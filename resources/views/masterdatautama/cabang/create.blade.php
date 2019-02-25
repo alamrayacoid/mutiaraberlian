@@ -23,7 +23,7 @@
               <a href="{{route('cabang.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
             </div>
           </div>
-          <form action="{{ route('cabang.create') }}" method="post" id="myForm" autocomplete="off">
+          <form id="formAddCabang" autocomplete="off">
             <div class="card-block">
               <section>
                 <div class="row">
@@ -90,7 +90,7 @@
     $.ajax({
       url   : "{{route('cabang.store')}}",
       type  : "get",
-      data  : $('#myForm').serialize(),
+      data  : $('#formAddCabang').serialize(),
       dataType : "json",
       beforeSend: function() {
         loadingShow();
