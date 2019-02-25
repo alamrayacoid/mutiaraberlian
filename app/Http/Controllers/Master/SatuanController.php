@@ -39,14 +39,14 @@ class SatuanController extends Controller
 
     public function tambahSatuan(Request $request)
     {
-      $s_id = $request->id;
+      $s_id   = $request->id;
       $s_name = $request->name;
 
       DB::beginTransaction();
       try {
         DB::table('m_unit')
           ->insert([
-            'u_id' => $s_id,
+            'u_id'   => $s_id,
             'u_name' => $s_name
           ]);
 
@@ -57,7 +57,7 @@ class SatuanController extends Controller
       } catch (\Exception $e) {
         DB::rollback();
         return response()->json([
-          'status' => 'gagal',
+          'status'  => 'gagal',
           'message' => $e
         ]);
       }
@@ -83,7 +83,7 @@ class SatuanController extends Controller
       } catch (\Exception $e) {
         DB::rollback();
         return response()->json([
-          'status' => 'gagal',
+          'status'  => 'gagal',
           'message' => $e
         ]);
       }
@@ -104,7 +104,7 @@ class SatuanController extends Controller
       } catch (\Exception $e) {
         DB::rollback();
         return response()->json([
-          'status' => 'gagal',
+          'status'  => 'gagal',
           'message' => $e
         ]);
       }
