@@ -256,20 +256,18 @@ body {
 
 .login-section {
     font-family: 'Quicksand', sans-serif;
-    border-radius: 12px;
     background-color: #163458 !important;
     border-bottom: none;
     color:white;
-    box-shadow: 4px 10px 20px rgb(255, 107, 107, 0.1);
 }
 
 .login-logo {
     margin-top:-15px;
 }
 
-.auth {
+/* .auth {
     background-color: #071C2E !important;
-}
+} */
 
 .auth-container .auth-header {
     padding-top: 30px;
@@ -280,8 +278,6 @@ body {
 .auth-container .auth-title {
     font-family: 'Cormorant SC', serif;
     font-size: 15pt;
-    margin-left: 5px;
-    margin-top: 5px;
     color:white;
 }
 
