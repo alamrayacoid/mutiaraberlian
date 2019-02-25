@@ -76,7 +76,7 @@
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input id="agen_name" type="text" class="form-control form-control-sm" name="name">
+                                <input id="name" type="text" class="form-control form-control-sm" name="name">
                               </div>
                             </div>
 
@@ -85,11 +85,22 @@
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <select id="" class="select2 form-control form-control-sm" name="type">
+                                <select id="type" class="select2 form-control form-control-sm" name="type">
                                   <option value="">Pilih Tipe Agen</option>
                                   <option value="AGEN">Agen</option>
                                   <option value="SUB AGEN">Sub Agen</option>
                                   <option value="KONSIGNE">Konsigne</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12 div_parent">
+                              <label>Agen (parent)</label>
+                            </div>
+                            <div class="col-md-9 col-sm-6 col-xs-12 div_parent">
+                              <div class="form-group">
+                                <select id="parent" class="select2 form-control form-control-sm" name="parent">
+                                  <option value="" selected="">Pilih Parent</option>
                                 </select>
                               </div>
                             </div>
@@ -205,6 +216,36 @@
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
   });
+
+  $(document).ready(function() {
+    $('.div_parent').hide();
+  })
+
+  $('#type').on('change', function() {
+    if ($(this).val() == 'SUB AGEN') {
+      RetrieveListAgents();
+      $('.div_parent').show();
+    } else {
+      $('.div_parent').hide();
+      $('#parent').empty();
+    }
+  })
+
+  function RetrieveListAgents()
+  {
+    $.ajax({
+      type: 'get',
+      url: baseUrl + '/masterdatautama/agen/agents',
+      success: function(data) {
+        $('#parent').empty();
+        $.each(data, function(key, val) {
+          $("#parent").append('<option value="'+ val.a_code +'">'+ val.a_name +'</option>');
+        });
+        $('#parent').focus();
+        $('#parent').select2('open');
+      }
+    });
+  }
 
   // set request when area_prov changed
   // set value area_city

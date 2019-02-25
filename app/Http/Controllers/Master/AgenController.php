@@ -116,6 +116,19 @@ class AgenController extends Controller
     }
 
     /**
+     * Return list agents where type is 'AGEN'.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getAgents()
+    {
+      $agents = DB::table('m_agen')
+        ->where('a_type', 'AGEN')
+        ->orderBy('a_name', 'asc')
+        ->get();
+      return $agents;
+    }
+    /**
      * Return DataTable list for view.
      *
      * @return Yajra/DataTables
@@ -153,6 +166,7 @@ class AgenController extends Controller
     public function create()
     {
       $data['provinces'] = $this->getProvinces();
+      // $data['agents'] = $this->getAgents();
       return view('masterdatautama.agen.create', compact('data'));
     }
 
@@ -193,6 +207,7 @@ class AgenController extends Controller
             'a_desa' => $request->address_village,
             'a_address' => $request->address,
             'a_type' => $request->type,
+            'a_parent' => $request->parent,
             'a_insert' => Carbon::now(),
             'a_update' => Carbon::now()
           ]);
@@ -267,6 +282,7 @@ class AgenController extends Controller
             'a_desa' => $request->address_village,
             'a_address' => $request->address,
             'a_type' => $request->type,
+            'a_parent' => $request->parent,
             'a_update' => Carbon::now()
           ]);
 
