@@ -224,9 +224,13 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+<<<<<<< HEAD
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         'CodeGenerator' => App\Http\Controllers\CodeGenerator::class,
 
+=======
+        'CodeGenerator' => App\Http\Controllers\CodeGenerator::class,
+>>>>>>> c17232b23c1e4b57ec328bd46b4ceb86323fab6e
     ],
 
 ];

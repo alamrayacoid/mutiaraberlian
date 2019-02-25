@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Master;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
 use DB;
 use Auth;
 use Session;
@@ -12,84 +14,10 @@ use Yajra\Datatables\Datatables;
 
 class SatuanController extends Controller
 {
-    // =============================== Master Data Utama ===============================
-
-    //  * Master Data Pegawai
-
-    public function kelolapegawai()
+    public function index()
     {
-        return view('masterdatautama.datapegawai.index');
-    }
-    public function edit_kelolapegawai()
-    {
-        return view('masterdatautama.datapegawai.edit');
-    }
-    public function create_kelolapegawai()
-    {
-        return view('masterdatautama.datapegawai.create');
-    }
-
-    // Master Variasi Satuan Produk
-
-    public function variasisatuanproduk()
-    {
-        return view('masterdatautama.variasisatuan.index');
-    }
-
-    public function create_variasisatuanproduk()
-    {
-        return view('masterdatautama.variasisatuan.create');
-    }
-
-    public function edit_variasisatuanproduk()
-    {
-        return view('masterdatautama.variasisatuan.edit');
-    }
-
-    // * Master Harga
-
-    public function dataharga()
-    {
-        return view('masterdatautama.harga.index');
-    }
-
-    public function create_dataharga()
-    {
-        return view('masterdatautama.harga.create');
-    }
-
-    public function edit_dataharga()
-    {
-        return view('masterdatautama.harga.edit');
-    }
-
-    // * Master Suplier
-
-    public function suplier()
-    {
-        return view('masterdatautama.suplier.index');
-    }
-
-    public function create_suplier()
-    {
-        return view('masterdatautama.suplier.create');
-    }
-
-    public function edit_suplier()
-    {
-        return view('masterdatautama.suplier.edit');
-    }
-
-    public function produkpersuplier()
-    {
-        return view('masterdatautama.suplier.produkpersuplier.index');
-    }
-
-    // * Master Cabang
-
-    public function cabang()
-    {
-        return view('masterdatautama.cabang.index');
+      $id = DB::table('m_unit')->max('u_id') + 1;
+      return view('masterdatautama/datasatuan/index', compact('id'));
     }
 
     public function list_satuan()
@@ -111,14 +39,14 @@ class SatuanController extends Controller
 
     public function tambahSatuan(Request $request)
     {
-      $s_id = $request->id;
+      $s_id   = $request->id;
       $s_name = $request->name;
 
       DB::beginTransaction();
       try {
         DB::table('m_unit')
           ->insert([
-            'u_id' => $s_id,
+            'u_id'   => $s_id,
             'u_name' => $s_name
           ]);
 
@@ -129,7 +57,7 @@ class SatuanController extends Controller
       } catch (\Exception $e) {
         DB::rollback();
         return response()->json([
-          'status' => 'gagal',
+          'status'  => 'gagal',
           'message' => $e
         ]);
       }
@@ -155,7 +83,7 @@ class SatuanController extends Controller
       } catch (\Exception $e) {
         DB::rollback();
         return response()->json([
-          'status' => 'gagal',
+          'status'  => 'gagal',
           'message' => $e
         ]);
       }
@@ -176,7 +104,7 @@ class SatuanController extends Controller
       } catch (\Exception $e) {
         DB::rollback();
         return response()->json([
-          'status' => 'gagal',
+          'status'  => 'gagal',
           'message' => $e
         ]);
       }

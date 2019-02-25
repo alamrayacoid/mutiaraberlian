@@ -1,19 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\master;
+namespace App\Http\Controllers\Master;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Validator;
-use DataTables;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
-use Carbon\Carbon;
+
 use DB;
 use Auth;
+use Validator;
+use DataTables;
 use CodeGenerator;
+use Carbon\Carbon;
 
-class CompanyController extends Controller
+class CabangController extends Controller
 {
     public function index()
     {
@@ -58,8 +59,6 @@ class CompanyController extends Controller
                     'message' => $errors
                 ]);
             }
-            // end: validate
-            // start: execute insert data
             DB::beginTransaction();
             try {
                 DB::table('m_company')
@@ -123,8 +122,6 @@ class CompanyController extends Controller
                     'message' => $errors
                 ]);
             }
-            // end: validate
-            // start: execute update data
             DB::beginTransaction();
             try {
                 DB::table('m_company')
@@ -150,7 +147,7 @@ class CompanyController extends Controller
             }
         }
     }
-
+    
     public function delete($id)
     {
         try{
@@ -179,4 +176,5 @@ class CompanyController extends Controller
             ]);
         }
     }
+
 }
