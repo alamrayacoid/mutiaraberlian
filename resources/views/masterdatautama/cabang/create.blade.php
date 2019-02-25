@@ -59,6 +59,7 @@
                       <select id="cabang_type" class="form-control form-control-sm" name="cabang_type">
                         <option value="PUSAT" selected="">Pusat</option>
                         <option value="CABANG">Cabang</option>
+                        <option value="AGEN">Agen</option>
                       </select>
                     </div>
                   </div>
