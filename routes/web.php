@@ -68,11 +68,11 @@ Route::group(['middleware' => 'guest'], function(){
     //	=============End Mas Rowi=============
 
 //    ==========Master Outlet==========
-    Route::get('/masterdatautama/cabang/index', 'master\CompanyController@index')->name('cabang.index');
-    Route::get('/masterdatautama/cabang/list', 'master\CompanyController@getData')->name('cabang.list');
-    Route::match(['get', 'post'],'/masterdatautama/cabang/create', 'master\CompanyController@create')->name('cabang.create');
-    Route::match(['get', 'post'], '/masterdatautama/cabang/edit/{id}', 'master\CompanyController@edit')->name('cabang.edit');
-    Route::get('/masterdatautama/cabang/delete/{id}', 'master\CompanyController@delete')->name('cabang.delete');
+    Route::get('/masterdatautama/cabang/index', 'Master\CabangController@index')->name('cabang.index');
+    Route::get('/masterdatautama/cabang/list', 'Master\CabangController@getData')->name('cabang.list');
+    Route::match(['get', 'post'],'/masterdatautama/cabang/create', 'Master\CabangController@create')->name('cabang.create');
+    Route::match(['get', 'post'], '/masterdatautama/cabang/edit/{id}', 'Master\CabangController@edit')->name('cabang.edit');
+    Route::get('/masterdatautama/cabang/delete/{id}', 'Master\CabangController@delete')->name('cabang.delete');
 //    ==========End Master Outlet======
 
 	Route::get('/masterdatautama/agen/index', 'Master\AgenController@index')->name('agen.index');
