@@ -71,7 +71,8 @@ Route::group(['middleware' => 'guest'], function(){
 //    ==========Master Outlet==========
     Route::get('/masterdatautama/cabang/index', 'Master\CabangController@index')->name('cabang.index');
     Route::get('/masterdatautama/cabang/list', 'Master\CabangController@getData')->name('cabang.list');
-    Route::match(['get', 'post'],'/masterdatautama/cabang/create', 'Master\CabangController@create')->name('cabang.create');
+    Route::get('/masterdatautama/cabang/create', 'Master\CabangController@create')->name('cabang.create');
+    Route::get('/masterdatautama/cabang/store', 'Master\CabangController@store')->name('cabang.store');
     Route::match(['get', 'post'], '/masterdatautama/cabang/edit/{id}', 'Master\CabangController@edit')->name('cabang.edit');
     Route::get('/masterdatautama/cabang/delete/{id}', 'Master\CabangController@delete')->name('cabang.delete');
 //    ==========End Master Outlet======
