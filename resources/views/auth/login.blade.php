@@ -4,7 +4,48 @@
     @include('layouts._head')
 
 <body>
+    <style>
+        body, html {
+    height: 100%;
+  }
+  
+  .falling-leaves {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%; // image is only 880x880
+    transform: translate(-50%, 0);
+    background: url(assets/img/forestback.svg) no-repeat center center;
+    background-size: cover;
+    overflow: hidden;
+  }
+  
+  .leaf-scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      transform-style: preserve-3d;
+  
+    }
+  p {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      background: url(assets/img/leaf.png) no-repeat;
+      background-size: 100%;
+      transform-style: preserve-3d;
+      backface-visibility: visible;
+  }
+    </style>
     <div class="auth">
+    <div class="falling-leaves" id="scene"></div>
             <div class="auth-container">
                 <div class="card login-section animated fadeIn">
                     <header class="auth-header">
