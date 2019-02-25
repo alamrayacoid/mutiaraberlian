@@ -14,6 +14,7 @@
 Route::get('/', function () {
     return view('home');
 });
+
 Route::get('/login', function () {
     return view('auth.login');
 });
@@ -70,7 +71,8 @@ Route::group(['middleware' => 'guest'], function(){
 //    ==========Master Outlet==========
     Route::get('/masterdatautama/cabang/index', 'Master\CabangController@index')->name('cabang.index');
     Route::get('/masterdatautama/cabang/list', 'Master\CabangController@getData')->name('cabang.list');
-    Route::match(['get', 'post'],'/masterdatautama/cabang/create', 'Master\CabangController@create')->name('cabang.create');
+    Route::get('/masterdatautama/cabang/create', 'Master\CabangController@create')->name('cabang.create');
+    Route::get('/masterdatautama/cabang/store', 'Master\CabangController@store')->name('cabang.store');
     Route::match(['get', 'post'], '/masterdatautama/cabang/edit/{id}', 'Master\CabangController@edit')->name('cabang.edit');
     Route::get('/masterdatautama/cabang/delete/{id}', 'Master\CabangController@delete')->name('cabang.delete');
 //    ==========End Master Outlet======
@@ -78,7 +80,8 @@ Route::group(['middleware' => 'guest'], function(){
 	Route::get('/masterdatautama/agen/index', 'Master\AgenController@index')->name('agen.index');
 	Route::get('/masterdatautama/agen/list', 'Master\AgenController@getList')->name('agen.list');
 	Route::get('/masterdatautama/agen/create', 'Master\AgenController@create')->name('agen.create');
-  	Route::get('/masterdatautama/agen/provinces', 'Master\AgenController@getProvinces')->name('agen.provinces');
+	Route::get('/masterdatautama/agen/agents', 'Master\AgenController@getAgents')->name('agen.agents');
+	Route::get('/masterdatautama/agen/provinces', 'Master\AgenController@getProvinces')->name('agen.provinces');
 	Route::get('/masterdatautama/agen/cities/{prov}', 'Master\AgenController@getCities')->name('agen.cities');
 	Route::get('/masterdatautama/agen/districts/{prov}', 'Master\AgenController@getDistricts')->name('agen.districts');
 	Route::get('/masterdatautama/agen/villages/{prov}', 'Master\AgenController@getVillages')->name('agen.villages');

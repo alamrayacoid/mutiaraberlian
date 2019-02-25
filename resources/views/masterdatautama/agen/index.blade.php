@@ -41,7 +41,6 @@
 																				<th>Kode Agen</th>
 												                <th>Nama Agen</th>
 																				<th>Tipe Agen</th>
-																				<th>Tanggal Lahir</th>
 												                <th>Alamat Agen</th>
 																				<th>Email</th>
 												                <th>No Telp</th>
@@ -100,7 +99,6 @@
 				{data: 'a_code', name: 'a_code'},
 				{data: 'a_name', name: 'a_name'},
 				{data: 'a_type', name: 'a_type'},
-				{data: 'a_birthday', name: 'a_birthday'},
 				{data: 'a_address', name: 'a_address'},
 				{data: 'a_email', name: 'a_email'},
 				{data: 'a_telp'},

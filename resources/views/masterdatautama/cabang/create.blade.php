@@ -23,7 +23,7 @@
               <a href="{{route('cabang.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
             </div>
           </div>
-          <form action="{{ route('cabang.create') }}" method="post" id="myForm" autocomplete="off">
+          <form id="formAddCabang" autocomplete="off">
             <div class="card-block">
               <section>
                 <div class="row">
@@ -57,7 +57,7 @@
                   <div class="col-md-9 col-sm-6 col-xs-12">
                     <div class="form-group">
                       <select id="cabang_type" class="form-control form-control-sm" name="cabang_type">
-                        <option value="PUSAT" selected="">Pusat</option>
+                        <option value="PUSAT" selected>Pusat</option>
                         <option value="CABANG">Cabang</option>
                         <option value="AGEN">Agen</option>
                       </select>
@@ -81,53 +81,36 @@
 
 @section('extra_script')
 <script type="text/javascript">
-$.ajaxSetup({
-headers: {
-    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-  }
-});
-
-$('#btn_simpan').on('click', function() {
-  SubmitForm(event);
-});
-
-function resetForm()
-{
-  $('#cabang_name').val('');
-  $('#cabang_address').val('');
-  $('#cabang_telp').val('');
-  $('#cabang_type').val('PUSAT');
-}
-
-// submit form to store data in db
-function SubmitForm(event)
-{
-  event.preventDefault();
-  form_data = $('#myForm').serialize();
-
-  $.ajax({
-    data : form_data,
-    type : "post",
-    url : $("#myForm").attr('action'),
-    dataType : 'json',
-    beforeSend: function() {
-      loadingShow();
-    },
-    success : function (response){
-      if(response.status == 'berhasil'){
-        loadingHide();
-        messageSuccess('Success', 'Data berhasil ditambahkan!');
-        resetForm();
-      } else if (response.status == 'invalid') {
-        loadingHide();
-        messageWarning('Perhatian', response.message);
-      }
-    },
-    error : function(e){
-      loadingHide();
-      messageWarning('Warning', e.message);
+  $.ajaxSetup({
+  headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
   });
-}
+
+  $('#btn_simpan').on('click', function() {
+    $.ajax({
+      url   : "{{route('cabang.store')}}",
+      type  : "get",
+      data  : $('#formAddCabang').serialize(),
+      dataType : "json",
+      beforeSend: function() {
+        loadingShow();
+      },
+      success : function (response){
+        if(response.status == 'sukses'){
+          loadingHide();
+          messageSuccess('Success', 'Data berhasil ditambahkan!');
+          window.location.href = "{{route('cabang.create')}}";
+        } else {
+          loadingHide();
+          messageFailed('Gagal', response.message);
+        }
+      },
+      error: function (e) {
+        loadingHide();
+        messageWarning('Peringatan', e.message);
+      }
+    });
+  });
 </script>
 @endsection

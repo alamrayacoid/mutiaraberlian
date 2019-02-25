@@ -13,8 +13,9 @@
     position: absolute;
     top: 0;
     bottom: 0;
+    left:3px;
     width: 100%;
-    height: 100%;
+    height: 766px;
     max-width: 100%;
     max-height: 100%; // image is only 880x880
     transform: translate(-50%, 0);
@@ -64,12 +65,12 @@
                         {{ csrf_field() }}
                             <div class="form-group">
                                 <label for="email">Username</label>
-                                <input type="text" class="form-control login-input" name="email" id="email" placeholder="Username" required autofocus=""> </div>
-                                <br>
+                                <input type="text" class="form-control login-input" name="email" id="email" required autofocus=""> 
+                                </div>
                             <div class="form-group">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control login-input" name="password" id="password" placeholder="Password" required> </div>
-                                <br>
+                                <input type="password" class="form-control login-input" name="password" id="password" required> 
+                                </div>
                             <div class="form-group">
                                 <label for="remember">
                                     <input class="checkbox check-remember" id="remember" name="remember" type="checkbox">

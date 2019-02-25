@@ -42,7 +42,7 @@
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="" value="{{ $data['agen']->a_code }}" readonly="">
+                                <input type="text" class="form-control form-control-sm" id="code" value="{{ $data['agen']->a_code }}" readonly="">
                               </div>
                             </div>
 
@@ -91,11 +91,23 @@
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
                                 <input type="hidden" id="type_hidden" value="{{ $data['agen']->a_type }}">
-                                <select name="type" id="type" class="form-control form-control-sm">
+                                <select name="type" id="type" class="select2 form-control form-control-sm">
                                     <option value="">Pilih Tipe Agen</option>
                                     <option value="AGEN">Agen</option>
                                     <option value="SUB AGEN">Sub Agen</option>
                                     <option value="KONSIGNE">Konsigne</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12 div_parent">
+                              <label>Agen (parent)</label>
+                            </div>
+                            <div class="col-md-9 col-sm-6 col-xs-12 div_parent">
+                              <div class="form-group">
+                                <input type="hidden" id="parent_hidden" value="{{ $data['agen']->a_parent }}">
+                                <select id="parent" class="select2 form-control form-control-sm" name="parent">
+                                  <option value="" selected="">Pilih Parent</option>
                                 </select>
                               </div>
                             </div>
@@ -225,8 +237,45 @@
     }
   });
 
+  $(document).ready(function() {
+    if ($('#type').val() == 'SUB AGEN') {
+      RetrieveListAgents();
+      $('.div_parent').show();
+    } else {
+      $('.div_parent').hide();
+      $('#parent').empty();
+    }
+  })
+
+  $('#type').on('change', function() {
+    if ($(this).val() == 'SUB AGEN') {
+      RetrieveListAgents();
+      $('.div_parent').show();
+    } else {
+      $('.div_parent').hide();
+      $('#parent').empty();
+    }
+  })
+
+  function RetrieveListAgents()
+  {
+    $.ajax({
+      type: 'get',
+      url: baseUrl + '/masterdatautama/agen/agents',
+      success: function(data) {
+        $('#parent').empty();
+        $.each(data, function(key, val) {
+          $("#parent").append('<option value="'+ val.a_code +'">'+ val.a_name +'</option>');
+        });
+        $('#parent option[value="'+ $('#code').val() +'"]').remove();
+        parent_hidden = $('#parent_hidden').val();
+        $("#parent option[value='"+parent_hidden+"']").prop("selected", true);
+      }
+    });
+  }
+
   // set request when area_prov changed
-  // set value area_city
+  // set option list area_city
   $('#area_prov').on('change', function() {
     $.ajax({
       type: 'get',
@@ -244,7 +293,7 @@
   })
 
   // set request when address_prov changed
-  // set value address_city
+  // set option list address_city
   $('#address_prov').on('change', function() {
     $.ajax({
       type: 'get',
@@ -263,7 +312,7 @@
   })
 
   // set request when address_city changed
-  // set value address_district
+  // set option list address_district
   $('#address_city').on('change', function() {
     $.ajax({
       type: 'get',
@@ -281,7 +330,7 @@
   })
 
   // set request when address_district changed
-  // set value address_village
+  // set option list address_village
   $('#address_district').on('change', function() {
     $.ajax({
       type: 'get',

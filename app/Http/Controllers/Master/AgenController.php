@@ -24,11 +24,13 @@ class AgenController extends Controller
     {
       // start: validate data before execute
       $messages = [
-        'name.required' => 'Nama agen masih kosong, silahkan isi terlebih dahulu !',
+        'area_prov.required' => 'Area Provinsi masih kosong, silahkan isi terlebih dahulu !',
         'area_city.required' => 'Area Kota masih kosong, silahkan isi terlebih dahulu !',
+        'name.required' => 'Nama agen masih kosong, silahkan isi terlebih dahulu !',
         'telp.required' => 'No Telp masih kosong, silahkan isi terlebih dahulu !'
       ];
       $validator = Validator::make($request->all(), [
+        'area_prov' => 'required',
         'area_city' => 'required',
         'name' => 'required',
         'telp' => 'required'
@@ -114,6 +116,19 @@ class AgenController extends Controller
     }
 
     /**
+     * Return list agents where type is 'AGEN'.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getAgents()
+    {
+      $agents = DB::table('m_agen')
+        ->where('a_type', 'AGEN')
+        ->orderBy('a_name', 'asc')
+        ->get();
+      return $agents;
+    }
+    /**
      * Return DataTable list for view.
      *
      * @return Yajra/DataTables
@@ -150,8 +165,8 @@ class AgenController extends Controller
      */
     public function create()
     {
-      $data['code'] = CodeGenerator::code('m_agen', 'a_code', 7, 'A');
       $data['provinces'] = $this->getProvinces();
+      // $data['agents'] = $this->getAgents();
       return view('masterdatautama.agen.create', compact('data'));
     }
 
@@ -175,11 +190,12 @@ class AgenController extends Controller
       // start: execute insert data
       DB::beginTransaction();
       try {
+        $code = CodeGenerator::code('m_agen', 'a_code', 7, 'A');
         $id = DB::table('m_agen')->max('a_id') + 1;
         DB::table('m_agen')
           ->insert([
             'a_id' => $id,
-            'a_code' => $request->code,
+            'a_code' => $code,
             'a_area' => $request->area_city,
             'a_name' => $request->name,
             'a_birthday' => Carbon::parse($request->birthday),
@@ -191,6 +207,7 @@ class AgenController extends Controller
             'a_desa' => $request->address_village,
             'a_address' => $request->address,
             'a_type' => $request->type,
+            'a_parent' => $request->parent,
             'a_insert' => Carbon::now(),
             'a_update' => Carbon::now()
           ]);
@@ -265,6 +282,7 @@ class AgenController extends Controller
             'a_desa' => $request->address_village,
             'a_address' => $request->address,
             'a_type' => $request->type,
+            'a_parent' => $request->parent,
             'a_update' => Carbon::now()
           ]);
 
