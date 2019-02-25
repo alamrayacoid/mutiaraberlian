@@ -1,0 +1,345 @@
+/* 
+
+# Alamraya Custom Styling
+
+============================
+*/
+
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+.card-title-block {
+    /*margin: -20px;*/
+    padding: 20px !important;
+    background-color: #fafafa;
+    border-bottom: 1px solid #dbdbdb !important;
+}
+.input-group-append > .btn-sm{
+	height: 31px;
+}
+.input-group-append > .btn-md{
+	height: 38px;
+}
+.input-group-append > .btn-lg{
+	height: 48px;
+}
+.select2-container--default .select2-selection--single{
+	border: 1px solid #ced4da;
+}
+.form-control ~ .select2-container .select2-selection--single{
+	height: 38px;
+}
+.form-control-sm ~ .select2-container .select2-selection--single{
+	height: 31px;
+}
+.form-control-lg ~ .select2-container .select2-selection--single{
+	height: 48px;
+}
+.input-group-addon {
+    padding: 0 7px 0 7px;
+}
+.modal-open .main-wrapper{
+	overflow: hidden;
+}
+fieldset{
+	border:1px solid #dbdbdb;
+	padding: 15px;
+}
+.btn{
+	margin-bottom: 0;
+}
+.header .header-block-search .input-container > button{
+	left: 0;
+}
+.header .header-block-search .input-container > button > i{
+	position: initial;
+	pointer-events: none;
+	display: block;
+	height: 17px;
+	line-height: 17px;
+	left: 0;
+}
+.table-condensed > thead > tr > th,
+.table-condensed > tfoot > tr > th,
+.table-condensed > tbody > tr > td{
+	padding: 5px;
+}
+@media (max-width:768px){
+	#search-container{
+		display: none;
+		position: absolute;
+		background: white;
+		left: 0;
+		width: 100%;
+		text-align: left;
+		z-index: 1;
+	}
+	#search-container form{
+		width: 100%;
+	}
+	#filterInput{
+		width: 100%;
+		max-width: 100%;
+	}
+	#btn-reset{
+		right: 0;
+		position: absolute;
+		left: unset;
+		margin: 6px;
+		top: 0;
+	}
+}
+
+.text-brand {
+	font-family: 'Roboto',		 cursive;
+    font-size: 11pt;
+    margin-left: 10px;
+}
+.login-text {
+	font-family: 'Courgette', cursive;
+}
+.sidebar .sidebar-menu > li > .sidebar-nav > li.active a ,
+.sidebar .sidebar-menu > li > .sidebar-nav > li > .sidebar-nav > li.active a ,
+.sidebar .sidebar-menu > li > .sidebar-nav > li > .sidebar-nav > li > .sidebar-nav > li.active a ,
+
+{
+	color: #ffffff; 
+}
+.sidebar .sidebar-menu > li > .sidebar-nav > li.aktif > a{
+	color: white;
+    background-color: rgba(85, 187, 221, .8) ;
+}
+aside.sidebar{
+	padding-bottom: unset;
+}
+.container-fluid{
+	padding-left: unset;
+	padding-right: unset;
+}
+.sidebar {
+	background-color: #3c415e;
+}
+.sidebar .sidebar-container{
+	bottom: 0;
+}
+.sidebar-header .brand{
+    height: 100px;
+    display: flex;
+    align-items: center;
+    background: #3c415e;
+    box-shadow: inset 1px 1px 0 rgba(0, 0, 0, .1), inset 0 -1px 0 rgba(0, 0, 0, .07);
+}
+#sidebar #search-container-bro{
+	margin: 10px 0 5px 0;
+}
+/*Ari Style*/
+#search-container-bro .input-container {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    margin: 10px 0 10px 0;
+}
+#search-container-bro .input-container #filterInput {
+    background: transparent;
+    border: unset;
+    border-bottom: 1px solid lightgray;
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    font-size: 9pt;
+    width: 62%;
+    flex: 1 1 auto;
+    transition: .2s;
+    font-size: 9pt;
+}
+
+#search-container-bro .input-container #filterInput:hover {
+    border-bottom: 0px solid transparent !important;
+}
+
+
+#search-container-bro .input-container #filterInput:focus {
+    border-bottom: 0px solid transparent !important;
+}
+
+#search-container-bro .input-container .underline,
+#search-container-bro .input-container .underline{
+	height: 1px;
+	background: #ff4757;
+    width: 1px;
+    transition: 1s ease;
+    margin-top: -1px;
+    margin-left:45px;
+}
+
+#search-container-bro .input-container:hover .underline,
+#search-container-bro .input-container:focus-within .underline{
+	height: 1px;
+    width: 170px;
+}
+
+#search-container-bro .input-container #btn-reset{
+	background: transparent;
+    border: unset;
+    color: red;
+    left: 210px;
+    top: 7px;	
+    right: 0;
+    position: absolute;
+    transition: .2s;
+}
+#search-container-bro .input-container #filterInput::placeholder
+{
+	color: #A3A3A3;
+}
+#search-container-bro .input-container:hover #btn-reset,
+#search-container-bro .input-container:focus-within #btn-reset
+{
+	top:7px;
+}
+#search-container-bro .input-container .input-container-prepend,
+#search-container-bro .input-container .input-container-append
+{
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	align-items: center;
+	padding: 0px;
+	color: white;
+}
+#sidebar-collapse-btn{
+	cursor: pointer;
+}
+.sidebar #search-container-bro #btn-search-menu {
+    background: transparent;
+    color: white;
+    border: none;
+}
+@media (min-width: 998.98px){
+	.app{
+		padding-left: 240px;
+	}
+	.app.sidebar-open{
+		padding-left: 60px;
+	}
+	.app.sidebar-open .sidebar .sidebar-menu > li > a .menu-title,
+	.app.sidebar-open .sidebar .sidebar-menu > li > a i.fa.arrow,
+	.app.sidebar-open .sidebar #search-container-bro #filterInput,
+	.app.sidebar-open .sidebar #search-container-bro .underline
+	{
+		display: none;	
+	}
+	.app .sidebar .sidebar-menu > li > a .menu-title,
+	.app.sidebar-open .sidebar:hover .sidebar-menu > li > a .menu-title,
+	.app.sidebar-open .sidebar:hover .sidebar-menu > li > a i.fa.arrow,
+	.app.sidebar-open .sidebar:focus-within .sidebar-menu > li > a i.fa.arrow,
+	.app.sidebar-open .sidebar:focus-within .sidebar-menu > li > a .menu-title,
+	.app.sidebar-open .sidebar:hover .sidebar-header .brand .text-brand,
+	.app.sidebar-open .sidebar:focus-within .sidebar-header .brand .text-brand,
+	.app.sidebar-open .sidebar:focus-within #search-container-bro #filterInput,
+	.app.sidebar-open .sidebar:hover #search-container-bro #filterInput,
+	.app.sidebar-open .sidebar:hover #search-container-bro .underline,
+	.app.sidebar-open .sidebar:focus-within #search-container-bro .underline
+
+	{
+		display: unset;
+	}
+	.app.sidebar-open .sidebar,
+	.app.sidebar-open .sidebar .sidebar-footer #customize-menu
+
+	{
+		width: 60px;
+		box-shadow: inset -3px 0px 0 rgba(0, 0, 0, .1), inset 3px 0 0 rgba(0, 0, 0, .07);
+	}
+
+	.app aside.sidebar,
+	.app.sidebar-open .sidebar:hover,
+	.app.sidebar-open .sidebar:focus-within,
+	.app.sidebar-open .sidebar:hover .sidebar-footer #customize-menu,
+	.app.sidebar-open .sidebar:focus-within .sidebar-footer #customize-menu
+	{
+		width: 240px;
+		transition: .3s ease;
+	}
+	
+	.loaded .app.sidebar-open .sidebar .sidebar-menu ul
+	{
+		height: 0;
+	}
+	.loaded .app.sidebar-open .sidebar:hover .sidebar-menu ul,
+	.loaded .app.sidebar-open .sidebar:focus-within .sidebar-menu ul
+	{
+		height: auto;
+	}
+	.app.sidebar-open #customize-menu{
+		left: 0;
+		transition: .3s ease;
+	}
+	.app #customize-menu{
+		transition: .3s;
+	}
+	.app.sidebar-open .header{
+		left: 60px;
+	}
+	.app.sidebar-open .footer{
+		left: 60px;
+	}
+	.app .sidebar-header .brand{
+		transition: .3s ease;
+	}
+	.app.sidebar-open .sidebar:hover .sidebar-header .brand,
+	.app.sidebar-open .sidebar:focus-within .sidebar-header .brand{
+		padding-left: 25px;
+		transition: .3s ease;
+	}
+	.app.sidebar-open .sidebar .sidebar-header .brand
+	{
+		padding-left: unset;
+		text-align: center;
+	}
+	.app .sidebar .sidebar-header .brand img
+	{
+		transition: 1s ease;
+	}
+	.app.sidebar-open .sidebar .sidebar-header .brand img
+	{
+		margin: auto;
+	}
+	.app.sidebar-open .sidebar:hover .sidebar-header .brand img,
+	.app.sidebar-open .sidebar:focus-within .sidebar-header .brand img
+	{
+		margin: unset;
+	}
+
+	.app.sidebar-open .sidebar .sidebar-header .brand .text-brand{
+		display: none;
+	}
+
+	.app.sidebar-open .sidebar .sidebar-footer .customize-menu-title
+	{
+		display: none;
+	}
+
+	.app.sidebar-open .sidebar:hover .sidebar-footer .customize-menu-title,
+	.app.sidebar-open .sidebar:focus-within .sidebar-footer .customize-menu-title
+	{
+		display: unset;
+	}
+
+	.app.sidebar-open .sidebar .sidebar-header .input-container .input-container-prepend{
+		margin: auto;
+	}
+}
+.footer .author > ul {
+    display: block;
+}
+@media (max-width: 991.98px)
+.footer .author > ul {
+    display: block;
+}
+@media (max-width: 767.98px)
+.footer .author > ul {
+    display: block;
+}
+.footer .author ul > li{
+	display: inline-block;
+}
+/*End Ari Style*/

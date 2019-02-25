@@ -1,0 +1,184 @@
+
+/* Loader */
+
+	.loader .loading{
+		background-color: #0099CC;
+		width: 8px;
+		height: 8px;
+		position: relative;
+		display: inline-block;
+		border-radius: 50%;
+		-webkit-animation-name: Grad; /* Untuk Safari 4.0 - 8.0 */
+		-webkit-animation-duration: 1s; /* Untuk Safari 4.0 - 8.0 */
+		animation-name: Grad;
+		animation-duration: 1s;
+		animation-iteration-count: infinite;
+	}
+
+	.loader span{
+		font-style: italic;
+	}
+
+	/* Untuk Safari 4.0 - 8.0 */
+	@-webkit-keyframes Grad {
+	  0%   {background-color: #0099CC;}
+	  25%  {background-color: #CC0000;}
+	  50%  {background-color: #FF8800;}
+	  100% {background-color: #0099CC;}
+	}
+
+	/* Normal syntax */
+	@keyframes Grad {
+	  0%   {background-color: #0099CC;}
+	  25%  {background-color: #CC0000;}
+	  50%  {background-color: #FF8800;}
+	  100% {background-color: #0099CC;}
+	}
+	
+/* End Loader */
+
+[v-cloak] {
+  display: none;
+}
+
+button:disabled{
+	cursor: not-allowed;
+}
+
+.table{
+	font-size: 10pt;
+}
+
+.table th, .table td{
+	padding: 10px;
+}
+
+.table th{
+	text-align: center;
+}
+
+.table td button{
+	font-size: 9pt;
+}
+
+.table-content{
+	margin-top: 20px;
+	background: white; 
+	padding: 20px;
+	box-shadow: 0px 0px 10px #eee;
+	border-radius: 5px;
+}
+
+.table-mini{
+	font-size: 12px;
+	background: white;
+}
+
+.table-mini th{
+	padding: 8px;
+}
+
+.content-title{
+	font-size: 12pt;
+	font-weight: 600;
+	font-style: italic;
+}
+
+.content-button{
+	background: none;
+	margin-top: 30px;
+	border-top: 1px solid #eee;
+	padding: 15px 10px 0px 10px;
+}
+
+.form-status{
+	font-size: 9pt;
+}
+
+label.modul-keuangan{
+	font-size: 10pt;
+}
+
+input.modul-keuangan{
+	font-size: 10pt;
+	padding: 0px 8px;
+	height: 32px;
+}
+
+select.modul-keuangan{
+	font-size: 10pt;
+	padding: 0px 8px;
+	height: 32px;
+	cursor: pointer;
+}
+
+.input-group-prepend.modul-keuangan{
+	height: 2em;
+}
+
+.input-group-prepend.modul-keuangan .input-group-text{
+	background: white;
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+.modul-keuangan-alert{
+	padding: 5px 20px;\
+	box-shadow: 0px 0px 8px #eee;
+	border-radius: 5px;
+	font-size: 10pt;
+}
+
+.modul-keuangan-alert.primary{
+	background: #4285F4;
+	color: white;
+}
+
+.form-info-icon{
+	font-size: 10pt;
+	padding: 5px 0px;
+	cursor: help;
+}
+
+.form-info-icon.link{
+	cursor: pointer;
+}
+
+.mt-form:not(:first-child){
+	margin-top: 20px;
+}
+
+.select2-modul-keuangan-dropdown{
+    font-size: 10pt;
+}
+
+.select2-modul-keuangan-content{
+    font-size: 9pt;
+    border: 1px solid #ccc;
+}
+
+table #vue-datatable{
+  font-size: 9pt;
+}
+
+#vue-datatable th{
+  background: #4B515D;
+  text-align: center;
+  color: white;
+  position: sticky;
+  padding: 5px;
+  top: 0px;
+}
+
+#vue-datatable td{
+  padding: 5px;
+}
+
+#vue-datatable tbody tr{
+  cursor: pointer;
+  background: white;
+}
+
+#vue-datatable tbody tr:hover{
+  background: #e0e0e0;
+}

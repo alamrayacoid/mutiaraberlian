@@ -1,0 +1,493 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+@import url('https://fonts.googleapis.com/css?family=Cormorant+SC:700');
+@import url('https://fonts.googleapis.com/css?family=Quicksand:700');
+/* END */
+body {
+    font-family: 'Roboto', sans-serif;
+}
+.status-pelamar {
+    font-style:italic;
+}
+.status-pelamar span{
+    color:#3498db;
+}
+.status-pelamar p{
+    color:#95a5a6;
+}
+.approval-1 {
+    margin-top:10px;
+}
+.approval-2 {
+    background-color:#e9ecef;
+    margin-top:10px;
+    margin-left:5px;
+}
+.approval-3 {
+    background-color:#e9ecef;
+    margin-top:10px;
+    margin-left:5px;
+}
+.radio-box p{
+    margin-left:10px;
+    margin-top:-5px;
+    font-size: 0.9em;
+}
+.preview-hr {
+    border: 1px solid #000;
+}
+.statusmng {
+    color:red;
+}
+.btn-upload {
+    margin-top: 10px;
+}
+.download-contoh {
+    margin-right:-13em;
+}
+.for-job {
+    margin-left:13px;
+}
+.icon-search {
+    color:white;
+    padding:10px 4px 0px 13px;
+}
+
+#btn-reset {
+    background-color: #3c415e !important;
+    border: 1px solid #3c415e !important;
+    color:white !important;
+}
+
+.input-search {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    border-bottom: 1px solid white;
+    color:white;
+    /*margin-bottom: 10px;*/
+}
+.title {
+    font-size: 14pt;
+}
+.title-description { 
+    font-size: 10pt;
+}
+.section {
+    font-size: 10pt;
+}
+.btn-primary {
+    font-size: 10pt;
+}
+.btn-secondary {
+    font-size: 10pt;
+}
+.form-control {
+    font-size: 10pt;
+}
+.sidebar .sidebar-menu {
+    font-size: 9pt;
+}
+.termin-table {
+    margin-top:10px;
+    display:none;
+}
+
+.btn-tambah-termin-gan {
+    margin-bottom:0px;
+    margin-left:15px;
+    margin-right:15px;
+    float:right;
+    display:block;
+}
+
+.section-nilai-bayar {
+    margin-left:18px;
+    margin-top:-20px;
+    margin-bottom:10px;
+}
+
+.input-rupiah {
+    font-weight: bold;
+    text-align: right;
+}
+
+.btn-tambah {
+    border-radius: 50%;
+    color:white !important;
+}
+
+.btn-tambah-termin {
+    border-radius: 50%;
+    color:white !important;
+}
+
+.btn-hapus {
+    border-radius:50%;
+}
+
+.status-termin-lunas {
+    background-color:#1dd1a1;
+    border-radius: 20px;
+}
+
+.status-termin-belum {
+    background-color:#ff6b6b;
+    border-radius: 20px;
+}
+
+
+.status-termin-lunas p{
+    color:white;
+    font-size: 9pt;
+    text-align: center;
+    padding:5px 5px 5px 5px;
+}
+
+
+.status-termin-belum p{
+    color:white;
+    font-size: 9pt;
+    text-align: center;
+    padding:5px 5px 5px 5px;
+}
+
+.text-brand {
+    font-family: 'Cormorant SC', serif;
+    font-size: 15pt;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+.brand img{
+    margin-left:-10px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 0;
+    background-color: #40739e !important;
+}
+
+.sidebar .sidebar-container::-webkit-scrollbar-track {
+    background-color: #3c415e;
+}
+
+.sidebar .sidebar-menu > li.active > a, .sidebar .sidebar-menu > li.active > a:hover {
+    background-color: #40739e !important;
+    color: #ffffff !important;
+}
+
+.sidebar .sidebar-menu > li > .sidebar-nav > li.active a {
+    color: #ffffff;
+    background-color: #487eb0 !important;
+}
+
+.text-primary {
+    font-family: 'Quicksand', sans-serif;
+    color:#40739e;
+}
+
+.card .card-header .title {
+    font-family: 'Quicksand', sans-serif;
+    color:#353b48;
+}
+
+.section-barang {
+    display:none;
+}
+
+.btn-go {
+    display: block;
+}
+
+.status-distribusi {
+    background-color:#74b9ff;
+    border-radius:25px; 
+}
+
+.status-distribusi p{
+    color:white;
+    text-align: center;
+}
+
+.status-stok-normal {
+    background-color:#1dd1a1;
+    border-radius:25px;
+    color:white;
+    text-align: center;
+}
+
+.btn-approval {
+    color:white !important;
+}
+
+.status-pending {
+    background-color:#fdcb6e !important;
+    color:white;
+    border-radius: 25px;
+    text-align: center;
+    border:none;
+    outline:none !important;
+}
+
+.btn-primary:focus {
+    outline:none !important;
+    box-shadow:none !important;
+}
+
+.status-approve {
+    background-color: #1dd1a1 !important;
+    color:white;
+    border-radius: 25px;
+    text-align: center;
+    border:none;
+    outline:none !important;
+}
+
+
+.status-reject {
+    background-color: #ff6b6b !important;
+    color:white;
+    border-radius: 25px;
+    text-align: center;
+    border:none;
+}
+
+.login-section {
+    font-family: 'Quicksand', sans-serif;
+    border-radius: 12px;
+    background-color: #163458 !important;
+    border-bottom: none;
+    color:white;
+    box-shadow: 4px 10px 20px rgb(255, 107, 107, 0.1);
+}
+
+.login-logo {
+    margin-top:-15px;
+}
+
+.auth {
+    background-color: #071C2E !important;
+}
+
+.auth-container .auth-header {
+    padding-top: 30px;
+    text-align: center;
+    border-bottom: none;
+}
+
+.auth-container .auth-title {
+    font-family: 'Cormorant SC', serif;
+    font-size: 15pt;
+    margin-left: 5px;
+    margin-top: 5px;
+    color:white;
+}
+
+.login-input {
+    background-color: transparent;
+    border:unset;
+    border-bottom: 1px solid white;
+    border-radius: 0px;
+    color:white !important;
+}
+
+
+.login-input:focus {
+    background-color: transparent;
+    outline:none;
+    box-shadow:unset;
+    border-bottom-color: white;
+}
+
+.check-remember {
+    size: 10px;
+}
+
+.btn-login {
+    margin-top:30px;
+    font-size: 10pt;
+    border-radius:25px;
+    padding-top: 10px;
+    padding-bottom:10px;
+    background-color: #ff4757 !important;
+    border-color: #ff4757 !important;
+    box-shadow: 0px 8px 17px rgba(255, 71, 87, 0.7);
+    margin-bottom: 50px;
+}
+
+/* color presentase  */
+.good {
+    color:#2ecc71 !important;
+}
+
+.standart {
+    color:#3498db !important;
+}
+
+.bad {
+    color:#e74c3c !important;
+}
+/* End */
+
+.akumulasi-txt {
+    font-family: 'Roboto', sans-serif;
+    font-size: 13pt;
+    margin-top: 5px;
+}
+
+.modal-content {
+    font-size:9pt;
+}
+.modal-content .modal-title {
+    font-size:14pt;
+}
+
+/* HamburgeButton */
+/* menuThree */
+.menuThree{
+    width: 31px;
+    height: 30px;
+    margin: 10px 10px;
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    float:left;
+    left:0px;
+  }
+  .menuThree span{
+    background-color:#3c415e;
+    position: absolute;
+    border-radius: 2px;
+    transition: .3s cubic-bezier(.8, .5, .2, 1.4);
+  }
+  .menuThree span:nth-child(1){
+    width: 100%;
+    height:  4px;
+    display: block;
+    top: 4px;
+    left: 0px;
+  }
+  .menuThree span:nth-child(2){
+    width: 100%;
+    height:  4px;
+    display: block;
+    top: 13px;
+    left: 0px;
+  }
+  .menuThree span:nth-child(3){
+    width: 100%;
+    height:  4px;
+    display: block;
+    bottom: 4px;
+    left: 0px;
+  }
+  .menuThree:not(.clickMenuThree):hover span:nth-child(1){
+    width: 100%;
+    height:  4px;
+    display: block;
+    top: -2px;
+    left: 0px;
+    transition: .3s cubic-bezier(.8, .5, .2, 1.4);
+  }
+  .menuThree:not(.clickMenuThree):hover span:nth-child(2){
+    width: 100%;
+    height:  4px;
+    display: block;
+    top: 13px;
+    left: 0px;
+    transition: .4s cubic-bezier(.8, .5, .2, 1.4);
+  }
+  .menuThree:not(.clickMenuThree):hover span:nth-child(3){
+    width: 100%;
+    height:  4px;
+    display: block;
+    bottom: -2px;
+    left: 0px;
+    transition: .3s cubic-bezier(.8, .5, .2, 1.4);
+  }
+  .clickMenuThree {
+    transform: rotate(-90deg);
+  }
+  .clickMenuThree span:nth-child(1){
+    left:3px;
+    top: 12px;
+    width: 30px;
+    transition: .3s cubic-bezier(.8, .5, .2, 1.4);
+    transform: rotate(90deg);
+    transition-delay: 150ms;
+  }
+  .clickMenuThree span:nth-child(2){
+    left:2px;
+    top: 20px;
+    width: 20px;
+    transition: .3s cubic-bezier(.8, .5, .2, 1.4);
+    transform: rotate(45deg);
+    transition-delay: 50ms;
+  }
+  .clickMenuThree span:nth-child(3){
+    left:14px;
+    top: 20px;
+    width: 20px;
+    transition: .3s cubic-bezier(.8, .5, .2, 1.4);
+    transform: rotate(-45deg);
+    transition-delay: 100ms;
+  }
+  .kas-section {
+      padding:10px 50px 10px 50px;
+  }
+  .bank-card {
+      margin:0 auto;
+      float:none;
+      margin-bottom: 10px;
+  }
+
+  .another-card {
+    margin:5px auto;
+    float:none;
+    margin-bottom: 10px;
+  }
+
+  .horizontal-line {
+      height:1px;
+      width: 100%;
+      background-color: gainsboro;
+  }
+  .add-transaksi {
+      background-color:transparent;
+      border:none;
+      color:green;
+  }
+  
+  .add-transaksi:hover {
+    background-color:transparent;
+    border:none;
+    color:grey;
+ }
+
+ .input-invis {
+     border:0px none;
+     background: white none repeat;
+     margin:0px;
+     color:#4f5f6f !important;
+     padding-right: 0px;
+
+ }
+
+ .input-invis:active,
+ .input-invis:hover,
+ .input-invis:focus {  
+    outline: none;
+    color:#4f5f6f !important;
+    box-shadow:none !important;
+    border:unset;
+
+}
+/* End */
+/* .btn.btn-primary {
+    background-color: #ff4757;
+    border-color: #ff4757;
+    box-shadow: 0px 8px 17px rgba(255, 71, 87, 0.7);
+    color:white;
+} */
