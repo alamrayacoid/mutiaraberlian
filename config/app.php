@@ -223,7 +223,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
+        'CodeGenerator' => App\Http\Controllers\CodeGenerator::class,
     ],
 
 ];
