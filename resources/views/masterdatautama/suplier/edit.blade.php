@@ -143,7 +143,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="top" value="{{ $data['supplier']->s_top }}">
+                                <input type="text" class="form-control form-control-sm" name="top" id="top" value="{{ $data['supplier']->s_top }}">
                               </div>
                             </div>
 
@@ -152,7 +152,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="deposit" value="{{ $data['supplier']->s_deposit }}">
+                                <input type="text" class="form-control form-control-sm" name="deposit" id="deposit" value="{{ $data['supplier']->s_deposit }}">
                               </div>
                             </div>
 
@@ -199,7 +199,20 @@
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
   });
-  
+
+  $(document).ready(function(){
+    $('#top').maskMoney({
+      thousands: '.',
+      precision: 0,
+      suffix: ' Hari'
+    });
+    $('#deposit').maskMoney({
+      thousands: '.',
+      precision: 0,
+      suffix: ' Hari'
+    });
+  });
+
   $('#btn_simpan').on('click', function() {
     SubmitForm(event);
   })

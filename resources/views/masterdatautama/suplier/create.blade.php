@@ -109,6 +109,15 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Atas Nama (rekening)</label>
+                            </div>
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm" name="atasnama">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Bank</label>
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
@@ -129,7 +138,7 @@
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Note</label>
                             </div>
-                            <div class="col-md-3 col-sm-6 col-xs-12">
+                            <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
                                 <textarea type="text" class="form-control form-control-sm" name="note"></textarea>
                               </div>
@@ -141,7 +150,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="top">
+                                <input type="text" class="form-control form-control-sm" name="top" id="top">
                               </div>
                             </div>
 
@@ -150,7 +159,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="deposit">
+                                <input type="text" class="form-control form-control-sm" name="deposit" id="deposit">
                               </div>
                             </div>
 
@@ -199,7 +208,16 @@
   });
 
   $(document).ready(function(){
-
+    $('#top').maskMoney({
+      thousands: '.',
+      precision: 0,
+      suffix: ' Hari'
+    });
+    $('#deposit').maskMoney({
+      thousands: '.',
+      precision: 0,
+      suffix: ' Hari'
+    });
   });
 
   $('#btn_simpan').on('click', function() {
@@ -212,7 +230,6 @@
     loadingShow();
     event.preventDefault();
     form_data = $('#myForm').serialize();
-
     $.ajax({
       data : form_data,
       type : "post",

@@ -32,7 +32,7 @@
                         <section>
 
                         	<div class="table-responsive">
-	                            <table class="table table-striped table-hover display" cellspacing="0" id="table_supplier">
+	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_supplier">
 	                                <thead class="bg-primary">
 	                                    <tr align="center">
 													                <th width="1%">No</th>

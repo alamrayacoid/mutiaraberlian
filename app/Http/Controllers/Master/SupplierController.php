@@ -56,15 +56,19 @@ class SupplierController extends Controller
     }
 
     /**
-     * Get float type from currency format.
+     * Remove maskMoney (suffix, prefix) and return floatval.
      *
-     * @param string "RP. x.xxx.xxx,xx"
+     * @param string $str
+     * @param string $prefix
+     * @param string $suffix
      * @return float $limit or $hutang
      */
-    public function getFloatFromStr($str)
+    public function removeMask($str, $prefix, $suffix)
     {
-      $strFormat = str_replace('.', '', $str);
-      $floatformat = floatval(substr($strFormat, 3, (strlen($strFormat) - 3)));
+      $strFormat = str_replace($prefix, '', $str);
+      $strFormat = str_replace($suffix, '', $strFormat);
+      $strFormat = str_replace('.', '', $strFormat);
+      $floatformat = floatval($strFormat);
       return $floatformat;
     }
 
@@ -122,6 +126,12 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
+      // Remove masked value before validate it
+      // also, merged $request with new data
+      $request->merge(['top' => (int)$this->removeMask($request->top, '', ' Hari')]);
+      $request->merge(['deposit' => (int)$this->removeMask($request->deposit, '', ' Hari')]);
+      $request->merge(['limit' => $this->removeMask($request->limit, 'Rp. ', '')]);
+      $request->merge(['hutang' => $this->removeMask($request->hutang, 'Rp. ', '')]);
       // validate request
       $isValidRequest = $this->validate_req($request);
       if ($isValidRequest != '1') {
@@ -131,18 +141,6 @@ class SupplierController extends Controller
           'message' => $errors
         ]);
       }
-      // set 'hutang' and 'limit' format
-      if ($request->limit == null) {
-        $limit = 0;
-      } else {
-        $limit = $this->getFloatFromStr($request->limit);
-      }
-      if ($request->hutang == null) {
-        $hutang = 0;
-      } else {
-        $hutang = $this->getFloatFromStr($request->hutang);
-      }
-
       // start: execute insert data
       DB::beginTransaction();
       try {
@@ -158,13 +156,14 @@ class SupplierController extends Controller
             's_phone1' => $request->phone1,
             's_phone2' => $request->phone2,
             's_rekening' => $request->rekening,
+            's_atasnama' => $request->atasnama,
             's_bank' => $request->bank,
             's_fax' => $request->fax,
             's_note' => $request->note,
             's_top' => $request->top,
             's_deposit' => $request->deposit,
-            's_limit' => $limit,
-            's_hutang' => $hutang,
+            's_limit' => $request->limit,
+            's_hutang' => $request->hutang,
             's_insert' => Carbon::now(),
             's_update' => Carbon::now()
         ]);
@@ -208,6 +207,12 @@ class SupplierController extends Controller
      */
     public function update(Request $request, $id)
     {
+      // Remove masked value before validate it
+      // also, merged $request with new data
+      $request->merge(['top' => (int)$this->removeMask($request->top, '', ' Hari')]);
+      $request->merge(['deposit' => (int)$this->removeMask($request->deposit, '', ' Hari')]);
+      $request->merge(['limit' => $this->removeMask($request->limit, 'Rp. ', '')]);
+      $request->merge(['hutang' => $this->removeMask($request->hutang, 'Rp. ', '')]);
       // validate request
       $isValidRequest = $this->validate_req($request);
       if ($isValidRequest != '1') {
@@ -216,17 +221,6 @@ class SupplierController extends Controller
           'status' => 'invalid',
           'message' => $errors
         ]);
-      }
-      // set 'hutang' and 'limit' format
-      if ($request->limit == null) {
-        $limit = 0;
-      } else {
-        $limit = $this->getFloatFromStr($request->limit);
-      }
-      if ($request->hutang == null) {
-        $hutang = 0;
-      } else {
-        $hutang = $this->getFloatFromStr($request->hutang);
       }
       // start: execute insert data
       DB::beginTransaction();
@@ -242,13 +236,14 @@ class SupplierController extends Controller
             's_phone1' => $request->phone1,
             's_phone2' => $request->phone2,
             's_rekening' => $request->rekening,
+            's_atasnama' => $request->atasnama,
             's_bank' => $request->bank,
             's_fax' => $request->fax,
             's_note' => $request->note,
             's_top' => $request->top,
             's_deposit' => $request->deposit,
-            's_limit' => $limit,
-            's_hutang' => $hutang,
+            's_limit' => $request->limit,
+            's_hutang' => $request->hutang,
             // 's_insert' => Carbon::now(),
             's_update' => Carbon::now()
         ]);
