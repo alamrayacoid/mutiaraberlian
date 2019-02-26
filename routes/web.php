@@ -57,8 +57,8 @@ Route::group(['middleware' => 'guest'], function(){
 	Route::get('/masterdatautama/variasisatuanproduk/edit', 'MasterController@edit_variasisatuanproduk')->name('variasisatuan.edit');
 
 	Route::get('/masterdatautama/harga/index', 'MasterController@dataharga')->name('dataharga.index');
-	Route::get('/masterdatautama/harga/satuan/create', 'MasterController@create_satuanharga')->name('satuanharga.create');
-	Route::get('/masterdatautama/harga/satuan/edit', 'MasterController@edit_satuanharga')->name('satuanharga.edit');
+	Route::get('/masterdatautama/harga/satuan/create', 'MasterController@create_golonganharga')->name('golonganharga.create');
+	Route::get('/masterdatautama/harga/satuan/edit', 'MasterController@edit_golonganharga')->name('golonganharga.edit');
 
 	Route::get('/masterdatautama/suplier/index', 'Master\SupplierController@index')->name('suplier.index');
 	Route::get('/masterdatautama/suplier/list', 'Master\SupplierController@getList')->name('suplier.list');
