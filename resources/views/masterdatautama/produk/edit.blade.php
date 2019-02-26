@@ -53,10 +53,11 @@
                                 <input type="hidden" value="{{ $data['dataproduk']->i_type }}" id="type">
                                 <select class="form-control form-control-sm" name="dataproduk_type" id="dataproduk_type">
                                   <option value="">--Pilih Jenis Produk--</option>
-                                  <option value="BB">Bahan Baku</option>
-                                  <option value="SP">Spare Part</option>
-                                  <option value="BJ">Barang Jual</option>
-                                  <option value="LL">Lain-lain</option>
+                                  @foreach ($jenis as $key => $value)
+                                    <option value="{{$value->it_id}}" @if ($value->it_id == $data['dataproduk']->i_type)
+                                      selected
+                                    @endif>{{$value->it_name}}</option>
+                                  @endforeach
                                 </select>
                               </div>
                             </div>
@@ -71,12 +72,10 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Min Stock</label>
+
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="number" class="form-control form-control-sm" name="dataproduk_minstock">
-                              </div>
+
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
@@ -86,9 +85,11 @@
                               <div class="form-group">
                                 <select class="form-control form-control-sm" name="dataproduk_satuanutama">
                                   <option value="">--Pilih--</option>
-                                  <option value="1">Kardus</option>
-                                  <option value="2">Pcs</option>
-                                  <option value="3">Kg</option>
+                                  @foreach ($satuan as $key => $value)
+                                    <option value="{{$value->u_id}}" @if ($value->u_id == $data['dataproduk']->i_unit1)
+                                      selected
+                                    @endif>{{$value->u_name}}</option>
+                                  @endforeach
                                 </select>
                               </div>
                             </div>
@@ -98,7 +99,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="number" class="form-control-sm form-control" min="0" name="dataproduk_isisatuanutama">
+                                <input type="number" class="form-control-sm form-control" min="0" value="{{(int)$data['dataproduk']->i_unitcompare1}}" readonly name="dataproduk_isisatuanutama">
                               </div>
                             </div>
 
@@ -109,9 +110,11 @@
                               <div class="form-group">
                                 <select class="form-control form-control-sm" name="dataproduk_satuanalt1">
                                   <option value="">--Pilih--</option>
-                                  <option value="1">Kardus</option>
-                                  <option value="2">Pcs</option>
-                                  <option value="3">Kg</option>
+                                  @foreach ($satuan as $key => $value)
+                                    <option value="{{$value->u_id}}" @if ($value->u_id == $data['dataproduk']->i_unit2)
+                                      selected
+                                    @endif>{{$value->u_name}}</option>
+                                  @endforeach
                                 </select>
                               </div>
                             </div>
@@ -121,7 +124,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="number" class="form-control-sm form-control" min="0" name="dataproduk_isisatuanalt1">
+                                <input type="number" class="form-control-sm form-control" min="0" value="{{(int)$data['dataproduk']->i_unitcompare2}}" name="dataproduk_isisatuanalt1">
                               </div>
                             </div>
 
@@ -132,9 +135,11 @@
                               <div class="form-group">
                                 <select class="form-control form-control-sm" name="dataproduk_satuanalt2">
                                   <option value="">--Pilih--</option>
-                                  <option value="1">Kardus</option>
-                                  <option value="2">Pcs</option>
-                                  <option value="3">Kg</option>
+                                  @foreach ($satuan as $key => $value)
+                                    <option value="{{$value->u_id}}" @if ($value->u_id == $data['dataproduk']->i_unit3)
+                                      selected
+                                    @endif>{{$value->u_name}}</option>
+                                  @endforeach
                                 </select>
                               </div>
                             </div>
@@ -144,7 +149,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="number" class="form-control-sm form-control" min="0" name="dataproduk_isisatuanalt2">
+                                <input type="number" class="form-control-sm form-control" min="0" value="{{(int)$data['dataproduk']->i_unitcompare3}}" name="dataproduk_isisatuanalt2">
                               </div>
                             </div>
 
@@ -153,7 +158,7 @@
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <textarea class="form-control" name="dataproduk_ket">{{ $data['dataproduk']->i_det }}</textarea>
+                                <textarea class="form-control" name="dataproduk_ket">{{ $data['dataproduk']->i_detail }}</textarea>
                               </div>
                             </div>
 
@@ -209,7 +214,10 @@
             loaderBg: '#55efc4',
             icon: 'success',
             stack: false,
-            hideAfter: 1500
+            hideAfter: 1500,
+            afterHidden: function() {
+              window.location.href = "{{ route('dataproduk.index') }}";
+            }
           });
         } else if (response.status == 'invalid') {
           $.toast({
