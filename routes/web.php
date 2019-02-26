@@ -36,10 +36,15 @@ Route::group(['middleware' => 'guest'], function(){
 	Route::get('/masterdatautama/produk/index', 'Master\ItemController@index')->name('dataproduk.index');
 	Route::get('/masterdatautama/produk/list', 'Master\ItemController@getList')->name('dataproduk.list');
 	Route::get('/masterdatautama/produk/create', 'Master\ItemController@create')->name('dataproduk.create');
-  	Route::post('/masterdatautama/produk/store', 'Master\ItemController@store')->name('dataproduk.store');
+  Route::post('/masterdatautama/produk/store', 'Master\ItemController@store')->name('dataproduk.store');
+  Route::get('/masterdatautama/produk/store', 'Master\ItemController@store')->name('dataproduk.store');
 	Route::get('/masterdatautama/produk/edit/{id}', 'Master\ItemController@edit')->name('dataproduk.edit');
 	Route::post('/masterdatautama/produk/update/{id}', 'Master\ItemController@update')->name('dataproduk.update');
 	Route::post('/masterdatautama/produk/delete/{id}', 'Master\ItemController@destroy')->name('dataproduk.delete');
+  Route::post('/masterdatautama/produk/simpanjenis', 'Master\ItemController@simpanjenis');
+  Route::post('/masterdatautama/produk/tablejenis', 'Master\ItemController@tablejenis');
+  Route::post('/masterdatautama/produk/hapusjenis', 'Master\ItemController@hapusjenis');
+  Route::post('/masterdatautama/produk/updatejenis', 'Master\ItemController@updatejenis');
 
   	Route::get('/masterdatautama/produk/jenis/create', 'MasterController@create_datajenisproduk')->name('datajenisproduk.create');
 	Route::get('/masterdatautama/produk/jenis/edit', 'MasterController@edit_datajenisproduk')->name('datajenisproduk.edit');
