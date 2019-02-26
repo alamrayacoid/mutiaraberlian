@@ -34,14 +34,14 @@
 
 
                         	<div class="table-responsive">
-	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_agen">
+	                            <table class="table table-striped table-hover display" cellspacing="0" id="table_agen">
 	                                <thead class="bg-primary">
 	                                    <tr>
 												                <th width="1%">No</th>
 																				<th>Kode Agen</th>
 												                <th>Nama Agen</th>
 																				<th>Tipe Agen</th>
-												                <th>Alamat Agen</th>
+												                <th width="20%">Alamat Agen</th>
 																				<th>Email</th>
 												                <th>No Telp</th>
 												                <th>Aksi</th>
@@ -100,7 +100,7 @@
 				{data: 'a_name', name: 'a_name'},
 				{data: 'a_type', name: 'a_type'},
 				{data: 'a_address', name: 'a_address'},
-				{data: 'a_email', name: 'a_email'},
+				{data: 'a_email'},
 				{data: 'a_telp'},
 				{data: 'action', name: 'action'}
 			],
