@@ -63,7 +63,7 @@
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <div class="form-group">
-                            <input type="text" class="form-control form-control-sm" readonly="" name="dataproduk_code" value="{{ $code }}">
+                            <input type="text" class="form-control form-control-sm" name="dataproduk_code" value="{{ $code }}">
                           </div>
                         </div>
 
@@ -95,7 +95,7 @@
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <div class="form-group">
-                           <input type="number" class="form-control-sm form-control" min="0" value="1" name="dataproduk_isisatuanutama">
+                           <input type="number" class="form-control-sm form-control" min="0" value="1" name="dataproduk_isisatuanutama" readonly="">
                           </div>
                         </div>
 

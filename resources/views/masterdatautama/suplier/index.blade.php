@@ -36,26 +36,42 @@
 	                                <thead class="bg-primary">
 	                                    <tr align="center">
 							                <th width="1%">No</th>
-											<th width="10%">Kode Suplier</th>
+											<th width="10%">Nama Perusahaan</th>
 							                <th width="10%">Nama Suplier</th>
+							                <th width="10%">NPWP</th>
 							                <th width="10%">Alamat</th>
-							                <th width="10%">No Telp</th>
-											<th width="10%">Contact Person</th>
-											<th width="10%">No Contact Person</th>
-											<th width="10%">Produk</th>
+											<th width="10%">Telepon</th>
+											<th width="10%">Telepon 2</th>
+											<th width="10%">Telepon 3</th>
+											<th>No Rek</th>
+											<th>Bank</th>
+											<th>FAX</th>
+											<th>Note</th>
+											<th>TOP</th>
+											<th>Deposit</th>
+											<th>Limit</th>
+											<th>Hutang</th>
 							                <th width="5%">Aksi</th>
 							            </tr>
 	                                </thead>
 	                                <tbody>
 	                                	<tr align="center">
 	                                		<td>1</td>
-											<td>321123</td>
-	                                		<td>David</td>
-	                                		<td>Jl. Hehe</td>
-	                                		<td>08132312451123</td>
-	                                		<td>Ridwan</td>
-											<td>01231912371293</td>
+											<td>BradCompany</td>
+	                                		<td>Brad</td>
+	                                		<td>123123</td>
+	                                		<td>JL.Rh</td>
+	                                		<td>012312</td>
+											<td>-</td>
+											<td>-</td>
+											<td>0123212</td>
+											<th>Bang</th>
+											<td>-</td>
 											<td><button class="btn btn-primary btn-modal" data-toggle="modal" data-target="#detail" type="button">Detail</button></td>
+											<td>-</td>
+											<td>-</td>
+											<td class="input-rupiah">0.00</td>
+											<td class="input-rupiah">0.00</td>
 	                                		<td>
 	                                			<div class="btn-group btn-group-sm">
 	                                				<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>

@@ -1,6 +1,10 @@
 @extends('main')
 
 @section('content')
+
+@include('masterdatautama.produk.modal-create')
+
+@include('masterdatautama.produk.modal-edit')
 <article class="content animated fadeInLeft">
 
 	<div class="title-block text-primary">
@@ -45,13 +49,13 @@
 			                        <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_produk">
 			                            <thead class="bg-primary">
 			                                <tr>
-									                				<th>No</th>
-			                                		<th>Kode Barang</th>
-			                                		<th>Nama Barang</th>
-			                                		<th>Satuan</th>
-			                                		<th>Jenis Barang</th>
-									                				<th>Aksi</th>
-												            	</tr>
+												<th>No</th>
+												<th>Kode Barang</th>
+												<th>Nama Barang</th>
+												<th>Satuan</th>
+												<th>Jenis Barang</th>
+												<th>Aksi</th>
+											</tr>
 			                            </thead>
 			                            <tbody>
 			                            </tbody>
@@ -70,42 +74,37 @@
 			            			<h3 class="title">Data Jenis Produk</h3>
 			            		</div>
 			            		<div class="header-block pull-right">
-												<a class="btn btn-primary" href="{{route('datajenisproduk.create')}}"><i class="fa fa-plus"></i>&nbsp;Tambah Data Jenis Produk</a>
+									<button class="btn btn-primary btn-modal" data-toggle="modal" data-target="#create" type="button"><i class="fa fa-plus"></i>&nbsp;Tambah Data Jenis Produk</button>
 			            		</div>
 		            		</div>
-
 		            		<div class="card-block">
 		            			<section>
-
 			            			<div class="table-responsive">
 			                            <table class="table table-striped table-hover" cellspacing="0" id="table_jenis_produk">
 			                                <thead class="bg-primary">
 			                                    <tr>
-									                <th>No</th>
-									                <th>Kode Jenis Produk</th>
-									                <th>Nama Jenis Produk</th>
-									                <th>Aksi</th>
+									                <th width="5%">No</th>
+									                <th width="85%">Nama Jenis Produk</th>
+									                <th width="10%">Aksi</th>
 									            </tr>
 			                                </thead>
 			                                <tbody>
 			                                	<tr>
 			                                		<td>1</td>
-			                                		<td>JP/1</td>
-			                                		<td>Herbal</td>
+			                                		<td>Cair</td>
 			                                		<td>
 			                                			<div class="btn-group btn-group-sm">
-			                                				<button class="btn btn-warning btn-edit" title="Edit" type="button"><i class="fa fa-pencil"></i></button>
+			                                				<button class="btn btn-warning btn-edit" data-toggle="modal" data-target="#edit" title="Edit" type="button"><i class="fa fa-pencil"></i></button>
 			                                				<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
 			                                			</div>
 			                                		</td>
 			                                	</tr>
 			                                	<tr>
 			                                		<td>2</td>
-			                                		<td>JP/2</td>
-			                                		<td>Obat-obatan</td>
+			                                		<td>Madu</td>
 			                                		<td>
 			                                			<div class="btn-group btn-group-sm">
-			                                				<button class="btn btn-warning btn-edit" title="Edit" type="button"><i class="fa fa-pencil"></i></button>
+			                                				<button class="btn btn-warning btn-edit" data-toggle="modal" data-target="#edit" title="Edit" type="button"><i class="fa fa-pencil"></i></button>
 			                                				<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
 			                                			</div>
 			                                		</td>
@@ -115,7 +114,6 @@
 			                        </div>
 			            		</section>
 		            		</div>
-
 		            	</div>
 		            </div>
 	            </div>
@@ -236,88 +234,67 @@
 		});
 	}
 
-	// start: unused -> confirmed and deleted soon
-	// $(document).ready(function(){
-	// 	var table = $('#tabel_jenisproduk').DataTable();
-	// 	var table1 = $('#tabel_produk').DataTable();
-	//
-	// 	$('#tabel_produk tbody').on('click', '.btn-edit', function(){
-	//
-	//
-	// 	});
-	//
-	// 	$('#tabel_jenisproduk tbody').on('click', '.btn-edit', function(){
-	//
-	// 		window.location.href = '{{route("datajenisproduk.edit")}}';
-	//
-	// 	});
-	//
-	// 	$('#btn-tambah-produk').on('click', function(){
-	//
-	// 		window.location.href = '{{route("dataproduk.create")}}';
-	//
-	// 	});
-	//
-	// 	$('#btn-tambah-jenisproduk').on('click', function(){
-	//
-	// 		window.location.href = '{{route("datajenisproduk.create")}}';
-	//
-	// 	});
-	//
-	//
-	// 	$(document).on('click', '.btn-disable', function(){
-	// 		var ini = $(this);
-	// 		$.confirm({
-	// 			animation: 'RotateY',
-	// 			closeAnimation: 'scale',
-	// 			animationBounce: 1.5,
-	// 			icon: 'fa fa-exclamation-triangle',
-	// 			title: 'Peringatan!',
-	// 			content: 'Apa anda yakin mau menonaktifkan data ini?',
-	// 			theme: 'disable',
-	// 			buttons: {
-	// 				info: {
-	// 					btnClass: 'btn-blue',
-	// 					text:'Ya',
-	// 					action : function(){
-	// 						$.toast({
-	// 							heading: 'Information',
-	// 							text: 'Data Berhasil di Nonaktifkan.',
-	// 							bgColor: '#0984e3',
-	// 							textColor: 'white',
-	// 							loaderBg: '#fdcb6e',
-	// 							icon: 'info'
-	// 						})
-	// 						ini.parents('.btn-group').html('<button class="btn btn-success btn-enable" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-	// 					}
-	// 				},
-	// 				cancel:{
-	// 					text: 'Tidak',
-	// 					action: function () {
-	// 						// tutup confirm
-	// 					}
-	// 				}
-	// 			}
-	// 		});
-	// 	});
-	//
-	// 	$(document).on('click', '.btn-enable', function(){
-		// 	$.toast({
-		// 		heading: 'Information',
-		// 		text: 'Data Berhasil di Aktifkan.',
-		// 		bgColor: '#0984e3',
-		// 		textColor: 'white',
-		// 		loaderBg: '#fdcb6e',
-		// 		icon: 'info'
-		// 	})
-		// 	$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
-		// 									'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-		// })
-	// function table_hapus(a){
-	// 	table.row($(a).parents('tr')).remove().draw();
-	// }
-	// });
-	// end: unused -> confirmed and deleted soon
+	$(document).ready(function(){
+		var table = $('#tabel_jenisproduk').DataTable();
+
+		$('#tabel_jenisproduk tbody').on('click', '.btn-edit', function(){
+	
+			window.location.href = '{{route("datajenisproduk.edit")}}';
+	
+		});
+	
+		$(document).on('click', '.btn-disable', function(){
+			var ini = $(this);
+			$.confirm({
+				animation: 'RotateY',
+				closeAnimation: 'scale',
+				animationBounce: 1.5,
+				icon: 'fa fa-exclamation-triangle',
+				title: 'Peringatan!',
+				content: 'Apa anda yakin mau menonaktifkan data ini?',
+				theme: 'disable',
+				buttons: {
+					info: {
+						btnClass: 'btn-blue',
+						text:'Ya',
+						action : function(){
+							$.toast({
+								heading: 'Information',
+								text: 'Data Berhasil di Nonaktifkan.',
+								bgColor: '#0984e3',
+								textColor: 'white',
+								loaderBg: '#fdcb6e',
+								icon: 'info'
+							})
+							ini.parents('.btn-group').html('<button class="btn btn-success btn-enable" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
+						}
+					},
+					cancel:{
+						text: 'Tidak',
+						action: function () {
+							// tutup confirm
+						}
+					}
+				}
+			});
+		});
+	
+		$(document).on('click', '.btn-enable', function(){
+			$.toast({
+				heading: 'Information',
+				text: 'Data Berhasil di Aktifkan.',
+				bgColor: '#0984e3',
+				textColor: 'white',
+				loaderBg: '#fdcb6e',
+				icon: 'info'
+			})
+			$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
+											'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
+		})
+	function table_hapus(a){
+		table.row($(a).parents('tr')).remove().draw();
+	}
+	});
 
 </script>
 @endsection

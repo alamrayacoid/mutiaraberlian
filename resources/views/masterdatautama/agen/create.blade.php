@@ -37,15 +37,6 @@
 
                           <div class="row">
 
-                            <!-- <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Kode Agen</label>
-                            </div>
-                            <div class="col-md-9 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="code" value="(Auto Generete)" readonly>
-                              </div>
-                            </div> -->
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Area (Provinsi)</label>
                             </div>
@@ -76,7 +67,7 @@
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input id="name" type="text" class="form-control form-control-sm" name="name">
+                                <input id="name" type="text" class="form-control form-control-sm" name="name" maxlength="100">
                               </div>
                             </div>
 
@@ -85,6 +76,7 @@
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
+                                <input type="hidden" name="type_hidden" id="type_hidden">
                                 <select id="type" class="select2 form-control form-control-sm" name="type">
                                   <option value="">Pilih Tipe Agen</option>
                                   <option value="AGEN">Agen</option>
@@ -106,11 +98,30 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Tanggal Lahir</label>
+                              <label>Class</label>
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm datepicker" name="birthday">
+                                <select id="a_class" class="select2 form-control form-control-sm" name="a_class">
+                                  <option value="" selected="">Pilih Class</option>
+                                  @foreach($data['classes'] as $class)
+                                    <option value="{{ $class->pc_id }}">{{ $class->pc_name }}</option>
+                                  @endforeach
+                                </select>
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Tanggal Lahir</label>
+                            </div>
+                            <div class="col-md-9 col-sm-6 col-xs-12">
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text">
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                  </span>
+                                </div>
+                                <input type="text" class="form-control form-control-sm datepicker" id="birthday" name="birthday">
                               </div>
                             </div>
 
@@ -222,6 +233,7 @@
   })
 
   $('#type').on('change', function() {
+    $('#type_hidden').val($('#type').val());
     if ($(this).val() == 'SUB AGEN') {
       RetrieveListAgents();
       $('.div_parent').show();
@@ -246,6 +258,11 @@
       }
     });
   }
+
+  // hide datepicker after select any date
+  $('#birthday').on('changeDate', function() {
+    $(this).datepicker('hide');
+  })
 
   // set request when area_prov changed
   // set option list area_city
@@ -342,6 +359,9 @@
         } else if (response.status == 'invalid') {
           loadingHide();
           messageWarning('Perhatian', response.message);
+        } else if (response.status == 'gagal') {
+          loadingHide();
+          messageWarning('Error', response.message);
         }
       },
       error : function(e){

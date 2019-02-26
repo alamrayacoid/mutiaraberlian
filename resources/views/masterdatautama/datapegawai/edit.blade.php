@@ -170,10 +170,15 @@
                               <div class="col-md-3 col-sm-6 col-xs-12">
                                 <div class="form-group">
                                   <select name="" id="" class="form-control form-control-sm select2">
-                                    <option value="">Manager</option>
-                                    <option value="">Supervisor</option>
-                                    <option value="">Staf</option>
-                                    <option value="">Admin</option>
+                                    <option value="1">Share Holder</option>
+                                    <option value="2">Admin Sistem</option>
+                                    <option value="3">Manajer</option>
+                                    <option value="4">Staff Operasional</option>
+                                    <option value="5">Pemilik Cabang</option>
+                                    <option value="6">Staff Cabang</option>
+                                    <option value="7">Agen</option>
+                                    <option value="8">Pembeli</option>
+                                    <option value="9">Calon Pembeli</option>
                                   </select>
                                 </div>
                               </div>
@@ -185,13 +190,11 @@
                               <div class="col-md-3 col-sm-6 col-xs-12">
                                 <div class="form-group">
                                   <select name="" id="" class="form-control form-control-sm select2">
-                                    <option value="">HRD & GA</option>
-                                    <option value="">Keuangan dan Akuntansi</option>
-                                    <option value="">Sales dan Marketing</option>
-                                    <option value="">Produksi</option>
-                                    <option value="">Gudang dan Pengiriman</option>
-                                    <option value="">Direksi</option>
-                                    <option value="">Operasional</option>
+                                    <option value="1">Marketing Officer</option>
+                                    <option value="2">Sales Officer</option>
+                                    <option value="3">Inventory Officer</option>
+                                    <option value="4">Operasional Officer</option>
+                                    <option value="5">Finance Officer</option>
                                   </select>
                                 </div>
                               </div>
@@ -266,40 +269,6 @@
 
                             </div>
                           </fieldset>
-
-                          <fieldset class="mt-3">
-                            <div class="row">
-                              
-
-                              <div class="col-md-3 col-sm-6 col-xs-12">
-                                <label>Username</label>
-                              </div>
-
-                              <div class="col-md-9 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                  <input type="text" class="form-control form-control-sm" name="">
-                                </div>
-                              </div>
-
-
-                              <div class="col-md-3 col-sm-6 col-xs-12">
-                                <label>Password</label>
-                              </div>
-
-                              <div class="col-md-9 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                  <div class="input-group">
-                                    <input type="password" class="form-control form-control-sm" value="123456" name="">
-                                    <div class="input-group-append">
-                                      <button class="btn btn-primary btn-sm" id="showpassword"><i class="fa fa-eye" id="showpassword-icon"></i></button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                            </div>
-                          </fieldset>
-                          
                         </section>
                     </div>
                     <div class="card-footer text-right">
@@ -320,16 +289,49 @@
 @section('extra_script')
 <script type="text/javascript">
   $(document).ready(function(){
-    $(document).on('click', '.btn-submit', function(){
+    $('.btn-submit').on('click', function(){
 			$.toast({
 				heading: 'Success',
-				text: 'Data Berhasil di Edit',
+				text: 'Data Berhasil di Simpan',
 				bgColor: '#00b894',
 				textColor: 'white',
 				loaderBg: '#55efc4',
 				icon: 'success'
 			})
-		})
+		});
+
+    $('#showpassword').click(function(){
+      var val = $(this).parents('.input-group').find('input')
+      .attr('type', function(index, attr){
+        return attr == 'text' ? 'password' : 'text';
+      });
+
+      $('#showpassword-icon').toggleClass('fa-eye fa-eye-slash');
+    });
+
+    function readURL(input, target) {
+
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          $(target).attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    $("#foto").change(function() {
+      readURL(this, '#img-preview');
+    });  
+
+    $('#img-preview').click(function(){
+
+      $('#foto').click();
+
+    });
+
   });
 </script>
 @endsection

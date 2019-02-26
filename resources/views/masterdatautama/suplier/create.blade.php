@@ -35,12 +35,22 @@
                         <section>
                           
                           <div id="sectionsuplier" class="row">
+                            
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Nama Perusahaan</label>
+                            </div> 
+
+                            <div class="col-md-9 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm"name="">
+                              </div>
+                            </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Nama Suplier</label>
                             </div> 
 
-                            <div class="col-md-3 col-sm-6 col-xs-12">
+                            <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
                                 <input type="text" class="form-control form-control-sm" name="">
                               </div>
@@ -50,12 +60,21 @@
                               <label>Alamat</label>
                             </div> 
 
-                            <div class="col-md-3 col-sm-6 col-xs-12">
+                            <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
                                 <input type="text" class="form-control form-control-sm" name="">
                               </div>
                             </div>
 
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>NPWP</label>
+                            </div> 
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm" name="">
+                              </div>
+                            </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>No Telp</label>
@@ -68,17 +87,7 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Contact Person</label>
-                            </div> 
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
-                              </div>
-                            </div>
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>No Contact Person</label>
+                              <label>No Telp 1</label>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
@@ -88,47 +97,96 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Batas TOP (Termin Of Payment)</label>
+                              <label>No Telp 2</label>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>No Rekening</label>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm">
+                              </div>
                             </div>
                             
                             <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Bank</label>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="number" min="0" class="form-control form-control-sm">
+                                <input type="text" class="form-control form-control-sm">
+                              </div>
+                            </div>
+
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Fax</label>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Note</label>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <textarea type="text" class="form-control form-control-sm"></textarea>
+                              </div>
+                            </div>
+
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>TOP(Termin Of Payment)</label>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm datepicker">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Deposit</label>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm datepicker">
                               </div>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Limit</label>
                             </div>
-                            
+
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
                                 <input type="text" class="form-control form-control-sm input-rupiah">
                               </div>
                             </div>
 
-                            <div class="col-md-3">
-                              <button class="btn btn-primary btn-tambahp"><i class="fa fa-plus"></i>&nbsp;Tambah Produk</button>
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Hutang</label>
                             </div>
 
-                            <div class="container">
-                            <div class="table-responsive mt-3">
-                            <table class="table table-hover table-striped table-bordered" id="table_rencana">
-                              <thead class="bg-primary">
-                              <tr>
-                                <th>Nama Barang</th>
-                                <th>Harga</th>
-                                <th>Stok</th>
-                                <th>Keterangan</th>
-                                <th>Aksi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              </tbody>
-                            </table>
-
-                          </div>
-                          </div>
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm input-rupiah">
+                              </div>
+                            </div>
                         </section>
                     </div>
                     <div class="card-footer text-right">
