@@ -34,7 +34,6 @@
                     <form action="{{ route('suplier.store') }}" method="post" id="myForm" autocomplete="off">
                       <div class="card-block">
                         <section>
-
                           <div id="sectionsuplier" class="row">
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
@@ -173,15 +172,15 @@
                               </div>
                             </div>
                           </section>
-                        </div>
+                          </div>
                         <div class="card-footer text-right">
                           <button class="btn btn-primary btn-submit" type="button" id="btn_simpan">Simpan</button>
                           <a href="{{route('suplier.index')}}" class="btn btn-secondary">Kembali</a>
                         </div>
+                      </div>
                     </form>
-                </div>
+                  </div>
 
-                </div>
 
             </div>
 

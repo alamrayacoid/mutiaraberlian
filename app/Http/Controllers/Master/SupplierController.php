@@ -28,7 +28,9 @@ class SupplierController extends Controller
         'phone' => 'required|numeric',
         'phone1' => 'sometimes|nullable|numeric',
         'phone2' => 'sometimes|nullable|numeric',
-        'rekening' => 'required|numeric'
+        'rekening' => 'required|numeric',
+        'top' => 'sometimes|nullable|numeric|max:127',
+        'deposit' => 'sometimes|nullable|numeric|max:127'
       ],
       [
         'company.required' => 'Nama perusahaan masih kosong !',
@@ -39,7 +41,9 @@ class SupplierController extends Controller
         'phone1.numeric' => 'Nomor telp hanya berisi angka !',
         'phone2.numeric' => 'Nomor telp hanya berisi angka !',
         'rekening.required' => 'Nomor rekening masih kosong !',
-        'rekening.numeric' => 'Nomor rekening hanya berisi angka !'
+        'rekening.numeric' => 'Nomor rekening hanya berisi angka !',
+        'top.max' => 'TOP maksimal 127 !',
+        'deposit.max' => 'Deposit maksimal 127 !'
       ]);
       if($validator->fails())
       {
