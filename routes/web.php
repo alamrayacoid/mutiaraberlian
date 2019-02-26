@@ -52,9 +52,9 @@ Route::group(['middleware' => 'guest'], function(){
 	Route::get('/masterdatautama/harga/create', 'MasterController@create_dataharga')->name('dataharga.create');
 	Route::get('/masterdatautama/harga/edit', 'MasterController@edit_dataharga')->name('dataharga.edit');
 
-	Route::get('/masterdatautama/suplier/index', 'MasterController@suplier')->name('suplier.index');
-	Route::get('/masterdatautama/suplier/create', 'MasterController@create_suplier')->name('suplier.create');
-	Route::get('/masterdatautama/suplier/edit', 'MasterController@edit_suplier')->name('suplier.edit');
+	Route::get('/masterdatautama/suplier/index', 'Master\SupplierController@index')->name('suplier.index');
+	Route::match(['get', 'post'],'/masterdatautama/suplier/create', 'Master\SupplierController@add')->name('suplier.create');
+	Route::get('/masterdatautama/suplier/edit', 'Master\SupplierController@edit')->name('suplier.edit');
 
 //	=============Mas Rowi=============
 
