@@ -61,8 +61,12 @@ Route::group(['middleware' => 'guest'], function(){
 	Route::get('/masterdatautama/harga/satuan/edit', 'MasterController@edit_golonganharga')->name('golonganharga.edit');
 
 	Route::get('/masterdatautama/suplier/index', 'Master\SupplierController@index')->name('suplier.index');
-	Route::match(['get', 'post'],'/masterdatautama/suplier/create', 'Master\SupplierController@add')->name('suplier.create');
-	Route::get('/masterdatautama/suplier/edit', 'Master\SupplierController@edit')->name('suplier.edit');
+	Route::get('/masterdatautama/suplier/list', 'Master\SupplierController@getList')->name('suplier.list');
+	Route::get('/masterdatautama/suplier/create', 'Master\SupplierController@create')->name('suplier.create');
+	Route::post('/masterdatautama/suplier/store', 'Master\SupplierController@store')->name('suplier.store');
+	Route::get('/masterdatautama/suplier/edit/{id}', 'Master\SupplierController@edit')->name('suplier.edit');
+	Route::post('/masterdatautama/suplier/post/{id}', 'Master\SupplierController@update')->name('suplier.update');
+	Route::post('/masterdatautama/suplier/delete/{id}', 'Master\SupplierController@destroy')->name('suplier.delete');
 
 //	=============Mas Rowi=============
 
@@ -95,7 +99,7 @@ Route::group(['middleware' => 'guest'], function(){
 	Route::get('/masterdatautama/agen/villages/{prov}', 'Master\AgenController@getVillages')->name('agen.villages');
 	Route::post('/masterdatautama/agen/store', 'Master\AgenController@store')->name('agen.store');
 	Route::get('/masterdatautama/agen/edit/{id}', 'Master\AgenController@edit')->name('agen.edit');
-  	Route::post('/masterdatautama/agen/update/{id}', 'Master\AgenController@update')->name('agen.update');
+	Route::post('/masterdatautama/agen/update/{id}', 'Master\AgenController@update')->name('agen.update');
 	Route::post('/masterdatautama/agen/delete/{id}', 'Master\AgenController@destroy')->name('agen.delete');
 
 

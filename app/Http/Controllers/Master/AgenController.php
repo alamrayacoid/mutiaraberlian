@@ -259,7 +259,7 @@ class AgenController extends Controller
             'c_type' => 'AGEN',
             'c_insert' => Carbon::now(),
             'c_update' => Carbon::now()
-          ]);
+        ]);
 
         DB::commit();
         return response()->json([
