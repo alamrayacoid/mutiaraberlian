@@ -38,7 +38,8 @@ class CabangController extends Controller
 
     public function create()
     {
-      return view('masterdatautama.cabang.create');
+      $employe = DB::table('m_employee')->select('e_id', 'e_name')->get();
+      return view('masterdatautama.cabang.create', compact('employe'));
     }
 
     public function store(Request $request)
@@ -72,6 +73,7 @@ class CabangController extends Controller
           'c_address' => $request->cabang_address,
           'c_tlp'     => $request->cabang_telp,
           'c_type'    => $request->cabang_type,
+          'c_user'    => $request->cabang_user,
           'c_insert'  => Carbon::now('Asia/Jakarta'),
           'c_update'  => Carbon::now('Asia/Jakarta')
         ]);
@@ -98,9 +100,12 @@ class CabangController extends Controller
                 return view('errors.404');
             }
             $data = DB::table('m_company')
-                ->where('c_id', $id)
-                ->first();
-            return view('masterdatautama.cabang.edit', compact('data'));
+              ->leftJoin('m_employee', 'c_user', 'e_id')
+              ->select('m_company.*', 'e_id', 'e_name')
+              ->where('c_id', '=', $id)
+              ->first();
+            $employe = DB::table('m_employee')->select('m_employee.*')->get();
+            return view('masterdatautama.cabang.edit', compact('data', 'employe'));
         } else {
           try{
               $id = Crypt::decrypt($id);
@@ -135,6 +140,7 @@ class CabangController extends Controller
                 'c_address' => $request->cabang_address,
                 'c_tlp'     => $request->cabang_telp,
                 'c_type'    => $request->cabang_type,
+                'c_user'    => $request->cabang_user,
                 'c_update'  => Carbon::now('Asia/Jakarta')
               ]);
             DB::commit();
