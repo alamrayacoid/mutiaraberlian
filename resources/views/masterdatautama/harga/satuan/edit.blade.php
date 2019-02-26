@@ -77,15 +77,28 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Rentan</label>
+                              <label>Set Satuan</label>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                               <select name="" id="" class="form-control form-control-sm select2">
-                                  <option value="">Pilih Rentan</option>
-                                  <option value="">1 DUS - 2 DUS</option>
-                               </select>
+                                <input type="text" class="form-control form-control-sm">
+                              </div>
+                            </div>
+
+                            <div class="col-md-2 col-sm-6 col-xs-12">
+                              <label>Set Rentang</label>
+                            </div>
+
+                            <div class="col-md-1 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm">
+                              </div>
+                            </div>
+                            <span>-</span>
+                            <div class="col-md-1 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm">
                               </div>
                             </div>
 
@@ -93,7 +106,7 @@
                               <label>Harga</label>
                             </div>
 
-                            <div class="col-md-3 col-sm-6 col-xs-12">
+                            <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
                                <input type="text" class="form-control-sm form-control input-rupiah" name="">
                               </div>
