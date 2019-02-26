@@ -65,11 +65,11 @@
                 </h1>
             </header>
             <div class="auth-content">
-                <form method="POST" action="{{ url('login') }}">
+                <form method="POST" action="{{ url('auth') }}">
                     {{ csrf_field() }}
                     <div class="form-group">
                         <label for="email">Username</label>
-                        <input type="text" class="form-control login-input" name="email" id="email" required
+                        <input type="text" class="form-control login-input" name="username" id="username" required
                                autofocus="">
                     </div>
                     <div class="form-group">
