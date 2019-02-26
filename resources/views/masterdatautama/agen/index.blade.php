@@ -75,9 +75,6 @@
 	});
 
 	var tb_agen;
-	setTimeout(function() {
-		TableAgen();
-	}, 1500);
 	// function to retrieve DataTable server side
 	function TableAgen()
 	{
@@ -160,5 +157,8 @@
 
 	}
 
+	$(document).ready(function(){
+		TableAgen();
+	});
 </script>
 @endsection
