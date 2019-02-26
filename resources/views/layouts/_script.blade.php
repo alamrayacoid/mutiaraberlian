@@ -35,7 +35,7 @@
   getstorage = localStorage.getItem('sidebar-collapse-storage');
   if (getstorage) {
     $('#app').addClass(getstorage);
-  }  
+  }
 
 
   // var getstoragehamb;
@@ -51,7 +51,7 @@
   // getstorage = localStorage.getItem('hamburger-collapse-storage');
   // if (getstorage) {
   //   $('#app').addClass(getstorage);
-  // }  
+  // }
 
 </script>
 <script type="text/javascript">
@@ -173,8 +173,8 @@
 
       if ($(window).width() > 768) {
         $('#search-container').css('display', 'block');
-      } 
-      
+      }
+
 
     });
 
@@ -183,7 +183,7 @@
             enableOnReadonly:false
 
         });
-        
+
         $('.datetimepicker').datetimepicker({
             format:"D-M-Y HH:mm:ss",
             disabledTimeIntervals: false
@@ -222,7 +222,7 @@
             hideAfter: 3000, // false to make it sticky or number representing the miliseconds as time after which toast needs to be hidden
             stack: 8, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
             position: 'top-right', // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values
-            
+
             // bgColor: '#444444',  // Background color of the toast
             // textColor: '#eeeeee',  // Text color of the toast
             textAlign: 'left',  // Text alignment i.e. left, right or center
@@ -290,7 +290,7 @@
                       li[i].style.display = "none";
 
                   }
-              
+
               }
         });
 
@@ -318,8 +318,7 @@
   $('.menuThree').addClass('localStorage_menuThree');
 
    function addClassFunThree() {
-      localStorage_menuThree = localStorage.getItem('storage-menuthree-boys');
-      console.log(localStorage_menuThree);
+      localStorage_menuThree = localStorage.getItem('storage-menuthree-boys');      
 
       (localStorage_menuThree) ? (localStorage.removeItem('storage-menuthree-boys')) : (localStorage.setItem('storage-menuthree-boys', 'clickMenuThree'));
 
@@ -478,7 +477,7 @@
     this.world.style.MozPerspective = "400px";
     this.world.style.oPerspective = "400px";
     this.world.style.perspective = "400px";
-    
+
     // reset window height/width on resize
     var self = this;
     window.onresize = function(event) {

@@ -50,10 +50,9 @@
                           <div class="form-group">
                             <select class="form-control form-control-sm" name="dataproduk_type">
                               <option value="" selected="" disabled="">--Pilih Jenis Produk--</option>
-                              <option value="BB">Bahan Baku</option>
-                              <option value="SP">Spare Part</option>
-                              <option value="BJ">Barang Jual</option>
-                              <option value="LL">Lain-lain</option>
+                              @foreach ($jenis as $key => $value)
+                                <option value="{{$value->it_id}}">{{$value->it_name}}</option>
+                              @endforeach
                             </select>
                           </div>
                         </div>
@@ -63,17 +62,15 @@
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <div class="form-group">
-                            <input type="text" class="form-control form-control-sm" name="dataproduk_code" value="{{ $code }}">
+                            <input type="text" class="form-control form-control-sm" name="dataproduk_code">
                           </div>
                         </div>
 
                         <div class="col-md-3 col-sm-6 col-xs-12">
-                          <label>Min Stock</label>
+                          
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
-                          <div class="form-group">
-                            <input type="number" class="form-control form-control-sm" name="dataproduk_minstock">
-                          </div>
+
                         </div>
 
                         <div class="col-md-3 col-sm-6 col-xs-12">
@@ -83,9 +80,9 @@
                           <div class="form-group">
                             <select class="form-control form-control-sm" name="dataproduk_satuanutama">
                               <option value="">--Pilih--</option>
-                              <option value="1">Kardus</option>
-                              <option value="2">Pcs</option>
-                              <option value="3">Kg</option>
+                              @foreach ($satuan as $key => $value)
+                                <option value="{{$value->u_id}}">{{$value->u_name}}</option>
+                              @endforeach
                             </select>
                           </div>
                         </div>
@@ -106,9 +103,9 @@
                           <div class="form-group">
                             <select class="form-control form-control-sm" name="dataproduk_satuanalt1">
                               <option value="">--Pilih--</option>
-                              <option value="1">Kardus</option>
-                              <option value="2">Pcs</option>
-                              <option value="3">Kg</option>
+                              @foreach ($satuan as $key => $value)
+                                <option value="{{$value->u_id}}">{{$value->u_name}}</option>
+                              @endforeach
                             </select>
                           </div>
                         </div>
@@ -129,9 +126,9 @@
                           <div class="form-group">
                             <select class="form-control form-control-sm" name="dataproduk_satuanalt2">
                               <option value="">--Pilih--</option>
-                              <option value="1">Kardus</option>
-                              <option value="2">Pcs</option>
-                              <option value="3">Kg</option>
+                              @foreach ($satuan as $key => $value)
+                                <option value="{{$value->u_id}}">{{$value->u_name}}</option>
+                              @endforeach
                             </select>
                           </div>
                         </div>
@@ -194,7 +191,7 @@
 
     $.ajax({
      data : form_data,
-     type : "post",
+     type : "get",
      url : $("#myForm").attr('action'),
      dataType : 'json',
      success : function (response){

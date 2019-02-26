@@ -180,14 +180,16 @@
                         </div>
                     </form>
                 </div>
+                    </div>
+>>>>>>> 7b8dc7febd0c066f0f2d0598746e1a9001dba157
 
-      </div>
+                </div>
 
-    </div>
+            </div>
 
-  </section>
+        </section>
 
-</article>
+    </article>
 
 @endsection
 
