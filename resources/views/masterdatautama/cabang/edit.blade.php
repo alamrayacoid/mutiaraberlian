@@ -26,6 +26,13 @@
           <form action="{{ route('cabang.edit', [Crypt::encrypt($data->c_id)]) }}" method="post" id="myForm" autocomplete="off">
             <div class="card-block">
               <section>
+                  <?php
+                    if($data->c_type == 'AGEN'){
+                      $temp = "disabled";
+                    }else{
+                      $temp = "";
+                    }
+                  ?>
                 <div class="row">
                   <div class="col-md-3 col-sm-6 col-xs-12">
                     <label>Nama Cabang</label>
@@ -56,13 +63,39 @@
                   </div>
                   <div class="col-md-9 col-sm-6 col-xs-12">
                     <div class="form-group">
-                      <select id="" class="form-control form-control-sm" name="cabang_type">
+                      <select id="" class="form-control form-control-sm" name="cabang_type" {{$temp}}>
                         @if($data->c_type == 'PUSAT')
                           <option value="PUSAT" selected="">Pusat</option>
                           <option value="CABANG">Cabang</option>
+                          <option value="AGEN">Agen</option>
                         @elseif($data->c_type == 'CABANG')
                           <option value="PUSAT">Pusat</option>
                           <option value="CABANG" selected="">Cabang</option>
+                          <option value="AGEN">Agen</option>
+                        @elseif($data->c_type == 'AGEN')
+                          <option value="PUSAT">Pusat</option>
+                          <option value="CABANG">Cabang</option>
+                          <option value="AGEN" selected="">Agen</option>
+                        @endif
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+                    <label>Pemilik Cabang</label>
+                  </div>
+                  <div class="col-md-9 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <select name="cabang_user" id="" class="form-control form-control-sm" {{$temp}}>
+                        @if($data->c_user == null)
+                          <option value="" selected>!--- Pilih Pemilik Cabang ---!</option>
+                          @foreach($employe as $emp)
+                            <option value="{{$emp->e_id}}">{{$emp->e_name}}</option>
+                          @endforeach
+                        @else
+                          <option value="{{$data->c_user}}" selected>{{$data->e_name}}</option>
+                          @foreach($employe as $emp)
+                            <option value="{{$emp->e_id}}">{{$emp->e_name}}</option>
+                          @endforeach
                         @endif
                       </select>
                     </div>
