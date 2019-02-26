@@ -116,8 +116,8 @@
         }
       }
     });
-  })
-  // start: submit form to update data in db
+  });
+  
   function SubmitForm(event)
   {
     event.preventDefault();
