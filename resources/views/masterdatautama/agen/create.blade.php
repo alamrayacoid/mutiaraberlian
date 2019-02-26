@@ -37,14 +37,14 @@
 
                           <div class="row">
 
-                            <div class="col-md-3 col-sm-6 col-xs-12">
+                            <!-- <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Kode Agen</label>
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="code" value="{{ $data['code'] }}" readonly>
+                                <input type="text" class="form-control form-control-sm" name="code" value="(Auto Generete)" readonly>
                               </div>
-                            </div>
+                            </div> -->
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Area (Provinsi)</label>
