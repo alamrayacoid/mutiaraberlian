@@ -157,9 +157,9 @@
                         <li class="{{Request::is('masterdatautama/produk/*') ? 'active' : ''}}">
                             <a href="{{route('dataproduk.index')}}"> Master Produk</a>
                         </li>
-                        <li class="{{Request::is('masterdatautama/variasisatuanproduk/*') ? 'active' : ''}}">
+                        <!-- <li class="{{Request::is('masterdatautama/variasisatuanproduk/*') ? 'active' : ''}}">
                             <a href="{{route('variasisatuan.index')}}"> Variasi Satuan Produk</a>
-                        </li>
+                        </li> -->
                         <li class="{{Request::is('masterdatautama/harga/*') ? 'active' : ''}}">
                             <a href="{{route('dataharga.index')}}"> Master Harga</a>
                         </li>
