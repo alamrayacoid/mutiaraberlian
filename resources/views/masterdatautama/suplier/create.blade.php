@@ -19,7 +19,7 @@
     <div class="row">
 
       <div class="col-12">
-        
+
         <div class="card">
 
                     <div class="card-header bordered p-2">
@@ -31,119 +31,108 @@
                       </div>
                     </div>
 
-                    <div class="card-block">
+                    <form action="{{ route('suplier.store') }}" method="post" id="myForm" autocomplete="off">
+                      <div class="card-block">
                         <section>
-                          
+
                           <div id="sectionsuplier" class="row">
-                            
+
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Nama Perusahaan</label>
-                            </div> 
-
+                            </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm"name="">
+                                <input type="text" class="form-control form-control-sm" name="company">
                               </div>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Nama Suplier</label>
-                            </div> 
-
+                            </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
+                                <input type="text" class="form-control form-control-sm" name="name">
                               </div>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Alamat</label>
-                            </div> 
-
+                            </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
+                                <input type="text" class="form-control form-control-sm" name="address">
                               </div>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>NPWP</label>
-                            </div> 
-
+                            </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
+                                <input type="text" class="form-control form-control-sm" name="npwp">
                               </div>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>No Telp</label>
-                            </div> 
-
+                            </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
+                                <input type="text" class="form-control form-control-sm" name="phone">
                               </div>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>No Telp 1</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm">
+                                <input type="text" class="form-control form-control-sm" name="phone1">
                               </div>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>No Telp 2</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm">
+                                <input type="text" class="form-control form-control-sm" name="phone2">
                               </div>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>No Rekening</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm">
+                                <input type="text" class="form-control form-control-sm" name="rekening">
                               </div>
                             </div>
-                            
+
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Bank</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm">
+                                <input type="text" class="form-control form-control-sm" name="bank">
                               </div>
                             </div>
-
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Fax</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm">
+                                <input type="text" class="form-control form-control-sm" name="fax">
                               </div>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Note</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <textarea type="text" class="form-control form-control-sm"></textarea>
+                                <textarea type="text" class="form-control form-control-sm" name="note"></textarea>
                               </div>
                             </div>
 
@@ -151,48 +140,45 @@
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>TOP(Termin Of Payment)</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm">
+                                <input type="text" class="form-control form-control-sm" name="top">
                               </div>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Deposit</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm">
+                                <input type="text" class="form-control form-control-sm" name="deposit">
                               </div>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Limit</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm input-rupiah">
+                                <input type="text" class="form-control form-control-sm input-rupiah" name="limit">
                               </div>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Hutang</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm input-rupiah">
+                                <input type="text" class="form-control form-control-sm input-rupiah" name="hutang">
                               </div>
                             </div>
-                        </section>
-                    </div>
-                    <div class="card-footer text-right">
-                      <button class="btn btn-primary btn-submit" type="button">Simpan</button>
-                      <a href="{{route('suplier.index')}}" class="btn btn-secondary">Kembali</a>
-                    </div>
+                          </section>
+                        </div>
+                        <div class="card-footer text-right">
+                          <button class="btn btn-primary btn-submit" type="button" id="btn_simpan">Simpan</button>
+                          <a href="{{route('suplier.index')}}" class="btn btn-secondary">Kembali</a>
+                        </div>
+                    </form>
                 </div>
 
       </div>
@@ -207,61 +193,53 @@
 
 @section('extra_script')
 <script type="text/javascript">
-  $(document).ready(function(){
-    $('#type_cus').change(function(){
-      if($(this).val() === 'kontrak'){
-        $('#label_type_cus').text('Jumlah Bulan');
-        $('#jumlah_hari_bulan').val('');
-        $('#pagu').val('');
-        $('#armada').prop('selectedIndex', 0).trigger('change');
-        $('.120mm').removeClass('d-none');
-        $('.125mm').addClass('d-none');
-        $('.122mm').removeClass('d-none');
-      } else if($(this).val() === 'harian'){
-        $('#label_type_cus').text('Jumlah Hari');
-        $('#armada').prop('selectedIndex', 0).trigger('change');
-        $('#pagu').val('');
-        $('#jumlah_hari_bulan').val('');
-        $('.122mm').addClass('d-none');
-        $('.120mm').removeClass('d-none');
-        $('.125mm').removeClass('d-none');
-      } else {
-        $('#jumlah_hari_bulan').val('');
-        $('#armada').prop('selectedIndex', 0).trigger('change');
-        $('#pagu').val('');
-        $('.122mm').addClass('d-none');
-        $('.120mm').addClass('d-none');
-        $('.125mm').addClass('d-none');
-      }
-    });
-
-    $(document).on('click', '.btn-hapus', function(){
-      $(this).parents('tr').remove();
-    });
-
-    $('.btn-tambahp').on('click',function(){
-      $('#table_rencana tbody')
-      .append(
-        '<tr>'+
-          '<td><input type="text" class="form-control" value="Obat Masuk Angin"></td>'+
-          '<td><input type="number" class="form-control" value="2500"></td>'+
-          '<td><input type="number" class="form-control" value="20"></td>'+
-          '<td><input type="text" class="form-control" value="Hampir Expired"></td>'+
-          '<td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
-        '</tr>'
-        );
-    });
-
-    $(document).on('click', '.btn-submit', function(){
-			$.toast({
-				heading: 'Success',
-				text: 'Data Berhasil di Simpan',
-				bgColor: '#00b894',
-				textColor: 'white',
-				loaderBg: '#55efc4',
-				icon: 'success'
-			})
-		})
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
   });
+
+  $(document).ready(function(){
+
+  });
+
+  $('#btn_simpan').on('click', function() {
+    SubmitForm(event);
+  });
+
+  // submit form to store data in db
+  function SubmitForm(event)
+  {
+    loadingShow();
+    event.preventDefault();
+    form_data = $('#myForm').serialize();
+
+    $.ajax({
+      data : form_data,
+      type : "post",
+      url : $("#myForm").attr('action'),
+      dataType : 'json',
+      success : function (response){
+        if(response.status == 'berhasil'){
+          loadingHide();
+          messageSuccess('Berhasil', 'Data berhasil ditambahkan !');
+          location.reload();
+        } else if (response.status == 'invalid') {
+          loadingHide();
+          messageWarning('Perhatian', response.message);
+        } else if (response.status == 'gagal') {
+          loadingHide();
+          messageWarning('Error', response.message);
+        }
+      },
+      error : function(e){
+        loadingHide();
+        messageWarning('Gagal', 'Data gagal ditambahkan, hubungi pengembang !');
+      }
+    })
+  }
+
+
+
 </script>
 @endsection
