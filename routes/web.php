@@ -48,6 +48,7 @@ Route::group(['middleware' => 'guest'], function(){
   Route::post('/masterdatautama/produk/tablejenis', 'Master\ItemController@tablejenis');
   Route::post('/masterdatautama/produk/hapusjenis', 'Master\ItemController@hapusjenis');
   Route::post('/masterdatautama/produk/updatejenis', 'Master\ItemController@updatejenis');
+  Route::get('/masterdatautama/produk/detail', 'Master\ItemController@detail');
 
   	Route::get('/masterdatautama/produk/jenis/create', 'MasterController@create_datajenisproduk')->name('datajenisproduk.create');
 	Route::get('/masterdatautama/produk/jenis/edit', 'MasterController@edit_datajenisproduk')->name('datajenisproduk.edit');

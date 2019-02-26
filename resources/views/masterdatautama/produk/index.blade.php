@@ -4,7 +4,17 @@
 
 @include('masterdatautama.produk.modal-create')
 
-@include('masterdatautama.produk.modal-edit')
+<style media="screen">
+.detail
+/* Or better yet try giving an ID or class if possible*/
+	{
+	border: 0;
+	background: none;
+	box-shadow: none;
+	border-radius: 0px;
+	}
+</style>
+
 <article class="content animated fadeInLeft">
 
 	<div class="title-block text-primary">
@@ -46,14 +56,14 @@
 			                  <section>
 
 			                  	<div class="table-responsive">
-			                        <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_produk">
+			                        <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_produk" style="width:100%">
 			                            <thead class="bg-primary">
 			                                <tr>
 												<th>No</th>
 												<th>Kode Barang</th>
-												<th>Nama Barang</th>
-												<th>Satuan</th>
 												<th>Jenis Barang</th>
+												<th>Nama Barang</th>
+												<th>Detail</th>
 												<th>Aksi</th>
 											</tr>
 			                            </thead>
@@ -80,7 +90,7 @@
 		            		<div class="card-block">
 		            			<section>
 			            			<div class="table-responsive">
-			                            <table class="table table-striped table-hover" cellspacing="0" id="table_jenis_produk">
+			                            <table class="table table-striped table-hover" cellspacing="0" id="table_jenis_produk" style="width:100%">
 			                                <thead class="bg-primary">
 			                                    <tr>
 									                <th width="5%">No</th>
@@ -118,10 +128,11 @@
 
 	var tb_produk;
 	var tb_jenis;
-	TableProduk();
-	setTimeout(function() {
-		tablejenis();
-	}, 1500);
+
+	$(document).ready(function(){
+			tablejenis();
+			TableProduk();
+	});
 
 	function tablejenis(){
 		$('#table_jenis_produk').dataTable().fnDestroy();
@@ -176,9 +187,9 @@
 			columns: [
 				{data: 'DT_RowIndex'},
 				{data: 'i_code', name: 'i_code'},
+				{data: 'it_name', name: 'it_name'},
 				{data: 'i_name', name: 'i_name'},
-				{data: 'i_unit1', name: 'i_unit1'},
-				{data: 'type', name: 'type'},
+				{data: 'detail', name: 'detail'},
 				{data: 'action', name: 'action'}
 			],
 			pageLength: 10,
@@ -324,6 +335,7 @@
 				loadingHide();
 				if (response.status == 'berhasil') {
 					messageSuccess('Success', 'Data berhasil disimpan!');
+					$('#create').modal('hide');
 					tb_jenis.ajax.reload();
 				} else {
 					messageFailed('Gagal', 'Data gagal disimpan!');
@@ -345,6 +357,7 @@
 				loadingHide();
 				if (response.status == 'berhasil') {
 					messageSuccess('Success', 'Data berhasil disimpan!');
+					$('#create').modal('hide');
 					tb_jenis.ajax.reload();
 				} else {
 					messageFailed('Gagal', 'Data gagal disimpan!');
@@ -410,6 +423,10 @@
 		$('#myModalLabel').text('Tambah Data Jenis Produk');
 		$('#savejenis').attr('onclick', 'savejenis()');
 	});
+
+	function DetailDataproduk(id){
+		window.location.href = baseUrl + '/masterdatautama/produk/detail?id='+id;
+	}
 
 </script>
 @endsection

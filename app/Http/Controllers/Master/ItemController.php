@@ -70,27 +70,21 @@ class ItemController extends Controller
      */
     public function getList()
     {
-      $datas = DB::table('m_item')->orderBy('i_name', 'asc')->where('i_isactive', 'Y')->get();
+      $datas = DB::table('m_item')->orderBy('i_name', 'asc')->where('i_isactive', 'Y')->join('m_itemtype', 'i_type', '=', 'it_id')->get();
       return Datatables::of($datas)
         ->addIndexColumn()
-        ->addColumn('type', function($datas) {
-          if ($datas->i_type == 'BB') {
-            return '<td>Bahan Baku</td>';
-          } elseif ($datas->i_type == 'BP') {
-            return '<td>Barang Produksi</td>';
-          } elseif ($datas->i_type == 'BJ') {
-            return '<td>Barang Jualan</td>';
-          } else {
-            return '<td>Lain-lain</td>';
-          }
-        })
         ->addColumn('action', function($datas) {
-          return '<div class="btn-group btn-group-sm">
+          return '<center><div class="btn-group btn-group-sm">
           <button class="btn btn-warning" onclick="EditDataproduk('.$datas->i_id.')" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
           <button class="btn btn-danger" onclick="DeleteDataproduk('.$datas->i_id.')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-trash-o"></i></button>
-          </div>';
+          </div></center>';
         })
-        ->rawColumns(['type', 'action'])
+        ->addColumn('detail', function($datas) {
+          return '<center><div class="btn-group btn-group-sm">
+          <button class="btn btn-info btn-xs detail" onclick="DetailDataproduk('.$datas->i_id.')" rel="tooltip" data-placement="top">Detail</button>
+          </div></center>';
+        })
+        ->rawColumns(['detail', 'action'])
         ->make(true);
     }
 
@@ -356,5 +350,19 @@ class ItemController extends Controller
           'status' => 'gagal'
         ]);
       }
+    }
+
+    public function detail(Request $request){
+      $data['dataproduk'] = DB::table('m_item')
+      ->where('i_id', $request->id)
+      ->first();
+
+      $jenis = DB::table('m_itemtype')
+                  ->get();
+
+      $satuan = DB::table('m_unit')
+                  ->get();
+
+      return view('masterdatautama.produk.detail', compact('data', 'jenis', 'satuan'));
     }
 }
