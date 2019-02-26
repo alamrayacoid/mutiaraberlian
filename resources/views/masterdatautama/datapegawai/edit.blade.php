@@ -266,40 +266,6 @@
 
                             </div>
                           </fieldset>
-
-                          <fieldset class="mt-3">
-                            <div class="row">
-                              
-
-                              <div class="col-md-3 col-sm-6 col-xs-12">
-                                <label>Username</label>
-                              </div>
-
-                              <div class="col-md-9 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                  <input type="text" class="form-control form-control-sm" name="">
-                                </div>
-                              </div>
-
-
-                              <div class="col-md-3 col-sm-6 col-xs-12">
-                                <label>Password</label>
-                              </div>
-
-                              <div class="col-md-9 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                  <div class="input-group">
-                                    <input type="password" class="form-control form-control-sm" value="123456" name="">
-                                    <div class="input-group-append">
-                                      <button class="btn btn-primary btn-sm" id="showpassword"><i class="fa fa-eye" id="showpassword-icon"></i></button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                            </div>
-                          </fieldset>
-                          
                         </section>
                     </div>
                     <div class="card-footer text-right">
