@@ -11,20 +11,34 @@
 |
 */
 
-Route::get('/', function () {
-    return view('home');
+Route::get("/", function () {
+    if (Auth::check()) {
+        return redirect()->route("home");
+    } else {
+        return redirect()->route("login");
+    }
 });
 
-Route::get('/login', function () {
-    return view('auth.login');
+Route::group(['middleware' => 'guest'], function () {
+    Route::get('/login', function () {
+        return view('auth/login');
+    })->name('login');
+
+    Route::post('auth', [
+        'uses' => 'AuthController@authenticate',
+        'as' => 'auth.authenticate'
+    ]);
 });
 
 Route::get('/recruitment', 'RecruitmentController@index')->name('recruitment.index');
 
 Auth::routes();
 
-Route::group(['middleware' => 'guest'], function(){
-
+Route::group(['middleware' => 'auth'], function(){
+    Route::get('logout', [
+        'uses' => 'AuthController@logout',
+        'as' => 'auth.logout'
+    ]);
 	Route::get('/home', 'HomeController@index')->name('home');
 
 	// !====================================================== Master Data Utama ======================================================!
@@ -48,6 +62,7 @@ Route::group(['middleware' => 'guest'], function(){
   Route::post('/masterdatautama/produk/tablejenis', 'Master\ItemController@tablejenis');
   Route::post('/masterdatautama/produk/hapusjenis', 'Master\ItemController@hapusjenis');
   Route::post('/masterdatautama/produk/updatejenis', 'Master\ItemController@updatejenis');
+  Route::get('/masterdatautama/produk/detail', 'Master\ItemController@detail');
 
   	Route::get('/masterdatautama/produk/jenis/create', 'MasterController@create_datajenisproduk')->name('datajenisproduk.create');
 	Route::get('/masterdatautama/produk/jenis/edit', 'MasterController@edit_datajenisproduk')->name('datajenisproduk.edit');

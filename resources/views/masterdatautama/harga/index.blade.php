@@ -178,20 +178,20 @@
 
 $(document).ready(function(){
 	$('#jenisharga').change(function(){
-		var ini, satuan, golongan;
+		var ini, satuan, range;
 		ini             = $(this).val();
 		satuan     		= $('#satuan');
-		golongan     	= $('#tukar_barang');
+		range     		= $('#range');
 
 		if (ini === '1') {
 			satuan.removeClass('d-none');
-			golongan.addClass('d-none');
+			range.addClass('d-none');
 		} else if(ini === '2'){
 			satuan.addClass('d-none');
-			golongan.removeClass('d-none');
+			range.removeClass('d-none');
 		} else {
 			satuan.addClass('d-none');
-			golongan.addClass('d-none');
+			range.addClass('d-none');
 		}
 	});
 });

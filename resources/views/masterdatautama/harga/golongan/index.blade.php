@@ -1,4 +1,4 @@
-<div class="tab-pane fade in active show" id="default">
+<div class="tab-pane fade in active show" id="golongan">
 	<div class="card">
 		<div class="card-header bordered p-2">
 			<div class="header-block">
