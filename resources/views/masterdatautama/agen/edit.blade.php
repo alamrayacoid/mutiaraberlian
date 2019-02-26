@@ -275,7 +275,7 @@
   }
 
   // set request when area_prov changed
-  // set value area_city
+  // set option list area_city
   $('#area_prov').on('change', function() {
     $.ajax({
       type: 'get',
@@ -293,7 +293,7 @@
   })
 
   // set request when address_prov changed
-  // set value address_city
+  // set option list address_city
   $('#address_prov').on('change', function() {
     $.ajax({
       type: 'get',
@@ -312,7 +312,7 @@
   })
 
   // set request when address_city changed
-  // set value address_district
+  // set option list address_district
   $('#address_city').on('change', function() {
     $.ajax({
       type: 'get',
@@ -330,7 +330,7 @@
   })
 
   // set request when address_district changed
-  // set value address_village
+  // set option list address_village
   $('#address_district').on('change', function() {
     $.ajax({
       type: 'get',

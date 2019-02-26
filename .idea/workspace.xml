@@ -2,722 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fb9626df-d2a3-4905-aed9-c6059d160f06" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Exceptions/Handler.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Exceptions/Handler.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/ForgotPasswordController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/ForgotPasswordController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/RegisterController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/RegisterController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/ResetPasswordController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/ResetPasswordController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/VerificationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/VerificationController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CodeGenerator.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CodeGenerator.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/HomeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/HomeController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/KeuanganController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/KeuanganController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/MarketingController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/MarketingController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Master/AgenController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Master/AgenController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Master/CabangController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Master/CabangController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Master/SatuanController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Master/SatuanController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/MasterController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/MasterController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/RecruitmentController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/RecruitmentController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SDMController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SDMController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Kernel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/Authenticate.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/Authenticate.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/CheckForMaintenanceMode.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/CheckForMaintenanceMode.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/EncryptCookies.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/EncryptCookies.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/RedirectIfAuthenticated.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/RedirectIfAuthenticated.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/TrimStrings.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/TrimStrings.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/TrustProxies.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/TrustProxies.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/VerifyCsrfToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/VerifyCsrfToken.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/BroadcastServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/BroadcastServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/EventServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/EventServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/RouteServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/RouteServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/artisan" beforeDir="false" afterPath="$PROJECT_DIR$/artisan" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/alexis.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/alexis.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/demo.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/demo.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/faces/3.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/faces/3.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/faces/4.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/faces/4.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/faces/5.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/faces/5.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/faces/7.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/faces/7.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/faces/8.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/faces/8.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/features.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/features.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/integration-asana.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/integration-asana.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/integration-github.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/integration-github.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/integration-jira.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/integration-jira.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/integration-pivotal.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/integration-pivotal.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/integration-trello.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/integration-trello.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/logo.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/screen-completed-tasks.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/screen-completed-tasks.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/screen-custom-chart.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/screen-custom-chart.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/screen-milestone.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/screen-milestone.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/screen-open-tasks.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/screen-open-tasks.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/screen-sprint.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/screen-sprint.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/screen-task-status.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/screen-task-status.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/screen-team-status.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/screen-team-status.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/screenful/screen-timing.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/assets/screenful/screen-timing.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/bootstrap-datetimepicker/js/moment.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/bootstrap-datetimepicker/js/moment.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/alamraya-style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/alamraya-style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/animate.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/animate.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/app-blue.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/app-blue.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/app-custom.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/app-custom.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/app-green.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/app-green.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/app-orange.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/app-orange.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/app-purple.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/app-purple.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/app-red.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/app-red.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/app-seagreen.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/app-seagreen.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/app.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/custom-style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/custom-style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/vendor.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/vendor.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/custom/7520e6f11b27c77db8ed.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/custom/7520e6f11b27c77db8ed.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.bootstrap.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.bootstrap.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.bootstrap.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.bootstrap.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.foundation.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.foundation.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.foundation.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.foundation.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.jqueryui.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.jqueryui.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.jqueryui.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.jqueryui.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.semanticui.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.semanticui.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.semanticui.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/dataTables.semanticui.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/jquery.dataTables.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/jquery.dataTables.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/jquery.dataTables.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/css/jquery.dataTables.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/images/sort_asc.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/images/sort_asc.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/images/sort_asc_disabled.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/images/sort_asc_disabled.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/images/sort_both.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/images/sort_both.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/images/sort_desc.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/images/sort_desc.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/images/sort_desc_disabled.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/images/sort_desc_disabled.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.bootstrap.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.bootstrap.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.bootstrap.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.bootstrap.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.foundation.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.foundation.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.foundation.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.foundation.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.jqueryui.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.jqueryui.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.jqueryui.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.jqueryui.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.semanticui.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.semanticui.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.semanticui.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/dataTables.semanticui.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/jquery.dataTables.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/jquery.dataTables.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/jquery.dataTables.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/DataTables-1.10.16/js/jquery.dataTables.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/datatables.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/datatables.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/datatables.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/datatables.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/datatables.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/datatables.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datatables/datatables.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datatables/datatables.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker.standalone.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker.standalone.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker.standalone.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker.standalone.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker.standalone.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker.standalone.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker3.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker3.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker3.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker3.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker3.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker3.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker3.standalone.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker3.standalone.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker3.standalone.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker3.standalone.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker3.standalone.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/css/bootstrap-datepicker3.standalone.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/js/bootstrap-datepicker.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/js/bootstrap-datepicker.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/datepicker/js/bootstrap-datepicker.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/datepicker/js/bootstrap-datepicker.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/FontAwesome.otf" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/FontAwesome.otf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.eot" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.eot" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.svg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.ttf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.woff" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.woff2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/img/add-image-icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/img/add-image-icon.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/img/cv-mutiaraberlian-icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/img/cv-mutiaraberlian-icon.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/img/games.ico" beforeDir="false" afterPath="$PROJECT_DIR$/assets/img/games.ico" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/img/jumping-green.svg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/img/jumping-green.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/img/jumping.svg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/img/jumping.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/img/logo.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/img/logo.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/jquery-confirm/dist/jquery-confirm.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/jquery-confirm/dist/jquery-confirm.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/jquery-confirm/dist/jquery-confirm.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/jquery-confirm/dist/jquery-confirm.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/jquery-confirm/jquery-confirm.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/jquery-confirm/jquery-confirm.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/jquery-confirm/jquery-confirm.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/jquery-confirm/jquery-confirm.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/jquery-confirm/jquery-confirm.less" beforeDir="false" afterPath="$PROJECT_DIR$/assets/jquery-confirm/jquery-confirm.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/jquery-toast/dist/jquery.toast.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/jquery-toast/dist/jquery.toast.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/jquery-toast/dist/jquery.toast.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/jquery-toast/dist/jquery.toast.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/jquery-toast/jquery.toast.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/jquery-toast/jquery.toast.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/jquery-toast/jquery.toast.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/jquery-toast/jquery.toast.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/jquery-ui/jquery-ui.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/jquery-ui/jquery-ui.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/jquery-ui/jquery-ui.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/jquery-ui/jquery-ui.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/jquery-ui/jquery-ui.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/jquery-ui/jquery-ui.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/jquery-ui/jquery-ui.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/jquery-ui/jquery-ui.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/jquery.maskMoney.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/jquery.maskMoney.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/vendor.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/vendor.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/vue.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/vue.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/recruitment/css/recruitment.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/recruitment/css/recruitment.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/ar.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/ar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/az.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/az.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/bg.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/bg.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/ca.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/ca.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/cs.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/cs.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/da.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/da.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/de.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/de.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/el.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/el.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/en.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/en.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/es.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/es.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/et.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/et.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/eu.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/eu.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/fa.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/fa.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/fi.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/fi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/fr.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/fr.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/gl.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/gl.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/he.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/he.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/hi.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/hi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/hr.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/hr.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/hu.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/hu.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/id.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/id.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/is.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/is.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/it.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/it.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/ja.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/ja.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/km.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/km.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/ko.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/ko.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/lt.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/lt.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/lv.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/lv.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/mk.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/mk.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/ms.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/ms.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/nb.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/nb.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/nl.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/nl.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/pl.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/pl.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/pt-BR.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/pt-BR.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/pt.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/pt.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/ro.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/ro.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/ru.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/ru.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/sk.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/sk.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/sr-Cyrl.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/sr-Cyrl.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/sr.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/sr.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/sv.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/sv.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/th.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/th.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/tr.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/tr.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/uk.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/uk.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/vi.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/vi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/zh-CN.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/zh-CN.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/i18n/zh-TW.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/i18n/zh-TW.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/select2-bootstrap.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/select2-bootstrap.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/select2.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/select2.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/select2.full.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/select2.full.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/select2.full.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/select2.full.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/select2.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/select2.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/select2.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/select2.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/select2/select2.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/select2/select2.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap/app.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/cache/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap/cache/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/app.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/auth.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/broadcasting.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/broadcasting.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/cache.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/cache.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/database.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/database.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/filesystems.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/filesystems.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/hashing.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/hashing.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/logging.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/logging.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/mail.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/mail.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/queue.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/queue.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/services.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/services.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/session.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/session.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/view.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/view.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/database/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/factories/UserFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/factories/UserFactory.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2014_10_12_000000_create_users_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2014_10_12_000000_create_users_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2014_10_12_100000_create_password_resets_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2014_10_12_100000_create_password_resets_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeds/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeds/DatabaseSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/favicon.ico" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-grid.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-grid.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-grid.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-grid.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-grid.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-grid.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-grid.min.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-grid.min.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-reboot.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-reboot.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-reboot.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-reboot.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-reboot.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-reboot.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-reboot.min.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap-reboot.min.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap.min.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap.min.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.bundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.bundle.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.bundle.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.bundle.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.bundle.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.bundle.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.bundle.min.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.bundle.min.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.min.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/js/bootstrap.min.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/HELP-US-OUT.txt" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/HELP-US-OUT.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/css/font-awesome.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/css/font-awesome.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/css/font-awesome.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/css/font-awesome.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/fonts/FontAwesome.otf" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/fonts/FontAwesome.otf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/fonts/fontawesome-webfont.eot" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/fonts/fontawesome-webfont.eot" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/fonts/fontawesome-webfont.svg" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/fonts/fontawesome-webfont.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/fonts/fontawesome-webfont.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/fonts/fontawesome-webfont.ttf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/fonts/fontawesome-webfont.woff" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/fonts/fontawesome-webfont.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/fonts/fontawesome-webfont.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/fonts/fontawesome-webfont.woff2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/animated.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/animated.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/bordered-pulled.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/bordered-pulled.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/core.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/core.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/fixed-width.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/fixed-width.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/font-awesome.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/font-awesome.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/icons.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/icons.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/larger.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/larger.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/list.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/list.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/mixins.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/mixins.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/path.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/path.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/rotated-flipped.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/rotated-flipped.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/screen-reader.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/screen-reader.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/stacked.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/stacked.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/variables.less" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/less/variables.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_animated.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_animated.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_bordered-pulled.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_bordered-pulled.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_core.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_core.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_fixed-width.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_fixed-width.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_icons.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_icons.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_larger.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_larger.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_list.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_list.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_mixins.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_mixins.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_path.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_path.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_rotated-flipped.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_rotated-flipped.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_screen-reader.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_screen-reader.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_stacked.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_stacked.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_variables.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/_variables.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/font-awesome.scss" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/font-awesome_4_7_0/scss/font-awesome.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/jquery_3_3_1.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/jquery_3_3_1.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/options.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/options.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/axios_0_18_0/axios.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/axios_0_18_0/axios.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/axios_0_18_0/axios.map" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/axios_0_18_0/axios.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/axios_0_18_0/axios.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/axios_0_18_0/axios.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/axios_0_18_0/axios.min.map" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/axios_0_18_0/axios.min.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.bootstrap.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.bootstrap.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.bootstrap.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.bootstrap.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.bootstrap4.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.bootstrap4.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.bootstrap4.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.bootstrap4.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.foundation.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.foundation.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.foundation.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.foundation.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.jqueryui.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.jqueryui.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.jqueryui.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.jqueryui.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.semanticui.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.semanticui.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.semanticui.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/dataTables.semanticui.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/jquery.dataTables.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/jquery.dataTables.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/jquery.dataTables.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/css/jquery.dataTables.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/images/sort_asc.png" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/images/sort_asc.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/images/sort_asc_disabled.png" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/images/sort_asc_disabled.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/images/sort_both.png" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/images/sort_both.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/images/sort_desc.png" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/images/sort_desc.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/images/sort_desc_disabled.png" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/images/sort_desc_disabled.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.bootstrap.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.bootstrap.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.bootstrap.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.bootstrap.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.bootstrap4.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.bootstrap4.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.bootstrap4.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.bootstrap4.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.foundation.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.foundation.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.foundation.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.foundation.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.jqueryui.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.jqueryui.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.jqueryui.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.jqueryui.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.semanticui.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.semanticui.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.semanticui.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/dataTables.semanticui.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/jquery.dataTables.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/jquery.dataTables.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/jquery.dataTables.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/DataTables-1.10.18/js/jquery.dataTables.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/datatables.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/datatables.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/datatables.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/datatables.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/datatables.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/datatables.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/datatables.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/bootstrap_datatable_v_1_10_18/datatables.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/chart_js_2_7_3/Chart.bundle.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/chart_js_2_7_3/Chart.bundle.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/datepicker/dist/datepicker.common.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/datepicker/dist/datepicker.common.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/datepicker/dist/datepicker.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/datepicker/dist/datepicker.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/datepicker/dist/datepicker.esm.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/datepicker/dist/datepicker.esm.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/datepicker/dist/datepicker.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/datepicker/dist/datepicker.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/datepicker/dist/datepicker.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/datepicker/dist/datepicker.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/datepicker/dist/datepicker.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/datepicker/dist/datepicker.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/ez_popup_v_1_1/ez.popup.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/ez_popup_v_1_1/ez.popup.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/ez_popup_v_1_1/ez.popup.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/ez_popup_v_1_1/ez.popup.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/inputmask/inputmask.jquery.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/inputmask/inputmask.jquery.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/select2/dist/css/select2-bootstrap.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/select2/dist/css/select2-bootstrap.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/select2/dist/css/select2.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/select2/dist/css/select2.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/select2/dist/js/select2.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/select2/dist/js/select2.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/bower.json" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/bower.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/demos/css/jquery.toast.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/demos/css/jquery.toast.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/demos/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/demos/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/demos/js/jquery.toast.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/demos/js/jquery.toast.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/dist/jquery.toast.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/dist/jquery.toast.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/dist/jquery.toast.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/dist/jquery.toast.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/src/jquery.toast.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/src/jquery.toast.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/src/jquery.toast.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/toast/src/jquery.toast.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/bootstrapValidator.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/bootstrapValidator.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/ar_MA.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/ar_MA.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/be_NL.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/be_NL.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/bg_BG.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/bg_BG.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/cs_CZ.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/cs_CZ.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/da_DK.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/da_DK.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/de_DE.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/de_DE.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/en_US.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/en_US.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/es_CL.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/es_CL.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/es_ES.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/es_ES.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/fr_FR.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/fr_FR.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/gr_EL.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/gr_EL.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/hu_HU.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/hu_HU.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/it_IT.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/it_IT.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/nl_NL.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/nl_NL.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/pl_PL.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/pl_PL.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/pt_BR.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/pt_BR.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/tr_TR.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/tr_TR.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/vi_VN.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/vi_VN.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/zh_CN.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/zh_CN.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/zh_TW.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/validator/language/zh_TW.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/vue_2_x/components/datatable.component.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/vue_2_x/components/datatable.component.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/vue_2_x/components/datepicker.component.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/vue_2_x/components/datepicker.component.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/vue_2_x/components/inputmask.component.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/vue_2_x/components/inputmask.component.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/vue_2_x/components/select.component.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/vue_2_x/components/select.component.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/vue_2_x/vue_2_x.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/vue_2_x/vue_2_x.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/wait_me_v_1_1/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/wait_me_v_1_1/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/js/vendors/wait_me_v_1_1/wait.js" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/js/vendors/wait_me_v_1_1/wait.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/klasifikasi.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/klasifikasi.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modul_keuangan/lap_bg.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/modul_keuangan/lap_bg.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/phpunit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/phpunit.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/bootstrap.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/bootstrap.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ExampleComponent.vue" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/ExampleComponent.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/lang/en/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/lang/en/auth.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/lang/en/pagination.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/lang/en/pagination.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/lang/en/passwords.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/lang/en/passwords.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/lang/en/validation.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/lang/en/validation.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/sass/_variables.scss" beforeDir="false" afterPath="$PROJECT_DIR$/resources/sass/_variables.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/sass/app.scss" beforeDir="false" afterPath="$PROJECT_DIR$/resources/sass/app.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/auth/login.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/auth/login.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/auth/passwords/email.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/auth/passwords/email.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/auth/passwords/reset.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/auth/passwords/reset.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/auth/register.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/auth/register.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/errors/404.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/errors/404.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/home.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/home.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/barangkeluar/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/barangkeluar/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/barangkeluar/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/barangkeluar/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/barangkeluar/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/barangkeluar/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/barangmasuk/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/barangmasuk/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/barangmasuk/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/barangmasuk/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/barangmasuk/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/barangmasuk/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/distribusibarang/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/distribusibarang/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/distribusibarang/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/distribusibarang/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/distribusibarang/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/distribusibarang/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/distribusibarang/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/distribusibarang/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/manajemenstok/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/manajemenstok/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/manajemenstok/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/manajemenstok/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/manajemenstok/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/manajemenstok/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/transaksibank/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/transaksibank/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/transaksibank/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/transaksibank/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/transaksikas/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/transaksikas/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/transaksikas/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/transaksikas/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/transaksimemorial/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/transaksimemorial/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/transaksimemorial/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/inputtransaksi/transaksimemorial/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/aruskas/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/aruskas/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/aruskas/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/aruskas/print/excel.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/aruskas/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/aruskas/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/aruskas/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/aruskas/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/bukubesar/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/bukubesar/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/bukubesar/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/bukubesar/print/excel.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/bukubesar/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/bukubesar/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/bukubesar/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/bukubesar/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/jurnal/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/jurnal/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/jurnal/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/jurnal/print/excel.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/jurnal/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/jurnal/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/jurnal/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/jurnal/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/labarugi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/labarugi/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/labarugi/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/labarugi/print/excel.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/labarugi/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/labarugi/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/labarugi/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/labarugi/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/neraca/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/neraca/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/neraca/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/neraca/print/excel.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/neraca/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/neraca/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/neraca/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporankeuangan/neraca/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/aset_ekuitas/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/aset_ekuitas/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/aset_ekuitas/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/aset_ekuitas/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/aset_ekuitas/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/aset_ekuitas/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/cashflow/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/cashflow/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/common_size/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/common_size/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/hutang_piutang/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/hutang_piutang/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/hutang_piutang/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/hutang_piutang/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/hutang_piutang/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/hutang_piutang/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/net_profit_ocf/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/net_profit_ocf/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/net_profit_ocf/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/net_profit_ocf/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/net_profit_ocf/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/net_profit_ocf/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/pertumbuhan_aset/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/pertumbuhan_aset/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/pertumbuhan_aset/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/pertumbuhan_aset/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/pertumbuhan_aset/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/analisa/pertumbuhan_aset/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/aset/aset/form.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/aset/aset/form.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/aset/aset/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/aset/aset/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/aset/group-aset/form.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/aset/group-aset/form.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/aset/group-aset/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/aset/group-aset/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/dash.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/dash.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/arus_kas/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/arus_kas/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/arus_kas/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/arus_kas/print/excel.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/arus_kas/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/arus_kas/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/arus_kas/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/arus_kas/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/buku_besar/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/buku_besar/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/buku_besar/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/buku_besar/print/excel.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/buku_besar/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/buku_besar/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/buku_besar/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/buku_besar/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/hutang/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/hutang/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/jurnal/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/jurnal/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/jurnal/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/jurnal/print/excel.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/jurnal/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/jurnal/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/jurnal/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/jurnal/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/laba_rugi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/laba_rugi/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/laba_rugi/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/laba_rugi/print/excel.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/laba_rugi/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/laba_rugi/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/laba_rugi/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/laba_rugi/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca/print/excel.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca_saldo/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca_saldo/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca_saldo/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca_saldo/print/excel.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca_saldo/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca_saldo/print/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca_saldo/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/laporan/neraca_saldo/print/pdf.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/master/akun/form.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/master/akun/form.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/master/akun/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/master/akun/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/master/group-akun/form.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/master/group-akun/form.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/master/group-akun/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/master/group-akun/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/setting/klasifikasi_akun/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/setting/klasifikasi_akun/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/transaksi/bank/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/transaksi/bank/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/transaksi/kas/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/transaksi/kas/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/transaksi/memorial/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/transaksi/memorial/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/transaksi/pelunasan_hutang/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/transaksi/pelunasan_hutang/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/transaksi/penerimaan_piutang/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/modul_keuangan/transaksi/penerimaan_piutang/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/layouts/_footer.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/layouts/_footer.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/layouts/_head.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/layouts/_head.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/layouts/_script.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/layouts/_script.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/layouts/_sidebar.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/layouts/_sidebar.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/layouts/app.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/layouts/app.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/login.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/login.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/main.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/main.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/agen/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/agen/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/agen/orderproduk/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/agen/orderproduk/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/agen/orderproduk/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/agen/orderproduk/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/agen/orderproduk/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/agen/orderproduk/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/monitoringpenjualan/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/monitoringpenjualan/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/monitoringpenjualan/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/monitoringpenjualan/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penerimaanuangpembayaran/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penerimaanuangpembayaran/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/approval.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/approval.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/bulanan/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/bulanan/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/bulanan/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/bulanan/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/bulanan/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/bulanan/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/tahunan/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/tahunan/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/tahunan/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/tahunan/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/tahunan/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/tahunan/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/datacanvassing/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/datacanvassing/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/datacanvassing/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/datacanvassing/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/datacanvassing/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/datacanvassing/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/datakonsinyasi/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/datakonsinyasi/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/datakonsinyasi/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/datakonsinyasi/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/datakonsinyasi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/datakonsinyasi/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/keloladataorder/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/keloladataorder/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/keloladataorder/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/keloladataorder/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/keloladataorder/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/keloladataorder/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/keloladataorder/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/keloladataorder/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/monitoring/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/monitoring/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/monitoring/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/monitoring/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/orderproduk/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/orderproduk/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/orderproduk/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/orderproduk/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/orderproduk/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/orderproduk/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/tab_kurangbarang.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/tab_kurangbarang.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/tab_potongnota.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/tab_potongnota.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/tab_salahalamat.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/tab_salahalamat.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/tab_salahbarang.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/tab_salahbarang.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/tab_tukarbarang.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/returnpenjualan/tab_tukarbarang.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/targetrealisasipenjualan/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/targetrealisasipenjualan/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/targetrealisasipenjualan/targetrealisasi/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/targetrealisasipenjualan/targetrealisasi/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/targetrealisasipenjualan/targetrealisasi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/targetrealisasipenjualan/targetrealisasi/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/targetrealisasipenjualan/targetrealisasi/status.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/targetrealisasipenjualan/targetrealisasi/status.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/agen/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/agen/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/agen/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/agen/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/agen/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/agen/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/cabang/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/cabang/create.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/cabang/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/cabang/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/cabang/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/cabang/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/datapegawai/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/datapegawai/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/datapegawai/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/datapegawai/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/datapegawai/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/datapegawai/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/datasatuan/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/datasatuan/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/datasatuan/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/datasatuan/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/datasatuan/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/datasatuan/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/harga/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/harga/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/harga/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/harga/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/harga/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/harga/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/produk/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/produk/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/produk/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/produk/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/suplier/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/suplier/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/suplier/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/suplier/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/suplier/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/suplier/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/suplier/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/suplier/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/variasisatuan/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/variasisatuan/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/variasisatuan/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/variasisatuan/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/variasisatuan/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/variasisatuan/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/passwords/email.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/passwords/email.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/passwords/reset.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/passwords/reset.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/penjualan/diskonpenjualan/diskonpenjualan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/penjualan/diskonpenjualan/diskonpenjualan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/penjualan/diskonpenjualan/tambah_diskonpenjualan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/penjualan/diskonpenjualan/tambah_diskonpenjualan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/penjualan/penjualanorder/penjualanorder.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/penjualan/penjualanorder/penjualanorder.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/penjualan/penjualanorder/tambah_penjualanorder.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/penjualan/penjualanorder/tambah_penjualanorder.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/penjualan/penjualanproject/penjualanproject.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/penjualan/penjualanproject/penjualanproject.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/penjualan/penjualanproject/tab_list_penjualan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/penjualan/penjualanproject/tab_list_penjualan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/penjualan/penjualanproject/tab_penjualan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/penjualan/penjualanproject/tab_penjualan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/penjualan/penjualanproject/termin_penjualanproject.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/penjualan/penjualanproject/termin_penjualanproject.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/penjualan/penjualantanpaorder/penjualantanpaorder.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/penjualan/penjualantanpaorder/penjualantanpaorder.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/penjualan/penjualantanpaorder/tambah_penjualantanpaorder.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/penjualan/penjualantanpaorder/tambah_penjualantanpaorder.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/penjualan/returnpenjualan/returnpenjualan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/penjualan/returnpenjualan/returnpenjualan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/penjualan/returnpenjualan/tambah_returnpenjualan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/penjualan/returnpenjualan/tambah_returnpenjualan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/orderproduksi/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/orderproduksi/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/orderproduksi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/orderproduksi/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/orderproduksi/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/orderproduksi/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/pembayaran/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/pembayaran/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/pembayaran/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/pembayaran/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/tab_kurangbarang.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/tab_kurangbarang.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/tab_potongnota.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/tab_potongnota.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/tab_salahalamat.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/tab_salahalamat.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/tab_salahbarang.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/tab_salahbarang.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/tab_tukarbarang.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/tab_tukarbarang.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/modal_detail.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/modal_detail.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/orderpembelian.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/orderpembelian.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/tab_daftar.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/tab_daftar.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/tab_history.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/tab_history.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/tab_po_tanpa_rencana.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/tab_po_tanpa_rencana.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/tambah_orderpembelian.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/tambah_orderpembelian.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/tambah_orderpembelian_tanparencana.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/orderpembelian/tambah_orderpembelian_tanparencana.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/rencanapembelian/modal_detail.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/rencanapembelian/modal_detail.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/rencanapembelian/modal_edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/rencanapembelian/modal_edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/rencanapembelian/rencanapembelian.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/rencanapembelian/rencanapembelian.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/rencanapembelian/tab_daftar.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/rencanapembelian/tab_daftar.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/rencanapembelian/tab_history.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/rencanapembelian/tab_history.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/rencanapembelian/tambah_rencanapembelian.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/rencanapembelian/tambah_rencanapembelian.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/returnpembelian/returnpembelian.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/returnpembelian/returnpembelian.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/returnpembelian/tab_return.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/returnpembelian/tab_return.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/returnpembelian/tab_revisi.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/returnpembelian/tab_revisi.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/purchasing/returnpembelian/tambah_returnpembelian.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/purchasing/returnpembelian/tambah_returnpembelian.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/recruitment.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/recruitment.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/register.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/register.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/absensisdm/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/absensisdm/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/inputkpi/modal_detail_datakpi.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/inputkpi/modal_detail_datakpi.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/inputkpi/modal_edit_datakpi.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/inputkpi/modal_edit_datakpi.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/inputkpi/modal_tambah_datakpi.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/inputkpi/modal_tambah_datakpi.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/inputkpi/tab_inputkpi.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/inputkpi/tab_inputkpi.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/manajemenscoreboard/modal_detail.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/manajemenscoreboard/modal_detail.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/manajemenscoreboard/modal_edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/manajemenscoreboard/modal_edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/manajemenscoreboard/tab_manajemenscoreboard.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/manajemenscoreboard/tab_manajemenscoreboard.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/manajemenscoreboardkpi/modal_detail.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/manajemenscoreboardkpi/modal_detail.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/manajemenscoreboardkpi/modal_edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/manajemenscoreboardkpi/modal_edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/manajemenscoreboardkpi/tab_manajemenscoreboardkpi.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/manajemenscoreboardkpi/tab_manajemenscoreboardkpi.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/scoreboardpegawai/modal_detail_scoreboardp.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/scoreboardpegawai/modal_detail_scoreboardp.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/scoreboardpegawai/modal_edit_scoreboardp.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/scoreboardpegawai/modal_edit_scoreboardp.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/scoreboardpegawai/modal_tambah_scoreboardp.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/scoreboardpegawai/modal_tambah_scoreboardp.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/scoreboardpegawai/tab_scoreboardpegawai.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/scoreboardpegawai/tab_scoreboardpegawai.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/manajemen/edit_manajemen.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/manajemen/edit_manajemen.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/manajemen/tab_manajemen.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/manajemen/tab_manajemen.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/manajemen/tambah_manajemen.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/manajemen/tambah_manajemen.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/payrollmanajemen/modal_tambah.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/payrollmanajemen/modal_tambah.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/payrollmanajemen/tab_payrollmanajemen.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/payrollmanajemen/tab_payrollmanajemen.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/produksi/edit_produksi.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/produksi/edit_produksi.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/produksi/tab_produksi.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/produksi/tab_produksi.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/produksi/tambah_produksi.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/produksi/tambah_produksi.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/tunjangan/edit_set_tunjangan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/tunjangan/edit_set_tunjangan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/tunjangan/edit_tunjangan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/tunjangan/edit_tunjangan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/tunjangan/set_tunjangan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/tunjangan/set_tunjangan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/tunjangan/tab_tunjangan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/tunjangan/tab_tunjangan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/penggajian/tunjangan/tambah_tunjangan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/penggajian/tunjangan/tambah_tunjangan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/modal_calonkaryawan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/modal_calonkaryawan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/preview.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/preview.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/process.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/process.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/tab_pelamarditerima.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/tab_pelamarditerima.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/tab_rekruitmen.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/tab_rekruitmen.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/dataadonan/dataadonan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/dataadonan/dataadonan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/dataadonan/edit_dataadonan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/dataadonan/edit_dataadonan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/dataadonan/list_dataadonan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/dataadonan/list_dataadonan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/dataadonan/tambah_dataadonan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/dataadonan/tambah_dataadonan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/opnamebahanbaku/detail_opnamebahanbaku.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/opnamebahanbaku/detail_opnamebahanbaku.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/opnamebahanbaku/opnamebahanbaku.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/opnamebahanbaku/opnamebahanbaku.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/opnamebahanbaku/tab_list_opname.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/opnamebahanbaku/tab_list_opname.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/opnamebahanbaku/tab_opname.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/opnamebahanbaku/tab_opname.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/pencatatanbarangmasuk/detail_pencatatanbarangmasuk.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/pencatatanbarangmasuk/detail_pencatatanbarangmasuk.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/pencatatanbarangmasuk/pencatatanbarangmasuk.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/pencatatanbarangmasuk/pencatatanbarangmasuk.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/pencatatanbarangmasuk/tambah_pencatatanbarangmasuk.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/pencatatanbarangmasuk/tambah_pencatatanbarangmasuk.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/penggunaanbahanbaku/penggunaanbahanbaku.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/penggunaanbahanbaku/penggunaanbahanbaku.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/penggunaanbahanbaku/tab_history_penggunaanbahanbaku.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/penggunaanbahanbaku/tab_history_penggunaanbahanbaku.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/penggunaanbahanbaku/tab_penggunaanbahanbaku.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/penggunaanbahanbaku/tab_penggunaanbahanbaku.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/penggunaanbahanbaku/tambah_penggunaanbahanbaku.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/penggunaanbahanbaku/tambah_penggunaanbahanbaku.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/tipemenghitunghpp/tambah_tipemenghitunghpp.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/tipemenghitunghpp/tambah_tipemenghitunghpp.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/stok/tipemenghitunghpp/tipemenghitunghpp.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/stok/tipemenghitunghpp/tipemenghitunghpp.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/suplier/orderproduksi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/suplier/orderproduksi/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/suplier/pembayaran/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/suplier/pembayaran/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/suplier/penerimaanbarang/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/suplier/penerimaanbarang/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/suplier/return/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/suplier/return/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/system/manajemenhakakses/manajemenhakakses.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/system/manajemenhakakses/manajemenhakakses.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/system/manajemenhakakses/tambah_manajemenhakakses.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/system/manajemenhakakses/tambah_manajemenhakakses.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/system/manajemenuser/manajemenuser.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/system/manajemenuser/manajemenuser.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/system/manajemenuser/tambah_manajemenuser.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/system/manajemenuser/tambah_manajemenuser.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/system/profilperusahaan/profilperusahaan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/system/profilperusahaan/profilperusahaan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/system/profilperusahaan/tambah_profilperusahaan.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/system/profilperusahaan/tambah_profilperusahaan.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/system/tahunfinansial/tahunfinansial.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/system/tahunfinansial/tahunfinansial.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/system/tahunfinansial/tambah_tahunfinansial.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/system/tahunfinansial/tambah_tahunfinansial.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/welcome.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/welcome.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots.txt" beforeDir="false" afterPath="$PROJECT_DIR$/robots.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/channels.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/channels.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/console.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/console.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.php" beforeDir="false" afterPath="$PROJECT_DIR$/server.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/app/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/app/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/app/public/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/app/public/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/cache/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/cache/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/cache/data/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/cache/data/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/sessions/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/testing/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/testing/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/views/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/logs/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/logs/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CreatesApplication.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CreatesApplication.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/ExampleTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/ExampleTest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/TestCase.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/TestCase.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Unit/ExampleTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Unit/ExampleTest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web.config" beforeDir="false" afterPath="$PROJECT_DIR$/web.config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webpack.mix.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.mix.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -725,25 +13,16 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/config/app.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/suplier/create.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="336">
-              <caret line="225" column="69" selection-start-line="225" selection-start-column="69" selection-end-line="225" selection-end-column="69" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/CabangController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="299">
-              <caret line="13" column="17" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="17" />
+            <state relative-caret-position="198">
+              <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
             </state>
           </provider>
         </entry>
@@ -757,8 +36,103 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/config/app.php" />
+        <option value="$PROJECT_DIR$/resources/views/masterdatautama/cabang/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/masterdatautama/cabang/edit.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/masterdatautama/suplier/create.blade.php" />
       </list>
     </option>
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/beyondcode/laravel-dump-server" />
+      <path value="$PROJECT_DIR$/vendor/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
+      <path value="$PROJECT_DIR$/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/vendor/yajra/laravel-datatables-oracle" />
+      <path value="$PROJECT_DIR$/vendor/mockery/mockery" />
+      <path value="$PROJECT_DIR$/vendor/hamcrest/hamcrest-php" />
+      <path value="$PROJECT_DIR$/vendor/fzaninotto/faker" />
+      <path value="$PROJECT_DIR$/vendor/dnoegel/php-xdg-base-dir" />
+      <path value="$PROJECT_DIR$/vendor/zendframework/zend-diactoros" />
+      <path value="$PROJECT_DIR$/vendor/egulias/email-validator" />
+      <path value="$PROJECT_DIR$/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/vendor/symfony/debug" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/vendor/jakub-onderka/php-console-highlighter" />
+      <path value="$PROJECT_DIR$/vendor/symfony/contracts" />
+      <path value="$PROJECT_DIR$/vendor/jakub-onderka/php-console-color" />
+      <path value="$PROJECT_DIR$/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/vendor/php-http/guzzle6-adapter" />
+      <path value="$PROJECT_DIR$/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/vendor/php-http/httplug" />
+      <path value="$PROJECT_DIR$/vendor/symfony/css-selector" />
+      <path value="$PROJECT_DIR$/vendor/php-http/promise" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/vendor/erusev/parsedown" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-token-stream" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/vendor/league/flysystem" />
+      <path value="$PROJECT_DIR$/vendor/phpspec/prophecy" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/vendor/lcobucci/jwt" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/vendor/nunomaduro/collision" />
+      <path value="$PROJECT_DIR$/vendor/ramsey/uuid" />
+      <path value="$PROJECT_DIR$/vendor/fideloper/proxy" />
+      <path value="$PROJECT_DIR$/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/vendor/opis/closure" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/vendor/nexmo/client" />
+      <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/vendor/filp/whoops" />
+      <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/vendor/swiftmailer/swiftmailer" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/promises" />
+      <path value="$PROJECT_DIR$/vendor/laravel/tinker" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/vendor/laravel/framework" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/vendor/laravel/nexmo-notification-channel" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/vendor/laravel/slack-notification-channel" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/vendor/nesbot/carbon" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/vendor/psy/psysh" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/vendor/tijsverkoyen/css-to-inline-styles" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
+    </include_path>
   </component>
   <component name="ProjectFrameBounds" extendedState="7">
     <option name="width" value="1338" />
@@ -769,7 +143,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -806,12 +179,34 @@
             <path>
               <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
               <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="masterdatautama" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="masterdatautama" type="462c0819:PsiDirectoryNode" />
+              <item name="suplier" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -839,6 +234,9 @@
       <method v="2" />
     </configuration>
   </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="fb9626df-d2a3-4905-aed9-c6059d160f06" name="Default Changelist" comment="" />
@@ -846,26 +244,23 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1551081935077</updated>
-      <workItem from="1551081940842" duration="287000" />
+      <workItem from="1551081940842" duration="1013000" />
+      <workItem from="1551083153929" duration="320000" />
+      <workItem from="1551083752977" duration="2123000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="287000" />
+    <option name="totallyTimeSpent" value="3456000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1366" height="768" extended-state="7" />
+    <frame x="0" y="0" width="1366" height="768" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="npm" side_tool="true" />
-      <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25757575" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Database Changes" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info id="npm" order="2" side_tool="true" />
+      <window_info id="Favorites" order="3" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -873,16 +268,28 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="Database" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Database Changes" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info anchor="bottom" id="Terminal" order="11" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/cabang/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="93" column="88" selection-start-line="93" selection-start-column="88" selection-end-line="93" selection-end-column="88" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/CabangController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="299">
@@ -890,10 +297,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/layouts/_head.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="10" column="74" selection-start-line="10" selection-start-column="74" selection-end-line="10" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/cabang/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="60" column="62" selection-start-line="60" selection-start-column="62" selection-end-line="60" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/config/app.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
+        <state relative-caret-position="520">
           <caret line="225" column="69" selection-start-line="225" selection-start-column="69" selection-end-line="225" selection-end-column="69" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/suplier/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
         </state>
       </provider>
     </entry>
