@@ -117,7 +117,7 @@
                               <div class="col-md-3 col-sm-6 col-xs-12">
                                 <div class="form-group">
                                   <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <span class="input-group-addon"><i class="fa fa-calendar mt-2"></i></span>
                                     <input type="text" class="form-control form-control-sm datepicker" name="">
                                   </div>
                                 </div>
@@ -130,7 +130,7 @@
                               <div class="col-md-3 col-sm-6 col-xs-12">
                                 <div class="form-group">
                                   <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <span class="input-group-addon"><i class="fa fa-calendar mt-2"></i></span>
                                     <input type="text" class="form-control form-control-sm datepicker" name="">
                                   </div>
                                 </div>

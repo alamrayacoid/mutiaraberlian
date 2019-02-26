@@ -25,7 +25,7 @@
 	                        <h3 class="title"> Master Harga </h3>
 	                    </div>
 	                    <div class="header-block pull-right">
-                    			<a class="btn btn-primary" href="{{route('dataharga.create')}}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
+                    			<a class="btn btn-primary" href="{{route('satuanharga.create')}}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
 	                    </div>
                     </div>
                     <div class="card-block">
@@ -131,7 +131,7 @@
 	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 		})
         $('#table_harga tbody').on('click','.btn-edit', function(){
-			window.location.href='{{route('dataharga.edit')}}'
+			window.location.href='{{route('satuanharga.edit')}}'
 		})
 	});
 </script>
