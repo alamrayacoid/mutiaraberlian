@@ -9,7 +9,7 @@
       <p class="title-description">
         <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
          / <span>Master Data Utama</span>
-         / <a href="{{route('kelolapegawai.index')}}"><span>Data Pegawai</span></a>
+         / <a href="{{route('pegawai.index')}}"><span>Data Pegawai</span></a>
          / <span class="text-primary font-weight-bold">Tambah Data Pegawai</span>
        </p>
   </div>
@@ -26,19 +26,15 @@
                         <h3 class="title">Tambah Data Pegawai</h3>
                       </div>
                       <div class="header-block pull-right">
-                        <a href="{{route('kelolapegawai.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
+                        <a href="{{route('pegawai.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
                       </div>
                     </div>
-
                     <div class="card-block">
                         <section>
-                        
                           <fieldset>
                             <div class="row">
-
-
                               <div class="col-md-3 col-sm-6 col-xs-12">
-                                <label>NIK</label>
+                                <label>NIP</label>
                               </div>
 
                               <div class="col-md-9 col-sm-6 col-xs-12">
@@ -58,7 +54,7 @@
                               </div>
 
                               <div class="col-md-3 col-sm-6 col-xs-12">
-                                <label>Ktp</label>
+                                <label>NIK</label>
                               </div>
 
                               <div class="col-md-9 col-sm-6 col-xs-12">
@@ -273,7 +269,7 @@
                     </div>
                     <div class="card-footer text-right">
                       <button class="btn btn-primary btn-submit" type="button">Simpan</button>
-                      <a href="{{route('kelolapegawai.index')}}" class="btn btn-secondary">Kembali</a>
+                      <a href="{{route('pegawai.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
 

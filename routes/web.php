@@ -29,9 +29,12 @@ Route::group(['middleware' => 'guest'], function(){
 
 	// !====================================================== Master Data Utama ======================================================!
 
-	Route::get('/masterdatautama/datapegawai/index', 'MasterController@kelolapegawai')->name('kelolapegawai.index');
-	Route::get('/masterdatautama/datapegawai/edit', 'MasterController@edit_kelolapegawai')->name('kelolapegawai.edit');
-	Route::get('/masterdatautama/datapegawai/create', 'MasterController@create_kelolapegawai')->name('kelolapegawai.create');
+	Route::get('/masterdatautama/datapegawai/index', 'Master\EmployeeController@index')->name('pegawai.index');
+	Route::get('/masterdatautama/datapegawai/getData', 'Master\EmployeeController@getData')->name('pegawai.list');
+	Route::get('/masterdatautama/datapegawai/create', 'Master\EmployeeController@create')->name('pegawai.create');
+	Route::get('/masterdatautama/datapegawai/store', 'Master\EmployeeController@store')->name('pegawai.store');
+	Route::get('/masterdatautama/datapegawai/edit/{id}', 'Master\EmployeeController@edit')->name('pegawai.edit');
+	Route::post('/masterdatautama/datapegawai/update/{id}', 'Master\EmployeeController@update')->name('pegawai.update');
 
 	Route::get('/masterdatautama/produk/index', 'Master\ItemController@index')->name('dataproduk.index');
 	Route::get('/masterdatautama/produk/list', 'Master\ItemController@getList')->name('dataproduk.list');

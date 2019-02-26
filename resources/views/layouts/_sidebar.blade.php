@@ -152,7 +152,7 @@
                     </a>
                     <ul class="sidebar-nav">
                         <li class="{{Request::is('masterdatautama/datapegawai/*') ? 'active' : ''}}">
-                            <a href="{{route('kelolapegawai.index')}}"> Master Pegawai</a>
+                            <a href="{{route('pegawai.index')}}"> Master Pegawai</a>
                         </li>
                         <li class="{{Request::is('masterdatautama/produk/*') ? 'active' : ''}}">
                             <a href="{{route('dataproduk.index')}}"> Master Produk</a>
