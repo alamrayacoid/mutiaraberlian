@@ -23,18 +23,21 @@ class AgenController extends Controller
     public function validate_req(Request $request)
     {
       // start: validate data before execute
-      $messages = [
-        'area_prov.required' => 'Area Provinsi masih kosong, silahkan isi terlebih dahulu !',
-        'area_city.required' => 'Area Kota masih kosong, silahkan isi terlebih dahulu !',
-        'name.required' => 'Nama agen masih kosong, silahkan isi terlebih dahulu !',
-        'telp.required' => 'No Telp masih kosong, silahkan isi terlebih dahulu !'
-      ];
       $validator = Validator::make($request->all(), [
         'area_prov' => 'required',
         'area_city' => 'required',
         'name' => 'required',
-        'telp' => 'required'
-      ], $messages);
+        'email' => 'sometimes|nullable|email',
+        'telp' => 'required|numeric'
+      ],
+      [
+        'area_prov.required' => 'Area Provinsi masih kosong !',
+        'area_city.required' => 'Area Kota masih kosong !',
+        'name.required' => 'Nama agen masih kosong !',
+        'email.email' => 'Format email tidak valid !',
+        'telp.required' => 'No Telp masih kosong !',
+        'telp.numeric' => 'No Telp hanya berupa angka, tidak boleh mengandung huruf !'
+      ]);
       if($validator->fails())
       {
         return $validator->errors()->first();
@@ -43,6 +46,19 @@ class AgenController extends Controller
       {
         return '1';
       }
+    }
+
+    /**
+     * Return list of 'price class'.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getClasses()
+    {
+      $classes = DB::table('m_priceclass')
+        ->orderBy('pc_name', 'asc')
+        ->get();
+      return $classes;
     }
 
     /**
@@ -71,7 +87,6 @@ class AgenController extends Controller
         ->first();
       return $provinceId->wc_provinsi;
     }
-
 
     /**
      * Return list of cities based on provinces.
@@ -128,6 +143,25 @@ class AgenController extends Controller
         ->get();
       return $agents;
     }
+
+    /**
+     * Return true if the agent has sub-agent
+     *
+     * @param code $codeAgent
+     * @return bool hasSubAgent
+     */
+    public function hasSubAgent($code)
+    {
+      $subAgent = DB::table('m_agen')
+        ->where('a_parent', $code)
+        ->first();
+      if($subAgent != null) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     /**
      * Return DataTable list for view.
      *
@@ -166,7 +200,7 @@ class AgenController extends Controller
     public function create()
     {
       $data['provinces'] = $this->getProvinces();
-      // $data['agents'] = $this->getAgents();
+      $data['classes'] = $this->getClasses();
       return view('masterdatautama.agen.create', compact('data'));
     }
 
@@ -190,12 +224,13 @@ class AgenController extends Controller
       // start: execute insert data
       DB::beginTransaction();
       try {
-        $code = CodeGenerator::code('m_agen', 'a_code', 7, 'A');
+        // insert to table m_agen
+        $codeAgen = CodeGenerator::code('m_agen', 'a_code', 7, 'A');
         $id = DB::table('m_agen')->max('a_id') + 1;
         DB::table('m_agen')
           ->insert([
             'a_id' => $id,
-            'a_code' => $code,
+            'a_code' => $codeAgen,
             'a_area' => $request->area_city,
             'a_name' => $request->name,
             'a_birthday' => Carbon::parse($request->birthday),
@@ -206,10 +241,24 @@ class AgenController extends Controller
             'a_kecamatan' => $request->address_district,
             'a_desa' => $request->address_village,
             'a_address' => $request->address,
-            'a_type' => $request->type,
+            'a_class' => $request->a_class,
+            'a_type' => $request->type_hidden,
             'a_parent' => $request->parent,
             'a_insert' => Carbon::now(),
             'a_update' => Carbon::now()
+          ]);
+
+        // insert to table m_company
+        $codeCompany = CodeGenerator::code('m_company', 'c_id', 7, 'MB');
+        DB::table('m_company')
+          ->insert([
+            'c_id' => $codeCompany,
+            'c_name' => $request->name,
+            'c_address' => $request->address,
+            'c_tlp' => $request->telp,
+            'c_type' => 'AGEN',
+            'c_insert' => Carbon::now(),
+            'c_update' => Carbon::now()
           ]);
 
         DB::commit();
@@ -220,7 +269,7 @@ class AgenController extends Controller
         DB::rollback();
         return response()->json([
           'status' => 'gagal',
-          'message' => $e
+          'message' => $e->getMessage()
         ]);
       }
     }
@@ -239,11 +288,13 @@ class AgenController extends Controller
       $provinceId = $this->getProvinceByCity($data['agen']->a_area);
 
       $data['provinces'] = $this->getProvinces();
+      $data['classes'] = $this->getClasses();
       $data['area_prov'] = $provinceId;
       $data['area_cities'] = $this->getCities($provinceId);
       $data['address_cities'] = $this->getCities($data['agen']->a_provinsi);
       $data['address_districts'] = $this->getDistricts($data['agen']->a_kabupaten);
       $data['address_villages'] = $this->getVillages($data['agen']->a_kecamatan);
+      $data['has_subagent'] = $this->hasSubAgent($data['agen']->a_code);
       return view('masterdatautama.agen.edit', compact('data'));
     }
 
@@ -268,6 +319,7 @@ class AgenController extends Controller
       // start: execute update data
       DB::beginTransaction();
       try {
+        // update data in table m_agen
         DB::table('m_agen')
           ->where('a_id', $id)
           ->update([
@@ -281,7 +333,8 @@ class AgenController extends Controller
             'a_kecamatan' => $request->address_district,
             'a_desa' => $request->address_village,
             'a_address' => $request->address,
-            'a_type' => $request->type,
+            'a_class' => $request->a_class,
+            'a_type' => $request->type_hidden,
             'a_parent' => $request->parent,
             'a_update' => Carbon::now()
           ]);
@@ -294,7 +347,7 @@ class AgenController extends Controller
         DB::rollback();
         return response()->json([
           'status' => 'gagal',
-          'message' => $e
+          'message' => $e->getMessage()
         ]);
       }
     }
@@ -322,7 +375,7 @@ class AgenController extends Controller
         DB::rollback();
         return response()->json([
           'status' => 'gagal',
-          'message' => $e
+          'message' => $e->getMessage()
         ]);
       }
     }
