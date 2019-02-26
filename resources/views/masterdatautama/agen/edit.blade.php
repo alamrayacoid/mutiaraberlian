@@ -52,7 +52,7 @@
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
                                 <input type="hidden" id="area_prov_hidden" value="{{ $data['area_prov'] }}">
-                                <select id="area_prov" class="select2 form-control form-control-sm" name="area_prov">
+                                <select id="area_prov" class="select2 form-control form-control-sm" name="area_prov" tabindex="1">
                                   <option value="">Pilih Provinsi</option>
                                   @foreach($data['provinces'] as $prov)
                                     <option value="{{ $prov->wp_id }}">{{ $prov->wp_name }}</option>
@@ -67,7 +67,7 @@
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
                                 <input type="hidden" id="area_city_hidden" value="{{ $data['agen']->a_area }}">
-                                <select id="area_city" class="select2 form-control form-control-sm" name="area_city">
+                                <select id="area_city" class="select2 form-control form-control-sm" name="area_city" tabindex="2">
                                   <option value="">Pilih Kota/Kabupaten</option>
                                   @foreach($data['area_cities'] as $city)
                                     <option value="{{ $city->wc_id }}">{{ $city->wc_name }}</option>
@@ -81,7 +81,7 @@
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="name" value="{{ $data['agen']->a_name }}">
+                                <input type="text" class="form-control form-control-sm" name="name" value="{{ $data['agen']->a_name }}" tabindex="3">
                               </div>
                             </div>
 
@@ -90,8 +90,9 @@
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="hidden" id="type_hidden" value="{{ $data['agen']->a_type }}">
-                                <select name="type" id="type" class="select2 form-control form-control-sm">
+                                <input type="hidden" name="type_hidden" id="type_hidden" value="{{ $data['agen']->a_type }}">
+                                <input type="hidden" id="has_subagent" value="{{ $data['has_subagent'] }}">
+                                <select name="type" id="type" class="select2 form-control form-control-sm" tabindex="4">
                                     <option value="">Pilih Tipe Agen</option>
                                     <option value="AGEN">Agen</option>
                                     <option value="SUB AGEN">Sub Agen</option>
@@ -113,11 +114,31 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Tanggal Lahir</label>
+                              <label>Class</label>
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm datepicker" name="birthday" value="{{ date('d-m-Y', strtotime($data['agen']->a_birthday)) }}">
+                                <input type="hidden" id="class_hidden" value="{{ $data['agen']->a_class }}">
+                                <select id="a_class" class="select2 form-control form-control-sm" name="a_class">
+                                  <option value="" selected="">Pilih Class</option>
+                                  @foreach($data['classes'] as $class)
+                                    <option value="{{ $class->pc_id }}">{{ $class->pc_name }}</option>
+                                  @endforeach
+                                </select>
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Tanggal Lahir</label>
+                            </div>
+                            <div class="col-md-9 col-sm-6 col-xs-12">
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text">
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                  </span>
+                                </div>
+                                <input type="text" class="form-control form-control-sm datepicker" id="birthday" name="birthday" value="{{ date('d-m-Y', strtotime($data['agen']->a_birthday)) }}" tabindex="5">
                               </div>
                             </div>
 
@@ -127,7 +148,7 @@
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
                                 <input type="hidden" id="address_prov_hidden" value="{{ $data['agen']->a_provinsi }}">
-                                <select id="address_prov" class="select2 form-control form-control-sm" name="address_prov">
+                                <select id="address_prov" class="select2 form-control form-control-sm" name="address_prov" tabindex="6">
                                   <option value="">Pilih Provinsi</option>
                                   @foreach($data['provinces'] as $prov)
                                     <option value="{{ $prov->wp_id }}">{{ $prov->wp_name }}</option>
@@ -186,7 +207,7 @@
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <textarea type="text" class="form-control form-control-sm" name="address">{{ $data['agen']->a_address }}</textarea>
+                                <textarea type="text" class="form-control form-control-sm" name="address" tabindex="7">{{ $data['agen']->a_address }}</textarea>
                               </div>
                             </div>
 
@@ -195,7 +216,7 @@
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="email" value="{{ $data['agen']->a_email }}" placeholder="user@email.com">
+                                <input type="text" class="form-control form-control-sm" name="email" value="{{ $data['agen']->a_email }}" placeholder="user@email.com" tabindex="8">
                               </div>
                             </div>
 
@@ -204,7 +225,7 @@
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="telp" value="{{ $data['agen']->a_telp }}">
+                                <input type="text" class="form-control form-control-sm" name="telp" value="{{ $data['agen']->a_telp }}" tabindex="8">
                               </div>
                             </div>
 
@@ -245,9 +266,13 @@
       $('.div_parent').hide();
       $('#parent').empty();
     }
+    if ($('#has_subagent').val() == 1) {
+      $('#type').attr('disabled', true);
+    }
   })
 
   $('#type').on('change', function() {
+    $('#type_hidden').val($('#type').val());
     if ($(this).val() == 'SUB AGEN') {
       RetrieveListAgents();
       $('.div_parent').show();
@@ -273,6 +298,11 @@
       }
     });
   }
+
+  // hide datepicker after select any date
+  $('#birthday').on('changeDate', function() {
+    $(this).datepicker('hide');
+  })
 
   // set request when area_prov changed
   // set option list area_city
@@ -368,6 +398,9 @@
         } else if (response.status == 'invalid') {
           loadingHide();
           messageWarning('Perhatian', response.message);
+        } else if (response.status == 'gagal') {
+          loadingHide();
+          messageWarning('Error', response.message);
         }
       },
       error : function(e){
@@ -379,20 +412,26 @@
   }
 
   // set default/selected value for select2 (area, type agen, and address)
+  class_hidden = $('#class_hidden').val();
+  $("#a_class option[value='"+class_hidden+"']").prop("selected", true);
   type_hidden = $('#type_hidden').val();
   $("#type option[value='"+type_hidden+"']").prop("selected", true);
   area_prov_hidden = $('#area_prov_hidden').val();
   $("#area_prov option[value="+area_prov_hidden+"]").prop("selected", true);
   area_city_hidden = $('#area_city_hidden').val();
   $("#area_city option[value="+area_city_hidden+"]").prop("selected", true);
-  address_prov_hidden = $('#address_prov_hidden').val();
-  $("#address_prov option[value="+address_prov_hidden+"]").prop("selected", true);
-  address_city_hidden = $('#address_city_hidden').val();
-  $("#address_city option[value="+address_city_hidden+"]").prop("selected", true);
-  address_district_hidden = $('#address_district_hidden').val();
-  $("#address_district option[value="+address_district_hidden+"]").prop("selected", true);
-  address_village_hidden = $('#address_village_hidden').val();
-  $("#address_village option[value="+address_village_hidden+"]").prop("selected", true);
+  console.log($('#address_village_hidden').val());
+
+  if ($('#address_village_hidden').val() != "") {
+    address_prov_hidden = $('#address_prov_hidden').val();
+    $("#address_prov option[value="+address_prov_hidden+"]").prop("selected", true);
+    address_city_hidden = $('#address_city_hidden').val();
+    $("#address_city option[value="+address_city_hidden+"]").prop("selected", true);
+    address_district_hidden = $('#address_district_hidden').val();
+    $("#address_district option[value="+address_district_hidden+"]").prop("selected", true);
+    address_village_hidden = $('#address_village_hidden').val();
+    $("#address_village option[value="+address_village_hidden+"]").prop("selected", true);
+  }
 
 </script>
 @endsection
