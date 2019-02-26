@@ -3,6 +3,7 @@
 @import url('https://fonts.googleapis.com/css?family=Nunito');
 @import url('https://fonts.googleapis.com/css?family=Cormorant+SC:700');
 @import url('https://fonts.googleapis.com/css?family=Quicksand:700');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:700');
 /* END */
 body {
     font-family: 'Roboto', sans-serif;
@@ -271,9 +272,10 @@ body {
 } */
 
 .auth-container .auth-header {
-    padding-top: 30px;
+    padding-top: 26px;
     text-align: center;
     border-bottom: none;
+    margin-bottom: -20px;
 }
 
 .auth-container .auth-title {
@@ -302,7 +304,7 @@ body {
 }
 
 .btn-login {
-    margin-top:30px;
+    margin-top:20px;
     font-size: 10pt;
     border-radius:3px;
     padding-top: 10px;

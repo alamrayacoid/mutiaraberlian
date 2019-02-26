@@ -26,7 +26,7 @@
 	              	<div class="card-block">
 	                  	<section>
 	                  		<div class="table-responsive">
-	                        	<table class="table table-sm table-striped table-hover display nowrap" cellspacing="0" id="table_satuan">
+	                        	<table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_satuan">
 	                            	<thead class="bg-primary">
 	                                	<tr>
 	                                		<th width="1%">No</th>
