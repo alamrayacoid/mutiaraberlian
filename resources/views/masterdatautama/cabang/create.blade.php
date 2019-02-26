@@ -76,7 +76,6 @@
     </div>
   </section>
 </article>
-
 @endsection
 
 @section('extra_script')
