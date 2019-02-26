@@ -34,20 +34,6 @@
                           <div class="row">
                             
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>No Nota</label>
-                            </div> 
-
-                            <div class="col-md-9 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <select name="" id="" class="form-control form-control-sm select2">
-                                  <option value="">-</option>
-                                  <option value="">001533903</option>
-                                  <option value="">001433953</option>
-                                </select>
-                              </div>
-                            </div>
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Tanggal</label>
                             </div> 
 
@@ -217,7 +203,7 @@
       $('#table_order')
       .append(
         '<tr>'+
-          '<td><select name="" id="" class="form-control form-control-sm select2"><option value="">00145123/Obat</option></select></td>'+
+          '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><input type="number" class="form-control form-control-sm"></td>'+
           '<td><input type="text" class="form-control form-control-sm input-rupiah"></td>'+
