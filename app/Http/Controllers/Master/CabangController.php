@@ -23,17 +23,17 @@ class CabangController extends Controller
 
     public function getData()
     {
-        $datas = DB::table('m_company')->orderBy('c_name', 'asc');
-        return Datatables::of($datas)
-            ->addIndexColumn()
-            ->addColumn('action', function($datas) {
-                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                            <button class="btn btn-warning" onclick="EditCabang(\''.Crypt::encrypt($datas->c_id).'\')" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
-                            <button class="btn btn-danger" onclick="DeleteCabang(\''.Crypt::encrypt($datas->c_id).'\')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-trash-o"></i></button>
-                        </div></div>';
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+      $datas = DB::table('m_company')->orderBy('c_name', 'asc');
+      return Datatables::of($datas)
+        ->addIndexColumn()
+        ->addColumn('action', function($datas) {
+          return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                    <button class="btn btn-warning" onclick="EditCabang(\''.Crypt::encrypt($datas->c_id).'\')" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
+                    <button class="btn btn-danger" onclick="DeleteCabang(\''.Crypt::encrypt($datas->c_id).'\')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-trash-o"></i></button>
+                    </div></div>';
+          })
+        ->rawColumns(['action'])
+        ->make(true);
     }
 
     public function create()
