@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
+    <list default="true" id="fb9626df-d2a3-4905-aed9-c6059d160f06" name="Default Changelist" comment="" />
+=======
     <list default="true" id="06045957-7410-463f-9c24-490355557206" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
+>>>>>>> 1ceb5c85dea6e22c0a115b757424c2214e421491
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,6 +53,9 @@
     </session>
   </component>
   <component name="FileEditorManager">
+<<<<<<< HEAD
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+=======
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
@@ -102,6 +109,7 @@
         </entry>
       </file>
     </leaf>
+>>>>>>> 1ceb5c85dea6e22c0a115b757424c2214e421491
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -242,10 +250,15 @@
     </include_path>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
+<<<<<<< HEAD
+    <option name="width" value="1338" />
+    <option name="height" value="585" />
+=======
     <option name="x" value="10" />
     <option name="y" value="20" />
     <option name="width" value="1346" />
     <option name="height" value="688" />
+>>>>>>> 1ceb5c85dea6e22c0a115b757424c2214e421491
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -289,9 +302,23 @@
               <item name="config" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
+<<<<<<< HEAD
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="masterdatautama" type="462c0819:PsiDirectoryNode" />
+=======
               <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
               <item name="mutiara" type="462c0819:PsiDirectoryNode" />
               <item name="routes" type="462c0819:PsiDirectoryNode" />
+>>>>>>> 1ceb5c85dea6e22c0a115b757424c2214e421491
             </path>
           </expand>
           <select />
@@ -469,9 +496,16 @@
       <created>1551079200341</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
+<<<<<<< HEAD
+      <updated>1551081935077</updated>
+      <workItem from="1551081940842" duration="1013000" />
+      <workItem from="1551083153929" duration="320000" />
+      <workItem from="1551083752977" duration="2779000" />
+=======
       <updated>1551079200341</updated>
       <workItem from="1551079202379" duration="11239000" />
       <workItem from="1551148609846" duration="436000" />
+>>>>>>> 1ceb5c85dea6e22c0a115b757424c2214e421491
     </task>
     <task id="LOCAL-00001" summary="roliz">
       <created>1551082234851</created>
@@ -491,10 +525,17 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
+<<<<<<< HEAD
+    <option name="totallyTimeSpent" value="4112000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="0" width="1366" height="768" extended-state="6" />
+=======
     <option name="totallyTimeSpent" value="11764000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1366" height="732" extended-state="6" />
+>>>>>>> 1ceb5c85dea6e22c0a115b757424c2214e421491
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25378788" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -537,6 +578,9 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/resources/views/layouts/_head.blade.php">
+=======
     <entry file="file://$PROJECT_DIR$/_ide_helper.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -545,6 +589,7 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/MasterController.php">
+>>>>>>> 1ceb5c85dea6e22c0a115b757424c2214e421491
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
           <caret line="18" column="20" selection-start-line="18" selection-start-column="20" selection-end-line="18" selection-end-column="20" />
@@ -587,8 +632,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/app.php">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+        <state relative-caret-position="198">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/CabangController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3289">
+          <caret line="13" column="17" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="17" />
+=======
         <state relative-caret-position="37">
           <caret line="211" column="57" selection-start-line="211" selection-start-column="57" selection-end-line="211" selection-end-column="57" />
+>>>>>>> 1ceb5c85dea6e22c0a115b757424c2214e421491
         </state>
       </provider>
     </entry>
