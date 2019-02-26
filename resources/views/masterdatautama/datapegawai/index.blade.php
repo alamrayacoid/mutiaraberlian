@@ -13,23 +13,19 @@
 	</div>
 
 	<section class="section">
-
 		<div class="row">
-
 			<div class="col-12">
-				
 				<div class="card">
                     <div class="card-header bordered p-2">
                     	<div class="header-block">
 	                        <h3 class="title"> Data Pegawai </h3>
 	                    </div>
 	                    <div class="header-block pull-right">
-                			<button class="btn btn-primary" id="btn-tambah"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button>
+                			<button type="button" class="btn btn-primary" id="btn-tambah"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button>
 	                    </div>
                     </div>
                     <div class="card-block">
                         <section>
-                        	
                         	<div class="table-responsive">
 	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_pegawai">
 	                                <thead class="bg-primary">
@@ -44,93 +40,20 @@
 											<th>Tanggal Masuk</th>
 											<th>Ktp</th>
 											<th>Alamat Ktp</th>
-											<th>Pendidikan</th>
-											<th>Bank</th>
-											<th>No.Rek</th>
-											<th>Atas Nama</th>
-							                <th>Aksi</th>
+											<th>Aksi</th>
 							            </tr>
 	                                </thead>
 	                                <tbody>
-	                                	<tr>
-	                                		<td>1</td>
-	                                		<td>PG/001</td>
-	                                		<td>1111</td>
-	                                		<td>Alpha</td>
-											<td>Manager</td>
-	                                		<td>Jl. Alpha</td>
-	                                		<td>Sudah Menikah</td>
-											<td>02/01/2019</td>
-											<td>00011231231</td>
-											<td>Jl.Rahasia</td>
-											<td>S3</td>
-											<td>Amex</td>
-											<td>1231212412</td>
-											<td>Alpha</td>
-	                                		<td>
-	                                			<div class="btn-group btn-group-sm">
-	                                				<button class="btn btn-warning btn-edit" title="Edit" type="button"><i class="fa fa-pencil"></i></button>
-	                                				<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-	                                			</div>
-	                                		</td>
-	                                	</tr>
-	                                	<tr>
-	                                		<td>2</td>
-	                                		<td>PG/002</td>
-	                                		<td>1112</td>
-	                                		<td>Bravo</td>
-											<td>Supervisor</td>
-	                                		<td>Jl. Bravo</td>
-	                                		<td>Sudah Menikah</td>
-											<td>02/01/2019</td>
-											<td>00011231231</td>
-											<td>Jl.Rahasia</td>
-											<td>S3</td>
-											<td>Amex</td>
-											<td>1231212412</td>
-											<td>Alpha</td>
-	                                		<td>
-	                                			<div class="btn-group btn-group-sm">
-													<button class="btn btn-warning btn-edit" title="Edit" type="button"><i class="fa fa-pencil"></i></button>
-	                                				<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-	                                			</div>
-	                                		</td>
-	                                	</tr>
-	                                	<tr>
-	                                		<td>3</td>
-	                                		<td>PG/003</td>
-	                                		<td>1113</td>
-	                                		<td>Charlie</td>
-											<td>Staf</td>
-	                                		<td>Jl. Charlie</td>
-	                                		<td>Belum Menikah</td>
-											<td>02/01/2019</td>
-											<td>00011231231</td>
-											<td>Jl.Rahasia</td>
-											<td>S3</td>
-											<td>Amex</td>
-											<td>1231212412</td>
-											<td>Alpha</td>
-	                                		<td>
-	                                			<div class="btn-group btn-group-sm">
-													<button class="btn btn-warning btn-edit" title="Edit" type="button"><i class="fa fa-pencil"></i></button>
-	                                				<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-	                                			</div>
-	                                		</td>
-	                                	</tr>
+
 	                                </tbody>
 	                            </table>
 	                        </div>
                         </section>
                     </div>
                 </div>
-
 			</div>
-
 		</div>
-
 	</section>
-
 </article>
 
 @endsection
@@ -142,22 +65,106 @@
 	});
 </script>
 <script type="text/javascript">
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
 
-$(document).ready(function(){
-	var table = $('#table_pegawai').DataTable();
+        var tb_pegawai;
+        setTimeout(function () {
+            tablePegawai();
+            addPegawai();
+        }, 500);
 
-	$('#table_pegawai tbody').on('click', '.btn-edit', function(){
+        function tablePegawai() {
+            tb_pegawai = $('#table_pegawai').DataTable({
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('pegawai.list') }}",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                columns: [
+                    {data: 'e_id', name: 'e_id'},
+                    {data: 'e_position', name: 'e_position'},
+                    {data: 'e_nik', name: 'e_nik'},
+                    {data: 'e_nip', name: 'e_nip'},
+                    {data: 'e_name', name: 'e_name'},
+                    {data: 'e_workingdays', name: 'e_workingdays'},
+                    {data: 'e_address', name: 'e_address'},
+                    {data: 'e_education', name: 'e_education'},
+                    {data: 'e_religion', name: 'e_religion'},
+                    {data: 'e_telp', name: 'e_telp'},
+                    {data: 'action', name: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
 
-		window.location.href = '{{route("kelolapegawai.edit")}}';
+        function addPegawai()
+        {
+        	$('#btn-tambah').on('click', function(){
+        		window.location.href = "{{route('pegawai.create')}}";
+        	})
+        }
 
-	});
+        function Editpegawai(idx) {
+            window.location = baseUrl + "/masterdatautama/datapegawai/edit/" + idx;
+        }
 
-	$('#btn-tambah').on('click', function(){
+        function Deletepegawai(idx) {
+            var url_hapus = baseUrl + "/masterdatautama/datapegawai/delete/" + idx;
 
-		window.location.href = '{{route("kelolapegawai.create")}}';
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Pesan!',
+                content: 'Apakah anda yakin ingin menghapus data ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return $.ajax({
+                                type: "get",
+                                url: url_hapus,
+                                beforeSend: function() {
+                                    loadingShow();
+                                },
+                                success: function (response) {
+                                    if (response.status == 'berhasil') {
+                                        loadingHide();
+                                        messageSuccess('Berhasil', 'Data berhasil dihapus!');
+                                        tb_pegawai.ajax.reload();
+                                    } else {
+                                        loadingHide();
+                                        messageFailed('Gagal', response.message);
+                                    }
+                                },
+                                error: function (e) {
+                                    loadingHide();
+                                    messageWarning('Peringatan', e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
 
-	});
-
+                        }
+                    }
+                }
+            });
+        }
 
 	$(document).on('click', '.btn-disable', function(){
 		var ini = $(this);
@@ -188,29 +195,10 @@ $(document).ready(function(){
 				cancel:{
 					text: 'Tidak',
 					action: function () {
-						// tutup confirm
 					}
 				}
 			}
 		});
 	});
-
-	$(document).on('click', '.btn-enable', function(){
-		$.toast({
-			heading: 'Information',
-			text: 'Data Berhasil di Aktifkan.',
-			bgColor: '#0984e3',
-			textColor: 'white',
-			loaderBg: '#fdcb6e',
-			icon: 'info'
-		})
-		$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
-										'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-	})
-
-	// function table_hapus(a){
-	// 	table.row($(a).parents('tr')).remove().draw();
-	// }
-});
 </script>
 @endsection

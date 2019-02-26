@@ -34,20 +34,6 @@
                           <div class="row">
                             
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>No Nota</label>
-                            </div> 
-
-                            <div class="col-md-9 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <select name="" id="" class="form-control form-control-sm select2">
-                                  <option value="">-</option>
-                                  <option value="">001533903</option>
-                                  <option value="">001433953</option>
-                                </select>
-                              </div>
-                            </div>
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Tanggal</label>
                             </div> 
 
@@ -61,7 +47,7 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Produsen</label>
+                              <label>Suplier</label>
                             </div> 
 
                             <div class="col-md-9 col-sm-6 col-xs-12">
@@ -74,7 +60,7 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Nilai</label>
+                              <label>Total Harga</label>
                             </div> 
 
                             <div class="col-md-9 col-sm-6 col-xs-12">
@@ -88,7 +74,7 @@
 	                                <thead class="bg-primary">
 	                                  <tr>
 	                                    <th>Kode Barang/Nama Barang</th>
-	                                		<th width="5%">Satuan</th>
+	                                		<th width="10%">Satuan</th>
                                       <th width="10%">Jumlah</th>
                                       <th>Harga</th>
                                       <th>Sub Total</th>
@@ -98,12 +84,12 @@
 	                                <tbody>
 	                                	<tr>
 	                                		<td>
-                                      <select name="" id="" class="form-control form-control-sm select2">
-                                        <option value="">00145123/Obat</option>
-                                      </select>
+                                      <input type="text" class="form-control form-control-sm">
                                       </td>
 	                                		<td>
-                                      <input type="text" class="form-control form-control-sm" value="pcs">
+                                      <select name="" id="" class="form-control form-control-sm select2">
+                                        <option value=""></option>
+                                      </select>
                                       </td>
 	                                		<td>
                                       <input type="number" class="form-control form-control-sm" value="3">
@@ -217,7 +203,7 @@
       $('#table_order')
       .append(
         '<tr>'+
-          '<td><select name="" id="" class="form-control form-control-sm select2"><option value="">00145123/Obat</option></select></td>'+
+          '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><input type="number" class="form-control form-control-sm"></td>'+
           '<td><input type="text" class="form-control form-control-sm input-rupiah"></td>'+

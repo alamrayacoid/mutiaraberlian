@@ -53,14 +53,14 @@ class MasterController extends Controller
         return view('masterdatautama.harga.index');
     }
 
-    public function create_dataharga()
+    public function create_satuanharga()
     {
-        return view('masterdatautama.harga.create');
+        return view('masterdatautama.harga.satuan.create');
     }
 
-    public function edit_dataharga()
+    public function edit_satuanharga()
     {
-        return view('masterdatautama.harga.edit');
+        return view('masterdatautama.harga.satuan.edit');
     }
 
     // * Master Suplier

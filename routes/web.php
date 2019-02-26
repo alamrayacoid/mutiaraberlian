@@ -29,9 +29,12 @@ Route::group(['middleware' => 'guest'], function(){
 
 	// !====================================================== Master Data Utama ======================================================!
 
-	Route::get('/masterdatautama/datapegawai/index', 'MasterController@kelolapegawai')->name('kelolapegawai.index');
-	Route::get('/masterdatautama/datapegawai/edit', 'MasterController@edit_kelolapegawai')->name('kelolapegawai.edit');
-	Route::get('/masterdatautama/datapegawai/create', 'MasterController@create_kelolapegawai')->name('kelolapegawai.create');
+	Route::get('/masterdatautama/datapegawai/index', 'Master\EmployeeController@index')->name('pegawai.index');
+	Route::get('/masterdatautama/datapegawai/getData', 'Master\EmployeeController@getData')->name('pegawai.list');
+	Route::get('/masterdatautama/datapegawai/create', 'Master\EmployeeController@create')->name('pegawai.create');
+	Route::get('/masterdatautama/datapegawai/store', 'Master\EmployeeController@store')->name('pegawai.store');
+	Route::get('/masterdatautama/datapegawai/edit/{id}', 'Master\EmployeeController@edit')->name('pegawai.edit');
+	Route::post('/masterdatautama/datapegawai/update/{id}', 'Master\EmployeeController@update')->name('pegawai.update');
 
 	Route::get('/masterdatautama/produk/index', 'Master\ItemController@index')->name('dataproduk.index');
 	Route::get('/masterdatautama/produk/list', 'Master\ItemController@getList')->name('dataproduk.list');
@@ -54,12 +57,12 @@ Route::group(['middleware' => 'guest'], function(){
 	Route::get('/masterdatautama/variasisatuanproduk/edit', 'MasterController@edit_variasisatuanproduk')->name('variasisatuan.edit');
 
 	Route::get('/masterdatautama/harga/index', 'MasterController@dataharga')->name('dataharga.index');
-	Route::get('/masterdatautama/harga/create', 'MasterController@create_dataharga')->name('dataharga.create');
-	Route::get('/masterdatautama/harga/edit', 'MasterController@edit_dataharga')->name('dataharga.edit');
+	Route::get('/masterdatautama/harga/satuan/create', 'MasterController@create_satuanharga')->name('satuanharga.create');
+	Route::get('/masterdatautama/harga/satuan/edit', 'MasterController@edit_satuanharga')->name('satuanharga.edit');
 
-	Route::get('/masterdatautama/suplier/index', 'MasterController@suplier')->name('suplier.index');
-	Route::get('/masterdatautama/suplier/create', 'MasterController@create_suplier')->name('suplier.create');
-	Route::get('/masterdatautama/suplier/edit', 'MasterController@edit_suplier')->name('suplier.edit');
+	Route::get('/masterdatautama/suplier/index', 'Master\SupplierController@index')->name('suplier.index');
+	Route::match(['get', 'post'],'/masterdatautama/suplier/create', 'Master\SupplierController@add')->name('suplier.create');
+	Route::get('/masterdatautama/suplier/edit', 'Master\SupplierController@edit')->name('suplier.edit');
 
 //	=============Mas Rowi=============
 

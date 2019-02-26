@@ -35,16 +35,6 @@
                         <section>
                           
                           <div class="row">
-                            
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>No Nota</label>
-                            </div> 
-
-                            <div class="col-md-9 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
-                              </div>
-                            </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Tanggal</label>
@@ -77,7 +67,7 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Produsen</label>
+                              <label>Suplier</label>
                             </div> 
 
                             <div class="col-md-9 col-sm-6 col-xs-12">
@@ -227,7 +217,7 @@
       $('#table_order')
       .append(
         '<tr>'+
-          '<td><input type="text" class="form-control form-control-sm""></td>'+
+          '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
