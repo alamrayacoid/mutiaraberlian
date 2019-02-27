@@ -28,8 +28,8 @@ class EmployeeController extends Controller
         ->addIndexColumn()
         ->addColumn('action', function($datas) {
           return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                    <button class="btn btn-warning" onclick="EditPegawai(\''.Crypt::encrypt($datas->e_id).'\')" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
-                    <button class="btn btn-danger" onclick="DeletePegawai(\''.Crypt::encrypt($datas->e_id).'\')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-trash-o"></i></button>
+                    <button type="button" class="btn btn-warning" onclick="editPegawai(\''.Crypt::encrypt($datas->e_id).'\')" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
+                    <button class="btn btn-danger" onclick="deletePegawai(\''.Crypt::encrypt($datas->e_id).'\')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-trash-o"></i></button>
                     </div></div>';
           })
         ->rawColumns(['action'])
@@ -140,71 +140,78 @@ class EmployeeController extends Controller
 
     }
 
-    // public function edit($id = null, Request $request)
-    // {
-    //     if (!$request->isMethod('post')) {
-    //         try{
-    //             $id = Crypt::decrypt($id);
-    //         }catch (\Exception $e){
-    //             return view('errors.404');
-    //         }
-    //         $data = DB::table('m_company')
-    //           ->leftJoin('m_employee', 'c_user', 'e_id')
-    //           ->select('m_company.*', 'e_id', 'e_name')
-    //           ->where('c_id', '=', $id)
-    //           ->first();
-    //         $employe = DB::table('m_employee')->select('m_employee.*')->get();
-    //         return view('masterdatautama.cabang.edit', compact('data', 'employe'));
-    //     } else {
-    //       try{
-    //           $id = Crypt::decrypt($id);
-    //       }catch (\Exception $e){
-    //           return view('errors.404');
-    //       }
-    //       $messages = [
-    //         'cabang_name.required'    => 'Nama cabang masih kosong, silahkan isi terlebih dahulu !',
-    //         'cabang_address.required' => 'Alamat cabang masih kosong, silahkan isi terlebih dahulu !',
-    //         'cabang_telp.required'    => 'Nomor telp masih kosong, silahkan isi terlebih dahulu !'
-    //       ];
-    //       $validator = Validator::make($request->all(), [
-    //         'cabang_name'    => 'required',
-    //         'cabang_address' => 'required',
-    //         'cabang_telp'    => 'required'
-    //       ], $messages);
+    public function edit($id = null, Request $request)
+    {
+      if (!$request->isMethod('post')) {
+        try{
+          $id = Crypt::decrypt($id);
+        }catch (\Exception $e){
+          return view('errors.404');
+        }
+        $jabatan = DB::table('m_jabatan')->select('m_jabatan.*')->get();
+        $divisi  = DB::table('m_divisi')->select('m_divisi.*')->get();
+        $company = DB::table('m_company')->select('m_company.*')
+          ->where('c_type', '!=', 'AGEN')
+          ->where('c_isactive', '=', 'Y')
+          ->get();
+        $employee = DB::table('m_employee')
+          ->leftJoin('m_company', 'e_company', 'c_id')
+          ->leftJoin('m_jabatan', 'e_position', 'j_id')
+          ->leftJoin('m_divisi', 'e_department', 'm_id')
+          ->select('m_employee.*', 'c_name', 'j_name', 'm_name')
+          ->where('e_id', '=', $id)
+          ->first();
+        return view('masterdatautama.datapegawai.edit', compact('employee', 'company', 'jabatan', 'divisi'));
+      } else {
+          try{
+              $id = Crypt::decrypt($id);
+          }catch (\Exception $e){
+              return view('errors.404');
+          }
+          $messages = [
+            'cabang_name.required'    => 'Nama cabang masih kosong, silahkan isi terlebih dahulu !',
+            'cabang_address.required' => 'Alamat cabang masih kosong, silahkan isi terlebih dahulu !',
+            'cabang_telp.required'    => 'Nomor telp masih kosong, silahkan isi terlebih dahulu !'
+          ];
+          $validator = Validator::make($request->all(), [
+            'cabang_name'    => 'required',
+            'cabang_address' => 'required',
+            'cabang_telp'    => 'required'
+          ], $messages);
 
-    //       if($validator->fails())
-    //       {
-    //         $errors = $validator->errors()->first();
-    //         return response()->json([
-    //           'status'  => 'invalid',
-    //           'message' => $errors
-    //         ]);
-    //       }
-    //       DB::beginTransaction();
-    //       try {
-    //         DB::table('m_company')
-    //           ->where('c_id', $id)
-    //           ->update([
-    //             'c_name'    => strtoupper($request->cabang_name),
-    //             'c_address' => $request->cabang_address,
-    //             'c_tlp'     => $request->cabang_telp,
-    //             'c_type'    => $request->cabang_type,
-    //             'c_user'    => $request->cabang_user,
-    //             'c_update'  => Carbon::now('Asia/Jakarta')
-    //           ]);
-    //         DB::commit();
-    //         return response()->json([
-    //           'status' => 'sukses'
-    //         ]);
-    //       } catch (\Exception $e) {
-    //         DB::rollback();
-    //         return response()->json([
-    //           'status'  => 'gagal',
-    //           'message' => $e
-    //         ]);
-    //       }
-    //     }
-    // }
+          if($validator->fails())
+          {
+            $errors = $validator->errors()->first();
+            return response()->json([
+              'status'  => 'invalid',
+              'message' => $errors
+            ]);
+          }
+          DB::beginTransaction();
+          try {
+            DB::table('m_company')
+              ->where('c_id', $id)
+              ->update([
+                'c_name'    => strtoupper($request->cabang_name),
+                'c_address' => $request->cabang_address,
+                'c_tlp'     => $request->cabang_telp,
+                'c_type'    => $request->cabang_type,
+                'c_user'    => $request->cabang_user,
+                'c_update'  => Carbon::now('Asia/Jakarta')
+              ]);
+            DB::commit();
+            return response()->json([
+              'status' => 'sukses'
+            ]);
+          } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+              'status'  => 'gagal',
+              'message' => $e
+            ]);
+          }
+        }
+    }
 
     // public function delete($id)
     // {

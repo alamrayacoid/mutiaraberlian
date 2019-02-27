@@ -109,7 +109,7 @@
         	})
         }
 
-        function Editpegawai(idx) {
+        function editPegawai(idx) {
             window.location = baseUrl + "/masterdatautama/datapegawai/edit/" + idx;
         }
 
