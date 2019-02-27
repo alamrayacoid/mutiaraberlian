@@ -159,9 +159,9 @@
                 	$('#addSatuan').modal('hide');
                 	messageSuccess('Success', 'Data berhasil disimpan');
                    	$('#table_satuan').DataTable().ajax.reload();
+                   	
             	} else {
                     $('#addSatuan').modal('hide');
-                    $('#table_satuan').DataTable().ajax.reload();
                 }
             },
         });
