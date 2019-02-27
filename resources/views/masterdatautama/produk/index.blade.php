@@ -391,6 +391,8 @@
 								if (response.status == 'berhasil') {
 									messageSuccess('Success', 'Berhasil dihapus');
 									tb_jenis.ajax.reload();
+								} else if (response.status == 'digunakan') {
+									messageWarning('Warning', 'Type sedang digunakan');
 								} else {
 									messageFailed('Gagal', 'Gagal dihapus');
 								}
