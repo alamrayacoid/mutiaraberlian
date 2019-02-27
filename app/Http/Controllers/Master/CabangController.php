@@ -39,7 +39,8 @@ class CabangController extends Controller
     public function create()
     {
       $employe = DB::table('m_employee')->select('e_id', 'e_name')->get();
-      return view('masterdatautama.cabang.create', compact('employe'));
+      $company = DB::table('m_company')->select('c_id', 'c_name')->get();
+      return view('masterdatautama.cabang.create', compact('employe', 'company'));
     }
 
     public function store(Request $request)
