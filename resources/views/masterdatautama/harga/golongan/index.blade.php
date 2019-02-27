@@ -7,34 +7,43 @@
 		</div>
 		<div class="card-block">
 			<section>
-				<div class="container">
 				<div class="row">
-					<fieldset class="col-md-6 col-sm-12 mr-4">
+					<div class="col-md-6 col-sm-12">
 					<div class="table-responsive">
-					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_hargasatuan">
+					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_golonganharga">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>
-								<th>Nama</th>
-								<th>Aksi</th>
+								<th width="70" style="text-align:center">Nama</th>
+								<th width="19%">Aksi</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td>1</td>
-								<td>Agen</td>
+								<td  style="text-align:center">Agen</td>
 								<td>
 									<div class="btn-group btn-group-sm">
 										<button class="btn btn-warning btn-edit-golonganharga" title="Edit" type="button"><i class="fa fa-pencil"></i></button>
 										<button class="btn btn-danger btn-disable-golonganharga" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
+										<button class="btn btn-primary btn-add-golonganharga" title="add" type="button"><i class="fa fa-arrow-right"></i>
+</button>
 									</div>
 								</td>
 							</tr>
 						</tbody>
 					</table>
 					</div>
-					</fieldset>
-					<fieldset class="col-md-5 col-sm-12">
+					</div>
+					<fieldset class="col-md-6 col-sm-12">
+						<div class="row">
+						<div class="col-md-2">
+							<label for="">Class : </label>
+						</div>
+						<div class="col-md-10">
+							<p>~</p>
+						</div>
+						</div>
 						<div>
 							<label for="">Nama Barang</label>
 						</div>
@@ -55,8 +64,36 @@
 						<hr>
 						@include('masterdatautama.harga.golongan.satuan')
 						@include('masterdatautama.harga.golongan.range')
+						<div>
+						<div class="table-responsive">
+						<table class="table table-hover table-striped display nowrap" cellspacing="0" id="#table_item">
+							<thead class="bg-primary">
+								<tr>
+									<th width="1%">No</th>
+									<th>Nama</th>
+									<th>Jenis</th>
+									<th>Range</th>
+									<th>Satuan</th>
+									<th>Jenis Pembayaran</th>
+									<th>Aksi</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>1</td>
+									<td>Agen</td>
+									<td>
+										<div class="btn-group btn-group-sm">
+											<button class="btn btn-warning btn-edit-golonganharga" title="Edit" type="button"><i class="fa fa-pencil"></i></button>
+											<button class="btn btn-danger btn-disable-golonganharga" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						</div>
+						</div>
 					</fieldset>
-				</div>
 				</div>
 			</section>
 
