@@ -148,15 +148,20 @@ class EmployeeController extends Controller
         }catch (\Exception $e){
           return view('errors.404');
         }
+        $jabatan = DB::table('m_jabatan')->select('m_jabatan.*')->get();
+        $divisi  = DB::table('m_divisi')->select('m_divisi.*')->get();
         $company = DB::table('m_company')->select('m_company.*')
           ->where('c_type', '!=', 'AGEN')
           ->where('c_isactive', '=', 'Y')
           ->get();
         $employee = DB::table('m_employee')
-          ->select('m_employee.*')
+          ->leftJoin('m_company', 'e_company', 'c_id')
+          ->leftJoin('m_jabatan', 'e_position', 'j_id')
+          ->leftJoin('m_divisi', 'e_department', 'm_id')
+          ->select('m_employee.*', 'c_name', 'j_name', 'm_name')
           ->where('e_id', '=', $id)
           ->first();
-        return view('masterdatautama.cabang.edit', compact('employee', 'company'));
+        return view('masterdatautama.datapegawai.edit', compact('employee', 'company', 'jabatan', 'divisi'));
       } else {
           try{
               $id = Crypt::decrypt($id);
