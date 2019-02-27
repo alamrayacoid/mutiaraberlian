@@ -317,12 +317,20 @@ class ItemController extends Controller
       DB::beginTransaction();
       try {
 
-        DB::table('m_itemtype')->where('it_id', $request->id)->delete();
+        $cek = DB::table('m_item')->where('i_type', $request->id)->count();
 
-        DB::commit();
-        return response()->json([
-          'status' => 'berhasil'
-        ]);
+        if ($cek > 0) {
+          return response()->json([
+            'status' => 'digunakan'
+          ]);
+        } else {
+          DB::table('m_itemtype')->where('it_id', $request->id)->delete();
+          DB::commit();
+          return response()->json([
+            'status' => 'berhasil'
+          ]);
+        }
+
       } catch (Exception $e) {
         DB::rollback();
         return response()->json([
