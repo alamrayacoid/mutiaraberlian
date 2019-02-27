@@ -113,51 +113,51 @@
                                     <div class="col-lg-3 col-sm-12">
                                         <label for="">Pendidikan<span style="color:red;">*</span></label>
                                     </div>
-                                    <div class=" col-lg-9 col-sm-12">
-                                        <select class="form-control" name="pendidikanterakhir" id="pendidikanterakhir">
-                                            <option value="-" selected disabled>-- Pendidikan Terakhir --</option>
-                                            <option value="SD" >SD</option>
-                                            <option value="SMP" >SMP</option>
-                                            <option value="SMA" >SMA</option>
-                                            <option value="SMK" >SMK</option>
-                                            <option value="D1" >D1</option>
-                                            <option value="D2" >D2</option>
-                                            <option value="D3" >D3</option>
-                                            <option value="S1" >S1</option>
-                                        </select>
-                                    </div>
+                                    <select class="form-control col-lg-9 col-sm-12" name="pendidikanterakhir" id="pendidikanterakhir">
+                                        <option value="-" selected disabled>-- Pendidikan Terakhir --</option>
+                                        <option value="SD">SD</option>
+                                        <option value="SMP">SMP</option>
+                                        <option value="SMA">SMA</option>
+                                        <option value="SMK">SMK</option>
+                                        <option value="D1">D1</option>
+                                        <option value="D2">D2</option>
+                                        <option value="D3">D3</option>
+                                        <option value="S1">S1</option>
+                                    </select>
                                     <div class="col-lg-3 col-sm-12">
                                         <label for="">Email<span style="color:red;">*</span></label>
                                     </div>
-                                    <input type="text" class="form-control col-lg-9 col-sm-12">
+                                    <input type="text" class="form-control col-lg-7 col-sm-12">
+                                    <div>
+                                    <button class="btn btn-check">Cek Email</button>
+                                    </div>
                                     <div class="col-lg-3 col-sm-12">
                                         <label for="">No Telp/WA<span style="color:red;">*</span></label>
                                     </div>
-                                    <input type="text" class="form-control col-lg-9 col-sm-12">
+                                    <input type="text" class="form-control col-lg-7 col-sm-12">
+                                    <div>
+                                    <button class="btn btn-check">Cek Nomer</button>
+                                    </div>
                                     <div class="col-lg-3 col-sm-12">
                                         <label for="">Agama<span style="color:red;">*</span></label>
                                     </div>
-                                    <div class="col-lg-9 col-sm-12">
-                                        <select class="form-control" name="agama" id="agama">
-                                            <option value="-" selected disabled>-- Pilih Agama --</option>
-                                            <option value="islam" >Islam</option>
-                                            <option value="kristen" >Kristen</option>
-                                            <option value="katolik" >Katolik</option>
-                                            <option value="budha" >Budha</option>
-                                            <option value="hindu" >Hindu</option>
-                                            <option value="konghuchu" >Konghuchu</option>
-                                        </select>
-                                    </div>
+                                    <select class="form-control col-lg-9 col-sm-12" name="agama" id="agama">
+                                        <option value="-" selected disabled>-- Pilih Agama --</option>
+                                        <option value="islam" >Islam</option>
+                                        <option value="kristen" >Kristen</option>
+                                        <option value="katolik" >Katolik</option>
+                                        <option value="budha" >Budha</option>
+                                        <option value="hindu" >Hindu</option>
+                                        <option value="konghuchu" >Konghuchu</option>
+                                    </select>
                                     <div class="col-lg-3 col-sm-12">
                                         <label for="">Status<span style="color:red;">*</span></label>
                                     </div>
-                                    <div class="col-lg-9 col-sm-12">
-                                        <select class="form-control" name="status" id="status">
-                                            <option value="-" selected disabled>-- Pilih Status --</option>
-                                            <option value="menikah" >Menikah</option>
-                                            <option value="belum" >Belum Menikah</option>
-                                        </select>
-                                    </div>
+                                    <select class="form-control col-lg-9 col-sm-12" name="status" id="status">
+                                        <option value="-" selected disabled>-- Pilih Status --</option>
+                                        <option value="menikah" >Menikah</option>
+                                        <option value="belum" >Belum Menikah</option>
+                                    </select>
                                     <div class="col-lg-3 col-sm-12">
                                         <label for="">Nama Suami/Istri<span style="color:red;">*</span></label>
                                     </div>
@@ -306,13 +306,6 @@
                         <button type="button" class="btn btn-lg btn-common next-step next-button">Simpan</button>
                     </li>
                 </ul>
-            </div>
-            <div class="tab-pane" role="tabpanel" id="step5">
-                <h1 class="text-md-center">Complete</h1>
-                <div class="row">
-
-
-                </div>
             </div>
             <div class="clearfix"></div>
         </div>

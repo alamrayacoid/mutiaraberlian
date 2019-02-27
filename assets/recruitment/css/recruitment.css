@@ -29,6 +29,12 @@ body {
     display:inline-block; 
 }
 
+.btn-check {
+    background-color:#1dd1a1 !important;
+    color:white !important;
+    margin-left:10px;
+}
+
 .btn-about {
     font-family: 'Nunito Sans', sans-serif;
     background-color: white !important;
