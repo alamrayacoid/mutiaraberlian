@@ -40,6 +40,7 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'auth.logout'
     ]);
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('storage/uploads/produk/original')->name('image_produk');   
 
     // !====================================================== Master Data Utama ======================================================!
 
@@ -54,7 +55,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/produk/list', 'Master\ItemController@getList')->name('dataproduk.list');
     Route::get('/masterdatautama/produk/create', 'Master\ItemController@create')->name('dataproduk.create');
     Route::post('/masterdatautama/produk/store', 'Master\ItemController@store')->name('dataproduk.store');
-    Route::get('/masterdatautama/produk/store', 'Master\ItemController@store')->name('dataproduk.store');
     Route::get('/masterdatautama/produk/edit/{id}', 'Master\ItemController@edit')->name('dataproduk.edit');
     Route::post('/masterdatautama/produk/update/{id}', 'Master\ItemController@update')->name('dataproduk.update');
     Route::post('/masterdatautama/produk/delete/{id}', 'Master\ItemController@destroy')->name('dataproduk.delete');

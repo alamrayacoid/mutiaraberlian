@@ -83,7 +83,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <select class="form-control form-control-sm" name="dataproduk_satuanutama">
+                                <select class="form-control form-control-sm" readonly name="dataproduk_satuanutama">
                                   <option value="">--Pilih--</option>
                                   @foreach ($satuan as $key => $value)
                                     <option value="{{$value->u_id}}" @if ($value->u_id == $data['dataproduk']->i_unit1)
@@ -167,13 +167,17 @@
                             </div>
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="file" class="form-control form-control-sm" name="e_foto" id="foto">
+                                <input type="file" class="form-control form-control-sm" name="e_foto" id="foto" accept="image/*">
                               </div>
                             </div>
 
                             <div class="col-12" align="center">
                               <div class="form-group">
-                                <img src="{{asset('assets/img/add-image-icon.png')}}" height="120px" width="90px" id="img-preview" style="cursor: pointer;">
+                                @if ($data['dataproduk']->i_image != null)
+                                  <img src="{{url('/storage/uploads/produk/original') . '/' . $data['dataproduk']->i_image}}" height="120px" width="130px" id="img-preview" style="cursor: pointer;">
+                                @else
+                                  <img src="{{asset('assets/img/add-image-icon.png')}}" height="120px" width="130px" id="img-preview" style="cursor: pointer;">
+                                @endif
                               </div>
                             </div>
 
@@ -212,13 +216,17 @@
   function SubmitForm(event)
   {
     event.preventDefault();
-    form_data = $('#myForm').serialize();
-
+    var file_data = $('#foto').prop('files')[0];
+    var form_data = new FormData();
+    form_data.append('file', file_data);
     $.ajax({
       data : form_data,
       type : "post",
-      url : $("#myForm").attr('action'),
+      url : $("#myForm").attr('action')+'?'+$('#myForm').serialize(),
       dataType : 'json',
+      cache: false,
+      contentType: false,
+      processData: false,
       success : function (response){
         if(response.status == 'berhasil'){
           $.toast({
@@ -235,16 +243,7 @@
             }
           });
         } else if (response.status == 'invalid') {
-          $.toast({
-            heading: 'Perhatian',
-            text: response.message,
-            bgColor: '#00b894',
-            textColor: 'white',
-            loaderBg: '#55efc4',
-            icon: 'warning',
-            stack: false,
-            hideAfter: 2000
-          });
+          messageWarning('Warning', response.message);
         }
       },
       error : function(e){
@@ -280,11 +279,17 @@
   });
 </script>
 <script type="text/javascript">
-  $(document).ready(function(){
-  
-    function readURL(input, target) {
+$(document).ready(function(){
 
-      if (input.files && input.files[0]) {
+  function readURL(input, target) {
+
+    if (input.files && input.files[0]) {
+      var fsize = $('#foto')[0].files[0].size;
+      if(fsize>1048576) //do something if file size more than 1 mb (1048576)
+      {
+          messageWarning('Warning', 'File is to big!');
+          return false;
+      } else {
         var reader = new FileReader();
 
         reader.onload = function(e) {
@@ -294,17 +299,18 @@
         reader.readAsDataURL(input.files[0]);
       }
     }
+  }
 
-    $("#foto").change(function() {
-      readURL(this, '#img-preview');
-    });  
+  $("#foto").change(function() {
+    readURL(this, '#img-preview');
+  });
 
-    $('#img-preview').click(function(){
+  $('#img-preview').click(function(){
 
-      $('#foto').click();
-
-    });
+    $('#foto').click();
 
   });
+
+});
 </script>
 @endsection
