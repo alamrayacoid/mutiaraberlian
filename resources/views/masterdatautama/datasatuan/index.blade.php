@@ -158,10 +158,10 @@
             	if(data.status =='sukses'){
                 	$('#addSatuan').modal('hide');
                 	messageSuccess('Success', 'Data berhasil disimpan');
-                   	$('#table_satuan').DataTable().ajax.reload();
+                   	// $('#table_satuan').DataTable().ajax.reload();
+                   	window.location.href = "{{route('datasatuan.index')}}";
             	} else {
                     $('#addSatuan').modal('hide');
-                    $('#table_satuan').DataTable().ajax.reload();
                 }
             },
         });

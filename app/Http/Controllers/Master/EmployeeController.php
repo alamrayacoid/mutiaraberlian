@@ -39,13 +39,18 @@ class EmployeeController extends Controller
     public function create()
     {
       $jabatan = DB::table('m_jabatan')->select('m_jabatan.*')->get();
-      $divisi = DB::table('m_divisi')->select('m_divisi.*')->get();
-      return view('masterdatautama.datapegawai.create', compact('jabatan', 'divisi'));
+      $divisi  = DB::table('m_divisi')->select('m_divisi.*')->get();
+      $company = DB::table('m_company')->select('m_company.*')
+        ->where('c_type', '!=', 'AGEN')
+        ->where('c_isactive', '=', 'Y')
+        ->get();
+      return view('masterdatautama.datapegawai.create', compact('jabatan', 'divisi', 'company'));
     }
 
     public function store(Request $request)
     {
       $messages = [
+        'e_company.required'       => 'Cabang masih kosong, silahkan isi terlebih dahulu !',
         'e_nip.required'           => 'NIP masih kosong, silahkan isi terlebih dahulu !',
         'e_name.required'          => 'Nama masih kosong, silahkan isi terlebih dahulu !',
         'e_nik.required'           => 'NIK masih kosong, silahkan isi terlebih dahulu !',
@@ -64,6 +69,7 @@ class EmployeeController extends Controller
         'e_an.required'            => 'AN masih kosong, silahkan isi terlebih dahulu !'
       ];
       $validator = Validator::make($request->all(), [
+        'e_company'       => 'required',
         'e_nip'           => 'required',
         'e_name'          => 'required',
         'e_nik'           => 'required',
@@ -72,7 +78,7 @@ class EmployeeController extends Controller
         'e_gender'        => 'required',
         'e_maritalstatus' => 'required',
         'e_birth'         => 'required',
-        'e_edication'     => 'required',
+        'e_education'     => 'required',
         'e_email'         => 'required',
         'e_position'      => 'required',
         'e_department'    => 'required',
@@ -95,14 +101,20 @@ class EmployeeController extends Controller
       try {
         DB::table('m_employee')
         ->insert([
-          'e_id'            => CodeGenerator::code('m_employee', 'e_id', 7, 'MB'),
+          'e_id'            => CodeGenerator::code('m_employee', 'e_id', 7, 'EMP'),
+          'e_company'       => $request->e_company,
           'e_nip'           => $request->e_nip,
           'e_name'          => strtoupper($request->e_name),
           'e_nik'           => $request->e_nik,
+          'e_workingdays'   => $request->e_workingdays,
           'e_telp'          => $request->e_telp,
           'e_religion'      => $request->e_religion,
+          'e_gender'        => $request->e_gender,
+          'e_matename'      => $request->e_matename,
           'e_maritalstatus' => $request->e_maritalstatus,
-          'e_birth'         => $request->e_birth,
+          'e_child'         => $request->e_child,
+          'e_birth'         => date('Y-m-d', strtotime($request->e_birth)),
+          "e_workingyear"   => $request->e_workingyear,
           'e_education'     => $request->e_education,
           'e_email'         => $request->e_email,
           'e_position'      => $request->e_position,
@@ -111,8 +123,8 @@ class EmployeeController extends Controller
           'e_bank'          => $request->e_bank,
           'e_rekening'      => $request->e_rekening,
           'e_an'            => $request->e_an,
-          'c_insert'        => Carbon::now('Asia/Jakarta'),
-          'c_update'        => Carbon::now('Asia/Jakarta')
+          'e_isactive'      => "Y",
+          'e_foto'          => $request->e_foto
         ]);
         DB::commit();
         return response()->json([
