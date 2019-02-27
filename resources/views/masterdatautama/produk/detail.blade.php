@@ -162,6 +162,12 @@
                               </div>
                             </div>
 
+                            <div class="col-12" align="center">
+                              <div class="form-group">
+                                <img src="{{asset('assets/img/add-image-icon.png')}}" height="120px" width="130px" id="img-preview" style="cursor: pointer;">
+                              </div>
+                            </div>
+
                           </div>
                         </section>
                       </div>
