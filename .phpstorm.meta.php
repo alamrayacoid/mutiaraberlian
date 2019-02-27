@@ -5,7 +5,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2019-02-27 04:32:35.
+    * Generated on 2019-02-27 04:52:23.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -18,7 +18,7 @@ namespace PHPSTORM_META {
         'Illuminate\Console\Scheduling\ScheduleFinishCommand' => \Illuminate\Console\Scheduling\ScheduleFinishCommand::class,
         'Illuminate\Console\Scheduling\ScheduleRunCommand' => \Illuminate\Console\Scheduling\ScheduleRunCommand::class,
         'Illuminate\Contracts\Auth\Access\Gate' => \Illuminate\Auth\Access\Gate::class,
-        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\LogBroadcaster::class,
+        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\NullBroadcaster::class,
         'Illuminate\Contracts\Console\Kernel' => \App\Console\Kernel::class,
         'Illuminate\Contracts\Debug\ExceptionHandler' => \NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler::class,
         'Illuminate\Contracts\Http\Kernel' => \App\Http\Kernel::class,
@@ -161,7 +161,7 @@ namespace PHPSTORM_META {
         'Illuminate\Console\Scheduling\ScheduleFinishCommand' => \Illuminate\Console\Scheduling\ScheduleFinishCommand::class,
         'Illuminate\Console\Scheduling\ScheduleRunCommand' => \Illuminate\Console\Scheduling\ScheduleRunCommand::class,
         'Illuminate\Contracts\Auth\Access\Gate' => \Illuminate\Auth\Access\Gate::class,
-        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\LogBroadcaster::class,
+        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\NullBroadcaster::class,
         'Illuminate\Contracts\Console\Kernel' => \App\Console\Kernel::class,
         'Illuminate\Contracts\Debug\ExceptionHandler' => \NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler::class,
         'Illuminate\Contracts\Http\Kernel' => \App\Http\Kernel::class,
@@ -304,7 +304,7 @@ namespace PHPSTORM_META {
         'Illuminate\Console\Scheduling\ScheduleFinishCommand' => \Illuminate\Console\Scheduling\ScheduleFinishCommand::class,
         'Illuminate\Console\Scheduling\ScheduleRunCommand' => \Illuminate\Console\Scheduling\ScheduleRunCommand::class,
         'Illuminate\Contracts\Auth\Access\Gate' => \Illuminate\Auth\Access\Gate::class,
-        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\LogBroadcaster::class,
+        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\NullBroadcaster::class,
         'Illuminate\Contracts\Console\Kernel' => \App\Console\Kernel::class,
         'Illuminate\Contracts\Debug\ExceptionHandler' => \NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler::class,
         'Illuminate\Contracts\Http\Kernel' => \App\Http\Kernel::class,
@@ -447,7 +447,7 @@ namespace PHPSTORM_META {
         'Illuminate\Console\Scheduling\ScheduleFinishCommand' => \Illuminate\Console\Scheduling\ScheduleFinishCommand::class,
         'Illuminate\Console\Scheduling\ScheduleRunCommand' => \Illuminate\Console\Scheduling\ScheduleRunCommand::class,
         'Illuminate\Contracts\Auth\Access\Gate' => \Illuminate\Auth\Access\Gate::class,
-        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\LogBroadcaster::class,
+        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\NullBroadcaster::class,
         'Illuminate\Contracts\Console\Kernel' => \App\Console\Kernel::class,
         'Illuminate\Contracts\Debug\ExceptionHandler' => \NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler::class,
         'Illuminate\Contracts\Http\Kernel' => \App\Http\Kernel::class,
@@ -590,7 +590,7 @@ namespace PHPSTORM_META {
         'Illuminate\Console\Scheduling\ScheduleFinishCommand' => \Illuminate\Console\Scheduling\ScheduleFinishCommand::class,
         'Illuminate\Console\Scheduling\ScheduleRunCommand' => \Illuminate\Console\Scheduling\ScheduleRunCommand::class,
         'Illuminate\Contracts\Auth\Access\Gate' => \Illuminate\Auth\Access\Gate::class,
-        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\LogBroadcaster::class,
+        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\NullBroadcaster::class,
         'Illuminate\Contracts\Console\Kernel' => \App\Console\Kernel::class,
         'Illuminate\Contracts\Debug\ExceptionHandler' => \NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler::class,
         'Illuminate\Contracts\Http\Kernel' => \App\Http\Kernel::class,
@@ -733,7 +733,7 @@ namespace PHPSTORM_META {
         'Illuminate\Console\Scheduling\ScheduleFinishCommand' => \Illuminate\Console\Scheduling\ScheduleFinishCommand::class,
         'Illuminate\Console\Scheduling\ScheduleRunCommand' => \Illuminate\Console\Scheduling\ScheduleRunCommand::class,
         'Illuminate\Contracts\Auth\Access\Gate' => \Illuminate\Auth\Access\Gate::class,
-        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\LogBroadcaster::class,
+        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\NullBroadcaster::class,
         'Illuminate\Contracts\Console\Kernel' => \App\Console\Kernel::class,
         'Illuminate\Contracts\Debug\ExceptionHandler' => \NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler::class,
         'Illuminate\Contracts\Http\Kernel' => \App\Http\Kernel::class,
@@ -876,7 +876,7 @@ namespace PHPSTORM_META {
         'Illuminate\Console\Scheduling\ScheduleFinishCommand' => \Illuminate\Console\Scheduling\ScheduleFinishCommand::class,
         'Illuminate\Console\Scheduling\ScheduleRunCommand' => \Illuminate\Console\Scheduling\ScheduleRunCommand::class,
         'Illuminate\Contracts\Auth\Access\Gate' => \Illuminate\Auth\Access\Gate::class,
-        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\LogBroadcaster::class,
+        'Illuminate\Contracts\Broadcasting\Broadcaster' => \Illuminate\Broadcasting\Broadcasters\NullBroadcaster::class,
         'Illuminate\Contracts\Console\Kernel' => \App\Console\Kernel::class,
         'Illuminate\Contracts\Debug\ExceptionHandler' => \NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler::class,
         'Illuminate\Contracts\Http\Kernel' => \App\Http\Kernel::class,

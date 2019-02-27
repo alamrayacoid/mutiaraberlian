@@ -58,6 +58,7 @@
                       <input type="number" class="form-control form-control-sm" name="cabang_telp" value="{{ $data->c_tlp }}">
                     </div>
                   </div>
+                  <input type="hidden" name="cabang_type" value="{{$data->c_type}}">
                   <div class="col-md-3 col-sm-6 col-xs-12">
                     <label>Pemilik Cabang</label>
                   </div>

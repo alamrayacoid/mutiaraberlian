@@ -63,7 +63,7 @@
         <h1 class="hire-title">WE'RE HIRING!</h1>
         <div class="row header-button">
             <button class="btn btn-secondary btn-about" onclick="window.location.href='#about'">About Us</button>
-            <button class="btn btn-secondary btn-join" onclick="window.location.href='#section-1'">Apply Now</button>
+            <button class="btn btn-secondary btn-join" onclick="window.location.href='#register'">Apply Now</button>
         </div>
         <div class="square-border d-none d-xl-block"></div>
         <div class="images">
@@ -73,7 +73,7 @@
 </div>
 <button onclick="topFunction()" id="TopGan" title="Go to top"><i class="fa fa-angle-double-up" aria-hidden="true"></i>
 </button>
-<div class="container" id="section-1">
+<div class="container" id="register">
 
 </div>
 <form class="form cf" action="{{ route('recruitment.store') }}" method="post" id="myForm" autocomplete="off" enctype="multipart/form-data">
