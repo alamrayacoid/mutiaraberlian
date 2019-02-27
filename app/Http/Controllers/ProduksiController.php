@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use DB;
+use Response;
 
 class ProduksiController extends Controller
 {
@@ -10,10 +12,41 @@ class ProduksiController extends Controller
     {
     	return view('produksi/orderproduksi/index');
     }
-    public function create_produksi()
+    public function create_produksi(Request $request)
     {
-        return view('produksi/orderproduksi/create');
+        if (!$request->isMethod('post')) {
+            $suppliers = DB::table('m_supplier')
+                ->select('s_id', 's_name')
+                ->get();
+
+            $units = DB::table('m_unit')->get();
+            return view('produksi/orderproduksi/create')->with(compact('suppliers', 'units'));
+        } else {
+            $data = $request->all();
+            dd($data);
+        }
     }
+
+    public function cariBarang(Request $request)
+    {
+        $cari = $request->term;
+        $results = [];
+        $nama = DB::table('m_item')
+            ->where(function ($q) use ($cari){
+                $q->where('i_code', 'like', '%'.$cari.'%');
+                $q->orWhere('i_name', 'like', '%'.$cari.'%');
+            })->get();
+
+        if (count($nama) < 1) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $nama];
+            }
+        }
+        return Response::json($results);
+    }
+
     public function edit_produksi()
     {
         return view('produksi/orderproduksi/edit');
