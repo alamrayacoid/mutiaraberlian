@@ -101,7 +101,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/cabang/create', 'Master\CabangController@create')->name('cabang.create');
     Route::get('/masterdatautama/cabang/store', 'Master\CabangController@store')->name('cabang.store');
     Route::match(['get', 'post'], '/masterdatautama/cabang/edit/{id}', 'Master\CabangController@edit')->name('cabang.edit');
-    Route::get('/masterdatautama/cabang/delete/{id}', 'Master\CabangController@delete')->name('cabang.delete');
+    Route::get('/masterdatautama/cabang/nonactive/{id}', 'Master\CabangController@nonActive')->name('cabang.nonActive');
+    Route::get('/masterdatautama/cabang/actived/{id}', 'Master\CabangController@actived')->name('cabang.actived');
 //    ==========End Master Outlet======
 
     Route::get('/masterdatautama/agen/index', 'Master\AgenController@index')->name('agen.index');
