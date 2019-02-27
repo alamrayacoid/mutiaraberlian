@@ -259,6 +259,7 @@
 
             $(document).on('click', '.btn-hapus', function () {
                 $(this).parents('tr').remove();
+                updateTotalTampil();
             });
 
             $( ".cari-barang" ).autocomplete({
