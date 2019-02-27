@@ -109,7 +109,7 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Atas Nama (rekening)</label>
+                              <label>Atasnama (rekening)</label>
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
@@ -146,7 +146,7 @@
 
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>TOP(Termin Of Payment)</label>
+                              <label>TOP (Termin Of Payment)</label>
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">

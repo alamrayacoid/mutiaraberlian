@@ -110,6 +110,15 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Atasnama (rekening)</label>
+                            </div>
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm" name="atasnama" value="{{ $data['supplier']->s_atasnama }}">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Bank</label>
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
@@ -131,7 +140,7 @@
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Note</label>
                             </div>
-                            <div class="col-md-3 col-sm-6 col-xs-12">
+                            <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
                                 <textarea type="text" class="form-control form-control-sm" name="note" value="{{ $data['supplier']->s_note }}"></textarea>
                               </div>
@@ -139,7 +148,7 @@
 
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>TOP(Termin Of Payment)</label>
+                              <label>TOP (Termin Of Payment)</label>
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
