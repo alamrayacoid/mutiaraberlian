@@ -326,6 +326,25 @@
                         </li>
                     </ul>
                 </li>
+                <!-- AKTIVITAS Setting -->
+                <li class="{{Request::is('pengaturan/*') ? 'active open' : ''}}">
+                    <a href="">
+                        <i class="fa fa-cog"></i><span class="menu-title"> Pengaturan</span>
+                        <i class="fa arrow"></i>
+                    </a>
+                    <ul class="sidebar-nav">
+                        <li class="">
+                            <a href="">Otorisasi</a>
+                        </li>
+                        <li class="">
+                            <a href="">Notifikasi</a>
+                        </li>
+                        <li class="">
+                            <a href="">Pengaturan Pengguna</a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- END AKTIVITAS Setting -->
             </ul>
         </nav>
     </div>
