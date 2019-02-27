@@ -110,6 +110,15 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Atasnama (rekening)</label>
+                            </div>
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm" name="atasnama" value="{{ $data['supplier']->s_atasnama }}">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Bank</label>
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
@@ -131,7 +140,7 @@
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Note</label>
                             </div>
-                            <div class="col-md-3 col-sm-6 col-xs-12">
+                            <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
                                 <textarea type="text" class="form-control form-control-sm" name="note" value="{{ $data['supplier']->s_note }}"></textarea>
                               </div>
@@ -139,7 +148,7 @@
 
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>TOP(Termin Of Payment)</label>
+                              <label>TOP (Termin Of Payment)</label>
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
@@ -161,7 +170,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm input-rupiah" name="limit" value="{{ $data['supplier']->s_limit }}">
+                                <input type="text" class="form-control form-control-sm input-rupiah" id="limit" name="limit" value="{{ $data['supplier']->s_limit }}">
                               </div>
                             </div>
 
@@ -170,7 +179,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm input-rupiah" name="hutang" value="{{ $data['supplier']->s_hutang }}">
+                                <input type="text" class="form-control form-control-sm input-rupiah" id="hutang" name="hutang" value="{{ $data['supplier']->s_hutang }}">
                               </div>
                             </div>
                           </section>
@@ -211,6 +220,11 @@
       precision: 0,
       suffix: ' Hari'
     });
+    $('#top').maskMoney('mask');
+    $('#deposit').maskMoney('mask');
+    $('#limit').maskMoney('mask');
+    $('#hutang').maskMoney('mask');
+    $('')
   });
 
   $('#btn_simpan').on('click', function() {
