@@ -46,14 +46,40 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
       $messages = [
-        'cabang_name.required'    => 'Nama cabang masih kosong, silahkan isi terlebih dahulu !',
-        'cabang_address.required' => 'Alamat cabang masih kosong, silahkan isi terlebih dahulu !',
-        'cabang_telp.required'    => 'Nomor telp masih kosong, silahkan isi terlebih dahulu !'
+        'e_nip.required'           => 'NIP masih kosong, silahkan isi terlebih dahulu !',
+        'e_name.required'          => 'Nama masih kosong, silahkan isi terlebih dahulu !',
+        'e_nik.required'           => 'NIK masih kosong, silahkan isi terlebih dahulu !',
+        'e_telp.required'          => 'Telepon masih kosong, silahkan isi terlebih dahulu !',
+        'e_religion.required'      => 'Agama masih kosong, silahkan isi terlebih dahulu !',
+        'e_gender.required'        => 'Jenis Kelamin masih kosong, silahkan isi terlebih dahulu !',
+        'e_maritalstatus.required' => 'Status masih kosong, silahkan isi terlebih dahulu !',
+        'e_birth.required'         => 'Tgl Lahir masih kosong, silahkan isi terlebih dahulu !',
+        'e_education.required'     => 'Pendidikan masih kosong, silahkan isi terlebih dahulu !',
+        'e_email.required'         => 'Email masih kosong, silahkan isi terlebih dahulu !',
+        'e_position.required'      => 'Jabatan masih kosong, silahkan isi terlebih dahulu !',
+        'e_department.required'    => 'Divisi masih kosong, silahkan isi terlebih dahulu !',
+        'e_address.required'       => 'Alamat masih kosong, silahkan isi terlebih dahulu !',
+        'e_bank.required'          => 'Bank masih kosong, silahkan isi terlebih dahulu !',
+        'e_rekening.required'      => 'Rekening masih kosong, silahkan isi terlebih dahulu !',
+        'e_an.required'            => 'AN masih kosong, silahkan isi terlebih dahulu !'
       ];
       $validator = Validator::make($request->all(), [
-        'cabang_name'    => 'required',
-        'cabang_address' => 'required',
-        'cabang_telp'    => 'required'
+        'e_nip'           => 'required',
+        'e_name'          => 'required',
+        'e_nik'           => 'required',
+        'e_telp'          => 'required',
+        'e_religion'      => 'required',
+        'e_gender'        => 'required',
+        'e_maritalstatus' => 'required',
+        'e_birth'         => 'required',
+        'e_edication'     => 'required',
+        'e_email'         => 'required',
+        'e_position'      => 'required',
+        'e_department'    => 'required',
+        'e_address'       => 'required',
+        'e_bank'          => 'required',
+        'e_rekening'      => 'required',
+        'e_an'            => 'required'
       ], $messages);
 
       if($validator->fails())
@@ -67,16 +93,26 @@ class EmployeeController extends Controller
       
       DB::beginTransaction();
       try {
-        DB::table('m_company')
+        DB::table('m_employee')
         ->insert([
-          'c_id'      => CodeGenerator::code('m_company', 'c_id', 7, 'MB'),
-          'c_name'    => strtoupper($request->cabang_name),
-          'c_address' => $request->cabang_address,
-          'c_tlp'     => $request->cabang_telp,
-          'c_type'    => $request->cabang_type,
-          'c_user'    => $request->cabang_user,
-          'c_insert'  => Carbon::now('Asia/Jakarta'),
-          'c_update'  => Carbon::now('Asia/Jakarta')
+          'e_id'            => CodeGenerator::code('m_employee', 'e_id', 7, 'MB'),
+          'e_nip'           => $request->e_nip,
+          'e_name'          => strtoupper($request->e_name),
+          'e_nik'           => $request->e_nik,
+          'e_telp'          => $request->e_telp,
+          'e_religion'      => $request->e_religion,
+          'e_maritalstatus' => $request->e_maritalstatus,
+          'e_birth'         => $request->e_birth,
+          'e_education'     => $request->e_education,
+          'e_email'         => $request->e_email,
+          'e_position'      => $request->e_position,
+          'e_department'    => $request->e_department,
+          'e_address'       => $request->e_address,
+          'e_bank'          => $request->e_bank,
+          'e_rekening'      => $request->e_rekening,
+          'e_an'            => $request->e_an,
+          'c_insert'        => Carbon::now('Asia/Jakarta'),
+          'c_update'        => Carbon::now('Asia/Jakarta')
         ]);
         DB::commit();
         return response()->json([
