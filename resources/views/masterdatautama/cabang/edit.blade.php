@@ -59,28 +59,6 @@
                     </div>
                   </div>
                   <div class="col-md-3 col-sm-6 col-xs-12">
-                    <label>Tipe Cabang</label>
-                  </div>
-                  <div class="col-md-9 col-sm-6 col-xs-12">
-                    <div class="form-group">
-                      <select id="" class="form-control form-control-sm" name="cabang_type" {{$temp}}>
-                        @if($data->c_type == 'PUSAT')
-                          <option value="PUSAT" selected="">Pusat</option>
-                          <option value="CABANG">Cabang</option>
-                          <option value="AGEN">Agen</option>
-                        @elseif($data->c_type == 'CABANG')
-                          <option value="PUSAT">Pusat</option>
-                          <option value="CABANG" selected="">Cabang</option>
-                          <option value="AGEN">Agen</option>
-                        @elseif($data->c_type == 'AGEN')
-                          <option value="PUSAT">Pusat</option>
-                          <option value="CABANG">Cabang</option>
-                          <option value="AGEN" selected="">Agen</option>
-                        @endif
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-md-3 col-sm-6 col-xs-12">
                     <label>Pemilik Cabang</label>
                   </div>
                   <div class="col-md-9 col-sm-6 col-xs-12">

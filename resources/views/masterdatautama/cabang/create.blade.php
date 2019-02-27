@@ -52,18 +52,6 @@
                     </div>
                   </div>
                   <div class="col-md-3 col-sm-6 col-xs-12">
-                    <label>Tipe Cabang</label>
-                  </div>
-                  <div class="col-md-9 col-sm-6 col-xs-12">
-                    <div class="form-group">
-                      <select id="cabang_type" class="form-control form-control-sm" name="cabang_type">
-                        <option value="PUSAT" selected>Pusat</option>
-                        <option value="CABANG">Cabang</option>
-                        <option value="AGEN">Agen</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-md-3 col-sm-6 col-xs-12">
                     <label>Pemilik Cabang</label>
                   </div>
                   <div class="col-md-9 col-sm-6 col-xs-12">

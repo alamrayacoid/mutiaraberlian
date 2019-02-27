@@ -38,7 +38,9 @@ class EmployeeController extends Controller
 
     public function create()
     {
-      return view('masterdatautama.datapegawai.create');
+      $jabatan = DB::table('m_jabatan')->select('m_jabatan.*')->get();
+      $divisi = DB::table('m_divisi')->select('m_divisi.*')->get();
+      return view('masterdatautama.datapegawai.create', compact('jabatan', 'divisi'));
     }
 
     public function store(Request $request)
