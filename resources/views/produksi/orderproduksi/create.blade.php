@@ -380,23 +380,11 @@
                 '<td>'+namaItem+'<input type="hidden" name="idItem[]" value="'+idItem+'"></td>' +
                 '<td>'+satuan+'<input type="hidden" name="satuan[]" value="'+satuanVal+'"></td>' +
                 '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm" value="'+jumlah+'"></td>' +
-                '<td><input type="text" name="harga[]" class="form-control form-control-sm input-rupiah" value="'+harga+'"></td>' +
-                '<td><input type="text" name="subtotal[]" class="form-control form-control-sm" style="text-align: right;" readonly value="'+subtotal+'"></td>' +
+                '<td><input type="text" name="hrg[]" class="form-control form-control-sm input-rupiah" value="'+harga+'"><input type="hidden" name="harga[]" value="'+harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")+'"></td>' +
+                '<td><input type="text" name="sbtotal[]" class="form-control form-control-sm" style="text-align: right;" readonly value="'+subtotal+'"><input type="hidden" name="subtotal[]" class="subtotal" value="'+subtotal.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")+'"></td>' +
                 '<td><button class="btn btn-danger btn-sm btn-hapus" type="button"><i class="fa fa-trash-o"></i></button></td>' +
                 '</tr>';
             $('#table_order').append(row);
-            $('.select2').select2({
-                theme:"bootstrap",
-                dropdownAutoWidth: true,
-                width:'100%'
-            });
-            $( ".cari-barang" ).autocomplete({
-                source: baseUrl+'/produksi/orderproduksi/cari-barang',
-                minLength: 1,
-                select: function(event, data) {
-                    setItem(data.item);
-                }
-            });
             $('.input-rupiah').maskMoney({
                 thousands: ".",
                 precision: 0,
@@ -404,6 +392,23 @@
                 prefix: "Rp. "
             });
             resetForm();
+            updateTotalTampil();
+        }
+
+        function updateTotalTampil() {
+            var total = 0;
+
+            var inputs = document.getElementsByClassName( 'subtotal' ),
+                subtotal  = [].map.call(inputs, function( input ) {
+                    return input.value;
+                });
+
+            for (var i = 0; i < subtotal.length; i++){
+                total += parseInt(subtotal[i]);
+            }
+
+            $("#total_harga").val(convertToRupiah(total));
+
         }
     </script>
 @endsection
