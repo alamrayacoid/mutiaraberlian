@@ -42,8 +42,8 @@ class SupplierController extends Controller
         'phone2.numeric' => 'Nomor telp hanya berisi angka !',
         'rekening.required' => 'Nomor rekening masih kosong !',
         'rekening.numeric' => 'Nomor rekening hanya berisi angka !',
-        'top.max' => 'TOP maksimal 127 !',
-        'deposit.max' => 'Deposit maksimal 127 !'
+        'top.max' => 'TOP maksimal 127 hari !',
+        'deposit.max' => 'Deposit maksimal 127 hari !'
       ]);
       if($validator->fails())
       {
