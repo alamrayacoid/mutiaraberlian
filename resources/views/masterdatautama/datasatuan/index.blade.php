@@ -60,7 +60,6 @@
 				<div class="form-group row">
 					<label for="inputPassword" class="col-sm-3 col-form-label">Nama Satuan</label>
 					<div class="col-sm-9">
-						<input type="hidden" name="satuan_id" id="s_id" value="{{$id}}">
 						<input type="text" class="form-control form-control-sm" name="s_name" id="s_name">
 					</div>
 				</div>
