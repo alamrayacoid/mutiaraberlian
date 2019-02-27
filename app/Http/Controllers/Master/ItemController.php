@@ -70,27 +70,21 @@ class ItemController extends Controller
      */
     public function getList()
     {
-      $datas = DB::table('m_item')->orderBy('i_name', 'asc')->where('i_isactive', 'Y')->get();
+      $datas = DB::table('m_item')->orderBy('i_name', 'asc')->where('i_isactive', 'Y')->join('m_itemtype', 'i_type', '=', 'it_id')->get();
       return Datatables::of($datas)
         ->addIndexColumn()
-        ->addColumn('type', function($datas) {
-          if ($datas->i_type == 'BB') {
-            return '<td>Bahan Baku</td>';
-          } elseif ($datas->i_type == 'BP') {
-            return '<td>Barang Produksi</td>';
-          } elseif ($datas->i_type == 'BJ') {
-            return '<td>Barang Jualan</td>';
-          } else {
-            return '<td>Lain-lain</td>';
-          }
-        })
         ->addColumn('action', function($datas) {
-          return '<div class="btn-group btn-group-sm">
+          return '<center><div class="btn-group btn-group-sm">
           <button class="btn btn-warning" onclick="EditDataproduk('.$datas->i_id.')" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
           <button class="btn btn-danger" onclick="DeleteDataproduk('.$datas->i_id.')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-trash-o"></i></button>
-          </div>';
+          </div></center>';
         })
-        ->rawColumns(['type', 'action'])
+        ->addColumn('detail', function($datas) {
+          return '<center><div class="btn-group btn-group-sm">
+          <button class="btn btn-info btn-xs detail" onclick="DetailDataproduk('.$datas->i_id.')" rel="tooltip" data-placement="top">Detail</button>
+          </div></center>';
+        })
+        ->rawColumns(['detail', 'action'])
         ->make(true);
     }
 
@@ -111,8 +105,13 @@ class ItemController extends Controller
      */
     public function create()
     {
-      $code = $this->getCode();
-      return view('masterdatautama.produk.create', compact('code'));
+      $jenis = DB::table('m_itemtype')
+                  ->get();
+
+      $satuan = DB::table('m_unit')
+                  ->get();
+
+      return view('masterdatautama.produk.create', compact('jenis', 'satuan'));
     }
 
     /**
@@ -144,15 +143,13 @@ class ItemController extends Controller
             'i_type' => $request->dataproduk_type,
             'i_codegroup' => null,
             'i_name' => $request->dataproduk_name,
-            'i_min_stock' => $request->dataproduk_minstock,
             'i_unit1' => $request->dataproduk_satuanutama,
             'i_unit2' => $request->dataproduk_satuanalt1,
             'i_unit3' => $request->dataproduk_satuanalt2,
             'i_unitcompare1' => $request->dataproduk_isisatuanutama,
             'i_unitcompare2' => $request->dataproduk_isisatuanalt1,
             'i_unitcompare3' => $request->dataproduk_isisatuanalt2,
-            'i_price' => null,
-            'i_det' => $request->dataproduk_ket,
+            'i_detail' => $request->dataproduk_ket,
             'i_isactive' => "Y",
             'i_created_at' => Carbon::now(),
             'i_update_at' => Carbon::now(),
@@ -184,7 +181,14 @@ class ItemController extends Controller
       $data['dataproduk'] = DB::table('m_item')
       ->where('i_id', $id)
       ->first();
-      return view('masterdatautama.produk.edit', compact('data'));
+
+      $jenis = DB::table('m_itemtype')
+                  ->get();
+
+      $satuan = DB::table('m_unit')
+                  ->get();
+
+      return view('masterdatautama.produk.edit', compact('data', 'jenis', 'satuan'));
     }
 
     /**
@@ -214,15 +218,13 @@ class ItemController extends Controller
             'i_type' => $request->dataproduk_type,
             'i_codegroup' => null,
             'i_name' => $request->dataproduk_name,
-            'i_min_stock' => $request->dataproduk_minstock,
             // 'i_unit1' => $request->dataproduk_satuanutama,
             'i_unit2' => $request->dataproduk_satuanalt1,
             'i_unit3' => $request->dataproduk_satuanalt2,
             // 'i_unitcompare1' => $request->dataproduk_isisatuanutama,
             'i_unitcompare2' => $request->dataproduk_isisatuanalt1,
             'i_unitcompare3' => $request->dataproduk_isisatuanalt2,
-            'i_price' => null,
-            'i_det' => $request->dataproduk_ket,
+            'i_detail' => $request->dataproduk_ket,
             'i_isactive' => "Y",
             'i_created_at' => Carbon::now(),
             'i_update_at' => Carbon::now(),
@@ -272,5 +274,95 @@ class ItemController extends Controller
           'message' => $e
         ]);
       }
+    }
+
+    public function simpanjenis(Request $request){
+      DB::beginTransaction();
+      try {
+
+          $id = DB::table('m_itemtype')->max('it_id')+1;
+          DB::table('m_itemtype')
+                ->insert([
+                  'it_id' => $id,
+                  'it_name' => $request->jenis
+                ]);
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal'
+        ]);
+      }
+    }
+
+    public function tablejenis(){
+      $datas = DB::table('m_itemtype')->orderBy('it_name', 'asc')->get();
+      return Datatables::of($datas)
+        ->addIndexColumn()
+        ->addColumn('action', function($datas) {
+          return '<center><div class="btn-group btn-group-sm">
+          <button class="btn btn-warning" onclick="editjenis('.$datas->it_id.', this)" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
+          <button class="btn btn-danger" onclick="deletejenis('.$datas->it_id.')" data-id="" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-trash-o"></i></button>
+          </div></center>';
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+    }
+
+    public function hapusjenis(Request $request){
+      DB::beginTransaction();
+      try {
+
+        DB::table('m_itemtype')->where('it_id', $request->id)->delete();
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal'
+        ]);
+      }
+    }
+
+    public function updatejenis(Request $request){
+      DB::beginTransaction();
+      try {
+
+        DB::table('m_itemtype')->where('it_id', $request->id)
+        ->update([
+          'it_name' => $request->jenis
+        ]);
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal'
+        ]);
+      }
+    }
+
+    public function detail(Request $request){
+      $data['dataproduk'] = DB::table('m_item')
+      ->where('i_id', $request->id)
+      ->first();
+
+      $jenis = DB::table('m_itemtype')
+                  ->get();
+
+      $satuan = DB::table('m_unit')
+                  ->get();
+
+      return view('masterdatautama.produk.detail', compact('data', 'jenis', 'satuan'));
     }
 }

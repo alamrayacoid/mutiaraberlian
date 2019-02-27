@@ -11,13 +11,12 @@
 				<div class="form-group row">
 					<label for="inputPassword" class="col-sm-3 col-form-label">Nama Jenis</label>
 					<div class="col-sm-9">
-						<input type="hidden" name="" id="" value="">
-						<input type="text" class="form-control form-control-sm" name="" id="">
+						<input type="text" class="form-control form-control-sm" name="jenis" id="jenis">
 					</div>
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary">
+				<button type="button" class="btn btn-primary" id="savejenis" onclick="savejenis()">
 					<span class="glyphicon glyphicon-floppy-disk"></span> Simpan
 				</button>
 			</div>

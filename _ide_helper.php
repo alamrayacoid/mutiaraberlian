@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.7.27 on 2019-02-25 07:37:52.
+ * Generated for Laravel 5.7.27 on 2019-02-26 14:01:48.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -13402,6 +13402,18 @@ namespace Illuminate\Support\Facades {
  
 }
 
+namespace App\Http\Controllers { 
+
+    /**
+     * 
+     *
+     */ 
+    class CodeGenerator {
+         
+    }
+ 
+}
+
 namespace Yajra\DataTables\Facades { 
 
     /**
@@ -16006,6 +16018,8 @@ namespace  {
     class Validator extends \Illuminate\Support\Facades\Validator {}
 
     class View extends \Illuminate\Support\Facades\View {}
+
+    class CodeGenerator extends \App\Http\Controllers\CodeGenerator {}
 
     class DataTables extends \Yajra\DataTables\Facades\DataTables {}
  

@@ -4,7 +4,17 @@
 
 @include('masterdatautama.produk.modal-create')
 
-@include('masterdatautama.produk.modal-edit')
+<style media="screen">
+.detail
+/* Or better yet try giving an ID or class if possible*/
+	{
+	border: 0;
+	background: none;
+	box-shadow: none;
+	border-radius: 0px;
+	}
+</style>
+
 <article class="content animated fadeInLeft">
 
 	<div class="title-block text-primary">
@@ -46,14 +56,14 @@
 			                  <section>
 
 			                  	<div class="table-responsive">
-			                        <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_produk">
+			                        <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_produk" style="width:100%">
 			                            <thead class="bg-primary">
 			                                <tr>
 												<th>No</th>
 												<th>Kode Barang</th>
-												<th>Nama Barang</th>
-												<th>Satuan</th>
 												<th>Jenis Barang</th>
+												<th>Nama Barang</th>
+												<th>Detail</th>
 												<th>Aksi</th>
 											</tr>
 			                            </thead>
@@ -74,13 +84,13 @@
 			            			<h3 class="title">Data Jenis Produk</h3>
 			            		</div>
 			            		<div class="header-block pull-right">
-									<button class="btn btn-primary btn-modal" data-toggle="modal" data-target="#create" type="button"><i class="fa fa-plus"></i>&nbsp;Tambah Data Jenis Produk</button>
+												<button class="btn btn-primary btn-modal" id="tambahbtn" data-toggle="modal" data-target="#create" type="button"><i class="fa fa-plus"></i>&nbsp;Tambah Data Jenis Produk</button>
 			            		</div>
 		            		</div>
 		            		<div class="card-block">
 		            			<section>
 			            			<div class="table-responsive">
-			                            <table class="table table-striped table-hover" cellspacing="0" id="table_jenis_produk">
+			                            <table class="table table-striped table-hover" cellspacing="0" id="table_jenis_produk" style="width:100%">
 			                                <thead class="bg-primary">
 			                                    <tr>
 									                <th width="5%">No</th>
@@ -88,28 +98,7 @@
 									                <th width="10%">Aksi</th>
 									            </tr>
 			                                </thead>
-			                                <tbody>
-			                                	<tr>
-			                                		<td>1</td>
-			                                		<td>Cair</td>
-			                                		<td>
-			                                			<div class="btn-group btn-group-sm">
-			                                				<button class="btn btn-warning btn-edit" data-toggle="modal" data-target="#edit" title="Edit" type="button"><i class="fa fa-pencil"></i></button>
-			                                				<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-			                                			</div>
-			                                		</td>
-			                                	</tr>
-			                                	<tr>
-			                                		<td>2</td>
-			                                		<td>Madu</td>
-			                                		<td>
-			                                			<div class="btn-group btn-group-sm">
-			                                				<button class="btn btn-warning btn-edit" data-toggle="modal" data-target="#edit" title="Edit" type="button"><i class="fa fa-pencil"></i></button>
-			                                				<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-			                                			</div>
-			                                		</td>
-			                                	</tr>
-			                                </tbody>
+
 			                            </table>
 			                        </div>
 			            		</section>
@@ -138,9 +127,46 @@
 	});
 
 	var tb_produk;
-	setTimeout(function() {
-		TableProduk();
-	}, 1500);
+	var tb_jenis;
+
+	$(document).ready(function(){
+			tablejenis();
+			TableProduk();
+	});
+
+	function tablejenis(){
+		$('#table_jenis_produk').dataTable().fnDestroy();
+		tb_jenis = $('#table_jenis_produk').DataTable({
+			responsive: true,
+			// language: dataTableLanguage,
+			// processing: true,
+			serverSide: true,
+			ajax: {
+				url: baseUrl + "/masterdatautama/produk/tablejenis",
+				type: "post",
+				data: {
+					"_token": "{{ csrf_token() }}"
+				}
+			},
+			columnDefs: [
+			{
+				targets: [1],
+				className: "jenis"
+			},
+			{
+				targets: [0],
+				className: "id"
+			},
+			],
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'it_name', name: 'it_name'},
+				{data: 'action', name: 'action'}
+			],
+			pageLength: 10,
+			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
+	}
 	// function to retrieve DataTable server side
 	// retrieve data 'produk'
 	function TableProduk()
@@ -161,9 +187,9 @@
 			columns: [
 				{data: 'DT_RowIndex'},
 				{data: 'i_code', name: 'i_code'},
+				{data: 'it_name', name: 'it_name'},
 				{data: 'i_name', name: 'i_name'},
-				{data: 'i_unit1', name: 'i_unit1'},
-				{data: 'type', name: 'type'},
+				{data: 'detail', name: 'detail'},
 				{data: 'action', name: 'action'}
 			],
 			pageLength: 10,
@@ -238,11 +264,11 @@
 		var table = $('#tabel_jenisproduk').DataTable();
 
 		$('#tabel_jenisproduk tbody').on('click', '.btn-edit', function(){
-	
+
 			window.location.href = '{{route("datajenisproduk.edit")}}';
-	
+
 		});
-	
+
 		$(document).on('click', '.btn-disable', function(){
 			var ini = $(this);
 			$.confirm({
@@ -278,7 +304,7 @@
 				}
 			});
 		});
-	
+
 		$(document).on('click', '.btn-enable', function(){
 			$.toast({
 				heading: 'Information',
@@ -295,6 +321,112 @@
 		table.row($(a).parents('tr')).remove().draw();
 	}
 	});
+
+	function savejenis(){
+		loadingShow();
+		var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+		var jenis = $('#jenis').val();
+		$.ajax({
+			type: 'post',
+			data: {_token:CSRF_TOKEN, jenis:jenis},
+			dataType: 'json',
+			url: baseUrl + '/masterdatautama/produk/simpanjenis',
+			success : function(response){
+				loadingHide();
+				if (response.status == 'berhasil') {
+					messageSuccess('Success', 'Data berhasil disimpan!');
+					$('#create').modal('hide');
+					tb_jenis.ajax.reload();
+				} else {
+					messageFailed('Gagal', 'Data gagal disimpan!');
+				}
+			}
+		})
+	}
+
+	function updatejenis(id){
+		loadingShow();
+		var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+		var jenis = $('#jenis').val();
+		$.ajax({
+			type: 'post',
+			data: {_token:CSRF_TOKEN, jenis:jenis, id:id},
+			dataType: 'json',
+			url: baseUrl + '/masterdatautama/produk/updatejenis',
+			success : function(response){
+				loadingHide();
+				if (response.status == 'berhasil') {
+					messageSuccess('Success', 'Data berhasil disimpan!');
+					$('#create').modal('hide');
+					tb_jenis.ajax.reload();
+				} else {
+					messageFailed('Gagal', 'Data gagal disimpan!');
+				}
+			}
+		})
+	}
+
+	function deletejenis(id){
+		$.confirm({
+			animation: 'RotateY',
+			closeAnimation: 'scale',
+			animationBounce: 1.5,
+			icon: 'fa fa-exclamation-triangle',
+			title: 'Peringatan!',
+			content: 'Apa anda yakin menghapus data ini?',
+			theme: 'disable',
+			buttons: {
+				info: {
+					btnClass: 'btn-blue',
+					text:'Ya',
+					action : function(){
+						var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+						var jenis = $('#jenis').val();
+						$.ajax({
+							type: 'post',
+							data: {_token:CSRF_TOKEN, id:id},
+							dataType: 'json',
+							url: baseUrl + '/masterdatautama/produk/hapusjenis',
+							success : function(response){
+								if (response.status == 'berhasil') {
+									messageSuccess('Success', 'Berhasil dihapus');
+									tb_jenis.ajax.reload();
+								} else {
+									messageFailed('Gagal', 'Gagal dihapus');
+								}
+							}
+						});
+					}
+				},
+				cancel:{
+					text: 'Tidak',
+					action: function () {
+						// tutup confirm
+					}
+				}
+			}
+		});
+	}
+
+	function editjenis(id,parm){
+		$('#myModalLabel').text('Edit Data Jenis Produk');
+		$('#savejenis').attr('onclick', 'updatejenis('+id+')');
+
+		var parent = $(parm).parents('tr');
+		var jenis = $(parent).find('.jenis').text();
+
+		$('#jenis').val(jenis);
+		$('#create').modal('show');
+	}
+
+	$('#tambahbtn').on('click', function(){
+		$('#myModalLabel').text('Tambah Data Jenis Produk');
+		$('#savejenis').attr('onclick', 'savejenis()');
+	});
+
+	function DetailDataproduk(id){
+		window.location.href = baseUrl + '/masterdatautama/produk/detail?id='+id;
+	}
 
 </script>
 @endsection
