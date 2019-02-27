@@ -342,7 +342,7 @@
           if(response.status == 'sukses'){
             loadingHide();
             messageSuccess('Success', 'Data berhasil ditambahkan!');
-            window.location.href = "{{route('pegawai.create')}}";
+            window.location.href = "{{route('pegawai.index')}}";
           } else {
             loadingHide();
             messageFailed('Gagal', response.message);
