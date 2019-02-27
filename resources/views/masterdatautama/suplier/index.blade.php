@@ -38,8 +38,8 @@
 													                <th width="1%">No</th>
 																					<th>Nama Perusahaan</th>
 																					<th width="15%">Telepon</th>
-																					<th width="10%">Limit</th>
-																					<th width="10%">Hutang</th>
+																					<th width="15%">Limit</th>
+																					<th width="15%">Hutang</th>
 																					<th width="5%">Aksi</th>
 													            </tr>
 	                                </thead>
@@ -115,8 +115,8 @@
 				{data: 'DT_RowIndex'},
 				{data: 's_company'},
 				{data: 'phone'},
-				{data: 's_limit'},
-				{data: 's_hutang'},
+				{data: 'limit'},
+				{data: 'hutang'},
 				{data: 'action'}
 			],
 			pageLength: 10,

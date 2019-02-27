@@ -90,6 +90,18 @@ class SupplierController extends Controller
         ->get();
       return Datatables::of($datas)
         ->addIndexColumn()
+        ->addColumn('limit', function($datas) {
+          return '<td>
+          <span class="float-left">Rp </span>
+          <span class="float-right">'. number_format($datas->s_limit, 2, ',', '.') .'</span>
+          </td>';
+        })
+        ->addColumn('hutang', function($datas) {
+          return '<td>
+          <span class="float-left">Rp </span>
+          <span class="float-right">'. number_format($datas->s_hutang, 2, ',', '.') .'</span>
+          </td>';
+        })
         ->addColumn('phone', function($datas) {
           return '<td>'.
           (($datas->s_phone == null) ? '-' : $datas->s_phone) .''.
@@ -102,7 +114,7 @@ class SupplierController extends Controller
           <button class="btn btn-danger" onclick="DeleteSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-times-circle"></i></button>
           </div>';
         })
-        ->rawColumns(['phone', 'action'])
+        ->rawColumns(['limit', 'hutang', 'phone', 'action'])
         ->make(true);
     }
 
