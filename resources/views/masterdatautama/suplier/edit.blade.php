@@ -170,7 +170,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm input-rupiah" name="limit" value="{{ $data['supplier']->s_limit }}">
+                                <input type="text" class="form-control form-control-sm input-rupiah" id="limit" name="limit" value="{{ $data['supplier']->s_limit }}">
                               </div>
                             </div>
 
@@ -179,7 +179,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm input-rupiah" name="hutang" value="{{ $data['supplier']->s_hutang }}">
+                                <input type="text" class="form-control form-control-sm input-rupiah" id="hutang" name="hutang" value="{{ $data['supplier']->s_hutang }}">
                               </div>
                             </div>
                           </section>
@@ -220,6 +220,11 @@
       precision: 0,
       suffix: ' Hari'
     });
+    $('#top').maskMoney('mask');
+    $('#deposit').maskMoney('mask');
+    $('#limit').maskMoney('mask');
+    $('#hutang').maskMoney('mask');
+    $('')
   });
 
   $('#btn_simpan').on('click', function() {

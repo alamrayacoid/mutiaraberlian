@@ -85,19 +85,21 @@ class SupplierController extends Controller
      */
     public function getList()
     {
-      $datas = DB::table('m_supplier')->orderBy('s_company', 'asc')->get();
+      $datas = DB::table('m_supplier')->orderBy('s_company', 'asc')
+        ->where('s_isactive', 'Y')
+        ->get();
       return Datatables::of($datas)
         ->addIndexColumn()
         ->addColumn('phone', function($datas) {
-          return '<td>'. (($datas->s_phone == null) ? '-' : $datas->s_phone) .'
-           / '. (($datas->s_phone1 == null) ? '-' : $datas->s_phone1) .'
-           / '. (($datas->s_phone2 == null) ? '-' : $datas->s_phone2) .'
-           </td>';
+          return '<td>'.
+          (($datas->s_phone == null) ? '-' : $datas->s_phone) .''.
+          (($datas->s_phone1 == null) ? '' : ' / ' . $datas->s_phone1) .''.
+          (($datas->s_phone2 == null) ? '' : ' / ' . $datas->s_phone2) .'</td>';
         })
         ->addColumn('action', function($datas) {
           return '<div class="btn-group btn-group-sm">
           <button class="btn btn-warning" onclick="EditSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
-          <button class="btn btn-danger" onclick="DeleteSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-trash-o"></i></button>
+          <button class="btn btn-danger" onclick="DeleteSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-times-circle"></i></button>
           </div>';
         })
         ->rawColumns(['phone', 'action'])
@@ -170,6 +172,7 @@ class SupplierController extends Controller
             's_deposit' => $request->deposit,
             's_limit' => $request->limit,
             's_hutang' => $request->hutang,
+            's_isactive' => 'Y',
             's_insert' => Carbon::now(),
             's_update' => Carbon::now()
         ]);
@@ -280,7 +283,9 @@ class SupplierController extends Controller
       try {
         DB::table('m_supplier')
           ->where('s_id', $id)
-          ->delete();
+          ->update([
+            's_isactive' => 'N'
+          ]);
 
         DB::commit();
         return response()->json([
