@@ -2,7 +2,9 @@
 
 @section('content')
 
+@include('masterdatautama.harga.default.modal-info')
 
+@include('masterdatautama.harga.default.modal-edit')
 
 <article class="content">
 
@@ -54,6 +56,12 @@
 			"ordering": false,
 			"info":     false
     	});
+		$('#table_list_item').DataTable({
+			"paging":   false,
+			"ordering": false,
+			"info":     false
+    	});
+
 
 		$(document).on('click','.btn-edit-golonganharga',function(){
 			window.location.href='{{route('golonganharga.edit')}}'

@@ -22,10 +22,16 @@
   <div>
     <select name="" id="" class="form-control form-control-sm select2">
       <option value="1">Konsinyasi</option>
-      <option value="2">Kas</option>
+      <option value="2">Cas</option>
     </select>
   </div>
+  <div>
+    <label for="" class="mt-3">Harga</label>
+  </div>
+  <div>
+    <input type="text" class="form-control form-control-sm input-rupiah">
+  </div>
   <div style="float:right;">
-    <button class="btn btn-primary btn-sm btn-submit mt-4">Simpan</button>
+    <button class="btn btn-primary btn-sm btn-submit mt-4 mb-2">Simpan</button>
   </div>
 </div>
