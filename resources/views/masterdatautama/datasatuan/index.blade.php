@@ -158,8 +158,8 @@
             	if(data.status =='sukses'){
                 	$('#addSatuan').modal('hide');
                 	messageSuccess('Success', 'Data berhasil disimpan');
-                   	// $('#table_satuan').DataTable().ajax.reload();
-                   	window.location.href = "{{route('datasatuan.index')}}";
+                   	$('#table_satuan').DataTable().ajax.reload();
+                   	
             	} else {
                     $('#addSatuan').modal('hide');
                 }
