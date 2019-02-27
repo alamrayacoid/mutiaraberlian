@@ -8,7 +8,7 @@
 		<div class="card-block">
 			<section>
 				<div class="row">
-					<div class="col-md-6 col-sm-12">
+					<div class="col-md-5 col-sm-12">
 					<div class="table-responsive">
 					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_golonganharga">
 						<thead class="bg-primary">
@@ -35,12 +35,12 @@
 					</table>
 					</div>
 					</div>
-					<fieldset class="col-md-6 col-sm-12">
+					<fieldset class="col-md-7 col-sm-12">
 						<div class="row">
-						<div class="col-md-2">
-							<label for="">Class : </label>
+						<div class="col-md-3">
+							<label for="">Gologan :</label>
 						</div>
-						<div class="col-md-10">
+						<div class="col-md-8">
 							<p>~</p>
 						</div>
 						</div>
@@ -74,6 +74,7 @@
 									<th>Jenis</th>
 									<th>Range</th>
 									<th>Satuan</th>
+									<th>Harga</th>
 									<th>Jenis Pembayaran</th>
 									<th>Aksi</th>
 								</tr>
@@ -81,7 +82,12 @@
 							<tbody>
 								<tr>
 									<td>1</td>
-									<td>Agen</td>
+									<td>Item</td>
+									<td>Satuan</td>
+									<td>1</td>
+									<td>Botol</td>
+									<td>0.00</td>
+									<td>Cas</td>
 									<td>
 										<div class="btn-group btn-group-sm">
 											<button class="btn btn-warning btn-edit-golonganharga" title="Edit" type="button"><i class="fa fa-pencil"></i></button>

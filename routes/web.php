@@ -40,6 +40,7 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'auth.logout'
     ]);
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('storage/uploads/produk/original')->name('image_produk');   
 
     // !====================================================== Master Data Utama ======================================================!
 
@@ -54,7 +55,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/produk/list', 'Master\ItemController@getList')->name('dataproduk.list');
     Route::get('/masterdatautama/produk/create', 'Master\ItemController@create')->name('dataproduk.create');
     Route::post('/masterdatautama/produk/store', 'Master\ItemController@store')->name('dataproduk.store');
-    Route::get('/masterdatautama/produk/store', 'Master\ItemController@store')->name('dataproduk.store');
     Route::get('/masterdatautama/produk/edit/{id}', 'Master\ItemController@edit')->name('dataproduk.edit');
     Route::post('/masterdatautama/produk/update/{id}', 'Master\ItemController@update')->name('dataproduk.update');
     Route::post('/masterdatautama/produk/delete/{id}', 'Master\ItemController@destroy')->name('dataproduk.delete');
@@ -130,7 +130,8 @@ Route::group(['middleware' => 'auth'], function () {
     // !===================================================== PRODUKSI =====================================================!
     // Order Produksi
     Route::get('/produksi/orderproduksi/index', 'ProduksiController@order_produksi')->name('order.index');
-    Route::get('/produksi/orderproduksi/create', 'ProduksiController@create_produksi')->name('order.create');
+    Route::match(['get', 'post'],'/produksi/orderproduksi/create', 'ProduksiController@create_produksi')->name('order.create');
+    Route::get('/produksi/orderproduksi/cari-barang', 'ProduksiController@cariBarang')->name('order.caribarang');
     Route::get('/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
 
     // Penerimaan Barang
