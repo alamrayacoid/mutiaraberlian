@@ -45,7 +45,7 @@
                                                 <span class="input-group-text" id="basic-addon1"><i
                                                         class="fa fa-calendar" aria-hidden="true"></i></span>
                                                 </div>
-                                                <input type="text" class="form-control form-control-sm datepicker">
+                                                <input type="text" name="po_date" class="form-control form-control-sm datepicker">
                                             </div>
                                         </div>
 
@@ -72,6 +72,7 @@
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm"
                                                        name="total_harga" id="total_harga" readonly>
+                                                <input type="hidden" name="tot_hrg" id="tot_hrg">
                                             </div>
                                         </div>
                                         <div class="container">
@@ -228,6 +229,7 @@
     <script type="text/javascript">
         var idItem = [];
         var namaItem = null;
+        var unit1 = null;
 
         $(document).ready(function () {
             $('#type_cus').change(function () {
@@ -299,6 +301,7 @@
             function setItem(info) {
                 idItem = info.data[0].i_id;
                 namaItem = info.data[0].i_name;
+                unit1 = info.data[0].i_unit1;
             }
 
             $(document).on('click', '.btn-hapus-termin', function () {
@@ -330,6 +333,7 @@
                 });
                 $('.input-rupiah').maskMoney({
                     thousands: ".",
+                    precision: 0,
                     decimal: ",",
                     prefix: "Rp. "
                 });
@@ -349,7 +353,6 @@
                         if(response.status == 'sukses'){
                             loadingHide();
                             messageSuccess('Success', 'Data berhasil ditambahkan!');
-                            window.location.href = "{{route('cabang.create')}}";
                         } else {
                             loadingHide();
                             messageFailed('Gagal', response.message);
@@ -378,7 +381,7 @@
             var harga = $("#harga").val();
             var subtotal = $("#subtotal").val();
             row = '<tr>' +
-                '<td>'+namaItem+'<input type="hidden" name="idItem[]" value="'+idItem+'"></td>' +
+                '<td>'+namaItem+'<input type="hidden" name="idItem[]" value="'+idItem+'"><input type="hidden" name="unit1[]" value="'+unit1+'"></td>' +
                 '<td>'+satuan+'<input type="hidden" name="satuan[]" value="'+satuanVal+'"></td>' +
                 '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm" value="'+jumlah+'"></td>' +
                 '<td><input type="text" name="hrg[]" class="form-control form-control-sm input-rupiah" value="'+harga+'"><input type="hidden" name="harga[]" value="'+harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")+'"></td>' +
@@ -407,7 +410,7 @@
             for (var i = 0; i < subtotal.length; i++){
                 total += parseInt(subtotal[i]);
             }
-
+            $("#tot_hrg").val(total);
             $("#total_harga").val(convertToRupiah(total));
 
         }
