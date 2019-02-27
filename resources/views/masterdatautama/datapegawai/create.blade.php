@@ -26,14 +26,14 @@
           <div class="card-block">
             <section>
               <fieldset>
-                <form id="formAddPegawai">
+                <form id="formAdd">
                   <div class="row">
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>NIP <span class="text-danger">*</span></label>
                     </div>
                     <div class="col-md-9 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_nip">
+                        <input type="text" class="form-control form-control-sm" name="e_nip" required>
                       </div>
                     </div>
 
@@ -42,7 +42,7 @@
                     </div>
                     <div class="col-md-9 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_name">
+                        <input type="text" class="form-control form-control-sm" name="e_name" required>
                       </div>
                     </div>
 
@@ -51,7 +51,21 @@
                     </div>
                     <div class="col-md-9 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_nik">
+                        <input type="text" class="form-control form-control-sm" name="e_nik" required>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <label>Pemilik Cabang <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-md-9 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <select name="e_company" id="" class="form-control form-control-sm select2">
+                          <option value="" selected>--- Pilih Cabang ---</option>
+                          @foreach($company as $comp)
+                          <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
+                          @endforeach
+                        </select>
                       </div>
                     </div>
 
@@ -69,7 +83,7 @@
                     </div>
                     <div class="col-md-9 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_telp">
+                        <input type="text" class="form-control form-control-sm" name="e_telp" required>
                       </div>
                     </div>
 
@@ -78,7 +92,7 @@
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_religion">
+                        <input type="text" class="form-control form-control-sm" name="e_religion" required>
                       </div>
                     </div>
 
@@ -87,7 +101,7 @@
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <select class="form-control form-control-sm" name="e_gender">
+                        <select class="form-control form-control-sm" name="e_gender" required>
                           <option value="L">Laki-laki</option>
                           <option value="P">Perempuan</option>
                         </select>
@@ -108,7 +122,7 @@
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <select class="form-control form-control-sm" name="e_maritalstatus">
+                        <select class="form-control form-control-sm" name="e_maritalstatus" required>
                           <option value="">--Pilih Status--</option>
                           <option value="N">Belum Menikah</option>
                           <option value="Y">Sudah Menikah</option>
@@ -132,7 +146,7 @@
                       <div class="form-group">
                         <div class="input-group">
                           <span class="input-group-addon"><i class="fa fa-calendar mt-2"></i></span>
-                          <input type="text" class="form-control form-control-sm datepicker" name="e_birth">
+                          <input type="text" class="form-control form-control-sm datepicker" name="e_birth" required>
                         </div>
                       </div>
                     </div>
@@ -154,7 +168,7 @@
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_education">
+                        <input type="text" class="form-control form-control-sm" name="e_education" required>
                       </div>
                     </div>
 
@@ -163,7 +177,7 @@
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_email">
+                        <input type="text" class="form-control form-control-sm" name="e_email" required>
                       </div>
                     </div>
 
@@ -200,7 +214,7 @@
                     </div>
                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                       <div class="form-group">
-                        <textarea type="text" class="form-control form-control-sm mb-3" name="e_address"></textarea>
+                        <textarea type="text" class="form-control form-control-sm mb-3" name="e_address" required></textarea>
                       </div>
                     </div>
 
@@ -209,7 +223,7 @@
                     </div>
                     <div class="col-md-9 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_bank">
+                        <input type="text" class="form-control form-control-sm" name="e_bank" required>
                       </div>
                     </div>
 
@@ -218,7 +232,7 @@
                     </div>
                     <div class="col-md-9 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_rekening">
+                        <input type="text" class="form-control form-control-sm" name="e_rekening" required>
                       </div>
                     </div>
 
@@ -227,7 +241,7 @@
                     </div>
                     <div class="col-md-9 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_an">
+                        <input type="text" class="form-control form-control-sm" name="e_an" required>
                       </div>
                     </div>
 
@@ -309,11 +323,17 @@
 
   function addPegawai()
   {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+
     $('#btn-submit').on('click', function(){
       $.ajax({
         url   : "{{route('pegawai.store')}}",
         type  : "get",
-        data  : $('#formAddPegawai').serialize(),
+        data  : $('#formAdd').serialize(),
         dataType : "json",
         beforeSend: function() {
           loadingShow();
