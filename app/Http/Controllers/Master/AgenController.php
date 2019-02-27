@@ -169,7 +169,7 @@ class AgenController extends Controller
      */
     public function getList()
     {
-      $datas = DB::table('m_agen')->orderBy('a_name', 'asc')->get();
+      $datas = DB::table('m_agen')->orderBy('a_code', 'asc')->get();
       return Datatables::of($datas)
         ->addIndexColumn()
         ->addColumn('action', function($datas) {
@@ -249,7 +249,7 @@ class AgenController extends Controller
           ]);
 
         // insert to table m_company
-        $codeCompany = CodeGenerator::code('m_company', 'c_id', 7, 'MB');
+        $codeCompany = CodeGenerator::code('m_company', 'c_id', 8, 'MB');
         DB::table('m_company')
           ->insert([
             'c_id' => $codeCompany,

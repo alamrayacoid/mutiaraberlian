@@ -151,6 +151,21 @@
                           </div>
                         </div>
 
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Foto</label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="file" class="form-control form-control-sm" name="e_foto" id="foto">
+                          </div>
+                        </div>
+
+                        <div class="col-12" align="center">
+                          <div class="form-group">
+                            <img src="{{asset('assets/img/add-image-icon.png')}}" height="120px" width="90px" id="img-preview" style="cursor: pointer;">
+                          </div>
+                        </div>
+
                       </div>
                     </section>
                 </div>
@@ -177,7 +192,6 @@
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
   });
-
 
   $('#btn_simpan').on('click', function() {
     SubmitForm(event);
@@ -254,5 +268,33 @@
   // end: unused
 
 
+</script>
+<script type="text/javascript">
+  $(document).ready(function(){
+  
+    function readURL(input, target) {
+
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          $(target).attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    $("#foto").change(function() {
+      readURL(this, '#img-preview');
+    });  
+
+    $('#img-preview').click(function(){
+
+      $('#foto').click();
+
+    });
+
+  });
 </script>
 @endsection
