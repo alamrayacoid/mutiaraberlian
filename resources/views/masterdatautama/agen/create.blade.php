@@ -81,7 +81,6 @@
                                   <option value="">Pilih Tipe Agen</option>
                                   <option value="AGEN">Agen</option>
                                   <option value="SUB AGEN">Sub Agen</option>
-                                  <option value="KONSIGNE">Konsigne</option>
                                 </select>
                               </div>
                             </div>

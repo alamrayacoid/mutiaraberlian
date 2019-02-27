@@ -2,7 +2,9 @@
 
 @section('content')
 
+@include('masterdatautama.harga.default.modal-info')
 
+@include('masterdatautama.harga.default.modal-edit')
 
 <article class="content">
 
@@ -25,7 +27,7 @@
                         <a href="" class="nav-link active" data-target="#golongan" aria-controls="golongan" data-toggle="tab" role="tab">Data Golongan</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link" data-target="#default" aria-controls="default" data-toggle="tab" role="tab">Default</a>
+                        <a href="" class="nav-link" data-target="#default" aria-controls="default" data-toggle="tab" role="tab">Harga Default</a>
                     </li>
                 </ul>				
 		
@@ -49,8 +51,16 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		var table_sup = $('#table_golonganharga').DataTable();
-		var table_bar= $('#table_pelamard').DataTable();
+	    $('#table_golonganharga').DataTable({
+			"paging":   false,
+			"ordering": false,
+			"info":     false
+    	});
+		$('#table_list_item').DataTable({
+			"paging":   false,
+			"ordering": false,
+			"info":     false
+    	});
 
 
 		$(document).on('click','.btn-edit-golonganharga',function(){

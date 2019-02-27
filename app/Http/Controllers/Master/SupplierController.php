@@ -24,26 +24,32 @@ class SupplierController extends Controller
       $validator = Validator::make($request->all(), [
         'company' => 'required',
         'name' => 'required',
-        'npwp' => 'required|numeric',
+        'npwp' => 'sometimes|nullable|numeric',
         'phone' => 'required|numeric',
         'phone1' => 'sometimes|nullable|numeric',
         'phone2' => 'sometimes|nullable|numeric',
         'rekening' => 'required|numeric',
+        'atasnama' => 'required_with:rekening',
+        'bank' => 'required_with:rekening',
+        'fax' => 'sometimes|nullable|numeric',
         'top' => 'sometimes|nullable|numeric|max:127',
         'deposit' => 'sometimes|nullable|numeric|max:127'
       ],
       [
         'company.required' => 'Nama perusahaan masih kosong !',
         'name.required' => 'Nama suplier masih kosong !',
-        'npwp.required' => 'NPWP masih kosong !',
+        'npwp.numeric' => 'Nomor npwp hanya boleh berisi angka !',
         'phone.required' => 'Nomor telp masih kosong !',
-        'phone.numeric' => 'Nomor telp hanya berisi angka !',
-        'phone1.numeric' => 'Nomor telp hanya berisi angka !',
-        'phone2.numeric' => 'Nomor telp hanya berisi angka !',
+        'phone.numeric' => 'Nomor telp hanya boleh berisi angka !',
+        'phone1.numeric' => 'Nomor telp hanya boleh berisi angka !',
+        'phone2.numeric' => 'Nomor telp hanya boleh berisi angka !',
         'rekening.required' => 'Nomor rekening masih kosong !',
-        'rekening.numeric' => 'Nomor rekening hanya berisi angka !',
-        'top.max' => 'TOP maksimal 127 !',
-        'deposit.max' => 'Deposit maksimal 127 !'
+        'rekening.numeric' => 'Nomor rekening hanya boleh berisi angka !',
+        'atasnama.required_with' => 'Atasnama (rekening) masih kosong !',
+        'bank.required_with' => 'Nama bank masih kosong !',
+        'fax.numeric' => 'Nomor fax hanya boleh berisi angka !',
+        'top.max' => 'TOP maksimal 127 hari !',
+        'deposit.max' => 'Deposit maksimal 127 hari !'
       ]);
       if($validator->fails())
       {
@@ -79,22 +85,36 @@ class SupplierController extends Controller
      */
     public function getList()
     {
-      $datas = DB::table('m_supplier')->orderBy('s_company', 'asc')->get();
+      $datas = DB::table('m_supplier')->orderBy('s_company', 'asc')
+        ->where('s_isactive', 'Y')
+        ->get();
       return Datatables::of($datas)
         ->addIndexColumn()
+        ->addColumn('limit', function($datas) {
+          return '<td>
+          <span class="float-left">Rp </span>
+          <span class="float-right">'. number_format($datas->s_limit, 2, ',', '.') .'</span>
+          </td>';
+        })
+        ->addColumn('hutang', function($datas) {
+          return '<td>
+          <span class="float-left">Rp </span>
+          <span class="float-right">'. number_format($datas->s_hutang, 2, ',', '.') .'</span>
+          </td>';
+        })
         ->addColumn('phone', function($datas) {
-          return '<td>'. (($datas->s_phone == null) ? '-' : $datas->s_phone) .'
-           / '. (($datas->s_phone1 == null) ? '-' : $datas->s_phone1) .'
-           / '. (($datas->s_phone2 == null) ? '-' : $datas->s_phone2) .'
-           </td>';
+          return '<td>'.
+          (($datas->s_phone == null) ? '-' : $datas->s_phone) .''.
+          (($datas->s_phone1 == null) ? '' : ' / ' . $datas->s_phone1) .''.
+          (($datas->s_phone2 == null) ? '' : ' / ' . $datas->s_phone2) .'</td>';
         })
         ->addColumn('action', function($datas) {
           return '<div class="btn-group btn-group-sm">
           <button class="btn btn-warning" onclick="EditSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
-          <button class="btn btn-danger" onclick="DeleteSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-trash-o"></i></button>
+          <button class="btn btn-danger" onclick="DeleteSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-times-circle"></i></button>
           </div>';
         })
-        ->rawColumns(['phone', 'action'])
+        ->rawColumns(['limit', 'hutang', 'phone', 'action'])
         ->make(true);
     }
 
@@ -164,6 +184,7 @@ class SupplierController extends Controller
             's_deposit' => $request->deposit,
             's_limit' => $request->limit,
             's_hutang' => $request->hutang,
+            's_isactive' => 'Y',
             's_insert' => Carbon::now(),
             's_update' => Carbon::now()
         ]);
@@ -274,7 +295,9 @@ class SupplierController extends Controller
       try {
         DB::table('m_supplier')
           ->where('s_id', $id)
-          ->delete();
+          ->update([
+            's_isactive' => 'N'
+          ]);
 
         DB::commit();
         return response()->json([

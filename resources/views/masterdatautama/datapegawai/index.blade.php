@@ -30,16 +30,14 @@
 	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_pegawai">
 	                                <thead class="bg-primary">
 	                                    <tr>
-							                <th>No</th>
 							                <th>ID Pegawai</th>
+                                            <th>Nama Pegawai</th>
 							                <th>NIK</th>
-							                <th>Nama Pegawai</th>
+                                            <th>Ktp</th>
 											<th>Jabatan</th>
 							                <th>Alamat</th>
 							                <th>Status Karyawan</th>
 											<th>Tanggal Masuk</th>
-											<th>Ktp</th>
-											<th>Alamat Ktp</th>
 											<th>Aksi</th>
 							            </tr>
 	                                </thead>
@@ -90,15 +88,13 @@
                 },
                 columns: [
                     {data: 'e_id', name: 'e_id'},
-                    {data: 'e_position', name: 'e_position'},
+                    {data: 'e_name', name: 'e_name'},
                     {data: 'e_nik', name: 'e_nik'},
                     {data: 'e_nip', name: 'e_nip'},
-                    {data: 'e_name', name: 'e_name'},
-                    {data: 'e_workingdays', name: 'e_workingdays'},
+                    {data: 'e_position', name: 'e_position'},
                     {data: 'e_address', name: 'e_address'},
-                    {data: 'e_education', name: 'e_education'},
-                    {data: 'e_religion', name: 'e_religion'},
-                    {data: 'e_telp', name: 'e_telp'},
+                    {data: 'e_maritalstatus', name: 'e_maritalstatus'},
+                    {data: 'e_workingdays', name: 'e_workingdays'},
                     {data: 'action', name: 'action'}
                 ],
                 pageLength: 10,
@@ -113,7 +109,7 @@
         	})
         }
 
-        function Editpegawai(idx) {
+        function editPegawai(idx) {
             window.location = baseUrl + "/masterdatautama/datapegawai/edit/" + idx;
         }
 
