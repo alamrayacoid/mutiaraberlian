@@ -31,6 +31,7 @@ Route::group(['middleware' => 'guest'], function () {
 });
 
 Route::get('/recruitment', 'RecruitmentController@index')->name('recruitment.index');
+Route::post('/recruitment/store', 'RecruitmentController@store')->name('recruitment.store');
 
 Auth::routes();
 
@@ -82,18 +83,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/suplier/edit/{id}', 'Master\SupplierController@edit')->name('suplier.edit');
     Route::post('/masterdatautama/suplier/post/{id}', 'Master\SupplierController@update')->name('suplier.update');
     Route::post('/masterdatautama/suplier/delete/{id}', 'Master\SupplierController@destroy')->name('suplier.delete');
-
-//	=============Mas Rowi=============
-
-//	Route::get('/masterdatautama/cabang/index', 'MasterController@cabang')->name('cabang.index');
-//    Route::get('/masterdatautama/cabang/list', 'MasterController@get_list_cabang')->name('cabang.list');
-//	Route::get('/masterdatautama/cabang/create', 'MasterController@create_cabang')->name('cabang.create');
-//    Route::post('/masterdatautama/cabang/store', 'MasterController@store_cabang')->name('cabang.store');
-//	Route::get('/masterdatautama/cabang/edit/{id}', 'MasterController@edit_cabang')->name('cabang.edit');
-//	Route::post('/masterdatautama/cabang/update/{id}', 'MasterController@update_cabang')->name('cabang.update');
-//	Route::post('/masterdatautama/cabang/delete/{id}', 'MasterController@delete_cabang')->name('cabang.delete');
-
-    //	=============End Mas Rowi=============
 
 //    ==========Master Outlet==========
     Route::get('/masterdatautama/cabang/index', 'Master\CabangController@index')->name('cabang.index');
