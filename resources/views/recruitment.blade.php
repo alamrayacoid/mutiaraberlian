@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
     <link rel="stylesheet" type="text/css" href="{{asset('assets/jquery-confirm/jquery-confirm.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('assets/jquery-toast/jquery.toast.css')}}">
 </head>
@@ -251,12 +251,12 @@
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">Tahun Masuk<span style="color:red;">*</span></label>
                                 </div>
-                                <input type="number" class="form-control col-lg-9 col-sm-12" name="yearin">
+                                <input type="text" class="form-control col-lg-9 col-sm-12" name="yearin" id="datepickers">
 
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">Tahun Keluar<span style="color:red;">*</span></label>
                                 </div>
-                                <input type="number" class="form-control col-lg-9 col-sm-12" name="yearout">
+                                <input type="text" class="form-control col-lg-9 col-sm-12" name="yearout" id="datepickeryear">
 
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">Jurusan<span style="color:red;">*</span></label>
@@ -280,7 +280,7 @@
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">Tahun</label>
                                 </div>
-                                <input type="text" class="form-control col-9" name="yearsofwork1">
+                                <input type="text" class="form-control col-9" name="yearsofwork1" id="datepickeryears">
 
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">Job Desc</label>
@@ -296,7 +296,7 @@
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">Tahun</label>
                                 </div>
-                                <input type="text" class="form-control col-lg-9 col-sm-12" name="yearsofwork2">
+                                <input type="text" class="form-control col-lg-9 col-sm-12" name="yearsofwork2" id="datepickeryearss">
 
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">Job Desc</label>
@@ -406,7 +406,37 @@
         integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
         crossorigin="anonymous"></script>
 <script src="{{asset('assets/js/dobPicker.min.js')}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
 <script>
+    $(document).ready(function() {
+        $('.datepicker').datepicker();
+    })
+
+    $("#datepickers").datepicker({
+    format: "yyyy",
+    viewMode: "years", 
+    minViewMode: "years",
+    autoclose: true,
+    });
+    $("#datepickeryear").datepicker({
+    format: "yyyy",
+    viewMode: "years", 
+    minViewMode: "years",
+    autoclose: true,
+    });
+    $("#datepickeryears").datepicker({
+    format: "yyyy",
+    viewMode: "years", 
+    minViewMode: "years",
+    autoclose: true,
+    });
+    $("#datepickeryearss").datepicker({
+    format: "yyyy",
+    viewMode: "years", 
+    minViewMode: "years",
+    autoclose: true,
+    });
+
     $.dobPicker({
         // Selectopr IDs
         daySelector: '#dobday',
