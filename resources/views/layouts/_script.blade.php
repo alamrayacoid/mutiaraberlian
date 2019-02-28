@@ -110,7 +110,7 @@
             hideAfter: 3000
         });
     }
-
+    
     function convertToRupiah(angka) {
         var rupiah = '';
         var angkarev = angka.toString().split('').reverse().join('');
@@ -162,10 +162,11 @@
         $('.data-table').DataTable();
 
         $('.datepicker').datepicker({
+            format: "dd-mm-yyyy",
+            enableOnReadonly: false,
             dateFormat: "dd-mm-yy",
             enableOnReadonly: false,
             autoclose: true
-
         });
 
         $('#search-mobile').click(function () {

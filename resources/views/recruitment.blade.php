@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Mutiara Berlian Recruitment</title>
+    <link rel="shortcut icon" href="{{asset('assets/img/cv-mutiaraberlian-icon.png')}}">
     <!-- CSS -->
     <link rel="stylesheet" href="{{asset('assets/recruitment/css/recruitment.css')}}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -177,6 +178,7 @@
                                     <label for="">Email<span style="color:red;">*</span></label>
                                 </div>
                                 <input type="text" class="form-control col-lg-9 col-sm-12" name="email" id="email">
+                                <input type="hidden" value="1" id="isEmailDuplicated">
                                 <div>
                                 <!-- <button class="btn btn-check" id="btn_checkemail">Cek Email</button> -->
                                 </div>
@@ -185,6 +187,7 @@
                                     <label for="">No Telp/WA<span style="color:red;">*</span></label>
                                 </div>
                                 <input type="text" class="form-control col-lg-9 col-sm-12" name="telp" id="telp">
+                                <input type="hidden" value="1" id="isTelpDuplicated">
                                 <div>
                                 <!-- <button class="btn btn-check" id="btn_checktelp">Cek Nomer</button> -->
                                 </div>
@@ -222,7 +225,7 @@
                                 <input type="number" class="form-control col-lg-9 col-sm-12" name="childcount">
 
                                 <div class="col-lg-3 col-sm-12">
-                                    <label for="">Deskripsi diri anda<span style="color:red;">*</span></label>
+                                    <label for="">Deskripsi diri anda</label>
                                 </div>
                                 <textarea type="text" class="form-control col-lg-9 col-sm-12" row="5" name="description"></textarea>
                             </div>
@@ -232,7 +235,7 @@
                 <ul class="list-inline text-md-center">
                     <li>
                         <button type="button" onclick="window.location.href='#wizard-form'"
-                                class="btn btn-lg btn-common next-step next-button">Selanjutnya
+                                class="btn btn-lg btn-common next-step next-button" id="btn_next1">Selanjutnya
                         </button>
                     </li>
                 </ul>
@@ -569,6 +572,10 @@
     }
   });
 
+  $(document).ready(function() {
+    $('#btn_next1').prop('disabled', true);
+  })
+
   $('#btn_simpan').on('click', function() {
     loadingShow();
     SubmitForm(event);
@@ -580,13 +587,23 @@
       CheckDuplicated(event, 'email');
     }
   });
-  
+
   $('#telp').focusout(function() {
     if($(this).val() != "") {
       loadingShow();
       CheckDuplicated(event, 'telp');
     }
   });
+
+  // enable btn_next1 when ther is no duplicated email and no telp
+  function EnableNext() {
+    console.log($('#isEmailDuplicated').val(), $('#isTelpDuplicated').val());
+    if ($('#isEmailDuplicated').val() == 0 && $('#isTelpDuplicated').val() == 0) {
+      $('#btn_next1').prop('disabled', false);
+    } else {
+      $('#btn_next1').prop('disabled', true);
+    }
+  }
 
   // check is data is used by other user
   function CheckDuplicated(event, field)
@@ -603,13 +620,22 @@
       success : function (response){
         if(response.status == 'valid'){
           loadingHide();
+          if (field == 'email') {
+            $('#isEmailDuplicated').val('0');
+          } else if (field == 'telp') {
+            $('#isTelpDuplicated').val('0');
+          }
+          EnableNext();
         } else if (response.status == 'invalid') {
           loadingHide();
           if (field == 'email') {
+            $('#isEmailDuplicated').val('1');
             messageWarning('Perhatian', 'Email sudah digunakan, gunakan yang lain !');
           } else if (field == 'telp') {
+            $('#isTelpDuplicated').val('1');
             messageWarning('Perhatian', 'No telp sudah digunakan, gunakan yang lain !');
           }
+          EnableNext();
         }
       },
       error : function(e){
@@ -635,8 +661,8 @@
       success : function (response){
         if(response.status == 'berhasil'){
           loadingHide();
-          messageSuccess('Berhasil', 'Data berhasil ditambahkan !');
-          location.reload();
+          messageSuccess('Berhasil', 'Registrasi berhasil !');
+          $('#myForm :input').prop('disabled', true);
         } else if (response.status == 'invalid') {
           loadingHide();
           messageWarning('Perhatian', response.message);
