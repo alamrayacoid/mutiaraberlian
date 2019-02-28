@@ -637,7 +637,7 @@
         if(response.status == 'berhasil'){
           loadingHide();
           messageSuccess('Berhasil', 'Registrasi berhasil !');
-          location.reload();
+          $('#myForm :input').prop('disabled', true);
         } else if (response.status == 'invalid') {
           loadingHide();
           messageWarning('Perhatian', response.message);
