@@ -27,7 +27,7 @@
           <div class="card-block">
             <section>
               <fieldset>
-                <form id="formEdit" action="{{route('pegawai.edit', Crypt::encrypt($employee->e_id))}}" method="post">
+                <form id="formEdit" action="{{ route('pegawai.edit', [Crypt::encrypt($employee->e_id)]) }}" method="post" autocomplete="off">
                   <div class="row">
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>NIP <span class="text-danger">*</span></label>
@@ -223,11 +223,7 @@
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <select name="e_department" id="" class="form-control form-control-sm select2">
-                          @if($employee->e_department == null)
-                            <option value="">--- Pilih Divisi ---</option>
-                          @else
-                            <option value="{{$employee->e_department}}" selected>{{$employee->m_name}}</option>
-                          @endif
+                          <option value="{{$employee->e_department}}" selected>{{$employee->m_name}}</option>
                           @foreach($divisi->where('m_id', '!=', $employee->e_department) as $div)
                             <option value="{{$div->m_id}}">{{$div->m_name}}</option>
                           @endforeach
@@ -297,7 +293,7 @@
               </div>
               <div class="col-sm-6">
                 <div class="text-right">
-                  <button type="button" class="btn btn-primary" id="btn-update" onclick=editPegawai('{{$employee->e_id}}')>Simpan</button>
+                  <button class="btn btn-primary" id="btn-update">Simpan</button>
                   <a href="{{route('pegawai.index')}}" class="btn btn-secondary">Kembali</a>
                 </div>
               </div>
@@ -325,29 +321,51 @@
     $("#foto").change(function() {
       readURL(this, '#img-preview');
     });  
-
     $('#img-preview').click(function(){
       $('#foto').click();
     });
-    editPegawai(id);
   });
-    
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
 
-  // $.ajaxSetup({
-  //   headers: {
-  //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-  //   }
-  // });
+  $('#btn-update').on('click', function() {
+    $.confirm({
+      animation: 'RotateY',
+      closeAnimation: 'scale',
+      animationBounce: 1.5,
+      icon: 'fa fa-exclamation-triangle',
+      title: 'Pesan!',
+      content: 'Apakah anda yakin ingin memperbarui data ini?',
+      theme: 'disable',
+      buttons: {
+        info: {
+          btnClass: 'btn-blue',
+          text: 'Ya',
+          action: function () {
+            SubmitForm(event);
+          }
+        },
+        cancel: {
+          text: 'Tidak',
+          action: function () {
 
-  function editPegawai(id)
+          }
+        }
+      }
+    });
+  });
+  
+  function SubmitForm(event)
   {
+    event.preventDefault();
+
     $.ajax({
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      },
       data : $('#formEdit').serialize(),
       type : "post",
-      url  : "{{url('/masterdatautama/datapegawai/edit/')}}/" + id,
+      url  : $("#formEdit").attr('action'),
       dataType : 'json',
       beforeSend: function() {
         loadingShow();
