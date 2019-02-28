@@ -33,8 +33,9 @@ class ProduksiController extends Controller
             $productionorder = [];
             $productionorderdt = [];
             $productionorderpayment = [];
+            DB::beginTransaction();
             try{
-                $idpo= (DB::table('d_productionorder')->max('po_id')) ? DB::table('d_productionorder')->max('po_id') + 1 : 1;
+                $idpo= (DB::table('d_productionorder')->max('po_id')) ? (DB::table('d_productionorder')->max('po_id')) + 1 : 1;
                 $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_id', 8, 10, 3, 'PO', '-');
                 $productionorder = [
                     'po_id' => $idpo,
@@ -45,16 +46,18 @@ class ProduksiController extends Controller
                     'po_status' => 'BELUM'
                 ];
 
+                $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) + 1 : 1;
+                $detailpod = $poddetail;
                 for ($i = 0; $i < count($data['idItem']); $i++) {
-                    $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid') + 1 : 1;
                     $productionorderdt[] = [
                         'pod_productionorder' => $idpo,
-                        'pod_detailid' => $poddetail,
+                        'pod_detailid' => $detailpod,
                         'pod_item' => $data['idItem'][$i],
                         'pod_qty' => $data['jumlah'][$i],
-                        'pod_value' => $data['harga'][$i],
-                        'pod_totalnet' => $data['subtotal'][$i]
+                        'pod_value' => $this->removeCurrency($data['harga'][$i]),
+                        'pod_totalnet' => $this->removeCurrency($data['subtotal'][$i])
                     ];
+                    $detailpod++;
                 }
 
                 for ($i = 0; $i < count($data['termin']); $i++) {
@@ -75,10 +78,10 @@ class ProduksiController extends Controller
                 ]);
             }catch (\Exception $e){
                 DB::rollBack();
-                return $e;
-//                return response()->json([
-//                    'status' => 'gagal'
-//                ]);
+//                return $e;
+                return response()->json([
+                    'status' => 'gagal'
+                ]);
             }
         }
     }
