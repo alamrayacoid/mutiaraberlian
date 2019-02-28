@@ -46,7 +46,7 @@
                                                         class="fa fa-calendar" aria-hidden="true"></i></span>
                                                 </div>
                                                 <input type="text" name="po_date"
-                                                       class="form-control form-control-sm datepicker">
+                                                       class="form-control form-control-sm datepicker" autocomplete="off" id="tanggal">
                                             </div>
                                         </div>
 
@@ -158,12 +158,12 @@
                                                             <input type="text"
                                                                    name="termin[]"
                                                                    class="form-control form-control-sm termin"
-                                                                   value="1">
+                                                                   value="1" readonly>
                                                         </td>
                                                         <td>
                                                             <input type="text"
                                                                    name="estimasi[]"
-                                                                   class="form-control form-control-sm datepicker">
+                                                                   class="form-control form-control-sm datepicker" autocomplete="off">
                                                         </td>
                                                         <td>
                                                             <input type="text"
@@ -173,7 +173,7 @@
                                                         <td>
                                                             <input type="text"
                                                                    name="tanggal[]"
-                                                                   class="form-control form-control-sm datepicker">
+                                                                   class="form-control form-control-sm datepicker" autocomplete="off">
                                                         </td>
                                                         <td>
                                                             <button class="btn btn-success btn-tambah-termin btn-sm"
@@ -276,6 +276,7 @@
 
             $(document).on('click', '.btn-hapus-termin', function () {
                 $(this).parents('tr').remove();
+                setTerimin();
             });
 
             $('.btn-tambah-termin').on('click', function () {
@@ -288,11 +289,11 @@
                 $('#table_order_termin')
                     .append(
                         '<tr>' +
-                        '<td><input type="text" name="termin[]" class="form-control form-control-sm termin" value="' + next_termin + '"></td>' +
-                        '<td><input type="text" name="estimasi[]" class="form-control form-control-sm datepicker"></td>' +
+                        '<td><input type="text" name="termin[]" class="form-control form-control-sm termin" readonly value="' + next_termin + '"></td>' +
+                        '<td><input type="text" name="estimasi[]" class="form-control form-control-sm datepicker" autocomplete="off"></td>' +
                         '<td><input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah"></td>' +
-                        '<td><input type="text" name="tanggal[]" class="form-control form-control-sm datepicker"></td>' +
-                        '<td><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>' +
+                        '<td><input type="text" name="tanggal[]" class="form-control form-control-sm datepicker" autocomplete="off"></td>' +
+                        '<td><button class="btn btn-danger btn-sm btn-hapus-termin" type="button"><i class="fa fa-trash-o"></i></button></td>' +
                         '</tr>'
                     );
                 $('.datepicker').datepicker({
@@ -307,32 +308,40 @@
                     decimal: ",",
                     prefix: "Rp. "
                 });
+                setTerimin();
             });
 
             $(document).on('click', '.btn-submit', function (evt) {
                 evt.preventDefault();
-                $.ajax({
-                    url: "{{route('order.create')}}",
-                    type: "post",
-                    data: $('#form').serialize(),
-                    dataType: "json",
-                    beforeSend: function () {
-                        loadingShow();
-                    },
-                    success: function (response) {
-                        if (response.status == 'sukses') {
+                if ($("#tanggal").val() == "") {
+                    messageWarning('Peringatan', 'Kolom tanggal tidak boleh kosong');
+                } else if ($("#tot_hrg").val() == "" || $("#tot_hrg").val() == 0) {
+                    messageWarning('Peringatan', 'Lengkapi data order produksi');
+                } else {
+                    $.ajax({
+                        url: "{{route('order.create')}}",
+                        type: "post",
+                        data: $('#form').serialize(),
+                        dataType: "json",
+                        beforeSend: function () {
+                            loadingShow();
+                        },
+                        success: function (response) {
+                            if (response.status == 'sukses') {
+                                loadingHide();
+                                messageSuccess('Success', 'Data berhasil ditambahkan!');
+                                setInterval(function(){ location.reload(); }, 3500);
+                            } else {
+                                loadingHide();
+                                messageFailed('Gagal', response.message);
+                            }
+                        },
+                        error: function (e) {
                             loadingHide();
-                            messageSuccess('Success', 'Data berhasil ditambahkan!');
-                        } else {
-                            loadingHide();
-                            messageFailed('Gagal', response.message);
+                            messageWarning('Peringatan', e.message);
                         }
-                    },
-                    error: function (e) {
-                        loadingHide();
-                        messageWarning('Peringatan', e.message);
-                    }
-                });
+                    });
+                }
             })
         });
 
@@ -484,11 +493,29 @@
                 url: '{{ url('/produksi/orderproduksi/get-satuan/') }}'+'/'+idItem,
                 type: 'GET',
                 success: function( resp ) {
-                    resp.forEach(function (data) {
-                        $(".satuan").eq(idxBarang).append("<option value='"+data.u_id+"'>"+data.u_name+"</option>");
-                    })
+                    var option = '';
+                    option += '<option value="'+resp.id1+'">'+resp.unit1+'</option>';
+                    if (resp.id2 != null && resp.id2 != resp.id1) {
+                        option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                    }
+                    if (resp.id3 != null && resp.id3 != resp.id1) {
+                        option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                    }
+                    $(".satuan").eq(idxBarang).append(option);
                 }
             });
+        }
+
+        function setTerimin() {
+            var inputs = document.getElementsByClassName('termin'),
+                termin  = [].map.call(inputs, function( input ) {
+                    return parseInt(input.value);
+                });
+
+            for (var i=0; i < termin.length; i++) {
+                $(".termin").eq(i).val('');
+                $(".termin").eq(i).val(i+1);
+            }
         }
 
         function setArrayCode() {

@@ -85,7 +85,7 @@
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="nav-item">
                     <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Step 1"
-                       class="nav-link active">
+                       class="nav-link active" id="a_step1">
                 <span class="round-tab">
                 <i class="fa fa-user"></i>
                 </span>
@@ -93,7 +93,7 @@
                 </li>
                 <li role="presentation" class="nav-item">
                     <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Step 2"
-                       class="nav-link disabled">
+                       class="nav-link disabled" id="a_step2">
                 <span class="round-tab">
                 <i class="fa fa-history"></i>
                 </span>
@@ -101,7 +101,7 @@
                 </li>
                 <li role="presentation" class="nav-item">
                     <a href="#step3" data-toggle="tab" aria-controls="step3" role="tab" title="Step 3"
-                       class="nav-link disabled">
+                       class="nav-link disabled" id="a_step3">
                 <span class="round-tab">
                 <i class="fa fa-file"></i>
                 </span>
@@ -109,7 +109,7 @@
                 </li>
                 <li role="presentation" class="nav-item">
                     <a href="#step4" data-toggle="tab" aria-controls="step4" role="tab" title="Step 4"
-                       class="nav-link disabled">
+                       class="nav-link disabled" id="a_step4">
                 <span class="round-tab">
                 <i class="fa fa-check"></i>
                 </span>
@@ -178,6 +178,7 @@
                                     <label for="">Email<span style="color:red;">*</span></label>
                                 </div>
                                 <input type="text" class="form-control col-lg-9 col-sm-12" name="email" id="email">
+                                <input type="hidden" value="1" id="isEmailDuplicated">
                                 <div>
                                 <!-- <button class="btn btn-check" id="btn_checkemail">Cek Email</button> -->
                                 </div>
@@ -186,6 +187,7 @@
                                     <label for="">No Telp/WA<span style="color:red;">*</span></label>
                                 </div>
                                 <input type="text" class="form-control col-lg-9 col-sm-12" name="telp" id="telp">
+                                <input type="hidden" value="1" id="isTelpDuplicated">
                                 <div>
                                 <!-- <button class="btn btn-check" id="btn_checktelp">Cek Nomer</button> -->
                                 </div>
@@ -233,7 +235,7 @@
                 <ul class="list-inline text-md-center">
                     <li>
                         <button type="button" onclick="window.location.href='#wizard-form'"
-                                class="btn btn-lg btn-common next-step next-button">Selanjutnya
+                                class="btn btn-lg btn-common next-step next-button" id="btn_next1">Selanjutnya
                         </button>
                     </li>
                 </ul>
@@ -570,6 +572,10 @@
     }
   });
 
+  $(document).ready(function() {
+    EnableNext();
+  })
+
   $('#btn_simpan').on('click', function() {
     loadingShow();
     SubmitForm(event);
@@ -589,13 +595,27 @@
     }
   });
 
+  // enable btn_next1 when ther is no duplicated email and no telp
+  function EnableNext() {
+    if ($('#isEmailDuplicated').val() == 0 && $('#isTelpDuplicated').val() == 0) {
+      $('#btn_next1').prop('disabled', false);
+      $('#a_step2').removeClass('disabled');
+      $('#a_step3').removeClass('disabled');
+      $('#a_step4').removeClass('disabled');
+    } else {
+      $('#a_step2').addClass('disabled');
+      $('#a_step3').addClass('disabled');
+      $('#a_step4').addClass('disabled');
+      $('#btn_next1').prop('disabled', true);
+    }
+  }
+
   // check is data is used by other user
   function CheckDuplicated(event, field)
   {
     event.preventDefault();
     myUrl = "{{ url('/recruitment/isduplicated/') }}";
     myUrl = myUrl + '/' + field + '/' + $('#' + field).val();
-    console.log(myUrl);
 
     $.ajax({
       type : "get",
@@ -604,13 +624,22 @@
       success : function (response){
         if(response.status == 'valid'){
           loadingHide();
+          if (field == 'email') {
+            $('#isEmailDuplicated').val('0');
+          } else if (field == 'telp') {
+            $('#isTelpDuplicated').val('0');
+          }
+          EnableNext();
         } else if (response.status == 'invalid') {
           loadingHide();
           if (field == 'email') {
+            $('#isEmailDuplicated').val('1');
             messageWarning('Perhatian', 'Email sudah digunakan, gunakan yang lain !');
           } else if (field == 'telp') {
+            $('#isTelpDuplicated').val('1');
             messageWarning('Perhatian', 'No telp sudah digunakan, gunakan yang lain !');
           }
+          EnableNext();
         }
       },
       error : function(e){
@@ -637,7 +666,7 @@
         if(response.status == 'berhasil'){
           loadingHide();
           messageSuccess('Berhasil', 'Registrasi berhasil !');
-          location.reload();
+          $('#myForm :input').prop('disabled', true);
         } else if (response.status == 'invalid') {
           loadingHide();
           messageWarning('Perhatian', response.message);

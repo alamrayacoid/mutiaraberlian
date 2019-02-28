@@ -33,9 +33,10 @@ class ProduksiController extends Controller
             $productionorder = [];
             $productionorderdt = [];
             $productionorderpayment = [];
+            DB::beginTransaction();
             try{
-                $idpo= (DB::table('d_productionorder')->max('po_id')) ? DB::table('d_productionorder')->max('po_id') + 1 : 1;
-                $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_id', 8, 10, 3, 'PO', '-');
+                $idpo= (DB::table('d_productionorder')->max('po_id')) ? (DB::table('d_productionorder')->max('po_id')) + 1 : 1;
+                $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
                 $productionorder = [
                     'po_id' => $idpo,
                     'po_nota' => $nota,
@@ -45,16 +46,32 @@ class ProduksiController extends Controller
                     'po_status' => 'BELUM'
                 ];
 
+                $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) + 1 : 1;
+                $detailpod = $poddetail;
                 for ($i = 0; $i < count($data['idItem']); $i++) {
-                    $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid') + 1 : 1;
+                    if ($data['satuan'][$i] == 1) {
+                        $qty = $data['jumlah'][$i];
+                    } else if ($data['satuan'][$i] == 2) {
+                        $getCompare = DB::table('m_item')
+                            ->where('i_id', '=', $data['idItem'][$i])
+                            ->first();
+                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare1;
+                    } else if ($data['satuan'][$i] == 3) {
+                        $getCompare = DB::table('m_item')
+                            ->where('i_id', '=', $data['idItem'][$i])
+                            ->first();
+                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare1;
+                    }
+
                     $productionorderdt[] = [
                         'pod_productionorder' => $idpo,
-                        'pod_detailid' => $poddetail,
+                        'pod_detailid' => $detailpod,
                         'pod_item' => $data['idItem'][$i],
-                        'pod_qty' => $data['jumlah'][$i],
-                        'pod_value' => $data['harga'][$i],
-                        'pod_totalnet' => $data['subtotal'][$i]
+                        'pod_qty' => $qty,
+                        'pod_value' => $this->removeCurrency($data['harga'][$i]),
+                        'pod_totalnet' => $this->removeCurrency($data['subtotal'][$i])
                     ];
+                    $detailpod++;
                 }
 
                 for ($i = 0; $i < count($data['termin']); $i++) {
@@ -75,10 +92,10 @@ class ProduksiController extends Controller
                 ]);
             }catch (\Exception $e){
                 DB::rollBack();
-                return $e;
-//                return response()->json([
-//                    'status' => 'gagal'
-//                ]);
+//                return $e;
+                return response()->json([
+                    'status' => 'gagal'
+                ]);
             }
         }
     }
@@ -128,12 +145,19 @@ class ProduksiController extends Controller
 
     public function getSatuan($id)
     {
-        $data = DB::table('m_unit')
-            ->select('m_item.*', 'm_unit.*')
-            ->join('m_item', function ($x) use ($id){
-                $x->where('m_item.i_id', '=', $id);
+        $data = DB::table('m_item')
+            ->select('m_item.*', 'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
+            ->where('m_item.i_id', '=', $id)
+            ->join('m_unit as a', function ($x){
+                $x->on('m_item.i_unit1', '=', 'a.u_id');
             })
-            ->get();
+            ->leftjoin('m_unit as b', function ($y){
+                $y->on('m_item.i_unit2', '=', 'b.u_id');
+            })
+            ->leftjoin('m_unit as c', function ($z){
+                $z->on('m_item.i_unit3', '=', 'c.u_id');
+            })
+            ->first();
         return Response::json($data);
     }
 

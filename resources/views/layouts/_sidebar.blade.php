@@ -26,12 +26,11 @@
     <div class="header-block header-block-nav">
         <ul class="nav-profile">
             <li class="notifications new">
-                <a href="" data-toggle="dropdown">
-                    <i class="fa fa-bell-o"></i>
-                    <sup>
-                        <span class="counter">8</span>
-                    </sup>
-                </a>
+            <a href="" data-toggle="dropdown">
+                <i class="fa fa-bell-o" style="font-size:25px;">
+                <i class="fa fa-check" style="font-size:11px; position:relative; left:-24px; bottom:5px;"></i>
+                </i>
+            </a>
                 <div class="dropdown-menu notifications-dropdown-menu">
                     <ul class="notifications-container">
                         <li>
@@ -42,6 +41,61 @@
                                 <div class="body-col">
                                     <p>
                                         <span class="accent">Zack Alien</span> pushed new commit:
+                                        <span class="accent">Fix page load performance issue</span>. </p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" class="notification-item">
+                                <div class="img-col">
+                                    <div class="img" style="background-image: url('assets/assets/faces/5.jpg')"></div>
+                                </div>
+                                <div class="body-col">
+                                    <p>
+                                        <span class="accent">Amaya Hatsumi</span> started new task:
+                                        <span class="accent">Dashboard UI design.</span>. </p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" class="notification-item">
+                                <div class="img-col">
+                                    <div class="img" style="background-image: url('assets/assets/faces/8.jpg')"></div>
+                                </div>
+                                <div class="body-col">
+                                    <p>
+                                        <span class="accent">Andy Nouman</span> deployed new version of
+                                        <span class="accent">NodeJS REST Api V3</span>
+                                    </p>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                    <footer>
+                        <ul>
+                            <li>
+                                <a href=""> View All </a>
+                            </li>
+                        </ul>
+                    </footer>
+                </div>
+            </li>
+            <li class="notifications new">
+                <a href="" data-toggle="dropdown">
+                    <i class="fa fa-bell-o" style="font-size:25px;">
+                    <i class="fa fa-info" style="font-size:11px; position:relative; left:-20.4px; bottom:5px;"></i>
+                    </i>
+                </a>
+                <div class="dropdown-menu notifications-dropdown-menu">
+                    <ul class="notifications-container">
+                        <li>
+                            <a href="" class="notification-item">
+                                <div class="img-col">
+                                    <div class="img" style="background-image: url('assets/assets/faces/3.jpg')"></div>
+                                </div>
+                                <div class="body-col">
+                                    <p>
+                                        <span class="accent">Alien</span> pushed new commit:
                                         <span class="accent">Fix page load performance issue</span>. </p>
                                 </div>
                             </a>
@@ -333,8 +387,31 @@
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
-                        <li class="">
-                            <a href="">Otorisasi</a>
+                        <li class="{{Request::is('pengaturan/otoritas/*') ? 'open' : ''}}">
+                            <a href="#">
+                                Otorisasi
+                                <i class="fa arrow"></i>
+                            </a>
+                            <ul class="sidebar-nav">
+                                <li class="{{Request::is('pengaturan/otoritas/perubahanhargajual/*') ? 'active' : ''}}">
+                                    <a href="{{ route('perubahanhargajual.index') }}">Perubahan Harga Jual</a>
+                                </li>
+
+                                <li class="#">
+                                    <a href="{{ route('mngagen.index') }}">Pengeluaran Lebih Dari Nilai Tertentu</a>
+                                </li>
+
+                                <li class="#">
+                                    <a href="{{ route('mngagen.index') }}">Opname Item Produk</a>
+                                </li>
+
+                                <li class="#">
+                                    <a href="{{ route('mngagen.index') }}">Adjustment Item Produk</a>
+                                </li>
+                                <li class="#">
+                                    <a href="{{ route('mngagen.index') }}">Revisi Data</a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="">
                             <a href="">Notifikasi</a>

@@ -27,7 +27,7 @@
                     <div class="card-block">
                         <section>
                         	<div class="table-responsive">
-	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_pegawai">
+	                            <table class="table table-hover display nowrap" cellspacing="0" id="table_pegawai">
 	                                <thead class="bg-primary">
 	                                    <tr>
 							                <th>ID Pegawai</th>
@@ -54,7 +54,6 @@
 		</div>
 	</section>
 </article>
-
 @endsection
 
 @section('extra_script')
@@ -64,139 +63,60 @@
 	});
 </script>
 <script type="text/javascript">
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        var tb_pegawai;
-        setTimeout(function () {
-            tablePegawai();
-        }, 500);
-
-        function tablePegawai() {
-            tb_pegawai = $('#table_pegawai').DataTable({
-                responsive: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('pegawai.list') }}",
-                    type: "get",
-                    data: {
-                        "_token": "{{ csrf_token() }}"
-                    }
-                },
-                columns: [
-                    {data: 'e_id', name: 'e_id'},
-                    {data: 'e_name', name: 'e_name'},
-                    {data: 'e_nik', name: 'e_nik'},
-                    {data: 'e_nip', name: 'e_nip'},
-                    {data: 'jabatan', name: 'jabatan'},
-                    {data: 'e_address', name: 'e_address'},
-                    {data: 'maried', name: 'maried'},
-                    {data: 'e_workingdays', name: 'e_workingdays'},
-                    {data: 'status', name: 'status'},
-                    {data: 'action', name: 'action'}
-                ],
-                pageLength: 10,
-                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-            });
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
+    });
 
-        function addPegawai()
-        {
-        	$('#btn-tambah').on('click', function(){
-        		window.location.href = "{{route('pegawai.create')}}";
-        	})
-        }
+    var tb_pegawai;
+    setTimeout(function () {
+        tablePegawai();
+        addPegawai();
+    }, 500);
 
-        function editPegawai(idx) {
-            window.location = baseUrl + "/masterdatautama/datapegawai/edit/" + idx;
-        }
-
-        function Deletepegawai(idx) {
-            var url_hapus = baseUrl + "/masterdatautama/datapegawai/delete/" + idx;
-
-            $.confirm({
-                animation: 'RotateY',
-                closeAnimation: 'scale',
-                animationBounce: 1.5,
-                icon: 'fa fa-exclamation-triangle',
-                title: 'Pesan!',
-                content: 'Apakah anda yakin ingin menghapus data ini?',
-                theme: 'disable',
-                buttons: {
-                    info: {
-                        btnClass: 'btn-blue',
-                        text: 'Ya',
-                        action: function () {
-                            return $.ajax({
-                                type: "get",
-                                url: url_hapus,
-                                beforeSend: function() {
-                                    loadingShow();
-                                },
-                                success: function (response) {
-                                    if (response.status == 'berhasil') {
-                                        loadingHide();
-                                        messageSuccess('Berhasil', 'Data berhasil dihapus!');
-                                        tb_pegawai.ajax.reload();
-                                    } else {
-                                        loadingHide();
-                                        messageFailed('Gagal', response.message);
-                                    }
-                                },
-                                error: function (e) {
-                                    loadingHide();
-                                    messageWarning('Peringatan', e.message);
-                                }
-                            });
-                        }
-                    },
-                    cancel: {
-                        text: 'Tidak',
-                        action: function () {
-
-                        }
-                    }
+    function tablePegawai() {
+        tb_pegawai = $('#table_pegawai').DataTable({
+            responsive: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('pegawai.list') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}"
                 }
-            });
-        }
+            },
+            columns: [
+                {data: 'e_id', name: 'e_id'},
+                {data: 'e_name', name: 'e_name'},
+                {data: 'e_nik', name: 'e_nik'},
+                {data: 'e_nip', name: 'e_nip'},
+                {data: 'jabatan', name: 'jabatan'},
+                {data: 'e_address', name: 'e_address'},
+                {data: 'maried', name: 'maried'},
+                {data: 'e_workingyear', name: 'e_workingyear'},
+                {data: 'status', name: 'status'},
+                {data: 'action', name: 'action'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    }
 
-	$(document).on('click', '.btn-disable', function(){
-		var ini = $(this);
-		$.confirm({
-			animation: 'RotateY',
-			closeAnimation: 'scale',
-			animationBounce: 1.5,
-			icon: 'fa fa-exclamation-triangle',
-			title: 'Peringatan!',
-			content: 'Apa anda yakin mau menonaktifkan data ini?',
-			theme: 'disable',
-			buttons: {
-				info: {
-					btnClass: 'btn-blue',
-					text:'Ya',
-					action : function(){
-						$.toast({
-							heading: 'Information',
-							text: 'Data Berhasil di Nonaktifkan.',
-							bgColor: '#0984e3',
-							textColor: 'white',
-							loaderBg: '#fdcb6e',
-							icon: 'info'
-						})
-						ini.parents('.btn-group').html('<button class="btn btn-success btn-enable" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-					}
-				},
-				cancel:{
-					text: 'Tidak',
-					action: function () {
-					}
-				}
-			}
-		});
-	});
+    function addPegawai()
+    {
+    	$('#btn-tambah').on('click', function(){
+    		window.location.href = "{{route('pegawai.create')}}";
+    	})
+    }
+
+    function detailPegawai(idx) {
+        window.location = baseUrl + "/masterdatautama/datapegawai/detail/" + idx;
+    }
+
+    function editPegawai(idx) {
+        window.location = baseUrl + "/masterdatautama/datapegawai/edit/" + idx;
+    }
 
     function nonActive(idx) {
         var nonActive = baseUrl + "/masterdatautama/datapegawai/nonactive/" + idx;
@@ -294,6 +214,11 @@
                 }
             }
         });
+    }
+
+    function detail(id)
+    {
+        window.location = baseUrl + "/masterdatautama/datapegawai/detail/" + id;
     }
 </script>
 @endsection
