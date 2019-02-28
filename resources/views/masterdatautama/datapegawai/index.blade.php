@@ -72,7 +72,6 @@
         var tb_pegawai;
         setTimeout(function () {
             tablePegawai();
-            addPegawai();
         }, 500);
 
         function tablePegawai() {
