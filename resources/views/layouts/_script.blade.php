@@ -110,7 +110,7 @@
             hideAfter: 3000
         });
     }
-
+    
     function convertToRupiah(angka) {
         var rupiah = '';
         var angkarev = angka.toString().split('').reverse().join('');
@@ -162,10 +162,11 @@
         $('.data-table').DataTable();
 
         $('.datepicker').datepicker({
+            format: "dd-mm-yyyy",
+            enableOnReadonly: false,
             dateFormat: "dd-mm-yy",
             enableOnReadonly: false,
             autoclose: true
-
         });
 
         $('#search-mobile').click(function () {
@@ -260,6 +261,9 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        // $(function () {
+          $('[data-toggle="tooltip"]').tooltip();
+        // });
         // custom function .ignore()
         $.fn.ignore = function (sel) {
             return this.clone().find(sel || ">*").remove().end();
@@ -348,8 +352,6 @@
 
     menuThree.addEventListener('click', addClassFunThree);
 </script>
-<<<<<<< HEAD
-
 <script>
     var LeafScene = function (el) {
         this.viewport = el;
@@ -519,5 +521,3 @@
     leaves.init();
     leaves.render();
 </script>
-=======
->>>>>>> d54453d6ac60b4e04b81635d4974ff0e9740cdad

@@ -59,13 +59,12 @@
 			                        <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_produk" style="width:100%">
 			                            <thead class="bg-primary">
 			                                <tr>
-												<th>No</th>
-												<th>Kode Barang</th>
-												<th>Jenis Barang</th>
-												<th>Nama Barang</th>
-												<th>Detail</th>
-												<th>Aksi</th>
-											</tr>
+																			<th>No</th>
+																			<th>Kode Barang</th>
+																			<th>Jenis Barang</th>
+																			<th>Nama Barang</th>
+																			<th>Aksi</th>
+																			</tr>
 			                            </thead>
 			                            <tbody>
 			                            </tbody>
@@ -188,8 +187,7 @@
 				{data: 'DT_RowIndex'},
 				{data: 'i_code', name: 'i_code'},
 				{data: 'it_name', name: 'it_name'},
-				{data: 'i_name', name: 'i_name'},
-				{data: 'detail', name: 'detail'},
+				{data: 'i_name', name: 'i_name'},				
 				{data: 'action', name: 'action'}
 			],
 			pageLength: 10,
@@ -321,7 +319,7 @@
 		table.row($(a).parents('tr')).remove().draw();
 	}
 	});
-	
+
 	function savejenis(){
 		loadingShow();
 		var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');

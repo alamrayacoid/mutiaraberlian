@@ -60,17 +60,17 @@ class EmployeeController extends Controller
         if ($datas->e_isactive == "Y") {
           return '<div class="text-center">
                     <div class="btn-group btn-group-sm">
-                      <button class="btn btn-info" onclick="detail(\''.Crypt::encrypt($datas->e_id).'\')" data-toggle="tooltip" data-placement="top" disabled><i class="fa fa-list-alt"></i></button>
-                      <button type="button" class="btn btn-warning" onclick="editPegawai(\''.Crypt::encrypt($datas->e_id).'\')" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
-                      <button class="btn btn-danger" onclick="nonActive(\''.Crypt::encrypt($datas->e_id).'\')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-times"></i></button>
+                      <button class="btn btn-info" onclick="detail(\''.Crypt::encrypt($datas->e_id).'\')" data-toggle="tooltip" data-placement="bottom" title="Detail"><i class="fa fa-list-alt"></i></button>
+                      <button type="button" class="btn btn-warning" onclick="editPegawai(\''.Crypt::encrypt($datas->e_id).'\')" data-toggle="tooltip" data-placement="bottom" title="Edit"><i class="fa fa-pencil"></i></button>
+                      <button class="btn btn-danger" onclick="nonActive(\''.Crypt::encrypt($datas->e_id).'\')" data-toggle="tooltip" data-placement="bottom" title="Nonaktifkan"><i class="fa fa-times"></i></button>
                     </div>
                   </div>';
         } else {
           return '<div class="text-center">
                     <div class="btn-group btn-group-sm">
-                      <button class="btn btn-info" onclick="detail(\''.Crypt::encrypt($datas->e_id).'\')" data-toggle="tooltip" data-placement="top" disabled><i class="fa fa-list-alt"></i></button>
-                      <button class="btn btn-disabled disabled" onclick="editPegawai(\''.Crypt::encrypt($datas->e_id).'\')" data-toggle="tooltip" data-placement="top" disabled><i class="fa fa-pencil"></i></button>
-                      <button class="btn btn-success" onclick="active(\''.Crypt::encrypt($datas->e_id).'\')" data-toggle="tooltip" data-placement="top" title="Aktifkan"><i class="fa fa-check"></i></button>
+                      <button class="btn btn-info" onclick="detail(\''.Crypt::encrypt($datas->e_id).'\')" data-toggle="tooltip" data-placement="bottom" title="Detail"><i class="fa fa-list-alt"></i></button>
+                      <button class="btn btn-disabled disabled" onclick="editPegawai(\''.Crypt::encrypt($datas->e_id).'\')" data-toggle="tooltip" data-placement="bottom" title="Edit" disabled><i class="fa fa-pencil"></i></button>
+                      <button class="btn btn-success" onclick="active(\''.Crypt::encrypt($datas->e_id).'\')" data-toggle="tooltip" data-placement="bottom" title="Aktifkan"><i class="fa fa-check"></i></button>
                     </div>
                   </div>';        
         }
@@ -149,7 +149,6 @@ class EmployeeController extends Controller
         'e_nip'           => $request->e_nip,
         'e_name'          => strtoupper($request->e_name),
         'e_nik'           => $request->e_nik,
-        'e_workingdays'   => $request->e_workingdays,
         'e_telp'          => $request->e_telp,
         'e_religion'      => $request->e_religion,
         'e_gender'        => $request->e_gender,
@@ -157,7 +156,7 @@ class EmployeeController extends Controller
         'e_maritalstatus' => $request->e_maritalstatus,
         'e_child'         => $request->e_child,
         'e_birth'         => date('Y-m-d', strtotime($request->e_birth)),
-        "e_workingyear"   => $request->e_workingyear,
+        "e_workingyear"   => date('Y-m-d', strtotime($request->e_workingyear)),
         'e_education'     => $request->e_education,
         'e_email'         => $request->e_email,
         'e_position'      => $request->e_position,
@@ -361,5 +360,26 @@ class EmployeeController extends Controller
               'message' => $e
           ]);
       }
+  }
+
+  public function detail($id)
+  {
+    try{
+      $id = Crypt::decrypt($id);
+    }catch (\Exception $e){
+      return view('errors.404');
+    }
+    $employee = DB::table('m_employee')
+      ->leftJoin('m_company', 'e_company', 'c_id')
+      ->leftJoin('m_jabatan', 'e_position', 'j_id')
+      ->leftJoin('m_divisi', 'e_department', 'm_id')
+      ->select('m_employee.*',
+        DB::raw('date_format(e_birth, "%d/%m/%Y") as e_birth'),
+        DB::raw('date_format(e_workingyear, "%d/%m/%Y") as e_workingyear'),
+        'c_name', 'j_name', 'm_name')
+      ->where('e_id', '=', $id)
+      ->first();
+    return view('masterdatautama.datapegawai.detail', compact('employee'));
+
   }
 }

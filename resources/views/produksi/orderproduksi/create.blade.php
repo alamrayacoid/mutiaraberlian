@@ -323,6 +323,7 @@
                         if (response.status == 'sukses') {
                             loadingHide();
                             messageSuccess('Success', 'Data berhasil ditambahkan!');
+                            setInterval(function(){ location.reload(); }, 3500);
                         } else {
                             loadingHide();
                             messageFailed('Gagal', response.message);
