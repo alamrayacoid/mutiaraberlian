@@ -84,7 +84,7 @@
 			            			<h3 class="title">Data Jenis Produk</h3>
 			            		</div>
 			            		<div class="header-block pull-right">
-												<button class="btn btn-primary btn-modal" id="tambahbtn" data-toggle="modal" data-target="#create" type="button"><i class="fa fa-plus"></i>&nbsp;Tambah Data Jenis Produk</button>
+									<button class="btn btn-primary btn-modal" id="tambahbtn" data-toggle="modal" data-target="#create" type="button"><i class="fa fa-plus"></i>&nbsp;Tambah Data Jenis Produk</button>
 			            		</div>
 		            		</div>
 		            		<div class="card-block">
