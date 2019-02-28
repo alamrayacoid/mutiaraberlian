@@ -31,6 +31,7 @@ Route::group(['middleware' => 'guest'], function () {
 });
 
 Route::get('/recruitment', 'RecruitmentController@index')->name('recruitment.index');
+Route::post('/recruitment/store', 'RecruitmentController@store')->name('recruitment.store');
 
 Auth::routes();
 
@@ -40,6 +41,7 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'auth.logout'
     ]);
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('storage/uploads/produk/original')->name('image_produk');   
 
     // !====================================================== Master Data Utama ======================================================!
 
@@ -54,7 +56,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/produk/list', 'Master\ItemController@getList')->name('dataproduk.list');
     Route::get('/masterdatautama/produk/create', 'Master\ItemController@create')->name('dataproduk.create');
     Route::post('/masterdatautama/produk/store', 'Master\ItemController@store')->name('dataproduk.store');
-    Route::get('/masterdatautama/produk/store', 'Master\ItemController@store')->name('dataproduk.store');
     Route::get('/masterdatautama/produk/edit/{id}', 'Master\ItemController@edit')->name('dataproduk.edit');
     Route::post('/masterdatautama/produk/update/{id}', 'Master\ItemController@update')->name('dataproduk.update');
     Route::post('/masterdatautama/produk/delete/{id}', 'Master\ItemController@destroy')->name('dataproduk.delete');
@@ -83,25 +84,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/suplier/post/{id}', 'Master\SupplierController@update')->name('suplier.update');
     Route::post('/masterdatautama/suplier/delete/{id}', 'Master\SupplierController@destroy')->name('suplier.delete');
 
-//	=============Mas Rowi=============
-
-//	Route::get('/masterdatautama/cabang/index', 'MasterController@cabang')->name('cabang.index');
-//    Route::get('/masterdatautama/cabang/list', 'MasterController@get_list_cabang')->name('cabang.list');
-//	Route::get('/masterdatautama/cabang/create', 'MasterController@create_cabang')->name('cabang.create');
-//    Route::post('/masterdatautama/cabang/store', 'MasterController@store_cabang')->name('cabang.store');
-//	Route::get('/masterdatautama/cabang/edit/{id}', 'MasterController@edit_cabang')->name('cabang.edit');
-//	Route::post('/masterdatautama/cabang/update/{id}', 'MasterController@update_cabang')->name('cabang.update');
-//	Route::post('/masterdatautama/cabang/delete/{id}', 'MasterController@delete_cabang')->name('cabang.delete');
-
-    //	=============End Mas Rowi=============
-
 //    ==========Master Outlet==========
     Route::get('/masterdatautama/cabang/index', 'Master\CabangController@index')->name('cabang.index');
     Route::get('/masterdatautama/cabang/list', 'Master\CabangController@getData')->name('cabang.list');
     Route::get('/masterdatautama/cabang/create', 'Master\CabangController@create')->name('cabang.create');
     Route::get('/masterdatautama/cabang/store', 'Master\CabangController@store')->name('cabang.store');
     Route::match(['get', 'post'], '/masterdatautama/cabang/edit/{id}', 'Master\CabangController@edit')->name('cabang.edit');
-    Route::get('/masterdatautama/cabang/delete/{id}', 'Master\CabangController@delete')->name('cabang.delete');
+    Route::get('/masterdatautama/cabang/nonactive/{id}', 'Master\CabangController@nonActive')->name('cabang.nonActive');
+    Route::get('/masterdatautama/cabang/actived/{id}', 'Master\CabangController@actived')->name('cabang.actived');
 //    ==========End Master Outlet======
 
     Route::get('/masterdatautama/agen/index', 'Master\AgenController@index')->name('agen.index');
@@ -130,7 +120,8 @@ Route::group(['middleware' => 'auth'], function () {
     // !===================================================== PRODUKSI =====================================================!
     // Order Produksi
     Route::get('/produksi/orderproduksi/index', 'ProduksiController@order_produksi')->name('order.index');
-    Route::get('/produksi/orderproduksi/create', 'ProduksiController@create_produksi')->name('order.create');
+    Route::match(['get', 'post'],'/produksi/orderproduksi/create', 'ProduksiController@create_produksi')->name('order.create');
+    Route::get('/produksi/orderproduksi/cari-barang', 'ProduksiController@cariBarang')->name('order.caribarang');
     Route::get('/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
 
     // Penerimaan Barang

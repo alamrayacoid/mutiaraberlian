@@ -223,7 +223,11 @@
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <select name="e_department" id="" class="form-control form-control-sm select2">
-                          <option value="{{$employee->e_department}}" selected>{{$employee->m_name}}</option>
+                          @if($employee->e_department == null)
+                            <option value="">--- Pilih Divisi ---</option>
+                          @else
+                            <option value="{{$employee->e_department}}" selected>{{$employee->m_name}}</option>
+                          @endif
                           @foreach($divisi->where('m_id', '!=', $employee->e_department) as $div)
                             <option value="{{$div->m_id}}">{{$div->m_name}}</option>
                           @endforeach
@@ -236,7 +240,7 @@
                     </div>
                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                       <div class="form-group">
-                        <textarea type="text" class="form-control form-control-sm mb-3" name="e_address" value="{{$employee->e_address}}"></textarea>
+                        <textarea type="text" class="form-control form-control-sm mb-3" name="e_address">{{$employee->e_address}}</textarea>
                       </div>
                     </div>
 
@@ -278,7 +282,7 @@
 
                     <div class="col-12" align="center">
                       <div class="form-group">
-                        <img src="{{asset('assets/img/add-image-icon.png')}}" height="120px" width="90px" id="img-preview" style="cursor: pointer;">
+                        <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" width="120px" id="img-preview" style="cursor: pointer;">
                       </div>
                     </div>
                   </div>

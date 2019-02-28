@@ -321,7 +321,7 @@
 		table.row($(a).parents('tr')).remove().draw();
 	}
 	});
-
+	
 	function savejenis(){
 		loadingShow();
 		var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
@@ -337,7 +337,9 @@
 					messageSuccess('Success', 'Data berhasil disimpan!');
 					$('#create').modal('hide');
 					tb_jenis.ajax.reload();
-				} else {
+				} else if (response.status == 'invalid') {
+        	messageWarning('Warning', response.message);
+        } else {
 					messageFailed('Gagal', 'Data gagal disimpan!');
 				}
 			}
@@ -359,7 +361,9 @@
 					messageSuccess('Success', 'Data berhasil disimpan!');
 					$('#create').modal('hide');
 					tb_jenis.ajax.reload();
-				} else {
+				} else if (response.status == 'invalid') {
+        	messageWarning('Warning', response.message);
+        } else {
 					messageFailed('Gagal', 'Data gagal disimpan!');
 				}
 			}

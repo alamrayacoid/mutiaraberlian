@@ -23,23 +23,53 @@ class CabangController extends Controller
 
     public function getData()
     {
-      $datas = DB::table('m_company')->orderBy('c_name', 'asc');
+      $datas = DB::table('m_company')
+        ->orderBy('c_name', 'asc');
       return Datatables::of($datas)
         ->addIndexColumn()
+        ->addColumn('status', function($datas){
+          if ($datas->c_isactive == "Y") {
+            return '<div class="text-center">
+                      <span class="badge badge-success btn-block py-2">AKTIF</span>
+                    </div>';
+          } else {
+            return '<div class="text-center">
+                      <span class="badge badge-danger btn-block py-2">NON AKTIF</span>
+                    </div>';
+          }
+        })
         ->addColumn('action', function($datas) {
-          return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                    <button class="btn btn-warning" onclick="EditCabang(\''.Crypt::encrypt($datas->c_id).'\')" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
-                    <button class="btn btn-danger" onclick="DeleteCabang(\''.Crypt::encrypt($datas->c_id).'\')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-trash-o"></i></button>
-                    </div></div>';
-          })
-        ->rawColumns(['action'])
+          if ($datas->c_isactive == "Y") {
+            if ($datas->c_type == "PUSAT") {
+              return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                        <button class="btn btn-warning" onclick="EditCabang(\''.Crypt::encrypt($datas->c_id).'\')" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i></button>
+                        <button class="btn btn-disabled disabled" onclick="nonActive(\''.Crypt::encrypt($datas->c_id).'\')" data-toggle="tooltip" data-placement="top" disabled><i class="fa fa-times"></i></button>
+                        </div>
+                      </div>';
+            } else {
+                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                          <button class="btn btn-warning" onclick="EditCabang(\''.Crypt::encrypt($datas->c_id).'\')" rel="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i></button>
+                          <button class="btn btn-danger" onclick="nonActive(\''.Crypt::encrypt($datas->c_id).'\')" data-toggle="tooltip" data-placement="top" title="Nonaktifkan"><i class="fa fa-times"></i></button>
+                          </div>
+                        </div>';
+            }
+          } else {
+              return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                        <button class="btn btn-disabled disabled" onclick="EditCabang(\''.Crypt::encrypt($datas->c_id).'\')" data-toggle="tooltip" data-placement="top" disabled><i class="fa fa-pencil"></i></button>
+                        <button class="btn btn-success" onclick="active(\''.Crypt::encrypt($datas->c_id).'\')" data-toggle="tooltip" data-placement="top" title="Aktifkan"><i class="fa fa-check"></i></button>
+                        </div>
+                      </div>';        
+          }
+        })
+        ->rawColumns(['status','action'])
         ->make(true);
     }
 
     public function create()
     {
       $employe = DB::table('m_employee')->select('e_id', 'e_name')->get();
-      return view('masterdatautama.cabang.create', compact('employe'));
+      $company = DB::table('m_company')->select('c_id', 'c_name')->get();
+      return view('masterdatautama.cabang.create', compact('employe', 'company'));
     }
 
     public function store(Request $request)
@@ -157,7 +187,7 @@ class CabangController extends Controller
         }
     }
 
-    public function delete($id)
+    public function nonActive($id)
     {
         try{
             $id = Crypt::decrypt($id);
@@ -171,11 +201,44 @@ class CabangController extends Controller
         try {
             DB::table('m_company')
                 ->where('c_id', $id)
-                ->delete();
+                ->update([
+                  'c_isactive' => "N"
+                ]);
 
             DB::commit();
             return response()->json([
-                'status' => 'berhasil'
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function actived($id)
+    {
+        try{
+            $id = Crypt::decrypt($id);
+        }catch (\Exception $e){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e
+            ]);
+        }
+        DB::beginTransaction();
+        try {
+            DB::table('m_company')
+                ->where('c_id', $id)
+                ->update([
+                  'c_isactive' => "Y"
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
             ]);
         } catch (\Exception $e) {
             DB::rollback();
