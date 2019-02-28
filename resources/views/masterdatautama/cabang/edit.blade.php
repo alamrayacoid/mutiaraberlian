@@ -155,8 +155,7 @@
         loadingHide();
         messageWarning('Warning', e.message);
       }
-    })
-
+    });
   }
 </script>
 @endsection
