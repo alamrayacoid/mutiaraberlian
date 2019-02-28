@@ -223,7 +223,7 @@
                                 <input type="number" class="form-control col-lg-9 col-sm-12" name="childcount">
 
                                 <div class="col-lg-3 col-sm-12">
-                                    <label for="">Deskripsi diri anda<span style="color:red;">*</span></label>
+                                    <label for="">Deskripsi diri anda</label>
                                 </div>
                                 <textarea type="text" class="form-control col-lg-9 col-sm-12" row="5" name="description"></textarea>
                             </div>
@@ -581,7 +581,7 @@
       CheckDuplicated(event, 'email');
     }
   });
-  
+
   $('#telp').focusout(function() {
     if($(this).val() != "") {
       loadingShow();
@@ -636,8 +636,8 @@
       success : function (response){
         if(response.status == 'berhasil'){
           loadingHide();
-          messageSuccess('Berhasil', 'Data berhasil ditambahkan !');
-          location.reload();
+          messageSuccess('Berhasil', 'Registrasi berhasil !');
+          $('#myForm :input').prop('disabled', true);
         } else if (response.status == 'invalid') {
           loadingHide();
           messageWarning('Perhatian', response.message);

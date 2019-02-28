@@ -29,14 +29,14 @@ class RecruitmentController extends Controller
         'birthmonth' => 'required',
         'birthyear' => 'required',
         'lasteducation' => 'required',
-        'email' => 'required|nullable|email',
+        'email' => 'required|email',
         'telp' => 'required|numeric',
         'religion' => 'required',
         'partner' => 'required_if:status,M',
         'schoolname' => 'required',
-        'yearin' => 'required|numeric|digits:4',
-        'yearout' => 'required|numeric|digits:4',
-        // 'majors' => 'sometimes',
+        'yearin' => 'required',
+        'yearout' => 'required',
+        'majors' => 'required',
         'filephoto' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'filektp' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'fileijazah' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -61,12 +61,8 @@ class RecruitmentController extends Controller
         'partner.required_if' => 'Nama suami/istri masih kosong !',
         'schoolname.required' => 'Nama sekolah masih kosong !',
         'yearin.required' => 'Tahun masuk masih kosong !',
-        'yearin.numeric' => 'Tahun masuk hanya boleh berisi angka !',
-        'yearin.digits' => 'Tahun masuk maksimal 4 digit !',
         'yearout.required' => 'Tahun keluar masih kosong !',
-        'yearout.numeric' => 'Tahun keluar hanya boleh berisi angka !',
-        'yearout.digits' => 'Tahun keluar maksimal 4 digit !',
-        // 'majors.required' => 'Jurusan sekolah masih kosong !',
+        'majors.required' => 'Jurusan sekolah masih kosong !',
         'filephoto.max' => 'Ukuran file maksimal 2 MB !',
         'filektp.max' => 'Ukuran file maksimal 2 MB !',
         'fileijazah.max' => 'Ukuran file maksimal 2 MB !',
@@ -111,7 +107,7 @@ class RecruitmentController extends Controller
     }
 
     /**
-    * uploads images to public_path and return image name.
+    * uploads images to storage_path and return image name.
     *
     * @param file $image
     * @param string $nik (9271928xxx)
