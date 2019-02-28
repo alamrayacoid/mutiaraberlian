@@ -36,7 +36,7 @@ class ProduksiController extends Controller
             DB::beginTransaction();
             try{
                 $idpo= (DB::table('d_productionorder')->max('po_id')) ? (DB::table('d_productionorder')->max('po_id')) + 1 : 1;
-                $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_id', 8, 10, 3, 'PO', '-');
+                $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
                 $productionorder = [
                     'po_id' => $idpo,
                     'po_nota' => $nota,
@@ -49,11 +49,25 @@ class ProduksiController extends Controller
                 $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) + 1 : 1;
                 $detailpod = $poddetail;
                 for ($i = 0; $i < count($data['idItem']); $i++) {
+                    if ($data['satuan'][$i] == 1) {
+                        $qty = $data['jumlah'][$i];
+                    } else if ($data['satuan'][$i] == 2) {
+                        $getCompare = DB::table('m_item')
+                            ->where('i_id', '=', $data['idItem'][$i])
+                            ->first();
+                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare1;
+                    } else if ($data['satuan'][$i] == 3) {
+                        $getCompare = DB::table('m_item')
+                            ->where('i_id', '=', $data['idItem'][$i])
+                            ->first();
+                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare1;
+                    }
+
                     $productionorderdt[] = [
                         'pod_productionorder' => $idpo,
                         'pod_detailid' => $detailpod,
                         'pod_item' => $data['idItem'][$i],
-                        'pod_qty' => $data['jumlah'][$i],
+                        'pod_qty' => $qty,
                         'pod_value' => $this->removeCurrency($data['harga'][$i]),
                         'pod_totalnet' => $this->removeCurrency($data['subtotal'][$i])
                     ];

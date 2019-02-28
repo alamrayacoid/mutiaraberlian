@@ -46,7 +46,7 @@
                                                         class="fa fa-calendar" aria-hidden="true"></i></span>
                                                 </div>
                                                 <input type="text" name="po_date"
-                                                       class="form-control form-control-sm datepicker">
+                                                       class="form-control form-control-sm datepicker" autocomplete="off" id="tanggal">
                                             </div>
                                         </div>
 
@@ -163,7 +163,7 @@
                                                         <td>
                                                             <input type="text"
                                                                    name="estimasi[]"
-                                                                   class="form-control form-control-sm datepicker">
+                                                                   class="form-control form-control-sm datepicker" autocomplete="off">
                                                         </td>
                                                         <td>
                                                             <input type="text"
@@ -173,7 +173,7 @@
                                                         <td>
                                                             <input type="text"
                                                                    name="tanggal[]"
-                                                                   class="form-control form-control-sm datepicker">
+                                                                   class="form-control form-control-sm datepicker" autocomplete="off">
                                                         </td>
                                                         <td>
                                                             <button class="btn btn-success btn-tambah-termin btn-sm"
@@ -290,9 +290,9 @@
                     .append(
                         '<tr>' +
                         '<td><input type="text" name="termin[]" class="form-control form-control-sm termin" readonly value="' + next_termin + '"></td>' +
-                        '<td><input type="text" name="estimasi[]" class="form-control form-control-sm datepicker"></td>' +
+                        '<td><input type="text" name="estimasi[]" class="form-control form-control-sm datepicker" autocomplete="off"></td>' +
                         '<td><input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah"></td>' +
-                        '<td><input type="text" name="tanggal[]" class="form-control form-control-sm datepicker"></td>' +
+                        '<td><input type="text" name="tanggal[]" class="form-control form-control-sm datepicker" autocomplete="off"></td>' +
                         '<td><button class="btn btn-danger btn-sm btn-hapus-termin" type="button"><i class="fa fa-trash-o"></i></button></td>' +
                         '</tr>'
                     );
@@ -313,29 +313,35 @@
 
             $(document).on('click', '.btn-submit', function (evt) {
                 evt.preventDefault();
-                $.ajax({
-                    url: "{{route('order.create')}}",
-                    type: "post",
-                    data: $('#form').serialize(),
-                    dataType: "json",
-                    beforeSend: function () {
-                        loadingShow();
-                    },
-                    success: function (response) {
-                        if (response.status == 'sukses') {
+                if ($("#tanggal").val() == "") {
+                    messageWarning('Peringatan', 'Kolom tanggal tidak boleh kosong');
+                } else if ($("#tot_hrg").val() == "" || $("#tot_hrg").val() == 0) {
+                    messageWarning('Peringatan', 'Lengkapi data order produksi');
+                } else {
+                    $.ajax({
+                        url: "{{route('order.create')}}",
+                        type: "post",
+                        data: $('#form').serialize(),
+                        dataType: "json",
+                        beforeSend: function () {
+                            loadingShow();
+                        },
+                        success: function (response) {
+                            if (response.status == 'sukses') {
+                                loadingHide();
+                                messageSuccess('Success', 'Data berhasil ditambahkan!');
+                                setInterval(function(){ location.reload(); }, 3500);
+                            } else {
+                                loadingHide();
+                                messageFailed('Gagal', response.message);
+                            }
+                        },
+                        error: function (e) {
                             loadingHide();
-                            messageSuccess('Success', 'Data berhasil ditambahkan!');
-                            setInterval(function(){ location.reload(); }, 3500);
-                        } else {
-                            loadingHide();
-                            messageFailed('Gagal', response.message);
+                            messageWarning('Peringatan', e.message);
                         }
-                    },
-                    error: function (e) {
-                        loadingHide();
-                        messageWarning('Peringatan', e.message);
-                    }
-                });
+                    });
+                }
             })
         });
 
