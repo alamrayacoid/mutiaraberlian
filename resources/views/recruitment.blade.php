@@ -85,7 +85,7 @@
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="nav-item">
                     <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Step 1"
-                       class="nav-link active">
+                       class="nav-link active" id="a_step1">
                 <span class="round-tab">
                 <i class="fa fa-user"></i>
                 </span>
@@ -93,7 +93,7 @@
                 </li>
                 <li role="presentation" class="nav-item">
                     <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Step 2"
-                       class="nav-link disabled">
+                       class="nav-link disabled" id="a_step2">
                 <span class="round-tab">
                 <i class="fa fa-history"></i>
                 </span>
@@ -101,7 +101,7 @@
                 </li>
                 <li role="presentation" class="nav-item">
                     <a href="#step3" data-toggle="tab" aria-controls="step3" role="tab" title="Step 3"
-                       class="nav-link disabled">
+                       class="nav-link disabled" id="a_step3">
                 <span class="round-tab">
                 <i class="fa fa-file"></i>
                 </span>
@@ -109,7 +109,7 @@
                 </li>
                 <li role="presentation" class="nav-item">
                     <a href="#step4" data-toggle="tab" aria-controls="step4" role="tab" title="Step 4"
-                       class="nav-link disabled">
+                       class="nav-link disabled" id="a_step4">
                 <span class="round-tab">
                 <i class="fa fa-check"></i>
                 </span>
@@ -573,7 +573,7 @@
   });
 
   $(document).ready(function() {
-    $('#btn_next1').prop('disabled', true);
+    EnableNext();
   })
 
   $('#btn_simpan').on('click', function() {
@@ -597,10 +597,15 @@
 
   // enable btn_next1 when ther is no duplicated email and no telp
   function EnableNext() {
-    console.log($('#isEmailDuplicated').val(), $('#isTelpDuplicated').val());
     if ($('#isEmailDuplicated').val() == 0 && $('#isTelpDuplicated').val() == 0) {
       $('#btn_next1').prop('disabled', false);
+      $('#a_step2').removeClass('disabled');
+      $('#a_step3').removeClass('disabled');
+      $('#a_step4').removeClass('disabled');
     } else {
+      $('#a_step2').addClass('disabled');
+      $('#a_step3').addClass('disabled');
+      $('#a_step4').addClass('disabled');
       $('#btn_next1').prop('disabled', true);
     }
   }
@@ -611,7 +616,6 @@
     event.preventDefault();
     myUrl = "{{ url('/recruitment/isduplicated/') }}";
     myUrl = myUrl + '/' + field + '/' + $('#' + field).val();
-    console.log(myUrl);
 
     $.ajax({
       type : "get",
