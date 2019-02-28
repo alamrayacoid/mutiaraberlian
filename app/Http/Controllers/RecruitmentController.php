@@ -85,24 +85,27 @@ class RecruitmentController extends Controller
     /**
      * validate is there any same value or not in db.
      *
-     * @param string $str
-     * @param string $field
+     * @param string $field field name
+     * @param string $str value
      * @return JSON response
      */
-    public function isDuplicated($str, $field)
+    public function isDuplicated($field, $str)
     {
+      if ($field == 'email') {
+        $field = 'p_email';
+      } elseif ($field == 'telp') {
+        $field = 'p_tlp';
+      }
       $query = DB::table('d_pelamar')
         ->where($field, $str)
         ->first();
       if ($query == null) {
         return response()->json([
-          'status' => 'valid',
-          'message' => 'Data dapat digunakan !'
+          'status' => 'valid'
         ]);
       } else {
         return response()->json([
-          'status' => 'invalid',
-          'message' => 'Data tidak dapat digunakan, silahkan diganti !'
+          'status' => 'invalid'
         ]);
       }
     }

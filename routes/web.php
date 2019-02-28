@@ -32,6 +32,7 @@ Route::group(['middleware' => 'guest'], function () {
 
 Route::get('/recruitment', 'RecruitmentController@index')->name('recruitment.index');
 Route::post('/recruitment/store', 'RecruitmentController@store')->name('recruitment.store');
+Route::get('/recruitment/isduplicated/{field}/{value}', 'RecruitmentController@isDuplicated')->name('recruitment.isduplicated');
 
 Auth::routes();
 
@@ -41,7 +42,7 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'auth.logout'
     ]);
     Route::get('/home', 'HomeController@index')->name('home');
-    Route::get('storage/uploads/produk/original')->name('image_produk');   
+    Route::get('storage/uploads/produk/original')->name('image_produk');
 
     // !====================================================== Master Data Utama ======================================================!
 
