@@ -178,6 +178,7 @@
                                     <label for="">Email<span style="color:red;">*</span></label>
                                 </div>
                                 <input type="text" class="form-control col-lg-9 col-sm-12" name="email" id="email">
+                                <input type="hidden" value="1" id="isEmailDuplicated">
                                 <div>
                                 <!-- <button class="btn btn-check" id="btn_checkemail">Cek Email</button> -->
                                 </div>
@@ -186,6 +187,7 @@
                                     <label for="">No Telp/WA<span style="color:red;">*</span></label>
                                 </div>
                                 <input type="text" class="form-control col-lg-9 col-sm-12" name="telp" id="telp">
+                                <input type="hidden" value="1" id="isTelpDuplicated">
                                 <div>
                                 <!-- <button class="btn btn-check" id="btn_checktelp">Cek Nomer</button> -->
                                 </div>
@@ -233,7 +235,7 @@
                 <ul class="list-inline text-md-center">
                     <li>
                         <button type="button" onclick="window.location.href='#wizard-form'"
-                                class="btn btn-lg btn-common next-step next-button">Selanjutnya
+                                class="btn btn-lg btn-common next-step next-button" id="btn_next1">Selanjutnya
                         </button>
                     </li>
                 </ul>
@@ -570,6 +572,10 @@
     }
   });
 
+  $(document).ready(function() {
+    $('#btn_next1').prop('disabled', true);
+  })
+
   $('#btn_simpan').on('click', function() {
     loadingShow();
     SubmitForm(event);
@@ -589,6 +595,16 @@
     }
   });
 
+  // enable btn_next1 when ther is no duplicated email and no telp
+  function EnableNext() {
+    console.log($('#isEmailDuplicated').val(), $('#isTelpDuplicated').val());
+    if ($('#isEmailDuplicated').val() == 0 && $('#isTelpDuplicated').val() == 0) {
+      $('#btn_next1').prop('disabled', false);
+    } else {
+      $('#btn_next1').prop('disabled', true);
+    }
+  }
+
   // check is data is used by other user
   function CheckDuplicated(event, field)
   {
@@ -604,13 +620,22 @@
       success : function (response){
         if(response.status == 'valid'){
           loadingHide();
+          if (field == 'email') {
+            $('#isEmailDuplicated').val('0');
+          } else if (field == 'telp') {
+            $('#isTelpDuplicated').val('0');
+          }
+          EnableNext();
         } else if (response.status == 'invalid') {
           loadingHide();
           if (field == 'email') {
+            $('#isEmailDuplicated').val('1');
             messageWarning('Perhatian', 'Email sudah digunakan, gunakan yang lain !');
           } else if (field == 'telp') {
+            $('#isTelpDuplicated').val('1');
             messageWarning('Perhatian', 'No telp sudah digunakan, gunakan yang lain !');
           }
+          EnableNext();
         }
       },
       error : function(e){
