@@ -122,6 +122,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/orderproduksi/index', 'ProduksiController@order_produksi')->name('order.index');
     Route::match(['get', 'post'],'/produksi/orderproduksi/create', 'ProduksiController@create_produksi')->name('order.create');
     Route::get('/produksi/orderproduksi/cari-barang', 'ProduksiController@cariBarang')->name('order.caribarang');
+    Route::get('/produksi/orderproduksi/get-satuan/{id}', 'ProduksiController@getSatuan')->name('order.getsatuan');
     Route::get('/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
 
     // Penerimaan Barang
