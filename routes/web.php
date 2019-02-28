@@ -51,6 +51,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/datapegawai/create', 'Master\EmployeeController@create')->name('pegawai.create');
     Route::get('/masterdatautama/datapegawai/store', 'Master\EmployeeController@store')->name('pegawai.store');
     Route::match(['get', 'post'], '/masterdatautama/datapegawai/edit/{id}', 'Master\EmployeeController@edit')->name('pegawai.edit');
+    Route::get('/masterdatautama/datapegawai/nonactive/{id}', 'Master\EmployeeController@nonActive')->name('cabang.nonActive');
+    Route::get('/masterdatautama/datapegawai/actived/{id}', 'Master\EmployeeController@actived')->name('cabang.actived');
 
     Route::get('/masterdatautama/produk/index', 'Master\ItemController@index')->name('dataproduk.index');
     Route::get('/masterdatautama/produk/list', 'Master\ItemController@getList')->name('dataproduk.list');
@@ -122,6 +124,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/orderproduksi/index', 'ProduksiController@order_produksi')->name('order.index');
     Route::match(['get', 'post'],'/produksi/orderproduksi/create', 'ProduksiController@create_produksi')->name('order.create');
     Route::get('/produksi/orderproduksi/cari-barang', 'ProduksiController@cariBarang')->name('order.caribarang');
+    Route::get('/produksi/orderproduksi/get-satuan/{id}', 'ProduksiController@getSatuan')->name('order.getsatuan');
     Route::get('/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
 
     // Penerimaan Barang
