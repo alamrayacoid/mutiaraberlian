@@ -32,6 +32,7 @@ Route::group(['middleware' => 'guest'], function () {
 
 Route::get('/recruitment', 'RecruitmentController@index')->name('recruitment.index');
 Route::post('/recruitment/store', 'RecruitmentController@store')->name('recruitment.store');
+Route::get('/recruitment/isduplicated/{field}/{value}', 'RecruitmentController@isDuplicated')->name('recruitment.isduplicated');
 
 Auth::routes();
 
@@ -41,7 +42,7 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'auth.logout'
     ]);
     Route::get('/home', 'HomeController@index')->name('home');
-    Route::get('storage/uploads/produk/original')->name('image_produk');   
+    Route::get('storage/uploads/produk/original')->name('image_produk');
 
     // !====================================================== Master Data Utama ======================================================!
 
@@ -49,8 +50,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/datapegawai/getData', 'Master\EmployeeController@getData')->name('pegawai.list');
     Route::get('/masterdatautama/datapegawai/create', 'Master\EmployeeController@create')->name('pegawai.create');
     Route::get('/masterdatautama/datapegawai/store', 'Master\EmployeeController@store')->name('pegawai.store');
-    Route::get('/masterdatautama/datapegawai/edit/{id}', 'Master\EmployeeController@edit')->name('pegawai.edit');
-    Route::post('/masterdatautama/datapegawai/update/{id}', 'Master\EmployeeController@update')->name('pegawai.update');
+    Route::match(['get', 'post'], '/masterdatautama/datapegawai/edit/{id}', 'Master\EmployeeController@edit')->name('pegawai.edit');
+    Route::get('/masterdatautama/datapegawai/nonactive/{id}', 'Master\EmployeeController@nonActive')->name('cabang.nonActive');
+    Route::get('/masterdatautama/datapegawai/actived/{id}', 'Master\EmployeeController@actived')->name('cabang.actived');
 
     Route::get('/masterdatautama/produk/index', 'Master\ItemController@index')->name('dataproduk.index');
     Route::get('/masterdatautama/produk/list', 'Master\ItemController@getList')->name('dataproduk.list');
@@ -122,6 +124,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/orderproduksi/index', 'ProduksiController@order_produksi')->name('order.index');
     Route::match(['get', 'post'],'/produksi/orderproduksi/create', 'ProduksiController@create_produksi')->name('order.create');
     Route::get('/produksi/orderproduksi/cari-barang', 'ProduksiController@cariBarang')->name('order.caribarang');
+    Route::get('/produksi/orderproduksi/get-satuan/{id}', 'ProduksiController@getSatuan')->name('order.getsatuan');
     Route::get('/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
 
     // Penerimaan Barang

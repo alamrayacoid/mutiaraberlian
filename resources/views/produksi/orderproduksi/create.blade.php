@@ -97,14 +97,13 @@
                                                             <input type="text"
                                                                    name="barang[]"
                                                                    class="form-control form-control-sm barang">
+                                                            <input type="hidden" name="idItem[]" class="itemid">
+                                                            <input type="hidden" name="kode[]" class="kode">
                                                         </td>
                                                         <td>
                                                             <select name="satuan[]"
                                                                     class="form-control form-control-sm select2 satuan">
-                                                                @foreach($units as $unit)
-                                                                    <option
-                                                                        value="{{$unit->u_id}}">{{$unit->u_name}}</option>
-                                                                @endforeach
+
                                                             </select>
                                                         </td>
                                                         <td>
@@ -212,7 +211,9 @@
     <script type="text/javascript">
         var idItem = [];
         var namaItem = null;
-        var unit1 = null;
+        var kode = null;
+        var idxBarang = null;
+        var icode = [];
 
         $(document).ready(function () {
             // $('#type_cus').change(function () {
@@ -244,9 +245,21 @@
             changeJumlah();
             changeHarga();
 
+            $('.barang').on('click', function(e){
+                // console.log( $('.barang').index(this) );
+                idxBarang = $('.barang').index(this);
+                setArrayCode();
+            });
+
+            $(".barang").eq(idxBarang).on("keyup", function () {
+                $(".itemid").eq(idxBarang).val('');
+                $(".kode").eq(idxBarang).val('');
+            });
+
             $(document).on('click', '.btn-hapus', function () {
                 $(this).parents('tr').remove();
                 updateTotalTampil();
+                setArrayCode();
             });
 
             $(".barang").autocomplete({
@@ -403,12 +416,9 @@
         function tambah() {
             var row = '';
             row = '<tr>' +
-                '<td><input type="text" name="barang[]" class="form-control form-control-sm barang"></td>'+
+                '<td><input type="text" name="barang[]" class="form-control form-control-sm barang"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"></td>'+
                 '<td>'+
                 '<select name="satuan[]" class="form-control form-control-sm select2 satuan">'+
-                '@foreach($units as $unit)'+
-                '<option value="{{$unit->u_id}}">{{$unit->u_name}}</option>'+
-                '@endforeach'+
                 '</select>'+
                 '</td>'+
                 '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0"></td>'+
@@ -422,14 +432,19 @@
             '</tr>';
             $('#table_order').append(row);
             changeJumlah();
-            changeHarga()
-            $(".barang").autocomplete({
-                source: baseUrl + '/produksi/orderproduksi/cari-barang',
-                minLength: 1,
-                select: function (event, data) {
-                    setItem(data.item);
-                }
+            changeHarga();
+
+            $('.barang').on('click', function(e){
+                idxBarang = $('.barang').index(this);
             });
+
+            $(".barang").on("keyup", function () {
+                $(".itemid").eq(idxBarang).val('');
+                $(".kode").eq(idxBarang).val('');
+            });
+
+            setArrayCode();
+
             $('.input-rupiah').maskMoney({
                 thousands: ".",
                 precision: 0,
@@ -459,9 +474,53 @@
         }
 
         function setItem(info) {
-            idItem = info.data[0].i_id;
-            namaItem = info.data[0].i_name;
-            unit1 = info.data[0].i_unit1;
+            idItem = info.data.i_id;
+            namaItem = info.data.i_name;
+            kode = info.data.i_code;
+            $(".kode").eq(idxBarang).val(kode);
+            $(".itemid").eq(idxBarang).val(idItem);
+            setArrayCode();
+            $.ajax({
+                url: '{{ url('/produksi/orderproduksi/get-satuan/') }}'+'/'+idItem,
+                type: 'GET',
+                success: function( resp ) {
+                    resp.forEach(function (data) {
+                        $(".satuan").eq(idxBarang).append("<option value='"+data.u_id+"'>"+data.u_name+"</option>");
+                    })
+                }
+            });
+        }
+
+        function setArrayCode() {
+            var inputs = document.getElementsByClassName('kode'),
+                code  = [].map.call(inputs, function( input ) {
+                    return input.value.toString();
+                });
+
+            for (var i=0; i < code.length; i++) {
+                if (code[i] != "") {
+                    icode.push(code[i]);
+                }
+            }
+
+            $( ".barang" ).autocomplete({
+                source: function( request, response ) {
+                    $.ajax({
+                        url: '{{ url('/produksi/orderproduksi/cari-barang') }}',
+                        data: {
+                            kode: icode,
+                            term: $(".barang").eq(idxBarang).val()
+                        },
+                        success: function( data ) {
+                            response( data );
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function(event, data) {
+                    setItem(data.item);
+                }
+            });
         }
     </script>
 @endsection

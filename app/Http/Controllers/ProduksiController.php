@@ -87,20 +87,54 @@ class ProduksiController extends Controller
     {
         $cari = $request->term;
         $results = [];
-        $nama = DB::table('m_item')
-            ->where(function ($q) use ($cari){
-                $q->where('i_code', 'like', '%'.$cari.'%');
-                $q->orWhere('i_name', 'like', '%'.$cari.'%');
-            })->get();
+        $kode = [];
+        if (isset($request->kode)) {
+            $kode = $request->kode;
+            if (($key = array_search(null, $kode)) !== false) {
+                unset($kode[$key]);
+            }
+            $temp = [];
+            foreach ($kode as $code){
+                array_push($temp, $code);
+            }
+            $kode = $temp;
+        }
+
+        if (count($kode) > 0) {
+            $nama = DB::table('m_item')
+                ->where(function ($q) use ($cari, $kode){
+//                    $q->whereNotIn('i_code', $kode);
+                    $q->where('i_code', 'like', '%'.$cari.'%');
+                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
+                })
+                ->whereNotIn('i_code', $kode)->get();
+        } else {
+            $nama = DB::table('m_item')
+                ->where(function ($q) use ($cari){
+                    $q->where('i_code', 'like', '%'.$cari.'%');
+                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
+                })->get();
+        }
 
         if (count($nama) < 1) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $nama];
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query];
             }
         }
         return Response::json($results);
+    }
+
+    public function getSatuan($id)
+    {
+        $data = DB::table('m_unit')
+            ->select('m_item.*', 'm_unit.*')
+            ->join('m_item', function ($x) use ($id){
+                $x->where('m_item.i_id', '=', $id);
+            })
+            ->get();
+        return Response::json($data);
     }
 
     public function edit_produksi()

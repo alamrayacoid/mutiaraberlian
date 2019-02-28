@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Mutiara Berlian Recruitment</title>
+    <link rel="shortcut icon" href="{{asset('assets/img/cv-mutiaraberlian-icon.png')}}">
     <!-- CSS -->
     <link rel="stylesheet" href="{{asset('assets/recruitment/css/recruitment.css')}}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -176,17 +177,17 @@
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">Email<span style="color:red;">*</span></label>
                                 </div>
-                                <input type="text" class="form-control col-lg-7 col-sm-12" name="email">
+                                <input type="text" class="form-control col-lg-9 col-sm-12" name="email" id="email">
                                 <div>
-                                <button class="btn btn-check">Cek Email</button>
+                                <!-- <button class="btn btn-check" id="btn_checkemail">Cek Email</button> -->
                                 </div>
 
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">No Telp/WA<span style="color:red;">*</span></label>
                                 </div>
-                                <input type="text" class="form-control col-lg-7 col-sm-12" name="telp">
+                                <input type="text" class="form-control col-lg-9 col-sm-12" name="telp" id="telp">
                                 <div>
-                                <button class="btn btn-check">Cek Nomer</button>
+                                <!-- <button class="btn btn-check" id="btn_checktelp">Cek Nomer</button> -->
                                 </div>
 
                                 <div class="col-lg-3 col-sm-12">
@@ -206,7 +207,7 @@
                                     <label for="">Status<span style="color:red;">*</span></label>
                                 </div>
                                 <select class="form-control col-lg-9 col-sm-12" name="status" id="status">
-                                    <!-- <option value="-" selected disabled>-- Pilih Status --</option> -->
+                                    <!-- <option value="-" selected disabled>- - Pilih Status - -</option> -->
                                     <option value="M" >Menikah</option>
                                     <option value="S" selected="">Belum Menikah</option>
                                 </select>
@@ -222,7 +223,7 @@
                                 <input type="number" class="form-control col-lg-9 col-sm-12" name="childcount">
 
                                 <div class="col-lg-3 col-sm-12">
-                                    <label for="">Deskripsi diri anda<span style="color:red;">*</span></label>
+                                    <label for="">Deskripsi diri anda</label>
                                 </div>
                                 <textarea type="text" class="form-control col-lg-9 col-sm-12" row="5" name="description"></textarea>
                             </div>
@@ -324,7 +325,7 @@
                                     <label for="">File Foto<span style="color:red;">*</span></label>
                                 </div>
                                 <div class="custom-file col-lg-9 col-sm-12 mb-3">
-                                    <input type="file" class="custom-file-input" name="filephoto">
+                                    <input type="file" class="custom-file-input" name="filephoto" accept="image/*">
                                     <label class="custom-file-label">Pilih Foto</label>
                                 </div>
 
@@ -332,7 +333,7 @@
                                     <label for="">File KTP</label>
                                 </div>
                                 <div class="custom-file col-lg-9 col-sm-12 mb-3">
-                                    <input type="file" class="custom-file-input" name="filektp">
+                                    <input type="file" class="custom-file-input" name="filektp" accept="image/*">
                                     <label class="custom-file-label">Pilih File</label>
                                 </div>
 
@@ -340,7 +341,7 @@
                                     <label for="">File Ijazah</label>
                                 </div>
                                 <div class="custom-file col-lg-9 col-sm-12 mb-3">
-                                    <input type="file" class="custom-file-input" name="fileijazah">
+                                    <input type="file" class="custom-file-input" name="fileijazah" accept="image/*">
                                     <label class="custom-file-label">Pilih File</label>
                                 </div>
 
@@ -348,7 +349,7 @@
                                     <label for="">File Lain-lain</label>
                                 </div>
                                 <div class="custom-file col-lg-9 col-sm-12 mb-3">
-                                    <input type="file" class="custom-file-input" name="fileanother">
+                                    <input type="file" class="custom-file-input" name="fileanother" accept="image/*">
                                     <label class="custom-file-label">Pilih File</label>
                                 </div>
                             </div>
@@ -414,25 +415,25 @@
 
     $("#datepickers").datepicker({
     format: "yyyy",
-    viewMode: "years", 
+    viewMode: "years",
     minViewMode: "years",
     autoclose: true,
     });
     $("#datepickeryear").datepicker({
     format: "yyyy",
-    viewMode: "years", 
+    viewMode: "years",
     minViewMode: "years",
     autoclose: true,
     });
     $("#datepickeryears").datepicker({
     format: "yyyy",
-    viewMode: "years", 
+    viewMode: "years",
     minViewMode: "years",
     autoclose: true,
     });
     $("#datepickeryearss").datepicker({
     format: "yyyy",
-    viewMode: "years", 
+    viewMode: "years",
     minViewMode: "years",
     autoclose: true,
     });
@@ -574,6 +575,51 @@
     SubmitForm(event);
   });
 
+  $('#email').focusout(function() {
+    if($(this).val() != "") {
+      loadingShow();
+      CheckDuplicated(event, 'email');
+    }
+  });
+
+  $('#telp').focusout(function() {
+    if($(this).val() != "") {
+      loadingShow();
+      CheckDuplicated(event, 'telp');
+    }
+  });
+
+  // check is data is used by other user
+  function CheckDuplicated(event, field)
+  {
+    event.preventDefault();
+    myUrl = "{{ url('/recruitment/isduplicated/') }}";
+    myUrl = myUrl + '/' + field + '/' + $('#' + field).val();
+    console.log(myUrl);
+
+    $.ajax({
+      type : "get",
+      url : myUrl,
+      dataType : 'json',
+      success : function (response){
+        if(response.status == 'valid'){
+          loadingHide();
+        } else if (response.status == 'invalid') {
+          loadingHide();
+          if (field == 'email') {
+            messageWarning('Perhatian', 'Email sudah digunakan, gunakan yang lain !');
+          } else if (field == 'telp') {
+            messageWarning('Perhatian', 'No telp sudah digunakan, gunakan yang lain !');
+          }
+        }
+      },
+      error : function(e){
+        loadingHide();
+        messageWarning('Gagal', 'Check isDuplicated() gagal, hubungi pengembang !');
+      }
+    })
+  }
+
   // submit form to store data in db
   function SubmitForm(event)
   {
@@ -590,8 +636,8 @@
       success : function (response){
         if(response.status == 'berhasil'){
           loadingHide();
-          messageSuccess('Berhasil', 'Data berhasil ditambahkan !');
-          location.reload();
+          messageSuccess('Berhasil', 'Registrasi berhasil !');
+          $('#myForm :input').prop('disabled', true);
         } else if (response.status == 'invalid') {
           loadingHide();
           messageWarning('Perhatian', response.message);
