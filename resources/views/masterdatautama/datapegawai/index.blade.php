@@ -38,6 +38,7 @@
 							                <th>Alamat</th>
 							                <th>Status Karyawan</th>
 											<th>Tanggal Masuk</th>
+                                            <th>Status Keaktifan</th>
 											<th>Aksi</th>
 							            </tr>
 	                                </thead>
@@ -72,7 +73,6 @@
         var tb_pegawai;
         setTimeout(function () {
             tablePegawai();
-            addPegawai();
         }, 500);
 
         function tablePegawai() {
@@ -91,10 +91,11 @@
                     {data: 'e_name', name: 'e_name'},
                     {data: 'e_nik', name: 'e_nik'},
                     {data: 'e_nip', name: 'e_nip'},
-                    {data: 'e_position', name: 'e_position'},
+                    {data: 'jabatan', name: 'jabatan'},
                     {data: 'e_address', name: 'e_address'},
-                    {data: 'e_maritalstatus', name: 'e_maritalstatus'},
+                    {data: 'maried', name: 'maried'},
                     {data: 'e_workingdays', name: 'e_workingdays'},
+                    {data: 'status', name: 'status'},
                     {data: 'action', name: 'action'}
                 ],
                 pageLength: 10,
@@ -196,5 +197,103 @@
 			}
 		});
 	});
+
+    function nonActive(idx) {
+        var nonActive = baseUrl + "/masterdatautama/datapegawai/nonactive/" + idx;
+
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Pesan!',
+            content: 'Apakah anda yakin ingin nonaktifkan pegawai ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "get",
+                            url: nonActive,
+                            beforeSend: function() {
+                                loadingShow();
+                            },
+                            success: function (response) {
+                                if (response.status == 'sukses') {
+                                    loadingHide();
+                                    messageSuccess('Berhasil', 'pegawai Berhasil Dinonaktifkan!');
+                                    tb_pegawai.ajax.reload();
+                                } else {
+                                    loadingHide();
+                                    messageFailed('Gagal', response.message);
+                                }
+                            },
+                            error: function (e) {
+                                loadingHide();
+                                messageWarning('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+
+                    }
+                }
+            }
+        });
+    }
+
+    function active(idx) {
+        var actived = baseUrl + "/masterdatautama/datapegawai/actived/" + idx;
+
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Pesan!',
+            content: 'Apakah anda yakin ingin aktifkan pegawai ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "get",
+                            url: actived,
+                            beforeSend: function() {
+                                loadingShow();
+                            },
+                            success: function (response) {
+                                if (response.status == 'sukses') {
+                                    loadingHide();
+                                    messageSuccess('Berhasil', 'pegawai Berhasil Diaktifkan!');
+                                    tb_pegawai.ajax.reload();
+                                } else {
+                                    loadingHide();
+                                    messageFailed('Gagal', response.message);
+                                }
+                            },
+                            error: function (e) {
+                                loadingHide();
+                                messageWarning('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+
+                    }
+                }
+            }
+        });
+    }
 </script>
 @endsection

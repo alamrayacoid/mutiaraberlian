@@ -27,7 +27,7 @@
           <div class="card-block">
             <section>
               <fieldset>
-                <form id="formAdd">
+                <form id="formEdit" action="{{ route('pegawai.edit', [Crypt::encrypt($employee->e_id)]) }}" method="post" autocomplete="off">
                   <div class="row">
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>NIP <span class="text-danger">*</span></label>
@@ -236,7 +236,7 @@
                     </div>
                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                       <div class="form-group">
-                        <textarea type="text" class="form-control form-control-sm mb-3" name="e_address" value="{{$employee->e_address}}"></textarea>
+                        <textarea type="text" class="form-control form-control-sm mb-3" name="e_address">{{$employee->e_address}}</textarea>
                       </div>
                     </div>
 
@@ -278,7 +278,7 @@
 
                     <div class="col-12" align="center">
                       <div class="form-group">
-                        <img src="{{asset('assets/img/add-image-icon.png')}}" height="120px" width="90px" id="img-preview" style="cursor: pointer;">
+                        <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" width="120px" id="img-preview" style="cursor: pointer;">
                       </div>
                     </div>
                   </div>
@@ -293,7 +293,7 @@
               </div>
               <div class="col-sm-6">
                 <div class="text-right">
-                  <button class="btn btn-primary" id="btn-submit">Simpan</button>
+                  <button class="btn btn-primary" id="btn-update">Simpan</button>
                   <a href="{{route('pegawai.index')}}" class="btn btn-secondary">Kembali</a>
                 </div>
               </div>
@@ -308,35 +308,12 @@
 @section('extra_script')
 <script type="text/javascript">
   $(document).ready(function(){
-    $('.btn-submit').on('click', function(){
-			$.toast({
-				heading: 'Success',
-				text: 'Data Berhasil di Simpan',
-				bgColor: '#00b894',
-				textColor: 'white',
-				loaderBg: '#55efc4',
-				icon: 'success'
-			})
-		});
-
-    $('#showpassword').click(function(){
-      var val = $(this).parents('.input-group').find('input')
-      .attr('type', function(index, attr){
-        return attr == 'text' ? 'password' : 'text';
-      });
-
-      $('#showpassword-icon').toggleClass('fa-eye fa-eye-slash');
-    });
-
     function readURL(input, target) {
-
       if (input.files && input.files[0]) {
         var reader = new FileReader();
-
         reader.onload = function(e) {
           $(target).attr('src', e.target.result);
         }
-
         reader.readAsDataURL(input.files[0]);
       }
     }
@@ -344,13 +321,70 @@
     $("#foto").change(function() {
       readURL(this, '#img-preview');
     });  
-
     $('#img-preview').click(function(){
-
       $('#foto').click();
-
     });
-
   });
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+
+  $('#btn-update').on('click', function() {
+    $.confirm({
+      animation: 'RotateY',
+      closeAnimation: 'scale',
+      animationBounce: 1.5,
+      icon: 'fa fa-exclamation-triangle',
+      title: 'Pesan!',
+      content: 'Apakah anda yakin ingin memperbarui data ini?',
+      theme: 'disable',
+      buttons: {
+        info: {
+          btnClass: 'btn-blue',
+          text: 'Ya',
+          action: function () {
+            SubmitForm(event);
+          }
+        },
+        cancel: {
+          text: 'Tidak',
+          action: function () {
+
+          }
+        }
+      }
+    });
+  });
+  
+  function SubmitForm(event)
+  {
+    event.preventDefault();
+
+    $.ajax({
+      data : $('#formEdit').serialize(),
+      type : "post",
+      url  : $("#formEdit").attr('action'),
+      dataType : 'json',
+      beforeSend: function() {
+        loadingShow();
+      },
+      success : function (response){
+        if(response.status == 'sukses'){
+          loadingHide();
+          messageSuccess('Success', 'Data berhasil diperbarui!');
+          window.location.href = "{{route('pegawai.index')}}";
+        } else if (response.status == 'invalid') {
+          loadingHide();
+          messageWarning('Perhatian', response.message);
+        }
+      },
+      error : function(e){
+        loadingHide();
+        messageWarning('Warning', e.message);
+      }
+    });
+  }
 </script>
 @endsection

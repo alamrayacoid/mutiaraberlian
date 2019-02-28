@@ -23,7 +23,7 @@
               <a href="{{route('cabang.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
             </div>
           </div>
-          <form id="formAddCabang" autocomplete="off">
+          <form id="formAdd" autocomplete="off">
             <div class="card-block">
               <section>
                 <div class="row">
@@ -49,6 +49,19 @@
                   <div class="col-md-9 col-sm-6 col-xs-12">
                     <div class="form-group">
                       <input type="number" class="form-control form-control-sm" id="cabang_telp" name="cabang_telp">
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+                    <label>Tipe Company</label>
+                  </div>
+                  <div class="col-md-9 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <select id="cabang_type" class="form-control form-control-sm" name="cabang_type">
+                        <option value="" selected="">!--- Pilih Type ---!</option>
+                        <option value="PUSAT">PUSAT</option>
+                        <option value="CABANG">CABANG</option>
+                        <option value="AGEN">AGEN</option>
+                      </select>
                     </div>
                   </div>
                   <div class="col-md-3 col-sm-6 col-xs-12">
@@ -91,7 +104,7 @@
     $.ajax({
       url   : "{{route('cabang.store')}}",
       type  : "get",
-      data  : $('#formAddCabang').serialize(),
+      data  : $('#formAdd').serialize(),
       dataType : "json",
       beforeSend: function() {
         loadingShow();
@@ -100,7 +113,7 @@
         if(response.status == 'sukses'){
           loadingHide();
           messageSuccess('Success', 'Data berhasil ditambahkan!');
-          window.location.href = "{{route('cabang.create')}}";
+          window.location.href = "{{route('cabang.index')}}";
         } else {
           loadingHide();
           messageFailed('Gagal', response.message);

@@ -31,6 +31,8 @@ Route::group(['middleware' => 'guest'], function () {
 });
 
 Route::get('/recruitment', 'RecruitmentController@index')->name('recruitment.index');
+Route::post('/recruitment/store', 'RecruitmentController@store')->name('recruitment.store');
+Route::get('/recruitment/isduplicated/{field}/{value}', 'RecruitmentController@isDuplicated')->name('recruitment.isduplicated');
 
 Auth::routes();
 
@@ -40,7 +42,7 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'auth.logout'
     ]);
     Route::get('/home', 'HomeController@index')->name('home');
-    Route::get('storage/uploads/produk/original')->name('image_produk');   
+    Route::get('storage/uploads/produk/original')->name('image_produk');
 
     // !====================================================== Master Data Utama ======================================================!
 
@@ -49,7 +51,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/datapegawai/create', 'Master\EmployeeController@create')->name('pegawai.create');
     Route::get('/masterdatautama/datapegawai/store', 'Master\EmployeeController@store')->name('pegawai.store');
     Route::match(['get', 'post'], '/masterdatautama/datapegawai/edit/{id}', 'Master\EmployeeController@edit')->name('pegawai.edit');
-    Route::post('/masterdatautama/datapegawai/update/{id}', 'Master\EmployeeController@update')->name('pegawai.update');
+    Route::get('/masterdatautama/datapegawai/nonactive/{id}', 'Master\EmployeeController@nonActive')->name('cabang.nonActive');
+    Route::get('/masterdatautama/datapegawai/actived/{id}', 'Master\EmployeeController@actived')->name('cabang.actived');
 
     Route::get('/masterdatautama/produk/index', 'Master\ItemController@index')->name('dataproduk.index');
     Route::get('/masterdatautama/produk/list', 'Master\ItemController@getList')->name('dataproduk.list');
@@ -83,25 +86,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/suplier/post/{id}', 'Master\SupplierController@update')->name('suplier.update');
     Route::post('/masterdatautama/suplier/delete/{id}', 'Master\SupplierController@destroy')->name('suplier.delete');
 
-//	=============Mas Rowi=============
-
-//	Route::get('/masterdatautama/cabang/index', 'MasterController@cabang')->name('cabang.index');
-//    Route::get('/masterdatautama/cabang/list', 'MasterController@get_list_cabang')->name('cabang.list');
-//	Route::get('/masterdatautama/cabang/create', 'MasterController@create_cabang')->name('cabang.create');
-//    Route::post('/masterdatautama/cabang/store', 'MasterController@store_cabang')->name('cabang.store');
-//	Route::get('/masterdatautama/cabang/edit/{id}', 'MasterController@edit_cabang')->name('cabang.edit');
-//	Route::post('/masterdatautama/cabang/update/{id}', 'MasterController@update_cabang')->name('cabang.update');
-//	Route::post('/masterdatautama/cabang/delete/{id}', 'MasterController@delete_cabang')->name('cabang.delete');
-
-    //	=============End Mas Rowi=============
-
 //    ==========Master Outlet==========
     Route::get('/masterdatautama/cabang/index', 'Master\CabangController@index')->name('cabang.index');
     Route::get('/masterdatautama/cabang/list', 'Master\CabangController@getData')->name('cabang.list');
     Route::get('/masterdatautama/cabang/create', 'Master\CabangController@create')->name('cabang.create');
     Route::get('/masterdatautama/cabang/store', 'Master\CabangController@store')->name('cabang.store');
     Route::match(['get', 'post'], '/masterdatautama/cabang/edit/{id}', 'Master\CabangController@edit')->name('cabang.edit');
-    Route::get('/masterdatautama/cabang/delete/{id}', 'Master\CabangController@delete')->name('cabang.delete');
+    Route::get('/masterdatautama/cabang/nonactive/{id}', 'Master\CabangController@nonActive')->name('cabang.nonActive');
+    Route::get('/masterdatautama/cabang/actived/{id}', 'Master\CabangController@actived')->name('cabang.actived');
 //    ==========End Master Outlet======
 
     Route::get('/masterdatautama/agen/index', 'Master\AgenController@index')->name('agen.index');
@@ -132,6 +124,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/orderproduksi/index', 'ProduksiController@order_produksi')->name('order.index');
     Route::match(['get', 'post'],'/produksi/orderproduksi/create', 'ProduksiController@create_produksi')->name('order.create');
     Route::get('/produksi/orderproduksi/cari-barang', 'ProduksiController@cariBarang')->name('order.caribarang');
+    Route::get('/produksi/orderproduksi/get-satuan/{id}', 'ProduksiController@getSatuan')->name('order.getsatuan');
     Route::get('/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
 
     // Penerimaan Barang
@@ -239,6 +232,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/keuangan/laporankeuangan/labarugi/index', 'KeuanganController@laporankeuangan_labarugi')->name('laporankeuangan.labarugi');
     Route::get('/keuangan/laporankeuangan/aruskas/index', 'KeuanganController@laporankeuangan_aruskas')->name('laporankeuangan.aruskas');
     // !===================================================== END KEUANGAN =====================================================!
+
+    // !===================================================== PENGATURAN =====================================================!
+    // Perubahan Harga Jual
+    Route::get('/pengaturan/otoritas/perubahanhargajual/index', 'SettingController@perubahanhargajual_index')->name('perubahanhargajual.index');
+    // !===================================================== END PENGATURAN =====================================================!
 
 
 });
