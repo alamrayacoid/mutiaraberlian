@@ -548,10 +548,13 @@
   function SubmitForm(event)
   {
     event.preventDefault();
-    form_data = $('#myForm').serialize();
+    form_datax = new FormData($('#myForm')[0]);
     $.ajax({
-      data : form_data,
+      data : form_datax,
       type : "post",
+      processData: false,
+      contentType: false,
+      enctype: 'multipart/form-data',
       url : $("#myForm").attr('action'),
       dataType : 'json',
       success : function (response){
