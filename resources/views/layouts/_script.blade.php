@@ -111,6 +111,8 @@
         });
     }
 
+<<<<<<< HEAD
+=======
     function convertToRupiah(angka) {
         var rupiah = '';
         var angkarev = angka.toString().split('').reverse().join('');
@@ -119,6 +121,7 @@
         return hasil;
 
     }
+>>>>>>> 5b8c5908a8301bf034aa23126043d4145cdea331
     $(document).ready(function () {
         $("input[type='number']").keydown(function (e) {
             // Allow: backspace, delete, tab, escape, enter and .
@@ -162,10 +165,15 @@
         $('.data-table').DataTable();
 
         $('.datepicker').datepicker({
+<<<<<<< HEAD
+            format: "dd-mm-yyyy",
+            enableOnReadonly: false
+=======
             dateFormat: "dd-mm-yy",
             enableOnReadonly: false,
             autoclose: true
 
+>>>>>>> 5b8c5908a8301bf034aa23126043d4145cdea331
         });
 
         $('#search-mobile').click(function () {
@@ -214,7 +222,10 @@
 
         $('.input-rupiah').maskMoney({
             thousands: ".",
+<<<<<<< HEAD
+=======
             precision: 0,
+>>>>>>> 5b8c5908a8301bf034aa23126043d4145cdea331
             decimal: ",",
             prefix: "Rp. "
         });
@@ -348,6 +359,7 @@
 
     menuThree.addEventListener('click', addClassFunThree);
 </script>
+<<<<<<< HEAD
 
 <script>
     var LeafScene = function (el) {
@@ -518,3 +530,5 @@
     leaves.init();
     leaves.render();
 </script>
+=======
+>>>>>>> a3e4b7eb8f1e82024a0ee98bb169af93c91e8082
