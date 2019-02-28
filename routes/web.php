@@ -230,6 +230,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/keuangan/laporankeuangan/aruskas/index', 'KeuanganController@laporankeuangan_aruskas')->name('laporankeuangan.aruskas');
     // !===================================================== END KEUANGAN =====================================================!
 
+    // !===================================================== PENGATURAN =====================================================!
+    // Perubahan Harga Jual
+    Route::get('/pengaturan/otoritas/perubahanhargajual/index', 'SettingController@perubahanhargajual_index')->name('perubahanhargajual.index');
+    // !===================================================== END PENGATURAN =====================================================!
+
 
 });
 // End Route Group
