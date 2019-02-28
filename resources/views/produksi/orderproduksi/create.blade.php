@@ -484,9 +484,15 @@
                 url: '{{ url('/produksi/orderproduksi/get-satuan/') }}'+'/'+idItem,
                 type: 'GET',
                 success: function( resp ) {
-                    resp.forEach(function (data) {
-                        $(".satuan").eq(idxBarang).append("<option value='"+data.u_id+"'>"+data.u_name+"</option>");
-                    })
+                    var option = '';
+                    option += '<option value="'+resp.id1+'">'+resp.unit1+'</option>';
+                    if (resp.id2 != null && resp.id2 != resp.id1) {
+                        option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                    }
+                    if (resp.id3 != null && resp.id3 != resp.id1) {
+                        option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                    }
+                    $(".satuan").eq(idxBarang).append(option);
                 }
             });
         }
