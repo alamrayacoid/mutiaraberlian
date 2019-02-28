@@ -27,7 +27,7 @@
           <div class="card-block">
             <section>
               <fieldset>
-                <form id="formAdd">
+                <form id="formEdit" action="{{route('pegawai.edit', Crypt::encrypt($employee->e_id))}}" method="post">
                   <div class="row">
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>NIP <span class="text-danger">*</span></label>
@@ -223,7 +223,11 @@
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <select name="e_department" id="" class="form-control form-control-sm select2">
-                          <option value="{{$employee->e_department}}" selected>{{$employee->m_name}}</option>
+                          @if($employee->e_department == null)
+                            <option value="">--- Pilih Divisi ---</option>
+                          @else
+                            <option value="{{$employee->e_department}}" selected>{{$employee->m_name}}</option>
+                          @endif
                           @foreach($divisi->where('m_id', '!=', $employee->e_department) as $div)
                             <option value="{{$div->m_id}}">{{$div->m_name}}</option>
                           @endforeach
@@ -236,7 +240,7 @@
                     </div>
                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                       <div class="form-group">
-                        <textarea type="text" class="form-control form-control-sm mb-3" name="e_address" value="{{$employee->e_address}}"></textarea>
+                        <textarea type="text" class="form-control form-control-sm mb-3" name="e_address">{{$employee->e_address}}</textarea>
                       </div>
                     </div>
 
@@ -278,7 +282,7 @@
 
                     <div class="col-12" align="center">
                       <div class="form-group">
-                        <img src="{{asset('assets/img/add-image-icon.png')}}" height="120px" width="90px" id="img-preview" style="cursor: pointer;">
+                        <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" width="120px" id="img-preview" style="cursor: pointer;">
                       </div>
                     </div>
                   </div>
@@ -293,7 +297,7 @@
               </div>
               <div class="col-sm-6">
                 <div class="text-right">
-                  <button class="btn btn-primary" id="btn-submit">Simpan</button>
+                  <button type="button" class="btn btn-primary" id="btn-update" onclick=editPegawai('{{$employee->e_id}}')>Simpan</button>
                   <a href="{{route('pegawai.index')}}" class="btn btn-secondary">Kembali</a>
                 </div>
               </div>
@@ -308,35 +312,12 @@
 @section('extra_script')
 <script type="text/javascript">
   $(document).ready(function(){
-    $('.btn-submit').on('click', function(){
-			$.toast({
-				heading: 'Success',
-				text: 'Data Berhasil di Simpan',
-				bgColor: '#00b894',
-				textColor: 'white',
-				loaderBg: '#55efc4',
-				icon: 'success'
-			})
-		});
-
-    $('#showpassword').click(function(){
-      var val = $(this).parents('.input-group').find('input')
-      .attr('type', function(index, attr){
-        return attr == 'text' ? 'password' : 'text';
-      });
-
-      $('#showpassword-icon').toggleClass('fa-eye fa-eye-slash');
-    });
-
     function readURL(input, target) {
-
       if (input.files && input.files[0]) {
         var reader = new FileReader();
-
         reader.onload = function(e) {
           $(target).attr('src', e.target.result);
         }
-
         reader.readAsDataURL(input.files[0]);
       }
     }
@@ -346,11 +327,46 @@
     });  
 
     $('#img-preview').click(function(){
-
       $('#foto').click();
-
     });
-
+    editPegawai(id);
   });
+    
+
+  // $.ajaxSetup({
+  //   headers: {
+  //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+  //   }
+  // });
+
+  function editPegawai(id)
+  {
+    $.ajax({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      data : $('#formEdit').serialize(),
+      type : "post",
+      url  : "{{url('/masterdatautama/datapegawai/edit/')}}/" + id,
+      dataType : 'json',
+      beforeSend: function() {
+        loadingShow();
+      },
+      success : function (response){
+        if(response.status == 'sukses'){
+          loadingHide();
+          messageSuccess('Success', 'Data berhasil diperbarui!');
+          window.location.href = "{{route('pegawai.index')}}";
+        } else if (response.status == 'invalid') {
+          loadingHide();
+          messageWarning('Perhatian', response.message);
+        }
+      },
+      error : function(e){
+        loadingHide();
+        messageWarning('Warning', e.message);
+      }
+    });
+  }
 </script>
 @endsection

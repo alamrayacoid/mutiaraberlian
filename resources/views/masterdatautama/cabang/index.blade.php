@@ -28,13 +28,14 @@
                         <div class="card-block">
                             <section>
                                 <div class="table-responsive">
-                                    <table class="table table-striped table-hover display nowrap" cellspacing="0"
+                                    <table class="table table-hover display nowrap" cellspacing="0"
                                            id="table_cabang">
                                         <thead class="bg-primary">
                                         <tr>
                                             <th>Nama Cabang</th>
                                             <th>Alamat Cabang</th>
                                             <th>No Telp</th>
+                                            <th>Status</th>
                                             <th class="text-center">Aksi</th>
                                         </tr>
                                         </thead>
@@ -61,6 +62,7 @@
 
         var tb_cabang;
         setTimeout(function () {
+            $('[data-toggle="tooltip"]').tooltip();
             TableCabang();
         }, 500);
 
@@ -79,6 +81,7 @@
                     {data: 'c_name', name: 'c_name'},
                     {data: 'c_address', name: 'c_address'},
                     {data: 'c_tlp', name: 'c_tlp'},
+                    {data: 'status', name: 'status'},
                     {data: 'action', name: 'action'}
                 ],
                 pageLength: 10,
@@ -90,8 +93,8 @@
             window.location = baseUrl + "/masterdatautama/cabang/edit/" + idx;
         }
 
-        function DeleteCabang(idx) {
-            var url_hapus = baseUrl + "/masterdatautama/cabang/delete/" + idx;
+        function nonActive(idx) {
+            var nonActive = baseUrl + "/masterdatautama/cabang/nonactive/" + idx;
 
             $.confirm({
                 animation: 'RotateY',
@@ -99,7 +102,7 @@
                 animationBounce: 1.5,
                 icon: 'fa fa-exclamation-triangle',
                 title: 'Pesan!',
-                content: 'Apakah anda yakin ingin menghapus data ini?',
+                content: 'Apakah anda yakin ingin nonaktifkan cabang ini?',
                 theme: 'disable',
                 buttons: {
                     info: {
@@ -108,14 +111,63 @@
                         action: function () {
                             return $.ajax({
                                 type: "get",
-                                url: url_hapus,
+                                url: nonActive,
                                 beforeSend: function() {
                                     loadingShow();
                                 },
                                 success: function (response) {
-                                    if (response.status == 'berhasil') {
+                                    if (response.status == 'sukses') {
                                         loadingHide();
-                                        messageSuccess('Berhasil', 'Data berhasil dihapus!');
+                                        messageSuccess('Berhasil', 'Cabang Berhasil Dinonaktifkan!');
+                                        tb_cabang.ajax.reload();
+                                    } else {
+                                        loadingHide();
+                                        messageFailed('Gagal', response.message);
+                                    }
+                                },
+                                error: function (e) {
+                                    loadingHide();
+                                    messageWarning('Peringatan', e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+
+                        }
+                    }
+                }
+            });
+        }
+
+        function active(idx) {
+            var actived = baseUrl + "/masterdatautama/cabang/actived/" + idx;
+
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Pesan!',
+                content: 'Apakah anda yakin ingin aktifkan cabang ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return $.ajax({
+                                type: "get",
+                                url: actived,
+                                beforeSend: function() {
+                                    loadingShow();
+                                },
+                                success: function (response) {
+                                    if (response.status == 'sukses') {
+                                        loadingHide();
+                                        messageSuccess('Berhasil', 'Cabang Berhasil Diaktifkan!');
                                         tb_cabang.ajax.reload();
                                     } else {
                                         loadingHide();
