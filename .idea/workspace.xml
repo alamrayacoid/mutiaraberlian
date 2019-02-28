@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="06045957-7410-463f-9c24-490355557206" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/layouts/_script.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/layouts/_script.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php" afterDir="false" />
     </list>
@@ -70,7 +68,7 @@
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="387">
-              <caret line="83" column="19" lean-forward="true" selection-start-line="83" selection-start-column="19" selection-end-line="83" selection-end-column="19" />
+              <caret line="83" column="19" selection-start-line="83" selection-start-column="19" selection-end-line="83" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -78,15 +76,15 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="299">
-              <caret line="327" column="42" lean-forward="true" selection-start-line="327" selection-start-column="42" selection-end-line="327" selection-end-column="42" />
+            <state relative-caret-position="169">
+              <caret line="160" column="85" selection-start-line="160" selection-start-column="85" selection-end-line="160" selection-end-column="85" />
               <folding>
-                <element signature="e#17599#19128#0#HTML" />
+                <element signature="e#19198#20186#0#HTML" />
                 <element signature="e#18306#20176#0#HTML" />
                 <element signature="e#19878#19902#0#HTML" />
-                <element signature="e#20405#22097#0#HTML" />
                 <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-                <element signature="e#22136#22591#0#HTML" />
+                <element signature="e#23597#24089#0#HTML" />
+                <element signature="e#24368#24392#0#HTML" />
               </folding>
             </state>
           </provider>
@@ -514,7 +512,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="44810000" />
+    <option name="totallyTimeSpent" value="47366000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1366" height="768" extended-state="6" />
@@ -752,7 +750,7 @@
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="387">
-          <caret line="83" column="19" lean-forward="true" selection-start-line="83" selection-start-column="19" selection-end-line="83" selection-end-column="19" />
+          <caret line="83" column="19" selection-start-line="83" selection-start-column="19" selection-end-line="83" selection-end-column="19" />
         </state>
       </provider>
     </entry>
@@ -763,22 +761,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/layouts/_script.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10522">
-          <caret line="519" column="9" selection-start-line="519" selection-start-column="9" selection-end-line="519" selection-end-column="9" />
+        <state relative-caret-position="-2168">
+          <caret line="215" column="25" selection-start-line="215" selection-start-column="25" selection-end-line="215" selection-end-column="25" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="327" column="42" lean-forward="true" selection-start-line="327" selection-start-column="42" selection-end-line="327" selection-end-column="42" />
+        <state relative-caret-position="169">
+          <caret line="160" column="85" selection-start-line="160" selection-start-column="85" selection-end-line="160" selection-end-column="85" />
           <folding>
-            <element signature="e#17599#19128#0#HTML" />
+            <element signature="e#19198#20186#0#HTML" />
             <element signature="e#18306#20176#0#HTML" />
             <element signature="e#19878#19902#0#HTML" />
-            <element signature="e#20405#22097#0#HTML" />
             <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-            <element signature="e#22136#22591#0#HTML" />
+            <element signature="e#23597#24089#0#HTML" />
+            <element signature="e#24368#24392#0#HTML" />
           </folding>
         </state>
       </provider>

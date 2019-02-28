@@ -158,7 +158,7 @@
                                                             <input type="text"
                                                                    name="termin[]"
                                                                    class="form-control form-control-sm termin"
-                                                                   value="1">
+                                                                   value="1" readonly>
                                                         </td>
                                                         <td>
                                                             <input type="text"
@@ -276,6 +276,7 @@
 
             $(document).on('click', '.btn-hapus-termin', function () {
                 $(this).parents('tr').remove();
+                setTerimin();
             });
 
             $('.btn-tambah-termin').on('click', function () {
@@ -288,11 +289,11 @@
                 $('#table_order_termin')
                     .append(
                         '<tr>' +
-                        '<td><input type="text" name="termin[]" class="form-control form-control-sm termin" value="' + next_termin + '"></td>' +
+                        '<td><input type="text" name="termin[]" class="form-control form-control-sm termin" readonly value="' + next_termin + '"></td>' +
                         '<td><input type="text" name="estimasi[]" class="form-control form-control-sm datepicker"></td>' +
                         '<td><input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah"></td>' +
                         '<td><input type="text" name="tanggal[]" class="form-control form-control-sm datepicker"></td>' +
-                        '<td><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>' +
+                        '<td><button class="btn btn-danger btn-sm btn-hapus-termin" type="button"><i class="fa fa-trash-o"></i></button></td>' +
                         '</tr>'
                     );
                 $('.datepicker').datepicker({
@@ -307,6 +308,7 @@
                     decimal: ",",
                     prefix: "Rp. "
                 });
+                setTerimin();
             });
 
             $(document).on('click', '.btn-submit', function (evt) {
@@ -496,6 +498,18 @@
                     $(".satuan").eq(idxBarang).append(option);
                 }
             });
+        }
+
+        function setTerimin() {
+            var inputs = document.getElementsByClassName('termin'),
+                termin  = [].map.call(inputs, function( input ) {
+                    return parseInt(input.value);
+                });
+
+            for (var i=0; i < termin.length; i++) {
+                $(".termin").eq(i).val('');
+                $(".termin").eq(i).val(i+1);
+            }
         }
 
         function setArrayCode() {
