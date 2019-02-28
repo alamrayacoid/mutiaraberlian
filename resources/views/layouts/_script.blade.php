@@ -259,6 +259,9 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        // $(function () {
+          $('[data-toggle="tooltip"]').tooltip();
+        // });
         // custom function .ignore()
         $.fn.ignore = function (sel) {
             return this.clone().find(sel || ">*").remove().end();
@@ -347,8 +350,6 @@
 
     menuThree.addEventListener('click', addClassFunThree);
 </script>
-<<<<<<< HEAD
-
 <script>
     var LeafScene = function (el) {
         this.viewport = el;
@@ -518,5 +519,3 @@
     leaves.init();
     leaves.render();
 </script>
-=======
->>>>>>> a3e4b7eb8f1e82024a0ee98bb169af93c91e8082
