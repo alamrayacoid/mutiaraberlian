@@ -90,16 +90,6 @@ class EmployeeController extends Controller
     return view('masterdatautama.datapegawai.create', compact('jabatan', 'divisi', 'company'));
   }
 
-
-  public function getImage($foto) {
-    if ($foto != null) {
-      $imageName = $input['imageName'] = time().'.'.$foto->getClientOriginalName();
-      $destinationPathOri = storage_path('assets/uploads/pegawai');
-      $foto->move($destinationPathOri, $imageName);
-      return $imageName;
-    }
-  }
-
   public function store(Request $request)
   {
     $messages = [
@@ -271,8 +261,7 @@ class EmployeeController extends Controller
       }
 
       $filePhoto = $request->file('e_foto');
-      $photo = $this->getImage($filePhoto);    
-      
+      $photo = $this->getImage($filePhoto);
       DB::beginTransaction();
       try {
         DB::table('m_employee')
@@ -315,6 +304,15 @@ class EmployeeController extends Controller
       }
     }
   }
+
+    public function getImage($foto) {
+        if ($foto != null) {
+            $imageName = $input['imageName'] = time().'.'.$foto->getClientOriginalName();
+            $destinationPathOri = 'assets/uploads/pegawai';
+            $foto->move($destinationPathOri, $imageName);
+            return $imageName;
+        }
+    }
 
   public function nonActive($id)
   {

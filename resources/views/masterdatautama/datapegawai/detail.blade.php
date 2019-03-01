@@ -32,7 +32,7 @@
                     <div class="row">
                       <div class="col-12" align="center">
                         <div class="form-group">
-                          <img src="{{asset('storage/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" width="200px">
+                          <img src="{{asset('assets/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" width="200px">
                           {{-- <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" width="200px" id="img-preview" style="cursor: pointer;"> --}}
                         </div>
                       </div>
