@@ -370,6 +370,7 @@
 
                 if ($("#tanggal").val() == "") {
                     messageWarning('Peringatan', 'Kolom tanggal tidak boleh kosong');
+                    $("#tanggal").focus();
                 } else if ($("#tot_hrg").val() == "" || $("#tot_hrg").val() == 0 || checkForm() == "cek form" || checkTermin() == "cek form") {
                     messageWarning('Peringatan', 'Lengkapi data order produksi');
                 } else {
