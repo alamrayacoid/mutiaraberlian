@@ -33,7 +33,7 @@
 							                <th>ID Pegawai</th>
                                             <th>Nama Pegawai</th>
 							                <th>NIK</th>
-                                            <th>Ktp</th>
+                                            <th>KTP</th>
 											<th>Jabatan</th>
 							                <th>Alamat</th>
 							                <th>Status Karyawan</th>
