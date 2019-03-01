@@ -110,10 +110,10 @@
 	{
 		window.location.href = baseUrl + "/masterdatautama/agen/edit/" + idx;
 	}
-	// function to execute delete request
-	function DeleteAgen(idx)
+	// function to execute disable request
+	function DisableAgen(idx)
 	{
-		var url_hapus = baseUrl + "/masterdatautama/agen/delete/" + idx;
+		var url_hapus = baseUrl + "/masterdatautama/agen/disable/" + idx;
 
 		$.confirm({
 			animation: 'RotateY',
@@ -121,7 +121,7 @@
 			animationBounce: 1.5,
 			icon: 'fa fa-exclamation-triangle',
 			title: 'Peringatan!',
-			content: 'Apakah anda yakin ingin menghapus data ini ?',
+			content: 'Apakah anda yakin ingin menonaktifkan data ini ?',
 			theme: 'disable',
 			buttons: {
 				info: {
@@ -133,14 +133,60 @@
 							url : url_hapus,
 							success : function (response){
 								if(response.status == 'berhasil'){
-				          messageSuccess('Berhasil', 'Data berhasil dihapus !');
+				          messageSuccess('Berhasil', 'Data berhasil dinonaktifkan !');
 									loadingShow();
 									tb_agen.ajax.reload();
 									loadingHide();
 								}
 							},
 							error : function(e){
-				        messageWarning('Gagal', 'Data gagal dihapus, hubungi pengembang !');
+				        messageWarning('Gagal', 'Error, hubungi pengembang !');
+							}
+						});
+
+					}
+				},
+				cancel:{
+					text: 'Tidak',
+					action: function () {
+						// tutup confirm
+					}
+				}
+			}
+		});
+
+	}
+	// function to execute enable request
+	function EnableAgen(idx)
+	{
+		var url_hapus = baseUrl + "/masterdatautama/agen/enable/" + idx;
+
+		$.confirm({
+			animation: 'RotateY',
+			closeAnimation: 'scale',
+			animationBounce: 1.5,
+			icon: 'fa fa-exclamation-triangle',
+			title: 'Peringatan!',
+			content: 'Apakah anda yakin ingin mengaktifkan data ini ?',
+			theme: 'disable',
+			buttons: {
+				info: {
+					btnClass: 'btn-blue',
+					text:'Ya',
+					action : function(){
+						return $.ajax({
+							type : "post",
+							url : url_hapus,
+							success : function (response){
+								if(response.status == 'berhasil'){
+									messageSuccess('Berhasil', 'Data berhasil diaktifkan !');
+									loadingShow();
+									tb_agen.ajax.reload();
+									loadingHide();
+								}
+							},
+							error : function(e){
+								messageWarning('Gagal', 'Erro, hubungi pengembang !');
 							}
 						});
 

@@ -85,7 +85,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/suplier/store', 'Master\SupplierController@store')->name('suplier.store');
     Route::get('/masterdatautama/suplier/edit/{id}', 'Master\SupplierController@edit')->name('suplier.edit');
     Route::post('/masterdatautama/suplier/post/{id}', 'Master\SupplierController@update')->name('suplier.update');
-    Route::post('/masterdatautama/suplier/delete/{id}', 'Master\SupplierController@destroy')->name('suplier.delete');
+    Route::post('/masterdatautama/suplier/disable/{id}', 'Master\SupplierController@disable')->name('suplier.disable');
+    Route::post('/masterdatautama/suplier/enable/{id}', 'Master\SupplierController@enable')->name('suplier.enable');
 
 //    ==========Master Outlet==========
     Route::get('/masterdatautama/cabang/index', 'Master\CabangController@index')->name('cabang.index');
@@ -108,7 +109,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/agen/store', 'Master\AgenController@store')->name('agen.store');
     Route::get('/masterdatautama/agen/edit/{id}', 'Master\AgenController@edit')->name('agen.edit');
     Route::post('/masterdatautama/agen/update/{id}', 'Master\AgenController@update')->name('agen.update');
-    Route::post('/masterdatautama/agen/delete/{id}', 'Master\AgenController@destroy')->name('agen.delete');
+    Route::post('/masterdatautama/agen/disable/{id}', 'Master\AgenController@disable')->name('agen.disable');
+    Route::post('/masterdatautama/agen/enable/{id}', 'Master\AgenController@enable')->name('agen.enable');
 
 
     Route::get('/masterdatautama/agen/kelolaagen/index', 'MasterController@kelolaagen')->name('kelolaagen.index');

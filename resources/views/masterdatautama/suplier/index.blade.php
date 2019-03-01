@@ -130,9 +130,9 @@
 		window.location.href = baseUrl + "/masterdatautama/suplier/edit/" + idx;
 	}
 	// function to execute delete request
-	function DeleteSupplier(idx)
+	function DisableSupplier(idx)
 	{
-		var url_hapus = baseUrl + "/masterdatautama/suplier/delete/" + idx;
+		var url_hapus = baseUrl + "/masterdatautama/suplier/disable/" + idx;
 
 		$.confirm({
 			animation: 'RotateY',
@@ -140,7 +140,7 @@
 			animationBounce: 1.5,
 			icon: 'fa fa-exclamation-triangle',
 			title: 'Peringatan!',
-			content: 'Apakah anda yakin ingin menghapus data ini ?',
+			content: 'Apakah anda yakin ingin menonaktifkan data ini ?',
 			theme: 'disable',
 			buttons: {
 				info: {
@@ -152,14 +152,14 @@
 							url : url_hapus,
 							success : function (response){
 								if(response.status == 'berhasil'){
-									messageSuccess('Berhasil', 'Data berhasil dihapus !');
+									messageSuccess('Berhasil', 'Data berhasil dinonaktifkan !');
 									loadingShow();
 									tb_supplier.ajax.reload();
 									loadingHide();
 								}
 							},
 							error : function(e){
-								messageWarning('Gagal', 'Data gagal dihapus, hubungi pengembang !');
+								messageWarning('Gagal', 'Error, hubungi pengembang !');
 							}
 						});
 
@@ -174,6 +174,52 @@
 			}
 		});
 
+	}
+
+	// function to execute delete request
+	function EnableSupplier(idx)
+	{
+		var url_hapus = baseUrl + "/masterdatautama/suplier/enable/" + idx;
+
+		$.confirm({
+			animation: 'RotateY',
+			closeAnimation: 'scale',
+			animationBounce: 1.5,
+			icon: 'fa fa-exclamation-triangle',
+			title: 'Peringatan!',
+			content: 'Apakah anda yakin ingin mengaktifkan data ini ?',
+			theme: 'disable',
+			buttons: {
+				info: {
+					btnClass: 'btn-blue',
+					text:'Ya',
+					action : function(){
+						return $.ajax({
+							type : "post",
+							url : url_hapus,
+							success : function (response){
+								if(response.status == 'berhasil'){
+									messageSuccess('Berhasil', 'Data berhasil diaktifkan !');
+									loadingShow();
+									tb_supplier.ajax.reload();
+									loadingHide();
+								}
+							},
+							error : function(e){
+								messageWarning('Gagal', 'Error, hubungi pengembang !');
+							}
+						});
+
+					}
+				},
+				cancel:{
+					text: 'Tidak',
+					action: function () {
+						// tutup confirm
+					}
+				}
+			}
+		});
 	}
 
 	$(document).ready(function(){

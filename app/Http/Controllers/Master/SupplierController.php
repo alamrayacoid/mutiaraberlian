@@ -85,8 +85,8 @@ class SupplierController extends Controller
      */
     public function getList()
     {
-      $datas = DB::table('m_supplier')->orderBy('s_company', 'asc')
-        ->where('s_isactive', 'Y')
+      $datas = DB::table('m_supplier')
+        ->orderBy('s_company', 'asc')
         ->get();
       return Datatables::of($datas)
         ->addIndexColumn()
@@ -109,10 +109,16 @@ class SupplierController extends Controller
           (($datas->s_phone2 == null) ? '' : ' / ' . $datas->s_phone2) .'</td>';
         })
         ->addColumn('action', function($datas) {
-          return '<div class="btn-group btn-group-sm">
-          <button class="btn btn-warning" onclick="EditSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
-          <button class="btn btn-danger" onclick="DeleteSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-times-circle"></i></button>
-          </div>';
+          if ($datas->s_isactive == 'Y') {
+            return '<div class="btn-group btn-group-sm">
+            <button class="btn btn-warning" onclick="EditSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" title="Edit Data"><i class="fa fa-pencil"></i></button>
+            <button class="btn btn-danger" onclick="DisableSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" title="Nonaktifkan Data"><i class="fa fa-times-circle"></i></button>
+            </div>';
+          } elseif ($datas->s_isactive == 'N') {
+            return '<div class="btn-group btn-group-sm">
+            <button class="btn btn-success btn-enable" onclick="EnableSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" title="Aktifkan Data"><i class="fa fa-check-circle"></i></button>
+            </div>';
+          }
         })
         ->rawColumns(['limit', 'hutang', 'phone', 'action'])
         ->make(true);
@@ -282,13 +288,43 @@ class SupplierController extends Controller
       }
     }
 
+  /**
+   * Enable the specified resource from storage.
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+    public function enable($id)
+    {
+      // start: execute delete data
+      DB::beginTransaction();
+      try {
+        DB::table('m_supplier')
+          ->where('s_id', $id)
+          ->update([
+            's_isactive' => 'Y'
+          ]);
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (\Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal',
+          'message' => $e->getMessage()
+        ]);
+      }
+    }
+
     /**
-     * Remove the specified resource from storage.
+     * Disable the specified resource from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function disable($id)
     {
       // start: execute delete data
       DB::beginTransaction();
