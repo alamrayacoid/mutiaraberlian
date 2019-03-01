@@ -246,7 +246,7 @@
           location.reload();
         } else if (response.status == 'invalid') {
           loadingHide();
-          messageWarning('Perhatian', response.message);
+          messageFailed('Perhatian', response.message);
         } else if (response.status == 'gagal') {
           loadingHide();
           messageWarning('Error', response.message);
