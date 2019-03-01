@@ -173,10 +173,16 @@ class AgenController extends Controller
       return Datatables::of($datas)
         ->addIndexColumn()
         ->addColumn('action', function($datas) {
-          return '<div class="btn-group btn-group-sm">
-          <button class="btn btn-warning" onclick="EditAgen('.$datas->a_id.')" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
-          <button class="btn btn-danger" onclick="DeleteAgen('.$datas->a_id.')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-trash-o"></i></button>
-          </div>';
+          if ($datas->a_isactive == 'Y') {
+            return '<div class="btn-group btn-group-sm">
+            <button class="btn btn-warning" onclick="EditAgen('.$datas->a_id.')" rel="tooltip" data-placement="top" title="Edit data"><i class="fa fa-pencil"></i></button>
+            <button class="btn btn-danger" onclick="DisableAgen('.$datas->a_id.')" rel="tooltip" data-placement="top" title="Nonaktifkan data"><i class="fa fa-times-circle"></i></button>
+            </div>';
+          } elseif ($datas->a_isactive == 'N') {
+            return '<div class="btn-group btn-group-sm">
+            <button class="btn btn-success btn-enable" onclick="EnableAgen('.$datas->a_id.')" rel="tooltip" data-placement="top" title="Aktifkan data"><i class="fa fa-check-circle"></i></button>
+            </div>';
+          }
         })
         ->rawColumns(['action'])
         ->make(true);
@@ -353,19 +359,51 @@ class AgenController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Disable the specified resource from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function disable($id)
     {
       // start: execute delete data
       DB::beginTransaction();
       try {
         DB::table('m_agen')
           ->where('a_id', $id)
-          ->delete();
+          ->update([
+            'a_isactive' => 'N'
+          ]);
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (\Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal',
+          'message' => $e->getMessage()
+        ]);
+      }
+    }
+
+    /**
+     * Enable the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function enable($id)
+    {
+      // start: execute delete data
+      DB::beginTransaction();
+      try {
+        DB::table('m_agen')
+          ->where('a_id', $id)
+          ->update([
+            'a_isactive' => 'Y'
+          ]);
 
         DB::commit();
         return response()->json([

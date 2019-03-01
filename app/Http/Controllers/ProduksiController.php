@@ -50,17 +50,20 @@ class ProduksiController extends Controller
                 $detailpod = $poddetail;
                 for ($i = 0; $i < count($data['idItem']); $i++) {
                     if ($data['satuan'][$i] == 1) {
-                        $qty = $data['jumlah'][$i];
+                        $getCompare = DB::table('m_item')
+                            ->where('i_id', '=', $data['idItem'][$i])
+                            ->first();
+                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare1;
                     } else if ($data['satuan'][$i] == 2) {
                         $getCompare = DB::table('m_item')
                             ->where('i_id', '=', $data['idItem'][$i])
                             ->first();
-                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare1;
+                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare2;
                     } else if ($data['satuan'][$i] == 3) {
                         $getCompare = DB::table('m_item')
                             ->where('i_id', '=', $data['idItem'][$i])
                             ->first();
-                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare1;
+                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare3;
                     }
 
                     $productionorderdt[] = [

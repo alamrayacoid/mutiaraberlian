@@ -163,17 +163,17 @@
                                                         <td>
                                                             <input type="text"
                                                                    name="estimasi[]"
-                                                                   class="form-control form-control-sm datepicker" autocomplete="off">
+                                                                   class="form-control form-control-sm datepicker estimasi" autocomplete="off">
                                                         </td>
                                                         <td>
                                                             <input type="text"
                                                                    name="nominal[]"
-                                                                   class="form-control form-control-sm input-rupiah">
+                                                                   class="form-control form-control-sm input-rupiah nominal" value="Rp. 0">
                                                         </td>
                                                         <td>
                                                             <input type="text"
                                                                    name="tanggal[]"
-                                                                   class="form-control form-control-sm datepicker" autocomplete="off">
+                                                                   class="form-control form-control-sm datepicker tanggal" autocomplete="off">
                                                         </td>
                                                         <td>
                                                             <button class="btn btn-success btn-tambah-termin btn-sm"
@@ -214,6 +214,8 @@
         var kode = null;
         var idxBarang = null;
         var icode = [];
+        var checkitem = null;
+        var checktermin = null;
 
         $(document).ready(function () {
             // $('#type_cus').change(function () {
@@ -290,9 +292,9 @@
                     .append(
                         '<tr>' +
                         '<td><input type="text" name="termin[]" class="form-control form-control-sm termin" readonly value="' + next_termin + '"></td>' +
-                        '<td><input type="text" name="estimasi[]" class="form-control form-control-sm datepicker" autocomplete="off"></td>' +
-                        '<td><input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah"></td>' +
-                        '<td><input type="text" name="tanggal[]" class="form-control form-control-sm datepicker" autocomplete="off"></td>' +
+                        '<td><input type="text" name="estimasi[]" class="form-control form-control-sm datepicker estimasi" autocomplete="off"></td>' +
+                        '<td><input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah nominal" value="Rp. 0"></td>' +
+                        '<td><input type="text" name="tanggal[]" class="form-control form-control-sm datepicker tanggal" autocomplete="off"></td>' +
                         '<td><button class="btn btn-danger btn-sm btn-hapus-termin" type="button"><i class="fa fa-trash-o"></i></button></td>' +
                         '</tr>'
                     );
@@ -311,36 +313,91 @@
                 setTerimin();
             });
 
+            function checkForm() {
+                var inpItemid = document.getElementsByClassName( 'itemid' ),
+                    item  = [].map.call(inpItemid, function( input ) {
+                        return input.value;
+                    });
+                var inpHarga = document.getElementsByClassName( 'harga' ),
+                    harga  = [].map.call(inpHarga, function( input ) {
+                        return input.value;
+                    });
+                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                        return parseInt(input.value);
+                    });
+
+                for (var i=0; i < item.length; i++) {
+                    if (item[i] == "" || harga[i] == "Rp. 0" || jumlah[i] == 0) {
+                        return "cek form";
+                        break;
+                    } else {
+                        checkitem = "true";
+                        continue;
+                    }
+                }
+                return checkitem;
+            }
+
+            function checkTermin() {
+                var inpEstimasi = document.getElementsByClassName( 'estimasi' ),
+                    estimasi  = [].map.call(inpEstimasi, function( input ) {
+                        return input.value;
+                    });
+                var inpNominal = document.getElementsByClassName( 'nominal' ),
+                    nominal  = [].map.call(inpNominal, function( input ) {
+                        return input.value;
+                    });
+                var inpTanggal = document.getElementsByClassName( 'tanggal' ),
+                    tanggal  = [].map.call(inpTanggal, function( input ) {
+                        return input.value;
+                    });
+
+                for (var i=0; i < estimasi.length; i++) {
+                    if (estimasi[i] == "" || nominal[i] == "Rp. 0" || tanggal[i] == "") {
+                        return "cek form";
+                        break;
+                    } else {
+                        checktermin = "true";
+                        continue;
+                    }
+                }
+                return checktermin;
+            }
+
             $(document).on('click', '.btn-submit', function (evt) {
                 evt.preventDefault();
+
                 if ($("#tanggal").val() == "") {
                     messageWarning('Peringatan', 'Kolom tanggal tidak boleh kosong');
-                } else if ($("#tot_hrg").val() == "" || $("#tot_hrg").val() == 0) {
+                    $("#tanggal").focus();
+                } else if ($("#tot_hrg").val() == "" || $("#tot_hrg").val() == 0 || checkForm() == "cek form" || checkTermin() == "cek form") {
                     messageWarning('Peringatan', 'Lengkapi data order produksi');
                 } else {
-                    $.ajax({
-                        url: "{{route('order.create')}}",
-                        type: "post",
-                        data: $('#form').serialize(),
-                        dataType: "json",
-                        beforeSend: function () {
-                            loadingShow();
-                        },
-                        success: function (response) {
-                            if (response.status == 'sukses') {
-                                loadingHide();
-                                messageSuccess('Success', 'Data berhasil ditambahkan!');
-                                setInterval(function(){ location.reload(); }, 3500);
-                            } else {
-                                loadingHide();
-                                messageFailed('Gagal', response.message);
-                            }
-                        },
-                        error: function (e) {
-                            loadingHide();
-                            messageWarning('Peringatan', e.message);
-                        }
-                    });
+                    messageSuccess("Sukses", "coba sukses");
+                    {{--$.ajax({--}}
+                        {{--url: "{{route('order.create')}}",--}}
+                        {{--type: "post",--}}
+                        {{--data: $('#form').serialize(),--}}
+                        {{--dataType: "json",--}}
+                        {{--beforeSend: function () {--}}
+                            {{--loadingShow();--}}
+                        {{--},--}}
+                        {{--success: function (response) {--}}
+                            {{--if (response.status == 'sukses') {--}}
+                                {{--loadingHide();--}}
+                                {{--messageSuccess('Success', 'Data berhasil ditambahkan!');--}}
+                                {{--setInterval(function(){ location.reload(); }, 3500);--}}
+                            {{--} else {--}}
+                                {{--loadingHide();--}}
+                                {{--messageFailed('Gagal', response.message);--}}
+                            {{--}--}}
+                        {{--},--}}
+                        {{--error: function (e) {--}}
+                            {{--loadingHide();--}}
+                            {{--messageWarning('Peringatan', e.message);--}}
+                        {{--}--}}
+                    {{--});--}}
                 }
             })
         });
