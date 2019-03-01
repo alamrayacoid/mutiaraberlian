@@ -27,7 +27,7 @@
           <div class="card-block">
             <section>
               <fieldset>
-                <form id="formEdit" action="{{ route('pegawai.edit', [Crypt::encrypt($employee->e_id)]) }}" method="post" autocomplete="off">
+                <form id="formEdit" action="{{ route('pegawai.edit', [Crypt::encrypt($employee->e_id)]) }}" method="post"  autocomplete="off" enctype="multipart/form-data">
                   <div class="row">
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>NIP <span class="text-danger">*</span></label>
@@ -272,7 +272,7 @@
                     </div>
                     <div class="col-md-9 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="file" class="form-control form-control-sm" name="e_foto" id="foto">
+                        <input type="file" class="form-control form-control-sm" name="e_foto" id="foto" accept="image/*">
                       </div>
                     </div>
 
@@ -361,10 +361,12 @@
   function SubmitForm(event)
   {
     event.preventDefault();
-
     $.ajax({
-      data : $('#formEdit').serialize(),
+      // data : $('#formEdit').serialize(),
+      data : new FormData($('#formEdit')[0]),
       type : "post",
+      processData: false,
+      contentType: false,
       url  : $("#formEdit").attr('action'),
       dataType : 'json',
       beforeSend: function() {

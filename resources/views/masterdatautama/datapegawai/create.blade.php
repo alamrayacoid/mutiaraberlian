@@ -26,7 +26,7 @@
           <div class="card-block">
             <section>
               <fieldset>
-                <form id="formAdd">
+                <form id="formAdd" action="{{ route('pegawai.store') }}" method="post" autocomplete="off" enctype="multipart/form-data">
                   <div class="row">
                     <div class="col-md-3">
                       <div class="row">
@@ -276,7 +276,7 @@
               </div>
               <div class="col-sm-6">
                 <div class="text-right">
-                  <button class="btn btn-primary" id="btn-submit">Simpan</button>
+                  <button type="button" class="btn btn-primary" id="btn-submit">Simpan</button>
                   <a href="{{route('pegawai.index')}}" class="btn btn-secondary">Kembali</a>
                 </div>
               </div>
@@ -290,26 +290,26 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
   $(document).ready(function(){
-    addPegawai();
     $('#showpassword').click(function(){
       var val = $(this).parents('.input-group').find('input')
       .attr('type', function(index, attr){
         return attr == 'text' ? 'password' : 'text';
       });
-
       $('#showpassword-icon').toggleClass('fa-eye fa-eye-slash');
     });
 
     function readURL(input, target) {
-
       if (input.files && input.files[0]) {
         var reader = new FileReader();
-
         reader.onload = function(e) {
           $(target).attr('src', e.target.result);
         }
-
         reader.readAsDataURL(input.files[0]);
       }
     }
@@ -317,49 +317,44 @@
     $("#foto").change(function() {
       readURL(this, '#img-preview');
     });  
-
     $('#img-preview').click(function(){
-
       $('#foto').click();
-
     });
-
   });
 
-  function addPegawai()
-  {
-    $.ajaxSetup({
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      }
-    });
-
-    $('#btn-submit').on('click', function(){
-      data_link = new FormData($('#formAdd')[0]);
-      $.ajax({
-        url   : "{{route('pegawai.store')}}",
-        type  : "get",
-        enctype: 'multipart/form-data',
-        data  : data_link,
-        dataType : "json",
-        beforeSend: function() {
-          loadingShow();
-        },
-        success : function (response){
-          if(response.status == 'sukses'){
-            loadingHide();
-            messageSuccess('Success', 'Data berhasil ditambahkan!');
-            window.location.href = "{{route('pegawai.index')}}";
-          } else {
-            loadingHide();
-            messageFailed('Gagal', response.message);
-          }
-        },
-        error: function (e) {
+  $('#btn-submit').on('click', function(){
+    loadingShow();
+    submitForm(event);
+  });
+    
+  function submitForm(event){
+    event.preventDefault();
+    // data_link = new FormData($('#formAdd')[0]);
+    $.ajax({
+      data   : $('#formAdd').serialize(),
+      type   : "post",
+      // processData: false,
+      // contentType: false,
+      // enctype: "multipart/form-data",
+      url    : $("#formAdd").attr('action'),
+      dataType  : "json",
+      beforeSend: function() {
+        loadingShow();
+      },
+      success : function (response){
+        if(response.status == 'sukses'){
           loadingHide();
-          messageWarning('Peringatan', e.message);
+          messageSuccess('Success', 'Data berhasil ditambahkan!');
+          window.location.href = "{{route('pegawai.index')}}";
+        } else {
+          loadingHide();
+          messageFailed('Gagal', response.message);
         }
-      });
+      },
+      error: function (e) {
+        loadingHide();
+        messageWarning('Peringatan', e.message);
+      }
     });
   }
 </script>

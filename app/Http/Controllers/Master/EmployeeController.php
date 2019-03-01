@@ -91,11 +91,11 @@ class EmployeeController extends Controller
   }
 
 
-  public function getImage($e_foto) {
-    if ($e_foto != null) {
-      $imageName = $input['imageName'] = time().'.'.$$e_foto->getClientOriginalName();
-      $destinationPathOri = storage_path('/uploads/pegawai');
-      $e_foto->move($destinationPathOri, $imageName);
+  public function getImage($foto) {
+    if ($foto != null) {
+      $imageName = $input['imageName'] = time().'.'.$foto->getClientOriginalName();
+      $destinationPathOri = storage_path('assets/uploads/pegawai');
+      $foto->move($destinationPathOri, $imageName);
       return $imageName;
     }
   }
@@ -150,13 +150,12 @@ class EmployeeController extends Controller
       ]);
     }
 
-    $filePhoto = $request->file('e_foto');
-    $photo = $this->getImage($filePhoto);
+    // $filePhoto = $request->file('e_foto');
+    // $photo = $this->getImage($filePhoto);
     
     DB::beginTransaction();
     try {
-      DB::table('m_employee')
-      ->insert([
+      DB::table('m_employee')->insert([
         'e_id'            => CodeGenerator::code('m_employee', 'e_id', 7, 'EMP'),
         'e_company'       => $request->e_company,
         'e_nip'           => $request->e_nip,
@@ -169,7 +168,7 @@ class EmployeeController extends Controller
         'e_maritalstatus' => $request->e_maritalstatus,
         'e_child'         => $request->e_child,
         'e_birth'         => date('Y-m-d', strtotime($request->e_birth)),
-        "e_workingyear"   => date('Y-m-d', strtotime($request->e_workingyear)),
+        'e_workingyear'   => date('Y-m-d', strtotime($request->e_workingyear)),
         'e_education'     => $request->e_education,
         'e_email'         => $request->e_email,
         'e_position'      => $request->e_position,
@@ -179,7 +178,7 @@ class EmployeeController extends Controller
         'e_rekening'      => $request->e_rekening,
         'e_an'            => $request->e_an,
         'e_isactive'      => "Y",
-        'e_foto'          => $photo
+        'e_foto'          => $request->e_foto
       ]);
       DB::commit();
       return response()->json([
@@ -270,6 +269,10 @@ class EmployeeController extends Controller
           'message' => $errors
         ]);
       }
+
+      $filePhoto = $request->file('e_foto');
+      $photo = $this->getImage($filePhoto);    
+      
       DB::beginTransaction();
       try {
         DB::table('m_employee')
@@ -297,7 +300,7 @@ class EmployeeController extends Controller
             'e_rekening'      => $request->e_rekening,
             'e_an'            => $request->e_an,
             'e_isactive'      => "Y",
-            'e_foto'          => $request->e_foto
+            'e_foto'          => $photo
           ]);
         DB::commit();
         return response()->json([
