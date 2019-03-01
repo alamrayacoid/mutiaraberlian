@@ -90,6 +90,16 @@ class EmployeeController extends Controller
     return view('masterdatautama.datapegawai.create', compact('jabatan', 'divisi', 'company'));
   }
 
+
+  public function getImage($e_foto) {
+    if ($e_foto != null) {
+      $imageName = $input['imageName'] = time().'.'.$$e_foto->getClientOriginalName();
+      $destinationPathOri = storage_path('/uploads/pegawai');
+      $e_foto->move($destinationPathOri, $imageName);
+      return $imageName;
+    }
+  }
+
   public function store(Request $request)
   {
     $messages = [
@@ -139,6 +149,9 @@ class EmployeeController extends Controller
         'message' => $errors
       ]);
     }
+
+    $filePhoto = $request->file('e_foto');
+    $photo = $this->getImage($filePhoto);
     
     DB::beginTransaction();
     try {
@@ -166,7 +179,7 @@ class EmployeeController extends Controller
         'e_rekening'      => $request->e_rekening,
         'e_an'            => $request->e_an,
         'e_isactive'      => "Y",
-        'e_foto'          => $request->e_foto
+        'e_foto'          => $photo
       ]);
       DB::commit();
       return response()->json([

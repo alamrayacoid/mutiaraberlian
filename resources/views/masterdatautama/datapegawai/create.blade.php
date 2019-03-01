@@ -28,96 +28,115 @@
               <fieldset>
                 <form id="formAdd">
                   <div class="row">
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>NIP <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_nip" required>
+                    <div class="col-md-3">
+                      <div class="row">
+                        <div class="col-12" align="center">
+                          <div class="form-group">
+                            <img src="{{asset('assets/img/add-image-icon2.png')}}" width="100%" id="img-preview" style="cursor: pointer;" class="img-thumbnail">
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <div class="form-group">
+                            <input type="file" class="form-control form-control-sm" name="e_foto" id="foto" accept="image/*">
+                          </div>
+                        </div>
                       </div>
                     </div>
+                    <div class="col-md-9">
+                      <div class="row">
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>NIP <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_nip" required>
+                          </div>
+                        </div>
 
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Nama Pegawai <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_name" required>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Nama Pegawai <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_name" required>
+                          </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>NIK <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_nik" required>
+                          </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Pemilik Cabang <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <select name="e_company" id="" class="form-control form-control-sm select2">
+                              <option value="" selected>--- Pilih Cabang ---</option>
+                              @foreach($company as $comp)
+                              <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
+                              @endforeach
+                            </select>
+                          </div>
+                        </div>
+
+                        {{-- <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Hari Kerja</label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_workingdays">
+                          </div>
+                        </div> --}}
+
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Nomor HP <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_telp" required>
+                          </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Agama <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_religion" required>
+                          </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Jenis Kelamin <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <select class="form-control form-control-sm" name="e_gender" required>
+                              <option value="">-- Pilih Jenis --</option>
+                              <option value="L">Laki-laki</option>
+                              <option value="P">Perempuan</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Nama Pasangan</label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_matename">
+                          </div>
+                        </div>
                       </div>
                     </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>NIK <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_nik" required>
-                      </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Pemilik Cabang <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <select name="e_company" id="" class="form-control form-control-sm select2">
-                          <option value="" selected>--- Pilih Cabang ---</option>
-                          @foreach($company as $comp)
-                          <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
-                          @endforeach
-                        </select>
-                      </div>
-                    </div>
-
-                    {{-- <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Hari Kerja</label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_workingdays">
-                      </div>
-                    </div> --}}
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Nomor HP <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_telp" required>
-                      </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Agama <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_religion" required>
-                      </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Jenis Kelamin <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <select class="form-control form-control-sm" name="e_gender" required>
-                          <option value="">-- Pilih Jenis --</option>
-                          <option value="L">Laki-laki</option>
-                          <option value="P">Perempuan</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Nama Pasangan</label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_matename">
-                      </div>
-                    </div>
-
+                  </div>
+                  <div class="row">
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>Status <span class="text-danger">*</span></label>
                     </div>
@@ -244,22 +263,7 @@
                       <div class="form-group">
                         <input type="text" class="form-control form-control-sm" name="e_an" required>
                       </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Foto</label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="file" class="form-control form-control-sm" name="e_foto" id="foto">
-                      </div>
-                    </div>
-
-                    <div class="col-12" align="center">
-                      <div class="form-group">
-                        <img src="{{asset('assets/img/add-image-icon.png')}}" height="120px" width="90px" id="img-preview" style="cursor: pointer;">
-                      </div>
-                    </div>
+                    </div>                        
                   </div>
                 </form>
               </fieldset>
@@ -331,10 +335,12 @@
     });
 
     $('#btn-submit').on('click', function(){
+      data_link = new FormData($('#formAdd')[0]);
       $.ajax({
         url   : "{{route('pegawai.store')}}",
         type  : "get",
-        data  : $('#formAdd').serialize(),
+        enctype: 'multipart/form-data',
+        data  : data_link,
         dataType : "json",
         beforeSend: function() {
           loadingShow();
