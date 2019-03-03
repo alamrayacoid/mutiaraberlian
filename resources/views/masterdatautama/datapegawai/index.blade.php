@@ -30,15 +30,11 @@
 	                            <table class="table table-hover display nowrap" cellspacing="0" id="table_pegawai">
 	                                <thead class="bg-primary">
 	                                    <tr>
-							                <th>ID Pegawai</th>
-                                            <th>Nama Pegawai</th>
 							                <th>NIK</th>
-                                            <th>KTP</th>
+                                            <th>Nama Pegawai</th>
 											<th>Jabatan</th>
-							                <th>Alamat</th>
-							                <th>Status Karyawan</th>
-											<th>Tanggal Masuk</th>
-                                            <th>Status Keaktifan</th>
+							                <th>No. Telepon</th>
+                                            <th>Status</th>
 											<th>Aksi</th>
 							            </tr>
 	                                </thead>
@@ -87,14 +83,10 @@
                 }
             },
             columns: [
-                {data: 'e_id', name: 'e_id'},
-                {data: 'e_name', name: 'e_name'},
                 {data: 'e_nik', name: 'e_nik'},
-                {data: 'e_nip', name: 'e_nip'},
+                {data: 'e_name', name: 'e_name'},
                 {data: 'jabatan', name: 'jabatan'},
-                {data: 'e_address', name: 'e_address'},
-                {data: 'maried', name: 'maried'},
-                {data: 'e_workingyear', name: 'e_workingyear'},
+                {data: 'e_telp', name: 'e_telp'},
                 {data: 'status', name: 'status'},
                 {data: 'action', name: 'action'}
             ],
