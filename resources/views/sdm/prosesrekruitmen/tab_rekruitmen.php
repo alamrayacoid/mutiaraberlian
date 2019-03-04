@@ -72,7 +72,7 @@
 			</fieldset>
 
 				<div class="table-responsive">
-					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_rekruitmen">
+					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_rekrutmen">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>
@@ -87,23 +87,6 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>07 Sep 2019</td>
-								<td>Brad</td>
-								<td>01238312321376</td>
-								<td>Brad@Pit.com</td>
-								<td>S1</td>
-								<td>Approve 1</td>
-								<td>Test Interview</td>
-								<td>
-									<div class="btn-group btn-group-sm">
-										<button class="btn btn-primary btn-preview-rekruitmen" type="button" title="Preview"><i class="fa fa-search"></i></button>
-										<button class="btn btn-warning btn-proses-rekruitmen" type="button" title="Process"><i class="fa fa-file-powerpoint-o"></i></button>
-										<button class="btn btn-danger btn-disable-rekruitmen" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-									</div>
-								</td>
-							</tr>
 						</tbody>
 					</table>
 				</div>

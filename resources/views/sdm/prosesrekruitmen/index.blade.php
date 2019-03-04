@@ -46,11 +46,77 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
+	// set header token for ajax request
+	$.ajaxSetup({
+		headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		}
+	});
+
+	// function to retrieve DataTable server side
+	function TableRekrutmen()
+	{
+		$('#table_rekrutmen').dataTable().fnDestroy();
+		tb_rekrutmen = $('#table_rekrutmen').DataTable({
+			responsive: true,
+			serverSide: true,
+			ajax: {
+				url: "{{ url('/sdm/prosesrekruitmen/list/All') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}"
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'tgl_apply'},
+				{data: 'p_name'},
+				{data: 'p_tlp'},
+				{data: 'p_email'},
+				{data: 'p_education'},
+				{data: 'status'},
+				{data: 'approval'},
+				{data: 'action'}
+			],
+			pageLength: 10,
+			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
+	}
+
+	// function to retrieve DataTable server side
+	function TableDiterima()
+	{
+		$('#table_diterima').dataTable().fnDestroy();
+		tb_diterima = $('#table_diterima').DataTable({
+			responsive: true,
+			serverSide: true,
+			ajax: {
+				url: "{{ url('/sdm/prosesrekruitmen/list/Y') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}"
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'tgl_apply'},
+				{data: 'p_name'},
+				{data: 'p_tlp'},
+				{data: 'p_email'},
+				{data: 'p_education'},
+				{data: 'status'},
+				{data: 'approval'},
+				{data: 'action'}
+			],
+			pageLength: 10,
+			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
+	}
 
 	$(document).ready(function(){
-		var table_sup = $('#table_rekruitmen').DataTable();
-		var table_bar= $('#table_pelamard').DataTable();
-
+		
+		TableRekrutmen();
+		TableDiterima();
 
 		$(document).on('click','.btn-preview-rekruitmen',function(){
 			window.location.href='{{route('rekruitmen.preview')}}'

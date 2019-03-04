@@ -20,7 +20,7 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        return view('masterdatautama.datapegawai.index');
+      return view('masterdatautama.datapegawai.index');
     }
 
     public function getData()
@@ -32,20 +32,20 @@ class EmployeeController extends Controller
       return Datatables::of($datas)
       ->addIndexColumn()
       ->addColumn('jabatan', function ($datas) {
-          return '<div class="text-center">
-            <p>' . $datas->j_name . '</p>
-          </div>';
+        return '<div class="text-center">
+          <p>' . $datas->j_name . '</p>
+        </div>';
       })
       ->addColumn('status', function ($datas) {
-          if ($datas->e_isactive == "Y") {
-              return '<div class="text-center">
-              <span class="badge badge-success btn-block py-2">AKTIF</span>
-            </div>';
-          } else {
-              return '<div class="text-center">
-              <span class="badge badge-danger btn-block py-2">NON AKTIF</span>
-            </div>';
-          }
+        if ($datas->e_isactive == "Y") {
+            return '<div class="text-center">
+            <span class="badge badge-success btn-block py-2">AKTIF</span>
+          </div>';
+        } else {
+            return '<div class="text-center">
+            <span class="badge badge-danger btn-block py-2">NON AKTIF</span>
+          </div>';
+        }
       })
       ->addColumn('action', function ($datas) {
         if ($datas->e_isactive == "Y") {
@@ -125,13 +125,13 @@ class EmployeeController extends Controller
       if ($validator->fails()) {
         $errors = $validator->errors()->first();
         return response()->json([
-            'status'  => 'invalid',
-            'message' => $errors
+          'status'  => 'invalid',
+          'message' => $errors
         ]);
       }
 
       $filePhoto = $request->file('e_foto');
-      $photo = $this->getImage($filePhoto);
+      $photo     = $this->getImage($filePhoto);
 
       DB::beginTransaction();
       try {
@@ -191,15 +191,15 @@ class EmployeeController extends Controller
           ->leftJoin('m_company', 'e_company', 'c_id')
           ->leftJoin('m_jabatan', 'e_position', 'j_id')
           ->leftJoin('m_divisi', 'e_department', 'm_id')
-          ->select('m_employee.*', 'c_name', 'j_name', 'm_name')
+          ->select('m_employee.*', DB::raw('date_format(e_birth, "%d-%m-%Y") as e_birth'), DB::raw('date_format(e_workingyear, "%d-%m-%Y") as e_workingyear'), 'c_name', 'j_name', 'm_name')
           ->where('e_id', '=', $id)
           ->first();
         return view('masterdatautama.datapegawai.edit', compact('employee', 'company', 'jabatan', 'divisi'));
       } else {
         try {
-            $id = Crypt::decrypt($id);
+          $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
-            return view('errors.404');
+          return view('errors.404');
         }
         $messages = [
           'e_company.required'       => 'Cabang masih kosong, silahkan isi terlebih dahulu !',
@@ -237,152 +237,166 @@ class EmployeeController extends Controller
           'e_address'       => 'required',
           'e_bank'          => 'required',
           'e_rekening'      => 'required',
-          'e_an'            => 'required'
+          'e_an'            => 'required',
         ], $messages);
 
         if ($validator->fails()) {
           $errors = $validator->errors()->first();
           return response()->json([
-              'status'  => 'invalid',
-              'message' => $errors
+            'status'  => 'invalid',
+            'message' => $errors
           ]);
         }
-
-        $filePhoto = $request->file('e_foto');
-        $photo = $this->getImage($filePhoto);
         DB::beginTransaction();
         try {
+          if( $request->hasFile('e_foto') ){
+            $dataImg = $request->file('e_foto');         
+
+            if ($dataImg->isValid()) {
+              $file = $request->current_foto;
+              if ($file != "") {
+                $path = 'assets/uploads/pegawai/'.$file;
+                if (File::exists($path)) {
+                    File::delete($path);
+                }
+              }
+              $imageName = $input['imageName'] = time().'.'.$dataImg->getClientOriginalName();
+              $pathOri = 'assets/uploads/pegawai';
+              $dataImg->move($pathOri, $imageName);
+            }
+            $photos = $imageName;
+          } else {
+            $photos = $request->current_foto;
+          }
+          
           DB::table('m_employee')
             ->where('e_id', $id)
             ->update([
-                'e_company'       => $request->e_company,
-                'e_nip'           => $request->e_nip,
-                'e_name'          => strtoupper($request->e_name),
-                'e_nik'           => $request->e_nik,
-                'e_workingdays'   => $request->e_workingdays,
-                'e_telp'          => $request->e_telp,
-                'e_religion'      => $request->e_religion,
-                'e_gender'        => $request->e_gender,
-                'e_matename'      => $request->e_matename,
-                'e_maritalstatus' => $request->e_maritalstatus,
-                'e_child'         => $request->e_child,
-                'e_birth'         => date('Y-m-d', strtotime($request->e_birth)),
-                "e_workingyear"   => date('Y-m-d', strtotime($request->e_workingyear)),
-                'e_education'     => $request->e_education,
-                'e_email'         => $request->e_email,
-                'e_position'      => $request->e_position,
-                'e_department'    => $request->e_department,
-                'e_address'       => $request->e_address,
-                'e_bank'          => $request->e_bank,
-                'e_rekening'      => $request->e_rekening,
-                'e_an'            => $request->e_an,
-                'e_isactive'      => "Y",
-                'e_foto'          => $photo
+              'e_company'       => $request->e_company,
+              'e_nip'           => $request->e_nip,
+              'e_name'          => strtoupper($request->e_name),
+              'e_nik'           => $request->e_nik,
+              'e_workingdays'   => $request->e_workingdays,
+              'e_telp'          => $request->e_telp,
+              'e_religion'      => $request->e_religion,
+              'e_gender'        => $request->e_gender,
+              'e_matename'      => $request->e_matename,
+              'e_maritalstatus' => $request->e_maritalstatus,
+              'e_child'         => $request->e_child,
+              'e_birth'         => date('Y-m-d', strtotime($request->e_birth)),
+              "e_workingyear"   => date('Y-m-d', strtotime($request->e_workingyear)),
+              'e_education'     => $request->e_education,
+              'e_email'         => $request->e_email,
+              'e_position'      => $request->e_position,
+              'e_department'    => $request->e_department,
+              'e_address'       => $request->e_address,
+              'e_bank'          => $request->e_bank,
+              'e_rekening'      => $request->e_rekening,
+              'e_an'            => $request->e_an,
+              'e_isactive'      => "Y",
+              'e_foto'          => $photos
             ]);
           DB::commit();
           return response()->json([
-              'status' => 'sukses'
+            'status' => 'sukses'
           ]);
         } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json([
-                'status'  => 'gagal',
-                'message' => $e
-            ]);
+          DB::rollback();
+          return response()->json([
+            'status'  => 'gagal',
+            'message' => $e
+          ]);
         }
       }
     }
 
     public function getImage($foto)
     {
-        if ($foto != null) {
-            $imageName = $input['imageName'] = time() . '.' . $foto->getClientOriginalName();
-            $destinationPathOri = 'assets/uploads/pegawai';
-            $foto->move($destinationPathOri, $imageName);
-            return $imageName;
-        }
+      if ($foto != null) {
+        $imageName = $input['imageName'] = time() . '.' . $foto->getClientOriginalName();
+        $pathOri = 'assets/uploads/pegawai';
+        $foto->move($pathOri, $imageName);
+        return $imageName;
+      }
     }
 
     public function nonActive($id)
     {
-        try {
-            $id = Crypt::decrypt($id);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => 'gagal',
-                'message' => $e
-            ]);
-        }
-        DB::beginTransaction();
-        try {
-            DB::table('m_employee')
-                ->where('e_id', $id)
-                ->update([
-                    'e_isactive' => "N"
-                ]);
-
-            DB::commit();
-            return response()->json([
-                'status' => 'sukses'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json([
-                'status'  => 'gagal',
-                'message' => $e
-            ]);
-        }
+      try {
+        $id = Crypt::decrypt($id);
+      } catch (\Exception $e) {
+        return response()->json([
+          'status'  => 'gagal',
+          'message' => $e
+        ]);
+      }
+      DB::beginTransaction();
+      try {
+        DB::table('m_employee')
+          ->where('e_id', $id)
+          ->update([
+            'e_isactive' => "N"
+          ]);
+        DB::commit();
+        return response()->json([
+          'status' => 'sukses'
+        ]);
+      } catch (\Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status'  => 'gagal',
+          'message' => $e
+        ]);
+      }
     }
 
     public function actived($id)
     {
-        try {
-            $id = Crypt::decrypt($id);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => 'gagal',
-                'message' => $e
-            ]);
-        }
-        DB::beginTransaction();
-        try {
-            DB::table('m_employee')
-                ->where('e_id', $id)
-                ->update([
-                    'e_isactive' => "Y"
-                ]);
-
-            DB::commit();
-            return response()->json([
-                'status' => 'sukses'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json([
-                'status'  => 'gagal',
-                'message' => $e
-            ]);
-        }
+      try {
+        $id = Crypt::decrypt($id);
+      } catch (\Exception $e) {
+        return response()->json([
+          'status'  => 'gagal',
+          'message' => $e
+        ]);
+      }
+      DB::beginTransaction();
+      try {
+        DB::table('m_employee')
+          ->where('e_id', $id)
+          ->update([
+            'e_isactive' => "Y"
+          ]);
+        DB::commit();
+        return response()->json([
+          'status' => 'sukses'
+        ]);
+      } catch (\Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status'  => 'gagal',
+          'message' => $e
+        ]);
+      }
     }
 
     public function detail($id)
     {
-        try {
-            $id = Crypt::decrypt($id);
-        } catch (\Exception $e) {
-            return view('errors.404');
-        }
-        $employee = DB::table('m_employee')
-            ->leftJoin('m_company', 'e_company', 'c_id')
-            ->leftJoin('m_jabatan', 'e_position', 'j_id')
-            ->leftJoin('m_divisi', 'e_department', 'm_id')
-            ->select('m_employee.*',
-                DB::raw('date_format(e_birth, "%d/%m/%Y") as e_birth'),
-                DB::raw('date_format(e_workingyear, "%d/%m/%Y") as e_workingyear'),
-                'c_name', 'j_name', 'm_name')
-            ->where('e_id', '=', $id)
-            ->first();
-        return view('masterdatautama.datapegawai.detail', compact('employee'));
-
+      try {
+        $id = Crypt::decrypt($id);
+      } catch (\Exception $e) {
+        return view('errors.404');
+      }
+      $employee = DB::table('m_employee')
+        ->leftJoin('m_company', 'e_company', 'c_id')
+        ->leftJoin('m_jabatan', 'e_position', 'j_id')
+        ->leftJoin('m_divisi', 'e_department', 'm_id')
+        ->select('m_employee.*',
+          DB::raw('date_format(e_birth, "%d/%m/%Y") as e_birth'),
+          DB::raw('date_format(e_workingyear, "%d/%m/%Y") as e_workingyear'),
+          'c_name', 'j_name', 'm_name')
+        ->where('e_id', '=', $id)
+        ->first();
+      return view('masterdatautama.datapegawai.detail', compact('employee'));
     }
 }
