@@ -42,7 +42,8 @@
 
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
+                                <input type="hidden" name="idItem" id="idItem">
+                                <input type="text" class="form-control form-control-sm" name="namaItem" id="namaItem">
                               </div>
                             </div>
 

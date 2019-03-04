@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use DB;
 use Auth;
+use Response;
 use App\Http\Controllers\Controller;
 
 class BarangMasukController extends Controller
@@ -31,20 +32,28 @@ class BarangMasukController extends Controller
     {
         $cari = $request->term;
         $item = DB::table('m_item')
-            ->select('i_id', 'i_name')
-            ->whereRaw("c_name like '%" . $cari . "%'")
-            ->where('c_id', '!=', $company)->get();
+            ->select('i_id', 'i_name', 'i_code')
+            ->whereRaw("i_name like '%" . $cari . "%'")
+            ->orWhereRaw("i_code like '%" . $cari . "%'")
+            ->get();
 
-        if ($comp == null) {
-            $hasilcomp[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        if ($item == null) {
+            $hasilItem[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
-            foreach ($comp as $query) {
-                $hasilcomp[] = [
-                    'id' => $query->c_id,
-                    'label' => $query->c_name
-                ];
+            foreach ($item as $query) {
+                if($query->i_code == null){
+                    $hasilItem[] = [
+                        'id' => $query->i_id,
+                        'label' => $query->i_name
+                    ];
+                }else{
+                    $hasilItem[] = [
+                        'id' => $query->i_id,
+                        'label' => $query->i_code.' - '.$query->i_name
+                    ];
+                }
             }
         }
-        return Response::json($hasilcomp);
+        return Response::json($hasilItem);
     }
 }
