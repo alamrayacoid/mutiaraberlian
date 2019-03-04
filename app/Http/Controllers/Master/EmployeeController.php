@@ -221,6 +221,7 @@ class EmployeeController extends Controller
           'e_an.required'            => 'AN masih kosong, silahkan isi terlebih dahulu !'
         ];
         $validator = Validator::make($request->all(), [
+        // $validator = $this->validate($request, [
           'e_company'       => 'required',
           'e_nip'           => 'required',
           'e_name'          => 'required',
@@ -237,8 +238,9 @@ class EmployeeController extends Controller
           'e_address'       => 'required',
           'e_bank'          => 'required',
           'e_rekening'      => 'required',
-          'e_an'            => 'required'
+          'e_an'            => 'required',
         ], $messages);
+        // $validator = $request->all();
 
         if ($validator->fails()) {
           $errors = $validator->errors()->first();
@@ -248,10 +250,35 @@ class EmployeeController extends Controller
           ]);
         }
 
-        $filePhoto = $request->file('e_foto');
-        $photo = $this->getImage($filePhoto);
+        // $filePhoto = $request->file('e_foto');
+        // $photo = $this->getImage($filePhoto);
         DB::beginTransaction();
         try {
+          if( $request->hasFile('e_foto') ){
+            $dataImg = $request->file('e_foto');         
+
+            if ($dataImg->isValid()) {
+              $file = $request->current_foto;
+              if ($file != "") {
+              
+                $path = 'assets/uploads/pegawai/'.$file;
+
+                if (File::exists($path)) {
+                    File::delete($path);
+                }
+
+                $imageName = $input['imageName'] = time().'.'.$dataImg->getClientOriginalName();
+                $pathOri = 'assets/uploads/pegawai';
+                $dataImg->move($pathOri, $imageName);
+              }
+            }
+            
+            $photo = $imageName;
+
+          } else {
+            $photo = $request->current_foto;
+          }
+          
           DB::table('m_employee')
             ->where('e_id', $id)
             ->update([
@@ -284,24 +311,24 @@ class EmployeeController extends Controller
               'status' => 'sukses'
           ]);
         } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json([
-                'status'  => 'gagal',
-                'message' => $e
-            ]);
+          DB::rollback();
+          return response()->json([
+              'status'  => 'gagal',
+              'message' => $e
+          ]);
         }
       }
     }
 
-    public function getImage($foto)
-    {
-        if ($foto != null) {
-            $imageName = $input['imageName'] = time() . '.' . $foto->getClientOriginalName();
-            $destinationPathOri = 'assets/uploads/pegawai';
-            $foto->move($destinationPathOri, $imageName);
-            return $imageName;
-        }
-    }
+    // public function getImage($foto)
+    // {
+    //     if ($foto != null) {
+    //         $imageName = $input['imageName'] = time() . '.' . $foto->getClientOriginalName();
+    //         $pathOri = 'assets/uploads/pegawai';
+    //         $foto->move($pathOri, $imageName);
+    //         return $imageName;
+    //     }
+    // }
 
     public function nonActive($id)
     {
