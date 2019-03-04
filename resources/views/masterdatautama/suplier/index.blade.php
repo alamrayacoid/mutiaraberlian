@@ -44,31 +44,6 @@
 													            </tr>
 	                                </thead>
 	                                <tbody>
-	                                	<!-- <tr align="center">
-	                                		<td>1</td>
-																			<td>BradCompany</td>
-	                                		<td>Brad</td>
-	                                		<td>123123</td>
-	                                		<td>JL.Rh</td>
-	                                		<td>012312</td>
-																			<td>-</td>
-																			<td>-</td>
-																			<td>0123212</td>
-																			<th>Bang</th>
-																			<td>-</td>
-																			<td><button class="btn btn-primary btn-modal" data-toggle="modal" data-target="#detail" type="button">Detail</button></td>
-																			<td>-</td>
-																			<td>-</td>
-																			<td class="input-rupiah">0.00</td>
-																			<td class="input-rupiah">0.00</td>
-	                                		<td>
-	                                			<div class="btn-group btn-group-sm">
-	                                				<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-	                                				<button class="btn btn-danger btn-disable" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>
-	                                			</div>
-	                                		</td>
-	                                	</tr>
-																		 -->
 	                                </tbody>
 	                            </table>
 	                        </div>
