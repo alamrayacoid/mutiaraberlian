@@ -114,8 +114,7 @@
 	}
 
 	$(document).ready(function(){
-		// var table_sup = $('#table_rekrutmen').DataTable();
-		// var table_bar= $('#table_pelamard').DataTable();
+		
 		TableRekrutmen();
 		TableDiterima();
 
