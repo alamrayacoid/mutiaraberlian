@@ -142,9 +142,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     // !===================================================== INVENTORY =====================================================!
     // Barang Masuk
-    Route::get('/inventory/barangmasuk/index', 'InventoryController@barangmasuk_index')->name('barangmasuk.index');
-    Route::get('/inventory/barangmasuk/create', 'InventoryController@barangmasuk_create')->name('barangmasuk.create');
-    Route::get('/inventory/barangmasuk/edit', 'InventoryController@barangmasuk_edit')->name('barangmasuk.edit');
+    Route::get('/inventory/barangmasuk/index', 'Inventory\BarangMasukController@index')->name('barangmasuk.index');
+    Route::get('/inventory/barangmasuk/create', 'Inventory\BarangMasukController@create')->name('barangmasuk.create');
+    Route::get('/inventory/barangmasuk/edit', 'Inventory\BarangMasukController@edit')->name('barangmasuk.edit');
+    Route::get('/inventory/barangmasuk/autoItem', 'Inventory\BarangMasukController@auto_item')->name('barangmasuk.autoitem');
+
     // Barang Keluar
     Route::get('/inventory/barangkeluar/index', 'InventoryController@barangkeluar_index')->name('barangkeluar.index');
     Route::get('/inventory/barangkeluar/create', 'InventoryController@barangkeluar_create')->name('barangkeluar.create');

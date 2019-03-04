@@ -37,7 +37,7 @@
                           <div class="row">
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Nama Barang Barang</label>
+                              <label>Nama Barang</label>
                             </div>
 
                             <div class="col-md-9 col-sm-6 col-xs-12">
@@ -47,22 +47,32 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Kode Barang</label>
-                            </div>
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
-                              </div>
-                            </div>
-                            
-                            <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Satuan</label>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
+                                <select name="satuan" id="satuan" class="form-control form-control-sm select2">
+                                  <option value="" disabled selected>== Pilih Satuan ==</option>
+                                  @foreach($unit as $unit)
+                                    <option value="{{$unit->u_id}}">{{$unit->u_name}}</option>
+                                  @endforeach
+                                </select>
+                              </div>
+                            </div>
+                            
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Lokasi Barang</label>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                  <select name="lokasi" id="lokasi" class="form-control form-control-sm select2">
+                                    <option value="" disabled selected>== Pilih Lokasi Barang ==</option>
+                                    @foreach($company as $lokasi)
+                                      <option value="{{$lokasi->c_id}}">{{$lokasi->c_name}}</option>
+                                    @endforeach
+                                  </select>
                               </div>
                             </div>
 
@@ -77,22 +87,27 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Pemilik Barang</label>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <select name="pemilik" id="pemilik" class="form-control form-control-sm select2">
+                                  <option value="" disabled selected>== Pilih Pemilik Barang ==</option>
+                                  @foreach($company as $pemilik)
+                                    <option value="{{$pemilik->c_id}}">{{$pemilik->c_name}}</option>
+                                  @endforeach
+                                </select>
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Tanggal Masuk</label>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                               <input type="text" class="form-control-sm form-control datepicker" name="">
-                              </div>
-                            </div>
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Lokasi Masuk</label>
-                            </div>
-
-                            <div class="col-md-9 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
+                                <input type="text" class="form-control form-control datepicker" name="">
                               </div>
                             </div>
 
@@ -119,6 +134,15 @@
 @section('extra_script')
 <script type="text/javascript">
   $(document).ready(function(){
+
+    $('#namaItem').autocomplete({
+      source: baseUrl+'/inventory/barangmasuk/autoItem',
+      minLength: 2,
+      select: function(event, data){
+          $('#idItem').val(data.item.id);
+      }
+    })
+
     $(document).on('click', '.btn-submit', function(){
 			$.toast({
 				heading: 'Success',
