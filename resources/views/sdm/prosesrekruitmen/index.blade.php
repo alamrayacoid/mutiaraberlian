@@ -64,7 +64,9 @@
 				url: "{{ url('/sdm/prosesrekruitmen/list/All') }}",
 				type: "get",
 				data: {
-					"_token": "{{ csrf_token() }}"
+					"_token": "{{ csrf_token() }}",
+					"date_from": $('#rekrut_from').val(),
+					"date_to": $('#rekrut_to').val()
 				}
 			},
 			columns: [
@@ -94,7 +96,9 @@
 				url: "{{ url('/sdm/prosesrekruitmen/list/Y') }}",
 				type: "get",
 				data: {
-					"_token": "{{ csrf_token() }}"
+					"_token": "{{ csrf_token() }}",
+					"date_from": $('#diterima_from').val(),
+					"date_to": $('#diterima_to').val()
 				}
 			},
 			columns: [
@@ -114,7 +118,13 @@
 	}
 
 	$(document).ready(function(){
-		
+
+		var cur_date = new Date();
+		$("#rekrut_from").datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth(), 1));
+		$("#rekrut_to").datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth()+1, 0));
+		$("#diterima_from").datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth(), 1));
+		$("#diterima_to").datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth()+1, 0));
+
 		TableRekrutmen();
 		TableDiterima();
 
@@ -241,5 +251,18 @@
 			})
 		})
 	});
+
+	$("#rekrut_from").on('change', function() {
+		TableRekrutmen();
+	})
+	$("#rekrut_to").on('change', function() {
+		TableRekrutmen();
+	})
+	$("#diterima_from").on('change', function() {
+		TableDiterima();
+	})
+	$("#diterima_to").on('change', function() {
+		TableDiterima();
+	})
 </script>
 @endsection

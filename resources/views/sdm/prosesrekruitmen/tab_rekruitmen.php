@@ -18,7 +18,7 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" name="">
+						<input type="text" class="form-control form-control-sm datepicker" id="rekrut_from" name="">
 					</div>
 					</div>
 
@@ -28,7 +28,7 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" name="">
+						<input type="text" class="form-control form-control-sm datepicker" id="rekrut_to" name="">
 					</div>
 					</div>
 
@@ -72,7 +72,7 @@
 			</fieldset>
 
 				<div class="table-responsive">
-					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_rekrutmen">
+					<table class="table table-hover table-striped display" cellspacing="0" style="width: 100%" id="table_rekrutmen">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>
