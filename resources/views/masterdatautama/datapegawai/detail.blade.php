@@ -7,10 +7,10 @@
       <h1 class="title"> Edit Data Pegawai </h1>
       <p class="title-description">
         <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
-         / <span>Master Data Utama</span>
-         / <a href="{{route('pegawai.index')}}"><span>Data Pegawai</span></a>
-         / <span class="text-primary font-weight-bold">Detail Data Pegawai</span>
-       </p>
+        / <span>Master Data Utama</span>
+        / <a href="{{route('pegawai.index')}}"><span>Data Pegawai</span></a>
+        / <span class="text-primary font-weight-bold">Detail Data Pegawai</span>
+      </p>
   </div>
   <section class="section">
     <div class="row">
@@ -33,9 +33,9 @@
                       <div class="col-12" align="center">
                         <div class="form-group">
                           @if($employee->e_foto != null)
-                          <img src="{{asset('assets/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" width="200px">
+                            <img src="{{asset('assets/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" width="100%">
                           @else
-                          <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" width="200px" id="img-preview" style="cursor: pointer;">
+                            <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" width="100%">
                           @endif
                         </div>
                       </div>
@@ -78,15 +78,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->c_name}}">
                         </div>
                       </div>
-
-                      {{-- <div class="col-md-3 col-sm-6 col-xs-12">
-                        <label>Hari Kerja</label>
-                      </div>
-                      <div class="col-md-9 col-sm-6 col-xs-12">
-                        <div class="form-group">
-                          <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_workingdays}}">
-                        </div>
-                      </div> --}}
 
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Nomor HP</label>
@@ -257,7 +248,7 @@
   </section>
 </article>
 @endsection
-@section('extra_script')
+{{-- @section('extra_script')
 <script type="text/javascript">
   $(document).ready(function(){
     function readURL(input, target) {
@@ -278,4 +269,4 @@
     });
   });
 </script>
-@endsection
+@endsection --}}

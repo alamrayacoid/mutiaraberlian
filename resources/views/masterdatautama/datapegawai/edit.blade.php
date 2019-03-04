@@ -34,9 +34,9 @@
                         <div class="col-12" align="center">
                           <div class="form-group">
                             @if($employee->e_foto != null)
-                              <img src="{{asset('assets/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" width="200px" id="img-preview" style="cursor: pointer;">
+                              <img src="{{asset('assets/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" width="100%" id="img-preview" style="cursor: pointer;">
                             @else
-                            <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" width="120px" id="img-preview" style="cursor: pointer;">
+                              <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" width="100%" id="img-preview" style="cursor: pointer;">
                             @endif
                           </div>
                         </div>
@@ -90,15 +90,6 @@
                             </select>
                           </div>
                         </div>
-
-                        {{-- <div class="col-md-3 col-sm-6 col-xs-12">
-                          <label>Hari Kerja</label>
-                        </div>
-                        <div class="col-md-9 col-sm-6 col-xs-12">
-                          <div class="form-group">
-                            <input type="text" class="form-control form-control-sm" name="e_workingdays" value="{{$employee->e_workingdays}}">
-                          </div>
-                        </div> --}}
 
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <label>Nomor HP <span class="text-danger">*</span></label>

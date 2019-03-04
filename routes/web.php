@@ -46,7 +46,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // !====================================================== Master Data Utama ======================================================!
 
-    Route::get('/masterdatautama/datapegawai/', 'Master\EmployeeController@index')->name('pegawai.index');
+    Route::get('/masterdatautama/datapegawai/index', 'Master\EmployeeController@index')->name('pegawai.index');
     Route::get('/masterdatautama/datapegawai/getData', 'Master\EmployeeController@getData')->name('pegawai.list');
     Route::get('/masterdatautama/datapegawai/create', 'Master\EmployeeController@create')->name('pegawai.create');
     Route::post('/masterdatautama/datapegawai/store', 'Master\EmployeeController@store')->name('pegawai.store');
