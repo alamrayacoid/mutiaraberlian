@@ -42,23 +42,23 @@ class CabangController extends Controller
           if ($datas->c_isactive == "Y") {
             if ($datas->c_type == "PUSAT") {
               return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                        <button class="btn btn-warning" onclick="EditCabang(\''.Crypt::encrypt($datas->c_id).'\')" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i></button>
+                        <button class="btn btn-warning hint--bottom-left hint--warning" onclick="EditCabang(\''.Crypt::encrypt($datas->c_id).'\')" data-toggle="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
                         <button class="btn btn-disabled disabled" onclick="nonActive(\''.Crypt::encrypt($datas->c_id).'\')" data-toggle="tooltip" data-placement="top" disabled><i class="fa fa-times"></i></button>
                         </div>
                       </div>';
             } else {
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                          <button class="btn btn-warning" onclick="EditCabang(\''.Crypt::encrypt($datas->c_id).'\')" rel="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i></button>
-                          <button class="btn btn-danger" onclick="nonActive(\''.Crypt::encrypt($datas->c_id).'\')" data-toggle="tooltip" data-placement="top" title="Nonaktifkan"><i class="fa fa-times"></i></button>
+                          <button class="btn btn-warning hint--bottom-left hint--warning" onclick="EditCabang(\''.Crypt::encrypt($datas->c_id).'\')" rel="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
+                          <button class="btn btn-danger hint--bottom-left hint--error" onclick="nonActive(\''.Crypt::encrypt($datas->c_id).'\')" data-toggle="tooltip" data-placement="top" aria-label="Nonaktifkan data"><i class="fa fa-times"></i></button>
                           </div>
                         </div>';
             }
           } else {
               return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                         <button class="btn btn-disabled disabled" onclick="EditCabang(\''.Crypt::encrypt($datas->c_id).'\')" data-toggle="tooltip" data-placement="top" disabled><i class="fa fa-pencil"></i></button>
-                        <button class="btn btn-success" onclick="active(\''.Crypt::encrypt($datas->c_id).'\')" data-toggle="tooltip" data-placement="top" title="Aktifkan"><i class="fa fa-check"></i></button>
+                        <button class="btn btn-success hint--bottom-left hint--error" onclick="active(\''.Crypt::encrypt($datas->c_id).'\')" data-toggle="tooltip" data-placement="top" aria-label="Aktifkan data"><i class="fa fa-check"></i></button>
                         </div>
-                      </div>';        
+                      </div>';
           }
         })
         ->rawColumns(['status','action'])
@@ -93,7 +93,7 @@ class CabangController extends Controller
           'message' => $errors
         ]);
       }
-      
+
       DB::beginTransaction();
       try {
         DB::table('m_company')

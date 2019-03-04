@@ -111,12 +111,12 @@ class SupplierController extends Controller
         ->addColumn('action', function($datas) {
           if ($datas->s_isactive == 'Y') {
             return '<div class="btn-group btn-group-sm">
-            <button class="btn btn-warning" onclick="EditSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" title="Edit Data"><i class="fa fa-pencil"></i></button>
-            <button class="btn btn-danger" onclick="DisableSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" title="Nonaktifkan Data"><i class="fa fa-times-circle"></i></button>
+            <button class="btn btn-warning hint--bottom-left hint--warning" onclick="EditSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" aria-label="Edit Data"><i class="fa fa-pencil"></i></button>
+            <button class="btn btn-danger hint--bottom-left hint--error" onclick="DisableSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" aria-label="Nonaktifkan Data"><i class="fa fa-times-circle"></i></button>
             </div>';
           } elseif ($datas->s_isactive == 'N') {
             return '<div class="btn-group btn-group-sm">
-            <button class="btn btn-success btn-enable" onclick="EnableSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" title="Aktifkan Data"><i class="fa fa-check-circle"></i></button>
+            <button class="btn btn-success btn-enable hint--bottom-left hint--error" onclick="EnableSupplier('.$datas->s_id.')" rel="tooltip" data-placement="top" aria-label="Aktifkan Data"><i class="fa fa-check-circle"></i></button>
             </div>';
           }
         })
