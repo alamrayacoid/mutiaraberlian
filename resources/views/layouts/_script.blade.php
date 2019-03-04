@@ -13,7 +13,6 @@
 <script src="{{asset('assets/js/app.js')}}"></script>
 {{-- <script type="text/javascript" src="{{asset('assets/jquery-ui/jquery-ui.js')}}"></script> --}}
 <script src="{{asset('assets/datatables/datatables.min.js')}}"></script>
-<script src="{{asset('assets/datepicker/js/bootstrap-datepicker.min.js')}}"></script>
 <script src="{{asset('assets/select2/select2.js')}}"></script>
 <script src="{{asset('assets/js/jquery.maskMoney.min.js')}}"></script>
 <script src="{{asset('assets/jquery-confirm/jquery-confirm.js')}}"></script>
@@ -21,6 +20,7 @@
 {{--<script src="{{asset('assets/jquery/jquery-3.1.0.min.js')}}"></script>--}}
 <script src="{{asset('assets/jquery-ui/jquery-ui.min.js')}}"></script>
 <script src="{{asset('assets/bootstrap-datetimepicker/js/moment.js')}}"></script>
+<script src="{{asset('assets/datepicker/js/bootstrap-datepicker.min.js')}}"></script>
 <script src="{{asset('assets/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js')}}"></script>
 <script src="{{asset('assets/js/vue.js')}}"></script>
 <script type="text/javascript">
@@ -162,7 +162,7 @@
         $('.data-table').DataTable();
 
         $('.datepicker').datepicker({
-            dateFormat: "dd-mm-yy",
+            format: "dd-mm-yyyy",
             enableOnReadonly: false,
             autoclose: true
         });
