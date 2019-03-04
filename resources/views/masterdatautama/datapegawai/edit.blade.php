@@ -34,9 +34,9 @@
                         <div class="col-12" align="center">
                           <div class="form-group">
                             @if($employee->e_foto != null)
-                              <img src="{{asset('assets/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" width="100%" id="img-preview" style="cursor: pointer;">
+                              <img src="{{asset('assets/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" id="img-preview" style="cursor: pointer;max-height: 254px;max-width: 100%;">
                             @else
-                              <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" width="100%" id="img-preview" style="cursor: pointer;">
+                              <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" id="img-preview" style="cursor: pointer;max-height: 254px;max-width: 100%;">
                             @endif
                           </div>
                         </div>
@@ -109,10 +109,10 @@
                           </div>
                         </div>
 
-                        <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="col-md-2 col-sm-6 col-xs-12">
                           <label>Jenis Kelamin <span class="text-danger">*</span></label>
                         </div>
-                        <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="col-md-4 col-sm-6 col-xs-12">
                           <div class="form-group">
                             <?php
                               if ($employee->e_gender == 'L') {
@@ -121,7 +121,7 @@
                                 $kelamin = "Perempuan";
                               }
                             ?>
-                            <select class="form-control form-control-sm" name="e_gender">
+                            <select class="form-control form-control-sm select2" name="e_gender">
                               <option value="{{$employee->e_gender}}" selected>{{$kelamin}}</option>
                               @if($employee->e_gender == "L")
                                 <option value="P">Perempuan</option>
@@ -155,7 +155,7 @@
                             $status = "Belum Menikah";
                           }
                         ?>
-                        <select class="form-control form-control-sm" name="e_maritalstatus">
+                        <select class="form-control form-control-sm select2" name="e_maritalstatus">
                           <option value="{{$employee->e_maritalstatus}}" selected>{{$status}}</option>
                           @if($employee->e_maritalstatus == "Y")
                             <option value="N">Belum Menikah</option>

@@ -32,7 +32,7 @@
                       <div class="row">
                         <div class="col-12" align="center">
                           <div class="form-group">
-                            <img src="{{asset('assets/img/add-image-icon2.png')}}" width="100%" id="img-preview" style="cursor: pointer;" class="img-thumbnail">
+                            <img src="{{asset('assets/img/add-image-icon2.png')}}" id="img-preview" style="cursor: pointer; max-height: 254px;max-width: 100%;" class="img-thumbnail">
                           </div>
                         </div>
                         <div class="col-12">
@@ -77,7 +77,7 @@
                         <div class="col-md-9 col-sm-6 col-xs-12">
                           <div class="form-group">
                             <select name="e_company" id="" class="form-control form-control-sm select2">
-                              <option value="" selected>--- Pilih Cabang ---</option>
+                              <option value="" disabled selected>== Pilih Cabang ==</option>
                               @foreach($company as $comp)
                               <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
                               @endforeach
@@ -112,13 +112,13 @@
                           </div>
                         </div>
 
-                        <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="col-md-2 col-sm-6 col-xs-12">
                           <label>Jenis Kelamin <span class="text-danger">*</span></label>
                         </div>
-                        <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="col-md-4 col-sm-6 col-xs-12">
                           <div class="form-group">
-                            <select class="form-control form-control-sm" name="e_gender" required>
-                              <option value="">-- Pilih Jenis --</option>
+                            <select class="form-control form-control-sm select2" name="e_gender" required>
+                              <option value="" disabled selected>== Pilih Jenis ==</option>
                               <option value="L">Laki-laki</option>
                               <option value="P">Perempuan</option>
                             </select>
@@ -142,8 +142,8 @@
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <select class="form-control form-control-sm" name="e_maritalstatus" required>
-                          <option value="">-- Pilih Status --</option>
+                        <select class="form-control form-control-sm select2" name="e_maritalstatus" required>
+                          <option value="" disabled selected>== Pilih Status ==</option>
                           <option value="N">Belum Menikah</option>
                           <option value="Y">Sudah Menikah</option>
                         </select>
@@ -207,7 +207,7 @@
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <select name="e_position" id="" class="form-control form-control-sm select2">
-                          <option value="" selected="">-- Pilih Jabatan --</option>
+                          <option value="" disabled selected="">== Pilih Jabatan ==</option>
                           @foreach($jabatan as $jab)
                             <option value="{{$jab->j_id}}">{{$jab->j_name}}</option>
                           @endforeach
@@ -221,7 +221,7 @@
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <select name="e_department" id="" class="form-control form-control-sm select2">
-                          <option value="" selected="">-- Pilih Divisi --</option>
+                          <option value="" disabled selected="">== Pilih Divisi ==</option>
                           @foreach($divisi as $div)
                             <option value="{{$div->m_id}}">{{$div->m_name}}</option>
                           @endforeach

@@ -138,10 +138,10 @@
 			textColor: 'white',
 			loaderBg: '#fdcb6e',
 			icon: 'info'
-		})
+		});
 		$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
-										'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-	})
+			'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>');
+	});
 
 		// function table_hapus(a){
 		// 	table.row($(a).parents('tr')).remove().draw();
