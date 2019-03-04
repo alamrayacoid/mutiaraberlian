@@ -17,16 +17,24 @@ class RekrutmentController extends Controller
    * @param string 'All'/'Y' (status)
    * @return Yajra/DataTables
    */
-  public function getList($status)
+  public function getList(Request $request, $status)
   {
+    // change the date format request
+    $date_fr = strtotime($request->date_from);
+    $from = date('Y-m-d', $date_fr);
+    $date_to = strtotime($request->date_to);
+    $to = date('Y-m-d', $date_to);
+
     if ($status == 'All') {
       $datas = DB::table('d_pelamar')
+        ->whereBetween('p_created', [$from, $to])
         ->orderBy('p_name', 'asc')
         ->get();
     } elseif ($status == 'Y') {
       $datas = DB::table('d_pelamar')
-        ->orderBy('p_name', 'asc')
         ->where('p_state', 'Y')
+        ->whereBetween('p_created', [$from, $to])
+        ->orderBy('p_name', 'asc')
         ->get();
     }
     return Datatables::of($datas)
