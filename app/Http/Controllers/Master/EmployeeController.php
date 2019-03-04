@@ -191,7 +191,7 @@ class EmployeeController extends Controller
           ->leftJoin('m_company', 'e_company', 'c_id')
           ->leftJoin('m_jabatan', 'e_position', 'j_id')
           ->leftJoin('m_divisi', 'e_department', 'm_id')
-          ->select('m_employee.*', 'c_name', 'j_name', 'm_name')
+          ->select('m_employee.*', DB::raw('date_format(e_birth, "%d-%m-%Y") as e_birth'), DB::raw('date_format(e_workingyear, "%d-%m-%Y") as e_workingyear'), 'c_name', 'j_name', 'm_name')
           ->where('e_id', '=', $id)
           ->first();
         return view('masterdatautama.datapegawai.edit', compact('employee', 'company', 'jabatan', 'divisi'));
