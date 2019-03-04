@@ -331,11 +331,11 @@
     event.preventDefault();
     // data_link = new FormData($('#formAdd')[0]);
     $.ajax({
-      data   : $('#formAdd').serialize(),
+      data   : new FormData($('#formAdd')[0]),
       type   : "post",
-      // processData: false,
-      // contentType: false,
-      // enctype: "multipart/form-data",
+      processData: false,
+      contentType: false,
+      enctype: "multipart/form-data",
       url    : $("#formAdd").attr('action'),
       dataType  : "json",
       beforeSend: function() {
