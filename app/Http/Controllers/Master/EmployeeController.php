@@ -221,7 +221,6 @@ class EmployeeController extends Controller
           'e_an.required'            => 'AN masih kosong, silahkan isi terlebih dahulu !'
         ];
         $validator = Validator::make($request->all(), [
-        // $validator = $this->validate($request, [
           'e_company'       => 'required',
           'e_nip'           => 'required',
           'e_name'          => 'required',
@@ -240,7 +239,6 @@ class EmployeeController extends Controller
           'e_rekening'      => 'required',
           'e_an'            => 'required',
         ], $messages);
-        // $validator = $request->all();
 
         if ($validator->fails()) {
           $errors = $validator->errors()->first();
@@ -260,23 +258,18 @@ class EmployeeController extends Controller
             if ($dataImg->isValid()) {
               $file = $request->current_foto;
               if ($file != "") {
-              
                 $path = 'assets/uploads/pegawai/'.$file;
-
                 if (File::exists($path)) {
                     File::delete($path);
                 }
-
-                $imageName = $input['imageName'] = time().'.'.$dataImg->getClientOriginalName();
-                $pathOri = 'assets/uploads/pegawai';
-                $dataImg->move($pathOri, $imageName);
               }
+              $imageName = $input['imageName'] = time().'.'.$dataImg->getClientOriginalName();
+              $pathOri = 'assets/uploads/pegawai';
+              $dataImg->move($pathOri, $imageName);
             }
-            
-            $photo = $imageName;
-
+            $photos = $imageName;
           } else {
-            $photo = $request->current_foto;
+            $photos = $request->current_foto;
           }
           
           DB::table('m_employee')
@@ -304,7 +297,7 @@ class EmployeeController extends Controller
                 'e_rekening'      => $request->e_rekening,
                 'e_an'            => $request->e_an,
                 'e_isactive'      => "Y",
-                'e_foto'          => $photo
+                'e_foto'          => $photos
             ]);
           DB::commit();
           return response()->json([
@@ -320,15 +313,15 @@ class EmployeeController extends Controller
       }
     }
 
-    // public function getImage($foto)
-    // {
-    //     if ($foto != null) {
-    //         $imageName = $input['imageName'] = time() . '.' . $foto->getClientOriginalName();
-    //         $pathOri = 'assets/uploads/pegawai';
-    //         $foto->move($pathOri, $imageName);
-    //         return $imageName;
-    //     }
-    // }
+    public function getImage($foto)
+    {
+        if ($foto != null) {
+            $imageName = $input['imageName'] = time() . '.' . $foto->getClientOriginalName();
+            $pathOri = 'assets/uploads/pegawai';
+            $foto->move($pathOri, $imageName);
+            return $imageName;
+        }
+    }
 
     public function nonActive($id)
     {

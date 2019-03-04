@@ -35,7 +35,7 @@
 											<th>Jabatan</th>
 							                <th>No. Telepon</th>
                                             <th>Status</th>
-											<th>Aksi</th>
+											<th class="text-center">Aksi</th>
 							            </tr>
 	                                </thead>
 	                                <tbody>
