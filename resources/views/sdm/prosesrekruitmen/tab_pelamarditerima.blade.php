@@ -56,7 +56,7 @@
 			</fieldset>
 
 				<div class="table-responsive">
-					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_pelamard">
+					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_diterima">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>
@@ -71,7 +71,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
+							<!-- <tr>
 								<td>1</td>
 								<td>07 Sep 2019</td>
 								<td>Brad</td>
@@ -88,6 +88,7 @@
 									</div>
 								</td>
 							</tr>
+							 -->
 						</tbody>
 					</table>
 				</div>
