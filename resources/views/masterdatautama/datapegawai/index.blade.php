@@ -9,7 +9,7 @@
 	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> 
 	    	/ <span>Master Data Utama</span> 
 	    	/ <span class="text-primary font-weight-bold">Data Pegawai</span>
-	     </p>
+        </p>
 	</div>
 
 	<section class="section">
@@ -34,7 +34,7 @@
                                             <th>Nama Pegawai</th>
 											<th>Jabatan</th>
 							                <th>No. Telepon</th>
-                                            <th>Status</th>
+                                            <th class="text-center">Status</th>
 											<th class="text-center">Aksi</th>
 							            </tr>
 	                                </thead>
