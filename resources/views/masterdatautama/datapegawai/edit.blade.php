@@ -275,10 +275,13 @@
                         <input type="file" class="form-control form-control-sm" name="e_foto" id="foto" accept="image/*">
                       </div>
                     </div>
-
                     <div class="col-12" align="center">
                       <div class="form-group">
+                        @if($employee->e_foto != null)
+                          <img src="{{asset('assets/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" width="120px" id="img-preview" style="cursor: pointer;">
+                        @else
                         <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" width="120px" id="img-preview" style="cursor: pointer;">
+                        @endif
                       </div>
                     </div>
                   </div>
