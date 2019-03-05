@@ -35,9 +35,6 @@
                     <ul class="notifications-container">
                         <li>
                             <a href="" class="notification-item">
-                                <div class="img-col">
-                                    <div class="img" style="background-image: url('assets/assets/faces/3.jpg')"></div>
-                                </div>
                                 <div class="body-col">
                                     <p>
                                         <span class="accent">Zack Alien</span> pushed new commit:
@@ -47,9 +44,6 @@
                         </li>
                         <li>
                             <a href="" class="notification-item">
-                                <div class="img-col">
-                                    <div class="img" style="background-image: url('assets/assets/faces/5.jpg')"></div>
-                                </div>
                                 <div class="body-col">
                                     <p>
                                         <span class="accent">Amaya Hatsumi</span> started new task:
@@ -59,9 +53,6 @@
                         </li>
                         <li>
                             <a href="" class="notification-item">
-                                <div class="img-col">
-                                    <div class="img" style="background-image: url('assets/assets/faces/8.jpg')"></div>
-                                </div>
                                 <div class="body-col">
                                     <p>
                                         <span class="accent">Andy Nouman</span> deployed new version of
@@ -90,9 +81,6 @@
                     <ul class="notifications-container">
                         <li>
                             <a href="" class="notification-item">
-                                <div class="img-col">
-                                    <div class="img" style="background-image: url('assets/assets/faces/3.jpg')"></div>
-                                </div>
                                 <div class="body-col">
                                     <p>
                                         <span class="accent">Alien</span> pushed new commit:
@@ -102,9 +90,6 @@
                         </li>
                         <li>
                             <a href="" class="notification-item">
-                                <div class="img-col">
-                                    <div class="img" style="background-image: url('assets/assets/faces/5.jpg')"></div>
-                                </div>
                                 <div class="body-col">
                                     <p>
                                         <span class="accent">Amaya Hatsumi</span> started new task:
@@ -114,9 +99,6 @@
                         </li>
                         <li>
                             <a href="" class="notification-item">
-                                <div class="img-col">
-                                    <div class="img" style="background-image: url('assets/assets/faces/8.jpg')"></div>
-                                </div>
                                 <div class="body-col">
                                     <p>
                                         <span class="accent">Andy Nouman</span> deployed new version of
