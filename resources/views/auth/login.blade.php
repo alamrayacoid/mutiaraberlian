@@ -65,14 +65,12 @@
                 </h1>
             </header>
             <div class="auth-content">
+                @if ($message = Session::get('gagal'))
+                    <small style="color: red">Kombinasi username dan password salah</small>
+                @endif
                 <form method="POST" action="{{ url('auth') }}">
                     {{ csrf_field() }}
-                    <div class="form-group wrap-input validate-input has-feedback{{ $errors->has('username') ? 'has-error' : '' }}" data-validate="Enter Username">
-                        @if ($errors->has('username'))
-                            <span class="help-block">
-                                <p>{{ $errors->first('username') }}</p>
-                            </span>
-                        @endif
+                    <div class="form-group wrap-input validate-input has-feedback" >
                         <label for="email">Username</label>
                         <input type="text" class="form-control login-input" name="username" id="username" required autofocus="">
                         <span class="focus-input"></span>
