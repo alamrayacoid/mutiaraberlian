@@ -77,9 +77,7 @@ $(document).ready(function(){
 	});
 	var sub;
 	$(document).ready(function () {
-        sub = $('#item_suplier').DataTable({
-            "columns": [ { "width": "5px" }, { "width": "100px", "className": "text-center" }, { "width": "10px" }]
-        });
+        sub = $('#item_suplier').DataTable({});
     })
 
 	var tb_supplier;
