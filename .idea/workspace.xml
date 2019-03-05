@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1c8b318e-c138-400d-afca-6445ceb3fae0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <ignored path="$PROJECT_DIR$/.idea/" />
@@ -122,8 +118,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="112">
-              <caret line="54" column="92" lean-forward="true" selection-start-line="54" selection-start-column="92" selection-end-line="54" selection-end-column="92" />
+            <state relative-caret-position="272">
+              <caret line="62" column="40" lean-forward="true" selection-start-line="62" selection-start-column="40" selection-end-line="62" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -132,7 +128,7 @@
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="322">
-              <caret line="81" column="225" lean-forward="true" selection-start-line="81" selection-start-column="225" selection-end-line="81" selection-end-column="225" />
+              <caret line="81" column="225" selection-start-line="81" selection-start-column="225" selection-end-line="81" selection-end-column="225" />
             </state>
           </provider>
         </entry>
@@ -140,8 +136,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-614">
-              <caret line="59" column="57" selection-start-line="59" selection-start-column="57" selection-end-line="59" selection-end-column="57" />
+            <state relative-caret-position="2420">
+              <caret line="121" selection-start-line="121" selection-end-line="121" />
             </state>
           </provider>
         </entry>
@@ -182,8 +178,8 @@
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/datapegawai/detail.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Master/EmployeeController.php" />
         <option value="$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php" />
+        <option value="$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php" />
       </list>
     </option>
   </component>
@@ -371,7 +367,7 @@
       <workItem from="1551490940879" duration="606000" />
       <workItem from="1551516527543" duration="697000" />
       <workItem from="1551679622325" duration="3184000" />
-      <workItem from="1551750820369" duration="5684000" />
+      <workItem from="1551750820369" duration="5936000" />
     </task>
     <task id="LOCAL-00001" summary="roliz">
       <created>1551435407765</created>
@@ -394,14 +390,22 @@
       <option name="project" value="LOCAL" />
       <updated>1551689611039</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="roliz">
+      <created>1551757221859</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1551757221860</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="12120000" />
+    <option name="totallyTimeSpent" value="12372000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-3" y="0" width="1372" height="742" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -510,8 +514,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-614">
-          <caret line="59" column="57" selection-start-line="59" selection-start-column="57" selection-end-line="59" selection-end-column="57" />
+        <state relative-caret-position="2420">
+          <caret line="121" selection-start-line="121" selection-end-line="121" />
         </state>
       </provider>
     </entry>
@@ -532,14 +536,14 @@
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="322">
-          <caret line="81" column="225" lean-forward="true" selection-start-line="81" selection-start-column="225" selection-end-line="81" selection-end-column="225" />
+          <caret line="81" column="225" selection-start-line="81" selection-start-column="225" selection-end-line="81" selection-end-column="225" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="54" column="92" lean-forward="true" selection-start-line="54" selection-start-column="92" selection-end-line="54" selection-end-column="92" />
+        <state relative-caret-position="272">
+          <caret line="62" column="40" lean-forward="true" selection-start-line="62" selection-start-column="40" selection-end-line="62" selection-end-column="40" />
         </state>
       </provider>
     </entry>
