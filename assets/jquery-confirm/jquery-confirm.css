@@ -1097,3 +1097,65 @@ body[class*=jconfirm-no-scroll-] {
           transform: scale(1);
 }
 
+/* Active Thema */
+.jconfirm.jconfirm-active .jconfirm-bg {
+    background-color: slategray;
+    opacity: .6;
+}
+.jconfirm.jconfirm-active .jconfirm-box {
+    color: #fff;
+    background-color: #0062cc;
+    -webkit-box-shadow: 0 7px 8px -4px rgba(0, 0, 0, 0.2), 0 13px 19px 2px rgba(0, 0, 0, 0.14), 0 5px 24px 4px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 7px 8px -4px rgba(0, 0, 0, 0.2), 0 13px 19px 2px rgba(0, 0, 0, 0.14), 0 5px 24px 4px rgba(0, 0, 0, 0.12);
+    padding: 30px 30px 15px;
+}
+.jconfirm.jconfirm-active .jconfirm-box div.jconfirm-closeIcon {
+    color: white;
+    top: 15px;
+    right: 15px;
+}
+.jconfirm.jconfirm-active .jconfirm-box div.jconfirm-title-c {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+}
+.jconfirm.jconfirm-active .jconfirm-box div.jconfirm-title-c .jconfirm-icon-c {
+    -webkit-transition: -webkit-transform .5s;
+    transition: -webkit-transform .5s;
+    transition: transform .5s;
+    transition: transform .5s, -webkit-transform .5s;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    display: block;
+    margin-right: 0px;
+    margin-left: 0px;
+    margin-bottom: 10px;
+    font-size: 69px;
+    color:white;
+}
+.jconfirm.jconfirm-active .jconfirm-box div.jconfirm-content {
+    text-align: center;
+    font-size: 15px;
+    color: white;
+    margin-bottom: 25px;
+}
+.jconfirm.jconfirm-active .jconfirm-box .jconfirm-buttons {
+    text-align: center;
+}
+.jconfirm.jconfirm-active .jconfirm-box .jconfirm-buttons button {
+    font-weight: bold;
+    text-transform: uppercase;
+    -webkit-transition: background .1s;
+    transition: background .1s;
+    padding: 10px 20px;
+}
+.jconfirm.jconfirm-active .jconfirm-box .jconfirm-buttons button + button {
+    margin-left: 4px;
+}
+.jconfirm.jconfirm-active.jconfirm-open .jconfirm-box .jconfirm-title-c .jconfirm-icon-c {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+

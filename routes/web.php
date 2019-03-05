@@ -62,6 +62,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/produk/edit/{id}', 'Master\ItemController@edit')->name('dataproduk.edit');
     Route::post('/masterdatautama/produk/update/{id}', 'Master\ItemController@update')->name('dataproduk.update');
     Route::post('/masterdatautama/produk/delete/{id}', 'Master\ItemController@destroy')->name('dataproduk.delete');
+    Route::post('/masterdatautama/produk/active/{id}', 'Master\ItemController@active')->name('dataproduk.active');
     Route::post('/masterdatautama/produk/simpanjenis', 'Master\ItemController@simpanjenis');
     Route::post('/masterdatautama/produk/tablejenis', 'Master\ItemController@tablejenis');
     Route::post('/masterdatautama/produk/hapusjenis', 'Master\ItemController@hapusjenis');

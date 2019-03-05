@@ -72,15 +72,28 @@ class ItemController extends Controller
      */
     public function getList()
     {
-        $datas = DB::table('m_item')->orderBy('i_name', 'asc')->where('i_isactive', 'Y')->join('m_itemtype', 'i_type', '=', 'it_id')->get();
+        $datas = DB::table('m_item')->orderBy('i_name', 'asc')->join('m_itemtype', 'i_type', '=', 'it_id')->get();
         return Datatables::of($datas)
             ->addIndexColumn()
+            ->setRowClass(function ($datas){
+                if ($datas->i_isactive == 'N'){
+                    return 'disabled-row';
+                }
+            })
             ->addColumn('action', function ($datas) {
-                return '<center><div class="btn-group btn-group-sm">
-          <button class="btn btn-info btn-xs detail hint--bottom-left hint--info" onclick="DetailDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
-          <button class="btn btn-warning hint--bottom-left hint--warning" onclick="EditDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
-          <button class="btn btn-danger hint--bottom-left hint--error" onclick="DeleteDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" data-original-title="Hapus" aria-label="Nonaktifkan"><i class="fa fa-close"></i></button>
-          </div></center>';
+                if ($datas->i_isactive == 'Y'){
+                    return '<center><div class="btn-group btn-group-sm">
+                            <button class="btn btn-info btn-xs detail hint--bottom-left hint--info" onclick="DetailDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
+                            <button class="btn btn-warning hint--bottom-left hint--warning" onclick="EditDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-danger hint--bottom-left hint--error" onclick="DeleteDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" data-original-title="Hapus" aria-label="Nonaktifkan"><i class="fa fa-close"></i></button>
+                            </div></center>';
+                } else {
+                    return '<center><div class="btn-group btn-group-sm">
+                            <button class="btn btn-info btn-xs detail hint--bottom-left hint--info" onclick="DetailDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
+                            <button class="btn btn-primary hint--bottom-left hint--error" onclick="ActiveDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" data-original-title="Aktif" aria-label="Aktifkan"><i class="fa fa-check"></i></button>
+                            </div></center>';
+                }
+
             })
             ->rawColumns(['detail', 'action'])
             ->make(true);
@@ -301,6 +314,31 @@ class ItemController extends Controller
                 ->where('i_id', $id)
                 ->update([
                     'i_isactive' => "N",
+                    'i_update_at' => Carbon::now(),
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function active($id)
+    {
+        // start: execute update data (delete)
+        DB::beginTransaction();
+        try {
+            DB::table('m_item')
+                ->where('i_id', $id)
+                ->update([
+                    'i_isactive' => "Y",
                     'i_update_at' => Carbon::now(),
                 ]);
 

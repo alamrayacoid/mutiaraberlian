@@ -13,6 +13,12 @@
             box-shadow: none;
             border-radius: 0px;
         }
+
+        #table_produk .disabled-row {
+            -webkit-text-decoration-line: line-through; /* Safari */
+            text-decoration-line: line-through;
+            color: #9da0ae;
+        }
     </style>
 
     <article class="content animated fadeInLeft">
@@ -216,7 +222,7 @@
                 animationBounce: 1.5,
                 icon: 'fa fa-exclamation-triangle',
                 title: 'Peringatan!',
-                content: 'Apakah anda yakin ingin menghapus data ini ?',
+                content: 'Apakah anda yakin ingin menonaktifkan data ini ?',
                 theme: 'disable',
                 buttons: {
                     info: {
@@ -230,7 +236,64 @@
                                     if (response.status == 'berhasil') {
                                         $.toast({
                                             heading: 'Success',
-                                            text: 'Data berhasil dihapus !',
+                                            text: 'Data berhasil dinonaktifkan !',
+                                            bgColor: '#00b894',
+                                            textColor: 'white',
+                                            loaderBg: '#55efc4',
+                                            icon: 'success',
+                                            stack: false
+                                        });
+                                        tb_produk.ajax.reload();
+                                    }
+                                },
+                                error: function (e) {
+                                    $.toast({
+                                        heading: 'Warning',
+                                        text: e.message,
+                                        bgColor: '#00b894',
+                                        textColor: 'white',
+                                        loaderBg: '#55efc4',
+                                        icon: 'warning',
+                                        stack: false
+                                    });
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+        }
+
+        function ActiveDataproduk(idx) {
+            var url_hapus = baseUrl + "/masterdatautama/produk/active/" + idx;
+
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'fade',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apakah anda yakin ingin mengaktifkan data ini ?',
+                theme: 'active',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return $.ajax({
+                                type: "post",
+                                url: url_hapus,
+                                success: function (response) {
+                                    if (response.status == 'berhasil') {
+                                        $.toast({
+                                            heading: 'Success',
+                                            text: 'Data berhasil diaktifkan !',
                                             bgColor: '#00b894',
                                             textColor: 'white',
                                             loaderBg: '#55efc4',
