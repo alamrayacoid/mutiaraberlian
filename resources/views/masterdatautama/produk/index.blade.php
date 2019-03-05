@@ -59,12 +59,12 @@
 			                        <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_produk" style="width:100%">
 			                            <thead class="bg-primary">
 			                                <tr>
-																			<th>No</th>
-																			<th>Kode Barang</th>
-																			<th>Jenis Barang</th>
-																			<th>Nama Barang</th>
-																			<th>Aksi</th>
-																			</tr>
+												<th>No</th>
+												<th>Kode Barang</th>
+												<th>Jenis Barang</th>
+												<th>Nama Barang</th>
+												<th>Aksi</th>
+											</tr>
 			                            </thead>
 			                            <tbody>
 			                            </tbody>

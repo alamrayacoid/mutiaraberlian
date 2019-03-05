@@ -141,7 +141,7 @@ class SupplierController extends Controller
      */
     public function create()
     {
-      return view('masterdatautama.suplier.create');
+      return view('masterdatautama.suplier.datasuplier.create');
     }
 
     /**

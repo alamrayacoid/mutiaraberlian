@@ -81,7 +81,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/masterdatautama/suplier/index', 'Master\SupplierController@index')->name('suplier.index');
     Route::get('/masterdatautama/suplier/list', 'Master\SupplierController@getList')->name('suplier.list');
-    Route::get('/masterdatautama/suplier/create', 'Master\SupplierController@create')->name('suplier.create');
+    Route::get('/masterdatautama/suplier/datasuplier/create', 'Master\SupplierController@create')->name('suplier.create');
     Route::post('/masterdatautama/suplier/store', 'Master\SupplierController@store')->name('suplier.store');
     Route::get('/masterdatautama/suplier/edit/{id}', 'Master\SupplierController@edit')->name('suplier.edit');
     Route::post('/masterdatautama/suplier/post/{id}', 'Master\SupplierController@update')->name('suplier.update');
