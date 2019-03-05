@@ -67,14 +67,25 @@
             <div class="auth-content">
                 <form method="POST" action="{{ url('auth') }}">
                     {{ csrf_field() }}
-                    <div class="form-group">
+                    <div class="form-group wrap-input validate-input has-feedback{{ $errors->has('username') ? 'has-error' : '' }}" data-validate="Enter Username">
+                        @if ($errors->has('username'))
+                            <span class="help-block">
+                                <p>{{ $errors->first('username') }}</p>
+                            </span>
+                        @endif
                         <label for="email">Username</label>
-                        <input type="text" class="form-control login-input" name="username" id="username" required
-                               autofocus="">
+                        <input type="text" class="form-control login-input" name="username" id="username" required autofocus="">
+                        <span class="focus-input"></span>
                     </div>
-                    <div class="form-group">
+                    <div class="wrap-input validate-input has-feedback{{ $errors->has('password') ? 'has-error' : '' }}" data-validate="Enter password">
+                        @if ($errors->has('password'))
+                            <span class="help-block">
+                                <p>{{ $errors->first('password') }}</p>
+                            </span>
+                        @endif
                         <label for="password">Password</label>
                         <input type="password" class="form-control login-input" name="password" id="password" required>
+                        <span class="focus-input"></span>
                     </div>
                     <div class="form-group">
                         <label for="remember">
@@ -84,8 +95,7 @@
                         <!-- <a href="reset.html" class="forgot-btn pull-right">Forgot password?</a> -->
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-block btn-primary btn-login">Login
-                        </button>
+                        <button type="submit" class="btn btn-block btn-primary btn-login">Login</button>
                     </div>
                     <!-- <div class="form-group">
                         <p class="text-muted text-center">Do not have an account?
