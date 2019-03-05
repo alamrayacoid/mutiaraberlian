@@ -208,9 +208,9 @@
                         <li class="{{Request::is('masterdatautama/agen/*') ? 'active' : ''}}">
                             <a href="{{ route('agen.index')}}">Master Agen</a>
                         </li>
-                        <li class="{{Request::is('masterdatautama/datasatuan/*') ? 'active' : ''}}">
+                       {{--  <li class="{{Request::is('masterdatautama/datasatuan/*') ? 'active' : ''}}">
                             <a href="{{route('datasatuan.index')}}">Master Satuan</a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
                 <!-- END MASTER DATA UTAMA -->
