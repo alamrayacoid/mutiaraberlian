@@ -75,12 +75,16 @@ $(document).ready(function(){
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 		}
 	});
+	var sub;
+	$(document).ready(function () {
+        sub = $('#item_suplier').DataTable({
+            "columns": [ { "width": "5px" }, { "width": "100px", "className": "text-center" }, { "width": "10px" }]
+        });
+    })
 
 	var tb_supplier;
 	// function to retrieve DataTable server side
-    sub = $('#item_suplier').DataTable({
-        "columns": [ { "width": "5px" }, { "width": "100px", "className": "text-center" }, { "width": "10px" }
-    });
+
 	function TableSupplier()
 	{
 		$('#table_supplier').dataTable().fnDestroy();

@@ -399,9 +399,8 @@ class ItemController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($datas) {
                 return '<center><div class="btn-group btn-group-sm">
-          <button class="btn btn-warning" onclick="editjenis(' . $datas->it_id . ', this)" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
-          <button class="btn btn-danger" onclick="deletejenis(' . $datas->it_id . ')" data-id="" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-trash-o"></i></button>
-          </div></center>';
+                      <button class="btn btn-warning" onclick="editjenis(' . $datas->it_id . ', this)" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
+                      </div></center>';
             })
             ->rawColumns(['action'])
             ->make(true);
