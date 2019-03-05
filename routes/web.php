@@ -49,10 +49,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/datapegawai/index', 'Master\EmployeeController@index')->name('pegawai.index');
     Route::get('/masterdatautama/datapegawai/getData', 'Master\EmployeeController@getData')->name('pegawai.list');
     Route::get('/masterdatautama/datapegawai/create', 'Master\EmployeeController@create')->name('pegawai.create');
-    Route::get('/masterdatautama/datapegawai/store', 'Master\EmployeeController@store')->name('pegawai.store');
+    Route::post('/masterdatautama/datapegawai/store', 'Master\EmployeeController@store')->name('pegawai.store');
     Route::match(['get', 'post'], '/masterdatautama/datapegawai/edit/{id}', 'Master\EmployeeController@edit')->name('pegawai.edit');
     Route::get('/masterdatautama/datapegawai/nonactive/{id}', 'Master\EmployeeController@nonActive')->name('cabang.nonActive');
     Route::get('/masterdatautama/datapegawai/actived/{id}', 'Master\EmployeeController@actived')->name('cabang.actived');
+    Route::get('/masterdatautama/datapegawai/detail/{id}', 'Master\EmployeeController@detail')->name('cabang.detail');
 
     Route::get('/masterdatautama/produk/index', 'Master\ItemController@index')->name('dataproduk.index');
     Route::get('/masterdatautama/produk/list', 'Master\ItemController@getList')->name('dataproduk.list');
@@ -84,7 +85,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/suplier/store', 'Master\SupplierController@store')->name('suplier.store');
     Route::get('/masterdatautama/suplier/edit/{id}', 'Master\SupplierController@edit')->name('suplier.edit');
     Route::post('/masterdatautama/suplier/post/{id}', 'Master\SupplierController@update')->name('suplier.update');
-    Route::post('/masterdatautama/suplier/delete/{id}', 'Master\SupplierController@destroy')->name('suplier.delete');
+    Route::post('/masterdatautama/suplier/disable/{id}', 'Master\SupplierController@disable')->name('suplier.disable');
+    Route::post('/masterdatautama/suplier/enable/{id}', 'Master\SupplierController@enable')->name('suplier.enable');
 
 //    ==========Master Outlet==========
     Route::get('/masterdatautama/cabang/index', 'Master\CabangController@index')->name('cabang.index');
@@ -107,7 +109,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/agen/store', 'Master\AgenController@store')->name('agen.store');
     Route::get('/masterdatautama/agen/edit/{id}', 'Master\AgenController@edit')->name('agen.edit');
     Route::post('/masterdatautama/agen/update/{id}', 'Master\AgenController@update')->name('agen.update');
-    Route::post('/masterdatautama/agen/delete/{id}', 'Master\AgenController@destroy')->name('agen.delete');
+    Route::post('/masterdatautama/agen/disable/{id}', 'Master\AgenController@disable')->name('agen.disable');
+    Route::post('/masterdatautama/agen/enable/{id}', 'Master\AgenController@enable')->name('agen.enable');
 
 
     Route::get('/masterdatautama/agen/kelolaagen/index', 'MasterController@kelolaagen')->name('kelolaagen.index');
@@ -139,9 +142,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     // !===================================================== INVENTORY =====================================================!
     // Barang Masuk
-    Route::get('/inventory/barangmasuk/index', 'InventoryController@barangmasuk_index')->name('barangmasuk.index');
-    Route::get('/inventory/barangmasuk/create', 'InventoryController@barangmasuk_create')->name('barangmasuk.create');
-    Route::get('/inventory/barangmasuk/edit', 'InventoryController@barangmasuk_edit')->name('barangmasuk.edit');
+    Route::get('/inventory/barangmasuk/index', 'Inventory\BarangMasukController@index')->name('barangmasuk.index');
+    Route::get('/inventory/barangmasuk/create', 'Inventory\BarangMasukController@create')->name('barangmasuk.create');
+    Route::get('/inventory/barangmasuk/edit', 'Inventory\BarangMasukController@edit')->name('barangmasuk.edit');
+    Route::get('/inventory/barangmasuk/autoItem', 'Inventory\BarangMasukController@auto_item')->name('barangmasuk.autoitem');
+
     // Barang Keluar
     Route::get('/inventory/barangkeluar/index', 'InventoryController@barangkeluar_index')->name('barangkeluar.index');
     Route::get('/inventory/barangkeluar/create', 'InventoryController@barangkeluar_create')->name('barangkeluar.create');
@@ -160,6 +165,7 @@ Route::group(['middleware' => 'auth'], function () {
     // !===================================================== SDM =====================================================!
     // Rekruitmen
     Route::get('/sdm/prosesrekruitmen/index', 'SDMController@proses_rekruitmen')->name('rekruitmen.index');
+    Route::get('/sdm/prosesrekruitmen/list/{status}', 'SDM\RekrutmentController@getList')->name('rekruitmen.list');
     Route::get('/sdm/prosesrekruitmen/process', 'SDMController@process')->name('rekruitmen.process');
     Route::get('/sdm/prosesrekruitmen/preview', 'SDMController@preview')->name('rekruitmen.preview');
     // Kinerja

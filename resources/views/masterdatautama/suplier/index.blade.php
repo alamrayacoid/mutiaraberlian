@@ -44,31 +44,6 @@
 													            </tr>
 	                                </thead>
 	                                <tbody>
-	                                	<!-- <tr align="center">
-	                                		<td>1</td>
-																			<td>BradCompany</td>
-	                                		<td>Brad</td>
-	                                		<td>123123</td>
-	                                		<td>JL.Rh</td>
-	                                		<td>012312</td>
-																			<td>-</td>
-																			<td>-</td>
-																			<td>0123212</td>
-																			<th>Bang</th>
-																			<td>-</td>
-																			<td><button class="btn btn-primary btn-modal" data-toggle="modal" data-target="#detail" type="button">Detail</button></td>
-																			<td>-</td>
-																			<td>-</td>
-																			<td class="input-rupiah">0.00</td>
-																			<td class="input-rupiah">0.00</td>
-	                                		<td>
-	                                			<div class="btn-group btn-group-sm">
-	                                				<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-	                                				<button class="btn btn-danger btn-disable" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>
-	                                			</div>
-	                                		</td>
-	                                	</tr>
-																		 -->
 	                                </tbody>
 	                            </table>
 	                        </div>
@@ -130,9 +105,9 @@
 		window.location.href = baseUrl + "/masterdatautama/suplier/edit/" + idx;
 	}
 	// function to execute delete request
-	function DeleteSupplier(idx)
+	function DisableSupplier(idx)
 	{
-		var url_hapus = baseUrl + "/masterdatautama/suplier/delete/" + idx;
+		var url_hapus = baseUrl + "/masterdatautama/suplier/disable/" + idx;
 
 		$.confirm({
 			animation: 'RotateY',
@@ -140,7 +115,7 @@
 			animationBounce: 1.5,
 			icon: 'fa fa-exclamation-triangle',
 			title: 'Peringatan!',
-			content: 'Apakah anda yakin ingin menghapus data ini ?',
+			content: 'Apakah anda yakin ingin menonaktifkan data ini ?',
 			theme: 'disable',
 			buttons: {
 				info: {
@@ -152,14 +127,14 @@
 							url : url_hapus,
 							success : function (response){
 								if(response.status == 'berhasil'){
-									messageSuccess('Berhasil', 'Data berhasil dihapus !');
+									messageSuccess('Berhasil', 'Data berhasil dinonaktifkan !');
 									loadingShow();
 									tb_supplier.ajax.reload();
 									loadingHide();
 								}
 							},
 							error : function(e){
-								messageWarning('Gagal', 'Data gagal dihapus, hubungi pengembang !');
+								messageWarning('Gagal', 'Error, hubungi pengembang !');
 							}
 						});
 
@@ -174,6 +149,52 @@
 			}
 		});
 
+	}
+
+	// function to execute delete request
+	function EnableSupplier(idx)
+	{
+		var url_hapus = baseUrl + "/masterdatautama/suplier/enable/" + idx;
+
+		$.confirm({
+			animation: 'RotateY',
+			closeAnimation: 'scale',
+			animationBounce: 1.5,
+			icon: 'fa fa-exclamation-triangle',
+			title: 'Peringatan!',
+			content: 'Apakah anda yakin ingin mengaktifkan data ini ?',
+			theme: 'disable',
+			buttons: {
+				info: {
+					btnClass: 'btn-blue',
+					text:'Ya',
+					action : function(){
+						return $.ajax({
+							type : "post",
+							url : url_hapus,
+							success : function (response){
+								if(response.status == 'berhasil'){
+									messageSuccess('Berhasil', 'Data berhasil diaktifkan !');
+									loadingShow();
+									tb_supplier.ajax.reload();
+									loadingHide();
+								}
+							},
+							error : function(e){
+								messageWarning('Gagal', 'Error, hubungi pengembang !');
+							}
+						});
+
+					}
+				},
+				cancel:{
+					text: 'Tidak',
+					action: function () {
+						// tutup confirm
+					}
+				}
+			}
+		});
 	}
 
 	$(document).ready(function(){

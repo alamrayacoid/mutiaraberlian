@@ -26,104 +26,124 @@
           <div class="card-block">
             <section>
               <fieldset>
-                <form id="formAdd">
+                <form id="formAdd" action="{{ route('pegawai.store') }}" method="post" autocomplete="off" enctype="multipart/form-data">
                   <div class="row">
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>NIP <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_nip" required>
+                    <div class="col-md-3">
+                      <div class="row">
+                        <div class="col-12" align="center">
+                          <div class="form-group">
+                            <img src="{{asset('assets/img/add-image-icon2.png')}}" id="img-preview" style="cursor: pointer; max-height: 254px;max-width: 100%;" class="img-thumbnail">
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <div class="form-group">
+                            <input type="file" class="form-control form-control-sm" name="e_foto" id="foto" accept="image/*">
+                          </div>
+                        </div>
                       </div>
                     </div>
+                    <div class="col-md-9">
+                      <div class="row">
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>NIP <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_nip" required>
+                          </div>
+                        </div>
 
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Nama Pegawai <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_name" required>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Nama Pegawai <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_name" required>
+                          </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>NIK <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_nik" required>
+                          </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Pemilik Cabang <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <select name="e_company" id="" class="form-control form-control-sm select2">
+                              <option value="" disabled selected>== Pilih Cabang ==</option>
+                              @foreach($company as $comp)
+                              <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
+                              @endforeach
+                            </select>
+                          </div>
+                        </div>
+
+                        {{-- <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Hari Kerja</label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_workingdays">
+                          </div>
+                        </div> --}}
+
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Nomor HP <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_telp" required>
+                          </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Agama <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_religion" required>
+                          </div>
+                        </div>
+
+                        <div class="col-md-2 col-sm-6 col-xs-12">
+                          <label>Jenis Kelamin <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <select class="form-control form-control-sm select2" name="e_gender" required>
+                              <option value="" disabled selected>== Pilih Jenis ==</option>
+                              <option value="L">Laki-laki</option>
+                              <option value="P">Perempuan</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Nama Pasangan</label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_matename">
+                          </div>
+                        </div>
                       </div>
                     </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>NIK <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_nik" required>
-                      </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Pemilik Cabang <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <select name="e_company" id="" class="form-control form-control-sm select2">
-                          <option value="" selected>--- Pilih Cabang ---</option>
-                          @foreach($company as $comp)
-                          <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
-                          @endforeach
-                        </select>
-                      </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Hari Kerja</label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_workingdays">
-                      </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Nomor HP <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_telp" required>
-                      </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Agama <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_religion" required>
-                      </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Jenis Kelamin <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <select class="form-control form-control-sm" name="e_gender" required>
-                          <option value="L">Laki-laki</option>
-                          <option value="P">Perempuan</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Nama Pasangan</label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_matename">
-                      </div>
-                    </div>
-
+                  </div>
+                  <div class="row">
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>Status <span class="text-danger">*</span></label>
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <select class="form-control form-control-sm" name="e_maritalstatus" required>
-                          <option value="">--Pilih Status--</option>
+                        <select class="form-control form-control-sm select2" name="e_maritalstatus" required>
+                          <option value="" disabled selected>== Pilih Status ==</option>
                           <option value="N">Belum Menikah</option>
                           <option value="Y">Sudah Menikah</option>
                         </select>
@@ -182,12 +202,12 @@
                     </div>
 
                     <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Jabatan</label>
+                      <label>Jabatan <span class="text-danger">*</span></label>
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <select name="e_position" id="" class="form-control form-control-sm select2">
-                          <option value="" selected="">-- Pilih Jabatan --</option>
+                          <option value="" disabled selected="">== Pilih Jabatan ==</option>
                           @foreach($jabatan as $jab)
                             <option value="{{$jab->j_id}}">{{$jab->j_name}}</option>
                           @endforeach
@@ -196,12 +216,12 @@
                     </div>
 
                     <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Divisi</label>
+                      <label>Divisi <span class="text-danger">*</span></label>
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <select name="e_department" id="" class="form-control form-control-sm select2">
-                          <option value="" selected="">-- Pilih Divisi --</option>
+                          <option value="" disabled selected="">== Pilih Divisi ==</option>
                           @foreach($divisi as $div)
                             <option value="{{$div->m_id}}">{{$div->m_name}}</option>
                           @endforeach
@@ -243,22 +263,7 @@
                       <div class="form-group">
                         <input type="text" class="form-control form-control-sm" name="e_an" required>
                       </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Foto</label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="file" class="form-control form-control-sm" name="e_foto" id="foto">
-                      </div>
-                    </div>
-
-                    <div class="col-12" align="center">
-                      <div class="form-group">
-                        <img src="{{asset('assets/img/add-image-icon.png')}}" height="120px" width="90px" id="img-preview" style="cursor: pointer;">
-                      </div>
-                    </div>
+                    </div>                        
                   </div>
                 </form>
               </fieldset>
@@ -271,7 +276,7 @@
               </div>
               <div class="col-sm-6">
                 <div class="text-right">
-                  <button class="btn btn-primary" id="btn-submit">Simpan</button>
+                  <button type="button" class="btn btn-primary" id="btn-submit">Simpan</button>
                   <a href="{{route('pegawai.index')}}" class="btn btn-secondary">Kembali</a>
                 </div>
               </div>
@@ -285,26 +290,26 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
   $(document).ready(function(){
-    addPegawai();
     $('#showpassword').click(function(){
       var val = $(this).parents('.input-group').find('input')
       .attr('type', function(index, attr){
         return attr == 'text' ? 'password' : 'text';
       });
-
       $('#showpassword-icon').toggleClass('fa-eye fa-eye-slash');
     });
 
     function readURL(input, target) {
-
       if (input.files && input.files[0]) {
         var reader = new FileReader();
-
         reader.onload = function(e) {
           $(target).attr('src', e.target.result);
         }
-
         reader.readAsDataURL(input.files[0]);
       }
     }
@@ -312,47 +317,44 @@
     $("#foto").change(function() {
       readURL(this, '#img-preview');
     });  
-
     $('#img-preview').click(function(){
-
       $('#foto').click();
-
     });
-
   });
 
-  function addPegawai()
-  {
-    $.ajaxSetup({
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      }
-    });
-
-    $('#btn-submit').on('click', function(){
-      $.ajax({
-        url   : "{{route('pegawai.store')}}",
-        type  : "get",
-        data  : $('#formAdd').serialize(),
-        dataType : "json",
-        beforeSend: function() {
-          loadingShow();
-        },
-        success : function (response){
-          if(response.status == 'sukses'){
-            loadingHide();
-            messageSuccess('Success', 'Data berhasil ditambahkan!');
-            window.location.href = "{{route('pegawai.index')}}";
-          } else {
-            loadingHide();
-            messageFailed('Gagal', response.message);
-          }
-        },
-        error: function (e) {
+  $('#btn-submit').on('click', function(){
+    loadingShow();
+    submitForm(event);
+  });
+    
+  function submitForm(event){
+    event.preventDefault();
+    // data_link = new FormData($('#formAdd')[0]);
+    $.ajax({
+      data   : new FormData($('#formAdd')[0]),
+      type   : "post",
+      processData: false,
+      contentType: false,
+      enctype: "multipart/form-data",
+      url    : $("#formAdd").attr('action'),
+      dataType  : "json",
+      beforeSend: function() {
+        loadingShow();
+      },
+      success : function (response){
+        if(response.status == 'sukses'){
           loadingHide();
-          messageWarning('Peringatan', e.message);
+          messageSuccess('Success', 'Data berhasil ditambahkan!');
+          window.location.href = "{{route('pegawai.index')}}";
+        } else {
+          loadingHide();
+          messageFailed('Gagal', response.message);
         }
-      });
+      },
+      error: function (e) {
+        loadingHide();
+        messageWarning('Peringatan', e.message);
+      }
     });
   }
 </script>

@@ -80,13 +80,9 @@ class ItemController extends Controller
         ->addIndexColumn()
         ->addColumn('action', function($datas) {
           return '<center><div class="btn-group btn-group-sm">
-          <button class="btn btn-warning" onclick="EditDataproduk('.$datas->i_id.')" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
-          <button class="btn btn-danger" onclick="DeleteDataproduk('.$datas->i_id.')" rel="tooltip" data-placement="top" data-original-title="Hapus"><i class="fa fa-trash-o"></i></button>
-          </div></center>';
-        })
-        ->addColumn('detail', function($datas) {
-          return '<center><div class="btn-group btn-group-sm">
-          <button class="btn btn-info btn-xs detail" onclick="DetailDataproduk('.$datas->i_id.')" rel="tooltip" data-placement="top">Detail</button>
+          <button class="btn btn-info btn-xs detail hint--bottom-left hint--info" onclick="DetailDataproduk('.$datas->i_id.')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
+          <button class="btn btn-warning hint--bottom-left hint--warning" onclick="EditDataproduk('.$datas->i_id.')" rel="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
+          <button class="btn btn-danger hint--bottom-left hint--error" onclick="DeleteDataproduk('.$datas->i_id.')" rel="tooltip" data-placement="top" data-original-title="Hapus" aria-label="Hapus data"><i class="fa fa-trash-o"></i></button>
           </div></center>';
         })
         ->rawColumns(['detail', 'action'])
@@ -151,7 +147,7 @@ class ItemController extends Controller
                     mkdir(storage_path('uploads/produk/original/'), 0777, true);
                 }
 
-                $original_path = storage_path('uploads/produks/original/');
+                $original_path = storage_path('uploads/produk/original/');
                 // return $original_path;
                 Image::make($file)
                       ->resize(261,null,function ($constraint) {

@@ -27,107 +27,121 @@
           <div class="card-block">
             <section>
               <fieldset>
-                <form id="formEdit" action="{{ route('pegawai.edit', [Crypt::encrypt($employee->e_id)]) }}" method="post" autocomplete="off">
+                <form id="formEdit" action="{{ route('pegawai.edit', [Crypt::encrypt($employee->e_id)]) }}" method="post"  autocomplete="off" enctype="multipart/form-data">
                   <div class="row">
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>NIP <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_nip" value="{{$employee->e_nip}}">
+                    <div class="col-3">
+                      <div class="row">
+                        <div class="col-12" align="center">
+                          <div class="form-group">
+                            @if($employee->e_foto != null)
+                              <img src="{{asset('assets/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" id="img-preview" style="cursor: pointer;max-height: 254px;max-width: 100%;">
+                            @else
+                              <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" id="img-preview" style="cursor: pointer;max-height: 254px;max-width: 100%;">
+                            @endif
+                          </div>
+                        </div>
+                        <div class="col-12">                          
+                          <div class="form-group">
+                            <input type="file" class="form-control form-control-sm" name="e_foto" id="foto" accept="image/*">
+                            <input type="hidden" name="current_foto" value="{{$employee->e_foto}}">
+                          </div>
+                        </div>
                       </div>
                     </div>
+                    <div class="col-9">
+                      <div class="row">
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>NIP <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_nip" value="{{$employee->e_nip}}">
+                          </div>
+                        </div>
 
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Nama Pegawai <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_name" value="{{$employee->e_name}}">
-                      </div>
-                    </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Nama Pegawai <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_name" value="{{$employee->e_name}}">
+                          </div>
+                        </div>
 
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>NIK <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_nik" value="{{$employee->e_nik}}">
-                      </div>
-                    </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>NIK <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_nik" value="{{$employee->e_nik}}">
+                          </div>
+                        </div>
 
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Pemilik Cabang <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <select name="e_company" id="" class="form-control form-control-sm select2">
-                          <option value="{{$employee->e_company}}" selected>{{$employee->c_name}}</option>
-                          @foreach($company->where('c_id', '!=', $employee->e_company) as $comp)
-                            <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
-                          @endforeach
-                        </select>
-                      </div>
-                    </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Pemilik Cabang <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <select name="e_company" id="" class="form-control form-control-sm select2">
+                              <option value="{{$employee->e_company}}" selected>{{$employee->c_name}}</option>
+                              @foreach($company->where('c_id', '!=', $employee->e_company) as $comp)
+                                <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
+                              @endforeach
+                            </select>
+                          </div>
+                        </div>
 
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Hari Kerja</label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_workingdays" value="{{$employee->e_workingdays}}">
-                      </div>
-                    </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Nomor HP <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_telp" value="{{$employee->e_telp}}">
+                          </div>
+                        </div>
 
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Nomor HP <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_telp" value="{{$employee->e_telp}}">
-                      </div>
-                    </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Agama <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_religion" value="{{$employee->e_religion}}">
+                          </div>
+                        </div>
 
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Agama <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_religion" value="{{$employee->e_religion}}">
-                      </div>
-                    </div>
+                        <div class="col-md-2 col-sm-6 col-xs-12">
+                          <label>Jenis Kelamin <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <?php
+                              if ($employee->e_gender == 'L') {
+                                $kelamin = "Laki-laki";
+                              } else {
+                                $kelamin = "Perempuan";
+                              }
+                            ?>
+                            <select class="form-control form-control-sm select2" name="e_gender">
+                              <option value="{{$employee->e_gender}}" selected>{{$kelamin}}</option>
+                              @if($employee->e_gender == "L")
+                                <option value="P">Perempuan</option>
+                              @else
+                                <option value="L">Laki-laki</option>
+                              @endif
+                            </select>
+                          </div>
+                        </div>
 
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Jenis Kelamin <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <?php
-                          if ($employee->e_gender == 'L') {
-                            $kelamin = "Laki-laki";
-                          } else {
-                            $kelamin = "Perempuan";
-                          }
-                        ?>
-                        <select class="form-control form-control-sm" name="e_gender">
-                          <option value="{{$employee->e_gender}}" selected>{{$kelamin}}</option>
-                          @if($employee->e_gender == "L")
-                            <option value="P">Perempuan</option>
-                          @else
-                            <option value="L">Laki-laki</option>
-                          @endif
-                        </select>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <label>Nama Pasangan</label>
+                        </div>
+                        <div class="col-md-9 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="e_matename" value="{{$employee->e_matename}}">
+                          </div>
+                        </div>
                       </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Nama Pasangan</label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_matename" value="{{$employee->e_matename}}">
-                      </div>
-                    </div>
+                    </div>      
 
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>Status <span class="text-danger">*</span></label>
@@ -141,7 +155,7 @@
                             $status = "Belum Menikah";
                           }
                         ?>
-                        <select class="form-control form-control-sm" name="e_maritalstatus">
+                        <select class="form-control form-control-sm select2" name="e_maritalstatus">
                           <option value="{{$employee->e_maritalstatus}}" selected>{{$status}}</option>
                           @if($employee->e_maritalstatus == "Y")
                             <option value="N">Belum Menikah</option>
@@ -266,21 +280,6 @@
                         <input type="text" class="form-control form-control-sm" name="e_an" value="{{$employee->e_an}}">
                       </div>
                     </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Foto</label>
-                    </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="file" class="form-control form-control-sm" name="e_foto" id="foto">
-                      </div>
-                    </div>
-
-                    <div class="col-12" align="center">
-                      <div class="form-group">
-                        <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" width="120px" id="img-preview" style="cursor: pointer;">
-                      </div>
-                    </div>
                   </div>
                 </form>
               </fieldset>
@@ -361,10 +360,12 @@
   function SubmitForm(event)
   {
     event.preventDefault();
-
     $.ajax({
-      data : $('#formEdit').serialize(),
+      // data : $('#formEdit').serialize(),
+      data : new FormData($('#formEdit')[0]),
       type : "post",
+      processData: false,
+      contentType: false,
       url  : $("#formEdit").attr('action'),
       dataType : 'json',
       beforeSend: function() {

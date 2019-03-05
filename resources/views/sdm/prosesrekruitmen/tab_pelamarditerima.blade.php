@@ -18,7 +18,7 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" name="">
+						<input type="text" class="form-control form-control-sm datepicker" id="diterima_from" name="">
 					</div>
 					</div>
 
@@ -28,7 +28,7 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" name="">
+						<input type="text" class="form-control form-control-sm datepicker" id="diterima_to" name="">
 					</div>
 					</div>
 
@@ -56,7 +56,7 @@
 			</fieldset>
 
 				<div class="table-responsive">
-					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_pelamard">
+					<table class="table table-hover table-striped display nowrap" style="width: 100%" cellspacing="0" id="table_diterima">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>
@@ -71,23 +71,6 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>07 Sep 2019</td>
-								<td>Brad</td>
-								<td>01238312321376</td>
-								<td>Brad@Pit.com</td>
-								<td>S1</td>
-								<td>Approve 1</td>
-								<td>Test Interview</td>
-								<td>
-									<div class="btn-group btn-group-sm">
-										<button class="btn btn-primary btn-preview-pelamar" type="button" title="Preview"><i class="fa fa-search"></i></button>
-										<button class="btn btn-warning btn-proses-pelamar" data-toggle="modal" data-target="#calon-karyawan" type="button" title="Process"><i class="fa fa-file-powerpoint-o"></i></button>
-										<button class="btn btn-danger btn-disable-pelamar" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-									</div>
-								</td>
-							</tr>
 						</tbody>
 					</table>
 				</div>

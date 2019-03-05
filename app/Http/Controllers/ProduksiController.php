@@ -33,9 +33,10 @@ class ProduksiController extends Controller
             $productionorder = [];
             $productionorderdt = [];
             $productionorderpayment = [];
+            DB::beginTransaction();
             try{
-                $idpo= (DB::table('d_productionorder')->max('po_id')) ? DB::table('d_productionorder')->max('po_id') + 1 : 1;
-                $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_id', 8, 10, 3, 'PO', '-');
+                $idpo= (DB::table('d_productionorder')->max('po_id')) ? (DB::table('d_productionorder')->max('po_id')) + 1 : 1;
+                $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
                 $productionorder = [
                     'po_id' => $idpo,
                     'po_nota' => $nota,
@@ -45,16 +46,35 @@ class ProduksiController extends Controller
                     'po_status' => 'BELUM'
                 ];
 
+                $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) + 1 : 1;
+                $detailpod = $poddetail;
                 for ($i = 0; $i < count($data['idItem']); $i++) {
-                    $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid') + 1 : 1;
+                    if ($data['satuan'][$i] == 1) {
+                        $getCompare = DB::table('m_item')
+                            ->where('i_id', '=', $data['idItem'][$i])
+                            ->first();
+                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare1;
+                    } else if ($data['satuan'][$i] == 2) {
+                        $getCompare = DB::table('m_item')
+                            ->where('i_id', '=', $data['idItem'][$i])
+                            ->first();
+                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare2;
+                    } else if ($data['satuan'][$i] == 3) {
+                        $getCompare = DB::table('m_item')
+                            ->where('i_id', '=', $data['idItem'][$i])
+                            ->first();
+                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare3;
+                    }
+
                     $productionorderdt[] = [
                         'pod_productionorder' => $idpo,
-                        'pod_detailid' => $poddetail,
+                        'pod_detailid' => $detailpod,
                         'pod_item' => $data['idItem'][$i],
-                        'pod_qty' => $data['jumlah'][$i],
-                        'pod_value' => $data['harga'][$i],
-                        'pod_totalnet' => $data['subtotal'][$i]
+                        'pod_qty' => $qty,
+                        'pod_value' => $this->removeCurrency($data['harga'][$i]),
+                        'pod_totalnet' => $this->removeCurrency($data['subtotal'][$i])
                     ];
+                    $detailpod++;
                 }
 
                 for ($i = 0; $i < count($data['termin']); $i++) {
@@ -75,10 +95,10 @@ class ProduksiController extends Controller
                 ]);
             }catch (\Exception $e){
                 DB::rollBack();
-                return $e;
-//                return response()->json([
-//                    'status' => 'gagal'
-//                ]);
+//                return $e;
+                return response()->json([
+                    'status' => 'gagal'
+                ]);
             }
         }
     }
