@@ -49,7 +49,9 @@
                                                         class="fa fa-calendar" aria-hidden="true"></i></span>
                                                 </div>
                                                 <input type="text" name="po_date"
-                                                       class="form-control form-control-sm datepicker" autocomplete="off" id="tanggal">
+                                                       class="form-control form-control-sm datepicker" autocomplete="off" id="tanggal"
+                                                       value="{{ \Carbon\Carbon::now()->format('d-m-Y') }}"
+                                                >
                                             </div>
                                         </div>
 
