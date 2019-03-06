@@ -29,6 +29,7 @@ class ProduksiController extends Controller
             $units = DB::table('m_unit')->get();
             return view('produksi/orderproduksi/create')->with(compact('suppliers', 'units'));
         } else {
+            dd($request);
             $data = $request->all();
             $productionorder = [];
             $productionorderdt = [];

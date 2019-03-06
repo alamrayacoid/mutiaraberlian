@@ -23,6 +23,9 @@
                     <div class="card">
 
                         <div class="card-header bordered p-2">
+                            <div class="header-block">
+                                <h3 class="title">Tambah Order Produksi</h3>
+                            </div>
                             <div class="header-block pull-right">
                                 <a href="{{route('order.index')}}" class="btn btn-secondary"><i
                                         class="fa fa-arrow-left"></i></a>
@@ -46,7 +49,9 @@
                                                         class="fa fa-calendar" aria-hidden="true"></i></span>
                                                 </div>
                                                 <input type="text" name="po_date"
-                                                       class="form-control form-control-sm datepicker" autocomplete="off" id="tanggal">
+                                                       class="form-control form-control-sm datepicker" autocomplete="off" id="tanggal"
+                                                       value="{{ \Carbon\Carbon::now()->format('d-m-Y') }}"
+                                                >
                                             </div>
                                         </div>
 
@@ -245,7 +250,7 @@
             //     }
             // });
             changeJumlah();
-            changeHarga();
+            changeHarga();  
 
             $('.barang').on('click', function(e){
                 // console.log( $('.barang').index(this) );
@@ -374,30 +379,35 @@
                 } else if ($("#tot_hrg").val() == "" || $("#tot_hrg").val() == 0 || checkForm() == "cek form" || checkTermin() == "cek form") {
                     messageWarning('Peringatan', 'Lengkapi data order produksi');
                 } else {
-                    messageSuccess("Sukses", "coba sukses");
-                    {{--$.ajax({--}}
-                        {{--url: "{{route('order.create')}}",--}}
-                        {{--type: "post",--}}
-                        {{--data: $('#form').serialize(),--}}
-                        {{--dataType: "json",--}}
-                        {{--beforeSend: function () {--}}
-                            {{--loadingShow();--}}
-                        {{--},--}}
-                        {{--success: function (response) {--}}
-                            {{--if (response.status == 'sukses') {--}}
-                                {{--loadingHide();--}}
-                                {{--messageSuccess('Success', 'Data berhasil ditambahkan!');--}}
-                                {{--setInterval(function(){ location.reload(); }, 3500);--}}
-                            {{--} else {--}}
-                                {{--loadingHide();--}}
-                                {{--messageFailed('Gagal', response.message);--}}
-                            {{--}--}}
-                        {{--},--}}
-                        {{--error: function (e) {--}}
-                            {{--loadingHide();--}}
-                            {{--messageWarning('Peringatan', e.message);--}}
-                        {{--}--}}
-                    {{--});--}}
+                    var data = $('#formgln').serialize();
+                    axios.post('{{route("order.create")}}', data).then((response) => {
+
+                    })
+                    messageSuccess("Sukses", "Data Order Produksi Berhasil Disimpan");
+                    // {{--$.ajax({--}}
+                    //     {{--url: "{{route('order.create')}}",--}}
+                    //     {{--type: "post",--}}
+                    //     {{--data: $('#form').serialize(),--}}
+                    //     {{--dataType: "json",--}}
+                    //     {{--beforeSend: function () {--}}
+                    //         {{--loadingShow();--}}
+                    //     {{--},--}}
+                    //     {{--success: function (response) {--}}
+                    //         {{--if (response.status == 'sukses') {--}}
+                    //             {{--loadingHide();--}}
+                    //             {{--messageSuccess('Success', 'Data berhasil ditambahkan!');--}}
+                    //             {{--setInterval(function(){ location.reload(); }, 3500);--}}
+                    //         {{--} else {--}}
+                    //             {{--loadingHide();--}}
+                    //             {{--messageFailed('Gagal', response.message);--}}
+                    //         {{--}--}}
+                    //     {{--},--}}
+                    //     {{--error: function (e) {--}}
+                    //         {{--loadingHide();--}}
+                    //         {{--messageWarning('Peringatan', e.message);--}}
+                    //     {{--}--}}
+                    // {{--});--}}}
+
                 }
             })
         });
@@ -499,6 +509,12 @@
             $('#table_order').append(row);
             changeJumlah();
             changeHarga();
+
+            $('.select2').select2({
+                theme: "bootstrap",
+                dropdownAutoWidth: true,
+                width: '100%'
+            });
 
             $('.barang').on('click', function(e){
                 idxBarang = $('.barang').index(this);

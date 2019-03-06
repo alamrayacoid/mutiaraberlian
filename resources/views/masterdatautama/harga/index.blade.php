@@ -1,5 +1,15 @@
 @extends('main')
-
+@section('extra_style')
+    <style>
+        #table_golonganharga_filter{
+            margin-left: -100px;
+            padding-left: -20px;
+        }
+        .toolbar {
+            float:left;
+        }
+    </style>
+@stop
 @section('content')
 
 @include('masterdatautama.harga.default.modal-info')
@@ -35,7 +45,7 @@
 
 					@include('masterdatautama.harga.golongan.index')
 					@include('masterdatautama.harga.default.index')
-
+					@include('masterdatautama.harga.golongan.add')
 
 		        </div>
 			</div>
@@ -54,14 +64,23 @@
 	    $('#table_golonganharga').DataTable({
 			"paging":   false,
 			"ordering": false,
-			"info":     false
-    	});
+			"info":     false,
+            dom: 'l<"toolbar">frtip',
+            initComplete: function(){
+                $("div.toolbar")
+                    .html('<button type="button" id="btngolongan" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Tambah</button>');
+            }
+        });
 		$('#table_list_item').DataTable({
 			"paging":   false,
 			"ordering": false,
 			"info":     false
     	});
 
+		$(document).on('click','#btngolongan', function (evt) {
+            evt.preventDefault();
+            $('#addgolongan').modal('show');
+        })
 
 		$(document).on('click','.btn-edit-golonganharga',function(){
 			window.location.href='{{route('golonganharga.edit')}}'
@@ -181,6 +200,15 @@
 				icon: 'success'
 			})
 		})
+
+        $(document).on('click', '.simpan_gln', function (evt) {
+            evt.preventDefault();
+            var data = $('#form').serialize();
+            axios.post('{{route("order.create")}}', data).then((response) => {
+                console.log(response)
+                // messageSuccess("Sukses", "Data Order Produksi Berhasil Disimpan");
+            })
+        })
 	});
 </script>
 

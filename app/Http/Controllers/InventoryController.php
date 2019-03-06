@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use DB;
+use Response;
 class InventoryController extends Controller
 {
     // BARANG MASUK
@@ -30,7 +31,13 @@ class InventoryController extends Controller
 
     public function barangkeluar_create()
     {
-        return view('inventory/barangkeluar/create');
+        $company = DB::table('m_company')->select('c_id', 'c_name')->get();
+        $unit = DB::table('m_unit')->get();
+
+        $mutcat = DB::table('m_mutcat')->select('m_id', 'm_name')->where('m_name', 'like', 'Barang Keluar%')->get();
+
+        
+        return view('inventory/barangkeluar/create')->with(compact('unit', 'company', 'mutcat'));
     }
 
     public function barangkeluar_edit()

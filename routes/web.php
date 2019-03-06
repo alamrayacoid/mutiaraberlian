@@ -62,6 +62,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/produk/edit/{id}', 'Master\ItemController@edit')->name('dataproduk.edit');
     Route::post('/masterdatautama/produk/update/{id}', 'Master\ItemController@update')->name('dataproduk.update');
     Route::post('/masterdatautama/produk/delete/{id}', 'Master\ItemController@destroy')->name('dataproduk.delete');
+    Route::post('/masterdatautama/produk/active/{id}', 'Master\ItemController@active')->name('dataproduk.active');
     Route::post('/masterdatautama/produk/simpanjenis', 'Master\ItemController@simpanjenis');
     Route::post('/masterdatautama/produk/tablejenis', 'Master\ItemController@tablejenis');
     Route::post('/masterdatautama/produk/hapusjenis', 'Master\ItemController@hapusjenis');
@@ -81,12 +82,17 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/masterdatautama/suplier/index', 'Master\SupplierController@index')->name('suplier.index');
     Route::get('/masterdatautama/suplier/list', 'Master\SupplierController@getList')->name('suplier.list');
-    Route::get('/masterdatautama/suplier/create', 'Master\SupplierController@create')->name('suplier.create');
+    Route::get('/masterdatautama/suplier/datasuplier/create', 'Master\SupplierController@create')->name('suplier.create');
     Route::post('/masterdatautama/suplier/store', 'Master\SupplierController@store')->name('suplier.store');
     Route::get('/masterdatautama/suplier/edit/{id}', 'Master\SupplierController@edit')->name('suplier.edit');
     Route::post('/masterdatautama/suplier/post/{id}', 'Master\SupplierController@update')->name('suplier.update');
     Route::post('/masterdatautama/suplier/disable/{id}', 'Master\SupplierController@disable')->name('suplier.disable');
     Route::post('/masterdatautama/suplier/enable/{id}', 'Master\SupplierController@enable')->name('suplier.enable');
+
+    Route::get('/masterdatautama/itemsuplier/autoItem', 'Master\ItemSupplierController@auto_item')->name('itemsuplier.autoitem');
+    Route::get('/masterdatautama/itemsuplier/getItemDT', 'Master\ItemSupplierController@get_itemDT')->name('itemsuplier.getitemdt');
+    Route::get('/masterdatautama/itemsuplier/hapus/{item}/{supp}', 'Master\ItemSupplierController@hapus')->name('itemsuplier.hapus');
+    Route::post('/masterdatautama/itemsuplier/tambah', 'Master\ItemSupplierController@tambah')->name('itemsuplier.tambah');
 
 //    ==========Master Outlet==========
     Route::get('/masterdatautama/cabang/index', 'Master\CabangController@index')->name('cabang.index');
@@ -243,8 +249,10 @@ Route::group(['middleware' => 'auth'], function () {
     // !===================================================== PENGATURAN =====================================================!
     // Perubahan Harga Jual
     Route::get('/pengaturan/otoritas/perubahanhargajual/index', 'SettingController@perubahanhargajual_index')->name('perubahanhargajual.index');
+    Route::get('/pengaturan/pengaturanpengguna/index', 'SettingController@pengaturanpengguna_index')->name('pengaturanpengguna.index');
     // !===================================================== END PENGATURAN =====================================================!
 
 
 });
 // End Route Group
+

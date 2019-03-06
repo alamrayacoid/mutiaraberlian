@@ -2,14 +2,16 @@
 
 @section('content')
 
-@include('masterdatautama.suplier.modal')
+@include('masterdatautama.suplier.datasuplier.modal')
 
-<article class="content animated fadeInLeft">
+<article class="content">
 
 	<div class="title-block text-primary">
 	    <h1 class="title"> Master Suplier </h1>
 	    <p class="title-description">
-	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Master Data Utama</span> / <span class="text-primary" style="font-weight: bold;">Kelola Data Suplier</span>
+	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> 
+	    	/ <span>Master Data Utama</span> 
+	    	/ <span class="text-primary" style="font-weight: bold;">Master Suplier</span>
 	     </p>
 	</div>
 
@@ -18,39 +20,22 @@
 		<div class="row">
 
 			<div class="col-12">
+				<ul class="nav nav-pills mb-3">
+                    <li class="nav-item">
+                        <a href="" class="nav-link active" data-target="#datasuplier" aria-controls="datasuplier" data-toggle="tab" role="tab">Data Suplier</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link" data-target="#itemsuplier" aria-controls="itemsuplier" data-toggle="tab" role="tab">Item Suplier</a>
+                    </li>
+                </ul>				
+		
+				<div class="tab-content">		
 
-				<div class="card">
-                    <div class="card-header bordered p-2">
-                    	<div class="header-block">
-	                        <h3 class="title"> Data Suplier </h3>
-	                    </div>
-	                    <div class="header-block pull-right">
-                			<button class="btn btn-primary" data-toggle="modal" data-target="#tambah" onclick="window.location.href='{{route('suplier.create')}}'"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button>
-	                    </div>
-                    </div>
-                    <div class="card-block">
-                        <section>
+					@include('masterdatautama.suplier.datasuplier.index')
+					@include('masterdatautama.suplier.itemsuplier.index')
 
-                        	<div class="table-responsive">
-	                            <table class="table table-striped table-hover table-bordered display nowrap" cellspacing="0" id="table_supplier">
-	                                <thead class="bg-primary">
-	                                    <tr align="center">
-													                <th width="1%">No</th>
-																					<th>Nama Perusahaan</th>
-																					<th width="15%">Telepon</th>
-																					<th width="15%">Limit</th>
-																					<th width="15%">Hutang</th>
-																					<th width="5%">Aksi</th>
-													            </tr>
-	                                </thead>
-	                                <tbody>
-	                                </tbody>
-	                            </table>
-	                        </div>
-                        </section>
-                    </div>
-                </div>
 
+		        </div>
 			</div>
 
 		</div>
@@ -62,15 +47,60 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
+
+$(document).ready(function(){
+	$('#jenisharga').change(function(){
+		var ini, satuan, range;
+		ini             = $(this).val();
+		satuan     		= $('#satuan');
+		range     		= $('#range');
+
+		if (ini === '1') {
+			satuan.removeClass('d-none');
+			range.addClass('d-none');
+		} else if(ini === '2'){
+			satuan.addClass('d-none');
+			range.removeClass('d-none');
+		} else {
+			satuan.addClass('d-none');
+			range.addClass('d-none');
+		}
+	});
+});
+</script>
+<script type="text/javascript">
 	// set header token for ajax request
 	$.ajaxSetup({
 		headers: {
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 		}
 	});
+	var sub;
+	$(document).ready(function () {
+        sub = $('#item_suplier').DataTable({
+			responsive: true,
+			autoWidth: false,
+			serverSide: true,
+			ajax: {
+				url: "{{ route('itemsuplier.getitemdt') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}"
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'i_name'},
+				{data: 's_company'},
+				{data: 'aksi'}
+			],
+		});
+
+    })
 
 	var tb_supplier;
 	// function to retrieve DataTable server side
+
 	function TableSupplier()
 	{
 		$('#table_supplier').dataTable().fnDestroy();
@@ -197,6 +227,49 @@
 		});
 	}
 
+	$( "#suppItemNama" ).autocomplete({
+		source: function(request, response) {
+			$.getJSON(baseUrl+'/masterdatautama/itemsuplier/autoItem', { idSupp: $("#suppId").val(), term: $("#suppItemNama").val() }, response);
+		},
+		minLength: 2,
+		select: function(event, data) {
+			$('#suppItemId').val(data.item.id);
+			$('#suppItemNama').val(data.item.label);
+		}
+	});
+
+	function tambah(){
+		var idSupp = $('#suppId').val();
+		var idItem = $('#suppItemId').val();
+		var data = 'idSupp='+idSupp+'&idItem='+idItem;
+		axios.post(baseUrl+'/masterdatautama/itemsuplier/tambah', data).then((response) => {
+			if(response.data.status == 'sukses'){
+				messageSuccess('Berhasil', 'Data berhasil ditambahkan !');
+				loadingShow();
+				sub.ajax.reload();
+				loadingHide();
+
+				$('#suppItemNama').val('');
+				$('#suppItemId').val('');
+			}else{
+
+			}
+		})
+	}
+
+	function hapus(itemId, suppId){
+		axios.get(baseUrl+'/masterdatautama/itemsuplier/hapus'+'/'+itemId+'/'+suppId).then((response) => {
+			if(response.data.status == 'sukses'){
+				messageSuccess('Berhasil', 'Data berhasil dihapus !');
+				loadingShow();
+				sub.ajax.reload();
+				loadingHide();
+			}else{
+
+			}
+		})
+	}
+
 	$(document).ready(function(){
 		TableSupplier();
 
@@ -250,5 +323,8 @@
 		// $('#table_suplier tbody').on('click','.btn-edit', function(){
 		// })
 	});
+
+
+	
 </script>
 @endsection

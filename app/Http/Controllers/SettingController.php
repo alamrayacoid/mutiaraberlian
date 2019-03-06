@@ -10,4 +10,9 @@ class SettingController extends Controller
     {
         return view('pengaturan.otoritas.perubahanhargajual.index');
     }
+    
+    public function pengaturanpengguna_index()
+    {
+        return view('pengaturan.pengaturanpengguna.index');
+    }
 }
