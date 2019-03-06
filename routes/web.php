@@ -261,7 +261,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/pengaturan/pengaturanpengguna/edit', 'SettingController@pengaturanpengguna_edit')->name('pengaturanpengguna.edit');
     // !===================================================== END PENGATURAN =====================================================!
 
-
+    // !================================================== OTORISASI NOTIFIKASI ==============================================!
+    Route::get('/notifikasiotorisasi/otoritasi/index', 'OtorisasiController@otorisasi')->name('otorisasi');
+    Route::get('/notifikasiotorisasi/notifikasi/index', 'NotifikasiController@notifikasi')->name('notifikasi');
+    // !================================================ END OTORISASI NOTIFIKASI ============================================!
 });
 // End Route Group
 

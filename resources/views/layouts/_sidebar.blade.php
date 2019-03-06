@@ -74,6 +74,7 @@
             </li>
             <li class="notifications new">
                 <a href="" data-toggle="dropdown">
+
                 <i><img src="{{ asset('assets/img/author-sign.png') }}" alt="" title="Otorisasi"></i>
                 <sup>
                     <span class="counter">6</span>
@@ -365,17 +366,17 @@
                     </ul>
                 </li>
                 <!-- Notifikasi & Authorization -->
-                <li class="{{ Request::is('notifikasi/*') ? 'active open' : '' || Request::is('otorisasi/*') ? 'active open' : ''}}">
+                <li class="{{ Request::is('notifikasiotorisasi/*') ? 'active open' : ''}}">
                     <a href="">
                         <i class="fa fa-bell"></i><span class="menu-title"> Notifikasi & Otorisasi</span>
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
-                        <li class="{{Request::is('otoritas/*') ? 'open' : ''}}">
-                            <a href="#">Otorisasi</a>
+                        <li class="{{Request::is('notifikasiotorisasi/otorisasi/*') ? 'open' : ''}}">
+                            <a href="{{route('otorisasi')}}">Otorisasi</a>
                         </li>
-                        <li class="{{Request::is('notifikasi/*') ? 'open' : ''}}">
-                            <a href="">Notifikasi</a>
+                        <li class="{{Request::is('notifikasiotorisasi/notifikasi/*') ? 'open' : ''}}">
+                            <a href="{{route('notifikasi')}}">Notifikasi</a>
                         </li>
                     </ul>
                 </li>
