@@ -101,7 +101,6 @@ $(document).ready(function(){
 				{data: 'DT_RowIndex'},
 				{data: 'i_code'},
 				{data: 'i_name'},
-				{data: 's_company'},
 				{data: 'aksi'}
 			],
 		});

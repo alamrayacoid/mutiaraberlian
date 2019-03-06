@@ -40,7 +40,6 @@
                                         <th width="10%">No</th>
                                         <th width="15%" style="text-align:center;">Kode Barang</th>
                                         <th width="35%" style="text-align:center;">Nama Barang</th>
-                                        <th width="30%" style="text-align:center;">Nama Supplier</th>
                                         <th width="10%" style="text-align:center;">Aksi</th>
                                     </tr>
                                 </thead>
