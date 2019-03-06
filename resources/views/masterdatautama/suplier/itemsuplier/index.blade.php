@@ -27,7 +27,7 @@
                             <input type="hidden" id="suppItemId">
                             <input type="text" class="form-control form-control-sm" id="suppItemNama" name="suppItemNama" style="text-transform:uppercase">
                         </div>
-                        <div class="col-1">
+                        <div class="col-1 btn-group-sm">
                             <button class="btn btn-sm btn-primary" onclick="tambah()">Simpan</button>
                         </div>
                     </div>
@@ -38,8 +38,9 @@
                                 <thead class="bg-primary">
                                     <tr>
                                         <th width="10%">No</th>
-                                        <th width="40%" style="text-align:center;">Nama Barang</th>
-                                        <th width="40%" style="text-align:center;">Nama Supplier</th>
+                                        <th width="15%" style="text-align:center;">Kode Barang</th>
+                                        <th width="35%" style="text-align:center;">Nama Barang</th>
+                                        <th width="30%" style="text-align:center;">Nama Supplier</th>
                                         <th width="10%" style="text-align:center;">Aksi</th>
                                     </tr>
                                 </thead>
