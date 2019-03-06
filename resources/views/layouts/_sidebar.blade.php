@@ -27,9 +27,10 @@
         <ul class="nav-profile">
             <li class="notifications new">
             <a href="" data-toggle="dropdown">
-                <i class="fa fa-bell-o" style="font-size:25px;">
-                <i class="fa fa-check" style="font-size:11px; position:relative; left:-24px; bottom:5px;"></i>
-                </i>
+                <i class="fa fa-bell-o" title="Notifikasi"></i>
+                <sup>
+                    <span class="counter">8</span>
+                </sup>
             </a>
                 <div class="dropdown-menu notifications-dropdown-menu">
                     <ul class="notifications-container">
@@ -73,9 +74,10 @@
             </li>
             <li class="notifications new">
                 <a href="" data-toggle="dropdown">
-                    <i class="fa fa-bell-o" style="font-size:25px;">
-                    <i class="fa fa-info" style="font-size:11px; position:relative; left:-20.4px; bottom:5px;"></i>
-                    </i>
+                <i><img src="assets/img/author-sign.png" alt="" title="Otorisasi"></i>
+                <sup>
+                    <span class="counter">6</span>
+                </sup>
                 </a>
                 <div class="dropdown-menu notifications-dropdown-menu">
                     <ul class="notifications-container">
