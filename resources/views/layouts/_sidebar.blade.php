@@ -74,7 +74,7 @@
             </li>
             <li class="notifications new">
                 <a href="" data-toggle="dropdown">
-                <i><img src="assets/img/author-sign.png" alt="" title="Otorisasi"></i>
+                <i><img src="{{ asset('assets/img/author-sign.png') }}" alt="" title="Otorisasi"></i>
                 <sup>
                     <span class="counter">6</span>
                 </sup>
