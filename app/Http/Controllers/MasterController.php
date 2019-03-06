@@ -53,6 +53,23 @@ class MasterController extends Controller
         return view('masterdatautama.harga.index');
     }
 
+    public function addGolongan(Request $request)
+    {
+        DB::beginTransaction();
+        try{
+            $values = [
+                'pc_id' => (DB::table('m_priceclass')->max('pc_id')) ? (DB::table('m_priceclass')->max('pc_id'))+1 : 1,
+                'pc_name' => $request->nama
+            ];
+            DB::table('m_priceclass')->insert($values);
+            DB::commit();
+            response()->json(['status'=>true]);
+        }catch (\Exception $e){
+            DB::rollBack();
+            response()->json(['status'=>false]);
+        }
+    }
+
     public function create_golonganharga()
     {
         return view('masterdatautama.harga.golongan.create');

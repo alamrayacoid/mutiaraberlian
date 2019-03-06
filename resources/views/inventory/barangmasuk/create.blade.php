@@ -103,12 +103,28 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Tanggal Masuk</label>
+                              <label>HPP</label>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control datepicker" name="">
+                                <input type="text" class="form-control form-control input-hpp text-right" name="">
+                              </div>
+                            </div>
+
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Keterangan Barang Masuk</label>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <select class="form-control form-control-sm select2" name="">
+                                  <option value="" disabled="" selected="">== Pilih Keterangan ==</option>
+                                  @foreach($mutcat as $ket)
+                                    <option value="{{$ket->m_id}}">{{$ket->m_name}}</option>
+                                  @endforeach
+                                </select>
                               </div>
                             </div>
 
@@ -142,7 +158,7 @@
       select: function(event, data){
           $('#idItem').val(data.item.id);
       }
-    })
+    });
 
     $(document).on('click', '.btn-submit', function(){
 			$.toast({
@@ -153,7 +169,15 @@
 				loaderBg: '#55efc4',
 				icon: 'success'
 			})
-		})
+		});
+
+    $('.input-hpp').maskMoney({
+      thousands: ".",
+      precision: 0,
+      decimal: ","
+    });
+
+
   });
 </script>
 @endsection

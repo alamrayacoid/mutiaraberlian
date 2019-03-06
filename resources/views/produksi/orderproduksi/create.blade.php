@@ -379,8 +379,8 @@
                 } else if ($("#tot_hrg").val() == "" || $("#tot_hrg").val() == 0 || checkForm() == "cek form" || checkTermin() == "cek form") {
                     messageWarning('Peringatan', 'Lengkapi data order produksi');
                 } else {
-                    var data = $('#form').serialize();
-                    axios.post( '{{route("order.create")}}' , data).then((response) => {
+                    var data = $('#formgln').serialize();
+                    axios.post('{{route("order.create")}}', data).then((response) => {
 
                     })
                     messageSuccess("Sukses", "Data Order Produksi Berhasil Disimpan");
@@ -406,7 +406,8 @@
                     //         {{--loadingHide();--}}
                     //         {{--messageWarning('Peringatan', e.message);--}}
                     //     {{--}--}}
-                    // {{--});--}}
+                    // {{--});--}}}
+
                 }
             })
         });

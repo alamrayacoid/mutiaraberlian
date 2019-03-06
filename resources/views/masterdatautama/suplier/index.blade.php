@@ -75,14 +75,39 @@ $(document).ready(function(){
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 		}
 	});
-	var sub;
+
 	$(document).ready(function () {
-        sub = $('#item_suplier').DataTable({});
+        
+		$('#item_suplier').DataTable();
+
     })
+
+	var sub;
+	function TableItemSupplier(idSupp){
+		$('#item_suplier').dataTable().fnDestroy();
+		sub = $('#item_suplier').DataTable({
+			responsive: true,
+			autoWidth: false,
+			serverSide: true,
+			ajax: {
+				url: "{{ route('itemsuplier.getitemdt') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}",
+					"idSupp": idSupp
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'i_code'},
+				{data: 'i_name'},
+				{data: 'aksi'}
+			],
+		});
+	}
 
 	var tb_supplier;
 	// function to retrieve DataTable server side
-
 	function TableSupplier()
 	{
 		$('#table_supplier').dataTable().fnDestroy();
@@ -209,6 +234,54 @@ $(document).ready(function(){
 		});
 	}
 
+	$( "#suppItemNama" ).autocomplete({
+		source: function(request, response) {
+			$.getJSON(baseUrl+'/masterdatautama/itemsuplier/autoItem', { idSupp: $("#suppId").val(), term: $("#suppItemNama").val() }, response);
+		},
+		minLength: 2,
+		select: function(event, data) {
+			$('#suppItemId').val(data.item.id);
+			$('#suppItemNama').val(data.item.label);
+		}
+	});
+
+	$('#suppId').on('change', function(){
+		var Supp = $('#suppId').val();
+		TableItemSupplier(Supp);
+	})
+
+	function tambah(){
+		var idSupp = $('#suppId').val();
+		var idItem = $('#suppItemId').val();
+		var data = 'idSupp='+idSupp+'&idItem='+idItem;
+		axios.post(baseUrl+'/masterdatautama/itemsuplier/tambah', data).then((response) => {
+			if(response.data.status == 'sukses'){
+				messageSuccess('Berhasil', 'Data berhasil ditambahkan !');
+				loadingShow();
+				sub.ajax.reload();
+				loadingHide();
+
+				$('#suppItemNama').val('');
+				$('#suppItemId').val('');
+			}else{
+
+			}
+		})
+	}
+
+	function hapus(itemId, suppId){
+		axios.get(baseUrl+'/masterdatautama/itemsuplier/hapus'+'/'+itemId+'/'+suppId).then((response) => {
+			if(response.data.status == 'sukses'){
+				messageSuccess('Berhasil', 'Data berhasil dihapus !');
+				loadingShow();
+				sub.ajax.reload();
+				loadingHide();
+			}else{
+
+			}
+		})
+	}
+
 	$(document).ready(function(){
 		TableSupplier();
 
@@ -262,5 +335,8 @@ $(document).ready(function(){
 		// $('#table_suplier tbody').on('click','.btn-edit', function(){
 		// })
 	});
+
+
+	
 </script>
 @endsection

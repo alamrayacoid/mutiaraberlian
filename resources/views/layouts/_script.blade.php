@@ -24,6 +24,7 @@
 <script src="{{asset('assets/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js')}}"></script>
 <script src="{{asset('assets/js/dobPicker.min.js')}}"></script>
 <script src="{{asset('assets/js/vue.js')}}"></script>
+<script src="{{asset('assets/js/axios/axios.min.js')}}"></script>
 <script type="text/javascript">
     var getstorage;
     $('#sidebar-collapse-btn, #sidebar-overlay').click(function () {

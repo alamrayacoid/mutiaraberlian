@@ -128,7 +128,9 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        return view('masterdatautama.suplier.index');
+        $getSupp = DB::table('m_supplier')->select('s_id', 's_company')->get();
+
+        return view('masterdatautama.suplier.index')->with(compact('getSupp'));
     }
 
     /**
