@@ -372,11 +372,11 @@
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
-                        <li class="{{Request::is('notifikasiotorisasi/otorisasi/*') ? 'open' : ''}}">
-                            <a href="{{route('otorisasi')}}">Otorisasi</a>
-                        </li>
                         <li class="{{Request::is('notifikasiotorisasi/notifikasi/*') ? 'open' : ''}}">
                             <a href="{{route('notifikasi')}}">Notifikasi</a>
+                        </li>
+                        <li class="{{Request::is('notifikasiotorisasi/otorisasi/*') ? 'open' : ''}}">
+                            <a href="{{route('otorisasi')}}">Otorisasi</a>
                         </li>
                     </ul>
                 </li>

@@ -256,7 +256,7 @@ Route::group(['middleware' => 'auth'], function () {
     // !===================================================== END PENGATURAN =====================================================!
 
     // !================================================== OTORISASI NOTIFIKASI ==============================================!
-    Route::get('/notifikasiotorisasi/otoritasi/index', 'OtorisasiController@otorisasi')->name('otorisasi');
+    Route::get('/notifikasiotorisasi/otorisasi/index', 'OtorisasiController@otorisasi')->name('otorisasi');
     Route::get('/notifikasiotorisasi/notifikasi/index', 'NotifikasiController@notifikasi')->name('notifikasi');
     // !================================================ END OTORISASI NOTIFIKASI ============================================!
 });

@@ -34,7 +34,7 @@
 			<div class="col-md-4 col-sm-6 col-12">
 				<a href="#">
 					<div class="card text-center p-4 card-custom text-info">
-						<img src="{{asset('assets/img/bars.png')}}" height="128px" width="128px">
+						<img src="{{asset('assets/img/rupiah.png')}}" height="128px" width="128px">
 						<h6>Otorisasi Perubahan Harga Jual</h6>
 					</div>
 				</a>
