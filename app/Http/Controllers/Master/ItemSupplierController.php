@@ -57,7 +57,7 @@ class ItemSupplierController extends Controller
             ->join('m_item', 'i_id', '=', 'is_item')
             ->join('m_supplier', 's_id', '=', 'is_supplier')
             ->where('is_supplier', $request->idSupp)
-            ->select('is_item', 'i_name', 'is_supplier', 's_company')->get();
+            ->select('is_item', 'i_name', 'is_supplier', 'i_code')->get();
 
         return DataTables::of($getItemDT)
             ->addIndexColumn()
