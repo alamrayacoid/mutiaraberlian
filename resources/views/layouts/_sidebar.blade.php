@@ -364,6 +364,22 @@
                         </li>
                     </ul>
                 </li>
+                <!-- Notifikasi & Authorization -->
+                <li class="{{ Request::is('notifikasi/*') ? 'active open' : '' || Request::is('otorisasi/*') ? 'active open' : ''}}">
+                    <a href="">
+                        <i class="fa fa-"></i><span class="menu-title"> Notifikasi & Otorisasi</span>
+                        <i class="fa arrow"></i>
+                    </a>
+                    <ul class="sidebar-nav">
+                        <li class="{{Request::is('otoritas/*') ? 'open' : ''}}">
+                            <a href="#">Otorisasi</a>
+                        </li>
+                        <li class="{{Request::is('notifikasi/*') ? 'open' : ''}}">
+                            <a href="">Notifikasi</a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- END Notifikasi & Authorization -->
                 <!-- AKTIVITAS Setting -->
                 <li class="{{Request::is('pengaturan/*') ? 'active open' : ''}}">
                     <a href="">
@@ -371,35 +387,6 @@
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
-                        <li class="{{Request::is('pengaturan/otoritas/*') ? 'open' : ''}}">
-                            <a href="#">
-                                Otorisasi
-                                <i class="fa arrow"></i>
-                            </a>
-                            <ul class="sidebar-nav">
-                                <li class="{{Request::is('pengaturan/otoritas/perubahanhargajual/*') ? 'active' : ''}}">
-                                    <a href="{{ route('perubahanhargajual.index') }}">Perubahan Harga Jual</a>
-                                </li>
-
-                                <li class="#">
-                                    <a href="{{ route('mngagen.index') }}">Pengeluaran Lebih Dari Nilai Tertentu</a>
-                                </li>
-
-                                <li class="#">
-                                    <a href="{{ route('mngagen.index') }}">Opname Item Produk</a>
-                                </li>
-
-                                <li class="#">
-                                    <a href="{{ route('mngagen.index') }}">Adjustment Item Produk</a>
-                                </li>
-                                <li class="#">
-                                    <a href="{{ route('mngagen.index') }}">Revisi Data</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="">
-                            <a href="">Notifikasi</a>
-                        </li>
                         <li class="">
                             <a href="">Pengaturan Pengguna</a>
                         </li>
