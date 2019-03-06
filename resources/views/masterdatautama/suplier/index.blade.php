@@ -233,8 +233,8 @@ $(document).ready(function(){
 		},
 		minLength: 2,
 		select: function(event, data) {
-			$('#suppId').val(data.item.id);
-			$('#suppNama').val(data.item.label);
+			$('#suppItemId').val(data.item.id);
+			$('#suppItemNama').val(data.item.label);
 		}
 	});
 
@@ -248,6 +248,9 @@ $(document).ready(function(){
 				loadingShow();
 				sub.ajax.reload();
 				loadingHide();
+
+				$('#suppItemNama').val('');
+				$('#suppItemId').val('');
 			}else{
 
 			}

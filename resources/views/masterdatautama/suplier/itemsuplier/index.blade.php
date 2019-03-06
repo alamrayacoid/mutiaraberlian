@@ -14,7 +14,7 @@
                         </div>
                         <div class="col-md-9 col-sm-12 mb-3">
                             <select name="suppId" id="suppId" class="form-control form-control-sm select2">
-                                <option value="">== Pilih Supplier ==</option>
+                                <option value="" selected disabled>== Pilih Supplier ==</option>
                                 @foreach($getSupp as $supp)
                                 <option value="{{ $supp->s_id }}">{{ $supp->s_company }}</option>
                                 @endforeach
@@ -28,7 +28,7 @@
                             <input type="text" class="form-control form-control-sm" id="suppItemNama" name="suppItemNama">
                         </div>
                         <div class="col-1">
-                            <button class="btn btn-sm btn-primary">Simpan</button>
+                            <button class="btn btn-sm btn-primary" onclick="tambah()">Simpan</button>
                         </div>
                     </div>
                     <hr>
