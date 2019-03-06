@@ -20,7 +20,11 @@ class BarangMasukController extends Controller
     {
         $company = DB::table('m_company')->select('c_id', 'c_name')->get();
         $unit = DB::table('m_unit')->get();
-        return view('inventory/barangmasuk/create')->with(compact('unit', 'company'));
+
+        $mutcat = DB::table('m_mutcat')->select('m_id', 'm_name')->where('m_name', 'like', 'Barang Masuk%')->get();
+
+        
+        return view('inventory/barangmasuk/create')->with(compact('unit', 'company', 'mutcat'));
     }
 
     public function edit()

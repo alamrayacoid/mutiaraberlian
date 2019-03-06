@@ -1,5 +1,12 @@
 @extends('main')
-
+@section('extra_style')
+    <style>
+        #table_golonganharga_filter{
+            margin-left: -100px;
+            padding-left: -20px;
+        }
+    </style>
+@stop
 @section('content')
 
 @include('masterdatautama.harga.default.modal-info')

@@ -27,9 +27,10 @@
         <ul class="nav-profile">
             <li class="notifications new">
             <a href="" data-toggle="dropdown">
-                <i class="fa fa-bell-o" style="font-size:25px;">
-                <i class="fa fa-check" style="font-size:11px; position:relative; left:-24px; bottom:5px;"></i>
-                </i>
+                <i class="fa fa-bell-o" title="Notifikasi"></i>
+                <sup>
+                    <span class="counter">8</span>
+                </sup>
             </a>
                 <div class="dropdown-menu notifications-dropdown-menu">
                     <ul class="notifications-container">
@@ -73,9 +74,10 @@
             </li>
             <li class="notifications new">
                 <a href="" data-toggle="dropdown">
-                    <i class="fa fa-bell-o" style="font-size:25px;">
-                    <i class="fa fa-info" style="font-size:11px; position:relative; left:-20.4px; bottom:5px;"></i>
-                    </i>
+                <i><img src="assets/img/author-sign.png" alt="" title="Otorisasi"></i>
+                <sup>
+                    <span class="counter">6</span>
+                </sup>
                 </a>
                 <div class="dropdown-menu notifications-dropdown-menu">
                     <ul class="notifications-container">
@@ -362,6 +364,22 @@
                         </li>
                     </ul>
                 </li>
+                <!-- Notifikasi & Authorization -->
+                <li class="{{ Request::is('notifikasi/*') ? 'active open' : '' || Request::is('otorisasi/*') ? 'active open' : ''}}">
+                    <a href="">
+                        <i class="fa fa-bell"></i><span class="menu-title"> Notifikasi & Otorisasi</span>
+                        <i class="fa arrow"></i>
+                    </a>
+                    <ul class="sidebar-nav">
+                        <li class="{{Request::is('otoritas/*') ? 'open' : ''}}">
+                            <a href="#">Otorisasi</a>
+                        </li>
+                        <li class="{{Request::is('notifikasi/*') ? 'open' : ''}}">
+                            <a href="">Notifikasi</a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- END Notifikasi & Authorization -->
                 <!-- AKTIVITAS Setting -->
                 <li class="{{Request::is('pengaturan/*') ? 'active open' : ''}}">
                     <a href="">
@@ -369,37 +387,8 @@
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
-                        <li class="{{Request::is('pengaturan/otoritas/*') ? 'open' : ''}}">
-                            <a href="#">
-                                Otorisasi
-                                <i class="fa arrow"></i>
-                            </a>
-                            <ul class="sidebar-nav">
-                                <li class="{{Request::is('pengaturan/otoritas/perubahanhargajual/*') ? 'active' : ''}}">
-                                    <a href="{{ route('perubahanhargajual.index') }}">Perubahan Harga Jual</a>
-                                </li>
-
-                                <li class="#">
-                                    <a href="{{ route('mngagen.index') }}">Pengeluaran Lebih Dari Nilai Tertentu</a>
-                                </li>
-
-                                <li class="#">
-                                    <a href="{{ route('mngagen.index') }}">Opname Item Produk</a>
-                                </li>
-
-                                <li class="#">
-                                    <a href="{{ route('mngagen.index') }}">Adjustment Item Produk</a>
-                                </li>
-                                <li class="#">
-                                    <a href="{{ route('mngagen.index') }}">Revisi Data</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="">
-                            <a href="">Notifikasi</a>
-                        </li>
-                        <li class="">
-                            <a href="">Pengaturan Pengguna</a>
+                        <li class="{{Request::is('pengaturan/pengaturanpengguna/*') ? 'active' : ''}}">
+                            <a href="{{ route('pengaturanpengguna.index') }}">Pengaturan Pengguna</a>
                         </li>
                     </ul>
                 </li>
