@@ -367,7 +367,7 @@
                 <!-- Notifikasi & Authorization -->
                 <li class="{{ Request::is('notifikasi/*') ? 'active open' : '' || Request::is('otorisasi/*') ? 'active open' : ''}}">
                     <a href="">
-                        <i class="fa fa-"></i><span class="menu-title"> Notifikasi & Otorisasi</span>
+                        <i class="fa fa-bell"></i><span class="menu-title"> Notifikasi & Otorisasi</span>
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
@@ -387,8 +387,8 @@
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
-                        <li class="">
-                            <a href="">Pengaturan Pengguna</a>
+                        <li class="{{Request::is('pengaturan/pengaturanpengguna/*') ? 'active' : ''}}">
+                            <a href="{{ route('pengaturanpengguna.index') }}">Pengaturan Pengguna</a>
                         </li>
                     </ul>
                 </li>

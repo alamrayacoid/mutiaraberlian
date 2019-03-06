@@ -243,6 +243,7 @@ Route::group(['middleware' => 'auth'], function () {
     // !===================================================== PENGATURAN =====================================================!
     // Perubahan Harga Jual
     Route::get('/pengaturan/otoritas/perubahanhargajual/index', 'SettingController@perubahanhargajual_index')->name('perubahanhargajual.index');
+    Route::get('/pengaturan/pengaturanpengguna/index', 'SettingController@pengaturanpengguna_index')->name('pengaturanpengguna.index');
     // !===================================================== END PENGATURAN =====================================================!
 
 
