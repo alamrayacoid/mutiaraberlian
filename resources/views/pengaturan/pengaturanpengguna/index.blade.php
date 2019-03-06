@@ -2,7 +2,7 @@
 
 @section('content')
 
-@include('pengaturan.otoritas.perubahanhargajual.modal')
+@include('pengaturan.pengaturanpengguna.modal')
 
 <article class="content">
 
@@ -26,18 +26,22 @@
                     	<div class="header-block">
                             <h3 class="title">Pengaturan Pengguna</h3>
                         </div>
+						<div class="header-block pull-right">
+                    		<a class="btn btn-primary" href="{{route('pengaturanpengguna.create')}}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
+	                    </div>
                     </div>
                     <div class="card-block">
                         <section>
                         	
                         	<div class="table-responsive">
-	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_perubahan">
+	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_pengaturan">
 	                                <thead class="bg-primary">
 	                                    <tr>
 	                                    	<th width="5%">No</th>
 	                                		<th width="25%">Nama User</th>
 	                                		<th width="20%">Username</th>
-                                            <th width="20%">Outlet</th>
+											<th width="20%">Jenis</th>
+                                            <th width="20%">Cabang</th>
                                             <th width="15">level</th>
 	                                		<th width="15%">Aksi</th>
 	                                	</tr>
@@ -46,14 +50,15 @@
 	                                	<tr>
 	                                		<td>1</td>
 	                                		<td>Bambang</td>
+											<td>Agen</td>
 											<td>BradPit666</td>
                                             <td>MUTIARA A</td>
                                             <TD>Admin</TD>
 	                                		<td>
 	                                			<div class="btn-group btn-group-sm">
-													<button class="btn btn-success btn-akses" data-toggle="modal" data-target="#detail" type="button" title="Akses"><i class="fa fa-wrench"></i></button>
-	                                				<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-	                                				<button class="btn btn-primary btn-change" type="button" title="Ganti Password"><i class="fa fa-exchange"></i></button>
+													<button class="btn btn-success btn-akses" onclick="window.location.href='{{ route('pengaturanpengguna.akses') }}'" title="Akses"><i class="fa fa-wrench"></i></button>
+	                                				<button class="btn btn-warning btn-edit" onclick="window.location.href='{{ route('pengaturanpengguna.edit') }}'" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
+	                                				<button class="btn btn-primary btn-change" data-toggle="modal" data-target="#change" type="button" title="Ganti Password"><i class="fa fa-exchange"></i></button>
                                                     <button class="btn btn-danger btn-nonaktif" type="button" title="Nonaktif"><i class="fa fa-times-circle"></i></button>
 	                                			</div>
 	                                		</td>
@@ -79,7 +84,7 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		var table = $('#table_perubahan').DataTable();
+		var table = $('#table_pengaturan').DataTable();
 
 	$(document).on('click', '.btn-approve', function(){
 		var ini = $(this);
