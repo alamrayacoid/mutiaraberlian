@@ -75,9 +75,17 @@ $(document).ready(function(){
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 		}
 	});
-	var sub;
+
 	$(document).ready(function () {
-        sub = $('#item_suplier').DataTable({
+        
+		$('#item_suplier').DataTable();
+
+    })
+
+	var sub;
+	function TableItemSupplier(idSupp){
+		$('#item_suplier').dataTable().fnDestroy();
+		sub = $('#item_suplier').DataTable({
 			responsive: true,
 			autoWidth: false,
 			serverSide: true,
@@ -85,7 +93,8 @@ $(document).ready(function(){
 				url: "{{ route('itemsuplier.getitemdt') }}",
 				type: "get",
 				data: {
-					"_token": "{{ csrf_token() }}"
+					"_token": "{{ csrf_token() }}",
+					"idSupp": idSupp
 				}
 			},
 			columns: [
@@ -95,12 +104,10 @@ $(document).ready(function(){
 				{data: 'aksi'}
 			],
 		});
-
-    })
+	}
 
 	var tb_supplier;
 	// function to retrieve DataTable server side
-
 	function TableSupplier()
 	{
 		$('#table_supplier').dataTable().fnDestroy();
@@ -237,6 +244,11 @@ $(document).ready(function(){
 			$('#suppItemNama').val(data.item.label);
 		}
 	});
+
+	$('#suppId').on('change', function(){
+		var Supp = $('#suppId').val();
+		TableItemSupplier(Supp);
+	})
 
 	function tambah(){
 		var idSupp = $('#suppId').val();
