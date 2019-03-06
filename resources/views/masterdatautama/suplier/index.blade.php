@@ -77,7 +77,25 @@ $(document).ready(function(){
 	});
 	var sub;
 	$(document).ready(function () {
-        sub = $('#item_suplier').DataTable({});
+        sub = $('#item_suplier').DataTable({
+			responsive: true,
+			autoWidth: false,
+			serverSide: true,
+			ajax: {
+				url: "{{ route('itemsuplier.getitemdt') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}"
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'i_name'},
+				{data: 's_company'},
+				{data: 'aksi'}
+			],
+		});
+
     })
 
 	var tb_supplier;
@@ -209,6 +227,46 @@ $(document).ready(function(){
 		});
 	}
 
+	$( "#suppItemNama" ).autocomplete({
+		source: function(request, response) {
+			$.getJSON(baseUrl+'/masterdatautama/itemsuplier/autoItem', { idSupp: $("#suppId").val(), term: $("#suppItemNama").val() }, response);
+		},
+		minLength: 2,
+		select: function(event, data) {
+			$('#suppId').val(data.item.id);
+			$('#suppNama').val(data.item.label);
+		}
+	});
+
+	function tambah(){
+		var idSupp = $('#suppId').val();
+		var idItem = $('#suppItemId').val();
+		var data = 'idSupp='+idSupp+'&idItem='+idItem;
+		axios.post(baseUrl+'/masterdatautama/itemsuplier/tambah', data).then((response) => {
+			if(response.data.status == 'sukses'){
+				messageSuccess('Berhasil', 'Data berhasil ditambahkan !');
+				loadingShow();
+				sub.ajax.reload();
+				loadingHide();
+			}else{
+
+			}
+		})
+	}
+
+	function hapus(itemId, suppId){
+		axios.get(baseUrl+'/masterdatautama/itemsuplier/hapus'+'/'+itemId+'/'+suppId).then((response) => {
+			if(response.data.status == 'sukses'){
+				messageSuccess('Berhasil', 'Data berhasil dihapus !');
+				loadingShow();
+				sub.ajax.reload();
+				loadingHide();
+			}else{
+
+			}
+		})
+	}
+
 	$(document).ready(function(){
 		TableSupplier();
 
@@ -262,5 +320,8 @@ $(document).ready(function(){
 		// $('#table_suplier tbody').on('click','.btn-edit', function(){
 		// })
 	});
+
+
+	
 </script>
 @endsection
