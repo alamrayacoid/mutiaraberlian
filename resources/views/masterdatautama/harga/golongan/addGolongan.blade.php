@@ -8,22 +8,24 @@
                 </button>
             </div>
             <form method="post" id="formgln">{{csrf_field()}}
-            <div class="modal-body">
-                <div class="form-group row">
-                    <div>
-                        <label class="col-sm-3">Nama</label>
-                    </div>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control form-control-sm mb-3" name="nama" id="nama">
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div>
+                            <label class="col-sm-3">Nama</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control form-control-sm mb-3" name="nama" id="nama">
+                        </div>
                     </div>
                 </div>
-            </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary simpan_gln">
+                        <span class="glyphicon glyphicon-floppy-disk"></span> Simpan
+                    </button>
+                </div>
             </form>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary simpan_gln">
-                    <span class="glyphicon glyphicon-floppy-disk"></span> Simpan
-                </button>
-            </div>
+
         </div>
     </div>
 </div>

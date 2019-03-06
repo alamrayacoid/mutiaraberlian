@@ -76,9 +76,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/variasisatuanproduk/create', 'MasterController@create_variasisatuanproduk')->name('variasisatuan.create');
     Route::get('/masterdatautama/variasisatuanproduk/edit', 'MasterController@edit_variasisatuanproduk')->name('variasisatuan.edit');
 
-    Route::get('/masterdatautama/harga/index', 'MasterController@dataharga')->name('dataharga.index');
-    Route::get('/masterdatautama/harga/satuan/create', 'MasterController@create_golonganharga')->name('golonganharga.create');
-    Route::get('/masterdatautama/harga/satuan/edit', 'MasterController@edit_golonganharga')->name('golonganharga.edit');
+    Route::get('/masterdatautama/harga/index', 'Master\HargaController@dataharga')->name('dataharga.index');
+    Route::get('/masterdatautama/harga/get-golongan', 'Master\HargaController@getGolongan')->name('dataharga.getgolongan');
+    Route::get('/masterdatautama/harga/delete-golongan/{id}', 'Master\HargaController@deleteGolongan')->name('dataharga.deletegolongan');
+    Route::post('/masterdatautama/harga/add-golongan', 'Master\HargaController@addGolongan')->name('dataharga.addgolongan');
+    Route::post('/masterdatautama/harga/edit-golongan', 'Master\HargaController@editGolongan')->name('dataharga.editgolongan');
+    Route::get('/masterdatautama/harga/cari-barang', 'Master\HargaController@cariBarang')->name('dataharga.caribarang');
+    Route::get('/masterdatautama/harga/get-satuan/{id}', 'Master\HargaController@getSatuan')->name('dataharga.getsatuan');
+    Route::get('/masterdatautama/harga/satuan/create', 'Master\HargaController@create_golonganharga')->name('golonganharga.create');
+    Route::get('/masterdatautama/harga/satuan/edit', 'Master\HargaController@edit_golonganharga')->name('golonganharga.edit');
 
     Route::get('/masterdatautama/suplier/index', 'Master\SupplierController@index')->name('suplier.index');
     Route::get('/masterdatautama/suplier/list', 'Master\SupplierController@getList')->name('suplier.list');

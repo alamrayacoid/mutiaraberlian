@@ -112,6 +112,71 @@
         });
     }
 
+    function deleteConfirm(uri) {
+        return $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "get",
+                            url: uri,
+                            success: function (response) {
+                                if (response.status == 'Success') {
+                                    $.toast({
+                                        heading: 'Success',
+                                        text: 'Data berhasil hapus !',
+                                        bgColor: '#00b894',
+                                        textColor: 'white',
+                                        loaderBg: '#55efc4',
+                                        icon: 'success',
+                                        stack: false
+                                    });
+                                    reloadTable();
+                                } else {
+                                    $.toast({
+                                        heading: 'Warning',
+                                        text: 'Gagal menghapus data!',
+                                        bgColor: '#00b894',
+                                        textColor: 'white',
+                                        loaderBg: '#55efc4',
+                                        icon: 'warning',
+                                        stack: false
+                                    });
+                                }
+                            },
+                            error: function (e) {
+                                $.toast({
+                                    heading: 'Warning',
+                                    text: e.message,
+                                    bgColor: '#00b894',
+                                    textColor: 'white',
+                                    loaderBg: '#55efc4',
+                                    icon: 'warning',
+                                    stack: false
+                                });
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
+
     function convertToRupiah(angka) {
         var rupiah = '';
         var angkarev = angka.toString().split('').reverse().join('');
