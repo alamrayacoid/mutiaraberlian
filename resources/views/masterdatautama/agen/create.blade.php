@@ -198,6 +198,20 @@
                               </div>
                             </div>
 
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Foto</label>
+                            </div>
+                            <div class="col-md-9 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <input type="file" class="form-control form-control-sm" name="photo" id="photo" accept="image/*">
+                              </div>
+                            </div>
+                            <div class="col-12" align="center">
+                              <div class="form-group">
+                                <img src="{{asset('assets/img/add-image-icon2.png')}}" id="img-preview" style="cursor: pointer; max-height: 254px;max-width: 100%;" class="img-thumbnail">
+                              </div>
+                            </div>
+
                           </div>
 
                         </section>
@@ -334,6 +348,23 @@
     });
   })
 
+  function readURL(input, target) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        $(target).attr('src', e.target.result);
+      }
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  $("#photo").change(function() {
+    readURL(this, '#img-preview');
+  });
+  $('#img-preview').click(function(){
+    $('#photo').click();
+  });
+
   $('#btn_simpan').on('click', function() {
     SubmitForm(event);
   });
@@ -343,11 +374,14 @@
   {
     loadingShow();
     event.preventDefault();
-    form_data = $('#myForm').serialize();
+    form_data = new FormData($('#myForm')[0]);
 
     $.ajax({
       data : form_data,
       type : "post",
+      processData: false,
+      contentType: false,
+      enctype: "multipart/form-data",
       url : $("#myForm").attr('action'),
       dataType : 'json',
       success : function (response){

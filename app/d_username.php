@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Auth;
 
 class d_username extends Authenticatable
 {
@@ -15,9 +16,18 @@ class d_username extends Authenticatable
 
     protected $fillable = ['u_id','u_company', 'u_username', 'u_password', 'u_user', 'u_lastlogin', 'u_lastlogout'];
 
+    public static function getName()
+    {
+        if (Auth::user()->u_user == 'E'){
+            return Auth::user()->employee->e_name;
+        } elseif (Auth::user()->u_user == 'A'){
+            return Auth::user()->agen->a_name;
+        }
+    }
+
     public function agen()
     {
-        return $this->hasOne('App/m_agen', 'a_code', 'u_code');
+        return $this->hasOne(m_agen::class, 'a_code', 'u_code');
     }
 
     public function employee()

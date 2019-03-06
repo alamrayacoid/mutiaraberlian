@@ -45,7 +45,8 @@
 
 					@include('masterdatautama.harga.golongan.index')
 					@include('masterdatautama.harga.default.index')
-					@include('masterdatautama.harga.golongan.add')
+					@include('masterdatautama.harga.golongan.addGolongan')
+					@include('masterdatautama.harga.golongan.editGolongan')
 
 		        </div>
 			</div>
@@ -59,19 +60,31 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-
+    var tbl_gln, tbl_item;
 	$(document).ready(function(){
-	    $('#table_golonganharga').DataTable({
+        tbl_gln = $('#table_golonganharga').DataTable({
 			"paging":   false,
 			"ordering": false,
 			"info":     false,
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('dataharga.getgolongan') }}",
+                type: "get"
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'pc_name'},
+                {data: 'action'}
+            ],
             dom: 'l<"toolbar">frtip',
             initComplete: function(){
                 $("div.toolbar")
                     .html('<button type="button" id="btngolongan" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Tambah</button>');
             }
         });
-		$('#table_list_item').DataTable({
+        tbl_item = $('#table_list_item').DataTable({
 			"paging":   false,
 			"ordering": false,
 			"info":     false
@@ -201,15 +214,80 @@
 			})
 		})
 
-        $(document).on('click', '.simpan_gln', function (evt) {
+        $(document).on('submit', '#formgln', function (evt) {
             evt.preventDefault();
-            var data = $('#form').serialize();
-            axios.post('{{route("order.create")}}', data).then((response) => {
-                console.log(response)
-                // messageSuccess("Sukses", "Data Order Produksi Berhasil Disimpan");
+            var data = $('#formgln').serialize();
+            axios.post('{{route("dataharga.addgolongan")}}', data).then(function (response) {
+                if (response.data.status == "Success") {
+                    messageSuccess("Berhasil", "Data berhasil disimpan!");
+                    $('#formgln').trigger("reset");
+                    reloadTable();
+                } else {
+                    messageWarning("Gagal", "Data gagal disimpan");
+                }
+            })
+        });
+
+        $(document).on('submit', '#formedtgln', function (evt) {
+            evt.preventDefault();
+            var data = $('#formedtgln').serialize();
+            axios.post('{{route("dataharga.editgolongan")}}', data).then(function (response) {
+                if (response.data.status == "Success") {
+                    messageSuccess("Berhasil", "Data berhasil perbarui!");
+                    reloadTable();
+                } else {
+                    messageWarning("Gagal", "Data gagal diperbarui!");
+                }
             })
         })
+
+        $(".barang").autocomplete({
+            source: baseUrl + '/masterdatautama/harga/cari-barang',
+            minLength: 1,
+            select: function (event, data) {
+                setItem(data.item);
+            }
+        });
 	});
+
+    function setItem(info) {
+        // idItem = info.data.i_id;
+        $("#idBarang").val(info.data.i_id)
+        $.ajax({
+            url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+info.data.i_id,
+            type: 'GET',
+            success: function( resp ) {
+                var option = '';
+                option += '<option value="'+resp.id1+'">'+resp.unit1+'</option>';
+                if (resp.id2 != null && resp.id2 != resp.id1) {
+                    option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                }
+                if (resp.id3 != null && resp.id3 != resp.id1) {
+                    option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                }
+                $("#satuanBarang").append(option);
+            }
+        });
+    }
+
+	function reloadTable() {
+        tbl_gln.ajax.reload();
+    }
+
+    function editGolongan(id, name) {
+	    $('#idGolongan').val(id);
+	    $('#namaGolongan').val(name);
+        $('#editgolongan').modal('show');
+    }
+
+	function hapusGolongan(id) {
+        deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan/"+id);
+    }
+
+    function addGolonganHarga(id, name) {
+        $('#idGol').val(id);
+        $('#txtGol').text(name);
+    }
 </script>
 
 <script type="text/javascript">

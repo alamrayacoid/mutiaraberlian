@@ -74,7 +74,8 @@
             </li>
             <li class="notifications new">
                 <a href="" data-toggle="dropdown">
-                <i><img src="assets/img/author-sign.png" alt="" title="Otorisasi"></i>
+
+                <i><img src="{{ asset('assets/img/author-sign.png') }}" alt="" title="Otorisasi"></i>
                 <sup>
                     <span class="counter">6</span>
                 </sup>
@@ -122,7 +123,7 @@
             <li class="profile dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                     <div class="img" style="background-image: url('https://avatars3.githubusercontent.com/u/3959008?v=3&s=40')"> </div>
-                    <span class="name"> {{ Auth::user()->u_username }} </span>
+                    <span class="name"> {{ \App\d_username::getName() }} </span>
                 </a>
                 <div class="dropdown-menu profile-dropdown-menu" aria-labelledby="dropdownMenu1">
                     <a class="dropdown-item" href="#">
@@ -365,17 +366,17 @@
                     </ul>
                 </li>
                 <!-- Notifikasi & Authorization -->
-                <li class="{{ Request::is('notifikasi/*') ? 'active open' : '' || Request::is('otorisasi/*') ? 'active open' : ''}}">
+                <li class="{{ Request::is('notifikasiotorisasi/*') ? 'active open' : ''}}">
                     <a href="">
                         <i class="fa fa-bell"></i><span class="menu-title"> Notifikasi & Otorisasi</span>
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
-                        <li class="{{Request::is('otoritas/*') ? 'open' : ''}}">
-                            <a href="#">Otorisasi</a>
+                        <li class="{{Request::is('notifikasiotorisasi/notifikasi/*') ? 'open' : ''}}">
+                            <a href="{{route('notifikasi')}}">Notifikasi</a>
                         </li>
-                        <li class="{{Request::is('notifikasi/*') ? 'open' : ''}}">
-                            <a href="">Notifikasi</a>
+                        <li class="{{Request::is('notifikasiotorisasi/otorisasi/*') ? 'open' : ''}}">
+                            <a href="{{route('otorisasi')}}">Otorisasi</a>
                         </li>
                     </ul>
                 </li>
