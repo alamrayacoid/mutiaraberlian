@@ -75,9 +75,17 @@ $(document).ready(function(){
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 		}
 	});
-	var sub;
+
 	$(document).ready(function () {
-        sub = $('#item_suplier').DataTable({
+        
+		$('#item_suplier').DataTable();
+
+    })
+
+	var sub;
+	function TableItemSupplier(idSupp){
+		$('#item_suplier').dataTable().fnDestroy();
+		sub = $('#item_suplier').DataTable({
 			responsive: true,
 			autoWidth: false,
 			serverSide: true,
@@ -85,22 +93,21 @@ $(document).ready(function(){
 				url: "{{ route('itemsuplier.getitemdt') }}",
 				type: "get",
 				data: {
-					"_token": "{{ csrf_token() }}"
+					"_token": "{{ csrf_token() }}",
+					"idSupp": idSupp
 				}
 			},
 			columns: [
 				{data: 'DT_RowIndex'},
+				{data: 'i_code'},
 				{data: 'i_name'},
-				{data: 's_company'},
 				{data: 'aksi'}
 			],
 		});
-
-    })
+	}
 
 	var tb_supplier;
 	// function to retrieve DataTable server side
-
 	function TableSupplier()
 	{
 		$('#table_supplier').dataTable().fnDestroy();
@@ -233,10 +240,15 @@ $(document).ready(function(){
 		},
 		minLength: 2,
 		select: function(event, data) {
-			$('#suppId').val(data.item.id);
-			$('#suppNama').val(data.item.label);
+			$('#suppItemId').val(data.item.id);
+			$('#suppItemNama').val(data.item.label);
 		}
 	});
+
+	$('#suppId').on('change', function(){
+		var Supp = $('#suppId').val();
+		TableItemSupplier(Supp);
+	})
 
 	function tambah(){
 		var idSupp = $('#suppId').val();
@@ -248,6 +260,9 @@ $(document).ready(function(){
 				loadingShow();
 				sub.ajax.reload();
 				loadingHide();
+
+				$('#suppItemNama').val('');
+				$('#suppItemId').val('');
 			}else{
 
 			}

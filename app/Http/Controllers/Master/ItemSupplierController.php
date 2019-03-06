@@ -51,12 +51,13 @@ class ItemSupplierController extends Controller
         return Response::json($hasilItem);
     }
 
-    public function get_itemDT()
+    public function get_itemDT(Request $request)
     {
         $getItemDT = DB::table('d_itemsupplier')
             ->join('m_item', 'i_id', '=', 'is_item')
             ->join('m_supplier', 's_id', '=', 'is_supplier')
-            ->select('is_item', 'i_name', 'is_supplier', 's_company')->get();
+            ->where('is_supplier', $request->idSupp)
+            ->select('is_item', 'i_name', 'is_supplier', 'i_code')->get();
 
         return DataTables::of($getItemDT)
             ->addIndexColumn()

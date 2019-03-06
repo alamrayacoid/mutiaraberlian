@@ -103,12 +103,12 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Tanggal Masuk</label>
+                              <label>HPP</label>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control datepicker" name="">
+                                <input type="text" class="form-control form-control input-hpp text-right" name="">
                               </div>
                             </div>
 
@@ -151,6 +151,7 @@
 @section('extra_script')
 <script type="text/javascript">
   $(document).ready(function(){
+    
     $(document).on('click', '.btn-submit', function(){
 			$.toast({
 				heading: 'Success',
@@ -161,6 +162,14 @@
 				icon: 'success'
 			})
 		})
+
+    $('.input-hpp').maskMoney({
+      thousands: ".",
+      precision: 0,
+      decimal: ","
+    });
+
+
   });
 </script>
 @endsection
