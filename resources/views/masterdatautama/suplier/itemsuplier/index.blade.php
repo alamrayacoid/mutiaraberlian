@@ -25,7 +25,7 @@
                         </div>
                         <div class="col-md-9 col-sm-12 mb-3">
                             <input type="hidden" id="suppItemId">
-                            <input type="text" class="form-control form-control-sm" id="suppItemNama" name="suppItemNama">
+                            <input type="text" class="form-control form-control-sm" id="suppItemNama" name="suppItemNama" style="text-transform:uppercase">
                         </div>
                         <div class="col-1">
                             <button class="btn btn-sm btn-primary" onclick="tambah()">Simpan</button>
