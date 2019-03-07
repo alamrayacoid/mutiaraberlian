@@ -280,6 +280,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/notifikasiotorisasi/notifikasi/index', 'NotifikasiController@notifikasi')->name('notifikasi');
     // !================================================ END OTORISASI NOTIFIKASI ============================================!
+
+    // Profile
+    Route::get('/profile', 'ProfileController@profile')->name('profile');
 });
 // End Route Group
 
