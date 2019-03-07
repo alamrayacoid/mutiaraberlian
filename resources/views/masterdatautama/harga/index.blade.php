@@ -259,14 +259,29 @@
                 if (response.data.status == "Success") {
                     messageSuccess("Berhasil", "Data berhasil disimpan!");
                     $("#formsetharga").trigger('reset');
+                    $("#jenisharga").val("");
+                    $("#select2-jenisharga-container").text('Pilih Jenis Harga');
                     $("#txtGol").text('~');
                     reloadTable();
                     $("#satuan").addClass('d-none');
                     $("#range").addClass('d-none');
-                } else {
+                } else if (response.data.status == "Failed") {
                     messageWarning("Gagal", "Data gagal disimpan!");
+                } else if (response.data.status == "Range Ada") {
+                    messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
+                } else if (response.data.status == "Unit Ada") {
+                    messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
                 }
             });
+        });
+
+        $(document).on('keyup', '#rangestart', function (evt) {
+            evt.preventDefault();
+            if ($(this).val() != "") {
+                $("#rangeend").removeAttr('readonly');
+            } else {
+                $("#rangeend").attr('readonly', true);
+            }
         });
 	});
 

@@ -8,7 +8,7 @@
   </div>
   <span>-</span>
   <div class="col-md-3">
-    <input type="text" class="form-control form-control-sm" name="rangeend" id="rangeend">
+    <input type="text" class="form-control form-control-sm" name="rangeend" id="rangeend" readonly>
   </div>
   <div class="col-md-4">
     <select name="satuanrange" id="satuanrange" class="form-control form-control-sm select2">

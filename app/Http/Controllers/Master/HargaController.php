@@ -216,36 +216,69 @@ class HargaController extends Controller
         DB::beginTransaction();
         try{
             if ($request->jenisharga == "U") {
-                $values = [
-                    'pcad_classprice' => $idGol,
-                    'pcad_detailid' => (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) ? (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid'))+1 : 1,
-                    'pcad_item' => $request->idBarang,
-                    'pcad_unit' => $request->satuanBarang,
-                    'pcad_type' => $request->jenisharga,
-                    'pcad_payment' => $request->jenis_pembayaran,
-                    'pcad_rangeqtystart' => 1,
-                    'pcad_rangeqtyend' => 1,
-                    'pcad_price' => Currency::removeRupiah($request->harga),
-                    'pcad_user' => Auth::user()->u_id
-                ];
-            } else {
-                $values = [
-                    'pcad_classprice' => $idGol,
-                    'pcad_detailid' => (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) ? (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid'))+1 : 1,
-                    'pcad_item' => $request->idBarang,
-                    'pcad_unit' => $request->satuanrange,
-                    'pcad_type' => $request->jenisharga,
-                    'pcad_payment' => $request->jenis_pembayaranrange,
-                    'pcad_rangeqtystart' => $request->rangestart,
-                    'pcad_rangeqtyend' => $request->rangeend,
-                    'pcad_price' => Currency::removeRupiah($request->hargarange),
-                    'pcad_user' => Auth::user()->u_id
-                ];
-            }
 
-            DB::table('d_priceclassauthdt')->insert($values);
-            DB::commit();
-            return response()->json(['status'=>"Success"]);
+                $check = DB::table('d_priceclassauthdt')
+                    ->where('pcad_item', '=', $request->idBarang)
+                    ->where('pcad_unit', '=', $request->satuanBarang)
+                    ->where('pcad_type', '=', $request->jenisharga)
+                    ->get();
+
+                if (count($check) > 0) {
+                    return response()->json(['status'=>"Unit Ada"]);
+                } else {
+                    $values = [
+                        'pcad_classprice' => $idGol,
+                        'pcad_detailid' => (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) ? (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid'))+1 : 1,
+                        'pcad_item' => $request->idBarang,
+                        'pcad_unit' => $request->satuanBarang,
+                        'pcad_type' => $request->jenisharga,
+                        'pcad_payment' => $request->jenis_pembayaran,
+                        'pcad_rangeqtystart' => 1,
+                        'pcad_rangeqtyend' => 1,
+                        'pcad_price' => Currency::removeRupiah($request->harga),
+                        'pcad_user' => Auth::user()->u_id
+                    ];
+                    DB::table('d_priceclassauthdt')->insert($values);
+                    DB::commit();
+                    return response()->json(['status'=>"Success"]);
+                }
+            } else {
+                $check = DB::table('d_priceclassauthdt')
+                    ->where('pcad_item', '=', $request->idBarang)
+                    ->where('pcad_unit', '=', $request->satuanrange)
+                    ->where('pcad_type', '=', $request->jenisharga)
+                    ->get();
+
+                $sts = '';
+                foreach ($check as $key => $val) {
+                    if ( in_array($request->rangestart, range($val->pcad_rangeqtystart,$val->pcad_rangeqtyend)) ) {
+                        $sts = 'Not Null';
+                        return response()->json(['status'=>"Range Ada"]);
+                        break;
+                    }else{
+                        $sts = 'Null';
+                        continue;
+                    }
+                }
+
+                if ($sts = "Null") {
+                    $values = [
+                        'pcad_classprice' => $idGol,
+                        'pcad_detailid' => (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) ? (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid'))+1 : 1,
+                        'pcad_item' => $request->idBarang,
+                        'pcad_unit' => $request->satuanrange,
+                        'pcad_type' => $request->jenisharga,
+                        'pcad_payment' => $request->jenis_pembayaranrange,
+                        'pcad_rangeqtystart' => $request->rangestart,
+                        'pcad_rangeqtyend' => $request->rangeend,
+                        'pcad_price' => Currency::removeRupiah($request->hargarange),
+                        'pcad_user' => Auth::user()->u_id
+                    ];
+                    DB::table('d_priceclassauthdt')->insert($values);
+                    DB::commit();
+                    return response()->json(['status'=>"Success"]);
+                }
+            }
         }catch (\Exception $e){
             DB::rollback();
             return response()->json(['status'=>"Failed"]);
@@ -275,9 +308,13 @@ class HargaController extends Controller
         }
     }
 
-    public function create_golonganharga()
+    public function create_golonganharga($id)
     {
-        return view('masterdatautama.harga.golongan.create');
+        if ( in_array($id, range(1,7)) ) {
+            echo 'Number '.$id.' is in range 1-7';
+        }else{
+            echo 'Number '.$id.' not in range 1-7';
+        }
     }
 
     public function edit_golonganharga()
