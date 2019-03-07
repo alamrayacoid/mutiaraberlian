@@ -85,11 +85,11 @@
                 }
             },
             columns: [
-                {data: 's_created_at', name: 's_created_at'},
+                {data: 'tgl_masuk', name: 'tgl_masuk'},
                 {data: 'i_code', name: 'i_code'},
                 {data: 's_qty', name: 's_qty'},
-                {data: 's_comp', name: 's_comp'},
-                {data: 's_position', name: 's_position'},
+                {data: 'c_name', name: 'c_name'},
+                {data: 'c_name', name: 'c_name'},
                 {data: 's_condition', name: 's_condition'},
                 {data: 'action', name: 'action'}
             ],
