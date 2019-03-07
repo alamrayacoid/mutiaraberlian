@@ -75,7 +75,7 @@ class HargaController extends Controller
             ->addColumn('action', function ($datas) {
                 return '<center><div class="btn-group btn-group-sm">
                                             <button class="btn btn-warning" title="Edit"
-                                                    type="button" onclick="editGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\', \''.$datas->pcad_item.'\', \''.Currency::addRupiah($datas->pcad_price).'\', \''.$datas->pcad_unit.'\')"><i class="fa fa-pencil" style="color: #ffffff"></i></button>
+                                                    type="button" onclick="editGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\', \''.$datas->pcad_item.'\', \''.Currency::addRupiah($datas->pcad_price).'\', \''.$datas->pcad_unit.'\', \''.$datas->pcad_type.'\', \''.$datas->pcad_rangeqtystart.'\', \''.$datas->pcad_rangeqtyend.'\')"><i class="fa fa-pencil" style="color: #ffffff"></i></button>
                                             <button class="btn btn-danger" type="button"
                                                     title="Hapus" onclick="hapusGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\')"><i class="fa fa-trash"></i></button>
                                         </div></center>';
@@ -308,7 +308,7 @@ class HargaController extends Controller
         }
     }
 
-    public function editGolonganHarga(Request $request)
+    public function editGolonganHargaUnit(Request $request)
     {
         try{
             $id = Crypt::decrypt($request->golId);
@@ -325,6 +325,34 @@ class HargaController extends Controller
                 ->update([
                 'pcad_unit' => $request->satuanBarangUnitEdit,
                 'pcad_price' => Currency::removeRupiah($request->editharga),
+            ]);
+            DB::commit();
+            return response()->json(['status'=>"Success"]);
+        }catch (\Exception $e){
+            DB::rollBack();
+            return response()->json(['status'=>"Failed"]);
+        }
+    }
+
+    public function editGolonganHargaRange(Request $request)
+    {
+        try{
+            $id = Crypt::decrypt($request->golIdRange);
+            $detail = Crypt::decrypt($request->golDetailRange);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>"Failed"]);
+        }
+
+        DB::beginTransaction();
+        try{
+            DB::table('d_priceclassauthdt')
+                ->where('pcad_classprice', '=', $id)
+                ->where('pcad_detailid', '=', $detail)
+                ->update([
+                'pcad_unit' => $request->satuanBarangRangeEdit,
+                'pcad_price' => Currency::removeRupiah($request->edithargarange),
+                    'pcad_rangeqtystart' => $request->rangestartedit,
+                    'pcad_rangeqtyend' => $request->rangeendedit
             ]);
             DB::commit();
             return response()->json(['status'=>"Success"]);
