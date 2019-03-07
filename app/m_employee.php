@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class m_employee extends Model
 {
     protected $table       = 'm_employee';
+    protected $primaryKey  = 'e_id';
 
     public function username()
     {
-        return $this->belongsTo('App/d_username', 'u_code', 'e_id');
+        return $this->belongsTo(d_username::class, 'e_id', 'u_code');
     }
 }
