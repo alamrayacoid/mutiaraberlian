@@ -62,6 +62,14 @@
 <script type="text/javascript">
     var tbl_gln, tbl_item;
 	$(document).ready(function(){
+	    if ($("#idGol").val() == "") {
+	        $(".barang").attr('disabled', true);
+	        $("#jenisharga").attr('disabled', true);
+        } else {
+            $(".barang").attr('disabled', false);
+            $("#jenisharga").attr('disabled', false);
+        }
+
         tbl_gln = $('#table_golongan').DataTable({
 			"paging":   false,
 			"ordering": false,
@@ -326,6 +334,8 @@
     }
 
     function addGolonganHarga(id, name) {
+        $(".barang").attr('disabled', false);
+        $("#jenisharga").attr('disabled', false);
         $('#idGol').val(id);
         $('#txtGol').text(name);
         if ($.fn.DataTable.isDataTable("#table_golonganharga")) {

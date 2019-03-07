@@ -224,8 +224,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'CodeGenerator' => App\Http\Controllers\Helper\CodeGenerator::class,
-        'Currency' => App\Http\Controllers\Helper\Currency::class,
+        'CodeGenerator' => App\Http\Controllers\CodeGenerator::class,
+        'Currency' => App\Http\Controllers\Currency::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         'Image' => Intervention\Image\Facades\Image::class,
 
