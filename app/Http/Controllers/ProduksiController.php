@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use DB;
 use Response;
 use Carbon\Carbon;
+use CodeGenerator;
+use Yajra\DataTables\DataTables;
+use Crypt;
 
 class ProduksiController extends Controller
 {
@@ -19,6 +22,40 @@ class ProduksiController extends Controller
     {
     	return view('produksi/orderproduksi/index');
     }
+    public function get_history(Request $request){
+        $data = '';
+        $getData = DB::table('d_productionorder')
+            ->join('m_supplier', 's_id', '=', 'po_supplier');
+
+        if($request->tglAwal != ""){
+            $getData->where('po_date', '>=',Carbon::createFromFormat('d-m-Y', $request->tglAwal)->format('Y-m-d'));
+        }
+
+        if($request->tglAkhir != ""){
+            $getData->where('po_date', '<=',Carbon::createFromFormat('d-m-Y', $request->tglAkhir)->format('Y-m-d'));
+        }
+
+        $data = $getData->get();
+    
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('detail', function($data){
+                return '<button class="btn btn-primary btn-modal" type="button" onclick="detail(\''. Crypt::encrypt($data->po_id) .'\')">Detail</button>';
+            })
+            ->addColumn('totalnet', function($data){
+                return 'Rp.'. ;
+            })
+            ->addColumn('bayar', function($data){
+                return '';
+            })
+            ->addColumn('aksi', function($data){
+                $edit = '<button class="btn btn-warning btn-edit" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-pencil"></i></button>';
+                $hapus = '<button class="btn btn-danger btn-disable" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-times-circle"></i></button>';
+                return '<div class="btn-group btn-group-sm">' . $edit . '&nbsp;' . $hapus . '</div>';
+            })
+            ->rawColumns(['detail','aksi'])
+            ->make(true);
+    }
     public function create_produksi(Request $request)
     {
         if (!$request->isMethod('post')) {
@@ -29,13 +66,13 @@ class ProduksiController extends Controller
             $units = DB::table('m_unit')->get();
             return view('produksi/orderproduksi/create')->with(compact('suppliers', 'units'));
         } else {
-            dd($request);
             $data = $request->all();
             $productionorder = [];
             $productionorderdt = [];
             $productionorderpayment = [];
             DB::beginTransaction();
             try{
+                // dd($request);
                 $idpo= (DB::table('d_productionorder')->max('po_id')) ? (DB::table('d_productionorder')->max('po_id')) + 1 : 1;
                 $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
                 $productionorder = [
@@ -50,28 +87,12 @@ class ProduksiController extends Controller
                 $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) + 1 : 1;
                 $detailpod = $poddetail;
                 for ($i = 0; $i < count($data['idItem']); $i++) {
-                    if ($data['satuan'][$i] == 1) {
-                        $getCompare = DB::table('m_item')
-                            ->where('i_id', '=', $data['idItem'][$i])
-                            ->first();
-                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare1;
-                    } else if ($data['satuan'][$i] == 2) {
-                        $getCompare = DB::table('m_item')
-                            ->where('i_id', '=', $data['idItem'][$i])
-                            ->first();
-                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare2;
-                    } else if ($data['satuan'][$i] == 3) {
-                        $getCompare = DB::table('m_item')
-                            ->where('i_id', '=', $data['idItem'][$i])
-                            ->first();
-                        $qty = $data['jumlah'][$i] * $getCompare->i_unitcompare3;
-                    }
-
                     $productionorderdt[] = [
                         'pod_productionorder' => $idpo,
                         'pod_detailid' => $detailpod,
                         'pod_item' => $data['idItem'][$i],
-                        'pod_qty' => $qty,
+                        'pod_qty' => $data['jumlah'][$i],
+                        'pod_unit' => $data['satuan'][$i],
                         'pod_value' => $this->removeCurrency($data['harga'][$i]),
                         'pod_totalnet' => $this->removeCurrency($data['subtotal'][$i])
                     ];
@@ -82,23 +103,24 @@ class ProduksiController extends Controller
                     $productionorderpayment[] = [
                         'pop_productionorder' => $idpo,
                         'pop_termin' => $data['termin'][$i],
-                        'pop_estimasi' => date('Y-m-d', strtotime($data['estimasi'][$i])),
-                        'pop_date' => date('Y-m-d', strtotime($data['tanggal'][$i])),
+                        'pop_datetop' => date('Y-m-d', strtotime($data['tanggal'][$i])),
                         'pop_value' => $this->removeCurrency($data['nominal'][$i]),
                     ];
                 }
+
+                // dd($productionorderpayment);
                 DB::table('d_productionorder')->insert($productionorder);
                 DB::table('d_productionorderdt')->insert($productionorderdt);
                 DB::table('d_productionorderpayment')->insert($productionorderpayment);
                 DB::commit();
-                return response()->json([
+                return json_encode([
                     'status' => 'sukses'
                 ]);
             }catch (\Exception $e){
                 DB::rollBack();
-//                return $e;
-                return response()->json([
-                    'status' => 'gagal'
+                return json_encode([
+                    'status' => 'gagal',
+                    'msg' => $e
                 ]);
             }
         }
@@ -106,38 +128,32 @@ class ProduksiController extends Controller
 
     public function cariBarang(Request $request)
     {
+        $is_item = array();
+        for($i = 0; $i < count($request->idItem); $i++){
+            if($request->idItem[$i] != null){
+                array_push($is_item, $request->idItem[$i]);
+            }
+        }
+
         $cari = $request->term;
-        $results = [];
-        $kode = [];
-        if (isset($request->kode)) {
-            $kode = $request->kode;
-            if (($key = array_search(null, $kode)) !== false) {
-                unset($kode[$key]);
-            }
-            $temp = [];
-            foreach ($kode as $code){
-                array_push($temp, $code);
-            }
-            $kode = $temp;
+        if(count($is_item) == 0){
+            $nama = DB::table('m_item')
+                ->join('d_itemsupplier', 'is_item', '=', 'i_id')
+                ->where('is_supplier', $request->supp)
+                ->whereRaw("i_name like '%" . $cari . "%'")
+                ->orWhereRaw("i_code like '%" . $cari . "%'")
+                ->get();
+        }else{
+            $nama = DB::table('m_item')
+                ->join('d_itemsupplier', 'is_item', '=', 'i_id')
+                ->whereNotIn('i_id', $is_item) 
+                ->where('is_supplier', $request->supp)
+                ->whereRaw("i_name like '%" . $cari . "%'")
+                ->orWhereRaw("i_code like '%" . $cari . "%'")
+                ->get();
         }
 
-        if (count($kode) > 0) {
-            $nama = DB::table('m_item')
-                ->where(function ($q) use ($cari, $kode){
-//                    $q->whereNotIn('i_code', $kode);
-                    $q->where('i_code', 'like', '%'.$cari.'%');
-                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
-                })
-                ->whereNotIn('i_code', $kode)->get();
-        } else {
-            $nama = DB::table('m_item')
-                ->where(function ($q) use ($cari){
-                    $q->where('i_code', 'like', '%'.$cari.'%');
-                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
-                })->get();
-        }
-
-        if (count($nama) < 1) {
+        if (count($nama) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
