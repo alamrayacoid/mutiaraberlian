@@ -261,6 +261,34 @@
                     </ul>
                 </li>
                 <!-- END AKTIVITAS INVENTORY -->
+                <!-- AKTIVITAS MARKETING -->
+                <li class="{{Request::is('marketing/*') ? 'active open' : ''}}">
+                    <a href="#">
+                        <i class="fa fa-shopping-cart"></i><span class="menu-title"> Aktivitas Marketing</span>
+                        <i class="fa arrow"></i>
+                    </a>
+                    <ul class="sidebar-nav">
+                        <li class="{{Request::is('marketing/manajemenmarketing/*') ? 'active' : ''}}">
+                            <a href="{{route('mngmarketing.index')}}">Manajemen Marketing</a>
+                        </li>
+                        {{-- <li class="{{Request::is('marketing/targetrealisasipenjualan/*') ? 'active' : ''}}">
+                            <a href="{{route('targetrealisasi.index')}}">Target dan Realisasi Penjualan</a>
+                        </li> --}}
+                        <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
+                            <a href="{{route('penjualanpusat.index')}}">Penjualan Pusat</a>
+                        </li>
+                        <li class="{{Request::is('marketing/konsinyasipusat/*') ? 'active' : ''}}">
+                            <a href="{{route('konsinyasipusat.index')}}">Konsinyasi Pusat</a>
+                        </li>
+                        <li class="{{Request::is('marketing/marketingarea/*') ? 'active' : ''}}">
+                            <a href="{{ route('marketingarea.index') }}">Marketing Area</a>
+                        </li>
+                        <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
+                            <a href="{{ route('mngagen.index') }}">Manajemen Agen</a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- END AKTIVITAS MARKETING -->
                 <!-- AKTIVITAS SDM -->
                 <li class="{{Request::is('sdm/*') ? 'active open' : ''}}">
                     <a href="">
@@ -283,40 +311,31 @@
                     </ul>
                 </li>
                 <!-- END AKTIVITAS SDM -->
-                <!-- AKTIVITAS MARKETING -->
-                <li class="{{Request::is('marketing/*') ? 'active open' : ''}}">
-                    <a href="#">
-                        <i class="fa fa-shopping-cart"></i><span class="menu-title"> Aktivitas Marketing</span>
+
+                <li class="">
+                    <a href="">
+                        <i class="fa fa-money"></i><span class="menu-title"> Budgeting</span>
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
-                        <li class="{{Request::is('marketing/manajemenmarketing/*') ? 'active' : ''}}">
-                            <a href="{{route('mngmarketing.index')}}">Manajemen Marketing</a>
+                        <li>
+                            <a href="#">Manajemen Perencanaan</a>
                         </li>
-                        <li class="{{Request::is('marketing/targetrealisasipenjualan/*') ? 'active' : ''}}">
-                            <a href="{{route('targetrealisasi.index')}}">Target dan Realisasi Penjualan</a>
-                        </li>
-                        <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
-                            <a href="{{route('penjualanpusat.index')}}">Penjualan Pusat</a>
-                        </li>
-                        <li class="{{Request::is('marketing/konsinyasipusat/*') ? 'active' : ''}}">
-                            <a href="{{route('konsinyasipusat.index')}}">Konsinyasi Pusat</a>
-                        </li>
-                        <li class="{{Request::is('marketing/marketingarea/*') ? 'active' : ''}}">
-                            <a href="{{ route('marketingarea.index') }}">Marketing Area</a>
-                        </li>
-                        <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                            <a href="{{ route('mngagen.index') }}">Manajemen Agen</a>
+                        <li>
+                            <a href="#">Manajemen Penganggaran</a>
                         </li>
                     </ul>
                 </li>
-                <!-- END AKTIVITAS MARKETING -->
+                
                 <li class="{{Request::is('keuangan/*') ? 'active open' : ''}}">
                     <a href="#">
                         <i class="fa fa-usd"></i><span class="menu-title"> Keuangan</span>
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
+                        <li>
+                            <a href="#">Dashboard</a>
+                        </li>
                         <li class="{{Request::is('keuangan/inputtransaksi/*') ? 'active' : ''}}">
                             <a href="{{route('inputtransaksi.index')}}">Manajemen Input Transaksi</a>
                         </li>

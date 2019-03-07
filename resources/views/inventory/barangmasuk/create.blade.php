@@ -198,11 +198,7 @@
         loadingShow();
       },
       success : function (response){
-        if(response.status == 'berhasil'){
-          loadingHide();
-          messageSuccess('Success', 'Anda baru saja memperbarui jumlah qty!');
-          window.location.href = "{{route('barangmasuk.index')}}";
-        } else if(response.status == 'sukses'){
+        if(response.status == 'sukses'){
           loadingHide();
           messageSuccess('Success', 'Data berhasil ditambahkan!');
           window.location.href = "{{route('barangmasuk.index')}}";

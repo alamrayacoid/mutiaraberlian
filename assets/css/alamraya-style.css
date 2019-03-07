@@ -343,3 +343,18 @@ aside.sidebar{
 	display: inline-block;
 }
 /*End Ari Style*/
+
+.btn.btn-danger,
+.btn.btn-primary
+{
+	color: #000;
+}
+.btn.btn-info:hover,
+.btn.btn-info:active,
+.btn.btn-primary:hover,
+.btn.btn-primary:active,
+.btn.btn-warning:hover,
+.btn.btn-warning:active
+{
+	color: #fff;
+}
