@@ -8,7 +8,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="post" id="formEditGolHrgUnit">{{ csrf_field() }}
+            <form method="post" id="formEditGolHrgRange">{{ csrf_field() }}
                 <div class="modal-body">
                     <fieldset class="col-sm-12">
 

@@ -308,7 +308,7 @@ class HargaController extends Controller
         }
     }
 
-    public function editGolonganHarga(Request $request)
+    public function editGolonganHargaUnit(Request $request)
     {
         try{
             $id = Crypt::decrypt($request->golId);
@@ -325,6 +325,34 @@ class HargaController extends Controller
                 ->update([
                 'pcad_unit' => $request->satuanBarangUnitEdit,
                 'pcad_price' => Currency::removeRupiah($request->editharga),
+            ]);
+            DB::commit();
+            return response()->json(['status'=>"Success"]);
+        }catch (\Exception $e){
+            DB::rollBack();
+            return response()->json(['status'=>"Failed"]);
+        }
+    }
+
+    public function editGolonganHargaRange(Request $request)
+    {
+        try{
+            $id = Crypt::decrypt($request->golIdRange);
+            $detail = Crypt::decrypt($request->golDetailRange);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>"Failed"]);
+        }
+
+        DB::beginTransaction();
+        try{
+            DB::table('d_priceclassauthdt')
+                ->where('pcad_classprice', '=', $id)
+                ->where('pcad_detailid', '=', $detail)
+                ->update([
+                'pcad_unit' => $request->satuanBarangRangeEdit,
+                'pcad_price' => Currency::removeRupiah($request->edithargarange),
+                    'pcad_rangeqtystart' => $request->rangestartedit,
+                    'pcad_rangeqtyend' => $request->rangeendedit
             ]);
             DB::commit();
             return response()->json(['status'=>"Success"]);

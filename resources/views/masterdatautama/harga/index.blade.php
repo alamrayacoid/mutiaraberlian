@@ -310,7 +310,44 @@
                         btnClass: 'btn-blue',
                         text: 'Ya',
                         action: function () {
-                            return axios.post('{{route("dataharga.editgolonganharga")}}', data).then(function (response) {
+                            return axios.post('{{route("dataharga.editgolonganhargaunit")}}', data).then(function (response) {
+                                if (response.data.status == "Success") {
+                                    messageSuccess("Berhasil", "Data berhasil perbarui!");
+                                    reloadTable();
+                                } else {
+                                    messageWarning("Gagal", "Data gagal diperbarui!");
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+
+        })
+
+        $(document).on('submit', '#formEditGolHrgRange', function (evt) {
+            evt.preventDefault();
+            var data = $('#formEditGolHrgRange').serialize();
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 2.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apakah anda yakin ingin memperbarui data ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return axios.post('{{route("dataharga.editgolonganhargarange")}}', data).then(function (response) {
                                 if (response.data.status == "Success") {
                                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                                     reloadTable();
