@@ -47,6 +47,7 @@
 					@include('masterdatautama.harga.default.index')
 					@include('masterdatautama.harga.golongan.addGolongan')
 					@include('masterdatautama.harga.golongan.editGolongan')
+					@include('masterdatautama.harga.golongan.editGolHrgUnit')
 
 		        </div>
 			</div>
@@ -291,6 +292,43 @@
                 $("#rangeend").attr('readonly', true);
             }
         });
+
+        $(document).on('submit', '#formEditGolHrgUnit', function (evt) {
+            evt.preventDefault();
+            var data = $('#formEditGolHrgUnit').serialize();
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 2.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apakah anda yakin ingin memperbarui data ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return axios.post('{{route("dataharga.editgolonganharga")}}', data).then(function (response) {
+                                if (response.data.status == "Success") {
+                                    messageSuccess("Berhasil", "Data berhasil perbarui!");
+                                    reloadTable();
+                                } else {
+                                    messageWarning("Gagal", "Data gagal diperbarui!");
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+
+        })
 	});
 
     function setItem(info) {
@@ -327,6 +365,43 @@
 
 	function hapusGolongan(id) {
         deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan/"+id);
+    }
+
+    function editGolonganHarga(id, detail, item, harga, satuan) {
+        $.ajax({
+            url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
+            type: 'GET',
+            success: function( resp ) {
+                var option = '';
+                if (resp.id1 == satuan) {
+                    option += '<option value="'+resp.id1+'" selected>'+resp.unit1+'</option>';
+                } else {
+                    option += '<option value="'+resp.id1+'" >'+resp.unit1+'</option>';
+                }
+
+                if (resp.id2 != null && resp.id2 != resp.id1) {
+                    if (resp.id2 == satuan) {
+                        option += '<option value="'+resp.id2+'" selected>'+resp.unit2+'</option>';
+                    } else {
+                        option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                    }
+
+                }
+                if (resp.id3 != null && resp.id3 != resp.id1) {
+                    if (resp.id3 == satuan) {
+                        option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                    } else {
+                        option += '<option value="'+resp.id3+'" selected>'+resp.unit3+'</option>';
+                    }
+
+                }
+                $("#satuanBarangUnitEdit").append(option);
+            }
+        });
+        $("#golId").val(id);
+        $("#golDetail").val(detail);
+        $("#txtEditGolHrg").val(harga);
+        $('#editGolHrgUnit').modal('show');
     }
 
     function hapusGolonganHarga(id, detail) {
