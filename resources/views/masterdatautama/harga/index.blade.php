@@ -88,7 +88,8 @@
         tbl_item = $('#table_golonganharga').DataTable({
 			"paging":   false,
 			"ordering": false,
-			"info":     false
+			"info":     false,
+            "searching": false,
     	});
 
 		$(document).on('click','#btngolongan', function (evt) {
@@ -305,6 +306,10 @@
         deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan/"+id);
     }
 
+    function hapusGolonganHarga(id, detail) {
+        deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail);
+    }
+
     function addGolonganHarga(id, name) {
         $('#idGol').val(id);
         $('#txtGol').text(name);
@@ -315,6 +320,7 @@
             "paging":   false,
             "ordering": false,
             "info":     false,
+            "searching": false,
             responsive: true,
             processing: true,
             serverSide: true,

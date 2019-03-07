@@ -75,9 +75,9 @@ class HargaController extends Controller
             ->addColumn('action', function ($datas) {
                 return '<center><div class="btn-group btn-group-sm">
                                             <button class="btn btn-warning" title="Edit"
-                                                    type="button" onclick="editGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.$datas->pcad_detailid.'\')"><i class="fa fa-pencil" style="color: #ffffff"></i></button>
+                                                    type="button" onclick="editGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\')"><i class="fa fa-pencil" style="color: #ffffff"></i></button>
                                             <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.$datas->pcad_detailid.'\')"><i class="fa fa-trash"></i></button>
+                                                    title="Hapus" onclick="hapusGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\')"><i class="fa fa-trash"></i></button>
                                         </div></center>';
 
             })
@@ -244,6 +244,29 @@ class HargaController extends Controller
             }
 
             DB::table('d_priceclassauthdt')->insert($values);
+            DB::commit();
+            return response()->json(['status'=>"Success"]);
+        }catch (\Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>"Failed"]);
+        }
+    }
+
+    public function deleteGolonganHarga($id, $detail)
+    {
+        try{
+            $id = Crypt::decrypt($id);
+            $detail = Crypt::decrypt($detail);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>"Failed"]);
+        }
+
+        DB::beginTransaction();
+        try{
+            DB::table('d_priceclassauthdt')
+                ->where('pcad_classprice', '=', $id)
+                ->where('pcad_detailid', '=', $detail)
+                ->delete();
             DB::commit();
             return response()->json(['status'=>"Success"]);
         }catch (\Exception $e){
