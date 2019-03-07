@@ -205,4 +205,8 @@ class ProduksiController extends Controller
     {
         return view('produksi/returnproduksi/create');
     }
+    public function detail_produksi()
+    {
+        return view('produksi/orderproduksi/detail');
+    }
 }

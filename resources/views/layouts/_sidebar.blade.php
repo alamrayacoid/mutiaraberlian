@@ -74,7 +74,8 @@
             </li>
             <li class="notifications new">
                 <a href="" data-toggle="dropdown">
-                <i><img src="assets/img/author-sign.png" alt="" title="Otorisasi"></i>
+
+                <i><img src="{{ asset('assets/img/author-sign.png') }}" alt="" title="Otorisasi"></i>
                 <sup>
                     <span class="counter">6</span>
                 </sup>
@@ -122,14 +123,12 @@
             <li class="profile dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                     <div class="img" style="background-image: url('https://avatars3.githubusercontent.com/u/3959008?v=3&s=40')"> </div>
-                    <span class="name"> {{ Auth::user()->u_username }} </span>
+                    <span class="name"> {{ \App\d_username::getName() }} </span>
                 </a>
                 <div class="dropdown-menu profile-dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="{{route('profile')}}">
                         <i class="fa fa-user icon"></i> Profile </a>
-                    <a class="dropdown-item" href="#">
-                        <i class="fa fa-bell icon"></i> Notifications </a>
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="{{route('pengaturanpengguna.index')}}">
                         <i class="fa fa-gear icon"></i> Settings </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ route('logout') }}"
@@ -260,6 +259,34 @@
                     </ul>
                 </li>
                 <!-- END AKTIVITAS INVENTORY -->
+                <!-- AKTIVITAS MARKETING -->
+                <li class="{{Request::is('marketing/*') ? 'active open' : ''}}">
+                    <a href="#">
+                        <i class="fa fa-shopping-cart"></i><span class="menu-title"> Aktivitas Marketing</span>
+                        <i class="fa arrow"></i>
+                    </a>
+                    <ul class="sidebar-nav">
+                        <li class="{{Request::is('marketing/manajemenmarketing/*') ? 'active' : ''}}">
+                            <a href="{{route('mngmarketing.index')}}">Manajemen Marketing</a>
+                        </li>
+                        {{-- <li class="{{Request::is('marketing/targetrealisasipenjualan/*') ? 'active' : ''}}">
+                            <a href="{{route('targetrealisasi.index')}}">Target dan Realisasi Penjualan</a>
+                        </li> --}}
+                        <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
+                            <a href="{{route('penjualanpusat.index')}}">Penjualan Pusat</a>
+                        </li>
+                        <li class="{{Request::is('marketing/konsinyasipusat/*') ? 'active' : ''}}">
+                            <a href="{{route('konsinyasipusat.index')}}">Konsinyasi Pusat</a>
+                        </li>
+                        <li class="{{Request::is('marketing/marketingarea/*') ? 'active' : ''}}">
+                            <a href="{{ route('marketingarea.index') }}">Marketing Area</a>
+                        </li>
+                        <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
+                            <a href="{{ route('mngagen.index') }}">Manajemen Agen</a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- END AKTIVITAS MARKETING -->
                 <!-- AKTIVITAS SDM -->
                 <li class="{{Request::is('sdm/*') ? 'active open' : ''}}">
                     <a href="">
@@ -282,40 +309,31 @@
                     </ul>
                 </li>
                 <!-- END AKTIVITAS SDM -->
-                <!-- AKTIVITAS MARKETING -->
-                <li class="{{Request::is('marketing/*') ? 'active open' : ''}}">
-                    <a href="#">
-                        <i class="fa fa-shopping-cart"></i><span class="menu-title"> Aktivitas Marketing</span>
+
+                <li class="">
+                    <a href="">
+                        <i class="fa fa-money"></i><span class="menu-title"> Budgeting</span>
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
-                        <li class="{{Request::is('marketing/manajemenmarketing/*') ? 'active' : ''}}">
-                            <a href="{{route('mngmarketing.index')}}">Manajemen Marketing</a>
+                        <li>
+                            <a href="#">Manajemen Perencanaan</a>
                         </li>
-                        <li class="{{Request::is('marketing/targetrealisasipenjualan/*') ? 'active' : ''}}">
-                            <a href="{{route('targetrealisasi.index')}}">Target dan Realisasi Penjualan</a>
-                        </li>
-                        <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
-                            <a href="{{route('penjualanpusat.index')}}">Penjualan Pusat</a>
-                        </li>
-                        <li class="{{Request::is('marketing/konsinyasipusat/*') ? 'active' : ''}}">
-                            <a href="{{route('konsinyasipusat.index')}}">Konsinyasi Pusat</a>
-                        </li>
-                        <li class="{{Request::is('marketing/marketingarea/*') ? 'active' : ''}}">
-                            <a href="{{ route('marketingarea.index') }}">Marketing Area</a>
-                        </li>
-                        <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                            <a href="{{ route('mngagen.index') }}">Manajemen Agen</a>
+                        <li>
+                            <a href="#">Manajemen Penganggaran</a>
                         </li>
                     </ul>
                 </li>
-                <!-- END AKTIVITAS MARKETING -->
+                
                 <li class="{{Request::is('keuangan/*') ? 'active open' : ''}}">
                     <a href="#">
                         <i class="fa fa-usd"></i><span class="menu-title"> Keuangan</span>
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
+                        <li>
+                            <a href="#">Dashboard</a>
+                        </li>
                         <li class="{{Request::is('keuangan/inputtransaksi/*') ? 'active' : ''}}">
                             <a href="{{route('inputtransaksi.index')}}">Manajemen Input Transaksi</a>
                         </li>
@@ -365,17 +383,17 @@
                     </ul>
                 </li>
                 <!-- Notifikasi & Authorization -->
-                <li class="{{ Request::is('notifikasi/*') ? 'active open' : '' || Request::is('otorisasi/*') ? 'active open' : ''}}">
+                <li class="{{ Request::is('notifikasiotorisasi/*') ? 'active open' : ''}}">
                     <a href="">
                         <i class="fa fa-bell"></i><span class="menu-title"> Notifikasi & Otorisasi</span>
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
-                        <li class="{{Request::is('otoritas/*') ? 'open' : ''}}">
-                            <a href="#">Otorisasi</a>
+                        <li class="{{Request::is('notifikasiotorisasi/notifikasi/*') ? 'open' : ''}}">
+                            <a href="{{route('notifikasi')}}">Notifikasi</a>
                         </li>
-                        <li class="{{Request::is('notifikasi/*') ? 'open' : ''}}">
-                            <a href="">Notifikasi</a>
+                        <li class="{{Request::is('notifikasiotorisasi/otorisasi/*') ? 'open' : ''}}">
+                            <a href="{{route('otorisasi')}}">Otorisasi</a>
                         </li>
                     </ul>
                 </li>

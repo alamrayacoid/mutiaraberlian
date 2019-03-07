@@ -22,6 +22,7 @@
 <script src="{{asset('assets/bootstrap-datetimepicker/js/moment.js')}}"></script>
 <script src="{{asset('assets/datepicker/js/bootstrap-datepicker.min.js')}}"></script>
 <script src="{{asset('assets/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js')}}"></script>
+<script src="{{asset('assets/js/dobPicker.min.js')}}"></script>
 <script src="{{asset('assets/js/vue.js')}}"></script>
 <script src="{{asset('assets/js/axios/axios.min.js')}}"></script>
 <script type="text/javascript">
@@ -109,6 +110,47 @@
             icon: 'error',
             stack: false,
             hideAfter: 3000
+        });
+    }
+
+    function deleteConfirm(uri) {
+        return $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "get",
+                            url: uri,
+                            success: function (response) {
+                                if (response.status == 'Success') {
+                                    messageSuccess('Berhasil', 'Data berhasil hapus!');
+                                    reloadTable();
+                                } else {
+                                    messageWarning('Gagal', 'Gagal menghapus data!');
+                                }
+                            },
+                            error: function (e) {
+                                messageFailed('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
         });
     }
 

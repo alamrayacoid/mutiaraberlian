@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use DB;
+use File;
+use Image;
 use Session;
 use Validator;
 use carbon\Carbon;
@@ -162,6 +164,31 @@ class AgenController extends Controller
       }
     }
 
+
+    /**
+    * uploads images to storage_path and return image name.
+    *
+    * @param file $image
+    * @param string $nik (9271928xxx)
+    * @param string $type (photo, ktp, others)
+    * @return string $imageName (18276-ktp)
+    */
+    public function uploadImage($image, $nik, $type)
+    {
+      if ($image != null) {
+        $imageExt = $image->getClientOriginalExtension();
+        $imageName = $nik . '-' . $type . '.' .$imageExt;
+        $path = storage_path('/uploads/agen/' . $imageName);
+        if (File::exists($path)) {
+          File::delete($path);
+        }
+        Image::make($image)->resize(300, null, function($constraint) {
+          $constraint->aspectRatio();
+        })->save(storage_path('/uploads/agen/' . $imageName));
+        return $imageName;
+      }
+    }
+
     /**
      * Return DataTable list for view.
      *
@@ -233,6 +260,13 @@ class AgenController extends Controller
         // insert to table m_agen
         $codeAgen = CodeGenerator::code('m_agen', 'a_code', 7, 'A');
         $id = DB::table('m_agen')->max('a_id') + 1;
+
+        $photo = $this->uploadImage(
+          $request->file('photo'),
+          $codeAgen,
+          'photo'
+        );
+
         DB::table('m_agen')
           ->insert([
             'a_id' => $id,
@@ -250,12 +284,13 @@ class AgenController extends Controller
             'a_class' => $request->a_class,
             'a_type' => $request->type_hidden,
             'a_parent' => $request->parent,
+            'a_img' => $photo,
             'a_insert' => Carbon::now(),
             'a_update' => Carbon::now()
           ]);
 
         // insert to table m_company
-        $codeCompany = CodeGenerator::code('m_company', 'c_id', 8, 'MB');
+        $codeCompany = CodeGenerator::code('m_company', 'c_id', 7, 'MB');
         DB::table('m_company')
           ->insert([
             'c_id' => $codeCompany,
@@ -322,6 +357,15 @@ class AgenController extends Controller
           'message' => $errors
         ]);
       }
+      if ($request->hasFile('photo')) {
+        $photo = $this->uploadImage(
+          $request->file('photo'),
+          $request->code,
+          'photo'
+        );
+      } else {
+        $photo = $request->current_photo;
+      }
       // start: execute update data
       DB::beginTransaction();
       try {
@@ -342,6 +386,7 @@ class AgenController extends Controller
             'a_class' => $request->a_class,
             'a_type' => $request->type_hidden,
             'a_parent' => $request->parent,
+            'a_img' => $photo,
             'a_update' => Carbon::now()
           ]);
 

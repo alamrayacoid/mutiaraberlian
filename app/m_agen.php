@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class m_agen extends Model
 {
     protected $table       = 'm_agen';
+    protected $primaryKey  = 'a_code';
 
     public function username()
     {
