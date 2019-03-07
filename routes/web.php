@@ -84,6 +84,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/harga/cari-barang', 'Master\HargaController@cariBarang')->name('dataharga.caribarang');
     Route::get('/masterdatautama/harga/get-satuan/{id}', 'Master\HargaController@getSatuan')->name('dataharga.getsatuan');
     Route::post('/masterdatautama/harga/add-golongan-harga', 'Master\HargaController@addGolonganHarga')->name('dataharga.addgolonganharga');
+    Route::get('/masterdatautama/harga/get-golongan-harga/{id}', 'Master\HargaController@getGolonganHarga')->name('dataharga.getgolonganharga');
     Route::get('/masterdatautama/harga/satuan/create', 'Master\HargaController@create_golonganharga')->name('golonganharga.create');
     Route::get('/masterdatautama/harga/satuan/edit', 'Master\HargaController@edit_golonganharga')->name('golonganharga.edit');
 
