@@ -261,28 +261,6 @@
                     </ul>
                 </li>
                 <!-- END AKTIVITAS INVENTORY -->
-                <!-- AKTIVITAS SDM -->
-                <li class="{{Request::is('sdm/*') ? 'active open' : ''}}">
-                    <a href="">
-                        <i class="fa fa-group"></i><span class="menu-title"> Aktivitas SDM</span>
-                        <i class="fa arrow"></i>
-                    </a>
-                    <ul class="sidebar-nav">
-                        <li class="{{Request::is('sdm/prosesrekruitmen/*') ? 'active' : ''}}">
-                            <a href="{{route('rekruitmen.index')}}">Proses Rekruitmen</a>
-                        </li>
-                        <li class="{{Request::is('sdm/kinerjasdm/*') ? 'active' : ''}}">
-                            <a href="{{route('kinerjasdm.index')}}">Kelola Kinerja SDM</a>
-                        </li>
-                        <li class="{{Request::is('sdm/absensisdm/*') ? 'active' : ''}}">
-                            <a href="{{route('absensisdm.index')}}">Kelola Abesensi SDM</a>
-                        </li>
-                        <li class="{{Request::is('sdm/penggajian/*') ? 'active' : ''}}">
-                            <a href="{{ route('penggajian.index') }}">Kelola Penggajian</a>
-                        </li>
-                    </ul>
-                </li>
-                <!-- END AKTIVITAS SDM -->
                 <!-- AKTIVITAS MARKETING -->
                 <li class="{{Request::is('marketing/*') ? 'active open' : ''}}">
                     <a href="#">
@@ -311,12 +289,53 @@
                     </ul>
                 </li>
                 <!-- END AKTIVITAS MARKETING -->
+                <!-- AKTIVITAS SDM -->
+                <li class="{{Request::is('sdm/*') ? 'active open' : ''}}">
+                    <a href="">
+                        <i class="fa fa-group"></i><span class="menu-title"> Aktivitas SDM</span>
+                        <i class="fa arrow"></i>
+                    </a>
+                    <ul class="sidebar-nav">
+                        <li class="{{Request::is('sdm/prosesrekruitmen/*') ? 'active' : ''}}">
+                            <a href="{{route('rekruitmen.index')}}">Proses Rekruitmen</a>
+                        </li>
+                        <li class="{{Request::is('sdm/kinerjasdm/*') ? 'active' : ''}}">
+                            <a href="{{route('kinerjasdm.index')}}">Kelola Kinerja SDM</a>
+                        </li>
+                        <li class="{{Request::is('sdm/absensisdm/*') ? 'active' : ''}}">
+                            <a href="{{route('absensisdm.index')}}">Kelola Abesensi SDM</a>
+                        </li>
+                        <li class="{{Request::is('sdm/penggajian/*') ? 'active' : ''}}">
+                            <a href="{{ route('penggajian.index') }}">Kelola Penggajian</a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- END AKTIVITAS SDM -->
+
+                <li class="">
+                    <a href="">
+                        <i class="fa fa-money"></i><span class="menu-title"> Budgeting</span>
+                        <i class="fa arrow"></i>
+                    </a>
+                    <ul class="sidebar-nav">
+                        <li>
+                            <a href="#">Manajemen Perencanaan</a>
+                        </li>
+                        <li>
+                            <a href="#">Manajemen Penganggaran</a>
+                        </li>
+                    </ul>
+                </li>
+                
                 <li class="{{Request::is('keuangan/*') ? 'active open' : ''}}">
                     <a href="#">
                         <i class="fa fa-usd"></i><span class="menu-title"> Keuangan</span>
                         <i class="fa arrow"></i>
                     </a>
                     <ul class="sidebar-nav">
+                        <li>
+                            <a href="#">Dashboard</a>
+                        </li>
                         <li class="{{Request::is('keuangan/inputtransaksi/*') ? 'active' : ''}}">
                             <a href="{{route('inputtransaksi.index')}}">Manajemen Input Transaksi</a>
                         </li>
