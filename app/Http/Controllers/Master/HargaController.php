@@ -67,7 +67,7 @@ class HargaController extends Controller
                 return $datas->u_name;
             })
             ->addColumn('harga', function ($datas){
-                return Currency::addRupiah($datas->pcad_price);
+                return '<span class="text-right">'.Currency::addRupiah($datas->pcad_price).'</span>';
             })
             ->addColumn('jenis_pembayaran', function ($datas){
                 return $datas->pcad_payment=="K" ? "Konsinyasi" : "Cash";
