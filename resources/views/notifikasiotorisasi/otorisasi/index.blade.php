@@ -11,6 +11,10 @@
 	.card-custom{
 		min-height: calc(100vh / 2);
 	}
+	.card-custom:hover,
+	.card-custom:focus-within{
+		background-color: rgba(255,255,255,.6);
+	}
 </style>
 @endsection
 
@@ -32,7 +36,7 @@
 		<div class="row">
 
 			<div class="col-md-4 col-sm-6 col-12">
-				<a href="#">
+				<a href="{{route('perubahanhargajual')}}">
 					<div class="card text-center p-4 card-custom text-info">
 						<img src="{{asset('assets/img/rupiah.png')}}" height="128px" width="128px">
 						<h6>Otorisasi Perubahan Harga Jual</h6>
@@ -41,8 +45,8 @@
 			</div>
 
 			<div class="col-md-4 col-sm-6 col-12">
-				<a href="#">
-					<div class="card text-center p-4 card-custom text-secondary">
+				<a href="{{route('pengeluaranlebih')}}">
+					<div class="card text-center p-4 card-custom text-info">
 						<img src="{{asset('assets/img/comparison1.png')}}" height="128px" width="128px">
 						<h6>Otorisasi Pengeluaran Lebih Dari Nilai Tertentu</h6>
 					</div>
@@ -50,8 +54,8 @@
 			</div>
 
 			<div class="col-md-4 col-sm-6 col-12">
-				<a href="#">
-					<div class="card text-center p-4 card-custom text-success">
+				<a href="{{route('opname_otorisasi')}}">
+					<div class="card text-center p-4 card-custom text-info">
 						<img src="{{asset('assets/img/box.png')}}" height="128px" width="128px">
 						<h6>Otorisasi Opname Item Produk</h6>
 					</div>
@@ -59,8 +63,8 @@
 			</div>
 
 			<div class="col-md-4 col-sm-6 col-12">
-				<a href="#">
-					<div class="card text-center p-4 card-custom text-warning">
+				<a href="{{route('adjustment')}}">
+					<div class="card text-center p-4 card-custom text-info">
 						<img src="{{asset('assets/img/manufacture.png')}}" height="128px" width="128px">
 						<h6>Otorisasi Adjustment Item Produk</h6>
 					</div>
@@ -68,8 +72,8 @@
 			</div>
 
 			<div class="col-md-4 col-sm-6 col-12">
-				<a href="#">
-					<div class="card text-center p-4 card-custom text-danger">
+				<a href="{{route('revisi')}}">
+					<div class="card text-center p-4 card-custom text-info">
 						<img src="{{asset('assets/img/checklist.png')}}" height="128px" width="128px">
 						<h6>Otorisasi Revisi Data</h6>
 					</div>
