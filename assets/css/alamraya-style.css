@@ -344,7 +344,9 @@ aside.sidebar{
 }
 /*End Ari Style*/
 
-.btn.btn-danger{
+.btn.btn-danger,
+.btn.btn-primary
+{
 	color: #000;
 }
 .btn.btn-info:hover,

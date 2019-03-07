@@ -271,9 +271,9 @@
                         <li class="{{Request::is('marketing/manajemenmarketing/*') ? 'active' : ''}}">
                             <a href="{{route('mngmarketing.index')}}">Manajemen Marketing</a>
                         </li>
-                        <li class="{{Request::is('marketing/targetrealisasipenjualan/*') ? 'active' : ''}}">
+                        {{-- <li class="{{Request::is('marketing/targetrealisasipenjualan/*') ? 'active' : ''}}">
                             <a href="{{route('targetrealisasi.index')}}">Target dan Realisasi Penjualan</a>
-                        </li>
+                        </li> --}}
                         <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
                             <a href="{{route('penjualanpusat.index')}}">Penjualan Pusat</a>
                         </li>
