@@ -11,6 +11,8 @@ use DataTables;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\EncryptException;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Currency;
+use Auth;
 
 class HargaController extends Controller
 {
@@ -36,7 +38,50 @@ class HargaController extends Controller
                                         </div></center>';
 
             })
-            ->rawColumns(['detail', 'action'])
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+
+    public function getGolonganHarga($id)
+    {
+        $datas = DB::table('d_priceclassauthdt')
+            ->join('m_item', function($item){
+                $item->on('d_priceclassauthdt.pcad_item', '=', 'm_item.i_id');
+            })
+        ->join('m_unit', function($unit){
+            $unit->on('d_priceclassauthdt.pcad_unit', '=', 'm_unit.u_id');
+        })
+        ->where('d_priceclassauthdt.pcad_classprice', '=', Crypt::decrypt($id));
+        return Datatables::of($datas)
+            ->addIndexColumn()
+            ->addColumn('item', function ($datas){
+                return $datas->i_name;
+            })
+            ->addColumn('jenis', function ($datas){
+                return $datas->pcad_type=="R" ? "Range" : "Unit";
+            })
+            ->addColumn('range', function ($datas){
+                return $datas->pcad_rangeqtystart .'-'. $datas->pcad_rangeqtyend;
+            })
+            ->addColumn('satuan', function ($datas){
+                return $datas->u_name;
+            })
+            ->addColumn('harga', function ($datas){
+                return '<span class="text-right">'.Currency::addRupiah($datas->pcad_price).'</span>';
+            })
+            ->addColumn('jenis_pembayaran', function ($datas){
+                return $datas->pcad_payment=="K" ? "Konsinyasi" : "Cash";
+            })
+            ->addColumn('action', function ($datas) {
+                return '<center><div class="btn-group btn-group-sm">
+                                            <button class="btn btn-warning" title="Edit"
+                                                    type="button" onclick="editGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\')"><i class="fa fa-pencil" style="color: #ffffff"></i></button>
+                                            <button class="btn btn-danger" type="button"
+                                                    title="Hapus" onclick="hapusGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\')"><i class="fa fa-trash"></i></button>
+                                        </div></center>';
+
+            })
+            ->rawColumns(['item', 'jenis', 'range', 'satuan', 'harga', 'jenis_pembayaran', 'action'])
             ->make(true);
     }
 
@@ -159,6 +204,75 @@ class HargaController extends Controller
             })
             ->first();
         return Response::json($data);
+    }
+
+    public function addGolonganHarga(Request $request)
+    {
+        try{
+            $idGol = Crypt::decrypt($request->idGol);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>"Failed"]);
+        }
+        DB::beginTransaction();
+        try{
+            if ($request->jenisharga == "U") {
+                $values = [
+                    'pcad_classprice' => $idGol,
+                    'pcad_detailid' => (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) ? (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid'))+1 : 1,
+                    'pcad_item' => $request->idBarang,
+                    'pcad_unit' => $request->satuanBarang,
+                    'pcad_type' => $request->jenisharga,
+                    'pcad_payment' => $request->jenis_pembayaran,
+                    'pcad_rangeqtystart' => 1,
+                    'pcad_rangeqtyend' => 1,
+                    'pcad_price' => Currency::removeRupiah($request->harga),
+                    'pcad_user' => Auth::user()->u_id
+                ];
+            } else {
+                $values = [
+                    'pcad_classprice' => $idGol,
+                    'pcad_detailid' => (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) ? (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid'))+1 : 1,
+                    'pcad_item' => $request->idBarang,
+                    'pcad_unit' => $request->satuanrange,
+                    'pcad_type' => $request->jenisharga,
+                    'pcad_payment' => $request->jenis_pembayaranrange,
+                    'pcad_rangeqtystart' => $request->rangestart,
+                    'pcad_rangeqtyend' => $request->rangeend,
+                    'pcad_price' => Currency::removeRupiah($request->hargarange),
+                    'pcad_user' => Auth::user()->u_id
+                ];
+            }
+
+            DB::table('d_priceclassauthdt')->insert($values);
+            DB::commit();
+            return response()->json(['status'=>"Success"]);
+        }catch (\Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>"Failed"]);
+        }
+    }
+
+    public function deleteGolonganHarga($id, $detail)
+    {
+        try{
+            $id = Crypt::decrypt($id);
+            $detail = Crypt::decrypt($detail);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>"Failed"]);
+        }
+
+        DB::beginTransaction();
+        try{
+            DB::table('d_priceclassauthdt')
+                ->where('pcad_classprice', '=', $id)
+                ->where('pcad_detailid', '=', $detail)
+                ->delete();
+            DB::commit();
+            return response()->json(['status'=>"Success"]);
+        }catch (\Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>"Failed"]);
+        }
     }
 
     public function create_golonganharga()

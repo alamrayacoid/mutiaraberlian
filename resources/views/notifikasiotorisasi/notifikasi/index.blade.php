@@ -11,6 +11,10 @@
 	.card-custom{
 		min-height: calc(100vh / 2);
 	}
+	.card-custom:hover,
+	.card-custom:focus-within{
+		background-color: rgba(255,255,255,.6);
+	}
 </style>
 @endsection
 
@@ -42,7 +46,7 @@
 
 			<div class="col-md-4 col-sm-6 col-12">
 				<a href="#">
-					<div class="card text-center p-4 card-custom text-secondary">
+					<div class="card text-center p-4 card-custom text-info">
 						<img src="{{asset('assets/img/graph.png')}}" height="128px" width="128px">
 						<h6>Notifikasi Informasi Analisa Finansial</h6>
 					</div>
@@ -51,7 +55,7 @@
 
 			<div class="col-md-4 col-sm-6 col-12">
 				<a href="#">
-					<div class="card text-center p-4 card-custom text-success">
+					<div class="card text-center p-4 card-custom text-info">
 						<img src="{{asset('assets/img/caution.png')}}" height="128px" width="128px">
 						<h6>Notifikasi Peringatan</h6>
 					</div>
