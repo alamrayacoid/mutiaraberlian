@@ -126,11 +126,9 @@
                     <span class="name"> {{ \App\d_username::getName() }} </span>
                 </a>
                 <div class="dropdown-menu profile-dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="{{route('profile')}}">
                         <i class="fa fa-user icon"></i> Profile </a>
-                    <a class="dropdown-item" href="#">
-                        <i class="fa fa-bell icon"></i> Notifications </a>
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="{{route('pengaturanpengguna.index')}}">
                         <i class="fa fa-gear icon"></i> Settings </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ route('logout') }}"
@@ -271,9 +269,9 @@
                         <li class="{{Request::is('marketing/manajemenmarketing/*') ? 'active' : ''}}">
                             <a href="{{route('mngmarketing.index')}}">Manajemen Marketing</a>
                         </li>
-                        <li class="{{Request::is('marketing/targetrealisasipenjualan/*') ? 'active' : ''}}">
+                        {{-- <li class="{{Request::is('marketing/targetrealisasipenjualan/*') ? 'active' : ''}}">
                             <a href="{{route('targetrealisasi.index')}}">Target dan Realisasi Penjualan</a>
-                        </li>
+                        </li> --}}
                         <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
                             <a href="{{route('penjualanpusat.index')}}">Penjualan Pusat</a>
                         </li>
