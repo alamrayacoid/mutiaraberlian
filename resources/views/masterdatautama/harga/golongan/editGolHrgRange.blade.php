@@ -1,4 +1,4 @@
-<div class="modal fade" id="editGolHrgUnit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+<div class="modal fade" id="editGolHrgRange" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content" style="border-radius: 5px;">
@@ -12,14 +12,31 @@
                 <div class="modal-body">
                     <fieldset class="col-sm-12">
 
-                        <input type="hidden" name="golId" id="golId">
-                        <input type="hidden" name="golDetail" id="golDetail">
+                        <input type="hidden" name="golIdRange" id="golIdRange">
+                        <input type="hidden" name="golDetailRange" id="golDetailRange">
                         <div class="row">
+                            <div>
+                                <label class="col-sm-3">Range</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="col-sm-12">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control form-control-sm" name="rangestartedit"
+                                               id="rangestartedit">
+                                        <div class="input-group-addon">
+                                            <span>-</span>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" name="rangeendedit"
+                                               id="rangeendedit">
+                                    </div>
+
+                                </div>
+                            </div>
                             <div>
                                 <label class="col-sm-3">Satuan</label>
                             </div>
                             <div class="col-sm-9">
-                                <select name="satuanBarangUnitEdit" id="satuanBarangUnitEdit"
+                                <select name="satuanBarangRangeEdit" id="satuanBarangRangeEdit"
                                         class="form-control form-control-sm select2">
                                     <option value="">Pilih Satuan</option>
                                 </select>
@@ -28,8 +45,9 @@
                                 <label class="col-sm-3">Harga</label>
                             </div>
                             <div class="col-sm-9" style="margin-left:7px; margin-top: 20px;">
-                                <input type="text" class="form-control form-control-sm input-rupiah" id="txtEditGolHrg"
-                                       name="editharga">
+                                <input type="text" class="form-control form-control-sm input-rupiah"
+                                       id="txtEditGolHrgRange"
+                                       name="edithargarange">
                             </div>
                         </div>
 
