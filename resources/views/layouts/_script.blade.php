@@ -132,38 +132,14 @@
                             url: uri,
                             success: function (response) {
                                 if (response.status == 'Success') {
-                                    $.toast({
-                                        heading: 'Success',
-                                        text: 'Data berhasil hapus !',
-                                        bgColor: '#00b894',
-                                        textColor: 'white',
-                                        loaderBg: '#55efc4',
-                                        icon: 'success',
-                                        stack: false
-                                    });
+                                    messageSuccess('Berhasil', 'Data berhasil hapus!');
                                     reloadTable();
                                 } else {
-                                    $.toast({
-                                        heading: 'Warning',
-                                        text: 'Gagal menghapus data!',
-                                        bgColor: '#00b894',
-                                        textColor: 'white',
-                                        loaderBg: '#55efc4',
-                                        icon: 'warning',
-                                        stack: false
-                                    });
+                                    messageWarning('Gagal', 'Gagal menghapus data!');
                                 }
                             },
                             error: function (e) {
-                                $.toast({
-                                    heading: 'Warning',
-                                    text: e.message,
-                                    bgColor: '#00b894',
-                                    textColor: 'white',
-                                    loaderBg: '#55efc4',
-                                    icon: 'warning',
-                                    stack: false
-                                });
+                                messageFailed('Peringatan', e.message);
                             }
                         });
                     }

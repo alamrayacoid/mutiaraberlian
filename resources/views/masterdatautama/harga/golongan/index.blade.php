@@ -11,7 +11,7 @@
                     <div class="col-md-5 col-sm-12">
                         <div class="">
                             <table class="table table-hover table-striped display nowrap" cellspacing="0"
-                                   id="table_golonganharga">
+                                   id="table_golongan">
                                 <thead class="bg-primary">
                                 <tr>
                                     <th width="10%">No</th>
@@ -75,7 +75,7 @@
                         <div>
                             <div class="table-responsive">
                                 <table class="table table-hover table-striped display nowrap" cellspacing="0"
-                                       id="#table_item">
+                                       id="table_golonganharga">
                                     <thead class="bg-primary">
                                     <tr>
                                         <th width="1%">No</th>
@@ -89,23 +89,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Item</td>
-                                        <td>Satuan</td>
-                                        <td>1</td>
-                                        <td>Botol</td>
-                                        <td>0.00</td>
-                                        <td>Cas</td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm">
-                                                <button class="btn btn-warning btn-edit-golonganharga" title="Edit"
-                                                        type="button"><i class="fa fa-pencil"></i></button>
-                                                <button class="btn btn-danger btn-disable-golonganharga" type="button"
-                                                        title="Disable"><i class="fa fa-times-circle"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
+
                                     </tbody>
                                 </table>
                             </div>

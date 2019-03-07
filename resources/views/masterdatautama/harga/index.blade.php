@@ -62,7 +62,7 @@
 <script type="text/javascript">
     var tbl_gln, tbl_item;
 	$(document).ready(function(){
-        tbl_gln = $('#table_golonganharga').DataTable({
+        tbl_gln = $('#table_golongan').DataTable({
 			"paging":   false,
 			"ordering": false,
 			"info":     false,
@@ -84,10 +84,12 @@
                     .html('<button type="button" id="btngolongan" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Tambah</button>');
             }
         });
-        tbl_item = $('#table_list_item').DataTable({
+
+        tbl_item = $('#table_golonganharga').DataTable({
 			"paging":   false,
 			"ordering": false,
-			"info":     false
+			"info":     false,
+            "searching": false,
     	});
 
 		$(document).on('click','#btngolongan', function (evt) {
@@ -253,13 +255,17 @@
             evt.preventDefault();
             var data = $('#formsetharga').serialize();
             axios.post('{{route("dataharga.addgolonganharga")}}', data).then(function (response) {
-                console.log(response)
-                // if (response.data.status == "Success") {
-                //     messageSuccess("Berhasil", "Data berhasil perbarui!");
-                //     reloadTable();
-                // } else {
-                //     messageWarning("Gagal", "Data gagal diperbarui!");
-                // }
+                console.log(response);
+                if (response.data.status == "Success") {
+                    messageSuccess("Berhasil", "Data berhasil disimpan!");
+                    $("#formsetharga").trigger('reset');
+                    $("#txtGol").text('~');
+                    reloadTable();
+                    $("#satuan").addClass('d-none');
+                    $("#range").addClass('d-none');
+                } else {
+                    messageWarning("Gagal", "Data gagal disimpan!");
+                }
             });
         });
 	});
@@ -280,12 +286,14 @@
                     option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
                 }
                 $("#satuanBarang").append(option);
+                $("#satuanrange").append(option);
             }
         });
     }
 
 	function reloadTable() {
         tbl_gln.ajax.reload();
+        tbl_item.ajax.reload();
     }
 
     function editGolongan(id, name) {
@@ -298,9 +306,39 @@
         deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan/"+id);
     }
 
+    function hapusGolonganHarga(id, detail) {
+        deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail);
+    }
+
     function addGolonganHarga(id, name) {
         $('#idGol').val(id);
         $('#txtGol').text(name);
+        if ($.fn.DataTable.isDataTable("#table_golonganharga")) {
+            $('#table_golonganharga').DataTable().clear().destroy();
+        }
+        tbl_item = $('#table_golonganharga').DataTable({
+            "paging":   false,
+            "ordering": false,
+            "info":     false,
+            "searching": false,
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('/masterdatautama/harga/get-golongan-harga/') }}"+"/"+$("#idGol").val(),
+                type: "get"
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'item'},
+                {data: 'jenis'},
+                {data: 'range'},
+                {data: 'satuan'},
+                {data: 'harga'},
+                {data: 'jenis_pembayaran'},
+                {data: 'action'}
+            ]
+        });
     }
 </script>
 
@@ -315,7 +353,7 @@ $(document).ready(function(){
 
 		if (ini === 'U') {
 		    $("#qty").val(1);
-		    $("#qty").attr('readonly');
+		    $("#qty").attr('readonly', true);
 			satuan.removeClass('d-none');
 			range.addClass('d-none');
 		} else if(ini === 'R'){
