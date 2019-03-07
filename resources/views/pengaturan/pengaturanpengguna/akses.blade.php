@@ -18,7 +18,7 @@
 		<div class="row">
 
 			<div class="col-12">
-				
+
 				<div class="card">
                     <div class="card-block">
                     <div class="row">
@@ -29,9 +29,9 @@
                                 </div>
                                 <div class="profil-info col-md-8">
                                     <div>
-                                        <h2 class="mb-4">Bambang</h2>
-                                        <h4>Admin</h4>
-                                        <p>Rungkut</p>
+                                        <h2 class="mb-4">{{$nama}}</h2>
+                                        <h4>{{$level->m_name}}</h4>
+                                        <p>{{$address}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -49,20 +49,20 @@
                                         <td>
                                             <strong>Last Login</strong>
                                         </td>
-                                        <td>20/02/2019 01:31</td>
+                                        <td>{{Carbon\Carbon::parse(Auth::user()->u_lastlogin)->format('d/m/Y G:i:s')}}</td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <strong>Last Logout</strong>
                                         </td>
-                                        <td>29/01/2019 11:32 </td>
+                                        <td>{{Carbon\Carbon::parse(Auth::user()->u_lastlogout)->format('d/m/Y G:i:s')}}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div class="col-md-3">
                             <label for="">Username</label>
-                            <h2 class="no margins">BradPit</h2>
+                            <h2 class="no margins">{{Auth::user()->u_username}}</h2>
                         </div>
                     </div>
                     <div class="table-responsive mt-4">
@@ -78,27 +78,71 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><strong>Pembelian</strong></td>
-                                    <td><label><input class="checkbox rounded" checked="checked" type="checkbox"><span></span></label></td>
-                                    <td><label><input class="checkbox rounded" checked="checked" type="checkbox"><span></span></label></td>
-                                    <td><label><input class="checkbox rounded" type="checkbox"><span></span></label></td>
-                                    <td><label><input class="checkbox rounded" type="checkbox"><span></span></label></td>
-                                </tr>
-                                <tr>
-                                    <td class="pl-4">Rencana Pembelian</td>
-                                    <td><label><input class="checkbox rounded" checked="checked" type="checkbox"><span></span></label></td>
-                                    <td><label><input class="checkbox rounded" checked="checked" type="checkbox"><span></span></label></td>
-                                    <td><label><input class="checkbox rounded" type="checkbox"><span></span></label></td>
-                                    <td><label><input class="checkbox rounded" type="checkbox"><span></span></label></td>
-                                </tr>
-                                <tr>
-                                    <td class="pl-4">Konfirmasi Order</td>
-                                    <td><label><input class="checkbox rounded" checked="checked" type="checkbox"><span></span></label></td>
-                                    <td><label><input class="checkbox rounded" checked="checked" type="checkbox"><span></span></label></td>
-                                    <td><label><input class="checkbox rounded" type="checkbox"><span></span></label></td>
-                                    <td><label><input class="checkbox rounded" type="checkbox"><span></span></label></td>
-                                </tr>
+															@php
+																	$nomor=1;
+															@endphp
+
+															@foreach($menu as $index => $data)
+
+															@if($data->a_parent == $data->a_id)
+																	<tr style="background: #f7e8e8">
+																			<td>
+																					 <input type="hidden" name="id_access[]" value="{{$data->a_id}}">
+																					{{$nomor}}. &nbsp; <strong>{{$data->a_name}}</strong>
+																			</td>
+																			<td>
+
+																					 <input type="hidden" value="N" class="checkbox" name="read[]"  id="read-{{$data->a_id}}">
+																					 <label><input class="checkbox checkbox-info rounded" onchange="simpanRead('{{$data->a_id}}')"  id="read-{{$data->a_id}}" type="checkbox"><span></span></label>
+
+																			</td>
+																			<td>
+																					<input type="hidden" value="N" class="checkbox" name="insert[]" id="insert-{{$data->a_id}}">
+																					<label><input class="checkbox rounded" onchange="simpanInsert('{{$data->a_id}}')"  id="insert-{{$data->a_id}}" type="checkbox"><span></span></label>
+																			</td>
+																			<td>
+																					<input type="hidden" value="N" class="checkbox" name="update[]" id="update-{{$data->a_id}}">
+																					<label><input class="checkbox rounded" onchange="simpanUpdate('{{$data->a_id}}')"  id="update-{{$data->a_id}}" type="checkbox"><span></span></label>
+																			</td>
+																			<td>
+																					 <input type="hidden" value="N" class="checkbox" name="delete[]" id="delete-{{$data->a_id}}">
+																					 <label><input class="checkbox rounded" onchange="simpanDelete('{{$data->a_id}}')"  id="delete-{{$data->a_id}}" type="checkbox"><span></span></label>
+																			</td>
+																					@php
+																							$nomor++;
+																					@endphp
+																			</tr>
+																	@else
+																	<tr>
+																			<td>
+																			<input type="hidden" name="id_access[]" value="{{$data->a_id}}">
+																					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{$data->a_name}}
+																			</td>
+																			<td>
+																			<input type="checkbox" class="checkbox" onchange="simpanRead('{{$data->a_id}}')"  id="read1-{{$data->a_id}}">
+																			 <label><input class="checkbox rounded" value="N" name="read[]"  id="read-{{$data->a_id}}" type="checkbox"><span></span></label>
+																			</td>
+																			<td>
+																					<input type="checkbox" class="checkbox" onchange="simpanInsert('{{$data->a_id}}')" id="insert1-{{$data->a_id}}">
+
+																					<label><input class="checkbox rounded" value="N" name="insert[]"  id="insert-{{$data->a_id}}" type="checkbox"><span></span></label>
+																			</td>
+																			<td>
+																					<input type="checkbox" class="checkbox" onchange="simpanUpdate('{{$data->a_id}}')" id="update1-{{$data->a_id}}">
+
+																					 <label><input class="checkbox rounded" value="N" name="update[]"  id="update-{{$data->a_id}}" type="checkbox"><span></span></label>
+
+																			</td>
+																			<td>
+																					<input type="checkbox" class="checkbox" onchange="simpanDelete('{{$data->a_id}}')" id="delete1-{{$data->a_id}}">
+
+																					<label><input class="checkbox rounded" value="N" name="delete[]"  id="delete-{{$data->a_id}}" type="checkbox"><span></span></label>
+																			</td>
+																	</tr>
+																	@endif
+
+
+														 @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -129,5 +173,39 @@
         "info":     false,
         "search":   false
 	});
+
+	function simpanRead(id){
+if ($('#read1-'+id).prop('checked')) {
+	 $('#read-'+id).val('Y')
+} else {
+	 $('#read-'+id).val('N')
+}
+}
+
+function simpanInsert(id){
+if ($('#insert1-'+id).prop('checked')) {
+			$('#insert-'+id).val('Y')
+} else {
+	 $('#insert-'+id).val('N')
+}
+}
+
+
+function simpanUpdate(id){
+
+if ($('#update1-'+id).prop('checked')) {
+	 $('#update-'+id).val('Y')
+} else {
+	 $('#update-'+id).val('N')
+}
+}
+
+function simpanDelete(id){
+if ($('#delete1-'+id).prop('checked')) {
+ $('#delete-'+id).val('Y')
+} else {
+	 $('#delete-'+id).val('N')
+}
+}
 </script>
 @endsection
