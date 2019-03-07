@@ -225,6 +225,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'CodeGenerator' => App\Http\Controllers\CodeGenerator::class,
+        'RemoveCurrency' => App\Http\Controllers\RemoveCurrency::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         'Image' => Intervention\Image\Facades\Image::class,
 

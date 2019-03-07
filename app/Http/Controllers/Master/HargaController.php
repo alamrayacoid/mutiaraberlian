@@ -11,6 +11,7 @@ use DataTables;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\EncryptException;
 use Illuminate\Contracts\Encryption\DecryptException;
+use RemoveCurrency;
 
 class HargaController extends Controller
 {
@@ -159,6 +160,50 @@ class HargaController extends Controller
             })
             ->first();
         return Response::json($data);
+    }
+
+    public function addGolonganHarga(Request $request)
+    {
+        try{
+            $idGol = Crypt::decrypt($request->idGol);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>"Failed"]);
+        }
+        DB::beginTransaction();
+        try{
+            if ($request->jenisharga == "U") {
+                $values = [
+                    'pcad_classprice' => $idGol,
+                    'pcad_detailid' => (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) ? (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid'))+1 : 1,
+                    'pcad_item' => $request->idBarang,
+                    'pcad_unit' => $request->satuanBarang,
+                    'pcad_type' => $request->jenisharga,
+                    'pcad_payment' => $request->jenis_pembayaran,
+                    'pcad_rangeqtystart' => 1,
+                    'pcad_rangeqtyend' => 1,
+                    'pcad_price' => RemoveCurrency::rupiah($request->harga)
+                ];
+            } else {
+                $values = [
+                    'pcad_classprice' => $idGol,
+                    'pcad_detailid' => (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) ? (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid'))+1 : 1,
+                    'pcad_item' => $request->idBarang,
+                    'pcad_unit' => $request->satuanBarang,
+                    'pcad_type' => $request->jenisharga,
+                    'pcad_payment' => $request->jenis_pembayaran,
+                    'pcad_rangeqtystart' => 1,
+                    'pcad_rangeqtyend' => 1,
+                    'pcad_price' => RemoveCurrency::rupiah($request->harga)
+                ];
+            }
+
+            DB::table('d_priceclassauthdt')->insert($values);
+            DB::commit();
+            return response()->json(['status'=>"Success"]);
+        }catch (\Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>"Failed"]);
+        }
     }
 
     public function create_golonganharga()

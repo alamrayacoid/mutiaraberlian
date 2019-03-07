@@ -248,6 +248,20 @@
                 setItem(data.item);
             }
         });
+
+        $(document).on('submit', '#formsetharga', function (evt) {
+            evt.preventDefault();
+            var data = $('#formsetharga').serialize();
+            axios.post('{{route("dataharga.addgolonganharga")}}', data).then(function (response) {
+                console.log(response)
+                // if (response.data.status == "Success") {
+                //     messageSuccess("Berhasil", "Data berhasil perbarui!");
+                //     reloadTable();
+                // } else {
+                //     messageWarning("Gagal", "Data gagal diperbarui!");
+                // }
+            });
+        });
 	});
 
     function setItem(info) {
@@ -299,10 +313,12 @@ $(document).ready(function(){
 		satuan     		= $('#satuan');
 		range     		= $('#range');
 
-		if (ini === '1') {
+		if (ini === 'U') {
+		    $("#qty").val(1);
+		    $("#qty").attr('readonly');
 			satuan.removeClass('d-none');
 			range.addClass('d-none');
-		} else if(ini === '2'){
+		} else if(ini === 'R'){
 			satuan.addClass('d-none');
 			range.removeClass('d-none');
 		} else {
