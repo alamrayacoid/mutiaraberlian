@@ -27,6 +27,27 @@ class CabangController extends Controller
         ->orderBy('c_name', 'asc');
       return Datatables::of($datas)
         ->addIndexColumn()
+        ->addColumn('name', function ($datas) {
+          if ($datas->c_isactive == "Y") {
+            return ''. $datas->c_name .'';
+          } else {
+            return '<i><strike style="color:lightgrey;">'. $datas->c_name .'</strike></i>';
+          }
+        })
+        ->addColumn('alamat', function ($datas) {
+          if ($datas->c_isactive == "Y") {
+            return ''. $datas->c_address .'';
+          } else {
+            return '<i><strike style="color:lightgrey;">'. $datas->c_address .'</strike></i>';
+          }
+        })
+        ->addColumn('telepon', function ($datas) {
+          if ($datas->c_isactive == "Y") {
+            return ''. $datas->c_tlp .'';
+          } else {
+            return '<i><strike style="color:lightgrey;">'. $datas->c_tlp .'</strike></i>';
+          }
+        })
         ->addColumn('status', function($datas){
           if ($datas->c_isactive == "Y") {
             return '<div class="text-center">
@@ -61,7 +82,7 @@ class CabangController extends Controller
                       </div>';
           }
         })
-        ->rawColumns(['status','action'])
+        ->rawColumns(['name','alamat','telepon','status','action'])
         ->make(true);
     }
 

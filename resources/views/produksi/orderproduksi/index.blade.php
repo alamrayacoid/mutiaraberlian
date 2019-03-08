@@ -47,99 +47,127 @@
 	                                		<th>Aksi</th>
 	                                	</tr>
 	                                </thead>
-	                                <tbody>
-	                                	<tr>
-	                                		<td>1</td>
-	                                		<td>0123139 | 07/09/2019</td>
-	                                		<td>Brad</td>
-	                                		<td>
-											<button class="btn btn-primary btn-modal" data-toggle="modal" data-target="#detail" type="button">Detail</button>
-                                            </td>
-	                                		<td>Rp. 1.000.000</td>
-	                                		<td>Rp. 500.000</td>
-                                            <td>-</td>
-	                                		<td>
-	                                			<div class="btn-group btn-group-sm">
-	                                				<button class="btn btn-warning btn-edit" onclick="window.location.href='{{ route('order.edit') }}'" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-	                                				<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-	                                			</div>
-	                                		</td>
-	                                	</tr>
+	                                <tbody id="bodyTableIndex">
+	                                	
 	                                </tbody>
 	                            </table>
 	                        </div>
                         </section>
                     </div>
                 </div>
-
 			</div>
-
 		</div>
-
 	</section>
-
 </article>
-
 @endsection
 
 @section('extra_script')
 <script type="text/javascript">
-
+	var sub, detail;
 	$(document).ready(function(){
 		var table = $('#table_order').DataTable();
-
-		$(document).on('click', '.btn-disable', function(){
-			var ini = $(this);
-			$.confirm({
-				animation: 'RotateY',
-				closeAnimation: 'scale',
-				animationBounce: 1.5,
-				icon: 'fa fa-exclamation-triangle',
-				title: 'Peringatan!',
-				content: 'Apa anda yakin mau menonaktifkan data ini?',
-				theme: 'disable',
-			    buttons: {
-			        info: {
-						btnClass: 'btn-blue',
-			        	text:'Ya',
-			        	action : function(){
-							$.toast({
-								heading: 'Information',
-								text: 'Data Berhasil di Nonaktifkan.',
-								bgColor: '#0984e3',
-								textColor: 'white',
-								loaderBg: '#fdcb6e',
-								icon: 'info'
-							})
-					        ini.parents('.btn-group').html('<button class="btn btn-success btn-enable" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-				        }
-			        },
-			        cancel:{
-			        	text: 'Tidak',
-					    action: function () {
-    			            // tutup confirm
-    			        }
-    			    }
-			    }
-			});
-		});
-
-		$(document).on('click', '.btn-enable', function(){
-			$.toast({
-				heading: 'Information',
-				text: 'Data Berhasil di Aktifkan.',
-				bgColor: '#0984e3',
-				textColor: 'white',
-				loaderBg: '#fdcb6e',
-				icon: 'info'
-			})
-			$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
-	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-		})
-
-		// function table_hapus(a){
-		// 	table.row($(a).parents('tr')).remove().draw();
-		// }
+		TableIndex();
 	});
+
+	function TableIndex(){
+		var tglAwal = $('#tglAwal').val();
+		var tglAkhir = $('#tglAkhir').val();
+
+		$('#table_order').dataTable().fnDestroy();
+		sub = $('#table_order').DataTable({
+			responsive: true,
+			autoWidth: false,
+			serverSide: true,
+			ajax: {
+				url: "{{ route('order.gethistory') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}",
+					"tglAwal": tglAwal,
+					"tglAkkhir": tglAkhir
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'po_nota'},
+				{data: 's_company'},
+				{data: 'detail'},
+				{data: 'totalnet'},
+				{data: 'bayar'},
+				{data: 'status'},
+				{data: 'aksi'}
+			],
+		});
+	}
+
+	function TableDetail(id){
+		$('#table_detail').dataTable().fnDestroy();
+		detail = $('#table_detail').DataTable({
+			responsive: true,
+			autoWidth: false,
+			serverSide: true,
+			ajax: {
+				url: "{{ route('order.detail') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}",
+					"id": id
+				}
+			},
+			columns: [
+				{data: 'i_code'},
+				{data: 'i_name'},
+				{data: 'pod_qty'},
+				{data: 'u_name'}
+			],
+		});
+	}
+
+	function detail(id){
+		TableDetail(id);
+		$('#detail').modal('show');
+	}
+
+	function edit(id){
+		window.location.href = baseUrl+'/produksi/orderproduksi/edit?id='+id;
+	}
+
+	function hapus(id){
+		var url_hapus = baseUrl + "/produksi/orderproduksi/hapus" + '/'+id;
+		$.confirm({
+			animation: 'RotateY',
+			closeAnimation: 'scale',
+			animationBounce: 1.5,
+			icon: 'fa fa-exclamation-triangle',
+			title: 'Peringatan!',
+			content: 'Apakah anda yakin ingin menonaktifkan data ini ?',
+			theme: 'disable',
+			buttons: {
+				info: {
+					btnClass: 'btn-blue',
+					text: 'Ya',
+					action: function () {
+						axios.get(baseUrl+'/produksi/orderproduksi/hapus'+'/'+id).then((response) => {
+							loadingShow();
+							if(response.data.status == 'sukses'){
+								loadingHide();
+								messageSuccess("Berhasil", "Data Order Produksi Berhasil Dihapus");
+								TableIndex();
+							}else{
+								loadingHide();
+								messageFailed("Gagal", "Data Order Produksi Gagal Dihapus");
+							}
+						})
+					}
+				},
+				cancel: {
+					text: 'Tidak',
+					action: function () {
+						// tutup confirm
+					}
+				}
+			}
+		});		
+	}
 </script>
 @endsection

@@ -120,6 +120,7 @@ aside.sidebar{
 }
 .sidebar .sidebar-container{
 	bottom: 0;
+	padding-bottom:50px;
 }
 .sidebar-header .brand{
     height: 100px;
@@ -343,3 +344,68 @@ aside.sidebar{
 	display: inline-block;
 }
 /*End Ari Style*/
+
+.btn-group .btn.btn-danger > i,
+.btn-group .btn.btn-primary > i,
+.btn-group .btn.btn-warning > i,
+.btn-group .btn.btn-info > i,
+.btn-group .btn.btn-success > i
+{
+	color: #000;
+	transition: .2s;
+}
+.btn-group .btn.btn-info:hover > i,
+.btn-group .btn.btn-info:active > i,
+.btn-group .btn.btn-primary:hover > i,
+.btn-group .btn.btn-primary:active > i,
+.btn-group .btn.btn-success:hover > i,
+.btn-group .btn.btn-success:active > i,
+.btn-group .btn.btn-danger:hover > i,
+.btn-group .btn.btn-danger:active > i,
+.btn-group .btn.btn-warning:hover > i,
+.btn-group .btn.btn-warning:active > i
+{
+	color: #fff;
+}
+	.change-image{
+	    position: absolute;
+	    z-index: 5;
+	    width: 100%;
+	    height: 100%;
+	    top: 0;
+	    left: 0;
+	    padding-left: 15px;
+	    padding-right: 15px;
+	    background-image: transparent;
+	    transition: .3s ease;
+	    border-radius: 50%;
+	    cursor: pointer;
+	}
+	.change-image:hover{
+	    background-image: url('../img/camera.png');
+	    background-size: 50% 60%;
+	    background-repeat: no-repeat;
+	    background-position: center;
+	}
+	@media(max-width: 768px){
+		.change-image{
+		    background-image: url('../img/camera.png');
+		    background-size: 50% 60%;
+		    background-repeat: no-repeat;
+		    background-position: center;
+		    opacity: .75;
+		}	
+		.profil-image > img{
+		opacity: .5;
+		filter: alpha(opacity=50);
+	}
+	}
+	.profil-image{
+		opacity: 1;
+		filter: alpha(opacity=100);
+		transition: .3s ease;
+	}
+	.profil-image:hover > img{
+		opacity: .5;
+		filter: alpha(opacity=50);
+	}

@@ -63,9 +63,9 @@
                                             <div class="form-group">
                                                 <select name="supplier" id="supplier"
                                                         class="form-control form-control-sm select2">
+                                                    <option value="" disabled selected>== Pilih Supplier ==</option>
                                                     @foreach($suppliers as $supplier)
-                                                        <option
-                                                            value="{{$supplier->s_id}}">{{$supplier->s_name}}</option>
+                                                        <option value="{{$supplier->s_id}}">{{$supplier->s_company}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -153,7 +153,6 @@
                                                         <th>Termin</th>
                                                         <th>Estimasi</th>
                                                         <th>Nominal</th>
-                                                        <th>Tanggal</th>
                                                         <th>Aksi</th>
                                                     </tr>
                                                     </thead>
@@ -174,11 +173,6 @@
                                                             <input type="text"
                                                                    name="nominal[]"
                                                                    class="form-control form-control-sm input-rupiah nominal" value="Rp. 0">
-                                                        </td>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="tanggal[]"
-                                                                   class="form-control form-control-sm datepicker tanggal" autocomplete="off">
                                                         </td>
                                                         <td>
                                                             <button class="btn btn-success btn-tambah-termin btn-sm"
@@ -223,37 +217,10 @@
         var checktermin = null;
 
         $(document).ready(function () {
-            // $('#type_cus').change(function () {
-            //     if ($(this).val() === 'kontrak') {
-            //         $('#label_type_cus').text('Jumlah Bulan');
-            //         $('#jumlah_hari_bulan').val('');
-            //         $('#pagu').val('');
-            //         $('#armada').prop('selectedIndex', 0).trigger('change');
-            //         $('.120mm').removeClass('d-none');
-            //         $('.125mm').addClass('d-none');
-            //         $('.122mm').removeClass('d-none');
-            //     } else if ($(this).val() === 'harian') {
-            //         $('#label_type_cus').text('Jumlah Hari');
-            //         $('#armada').prop('selectedIndex', 0).trigger('change');
-            //         $('#pagu').val('');
-            //         $('#jumlah_hari_bulan').val('');
-            //         $('.122mm').addClass('d-none');
-            //         $('.120mm').removeClass('d-none');
-            //         $('.125mm').removeClass('d-none');
-            //     } else {
-            //         $('#jumlah_hari_bulan').val('');
-            //         $('#armada').prop('selectedIndex', 0).trigger('change');
-            //         $('#pagu').val('');
-            //         $('.122mm').addClass('d-none');
-            //         $('.120mm').addClass('d-none');
-            //         $('.125mm').addClass('d-none');
-            //     }
-            // });
             changeJumlah();
             changeHarga();  
 
             $('.barang').on('click', function(e){
-                // console.log( $('.barang').index(this) );
                 idxBarang = $('.barang').index(this);
                 setArrayCode();
             });
@@ -267,14 +234,6 @@
                 $(this).parents('tr').remove();
                 updateTotalTampil();
                 setArrayCode();
-            });
-
-            $(".barang").autocomplete({
-                source: baseUrl + '/produksi/orderproduksi/cari-barang',
-                minLength: 1,
-                select: function (event, data) {
-                    setItem(data.item);
-                }
             });
 
             $('.btn-tambah').on('click', function () {
@@ -299,12 +258,11 @@
                         '<td><input type="text" name="termin[]" class="form-control form-control-sm termin" readonly value="' + next_termin + '"></td>' +
                         '<td><input type="text" name="estimasi[]" class="form-control form-control-sm datepicker estimasi" autocomplete="off"></td>' +
                         '<td><input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah nominal" value="Rp. 0"></td>' +
-                        '<td><input type="text" name="tanggal[]" class="form-control form-control-sm datepicker tanggal" autocomplete="off"></td>' +
                         '<td><button class="btn btn-danger btn-sm btn-hapus-termin" type="button"><i class="fa fa-trash-o"></i></button></td>' +
                         '</tr>'
                     );
                 $('.datepicker').datepicker({
-                    dateFormat: "dd-mm-yy",
+                    format: "dd-mm-yyyy",
                     enableOnReadonly: false,
                     autoclose: true
 
@@ -379,34 +337,17 @@
                 } else if ($("#tot_hrg").val() == "" || $("#tot_hrg").val() == 0 || checkForm() == "cek form" || checkTermin() == "cek form") {
                     messageWarning('Peringatan', 'Lengkapi data order produksi');
                 } else {
-                    var data = $('#formgln').serialize();
-                    axios.post('{{route("order.create")}}', data).then((response) => {
-
+                    loadingShow();
+                    var data = $('#form').serialize();
+                    axios.post(baseUrl+'/produksi/orderproduksi/create', data).then((response) => {
+                        if(response.data.status == 'sukses'){
+                            loadingHide();
+                            messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
+                        }else{
+                            loadingHide();
+                            messageFailed("Gagal", "Data Order Produksi Gagal Disimpan");
+                        }
                     })
-                    messageSuccess("Sukses", "Data Order Produksi Berhasil Disimpan");
-                    // {{--$.ajax({--}}
-                    //     {{--url: "{{route('order.create')}}",--}}
-                    //     {{--type: "post",--}}
-                    //     {{--data: $('#form').serialize(),--}}
-                    //     {{--dataType: "json",--}}
-                    //     {{--beforeSend: function () {--}}
-                    //         {{--loadingShow();--}}
-                    //     {{--},--}}
-                    //     {{--success: function (response) {--}}
-                    //         {{--if (response.status == 'sukses') {--}}
-                    //             {{--loadingHide();--}}
-                    //             {{--messageSuccess('Success', 'Data berhasil ditambahkan!');--}}
-                    //             {{--setInterval(function(){ location.reload(); }, 3500);--}}
-                    //         {{--} else {--}}
-                    //             {{--loadingHide();--}}
-                    //             {{--messageFailed('Gagal', response.message);--}}
-                    //         {{--}--}}
-                    //     {{--},--}}
-                    //     {{--error: function (e) {--}}
-                    //         {{--loadingHide();--}}
-                    //         {{--messageWarning('Peringatan', e.message);--}}
-                    //     {{--}--}}
-                    // {{--});--}}}
 
                 }
             })
@@ -603,12 +544,20 @@
                 }
             }
 
+            var item = [];
+            var inpItemid = document.getElementsByClassName( 'itemid' ),
+                item  = [].map.call(inpItemid, function( input ) {
+                    return input.value;
+                });
+
+            var supp = $('#supplier').val();
             $( ".barang" ).autocomplete({
                 source: function( request, response ) {
                     $.ajax({
                         url: '{{ url('/produksi/orderproduksi/cari-barang') }}',
                         data: {
-                            kode: icode,
+                            idItem: item,
+                            supp: supp,
                             term: $(".barang").eq(idxBarang).val()
                         },
                         success: function( data ) {

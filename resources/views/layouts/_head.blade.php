@@ -52,6 +52,22 @@
                 width: 8px !important;
 
             }
+
+            .checkbox-danger:checked + span:before {
+                color: #ff4444;
+                content: "\f058"; }
+
+            .checkbox-info:checked + span:before {
+                color: #52bcd3;
+                content: "\f058"; }
+
+            .checkbox-success:checked + span:before {
+                color: #4bcf99;
+                content: "\f058"; }
+
+            .checkbox-warning:checked + span:before {
+                color: #fe974b;
+                content: "\f058"; }
         </style>
         <link rel="stylesheet" type="text/css" href="{{asset('assets/css/alamraya-style.css')}}">
         <link rel="stylesheet" type="text/css" href="{{asset('assets/css/custom-style.css')}}">
