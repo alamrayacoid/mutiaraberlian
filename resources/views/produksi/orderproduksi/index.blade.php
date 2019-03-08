@@ -63,59 +63,10 @@
 
 @section('extra_script')
 <script type="text/javascript">
-
+	var sub, detail;
 	$(document).ready(function(){
 		var table = $('#table_order').DataTable();
 		TableIndex();
-		$(document).on('click', '.btn-disable', function(){
-			var ini = $(this);
-			$.confirm({
-				animation: 'RotateY',
-				closeAnimation: 'scale',
-				animationBounce: 1.5,
-				icon: 'fa fa-exclamation-triangle',
-				title: 'Peringatan!',
-				content: 'Apa anda yakin mau menonaktifkan data ini?',
-				theme: 'disable',
-			    buttons: {
-			        info: {
-						btnClass: 'btn-blue',
-			        	text:'Ya',
-			        	action : function(){
-							$.toast({
-								heading: 'Information',
-								text: 'Data Berhasil di Nonaktifkan.',
-								bgColor: '#0984e3',
-								textColor: 'white',
-								loaderBg: '#fdcb6e',
-								icon: 'info'
-							})
-					        ini.parents('.btn-group').html('<button class="btn btn-success btn-enable" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-				        }
-			        },
-			        cancel:{
-			        	text: 'Tidak',
-					    action: function () {
-    			            // tutup confirm
-    			        }
-    			    }
-			    }
-			});
-		});
-
-		$(document).on('click', '.btn-enable', function(){
-			$.toast({
-				heading: 'Information',
-				text: 'Data Berhasil di Aktifkan.',
-				bgColor: '#0984e3',
-				textColor: 'white',
-				loaderBg: '#fdcb6e',
-				icon: 'info'
-			})
-			$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
-	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-		})
-
 	});
 
 	function TableIndex(){
@@ -182,7 +133,41 @@
 	}
 
 	function hapus(id){
-		axios.get(baseUrl+'/produksi/orderproduksi/edit')
+		var url_hapus = baseUrl + "/produksi/orderproduksi/hapus" + '/'+id;
+		$.confirm({
+			animation: 'RotateY',
+			closeAnimation: 'scale',
+			animationBounce: 1.5,
+			icon: 'fa fa-exclamation-triangle',
+			title: 'Peringatan!',
+			content: 'Apakah anda yakin ingin menonaktifkan data ini ?',
+			theme: 'disable',
+			buttons: {
+				info: {
+					btnClass: 'btn-blue',
+					text: 'Ya',
+					action: function () {
+						axios.get(baseUrl+'/produksi/orderproduksi/hapus'+'/'+id).then((response) => {
+							loadingShow();
+							if(response.data.status == 'sukses'){
+								loadingHide();
+								messageSuccess("Berhasil", "Data Order Produksi Berhasil Dihapus");
+								TableIndex();
+							}else{
+								loadingHide();
+								messageFailed("Gagal", "Data Order Produksi Gagal Dihapus");
+							}
+						})
+					}
+				},
+				cancel: {
+					text: 'Tidak',
+					action: function () {
+						// tutup confirm
+					}
+				}
+			}
+		});		
 	}
 </script>
 @endsection

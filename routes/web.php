@@ -146,10 +146,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/orderproduksi/cari-barang', 'ProduksiController@cariBarang')->name('order.caribarang');
     Route::get('/produksi/orderproduksi/get-satuan/{id}', 'ProduksiController@getSatuan')->name('order.getsatuan');
     Route::match(['get', 'post'],'/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
-    Route::get('/produksi/orderproduksi/hapus/{id}', 'ProduksiController@hapus')->name('order.hapus');
+    Route::get('/produksi/orderproduksi/hapus/{id}', 'ProduksiController@hapus_produksi')->name('order.hapus');
     Route::get('/produksi/orderproduksi/gethistory', 'ProduksiController@get_history')->name('order.gethistory');
     Route::get('/produksi/orderproduksi/detail', 'ProduksiController@detail_produksi')->name('order.detail');
 
+    
     // Penerimaan Barang
     Route::get('/produksi/penerimaanbarang/index', 'ProduksiController@penerimaan_barang')->name('penerimaan.index');
     Route::get('/produksi/penerimaanbarang/create', 'ProduksiController@create_penerimaan_barang')->name('penerimaan.create');

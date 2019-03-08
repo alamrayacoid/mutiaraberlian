@@ -211,6 +211,26 @@ class ProduksiController extends Controller
             ->first();
         return Response::json($data);
     }
+    public function hapus_produksi($id){
+        $id = Crypt::decrypt($id);
+        DB::beginTransaction();
+        try {
+            DB::table('d_productionorderpayment')->where('pop_productionorder', $id)->delete();
+            DB::table('d_productionorderdt')->where('pod_productionorder', $id)->delete();
+            DB::table('d_productionorder')->where('po_id', $id)->delete();
+
+            DB::commit();
+            return json_encode([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return json_encode([
+                'status' => 'gagal',
+                'msg' => $e
+            ]);
+        }
+    }
 
     /////////////////////////////////////////////////////
     // Penerimaan Barang
