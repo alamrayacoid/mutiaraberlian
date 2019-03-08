@@ -149,17 +149,40 @@
 		});
 	}
 
-	function detail(id){
+	function TableDetail(id){
+		$('#table_detail').dataTable().fnDestroy();
+		detail = $('#table_detail').DataTable({
+			responsive: true,
+			autoWidth: false,
+			serverSide: true,
+			ajax: {
+				url: "{{ route('order.detail') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}",
+					"id": id
+				}
+			},
+			columns: [
+				{data: 'i_code'},
+				{data: 'i_name'},
+				{data: 'pod_qty'},
+				{data: 'u_name'}
+			],
+		});
+	}
 
+	function detail(id){
+		TableDetail(id);
 		$('#detail').modal('show');
 	}
 
 	function edit(id){
-
+		window.location.href = baseUrl+'/produksi/orderproduksi/edit?id='+id;
 	}
 
 	function hapus(id){
-
+		axios.get(baseUrl+'/produksi/orderproduksi/edit')
 	}
 </script>
 @endsection
