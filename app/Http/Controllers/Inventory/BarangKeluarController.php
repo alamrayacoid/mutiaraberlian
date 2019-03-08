@@ -54,6 +54,24 @@ class BarangKeluarController extends Controller
     }
 
     /**
+    * Return a converted value by unit.
+    *
+    * @return varchar $nota
+    */
+    public function convertOutQtyToSmallestUnit($itemId, $unit, $outQty)
+    {
+      $item = m_item::where('i_id', $itemId)->first();
+      if ($unit == $item->i_unit1) {
+        $outQty = $outQty * $item->i_unitcompare1;
+      } elseif ($unit == $item->i_unit2) {
+        $outQty = $outQty * $item->i_unitcompare2;
+      } elseif ($unit == $item->i_unit3) {
+        $outQty = $outQty * $item->i_unitcompare3;
+      }
+      return $outQty;
+    }
+
+    /**
      * Update stock in 'd_stock'.
      *
      * @param string $positionId
@@ -73,12 +91,9 @@ class BarangKeluarController extends Controller
             ->where('s_item', $itemId)
             ->firstOrFail();
           // convert outQty to smallest unit
-          // if ($unit != 1) {
-          //   $item = m_item::where('i_id', $itemId)->get();
-          //   if (condition) {
-          //     // code...
-          //   }
-          // }
+          if ($unit != 1) {
+            $outQty = $this->convertOutQtyToSmallestUnit($itemId, $unit, $outQty);
+          }
           if ($outQty > $stock->s_qty) {
             return response()->json([
               'status' => 'invalid',
@@ -112,16 +127,16 @@ class BarangKeluarController extends Controller
       try {
         $newId = d_itemout::max('io_id') + 1;
         DB::beginTransaction();
-        $itemOut = new d_itemout;
-        $itemOut->io_id = $newId;
-        $itemOut->io_date = Carbon::now();
-        $itemOut->io_nota = $this->getNewNota();
-        $itemOut->io_item = $req->itemId;
-        $itemOut->io_qty = $req->qty;
-        $itemOut->io_unit = $req->unit;
-        $itemOut->io_mutcat = $req->mutcat;
-        $itemOut->io_user = Auth::user()->employee->e_id;
-        $itemOut->save();
+          $itemOut = new d_itemout;
+          $itemOut->io_id = $newId;
+          $itemOut->io_date = Carbon::now();
+          $itemOut->io_nota = $this->getNewNota();
+          $itemOut->io_item = $req->itemId;
+          $itemOut->io_qty = $req->qty;
+          $itemOut->io_unit = $req->unit;
+          $itemOut->io_mutcat = $req->mutcat;
+          $itemOut->io_user = Auth::user()->employee->e_id;
+          $itemOut->save();
         DB::commit();
         return true;
       } catch (\Exception $e) {
@@ -244,8 +259,9 @@ class BarangKeluarController extends Controller
      * @param int $outQty -> the number of 'jumlah barang keluar'
      * @param int $mutcat -> mutation category, reff: 'd_mutcat' table
      */
-    public function createNewStockMutation($stockId, $outQty, $mutcat)
+    public function createNewStockMutation($stockId, $unit, $outQty, $mutcat)
     {
+      $outQty = $this->convertOutQtyToSmallestUnit($stockId, $unit, $outQty);
       while ($outQty > 0) {
         // start: step 1
         // order 'stock mutation' by 'detail id' and
@@ -340,7 +356,7 @@ class BarangKeluarController extends Controller
       }
       // insert new 'stock mutation (d_stock_mutation)'
       $isNewStockMutationCreated = $this->createNewStockMutation(
-        $request->itemId, $request->qty, $request->mutcat
+        $request->itemId, $request->unit, $request->qty, $request->mutcat
       );
       if ($isNewStockMutationCreated == true) {
         return response()->json([
