@@ -11,6 +11,7 @@ use Auth;
 use Response;
 use DataTables;
 use Carbon\Carbon;
+use CodeGenerator;
 
 class BarangMasukController extends Controller
 {
@@ -21,18 +22,19 @@ class BarangMasukController extends Controller
 
     public function getData()
     {
-        $datas = DB::table('d_stock')
-            ->join('m_item', 'i_id', 's_item')
-            ->join('m_company', 'c_id', 's_comp')
-            ->select('d_stock.*', DB::raw('date_format(s_created_at, "%d/%m/%Y") as tgl_masuk'), 'i_code', 'c_name')
+        $datas = DB::table('d_stock_mutation')
+            ->join('d_stock', 'sm_stock', 's_id')
+            ->join('m_company as pemilik', 'd_stock.s_comp', 'pemilik.c_id')
+            ->join('m_company as posisi', 'd_stock.s_position', 'posisi.c_id')
+            ->select('sm_stock','sm_detailid',DB::raw('date_format(sm_date, "%d/%m/%Y") as sm_date'), 'sm_qty', 'pemilik.c_name as pemilik', 'posisi.c_name as posisi', 's_condition')
+            ->where('sm_mutcat', '=', 1||2||3)
             ->get();
         return Datatables::of($datas)
         ->addIndexColumn()
         ->addColumn('action', function($datas) {
             return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                        <button class="btn btn-warning hint--bottom-left hint--warning" onclick="EditCabang(\''.Crypt::encrypt($datas->s_id).'\')" data-toggle="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
-                        <button class="btn btn-disabled disabled" onclick="nonActive(\''.Crypt::encrypt($datas->s_id).'\')" data-toggle="tooltip" data-placement="top" disabled><i class="fa fa-times"></i></button>
-                        </div>
+                        <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.$datas->sm_stock.'\', \''.$datas->sm_detailid.'\')"><i class="fa fa-folder"></i>
+                        </button>
                     </div>';
         })
         ->rawColumns(['action'])
@@ -42,10 +44,34 @@ class BarangMasukController extends Controller
     public function create()
     {
         $company = DB::table('m_company')->select('c_id', 'c_name')->get();
-        $unit    = DB::table('m_unit')->get();
+        $unit    = DB::table('m_item')
+            ->join('m_unit as unit1', 'unit1.u_id', 'i_unit1')
+            ->join('m_unit as unit2', 'unit2.u_id', 'i_unit2')
+            ->join('m_unit as unit3', 'unit3.u_id', 'i_unit3')            
+            ->select('m_item.*','unit1.u_id as id1', 'unit1.u_name as name1', 'unit2.u_id as id2', 'unit2.u_name as name2', 'unit3.u_id as id3', 'unit3.u_name as name3')
+            ->get();
         $mutcat  = DB::table('m_mutcat')->select('m_id', 'm_name')->where('m_name', 'like', 'Barang Masuk%')->get();
 
         return view('inventory/barangmasuk/create')->with(compact('unit', 'company', 'mutcat'));
+    }
+
+    public function getUnit(Request $request)
+    {
+        $idUnit = $request->id;
+        $getUnit = DB::table('m_item')
+            ->join('m_unit as unit1', 'unit1.u_id', 'i_unit1')
+            ->join('m_unit as unit2', 'unit2.u_id', 'i_unit2')
+            ->join('m_unit as unit3', 'unit3.u_id', 'i_unit3')            
+            ->select('m_item.*','unit1.u_id as id1', 'unit1.u_name as name1', 'unit2.u_id as id2', 'unit2.u_name as name2', 'unit3.u_id as id3', 'unit3.u_name as name3')
+            ->where('i_id', '=', $idUnit)
+            ->first();
+        return Response::json(array(
+            'success' => true,
+            'data' => $getUnit
+            // 'unit1'   => $getUnit->name1,
+            // 'unit2'   => $getUnit->name2,
+            // 'unit3'   => $getUnit->name3
+        ));
     }
 
     public function edit()
@@ -57,7 +83,7 @@ class BarangMasukController extends Controller
     {
         $cari = $request->term;
         $item = DB::table('m_item')
-            ->select('i_id', 'i_name', 'i_code')
+            ->select('i_id', 'i_name', 'i_code', 'i_unit1', 'i_unit2', 'i_unit3')
             ->whereRaw("i_name like '%" . $cari . "%'")
             ->orWhereRaw("i_code like '%" . $cari . "%'")
             ->get();
@@ -74,7 +100,10 @@ class BarangMasukController extends Controller
                 }else{
                     $hasilItem[] = [
                         'id' => $query->i_id,
-                        'label' => $query->i_code.' - '.$query->i_name
+                        'label' => $query->i_code.' - '.$query->i_name,
+                        'unit1' => $query->i_unit1,
+                        'unit2' => $query->i_unit2,
+                        'unit3' => $query->i_unit3
                     ];
                 }
             }
@@ -107,21 +136,7 @@ class BarangMasukController extends Controller
         if ($countStock > 0) {
             $getIdMax = DB::table('d_stock')->max('s_id');
             $getId = $getIdMax + 1;
-        }
-
-        $cekNota = DB::table('d_stock_mutation')
-            ->whereRaw('sm_nota like "%' . $noteTime . '%"')
-            ->select(DB::raw('CAST(MID(sm_nota, 4, 3) AS UNSIGNED) as sm_nota'))
-            ->first();
-
-        $temp = 1;
-        if ($cekNota) {
-            $temp = ($cekNota->sm_nota+1);
-        }
-
-        $count = ++$temp;
-        $kode = sprintf("%03s", $count);
-        $nota = 'IN-' . $kode . '/' . $noteTime;
+        }        
 
         DB::beginTransaction();
         try {
@@ -139,8 +154,8 @@ class BarangMasukController extends Controller
                     'sm_detailid' => ++$detail,
                     'sm_mutcat'   => $m_mutcat,
                     'sm_qty'      => $s_qty,
-                    'sm_hpp'      => $sm_hpp,
-                    'sm_nota'     => $nota
+                    'sm_hpp'      => str_replace('.', '', $sm_hpp),
+                    'sm_nota'     => CodeGenerator::codeWithSeparator('d_stock_mutation', 'sm_nota', 8, 10, 3, 'IN', '-')
                 ]);
             } else {
                 $dtId = 0;
@@ -158,8 +173,8 @@ class BarangMasukController extends Controller
                     'sm_detailid' => $dtId+1,
                     'sm_mutcat'   => $m_mutcat,
                     'sm_qty'      => $s_qty,
-                    'sm_hpp'      => $sm_hpp,
-                    'sm_nota'     => $nota
+                    'sm_hpp'      => str_replace('.', '', $sm_hpp),
+                    'sm_nota'     => CodeGenerator::codeWithSeparator('d_stock_mutation', 'sm_nota', 8, 10, 3, 'IN', '-')
                 ]);
             }
             DB::commit();

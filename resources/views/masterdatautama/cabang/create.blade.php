@@ -56,8 +56,8 @@
                   </div>
                   <div class="col-md-9 col-sm-6 col-xs-12">
                     <div class="form-group">
-                      <select id="cabang_type" class="form-control form-control-sm" name="cabang_type">
-                        <option value="" selected="">!--- Pilih Type ---!</option>
+                      <select id="cabang_type" class="form-control form-control-sm select2" name="cabang_type">
+                        <option value="" selected disabled>=== Pilih Type ===</option>
                         <option value="PUSAT">PUSAT</option>
                         <option value="CABANG">CABANG</option>
                         <option value="AGEN">AGEN</option>
@@ -69,8 +69,8 @@
                   </div>
                   <div class="col-md-9 col-sm-6 col-xs-12">
                     <div class="form-group">
-                      <select id="cabang_user" class="form-control form-control-sm" name="cabang_user">
-                        <option value="" selected="">!--- Pilih Pemilik Cabang ---!</option>
+                      <select id="cabang_user" class="form-control form-control-sm select2" name="cabang_user">
+                        <option value="" selected disabled>=== Pilih Pemilik Cabang ===</option>
                         @foreach($employe as $emp)
                           <option value="{{$emp->e_id}}">{{$emp->e_name}}</option>
                         @endforeach

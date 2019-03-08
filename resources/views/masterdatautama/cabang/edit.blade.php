@@ -64,9 +64,9 @@
                   </div>
                   <div class="col-md-9 col-sm-6 col-xs-12">
                     <div class="form-group">
-                      <select name="cabang_user" id="" class="form-control form-control-sm" {{$temp}}>
+                      <select name="cabang_user" id="" class="form-control form-control-sm select2" {{$temp}}>
                         @if($data->c_user == null)
-                          <option value="" selected>!--- Pilih Pemilik Cabang ---!</option>
+                          <option value="" selected disabled>=== Pilih Pemilik Cabang ===</option>
                           @foreach($employe as $emp)
                             <option value="{{$emp->e_id}}">{{$emp->e_name}}</option>
                           @endforeach
