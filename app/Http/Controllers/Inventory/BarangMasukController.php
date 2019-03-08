@@ -230,7 +230,9 @@ class BarangMasukController extends Controller
             ->join('m_item', 's_item', 'i_id')
             ->join('m_company as pemilik', 's_comp', 'pemilik.c_id')
             ->join('m_company as posisi', 's_position', 'posisi.c_id')
-            ->select('pemilik.c_name as pemilik', 'posisi.c_name as posisi', 'i_code', 'i_name')
+            ->join('d_itementry', 'sm_nota', 'ie_nota')
+            ->join('m_unit', 'ie_unit', 'u_id')
+            ->select('pemilik.c_name as pemilik', 'posisi.c_name as posisi', 'i_code', 'i_name', 'u_name', 'sm_nota', 'sm_qty', 'sm_hpp')
             ->where('sm_stock', '=', $st)
             ->where('sm_detailid', '=', $dt)->first();
         return Response::json(array(
