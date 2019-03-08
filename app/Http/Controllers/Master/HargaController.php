@@ -31,9 +31,9 @@ class HargaController extends Controller
                                             <button class="btn btn-warning" title="Edit"
                                                     type="button" onclick="editGolongan(\''.Crypt::encrypt($datas->pc_id).'\', \''.$datas->pc_name.'\')"><i class="fa fa-pencil" style="color: #ffffff"></i></button>
                                             <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolongan(\''.Crypt::encrypt($datas->pc_id).'\')"><i class="fa fa-trash"></i></button>
+                                                    title="Hapus" onclick="hapusGolongan(\''.Crypt::encrypt($datas->pc_id).'\')"><i class="fa fa-trash" style="color: #ffffff"></i></button>
                                             <button class="btn btn-primary" title="add"
-                                                    type="button" onclick="addGolonganHarga(\''.Crypt::encrypt($datas->pc_id).'\', \''.$datas->pc_name.'\')"><i class="fa fa-arrow-right"></i>
+                                                    type="button" onclick="addGolonganHarga(\''.Crypt::encrypt($datas->pc_id).'\', \''.$datas->pc_name.'\')"><i class="fa fa-arrow-right" style="color: #ffffff"></i>
                                             </button>
                                         </div></center>';
 
@@ -77,7 +77,7 @@ class HargaController extends Controller
                                             <button class="btn btn-warning" title="Edit"
                                                     type="button" onclick="editGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\', \''.$datas->pcad_item.'\', \''.Currency::addRupiah($datas->pcad_price).'\', \''.$datas->pcad_unit.'\', \''.$datas->pcad_type.'\', \''.$datas->pcad_rangeqtystart.'\', \''.$datas->pcad_rangeqtyend.'\')"><i class="fa fa-pencil" style="color: #ffffff"></i></button>
                                             <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\')"><i class="fa fa-trash"></i></button>
+                                                    title="Hapus" onclick="hapusGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\')"><i class="fa fa-trash" style="color: #ffffff"></i></button>
                                         </div></center>';
 
             })
@@ -345,17 +345,51 @@ class HargaController extends Controller
 
         DB::beginTransaction();
         try{
-            DB::table('d_priceclassauthdt')
-                ->where('pcad_classprice', '=', $id)
-                ->where('pcad_detailid', '=', $detail)
-                ->update([
-                'pcad_unit' => $request->satuanBarangRangeEdit,
-                'pcad_price' => Currency::removeRupiah($request->edithargarange),
-                    'pcad_rangeqtystart' => $request->rangestartedit,
-                    'pcad_rangeqtyend' => $request->rangeendedit
-            ]);
-            DB::commit();
-            return response()->json(['status'=>"Success"]);
+            $check = DB::table('d_priceclassauthdt')
+                ->where('pcad_classprice', '=', Crypt::decrypt($request->golIdRange))
+                ->where('pcad_item', '=', $request->golItemRange)
+                ->where('pcad_unit', '=', $request->satuanBarangRangeEdit)
+                ->where('pcad_type', '=', "R")
+                ->get();
+
+            $sts = '';
+
+            if (count($check) > 0) {
+                if ($request->rangestartedit == $request->rangestartawal && $request->rangeendedit == $request->rangestartakhir) {
+                    $sts = 'Null';
+                } else {
+                    foreach ($check as $key => $val) {
+                        if ($val->pcad_classprice != Crypt::decrypt($request->golIdRange) && $val->pcad_detailid != Crypt::decrypt($request->golDetailRange)) {
+                            if ( in_array($request->rangestartedit, range($val->pcad_rangeqtystart,$val->pcad_rangeqtyend)) ) {
+                                $sts = 'Not Null';
+                                return response()->json(['status'=>"Range Ada"]);
+                                break;
+                            }else if( in_array($request->rangeendedit, range($val->pcad_rangeqtystart,$val->pcad_rangeqtyend)) ) {
+                                $sts = 'Not Null';
+                                return response()->json(['status'=>"Range Ada"]);
+                                break;
+                            }else{
+                                $sts = 'Null';
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ($sts = "Null") {
+                DB::table('d_priceclassauthdt')
+                    ->where('pcad_classprice', '=', $id)
+                    ->where('pcad_detailid', '=', $detail)
+                    ->update([
+                        'pcad_unit' => $request->satuanBarangRangeEdit,
+                        'pcad_price' => Currency::removeRupiah($request->edithargarange),
+                        'pcad_rangeqtystart' => $request->rangestartedit,
+                        'pcad_rangeqtyend' => $request->rangeendedit
+                    ]);
+                DB::commit();
+                return response()->json(['status'=>"Success"]);
+            }
         }catch (\Exception $e){
             DB::rollBack();
             return response()->json(['status'=>"Failed"]);

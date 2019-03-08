@@ -120,6 +120,7 @@ aside.sidebar{
 }
 .sidebar .sidebar-container{
 	bottom: 0;
+	padding-bottom:50px;
 }
 .sidebar-header .brand{
     height: 100px;

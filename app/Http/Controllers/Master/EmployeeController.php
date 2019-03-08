@@ -31,10 +31,26 @@ class EmployeeController extends Controller
         ->orderBy('e_name', 'asc');
       return Datatables::of($datas)
       ->addIndexColumn()
+      ->addColumn('nik', function ($datas) {
+        if ($datas->e_isactive == "Y") {
+          return ''. $datas->e_nik .'';
+        } else {
+          return '<i><strike style="color:lightgrey;">'. $datas->e_nik .'</strike></i>';
+        }
+      })
+      ->addColumn('name', function ($datas) {
+        if ($datas->e_isactive == "Y") {
+          return ''. $datas->e_name .'';
+        } else {
+          return '<i><strike style="color:lightgrey;">'. $datas->e_name .'</strike></i>';
+        }
+      })
       ->addColumn('jabatan', function ($datas) {
-        return '<div class="text-center">
-          <p>' . $datas->j_name . '</p>
-        </div>';
+        if ($datas->e_isactive == "Y") {
+          return ''. $datas->j_name .'';
+        } else {
+          return '<i><strike style="color:lightgrey;">'. $datas->j_name .'</strike></i>';
+        }
       })
       ->addColumn('status', function ($datas) {
         if ($datas->e_isactive == "Y") {
@@ -51,7 +67,7 @@ class EmployeeController extends Controller
         if ($datas->e_isactive == "Y") {
             return '<div class="text-center">
             <div class="btn-group btn-group-sm">
-              <button class="btn btn-info hint--bottom-left  hint--info" aria-label="Lihat Detail" onclick="detail(\'' . Crypt::encrypt($datas->e_id) . '\')"><i class="fa fa-list-alt"></i></button>
+              <button class="btn btn-info hint--bottom-left  hint--info" aria-label="Lihat Detail" onclick="detail(\'' . Crypt::encrypt($datas->e_id) . '\')"><i class="fa fa-folder"></i></button>
               <button type="button" class="btn btn-warning hint--bottom-left  hint--warning" aria-label="Edit Pegawai" onclick="editPegawai(\'' . Crypt::encrypt($datas->e_id) . '\')"><i class="fa fa-pencil"></i></button>
               <button class="btn btn-danger hint--bottom-left  hint--error" aria-label="Nonaktifkan" onclick="nonActive(\'' . Crypt::encrypt($datas->e_id) . '\')"><i class="fa fa-times"></i></button>
             </div>
@@ -59,14 +75,14 @@ class EmployeeController extends Controller
         } else {
             return '<div class="text-center">
             <div class="btn-group btn-group-sm">
-              <button class="btn btn-info hint--bottom-left  hint--info" aria-label="Lihat Detail" onclick="detail(\'' . Crypt::encrypt($datas->e_id) . '\')"><i class="fa fa-list-alt"></i></button>
+              <button class="btn btn-info hint--bottom-left  hint--info" aria-label="Lihat Detail" onclick="detail(\'' . Crypt::encrypt($datas->e_id) . '\')"><i class="fa fa-folder"></i></button>
               <button class="btn btn-disabled disabled" onclick="editPegawai(\'' . Crypt::encrypt($datas->e_id) . '\')" disabled><i class="fa fa-pencil"></i></button>
               <button class="btn btn-success hint--bottom-left  hint--success" aria-label="Aktifkan" onclick="active(\'' . Crypt::encrypt($datas->e_id) . '\')"><i class="fa fa-check"></i></button>
             </div>
           </div>';
         }
       })
-      ->rawColumns(['jabatan', 'status', 'action'])
+      ->rawColumns(['nik','name','jabatan', 'status', 'action'])
       ->make(true);
     }
 
