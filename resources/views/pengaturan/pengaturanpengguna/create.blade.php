@@ -125,7 +125,39 @@
 
 	}
 
+	function pshowpassword(){
+		var password = document.getElementById("ppassword");
+
+		if (password.type === "ppassword") {
+			$('#ppassword').attr('type', 'text');
+		} else {
+			$('#ppassword').attr('type', 'password');
+		}
+	}
+
+	function pshowconfirm(){
+		var password = document.getElementById("pconfirmpassword");
+
+		if (password.type === "password") {
+			$('#pconfirmpassword').attr('type', 'text');
+		} else {
+			$('#pconfirmpassword').attr('type', 'password');
+		}
+	}
+
+	function pmatching(){
+				password = $('#ppassword').val();
+				confirm = $('#pconfirmpassword').val();
+				if (password === confirm) {
+					$('#pcheck').css('display', '');
+				} else {
+					$('#pcheck').css('display', 'none');
+				}
+
+	}
+
 	function simpan(){
+		loadingShow();
 		var jenis = $('#jenis').val();
 
 		if (jenis == 1) {
@@ -164,6 +196,7 @@
 					success : function(response){
 						if (response.status == 'berhasil') {
 							messageSuccess('Berhasil', 'Data berhasil disimpan!');
+							loadingHide();
 							setTimeout(function () {
 								window.location.href = "{{url('/pengaturan/pengaturanpengguna/index')}}";
 							}, 800);
@@ -173,14 +206,14 @@
 					}
 				});
 			}
-		} else {
+		} else if (jenis == 2) {
 			var type = 'pegawai';
 			var pegawai = document.getElementById("spegawai");
-			var cabang = document.getElementById("cabang");
-			var level = document.getElementById("level");
-			var username = document.getElementById("username");
-			var password = document.getElementById("password");
-			var confirmpassword = document.getElementById("confirmpassword");
+			var cabang = document.getElementById("pcabang");			
+			var level = document.getElementById("plevel");
+			var username = document.getElementById("pusername");
+			var password = document.getElementById("ppassword");
+			var confirmpassword = document.getElementById("pconfirmpassword");
 			var data = $('#formpegawai').serialize();
 
 			if (pegawai.value == "" || pegawai.value == undefined) {
@@ -210,9 +243,10 @@
 					success : function(response){
 						if (response.status == 'berhasil') {
 							messageSuccess('Berhasil', 'Data berhasil disimpan!');
+							loadingHide();
 							setTimeout(function () {
 								window.location.href = "{{url('/pengaturan/pengaturanpengguna/index')}}";
-							}, 800);	
+							}, 800);
 						} else {
 							messageFailed('Gagal', 'Data gagal disimpan!');
 						}
