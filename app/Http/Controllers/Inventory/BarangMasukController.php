@@ -77,7 +77,7 @@ class BarangMasukController extends Controller
             ->first();
         return Response::json(array(
             'success' => true,
-            'data' => $getUnit
+            'data'    => $getUnit
         ));
     }
 
@@ -101,12 +101,12 @@ class BarangMasukController extends Controller
             foreach ($item as $query) {
                 if($query->i_code == null){
                     $hasilItem[] = [
-                        'id' => $query->i_id,
+                        'id'    => $query->i_id,
                         'label' => $query->i_name
                     ];
                 }else{
                     $hasilItem[] = [
-                        'id' => $query->i_id,
+                        'id'    => $query->i_id,
                         'label' => $query->i_code.' - '.$query->i_name,
                         'unit1' => $query->i_unit1,
                         'unit2' => $query->i_unit2,
@@ -142,14 +142,14 @@ class BarangMasukController extends Controller
         $getId = 1;
         if ($countStock > 0) {
             $getIdMax = DB::table('d_stock')->max('s_id');
-            $getId = $getIdMax + 1;
+            $getId    = $getIdMax + 1;
         }
 
         $countEntry = DB::table('d_itementry')->count();
         $entryId = 1;
         if ($countEntry > 0) {
             $getIdMax = DB::table('d_itementry')->max('ie_id');
-            $entryId = $getIdMax + 1;
+            $entryId  = $getIdMax + 1;
         }
 
         DB::beginTransaction();
@@ -245,8 +245,8 @@ class BarangMasukController extends Controller
             ->where('sm_detailid', '=', $dt)->first();
         return Response::json(array(
             'success' => true,
-            'data' => $detail,
-            'hpp' => 'Rp. '.number_format($detail->sm_hpp, 0,',','.')
+            'data'    => $detail,
+            'hpp'     => 'Rp. '.number_format($detail->sm_hpp, 0,',','.')
         ));
 
     }
