@@ -60,7 +60,40 @@
                 </button>
             </div>
             <div class="modal-body">
-            ...
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="pemilik">Pemilik Barang</label>
+                </div>
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <input type="text" class="form-control" value="" id="pemilikB">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="posisiB">Posisi Barang</label>
+                </div>
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <input type="text" class="form-control" value="" id="posisiB">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="codeB">Kode Barang</label>
+                </div>
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <input type="text" class="form-control" value="" id="codeB">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="namaB">Nama Barang</label>
+                </div>
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <input type="text" class="form-control" value="" id="namaB">
+                    </div>
+                </div>
+            </div>
             </div>
         </div>
     </div>
@@ -102,6 +135,21 @@
     function detail(stock, detail)
     {
         $('#mDetail').modal('show');
+        $.ajax({
+            url : baseUrl+"/inventory/barangmasuk/getDetail",
+            type: "get",
+            data :{
+                stock: stock,
+                detail : detail
+            },
+            dataType : "json",
+            success : function(response){
+                document.getElementById("pemilikB").setAttribute("value", response.data.pemilik);
+                document.getElementById("posisiB").setAttribute("value", response.data.posisi);
+                document.getElementById("codeB").setAttribute("value", response.data.i_code);
+                document.getElementById("namaB").setAttribute("value", response.data.i_name);
+            }
+        })
     }
 </script>
 @endsection

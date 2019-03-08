@@ -168,6 +168,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/barangmasuk/edit', 'Inventory\BarangMasukController@edit')->name('barangmasuk.edit');
     Route::get('/inventory/barangmasuk/autoItem', 'Inventory\BarangMasukController@auto_item')->name('barangmasuk.autoitem');
     Route::get('/inventory/barangmasuk/getUnit', 'Inventory\BarangMasukController@getUnit')->name('barangmasuk.getUnit');
+    Route::get('/inventory/barangmasuk/getDetail', 'Inventory\BarangMasukController@getDetail')->name('barangmasuk.getDetail');
 
     // Barang Keluar
     Route::get('/inventory/barangkeluar/index', 'InventoryController@barangkeluar_index')->name('barangkeluar.index');

@@ -27,13 +27,15 @@ class BarangMasukController extends Controller
             ->join('m_company as pemilik', 'd_stock.s_comp', 'pemilik.c_id')
             ->join('m_company as posisi', 'd_stock.s_position', 'posisi.c_id')
             ->select('sm_stock','sm_detailid',DB::raw('date_format(sm_date, "%d/%m/%Y") as sm_date'), 'sm_qty', 'pemilik.c_name as pemilik', 'posisi.c_name as posisi', 's_condition')
-            ->where('sm_mutcat', '=', 1||2||3)
+            ->where('sm_mutcat', '=', '1')
+            ->orWhere('sm_mutcat', '=', '2')
+            ->orWhere('sm_mutcat', '=', '3')
             ->get();
         return Datatables::of($datas)
         ->addIndexColumn()
         ->addColumn('action', function($datas) {
             return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                        <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.$datas->sm_stock.'\', \''.$datas->sm_detailid.'\')"><i class="fa fa-folder"></i>
+                        <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.$datas->sm_stock.'\',\''.$datas->sm_detailid.'\')"><i class="fa fa-folder"></i>
                         </button>
                     </div>';
         })
@@ -68,9 +70,6 @@ class BarangMasukController extends Controller
         return Response::json(array(
             'success' => true,
             'data' => $getUnit
-            // 'unit1'   => $getUnit->name1,
-            // 'unit2'   => $getUnit->name2,
-            // 'unit3'   => $getUnit->name3
         ));
     }
 
@@ -113,6 +112,7 @@ class BarangMasukController extends Controller
 
     public function store(Request $request)
     {
+        $user        = Auth::user()->u_id;
         $s_item      = $request->idItem;
         $m_mutcat    = $request->m_mutcat;
         $m_unit      = $request->m_unit;
@@ -122,7 +122,6 @@ class BarangMasukController extends Controller
         $s_condition = $request->s_condition;
         $s_qty       = $request->s_qty;
         $timeNow     = Carbon::now('Asia/Jakarta');
-        $noteTime    = Carbon::now('Asia/Jakarta')->format('d/m/Y');
 
         $countStock = DB::table('d_stock')->count();
         $query1 = DB::table('d_stock')
@@ -136,7 +135,14 @@ class BarangMasukController extends Controller
         if ($countStock > 0) {
             $getIdMax = DB::table('d_stock')->max('s_id');
             $getId = $getIdMax + 1;
-        }        
+        }
+
+        $countEntry = DB::table('d_itementry')->count();
+        $entryId = 1;
+        if ($countEntry > 0) {
+            $getIdMax = DB::table('d_itementry')->max('ie_id');
+            $entryId = $getIdMax + 1;
+        }
 
         DB::beginTransaction();
         try {
@@ -157,6 +163,18 @@ class BarangMasukController extends Controller
                     'sm_hpp'      => str_replace('.', '', $sm_hpp),
                     'sm_nota'     => CodeGenerator::codeWithSeparator('d_stock_mutation', 'sm_nota', 8, 10, 3, 'IN', '-')
                 ]);
+
+                DB::table('d_itementry')->insert([
+                    'ie_id'     => $entryId,
+                    'ie_date'   => date('Y-m-d', strtotime($timeNow)),
+                    'ie_nota'   => CodeGenerator::codeWithSeparator('d_itementry', 'ie_nota', 8, 10, 3, 'IN', '-'),
+                    'ie_item'   => $s_item,
+                    'ie_qty'    => $s_qty,
+                    'ie_unit'   => $m_unit,
+                    'ie_mutcat' => $m_mutcat,
+                    'ie_hpp'    => str_replace('.', '', $sm_hpp),
+                    'ie_user'   => $user
+                ]);
             } else {
                 $dtId = 0;
                 DB::table('d_stock')->insert([
@@ -176,6 +194,18 @@ class BarangMasukController extends Controller
                     'sm_hpp'      => str_replace('.', '', $sm_hpp),
                     'sm_nota'     => CodeGenerator::codeWithSeparator('d_stock_mutation', 'sm_nota', 8, 10, 3, 'IN', '-')
                 ]);
+
+                DB::table('d_itementry')->insert([
+                    'ie_id'     => $entryId,
+                    'ie_date'   => date('Y-m-d', strtotime($timeNow)),
+                    'ie_nota'   => CodeGenerator::codeWithSeparator('d_itementry', 'ie_nota', 8, 10, 3, 'IN', '-'),
+                    'ie_item'   => $s_item,
+                    'ie_qty'    => $s_qty,
+                    'ie_unit'   => $m_unit,
+                    'ie_mutcat' => $m_mutcat,
+                    'ie_hpp'    => str_replace('.', '', $sm_hpp),
+                    'ie_user'   => $user
+                ]);
             }
             DB::commit();
             return response()->json([
@@ -188,5 +218,25 @@ class BarangMasukController extends Controller
               'message' => $e
             ]);
         }
+    }
+
+    public function getDetail(Request $request)
+    {
+        $st = $request->stock;
+        $dt = $request->detail;
+
+        $detail = DB::table('d_stock_mutation')
+            ->join('d_stock', 'sm_stock', 's_id')
+            ->join('m_item', 's_item', 'i_id')
+            ->join('m_company as pemilik', 's_comp', 'pemilik.c_id')
+            ->join('m_company as posisi', 's_position', 'posisi.c_id')
+            ->select('pemilik.c_name as pemilik', 'posisi.c_name as posisi', 'i_code', 'i_name')
+            ->where('sm_stock', '=', $st)
+            ->where('sm_detailid', '=', $dt)->first();
+        return Response::json(array(
+            'success' => true,
+            'data' => $detail
+        ));
+
     }
 }

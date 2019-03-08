@@ -107,7 +107,7 @@
                 </div>
 
                 <div class="col-md-3 col-sm-6 col-xs-12">
-                  <label>HPP</label>
+                  <label>HPP Satuan Terkecil</label>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
                   <div class="form-group">
@@ -221,9 +221,6 @@
       data    : {id : u},
       dataType: "json",
       success : function(response){
-        // document.getElementById("unit1").setAttribute("value", response.unit1);
-        // document.getElementById("unit2").setAttribute("value", response.unit2);
-        // document.getElementById("unit3").setAttribute("value", response.unit3);
         $('#satuan').html('');
         $('#satuan').append('<option value="" disabled selected>== Pilih Satuan ==</option>'+
                       '<option value="'+response.data.id1+'" id="unit1">'+response.data.name1+'</option>'+
