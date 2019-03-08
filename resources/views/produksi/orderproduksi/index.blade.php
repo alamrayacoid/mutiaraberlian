@@ -182,7 +182,7 @@
 	}
 
 	function hapus(id){
-
+		axios.get(baseUrl+'/produksi/orderproduksi/edit')
 	}
 </script>
 @endsection

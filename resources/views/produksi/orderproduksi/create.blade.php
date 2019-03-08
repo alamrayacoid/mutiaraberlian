@@ -153,7 +153,6 @@
                                                         <th>Termin</th>
                                                         <th>Estimasi</th>
                                                         <th>Nominal</th>
-                                                        <th>Tanggal</th>
                                                         <th>Aksi</th>
                                                     </tr>
                                                     </thead>
@@ -174,11 +173,6 @@
                                                             <input type="text"
                                                                    name="nominal[]"
                                                                    class="form-control form-control-sm input-rupiah nominal" value="Rp. 0">
-                                                        </td>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="tanggal[]"
-                                                                   class="form-control form-control-sm datepicker tanggal" autocomplete="off">
                                                         </td>
                                                         <td>
                                                             <button class="btn btn-success btn-tambah-termin btn-sm"
@@ -223,49 +217,10 @@
         var checktermin = null;
 
         $(document).ready(function () {
-            // $('#type_cus').change(function () {
-            //     if ($(this).val() === 'kontrak') {
-            //         $('#label_type_cus').text('Jumlah Bulan');
-            //         $('#jumlah_hari_bulan').val('');
-            //         $('#pagu').val('');
-            //         $('#armada').prop('selectedIndex', 0).trigger('change');
-            //         $('.120mm').removeClass('d-none');
-            //         $('.125mm').addClass('d-none');
-            //         $('.122mm').removeClass('d-none');
-            //     } else if ($(this).val() === 'harian') {
-            //         $('#label_type_cus').text('Jumlah Hari');
-            //         $('#armada').prop('selectedIndex', 0).trigger('change');
-            //         $('#pagu').val('');
-            //         $('#jumlah_hari_bulan').val('');
-            //         $('.122mm').addClass('d-none');
-            //         $('.120mm').removeClass('d-none');
-            //         $('.125mm').removeClass('d-none');
-            //     } else {
-            //         $('#jumlah_hari_bulan').val('');
-            //         $('#armada').prop('selectedIndex', 0).trigger('change');
-            //         $('#pagu').val('');
-            //         $('.122mm').addClass('d-none');
-            //         $('.120mm').addClass('d-none');
-            //         $('.125mm').addClass('d-none');
-            //     }
-            // });
             changeJumlah();
             changeHarga();  
 
-            // FORM ATAS
-
-            ///////////
-
-            // FORM TABLE ITEM
-
-            //////////
-
-            // FORM TABLE TERMIN
-
-            /////////
-
             $('.barang').on('click', function(e){
-                // console.log( $('.barang').index(this) );
                 idxBarang = $('.barang').index(this);
                 setArrayCode();
             });
@@ -303,7 +258,6 @@
                         '<td><input type="text" name="termin[]" class="form-control form-control-sm termin" readonly value="' + next_termin + '"></td>' +
                         '<td><input type="text" name="estimasi[]" class="form-control form-control-sm datepicker estimasi" autocomplete="off"></td>' +
                         '<td><input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah nominal" value="Rp. 0"></td>' +
-                        '<td><input type="text" name="tanggal[]" class="form-control form-control-sm datepicker tanggal" autocomplete="off"></td>' +
                         '<td><button class="btn btn-danger btn-sm btn-hapus-termin" type="button"><i class="fa fa-trash-o"></i></button></td>' +
                         '</tr>'
                     );
