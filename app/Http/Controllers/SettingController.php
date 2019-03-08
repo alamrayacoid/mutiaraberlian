@@ -8,6 +8,10 @@ use DB;
 
 use Auth;
 
+use Yajra\DataTables\DataTables;
+
+use Carbon\Carbon;
+
 class SettingController extends Controller
 {
     public function perubahanhargajual_index()
@@ -108,11 +112,121 @@ class SettingController extends Controller
 
     public function pengaturanpengguna_create()
     {
-        return view('pengaturan.pengaturanpengguna.create');
+        $agen = DB::table('m_agen')->get();
+
+        $employee = DB::table('m_employee')->get();
+
+        $company = DB::table('m_company')->get();
+
+        $level = DB::table('m_level')->get();
+
+        return view('pengaturan.pengaturanpengguna.create',compact('agen', 'employee', 'company', 'level'));
     }
 
     public function pengaturanpengguna_edit()
     {
         return view('pengaturan.pengaturanpengguna.edit');
+    }
+    public function pengaturanpengguna_simpan(Request $request){
+      DB::beginTransaction();
+      try {
+
+        if ($request->type == "agen") {
+          $user = 'A';
+          $code = $request->agen;
+        } else {
+          $user = 'E';
+          $code = $request->pegawai;
+        }
+
+        $id = DB::table('d_username')->max('u_id')+1;
+        DB::table('d_username')
+            ->insert([
+              'u_id' => $id,
+              'u_company' => $request->cabang,
+              'u_username' => $request->username,
+              'u_password' => sha1(md5('islamjaya') . $request->password),
+              'u_level' => $request->level,
+              'u_user' => $user,
+              'u_code' => $code,
+              'u_created_at' => Carbon::now('Asia/Jakarta'),
+              'u_update_at' => Carbon::now('Asia/Jakarta')
+            ]);
+
+        $access = DB::table('m_access')
+                    ->get();          
+
+        $isi = [];
+        for ($i=0; $i < count($access); $i++) {
+          $array = ([
+            'ua_username' => $id,
+            'ua_access' => $access[$i]->a_id,
+            'ua_read' => 'N',
+            'ua_create' => 'N',
+            'ua_update' => 'N',
+            'ua_delete' => 'N'
+          ]);
+          array_push($isi, $array);
+        }
+
+        DB::table('d_useraccess')->insert($isi);
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal'
+        ]);
+      }
+
+    }
+    public function datatable(){
+      $agen = DB::table('d_username')
+                ->join('m_company', 'c_id', '=', 'u_company')
+                ->join('m_level', 'm_id', '=', 'u_level')
+                ->join('m_agen', 'a_code', '=', 'u_code')
+                ->where('u_user', 'A')
+                ->get();
+
+      $employee = DB::table('d_username')
+                    ->join('m_company', 'c_id', '=', 'u_company')
+                    ->join('m_level', 'm_id', '=', 'u_level')
+                    ->join('m_employee', 'e_id', '=', 'u_code')
+                    ->where('u_user', 'E')
+                    ->get();
+
+      $datas = $agen->merge($employee);
+
+      return Datatables::of($datas)
+          ->addIndexColumn()
+          ->addColumn('name', function ($datas){
+            if ($datas->u_user == 'A') {
+              $nama = $datas->a_name;
+            } else {
+              $nama = $datas->e_name;
+            }
+            return $nama;
+          })
+          ->addColumn('jenis', function ($datas){
+            if ($datas->u_user == 'A') {
+              $jenis = 'Agen';
+            } else {
+              $jenis = 'Employee';
+            }
+            return $jenis;
+          })
+          ->addColumn('action', function ($datas) {
+              return '<center><div class="btn-group btn-group-sm">
+                <button class="btn btn-success btn-akses" onclick="window.location.href='.route('pengaturanpengguna.akses').'?id='.$datas->u_id.'" title="Akses"><i class="fa fa-wrench"></i></button>
+                <button class="btn btn-warning btn-edit" onclick="window.location.href='.route('pengaturanpengguna.edit').'?id='.$datas->u_id.'" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
+                <button class="btn btn-primary btn-change" data-id="'.$datas->u_id.'" data-toggle="modal" data-target="#change" type="button" title="Ganti Password"><i class="fa fa-exchange"></i></button>
+                <button class="btn btn-danger btn-nonaktif" onclick="hapus('.$datas->u_id.')" type="button" title="Nonaktif"><i class="fa fa-times-circle"></i></button>
+                </div></center>';
+          })
+          ->rawColumns(['action'])
+          ->make(true);
     }
 }

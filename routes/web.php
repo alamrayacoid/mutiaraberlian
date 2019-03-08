@@ -147,6 +147,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/orderproduksi/get-satuan/{id}', 'ProduksiController@getSatuan')->name('order.getsatuan');
     Route::match(['get', 'post'],'/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
     Route::get('/produksi/orderproduksi/hapus', 'ProduksiController@hapus')->name('order.hapus');
+    Route::get('/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
     Route::get('/produksi/orderproduksi/gethistory', 'ProduksiController@get_history')->name('order.gethistory');
     Route::get('/produksi/orderproduksi/detail', 'ProduksiController@detail_produksi')->name('order.detail');
 
@@ -168,6 +169,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/barangmasuk/store', 'Inventory\BarangMasukController@store')->name('barangmasuk.store');
     Route::get('/inventory/barangmasuk/edit', 'Inventory\BarangMasukController@edit')->name('barangmasuk.edit');
     Route::get('/inventory/barangmasuk/autoItem', 'Inventory\BarangMasukController@auto_item')->name('barangmasuk.autoitem');
+    Route::get('/inventory/barangmasuk/getUnit', 'Inventory\BarangMasukController@getUnit')->name('barangmasuk.getUnit');
+    Route::get('/inventory/barangmasuk/getDetail', 'Inventory\BarangMasukController@getDetail')->name('barangmasuk.getDetail');
 
     // Barang Keluar
     Route::get('/inventory/barangkeluar/index', 'InventoryController@barangkeluar_index')->name('barangkeluar.index');
@@ -265,8 +268,10 @@ Route::group(['middleware' => 'auth'], function () {
     // Perubahan Harga Jual
     Route::get('/pengaturan/otoritas/perubahanhargajual/index', 'SettingController@perubahanhargajual_index')->name('perubahanhargajual.index');
     Route::get('/pengaturan/pengaturanpengguna/index', 'SettingController@pengaturanpengguna_index')->name('pengaturanpengguna.index');
+    Route::POST('/pengaturan/pengaturanpengguna/datatable', 'SettingController@datatable')->name('pengaturanpengguna.datatable');
     Route::get('/pengaturan/pengaturanpengguna/akses', 'SettingController@pengaturanpengguna_akses')->name('pengaturanpengguna.akses');
     Route::get('/pengaturan/pengaturanpengguna/create', 'SettingController@pengaturanpengguna_create')->name('pengaturanpengguna.create');
+    Route::get('/pengaturan/pengaturanpengguna/simpan', 'SettingController@pengaturanpengguna_simpan')->name('pengaturanpengguna.simpan');
     Route::get('/pengaturan/pengaturanpengguna/edit', 'SettingController@pengaturanpengguna_edit')->name('pengaturanpengguna.edit');
     // !===================================================== END PENGATURAN =====================================================!
 
@@ -289,4 +294,3 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/profile', 'ProfileController@profile')->name('profile');
 });
 // End Route Group
-

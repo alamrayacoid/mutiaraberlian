@@ -14,6 +14,7 @@
 
                         <input type="hidden" name="golIdRange" id="golIdRange">
                         <input type="hidden" name="golDetailRange" id="golDetailRange">
+                        <input type="hidden" name="golItemRange" id="golItemRange">
                         <div class="row">
                             <div>
                                 <label class="col-sm-3">Range</label>
@@ -21,13 +22,16 @@
                             <div class="col-sm-9">
                                 <div class="col-sm-12">
                                     <div class="input-group">
+                                        <input type="hidden" name="rangestartawal" id="rangestartawal">
                                         <input type="text" class="form-control form-control-sm" name="rangestartedit"
                                                id="rangestartedit">
                                         <div class="input-group-addon">
                                             <span>-</span>
                                         </div>
+                                        <input type="hidden" name="rangestartakhir" id="rangestartakhir">
                                         <input type="text" class="form-control form-control-sm" name="rangeendedit"
                                                id="rangeendedit">
+                                        <span class="text-danger" style="margin-top: 5px;">*)Tak terhingga = 0</span>
                                     </div>
 
                                 </div>

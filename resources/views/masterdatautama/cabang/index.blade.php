@@ -78,9 +78,9 @@
                     }
                 },
                 columns: [
-                    {data: 'c_name', name: 'c_name'},
-                    {data: 'c_address', name: 'c_address'},
-                    {data: 'c_tlp', name: 'c_tlp'},
+                    {data: 'name', name: 'name'},
+                    {data: 'alamat', name: 'alamat'},
+                    {data: 'telepon', name: 'telepon'},
                     {data: 'status', name: 'status'},
                     {data: 'action', name: 'action'}
                 ],

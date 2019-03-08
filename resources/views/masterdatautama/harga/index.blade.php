@@ -263,26 +263,85 @@
 
         $(document).on('submit', '#formsetharga', function (evt) {
             evt.preventDefault();
-            var data = $('#formsetharga').serialize();
-            axios.post('{{route("dataharga.addgolonganharga")}}', data).then(function (response) {
-                console.log(response);
-                if (response.data.status == "Success") {
-                    messageSuccess("Berhasil", "Data berhasil disimpan!");
-                    $("#formsetharga").trigger('reset');
-                    $("#jenisharga").val("");
-                    $("#select2-jenisharga-container").text('Pilih Jenis Harga');
-                    $("#txtGol").text('~');
-                    reloadTable();
-                    $("#satuan").addClass('d-none');
-                    $("#range").addClass('d-none');
-                } else if (response.data.status == "Failed") {
-                    messageWarning("Gagal", "Data gagal disimpan!");
-                } else if (response.data.status == "Range Ada") {
-                    messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
-                } else if (response.data.status == "Unit Ada") {
-                    messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
+            if ($("#jenisharga").val() == "U") {
+                if ($("#idBarang").val() == "") {
+                    messageWarning("Peringatan", "Masukkan nama barang dengan benar!");
+                } else if ($("#satuanBarang").val() == "") {
+                    messageWarning("Peringatan", "Pilih satuan barang!");
+                } else if ($("#jenis_pembayaran").val() == "") {
+                    messageWarning("Peringatan", "Pilih jenis pembayaran!");
+                } else if ($("#harga").val() == "" || $("#harga").val() == "Rp. 0") {
+                    messageWarning("Peringatan", "Masukkan harga barang dengan benar!");
+                } else {
+                    var data = $('#formsetharga').serialize();
+                    axios.post('{{route("dataharga.addgolonganharga")}}', data).then(function (response) {
+                        if (response.data.status == "Success") {
+                            messageSuccess("Berhasil", "Data berhasil disimpan!");
+                            $("#idBarang").val("");
+                            $(".barang").val("");
+                            $("#jenisharga").val("");
+                            $("#select2-jenisharga-container").text('Pilih Jenis Harga');
+                            reloadTable();
+                            $("#rangestart").val("");
+                            $("#rangeend").val("");
+                            $("#hargarange").val("");
+                            $("#satuanrange option").remove();
+                            $("#satuanrange").prepend('<option value="">Pilih Satuan</option>');
+                            $("#satuanrange").val(null);
+                            $("#select2-satuanrange-container").text('Pilih Satuan');
+                            $("#rangeend").attr("readonly", true);
+                            $("#satuan").addClass('d-none');
+                            $("#range").addClass('d-none');
+                        } else if (response.data.status == "Failed") {
+                            messageWarning("Gagal", "Data gagal disimpan!");
+                        } else if (response.data.status == "Range Ada") {
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
+                        } else if (response.data.status == "Unit Ada") {
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
+                        }
+                    });
                 }
-            });
+            } else if ($("#jenisharga").val() == "R") {
+                if ($("#idBarang").val() == "") {
+                    messageWarning("Peringatan", "Masukkan nama barang dengan benar!");
+                } else if ($("#rangestart").val() == "") {
+                    messageWarning("Peringatan", "Masukkan range awal dengan benar!");
+                } else if ($("#rangeend").val() == "") {
+                    messageWarning("Peringatan", "Masukkan range akhir dengan benar!");
+                } else if ($("#satuanrange").val() == "") {
+                    messageWarning("Peringatan", "Pilih satuan barang!");
+                } else if ($("#hargarange").val() == "" || $("#hargarange").val() == "Rp. 0") {
+                    messageWarning("Peringatan", "Masukkan harga barang dengan benar!");
+                } else {
+                    var data = $('#formsetharga').serialize();
+                    axios.post('{{route("dataharga.addgolonganharga")}}', data).then(function (response) {
+                        if (response.data.status == "Success") {
+                            messageSuccess("Berhasil", "Data berhasil disimpan!");
+                            $("#idBarang").val("");
+                            $(".barang").val("");
+                            $("#jenisharga").val("");
+                            $("#select2-jenisharga-container").text('Pilih Jenis Harga');
+                            reloadTable();
+                            $("#rangestart").val("");
+                            $("#rangeend").val("");
+                            $("#hargarange").val("");
+                            $("#satuanrange option").remove();
+                            $("#satuanrange").prepend('<option value="">Pilih Satuan</option>');
+                            $("#satuanrange").val(null);
+                            $("#select2-satuanrange-container").text('Pilih Satuan');
+                            $("#rangeend").attr("readonly", true);
+                            $("#satuan").addClass('d-none');
+                            $("#range").addClass('d-none');
+                        } else if (response.data.status == "Failed") {
+                            messageWarning("Gagal", "Data gagal disimpan!");
+                        } else if (response.data.status == "Range Ada") {
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
+                        } else if (response.data.status == "Unit Ada") {
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
+                        }
+                    });
+                }
+            }
         });
 
         $(document).on('keyup', '#rangestart', function (evt) {
@@ -351,6 +410,8 @@
                                 if (response.data.status == "Success") {
                                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                                     reloadTable();
+                                } else if (response.data.status == "Range Ada") {
+                                    messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
                                 } else {
                                     messageWarning("Gagal", "Data gagal diperbarui!");
                                 }
@@ -474,7 +535,10 @@
             });
             $("#golIdRange").val(id);
             $("#golDetailRange").val(detail);
+            $("#golItemRange").val(item);
+            $("#rangestartawal").val(rangestart);
             $("#rangestartedit").val(rangestart);
+            $("#rangestartakhir").val(rangeEnd);
             $("#rangeendedit").val(rangeEnd);
             $("#txtEditGolHrgRange").val(harga);
             $('#editGolHrgRange').modal('show');
