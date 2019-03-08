@@ -43,7 +43,7 @@
                                         <td>
                                             <strong>Perusahaan</strong>
                                         </td>
-                                        <td>MUTIARA A</td>
+                                        <td>{{$company->c_name}}</td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -67,6 +67,7 @@
                     </div>
                     <div class="table-responsive mt-4">
                     <h5>Akses Pengguna</h5>
+										<form id="dataakses">
                         <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_akses">
                             <thead class="bg-primary">
                                 <tr>
@@ -82,31 +83,53 @@
 																<tr>
 																	<td>@if($data->a_parent == $data->a_id) <strong>{{ $data->a_name }}</strong> @else<span
 																							style="margin-left: 20px;">{{ $data->a_name }}</span> @endif
+																							<input type="hidden" name="idaccess[]" value="{{$data->a_id}}">
 																	</td>
 																	<td>
-																			<label><input @if($data->a_parent == $data->a_id) id="read{{ $data->a_parent }}" class="checkbox checkbox-info rounded headread{{ $data->a_parent }}" onchange="handleChange(this);" @else onchange="checkParent(this, 'read{{ $data->a_parent }}');"
-																			class="checkbox checkbox-info rounded subread{{ $data->a_parent }}" @endif name="read[]" value="Y" type="checkbox"><span></span></label>
+																			<label><input @if($data->a_parent == $data->a_id) id="read{{ $data->a_parent }}" class="checkbox checkbox-info rounded headread{{ $data->a_parent }}" onchange="handleChange(this);" @else onchange="checkParent(this, 'read{{$data->a_parent}}', 'read{{ $data->a_id }}');"
+																			class="checkbox checkbox-info rounded subread{{ $data->a_parent }}" @endif type="checkbox" @if($data->ua_read == 'Y') checked @endif><span></span></label>
+																				@if($data->a_parent == $data->a_id)
+																				<input type="hidden" id="hread{{$data->a_id}}" class="hread{{ $data->a_parent }}" name="read[]" value="N">
+																				@else
+																				<input type="hidden" id="sread{{$data->a_id}}" class="sread{{ $data->a_parent }}" name="read[]" value="N">
+																				@endif
 																	</td>
 																	<td>
-																		<label><input @if($data->a_parent == $data->a_id) id="insert{{ $data->a_parent }}" class="checkbox checkbox-success rounded headinsert{{ $data->a_parent }}" onchange="handleChange(this);" @else onchange="checkParent(this, 'insert{{ $data->a_parent }}');"
-																		class="checkbox checkbox-success rounded subinsert{{ $data->a_parent }}" @endif name="insert[]" value="Y" type="checkbox"><span></span></label>
+																		<label><input @if($data->a_parent == $data->a_id) id="insert{{ $data->a_parent }}" class="checkbox checkbox-success rounded headinsert{{ $data->a_parent }}" onchange="handleChange(this);" @else onchange="checkParent(this, 'insert{{$data->a_parent}}', 'insert{{ $data->a_id }}');"
+																		class="checkbox checkbox-success rounded subinsert{{ $data->a_parent }}" @endif type="checkbox" @if($data->ua_create == 'Y') checked @endif><span></span></label>
+																			@if($data->a_parent == $data->a_id)
+																			<input type="hidden" id="hinsert{{$data->a_id}}" class="hinsert{{ $data->a_parent }}" name="insert[]" value="N">
+																			@else
+																			<input type="hidden" id="sinsert{{$data->a_id}}" class="sinsert{{ $data->a_parent }}" name="insert[]" value="N">
+																			@endif
 																	</td>
 																	<td>
-																		<label><input @if($data->a_parent == $data->a_id) id="update{{ $data->a_parent }}" class="checkbox checkbox-warning rounded headupdate{{ $data->a_parent }}" onchange="handleChange(this);" @else onchange="checkParent(this, 'update{{ $data->a_parent }}');"
-																		class="checkbox checkbox-warning rounded subupdate{{ $data->a_parent }}" @endif name="update[]" value="Y" type="checkbox"><span></span></label>
+																		<label><input @if($data->a_parent == $data->a_id) id="update{{ $data->a_parent }}" class="checkbox checkbox-warning rounded headupdate{{ $data->a_parent }}" onchange="handleChange(this);" @else onchange="checkParent(this, 'update{{$data->a_parent}}', 'update{{ $data->a_id }}');"
+																		class="checkbox checkbox-warning rounded subupdate{{ $data->a_parent }}" @endif type="checkbox" @if($data->ua_update == 'Y') checked @endif><span></span></label>
+																			@if($data->a_parent == $data->a_id)
+																			<input type="hidden" id="hupdate{{$data->a_id}}" class="hupdate{{ $data->a_parent }}" name="update[]" value="N">
+																			@else
+																			<input type="hidden" id="supdate{{$data->a_id}}" class="supdate{{ $data->a_parent }}" name="update[]" value="N">
+																			@endif
 																	</td>
 																	<td>
-																		<label><input @if($data->a_parent == $data->a_id) id="delete{{ $data->a_parent }}" class="checkbox checkbox-danger rounded headdelete{{ $data->a_parent }}" onchange="handleChange(this);" @else onchange="checkParent(this, 'delete{{ $data->a_parent }}');"
-																		class="checkbox checkbox-danger rounded subdelete{{ $data->a_parent }}" @endif name="delete[]" value="Y" type="checkbox"><span></span></label>
+																		<label><input @if($data->a_parent == $data->a_id) id="delete{{ $data->a_parent }}" class="checkbox checkbox-danger rounded headdelete{{ $data->a_parent }}" onchange="handleChange(this);" @else onchange="checkParent(this, 'delete{{$data->a_parent}}', 'delete{{ $data->a_id }}');"
+																		class="checkbox checkbox-danger rounded subdelete{{ $data->a_parent }}" @endif type="checkbox" @if($data->ua_delete == 'Y') checked @endif><span></span></label>
+																			@if($data->a_parent == $data->a_id)
+																			<input type="hidden" id="hdelete{{$data->a_id}}" class="hdelete{{ $data->a_parent }}" name="delete[]" value="N">
+																			@else
+																			<input type="hidden" id="sdelete{{$data->a_id}}" class="sdelete{{ $data->a_parent }}" name="delete[]" value="N">
+																			@endif
 																	</td>
 															</tr>
 													@endforeach
                             </tbody>
                         </table>
+												</form>
                     </div>
                     </div>
                     <div class="card-footer text-right">
-                    <button class="btn btn-primary btn-submit" type="button" id="btn_simpan">Simpan</button>
+                    <button class="btn btn-primary btn-submit" type="button" onclick="simpan({{$id}})" id="btn_simpan">Simpan</button>
                     <a href="{{route('pengaturanpengguna.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
@@ -128,16 +151,46 @@ function handleChange(checkbox) {
 		if (checkbox.checked) {
 				var klas = $(checkbox).attr('id');
 				$('.sub'+klas).prop("checked", true);
+				$('.h'+klas).val('Y');
+				$('.s'+klas).val('Y');
 		} else {
 				var klas = $(checkbox).attr('id');
 				$('.sub'+klas).prop("checked", false);
+				$('.h'+klas).val('N');
+				$('.s'+klas).val('N');
 		}
 }
 
-function checkParent(checkbox, id){
+function checkParent(checkbox, parent, id){
 		if (checkbox.checked) {
-				$('.head'+id).prop("checked", true);
+				$('.head'+parent).prop("checked", true);
+				$('.h'+parent).val('Y');
+				$('#s'+id).val('Y');
+		} else {
+			$('#s'+id).val('N');
 		}
+}
+
+function simpan(id){
+	loadingShow();
+	$.ajax({
+		type: 'get',
+		data: $('#dataakses').serialize()+'&id='+id,
+		dataType: 'JSON',
+		url: baseUrl + '/pengaturan/pengaturanpengguna/simpanakses',
+		success : function(response){
+			if (response.status == 'berhasil') {
+				loadingHide();
+				messageSuccess('Berhasil', 'Akses berhasil disimpan!');
+				setTimeout(function () {
+					window.location.href = "{{url('/pengaturan/pengaturanpengguna/index')}}";
+				}, 800);
+			} else {
+				loadingHide();
+				messageFailed('Gagal', 'Akses gagal disimpan!');
+			}
+		}
+	});
 }
 </script>
 @endsection
