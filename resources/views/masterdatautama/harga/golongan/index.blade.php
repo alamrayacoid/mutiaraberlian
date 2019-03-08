@@ -55,7 +55,7 @@
                             </div>
                             <div>
                                 <input type="hidden" name="idBarang" id="idBarang">
-                                <input type="text" class="form-control form-control-sm mb-2 barang">
+                                <input type="text" class="form-control form-control-sm mb-2 barang" name="nama_barang">
                             </div>
 
                             <div>
