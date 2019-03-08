@@ -47,39 +47,18 @@
 	                                		<th>Aksi</th>
 	                                	</tr>
 	                                </thead>
-	                                <tbody>
-	                                	<tr>
-	                                		<td>1</td>
-	                                		<td>0123139 | 07/09/2019</td>
-	                                		<td>Brad</td>
-	                                		<td>
-											<button class="btn btn-primary btn-modal" data-toggle="modal" data-target="#detail" type="button">Detail</button>
-                                            </td>
-	                                		<td>Rp. 1.000.000</td>
-	                                		<td>Rp. 500.000</td>
-                                            <td>-</td>
-	                                		<td>
-	                                			<div class="btn-group btn-group-sm">
-	                                				<button class="btn btn-warning btn-edit" onclick="window.location.href='{{ route('order.edit') }}'" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-	                                				<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-	                                			</div>
-	                                		</td>
-	                                	</tr>
+	                                <tbody id="bodyTableIndex">
+	                                	
 	                                </tbody>
 	                            </table>
 	                        </div>
                         </section>
                     </div>
                 </div>
-
 			</div>
-
 		</div>
-
 	</section>
-
 </article>
-
 @endsection
 
 @section('extra_script')
@@ -87,7 +66,7 @@
 
 	$(document).ready(function(){
 		var table = $('#table_order').DataTable();
-
+		TableIndex();
 		$(document).on('click', '.btn-disable', function(){
 			var ini = $(this);
 			$.confirm({
@@ -137,9 +116,50 @@
 	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 		})
 
-		// function table_hapus(a){
-		// 	table.row($(a).parents('tr')).remove().draw();
-		// }
 	});
+
+	function TableIndex(){
+		var tglAwal = $('#tglAwal').val();
+		var tglAkhir = $('#tglAkhir').val();
+
+		$('#table_order').dataTable().fnDestroy();
+		sub = $('#table_order').DataTable({
+			responsive: true,
+			autoWidth: false,
+			serverSide: true,
+			ajax: {
+				url: "{{ route('order.gethistory') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}",
+					"tglAwal": tglAwal,
+					"tglAkkhir": tglAkhir
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'po_nota'},
+				{data: 's_company'},
+				{data: 'detail'},
+				{data: 'totalnet'},
+				{data: 'bayar'},
+				{data: 'status'},
+				{data: 'aksi'}
+			],
+		});
+	}
+
+	function detail(id){
+
+		$('#detail').modal('show');
+	}
+
+	function edit(id){
+
+	}
+
+	function hapus(id){
+
+	}
 </script>
 @endsection

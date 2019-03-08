@@ -21,7 +21,7 @@
 		<div class="row">
 
 			<div class="col-12">
-				
+
 				<div class="card">
                     <div class="card-header bordered p-2">
                     	<div class="header-block">
@@ -33,7 +33,7 @@
                     </div>
                     <div class="card-block">
                         <section>
-                        	
+
                         	<div class="row">
                         		<div class="col-md-3 col-sm-6 col-12">
                         			<label>Pilih Jenis</label>
@@ -56,8 +56,8 @@
                         </section>
                     </div>
                     <div class="card-footer text-right">
-                    	<button class="btn btn-primary" type="button">Simpan</button>
-                    	<a href="{{route('return.index')}}" class="btn btn-secondary">Kembali</a>
+                    	<button class="btn btn-primary" type="button" onclick="simpan()">Simpan</button>
+                    	<a href="{{url('/pengaturan/pengaturanpengguna/index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
 
@@ -93,5 +93,133 @@
             }
         });
 	});
+
+	function showpassword(){
+		var password = document.getElementById("password");
+
+		if (password.type === "password") {
+			$('#password').attr('type', 'text');
+		} else {
+			$('#password').attr('type', 'password');
+		}
+	}
+
+	function showconfirm(){
+		var password = document.getElementById("confirmpassword");
+
+		if (password.type === "password") {
+			$('#confirmpassword').attr('type', 'text');
+		} else {
+			$('#confirmpassword').attr('type', 'password');
+		}
+	}
+
+	function matching(){
+				password = $('#password').val();
+        confirm = $('#confirmpassword').val();
+				if (password === confirm) {
+					$('#check').css('display', '');
+				} else {
+					$('#check').css('display', 'none');
+				}
+
+	}
+
+	function simpan(){
+		var jenis = $('#jenis').val();
+
+		if (jenis == 1) {
+			var type = 'agen';
+			var agen = document.getElementById("sagen");
+			var cabang = document.getElementById("cabang");
+			var level = document.getElementById("level");
+			var username = document.getElementById("username");
+			var password = document.getElementById("password");
+			var confirmpassword = document.getElementById("confirmpassword");
+			var data = $('#formagen').serialize();
+
+			if (agen.value == "" || agen.value == undefined) {
+				messageFailed('Failed', 'agen kosong, mohon lengkapi data!');
+				return false;
+			} else if (cabang.value == "" || cabang.value == undefined) {
+				messageFailed('Failed', 'cabang kosong, mohon lengkapi data!');
+				return false;
+			} else if (level.value == "" || level.value == undefined) {
+				messageFailed('Failed', 'level password kosong, mohon lengkapi data!');
+				return false;
+			} else if (username.value == "" || username.value == undefined) {
+				messageFailed('Failed', 'username kosong, mohon lengkapi data!');
+				return false;
+			}	else if (password.value == "" || password.value == undefined) {
+				messageFailed('Failed', 'password kosong, mohon lengkapi data!');
+				return false;
+			} else if (confirmpassword.value == "" || confirmpassword.value == undefined) {
+				messageFailed('Failed', 'confirm password kosong, mohon lengkapi data!');
+				return false;
+			} else {
+				$.ajax({
+					type: 'get',
+					dataType: 'JSON',
+					url: "{{route('pengaturanpengguna.simpan')}}"+'?type='+type+'&'+data,
+					success : function(response){
+						if (response.status == 'berhasil') {
+							messageSuccess('Berhasil', 'Data berhasil disimpan!');
+							setTimeout(function () {
+								window.location.href = "{{url('/pengaturan/pengaturanpengguna/index')}}";
+							}, 800);
+						} else {
+							messageFailed('Gagal', 'Data gagal disimpan!');
+						}
+					}
+				});
+			}
+		} else {
+			var type = 'pegawai';
+			var pegawai = document.getElementById("spegawai");
+			var cabang = document.getElementById("cabang");
+			var level = document.getElementById("level");
+			var username = document.getElementById("username");
+			var password = document.getElementById("password");
+			var confirmpassword = document.getElementById("confirmpassword");
+			var data = $('#formpegawai').serialize();
+
+			if (pegawai.value == "" || pegawai.value == undefined) {
+				messageFailed('Failed', 'agen kosong, mohon lengkapi data!');
+				return false;
+			} else if (cabang.value == "" || cabang.value == undefined) {
+				messageFailed('Failed', 'cabang kosong, mohon lengkapi data!');
+				return false;
+			} else if (level.value == "" || level.value == undefined) {
+				messageFailed('Failed', 'level password kosong, mohon lengkapi data!');
+				return false;
+			} else if (username.value == "" || username.value == undefined) {
+				messageFailed('Failed', 'username kosong, mohon lengkapi data!');
+				return false;
+			}	else if (password.value == "" || password.value == undefined) {
+				messageFailed('Failed', 'password kosong, mohon lengkapi data!');
+				return false;
+			} else if (confirmpassword.value == "" || confirmpassword.value == undefined) {
+				messageFailed('Failed', 'confirm password kosong, mohon lengkapi data!');
+				return false;
+			} else {
+				$.ajax({
+					type: 'get',
+					data: {data},
+					dataType: 'JSON',
+					url: "{{route('pengaturanpengguna.simpan')}}"+'?type='+type+'&'+data,
+					success : function(response){
+						if (response.status == 'berhasil') {
+							messageSuccess('Berhasil', 'Data berhasil disimpan!');
+							setTimeout(function () {
+								window.location.href = "{{url('/pengaturan/pengaturanpengguna/index')}}";
+							}, 800);	
+						} else {
+							messageFailed('Gagal', 'Data gagal disimpan!');
+						}
+					}
+				});
+			}
+		}
+	}
 </script>
 @endsection

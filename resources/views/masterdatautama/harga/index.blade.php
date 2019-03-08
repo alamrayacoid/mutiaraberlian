@@ -47,6 +47,8 @@
 					@include('masterdatautama.harga.default.index')
 					@include('masterdatautama.harga.golongan.addGolongan')
 					@include('masterdatautama.harga.golongan.editGolongan')
+					@include('masterdatautama.harga.golongan.editGolHrgUnit')
+					@include('masterdatautama.harga.golongan.editGolHrgRange')
 
 		        </div>
 			</div>
@@ -62,6 +64,14 @@
 <script type="text/javascript">
     var tbl_gln, tbl_item;
 	$(document).ready(function(){
+	    if ($("#idGol").val() == "") {
+	        $(".barang").attr('disabled', true);
+	        $("#jenisharga").attr('disabled', true);
+        } else {
+            $(".barang").attr('disabled', false);
+            $("#jenisharga").attr('disabled', false);
+        }
+
         tbl_gln = $('#table_golongan').DataTable({
 			"paging":   false,
 			"ordering": false,
@@ -259,15 +269,104 @@
                 if (response.data.status == "Success") {
                     messageSuccess("Berhasil", "Data berhasil disimpan!");
                     $("#formsetharga").trigger('reset');
+                    $("#jenisharga").val("");
+                    $("#select2-jenisharga-container").text('Pilih Jenis Harga');
                     $("#txtGol").text('~');
                     reloadTable();
                     $("#satuan").addClass('d-none');
                     $("#range").addClass('d-none');
-                } else {
+                } else if (response.data.status == "Failed") {
                     messageWarning("Gagal", "Data gagal disimpan!");
+                } else if (response.data.status == "Range Ada") {
+                    messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
+                } else if (response.data.status == "Unit Ada") {
+                    messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
                 }
             });
         });
+
+        $(document).on('keyup', '#rangestart', function (evt) {
+            evt.preventDefault();
+            if ($(this).val() != "") {
+                $("#rangeend").removeAttr('readonly');
+            } else {
+                $("#rangeend").attr('readonly', true);
+            }
+        });
+
+        $(document).on('submit', '#formEditGolHrgUnit', function (evt) {
+            evt.preventDefault();
+            var data = $('#formEditGolHrgUnit').serialize();
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 2.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apakah anda yakin ingin memperbarui data ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return axios.post('{{route("dataharga.editgolonganhargaunit")}}', data).then(function (response) {
+                                if (response.data.status == "Success") {
+                                    messageSuccess("Berhasil", "Data berhasil perbarui!");
+                                    reloadTable();
+                                } else {
+                                    messageWarning("Gagal", "Data gagal diperbarui!");
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+
+        })
+
+        $(document).on('submit', '#formEditGolHrgRange', function (evt) {
+            evt.preventDefault();
+            var data = $('#formEditGolHrgRange').serialize();
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 2.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apakah anda yakin ingin memperbarui data ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return axios.post('{{route("dataharga.editgolonganhargarange")}}', data).then(function (response) {
+                                if (response.data.status == "Success") {
+                                    messageSuccess("Berhasil", "Data berhasil perbarui!");
+                                    reloadTable();
+                                } else {
+                                    messageWarning("Gagal", "Data gagal diperbarui!");
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+
+        })
 	});
 
     function setItem(info) {
@@ -306,11 +405,90 @@
         deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan/"+id);
     }
 
+    function editGolonganHarga(id, detail, item, harga, satuan, tipe, rangestart, rangeEnd) {
+        if (tipe == "U") {
+            $.ajax({
+                url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
+                type: 'GET',
+                success: function( resp ) {
+                    var option = '';
+                    if (resp.id1 == satuan) {
+                        option += '<option value="'+resp.id1+'" selected>'+resp.unit1+'</option>';
+                    } else {
+                        option += '<option value="'+resp.id1+'" >'+resp.unit1+'</option>';
+                    }
+
+                    if (resp.id2 != null && resp.id2 != resp.id1) {
+                        if (resp.id2 == satuan) {
+                            option += '<option value="'+resp.id2+'" selected>'+resp.unit2+'</option>';
+                        } else {
+                            option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                        }
+
+                    }
+                    if (resp.id3 != null && resp.id3 != resp.id1) {
+                        if (resp.id3 == satuan) {
+                            option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                        } else {
+                            option += '<option value="'+resp.id3+'" selected>'+resp.unit3+'</option>';
+                        }
+
+                    }
+                    $("#satuanBarangUnitEdit").append(option);
+                }
+            });
+            $("#golId").val(id);
+            $("#golDetail").val(detail);
+            $("#txtEditGolHrg").val(harga);
+            $('#editGolHrgUnit').modal('show');
+        } else {
+            $.ajax({
+                url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
+                type: 'GET',
+                success: function( resp ) {
+                    var option = '';
+                    if (resp.id1 == satuan) {
+                        option += '<option value="'+resp.id1+'" selected>'+resp.unit1+'</option>';
+                    } else {
+                        option += '<option value="'+resp.id1+'" >'+resp.unit1+'</option>';
+                    }
+
+                    if (resp.id2 != null && resp.id2 != resp.id1) {
+                        if (resp.id2 == satuan) {
+                            option += '<option value="'+resp.id2+'" selected>'+resp.unit2+'</option>';
+                        } else {
+                            option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                        }
+
+                    }
+                    if (resp.id3 != null && resp.id3 != resp.id1) {
+                        if (resp.id3 == satuan) {
+                            option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                        } else {
+                            option += '<option value="'+resp.id3+'" selected>'+resp.unit3+'</option>';
+                        }
+
+                    }
+                    $("#satuanBarangRangeEdit").append(option);
+                }
+            });
+            $("#golIdRange").val(id);
+            $("#golDetailRange").val(detail);
+            $("#rangestartedit").val(rangestart);
+            $("#rangeendedit").val(rangeEnd);
+            $("#txtEditGolHrgRange").val(harga);
+            $('#editGolHrgRange').modal('show');
+        }
+
+    }
+
     function hapusGolonganHarga(id, detail) {
         deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail);
     }
 
     function addGolonganHarga(id, name) {
+        $(".barang").attr('disabled', false);
+        $("#jenisharga").attr('disabled', false);
         $('#idGol').val(id);
         $('#txtGol').text(name);
         if ($.fn.DataTable.isDataTable("#table_golonganharga")) {
