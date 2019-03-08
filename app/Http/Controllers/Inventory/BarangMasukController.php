@@ -237,7 +237,8 @@ class BarangMasukController extends Controller
             ->where('sm_detailid', '=', $dt)->first();
         return Response::json(array(
             'success' => true,
-            'data' => $detail
+            'data' => $detail,
+            'hpp' => 'Rp. '.number_format($detail->sm_hpp, 0,',','.')
         ));
 
     }

@@ -189,7 +189,7 @@
                 document.getElementById("posisiB").setAttribute("value", response.data.posisi);
                 document.getElementById("codeB").setAttribute("value", response.data.i_code);
                 document.getElementById("qtyB").setAttribute("value", response.data.sm_qty);
-                document.getElementById("hppB").setAttribute("value", response.data.sm_hpp);
+                document.getElementById("hppB").setAttribute("value", response.hpp);
                 document.getElementById("satuanB").setAttribute("value", response.data.u_name);
                 document.getElementById("notaB").setAttribute("value", response.data.sm_nota);
             }
