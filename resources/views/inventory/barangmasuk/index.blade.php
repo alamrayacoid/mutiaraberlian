@@ -164,7 +164,7 @@
                 {data: 'sm_qty', name: 'sm_qty'},
                 {data: 'pemilik', name: 'pemilik'},
                 {data: 'posisi', name: 'posisi'},
-                {data: 's_condition', name: 's_condition'},
+                {data: 'kondisi', name: 'kondisi'},
                 {data: 'action', name: 'action'}
             ],
             pageLength: 10,

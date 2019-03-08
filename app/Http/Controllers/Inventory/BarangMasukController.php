@@ -27,19 +27,27 @@ class BarangMasukController extends Controller
             ->join('m_company as pemilik', 'd_stock.s_comp', 'pemilik.c_id')
             ->join('m_company as posisi', 'd_stock.s_position', 'posisi.c_id')
             ->select('sm_stock','sm_detailid',DB::raw('date_format(sm_date, "%d/%m/%Y") as sm_date'), 'sm_qty', 'pemilik.c_name as pemilik', 'posisi.c_name as posisi', 's_condition')
+            ->where('s_status', '=', 'ON DESTINATION')
             ->where('sm_mutcat', '=', '1')
             ->orWhere('sm_mutcat', '=', '2')
             ->orWhere('sm_mutcat', '=', '3')
             ->get();
         return Datatables::of($datas)
         ->addIndexColumn()
+        ->addColumn('kondisi', function($datas) {
+            if($datas->s_condition == 'FINE'){
+                return 'BAIK';
+            } else {
+                return 'RUSAK';
+            }
+        })
         ->addColumn('action', function($datas) {
             return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                         <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.$datas->sm_stock.'\',\''.$datas->sm_detailid.'\')"><i class="fa fa-folder"></i>
                         </button>
                     </div>';
         })
-        ->rawColumns(['action'])
+        ->rawColumns(['kondisi','action'])
         ->make(true);
     }
 
