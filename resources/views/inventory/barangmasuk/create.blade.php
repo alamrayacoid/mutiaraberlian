@@ -36,7 +36,7 @@
 
                 <div class="col-md-9 col-sm-6 col-xs-12">
                   <div class="form-group">
-                    <input type="hidden" name="idItem" id="idItem">
+                    <input type="hidden" name="idItem" id="idItem" onchange="getUnit()">
                     <input type="text" class="form-control form-control-sm" name="s_item" id="namaItem" style="text-transform:uppercase">
                   </div>
                 </div>
@@ -64,9 +64,6 @@
                   <div class="form-group">
                     <select name="m_unit" id="satuan" class="form-control form-control-sm select2">
                       <option value="" disabled selected>== Pilih Satuan ==</option>
-                      @foreach($unit as $unit)
-                        <option value="{{$unit->u_id}}">{{$unit->u_name}}</option>
-                      @endforeach
                     </select>
                   </div>
                 </div>
@@ -157,7 +154,8 @@
       source: baseUrl+'/inventory/barangmasuk/autoItem',
       minLength: 2,
       select: function(event, data){
-          $('#idItem').val(data.item.id);
+          $('#idItem').val(data.item.id).trigger('change');
+
       }
     });
 
@@ -210,6 +208,27 @@
       error: function (e) {
         loadingHide();
         messageWarning('Peringatan', e.message);
+      }
+    });
+  }
+
+  function getUnit()
+  {
+    var u = document.getElementById("idItem").value;
+    $.ajax({
+      url : baseUrl+"/inventory/barangmasuk/getUnit/",
+      type    : "get",
+      data    : {id : u},
+      dataType: "json",
+      success : function(response){
+        // document.getElementById("unit1").setAttribute("value", response.unit1);
+        // document.getElementById("unit2").setAttribute("value", response.unit2);
+        // document.getElementById("unit3").setAttribute("value", response.unit3);
+        $('#satuan').html('');
+        $('#satuan').append('<option value="" disabled selected>== Pilih Satuan ==</option>'+
+                      '<option value="'+response.data.id1+'" id="unit1">'+response.data.name1+'</option>'+
+                      '<option value="'+response.data.id2+'" id="unit2">'+response.data.name2+'</option>'+
+                      '<option value="'+response.data.id3+'" id="unit3">'+response.data.name3+'</option>'); 
       }
     });
   }

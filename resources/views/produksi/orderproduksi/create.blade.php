@@ -63,9 +63,9 @@
                                             <div class="form-group">
                                                 <select name="supplier" id="supplier"
                                                         class="form-control form-control-sm select2">
+                                                    <option value="" disabled selected>== Pilih Supplier ==</option>
                                                     @foreach($suppliers as $supplier)
-                                                        <option
-                                                            value="{{$supplier->s_id}}">{{$supplier->s_name}}</option>
+                                                        <option value="{{$supplier->s_id}}">{{$supplier->s_name}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -252,6 +252,18 @@
             changeJumlah();
             changeHarga();  
 
+            // FORM ATAS
+
+            ///////////
+
+            // FORM TABLE ITEM
+
+            //////////
+
+            // FORM TABLE TERMIN
+
+            /////////
+
             $('.barang').on('click', function(e){
                 // console.log( $('.barang').index(this) );
                 idxBarang = $('.barang').index(this);
@@ -267,14 +279,6 @@
                 $(this).parents('tr').remove();
                 updateTotalTampil();
                 setArrayCode();
-            });
-
-            $(".barang").autocomplete({
-                source: baseUrl + '/produksi/orderproduksi/cari-barang',
-                minLength: 1,
-                select: function (event, data) {
-                    setItem(data.item);
-                }
             });
 
             $('.btn-tambah').on('click', function () {
@@ -304,7 +308,7 @@
                         '</tr>'
                     );
                 $('.datepicker').datepicker({
-                    dateFormat: "dd-mm-yy",
+                    format: "dd-mm-yyyy",
                     enableOnReadonly: false,
                     autoclose: true
 
@@ -379,34 +383,17 @@
                 } else if ($("#tot_hrg").val() == "" || $("#tot_hrg").val() == 0 || checkForm() == "cek form" || checkTermin() == "cek form") {
                     messageWarning('Peringatan', 'Lengkapi data order produksi');
                 } else {
-                    var data = $('#formgln').serialize();
-                    axios.post('{{route("order.create")}}', data).then((response) => {
-
+                    loadingShow();
+                    var data = $('#form').serialize();
+                    axios.post(baseUrl+'/produksi/orderproduksi/create', data).then((response) => {
+                        if(response.data.status == 'sukses'){
+                            loadingHide();
+                            messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
+                        }else{
+                            loadingHide();
+                            messageFailed("Gagal", "Data Order Produksi Gagal Disimpan");
+                        }
                     })
-                    messageSuccess("Sukses", "Data Order Produksi Berhasil Disimpan");
-                    // {{--$.ajax({--}}
-                    //     {{--url: "{{route('order.create')}}",--}}
-                    //     {{--type: "post",--}}
-                    //     {{--data: $('#form').serialize(),--}}
-                    //     {{--dataType: "json",--}}
-                    //     {{--beforeSend: function () {--}}
-                    //         {{--loadingShow();--}}
-                    //     {{--},--}}
-                    //     {{--success: function (response) {--}}
-                    //         {{--if (response.status == 'sukses') {--}}
-                    //             {{--loadingHide();--}}
-                    //             {{--messageSuccess('Success', 'Data berhasil ditambahkan!');--}}
-                    //             {{--setInterval(function(){ location.reload(); }, 3500);--}}
-                    //         {{--} else {--}}
-                    //             {{--loadingHide();--}}
-                    //             {{--messageFailed('Gagal', response.message);--}}
-                    //         {{--}--}}
-                    //     {{--},--}}
-                    //     {{--error: function (e) {--}}
-                    //         {{--loadingHide();--}}
-                    //         {{--messageWarning('Peringatan', e.message);--}}
-                    //     {{--}--}}
-                    // {{--});--}}}
 
                 }
             })
@@ -603,12 +590,20 @@
                 }
             }
 
+            var item = [];
+            var inpItemid = document.getElementsByClassName( 'itemid' ),
+                item  = [].map.call(inpItemid, function( input ) {
+                    return input.value;
+                });
+
+            var supp = $('#supplier').val();
             $( ".barang" ).autocomplete({
                 source: function( request, response ) {
                     $.ajax({
                         url: '{{ url('/produksi/orderproduksi/cari-barang') }}',
                         data: {
-                            kode: icode,
+                            idItem: item,
+                            supp: supp,
                             term: $(".barang").eq(idxBarang).val()
                         },
                         success: function( data ) {

@@ -78,71 +78,29 @@
                                 </tr>
                             </thead>
                             <tbody>
-															@php
-																	$nomor=1;
-															@endphp
-
-															@foreach($menu as $index => $data)
-
-															@if($data->a_parent == $data->a_id)
-																	<tr style="background: #f7e8e8">
-																			<td>
-																					 <input type="hidden" name="id_access[]" value="{{$data->a_id}}">
-																					{{$nomor}}. &nbsp; <strong>{{$data->a_name}}</strong>
-																			</td>
-																			<td>
-
-																					 <input type="hidden" value="N" class="checkbox" name="read[]"  id="read-{{$data->a_id}}">
-																					 <label><input class="checkbox checkbox-info rounded" onchange="simpanRead('{{$data->a_id}}')"  id="read-{{$data->a_id}}" type="checkbox"><span></span></label>
-
-																			</td>
-																			<td>
-																					<input type="hidden" value="N" class="checkbox" name="insert[]" id="insert-{{$data->a_id}}">
-																					<label><input class="checkbox rounded" onchange="simpanInsert('{{$data->a_id}}')"  id="insert-{{$data->a_id}}" type="checkbox"><span></span></label>
-																			</td>
-																			<td>
-																					<input type="hidden" value="N" class="checkbox" name="update[]" id="update-{{$data->a_id}}">
-																					<label><input class="checkbox rounded" onchange="simpanUpdate('{{$data->a_id}}')"  id="update-{{$data->a_id}}" type="checkbox"><span></span></label>
-																			</td>
-																			<td>
-																					 <input type="hidden" value="N" class="checkbox" name="delete[]" id="delete-{{$data->a_id}}">
-																					 <label><input class="checkbox rounded" onchange="simpanDelete('{{$data->a_id}}')"  id="delete-{{$data->a_id}}" type="checkbox"><span></span></label>
-																			</td>
-																					@php
-																							$nomor++;
-																					@endphp
-																			</tr>
-																	@else
-																	<tr>
-																			<td>
-																			<input type="hidden" name="id_access[]" value="{{$data->a_id}}">
-																					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{$data->a_name}}
-																			</td>
-																			<td>
-																			<input type="checkbox" class="checkbox" onchange="simpanRead('{{$data->a_id}}')"  id="read1-{{$data->a_id}}">
-																			 <label><input class="checkbox rounded" value="N" name="read[]"  id="read-{{$data->a_id}}" type="checkbox"><span></span></label>
-																			</td>
-																			<td>
-																					<input type="checkbox" class="checkbox" onchange="simpanInsert('{{$data->a_id}}')" id="insert1-{{$data->a_id}}">
-
-																					<label><input class="checkbox rounded" value="N" name="insert[]"  id="insert-{{$data->a_id}}" type="checkbox"><span></span></label>
-																			</td>
-																			<td>
-																					<input type="checkbox" class="checkbox" onchange="simpanUpdate('{{$data->a_id}}')" id="update1-{{$data->a_id}}">
-
-																					 <label><input class="checkbox rounded" value="N" name="update[]"  id="update-{{$data->a_id}}" type="checkbox"><span></span></label>
-
-																			</td>
-																			<td>
-																					<input type="checkbox" class="checkbox" onchange="simpanDelete('{{$data->a_id}}')" id="delete1-{{$data->a_id}}">
-
-																					<label><input class="checkbox rounded" value="N" name="delete[]"  id="delete-{{$data->a_id}}" type="checkbox"><span></span></label>
-																			</td>
-																	</tr>
-																	@endif
-
-
-														 @endforeach
+															@foreach($menu as $data)
+																<tr>
+																	<td>@if($data->a_parent == $data->a_id) <strong>{{ $data->a_name }}</strong> @else<span
+																							style="margin-left: 20px;">{{ $data->a_name }}</span> @endif
+																	</td>
+																	<td>
+																			<label><input @if($data->a_parent == $data->a_id) id="read{{ $data->a_parent }}" class="checkbox checkbox-info rounded headread{{ $data->a_parent }}" onchange="handleChange(this);" @else onchange="checkParent(this, 'read{{ $data->a_parent }}');"
+																			class="checkbox checkbox-info rounded subread{{ $data->a_parent }}" @endif name="read[]" value="Y" type="checkbox"><span></span></label>
+																	</td>
+																	<td>
+																		<label><input @if($data->a_parent == $data->a_id) id="insert{{ $data->a_parent }}" class="checkbox checkbox-success rounded headinsert{{ $data->a_parent }}" onchange="handleChange(this);" @else onchange="checkParent(this, 'insert{{ $data->a_parent }}');"
+																		class="checkbox checkbox-success rounded subinsert{{ $data->a_parent }}" @endif name="insert[]" value="Y" type="checkbox"><span></span></label>
+																	</td>
+																	<td>
+																		<label><input @if($data->a_parent == $data->a_id) id="update{{ $data->a_parent }}" class="checkbox checkbox-warning rounded headupdate{{ $data->a_parent }}" onchange="handleChange(this);" @else onchange="checkParent(this, 'update{{ $data->a_parent }}');"
+																		class="checkbox checkbox-warning rounded subupdate{{ $data->a_parent }}" @endif name="update[]" value="Y" type="checkbox"><span></span></label>
+																	</td>
+																	<td>
+																		<label><input @if($data->a_parent == $data->a_id) id="delete{{ $data->a_parent }}" class="checkbox checkbox-danger rounded headdelete{{ $data->a_parent }}" onchange="handleChange(this);" @else onchange="checkParent(this, 'delete{{ $data->a_parent }}');"
+																		class="checkbox checkbox-danger rounded subdelete{{ $data->a_parent }}" @endif name="delete[]" value="Y" type="checkbox"><span></span></label>
+																	</td>
+															</tr>
+													@endforeach
                             </tbody>
                         </table>
                     </div>
@@ -166,46 +124,20 @@
 @section('extra_script')
 <script type="text/javascript">
 
-	$(document).ready(function(){
-		var table = $('#table_akses').DataTable();
-        "paging":   false,
-        "ordering": false,
-        "info":     false,
-        "search":   false
-	});
-
-	function simpanRead(id){
-if ($('#read1-'+id).prop('checked')) {
-	 $('#read-'+id).val('Y')
-} else {
-	 $('#read-'+id).val('N')
-}
+function handleChange(checkbox) {
+		if (checkbox.checked) {
+				var klas = $(checkbox).attr('id');
+				$('.sub'+klas).prop("checked", true);
+		} else {
+				var klas = $(checkbox).attr('id');
+				$('.sub'+klas).prop("checked", false);
+		}
 }
 
-function simpanInsert(id){
-if ($('#insert1-'+id).prop('checked')) {
-			$('#insert-'+id).val('Y')
-} else {
-	 $('#insert-'+id).val('N')
-}
-}
-
-
-function simpanUpdate(id){
-
-if ($('#update1-'+id).prop('checked')) {
-	 $('#update-'+id).val('Y')
-} else {
-	 $('#update-'+id).val('N')
-}
-}
-
-function simpanDelete(id){
-if ($('#delete1-'+id).prop('checked')) {
- $('#delete-'+id).val('Y')
-} else {
-	 $('#delete-'+id).val('N')
-}
+function checkParent(checkbox, id){
+		if (checkbox.checked) {
+				$('.head'+id).prop("checked", true);
+		}
 }
 </script>
 @endsection
