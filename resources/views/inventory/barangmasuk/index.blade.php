@@ -66,7 +66,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="form-group">
-                            <input type="text" class="form-control-sm w-100 bg-light" disabled value="" readonly id="codeB">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="codeB">
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -74,7 +74,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="form-group">
-                            <input type="text" class="form-control-sm w-100 bg-light" disabled value="" readonly id="namaB">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="namaB">
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -82,7 +82,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="form-group">
-                            <input type="text" class="form-control-sm w-100 bg-light" disabled style="width: 100%;" value="" readonly id="pemilikB">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled style="width: 100%;" value="" readonly id="pemilikB">
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -90,7 +90,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="form-group">
-                            <input type="text" class="form-control-sm w-100 bg-light" disabled value="" readonly id="posisiB">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="posisiB">
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -98,7 +98,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="form-group">
-                            <input type="text" class="form-control-sm w-100 bg-light" disabled style="width: 100%;" value="" readonly id="qtyB">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled style="width: 100%;" value="" readonly id="qtyB">
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -106,7 +106,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="form-group">
-                            <input type="text" class="form-control-sm w-100 bg-light" disabled value="" readonly id="hppB">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="hppB">
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -114,7 +114,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="form-group">
-                            <input type="text" class="form-control-sm w-100 bg-light" disabled value="" readonly id="satuanB">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="satuanB">
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -122,7 +122,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="form-group">
-                            <input type="text" class="form-control-sm w-100 bg-light" disabled value="" readonly id="notaB">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="notaB">
                         </div>
                     </div>                        
                 </div>
