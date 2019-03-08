@@ -65,7 +65,7 @@
                                                         class="form-control form-control-sm select2">
                                                     <option value="" disabled selected>== Pilih Supplier ==</option>
                                                     @foreach($suppliers as $supplier)
-                                                        <option value="{{$supplier->s_id}}">{{$supplier->s_name}}</option>
+                                                        <option value="{{$supplier->s_id}}">{{$supplier->s_company}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>

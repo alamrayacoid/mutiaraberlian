@@ -22,147 +22,141 @@
         
         <div class="card">
 
-                    <div class="card-header bordered p-2">
-                      <div class="header-block">
-                        <h3 class="title"> Edit Order Produksi </h3>
-                      </div>
-                      <div class="header-block pull-right">
-                        <a href="{{route('order.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
-                      </div>
+          <div class="card-header bordered p-2">
+            <div class="header-block">
+              <h3 class="title"> Edit Order Produksi </h3>
+            </div>
+            <div class="header-block pull-right">
+              <a href="{{route('order.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
+            </div>
+          </div>
+
+          <div class="card-block">
+              <section>
+                
+                <div class="row">
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+                    <label>Nota</label>
+                  </div> 
+                  <div class="col-md-9 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                    <input type="text" class="form-control form-control-sm" name="" value="{{ $dataEdit->po_nota }}" readonly>
                     </div>
+                  </div>
 
-                    <div class="card-block">
-                        <section>
-                          
-                          <div class="row">
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Tanggal</label>
-                            </div> 
-
-                            <div class="col-md-9 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="text" class="form-control form-control-sm datepicker" name="">
-                              </div>
-                            </div>
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Produsen</label>
-                            </div> 
-
-                            <div class="col-md-9 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" readonly="" name="">
-                              </div>
-                            </div>
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Nilai</label>
-                            </div> 
-
-                            <div class="col-md-9 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
-                              </div>
-                            </div>
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Suplier</label>
-                            </div> 
-
-                            <div class="col-md-9 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
-                              </div>
-                            </div>
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Nilai</label>
-                            </div> 
-
-                            <div class="col-md-9 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
-                              </div>
-                            </div>
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Total Bayar</label>
-                            </div> 
-
-                            <div class="col-md-9 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
-                              </div>
-                            </div>
-
-                            <div class="table-responsive">
-	                            <table class="table table-striped table-hover" cellspacing="0" id="table_order">
-	                                <thead class="bg-primary">
-	                                  <tr>
-	                                    <th>Kode Barang</th>
-	                                		<th>Satuan</th>
-	                                		<th>Nama Barang</th>
-	                                		<th>Aksi</th>
-	                                	</tr>
-	                                </thead>
-	                                <tbody>
-	                                	<tr>
-	                                		<td>
-                                      <input type="text" class="form-control form-control-sm">
-                                      </td>
-	                                		<td>
-                                      <input type="text" class="form-control form-control-sm">
-                                      </td>
-	                                		<td>
-                                      <input type="text" class="form-control form-control-sm">
-                                      </td>
-                                      <td>
-                                      <button class="btn btn-success btn-tambah btn-sm" type="button"><i class="fa fa-plus" aria-hidden="true"></i>
-</button>
-	                                		</td>
-	                                	</tr>
-	                                </tbody>
-	                            </table>
-	                        </div>
-
-                          <div class="table-responsive">
-	                            <table class="table table-striped table-hover" cellspacing="0" id="table_order_termin">
-	                                <thead class="bg-primary">
-	                                    <tr>
-	                                    	<th>Termin</th>
-	                                		  <th>Estimasi</th>
-	                                		  <th>Nominal</th>
-	                                	  	<th>Tanggal</th>
-	                                		  <th>Aksi</th>
-	                                	</tr>
-	                                </thead>
-	                                <tbody>
-	                                	<tr>
-	                                		<td>
-                                      <input type="text" class="form-control form-control-sm">
-                                      </td>
-	                                		<td>
-                                      <input type="text" class="form-control form-control-sm">
-                                      </td>
-	                                		<td>
-                                      <input type="text" class="form-control form-control-sm">
-                                      </td>
-	                                		<td>
-                                      <input type="text" class="form-control form-control-sm">
-                                      </td>
-	                                		<td>
-                                      <button class="btn btn-success btn-tambah-termin btn-sm" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
-	                                		</td>
-	                                	</tr>
-	                                </tbody>
-	                            </table>
-	                        </div>
-
-                          </div>
-                        
-                        </section>
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+                    <label>Suplier</label>
+                  </div> 
+                  <div class="col-md-9 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <input type="text" class="form-control form-control-sm" name="" value="{{ $dataEdit->s_company }}" readonly>
                     </div>
+                  </div>
+
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+                    <label>Total Tagihan</label>
+                  </div> 
+                  <div class="col-md-9 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <input type="text" class="form-control form-control-sm" name="" value="{{ $dataEdit->po_totalnet }}" readonly>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+                    <label>Total Bayar</label>
+                  </div> 
+                  <div class="col-md-9 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <input type="text" class="form-control form-control-sm" name="" value="0" readonly>
+                    </div>
+                  </div>           
+
+                  <div class="table-responsive">
+                    <table class="table table-striped table-hover" cellspacing="0" id="table_order">
+                        <thead class="bg-primary">
+                          <tr>
+                              <th>Kode Barang/Nama Barang</th>
+                              <th width="10%">Satuan</th>
+                              <th width="10%">Jumlah</th>
+                              <th>Harga</th>
+                              <th>Sub Total</th>
+                              <th>Aksi</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for($i = 0; $i < count($dataEditDT); $i++)
+                            <tr>
+                              <td>
+                                <input type="hidden" name="idItem[]" id="idItem{{$i}}" value="{{$dataEditDT[$i]->i_id}}">
+                                <input type="text" class="form-control form-control-sm" value="{{$dataEditDT[$i]->i_code}}">
+                              </td>
+                              <td>
+                                <input type="hidden" name="idUnit[]" id="idUnit{{$i}}" value="{{$dataEditDT[$i]->u_id}}">
+                                <input type="text" class="form-control form-control-sm" value="{{$dataEditDT[$i]->u_name}}">
+                              </td>
+                              <td>
+                                <input type="number" class="form-control form-control-sm" name="jumlah[]" value="{{$dataEditDT[$i]->pod_qty}}">
+                              </td>
+                              <td>
+                                <input type="text" class="form-control form-control-sm" value="{{$dataEditDT[$i]->pod_value}}">
+                              </td>
+                              <td>
+                                <input type="text" class="form-control form-control-sm" value="">
+                              </td>
+                              <td>
+                                @if($i == 0)
+                                <button class="btn btn-success btn-tambah btn-sm" type="button">
+                                  <i class="fa fa-plus" aria-hidden="true"></i>
+                                </button>
+                                @else
+                                <button class="btn btn-danger btn-hapus btn-sm" type="button">
+                                  <i class="fa fa-trash-o"></i>
+                                </button>
+                                @endif
+                              </td>
+                            </tr>
+                          @endfor
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" cellspacing="0" id="table_order_termin">
+                        <thead class="bg-primary">
+                            <tr>
+                              <th>Termin</th>
+                              <th>Estimasi</th>
+                              <th>Nominal</th>
+                              <th>Tanggal</th>
+                              <th>Aksi</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <input type="text" class="form-control form-control-sm">
+                            </td>
+                            <td>
+                              <input type="text" class="form-control form-control-sm">
+                            </td>
+                            <td>
+                              <input type="text" class="form-control form-control-sm">
+                            </td>
+                            <td>
+                              <input type="text" class="form-control form-control-sm">
+                            </td>
+                            <td>
+                              <button class="btn btn-success btn-tambah-termin btn-sm" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            </td>
+                          </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                </div>
+              
+              </section>
+          </div>
                     <div class="card-footer text-right">
                       <button class="btn btn-primary btn-submit" type="button">Simpan</button>
                       <a href="{{route('order.index')}}" class="btn btn-secondary">Kembali</a>
