@@ -128,7 +128,7 @@
 	function pshowpassword(){
 		var password = document.getElementById("ppassword");
 
-		if (password.type === "ppassword") {
+		if (password.type === "password") {
 			$('#ppassword').attr('type', 'text');
 		} else {
 			$('#ppassword').attr('type', 'password');
@@ -200,6 +200,8 @@
 							setTimeout(function () {
 								window.location.href = "{{url('/pengaturan/pengaturanpengguna/index')}}";
 							}, 800);
+						} else if (response.status == 'failed') {
+							messageFailed('Gagal', response.ex+'!');
 						} else {
 							messageFailed('Gagal', 'Data gagal disimpan!');
 						}
@@ -209,7 +211,7 @@
 		} else if (jenis == 2) {
 			var type = 'pegawai';
 			var pegawai = document.getElementById("spegawai");
-			var cabang = document.getElementById("pcabang");			
+			var cabang = document.getElementById("pcabang");
 			var level = document.getElementById("plevel");
 			var username = document.getElementById("pusername");
 			var password = document.getElementById("ppassword");
@@ -247,6 +249,8 @@
 							setTimeout(function () {
 								window.location.href = "{{url('/pengaturan/pengaturanpengguna/index')}}";
 							}, 800);
+						} else if (response.status == 'failed') {
+							messageFailed('Gagal', response.ex+'!');
 						} else {
 							messageFailed('Gagal', 'Data gagal disimpan!');
 						}
