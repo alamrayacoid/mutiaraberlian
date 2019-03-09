@@ -201,6 +201,7 @@
 								window.location.href = "{{url('/pengaturan/pengaturanpengguna/index')}}";
 							}, 800);
 						} else if (response.status == 'failed') {
+							loadingHide();
 							messageFailed('Gagal', response.ex+'!');
 						} else {
 							messageFailed('Gagal', 'Data gagal disimpan!');
@@ -250,6 +251,7 @@
 								window.location.href = "{{url('/pengaturan/pengaturanpengguna/index')}}";
 							}, 800);
 						} else if (response.status == 'failed') {
+							loadingHide();
 							messageFailed('Gagal', response.ex+'!');
 						} else {
 							messageFailed('Gagal', 'Data gagal disimpan!');
