@@ -19,7 +19,7 @@
     <div class="row">
 
       <div class="col-12">
-        
+
         <div class="card">
                     <div class="card-header bordered p-2">
                       <div class="header-block">
@@ -30,9 +30,9 @@
                       </div>
                     </div>
 
-                    <div class="card-block">
+                    <form action="{{ route('barangkeluar.store') }}" method="post" id="myForm" autocomplete="off">
+                      <div class="card-block">
                         <section>
-                        
 
                           <div class="row">
 
@@ -42,38 +42,8 @@
 
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="hidden" name="idItem" id="idItem">
-                                <input type="text" class="form-control form-control-sm" name="namaItem" id="namaItem" style="text-transform:uppercase">
-                              </div>
-                            </div>
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Satuan</label>
-                            </div>
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <select name="satuan" id="satuan" class="form-control form-control-sm select2">
-                                  <option value="" disabled selected>== Pilih Satuan ==</option>
-                                  @foreach($unit as $unit)
-                                    <option value="{{$unit->u_id}}">{{$unit->u_name}}</option>
-                                  @endforeach
-                                </select>
-                              </div>
-                            </div>
-                            
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Lokasi Barang</label>
-                            </div>
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                  <select name="lokasi" id="lokasi" class="form-control form-control-sm select2">
-                                    <option value="" disabled selected>== Pilih Lokasi Barang ==</option>
-                                    @foreach($company as $lokasi)
-                                      <option value="{{$lokasi->c_id}}">{{$lokasi->c_name}}</option>
-                                    @endforeach
-                                  </select>
+                                <input type="hidden" name="itemId" id="itemId">
+                                <input type="text" class="form-control form-control-sm" name="itemName" id="itemName" style="text-transform:uppercase">
                               </div>
                             </div>
 
@@ -83,20 +53,47 @@
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="number" class="form-control form-control-sm" name="">
+                                <input type="number" class="form-control form-control-sm" name="qty">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Satuan</label>
+                            </div>
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <select name="unit" id="unit" class="form-control form-control-sm select2">
+                                  <option value="" disabled selected>== Pilih Satuan ==</option>
+                                  @foreach($data['unit'] as $unit)
+                                  <option value="{{$unit->u_id}}">{{$unit->u_name}}</option>
+                                  @endforeach
+                                </select>
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <label>Lokasi Barang</label>
+                            </div>
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <select name="position" id="position" class="form-control form-control-sm select2">
+                                  <option value="" disabled selected>== Pilih Lokasi Barang ==</option>
+                                  @foreach($data['company'] as $position)
+                                  <option value="{{$position->c_id}}">{{$position->c_name}}</option>
+                                  @endforeach
+                                </select>
                               </div>
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Pemilik Barang</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <select name="pemilik" id="pemilik" class="form-control form-control-sm select2">
+                                <select name="owner" id="owner" class="form-control form-control-sm select2">
                                   <option value="" disabled selected>== Pilih Pemilik Barang ==</option>
-                                  @foreach($company as $pemilik)
-                                    <option value="{{$pemilik->c_id}}">{{$pemilik->c_name}}</option>
+                                  @foreach($data['company'] as $owner)
+                                  <option value="{{$owner->c_id}}">{{$owner->c_name}}</option>
                                   @endforeach
                                 </select>
                               </div>
@@ -105,10 +102,9 @@
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>HPP</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control input-hpp text-right" name="">
+                                <input type="text" class="form-control form-control input-hpp text-right" name="HPP">
                               </div>
                             </div>
 
@@ -116,13 +112,12 @@
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Keterangan Barang Keluar</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <select class="form-control form-control-sm select2" name="">
+                                <select class="form-control form-control-sm select2" name="mutcat">
                                   <option value="" disabled="" selected="">== Pilih Keterangan ==</option>
-                                  @foreach($mutcat as $ket)
-                                    <option value="{{$ket->m_id}}">{{$ket->m_name}}</option>
+                                  @foreach($data['mutcat'] as $mutcat)
+                                  <option value="{{$mutcat->m_id}}">{{$mutcat->m_name}}</option>
                                   @endforeach
                                 </select>
                               </div>
@@ -130,13 +125,13 @@
 
                           </div>
 
-                          
                         </section>
-                    </div>
-                    <div class="card-footer text-right">
-                      <button class="btn btn-primary btn-submit" type="button">Simpan</button>
-                      <a href="{{ route('barangkeluar.index') }}" class="btn btn-secondary">Kembali</a>
-                    </div>
+                      </div>
+                      <div class="card-footer text-right">
+                        <button class="btn btn-primary btn-submit" type="button" id="btn_simpan">Simpan</button>
+                        <a href="{{ route('barangkeluar.index') }}" class="btn btn-secondary">Kembali</a>
+                      </div>
+                    </form>
                 </div>
 
       </div>
@@ -150,18 +145,31 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+
   $(document).ready(function(){
-    
     $(document).on('click', '.btn-submit', function(){
-			$.toast({
-				heading: 'Success',
-				text: 'Data Berhasil di Simpan',
-				bgColor: '#00b894',
-				textColor: 'white',
-				loaderBg: '#55efc4',
-				icon: 'success'
-			})
-		})
+      // $.toast({
+      // 	heading: 'Success',
+      // 	text: 'Data Berhasil di Simpan',
+      // 	bgColor: '#00b894',
+      // 	textColor: 'white',
+      // 	loaderBg: '#55efc4',
+      // 	icon: 'success'
+      // })
+    })
+
+    $('#itemName').autocomplete({
+      source: baseUrl+'/inventory/barangkeluar/getItems',
+      minLength: 2,
+      select: function(event, data){
+          $('#itemId').val(data.item.id);
+      }
+    });
 
     $('.input-hpp').maskMoney({
       thousands: ".",
@@ -169,7 +177,42 @@
       decimal: ","
     });
 
-
   });
+
+  $('#btn_simpan').on('click', function() {
+    SubmitForm(event);
+  });
+
+  // submit form to store data in db
+  function SubmitForm(event)
+  {
+    loadingShow();
+    event.preventDefault();
+    form_data = $('#myForm').serialize();
+
+    $.ajax({
+      data : form_data,
+      type : "post",
+      url : $("#myForm").attr('action'),
+      dataType : 'json',
+      success : function (response){
+        if(response.status == 'berhasil'){
+          loadingHide();
+          messageSuccess('Berhasil', 'Data berhasil ditambahkan !');
+          location.reload();
+        } else if (response.status == 'invalid') {
+          loadingHide();
+          messageFailed('Perhatian', response.message);
+        } else if (response.status == 'gagal') {
+          loadingHide();
+          messageWarning('Error', response.message);
+        }
+      },
+      error : function(e){
+        loadingHide();
+        messageWarning('Gagal', 'Data gagal ditambahkan, hubungi pengembang !');
+      }
+    })
+  }
 </script>
 @endsection
