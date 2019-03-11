@@ -76,6 +76,16 @@ class InventoryController extends Controller
     {
         return view('inventory/manajemenstok/edit');
     }
+
+    public function opname_stock()
+    {
+        return view('inventory/manajemenstok/opname/index');
+    }
+
+    public function opname_stock_create()
+    {
+        return view('inventory/manajemenstok/opname/opnamestock/create');
+    }
     
        
 }
