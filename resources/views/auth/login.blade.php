@@ -3,7 +3,7 @@
 
 @include('layouts._head')
 
-<body>
+<body height="100px" width="100px">
 <style>
     body, html {
         height: 100%;
@@ -13,13 +13,13 @@
         position: absolute;
         top: 0;
         bottom: 0;
-        left: 3px;
+        left: 0px;
         width: 100%;
         height: 766px;
         max-width: 100%;
         max-height: 100%;
     / / image is only 880 x880 transform: translate(- 50 %, 0);
-        background: url(assets/img/forestback.svg) no-repeat center center;
+        background: url(assets/img/forestback1.svg) no-repeat center center;
         background-size: cover;
         overflow: hidden;
     }
