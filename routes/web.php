@@ -192,6 +192,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/edit', 'InventoryController@manajemenstok_edit')->name('manajemenstok.edit');
     Route::get('/inventory/manajemenstok/opnamestock/index', 'InventoryController@opname_stock')->name('opname.index');
     Route::get('/inventory/manajemenstok/opnamestock/create', 'InventoryController@opname_stock_create')->name('opname.create');
+    Route::get('/inventory/manajemenstok/historyopname/index', 'InventoryController@history_opname')->name('history.index');
+    Route::get('/inventory/manajemenstok/adjustmentstock/index', 'InventoryController@adjustment_index')->name('adjustment.index');
+    Route::get('/inventory/manajemenstok/adjustmentstock/create', 'InventoryController@adjustment_create')->name('adjustment.create');
     // !===================================================== END INVENTORY =====================================================!
 
     // !===================================================== SDM =====================================================!
