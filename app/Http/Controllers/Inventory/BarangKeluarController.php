@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 
 use DB;
 use Auth;
+use Validator;
 use CodeGenerator;
 use carbon\Carbon;
 use App\m_item;
@@ -24,22 +25,66 @@ class BarangKeluarController extends Controller
     public function getItems(Request $request)
     {
       $term = $request->term;
-      $items = DB::table('m_item')
-        ->select('i_id', 'i_name', 'i_code')
-        ->where('i_name', 'like', '%'.$term.'%')
+      $items = m_item::where('i_name', 'like', '%'.$term.'%')
         ->orWhere('i_code', 'like', '%'.$term.'%')
+        ->with('getUnit1')
+        ->with('getUnit2')
+        ->with('getUnit3')
         ->get();
       if (sizeof($items) > 0) {
         foreach ($items as $item) {
           $results[] = [
             'id' => $item->i_id,
-            'label' => $item->i_name
+            'label' => $item->i_name,
+            'unit1_id' => $items[0]->getUnit1['u_id'],
+            'unit1_name' => $items[0]->getUnit1['u_name'],
+            'unit2_id' => $items[0]->getUnit2['u_id'],
+            'unit2_name' => $items[0]->getUnit2['u_name'],
+            'unit3_id' => $items[0]->getUnit3['u_id'],
+            'unit3_name' => $items[0]->getUnit3['u_name']
           ];
         }
       } else {
         $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
       }
       return response()->json($results);
+    }
+
+    /**
+     * Validate request before execute command.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return 'error message' or '1'
+     */
+    public function validate_req(Request $request)
+    {
+      // start: validate data before execute
+      $validator = Validator::make($request->all(), [
+        'itemId' => 'required',
+        'qty' => 'required',
+        'unit' => 'required',
+        'position' => 'required',
+        'owner' => 'required',
+        'HPP' => 'required',
+        'mutcat' => 'required'
+      ],
+      [
+        'itemId.required' => 'Item masih kosong !',
+        'qty.required' => 'Jumlah barang masih kosong !',
+        'unit.required' => 'Satuan masih kosong !',
+        'position.required' => 'Lokasi barang masih kosong !',
+        'owner.required' => 'Pemilik barang masih kosong !',
+        'HPP.required' => 'HPP masih kosong !',
+        'mutcat.required' => 'Keterangan masih kosong !'
+      ]);
+      if($validator->fails())
+      {
+        return $validator->errors()->first();
+      }
+      else
+      {
+        return '1';
+      }
     }
 
     /**
@@ -333,8 +378,16 @@ class BarangKeluarController extends Controller
      */
     public function store(Request $request)
     {
+      // validate request
+      $isValidRequest = $this->validate_req($request);
+      if ($isValidRequest != '1') {
+        $errors = $isValidRequest;
+        return response()->json([
+          'status' => 'invalid',
+          'message' => $errors
+        ]);
+      }
       // update 'main stock (d_stock)'
-      // bermasalah (jumlah out-qty lebih besar dari stock-qty)
       $isMainStockUpdated = $this->updateMainStock(
         $request->position, 'FINE',
         $request->itemId, $request->qty,
@@ -368,39 +421,5 @@ class BarangKeluarController extends Controller
           'message' => 'Gagal, hubungi pengembang !'
         ]);
       }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-      return view('inventory/barangkeluar/edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

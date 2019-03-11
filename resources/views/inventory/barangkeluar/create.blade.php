@@ -39,7 +39,6 @@
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Nama Barang</label>
                             </div>
-
                             <div class="col-md-9 col-sm-6 col-xs-12">
                               <div class="form-group">
                                 <input type="hidden" name="itemId" id="itemId">
@@ -50,7 +49,6 @@
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Jumlah Barang</label>
                             </div>
-
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
                                 <input type="number" class="form-control form-control-sm" name="qty">
@@ -64,9 +62,6 @@
                               <div class="form-group">
                                 <select name="unit" id="unit" class="form-control form-control-sm select2">
                                   <option value="" disabled selected>== Pilih Satuan ==</option>
-                                  @foreach($data['unit'] as $unit)
-                                  <option value="{{$unit->u_id}}">{{$unit->u_name}}</option>
-                                  @endforeach
                                 </select>
                               </div>
                             </div>
@@ -152,24 +147,22 @@
   });
 
   $(document).ready(function(){
-    $(document).on('click', '.btn-submit', function(){
-      // $.toast({
-      // 	heading: 'Success',
-      // 	text: 'Data Berhasil di Simpan',
-      // 	bgColor: '#00b894',
-      // 	textColor: 'white',
-      // 	loaderBg: '#55efc4',
-      // 	icon: 'success'
-      // })
-    })
 
     $('#itemName').autocomplete({
       source: baseUrl+'/inventory/barangkeluar/getItems',
       minLength: 2,
       select: function(event, data){
-          $('#itemId').val(data.item.id);
+        $('#itemId').val(data.item.id);
+        $('#unit').find('option').not(':first').remove();
+        (data.item.unit1_id != null) ? $('#unit').append('<option value="'+ data.item.unit1_id +'">'+ data.item.unit1_name +'</option>') : '';
+        $('#unit').append('<option value="'+ data.item.unit2_id +'">'+ data.item.unit2_name +'</option>');
+        $('#unit').append('<option value="'+ data.item.unit3_id +'">'+ data.item.unit3_name +'</option>');
       }
     });
+
+    $('#unit').on('change', function() {
+      console.log($(this).val());
+    })
 
     $('.input-hpp').maskMoney({
       thousands: ".",
