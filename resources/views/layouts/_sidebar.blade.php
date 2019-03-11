@@ -490,7 +490,7 @@
                       @endif
                     </ul>
                 </li>
-              @endif              
+              @endif
                 <!-- END Notifikasi & Authorization -->
                 <!-- AKTIVITAS Setting -->
                 @if ($sidebar[47]->ua_read == 'Y')
