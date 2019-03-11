@@ -14,6 +14,7 @@ use App\m_item;
 use App\d_stock;
 use App\d_itemout;
 use App\d_stock_mutation;
+use Yajra\DataTables\DataTables;
 
 class BarangKeluarController extends Controller
 {
@@ -347,6 +348,39 @@ class BarangKeluarController extends Controller
     }
 
     /**
+     * Return DataTable list for view.
+     *
+     * @return Yajra/DataTables
+     */
+    public function getList()
+    {
+      $datas = d_itemout::orderBy('io_id', 'asc')
+        ->with('getUnit')
+        ->with('getMutcat')
+        ->with('getItem')
+        ->get();
+      return Datatables::of($datas)
+        ->addIndexColumn()
+        ->addColumn('name', function($datas) {
+          return '<td>'. $datas->getItem['i_name'] .'</td>';
+        })
+        ->addColumn('unit', function($datas) {
+          return '<td>'. $datas->getUnit['u_name'] .'</td>';
+        })
+        ->addColumn('mutcat', function($datas) {
+          return '<td>'. $datas->getMutcat['m_name'] .'</td>';
+        })
+        ->addColumn('action', function($datas) {
+          return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                      <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="Detail('. $datas->io_id .')"><i class="fa fa-folder"></i>
+                      </button>
+                  </div>';
+        })
+        ->rawColumns(['name', 'unit', 'mutcat', 'action'])
+        ->make(true);
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -387,6 +421,10 @@ class BarangKeluarController extends Controller
           'message' => $errors
         ]);
       }
+      // insert new 'stock mutation (d_stock_mutation)'
+      $isNewStockMutationCreated = $this->createNewStockMutation(
+        $request->itemId, $request->unit, $request->qty, $request->mutcat
+      );
       // update 'main stock (d_stock)'
       $isMainStockUpdated = $this->updateMainStock(
         $request->position, 'FINE',
@@ -407,10 +445,6 @@ class BarangKeluarController extends Controller
           'message' => 'Gagal, hubungi pengembang !'
         ]);
       }
-      // insert new 'stock mutation (d_stock_mutation)'
-      $isNewStockMutationCreated = $this->createNewStockMutation(
-        $request->itemId, $request->unit, $request->qty, $request->mutcat
-      );
       if ($isNewStockMutationCreated == true) {
         return response()->json([
           'status' => 'berhasil'
