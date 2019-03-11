@@ -134,6 +134,22 @@
 		}
 	});
 
+	/* Fungsi formatRupiah */
+	function formatRupiah(angka, prefix){
+		var number_string = angka.replace(/[^,\d]/g, '').toString(),
+		split = number_string.split(','),
+		sisa = split[0].length % 3,
+		rupiah = split[0].substr(0, sisa),
+		ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+		// tambahkan titik jika yang di input sudah menjadi angka ribuan
+		if(ribuan){
+			separator = sisa ? '.' : '';
+			rupiah += separator + ribuan.join('.');
+		}
+		rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+		return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
+	}
+
 	var tb_barangkeluar;
 	function TableBarangKeluar()
 	{
@@ -176,9 +192,9 @@
 				$('#d_nota').val(response.io_nota);
 				$('#table_detail tbody').empty();
 				$.each(response.get_mutation_detail, function(i, val) {
-					// console.log(i+1, val, unit_name);
 					index = i + 1;
-					$('#table_detail > tbody:last-child').append('<tr><td>'+ index +'</td><td>'+ val.sm_reff +'</td><td>'+ val.sm_qty +'</td><td>'+ unit_name +'</td><td><span class="float-left">Rp </span><span class="float-right">'+ val.sm_hpp +'</span></td></tr>');
+					hpp = formatRupiah(val.sm_hpp, 'Rp')
+					$('#table_detail > tbody:last-child').append('<tr><td>'+ index +'</td><td>'+ val.sm_reff +'</td><td>'+ val.sm_qty +'</td><td>'+ unit_name +'</td><td>'+ hpp +'</td></tr>');
 				});
 				$('#modal_detail').modal('show');
 			},

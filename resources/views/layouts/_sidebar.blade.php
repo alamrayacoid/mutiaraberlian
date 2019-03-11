@@ -146,6 +146,9 @@
 
     <?php $sidebar = App\Http\Controllers\AksesUser::aksesSidebar() ?>
 
+
+
+{{dd($sidebar)}}
 <aside class="sidebar">
     <div class="sidebar-container">
         <div class="sidebar-header">
@@ -490,7 +493,7 @@
                       @endif
                     </ul>
                 </li>
-              @endif              
+              @endif
                 <!-- END Notifikasi & Authorization -->
                 <!-- AKTIVITAS Setting -->
                 @if ($sidebar[47]->ua_read == 'Y')
