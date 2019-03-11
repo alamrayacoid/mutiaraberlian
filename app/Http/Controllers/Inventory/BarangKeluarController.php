@@ -66,7 +66,6 @@ class BarangKeluarController extends Controller
         'unit' => 'required',
         'position' => 'required',
         'owner' => 'required',
-        'HPP' => 'required',
         'mutcat' => 'required'
       ],
       [
@@ -75,7 +74,6 @@ class BarangKeluarController extends Controller
         'unit.required' => 'Satuan masih kosong !',
         'position.required' => 'Lokasi barang masih kosong !',
         'owner.required' => 'Pemilik barang masih kosong !',
-        'HPP.required' => 'HPP masih kosong !',
         'mutcat.required' => 'Keterangan masih kosong !'
       ]);
       if($validator->fails())
@@ -361,6 +359,9 @@ class BarangKeluarController extends Controller
         ->get();
       return Datatables::of($datas)
         ->addIndexColumn()
+        ->addColumn('code', function($datas) {
+          return '<td>'. $datas->getItem['i_code'] .'</td>';
+        })
         ->addColumn('name', function($datas) {
           return '<td>'. $datas->getItem['i_name'] .'</td>';
         })
@@ -372,12 +373,27 @@ class BarangKeluarController extends Controller
         })
         ->addColumn('action', function($datas) {
           return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                      <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="Detail('. $datas->io_id .')"><i class="fa fa-folder"></i>
+                      <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="Detail('. $datas->io_id .', \''. $datas->io_nota .'\')"><i class="fa fa-folder"></i>
                       </button>
                   </div>';
         })
-        ->rawColumns(['name', 'unit', 'mutcat', 'action'])
+        ->rawColumns(['code', 'name', 'unit', 'mutcat', 'action'])
         ->make(true);
+    }
+
+    /**
+    * Return detail of an 'item-out'.
+    *
+    * @return \Illuminate\Http\Response
+    */
+    public function getDetail($id)
+    {
+      $data = d_itemout::where('io_id', $id)
+        ->with('getItem')
+        ->with('getItem.getUnit1')
+        ->with('getMutationDetail')
+        ->firstOrFail();
+      return $data;
     }
 
     /**
@@ -421,10 +437,6 @@ class BarangKeluarController extends Controller
           'message' => $errors
         ]);
       }
-      // insert new 'stock mutation (d_stock_mutation)'
-      $isNewStockMutationCreated = $this->createNewStockMutation(
-        $request->itemId, $request->unit, $request->qty, $request->mutcat
-      );
       // update 'main stock (d_stock)'
       $isMainStockUpdated = $this->updateMainStock(
         $request->position, 'FINE',
@@ -445,6 +457,10 @@ class BarangKeluarController extends Controller
           'message' => 'Gagal, hubungi pengembang !'
         ]);
       }
+      // insert new 'stock mutation (d_stock_mutation)'
+      $isNewStockMutationCreated = $this->createNewStockMutation(
+        $request->itemId, $request->unit, $request->qty, $request->mutcat
+      );
       if ($isNewStockMutationCreated == true) {
         return response()->json([
           'status' => 'berhasil'

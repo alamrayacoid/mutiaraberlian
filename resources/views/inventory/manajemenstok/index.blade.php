@@ -1,86 +1,84 @@
 @extends('main')
 
+@section('extra_style')
+<style type="text/css">
+	a:not(.btn){
+		text-decoration: none;
+	}
+	.card img{
+		margin: auto;
+	}
+	.card-custom{
+		min-height: calc(100vh / 2);
+	}
+	.card-custom:hover,
+	.card-custom:focus-within{
+		background-color: rgba(255,255,255,.6);
+	}
+</style>
+@endsection
+
 @section('content')
-
-
 
 <article class="content">
 
 	<div class="title-block text-primary">
-	    <h1 class="title"> Pengelolaan Manajemen Stok </h1>
-	    <p class="title-description">
-	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
-	    	 / <span>Aktivitas Inventory</span>
-	    	 / <span class="text-primary font-weight-bold">Pengelolaan Manajemen Stok</span>
-	     </p>
+		<h1 class="title"> Pengelolaan Manajemen Stok </h1>
+		<p class="title-description">
+			<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
+			/ <span>Aktivitas Inventory</span>
+			/ <a href="#"><span>Pengelolaan Manajemen Stok</span></a>
+		</p>
 	</div>
 
 	<section class="section">
 
 		<div class="row">
 
-			<div class="col-12">
-				
-				<div class="card">
-                    <div class="card-header bordered p-2">
-                    	<div class="header-block">
-                            <h3 class="title"> Pengelolaan Manajemen Stok </h3>
-                        </div>
-                        <div class="header-block pull-right">
-                        	
-                			<a class="btn btn-primary" href="{{ route('manajemenstok.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
-                        </div>
-                    </div>
-                    <div class="card-block">
-                        <section>
-                        	
-                        	<div class="table-responsive">
-	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_manajemenstok">
-	                                <thead class="bg-primary">
-	                                    <tr>
-	                                    	<th>No</th>
-	                                		<th>Kode Barang</th>
-	                                		<th>Nama Barang</th>
-	                                		<th>Satuan</th>
-	                                		<th>Harga Barang</th>
-	                                		<th>Min Stok</th>
-											<th>Max Stok</th>
-											<th>Jumlah Stok</th>
-											<th>Status</th>
-	                                		<th>Aksi</th>
-	                                	</tr>
-	                                </thead>
-	                                <tbody>
-	                                	<tr>
-	                                		<td>1</td>
-	                                		<td>BRG/001</td>
-	                                		<td>Obat 1</td>
-	                                		<td>pcs</td>
-	                                		<td style="font-weight:bold;">Rp. 10.000.00</td>
-											<td>10</td>
-											<td>200</td>
-	                                		<td>150</td>
-											<td>
-											<div class="status-stok-normal">
-											<p>Normal</p>
-											</div>
-											</td>
-	                                		<td>
-	                                			<div class="btn-group btn-group-sm">
-	                                				<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-	                                				<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-	                                			</div>
-	                                		</td>
-	                                	</tr>
-	                                </tbody>
-	                            </table>
-	                        </div>
-                        </section>
-                    </div>
-                </div>
-
+			<div class="col-md-4 col-sm-6 col-12">
+				<a href="{{route('opname.index')}}">
+					<div class="card text-center p-4 card-custom text-info">
+						<img src="{{asset('assets/img/rupiah.png')}}" height="128px" width="128px">
+						<h6>Opname Stock</h6>
+					</div>
+				</a>
 			</div>
 
+			<div class="col-md-4 col-sm-6 col-12">
+				<a href="{{route('pengeluaranlebih')}}">
+					<div class="card text-center p-4 card-custom text-info">
+						<img src="{{asset('assets/img/manufacture.png')}}" height="128px" width="128px">
+						<h6>Adjustment Stock</h6>
+					</div>
+				</a>
+			</div>
+<!-- 
+			<div class="col-md-4 col-sm-6 col-12">
+				<a href="{{route('opname_otorisasi')}}">
+					<div class="card text-center p-4 card-custom text-info">
+						<img src="{{asset('assets/img/box.png')}}" height="128px" width="128px">
+						<h6>Otorisasi Opname Item Produk</h6>
+					</div>
+				</a>
+			</div>
+
+			<div class="col-md-4 col-sm-6 col-12">
+				<a href="{{route('adjustment')}}">
+					<div class="card text-center p-4 card-custom text-info">
+						<img src="{{asset('assets/img/manufacture.png')}}" height="128px" width="128px">
+						<h6>Otorisasi Adjustment Item Produk</h6>
+					</div>
+				</a>
+			</div>
+
+			<div class="col-md-4 col-sm-6 col-12">
+				<a href="{{route('revisi')}}">
+					<div class="card text-center p-4 card-custom text-info">
+						<img src="{{asset('assets/img/checklist.png')}}" height="128px" width="128px">
+						<h6>Otorisasi Revisi Data</h6>
+					</div>
+				</a>
+			</div> -->
 		</div>
 
 	</section>
@@ -91,68 +89,8 @@
 
 @section('extra_script')
 <script type="text/javascript">
-
 	$(document).ready(function(){
-		var table = $('#table_manajemenstok').DataTable();
 
-	$('#table_manajemenstok tbody').on('click', '.btn-edit', function(){
-
-		window.location.href = '{{route("manajemenstok.edit")}}';
-
-	});
-
-	$(document).on('click', '.btn-disable', function(){
-		var ini = $(this);
-		$.confirm({
-			animation: 'RotateY',
-			closeAnimation: 'scale',
-			animationBounce: 1.5,
-			icon: 'fa fa-exclamation-triangle',
-			title: 'Peringatan!',
-			content: 'Apa anda yakin mau menonaktifkan data ini?',
-			theme: 'disable',
-			buttons: {
-				info: {
-					btnClass: 'btn-blue',
-					text:'Ya',
-					action : function(){
-						$.toast({
-							heading: 'Information',
-							text: 'Data Berhasil di Nonaktifkan.',
-							bgColor: '#0984e3',
-							textColor: 'white',
-							loaderBg: '#fdcb6e',
-							icon: 'info'
-						})
-						ini.parents('.btn-group').html('<button class="btn btn-success btn-enable" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-					}
-				},
-				cancel:{
-					text: 'Tidak',
-					action: function () {
-						// tutup confirm
-					}
-				}
-			}
-		});
-	});
-
-	$(document).on('click', '.btn-enable', function(){
-		$.toast({
-			heading: 'Information',
-			text: 'Data Berhasil di Aktifkan.',
-			bgColor: '#0984e3',
-			textColor: 'white',
-			loaderBg: '#fdcb6e',
-			icon: 'info'
-		})
-		$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
-										'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-	})
-
-		// function table_hapus(a){
-		// 	table.row($(a).parents('tr')).remove().draw();
-		// }
 	});
 </script>
 @endsection
