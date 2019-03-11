@@ -135,11 +135,11 @@
 	});
 
 	/* Fungsi formatRupiah */
-	function formatRupiah(angka, prefix){
-		var number_string = angka.replace(/[^,\d]/g, '').toString(),
-		split = number_string.split(','),
-		sisa = split[0].length % 3,
-		rupiah = split[0].substr(0, sisa),
+	function formatRupiah(angka){
+		var number_string = angka.replace(/[^.\d]/g, '').toString();
+		split = number_string.split(',');
+		sisa = split[0].length % 3;
+		rupiah = split[0].substr(0, sisa);
 		ribuan = split[0].substr(sisa).match(/\d{3}/gi);
 		// tambahkan titik jika yang di input sudah menjadi angka ribuan
 		if(ribuan){
@@ -147,7 +147,7 @@
 			rupiah += separator + ribuan.join('.');
 		}
 		rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-		return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
+		return rupiah;
 	}
 
 	var tb_barangkeluar;
@@ -185,7 +185,6 @@
 			url: baseUrl + "/inventory/barangkeluar/detail/" + id,
 			type: 'get',
 			success: function(response) {
-				console.log(response);
 				unit_name = response.get_item.get_unit1.u_name;
 				$('#d_code').val(response.get_item.i_code);
 				$('#d_name').val(response.get_item.i_name);
@@ -194,7 +193,7 @@
 				$.each(response.get_mutation_detail, function(i, val) {
 					index = i + 1;
 					hpp = formatRupiah(val.sm_hpp, 'Rp')
-					$('#table_detail > tbody:last-child').append('<tr><td>'+ index +'</td><td>'+ val.sm_reff +'</td><td>'+ val.sm_qty +'</td><td>'+ unit_name +'</td><td>'+ hpp +'</td></tr>');
+					$('#table_detail > tbody:last-child').append('<tr><td>'+ index +'</td><td>'+ val.sm_reff +'</td><td>'+ val.sm_qty +'</td><td>'+ unit_name +'</td><td><span class="float-left">Rp </span><span class="float-right">'+ hpp +'</span></td></tr>');
 				});
 				$('#modal_detail').modal('show');
 			},
