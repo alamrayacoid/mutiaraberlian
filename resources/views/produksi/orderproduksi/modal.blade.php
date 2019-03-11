@@ -10,21 +10,17 @@
       </div>
       <div class="modal-body">      
         <div class="table-responsive">
-          <table class="table table-striped data-table table-hover" cellspacing="0">
+          <table class="table table-striped data-table table-hover" cellspacing="0" id="table_detail">
             <thead class="bg-primary">
               <tr>
-                <th>Kode Barang</th>
-                <th>Satuan</th>
-                <th>Nama Barang</th>
+                <th width="20%">Kode Barang</th>
+                <th width="40%">Nama Barang</th>
+                <th width="20%">Jumlah Barang</th>
+                <th width="20%">Satuan</th>
               </tr>
             </thead>
             <tbody>
               
-               <tr>
-                <td>1231</td>
-                <td>-</td>
-                <td>Kulkas</td>
-              </tr>
             </tbody>
           </table>
         </div>

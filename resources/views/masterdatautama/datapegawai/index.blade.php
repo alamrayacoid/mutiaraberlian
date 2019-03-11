@@ -27,13 +27,12 @@
                     <div class="card-block">
                         <section>
                         	<div class="table-responsive">
-	                            <table class="table table-hover display nowrap" cellspacing="0" id="table_pegawai">
+	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_pegawai">
 	                                <thead class="bg-primary">
 	                                    <tr>
 							                <th>NIK</th>
                                             <th>Nama Pegawai</th>
 											<th>Jabatan</th>
-							                <th>No. Telepon</th>
                                             <th class="text-center">Status</th>
 											<th class="text-center">Aksi</th>
 							            </tr>
@@ -83,10 +82,9 @@
                 }
             },
             columns: [
-                {data: 'e_nik', name: 'e_nik'},
-                {data: 'e_name', name: 'e_name'},
+                {data: 'nik', name: 'nik'},
+                {data: 'name', name: 'name'},
                 {data: 'jabatan', name: 'jabatan'},
-                {data: 'e_telp', name: 'e_telp'},
                 {data: 'status', name: 'status'},
                 {data: 'action', name: 'action'}
             ],

@@ -21,7 +21,8 @@ class SettingController extends Controller
 
     public function pengaturanpengguna_index()
     {
-        return view('pengaturan.pengaturanpengguna.index');
+        $level = DB::table('m_level')->get();
+        return view('pengaturan.pengaturanpengguna.index', compact('level'));
     }
 
     public function getUser()
@@ -91,7 +92,7 @@ class SettingController extends Controller
             ->make(true);
     }
 
-    public function pengaturanpengguna_akses()
+    public function pengaturanpengguna_akses(Request $request)
     {
         $level = DB::table('m_level')->where('m_id', Auth::user()->u_level)->first();
 
@@ -105,9 +106,13 @@ class SettingController extends Controller
           $nama = $tmp->a_name;
         }
 
-        $menu = DB::table('m_access')->get();
+        $company = DB::table('m_company', 'c_id', '=', Auth::user()->u_company)->first();
 
-        return view('pengaturan.pengaturanpengguna.akses', compact('nama', 'level', 'address', 'menu'));
+        $menu = DB::table('m_access')->leftjoin('d_useraccess', 'ua_access', '=', 'a_id')->where('ua_username', $request->id)->get();
+
+        $id = $request->id;
+
+        return view('pengaturan.pengaturanpengguna.akses', compact('nama', 'level', 'address', 'menu', 'akses', 'company', 'id'));
     }
 
     public function pengaturanpengguna_create()
@@ -127,46 +132,75 @@ class SettingController extends Controller
     {
         return view('pengaturan.pengaturanpengguna.edit');
     }
+    public function pengaturanpengguna_hapus(Request $request){
+      DB::beginTransaction();
+      try {
+
+        DB::table('d_username')->where('u_id', $request->id)->delete();
+
+        DB::table('d_useraccess')->where('ua_username', $request->id)->delete();
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal'
+        ]);
+      }
+
+    }
     public function pengaturanpengguna_simpan(Request $request){
       DB::beginTransaction();
       try {
 
-        if ($request->type == "agen") {
-          $user = 'A';
-          $code = $request->agen;
-        } else {
-          $user = 'E';
-          $code = $request->pegawai;
-        }
+        $cek = DB::table('d_username')->where('u_username', $request->username)->count();
 
-        $id = DB::table('d_username')->max('u_id')+1;
-        DB::table('d_username')
-            ->insert([
-              'u_id' => $id,
-              'u_company' => $request->cabang,
-              'u_username' => $request->username,
-              'u_password' => sha1(md5('islamjaya') . $request->password),
-              'u_level' => $request->level,
-              'u_user' => $user,
-              'u_code' => $code,
-              'u_created_at' => Carbon::now('Asia/Jakarta'),
-              'u_update_at' => Carbon::now('Asia/Jakarta')
-            ]);
-
-        $access = DB::table('m_access')
-                    ->get();          
-
-        $isi = [];
-        for ($i=0; $i < count($access); $i++) {
-          $array = ([
-            'ua_username' => $id,
-            'ua_access' => $access[$i]->a_id,
-            'ua_read' => 'N',
-            'ua_create' => 'N',
-            'ua_update' => 'N',
-            'ua_delete' => 'N'
+        if ($cek != 0) {
+          return response()->json([
+            'status' => 'failed',
+            'ex' => 'Username sudah digunakan!'
           ]);
-          array_push($isi, $array);
+        } else {
+          if ($request->type == "agen") {
+            $user = 'A';
+            $code = $request->agen;
+          } else {
+            $user = 'E';
+            $code = $request->pegawai;
+          }
+
+          $id = DB::table('d_username')->max('u_id')+1;
+          DB::table('d_username')
+              ->insert([
+                'u_id' => $id,
+                'u_company' => $request->cabang,
+                'u_username' => $request->username,
+                'u_password' => sha1(md5('islamjaya') . $request->password),
+                'u_level' => $request->level,
+                'u_user' => $user,
+                'u_code' => $code,
+                'u_created_at' => Carbon::now('Asia/Jakarta'),
+                'u_update_at' => Carbon::now('Asia/Jakarta')
+              ]);
+
+          $access = DB::table('m_access')
+                      ->get();
+
+          $isi = [];
+          for ($i=0; $i < count($access); $i++) {
+            $array = ([
+              'ua_username' => $id,
+              'ua_access' => $access[$i]->a_id,
+              'ua_read' => 'N',
+              'ua_create' => 'N',
+              'ua_update' => 'N',
+              'ua_delete' => 'N'
+            ]);
+            array_push($isi, $array);
+          }
         }
 
         DB::table('d_useraccess')->insert($isi);
@@ -214,19 +248,130 @@ class SettingController extends Controller
             if ($datas->u_user == 'A') {
               $jenis = 'Agen';
             } else {
-              $jenis = 'Employee';
+              $jenis = 'Pegawai';
             }
             return $jenis;
           })
           ->addColumn('action', function ($datas) {
               return '<center><div class="btn-group btn-group-sm">
-                <button class="btn btn-success btn-akses" onclick="window.location.href='.route('pengaturanpengguna.akses').'?id='.$datas->u_id.'" title="Akses"><i class="fa fa-wrench"></i></button>
-                <button class="btn btn-warning btn-edit" onclick="window.location.href='.route('pengaturanpengguna.edit').'?id='.$datas->u_id.'" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-                <button class="btn btn-primary btn-change" data-id="'.$datas->u_id.'" data-toggle="modal" data-target="#change" type="button" title="Ganti Password"><i class="fa fa-exchange"></i></button>
+                <button class="btn btn-success btn-akses" onclick="akses('.$datas->u_id.')" title="Akses"><i class="fa fa-wrench"></i></button>
+                <button class="btn btn-warning btn-edit" onclick="editlevel('.$datas->u_id.')" type="button" title="Edit Level"><i class="fa fa-pencil"></i></button>
+                <button class="btn btn-primary btn-change" onclick="changepass('.$datas->u_id.')" data-toggle="modal" data-target="#change" type="button" title="Ganti Password"><i class="fa fa-exchange"></i></button>
                 <button class="btn btn-danger btn-nonaktif" onclick="hapus('.$datas->u_id.')" type="button" title="Nonaktif"><i class="fa fa-times-circle"></i></button>
                 </div></center>';
           })
           ->rawColumns(['action'])
           ->make(true);
+    }
+
+    public function pengaturanpengguna_updatepassword(Request $request){
+      DB::beginTransaction();
+      try {
+
+        $cek = DB::table('d_username')->where('u_id', $request->id)->first();
+        if (sha1(md5('islamjaya') . $request->lama) == $cek->u_password) {
+          if ($request->baru == $request->confirm) {
+            DB::table('d_username')->where('u_id', $request->id)->update([
+              'u_password' => sha1(md5('islamjaya') . $request->baru)
+            ]);
+          } else {
+            return response()->json([
+              'status' => 'failed',
+              'ex' => 'Password confirmasi tidak sama dengan password baru!'
+            ]);
+          }
+        } else {
+          return response()->json([
+            'status' => 'failed',
+            'ex' => 'Password lama salah!'
+          ]);
+        }
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal'
+        ]);
+      }
+
+    }
+
+    public function pengaturanpengguna_updatelevel(Request $request){
+      DB::beginTransaction();
+      try {
+
+        DB::table('d_username')->where('u_id', $request->id)->update([
+          'u_level' => $request->level
+        ]);
+
+        DB::commit();
+        return response()->json([
+          'status'=> 'berhasil'
+        ]);
+      } catch (Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'gagal' => 'gagal'
+        ]);
+      }
+
+    }
+
+    public function pengaturanpengguna_simpanakses(Request $request){
+      DB::beginTransaction();
+      try {
+        for ($i=0; $i < count($request->idaccess); $i++) {
+          if ($request->read[$i] != 'N') {
+            DB::table('d_useraccess')
+                  ->where('ua_username', $request->id)
+                  ->where('ua_access', $request->idaccess[$i])
+                  ->update([
+                    'ua_read' => $request->read[$i]
+                  ]);
+          }
+
+          if ($request->insert[$i] != 'N') {
+            DB::table('d_useraccess')
+                  ->where('ua_username', $request->id)
+                  ->where('ua_access', $request->idaccess[$i])
+                  ->update([
+                    'ua_create' => $request->insert[$i]
+                  ]);
+          }
+
+          if ($request->update[$i] != 'N') {
+            DB::table('d_useraccess')
+                  ->where('ua_username', $request->id)
+                  ->where('ua_access', $request->idaccess[$i])
+                  ->update([
+                    'ua_update' => $request->update[$i]
+                  ]);
+          }
+
+          if ($request->delete[$i] != 'N') {
+            DB::table('d_useraccess')
+                  ->where('ua_username', $request->id)
+                  ->where('ua_access', $request->idaccess[$i])
+                  ->update([
+                    'ua_delete' => $request->delete[$i]
+                  ]);
+          }
+        }
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal'
+        ]);
+      }
+
     }
 }

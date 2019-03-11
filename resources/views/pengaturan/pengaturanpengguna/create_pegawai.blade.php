@@ -26,7 +26,7 @@
 
         <div class="col-md-9 col-sm-6 col-12">
             <div class="form-group">
-              <select name="cabang" id="cabang" class="select2">
+              <select name="cabang" id="pcabang" class="select2">
               <option value="" disabled selected="">--Pilih Cabang--</option>
               @foreach ($company as $key => $value)
                 <option value="{{$value->c_id}}">{{$value->c_name}}</option>
@@ -41,7 +41,7 @@
 
         <div class="col-md-9 col-sm-6 col-12">
             <div class="form-group">
-                <select name="level" id="level" class="select2">
+                <select name="level" id="plevel" class="select2">
                 <option value="" disabled selected="">--Pilih Level--</option>
                 @foreach ($level as $key => $value)
                   <option value="{{$value->m_id}}">{{$value->m_name }}</option>
@@ -56,7 +56,7 @@
         </div>
         <div class="col-md-9 col-sm-6 col-12">
             <div class="form-group">
-                <input type="text" class="form-control form-control-sm" name="username" id="username">
+                <input type="text" class="form-control form-control-sm" name="username" id="pusername">
             </div>
         </div>
 
@@ -65,9 +65,9 @@
         </div>
         <div class="col-md-8 col-sm-6 col-12">
             <div class="form-group">
-                <input type="password" id="password" class="form-control form-control-sm" name="password">
+                <input type="password" id="ppassword" class="form-control form-control-sm" name="password">
             </div>
-            <label><input class="checkbox rounded" onclick="showpassword()" type="checkbox"><span>Show Password</span></label>
+            <label><input class="checkbox rounded" onclick="pshowpassword()" type="checkbox"><span>Show Password</span></label>
         </div>
 
         <div class="col-md-3 col-sm-6 col-12">
@@ -75,12 +75,12 @@
         </div>
         <div class="col-md-8 col-sm-6 col-12">
             <div class="form-group">
-                <input type="password" id="confirmpassword" onkeyup="matching()" class="form-control form-control-sm" name="confirmpassword">
+                <input type="password" id="pconfirmpassword" onkeyup="pmatching()" class="form-control form-control-sm" name="confirmpassword">
             </div>
-            <label><input class="checkbox rounded" onclick="showconfirm()" type="checkbox"><span>Show Confirm Password</span></label>
+            <label><input class="checkbox rounded" onclick="pshowconfirm()" type="checkbox"><span>Show Confirm Password</span></label>
         </div>
         <div class="col-md-1">
-          <span class="fa fa-check" id="check" style="font-size:20px; color:rgb(32, 186, 98); display:none"></span>
+          <span class="fa fa-check" id="pcheck" style="font-size:20px; color:rgb(32, 186, 98); display:none"></span>
         </div>
     </div>
     </fieldset>
