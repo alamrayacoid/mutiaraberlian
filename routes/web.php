@@ -175,6 +175,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Barang Keluar
     Route::get('/inventory/barangkeluar/index', 'Inventory\BarangKeluarController@index')->name('barangkeluar.index');
     Route::get('/inventory/barangkeluar/list', 'Inventory\BarangKeluarController@getList')->name('barangkeluar.list');
+    Route::get('/inventory/barangkeluar/detail/{nota}', 'Inventory\BarangKeluarController@getDetail')->name('barangkeluar.detail');
     Route::get('/inventory/barangkeluar/getItems', 'Inventory\BarangKeluarController@getItems')->name('barangkeluar.getItems');
     Route::get('/inventory/barangkeluar/create', 'Inventory\BarangKeluarController@create')->name('barangkeluar.create');
     Route::post('/inventory/barangkeluar/store', 'Inventory\BarangKeluarController@store')->name('barangkeluar.store');

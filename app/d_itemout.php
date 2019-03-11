@@ -22,4 +22,8 @@ class d_itemout extends Model
     {
       return $this->belongsTo('App\m_mutcat', 'io_mutcat', 'm_id');
     }
+    public function getMutationDetail()
+    {
+      return $this->hasMany('App\d_stock_mutation', 'sm_nota', 'io_nota');
+    }
 }

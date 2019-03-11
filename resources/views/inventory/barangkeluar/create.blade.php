@@ -95,16 +95,6 @@
                             </div>
 
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>HPP</label>
-                            </div>
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="text" class="form-control form-control input-hpp text-right" name="HPP">
-                              </div>
-                            </div>
-
-
-                            <div class="col-md-3 col-sm-6 col-xs-12">
                               <label>Keterangan Barang Keluar</label>
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">

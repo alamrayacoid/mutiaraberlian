@@ -56,14 +56,72 @@
                         </section>
                     </div>
                 </div>
-
 			</div>
-
 		</div>
-
 	</section>
-
 </article>
+
+{{-- Modal Detail --}}
+<div class="modal fade" id="modal_detail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Detail Barang Keluar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+									<div class="col-md-3">
+										<label for="d_code">Kode</label>
+									</div>
+									<div class="col-md-9">
+										<div class="form-group">
+											<input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="d_code">
+										</div>
+									</div>
+
+									<div class="col-md-3">
+										<label for="d_name">Nama</label>
+									</div>
+									<div class="col-md-9">
+										<div class="form-group">
+											<input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="d_name">
+										</div>
+									</div>
+
+									<div class="col-md-3">
+										<label for="d_nota">Nota Pengeluaran</label>
+									</div>
+									<div class="col-md-9">
+										<div class="form-group">
+											<input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="d_nota">
+										</div>
+									</div>
+
+                	<div class="table-responsive">
+                      <table class="table table-bordered table-striped table-hover display" cellspacing="0" id="table_detail">
+                          <thead class="bg-primary">
+                              <tr>
+                              	<th>No</th>
+																<th>Reff</th>
+																<th>Qty</th>
+																<th>Satuan</th>
+                            		<th>HPP</th>
+                            	</tr>
+                          </thead>
+                          <tbody>
+
+                          </tbody>
+                      </table>
+                  </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection
 
@@ -93,7 +151,7 @@
 			columns: [
 				{data: 'DT_RowIndex'},
 				{data: 'io_date'},
-				{data: 'io_nota'},
+				{data: 'code'},
 				{data: 'name'},
 				{data: 'io_qty'},
 				{data: 'unit'},
@@ -105,9 +163,27 @@
 		});
 	}
 
-	function Detail()
+	function Detail(id, nota)
 	{
-		
+		$.ajax({
+			url: baseUrl + "/inventory/barangkeluar/detail/" + id,
+			type: 'get',
+			success: function(response) {
+				console.log(response);
+				unit_name = response.get_item.get_unit1.u_name;
+				$('#d_code').val(response.get_item.i_code);
+				$('#d_name').val(response.get_item.i_name);
+				$('#d_nota').val(response.io_nota);
+				$('#table_detail tbody').empty();
+				$.each(response.get_mutation_detail, function(i, val) {
+					// console.log(i+1, val, unit_name);
+					index = i + 1;
+					$('#table_detail > tbody:last-child').append('<tr><td>'+ index +'</td><td>'+ val.sm_reff +'</td><td>'+ val.sm_qty +'</td><td>'+ unit_name +'</td><td><span class="float-left">Rp </span><span class="float-right">'+ val.sm_hpp +'</span></td></tr>');
+				});
+				$('#modal_detail').modal('show');
+			},
+
+		})
 	}
 
 	$(document).ready(function(){
