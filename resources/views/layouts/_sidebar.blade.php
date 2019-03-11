@@ -143,6 +143,9 @@
         </ul>
     </div>
 </header>
+
+    <?php $sidebar = App\Http\Controllers\AksesUser::aksesSidebar() ?>
+
 <aside class="sidebar">
     <div class="sidebar-container">
         <div class="sidebar-header">
@@ -324,7 +327,7 @@
                         </li>
                     </ul>
                 </li>
-                
+
                 <li class="{{Request::is('keuangan/*') ? 'active open' : ''}}">
                     <a href="#">
                         <i class="fa fa-usd"></i><span class="menu-title"> Keuangan</span>

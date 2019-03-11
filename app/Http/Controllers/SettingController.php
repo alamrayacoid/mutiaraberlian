@@ -156,42 +156,51 @@ class SettingController extends Controller
       DB::beginTransaction();
       try {
 
-        if ($request->type == "agen") {
-          $user = 'A';
-          $code = $request->agen;
-        } else {
-          $user = 'E';
-          $code = $request->pegawai;
-        }
+        $cek = DB::table('d_username')->where('u_username', $request->username)->count();
 
-        $id = DB::table('d_username')->max('u_id')+1;
-        DB::table('d_username')
-            ->insert([
-              'u_id' => $id,
-              'u_company' => $request->cabang,
-              'u_username' => $request->username,
-              'u_password' => sha1(md5('islamjaya') . $request->password),
-              'u_level' => $request->level,
-              'u_user' => $user,
-              'u_code' => $code,
-              'u_created_at' => Carbon::now('Asia/Jakarta'),
-              'u_update_at' => Carbon::now('Asia/Jakarta')
-            ]);
-
-        $access = DB::table('m_access')
-                    ->get();
-
-        $isi = [];
-        for ($i=0; $i < count($access); $i++) {
-          $array = ([
-            'ua_username' => $id,
-            'ua_access' => $access[$i]->a_id,
-            'ua_read' => 'N',
-            'ua_create' => 'N',
-            'ua_update' => 'N',
-            'ua_delete' => 'N'
+        if ($cek != 0) {
+          return response()->json([
+            'status' => 'failed',
+            'ex' => 'Username sudah digunakan!'
           ]);
-          array_push($isi, $array);
+        } else {
+          if ($request->type == "agen") {
+            $user = 'A';
+            $code = $request->agen;
+          } else {
+            $user = 'E';
+            $code = $request->pegawai;
+          }
+
+          $id = DB::table('d_username')->max('u_id')+1;
+          DB::table('d_username')
+              ->insert([
+                'u_id' => $id,
+                'u_company' => $request->cabang,
+                'u_username' => $request->username,
+                'u_password' => sha1(md5('islamjaya') . $request->password),
+                'u_level' => $request->level,
+                'u_user' => $user,
+                'u_code' => $code,
+                'u_created_at' => Carbon::now('Asia/Jakarta'),
+                'u_update_at' => Carbon::now('Asia/Jakarta')
+              ]);
+
+          $access = DB::table('m_access')
+                      ->get();
+
+          $isi = [];
+          for ($i=0; $i < count($access); $i++) {
+            $array = ([
+              'ua_username' => $id,
+              'ua_access' => $access[$i]->a_id,
+              'ua_read' => 'N',
+              'ua_create' => 'N',
+              'ua_update' => 'N',
+              'ua_delete' => 'N'
+            ]);
+            array_push($isi, $array);
+          }
         }
 
         DB::table('d_useraccess')->insert($isi);
@@ -239,7 +248,7 @@ class SettingController extends Controller
             if ($datas->u_user == 'A') {
               $jenis = 'Agen';
             } else {
-              $jenis = 'Employee';
+              $jenis = 'Pegawai';
             }
             return $jenis;
           })
