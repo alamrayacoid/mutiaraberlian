@@ -1,4 +1,4 @@
-<div class="tab-pane animated fadeIn active show" id="targetrealisasi">
+<div class="tab-pane animated fadeIn show" id="targetrealisasi">
 	<div class="card">
 		<div class="card-header bordered p-2">
 			<div class="header-block">
@@ -12,11 +12,11 @@
 		<div class="card-block">
 			<section>
 				<div class="table-responsive">
-				<p style="color:red;">*Click Status to See Details</p>
-					<table class="table table-hover table-striped" cellspacing="0" id="table_approval">
+					<table class="table table-hover table-striped" cellspacing="0" id="table_targetrealisasi">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>
+								<th>Nama Barang</th>
 								<th>Bulan/Tahun</th>
 								<th>Jumlah Terjual</th>
 								<th>Target</th>
@@ -26,10 +26,11 @@
 						<tbody>
 							<tr>
 								<td>1</td>
+								<td>Agarilus</td>
 								<td>February/2019</td>
 								<td>500</td>
                                 <td>1000</td>
-								<td><button class="btn btn-primary status-reject" type="button" onclick="window.location.href='{{ route('targetrealisasi.status') }}'">Gagal</button></td>
+								<td><button class="btn btn-primary status-reject" type="button">Gagal</button></td>
 							</tr>
 						</tbody>
 					</table>

@@ -38,7 +38,7 @@ class MarketingController extends Controller
 
     public function targetrealisasi_create()
     {
-        return view('marketing/targetrealisasipenjualan/targetrealisasi/create');
+        return view('marketing/penjualanpusat/targetrealisasi/create');
     }
     
     public function status_target()
