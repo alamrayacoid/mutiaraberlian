@@ -228,7 +228,7 @@ return [
         'Currency' => App\Http\Controllers\Currency::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         'Image' => Intervention\Image\Facades\Image::class,
-
+        'Pusher' => Pusher\Pusher::class,
     ],
 
 ];

@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\PusherEvent;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -310,5 +311,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Profile
     Route::get('/profile', 'ProfileController@profile')->name('profile');
+
+    //Get ototitasi
+    Route::get('/getoto', 'getotorisasiController@get');
 });
 // End Route Group
