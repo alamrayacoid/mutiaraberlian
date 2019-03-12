@@ -146,7 +146,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/orderproduksi/cari-barang', 'ProduksiController@cariBarang')->name('order.caribarang');
     Route::get('/produksi/orderproduksi/get-satuan/{id}', 'ProduksiController@getSatuan')->name('order.getsatuan');
     Route::get('/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
+
     Route::get('/produksi/orderproduksi/gethistory', 'ProduksiController@get_history')->name('order.gethistory');
+
     Route::get('/produksi/orderproduksi/detail', 'ProduksiController@detail_produksi')->name('order.detail');
 
     // Penerimaan Barang
@@ -168,11 +170,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/barangmasuk/edit', 'Inventory\BarangMasukController@edit')->name('barangmasuk.edit');
     Route::get('/inventory/barangmasuk/autoItem', 'Inventory\BarangMasukController@auto_item')->name('barangmasuk.autoitem');
     Route::get('/inventory/barangmasuk/getUnit', 'Inventory\BarangMasukController@getUnit')->name('barangmasuk.getUnit');
+    Route::get('/inventory/barangmasuk/getDetail', 'Inventory\BarangMasukController@getDetail')->name('barangmasuk.getDetail');
 
     // Barang Keluar
-    Route::get('/inventory/barangkeluar/index', 'InventoryController@barangkeluar_index')->name('barangkeluar.index');
-    Route::get('/inventory/barangkeluar/create', 'InventoryController@barangkeluar_create')->name('barangkeluar.create');
-    Route::get('/inventory/barangkeluar/edit', 'InventoryController@barangkeluar_edit')->name('barangkeluar.edit');
+    Route::get('/inventory/barangkeluar/index', 'Inventory\BarangKeluarController@index')->name('barangkeluar.index');
+    Route::get('/inventory/barangkeluar/list', 'Inventory\BarangKeluarController@getList')->name('barangkeluar.list');
+    Route::get('/inventory/barangkeluar/detail/{nota}', 'Inventory\BarangKeluarController@getDetail')->name('barangkeluar.detail');
+    Route::get('/inventory/barangkeluar/getItems', 'Inventory\BarangKeluarController@getItems')->name('barangkeluar.getItems');
+    Route::get('/inventory/barangkeluar/create', 'Inventory\BarangKeluarController@create')->name('barangkeluar.create');
+    Route::post('/inventory/barangkeluar/store', 'Inventory\BarangKeluarController@store')->name('barangkeluar.store');
+    Route::get('/inventory/barangkeluar/edit/{id}', 'Inventory\BarangKeluarController@edit')->name('barangkeluar.edit');
+    Route::post('/inventory/barangkeluar/update', 'Inventory\BarangKeluarController@update')->name('barangkeluar.update');
 
     // Distribusi Barang
     Route::get('/inventory/distribusibarang/index', 'InventoryController@distribusibarang_index')->name('distribusibarang.index');
@@ -182,6 +190,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
     Route::get('/inventory/manajemenstok/create', 'InventoryController@manajemenstok_create')->name('manajemenstok.create');
     Route::get('/inventory/manajemenstok/edit', 'InventoryController@manajemenstok_edit')->name('manajemenstok.edit');
+    Route::get('/inventory/manajemenstok/opnamestock/index', 'InventoryController@opname_stock')->name('opname.index');
+    Route::get('/inventory/manajemenstok/opnamestock/create', 'InventoryController@opname_stock_create')->name('opname.create');
+    Route::get('/inventory/manajemenstok/historyopname/index', 'InventoryController@history_opname')->name('history.index');
+    Route::get('/inventory/manajemenstok/adjustmentstock/index', 'InventoryController@adjustment_index')->name('adjustment.index');
+    Route::get('/inventory/manajemenstok/adjustmentstock/create', 'InventoryController@adjustment_create')->name('adjustment.create');
     // !===================================================== END INVENTORY =====================================================!
 
     // !===================================================== SDM =====================================================!
@@ -269,7 +282,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/pengaturan/pengaturanpengguna/akses', 'SettingController@pengaturanpengguna_akses')->name('pengaturanpengguna.akses');
     Route::get('/pengaturan/pengaturanpengguna/create', 'SettingController@pengaturanpengguna_create')->name('pengaturanpengguna.create');
     Route::get('/pengaturan/pengaturanpengguna/simpan', 'SettingController@pengaturanpengguna_simpan')->name('pengaturanpengguna.simpan');
+    Route::get('/pengaturan/pengaturanpengguna/hapus', 'SettingController@pengaturanpengguna_hapus')->name('pengaturanpengguna.hapus');
+    Route::get('/pengaturan/pengaturanpengguna/updatepassword', 'SettingController@pengaturanpengguna_updatepassword')->name('pengaturanpengguna.updatepassword');
     Route::get('/pengaturan/pengaturanpengguna/edit', 'SettingController@pengaturanpengguna_edit')->name('pengaturanpengguna.edit');
+    Route::get('/pengaturan/pengaturanpengguna/simpanakses', 'SettingController@pengaturanpengguna_simpanakses')->name('pengaturanpengguna.simpanakses');
+    Route::get('/pengaturan/pengaturanpengguna/updatelevel', 'SettingController@pengaturanpengguna_updatelevel')->name('pengaturanpengguna.updatelevel');
     // !===================================================== END PENGATURAN =====================================================!
 
     // !================================================== OTORISASI NOTIFIKASI ==============================================!

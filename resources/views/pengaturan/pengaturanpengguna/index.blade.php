@@ -3,6 +3,7 @@
 @section('content')
 
 @include('pengaturan.pengaturanpengguna.modal')
+@include('pengaturan.pengaturanpengguna.level')
 
 <article class="content">
 
@@ -194,5 +195,135 @@
 		// 	table.row($(a).parents('tr')).remove().draw();
 		// }
 	});
+
+	function hapus(id) {
+			$.confirm({
+					animation: 'RotateY',
+					closeAnimation: 'scale',
+					animationBounce: 1.5,
+					icon: 'fa fa-exclamation-triangle',
+					title: 'Peringatan!',
+					content: 'Apa anda yakin menghapus data ini?',
+					theme: 'disable',
+					buttons: {
+							info: {
+									btnClass: 'btn-blue',
+									text: 'Ya',
+									action: function () {
+										loadingShow();
+										$.ajax({
+											type: 'get',
+											data: {id},
+											dataType: 'JSON',
+											url: baseUrl + '/pengaturan/pengaturanpengguna/hapus',
+											success : function(response){
+												if (response.status == 'berhasil') {
+													messageSuccess('Berhasil', 'Data berhasil dihapus!');
+													loadingHide();
+													table.ajax.reload();
+												} else {
+													messageFailed('Gagal', 'Data gagal dihapus!');
+												}
+											}
+										});
+									}
+							},
+							cancel: {
+									text: 'Tidak',
+									action: function () {
+											// tutup confirm
+									}
+							}
+					}
+			});
+	}
+
+	function changepass(id){
+		$('#updatepassword').attr('onclick', 'updatepassword('+id+')')
+	}
+
+	function updatepassword(id) {
+			$.confirm({
+					animation: 'RotateY',
+					closeAnimation: 'scale',
+					animationBounce: 1.5,
+					icon: 'fa fa-exclamation-triangle',
+					title: 'Peringatan!',
+					content: 'Apa anda yakin mengubah password?',
+					theme: 'disable',
+					buttons: {
+							info: {
+									btnClass: 'btn-blue',
+									text: 'Ya',
+									action: function () {
+										if ($('#lama').val() == "" || $('#lama').val() == undefined) {
+											messageFailed('Failed', 'password lama kosong, mohon lengkapi data!');
+											return false;
+										} else if ($('#baru').val() == "" || $('#baru').val() == undefined) {
+											messageFailed('Failed', 'password baru kosong, mohon lengkapi data!');
+											return false;
+										} else if ($('#confirm').val() == "" || $('#confirm').val() == undefined) {
+											messageFailed('Failed', 'password baru kosong, mohon lengkapi data!');
+											return false;
+										} else {
+											var data = $('#datachange').serialize();
+											loadingShow();
+											$.ajax({
+												type: 'get',
+												dataType: 'JSON',
+												url: baseUrl + '/pengaturan/pengaturanpengguna/updatepassword?'+data+'&id='+id,
+												success : function(response){
+													if (response.status == 'berhasil') {
+														loadingHide();
+														messageSuccess('Berhasil', 'Password berhasil diubah!');
+													} else if (response.status == 'failed') {
+														loadingHide();
+														messageFailed('Gagal', response.ex+'!');
+													} else {
+														loadingHide();
+														messageFailed('Gagal', 'Password gagal diubah!');
+													}
+												}
+											});
+										}
+									}
+							},
+							cancel: {
+									text: 'Tidak',
+									action: function () {
+											// tutup confirm
+									}
+							}
+					}
+			});
+	}
+
+	function editlevel(id){
+		$('#updatelevel').attr('onclick', 'updatelevel('+id+')');
+		$('#level').modal('show');
+	}
+
+	function updatelevel(id){
+		loadingShow();
+		$.ajax({
+			type: 'get',
+			data: $('#datalevel').serialize()+'&id='+id,
+			dataType: 'JSON',
+			url: baseUrl + '/pengaturan/pengaturanpengguna/updatelevel',
+			success : function(response){
+				if (response.status == 'berhasil') {
+					loadingHide();
+					messageSuccess('Berhasil', 'Level berhasil diubah!');
+				} else {
+					loadingHide();
+					messageFailed('Gagal', 'Level gagal diubah!');
+				}
+			}
+		});
+	}
+
+	function akses(id){
+		window.location.href = "{{route('pengaturanpengguna.akses')}}?id="+id;
+	}
 </script>
 @endsection

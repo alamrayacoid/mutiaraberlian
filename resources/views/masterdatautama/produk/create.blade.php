@@ -211,51 +211,74 @@
         });
 
         // submit form to store data in db
-        function SubmitForm(event) {
-            event.preventDefault();
-            var file_data = $('#foto').prop('files')[0];
-            var form_data = new FormData();
-            form_data.append('file', file_data);
-            $.ajax({
-                data: form_data,
-                type: "post",
-                url: $("#myForm").attr('action') + '?' + $('#myForm').serialize(),
-                dataType: 'json',
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function (response) {
-                    if (response.status == 'berhasil') {
-                        $.toast({
-                            heading: 'Success',
-                            text: 'Data berhasil ditambahkan !',
-                            bgColor: '#00b894',
-                            textColor: 'white',
-                            loaderBg: '#55efc4',
-                            icon: 'success',
-                            stack: false,
-                            hideAfter: 1500,
-                            afterHidden: function () {
-                                window.location.href = "{{ route('dataproduk.index') }}";
-                            }
-                        });
-                    } else if (response.status == 'invalid') {
-                        messageWarning('Warning', response.message);
+        function SubmitForm(event)
+        {
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apakah anda yakin ingin menyimpan data?, satuan dan isi satuan tidak dapat diubah',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text:'Ya',
+                        action : function(){
+                          event.preventDefault();
+                          var file_data = $('#foto').prop('files')[0];
+                          var form_data = new FormData();
+                          form_data.append('file', file_data);
+                          $.ajax({
+                              data: form_data,
+                              type: "post",
+                              url: $("#myForm").attr('action') + '?' + $('#myForm').serialize(),
+                              dataType: 'json',
+                              cache: false,
+                              contentType: false,
+                              processData: false,
+                              success: function (response) {
+                                  if (response.status == 'berhasil') {
+                                      $.toast({
+                                          heading: 'Success',
+                                          text: 'Data berhasil ditambahkan !',
+                                          bgColor: '#00b894',
+                                          textColor: 'white',
+                                          loaderBg: '#55efc4',
+                                          icon: 'success',
+                                          stack: false,
+                                          hideAfter: 1500,
+                                          afterHidden: function () {
+                                              window.location.href = "{{ route('dataproduk.index') }}";
+                                          }
+                                      });
+                                  } else if (response.status == 'invalid') {
+                                      messageWarning('Warning', response.message);
+                                  }
+                              },
+                              error: function (e) {
+                                  $.toast({
+                                      heading: 'Warning',
+                                      text: e.message,
+                                      bgColor: '#00b894',
+                                      textColor: 'white',
+                                      loaderBg: '#55efc4',
+                                      icon: 'warning',
+                                      stack: false
+                                  });
+                              }
+                          });
+                        }
+                    },
+                    cancel:{
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
                     }
-                },
-                error: function (e) {
-                    $.toast({
-                        heading: 'Warning',
-                        text: e.message,
-                        bgColor: '#00b894',
-                        textColor: 'white',
-                        loaderBg: '#55efc4',
-                        icon: 'warning',
-                        stack: false
-                    });
                 }
             });
-
         }
 
 

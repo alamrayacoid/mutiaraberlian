@@ -5,11 +5,11 @@
 <article class="content">
 	<div class="title-block text-primary">
 	    <h1 class="title"> Pengelolaan Barang Masuk </h1>
-	    <p class="title-description">
+        <p class="title-description">
 	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
-	    	 / <span>Aktivitas Inventory</span>
-	    	 / <span class="text-primary font-weight-bold">Pengelolaan Barang Masuk</span>
-	     </p>
+	    	/ <span>Aktivitas Inventory</span>
+	    	/ <span class="text-primary font-weight-bold">Pengelolaan Barang Masuk</span>
+        </p>
 	</div>
 	<section class="section">
 		<div class="row">
@@ -54,13 +54,78 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Detail Barang</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-            ...
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="codeB">Kode Barang</label>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="codeB">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="namaB">Nama Barang</label>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="namaB">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="pemilik">Pemilik Barang</label>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled style="width: 100%;" value="" readonly id="pemilikB">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="posisiB">Posisi Barang</label>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="posisiB">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="qtyB">Jumlah Barang</label>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled style="width: 100%;" value="" readonly id="qtyB">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="hppB">HPP Barang</label>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="hppB">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="satuanB">Satuan Barang</label>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="satuanB">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="notaB">Nota Barang</label>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="notaB">
+                        </div>
+                    </div>                        
+                </div>
             </div>
         </div>
     </div>
@@ -70,38 +135,57 @@
 
 @section('extra_script')
 <script type="text/javascript">
-	var tb_barangmasuk;
-	$(document).ready(function(){
-		TableCabang();
-	});
+var tb_barangmasuk;
+$(document).ready(function(){
+	TableCabang();
+});
 
-	function TableCabang() {
-        tb_barangmasuk = $('#table_barangmasuk').DataTable({
-            responsive: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('barangmasuk.list') }}",
-                type: "get",
-                data: {
-                    "_token": "{{ csrf_token() }}"
-                }
-            },
-            columns: [
-                {data: 'sm_date', name: 'sm_date'},
-                {data: 'sm_qty', name: 'sm_qty'},
-                {data: 'pemilik', name: 'pemilik'},
-                {data: 'posisi', name: 'posisi'},
-                {data: 's_condition', name: 's_condition'},
-                {data: 'action', name: 'action'}
-            ],
-            pageLength: 10,
-            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-        });
-    }
+function TableCabang() {
+    tb_barangmasuk = $('#table_barangmasuk').DataTable({
+        responsive: true,
+        serverSide: true,
+        ajax: {
+            url : "{{ route('barangmasuk.list') }}",
+            type: "get",
+            data: {
+                "_token": "{{ csrf_token() }}"
+            }
+        },
+        columns: [
+            {data: 'sm_date', name: 'sm_date'},
+            {data: 'sm_qty', name: 'sm_qty'},
+            {data: 'pemilik', name: 'pemilik'},
+            {data: 'posisi', name: 'posisi'},
+            {data: 'kondisi', name: 'kondisi'},
+            {data: 'action', name: 'action'}
+        ],
+        pageLength: 10,
+        lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+    });
+}
 
-    function detail(stock, detail)
-    {
-        $('#mDetail').modal('show');
-    }
+function detail(stock, detail)
+{
+    $('#mDetail').modal('show');
+    $.ajax({
+        url : baseUrl+"/inventory/barangmasuk/getDetail",
+        type: "get",
+        data :{
+            stock  : stock,
+            detail : detail
+        },
+        dataType : "json",
+        success : function(response){
+            document.getElementById("namaB").setAttribute("value", response.data.i_name);
+            document.getElementById("pemilikB").setAttribute("value", response.data.pemilik);
+            document.getElementById("posisiB").setAttribute("value", response.data.posisi);
+            document.getElementById("codeB").setAttribute("value", response.data.i_code);
+            document.getElementById("qtyB").setAttribute("value", response.data.sm_qty);
+            document.getElementById("hppB").setAttribute("value", response.hpp);
+            document.getElementById("satuanB").setAttribute("value", response.data.u_name);
+            document.getElementById("notaB").setAttribute("value", response.data.sm_nota);
+        }
+    })
+}
 </script>
 @endsection

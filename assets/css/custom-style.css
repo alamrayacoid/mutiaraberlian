@@ -267,9 +267,9 @@ body {
     margin-top:-15px;
 }
 
-/* .auth {
-    background-color: #071C2E !important;
-} */
+ .auth {
+    background-color: transparent !important;
+} 
 
 .auth-container .auth-header {
     padding-top: 26px;
