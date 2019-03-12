@@ -76,7 +76,7 @@
                                       <input type="text" class="form-control form-control-sm">
                                       </td>
                                       <td>
-                                      <input type="text" class="form-control form-control-sm">
+                                      <input type="text" class="form-control form-control-sm select2">
                                       </td>
 	                                		<td>
                                       <button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
