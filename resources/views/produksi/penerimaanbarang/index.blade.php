@@ -62,9 +62,30 @@
 
 @section('extra_script')
 <script type="text/javascript">
-
+    var table;
 	$(document).ready(function(){
-		var table = $('#table_penerimaan').DataTable();
+        table = $('#table_penerimaan').DataTable({
+            responsive: true,
+            // language: dataTableLanguage,
+            // processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('produksi/penerimaanbarang/getnotapo') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}"
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'i_code', name: 'i_code'},
+                {data: 'it_name', name: 'it_name'},
+                {data: 'i_name', name: 'i_name'},
+                {data: 'action', name: 'action'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
 
 		$(document).on('click', '.btn-disable', function(){
 			var ini = $(this);

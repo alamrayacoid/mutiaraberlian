@@ -152,8 +152,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/orderproduksi/detail', 'ProduksiController@detail_produksi')->name('order.detail');
 
     // Penerimaan Barang
-    Route::get('/produksi/penerimaanbarang/index', 'ProduksiController@penerimaan_barang')->name('penerimaan.index');
-    Route::get('/produksi/penerimaanbarang/create', 'ProduksiController@create_penerimaan_barang')->name('penerimaan.create');
+    Route::get('/produksi/penerimaanbarang/index', 'PenerimaanProduksiController@penerimaan_barang')->name('penerimaan.index');
+    Route::get('/produksi/penerimaanbarang/getnotapo', 'PenerimaanProduksiController@getNotaPO');
+    Route::get('/produksi/penerimaanbarang/create', 'PenerimaanProduksiController@create_penerimaan_barang')->name('penerimaan.create');
     // Pembayaran
     Route::get('/produksi/pembayaran/index', 'ProduksiController@pembayaran')->name('pembayaran.index');
     // Return Produksi
