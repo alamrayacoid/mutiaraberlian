@@ -5,7 +5,7 @@
 				<h3 class="title">Target dan Realisasi</h3>
 			</div>
 	        <div class="header-block pull-right">
-                <a class="btn btn-primary" href="{{ route('targetrealisasi.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>	                    	
+                <a class="btn btn-primary" href="{{ route('targetReal.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>	                    	
 	        </div>
 			<div class=""></div>
 		</div>
@@ -50,7 +50,7 @@
 								<td>February/2019</td>
 								<td>500</td>
                                 <td>1000</td>
-								<td><button class="btn btn-primary status-reject" type="button">Gagal</button></td>
+								<td><label class="bg-danger status-reject px-3 py-1" disabled>Gagal</label></td>
 								<td><button class="btn btn-warning btn-modal btn-sm" data-toggle="modal" data-target="#edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button></td>
 							</tr>
 						</tbody>

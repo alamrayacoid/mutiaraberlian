@@ -314,7 +314,7 @@
                         </li> --}}
                       @if ($sidebar[19]->ua_read == 'Y')
                         <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
-                            <a href="{{route('penjualanpusat.index')}}">Penjualan Pusat</a>
+                            <a href="{{route('pusat.index')}}">Penjualan Pusat</a>
                         </li>
                       @endif
                       @if ($sidebar[20]->ua_read == 'Y')
@@ -408,12 +408,12 @@
                       @endif
                       @if ($sidebar[34]->ua_read == 'Y')
                         <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
-                            <a href="{{route('penjualanpusat.index')}}">Manajemen Hutang Piutang</a>
+                            <a href="{{route('pusat.index')}}">Manajemen Hutang Piutang</a>
                         </li>
                       @endif
                       @if ($sidebar[35]->ua_read == 'Y')
                         <li class="{{Request::is('marketing/kosinyasipusat/*') ? 'active' : ''}}">
-                            <a href="{{route('penjualanpusat.index')}}">Manajemen Pajak</a>
+                            <a href="{{route('pusat.index')}}">Manajemen Pajak</a>
                         </li>
                       @endif
                       @if ($sidebar[36]->ua_read == 'Y')

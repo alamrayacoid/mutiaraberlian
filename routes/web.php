@@ -232,13 +232,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/manajemenmarketing/edit-year-promotion', 'MarketingController@year_promotion_edit')->name('yearpromotion.edit');
     Route::get('/marketing/manajemenmarketing/create-month-promotion', 'MarketingController@month_promotion_create')->name('monthpromotion.create');
     Route::get('/marketing/manajemenmarketing/edit-month-promotion', 'MarketingController@month_promotion_edit')->name('monthpromotion.edit');
-    // Target dan Realisasi Penjualan
-    Route::get('/marketing/penjualanpusat/targetrealisasi/index', 'MarketingController@targetrealisasi')->name('targetrealisasi.index');
-    Route::get('/marketing/penjualanpusat/targetrealisasi/create', 'MarketingController@targetrealisasi_create')->name('targetrealisasi.create');
-    Route::get('/marketing/penjualanpusat/targetrealisasi/status', 'MarketingController@status_target')->name('targetrealisasi.status');
     // Penjualan Pusat
-    Route::get('/marketing/penjualanpusat/index', 'MarketingController@penjualan')->name('penjualanpusat.index');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
+    Route::get('/marketing/penjualanpusat/index', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@index')->name('pusat.index');
+        // Target Realisasi
+        Route::get('/marketing/penjualanpusat/targetrealisasi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@createTargetReal')->name('targetReal.create');
+        // End ---
+        // Return Penjualan
+        Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
+        // End ---
+    // End ---
     // Konsinyasi Pusat
     Route::get('/marketing/konsinyasipusat/index', 'MarketingController@konsinyasipusat')->name('konsinyasipusat.index');
     Route::get('/marketing/konsinyasipusat/penempatanproduk/create', 'MarketingController@create_penempatanproduk')->name('penempatanproduk.create');
