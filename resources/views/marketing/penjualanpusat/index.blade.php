@@ -103,6 +103,12 @@
 			    }
 			});
 		});
+		
+		$("#datepicker").datepicker( {
+			format: "MM/yyyy",
+			viewMode: "months", 
+			minViewMode: "months"
+		});
 
 		$(document).on('click', '.btn-cancel-reject', function(){
 			$(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>'+

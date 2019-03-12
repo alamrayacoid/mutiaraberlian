@@ -11,6 +11,25 @@
 		</div>
 		<div class="card-block">
 			<section>
+			<fieldset>
+			<div class="row">
+				<div class="col-2">
+					<label for="">Nama Item</label>
+				</div>
+				<div class="col-3">
+					<input type="text" class="form-control form-control-sm">
+				</div>
+				<div class="col-2">
+					<label for="">Bulan/Tahun</label>
+				</div>
+				<div class="col-3">
+					<input type="text" class="form-control form-control-sm" id="datepicker">
+				</div>
+				<div class="col-1">
+					<button class="btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+				</div>
+			</div>
+			</fieldset>
 				<div class="table-responsive">
 					<table class="table table-hover table-striped" cellspacing="0" id="table_targetrealisasi">
 						<thead class="bg-primary">
