@@ -9,7 +9,7 @@
       <p class="title-description">
         <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
          / <span>Aktivitas Marketing</span>
-         / <a href="{{route('targetrealisasi.index')}}"><span>Target dan Realisasi Penjualan</span></a>
+         / <a href="{{route('targetrealisasi.index')}}"><span>Manajemen Penjualan Pusat</span></a>
          / <span class="text-primary" style="font-weight: bold;"> Target dan Realisasi</span>
          / <span class="text-primary" style="font-weight: bold;"> Tambah Data Target</span>
        </p>
@@ -25,7 +25,7 @@
 
                     <div class="card-header bordered p-2">
                       <div class="header-block pull-right">
-                        <a href="{{route('targetrealisasi.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
+                        <a href="{{route('penjualanpusat.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
                       </div>
                     </div>
 
@@ -38,9 +38,9 @@
                               <label>Bulan/Tahun</label>
                             </div> 
 
-                            <div class="col-md-5 col-sm-6 col-xs-12">
+                            <div class="col-md-10 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
+                                <input type="text" class="form-control form-control-sm" id="datepicker" name="">
                               </div>
                             </div>
 
@@ -54,9 +54,10 @@
 	                                <thead class="bg-primary">
 	                                    <tr>
 	                                    	<th width="8%">No</th>
-	                                		<th width="50%">Kode/Nama Barang</th>
-	                                		<th width="10%">Satuan</th>
+	                                		  <th width="30%">Kode/Nama Barang</th>
+	                                		  <th width="10%">Satuan</th>
 	                                	  	<th width="25%">Jumlah Target</th>
+                                        <th width="25%">Cabang</th>
 	                                		<th>Aksi</th>
 	                                	</tr>
 	                                </thead>
@@ -74,8 +75,11 @@
 	                                		<td>
                                       <input type="text" class="form-control form-control-sm">
                                       </td>
+                                      <td>
+                                      <input type="text" class="form-control form-control-sm select2">
+                                      </td>
 	                                		<td>
-                                      <button class="btn btn-success btn-tambah btn-sm" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                      <button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
 	                                		</td>
 	                                	</tr>
 	                                </tbody>
@@ -88,7 +92,7 @@
                     </div>
                     <div class="card-footer text-right">
                       <button class="btn btn-primary btn-submit" type="button">Simpan</button>
-                      <a href="{{route('order.index')}}" class="btn btn-secondary">Kembali</a>
+                      <a href="{{route('penjualanpusat.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
 
@@ -132,21 +136,28 @@
       }
     });
 
+    $("#datepicker").datepicker( {
+        format: "MM/yyyy",
+        viewMode: "months", 
+        minViewMode: "months"
+    });
+
     $(document).on('click', '.btn-hapus', function(){
       $(this).parents('tr').remove();
     });
 
     $('.btn-tambahb').on('click',function(){
-      var tbody = $(this).parents('tbody');
-      var last_row = tbody.find('tr:last-child');
-      var input = last_row.find('td:eq(0) input');
-      var termin = input.val();
-      termin = parseInt( termin );
-      var next_termin = termin + 1;
+      // var tbody = $(this).parents('tbody');
+      // var last_row = tbody.find('tr:last-child');
+      // var input = last_row.find('td:eq(0) input');
+      // var termin = input.val();
+      // termin = parseInt( termin );
+      // var next_termin = termin + 1;
       $('#table_target')
       .append(
         '<tr>'+
-          '<td><input type="text" class="form-control form-control-sm" value="' + next_termin + '"></td>'+
+          '<td><input type="text" class="form-control form-control-sm" value=""></td>'+
+          '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><input type="text" class="form-control form-control-sm"></td>'+
