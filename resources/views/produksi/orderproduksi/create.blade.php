@@ -193,7 +193,7 @@
 
                         </div>
                         <div class="card-footer text-right">
-                            <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+                            <button class="btn btn-primary btn-submit" type="button" id="btn_submit">Simpan</button>
                             <a href="{{route('order.index')}}" class="btn btn-secondary">Kembali</a>
                         </div>
                     </div>
@@ -222,6 +222,7 @@
             changeJumlah();
             changeHarga();
             changeNominalTermin();
+            visibleSimpan();
 
             $('.barang').on('click', function(e){
                 idxBarang = $('.barang').index(this);
@@ -492,6 +493,33 @@
             updateTotalTampil();
         }
         
+        function visibleSimpan() {
+            var inpNominal = document.getElementsByClassName( 'nominal' ),
+                nominal  = [].map.call(inpNominal, function( input ) {
+                    return input.value;
+                });
+
+            var tot_harga = $("#tot_hrg").val();
+
+            var nomTot = 0;
+
+            for (var i =0; i < nominal.length; i++) {
+                var nomTermin = nominal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                nomTot += parseInt(nomTermin);
+            }
+
+            if (
+                parseInt(nomTot) == parseInt(tot_harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")) &&
+                parseInt(tot_harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")) != 0
+            ) {
+                $("#btn_submit").attr("disabled", false);
+                $("#btn_submit").attr("style", "cursor: pointer");
+            } else {
+                $("#btn_submit").attr("disabled", true);
+                $("#btn_submit").attr("style", "cursor: not-allowed");
+            }
+        }
+        
         function updateSisaPembayaran() {
             var inpNominal = document.getElementsByClassName( 'nominal' ),
                 nominal  = [].map.call(inpNominal, function( input ) {
@@ -510,6 +538,8 @@
             var sisa = parseInt(tot_harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")) - parseInt(nomTot);
 
             $("#sisapembayaran").html(convertToCurrency(sisa));
+
+            visibleSimpan();
 
         }
 
