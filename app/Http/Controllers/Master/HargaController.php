@@ -61,7 +61,8 @@ class HargaController extends Controller
                 return $datas->pcad_type=="R" ? "Range" : "Unit";
             })
             ->addColumn('range', function ($datas){
-                return $datas->pcad_rangeqtystart .'-'. $datas->pcad_rangeqtyend;
+                $end = ($datas->pcad_rangeqtyend == "0") ? "~" : $datas->pcad_rangeqtyend;
+                return $datas->pcad_rangeqtystart .'-'. $end;
             })
             ->addColumn('satuan', function ($datas){
                 return $datas->u_name;
@@ -270,7 +271,7 @@ class HargaController extends Controller
                         'pcad_type' => $request->jenisharga,
                         'pcad_payment' => $request->jenis_pembayaranrange,
                         'pcad_rangeqtystart' => $request->rangestart,
-                        'pcad_rangeqtyend' => $request->rangeend,
+                        'pcad_rangeqtyend' => ($request->rangeend == "~") ? 0 : $request->rangeend,
                         'pcad_price' => Currency::removeRupiah($request->hargarange),
                         'pcad_user' => Auth::user()->u_id
                     ];

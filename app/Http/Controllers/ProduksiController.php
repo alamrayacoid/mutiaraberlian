@@ -122,7 +122,7 @@ class ProduksiController extends Controller
                     $productionorderpayment[] = [
                         'pop_productionorder' => $idpo,
                         'pop_termin' => $data['termin'][$i],
-                        'pop_datetop' => date('Y-m-d', strtotime($data['tanggal'][$i])),
+                        'pop_datetop' => date('Y-m-d', strtotime($data['estimasi'][$i])),
                         'pop_value' => $this->removeCurrency($data['nominal'][$i]),
                     ];
                 }

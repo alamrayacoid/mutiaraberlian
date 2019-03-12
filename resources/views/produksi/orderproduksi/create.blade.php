@@ -157,29 +157,29 @@
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="termin[]"
-                                                                   class="form-control form-control-sm termin"
-                                                                   value="1" readonly>
-                                                        </td>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="estimasi[]"
-                                                                   class="form-control form-control-sm datepicker estimasi" autocomplete="off">
-                                                        </td>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="nominal[]"
-                                                                   class="form-control form-control-sm input-rupiah nominal" value="Rp. 0">
-                                                        </td>
-                                                        <td>
-                                                            <button class="btn btn-success btn-tambah-termin btn-sm"
-                                                                    type="button"><i class="fa fa-plus"
-                                                                                     aria-hidden="true"></i></button>
-                                                        </td>
-                                                    </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <input type="text"
+                                                                    name="termin[]"
+                                                                    class="form-control form-control-sm termin"
+                                                                    value="1" readonly>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text"
+                                                                    name="estimasi[]"
+                                                                    class="form-control form-control-sm datepicker estimasi" autocomplete="off">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text"
+                                                                    name="nominal[]"
+                                                                    class="form-control form-control-sm input-rupiah nominal" value="Rp. 0">
+                                                            </td>
+                                                            <td>
+                                                                <button class="btn btn-success btn-tambah-termin btn-sm"
+                                                                        type="button"><i class="fa fa-plus"
+                                                                                        aria-hidden="true"></i></button>
+                                                            </td>
+                                                        </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -311,13 +311,9 @@
                     nominal  = [].map.call(inpNominal, function( input ) {
                         return input.value;
                     });
-                var inpTanggal = document.getElementsByClassName( 'tanggal' ),
-                    tanggal  = [].map.call(inpTanggal, function( input ) {
-                        return input.value;
-                    });
 
                 for (var i=0; i < estimasi.length; i++) {
-                    if (estimasi[i] == "" || nominal[i] == "Rp. 0" || tanggal[i] == "") {
+                    if (estimasi[i] == "" || nominal[i] == "Rp. 0") {
                         return "cek form";
                         break;
                     } else {
@@ -343,6 +339,7 @@
                         if(response.data.status == 'sukses'){
                             loadingHide();
                             messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
+                            location.reload();
                         }else{
                             loadingHide();
                             messageFailed("Gagal", "Data Order Produksi Gagal Disimpan");

@@ -9,7 +9,7 @@
         <span>-</span>
         <div class="col-md-3">
             <input type="text" class="form-control form-control-sm" name="rangeend" id="rangeend" readonly>
-            <span class="text-danger">*)Tak terhingga = 0</span>
+            <span class="text-danger">*)Tak terhingga = ~</span>
         </div>
         <div class="col-md-4">
             <select name="satuanrange" id="satuanrange" class="form-control form-control-sm select2">
@@ -23,7 +23,7 @@
     <div>
         <select name="jenis_pembayaranrange" id="jenis_pembayaran" class="form-control form-control-sm select2">
             <option value="K">Konsinyasi</option>
-            <option value="C">Cas</option>
+            <option value="C">Cash</option>
         </select>
     </div>
     <div>
