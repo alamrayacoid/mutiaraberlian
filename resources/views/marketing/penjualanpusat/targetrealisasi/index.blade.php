@@ -11,7 +11,7 @@
 		</div>
 		<div class="card-block">
 			<section>
-			<fieldset>
+			<fieldset class="mb-3">
 			<div class="row">
 				<div class="col-2">
 					<label for="">Nama Item</label>
@@ -40,6 +40,7 @@
 								<th>Jumlah Terjual</th>
 								<th>Target</th>
 								<th>Status</th>
+								<th>Aksi</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -50,6 +51,7 @@
 								<td>500</td>
                                 <td>1000</td>
 								<td><button class="btn btn-primary status-reject" type="button">Gagal</button></td>
+								<td><button class="btn btn-warning btn-modal btn-sm" data-toggle="modal" data-target="#edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button></td>
 							</tr>
 						</tbody>
 					</table>

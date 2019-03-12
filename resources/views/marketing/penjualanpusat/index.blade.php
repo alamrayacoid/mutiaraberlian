@@ -4,6 +4,7 @@
 
 <!-- Modal Terima Order -->
 @include('marketing.penjualanpusat.terimaorder.modal')
+@include('marketing.penjualanpusat.targetrealisasi.modal')
 
 <article class="content animated fadeInLeft">
 
@@ -103,7 +104,7 @@
 			    }
 			});
 		});
-		
+
 		$("#datepicker").datepicker( {
 			format: "MM/yyyy",
 			viewMode: "months", 
