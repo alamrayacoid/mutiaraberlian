@@ -78,9 +78,9 @@
             },
             columns: [
                 {data: 'DT_RowIndex'},
-                {data: 'i_code', name: 'i_code'},
-                {data: 'it_name', name: 'it_name'},
-                {data: 'i_name', name: 'i_name'},
+                {data: 'po_nota', name: 'po_nota'},
+                {data: 's_name', name: 's_name'},
+                {data: 'po_date', name: 'po_date'},
                 {data: 'action', name: 'action'}
             ],
             pageLength: 10,
