@@ -121,7 +121,7 @@
 		});
 	}
 
-	function detail(id){
+	function detailOrder(id){
 		TableDetail(id);
 		$('#detail').modal('show');
 	}
@@ -131,14 +131,13 @@
 	}
 
 	function hapus(id){
-		var url_hapus = baseUrl + "/produksi/orderproduksi/hapus" + '/'+id;
 		$.confirm({
 			animation: 'RotateY',
 			closeAnimation: 'scale',
 			animationBounce: 1.5,
 			icon: 'fa fa-exclamation-triangle',
 			title: 'Peringatan!',
-			content: 'Apakah anda yakin ingin menonaktifkan data ini ?',
+			content: 'Apakah anda yakin ingin menghapus data ini?',
 			theme: 'disable',
 			buttons: {
 				info: {
@@ -147,7 +146,7 @@
 					action: function () {
 						axios.get(baseUrl+'/produksi/orderproduksi/hapus'+'/'+id).then(function(response) {
 							loadingShow();
-							if(response.data.status == 'sukses'){
+							if(response.data.status == 'Success'){
 								loadingHide();
 								messageSuccess("Berhasil", "Data Order Produksi Berhasil Dihapus");
 								TableIndex();
