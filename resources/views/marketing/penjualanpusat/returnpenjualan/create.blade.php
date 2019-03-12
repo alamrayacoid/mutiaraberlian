@@ -28,7 +28,7 @@
                             <h3 class="title"> Tambah Return Produksi </h3>
                         </div>
                         <div class="header-block pull-right">
-                			<a class="btn btn-secondary btn-sm" href="{{route('penjualanpusat.index')}}"><i class="fa fa-arrow-left"></i></a>
+                			<a class="btn btn-secondary btn-sm" href="{{route('pusat.index')}}"><i class="fa fa-arrow-left"></i></a>
                         </div>
                     </div>
                     <div class="card-block">
@@ -61,7 +61,7 @@
                     </div>
                     <div class="card-footer text-right">
                     	<button class="btn btn-primary" type="button">Simpan</button>
-                    	<a href="{{route('penjualanpusat.index')}}" class="btn btn-secondary">Kembali</a>
+                    	<a href="{{route('pusat.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
 

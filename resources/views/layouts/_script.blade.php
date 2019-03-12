@@ -165,6 +165,16 @@
         return hasil;
 
     }
+
+    function convertToCurrency(angka) {
+        var currency = '';
+        var angkarev = angka.toString().split('').reverse().join('');
+        for(var i = 0; i < angkarev.length; i++) if(i%3 == 0) currency += angkarev.substr(i,3)+'.';
+        var hasil = currency.split('',currency.length-1).reverse().join('');
+        return hasil;
+
+    }
+
     $(document).ready(function () {
         $("input[type='number']").keydown(function (e) {
             // Allow: backspace, delete, tab, escape, enter and .
@@ -210,6 +220,7 @@
         $('.datepicker').datepicker({
             format: "dd-mm-yyyy",
             enableOnReadonly: false,
+            todayHighlight: true,
             autoclose: true
         });
 

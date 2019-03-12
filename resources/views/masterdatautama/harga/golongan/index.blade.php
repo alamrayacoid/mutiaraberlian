@@ -84,7 +84,7 @@
                                         <th>Range</th>
                                         <th>Satuan</th>
                                         <th>Harga</th>
-                                        <th>Jenis Pembayaran</th>
+                                        <th>Jenis</th>
                                         <th>Aksi</th>
                                     </tr>
                                     </thead>

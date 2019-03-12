@@ -51,9 +51,6 @@ class ProduksiController extends Controller
 
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('detail', function($data){
-                return '<button class="btn btn-primary btn-modal" type="button" onclick="detail(\''. Crypt::encrypt($data->po_id) .'\')">Detail</button>';
-            })
             ->addColumn('totalnet', function($data){
                 return Currency::addRupiah($data->po_totalnet);
             })
@@ -68,9 +65,10 @@ class ProduksiController extends Controller
                 }
             })
             ->addColumn('aksi', function($data){
+                $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrder(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-folder"></i></button>';
                 $edit = '<button class="btn btn-warning btn-edit" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-pencil"></i></button>';
-                $hapus = '<button class="btn btn-danger btn-disable" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-times-circle"></i></button>';
-                return '<div class="btn-group btn-group-sm">' . $edit . '&nbsp;' . $hapus . '</div>';
+                $hapus = '<button class="btn btn-danger btn-disable" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-trash"></i></button>';
+                return '<div class="btn-group btn-group-sm">'. $detail . $edit . $hapus . '</div>';
             })
             ->rawColumns(['detail','totalnet','bayar','aksi'])
             ->make(true);
@@ -122,7 +120,7 @@ class ProduksiController extends Controller
                     $productionorderpayment[] = [
                         'pop_productionorder' => $idpo,
                         'pop_termin' => $data['termin'][$i],
-                        'pop_datetop' => date('Y-m-d', strtotime($data['tanggal'][$i])),
+                        'pop_datetop' => date('Y-m-d', strtotime($data['estimasi'][$i])),
                         'pop_value' => $this->removeCurrency($data['nominal'][$i]),
                     ];
                 }
@@ -158,6 +156,28 @@ class ProduksiController extends Controller
 
         return view('produksi/orderproduksi/edit')->with(compact('dataEdit', 'dataEditDT', 'dataEditPmt'));
     }
+
+    public function delete_produksi($id = null){
+        try{
+            $id = Crypt::decrypt($id);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>"Failed"]);
+        }
+
+        DB::beginTransaction();
+        try{
+
+            DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
+            DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
+            DB::table('d_productionorder')->where('po_id', '=', $id)->delete();
+            DB::commit();
+            return response()->json(['status'=>"Success"]);
+        }catch (\Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>"Failed"]);
+        }
+    }
+
     public function cariBarang(Request $request)
     {
         $is_item = array();
@@ -172,16 +192,20 @@ class ProduksiController extends Controller
             $nama = DB::table('m_item')
                 ->join('d_itemsupplier', 'is_item', '=', 'i_id')
                 ->where('is_supplier', $request->supp)
-                ->whereRaw("i_name like '%" . $cari . "%'")
-                ->orWhereRaw("i_code like '%" . $cari . "%'")
+                ->where(function ($q) use ($cari){
+                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
+                    $q->orWhere('i_code', 'like', '%'.$cari.'%');
+                })
                 ->get();
         }else{
             $nama = DB::table('m_item')
                 ->join('d_itemsupplier', 'is_item', '=', 'i_id')
-                ->whereNotIn('i_id', $is_item) 
+                ->whereNotIn('i_id', $is_item)
                 ->where('is_supplier', $request->supp)
-                ->whereRaw("i_name like '%" . $cari . "%'")
-                ->orWhereRaw("i_code like '%" . $cari . "%'")
+                ->where(function ($q) use ($cari){
+                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
+                    $q->orWhere('i_code', 'like', '%'.$cari.'%');
+                })
                 ->get();
         }
 
@@ -234,14 +258,7 @@ class ProduksiController extends Controller
 
     /////////////////////////////////////////////////////
     // Penerimaan Barang
-    public function penerimaan_barang()
-    {
-    	return view('produksi/penerimaanbarang/index');
-    }
-    public function create_penerimaan_barang()
-    {
-        return view('produksi/penerimaanbarang/create');
-    }    
+
 
     /////////////////////////////////////////////////////
     // Pembayaran

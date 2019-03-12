@@ -5,12 +5,12 @@
 <article class="content animated fadeInLeft">
 
   <div class="title-block text-primary">
-      <h1 class="title"> Tambah Opname Stock </h1>
+      <h1 class="title"> Tambah Adjustment Stock </h1>
       <p class="title-description">
         <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
          / <span>Inventory</span>
-         / <a href="{{route('manajemenstok.index'')}}"><span>Pengelolaan Manajemen Stock</span></a>
-         / <span class="text-primary" style="font-weight: bold;"> Tambah Opname Stock </span>
+         / <a href="{{route('adjustment.index')}}"><span>Pengelolaan Manajemen Stock</span></a>
+         / <span class="text-primary" style="font-weight: bold;"> Tambah Adjustment Stock </span>
        </p>
   </div>
 
@@ -24,10 +24,10 @@
 
                     <div class="card-header bordered p-2">
                       <div class="header-block">
-                        <h3 class="title"> Tambah Opname Stock </h3>
+                        <h3 class="title"> Tambah Adjustment Stock </h3>
                       </div>
                       <div class="header-block pull-right">
-                        <a href="{{route('opname.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
+                        <a href="{{route('adjustment.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
                       </div>
                     </div>
 
@@ -37,7 +37,7 @@
                             <div class="row">
                             
                                 <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Nama Barang</label>
+                                    <label>Nota Opname</label>
                                 </div> 
 
                                 <div class="col-md-10 col-sm-6 col-xs-12">
@@ -45,30 +45,20 @@
                                     <input type="text" class="form-control form-control-sm" name="">
                                 </div>
                                 </div>
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Pemilik</label>
-                                </div> 
-
-                                <div class="col-md-10 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                  <select name="" id="" class="form-control form-control-sm">
-                                    <option value=""></option>
-                                  </select>
-                                </div>
-                                </div>
-
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Lokasi</label>
-                                </div> 
-
-                                <div class="col-md-10 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                  <select name="" id="" class="form-control form-control-sm">
-                                    <option value=""></option>
-                                  </select>
-                                </div>
-                                </div>
                             <div class="col-12"><hr></div>
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Nama Barang</label>
+                                    </div> 
+
+                                    <div class="col-md-10 col-sm-6 col-xs-12">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control form-control-sm" name="" readonly="">
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-md-6">
                                 <div class="title-block">
                                     <h3 class="title"> Stock System </h3>
@@ -93,15 +83,29 @@
                                 <form role="form">
                                     <div class="form-group">
                                         <label class="control-label" for="formGroupExampleInput">Satuan</label>
-                                        <select type="text" class="form-control form-control-sm select2" id="formGroupExampleInput">
-                                            <option value="">Pilih Satuan</option>
-                                        </select> 
+                                        <input type="text" class="form-control form-control-sm">
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="formGroupExampleInput2">Qty</label>
                                         <input type="number" class="form-control form-control-sm" id="formGroupExampleInput2">
                                     </div>
                                 </form>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-12 mt-3">
+                            <div class="row">
+                                <div class="col-md-1 col-sm-6 col-xs-12">
+                                    <label for="">Aksi</label>
+                                </div>
+                                <div class="col-md-3 col-sm-12 col-xs-12">
+                                    <select name="" id="" class="form-contor form-control-sm select2">
+                                        <option value="">Pilih Aksi</option>
+                                        <option value="">Samakan System</option>
+                                        <option value="">Samakan Real</option>
+                                    </select>
+                                </div>
+                            </div>
                             </div>
                             </div>
                         </section>

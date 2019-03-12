@@ -29,11 +29,11 @@ class HargaController extends Controller
             ->addColumn('action', function ($datas) {
                 return '<center><div class="btn-group btn-group-sm">
                                             <button class="btn btn-warning" title="Edit"
-                                                    type="button" onclick="editGolongan(\''.Crypt::encrypt($datas->pc_id).'\', \''.$datas->pc_name.'\')"><i class="fa fa-pencil" style="color: #ffffff"></i></button>
+                                                    type="button" onclick="editGolongan(\''.Crypt::encrypt($datas->pc_id).'\', \''.$datas->pc_name.'\')"><i class="fa fa-pencil"></i></button>
                                             <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolongan(\''.Crypt::encrypt($datas->pc_id).'\')"><i class="fa fa-trash" style="color: #ffffff"></i></button>
+                                                    title="Hapus" onclick="hapusGolongan(\''.Crypt::encrypt($datas->pc_id).'\')"><i class="fa fa-trash"></i></button>
                                             <button class="btn btn-primary" title="add"
-                                                    type="button" onclick="addGolonganHarga(\''.Crypt::encrypt($datas->pc_id).'\', \''.$datas->pc_name.'\')"><i class="fa fa-arrow-right" style="color: #ffffff"></i>
+                                                    type="button" onclick="addGolonganHarga(\''.Crypt::encrypt($datas->pc_id).'\', \''.$datas->pc_name.'\')"><i class="fa fa-arrow-right"></i>
                                             </button>
                                         </div></center>';
 
@@ -61,7 +61,8 @@ class HargaController extends Controller
                 return $datas->pcad_type=="R" ? "Range" : "Unit";
             })
             ->addColumn('range', function ($datas){
-                return $datas->pcad_rangeqtystart .'-'. $datas->pcad_rangeqtyend;
+                $end = ($datas->pcad_rangeqtyend == "0") ? "~" : $datas->pcad_rangeqtyend;
+                return $datas->pcad_rangeqtystart .'-'. $end;
             })
             ->addColumn('satuan', function ($datas){
                 return $datas->u_name;
@@ -75,9 +76,9 @@ class HargaController extends Controller
             ->addColumn('action', function ($datas) {
                 return '<center><div class="btn-group btn-group-sm">
                                             <button class="btn btn-warning" title="Edit"
-                                                    type="button" onclick="editGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\', \''.$datas->pcad_item.'\', \''.Currency::addRupiah($datas->pcad_price).'\', \''.$datas->pcad_unit.'\', \''.$datas->pcad_type.'\', \''.$datas->pcad_rangeqtystart.'\', \''.$datas->pcad_rangeqtyend.'\')"><i class="fa fa-pencil" style="color: #ffffff"></i></button>
+                                                    type="button" onclick="editGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\', \''.$datas->pcad_item.'\', \''.Currency::addRupiah($datas->pcad_price).'\', \''.$datas->pcad_unit.'\', \''.$datas->pcad_type.'\', \''.$datas->pcad_rangeqtystart.'\', \''.$datas->pcad_rangeqtyend.'\')"><i class="fa fa-pencil"></i></button>
                                             <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\')"><i class="fa fa-trash" style="color: #ffffff"></i></button>
+                                                    title="Hapus" onclick="hapusGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\')"><i class="fa fa-trash"></i></button>
                                         </div></center>';
 
             })
@@ -247,6 +248,7 @@ class HargaController extends Controller
                     ->where('pcad_item', '=', $request->idBarang)
                     ->where('pcad_unit', '=', $request->satuanrange)
                     ->where('pcad_type', '=', $request->jenisharga)
+                    ->where('pcad_payment', '=', $request->jenis_pembayaranrange)
                     ->get();
 
                 $sts = '';
@@ -270,7 +272,7 @@ class HargaController extends Controller
                         'pcad_type' => $request->jenisharga,
                         'pcad_payment' => $request->jenis_pembayaranrange,
                         'pcad_rangeqtystart' => $request->rangestart,
-                        'pcad_rangeqtyend' => $request->rangeend,
+                        'pcad_rangeqtyend' => ($request->rangeend == "~") ? 0 : $request->rangeend,
                         'pcad_price' => Currency::removeRupiah($request->hargarange),
                         'pcad_user' => Auth::user()->u_id
                     ];

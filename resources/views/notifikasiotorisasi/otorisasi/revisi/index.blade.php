@@ -1,28 +1,7 @@
 @extends('main')
 
-@section('extra_style')
-<style type="text/css">
-	a:not(.btn){
-		text-decoration: none;
-	}
-	.card img{
-		margin: auto;
-	}
-	.card-custom{
-		min-height: calc(100vh / 2);
-	}
-	.card-custom:hover,
-	.card-custom:focus-within{
-		background-color: rgba(255,255,255,.6);
-	}
-</style>
-@endsection
-
 @section('content')
-
-@include('notifikasiotorisasi.otorisasi.revisi.modal')
-
-<article class="content">
+<article class="content animated fadeInLeft">
 
 	<div class="title-block text-primary">
 	    <h1 class="title"> Otorisasi Revisi Data </h1>
@@ -36,67 +15,47 @@
 
 	<section class="section">
 
-		<div class="row">
-			
-			<div class="col-12">
-				<div class="card">
+	<div class="row">
 
-					<div class="card-header bordered p-2">
-						<div class="header-block">
-							<h3 class="title">Otorisasi Revisi Data</h3>
-						</div>
-						<div class="header-block pull-right">
-							<a class="btn btn-secondary btn-sm" href="{{route('otorisasi')}}"><i class="fa fa-arrow-left"></i></a>
-						</div>
-					</div>
+		<div class="col-12">
 
-					<div class="card-body">
-						<div class="table-responsive">
-							
-							<table class="table table-bordered table-striped table-hover" id="table_otorisasi" cellspacing="0">
+		<ul class="nav nav-pills mb-3">
+			<li class="nav-item">
+				<a href="" class="nav-link active" data-target="#dataproduk" aria-controls="dataproduk" data-toggle="tab" role="tab">Data Produk</a>
+			</li>
+			<li class="nav-item">
+				<a href="" class="nav-link" data-target="#datapenjualan" aria-controls="datapenjualan" data-toggle="tab" role="tab">Data Penjualan</a>
+			</li>
+			<li class="nav-item">
+				<a href="" class="nav-link" data-target="#orderproduksi" aria-controls="orderproduksi" data-toggle="tab" role="tab">Data Order Produksi</a>
+			</li>
+		</ul>
 
-								<thead class="bg-primary">
-									<tr>
-										<th width="1%">No</th>
-										<th>Kegiatan</th>
-										<th>User</th>
-										<th>Max</th>
-										<th>Value</th>
-										<th width="20%">Aksi</th>
-									</tr>
-								</thead>
+		<div class="tab-content">
 
-								<tbody>
-									
-								</tbody>
-								
-							</table>
-
-						</div>
-					</div>
-					
-				</div>
-			</div>
+			@include('notifikasiotorisasi.otorisasi.revisi.produk.index')
+			@include('notifikasiotorisasi.otorisasi.revisi.penjualan.index')			
+			@include('notifikasiotorisasi.otorisasi.revisi.orderproduksi.index')
 
 		</div>
 
-	</section>
+	</div>
+
+</div>
+
+</section>
 
 </article>
 
 @endsection
-
 @section('extra_script')
 <script type="text/javascript">
+
 	$(document).ready(function(){
-		var table1, table2;
-
-		table1 = $('#table_otorisasi').DataTable();
-		table2 = $('#table_detail').DataTable();
-
-		$('#table_otorisasi tbody').on('click', '.btn-detail' ,function(){
-			$('#detail').modal('show');
-		})
+		var table_sup = $('#table_dataproduk').DataTable();
+		var table_bar = $('#table_datapenjualan').DataTable();
+		var table_pus = $('#table_orderproduksi').DataTable();
 	});
 </script>
+
 @endsection

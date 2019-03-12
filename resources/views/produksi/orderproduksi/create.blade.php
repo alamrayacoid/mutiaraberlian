@@ -91,7 +91,7 @@
                                                         <th>Kode Barang/Nama Barang</th>
                                                         <th width="10%">Satuan</th>
                                                         <th width="10%">Jumlah</th>
-                                                        <th>Harga</th>
+                                                        <th>Harga @satuan</th>
                                                         <th>Sub Total</th>
                                                         <th>Aksi</th>
                                                     </tr>
@@ -142,11 +142,13 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            <span><strong>NB: </strong> Jika barang tidak ditemukan, cobalah untuk mendaftarkan barang tersebut pada supplier <span style="color: #0d47a1; text-decoration: underline; cursor: pointer" onclick="itemSupplier()">disini</span></span>
                                         </div>
                                         <div class="container">
                                             <hr style="border:0.7px solid grey; margin-bottom:30px;">
+                                            <span class="pull-right">Sisa Pembayaran Rp. <strong id="sisapembayaran">0</strong></span>
                                             <div class="table-responsive">
-                                                <table class="table table-striped table-hover" cellspacing="0"
+                                                <table class="table table-striped table-bor table-hover" cellspacing="0"
                                                        id="table_order_termin">
                                                     <thead class="bg-primary">
                                                     <tr>
@@ -157,29 +159,29 @@
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="termin[]"
-                                                                   class="form-control form-control-sm termin"
-                                                                   value="1" readonly>
-                                                        </td>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="estimasi[]"
-                                                                   class="form-control form-control-sm datepicker estimasi" autocomplete="off">
-                                                        </td>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="nominal[]"
-                                                                   class="form-control form-control-sm input-rupiah nominal" value="Rp. 0">
-                                                        </td>
-                                                        <td>
-                                                            <button class="btn btn-success btn-tambah-termin btn-sm"
-                                                                    type="button"><i class="fa fa-plus"
-                                                                                     aria-hidden="true"></i></button>
-                                                        </td>
-                                                    </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <input type="text"
+                                                                    name="termin[]"
+                                                                    class="form-control form-control-sm termin"
+                                                                    value="1" readonly>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text"
+                                                                    name="estimasi[]"
+                                                                    class="form-control form-control-sm datepicker estimasi" autocomplete="off">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text"
+                                                                    name="nominal[]"
+                                                                    class="form-control form-control-sm input-rupiah nominal" value="Rp. 0">
+                                                            </td>
+                                                            <td>
+                                                                <button class="btn btn-success btn-tambah-termin btn-sm"
+                                                                        type="button"><i class="fa fa-plus"
+                                                                                        aria-hidden="true"></i></button>
+                                                            </td>
+                                                        </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -191,7 +193,7 @@
 
                         </div>
                         <div class="card-footer text-right">
-                            <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+                            <button class="btn btn-primary btn-submit" type="button" id="btn_submit">Simpan</button>
                             <a href="{{route('order.index')}}" class="btn btn-secondary">Kembali</a>
                         </div>
                     </div>
@@ -218,7 +220,9 @@
 
         $(document).ready(function () {
             changeJumlah();
-            changeHarga();  
+            changeHarga();
+            changeNominalTermin();
+            visibleSimpan();
 
             $('.barang').on('click', function(e){
                 idxBarang = $('.barang').index(this);
@@ -233,6 +237,7 @@
             $(document).on('click', '.btn-hapus', function () {
                 $(this).parents('tr').remove();
                 updateTotalTampil();
+                updateSisaPembayaran();
                 setArrayCode();
             });
 
@@ -242,6 +247,7 @@
 
             $(document).on('click', '.btn-hapus-termin', function () {
                 $(this).parents('tr').remove();
+                updateSisaPembayaran();
                 setTerimin();
             });
 
@@ -264,6 +270,7 @@
                 $('.datepicker').datepicker({
                     format: "dd-mm-yyyy",
                     enableOnReadonly: false,
+                    todayHighlight: true,
                     autoclose: true
 
                 });
@@ -274,6 +281,7 @@
                     prefix: "Rp. "
                 });
                 setTerimin();
+                changeNominalTermin();
             });
 
             function checkForm() {
@@ -311,13 +319,9 @@
                     nominal  = [].map.call(inpNominal, function( input ) {
                         return input.value;
                     });
-                var inpTanggal = document.getElementsByClassName( 'tanggal' ),
-                    tanggal  = [].map.call(inpTanggal, function( input ) {
-                        return input.value;
-                    });
 
                 for (var i=0; i < estimasi.length; i++) {
-                    if (estimasi[i] == "" || nominal[i] == "Rp. 0" || tanggal[i] == "") {
+                    if (estimasi[i] == "" || nominal[i] == "Rp. 0") {
                         return "cek form";
                         break;
                     } else {
@@ -339,19 +343,29 @@
                 } else {
                     loadingShow();
                     var data = $('#form').serialize();
-                    axios.post(baseUrl+'/produksi/orderproduksi/create', data).then((response) => {
+                    axios.post(baseUrl+'/produksi/orderproduksi/create', data).then(function (response){
+
                         if(response.data.status == 'sukses'){
                             loadingHide();
                             messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
+                            location.reload();
                         }else{
                             loadingHide();
                             messageFailed("Gagal", "Data Order Produksi Gagal Disimpan");
                         }
+
                     })
 
                 }
             })
         });
+
+        function changeNominalTermin() {
+            $(".nominal").on('keyup', function (evt) {
+                evt.preventDefault();
+                updateSisaPembayaran();
+            })
+        }
 
         function changeJumlah() {
             $(".jumlah").on('input', function (evt) {
@@ -389,6 +403,7 @@
 
                 }
                 updateTotalTampil();
+                updateSisaPembayaran();
             })
         }
 
@@ -427,6 +442,7 @@
                     $(".subtotal").eq(i).val(hasil);
                 }
                 updateTotalTampil();
+                updateSisaPembayaran();
             })
         }
 
@@ -475,6 +491,56 @@
                 prefix: "Rp. "
             });
             updateTotalTampil();
+        }
+        
+        function visibleSimpan() {
+            var inpNominal = document.getElementsByClassName( 'nominal' ),
+                nominal  = [].map.call(inpNominal, function( input ) {
+                    return input.value;
+                });
+
+            var tot_harga = $("#tot_hrg").val();
+
+            var nomTot = 0;
+
+            for (var i =0; i < nominal.length; i++) {
+                var nomTermin = nominal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                nomTot += parseInt(nomTermin);
+            }
+
+            if (
+                parseInt(nomTot) == parseInt(tot_harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")) &&
+                parseInt(tot_harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")) != 0
+            ) {
+                $("#btn_submit").attr("disabled", false);
+                $("#btn_submit").attr("style", "cursor: pointer");
+            } else {
+                $("#btn_submit").attr("disabled", true);
+                $("#btn_submit").attr("style", "cursor: not-allowed");
+            }
+        }
+        
+        function updateSisaPembayaran() {
+            var inpNominal = document.getElementsByClassName( 'nominal' ),
+                nominal  = [].map.call(inpNominal, function( input ) {
+                    return input.value;
+                });
+
+            var tot_harga = $("#tot_hrg").val();
+
+            var nomTot = 0;
+
+            for (var i =0; i < nominal.length; i++) {
+                var nomTermin = nominal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                nomTot += parseInt(nomTermin);
+            }
+
+            var sisa = parseInt(tot_harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")) - parseInt(nomTot);
+
+            $("#sisapembayaran").html(convertToCurrency(sisa));
+
+            visibleSimpan();
+
         }
 
         function updateTotalTampil() {
@@ -530,6 +596,7 @@
                 $(".termin").eq(i).val('');
                 $(".termin").eq(i).val(i+1);
             }
+            changeNominalTermin();
         }
 
         function setArrayCode() {
@@ -570,6 +637,10 @@
                     setItem(data.item);
                 }
             });
+        }
+
+        function itemSupplier() {
+            window.open("{{ url('masterdatautama/suplier/index') }}");
         }
     </script>
 @endsection

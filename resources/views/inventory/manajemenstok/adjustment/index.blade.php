@@ -2,12 +2,15 @@
 
 @section('content')
 
+<!-- Modal Terima Order -->
+@include('marketing.penjualanpusat.terimaorder.modal')
+
 <article class="content animated fadeInLeft">
 
 	<div class="title-block text-primary">
-	    <h1 class="title"> Target dan Realisasi Penjualan </h1>
+	    <h1 class="title"> Manajemen Penjualan Pusat  </h1>
 	    <p class="title-description">
-	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Marketing</span> / <span class="text-primary" style="font-weight: bold;">Target dan Realisasi Penjualan</span>
+	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Inventory</span> / <span class="text-primary" style="font-weight: bold;">Pengelolaan Manajemen Stok</span>
 	     </p>
 	</div>
 
@@ -19,16 +22,17 @@
 
                 <ul class="nav nav-pills mb-3">
                     <li class="nav-item">
-                        <a href="" class="nav-link active" data-target="#targetrealisasi" aria-controls="targetrealisasi" data-toggle="tab" role="tab">Target dan Realisasi</a>
+                        <a href="" class="nav-link active" data-target="#adjustmentstock" aria-controls="adjustmentstock" data-toggle="tab" role="tab">Adjustment Stock</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link" data-target="#promosi_tahunan" aria-controls="promosi_tahunan" data-toggle="tab" role="tab">History</a>
-                    </li>
+                        <a href="" class="nav-link" data-target="#historyadjustment" aria-controls="historyadjustment" data-toggle="tab" role="tab">History Adjustment Stock</a>
+					</li>
                 </ul>
 
                 <div class="tab-content">
 
-                	@include('marketing.targetrealisasipenjualan.targetrealisasi.index')
+					@include('inventory.manajemenstok.adjustment.adjustmentstock.index')
+					@include('inventory.manajemenstok.adjustment.historyadjustment.index')
 
 	            </div>
 
@@ -45,17 +49,8 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		var table_sup = $('#table_approval').DataTable();
-		var table_bar= $('#table_tahunan').DataTable();
-		var table_pus= $('#table_bulanan').DataTable();
-
-
-		$(document).on('click','.btn-preview-rekruitmen',function(){
-			window.location.href='{{route('rekruitmen.preview')}}'
-		});
-		$(document).on('click','.btn-proses-rekruitmen',function(){
-			window.location.href='{{route('rekruitmen.process')}}'
-		});
+		var table_sup = $('#table_adjustment').DataTable();
+		var table_bar= $('#table_historyadjusment').DataTable();
 
 		$(document).on('click', '.btn-rejected', function(){
 			var ini = $(this);

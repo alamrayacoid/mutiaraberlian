@@ -30,16 +30,6 @@ class MarketingController extends Controller
     {
         return view('marketing/manajemenmarketing/bulanan/edit');
     }
-
-    public function targetrealisasi()
-    {
-        return view('marketing/targetrealisasipenjualan/index');
-    }
-
-    public function targetrealisasi_create()
-    {
-        return view('marketing/targetrealisasipenjualan/targetrealisasi/create');
-    }
     
     public function status_target()
     {

@@ -4,6 +4,7 @@
 
 <!-- Modal Terima Order -->
 @include('marketing.penjualanpusat.terimaorder.modal')
+@include('marketing.penjualanpusat.targetrealisasi.modal')
 
 <article class="content animated fadeInLeft">
 
@@ -27,9 +28,11 @@
                     <li class="nav-item">
                         <a href="" class="nav-link" data-target="#promosi_tahunan" aria-controls="promosi_tahunan" data-toggle="tab" role="tab">Distribusi Penjualan</a>
 					</li>
-					
                     <li class="nav-item">
                         <a href="" class="nav-link" data-target="#returnpenjualan" aria-controls="returnpenjualan" data-toggle="tab" role="tab">Return Penjualan Agen </a>
+                    </li>
+					<li class="nav-item">
+                        <a href="" class="nav-link" data-target="#targetrealisasi" aria-controls="targetrealisasi" data-toggle="tab" role="tab">Target & Realisasi Penjualan</a>
                     </li>
                 </ul>
 
@@ -37,6 +40,7 @@
 
 					@include('marketing.penjualanpusat.terimaorder.index')
 					@include('marketing.penjualanpusat.returnpenjualan.index')
+					@include('marketing.penjualanpusat.targetrealisasi.index')
 
 	            </div>
 
@@ -56,7 +60,7 @@
 		var table_sup = $('#table_approval').DataTable();
 		var table_bar= $('#table_tahunan').DataTable();
 		var table_pus= $('#table_bulanan').DataTable();
-
+		var table_par = $('#table_targetrealisasi').DataTable();
 
 		$(document).on('click','.btn-preview-rekruitmen',function(){
 			window.location.href='{{route('rekruitmen.preview')}}'
@@ -99,6 +103,12 @@
     			    }
 			    }
 			});
+		});
+
+		$("#datepicker").datepicker( {
+			format: "MM/yyyy",
+			viewMode: "months", 
+			minViewMode: "months"
 		});
 
 		$(document).on('click', '.btn-cancel-reject', function(){
