@@ -56,13 +56,13 @@
                                         </div>
 
                                         <div class="col-md-3 col-sm-6 col-xs-12">
-                                            <label>Supplier</label>
+                                            <label>Agen</label>
                                         </div>
 
                                         <div class="col-md-9 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <select name="supplier" id="supplier" class="form-control form-control-sm select2">
-                                                    <option value="" disabled selected>== Pilih Supplier ==</option>
+                                                    <option value="" disabled selected>== Pilih Agen ==</option>
                                                         <option value=""></option>
                                                 </select>
                                             </div>
