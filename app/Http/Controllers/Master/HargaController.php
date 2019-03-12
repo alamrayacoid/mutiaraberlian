@@ -29,11 +29,11 @@ class HargaController extends Controller
             ->addColumn('action', function ($datas) {
                 return '<center><div class="btn-group btn-group-sm">
                                             <button class="btn btn-warning" title="Edit"
-                                                    type="button" onclick="editGolongan(\''.Crypt::encrypt($datas->pc_id).'\', \''.$datas->pc_name.'\')"><i class="fa fa-pencil" style="color: #ffffff"></i></button>
+                                                    type="button" onclick="editGolongan(\''.Crypt::encrypt($datas->pc_id).'\', \''.$datas->pc_name.'\')"><i class="fa fa-pencil"></i></button>
                                             <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolongan(\''.Crypt::encrypt($datas->pc_id).'\')"><i class="fa fa-trash" style="color: #ffffff"></i></button>
+                                                    title="Hapus" onclick="hapusGolongan(\''.Crypt::encrypt($datas->pc_id).'\')"><i class="fa fa-trash"></i></button>
                                             <button class="btn btn-primary" title="add"
-                                                    type="button" onclick="addGolonganHarga(\''.Crypt::encrypt($datas->pc_id).'\', \''.$datas->pc_name.'\')"><i class="fa fa-arrow-right" style="color: #ffffff"></i>
+                                                    type="button" onclick="addGolonganHarga(\''.Crypt::encrypt($datas->pc_id).'\', \''.$datas->pc_name.'\')"><i class="fa fa-arrow-right"></i>
                                             </button>
                                         </div></center>';
 
@@ -76,9 +76,9 @@ class HargaController extends Controller
             ->addColumn('action', function ($datas) {
                 return '<center><div class="btn-group btn-group-sm">
                                             <button class="btn btn-warning" title="Edit"
-                                                    type="button" onclick="editGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\', \''.$datas->pcad_item.'\', \''.Currency::addRupiah($datas->pcad_price).'\', \''.$datas->pcad_unit.'\', \''.$datas->pcad_type.'\', \''.$datas->pcad_rangeqtystart.'\', \''.$datas->pcad_rangeqtyend.'\')"><i class="fa fa-pencil" style="color: #ffffff"></i></button>
+                                                    type="button" onclick="editGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\', \''.$datas->pcad_item.'\', \''.Currency::addRupiah($datas->pcad_price).'\', \''.$datas->pcad_unit.'\', \''.$datas->pcad_type.'\', \''.$datas->pcad_rangeqtystart.'\', \''.$datas->pcad_rangeqtyend.'\')"><i class="fa fa-pencil"></i></button>
                                             <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\')"><i class="fa fa-trash" style="color: #ffffff"></i></button>
+                                                    title="Hapus" onclick="hapusGolonganHarga(\''.Crypt::encrypt($datas->pcad_classprice).'\', \''.Crypt::encrypt($datas->pcad_detailid).'\')"><i class="fa fa-trash"></i></button>
                                         </div></center>';
 
             })
