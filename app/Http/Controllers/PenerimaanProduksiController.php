@@ -19,8 +19,11 @@ class PenerimaanProduksiController extends Controller
     public function getNotaPO()
     {
         $data = DB::table('d_productionorder')
+            ->join('d_productionorderdt', 'pod_productionorder', '=', 'po_id')
             ->join('m_supplier', 's_id', '=', 'po_supplier')
             ->where('po_isapproved', '=', 'Y')
+            ->where('pod_received', '=', 'N')
+            ->groupBy('po_id')
             ->get();
 
         return DataTables::of($data)
