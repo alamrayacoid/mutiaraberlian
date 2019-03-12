@@ -270,7 +270,7 @@ class HargaController extends Controller
                         'pcad_type' => $request->jenisharga,
                         'pcad_payment' => $request->jenis_pembayaranrange,
                         'pcad_rangeqtystart' => $request->rangestart,
-                        'pcad_rangeqtyend' => $request->rangeend,
+                        'pcad_rangeqtyend' => ($request->rangeend == "~") ? 0 : $request->rangeend,
                         'pcad_price' => Currency::removeRupiah($request->hargarange),
                         'pcad_user' => Auth::user()->u_id
                     ];
