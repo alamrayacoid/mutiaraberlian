@@ -233,7 +233,7 @@
                 if (response.data.status == "Success") {
                     messageSuccess("Berhasil", "Data berhasil disimpan!");
                     $('#formgln').trigger("reset");
-                    reloadTable();
+                    reloadTable("golongan");
                 } else {
                     messageWarning("Gagal", "Data gagal disimpan");
                 }
@@ -248,7 +248,7 @@
                 if (response.data.status == "Success") {
                     loadingHide();
                     messageSuccess("Berhasil", "Data berhasil perbarui!");
-                    reloadTable();
+                    reloadTable("golongan");
                 } else {
                     loadingHide();
                     messageWarning("Gagal", "Data gagal diperbarui!");
@@ -286,7 +286,7 @@
                             $(".barang").val("");
                             $("#jenisharga").val("");
                             $("#select2-jenisharga-container").text('Pilih Jenis Harga');
-                            reloadTable();
+                            reloadTable("golonganHarga");
                             $("#rangestart").val("");
                             $("#rangeend").val("");
                             $("#hargarange").val("");
@@ -331,7 +331,7 @@
                             $(".barang").val("");
                             $("#jenisharga").val("");
                             $("#select2-jenisharga-container").text('Pilih Jenis Harga');
-                            reloadTable();
+                            reloadTable("golonganHarga");
                             $("#rangestart").val("");
                             $("#rangeend").val("");
                             $("#hargarange").val("");
@@ -387,7 +387,7 @@
                                 if (response.data.status == "Success") {
                                     loadingHide();
                                     messageSuccess("Berhasil", "Data berhasil perbarui!");
-                                    reloadTable();
+                                    reloadTable("golonganHarga");
                                 } else {
                                     loadingHide();
                                     messageWarning("Gagal", "Data gagal diperbarui!");
@@ -427,7 +427,7 @@
                                 if (response.data.status == "Success") {
                                     loadingHide();
                                     messageSuccess("Berhasil", "Data berhasil perbarui!");
-                                    reloadTable();
+                                    reloadTable("golonganHarga");
                                 } else if (response.data.status == "Range Ada") {
                                     loadingHide();
                                     messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
@@ -471,9 +471,12 @@
         });
     }
 
-	function reloadTable() {
-        tbl_gln.ajax.reload();
-        tbl_item.ajax.reload();
+	function reloadTable(table) {
+        if (table = "golongan") {
+            tbl_gln.ajax.reload();
+        } else {
+            tbl_item.ajax.reload();
+        }
     }
 
     function editGolongan(id, name) {
