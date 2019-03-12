@@ -36,20 +36,13 @@
 	                                    <tr>
 	                                    	<th width="1%">No</th>
 	                                		<th>Nota Order</th>
+                                            <th>Supplier</th>
+                                            <th>Tanggal</th>
 											<th>Aksi</th>
 	                                	</tr>
 	                                </thead>
 	                                <tbody>
-	                                	<tr>
-	                                		<td>1</td>
-	                                		<td>
-	                                			NT/P/20190206/1<br>
-	                                			<small>06 Feb 2019</small>
-	                                		</td>
-	                                		<td align="center" valign="middle">
-	                                			<a href="{{route('penerimaan.create')}}" class="btn btn-primary btn-sm"><i class="fa fa-sign-in"></i></a>
-	                                		</td>
-	                                	</tr>
+
 	                                </tbody>
 	                            </table>
 	                        </div>
