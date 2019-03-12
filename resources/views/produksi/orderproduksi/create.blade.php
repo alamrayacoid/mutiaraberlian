@@ -220,7 +220,8 @@
 
         $(document).ready(function () {
             changeJumlah();
-            changeHarga();  
+            changeHarga();
+            changeNominalTermin();
 
             $('.barang').on('click', function(e){
                 idxBarang = $('.barang').index(this);
@@ -235,6 +236,7 @@
             $(document).on('click', '.btn-hapus', function () {
                 $(this).parents('tr').remove();
                 updateTotalTampil();
+                updateSisaPembayaran();
                 setArrayCode();
             });
 
@@ -244,6 +246,7 @@
 
             $(document).on('click', '.btn-hapus-termin', function () {
                 $(this).parents('tr').remove();
+                updateSisaPembayaran();
                 setTerimin();
             });
 
@@ -277,6 +280,7 @@
                     prefix: "Rp. "
                 });
                 setTerimin();
+                changeNominalTermin();
             });
 
             function checkForm() {
@@ -338,7 +342,8 @@
                 } else {
                     loadingShow();
                     var data = $('#form').serialize();
-                    axios.post(baseUrl+'/produksi/orderproduksi/create', data).then((response) => {
+                    axios.post(baseUrl+'/produksi/orderproduksi/create', data).then(function (response){
+
                         if(response.data.status == 'sukses'){
                             loadingHide();
                             messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
@@ -347,11 +352,19 @@
                             loadingHide();
                             messageFailed("Gagal", "Data Order Produksi Gagal Disimpan");
                         }
+
                     })
 
                 }
             })
         });
+
+        function changeNominalTermin() {
+            $(".nominal").on('keyup', function (evt) {
+                evt.preventDefault();
+                updateSisaPembayaran();
+            })
+        }
 
         function changeJumlah() {
             $(".jumlah").on('input', function (evt) {
@@ -389,6 +402,7 @@
 
                 }
                 updateTotalTampil();
+                updateSisaPembayaran();
             })
         }
 
@@ -427,6 +441,7 @@
                     $(".subtotal").eq(i).val(hasil);
                 }
                 updateTotalTampil();
+                updateSisaPembayaran();
             })
         }
 
@@ -475,6 +490,27 @@
                 prefix: "Rp. "
             });
             updateTotalTampil();
+        }
+        
+        function updateSisaPembayaran() {
+            var inpNominal = document.getElementsByClassName( 'nominal' ),
+                nominal  = [].map.call(inpNominal, function( input ) {
+                    return input.value;
+                });
+
+            var tot_harga = $("#tot_hrg").val();
+
+            var nomTot = 0;
+
+            for (var i =0; i < nominal.length; i++) {
+                var nomTermin = nominal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                nomTot += parseInt(nomTermin);
+            }
+
+            var sisa = parseInt(tot_harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")) - parseInt(nomTot);
+
+            $("#sisapembayaran").html(convertToCurrency(sisa));
+
         }
 
         function updateTotalTampil() {
@@ -530,6 +566,7 @@
                 $(".termin").eq(i).val('');
                 $(".termin").eq(i).val(i+1);
             }
+            changeNominalTermin();
         }
 
         function setArrayCode() {
