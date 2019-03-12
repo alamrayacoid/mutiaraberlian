@@ -61,7 +61,8 @@ class HargaController extends Controller
                 return $datas->pcad_type=="R" ? "Range" : "Unit";
             })
             ->addColumn('range', function ($datas){
-                return $datas->pcad_rangeqtystart .'-'. $datas->pcad_rangeqtyend;
+                $end = ($datas->pcad_rangeqtyend == "0") ? "~" : $datas->pcad_rangeqtyend;
+                return $datas->pcad_rangeqtystart .'-'. $end;
             })
             ->addColumn('satuan', function ($datas){
                 return $datas->u_name;

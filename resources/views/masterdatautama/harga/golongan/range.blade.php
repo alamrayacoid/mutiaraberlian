@@ -23,7 +23,7 @@
     <div>
         <select name="jenis_pembayaranrange" id="jenis_pembayaran" class="form-control form-control-sm select2">
             <option value="K">Konsinyasi</option>
-            <option value="C">Cas</option>
+            <option value="C">Cash</option>
         </select>
     </div>
     <div>
