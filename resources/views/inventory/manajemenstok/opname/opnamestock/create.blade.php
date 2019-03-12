@@ -19,7 +19,7 @@
     <div class="row">
 
       <div class="col-12">
-        
+
         <div class="card">
 
                     <div class="card-header bordered p-2">
@@ -33,16 +33,16 @@
 
                     <div class="card-block">
                         <section>
-                          
+
                             <div class="row">
-                            
+
                                 <div class="col-md-2 col-sm-6 col-xs-12">
                                     <label>Nama Barang</label>
-                                </div> 
-
+                                </div>
                                 <div class="col-md-10 col-sm-6 col-xs-12">
                                 <div class="form-group">
-                                    <input type="text" class="form-control form-control-sm" name="">
+                                    <input type="hidden" name="itemId" id="itemId">
+                                    <input type="text" class="form-control form-control-sm" id="name" name="name" style="text-transform:uppercase">
                                 </div>
                                 </div>
                             <div class="col-12"><hr></div>
@@ -52,14 +52,14 @@
                                 </div>
                                 <form role="form">
                                     <div class="form-group">
-                                        <label class="control-label" for="formGroupExampleInput">Satuan</label>
-                                        <select type="text" class="form-control form-control-sm select2" id="formGroupExampleInput">
-                                            <option value="">Pilih Satuan</option>
-                                        </select> 
+                                        <label class="control-label" for="unit_sys">Satuan</label>
+                                        <select type="text" class="form-control form-control-sm select2" id="unit_sys" name="unit_sys">
+                                            <option value="" disabled>Pilih Satuan</option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label" for="formGroupExampleInput2">Qty</label>
-                                        <input type="number" class="form-control form-control-sm" id="formGroupExampleInput2">
+                                        <label class="control-label" for="qty_sys">Qty</label>
+                                        <input type="number" class="form-control form-control-sm" id="qty_sys" name="qty_sys" readonly>
                                     </div>
                                 </form>
                             </div>
@@ -69,12 +69,14 @@
                                 </div>
                                 <form role="form">
                                     <div class="form-group">
-                                        <label class="control-label" for="formGroupExampleInput">Satuan</label>
-                                        <input type="text" class="form-control form-control-sm">
+                                        <label class="control-label" for="unit_real">Satuan</label>
+                                        <select type="text" class="form-control form-control-sm select2" id="unit_real" name="unit_real">
+                                            <option value="" disabled>Pilih Satuan</option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label" for="formGroupExampleInput2">Qty</label>
-                                        <input type="number" class="form-control form-control-sm" id="formGroupExampleInput2">
+                                        <label class="control-label" for="qty_real">Qty</label>
+                                        <input type="number" class="form-control form-control-sm" id="qty_real" name="qty_real">
                                     </div>
                                 </form>
                             </div>
@@ -99,33 +101,38 @@
 
 @section('extra_script')
 <script type="text/javascript">
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+
   $(document).ready(function(){
-    $('#type_cus').change(function(){
-      if($(this).val() === 'kontrak'){
-        $('#label_type_cus').text('Jumlah Bulan');
-        $('#jumlah_hari_bulan').val('');
-        $('#pagu').val('');
-        $('#armada').prop('selectedIndex', 0).trigger('change');
-        $('.120mm').removeClass('d-none');
-        $('.125mm').addClass('d-none');
-        $('.122mm').removeClass('d-none');
-      } else if($(this).val() === 'harian'){
-        $('#label_type_cus').text('Jumlah Hari');
-        $('#armada').prop('selectedIndex', 0).trigger('change');
-        $('#pagu').val('');
-        $('#jumlah_hari_bulan').val('');
-        $('.122mm').addClass('d-none');
-        $('.120mm').removeClass('d-none');
-        $('.125mm').removeClass('d-none');
-      } else {
-        $('#jumlah_hari_bulan').val('');
-        $('#armada').prop('selectedIndex', 0).trigger('change');
-        $('#pagu').val('');
-        $('.122mm').addClass('d-none');
-        $('.120mm').addClass('d-none');
-        $('.125mm').addClass('d-none');
+
+    $('#name').autocomplete({
+      source: baseUrl+'/inventory/manajemenstok/opnamestock/getItems',
+      minLength: 2,
+      select: function(event, data){
+        $('#itemId').val(data.item.id);
+        $('#unit_sys').find('option').not(':first').remove();
+        if (data.item.unit1_id != null) {
+          $('#unit_sys').append('<option value="'+ data.item.unit1_id +'" data-qty="">'+ data.item.unit1_name +'</option>');
+          $('#unit_real').append('<option value="'+ data.item.unit1_id +'" data-qty="">'+ data.item.unit1_name +'</option>');
+        }
+        if (data.item.unit2_id != null) {
+          $('#unit_sys').append('<option value="'+ data.item.unit2_id +'" data-qty="">'+ data.item.unit2_name +'</option>');
+          $('#unit_real').append('<option value="'+ data.item.unit2_id +'" data-qty="">'+ data.item.unit2_name +'</option>');
+        }
+        if (data.item.unit3_id != null) {
+          $('#unit_sys').append('<option value="'+ data.item.unit3_id +'" data-qty="">'+ data.item.unit3_name +'</option>');
+          $('#unit_real').append('<option value="'+ data.item.unit3_id +'" data-qty="">'+ data.item.unit3_name +'</option>');
+        }
       }
     });
+
+    $('#unit_sys').on('select2:select', function() {
+
+    })
 
     $(document).on('click', '.btn-submit', function(){
 		var ini = $(this);
