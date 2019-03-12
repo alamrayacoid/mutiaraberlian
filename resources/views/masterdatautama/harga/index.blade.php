@@ -242,12 +242,15 @@
 
         $(document).on('submit', '#formedtgln', function (evt) {
             evt.preventDefault();
+            loadingShow();
             var data = $('#formedtgln').serialize();
             axios.post('{{route("dataharga.editgolongan")}}', data).then(function (response) {
                 if (response.data.status == "Success") {
+                    loadingHide();
                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                     reloadTable();
                 } else {
+                    loadingHide();
                     messageWarning("Gagal", "Data gagal diperbarui!");
                 }
             })
@@ -273,9 +276,11 @@
                 } else if ($("#harga").val() == "" || $("#harga").val() == "Rp. 0") {
                     messageWarning("Peringatan", "Masukkan harga barang dengan benar!");
                 } else {
+                    loadingShow();
                     var data = $('#formsetharga').serialize();
                     axios.post('{{route("dataharga.addgolonganharga")}}', data).then(function (response) {
                         if (response.data.status == "Success") {
+                            loadingHide();
                             messageSuccess("Berhasil", "Data berhasil disimpan!");
                             $("#idBarang").val("");
                             $(".barang").val("");
@@ -293,10 +298,13 @@
                             $("#satuan").addClass('d-none');
                             $("#range").addClass('d-none');
                         } else if (response.data.status == "Failed") {
+                            loadingHide();
                             messageWarning("Gagal", "Data gagal disimpan!");
                         } else if (response.data.status == "Range Ada") {
+                            loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
                         } else if (response.data.status == "Unit Ada") {
+                            loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
                         }
                     });
@@ -313,9 +321,11 @@
                 } else if ($("#hargarange").val() == "" || $("#hargarange").val() == "Rp. 0") {
                     messageWarning("Peringatan", "Masukkan harga barang dengan benar!");
                 } else {
+                    loadingShow();
                     var data = $('#formsetharga').serialize();
                     axios.post('{{route("dataharga.addgolonganharga")}}', data).then(function (response) {
                         if (response.data.status == "Success") {
+                            loadingHide();
                             messageSuccess("Berhasil", "Data berhasil disimpan!");
                             $("#idBarang").val("");
                             $(".barang").val("");
@@ -333,10 +343,13 @@
                             $("#satuan").addClass('d-none');
                             $("#range").addClass('d-none');
                         } else if (response.data.status == "Failed") {
+                            loadingHide();
                             messageWarning("Gagal", "Data gagal disimpan!");
                         } else if (response.data.status == "Range Ada") {
+                            loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
                         } else if (response.data.status == "Unit Ada") {
+                            loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
                         }
                     });
@@ -369,11 +382,14 @@
                         btnClass: 'btn-blue',
                         text: 'Ya',
                         action: function () {
+                            loadingShow();
                             return axios.post('{{route("dataharga.editgolonganhargaunit")}}', data).then(function (response) {
                                 if (response.data.status == "Success") {
+                                    loadingHide();
                                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                                     reloadTable();
                                 } else {
+                                    loadingHide();
                                     messageWarning("Gagal", "Data gagal diperbarui!");
                                 }
                             });
@@ -406,13 +422,17 @@
                         btnClass: 'btn-blue',
                         text: 'Ya',
                         action: function () {
+                            loadingShow();
                             return axios.post('{{route("dataharga.editgolonganhargarange")}}', data).then(function (response) {
                                 if (response.data.status == "Success") {
+                                    loadingHide();
                                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                                     reloadTable();
                                 } else if (response.data.status == "Range Ada") {
+                                    loadingHide();
                                     messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
                                 } else {
+                                    loadingHide();
                                     messageWarning("Gagal", "Data gagal diperbarui!");
                                 }
                             });
