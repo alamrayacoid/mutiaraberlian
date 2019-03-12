@@ -172,16 +172,20 @@ class ProduksiController extends Controller
             $nama = DB::table('m_item')
                 ->join('d_itemsupplier', 'is_item', '=', 'i_id')
                 ->where('is_supplier', $request->supp)
-                ->whereRaw("i_name like '%" . $cari . "%'")
-                ->orWhereRaw("i_code like '%" . $cari . "%'")
+                ->where(function ($q) use ($cari){
+                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
+                    $q->orWhere('i_code', 'like', '%'.$cari.'%');
+                })
                 ->get();
         }else{
             $nama = DB::table('m_item')
                 ->join('d_itemsupplier', 'is_item', '=', 'i_id')
-                ->whereNotIn('i_id', $is_item) 
+                ->whereNotIn('i_id', $is_item)
                 ->where('is_supplier', $request->supp)
-                ->whereRaw("i_name like '%" . $cari . "%'")
-                ->orWhereRaw("i_code like '%" . $cari . "%'")
+                ->where(function ($q) use ($cari){
+                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
+                    $q->orWhere('i_code', 'like', '%'.$cari.'%');
+                })
                 ->get();
         }
 

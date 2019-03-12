@@ -91,7 +91,7 @@
                                                         <th>Kode Barang/Nama Barang</th>
                                                         <th width="10%">Satuan</th>
                                                         <th width="10%">Jumlah</th>
-                                                        <th>Harga</th>
+                                                        <th>Harga @satuan</th>
                                                         <th>Sub Total</th>
                                                         <th>Aksi</th>
                                                     </tr>
@@ -142,11 +142,13 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            <span><strong>NB: </strong> Jika barang tidak ditemukan, cobalah untuk mendaftarkan barang tersebut pada supplier <span style="color: #0d47a1; text-decoration: underline; cursor: pointer" onclick="itemSupplier()">disini</span></span>
                                         </div>
                                         <div class="container">
                                             <hr style="border:0.7px solid grey; margin-bottom:30px;">
+                                            <span class="pull-right">Sisa Pembayaran Rp. <strong id="sisapembayaran">0</strong></span>
                                             <div class="table-responsive">
-                                                <table class="table table-striped table-hover" cellspacing="0"
+                                                <table class="table table-striped table-bor table-hover" cellspacing="0"
                                                        id="table_order_termin">
                                                     <thead class="bg-primary">
                                                     <tr>
@@ -264,6 +266,7 @@
                 $('.datepicker').datepicker({
                     format: "dd-mm-yyyy",
                     enableOnReadonly: false,
+                    todayHighlight: true,
                     autoclose: true
 
                 });
@@ -567,6 +570,10 @@
                     setItem(data.item);
                 }
             });
+        }
+
+        function itemSupplier() {
+            window.open("{{ url('masterdatautama/suplier/index') }}");
         }
     </script>
 @endsection
