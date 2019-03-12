@@ -2,7 +2,7 @@
 	<div class="card">
 		<div class="card-header bordered p-2">
 			<div class="header-block">
-				<h3 class="title">Data Produk</h3>
+				<h3 class="title">Data Order Produksi</h3>
 			</div>
 			<div class=""></div>
 		</div>
