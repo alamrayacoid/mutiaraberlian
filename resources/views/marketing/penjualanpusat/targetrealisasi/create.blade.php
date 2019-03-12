@@ -67,7 +67,8 @@
                                       <input type="text" class="form-control form-control-sm" value="1">
                                       </td>
 	                                		<td>
-                                      <input type="text" class="form-control form-control-sm">
+                                        <input type="hidden" name="idItem" id="idItem">
+                                        <input type="text" class="form-control form-control-sm" name="s_item" id="namaItem" style="text-transform:uppercase">
                                       </td>
 	                                		<td>
                                       <input type="text" class="form-control form-control-sm">
@@ -156,8 +157,9 @@
       $('#table_target')
       .append(
         '<tr>'+
-          '<td><input type="text" class="form-control form-control-sm" value=""></td>'+
-          '<td><input type="text" class="form-control form-control-sm"></td>'+
+          '<td><input type="text" class="form-control form-control-sm" value="'+next_termin+'"></td>'+
+          '<td><input type="hidden" name="idItem" id="idItem">'+
+                '<input type="text" class="form-control form-control-sm" name="s_item" id="namaItem" style="text-transform:uppercase"></td>'+
           '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><input type="text" class="form-control form-control-sm"></td>'+
@@ -175,7 +177,16 @@
 				loaderBg: '#55efc4',
 				icon: 'success'
 			})
-		})
+		});
+
+    $('#namaItem').autocomplete({
+      source: baseUrl+'/inventory/barangmasuk/autoItem',
+      minLength: 2,
+      select: function(event, data){
+          $('#idItem').val(data.item.id).trigger('change');
+
+      }
+    });
   });
 </script>
 @endsection
