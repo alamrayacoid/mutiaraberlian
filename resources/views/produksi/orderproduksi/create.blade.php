@@ -91,7 +91,7 @@
                                                         <th>Kode Barang/Nama Barang</th>
                                                         <th width="10%">Satuan</th>
                                                         <th width="10%">Jumlah</th>
-                                                        <th>Harga</th>
+                                                        <th>Harga @satuan</th>
                                                         <th>Sub Total</th>
                                                         <th>Aksi</th>
                                                     </tr>
@@ -142,11 +142,13 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            <span><strong>NB: </strong> Jika barang tidak ditemukan, cobalah untuk mendaftarkan barang tersebut pada supplier <span style="color: #0d47a1; text-decoration: underline; cursor: pointer" onclick="itemSupplier()">disini</span></span>
                                         </div>
                                         <div class="container">
                                             <hr style="border:0.7px solid grey; margin-bottom:30px;">
+                                            <span class="pull-right">Sisa Pembayaran Rp. <strong id="sisapembayaran">0</strong></span>
                                             <div class="table-responsive">
-                                                <table class="table table-striped table-hover" cellspacing="0"
+                                                <table class="table table-striped table-bor table-hover" cellspacing="0"
                                                        id="table_order_termin">
                                                     <thead class="bg-primary">
                                                     <tr>
@@ -157,29 +159,29 @@
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="termin[]"
-                                                                   class="form-control form-control-sm termin"
-                                                                   value="1" readonly>
-                                                        </td>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="estimasi[]"
-                                                                   class="form-control form-control-sm datepicker estimasi" autocomplete="off">
-                                                        </td>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="nominal[]"
-                                                                   class="form-control form-control-sm input-rupiah nominal" value="Rp. 0">
-                                                        </td>
-                                                        <td>
-                                                            <button class="btn btn-success btn-tambah-termin btn-sm"
-                                                                    type="button"><i class="fa fa-plus"
-                                                                                     aria-hidden="true"></i></button>
-                                                        </td>
-                                                    </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <input type="text"
+                                                                    name="termin[]"
+                                                                    class="form-control form-control-sm termin"
+                                                                    value="1" readonly>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text"
+                                                                    name="estimasi[]"
+                                                                    class="form-control form-control-sm datepicker estimasi" autocomplete="off">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text"
+                                                                    name="nominal[]"
+                                                                    class="form-control form-control-sm input-rupiah nominal" value="Rp. 0">
+                                                            </td>
+                                                            <td>
+                                                                <button class="btn btn-success btn-tambah-termin btn-sm"
+                                                                        type="button"><i class="fa fa-plus"
+                                                                                        aria-hidden="true"></i></button>
+                                                            </td>
+                                                        </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -264,6 +266,7 @@
                 $('.datepicker').datepicker({
                     format: "dd-mm-yyyy",
                     enableOnReadonly: false,
+                    todayHighlight: true,
                     autoclose: true
 
                 });
@@ -311,13 +314,9 @@
                     nominal  = [].map.call(inpNominal, function( input ) {
                         return input.value;
                     });
-                var inpTanggal = document.getElementsByClassName( 'tanggal' ),
-                    tanggal  = [].map.call(inpTanggal, function( input ) {
-                        return input.value;
-                    });
 
                 for (var i=0; i < estimasi.length; i++) {
-                    if (estimasi[i] == "" || nominal[i] == "Rp. 0" || tanggal[i] == "") {
+                    if (estimasi[i] == "" || nominal[i] == "Rp. 0") {
                         return "cek form";
                         break;
                     } else {
@@ -343,6 +342,7 @@
                         if(response.data.status == 'sukses'){
                             loadingHide();
                             messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
+                            location.reload();
                         }else{
                             loadingHide();
                             messageFailed("Gagal", "Data Order Produksi Gagal Disimpan");
@@ -570,6 +570,10 @@
                     setItem(data.item);
                 }
             });
+        }
+
+        function itemSupplier() {
+            window.open("{{ url('masterdatautama/suplier/index') }}");
         }
     </script>
 @endsection

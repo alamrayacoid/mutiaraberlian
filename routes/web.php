@@ -193,6 +193,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/opnamestock/index', 'Inventory\OpnameController@index')->name('opname.index');
     Route::get('/inventory/manajemenstok/opnamestock/getItems', 'Inventory\OpnameController@getItems')->name('opname.getItems');
     Route::get('/inventory/manajemenstok/opnamestock/create', 'Inventory\OpnameController@create')->name('opname.create');
+    Route::get('/inventory/manajemenstok/historyopname/index', 'InventoryController@history_opname')->name('history.index');
+    Route::get('/inventory/manajemenstok/adjustmentstock/index', 'InventoryController@adjustment_index')->name('adjustment.index');
+    Route::get('/inventory/manajemenstok/adjustmentstock/create', 'InventoryController@adjustment_create')->name('adjustment.create');
     // !===================================================== END INVENTORY =====================================================!
 
     // !===================================================== SDM =====================================================!
@@ -231,9 +234,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/manajemenmarketing/create-month-promotion', 'MarketingController@month_promotion_create')->name('monthpromotion.create');
     Route::get('/marketing/manajemenmarketing/edit-month-promotion', 'MarketingController@month_promotion_edit')->name('monthpromotion.edit');
     // Target dan Realisasi Penjualan
-    Route::get('/marketing/targetrealisasipenjualan/index', 'MarketingController@targetrealisasi')->name('targetrealisasi.index');
-    Route::get('/marketing/targetrealisasipenjualan/targetrealisasi/create', 'MarketingController@targetrealisasi_create')->name('targetrealisasi.create');
-    Route::get('/marketing/targetrealisasipenjualan/targetrealisasi/status', 'MarketingController@status_target')->name('targetrealisasi.status');
+    Route::get('/marketing/penjualanpusat/targetrealisasi/index', 'MarketingController@targetrealisasi')->name('targetrealisasi.index');
+    Route::get('/marketing/penjualanpusat/targetrealisasi/create', 'MarketingController@targetrealisasi_create')->name('targetrealisasi.create');
+    Route::get('/marketing/penjualanpusat/targetrealisasi/status', 'MarketingController@status_target')->name('targetrealisasi.status');
     // Penjualan Pusat
     Route::get('/marketing/penjualanpusat/index', 'MarketingController@penjualan')->name('penjualanpusat.index');
     Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');

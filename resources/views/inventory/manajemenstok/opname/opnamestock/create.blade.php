@@ -9,7 +9,7 @@
       <p class="title-description">
         <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
          / <span>Inventory</span>
-         / <a href="{{route('mngagen.index')}}"><span>Pengelolaan Manajemen Stock</span></a>
+         / <a href="{{route('manajemenstok.index'')}}"><span>Pengelolaan Manajemen Stock</span></a>
          / <span class="text-primary" style="font-weight: bold;"> Tambah Opname Stock </span>
        </p>
   </div>
@@ -43,6 +43,29 @@
                                 <div class="form-group">
                                     <input type="hidden" name="itemId" id="itemId">
                                     <input type="text" class="form-control form-control-sm" id="name" name="name" style="text-transform:uppercase">
+                                </div>
+                                </div>
+                                <div class="col-md-2 col-sm-6 col-xs-12">
+                                    <label>Pemilik</label>
+                                </div>
+
+                                <div class="col-md-10 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                  <select name="" id="" class="form-control form-control-sm">
+                                    <option value=""></option>
+                                  </select>
+                                </div>
+                                </div>
+
+                                <div class="col-md-2 col-sm-6 col-xs-12">
+                                    <label>Lokasi</label>
+                                </div>
+
+                                <div class="col-md-10 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                  <select name="" id="" class="form-control form-control-sm">
+                                    <option value=""></option>
+                                  </select>
                                 </div>
                                 </div>
                             <div class="col-12"><hr></div>

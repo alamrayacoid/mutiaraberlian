@@ -22,11 +22,13 @@
     <div>
         <label for="">Harga</label>
     </div>
-    <div>
+    <div class="row">
+    <div class="col-10">
         <input type="text" name="harga" id="harga" class="form-control form-control-sm input-rupiah">
     </div>
-    <div style="float:right;">
-        <button class="btn btn-primary btn-sm btn-submit mt-4 mb-2" type="submit">Simpan</button>
+    <div class="col-2">
+        <button class="btn btn-primary btn-md btn-submit btn-block" type="submit">Simpan</button>
+    </div>
     </div>
 </div>
 

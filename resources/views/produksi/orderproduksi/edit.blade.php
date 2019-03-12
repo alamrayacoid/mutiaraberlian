@@ -49,6 +49,7 @@
                 </div> 
                 <div class="col-md-9 col-sm-6 col-xs-12">
                   <div class="form-group">
+                    <input type="hidden" id="supplier" value="{{ $dataEdit->s_id }}">
                     <input type="text" class="form-control form-control-sm" name="" value="{{ $dataEdit->s_company }}" readonly>
                   </div>
                 </div>
@@ -87,7 +88,7 @@
                         @for($i = 0; $i < count($dataEditDT); $i++)
                           <tr>
                             <td>
-                              <input type="hidden" name="idItem[]" id="idItem{{$i}}" value="{{$dataEditDT[$i]->i_id}}">
+                              <input type="hidden" name="itemid[]" id="itemid{{$i}}" class="itemid" value="{{$dataEditDT[$i]->i_id}}">
                               <input type="text" class="form-control form-control-sm" value="{{$dataEditDT[$i]->i_code.' - '.$dataEditDT[$i]->i_name}}">
                             </td>
                             <td>
@@ -101,7 +102,7 @@
                               <input type="text" class="form-control form-control-sm input-rupiah" value="Rp. {{ number_format(intval($dataEditDT[$i]->pod_value), 0,",",".") }}">
                             </td>
                             <td>
-                              <input type="text" class="form-control form-control-sm" value="" readonly>
+                              <input type="text" class="form-control form-control-sm input-rupiah" value="Rp. {{ number_format((intval($dataEditDT[$i]->pod_value) * intval($dataEditDT[$i]->pod_qty)), 0,",",".") }}" readonly>
                             </td>
                             <td>
                               @if($i == 0)
@@ -131,23 +132,22 @@
                         </tr>
                       </thead>
                       <tbody>
+                        @for($i = 0; $i < count($dataEditPmt); $i++)
                         <tr>
                           <td>
-                            <input type="text" class="form-control form-control-sm">
+                            <input type="text" name="termin[]" class="form-control form-control-sm termin" value="{{$i+1}}" readonly>
                           </td>
                           <td>
-                            <input type="text" class="form-control form-control-sm">
+                            <input type="text" name="estimasi[]" class="form-control form-control-sm datepicker estimasi"  value="{{ date_format(strtotime($dataEditPmt[$i]->pop_datetop), "d-m-Y") }}" autocomplete="off">
                           </td>
                           <td>
-                            <input type="text" class="form-control form-control-sm">
+                              <input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah nominal" value="Rp. {{ number_format($dataEditPmt[$i]->pop_value, 0, ',', '.') }}">
                           </td>
                           <td>
-                            <input type="text" class="form-control form-control-sm">
-                          </td>
-                          <td>
-                            <button class="btn btn-success btn-tambah-termin btn-sm" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                              <button class="btn btn-success btn-tambah-termin btn-sm" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
                           </td>
                         </tr>
+                        @endfor
                       </tbody>
                   </table>
                 </div>
@@ -177,7 +177,7 @@
   var icode = [];
   var checkitem = null;
   var checktermin = null;
-  
+
   $(document).ready(function(){
     $('.input-rupiah').maskMoney({
       thousands: ".",
@@ -191,24 +191,7 @@
     });
 
     $('.btn-tambah').on('click',function(){
-      $('#table_order')
-      .append(
-        '<tr>'+
-          '<td><input type="text" name="barang[]" class="form-control form-control-sm barang"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"></td>'+
-          '<td>'+
-          '<select name="satuan[]" class="form-control form-control-sm select2 satuan">'+
-          '</select>'+
-          '</td>'+
-          '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0"></td>'+
-          '<td><input type="text" name="harga[]" class="form-control form-control-sm input-rupiah harga" value="Rp. 0"></td>'+
-          '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
-          '<td>'+
-          '<button class="btn btn-danger btn-hapus btn-sm" type="button">'+
-          '<i class="fa fa-remove" aria-hidden="true"></i>'+
-          '</button>'+
-          '</td>'+
-        '</tr>'
-        );
+      tambah();
     });
 
     $(document).on('click', '.btn-hapus-termin', function(){
@@ -216,16 +199,33 @@
     });
 
     $('.btn-tambah-termin').on('click',function(){
-      $('#table_order_termin')
-      .append(
-        '<tr>'+
-          '<td><input type="text" class="form-control form-control-sm""></td>'+
-          '<td><input type="text" class="form-control form-control-sm"></td>'+
-          '<td><input type="text" class="form-control form-control-sm"></td>'+
-          '<td><input type="text" class="form-control form-control-sm"></td>'+
-          '<td><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
-        '</tr>'
+      var tbody = $(this).parents('tbody');
+        var last_row = tbody.find('tr:last-child');
+        var input = last_row.find('td:eq(0) input');
+        var termin = input.val();
+        termin = parseInt(termin);
+        var next_termin = termin + 1;
+        $('#table_order_termin')
+          .append(
+            '<tr>' +
+            '<td><input type="text" name="termin[]" class="form-control form-control-sm termin" readonly value="' + next_termin + '"></td>' +
+            '<td><input type="text" name="estimasi[]" class="form-control form-control-sm datepicker estimasi" autocomplete="off"></td>' +
+            '<td><input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah nominal" value="Rp. 0"></td>' +
+            '<td><button class="btn btn-danger btn-sm btn-hapus-termin" type="button"><i class="fa fa-trash-o"></i></button></td>' +
+            '</tr>'
         );
+        $('.datepicker').datepicker({
+          format: "dd-mm-yyyy",
+          enableOnReadonly: false,
+          autoclose: true
+        });
+        $('.input-rupiah').maskMoney({
+          thousands: ".",
+          precision: 0,
+          decimal: ",",
+          prefix: "Rp. "
+        });
+        setTerimin();
     });
 
     $(document).on('click', '.btn-submit', function(){

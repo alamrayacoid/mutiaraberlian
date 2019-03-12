@@ -146,7 +146,7 @@ class ItemController extends Controller
         DB::beginTransaction();
         try {
 
-            $id = DB::table('m_item')->max('i_id') + 1;
+            $id = DB::table('m_item_auth')->max('ia_id') + 1;
 
             $file = $request->file('file');
             $file_name = null;
@@ -167,24 +167,24 @@ class ItemController extends Controller
                     ->save($original_path . $file_name);
             }
 
-            DB::table('m_item')
+            DB::table('m_item_auth')
                 ->insert([
-                    'i_id' => $id,
-                    'i_code' => strtoupper($request->dataproduk_code),
-                    'i_type' => $request->dataproduk_type,
-                    'i_codegroup' => null,
-                    'i_name' => strtoupper($request->dataproduk_name),
-                    'i_unit1' => $request->dataproduk_satuanutama,
-                    'i_unit2' => $request->dataproduk_satuanalt1,
-                    'i_unit3' => $request->dataproduk_satuanalt2,
-                    'i_unitcompare1' => $request->dataproduk_isisatuanutama,
-                    'i_unitcompare2' => $request->dataproduk_isisatuanalt1,
-                    'i_unitcompare3' => $request->dataproduk_isisatuanalt2,
-                    'i_detail' => $request->dataproduk_ket,
-                    'i_isactive' => "Y",
-                    'i_image' => $file_name,
-                    'i_created_at' => Carbon::now(),
-                    'i_update_at' => Carbon::now(),
+                    'ia_id' => $id,
+                    'ia_code' => strtoupper($request->dataproduk_code),
+                    'ia_type' => $request->dataproduk_type,
+                    'ia_codegroup' => null,
+                    'ia_name' => strtoupper($request->dataproduk_name),
+                    'ia_unit1' => $request->dataproduk_satuanutama,
+                    'ia_unit2' => $request->dataproduk_satuanalt1,
+                    'ia_unit3' => $request->dataproduk_satuanalt2,
+                    'ia_unitcompare1' => $request->dataproduk_isisatuanutama,
+                    'ia_unitcompare2' => $request->dataproduk_isisatuanalt1,
+                    'ia_unitcompare3' => $request->dataproduk_isisatuanalt2,
+                    'ia_detail' => $request->dataproduk_ket,
+                    'ia_isactive' => "Y",
+                    'ia_image' => $file_name,
+                    'ia_created_at' => Carbon::now(),
+                    'ia_update_at' => Carbon::now(),
                 ]);
 
             DB::commit();
@@ -267,24 +267,36 @@ class ItemController extends Controller
         } else {
             $file_name = $gambar->i_image;
         }
-
-        // start: execute update data
         DB::beginTransaction();
         try {
-            DB::table('m_item')
-                ->where('i_id', $id)
-                ->update([
-                    'i_type' => $request->dataproduk_type,
-                    'i_codegroup' => null,
-                    'i_name' => strtoupper($request->dataproduk_name),
-                    'i_unit2' => $request->dataproduk_satuanalt1,
-                    'i_unit3' => $request->dataproduk_satuanalt2,
-                    'i_unitcompare2' => $request->dataproduk_isisatuanalt1,
-                    'i_unitcompare3' => $request->dataproduk_isisatuanalt2,
-                    'i_detail' => $request->dataproduk_ket,
-                    'i_image' => $file_name,
-                    'i_update_at' => Carbon::now(),
-                ]);
+        $cek = DB::table('m_item_auth')->where('ia_id', $id)->count();
+        if ($cek == 0) {
+              DB::table('m_item_auth')
+                  ->insert([
+                      'ia_id' => $id,
+                      'ia_type' => $request->dataproduk_type,
+                      'ia_code' => $request->dataproduk_code,
+                      'ia_codegroup' => null,
+                      'ia_name' => strtoupper($request->dataproduk_name),
+                      'ia_detail' => $request->dataproduk_ket,
+                      'ia_image' => $file_name,
+                      'ia_update_at' => Carbon::now(),
+                  ]);
+        } else {
+          // start: execute update data
+
+              DB::table('m_item_auth')
+                  ->where('ia_id', $id)
+                  ->update([
+                      'ia_type' => $request->dataproduk_type,
+                      'ia_code' => $request->dataproduk_code,
+                      'ia_codegroup' => null,
+                      'ia_name' => strtoupper($request->dataproduk_name),
+                      'ia_detail' => $request->dataproduk_ket,
+                      'ia_image' => $file_name,
+                      'ia_update_at' => Carbon::now(),
+                  ]);
+        }
 
             DB::commit();
             return response()->json([
@@ -310,11 +322,11 @@ class ItemController extends Controller
         // start: execute update data (delete)
         DB::beginTransaction();
         try {
-            DB::table('m_item')
-                ->where('i_id', $id)
+            DB::table('m_item_auth')
+                ->where('ia_id', $id)
                 ->update([
-                    'i_isactive' => "N",
-                    'i_update_at' => Carbon::now(),
+                    'ia_isactive' => "N",
+                    'ia_update_at' => Carbon::now(),
                 ]);
 
             DB::commit();
@@ -335,11 +347,11 @@ class ItemController extends Controller
         // start: execute update data (delete)
         DB::beginTransaction();
         try {
-            DB::table('m_item')
-                ->where('i_id', $id)
+            DB::table('m_item_auth')
+                ->where('ia_id', $id)
                 ->update([
-                    'i_isactive' => "Y",
-                    'i_update_at' => Carbon::now(),
+                    'ia_isactive' => "Y",
+                    'ia_update_at' => Carbon::now(),
                 ]);
 
             DB::commit();

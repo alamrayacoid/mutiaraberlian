@@ -135,7 +135,9 @@ class OpnameController extends Controller
           $opname = new d_opname;
           $opname->o_id = $newId;
           $opname->date = Carbon::now();
-          
+          $opname->nota = $nota;
+          $opname->item = $request->itemId;
+          $opname->qty_real =
       } catch (\Exception $e) {
 
       }
