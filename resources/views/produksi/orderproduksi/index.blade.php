@@ -40,7 +40,6 @@
 	                                    	<th>No</th>
 	                                		<th>Nota Order</th>
 	                                		<th>Produsen</th>
-	                                		<th>Detail Item</th>
 	                                		<th>Nilai Order</th>
 	                                		<th>Total Bayar</th>
                                             <th>Status</th>
@@ -91,7 +90,6 @@
 				{data: 'DT_RowIndex'},
 				{data: 'po_nota'},
 				{data: 's_company'},
-				{data: 'detail'},
 				{data: 'totalnet'},
 				{data: 'bayar'},
 				{data: 'status'},
@@ -147,7 +145,7 @@
 					btnClass: 'btn-blue',
 					text: 'Ya',
 					action: function () {
-						axios.get(baseUrl+'/produksi/orderproduksi/hapus'+'/'+id).then((response) => {
+						axios.get(baseUrl+'/produksi/orderproduksi/hapus'+'/'+id).then(function(response) {
 							loadingShow();
 							if(response.data.status == 'sukses'){
 								loadingHide();

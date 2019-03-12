@@ -51,9 +51,6 @@ class ProduksiController extends Controller
 
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('detail', function($data){
-                return '<button class="btn btn-primary btn-modal" type="button" onclick="detail(\''. Crypt::encrypt($data->po_id) .'\')">Detail</button>';
-            })
             ->addColumn('totalnet', function($data){
                 return Currency::addRupiah($data->po_totalnet);
             })
@@ -68,9 +65,10 @@ class ProduksiController extends Controller
                 }
             })
             ->addColumn('aksi', function($data){
+                $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detail(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-folder"></i></button>';
                 $edit = '<button class="btn btn-warning btn-edit" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-pencil"></i></button>';
                 $hapus = '<button class="btn btn-danger btn-disable" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-times-circle"></i></button>';
-                return '<div class="btn-group btn-group-sm">' . $edit . '&nbsp;' . $hapus . '</div>';
+                return '<div class="btn-group btn-group-sm">'. $detail. '&nbsp;' . $edit . '&nbsp;' . $hapus . '</div>';
             })
             ->rawColumns(['detail','totalnet','bayar','aksi'])
             ->make(true);
