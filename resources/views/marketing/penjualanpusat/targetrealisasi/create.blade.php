@@ -9,7 +9,7 @@
       <p class="title-description">
         <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
          / <span>Aktivitas Marketing</span>
-         / <a href="{{route('targetrealisasi.index')}}"><span>Manajemen Penjualan Pusat</span></a>
+         / <a href="{{route('pusat.index')}}"><span>Manajemen Penjualan Pusat</span></a>
          / <span class="text-primary" style="font-weight: bold;"> Target dan Realisasi</span>
          / <span class="text-primary" style="font-weight: bold;"> Tambah Data Target</span>
        </p>
@@ -25,7 +25,7 @@
 
                     <div class="card-header bordered p-2">
                       <div class="header-block pull-right">
-                        <a href="{{route('order.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
+                        <a href="{{route('pusat.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
                       </div>
                     </div>
 
@@ -88,7 +88,7 @@
                     </div>
                     <div class="card-footer text-right">
                       <button class="btn btn-primary btn-submit" type="button">Simpan</button>
-                      <a href="{{route('order.index')}}" class="btn btn-secondary">Kembali</a>
+                      <a href="{{route('pusat.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
 
@@ -146,7 +146,16 @@
 				loaderBg: '#55efc4',
 				icon: 'success'
 			})
-		})
+		});
+
+    $('#namaItem').autocomplete({
+      source: baseUrl+'/inventory/barangmasuk/autoItem',
+      minLength: 2,
+      select: function(event, data){
+          $('#idItem').val(data.item.id).trigger('change');
+
+      }
+    });
   });
 </script>
 @endsection

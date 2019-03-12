@@ -238,14 +238,7 @@ class ProduksiController extends Controller
 
     /////////////////////////////////////////////////////
     // Penerimaan Barang
-    public function penerimaan_barang()
-    {
-    	return view('produksi/penerimaanbarang/index');
-    }
-    public function create_penerimaan_barang()
-    {
-        return view('produksi/penerimaanbarang/create');
-    }    
+
 
     /////////////////////////////////////////////////////
     // Pembayaran

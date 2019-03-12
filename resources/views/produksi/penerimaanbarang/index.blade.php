@@ -36,20 +36,13 @@
 	                                    <tr>
 	                                    	<th width="1%">No</th>
 	                                		<th>Nota Order</th>
+                                            <th>Supplier</th>
+                                            <th>Tanggal</th>
 											<th>Aksi</th>
 	                                	</tr>
 	                                </thead>
 	                                <tbody>
-	                                	<tr>
-	                                		<td>1</td>
-	                                		<td>
-	                                			NT/P/20190206/1<br>
-	                                			<small>06 Feb 2019</small>
-	                                		</td>
-	                                		<td align="center" valign="middle">
-	                                			<a href="{{route('penerimaan.create')}}" class="btn btn-primary btn-sm"><i class="fa fa-sign-in"></i></a>
-	                                		</td>
-	                                	</tr>
+
 	                                </tbody>
 	                            </table>
 	                        </div>
@@ -69,9 +62,30 @@
 
 @section('extra_script')
 <script type="text/javascript">
-
+    var table;
 	$(document).ready(function(){
-		var table = $('#table_penerimaan').DataTable();
+        table = $('#table_penerimaan').DataTable({
+            responsive: true,
+            // language: dataTableLanguage,
+            // processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('produksi/penerimaanbarang/getnotapo') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}"
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'i_code', name: 'i_code'},
+                {data: 'it_name', name: 'it_name'},
+                {data: 'i_name', name: 'i_name'},
+                {data: 'action', name: 'action'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
 
 		$(document).on('click', '.btn-disable', function(){
 			var ini = $(this);

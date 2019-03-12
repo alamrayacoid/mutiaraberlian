@@ -152,8 +152,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/orderproduksi/detail', 'ProduksiController@detail_produksi')->name('order.detail');
 
     // Penerimaan Barang
-    Route::get('/produksi/penerimaanbarang/index', 'ProduksiController@penerimaan_barang')->name('penerimaan.index');
-    Route::get('/produksi/penerimaanbarang/create', 'ProduksiController@create_penerimaan_barang')->name('penerimaan.create');
+    Route::get('/produksi/penerimaanbarang/index', 'PenerimaanProduksiController@penerimaan_barang')->name('penerimaan.index');
+    Route::get('/produksi/penerimaanbarang/getnotapo', 'PenerimaanProduksiController@getNotaPO');
+    Route::get('/produksi/penerimaanbarang/create', 'PenerimaanProduksiController@create_penerimaan_barang')->name('penerimaan.create');
     // Pembayaran
     Route::get('/produksi/pembayaran/index', 'ProduksiController@pembayaran')->name('pembayaran.index');
     // Return Produksi
@@ -232,13 +233,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/manajemenmarketing/edit-year-promotion', 'MarketingController@year_promotion_edit')->name('yearpromotion.edit');
     Route::get('/marketing/manajemenmarketing/create-month-promotion', 'MarketingController@month_promotion_create')->name('monthpromotion.create');
     Route::get('/marketing/manajemenmarketing/edit-month-promotion', 'MarketingController@month_promotion_edit')->name('monthpromotion.edit');
-    // Target dan Realisasi Penjualan
-    Route::get('/marketing/penjualanpusat/targetrealisasi/index', 'MarketingController@targetrealisasi')->name('targetrealisasi.index');
-    Route::get('/marketing/penjualanpusat/targetrealisasi/create', 'MarketingController@targetrealisasi_create')->name('targetrealisasi.create');
-    Route::get('/marketing/penjualanpusat/targetrealisasi/status', 'MarketingController@status_target')->name('targetrealisasi.status');
     // Penjualan Pusat
-    Route::get('/marketing/penjualanpusat/index', 'MarketingController@penjualan')->name('penjualanpusat.index');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
+    Route::get('/marketing/penjualanpusat/index', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@index')->name('pusat.index');
+        // Target Realisasi
+        Route::get('/marketing/penjualanpusat/targetrealisasi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@createTargetReal')->name('targetReal.create');
+        // End ---
+        // Return Penjualan
+        Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
+        // End ---
+    // End ---
     // Konsinyasi Pusat
     Route::get('/marketing/konsinyasipusat/index', 'MarketingController@konsinyasipusat')->name('konsinyasipusat.index');
     Route::get('/marketing/konsinyasipusat/penempatanproduk/create', 'MarketingController@create_penempatanproduk')->name('penempatanproduk.create');

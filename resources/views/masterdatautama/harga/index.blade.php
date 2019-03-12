@@ -286,7 +286,7 @@
                             $(".barang").val("");
                             $("#jenisharga").val("");
                             $("#select2-jenisharga-container").text('Pilih Jenis Harga');
-                            reloadTable();
+                            tbl_item.ajax.reload();
                             $("#rangestart").val("");
                             $("#rangeend").val("");
                             $("#hargarange").val("");
@@ -331,7 +331,7 @@
                             $(".barang").val("");
                             $("#jenisharga").val("");
                             $("#select2-jenisharga-container").text('Pilih Jenis Harga');
-                            reloadTable();
+                            tbl_item.ajax.reload();
                             $("#rangestart").val("");
                             $("#rangeend").val("");
                             $("#hargarange").val("");
@@ -347,7 +347,7 @@
                             messageWarning("Gagal", "Data gagal disimpan!");
                         } else if (response.data.status == "Range Ada") {
                             loadingHide();
-                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range, satuan dan jenis pembayaran tersebut!");
                         } else if (response.data.status == "Unit Ada") {
                             loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
@@ -387,7 +387,7 @@
                                 if (response.data.status == "Success") {
                                     loadingHide();
                                     messageSuccess("Berhasil", "Data berhasil perbarui!");
-                                    reloadTable();
+                                    tbl_item.ajax.reload();
                                 } else {
                                     loadingHide();
                                     messageWarning("Gagal", "Data gagal diperbarui!");
@@ -427,7 +427,7 @@
                                 if (response.data.status == "Success") {
                                     loadingHide();
                                     messageSuccess("Berhasil", "Data berhasil perbarui!");
-                                    reloadTable();
+                                    tbl_item.ajax.reload();
                                 } else if (response.data.status == "Range Ada") {
                                     loadingHide();
                                     messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
@@ -473,7 +473,6 @@
 
 	function reloadTable() {
         tbl_gln.ajax.reload();
-        tbl_item.ajax.reload();
     }
 
     function editGolongan(id, name) {
@@ -567,7 +566,45 @@
     }
 
     function hapusGolonganHarga(id, detail) {
-        deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail);
+        // deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail);
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "get",
+                            url: baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail,
+                            success: function (response) {
+                                if (response.status == 'Success') {
+                                    messageSuccess('Berhasil', 'Data berhasil hapus!');
+                                    tbl_item.ajax.reload();
+                                } else {
+                                    messageWarning('Gagal', 'Gagal menghapus data!');
+                                }
+                            },
+                            error: function (e) {
+                                messageFailed('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
     }
 
     function addGolonganHarga(id, name) {
