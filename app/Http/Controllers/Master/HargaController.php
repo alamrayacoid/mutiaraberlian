@@ -248,6 +248,7 @@ class HargaController extends Controller
                     ->where('pcad_item', '=', $request->idBarang)
                     ->where('pcad_unit', '=', $request->satuanrange)
                     ->where('pcad_type', '=', $request->jenisharga)
+                    ->where('pcad_payment', '=', $request->jenis_pembayaranrange)
                     ->get();
 
                 $sts = '';
