@@ -63,10 +63,14 @@
                                       <input type="text" class="form-control form-control-sm" value="1">
                                       </td>
 	                                		<td>
-                                      <input type="text" class="form-control form-control-sm datepicker" value="">
+                                        <input type="text" name="barang[]" class="form-control form-control-sm barang" style="text-transform:uppercase">
+                                        <input type="hidden" name="idItem[]" class="itemid">
+                                        <input type="hidden" name="kode[]" class="kode">
                                       </td>
 	                                		<td>
-                                      <input type="text" class="form-control form-control-sm input-rupiah" value="">
+                                          <select name="satuan[]"
+                                                  class="form-control form-control-sm select2 satuan">
+                                          </select>
                                       </td>
 	                                		<td>
                                       <input type="text" class="form-control form-control-sm datepicker" value="">
@@ -104,7 +108,21 @@
 
 @section('extra_script')
 <script type="text/javascript">
+  var idItem    = [];
+  var namaItem  = null;
+  var kode      = null;
+  var idxBarang = null;
+  var icode     = [];
   $(document).ready(function(){
+    $('.barang').on('click', function(e){
+        idxBarang = $('.barang').index(this);
+        setArrayCode();
+    });
+
+    $(".barang").eq(idxBarang).on("keyup", function () {
+        $(".itemid").eq(idxBarang).val('');
+        $(".kode").eq(idxBarang).val('');
+    });
 
     $("#datepicker").datepicker( {
         format: "MM/yyyy",
@@ -118,24 +136,101 @@
     });
 
     $('.btn-tambah').on('click',function(){
-      var tbody = $(this).parents('tbody');
-      var last_row = tbody.find('tr:last-child');
-      var input = last_row.find('td:eq(0) input');
-      var termin = input.val();
-      termin = parseInt( termin );
+      var tbody       = $(this).parents('tbody');
+      var last_row    = tbody.find('tr:last-child');
+      var input       = last_row.find('td:eq(0) input');
+      var termin      = input.val();
+      termin          = parseInt( termin );
       var next_termin = termin + 1;
       $('#table_target')
       .append(
         '<tr>'+
           '<td><input type="text" class="form-control form-control-sm" value="' + next_termin + '"></td>'+
-          '<td><input type="text" class="form-control form-control-sm"></td>'+
-          '<td><input type="text" class="form-control form-control-sm"></td>'+
+          '<td><input type="text" name="barang[]" class="form-control form-control-sm barang" style="text-transform:uppercase">'+
+            '<input type="hidden" name="idItem[]" class="itemid">'+
+            '<input type="hidden" name="kode[]" class="kode">'+
+          '</td>'+
+          '<td>'+
+                '<select name="satuan[]" class="form-control form-control-sm select2 satuan">'+
+                '</select>'+
+          '</td>'+
           '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><input type="text" class="form-control form-control-sm"></td>'+
           '<td><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
         '</tr>'
         );
+
+      $('.barang').on('click', function(e){
+          idxBarang = $('.barang').index(this);
+      });
+
+      $(".barang").on("keyup", function () {
+          $(".itemid").eq(idxBarang).val('');
+          $(".kode").eq(idxBarang).val('');
+      });
     });
+
+    function setItem(info) {
+        idItem   = info.data.i_id;
+        namaItem = info.data.i_name;
+        kode     = info.data.i_code;
+        $(".kode").eq(idxBarang).val(kode);
+        $(".itemid").eq(idxBarang).val(idItem);
+        setArrayCode();
+        $.ajax({
+            url: '{{ url('/marketing/penjualanpusat/targetrealisasi/get-satuan/') }}'+'/'+idItem,
+            type: 'GET',
+            success: function( resp ) {
+                var option = '';
+                option += '<option value="'+resp.id1+'">'+resp.unit1+'</option>';
+                if (resp.id2 != null && resp.id2 != resp.id1) {
+                    option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                }
+                if (resp.id3 != null && resp.id3 != resp.id1) {
+                    option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                }
+                $(".satuan").eq(idxBarang).append(option);
+            }
+        });
+    }
+
+    function setArrayCode() {
+        var inputs = document.getElementsByClassName('kode'),
+            code  = [].map.call(inputs, function( input ) {
+                return input.value.toString();
+            });
+
+        for (var i=0; i < code.length; i++) {
+            if (code[i] != "") {
+                icode.push(code[i]);
+            }
+        }
+
+        var item = [];
+        var inpItemid = document.getElementsByClassName( 'itemid' ),
+            item  = [].map.call(inpItemid, function( input ) {
+                return input.value;
+            });
+        console.log(item);
+        $( ".barang" ).autocomplete({
+            source: function( request, response ) {
+                $.ajax({
+                    url: '{{ url('/marketing/penjualanpusat/targetrealisasi/cari-barang') }}',
+                    data: {
+                        idItem: item,
+                        term: $(".barang").eq(idxBarang).val()
+                    },
+                    success: function( data ) {
+                        response( data );
+                    }
+                });
+            },
+            minLength: 1,
+            select: function(event, data) {
+                setItem(data.item);
+            }
+        });
+    }
 
     $(document).on('click', '.btn-submit', function(){
 			$.toast({
@@ -147,15 +242,6 @@
 				icon: 'success'
 			})
 		});
-
-    $('#namaItem').autocomplete({
-      source: baseUrl+'/inventory/barangmasuk/autoItem',
-      minLength: 2,
-      select: function(event, data){
-          $('#idItem').val(data.item.id).trigger('change');
-
-      }
-    });
   });
 </script>
 @endsection
