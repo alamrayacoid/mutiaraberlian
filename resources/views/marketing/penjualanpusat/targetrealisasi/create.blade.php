@@ -211,7 +211,12 @@
             item  = [].map.call(inpItemid, function( input ) {
                 return input.value;
             });
-        console.log(item);
+
+            for (var i = 0; i < item.length; i++) {
+              console.log(item[i]);
+            }
+
+
         $( ".barang" ).autocomplete({
             source: function( request, response ) {
                 $.ajax({

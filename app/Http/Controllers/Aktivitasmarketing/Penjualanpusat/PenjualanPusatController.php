@@ -36,7 +36,7 @@ class PenjualanPusatController extends Controller
 		return view('marketing.penjualanpusat.targetrealisasi.create');
 	}
 
-	public function cariBarang()
+	public function cariBarang(Request $request)
     {
         $is_item = array();
         for($i = 0; $i < count($request->idItem); $i++){
@@ -44,7 +44,6 @@ class PenjualanPusatController extends Controller
                 array_push($is_item, $request->idItem[$i]);
             }
         }
-
         $cari = $request->term;
 	    $nama = DB::table('m_item')
 	        ->select('m_item.*')
