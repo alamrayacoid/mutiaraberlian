@@ -38,7 +38,7 @@
 	                                <thead class="bg-primary">
 	                                    <tr>
 												                <th width="1%">No</th>
-																				<th>Kode Agen</th>
+																				<th>Area Agen</th>
 												                <th>Nama Agen</th>
 																				<th>Tipe Agen</th>
 												                <th width="20%">Alamat Agen</th>
@@ -93,7 +93,7 @@
 			},
 			columns: [
 				{data: 'DT_RowIndex'},
-				{data: 'a_code', name: 'a_code'},
+				{data: 'area'},
 				{data: 'a_name', name: 'a_name'},
 				{data: 'a_type', name: 'a_type'},
 				{data: 'a_address', name: 'a_address'},
