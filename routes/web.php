@@ -310,6 +310,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/notifikasiotorisasi/otorisasi/adjustment/index', 'OtorisasiController@adjustment')->name('adjustment');
         Route::get('/notifikasiotorisasi/otorisasi/revisi/index', 'OtorisasiController@revisi')->name('revisi');
 
+        //Oerder Produksi
+    Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi', 'OtorisasiController@getProduksi')->name('getproduksi');
+    Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi-detail-item', 'OtorisasiController@getProduksiDetailItem')->name('getproduksidetailitem');
+    Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi-detail-termin', 'OtorisasiController@getProduksiDetailTermin')->name('getproduksidetailtermin');
+
         // End Sub Otorisasi
 
     Route::get('/notifikasiotorisasi/notifikasi/index', 'NotifikasiController@notifikasi')->name('notifikasi');
