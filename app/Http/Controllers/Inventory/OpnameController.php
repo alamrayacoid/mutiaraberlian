@@ -333,4 +333,14 @@ class OpnameController extends Controller
         ]);
       }
     }
+
+    public function history_index()
+    {
+      return view('inventory/manajemenstok/adjustment/index');
+    }
+
+    public function history_list()
+    {
+
+    }
 }
