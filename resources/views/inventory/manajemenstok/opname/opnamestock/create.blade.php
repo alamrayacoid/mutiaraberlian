@@ -84,6 +84,7 @@
                                 </div>
                                 <div class="form-group">
                                   <label class="control-label" for="qty_sys">Qty</label>
+                                  <input type="hidden" name="qty_sys_hiddem" value="">
                                   <input type="text" class="form-control form-control-sm" id="qty_sys" name="qty_sys" readonly>
                                 </div>
                               </form>
