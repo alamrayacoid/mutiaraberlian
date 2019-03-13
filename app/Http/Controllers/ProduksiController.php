@@ -68,7 +68,8 @@ class ProduksiController extends Controller
                 $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrder(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-folder"></i></button>';
                 $edit = '<button class="btn btn-warning btn-edit" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-pencil"></i></button>';
                 $hapus = '<button class="btn btn-danger btn-disable" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-trash"></i></button>';
-                return '<div class="btn-group btn-group-sm">'. $detail . $edit . $hapus . '</div>';
+                $nota = '<button class="btn btn-info btn-nota" title="Nota" type="button"><i class="fa fa-print"></i></button>';
+                return '<div class="btn-group btn-group-sm">'. $detail . $nota . $edit . $hapus . '</div>';
             })
             ->rawColumns(['detail','totalnet','bayar','aksi'])
             ->make(true);
@@ -256,5 +257,8 @@ class ProduksiController extends Controller
     public function create_return_produksi()
     {
         return view('produksi/returnproduksi/create');
+    }
+    public function nota(){
+        return view('produksi/orderproduksi/nota');
     }
 }
