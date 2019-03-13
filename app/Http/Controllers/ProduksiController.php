@@ -84,24 +84,24 @@ class ProduksiController extends Controller
             return view('produksi/orderproduksi/create')->with(compact('suppliers', 'units'));
         } else {
             $data = $request->all();
-            $productionorder = [];
+            $productionorderauth = [];
             $productionorderdt = [];
             $productionorderpayment = [];
             DB::beginTransaction();
             try{
                 // dd($request);
-                $idpo= (DB::table('d_productionorder')->max('po_id')) ? (DB::table('d_productionorder')->max('po_id')) + 1 : 1;
-                $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
-                $productionorder = [
-                    'po_id' => $idpo,
-                    'po_nota' => $nota,
-                    'po_date' => date('Y-m-d', strtotime($data['po_date'])),
-                    'po_supplier' => $data['supplier'],
-                    'po_totalnet' => $data['tot_hrg'],
-                    'po_status' => 'BELUM'
+                $idpoa= (DB::table('d_productionorderauth')->max('poa_id')) ? (DB::table('d_productionorderauth')->max('poa_id')) + 1 : 1;
+                $notatemp = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_notatemp', 8, 10, 3, 'PO', '-');
+                $productionorderauth[] = [
+                    'poa_id' => $idpoa,
+                    'poa_notatemp' => $notatemp,
+                    'poa_date' => date('Y-m-d', strtotime($data['po_date'])),
+                    'poa_supplier' => $data['supplier'],
+                    'poa_totalnet' => $data['tot_hrg'],
+                    'poa_status' => 'BELUM'
                 ];
 
-                $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) + 1 : 1;
+                $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpoa)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) + 1 : 1;
                 $detailpod = $poddetail;
                 for ($i = 0; $i < count($data['idItem']); $i++) {
                     $productionorderdt[] = [
@@ -234,26 +234,6 @@ class ProduksiController extends Controller
             })
             ->first();
         return Response::json($data);
-    }
-    public function hapus_produksi($id){
-        $id = Crypt::decrypt($id);
-        DB::beginTransaction();
-        try {
-            DB::table('d_productionorderpayment')->where('pop_productionorder', $id)->delete();
-            DB::table('d_productionorderdt')->where('pod_productionorder', $id)->delete();
-            DB::table('d_productionorder')->where('po_id', $id)->delete();
-
-            DB::commit();
-            return json_encode([
-                'status' => 'sukses'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return json_encode([
-                'status' => 'gagal',
-                'msg' => $e
-            ]);
-        }
     }
 
     /////////////////////////////////////////////////////
