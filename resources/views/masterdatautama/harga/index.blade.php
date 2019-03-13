@@ -8,6 +8,14 @@
         .toolbar {
             float:left;
         }
+
+        .btn-khusus {
+            padding: 3px !important;
+            border-radius: 5px !important;
+            color: white !important;
+            cursor: text !important;
+            font-size: 9pt !important;
+        }
     </style>
 @stop
 @section('content')
@@ -36,8 +44,11 @@
                     <li class="nav-item">
                         <a href="" class="nav-link active" data-target="#golongan" aria-controls="golongan" data-toggle="tab" role="tab">Data Golongan</a>
                     </li>
-                    <li class="nav-item">
+                    {{--<li class="nav-item">
                         <a href="" class="nav-link" data-target="#default" aria-controls="default" data-toggle="tab" role="tab">Harga Default</a>
+                    </li>--}}
+                    <li class="nav-item">
+                        <a href="" class="nav-link" data-target="#needapprove" aria-controls="needapprove" data-toggle="tab" role="tab">Belum Disetujui</a>
                     </li>
                 </ul>				
 		
@@ -49,6 +60,7 @@
 					@include('masterdatautama.harga.golongan.editGolongan')
 					@include('masterdatautama.harga.golongan.editGolHrgUnit')
 					@include('masterdatautama.harga.golongan.editGolHrgRange')
+                    @include('masterdatautama.harga.pending.index')
 
 		        </div>
 			</div>
@@ -62,7 +74,7 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-    var tbl_gln, tbl_item;
+    var tbl_gln, tbl_item, tbl_napp;
 	$(document).ready(function(){
 	    if ($("#idGol").val() == "") {
 	        $(".barang").attr('disabled', true);
@@ -71,6 +83,26 @@
             $(".barang").attr('disabled', false);
             $("#jenisharga").attr('disabled', false);
         }
+
+        tbl_napp = $('#table-needappr').DataTable({
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('dataharga.getdataneedapprove') }}",
+                type: "get"
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'pc_name'},
+                {data: 'item'},
+                {data: 'jenis'},
+                {data: 'range'},
+                {data: 'satuan'},
+                {data: 'harga'},
+                {data: 'jenis_pembayaran'}
+            ]
+        });
 
         tbl_gln = $('#table_golongan').DataTable({
 			"paging":   false,
@@ -635,6 +667,7 @@
                 {data: 'satuan'},
                 {data: 'harga'},
                 {data: 'jenis_pembayaran'},
+                {data: 'status'},
                 {data: 'action'}
             ]
         });
