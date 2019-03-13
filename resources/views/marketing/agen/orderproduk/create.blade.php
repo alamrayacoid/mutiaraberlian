@@ -10,7 +10,7 @@
         <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
          / <span>Marketing</span>
          / <a href="{{route('mngagen.index')}}"><span>Manajemen Marketing Area </span></a>
-         / <span class="text-primary" style="font-weight: bold;"> Tambah Data Order Produk ke Agen / Pusat </span>
+         / <span class="text-primary" style="font-weight: bold;"> Tambah Data Order Produk ke Agen / Cabang </span>
        </p>
   </div>
 
@@ -37,59 +37,20 @@
                             <div class="row">
                             
                                 <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Nama Barang</label>
+                                    <label>Order Ke</label>
                                 </div> 
 
                                 <div class="col-md-10 col-sm-6 col-xs-12">
                                 <div class="form-group">
-                                    <input type="text" class="form-control form-control-sm" name="">
-                                </div>
-                                </div>
-
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Tanggal</label>
-                                </div> 
-
-                                <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <input type="text" class="form-control form-control-sm datepicker" name="">
-                                </div>
-                                </div>
-
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Satuan</label>
-                                </div> 
-
-                                <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <select name="" id="" class="form-control form-control-sm select2">
-                                        <option value="">Pilih Satuan</option>
-                                        <option value="">DUS</option>
-                                        <option value="">Botol</option>
+                                    <select name="" id="select-order" class="form-control form-control-sm select2">
+                                        <option value="0">Pilih</option>
+                                        <option value="1">Agen</option>
+                                        <option value="2">Cabang</option>
                                     </select>
                                 </div>
                                 </div>
-
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Jumlah</label>
-                                </div> 
-
-                                <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <input type="number" class="form-control form-control-sm" name="">
-                                </div>
-                                </div>
-
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Total Harga</label>
-                                </div> 
-
-                                <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <input type="text" class="form-control form-control-sm input-rupiah" name="">
-                                </div>
-                                </div>
-
+                                @include('marketing.marketingarea.orderproduk.agen')
+                                @include('marketing.marketingarea.orderproduk.cabang')
                             </div>
                         </section>
                     </div>
@@ -138,7 +99,43 @@
         $('.125mm').addClass('d-none');
       }
     });
+ 
 
+    $(document).on('click', '.btn-hapus-agen', function(){
+      $(this).parents('tr').remove();
+    });
+
+    $('.btn-tambah-agen').on('click',function(){
+      $('#table_agen')
+      .append(
+        '<tr>'+
+          '<td><input type="text" class="form-control form-control-sm"></td>'+
+          '<td><select name="#" id="#" class="form-control form-control-sm select2"><option value=""></option></select></td>'+
+          '<td><input type="number" class="form-control form-control-sm" value="0"></td>'+
+          '<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+
+          '<td><input type="text" class="form-control form-control-sm" readonly=""></td>'+
+          '<td><button class="btn btn-danger btn-hapus-agen btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+
+        '</tr>'
+        );
+    });
+
+    $(document).on('click', '.btn-hapus-cabang', function(){
+      $(this).parents('tr').remove();
+    });
+
+    $('.btn-tambah-cabang').on('click',function(){
+      $('#table_cabang')
+      .append(
+        '<tr>'+
+          '<td><input type="text" class="form-control form-control-sm"></td>'+
+          '<td><select name="#" id="#" class="form-control form-control-sm select2"><option value=""></option></select></td>'+
+          '<td><input type="number" class="form-control form-control-sm" value="0"></td>'+
+          '<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+
+          '<td><input type="text" class="form-control form-control-sm" readonly=""></td>'+
+          '<td><button class="btn btn-danger btn-hapus-cabang btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+
+        '</tr>'
+        );
+    });
     $(document).on('click', '.btn-submit', function(){
 			$.toast({
 				heading: 'Success',
@@ -150,5 +147,26 @@
 			})
 		})
   });
+</script>
+<script type="text/javascript">
+	$(document).ready(function(){
+        $('#select-order').change(function(){
+            var ini, agen, cabang;
+            ini         = $(this).val();
+            agen        = $('#agen');
+            cabang      = $('#cabang');
+
+            if (ini === '1') {
+                agen.removeClass('d-none');
+                cabang.addClass('d-none');
+            } else if(ini === '2'){
+                agen.addClass('d-none');
+                cabang.removeClass('d-none');
+            } else {
+                agen.addClass('d-none');
+                cabang.addClass('d-none');
+            }
+        });
+	});
 </script>
 @endsection

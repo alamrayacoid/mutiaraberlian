@@ -145,8 +145,8 @@
         $('#itemId').val(data.item.id);
         $('#unit').find('option').not(':first').remove();
         (data.item.unit1_id != null) ? $('#unit').append('<option value="'+ data.item.unit1_id +'">'+ data.item.unit1_name +'</option>') : '';
-        $('#unit').append('<option value="'+ data.item.unit2_id +'">'+ data.item.unit2_name +'</option>');
-        $('#unit').append('<option value="'+ data.item.unit3_id +'">'+ data.item.unit3_name +'</option>');
+        (data.item.unit2_id != null) ? $('#unit').append('<option value="'+ data.item.unit2_id +'">'+ data.item.unit2_name +'</option>') : '';
+        (data.item.unit3_id != null) ? $('#unit').append('<option value="'+ data.item.unit3_id +'">'+ data.item.unit3_name +'</option>') : '';
       }
     });
 

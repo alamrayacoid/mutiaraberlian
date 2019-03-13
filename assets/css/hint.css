@@ -33,7 +33,7 @@
 	 * tooltip body
 	 */ }
   [class*="hint--"]:before, [class*="hint--"]:after {
-    position: absolute;
+    position:absolute;
     -webkit-transform: translate3d(0, 0, 0);
     -moz-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);

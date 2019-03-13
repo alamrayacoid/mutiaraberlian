@@ -196,9 +196,15 @@ class AgenController extends Controller
      */
     public function getList()
     {
-      $datas = DB::table('m_agen')->orderBy('a_code', 'asc')->get();
+      $datas = DB::table('m_agen')
+        ->join('m_wil_kota', 'a_area', 'wc_id')
+        ->orderBy('a_code', 'asc')
+        ->get();
       return Datatables::of($datas)
         ->addIndexColumn()
+        ->addColumn('area', function($datas) {
+          return $datas->wc_name;
+        })
         ->addColumn('action', function($datas) {
           if ($datas->a_isactive == 'Y') {
             return '<div class="btn-group btn-group-sm">

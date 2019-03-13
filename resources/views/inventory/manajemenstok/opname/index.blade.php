@@ -2,8 +2,7 @@
 
 @section('content')
 
-<!-- Modal Terima Order -->
-@include('marketing.penjualanpusat.terimaorder.modal')
+@include('inventory.manajemenstok.opname.opnamestock.modal')
 
 <article class="content animated fadeInLeft">
 
