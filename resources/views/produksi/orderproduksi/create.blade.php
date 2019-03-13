@@ -193,7 +193,7 @@
 
                         </div>
                         <div class="card-footer text-right">
-                            <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+                            <button class="btn btn-primary btn-submit" type="button" id="btn_submit">Simpan</button>
                             <a href="{{route('order.index')}}" class="btn btn-secondary">Kembali</a>
                         </div>
                     </div>
@@ -220,7 +220,9 @@
 
         $(document).ready(function () {
             changeJumlah();
-            changeHarga();  
+            changeHarga();
+            changeNominalTermin();
+            visibleSimpan();
 
             $('.barang').on('click', function(e){
                 idxBarang = $('.barang').index(this);
@@ -230,11 +232,13 @@
             $(".barang").eq(idxBarang).on("keyup", function () {
                 $(".itemid").eq(idxBarang).val('');
                 $(".kode").eq(idxBarang).val('');
+                setArrayCode();
             });
 
             $(document).on('click', '.btn-hapus', function () {
                 $(this).parents('tr').remove();
                 updateTotalTampil();
+                updateSisaPembayaran();
                 setArrayCode();
             });
 
@@ -244,6 +248,7 @@
 
             $(document).on('click', '.btn-hapus-termin', function () {
                 $(this).parents('tr').remove();
+                updateSisaPembayaran();
                 setTerimin();
             });
 
@@ -277,6 +282,7 @@
                     prefix: "Rp. "
                 });
                 setTerimin();
+                changeNominalTermin();
             });
 
             function checkForm() {
@@ -338,8 +344,9 @@
                 } else {
                     loadingShow();
                     var data = $('#form').serialize();
-                    axios.post(baseUrl+'/produksi/orderproduksi/create', data).then((response) => {
-                        if(response.data.status == 'sukses'){
+                    axios.post(baseUrl+'/produksi/orderproduksi/create', data).then(function (response){
+
+                        if(response.data.status == 'Success'){
                             loadingHide();
                             messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
                             location.reload();
@@ -347,11 +354,19 @@
                             loadingHide();
                             messageFailed("Gagal", "Data Order Produksi Gagal Disimpan");
                         }
+
                     })
 
                 }
             })
         });
+
+        function changeNominalTermin() {
+            $(".nominal").on('keyup', function (evt) {
+                evt.preventDefault();
+                updateSisaPembayaran();
+            })
+        }
 
         function changeJumlah() {
             $(".jumlah").on('input', function (evt) {
@@ -389,6 +404,7 @@
 
                 }
                 updateTotalTampil();
+                updateSisaPembayaran();
             })
         }
 
@@ -427,6 +443,7 @@
                     $(".subtotal").eq(i).val(hasil);
                 }
                 updateTotalTampil();
+                updateSisaPembayaran();
             })
         }
 
@@ -476,6 +493,56 @@
             });
             updateTotalTampil();
         }
+        
+        function visibleSimpan() {
+            var inpNominal = document.getElementsByClassName( 'nominal' ),
+                nominal  = [].map.call(inpNominal, function( input ) {
+                    return input.value;
+                });
+
+            var tot_harga = $("#tot_hrg").val();
+
+            var nomTot = 0;
+
+            for (var i =0; i < nominal.length; i++) {
+                var nomTermin = nominal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                nomTot += parseInt(nomTermin);
+            }
+
+            if (
+                parseInt(nomTot) == parseInt(tot_harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")) &&
+                parseInt(tot_harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")) != 0
+            ) {
+                $("#btn_submit").attr("disabled", false);
+                $("#btn_submit").attr("style", "cursor: pointer");
+            } else {
+                $("#btn_submit").attr("disabled", true);
+                $("#btn_submit").attr("style", "cursor: not-allowed");
+            }
+        }
+        
+        function updateSisaPembayaran() {
+            var inpNominal = document.getElementsByClassName( 'nominal' ),
+                nominal  = [].map.call(inpNominal, function( input ) {
+                    return input.value;
+                });
+
+            var tot_harga = $("#tot_hrg").val();
+
+            var nomTot = 0;
+
+            for (var i =0; i < nominal.length; i++) {
+                var nomTermin = nominal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                nomTot += parseInt(nomTermin);
+            }
+
+            var sisa = parseInt(tot_harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")) - parseInt(nomTot);
+
+            $("#sisapembayaran").html(convertToCurrency(sisa));
+
+            visibleSimpan();
+
+        }
 
         function updateTotalTampil() {
             var total = 0;
@@ -507,6 +574,7 @@
                 url: '{{ url('/produksi/orderproduksi/get-satuan/') }}'+'/'+idItem,
                 type: 'GET',
                 success: function( resp ) {
+                    $(".satuan").eq(idxBarang).find('option').remove();
                     var option = '';
                     option += '<option value="'+resp.id1+'">'+resp.unit1+'</option>';
                     if (resp.id2 != null && resp.id2 != resp.id1) {
@@ -530,6 +598,7 @@
                 $(".termin").eq(i).val('');
                 $(".termin").eq(i).val(i+1);
             }
+            changeNominalTermin();
         }
 
         function setArrayCode() {

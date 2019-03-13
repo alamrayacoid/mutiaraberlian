@@ -221,11 +221,16 @@
       data    : {id : u},
       dataType: "json",
       success : function(response){
-        $('#satuan').html('');
-        $('#satuan').append('<option value="" disabled selected>== Pilih Satuan ==</option>'+
-                      '<option value="'+response.data.id1+'" id="unit1">'+response.data.name1+'</option>'+
-                      '<option value="'+response.data.id2+'" id="unit2">'+response.data.name2+'</option>'+
-                      '<option value="'+response.data.id3+'" id="unit3">'+response.data.name3+'</option>'); 
+        $("#satuan").find('option').remove();
+        var option = '';
+        option += '<option value="'+response.data.id1+'">'+response.data.name1+'</option>';
+        if (response.data.id2 != null && response.data.id2 != response.data.id1) {
+            option += '<option value="'+response.data.id2+'">'+response.data.name2+'</option>';
+        }
+        if (response.data.id3 != null && response.data.id3 != response.data.id1) {
+            option += '<option value="'+response.data.id3+'">'+response.data.name3+'</option>';
+        }
+        $("#satuan").append(option);
       }
     });
   }

@@ -40,7 +40,6 @@
 	                                    	<th>No</th>
 	                                		<th>Nota Order</th>
 	                                		<th>Produsen</th>
-	                                		<th>Detail Item</th>
 	                                		<th>Nilai Order</th>
 	                                		<th>Total Bayar</th>
                                             <th>Status</th>
@@ -91,7 +90,6 @@
 				{data: 'DT_RowIndex'},
 				{data: 'po_nota'},
 				{data: 's_company'},
-				{data: 'detail'},
 				{data: 'totalnet'},
 				{data: 'bayar'},
 				{data: 'status'},
@@ -123,7 +121,7 @@
 		});
 	}
 
-	function detail(id){
+	function detailOrder(id){
 		TableDetail(id);
 		$('#detail').modal('show');
 	}
@@ -133,23 +131,22 @@
 	}
 
 	function hapus(id){
-		var url_hapus = baseUrl + "/produksi/orderproduksi/hapus" + '/'+id;
 		$.confirm({
 			animation: 'RotateY',
 			closeAnimation: 'scale',
 			animationBounce: 1.5,
 			icon: 'fa fa-exclamation-triangle',
 			title: 'Peringatan!',
-			content: 'Apakah anda yakin ingin menonaktifkan data ini ?',
+			content: 'Apakah anda yakin ingin menghapus data ini?',
 			theme: 'disable',
 			buttons: {
 				info: {
 					btnClass: 'btn-blue',
 					text: 'Ya',
 					action: function () {
-						axios.get(baseUrl+'/produksi/orderproduksi/hapus'+'/'+id).then((response) => {
+						axios.get(baseUrl+'/produksi/orderproduksi/hapus'+'/'+id).then(function(response) {
 							loadingShow();
-							if(response.data.status == 'sukses'){
+							if(response.data.status == 'Success'){
 								loadingHide();
 								messageSuccess("Berhasil", "Data Order Produksi Berhasil Dihapus");
 								TableIndex();
