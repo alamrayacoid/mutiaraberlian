@@ -76,7 +76,7 @@ class EmployeeController extends Controller
             return '<div class="text-center">
             <div class="btn-group btn-group-sm">
               <button class="btn btn-info hint--top  hint--info" aria-label="Lihat Detail" onclick="detail(\'' . Crypt::encrypt($datas->e_id) . '\')"><i class="fa fa-folder"></i></button>
-              <button class="btn btn-disabled disabled" onclick="editPegawai(\'' . Crypt::encrypt($datas->e_id) . '\')" disabled><i class="fa fa-pencil"></i></button>
+              <button class="btn btn-disabled disabled" style="cursor:not-allowed;" onclick="editPegawai(\'' . Crypt::encrypt($datas->e_id) . '\')" disabled><i class="fa fa-pencil"></i></button>
               <button class="btn btn-success hint--top  hint--success" aria-label="Aktifkan" onclick="active(\'' . Crypt::encrypt($datas->e_id) . '\')"><i class="fa fa-check"></i></button>
             </div>
           </div>';

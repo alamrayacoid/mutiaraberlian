@@ -62,7 +62,7 @@ class ItemSupplierController extends Controller
         return DataTables::of($getItemDT)
             ->addIndexColumn()
             ->addColumn('aksi', function ($getItemDT) {
-                $hapus = '<button class="btn btn-danger hint--bottom-left hint--error" rel="tooltip" data-placement="top" aria-label="Hapus Data" onclick="hapus(\'' . Crypt::encrypt($getItemDT->is_item) . '\',\''. Crypt::encrypt($getItemDT->is_supplier) .'\')"><i class="fa fa-close"></i></button>';
+                $hapus = '<button class="btn btn-danger hint--top hint--error" rel="tooltip" data-placement="top" aria-label="Hapus Data" onclick="hapus(\'' . Crypt::encrypt($getItemDT->is_item) . '\',\''. Crypt::encrypt($getItemDT->is_supplier) .'\')"><i class="fa fa-close"></i></button>';
                 return '<div class="btn-group btn-group-sm">' . $hapus . '</div>';
             })
             ->rawColumns(['aksi'])
