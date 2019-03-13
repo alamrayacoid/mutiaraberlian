@@ -85,6 +85,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/harga/cari-barang', 'Master\HargaController@cariBarang')->name('dataharga.caribarang');
     Route::get('/masterdatautama/harga/get-satuan/{id}', 'Master\HargaController@getSatuan')->name('dataharga.getsatuan');
     Route::post('/masterdatautama/harga/add-golongan-harga', 'Master\HargaController@addGolonganHarga')->name('dataharga.addgolonganharga');
+    Route::get('/masterdatautama/harga/get-data-need-approve', 'Master\HargaController@getDataNeddApprove')->name('dataharga.getdataneedapprove');
     Route::get('/masterdatautama/harga/get-golongan-harga/{id}', 'Master\HargaController@getGolonganHarga')->name('dataharga.getgolonganharga');
     Route::get('/masterdatautama/harga/delete-golongan-harga/{id}/{detail}', 'Master\HargaController@deleteGolonganHarga')->name('dataharga.deletegolonganharga');
     Route::post('/masterdatautama/harga/edit-golongan-harga-unit', 'Master\HargaController@editGolonganHargaUnit')->name('dataharga.editgolonganhargaunit');
@@ -147,8 +148,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/orderproduksi/cari-barang', 'ProduksiController@cariBarang')->name('order.caribarang');
     Route::get('/produksi/orderproduksi/get-satuan/{id}', 'ProduksiController@getSatuan')->name('order.getsatuan');
     Route::get('/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
-    Route::get('/produksi/orderproduksi/gethistory', 'ProduksiController@get_history')->name('order.gethistory');
-    Route::get('/produksi/orderproduksi/detail', 'ProduksiController@detail_produksi')->name('order.detail');
+    Route::get('/produksi/orderproduksi/get-order-produksi', 'ProduksiController@get_order')->name('order.getOrderProd');
+    Route::get('/produksi/orderproduksi/detailitem', 'ProduksiController@getProduksiDetailItem')->name('order.detailitem');
+    Route::get('/produksi/orderproduksi/detailtermin', 'ProduksiController@getProduksiDetailTermin')->name('order.detailtermin');
     Route::get('/produksi/orderproduksi/hapus/{id}', 'ProduksiController@delete_produksi')->name('order.delete');
 
     Route::get('/produksi/orderproduksi/nota', 'ProduksiController@nota')->name('order.nota');
@@ -194,6 +196,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/create', 'InventoryController@manajemenstok_create')->name('manajemenstok.create');
     Route::get('/inventory/manajemenstok/edit', 'InventoryController@manajemenstok_edit')->name('manajemenstok.edit');
     Route::get('/inventory/manajemenstok/opnamestock/index', 'Inventory\OpnameController@index')->name('opname.index');
+    Route::get('/inventory/manajemenstok/opnamestock/print', 'Inventory\OpnameController@print_opname')->name('opname.print');
     Route::get('/inventory/manajemenstok/opnamestock/getItemAutocomplete', 'Inventory\OpnameController@getItemAutocomplete')->name('opname.getItemAutocomplete');
     Route::get('/inventory/manajemenstok/opnamestock/getItem', 'Inventory\OpnameController@getItem')->name('opname.getItem');
     Route::get('/inventory/manajemenstok/opnamestock/getQty', 'Inventory\OpnameController@getQty')->name('opname.getQty');
@@ -314,6 +317,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi', 'OtorisasiController@getProduksi')->name('getproduksi');
     Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi-detail-item', 'OtorisasiController@getProduksiDetailItem')->name('getproduksidetailitem');
     Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi-detail-termin', 'OtorisasiController@getProduksiDetailTermin')->name('getproduksidetailtermin');
+    Route::get('/notifikasiotorisasi/otorisasi/revisi/order-produksi-agree/{id}', 'OtorisasiController@agree')->name('orderpoduksi.agree');
+    Route::get('/notifikasiotorisasi/otorisasi/revisi/order-produksi-rejected/{id}', 'OtorisasiController@rejected')->name('orderpoduksi.rejected');
 
         // End Sub Otorisasi
 

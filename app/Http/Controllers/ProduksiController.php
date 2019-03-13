@@ -21,32 +21,91 @@ class ProduksiController extends Controller
         $angka = implode("", explode('.', $angka));
         return $angka;
     }
+
     public function order_produksi()
     {
     	return view('produksi/orderproduksi/index');
     }
-    public function detail_produksi()
+
+    public function getProduksiDetailItem(Request $request)
     {
-        $getDetail = DB::table('d_productionorderdt')
-            ->join('m_item', 'i_id', '=', 'pod_item')
-            ->join('m_unit', 'u_id', '=', 'pod_unit')
-            ->select('i_code', 'i_name', 'pod_qty', 'u_name')
+        try{
+            $id = Crypt::decrypt($request->id);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>'Failed']);
+        }
+
+        $data = DB::table('d_productionorderdt')
+            ->select('m_item.i_name',
+                'm_unit.u_name',
+                'd_productionorderdt.pod_qty',
+                'd_productionorderdt.pod_value',
+                'd_productionorderdt.pod_totalnet')
+            ->join('m_item', function ($q){
+                $q->on('d_productionorderdt.pod_item', '=', 'm_item.i_id');
+            })->join('m_unit', function ($q){
+                $q->on('d_productionorderdt.pod_unit', '=', 'm_unit.u_id');
+            })
+            ->where('d_productionorderdt.pod_productionorder', '=', $id)
             ->get();
-        
-        return DataTables::of($getDetail)
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('item', function($data){
+                return $data->i_name;
+            })
+            ->addColumn('unit', function($data){
+                return $data->u_name;
+            })
+            ->addColumn('qty', function($data){
+                return '<p class="text-center">'. $data->pod_qty .'</p>';
+            })
+            ->addColumn('value', function($data){
+                return '<p class="text-right">'. Currency::addRupiah($data->pod_value) .'</p>';
+            })
+            ->addColumn('totalnet', function($data){
+                return '<p class="text-right">'. Currency::addRupiah($data->pod_totalnet) .'</p><input type="hidden" class="totalnet" value="'.number_format($data->pod_totalnet,0,'','').'">';
+            })
+            ->rawColumns(['item','unit','qty','value','totalnet'])
             ->make(true);
     }
-    public function get_history(Request $request){
+
+    public function getProduksiDetailTermin(Request $request)
+    {
+        try{
+            $id = Crypt::decrypt($request->id);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>'Failed']);
+        }
+
+        $data = DB::table('d_productionorderpayment')
+            ->select('pop_termin',
+                'pop_datetop',
+                'pop_value')
+            ->where('pop_productionorder', '=', $id)
+            ->orderBy('pop_termin', 'asc')
+            ->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('termin', function($data){
+                return $data->pop_termin;
+            })
+            ->addColumn('date', function($data){
+                return date('d-m-Y', strtotime($data->pop_datetop));
+            })
+            ->addColumn('value', function($data){
+                return '<p class="text-right">'. Currency::addRupiah($data->pop_value) .'</p><input type="hidden" class="totaltermin" value="'.number_format($data->pop_value,0,'','').'">';
+            })
+            ->rawColumns(['termin','date','value'])
+            ->make(true);
+    }
+
+    public function get_order(Request $request){
         $data = '';
         $getData = DB::table('d_productionorder')
             ->join('m_supplier', 's_id', '=', 'po_supplier');
 
-        if($request->tglAwal != ""){
-            $getData->where('po_date', '>=',Carbon::createFromFormat('d-m-Y', $request->tglAwal)->format('Y-m-d'));
-        }
-        if($request->tglAkhir != ""){
-            $getData->where('po_date', '<=',Carbon::createFromFormat('d-m-Y', $request->tglAkhir)->format('Y-m-d'));
-        }
         $data = $getData->get();
 
         return DataTables::of($data)
@@ -74,6 +133,7 @@ class ProduksiController extends Controller
             ->rawColumns(['detail','totalnet','bayar','aksi'])
             ->make(true);
     }
+
     public function create_produksi(Request $request)
     {
         if (!$request->isMethod('post')) {
@@ -91,8 +151,8 @@ class ProduksiController extends Controller
             DB::beginTransaction();
             try{
                 // dd($request);
-                $idpo= (DB::table('d_productionorder')->max('po_id')) ? (DB::table('d_productionorder')->max('po_id')) + 1 : 1;
-                $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
+                $idpo= (DB::table('d_productionorderdt')->max('pod_productionorder')) ? (DB::table('d_productionorderdt')->max('pod_productionorder')) + 1 : 1;
+                $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_notatemp', 8, 10, 3, 'PO', '-');
                 $productionorderauth[] = [
                     'poa_id' => $idpo,
                     'poa_notatemp' => $nota,
@@ -143,6 +203,7 @@ class ProduksiController extends Controller
             }
         }
     }
+
     public function edit_produksi(Request $request)
     {
         $id = Crypt::decrypt($request->id);
@@ -219,6 +280,7 @@ class ProduksiController extends Controller
         }
         return Response::json($results);
     }
+
     public function getSatuan($id)
     {
         $data = DB::table('m_item')
