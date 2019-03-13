@@ -11,4 +11,9 @@ class d_stock extends Model
     const CREATED_AT = 's_created_at';
     const UPDATED_AT = 's_updated_at';
 
+    public function getItem()
+    {
+      return $this->belongsTo('App\m_item', 's_item', 'i_id');
+    }
+
 }

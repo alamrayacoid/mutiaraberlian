@@ -232,6 +232,7 @@
             $(".barang").eq(idxBarang).on("keyup", function () {
                 $(".itemid").eq(idxBarang).val('');
                 $(".kode").eq(idxBarang).val('');
+                setArrayCode();
             });
 
             $(document).on('click', '.btn-hapus', function () {
@@ -345,7 +346,7 @@
                     var data = $('#form').serialize();
                     axios.post(baseUrl+'/produksi/orderproduksi/create', data).then(function (response){
 
-                        if(response.data.status == 'sukses'){
+                        if(response.data.status == 'Success'){
                             loadingHide();
                             messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
                             location.reload();
@@ -573,6 +574,7 @@
                 url: '{{ url('/produksi/orderproduksi/get-satuan/') }}'+'/'+idItem,
                 type: 'GET',
                 success: function( resp ) {
+                    $(".satuan").eq(idxBarang).find('option').remove();
                     var option = '';
                     option += '<option value="'+resp.id1+'">'+resp.unit1+'</option>';
                     if (resp.id2 != null && resp.id2 != resp.id1) {

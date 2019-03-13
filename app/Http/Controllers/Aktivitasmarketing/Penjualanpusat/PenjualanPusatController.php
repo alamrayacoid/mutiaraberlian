@@ -31,36 +31,51 @@ class PenjualanPusatController extends Controller
 			->select('')->get();
 	}
 
-    public function auto_item(Request $request)
+	public function createTargetReal()
+	{
+		$company = DB::table('m_company')->select('m_company.*')->get();
+		return view('marketing.penjualanpusat.targetrealisasi.create', compact('company'));
+	}
+
+	public function cariBarang(Request $request)
     {
+        $is_item = array();
+        for($i = 0; $i < count($request->idItem); $i++){
+            if($request->idItem[$i] != null){
+                array_push($is_item, $request->idItem[$i]);
+            }
+        }
         $cari = $request->term;
-        $item = DB::table('m_item')
-            ->select('i_id', 'i_name', 'i_code', 'i_unit1', 'i_unit2', 'i_unit3')
+	    $nama = DB::table('m_item')
+	        ->select('m_item.*')
             ->whereRaw("i_name like '%" . $cari . "%'")
             ->orWhereRaw("i_code like '%" . $cari . "%'")
             ->get();
 
-        if ($item == null) {
-            $hasilItem[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
-            foreach ($item as $query) {
-                if($query->i_code == null){
-                    $hasilItem[] = [
-                        'id'    => $query->i_id,
-                        'label' => $query->i_name
-                    ];
-                }else{
-                    $hasilItem[] = [
-                        'id'    => $query->i_id,
-                        'label' => $query->i_code.' - '.$query->i_name
-                    ];
-                }
+            foreach ($nama as $query) {
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query];
             }
         }
-        return Response::json($hasilItem);
+        return Response::json($results);
     }
-	public function createTargetReal()
-	{
-		return view('marketing.penjualanpusat.targetrealisasi.create');
-	}
+    public function getSatuan($id)
+    {
+        $data = DB::table('m_item')
+            ->select('m_item.*', 'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
+            ->where('m_item.i_id', '=', $id)
+            ->join('m_unit as a', function ($x){
+                $x->on('m_item.i_unit1', '=', 'a.u_id');
+            })
+            ->leftjoin('m_unit as b', function ($y){
+                $y->on('m_item.i_unit2', '=', 'b.u_id');
+            })
+            ->leftjoin('m_unit as c', function ($z){
+                $z->on('m_item.i_unit3', '=', 'c.u_id');
+            })
+            ->first();
+        return Response::json($data);
+    }
 }

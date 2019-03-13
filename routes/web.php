@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\PusherEvent;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -146,10 +147,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/orderproduksi/cari-barang', 'ProduksiController@cariBarang')->name('order.caribarang');
     Route::get('/produksi/orderproduksi/get-satuan/{id}', 'ProduksiController@getSatuan')->name('order.getsatuan');
     Route::get('/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
-
     Route::get('/produksi/orderproduksi/gethistory', 'ProduksiController@get_history')->name('order.gethistory');
-
     Route::get('/produksi/orderproduksi/detail', 'ProduksiController@detail_produksi')->name('order.detail');
+    Route::get('/produksi/orderproduksi/hapus/{id}', 'ProduksiController@delete_produksi')->name('order.delete');
 
     // Penerimaan Barang
     Route::get('/produksi/penerimaanbarang/index', 'PenerimaanProduksiController@penerimaan_barang')->name('penerimaan.index');
@@ -191,8 +191,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
     Route::get('/inventory/manajemenstok/create', 'InventoryController@manajemenstok_create')->name('manajemenstok.create');
     Route::get('/inventory/manajemenstok/edit', 'InventoryController@manajemenstok_edit')->name('manajemenstok.edit');
-    Route::get('/inventory/manajemenstok/opnamestock/index', 'InventoryController@opname_stock')->name('opname.index');
-    Route::get('/inventory/manajemenstok/opnamestock/create', 'InventoryController@opname_stock_create')->name('opname.create');
+    Route::get('/inventory/manajemenstok/opnamestock/index', 'Inventory\OpnameController@index')->name('opname.index');
+    Route::get('/inventory/manajemenstok/opnamestock/getItemAutocomplete', 'Inventory\OpnameController@getItemAutocomplete')->name('opname.getItemAutocomplete');
+    Route::get('/inventory/manajemenstok/opnamestock/getItem', 'Inventory\OpnameController@getItem')->name('opname.getItem');
+    Route::get('/inventory/manajemenstok/opnamestock/getQty', 'Inventory\OpnameController@getQty')->name('opname.getQty');
+    Route::get('/inventory/manajemenstok/opnamestock/create', 'Inventory\OpnameController@create')->name('opname.create');
+    Route::post('/inventory/manajemenstok/opnamestock/store', 'Inventory\OpnameController@store')->name('opname.store');
     Route::get('/inventory/manajemenstok/historyopname/index', 'InventoryController@history_opname')->name('history.index');
     Route::get('/inventory/manajemenstok/adjustmentstock/index', 'InventoryController@adjustment_index')->name('adjustment.index');
     Route::get('/inventory/manajemenstok/adjustmentstock/create', 'InventoryController@adjustment_create')->name('adjustment.create');
@@ -234,9 +238,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/manajemenmarketing/create-month-promotion', 'MarketingController@month_promotion_create')->name('monthpromotion.create');
     Route::get('/marketing/manajemenmarketing/edit-month-promotion', 'MarketingController@month_promotion_edit')->name('monthpromotion.edit');
     // Penjualan Pusat
-    Route::get('/marketing/penjualanpusat/index', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@index')->name('pusat.index');
+    Route::get('/marketing/penjualanpusat/index', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@index')->name('penjualanpusat.index');
         // Target Realisasi
         Route::get('/marketing/penjualanpusat/targetrealisasi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@createTargetReal')->name('targetReal.create');
+        Route::get('/marketing/penjualanpusat/targetrealisasi/cari-barang', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@cariBarang')->name('targetReal.caribarang');
+        Route::get('/marketing/penjualanpusat/targetrealisasi/get-satuan/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getSatuan')->name('targetReal.getsatuan');
         // End ---
         // Return Penjualan
         Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
@@ -309,5 +315,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Profile
     Route::get('/profile', 'ProfileController@profile')->name('profile');
+
+    //Get ototitasi
+    Route::get('/getoto', 'getotorisasiController@get');
 });
 // End Route Group

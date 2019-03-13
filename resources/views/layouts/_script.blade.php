@@ -17,6 +17,7 @@
 <script src="{{asset('assets/js/jquery.maskMoney.min.js')}}"></script>
 <script src="{{asset('assets/jquery-confirm/jquery-confirm.js')}}"></script>
 <script src="{{asset('assets/jquery-toast/jquery.toast.js')}}"></script>
+<script src="https://js.pusher.com/4.4/pusher.min.js"></script>
 {{--<script src="{{asset('assets/jquery/jquery-3.1.0.min.js')}}"></script>--}}
 <script src="{{asset('assets/jquery-ui/jquery-ui.min.js')}}"></script>
 <script src="{{asset('assets/bootstrap-datetimepicker/js/moment.js')}}"></script>
@@ -26,6 +27,7 @@
 <script src="{{asset('assets/js/dobPicker.min.js')}}"></script>
 <script src="{{asset('assets/js/vue.js')}}"></script>
 <script src="{{asset('assets/js/axios/axios.min.js')}}"></script>
+<script src="{{asset('assets/pushjs/bin/push.min.js')}}"></script>
 <script type="text/javascript">
     var getstorage;
     $('#sidebar-collapse-btn, #sidebar-overlay').click(function () {
@@ -404,4 +406,49 @@
     }
 
     menuThree.addEventListener('click', addClassFunThree);
+
+    //PUSHER
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var p_key = "{{env('PUSHER_APP_KEY')}}";
+    var p_cluster = "{{env('PUSHER_APP_CLUSTER')}}";
+
+       var pusher = new Pusher(p_key, {
+         cluster: p_cluster,
+         forceTLS: true
+       });
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('my-event', function(data) {
+      otorisasi();
+    });
+
+    otorisasi();
+
+    function otorisasi(){
+      var html = "";
+      $.ajax({
+        type: 'get',
+        dataType: 'json',
+        url: baseUrl + '/getoto',
+        success : function(response){
+          for (var i = 0; i < response.data.length; i++) {
+            html += '<li>'
+                     +'<a href="'+response.data[i].link+'" class="notification-item">'
+                     +'<div class="body-col">'
+                     +'<p>'
+                     +      '<span class="accent"> '+response.data[i].menu+' </span> '+response.data[i].isi+''
+                     +      '<span class="accent"> '+response.data[i].count+' </span> . </p>'
+                     +'</div>'
+                     +'</a>'
+                     '</li>';
+          }
+          $('#showotorisasi').html(html);
+          $('#counter').text(response.count);
+        }
+      });
+    }
+
+    // Push.create('Hello World!')
 </script>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Master;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\Http\Controllers\otorisasiController as otorisasi;
 use DB;
 use Session;
 use Validator;
@@ -186,6 +187,8 @@ class ItemController extends Controller
                     'ia_created_at' => Carbon::now(),
                     'ia_update_at' => Carbon::now(),
                 ]);
+
+                otorisasi::otorisasiup();
 
             DB::commit();
             return response()->json([

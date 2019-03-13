@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1c8b318e-c138-400d-afca-6445ceb3fae0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <ignored path="$PROJECT_DIR$/.idea/" />
@@ -107,6 +104,7 @@
     <ignored path="$PROJECT_DIR$/vendor/webmozart/assert/" />
     <ignored path="$PROJECT_DIR$/vendor/yajra/laravel-datatables-oracle/" />
     <ignored path="$PROJECT_DIR$/vendor/zendframework/zend-diactoros/" />
+    <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -118,70 +116,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="241">
-              <caret line="156" column="81" selection-start-line="156" selection-start-column="81" selection-end-line="156" selection-end-column="81" />
+            <state relative-caret-position="201">
+              <caret line="297" column="75" selection-start-line="297" selection-start-column="56" selection-end-line="297" selection-end-column="75" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="108" column="47" selection-start-line="108" selection-start-column="47" selection-end-line="108" selection-end-column="47" />
-              <folding>
-                <element signature="e#47#75#0#PHP" expanded="true" />
-              </folding>
+            <state relative-caret-position="427">
+              <caret line="23" column="29" selection-start-line="23" selection-start-column="29" selection-end-line="23" selection-end-column="29" />
             </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="276">
-              <caret line="284" column="19" lean-forward="true" selection-start-line="272" selection-start-column="12" selection-end-line="293" selection-end-column="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="123">
-              <caret line="240" selection-start-line="240" selection-end-line="240" />
-              <folding>
-                <element signature="e#44#50#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/PenerimaanProduksiController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="6" column="34" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="34" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/index.blade.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="206">
-              <caret line="72" column="65" selection-start-line="72" selection-start-column="65" selection-end-line="72" selection-end-column="65" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/cabang/index.blade.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1248" />
           </provider>
         </entry>
       </file>
@@ -189,10 +138,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>prima</find>
-      <find>jenis produk</find>
-      <find>jenis</find>
-      <find>table_jenis_produk</find>
       <find>$('#item_suplier').DataTable({</find>
       <find>masterdatautama/suplier/index</find>
       <find>sub = $('#item_suplier').DataTable({</find>
@@ -219,6 +164,10 @@
       <find>table_produk</find>
       <find>masterdatautama/produk/index</find>
       <find>produksi/penerimaanbarang/index</find>
+      <find>getdata</find>
+      <find>revisi</find>
+      <find>notifikasiotorisasi/otorisasi/revisi/index</find>
+      <find>OtorisasiController</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -258,10 +207,11 @@
         <option value="$PROJECT_DIR$/app/Http/Controllers/AksesUser.php" />
         <option value="$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Master/CabangController.php" />
-        <option value="$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/index.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/PenerimaanProduksiController.php" />
         <option value="$PROJECT_DIR$/routes/web.php" />
+        <option value="$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/index.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/PenerimaanProduksiController.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php" />
       </list>
     </option>
   </component>
@@ -379,6 +329,65 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="auth" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="layouts" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="Scope">
         <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
           <expand>
@@ -445,72 +454,14 @@
           <select />
         </subPane>
       </pane>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="Http" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="Http" type="462c0819:PsiDirectoryNode" />
-              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="assets" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="auth" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="layouts" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="editor.config.ad.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.idea/workspace.xml" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="Symfony2.SettingsForm" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -562,7 +513,8 @@
       <workItem from="1552028979740" duration="600000" />
       <workItem from="1552094000803" duration="1040000" />
       <workItem from="1552285363321" duration="3182000" />
-      <workItem from="1552350598174" duration="9135000" />
+      <workItem from="1552350598174" duration="12743000" />
+      <workItem from="1552443103154" duration="1424000" />
     </task>
     <task id="LOCAL-00001" summary="roliz">
       <created>1551435407765</created>
@@ -697,17 +649,45 @@
       <option name="project" value="LOCAL" />
       <updated>1552372742771</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="roliz">
+      <created>1552375158504</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1552375158504</updated>
+    </task>
+    <task id="LOCAL-00021" summary="roliz">
+      <created>1552377007328</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1552377007328</updated>
+    </task>
+    <task id="LOCAL-00022" summary="roliz">
+      <created>1552383866744</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1552383866744</updated>
+    </task>
+    <task id="LOCAL-00023" summary="roliz">
+      <created>1552384243883</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1552384243883</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="70794000" />
+    <option name="totallyTimeSpent" value="75826000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="0" width="1368" height="740" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.225" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22878788" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="npm" order="3" side_tool="true" />
@@ -722,7 +702,7 @@
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3295082" />
-      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" weight="0.3286385" />
+      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" weight="0.32843137" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -737,20 +717,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="roliz" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/modul_keuangan/bootstrap_4_1_3/css/bootstrap.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="411">
-          <caret line="2539" column="17" lean-forward="true" selection-start-line="2539" selection-start-column="17" selection-end-line="2539" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/jquery-confirm/jquery-confirm.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="1106" column="30" selection-start-line="1106" selection-start-column="30" selection-end-line="1106" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/bootstrap/dist/css/bootstrap.css" />
     <entry file="file://$PROJECT_DIR$/assets/jquery-confirm/jquery-confirm.js">
       <provider selected="true" editor-type-id="text-editor">
@@ -1076,13 +1042,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="72" column="65" selection-start-line="72" selection-start-column="65" selection-end-line="72" selection-end-column="65" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="123">
@@ -1093,17 +1052,37 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Inventory/BarangMasukController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="40" column="31" selection-start-line="40" selection-start-column="31" selection-end-line="40" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/PenerimaanProduksiController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="6" column="34" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="34" />
+        <state relative-caret-position="110">
+          <caret line="18" column="31" selection-start-line="18" selection-start-column="31" selection-end-line="18" selection-end-column="31" />
+          <folding>
+            <element signature="e#39#46#0#PHP" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="241">
-          <caret line="156" column="81" selection-start-line="156" selection-start-column="81" selection-end-line="156" selection-end-column="81" />
+        <state relative-caret-position="201">
+          <caret line="297" column="75" selection-start-line="297" selection-start-column="56" selection-end-line="297" selection-end-column="75" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="427">
+          <caret line="23" column="29" selection-start-line="23" selection-start-column="29" selection-end-line="23" selection-end-column="29" />
         </state>
       </provider>
     </entry>

@@ -51,9 +51,6 @@ class ProduksiController extends Controller
 
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('detail', function($data){
-                return '<button class="btn btn-primary btn-modal" type="button" onclick="detail(\''. Crypt::encrypt($data->po_id) .'\')">Detail</button>';
-            })
             ->addColumn('totalnet', function($data){
                 return Currency::addRupiah($data->po_totalnet);
             })
@@ -68,9 +65,10 @@ class ProduksiController extends Controller
                 }
             })
             ->addColumn('aksi', function($data){
+                $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrder(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-folder"></i></button>';
                 $edit = '<button class="btn btn-warning btn-edit" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-pencil"></i></button>';
-                $hapus = '<button class="btn btn-danger btn-disable" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-times-circle"></i></button>';
-                return '<div class="btn-group btn-group-sm">' . $edit . '&nbsp;' . $hapus . '</div>';
+                $hapus = '<button class="btn btn-danger btn-disable" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-trash"></i></button>';
+                return '<div class="btn-group btn-group-sm">'. $detail . $edit . $hapus . '</div>';
             })
             ->rawColumns(['detail','totalnet','bayar','aksi'])
             ->make(true);
@@ -86,7 +84,7 @@ class ProduksiController extends Controller
             return view('produksi/orderproduksi/create')->with(compact('suppliers', 'units'));
         } else {
             $data = $request->all();
-            $productionorder = [];
+            $productionorderauth = [];
             $productionorderdt = [];
             $productionorderpayment = [];
             DB::beginTransaction();
@@ -94,13 +92,13 @@ class ProduksiController extends Controller
                 // dd($request);
                 $idpo= (DB::table('d_productionorder')->max('po_id')) ? (DB::table('d_productionorder')->max('po_id')) + 1 : 1;
                 $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
-                $productionorder = [
-                    'po_id' => $idpo,
-                    'po_nota' => $nota,
-                    'po_date' => date('Y-m-d', strtotime($data['po_date'])),
-                    'po_supplier' => $data['supplier'],
-                    'po_totalnet' => $data['tot_hrg'],
-                    'po_status' => 'BELUM'
+                $productionorderauth[] = [
+                    'poa_id' => $idpo,
+                    'poa_notatemp' => $nota,
+                    'poa_date' => date('Y-m-d', strtotime($data['po_date'])),
+                    'poa_supplier' => $data['supplier'],
+                    'poa_totalnet' => $data['tot_hrg'],
+                    'poa_status' => 'BELUM'
                 ];
 
                 $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) + 1 : 1;
@@ -128,17 +126,17 @@ class ProduksiController extends Controller
                 }
 
                 // dd($productionorderpayment);
-                DB::table('d_productionorder')->insert($productionorder);
+                DB::table('d_productionorderauth')->insert($productionorderauth);
                 DB::table('d_productionorderdt')->insert($productionorderdt);
                 DB::table('d_productionorderpayment')->insert($productionorderpayment);
                 DB::commit();
                 return json_encode([
-                    'status' => 'sukses'
+                    'status' => 'Success'
                 ]);
             }catch (\Exception $e){
                 DB::rollBack();
                 return json_encode([
-                    'status' => 'gagal',
+                    'status' => 'Failed',
                     'msg' => $e
                 ]);
             }
@@ -158,6 +156,28 @@ class ProduksiController extends Controller
 
         return view('produksi/orderproduksi/edit')->with(compact('dataEdit', 'dataEditDT', 'dataEditPmt'));
     }
+
+    public function delete_produksi($id = null){
+        try{
+            $id = Crypt::decrypt($id);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>"Failed"]);
+        }
+
+        DB::beginTransaction();
+        try{
+
+            DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
+            DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
+            DB::table('d_productionorder')->where('po_id', '=', $id)->delete();
+            DB::commit();
+            return response()->json(['status'=>"Success"]);
+        }catch (\Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>"Failed"]);
+        }
+    }
+
     public function cariBarang(Request $request)
     {
         $is_item = array();
@@ -214,26 +234,6 @@ class ProduksiController extends Controller
             })
             ->first();
         return Response::json($data);
-    }
-    public function hapus_produksi($id){
-        $id = Crypt::decrypt($id);
-        DB::beginTransaction();
-        try {
-            DB::table('d_productionorderpayment')->where('pop_productionorder', $id)->delete();
-            DB::table('d_productionorderdt')->where('pod_productionorder', $id)->delete();
-            DB::table('d_productionorder')->where('po_id', $id)->delete();
-
-            DB::commit();
-            return json_encode([
-                'status' => 'sukses'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return json_encode([
-                'status' => 'gagal',
-                'msg' => $e
-            ]);
-        }
     }
 
     /////////////////////////////////////////////////////

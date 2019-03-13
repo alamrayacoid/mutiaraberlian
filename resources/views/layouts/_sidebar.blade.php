@@ -77,39 +77,12 @@
 
                 <i><img src="{{ asset('assets/img/author-sign.png') }}" alt="" title="Otorisasi"></i>
                 <sup>
-                    <span class="counter">6</span>
+                    <span class="counter" id="counter">0</span>
                 </sup>
                 </a>
                 <div class="dropdown-menu notifications-dropdown-menu">
-                    <ul class="notifications-container">
-                        <li>
-                            <a href="" class="notification-item">
-                                <div class="body-col">
-                                    <p>
-                                        <span class="accent">Alien</span> pushed new commit:
-                                        <span class="accent">Fix page load performance issue</span>. </p>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="notification-item">
-                                <div class="body-col">
-                                    <p>
-                                        <span class="accent">Amaya Hatsumi</span> started new task:
-                                        <span class="accent">Dashboard UI design.</span>. </p>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="notification-item">
-                                <div class="body-col">
-                                    <p>
-                                        <span class="accent">Andy Nouman</span> deployed new version of
-                                        <span class="accent">NodeJS REST Api V3</span>
-                                    </p>
-                                </div>
-                            </a>
-                        </li>
+                    <ul class="notifications-container" id="showotorisasi">
+
                     </ul>
                     <footer>
                         <ul>
@@ -144,7 +117,7 @@
     </div>
 </header>
 
-    <?php $sidebar = App\Http\Controllers\AksesUser::aksesSidebar() ?>    
+    <?php $sidebar = App\Http\Controllers\AksesUser::aksesSidebar() ?>
 
 <aside class="sidebar">
     <div class="sidebar-container">
@@ -314,12 +287,12 @@
                         </li> --}}
                       @if ($sidebar[19]->ua_read == 'Y')
                         <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
-                            <a href="{{route('pusat.index')}}">Penjualan Pusat</a>
+                            <a href="{{route('penjualanpusat.index')}}">Manajemen Penjualan Pusat</a>
                         </li>
                       @endif
                       @if ($sidebar[20]->ua_read == 'Y')
                         <li class="{{Request::is('marketing/konsinyasipusat/*') ? 'active' : ''}}">
-                            <a href="{{route('konsinyasipusat.index')}}">Konsinyasi Pusat</a>
+                            <a href="{{route('konsinyasipusat.index')}}">Manajemen Konsinyasi Pusat</a>
                         </li>
                       @endif
                       @if ($sidebar[21]->ua_read == 'Y')
@@ -408,12 +381,12 @@
                       @endif
                       @if ($sidebar[34]->ua_read == 'Y')
                         <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
-                            <a href="{{route('pusat.index')}}">Manajemen Hutang Piutang</a>
+                            <a href="{{route('penjualanpusat.index')}}">Manajemen Hutang Piutang</a>
                         </li>
                       @endif
                       @if ($sidebar[35]->ua_read == 'Y')
                         <li class="{{Request::is('marketing/kosinyasipusat/*') ? 'active' : ''}}">
-                            <a href="{{route('pusat.index')}}">Manajemen Pajak</a>
+                            <a href="{{route('penjualanpusat.index')}}">Manajemen Pajak</a>
                         </li>
                       @endif
                       @if ($sidebar[36]->ua_read == 'Y')
