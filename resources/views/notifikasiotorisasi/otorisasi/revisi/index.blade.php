@@ -165,6 +165,97 @@
 
         $("#totTermin").html(convertToRupiah(total));
     }
+
+    function agree(id) {
+        return $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Konfirmasi!',
+            content: 'Apakan Anda yakin akan menyetujui order produksi ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        loadingShow();
+                        axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/revisi/order-produksi-agree'+'/'+id)
+                            .then(function (response) {
+                                if (response.data.status == "Success") {
+                                    loadingHide();
+                                    messageSuccess("Berhasil", "Data berhasil disetujui");
+                                } else {
+                                    loadingHide();
+                                    messageWarning("Gagal", "Data gagal disetujui");
+                                }
+                            })
+                            .catch(function (error) {
+                                loadingHide();
+                                messageFailed("Error", error);
+                            })
+                            .then(function () {
+                                loadingHide();
+                                table_pus.ajax.reload();
+                            });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+
+    }
+
+    function rejected(id) {
+        return $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Konfirmasi!',
+            content: 'Apakan Anda yakin akan menolak order produksi ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        loadingShow();
+                        axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/revisi/order-produksi-rejected'+'/'+id)
+                            .then(function (response) {
+                                if (response.data.status == "Success") {
+                                    loadingHide();
+                                    messageSuccess("Berhasil", "Data berhasil disetujui");
+                                } else {
+                                    loadingHide();
+                                    messageWarning("Gagal", "Data gagal disetujui");
+                                }
+                            })
+                            .catch(function (error) {
+                                loadingHide();
+                                messageFailed("Error", error);
+                            })
+                            .then(function () {
+                                loadingHide();
+                                table_pus.ajax.reload();
+                            });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
 </script>
 
 @endsection
