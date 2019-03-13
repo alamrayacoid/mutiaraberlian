@@ -257,4 +257,8 @@ class OpnameController extends Controller
     {
         //
     }
+
+    public function print_opname(){
+      return view('inventory.manajemenstok.opname.opnamestock.print');
+    }
 }

@@ -33,6 +33,7 @@
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <button class="btn btn-primary btn-modal" data-toggle="modal" data-target="#detail" type="button" title="Detail"><i class="fa fa-folder"></i></button>
+                                        <button class="btn btn-info btn-print" type="button" title="Nota Opname"><i class="fa fa-print"></i></button>
                                         <button class="btn btn-danger btn-disable-tunjangan" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>
                                     </div>
                                 </td>

@@ -51,6 +51,10 @@
 		var table_sup = $('#table_opnamestock').DataTable();
 		var table_bar= $('#table_historyopname').DataTable();
 
+		$('#table_opnamestock tbody').on('click', '.btn-print', function(){
+			window.open('{{route('opname.print')}}', '_blank');
+		});
+
 		$(document).on('click', '.btn-rejected', function(){
 			var ini = $(this);
 			$.confirm({
