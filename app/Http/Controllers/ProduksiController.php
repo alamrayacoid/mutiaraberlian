@@ -90,18 +90,18 @@ class ProduksiController extends Controller
             DB::beginTransaction();
             try{
                 // dd($request);
-                $idpoa= (DB::table('d_productionorderauth')->max('poa_id')) ? (DB::table('d_productionorderauth')->max('poa_id')) + 1 : 1;
-                $notatemp = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_notatemp', 8, 10, 3, 'PO', '-');
+                $idpo= (DB::table('d_productionorder')->max('po_id')) ? (DB::table('d_productionorder')->max('po_id')) + 1 : 1;
+                $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
                 $productionorderauth[] = [
-                    'poa_id' => $idpoa,
-                    'poa_notatemp' => $notatemp,
+                    'poa_id' => $idpo,
+                    'poa_notatemp' => $nota,
                     'poa_date' => date('Y-m-d', strtotime($data['po_date'])),
                     'poa_supplier' => $data['supplier'],
                     'poa_totalnet' => $data['tot_hrg'],
                     'poa_status' => 'BELUM'
                 ];
 
-                $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpoa)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) + 1 : 1;
+                $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) + 1 : 1;
                 $detailpod = $poddetail;
                 for ($i = 0; $i < count($data['idItem']); $i++) {
                     $productionorderdt[] = [
@@ -126,17 +126,17 @@ class ProduksiController extends Controller
                 }
 
                 // dd($productionorderpayment);
-                DB::table('d_productionorder')->insert($productionorder);
+                DB::table('d_productionorderauth')->insert($productionorderauth);
                 DB::table('d_productionorderdt')->insert($productionorderdt);
                 DB::table('d_productionorderpayment')->insert($productionorderpayment);
                 DB::commit();
                 return json_encode([
-                    'status' => 'sukses'
+                    'status' => 'Success'
                 ]);
             }catch (\Exception $e){
                 DB::rollBack();
                 return json_encode([
-                    'status' => 'gagal',
+                    'status' => 'Failed',
                     'msg' => $e
                 ]);
             }
