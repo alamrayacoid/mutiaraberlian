@@ -25,7 +25,9 @@
 
                                 <div class="col-md-10 col-sm-6 col-xs-12">
                                 <div class="form-group">
-                                    <input type="text" class="form-control form-control-sm" name="">
+                                    <select name="" id="" class="form-control form-control-sm select2">
+                                        <option value="">Pilih Cabang</option>
+                                    </select>
                                 </div>
                                 </div>
 
