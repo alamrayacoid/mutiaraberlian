@@ -91,8 +91,8 @@ class ProduksiController extends Controller
             DB::beginTransaction();
             try{
                 // dd($request);
-                $idpo= (DB::table('d_productionorder')->max('po_id')) ? (DB::table('d_productionorder')->max('po_id')) + 1 : 1;
-                $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
+                $idpo= (DB::table('d_productionorderdt')->max('pod_productionorder')) ? (DB::table('d_productionorderdt')->max('pod_productionorder')) + 1 : 1;
+                $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_notatemp', 8, 10, 3, 'PO', '-');
                 $productionorderauth[] = [
                     'poa_id' => $idpo,
                     'poa_notatemp' => $nota,

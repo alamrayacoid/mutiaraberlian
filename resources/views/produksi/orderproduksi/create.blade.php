@@ -345,11 +345,10 @@
                     loadingShow();
                     var data = $('#form').serialize();
                     axios.post(baseUrl+'/produksi/orderproduksi/create', data).then(function (response){
-
                         if(response.data.status == 'Success'){
                             loadingHide();
                             messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
-                            location.reload();
+                            setInterval(function(){location.reload();}, 3500)
                         }else{
                             loadingHide();
                             messageFailed("Gagal", "Data Order Produksi Gagal Disimpan");

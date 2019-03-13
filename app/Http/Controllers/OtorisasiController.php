@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use DB;
 use DataTables;
 use Currency;
+use CodeGenerator;
 use Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 
@@ -149,7 +150,7 @@ class OtorisasiController extends Controller
 
             $values = [
                 'po_id'         => $data->poa_id,
-                'po_nota'       => $data->poa_notatemp,
+                'po_nota'       => CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-'),
                 'po_date'       => $data->poa_date,
                 'po_supplier'   => $data->poa_supplier,
                 'po_totalnet'   => $data->poa_totalnet,
