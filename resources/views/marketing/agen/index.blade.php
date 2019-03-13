@@ -19,7 +19,7 @@
 
                 <ul class="nav nav-pills mb-3">
                     <li class="nav-item">
-                        <a href="" class="nav-link active" data-target="#orderprodukagenpusat" aria-controls="orderprodukagenpusat" data-toggle="tab" role="tab">Order Produk ke Agen / Pusat</a>
+                        <a href="" class="nav-link active" data-target="#orderprodukagenpusat" aria-controls="orderprodukagenpusat" data-toggle="tab" role="tab">Order Produk ke Agen / Cabang</a>
                     </li>
                     <li class="nav-item">
                         <a href="" class="nav-link" data-target="#keloladataagen" aria-controls="keloladataagen" data-toggle="tab" role="tab">Kelola Penjualan Langsung </a>
