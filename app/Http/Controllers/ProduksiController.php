@@ -10,6 +10,7 @@ use CodeGenerator;
 use Yajra\DataTables\DataTables;
 use Crypt;
 use Currency;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class ProduksiController extends Controller
 {
@@ -127,7 +128,7 @@ class ProduksiController extends Controller
                 $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrder(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-folder"></i></button>';
                 $edit = '<button class="btn btn-warning btn-edit" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-pencil"></i></button>';
                 $hapus = '<button class="btn btn-danger btn-disable" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-trash"></i></button>';
-                $nota = '<button class="btn btn-info btn-nota" title="Nota" type="button"><i class="fa fa-print"></i></button>';
+                $nota = '<button class="btn btn-info btn-nota" title="Nota" type="button" onclick="printNota(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-print"></i></button>';
                 return '<div class="btn-group btn-group-sm">'. $detail . $nota . $edit . $hapus . '</div>';
             })
             ->rawColumns(['detail','totalnet','bayar','aksi'])
@@ -297,6 +298,47 @@ class ProduksiController extends Controller
             })
             ->first();
         return Response::json($data);
+    }
+
+    public function printNota($id = null)
+    {
+        try{
+            $id = Crypt::decrypt($id);
+        }catch (DecryptException $e){
+            return abort(404);
+        }
+
+        $header = DB::table('d_productionorder')
+            ->select('d_productionorder.po_nota as nota', 'd_productionorder.po_date as tanggal', 'm_supplier.s_name as supplier')
+            ->join('m_supplier', function ($q){
+                $q->on('d_productionorder.po_supplier', '=', 'm_supplier.s_id');
+            })
+            ->where('po_id', '=', $id)
+            ->first();
+
+        $item = DB::table('d_productionorderdt')
+            ->select('m_item.i_name as barang',
+                'm_unit.u_name as satuan',
+                'd_productionorderdt.pod_qty as qty',
+                'd_productionorderdt.pod_value as value',
+                'd_productionorderdt.pod_totalnet as totalnet')
+            ->join('m_item', function ($q){
+                $q->on('d_productionorderdt.pod_item', '=', 'm_item.i_id');
+            })->join('m_unit', function ($q){
+                $q->on('d_productionorderdt.pod_unit', '=', 'm_unit.u_id');
+            })
+            ->where('d_productionorderdt.pod_productionorder', '=', $id)
+            ->get();
+
+        $termin = DB::table('d_productionorderpayment')
+            ->select('pop_termin as termin',
+                'pop_datetop as tanggal',
+                'pop_value as value')
+            ->where('pop_productionorder', '=', $id)
+            ->orderBy('pop_termin', 'asc')
+            ->get();
+
+        return view('produksi.orderproduksi.nota')->with(compact('item', 'termin', 'header'));
     }
 
     /////////////////////////////////////////////////////
