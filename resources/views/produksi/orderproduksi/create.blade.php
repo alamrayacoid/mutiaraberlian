@@ -346,7 +346,7 @@
                     var data = $('#form').serialize();
                     axios.post(baseUrl+'/produksi/orderproduksi/create', data).then(function (response){
 
-                        if(response.data.status == 'sukses'){
+                        if(response.data.status == 'Success'){
                             loadingHide();
                             messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
                             location.reload();
