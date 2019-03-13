@@ -145,7 +145,6 @@
             });
 
         var total = 0;
-
         for (var i =0; i < totNet.length; i++) {
             total += parseInt(totNet);
         }
@@ -160,7 +159,6 @@
             });
 
         var total = 0;
-
         for (var i =0; i < totTermin.length; i++) {
             total += parseInt(totTermin);
         }
