@@ -169,5 +169,35 @@ class OtorisasiController extends Controller
             return response()->json(['status'=>'Failed']);
         }
     }
+
+    public function rejected($id = null) {
+        try{
+            $id = Crypt::decrypt($id);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>'Failed']);
+        }
+
+        DB::beginTransaction();
+        try{
+
+            DB::table('d_productionorderpayment')
+                ->where('pop_productionorder', '=', $id)
+                ->delete();
+
+            DB::table('d_productionorderdt')
+                ->where('pod_productionorder', '=', $id)
+                ->delete();
+
+            DB::table('d_productionorderauth')
+                ->where('poa_id', '=', $id)
+                ->delete();
+
+            DB::commit();
+            return response()->json(['status'=>'Success']);
+        }catch (\Exception $e){
+            DB::commit();
+            return response()->json(['status'=>'Failed']);
+        }
+    }
 //    ================End Order Produksi===============
 }
