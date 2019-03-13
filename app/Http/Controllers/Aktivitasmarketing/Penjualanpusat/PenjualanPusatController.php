@@ -33,7 +33,8 @@ class PenjualanPusatController extends Controller
 
 	public function createTargetReal()
 	{
-		return view('marketing.penjualanpusat.targetrealisasi.create');
+		$company = DB::table('m_company')->select('m_company.*')->get();
+		return view('marketing.penjualanpusat.targetrealisasi.create', compact('company'));
 	}
 
 	public function cariBarang(Request $request)
