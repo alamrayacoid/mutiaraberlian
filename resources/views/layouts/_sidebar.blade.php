@@ -287,7 +287,7 @@
                         </li> --}}
                       @if ($sidebar[19]->ua_read == 'Y')
                         <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
-                            <a href="{{route('pusat.index')}}">Manajemen Penjualan Pusat</a>
+                            <a href="{{route('penjualanpusat.index')}}">Manajemen Penjualan Pusat</a>
                         </li>
                       @endif
                       @if ($sidebar[20]->ua_read == 'Y')
