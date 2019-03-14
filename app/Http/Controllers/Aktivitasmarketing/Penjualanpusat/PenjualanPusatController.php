@@ -90,64 +90,68 @@ class PenjualanPusatController extends Controller
 
     public function targetRealStore(Request $request)
     {
+    	
 		$data          = $request->all();
 		$salesTarget   = [];
 		$salesTargetDt = [];
+
+
+        $countST = DB::table('d_salestarget')->count();
+		$stId = 1;
+        if ($countST > 0) {
+            $getIdMax = DB::table('d_salestarget')->max('st_id');
+            $stId    = $getIdMax + 1;
+        }
+
+		$query1 = DB::table('d_salestarget')
+		    ->where('st_comp', '=', $data['t_comp'])
+		    ->where('st_periode', '=', Carbon::createFromFormat('d/m/Y', $data['t_periode'])->format('Y-m-d'))
+		    ->first();
+
         // DB::beginTransaction();
         // try{
-			$stId= (DB::table('d_salestarget')->max('st_id')) ? (DB::table('d_salestarget')->max('st_id')) + 1 : 1;
-			$detail = (DB::table('d_salestargetdt')->where('std_salestarget', '=', $stId)->max('std_detailid')) ? (DB::table('d_salestargetdt')->where('std_salestarget', '=', $stId)->max('std_detailid')) + 1 : 1;
-			$checkComp = DB::table('d_salestarget')
-			    ->where('st_comp', '=', $data['t_comp'])
-			    ->where('st_periode', '=', $data['t_periode'])->first();
-
-			if ($checkComp) {
-				$stDetail = $detail;
-				for ($i=0; $i < count($data['idItem']); $i++) {
-					$salesTargetDt[] = [
-						'std_salestarget' => $stId,
-						'std_detailid'    => $stDetail,
+			
+			$stDetail = 0;
+			for ($i=0; $i < count($data['idItem']); $i++) {
+				if ($query1) {
+		            $detail = DB::table('d_salestargetdt')
+		                    ->where('std_salestarget', '=', $query1->st_id)
+		                    ->max('std_detailid');
+					$stDetail = $detail;
+					DB::table('d_salestargetdt')->insert([
+						'std_salestarget' => $query1->st_id,
+						'std_detailid'    => ++$stDetail,
 						'std_item'        => $data['idItem'][$i],
 						'std_qty'         => $data['t_qty'][$i],
 						'std_unit'        => $data['t_unit'][$i]
-					];
-					$stDetail++;
-				}
-			} else {
-				for ($i=0; $i < count($data['idItem']); $i++) { 
-					$salesTarget[] = [
+					]);
+				} else {
+					DB::table('d_salestarget')->insert([
 						'st_id'      => $stId,
 						'st_comp'    => $data['t_comp'][$i],
-						'st_periode' => date('Y-m-d', strtotime($data['t_periode'][$i]))
-					];
-					$stId++;
-				}
-
-				$stDetail = $detail;
-				for ($i=0; $i < count($data['idItem']); $i++) {
-					$salesTargetDt[] = [
+						'st_periode' => Carbon::createFromFormat('d/m/Y', $data['t_periode'])->format('Y-m-d')
+					]);
+					DB::table('d_salestargetdt')->insert([
 						'std_salestarget' => $stId,
-						'std_detailid'    => $stDetail,
+						'std_detailid'    => $stDetail+1,
 						'std_item'        => $data['idItem'][$i],
 						'std_qty'         => $data['t_qty'][$i],
 						'std_unit'        => $data['t_unit'][$i]
-					];
-					$stDetail++;
+					]);
 				}
-			}
-            DB::table('d_salestarget')->insert($salesTarget);
-            DB::table('d_salestargetdt')->insert($salesTargetDt);
-			
-        //     return json_encode([
-        //         'status' => 'Success'
+			}			
+        
+        //     DB::commit();
+        //     return response()->json([
+        //       'status' => 'sukses'
         //     ]);
-        // }catch (\Exception $e){
-        //     DB::rollBack();
-        //     return json_encode([
-        //         'status' => 'Failed',
-        //         'msg' => $e
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return response()->json([
+        //       'status'  => 'Gagal',
+        //       'message' => $e
         //     ]);
-        // }		
+        // }
 
     }
 }

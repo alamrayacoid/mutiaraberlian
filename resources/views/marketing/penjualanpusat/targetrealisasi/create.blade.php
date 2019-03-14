@@ -118,9 +118,9 @@
     });
 
     $("#datepicker").datepicker( {
-      format     : "dd/mm/yyyy",
-      viewMode   : "months", 
-      minViewMode: "months"
+      format     : "dd/mm/yyyy"
+      // viewMode   : "months", 
+      // minViewMode: "months"
     });
 
     $(document).on('click', '.btn-hapus', function(){
@@ -265,10 +265,10 @@
           loadingShow();
         },
         success : function (response){
-          if(response.status == 'Success'){
+          if(response.status == 'sukses'){
             loadingHide();
             messageSuccess('Success', 'Data berhasil ditambahkan!');
-            window.location.href = "{{route('barangmasuk.index')}}";
+            window.location.href = "{{route('penjualanpusat.index')}}";
           } else {
             loadingHide();
             messageFailed('Gagal', response.message);
