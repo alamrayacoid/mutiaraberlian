@@ -53,7 +53,7 @@ class InventoryController extends Controller
 
     public function distribusibarang_create()
     {
-        return view('inventory/distribusibarang/create');
+        return view('inventory/distribusibarang/distribusi/create');
     }
 
     public function distribusibarang_edit()
