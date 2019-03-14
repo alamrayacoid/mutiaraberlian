@@ -37,7 +37,7 @@ class OtorisasiController extends Controller
     public function getProduksi()
     {
         $data = DB::table('d_productionorderauth')
-                ->select('d_productionorderauth.poa_id', 'd_productionorderauth.poa_date', 'm_supplier.s_name', 'd_productionorderauth.poa_notatemp')
+                ->select('d_productionorderauth.poa_id', 'd_productionorderauth.poa_date', 'm_supplier.s_name', 'd_productionorderauth.poa_nota')
                 ->join('m_supplier', function ($q){
                     $q->on('d_productionorderauth.poa_supplier', '=', 'm_supplier.s_id');
                 })->get();
@@ -51,7 +51,7 @@ class OtorisasiController extends Controller
                 return $data->s_name;
             })
             ->addColumn('nota', function($data){
-                return $data->poa_notatemp;
+                return $data->poa_nota;
             })
             ->addColumn('aksi', function($data){
                 $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrderProduksi(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-folder"></i></button>';
@@ -100,7 +100,7 @@ class OtorisasiController extends Controller
                 return '<p class="text-right">'. Currency::addRupiah($data->pod_value) .'</p>';
             })
             ->addColumn('totalnet', function($data){
-                return '<p class="text-right">'. Currency::addRupiah($data->pod_totalnet) .'</p><input type="hidden" class="totalnet" value="'.number_format($data->pod_totalnet,0,'','').'">';
+                return '<p class="text-right">'. Currency::addRupiah($data->pod_totalnet) .'</p><input type="hidden" class="totalnetdetail" name="totalnetdetail[]" value="'.number_format($data->pod_totalnet,0,'','').'">';
             })
             ->rawColumns(['item','unit','qty','value','totalnet'])
             ->make(true);
@@ -253,6 +253,56 @@ class OtorisasiController extends Controller
 
     public function approvePerubahanHarga($id, $detail)
     {
+        $id = decrypt($id);
+        $detail = decrypt($detail);
 
+        DB::beginTransaction();
+        try {
+            $data = DB::table('d_priceclassauthdt')
+                ->where('pcad_classprice', '=', $id)
+                ->where('pcad_detailid', '=', $detail)
+                ->first();
+
+            if ($data == null) {
+                return response()->json([
+                    'status' => 'gagal'
+                ]);
+            }
+
+            $max = DB::table('m_priceclassdt')
+                ->where('pcd_classprice', '=', $data->pcad_classprice)
+                ->max('pcd_detailid');
+
+            ++$max;
+
+            DB::table('m_priceclassdt')
+                ->insert([
+                    'pcd_classprice' => $data->pcad_classprice,
+                    'pcd_detailid' => $max,
+                    'pcd_item' => $data->pcad_item,
+                    'pcd_unit' => $data->pcad_unit,
+                    'pcd_type' => $data->pcad_type,
+                    'pcd_payment' => $data->pcad_payment,
+                    'pcd_rangeqtystart' => $data->pcad_rangeqtystart,
+                    'pcd_rangeqtyend' => $data->pcad_rangeqtyend,
+                    'pcd_price' => $data->pcad_price,
+                    'pcd_user' => $data->pcad_user
+                ]);
+
+            DB::table('d_priceclassauthdt')
+                ->where('pcad_classprice', '=', $id)
+                ->where('pcad_detailid', '=', $detail)
+                ->delete();
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e
+            ]);
+        }
     }
 }

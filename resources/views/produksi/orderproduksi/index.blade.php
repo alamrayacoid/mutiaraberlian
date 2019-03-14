@@ -164,7 +164,7 @@
 
         var total = 0;
         for (var i =0; i < totNet.length; i++) {
-            total += parseInt(totNet);
+            total += parseInt(totNet[i]);
         }
 
         $("#totNet").html(convertToRupiah(total));
@@ -178,7 +178,7 @@
 
         var total = 0;
         for (var i =0; i < totTermin.length; i++) {
-            total += parseInt(totTermin);
+            total += parseInt(totTermin[i]);
         }
 
         $("#totTermin").html(convertToRupiah(total));
