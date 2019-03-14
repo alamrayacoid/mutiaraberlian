@@ -132,8 +132,42 @@
 			$(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>'+
 			'<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
 		})
-
-
+		targetReal();
 	});
+	function targetReal() {
+	    tb_barangmasuk = $('#table_target').DataTable({
+	        responsive: true,
+	        serverSide: true,
+	        ajax: {
+	            url : "{{ route('targetReal.list') }}",
+	            type: "get",
+	            data: {
+	                "_token": "{{ csrf_token() }}"
+	            }
+	        },
+	        columns: [
+	            {data: 'st_periode'},
+	            {data: 'c_name'},
+	            {data: 'i_name'},
+	            {data: 'std_qty'},
+	            {data: 'status'},
+	            {data: 'action'}
+	        ],
+	        pageLength: 10,
+	        lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+	    });
+	}
+	function editTarget(st_id, dt_id)
+	{
+	 	$.ajax({
+	 		url: "{{url('/marketing/penjualanpusat/targetrealisasi/editTarget/')}}",
+	 		type : "get",
+	 		data: {
+	 			st_id: st_id,
+	 			dt_id: dt_id
+	 		},
+        	dataType : "json"
+	 	});
+	}
 </script>
 @endsection
