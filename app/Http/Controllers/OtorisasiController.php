@@ -201,4 +201,13 @@ class OtorisasiController extends Controller
         }
     }
 //    ================End Order Produksi===============
+// ============= Perubahan Harga Jual ==============
+
+    public function getDataPerubahanHarga()
+    {
+        $data = DB::table('m_priceclass')
+            ->join('d_priceclassauthdt', 'pc_id', '=', 'pcad_classprice')
+            ->get();
+        dd($data);
+    }
 }

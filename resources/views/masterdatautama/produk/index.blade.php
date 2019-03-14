@@ -323,7 +323,7 @@
                                     if (response.status == 'berhasil') {
                                         $.toast({
                                             heading: 'Success',
-                                            text: 'Data berhasil dinonaktifkan !',
+                                            text: 'Data berhasil dinonaktifkan!, data akan membutuhkan otorisasi terlebih dahulu',
                                             bgColor: '#00b894',
                                             textColor: 'white',
                                             loaderBg: '#55efc4',
@@ -380,7 +380,7 @@
                                     if (response.status == 'berhasil') {
                                         $.toast({
                                             heading: 'Success',
-                                            text: 'Data berhasil diaktifkan !',
+                                            text: 'Data berhasil diaktifkan!, data akan membutuhkan otorisasi terlebih dahulu',
                                             bgColor: '#00b894',
                                             textColor: 'white',
                                             loaderBg: '#55efc4',
@@ -714,7 +714,7 @@
                                     if(response.status == 'sukses'){
                                         $.toast({
                                             heading: 'Success',
-                                            text: 'Data berhasil dihapus !',
+                                            text: 'Data berhasil dihapus!, data akan membutuhkan otorisasi terlebih dahulu',
                                             bgColor: '#00b894',
                                             textColor: 'white',
                                             loaderBg: '#55efc4',
@@ -749,5 +749,5 @@
             });
         }
 
-    </script>    
+    </script>
 @endsection

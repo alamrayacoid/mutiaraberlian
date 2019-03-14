@@ -219,7 +219,7 @@
                 animationBounce: 1.5,
                 icon: 'fa fa-exclamation-triangle',
                 title: 'Peringatan!',
-                content: 'Apakah anda yakin ingin menyimpan data?, satuan dan isi satuan tidak dapat diubah',
+                content: 'Apakah anda yakin ingin menyimpan data?, satuan dan isi satuan tidak dapat diubah,',
                 theme: 'disable',
                 buttons: {
                     info: {
@@ -242,7 +242,7 @@
                                   if (response.status == 'berhasil') {
                                       $.toast({
                                           heading: 'Success',
-                                          text: 'Data berhasil ditambahkan !',
+                                          text: 'Data berhasil ditambahkan!, data akan membutuhkan otorisasi terlebih dahulu',
                                           bgColor: '#00b894',
                                           textColor: 'white',
                                           loaderBg: '#55efc4',

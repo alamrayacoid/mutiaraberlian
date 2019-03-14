@@ -170,7 +170,7 @@
                     if (response.status == 'berhasil') {
                         $.toast({
                             heading: 'Success',
-                            text: 'Data berhasil disimpan !',
+                            text: 'Data berhasil disimpan!, data akan membutuhkan otorisasi terlebih dahulu',
                             bgColor: '#00b894',
                             textColor: 'white',
                             loaderBg: '#55efc4',

@@ -310,6 +310,24 @@
                 $('#address_city').select2('open');
             }
         });
+        $('#area_city').focus();
+        $('#area_city').select2('open');
+      }
+    });
+  })
+
+  // set request when address_prov changed
+  // set option list address_city
+  $('#address_prov').on('change', function() {
+    $.ajax({
+      type: 'get',
+      url: baseUrl + '/masterdatautama/agen/cities/' + $('#address_prov').val(),
+      success: function(data) {
+        $('#address_city').empty();
+        $('#address_district').empty();
+        $('#address_village').empty(); 
+        $.each(data, function(key, val) {
+          $("#address_city").append('<option value="'+ val.wc_id +'">'+ val.wc_name +'</option>');
     })
 
     // set request when address_city changed
