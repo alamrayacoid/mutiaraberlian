@@ -8,7 +8,7 @@
         <div class="card-block">
             <section>
                 <div class="row">
-                    <div class="col-md-5 col-sm-12">
+                    <div class="col-md-4 col-sm-12">
                         <div class="">
                             <table class="table table-hover table-striped display nowrap" cellspacing="0"
                                    id="table_golongan">
@@ -20,26 +20,11 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {{--<tr>--}}
-                                {{--<td>1</td>--}}
-                                {{--<td style="text-align:center">Agen</td>--}}
-                                {{--<td>--}}
-                                {{--<div class="btn-group btn-group-sm">--}}
-                                {{--<button class="btn btn-warning btn-edit-golonganharga" title="Edit"--}}
-                                {{--type="button"><i class="fa fa-pencil"></i></button>--}}
-                                {{--<button class="btn btn-danger btn-disable-golonganharga" type="button"--}}
-                                {{--title="Disable"><i class="fa fa-times-circle"></i></button>--}}
-                                {{--<button class="btn btn-primary btn-add-golonganharga" title="add"--}}
-                                {{--type="button"><i class="fa fa-arrow-right"></i>--}}
-                                {{--</button>--}}
-                                {{--</div>--}}
-                                {{--</td>--}}
-                                {{--</tr>--}}
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <fieldset class="col-md-7 col-sm-12">
+                    <fieldset class="col-md-8 col-sm-12">
                         <form method="post" id="formsetharga">{{csrf_field()}}
                             <div class="row">
                                 <div class="col-md-2">
@@ -85,6 +70,7 @@
                                         <th>Satuan</th>
                                         <th>Harga</th>
                                         <th>Jenis</th>
+                                        <th>Status</th>
                                         <th>Aksi</th>
                                     </tr>
                                     </thead>

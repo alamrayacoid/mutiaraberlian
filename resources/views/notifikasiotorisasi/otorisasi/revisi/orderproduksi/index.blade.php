@@ -1,3 +1,4 @@
+
 <div class="tab-pane fade in show animated fadeIn" id="orderproduksi">
 	<div class="card">
 		<div class="card-header bordered p-2">
@@ -14,10 +15,9 @@
 							<thead class="bg-primary">
 								<tr>
 									<th>No</th>
-									<th>Kegiatan</th>
-									<th>User</th>
-									<th>Max</th>
-									<th>Value</th>
+									<th>Tanggal</th>
+									<th>Supplier</th>
+									<th>Nota</th>
 									<th>Aksi</th>
 								</tr>
 							</thead>
@@ -31,3 +31,5 @@
 		</div>
 	</div>
 </div>
+
+

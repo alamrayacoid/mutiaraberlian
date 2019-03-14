@@ -85,6 +85,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/harga/cari-barang', 'Master\HargaController@cariBarang')->name('dataharga.caribarang');
     Route::get('/masterdatautama/harga/get-satuan/{id}', 'Master\HargaController@getSatuan')->name('dataharga.getsatuan');
     Route::post('/masterdatautama/harga/add-golongan-harga', 'Master\HargaController@addGolonganHarga')->name('dataharga.addgolonganharga');
+    Route::get('/masterdatautama/harga/get-data-need-approve', 'Master\HargaController@getDataNeddApprove')->name('dataharga.getdataneedapprove');
     Route::get('/masterdatautama/harga/get-golongan-harga/{id}', 'Master\HargaController@getGolonganHarga')->name('dataharga.getgolonganharga');
     Route::get('/masterdatautama/harga/delete-golongan-harga/{id}/{detail}', 'Master\HargaController@deleteGolonganHarga')->name('dataharga.deletegolonganharga');
     Route::post('/masterdatautama/harga/edit-golongan-harga-unit', 'Master\HargaController@editGolonganHargaUnit')->name('dataharga.editgolonganhargaunit');
@@ -147,9 +148,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/orderproduksi/cari-barang', 'ProduksiController@cariBarang')->name('order.caribarang');
     Route::get('/produksi/orderproduksi/get-satuan/{id}', 'ProduksiController@getSatuan')->name('order.getsatuan');
     Route::get('/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
-    Route::get('/produksi/orderproduksi/gethistory', 'ProduksiController@get_history')->name('order.gethistory');
-    Route::get('/produksi/orderproduksi/detail', 'ProduksiController@detail_produksi')->name('order.detail');
+    Route::get('/produksi/orderproduksi/get-order-produksi', 'ProduksiController@get_order')->name('order.getOrderProd');
+    Route::get('/produksi/orderproduksi/detailitem', 'ProduksiController@getProduksiDetailItem')->name('order.detailitem');
+    Route::get('/produksi/orderproduksi/detailtermin', 'ProduksiController@getProduksiDetailTermin')->name('order.detailtermin');
     Route::get('/produksi/orderproduksi/hapus/{id}', 'ProduksiController@delete_produksi')->name('order.delete');
+    Route::get('/produksi/orderproduksi/nota/{id}', 'ProduksiController@printNota')->name('order.nota');
 
     // Penerimaan Barang
     Route::get('/produksi/penerimaanbarang/index', 'PenerimaanProduksiController@penerimaan_barang')->name('penerimaan.index');
@@ -191,8 +194,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
     Route::get('/inventory/manajemenstok/create', 'InventoryController@manajemenstok_create')->name('manajemenstok.create');
     Route::get('/inventory/manajemenstok/edit', 'InventoryController@manajemenstok_edit')->name('manajemenstok.edit');
-    Route::get('/inventory/manajemenstok/opnamestock/index', 'InventoryController@opname_stock')->name('opname.index');
-    Route::get('/inventory/manajemenstok/opnamestock/create', 'InventoryController@opname_stock_create')->name('opname.create');
+    Route::get('/inventory/manajemenstok/opnamestock/index', 'Inventory\OpnameController@index')->name('opname.index');
+    Route::get('/inventory/manajemenstok/opnamestock/list', 'Inventory\OpnameController@getList')->name('opname.list');
+    Route::get('/inventory/manajemenstok/opnamestock/getItemAutocomplete', 'Inventory\OpnameController@getItemAutocomplete')->name('opname.getItemAutocomplete');
+    Route::get('/inventory/manajemenstok/opnamestock/getItem', 'Inventory\OpnameController@getItem')->name('opname.getItem');
+    Route::get('/inventory/manajemenstok/opnamestock/getQty', 'Inventory\OpnameController@getQty')->name('opname.getQty');
+    Route::get('/inventory/manajemenstok/opnamestock/create', 'Inventory\OpnameController@create')->name('opname.create');
+    Route::post('/inventory/manajemenstok/opnamestock/store', 'Inventory\OpnameController@store')->name('opname.store');
+    Route::get('/inventory/manajemenstok/opnamestock/edit/{id}', 'Inventory\OpnameController@edit')->name('opname.edit');
+    Route::post('/inventory/manajemenstok/opnamestock/update/{id}', 'Inventory\OpnameController@update')->name('opname.update');
+    Route::post('/inventory/manajemenstok/opnamestock/delete/{id}', 'Inventory\OpnameController@destroy')->name('opname.delete');
+    Route::get('/inventory/manajemenstok/opnamestock/print', 'Inventory\OpnameController@print_opname')->name('opname.print');
     Route::get('/inventory/manajemenstok/historyopname/index', 'InventoryController@history_opname')->name('history.index');
     Route::get('/inventory/manajemenstok/adjustmentstock/index', 'InventoryController@adjustment_index')->name('adjustment.index');
     Route::get('/inventory/manajemenstok/adjustmentstock/create', 'InventoryController@adjustment_create')->name('adjustment.create');
@@ -306,6 +318,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/notifikasiotorisasi/otorisasi/adjustment/index', 'OtorisasiController@adjustment')->name('adjustment');
         Route::get('/notifikasiotorisasi/otorisasi/revisi/index', 'OtorisasiController@revisi')->name('revisi');
 
+        //Oerder Produksi
+    Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi', 'OtorisasiController@getProduksi')->name('getproduksi');
+    Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi-detail-item', 'OtorisasiController@getProduksiDetailItem')->name('getproduksidetailitem');
+    Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi-detail-termin', 'OtorisasiController@getProduksiDetailTermin')->name('getproduksidetailtermin');
+    Route::get('/notifikasiotorisasi/otorisasi/revisi/order-produksi-agree/{id}', 'OtorisasiController@agree')->name('orderpoduksi.agree');
+    Route::get('/notifikasiotorisasi/otorisasi/revisi/order-produksi-rejected/{id}', 'OtorisasiController@rejected')->name('orderpoduksi.rejected');
+
         // End Sub Otorisasi
 
     Route::get('/notifikasiotorisasi/notifikasi/index', 'NotifikasiController@notifikasi')->name('notifikasi');
@@ -318,3 +337,62 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/getoto', 'getotorisasiController@get');
 });
 // End Route Group
+
+
+/*
+
+
+hyssshyyhdhsyysssss+++oooooooooooyy+/+//+///+:.````````./s++++++o/://:/s/+/////::::::///:/::::///++o
+-:oyyyydhsyyysssso+++ooooooooooshs////++//++-``````````.:o+++++++:::/:os///////:::::::+:::/::::////+
+hyyyyhdysyysssss++++ooosoooo+oyho////o+/++:.```````````.:o++++++/:///:ys////////:::::-+:::::::::////
+yyyyhhsyyysssso+++osoosooooooyd+///+o//+/-`````.```````.:o+++++o/:////ho//++////:::::-+::::::::-:+::
+yyyhysyyssssso+++ooossoooooshho///+o+++:.``````````````.:oo+++++:///:sh+//+s////::::::o/::::::::-/+:
+shhssyyssssso+++sooyssooooydho///oo+o/:.```````````````.:oo+++o///+//hh+//+y/////:::::o/::::::::::+/
+dyssyysssyoo+++sssysssooshddo///so+o:-`````````````````.:oo++o+//+//o+y///oy/////:::::s+/::::::::::o
+soyyysssyoo+++ssyhsssssshhss//+soo+:-``````````````````-:so++o/+++/++/s+//oh//////::::s++:::::::-::+
+oyyysssyso+++ssyhsssssyhs+s+/+soo/:.```````````````````-:so+o+++o/++::o+++oy+/////::::y/o/:::::::::-
+yyyyssyoo+++yshhssssyys+/y+/oyso/:.````````````````````-/soo+oos/++:--+o+++s+////+:::/h+++::::::/:--
+yhyyyyos++oyshhysssys+//+s/oyso/:.`````````````````````-+oo+oos+++:.``:o++++o/+/++:::+h++o///::::/--
+hyyyyos+++yyhhyssyyo++++yooyys/:.``````````````````````-oo+oss+++:.```.+++//s+++++:::sh++s////:://:-
+yyyysy+++yyhdyyyys++:-/+s+yyo//-.`````````````````````./yosyyoso/:-...`:o+::oo++++://yy++s//////://-
+yyysyo++syhdhyys+/:.`.:ooyy+::.`-.````````````````````./osys+o/-.`..---:++-//s++++//+ss++s+////////-
+yysys++shhdhyyo/:.```./ssy+::.````````````````````````-/yyyo+/.`````````./-/+so+++//o+o++so///////+-
+yysyooohhdhys/:.``````/yh/::.````````````````````````.:yhyo+:.`````````````./+soo+/+o/o++os///////+-
+yshooshhhhyo:.``````..+h/-:.`````````````````````````.ohy+/-````````````````:/o+o++o/:o++oy///////+-
+shsooyhhsy/.``````````o:.-.``````````````````````````:ys/-.`````````````````.:+s+/+::/o++oy/////+++-
+yhooyhhoo-````````````-`-.``````````````````````````.s+:.`````````.``````````-/s+/+../oo+oy+///++++:
+dsoshho:.``````````````..```````````````````````````:-.``````````````````````.:+o+-``-/soos+///o/o/:
+hoshho:.``````````````````````````````````````````````````````````````````````.:s+```.:s+ss++/+++o/+
+soyds:`````````````````````````````````````````````````````````````````````````-/:````-ooso+++o++o+y
+osdy:``````````````````````````````````````````````````````````````````````````.:``````:yso+++o++oyo
+shy/.```````````````````````````````````````````````````````````````````````````.``````.ssoo+s++sho:
+yh+:```````..-::://::----.``````````````````````````````````````````````````````````````:yo++s+sho:+
+d+:-``-/shmNNMMMMMMMNNmdyo+/-````````````````````````````......``````````````````````````+ooosyho/oo
+o:::odNMMNNmmmNmmdmmmmddNmy+.``````````````````````````-:/++++++++/:-.```````````````````-+oohho+soy
+::/oddsy+++ssmdhydhhdhydN/--```````````````````````````.+hdmNNNNNNNNNmhyo/-``````````````.oooh+ossyy
+-:/+:-./ys:::ydssosoo+/dd```````````````````````````````:o/--oddhddmNNmNNNNmy+-``````````.//sossyyss
+-::.-.`oNd++++so+//::--..`````````````````````````````````...:o/-/shmddmmmdmNNNds:``````.:/oyyyhysss
+-:-`..-:/:-.....`````````````````````````````````````````````:Nm///ohshyhddddhdmNNdo-``.:/sysoyysss+
+-:..................``````````````..`````````````````````````:ddo:::soooooshyyhdNdhNms-:+yy+:ssssso/
+:-....``....-.........```````````..```````````````````````````..--:/+ssssss+::+dm:-/ydsoo/::+sssso//
+:-......---..........````````````````````````````````````````````````.--/+++++ym/....oo-`-:/sosso//+
+:..--.--........```````````````````````````````````````````````.......````..-:+o-...-.``.:/oosso/+oo
+-..........```````````````````````````````````````````````.........`.`.````````````````.:/ooss+/+oss
+.....```````````````````````````````````````````````````````...```..````...```````````.-/ooso++ssso+
+.`.``````````````````````````````````````````````````````````````````````````....`````-/sssoossso+++
+.````````````````````````````````````````````````````````````````````````````````````-/syysyysooo+/:
+-.``````````````````````.``````````````````````````````````````````````````````````.-+yyyysoooo+/://
+s/-.````````````````````:.```````````````````````````````````````````````````````..:oyysssoo+/::/++-
+:--.`````````````````````:......-------.``````````````````````````````````````.-:/+ssssso+/://+/:--:
+:-.```````````````````````.....```````..---...`..-````````````````````````.-:/ossssso++/////+/-```.-
+/:.`````````````````````````````````````````..--.````````````````````.-:/+osssso++////++o+::/:-.----
+d/:.`````````````````````````````````````````````````````````````.-://++++++++//::::/oo/-:::.````.-:
+md/:.`````````````````````````````````````````````````````````````````````...``````./:.:///:-..-----
+mmdo:.`````````````````````````````````````````````````````````````````````````````-../-..........:+
+mNmmh/-`````````````````````````````````````````````````````````````````````````````:/-``````.:/+oo+
+hdddmmo:.`````````````````````````````````````````````````````````````````````````.+ysoo++osyys+oo+/
+dhhhhhdh+-.``````````````````````````````````````````````````````````````````````/syysooyhhyooo++//+
+yyhdddhyhy+.``````````````````````````````````````````````````````````````````.//:oyssyhysoo++///+os
+
+
+*/

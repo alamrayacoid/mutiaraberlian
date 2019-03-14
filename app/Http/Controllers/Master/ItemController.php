@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Master;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-use App\Http\Controllers\otorisasiController as otorisasi;
+use App\Http\Controllers\pushotorisasiController as otorisasi;
 use DB;
 use Session;
 use Validator;
@@ -84,14 +84,14 @@ class ItemController extends Controller
             ->addColumn('action', function ($datas) {
                 if ($datas->i_isactive == 'Y'){
                     return '<center><div class="btn-group btn-group-sm">
-                            <button class="btn btn-info btn-xs detail hint--bottom-left hint--info" onclick="DetailDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
-                            <button class="btn btn-warning hint--bottom-left hint--warning" onclick="EditDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
-                            <button class="btn btn-danger hint--bottom-left hint--error" onclick="DeleteDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" data-original-title="Hapus" aria-label="Nonaktifkan"><i class="fa fa-close"></i></button>
+                            <button class="btn btn-info btn-xs detail hint--top hint--info" onclick="DetailDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
+                            <button class="btn btn-warning hint--top hint--warning" onclick="EditDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-danger hint--top hint--error" onclick="DeleteDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" data-original-title="Hapus" aria-label="Nonaktifkan"><i class="fa fa-close"></i></button>
                             </div></center>';
                 } else {
                     return '<center><div class="btn-group btn-group-sm">
-                            <button class="btn btn-info btn-xs detail hint--bottom-left hint--info" onclick="DetailDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
-                            <button class="btn btn-primary hint--bottom-left hint--error" onclick="ActiveDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" data-original-title="Aktif" aria-label="Aktifkan"><i class="fa fa-check"></i></button>
+                            <button class="btn btn-info btn-xs detail hint--top hint--info" onclick="DetailDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
+                            <button class="btn btn-primary hint--top hint--error" onclick="ActiveDataproduk(' . $datas->i_id . ')" rel="tooltip" data-placement="top" data-original-title="Aktif" aria-label="Aktifkan"><i class="fa fa-check"></i></button>
                             </div></center>';
                 }
 
@@ -301,6 +301,8 @@ class ItemController extends Controller
                   ]);
         }
 
+        otorisasi::otorisasiup();
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -332,6 +334,8 @@ class ItemController extends Controller
                     'ia_update_at' => Carbon::now(),
                 ]);
 
+                otorisasi::otorisasiup();
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -356,6 +360,8 @@ class ItemController extends Controller
                     'ia_isactive' => "Y",
                     'ia_update_at' => Carbon::now(),
                 ]);
+
+                otorisasi::otorisasiup();
 
             DB::commit();
             return response()->json([

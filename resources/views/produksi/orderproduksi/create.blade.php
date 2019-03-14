@@ -101,7 +101,7 @@
                                                         <td>
                                                             <input type="text"
                                                                    name="barang[]"
-                                                                   class="form-control form-control-sm barang">
+                                                                   class="form-control form-control-sm barang" autocomplete="off">
                                                             <input type="hidden" name="idItem[]" class="itemid">
                                                             <input type="hidden" name="kode[]" class="kode">
                                                         </td>
@@ -345,11 +345,10 @@
                     loadingShow();
                     var data = $('#form').serialize();
                     axios.post(baseUrl+'/produksi/orderproduksi/create', data).then(function (response){
-
                         if(response.data.status == 'Success'){
                             loadingHide();
                             messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
-                            location.reload();
+                            setInterval(function(){location.reload();}, 3500)
                         }else{
                             loadingHide();
                             messageFailed("Gagal", "Data Order Produksi Gagal Disimpan");
@@ -450,7 +449,7 @@
         function tambah() {
             var row = '';
             row = '<tr>' +
-                '<td><input type="text" name="barang[]" class="form-control form-control-sm barang"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"></td>'+
+                '<td><input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"></td>'+
                 '<td>'+
                 '<select name="satuan[]" class="form-control form-control-sm select2 satuan">'+
                 '</select>'+

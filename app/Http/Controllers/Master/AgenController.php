@@ -196,18 +196,24 @@ class AgenController extends Controller
      */
     public function getList()
     {
-      $datas = DB::table('m_agen')->orderBy('a_code', 'asc')->get();
+      $datas = DB::table('m_agen')
+        ->join('m_wil_kota', 'a_area', 'wc_id')
+        ->orderBy('a_code', 'asc')
+        ->get();
       return Datatables::of($datas)
         ->addIndexColumn()
+        ->addColumn('area', function($datas) {
+          return $datas->wc_name;
+        })
         ->addColumn('action', function($datas) {
           if ($datas->a_isactive == 'Y') {
             return '<div class="btn-group btn-group-sm">
-            <button class="btn btn-warning hint--bottom-left hint--warning" onclick="EditAgen('.$datas->a_id.')" rel="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
-            <button class="btn btn-danger hint--bottom-left hint--error" onclick="DisableAgen('.$datas->a_id.')" rel="tooltip" data-placement="top" aria-label="Nonaktifkan data"><i class="fa fa-times-circle"></i></button>
+            <button class="btn btn-warning hint--top hint--warning" onclick="EditAgen('.$datas->a_id.')" rel="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
+            <button class="btn btn-danger hint--top hint--error" onclick="DisableAgen('.$datas->a_id.')" rel="tooltip" data-placement="top" aria-label="Nonaktifkan data"><i class="fa fa-times-circle"></i></button>
             </div>';
           } elseif ($datas->a_isactive == 'N') {
             return '<div class="btn-group btn-group-sm">
-            <button class="btn btn-success btn-enable hint--bottom-left hint--error" onclick="EnableAgen('.$datas->a_id.')" rel="tooltip" data-placement="top" aria-label="Aktifkan data"><i class="fa fa-check-circle"></i></button>
+            <button class="btn btn-success btn-enable hint--top hint--error" onclick="EnableAgen('.$datas->a_id.')" rel="tooltip" data-placement="top" aria-label="Aktifkan data"><i class="fa fa-check-circle"></i></button>
             </div>';
           }
         })

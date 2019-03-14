@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div id="detailOrderProduksi" class="modal fade animated fadeIn" role="dialog">
+<div id="dtlordprod" class="modal fade animated fadeIn" role="dialog">
     <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
@@ -11,7 +11,7 @@
             <div class="modal-body">
                 <div class="table-responsive">
                     <div class="col-md-12">
-                        <table class="table table-striped data-table table-hover" cellspacing="0" id="tbl_dtlitem">
+                        <table class="table table-striped data-table table-hover" cellspacing="0" id="tbl_dtlprod">
                             <thead class="bg-primary">
                             <tr>
                                 <th width="30%">Nama Barang</th>
@@ -37,7 +37,7 @@
                             <h4 class="modal-title">Termin Pembayaran</h4>
                         </div>
 
-                        <table class="table table-striped data-table table-hover" cellspacing="0" id="tbl_dtltermin">
+                        <table class="table table-striped data-table table-hover" cellspacing="0" id="tbl_dtlprodtermin">
                             <thead class="bg-primary">
                             <tr>
                                 <th width="10%">Termin</th>
