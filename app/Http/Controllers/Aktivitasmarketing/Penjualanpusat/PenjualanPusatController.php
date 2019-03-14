@@ -102,33 +102,35 @@ class PenjualanPusatController extends Controller
             $getIdMax = DB::table('d_salestarget')->max('st_id');
             $stId    = $getIdMax + 1;
         }
-
-		$query1 = DB::table('d_salestarget')
-		    ->where('st_comp', '=', $data['t_comp'])
-		    ->where('st_periode', '=', Carbon::createFromFormat('d/m/Y', $data['t_periode'])->format('Y-m-d'))
-		    ->first();
-
-        // DB::beginTransaction();
-        // try{
+        $periode = Carbon::createFromFormat('d/m/Y', $data['t_periode']);
+        DB::beginTransaction();
+        try{
 			
 			$stDetail = 0;
 			for ($i=0; $i < count($data['idItem']); $i++) {
-				if ($query1) {
+				$query1 = DB::table('d_salestarget')
+				    ->where('st_comp', '=', $data['t_comp'][0])
+				    ->whereMonth('st_periode', '=', $periode->month)
+				    ->first();
+				    
+				if ($query1 != null) {
 		            $detail = DB::table('d_salestargetdt')
 		                    ->where('std_salestarget', '=', $query1->st_id)
 		                    ->max('std_detailid');
-					$stDetail = $detail;
+
+					$stDetail = $detail + 1;
 					DB::table('d_salestargetdt')->insert([
 						'std_salestarget' => $query1->st_id,
-						'std_detailid'    => ++$stDetail,
+						'std_detailid'    => $stDetail,
 						'std_item'        => $data['idItem'][$i],
 						'std_qty'         => $data['t_qty'][$i],
 						'std_unit'        => $data['t_unit'][$i]
 					]);
 				} else {
+
 					DB::table('d_salestarget')->insert([
 						'st_id'      => $stId,
-						'st_comp'    => $data['t_comp'][$i],
+						'st_comp'    => $data['t_comp'][0],
 						'st_periode' => Carbon::createFromFormat('d/m/Y', $data['t_periode'])->format('Y-m-d')
 					]);
 					DB::table('d_salestargetdt')->insert([
@@ -139,19 +141,18 @@ class PenjualanPusatController extends Controller
 						'std_unit'        => $data['t_unit'][$i]
 					]);
 				}
-			}			
-        
-        //     DB::commit();
-        //     return response()->json([
-        //       'status' => 'sukses'
-        //     ]);
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return response()->json([
-        //       'status'  => 'Gagal',
-        //       'message' => $e
-        //     ]);
-        // }
+			}
+            DB::commit();
+            return response()->json([
+              'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+              'status'  => 'Gagal',
+              'message' => $e
+            ]);
+        }
 
     }
 }
