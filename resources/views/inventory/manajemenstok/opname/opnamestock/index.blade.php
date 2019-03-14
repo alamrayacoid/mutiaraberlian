@@ -19,8 +19,8 @@
 								<th>Tanggal</th>
 								<th>Reff</th>
 								<th>Nama Barang</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
+                <th>Status</th>
+                <th>Aksi</th>
 							</tr>
 						</thead>
 						<tbody>

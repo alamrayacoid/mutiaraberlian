@@ -145,6 +145,19 @@
 			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
 		});
 	}
+	// function to view detail
+	function Detail(idx)
+	{
+		$.ajax({
+			url: baseUrl + "/inventory/manajemenstok/opnamestock/show/" + idx,
+			type: 'get',
+			success: function(response) {
+				$('#table_detail tbody').empty();
+				$('#table_detail > tbody:last-child').append('<tr><td>'+ response.get_item.i_name +'</td><td>'+ response.get_owner.c_name +'</td><td>'+ response.get_position.c_name +'</td><td>'+ response.get_unit_system.u_name +'</td><td>'+ response.oa_qtysystem +'</td><td>'+ response.get_unit_real.u_name +'</td><td>'+ response.oa_qtyreal +'</td></tr>');
+				$('#detail').modal('show');
+			}
+		})
+	}
 	// function to redirect page to edit page
 	function Edit(idx)
 	{
