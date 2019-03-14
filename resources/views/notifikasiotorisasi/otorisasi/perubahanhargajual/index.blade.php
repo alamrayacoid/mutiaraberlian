@@ -87,9 +87,8 @@
 
 @section('extra_script')
 <script type="text/javascript">
+    var table1, table2;
 	$(document).ready(function(){
-		var table1, table2;
-
         table1 = $('#table_otorisasi').DataTable({
             responsive: true,
             // language: dataTableLanguage,
@@ -135,17 +134,17 @@
                     btnClass: 'btn-blue',
                     text: 'Ya',
                     action: function () {
-                        /*axios.get(baseUrl+'/produksi/orderproduksi/hapus'+'/'+id).then(function(response) {
+                        axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/perubahanhargajual/approve'+'/'+id+'/'+detailid).then(function(response) {
                             loadingShow();
-                            if(response.data.status == 'Success'){
+                            if(response.data.status == 'sukses'){
                                 loadingHide();
                                 messageSuccess("Berhasil", "Data Order Produksi Berhasil Dihapus");
-                                TableIndex();
+                                table1.ajax.reload();
                             }else{
                                 loadingHide();
                                 messageFailed("Gagal", "Data Order Produksi Gagal Dihapus");
                             }
-                        })*/
+                        })
                     }
                 },
                 cancel: {

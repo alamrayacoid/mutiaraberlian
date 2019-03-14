@@ -2,7 +2,7 @@
 
 @section('content')
 
-
+    @include('produksi.penerimaanbarang.detail')
 
 <article class="content animated fadeInLeft">
 
@@ -67,7 +67,7 @@
         table = $('#table_penerimaan').DataTable({
             responsive: true,
             // language: dataTableLanguage,
-            // processing: true,
+            processing: true,
             serverSide: true,
             ajax: {
                 url: "{{ url('produksi/penerimaanbarang/getnotapo') }}",
@@ -78,10 +78,10 @@
             },
             columns: [
                 {data: 'DT_RowIndex'},
-                {data: 'po_nota', name: 'po_nota'},
-                {data: 's_name', name: 's_name'},
-                {data: 'po_date', name: 'po_date'},
-                {data: 'action', name: 'action'}
+                {data: 'nota'},
+                {data: 'supplier'},
+                {data: 'tanggal'},
+                {data: 'action'}
             ],
             pageLength: 10,
             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
@@ -140,5 +140,100 @@
 		// 	table.row($(a).parents('tr')).remove().draw();
 		// }
 	});
+
+    function detail(id) {
+        if ($.fn.DataTable.isDataTable("#tbl_dtlitem") && $.fn.DataTable.isDataTable("#tbl_dtltermin")) {
+            $('#tbl_dtlitem').DataTable().clear().destroy();
+            $('#tbl_dtltermin').DataTable().clear().destroy();
+        }
+
+        $('#tbl_dtlitem').DataTable({
+            "paging":   false,
+            "ordering": false,
+            "info":     false,
+            "searching":     false,
+            responsive: true,
+            autoWidth: false,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('penerimaan.detailitem') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "id": id
+                }
+            },
+            columns: [
+                {data: 'item'},
+                {data: 'unit'},
+                {data: 'qty'},
+                {data: 'value'},
+                {data: 'totalnet'}
+            ],
+            drawCallback: function( settings ) {
+                hitungTotalNet();
+            }
+        });
+
+        $('#tbl_dtltermin').DataTable({
+            "paging":   false,
+            "ordering": false,
+            "info":     false,
+            "searching":     false,
+            responsive: true,
+            autoWidth: false,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('penerimaan.detailtermin') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "id": id
+                }
+            },
+            columns: [
+                {data: 'termin'},
+                {data: 'date'},
+                {data: 'value'}
+            ],
+            drawCallback: function( settings ) {
+                hitungTotalTermin();
+            }
+        });
+
+        $('#detailOrderProduksi').modal('show');
+    }
+
+    function terima(id) {
+
+    }
+
+    function hitungTotalNet() {
+        var inpTotNet = document.getElementsByClassName( 'totalnet' ),
+            totNet  = [].map.call(inpTotNet, function( input ) {
+                return parseInt(input.value);
+            });
+
+        var total = 0;
+        for (var i =0; i < totNet.length; i++) {
+            total += parseInt(totNet[i]);
+        }
+
+        $("#totNet").html(convertToRupiah(total));
+    }
+
+    function hitungTotalTermin() {
+        var inpTotTermin = document.getElementsByClassName( 'totaltermin' ),
+            totTermin  = [].map.call(inpTotTermin, function( input ) {
+                return parseInt(input.value);
+            });
+
+        var total = 0;
+        for (var i =0; i < totTermin.length; i++) {
+            total += parseInt(totTermin[i]);
+        }
+
+        $("#totTermin").html(convertToRupiah(total));
+    }
 </script>
 @endsection

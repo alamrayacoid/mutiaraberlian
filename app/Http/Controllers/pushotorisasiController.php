@@ -8,8 +8,10 @@ use DB;
 
 class pushotorisasiController extends Controller
 {
-    static function otorisasiup()
+    static function otorisasiup($table, $menu, $url)
     {
+        $data = array('table' => $table, 'menu' => $menu, 'url' => $url );
+
         $options = array(
             'cluster' => env('PUSHER_APP_CLUSTER'),
             'useTLS' => true
@@ -20,6 +22,6 @@ class pushotorisasiController extends Controller
             env('PUSHER_APP_ID'),
             $options
         );
-        $pusher->trigger('my-channel', 'my-event', true);
+        $pusher->trigger('my-channel', 'my-event', $data);
     }
 }

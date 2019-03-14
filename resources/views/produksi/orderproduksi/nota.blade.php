@@ -594,7 +594,7 @@ table.border-none > tbody > tr > td{
 
         var total = 0;
         for (var i =0; i < totNet.length; i++) {
-            total += parseInt(totNet);
+            total += parseInt(totNet[i]);
         }
 
         $("#totalnet").html(convertToCurrency(total));
@@ -608,7 +608,7 @@ table.border-none > tbody > tr > td{
 
         var total = 0;
         for (var i =0; i < totTermin.length; i++) {
-            total += parseInt(totTermin);
+            total += parseInt(totTermin[i]);
         }
 
         $("#totaltermin").html(convertToCurrency(total));
