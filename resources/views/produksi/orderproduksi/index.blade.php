@@ -225,8 +225,8 @@
 		});		
 	}
 
-	$('#table_order tbody').on('click', '.btn-nota', function(){
-		window.open('{{route('order.nota')}}', '_blank');
-	})
+	function printNota(id) {
+        window.open('{{url('/produksi/orderproduksi/nota/')}}'+'/'+id, '_blank');
+    }
 </script>
 @endsection
