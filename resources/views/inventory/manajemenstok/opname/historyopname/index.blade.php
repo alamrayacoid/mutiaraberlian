@@ -15,20 +15,18 @@
 					<div class="col-md-2 col-sm-6 col-xs-12">
 					<label>Tanggal Awal</label>
 					</div>
-
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" id="rekrut_from" name="">
+						<input type="text" class="form-control form-control-sm datepicker" id="date_from" name="date_from">
 					</div>
 					</div>
 
 					<div class="col-md-2 col-sm-6 col-xs-12">
 					<label>Tanggal Akhir</label>
 					</div>
-
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" id="rekrut_to" name="">
+						<input type="text" class="form-control form-control-sm datepicker" id="date_to" name="date_to">
 					</div>
 					</div>
 
@@ -46,17 +44,9 @@
 								<th>Tanggal</th>
 								<th>Reff</th>
 								<th>Nama Barang</th>
-                                <th>Status</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>07/09/2019</td>
-								<td>-</td>
-                                <td>Obat</td>
-								<td><button class="btn btn-primary status-reject">Pending</button></td>
-							</tr>
 						</tbody>
 					</table>
 				</div>
