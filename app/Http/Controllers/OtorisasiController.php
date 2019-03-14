@@ -253,6 +253,56 @@ class OtorisasiController extends Controller
 
     public function approvePerubahanHarga($id, $detail)
     {
+        $id = decrypt($id);
+        $detail = decrypt($detail);
 
+        DB::beginTransaction();
+        try {
+            $data = DB::table('d_priceclassauthdt')
+                ->where('pcad_classprice', '=', $id)
+                ->where('pcad_detailid', '=', $detail)
+                ->first();
+
+            if ($data == null) {
+                return response()->json([
+                    'status' => 'gagal'
+                ]);
+            }
+
+            $max = DB::table('m_priceclassdt')
+                ->where('pcd_classprice', '=', $data->pcad_classprice)
+                ->max('pcd_detailid');
+
+            ++$max;
+
+            DB::table('m_priceclassdt')
+                ->insert([
+                    'pcd_classprice' => $data->pcad_classprice,
+                    'pcd_detailid' => $max,
+                    'pcd_item' => $data->pcad_item,
+                    'pcd_unit' => $data->pcad_unit,
+                    'pcd_type' => $data->pcad_type,
+                    'pcd_payment' => $data->pcad_payment,
+                    'pcd_rangeqtystart' => $data->pcad_rangeqtystart,
+                    'pcd_rangeqtyend' => $data->pcad_rangeqtyend,
+                    'pcd_price' => $data->pcad_price,
+                    'pcd_user' => $data->pcad_user
+                ]);
+
+            DB::table('d_priceclassauthdt')
+                ->where('pcad_classprice', '=', $id)
+                ->where('pcad_detailid', '=', $detail)
+                ->delete();
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e
+            ]);
+        }
     }
 }
