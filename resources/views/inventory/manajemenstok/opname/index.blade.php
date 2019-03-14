@@ -48,72 +48,14 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
+		cur_date = new Date();
+		first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+		last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+		$('#date_from').datepicker('setDate', first_day);
+		$('#date_to').datepicker('setDate', last_day);
+
 		TableOpnameStock();
-		// var table_sup = $('#table_opnamestock').DataTable();
-		var table_bar= $('#table_historyopname').DataTable();
-
-		$('#table_opnamestock tbody').on('click', '.btn-print', function(){
-			window.open('{{route('opname.print')}}', '_blank');
-		});
-
-		$(document).on('click', '.btn-rejected', function(){
-			var ini = $(this);
-			$.confirm({
-				animation: 'RotateY',
-				closeAnimation: 'scale',
-				animationBounce: 1.5,
-				icon: 'fa fa-exclamation-triangle',
-				title: 'Peringatan!',
-				content: 'Apa anda yakin?',
-				theme: 'disable',
-			    buttons: {
-			        info: {
-						btnClass: 'btn-blue',
-			        	text:'Ya',
-			        	action : function(){
-							$.toast({
-								heading: 'Information',
-								text: 'Promosi Ditolak.',
-								bgColor: '#0984e3',
-								textColor: 'white',
-								loaderBg: '#fdcb6e',
-								icon: 'info'
-							})
-					        ini.parents('.btn-group').html('<button class="btn btn-danger btn-sm btn-cancel-reject">Batalkan Penelokan</button>');
-				        }
-			        },
-			        cancel:{
-			        	text: 'Tidak',
-					    action: function () {
-    			            // tutup confirm
-    			        }
-    			    }
-			    }
-			});
-		});
-
-		$(document).on('click', '.btn-cancel-reject', function(){
-			$(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>'+
-			'<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
-		})
-
-		$(document).on('click', '.btn-approval', function(){
-			$.toast({
-				heading: 'Information',
-				text: 'Promosi Diterima.',
-				bgColor: '#0984e3',
-				textColor: 'white',
-				loaderBg: '#fdcb6e',
-				icon: 'info'
-			})
-			$(this).parents('.btn-group').html('<button class="btn btn-primary btn-sm btn-cancel-approve">Batalkan Penerimaan</button>')
-		})
-
-		$(document).on('click', '.btn-cancel-approve', function(){
-			$(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>'+
-			'<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
-		})
-
+		TableOpnameHistory();
 
 	});
 
@@ -136,7 +78,7 @@
 			columns: [
 				{data: 'DT_RowIndex'},
 				{data: 'oa_date'},
-				{data: 'oa_date'},
+				{data: 'oa_nota'},
 				{data: 'name'},
 				{data: 'status'},
 				{data: 'action', name: 'action'}
@@ -204,6 +146,41 @@
 					}
 				}
 			}
+		});
+	}
+
+	$('#date_from').on('change', function() {
+		TableOpnameHistory();
+	})
+	$('#date_to').on('change', function() {
+		TableOpnameHistory();
+	})
+
+	var tb_opnamehistory;
+	// function to retrieve DataTable server side
+	function TableOpnameHistory()
+	{
+		$('#table_historyopname').dataTable().fnDestroy();
+		tb_opnamehistory = $('#table_historyopname').DataTable({
+			responsive: true,
+			serverSide: true,
+			ajax: {
+				url: "{{ route('history.list') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}",
+					"date_from" : $('#date_from').val(),
+					"date_to" : $('#date_to').val()
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'oa_date'},
+				{data: 'oa_nota'},
+				{data: 'name'}
+			],
+			pageLength: 10,
+			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
 		});
 	}
 </script>
