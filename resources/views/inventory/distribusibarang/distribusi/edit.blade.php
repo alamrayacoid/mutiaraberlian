@@ -5,12 +5,12 @@
     <article class="content animated fadeInLeft">
 
         <div class="title-block text-primary">
-            <h1 class="title"> Tambah Data Distribusi Barang </h1>
+            <h1 class="title"> Edit Data Distribusi Barang </h1>
             <p class="title-description">
                 <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
                 / <span>Aktivitas Inventory</span>
                 / <a href="{{route('mngagen.index')}}"><span>Pengelolaan Distribusi Barang</span></a>
-                / <span class="text-primary" style="font-weight: bold;"> Tambah Data Distribusi Barang</span>
+                / <span class="text-primary" style="font-weight: bold;"> Edit Data Distribusi Barang</span>
             </p>
         </div>
 
@@ -24,7 +24,7 @@
 
                         <div class="card-header bordered p-2">
                             <div class="header-block">
-                                <h3 class="title"> Tambah Data Distribusi Barang</h3>
+                                <h3 class="title"> Edit Data Distribusi Barang</h3>
                             </div>
                             <div class="header-block pull-right">
                                 <a href="{{route('distribusibarang.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
@@ -49,8 +49,8 @@
                                             </select>
                                         </div>
                                     </div>
-                                    @include('inventory.distribusibarang.distribusi.agen')
-                                    @include('inventory.distribusibarang.distribusi.cabang')
+                                    @include('inventory.distribusibarang.distribusi.edit-agen')
+                                    @include('inventory.distribusibarang.distribusi.edit-cabang')
                                 </div>
                             </section>
                         </div>

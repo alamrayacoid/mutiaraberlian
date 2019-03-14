@@ -12,7 +12,7 @@
 		<div class="card-block">
 			<section>
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_manajemen">
+                    <table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_distribusi">
                         <thead class="bg-primary">
                             <tr>
                                 <th>No</th>
@@ -34,9 +34,9 @@
                                 <td>Pending</td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-primary btn-modal-detail"><i class="fa fa-folder"></i></button>
-                                        <button class="btn btn-warning btn-edit-manajemen" onclick="window.location.href='#'" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-                                        <button class="btn btn-danger btn-disable-manajemen" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
+                                        <button class="btn btn-primary btn-modal-detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
+                                        <button class="btn btn-warning btn-edit-distribusi" onclick="window.location.href='{{ route('distribusibarang.edit') }}'" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
+                                        <button class="btn btn-danger btn-disable-distribusi" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
                                     </div>
                                 </td>
                             </tr>

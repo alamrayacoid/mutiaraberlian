@@ -58,7 +58,7 @@ class InventoryController extends Controller
 
     public function distribusibarang_edit()
     {
-        return view('inventory/distribusibarang/edit');
+        return view('inventory/distribusibarang/distribusi/edit');
     }
     // MANAJEMEN STOK
 
