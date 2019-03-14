@@ -2,459 +2,764 @@
 
 @section('content')
 
-<article class="content animated fadeInLeft">
+    <article class="content animated fadeInLeft">
 
-  <div class="title-block text-primary">
-      <h1 class="title"> Edit Order Produksi </h1>
-      <p class="title-description">
-        <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
-         / <span>Aktivitas Produksi</span>
-         / <a href="{{route('order.index')}}"><span>Order Produksi</span></a>
-         / <span class="text-primary" style="font-weight: bold;"> Edit Order Produksi</span>
-       </p>
-  </div>
-
-  <section class="section">
-
-    <div class="row">
-
-      <div class="col-12">
-        
-        <div class="card">
-
-          <div class="card-header bordered p-2">
-            <div class="header-block">
-              <h3 class="title"> Edit Order Produksi </h3>
-            </div>
-            <div class="header-block pull-right">
-              <a href="{{route('order.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
-            </div>
-          </div>
-
-          <div class="card-block">
-            <section>
-              
-              <div class="row">
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                  <label>Nota</label>
-                </div> 
-                <div class="col-md-9 col-sm-6 col-xs-12">
-                  <div class="form-group">
-                  <input type="text" class="form-control form-control-sm" name="" value="{{ $dataEdit->po_nota }}" readonly>
-                  </div>
-                </div>
-
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                  <label>Suplier</label>
-                </div> 
-                <div class="col-md-9 col-sm-6 col-xs-12">
-                  <div class="form-group">
-                    <input type="hidden" id="supplier" value="{{ $dataEdit->s_id }}">
-                    <input type="text" class="form-control form-control-sm" name="" value="{{ $dataEdit->s_company }}" readonly>
-                  </div>
-                </div>
-
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                  <label>Total Tagihan</label>
-                </div> 
-                <div class="col-md-9 col-sm-6 col-xs-12">
-                  <div class="form-group">
-                    <input type="text" class="form-control form-control-sm" name="" value="{{ $dataEdit->po_totalnet }}" readonly>
-                  </div>
-                </div>
-
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                  <label>Total Bayar</label>
-                </div> 
-                <div class="col-md-9 col-sm-6 col-xs-12">
-                  <div class="form-group">
-                    <input type="text" class="form-control form-control-sm" name="" value="0" readonly>
-                  </div>
-                </div>           
-
-                <div class="table-responsive">
-                  <table class="table table-striped table-hover" cellspacing="0" id="table_order">
-                      <thead class="bg-primary">
-                        <tr>
-                            <th>Kode Barang/Nama Barang</th>
-                            <th width="10%">Satuan</th>
-                            <th width="10%">Jumlah</th>
-                            <th>Harga</th>
-                            <th>Sub Total</th>
-                            <th>Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @for($i = 0; $i < count($dataEditDT); $i++)
-                          <tr>
-                            <td>
-                              <input type="hidden" name="itemid[]" id="itemid{{$i}}" class="itemid" value="{{$dataEditDT[$i]->i_id}}">
-                              <input type="text" class="form-control form-control-sm" value="{{$dataEditDT[$i]->i_code.' - '.$dataEditDT[$i]->i_name}}">
-                            </td>
-                            <td>
-                              <input type="hidden" name="idUnit[]" id="idUnit{{$i}}" value="{{$dataEditDT[$i]->u_id}}">
-                              <input type="text" class="form-control form-control-sm" value="{{$dataEditDT[$i]->u_name}}">
-                            </td>
-                            <td>
-                              <input type="number" class="form-control form-control-sm" name="jumlah[]" value="{{$dataEditDT[$i]->pod_qty}}">
-                            </td>
-                            <td>
-                              <input type="text" class="form-control form-control-sm input-rupiah" value="Rp. {{ number_format(intval($dataEditDT[$i]->pod_value), 0,",",".") }}">
-                            </td>
-                            <td>
-                              <input type="text" class="form-control form-control-sm input-rupiah" value="Rp. {{ number_format((intval($dataEditDT[$i]->pod_value) * intval($dataEditDT[$i]->pod_qty)), 0,",",".") }}" readonly>
-                            </td>
-                            <td>
-                              @if($i == 0)
-                              <button class="btn btn-success btn-tambah btn-sm" type="button">
-                                <i class="fa fa-plus" aria-hidden="true"></i>
-                              </button>
-                              @else
-                              <button class="btn btn-danger btn-hapus btn-sm" type="button">
-                                <i class="fa fa-trash-o"></i>
-                              </button>
-                              @endif
-                            </td>
-                          </tr>
-                        @endfor
-                      </tbody>
-                  </table>
-                </div>
-
-                <div class="table-responsive">
-                  <table class="table table-striped table-hover" cellspacing="0" id="table_order_termin">
-                      <thead class="bg-primary">
-                          <tr>
-                            <th>Termin</th>
-                            <th>Estimasi Pembayaran</th>
-                            <th>Nominal</th>
-                            <th>Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @for($i = 0; $i < count($dataEditPmt); $i++)
-                        <tr>
-                          <td>
-                            <input type="text" name="termin[]" class="form-control form-control-sm termin" value="{{$i+1}}" readonly>
-                          </td>
-                          <td>
-                            <input type="text" name="estimasi[]" class="form-control form-control-sm datepicker estimasi"  value="{{ date_format(strtotime($dataEditPmt[$i]->pop_datetop), "d-m-Y") }}" autocomplete="off">
-                          </td>
-                          <td>
-                              <input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah nominal" value="Rp. {{ number_format($dataEditPmt[$i]->pop_value, 0, ',', '.') }}">
-                          </td>
-                          <td>
-                              <button class="btn btn-success btn-tambah-termin btn-sm" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                          </td>
-                        </tr>
-                        @endfor
-                      </tbody>
-                  </table>
-                </div>
-
-              </div>
-            
-            </section>
-          </div>
-
-          <div class="card-footer text-right">
-            <button class="btn btn-primary btn-submit" type="button">Simpan</button>
-            <a href="{{route('order.index')}}" class="btn btn-secondary">Kembali</a>
-          </div>
+        <div class="title-block text-primary">
+            <h1 class="title"> Edit Order Produksi </h1>
+            <p class="title-description">
+                <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
+                / <span>Aktivitas Produksi</span>
+                / <a href="{{route('order.index')}}"><span>Order Produksi</span></a>
+                / <span class="text-primary" style="font-weight: bold;"> Edit Order Produksi</span>
+            </p>
         </div>
-      </div>
-    </div>
-  </section>
-</article>
+
+        <section class="section">
+
+            <div class="row">
+
+                <div class="col-12">
+
+                    <div class="card">
+
+                        <div class="card-header bordered p-2">
+                            <div class="header-block">
+                                <h3 class="title">Edit Order Produksi</h3>
+                            </div>
+                            <div class="header-block pull-right">
+                                <a href="{{route('order.index')}}" class="btn btn-secondary"><i
+                                        class="fa fa-arrow-left"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="card-block">
+                            <form id="form">
+                                {{csrf_field()}}
+                                <section>
+
+                                    <div class="row">
+                                        <input type="hidden" name="orderId" value="{{ $oid }}">
+                                        <div class="col-md-3 col-sm-6 col-xs-12">
+                                            <label>Tanggal</label>
+                                        </div>
+
+                                        <div class="col-md-9 col-sm-6 col-xs-12">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i
+                                                        class="fa fa-calendar" aria-hidden="true"></i></span>
+                                                </div>
+                                                <input type="text" name="po_date"
+                                                       class="form-control form-control-sm datepicker" autocomplete="off" id="tanggal"
+                                                       value="{{ date('d-m-Y', strtotime($dataEdit->po_date)) }}" readonly>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3 col-sm-6 col-xs-12">
+                                            <label>Supplier</label>
+                                        </div>
+
+                                        <div class="col-md-9 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <input type="hidden" id="sup" name="sup" value="{{ $dataEdit->po_supplier }}">
+                                                <select name="supplier" id="supplier"
+                                                        class="form-control form-control-sm select2" disabled>
+                                                    <option value="" disabled selected>== Pilih Supplier ==</option>
+                                                    @foreach($suppliers as $supplier)
+                                                        <option value="{{$supplier->s_id}}" @if($supplier->s_id == $dataEdit->po_supplier) selected @endif>{{$supplier->s_company}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3 col-sm-6 col-xs-12">
+                                            <label>Total Harga</label>
+                                        </div>
+
+                                        <div class="col-md-9 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="total_harga" id="total_harga" readonly>
+                                                <input type="hidden" name="tot_hrg" id="tot_hrg">
+                                            </div>
+                                        </div>
+                                        <div class="container">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-hover" cellspacing="0"
+                                                       id="table_order">
+                                                    <thead class="bg-primary">
+                                                    <tr>
+                                                        <th>Kode Barang/Nama Barang</th>
+                                                        <th width="10%">Satuan</th>
+                                                        <th width="10%">Jumlah</th>
+                                                        <th>Harga @satuan</th>
+                                                        <th>Sub Total</th>
+                                                        <th>Aksi</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    @foreach($dataEditDT as $key => $data)
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text"
+                                                                   name="barang[]"
+                                                                   class="form-control form-control-sm barang" autocomplete="off" value="{{ $data->i_name }}">
+                                                            <input type="hidden" name="idItem[]" class="itemid" value="{{ $data->pod_item }}">
+                                                            <input type="hidden" name="kode[]" class="kode" value="{{ $data->i_code }}">
+                                                        </td>
+                                                        <td>
+                                                            <select name="satuan[]"
+                                                                    class="form-control form-control-sm select2 satuan">
+                                                                <option value="{{ $data->id1 }}" @if($data->pod_unit == $data->id1) selected @endif>{{ $data->unit1 }}</option>
+                                                                <option value="{{ $data->id2 }}" @if($data->pod_unit == $data->id2) selected @endif>{{ $data->unit2 }}</option>
+                                                                <option value="{{ $data->id3 }}" @if($data->pod_unit == $data->id3) selected @endif>{{ $data->unit3 }}</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number"
+                                                                   name="jumlah[]"
+                                                                   min="0"
+                                                                   class="form-control form-control-sm jumlah"
+                                                                   value="{{ $data->pod_qty }}">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text"
+                                                                   name="harga[]"
+                                                                   class="form-control form-control-sm input-rupiah harga"
+                                                                   value="Rp. {{ Currency::addCurrency($data->pod_value) }}"
+                                                                   autocomplete="off">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text"
+                                                                   name="subtotal[]"
+                                                                   style="text-align: right;"
+                                                                   class="form-control form-control-sm subtotal"
+                                                                   readonly value="Rp. {{ Currency::addCurrency($data->pod_totalnet) }}">
+                                                            <input type="hidden" name="sbtotal[]" class="sbtotal" value="{{ number_format($data->pod_totalnet,0,'','') }}">
+                                                        </td>
+                                                        <td>
+                                                            @if($key == 0)
+                                                            <button class="btn btn-success btn-tambah btn-sm"
+                                                                    type="button">
+                                                                <i class="fa fa-plus" aria-hidden="true"></i>
+                                                            </button>
+                                                            @else
+                                                                <button class="btn btn-danger btn-hapus-1 btn-sm" data-id="{{ $oid }}" data-detail="{{ Crypt::encrypt($data->pod_detailid) }}" data-item="{{ Crypt::encrypt($data->pod_item) }}" type="button">
+                                                                    <i class="fa fa-remove" aria-hidden="true"></i>
+                                                                </button>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <span><strong>NB: </strong> Jika barang tidak ditemukan, cobalah untuk mendaftarkan barang tersebut pada supplier <span style="color: #0d47a1; text-decoration: underline; cursor: pointer" onclick="itemSupplier()">disini</span></span>
+                                        </div>
+                                        <div class="container">
+                                            <hr style="border:0.7px solid grey; margin-bottom:30px;">
+                                            <span class="pull-right">Sisa Pembayaran Rp. <strong id="sisapembayaran">0</strong></span>
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-bor table-hover" cellspacing="0"
+                                                       id="table_order_termin">
+                                                    <thead class="bg-primary">
+                                                    <tr>
+                                                        <th>Termin</th>
+                                                        <th>Estimasi</th>
+                                                        <th>Nominal</th>
+                                                        <th>Aksi</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    @foreach($dataEditPmt as $key => $termin)
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text"
+                                                                   name="termin[]"
+                                                                   class="form-control form-control-sm termin"
+                                                                   value="{{ $termin->pop_termin }}" readonly>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text"
+                                                                   name="estimasi[]"
+                                                                   class="form-control form-control-sm datepicker estimasi"
+                                                                   value="{{ date('d-m-Y', strtotime($termin->pop_datetop)) }}"
+                                                                   autocomplete="off">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text"
+                                                                   name="nominal[]"
+                                                                   class="form-control form-control-sm input-rupiah nominal"
+                                                                   value="Rp. {{ Currency::addCurrency($termin->pop_value) }}">
+                                                        </td>
+                                                        <td>
+                                                            @if($key == 0)
+                                                            <button class="btn btn-success btn-tambah-termin btn-sm" type="button">
+                                                                <i class="fa fa-plus" aria-hidden="true"></i>
+                                                            </button>
+                                                            @else
+                                                                <button class="btn btn-danger btn-hapus-termin-1 btn-sm" data-order="{{ Crypt::encrypt($termin->pop_productionorder) }}" data-termin="{{ Crypt::encrypt($termin->pop_termin) }}" type="button">
+                                                                    <i class="fa fa-remove" aria-hidden="true"></i>
+                                                                </button>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </section>
+                            </form>
+
+                        </div>
+                        <div class="card-footer text-right">
+                            <button class="btn btn-primary btn-submit" type="button" id="btn_submit">Simpan</button>
+                            <a href="{{route('order.index')}}" class="btn btn-secondary">Kembali</a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </article>
+
 @endsection
 
 @section('extra_script')
-<script type="text/javascript">
-  var idItem = [];
-  var namaItem = null;
-  var kode = null;
-  var idxBarang = null;
-  var icode = [];
-  var checkitem = null;
-  var checktermin = null;
+    <script type="text/javascript">
+        var idItem = [];
+        var namaItem = null;
+        var kode = null;
+        var idxBarang = null;
+        var icode = [];
+        var checkitem = null;
+        var checktermin = null;
 
-  $(document).ready(function(){
-    $('.input-rupiah').maskMoney({
-      thousands: ".",
-      precision: 0,
-      decimal: ",",
-      prefix: "Rp. "
-    });
+        $(document).ready(function () {
+            changeJumlah();
+            changeHarga();
+            changeNominalTermin();
+            visibleSimpan();
+            updateTotalTampil();
+            updateSisaPembayaran();
+            setArrayCode();
 
-    $(document).on('click', '.btn-hapus', function(){
-      $(this).parents('tr').remove();
-    });
+            $('.barang').on('click', function(e){
+                idxBarang = $('.barang').index(this);
+                setArrayCode();
+            });
 
-    $('.btn-tambah').on('click',function(){
-      tambah();
-    });
+            $(".barang").eq(idxBarang).on("keyup", function () {
+                $(".itemid").eq(idxBarang).val('');
+                $(".kode").eq(idxBarang).val('');
+                setArrayCode();
+            });
 
-    $(document).on('click', '.btn-hapus-termin', function(){
-      $(this).parents('tr').remove();
-    });
+            $(document).on('click', '.btn-hapus-1', function () {
+                var order = $(this).data("id");
+                var detail = $(this).data("detail");
+                var item = $(this).data("item");
+                var remove = $(this).parents('tr');
+                $.confirm({
+                    animation: 'RotateY',
+                    closeAnimation: 'scale',
+                    animationBounce: 1.5,
+                    icon: 'fa fa-exclamation-triangle',
+                    title: 'Peringatan!',
+                    content: 'Apakah anda yakin ingin menghapus data ini?',
+                    theme: 'disable',
+                    buttons: {
+                        info: {
+                            btnClass: 'btn-blue',
+                            text: 'Ya',
+                            action: function () {
+                                loadingShow();
+                                axios.get(baseUrl+'/produksi/orderproduksi/hapus-item'+'/'+order+'/'+detail+'/'+item).then(function(response) {
+                                    if(response.data.status == 'Success'){
+                                        remove.remove();
+                                        updateTotalTampil();
+                                        updateSisaPembayaran();
+                                        setArrayCode();
+                                        loadingHide();
+                                        messageSuccess("Berhasil", "Item berhasil dihapus");
+                                    }else{
+                                        loadingHide();
+                                        messageFailed("Gagal", "Item gagal dihapus");
+                                    }
+                                })
+                            }
+                        },
+                        cancel: {
+                            text: 'Tidak',
+                            action: function () {
+                                // tutup confirm
+                            }
+                        }
+                    }
+                });
 
-    $('.btn-tambah-termin').on('click',function(){
-      var tbody = $(this).parents('tbody');
-        var last_row = tbody.find('tr:last-child');
-        var input = last_row.find('td:eq(0) input');
-        var termin = input.val();
-        termin = parseInt(termin);
-        var next_termin = termin + 1;
-        $('#table_order_termin')
-          .append(
-            '<tr>' +
-            '<td><input type="text" name="termin[]" class="form-control form-control-sm termin" readonly value="' + next_termin + '"></td>' +
-            '<td><input type="text" name="estimasi[]" class="form-control form-control-sm datepicker estimasi" autocomplete="off"></td>' +
-            '<td><input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah nominal" value="Rp. 0"></td>' +
-            '<td><button class="btn btn-danger btn-sm btn-hapus-termin" type="button"><i class="fa fa-trash-o"></i></button></td>' +
-            '</tr>'
-        );
-        $('.datepicker').datepicker({
-          format: "dd-mm-yyyy",
-          enableOnReadonly: false,
-          autoclose: true
+            });
+
+            $(document).on('click', '.btn-hapus', function () {
+                $(this).parents('tr').remove();
+                updateTotalTampil();
+                updateSisaPembayaran();
+                setArrayCode();
+            });
+
+            $('.btn-tambah').on('click', function () {
+                tambah();
+            });
+
+            $(document).on('click', '.btn-hapus-termin-1', function () {
+                var order   = $(this).data('order');
+                var termin = $(this).data('termin');
+                var remove = $(this).parents('tr');
+                $.confirm({
+                    animation: 'RotateY',
+                    closeAnimation: 'scale',
+                    animationBounce: 1.5,
+                    icon: 'fa fa-exclamation-triangle',
+                    title: 'Peringatan!',
+                    content: 'Apakah anda yakin ingin menghapus data ini?',
+                    theme: 'disable',
+                    buttons: {
+                        info: {
+                            btnClass: 'btn-blue',
+                            text: 'Ya',
+                            action: function () {
+                                loadingShow();
+                                axios.get(baseUrl+'/produksi/orderproduksi/hapus-termin'+'/'+order+'/'+termin).then(function(response) {
+                                    if(response.data.status == 'Success'){
+                                        remove.remove();
+                                        updateSisaPembayaran();
+                                        setTerimin();
+                                        loadingHide();
+                                        messageSuccess("Berhasil", "Termin berhasil dihapus");
+                                    }else{
+                                        loadingHide();
+                                        messageFailed("Gagal", "Termin gagal dihapus");
+                                    }
+                                })
+                            }
+                        },
+                        cancel: {
+                            text: 'Tidak',
+                            action: function () {
+                                // tutup confirm
+                            }
+                        }
+                    }
+                });
+
+            });
+
+            $(document).on('click', '.btn-hapus-termin', function () {
+                $(this).parents('tr').remove();
+                updateSisaPembayaran();
+                setTerimin();
+            });
+
+            $('.btn-tambah-termin').on('click', function () {
+                var tbody = $(this).parents('tbody');
+                var last_row = tbody.find('tr:last-child');
+                var input = last_row.find('td:eq(0) input');
+                var termin = input.val();
+                termin = parseInt(termin);
+                var next_termin = termin + 1;
+                $('#table_order_termin')
+                    .append(
+                        '<tr>' +
+                        '<td><input type="text" name="termin[]" class="form-control form-control-sm termin" readonly value="' + next_termin + '"></td>' +
+                        '<td><input type="text" name="estimasi[]" class="form-control form-control-sm datepicker estimasi" autocomplete="off"></td>' +
+                        '<td><input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah nominal" value="Rp. 0"></td>' +
+                        '<td><button class="btn btn-danger btn-sm btn-hapus-termin" type="button"><i class="fa fa-trash-o"></i></button></td>' +
+                        '</tr>'
+                    );
+                $('.datepicker').datepicker({
+                    format: "dd-mm-yyyy",
+                    enableOnReadonly: false,
+                    todayHighlight: true,
+                    autoclose: true
+
+                });
+                $('.input-rupiah').maskMoney({
+                    thousands: ".",
+                    precision: 0,
+                    decimal: ",",
+                    prefix: "Rp. "
+                });
+                setTerimin();
+                changeNominalTermin();
+            });
+
+            function checkForm() {
+                var inpItemid = document.getElementsByClassName( 'itemid' ),
+                    item  = [].map.call(inpItemid, function( input ) {
+                        return input.value;
+                    });
+                var inpHarga = document.getElementsByClassName( 'harga' ),
+                    harga  = [].map.call(inpHarga, function( input ) {
+                        return input.value;
+                    });
+                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                        return parseInt(input.value);
+                    });
+
+                for (var i=0; i < item.length; i++) {
+                    if (item[i] == "" || harga[i] == "Rp. 0" || jumlah[i] == 0) {
+                        return "cek form";
+                        break;
+                    } else {
+                        checkitem = "true";
+                        continue;
+                    }
+                }
+                return checkitem;
+            }
+
+            function checkTermin() {
+                var inpEstimasi = document.getElementsByClassName( 'estimasi' ),
+                    estimasi  = [].map.call(inpEstimasi, function( input ) {
+                        return input.value;
+                    });
+                var inpNominal = document.getElementsByClassName( 'nominal' ),
+                    nominal  = [].map.call(inpNominal, function( input ) {
+                        return input.value;
+                    });
+
+                for (var i=0; i < estimasi.length; i++) {
+                    if (estimasi[i] == "" || nominal[i] == "Rp. 0") {
+                        return "cek form";
+                        break;
+                    } else {
+                        checktermin = "true";
+                        continue;
+                    }
+                }
+                return checktermin;
+            }
+
+            $(document).on('click', '.btn-submit', function (evt) {
+                evt.preventDefault();
+
+                if ($("#tanggal").val() == "") {
+                    messageWarning('Peringatan', 'Kolom tanggal tidak boleh kosong');
+                    $("#tanggal").focus();
+                } else if ($("#tot_hrg").val() == "" || $("#tot_hrg").val() == 0 || checkForm() == "cek form" || checkTermin() == "cek form") {
+                    messageWarning('Peringatan', 'Lengkapi data order produksi');
+                } else {
+                    loadingShow();
+                    var data = $('#form').serialize();
+                    axios.post(baseUrl+'/produksi/orderproduksi/edit-order-produksi', data).then(function (response){
+                        if(response.data.status == 'Success'){
+                            loadingHide();
+                            messageSuccess("Berhasil", "Data order produksi berhasil disimpan");
+                            setInterval(function(){location.reload();}, 3500)
+                        }else{
+                            loadingHide();
+                            messageFailed("Gagal", "Data order produksi gagal disimpan");
+                        }
+
+                    })
+
+                }
+            })
         });
-        $('.input-rupiah').maskMoney({
-          thousands: ".",
-          precision: 0,
-          decimal: ",",
-          prefix: "Rp. "
-        });
-        setTerimin();
-    });
 
-    $(document).on('click', '.btn-submit', function(){
-			$.toast({
-				heading: 'Success',
-				text: 'Data Berhasil di Edit',
-				bgColor: '#00b894',
-				textColor: 'white',
-				loaderBg: '#55efc4',
-				icon: 'success'
-			})
-		})
-  });
-
-  function changeJumlah() {
-    $(".jumlah").on('input', function (evt) {
-      var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-        jumlah  = [].map.call(inpJumlah, function( input ) {
-            return parseInt(input.value);
-        });
-
-      var inpHarga = document.getElementsByClassName( 'harga' ),
-        harga  = [].map.call(inpHarga, function( input ) {
-            return input.value;
-        });
-
-      var inpSubtotal = document.getElementsByClassName( 'subtotal' ),
-        subtotal  = [].map.call(inpSubtotal, function( input ) {
-            return input.value;
-        });
-
-      for (var i = 0; i < jumlah.length; i++) {
-        var hasil = 0;
-        var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-        var jml = jumlah[i];
-
-        if (jml == "") {
-            jml = 0;
+        function changeNominalTermin() {
+            $(".nominal").on('keyup', function (evt) {
+                evt.preventDefault();
+                updateSisaPembayaran();
+            })
         }
 
-        hasil += parseInt(hrg) * parseInt(jml);
+        function changeJumlah() {
+            $(".jumlah").on('input', function (evt) {
+                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                        return parseInt(input.value);
+                    });
 
-        if (isNaN(hasil)) {
-            hasil = 0;
+                var inpHarga = document.getElementsByClassName( 'harga' ),
+                    harga  = [].map.call(inpHarga, function( input ) {
+                        return input.value;
+                    });
+
+                var inpSubtotal = document.getElementsByClassName( 'subtotal' ),
+                    subtotal  = [].map.call(inpSubtotal, function( input ) {
+                        return input.value;
+                    });
+
+                for (var i = 0; i < jumlah.length; i++) {
+                    var hasil = 0;
+                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                    var jml = jumlah[i];
+
+                    if (jml == "") {
+                        jml = 0;
+                    }
+
+                    hasil += parseInt(hrg) * parseInt(jml);
+
+                    if (isNaN(hasil)) {
+                        hasil = 0;
+                    }
+                    hasil = convertToRupiah(hasil);
+                    $(".subtotal").eq(i).val(hasil);
+
+                }
+                updateTotalTampil();
+                updateSisaPembayaran();
+            })
         }
-        hasil = convertToRupiah(hasil);
-        $(".subtotal").eq(i).val(hasil);
-      }
-      updateTotalTampil();
-    })
-  }
 
-  function changeHarga() {
-    $(".harga").on('keyup', function (evt) {
-      var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-        jumlah  = [].map.call(inpJumlah, function( input ) {
-            return parseInt(input.value);
-        });
+        function changeHarga() {
+            $(".harga").on('keyup', function (evt) {
+                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                        return parseInt(input.value);
+                    });
 
-      var inpHarga = document.getElementsByClassName( 'harga' ),
-        harga  = [].map.call(inpHarga, function( input ) {
-            return input.value;
-        });
+                var inpHarga = document.getElementsByClassName( 'harga' ),
+                    harga  = [].map.call(inpHarga, function( input ) {
+                        return input.value;
+                    });
 
-      var inpSubtotal = document.getElementsByClassName( 'subtotal' ),
-        subtotal  = [].map.call(inpSubtotal, function( input ) {
-            return input.value;
-        });
+                var inpSubtotal = document.getElementsByClassName( 'subtotal' ),
+                    subtotal  = [].map.call(inpSubtotal, function( input ) {
+                        return input.value;
+                    });
 
-      for (var i = 0; i < harga.length; i++) {
-        var hasil = 0;
-        var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-        var jml = jumlah[i];
+                for (var i = 0; i < harga.length; i++) {
+                    var hasil = 0;
+                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                    var jml = jumlah[i];
 
-        if (jml == "") {
-            jml = 0;
+                    if (jml == "") {
+                        jml = 0;
+                    }
+
+                    hasil += parseInt(hrg) * parseInt(jml);
+
+                    if (isNaN(hasil)) {
+                        hasil = 0;
+                    }
+                    hasil = convertToRupiah(hasil);
+                    $(".subtotal").eq(i).val(hasil);
+                }
+                updateTotalTampil();
+                updateSisaPembayaran();
+            })
         }
 
-        hasil += parseInt(hrg) * parseInt(jml);
+        function tambah() {
+            var row = '';
+            row = '<tr>' +
+                '<td><input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"></td>'+
+                '<td>'+
+                '<select name="satuan[]" class="form-control form-control-sm select2 satuan">'+
+                '</select>'+
+                '</td>'+
+                '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0"></td>'+
+                '<td><input type="text" name="harga[]" class="form-control form-control-sm input-rupiah harga" value="Rp. 0"></td>'+
+                '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
+                '<td>'+
+                '<button class="btn btn-danger btn-hapus btn-sm" type="button">'+
+                '<i class="fa fa-remove" aria-hidden="true"></i>'+
+                '</button>'+
+                '</td>'+
+                '</tr>';
+            $('#table_order').append(row);
+            changeJumlah();
+            changeHarga();
 
-        if (isNaN(hasil)) {
-            hasil = 0;
+            $('.select2').select2({
+                theme: "bootstrap",
+                dropdownAutoWidth: true,
+                width: '100%'
+            });
+
+            $('.barang').on('click', function(e){
+                idxBarang = $('.barang').index(this);
+            });
+
+            $(".barang").on("keyup", function () {
+                $(".itemid").eq(idxBarang).val('');
+                $(".kode").eq(idxBarang).val('');
+            });
+
+            $('.input-rupiah').maskMoney({
+                thousands: ".",
+                precision: 0,
+                decimal: ",",
+                prefix: "Rp. "
+            });
+            updateTotalTampil();
+            updateSisaPembayaran();
+            setArrayCode();
         }
-        hasil = convertToRupiah(hasil);
-        $(".subtotal").eq(i).val(hasil);
-      }
-      updateTotalTampil();
-    })
-  }
 
-  function tambah() {
-    var row = '';
-    row = '<tr>' +
-      '<td><input type="text" name="barang[]" class="form-control form-control-sm barang"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"></td>'+
-      '<td>'+
-      '<select name="satuan[]" class="form-control form-control-sm select2 satuan">'+
-      '</select>'+
-      '</td>'+
-      '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0"></td>'+
-      '<td><input type="text" name="harga[]" class="form-control form-control-sm input-rupiah harga" value="Rp. 0"></td>'+
-      '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
-      '<td>'+
-      '<button class="btn btn-danger btn-hapus btn-sm" type="button">'+
-      '<i class="fa fa-remove" aria-hidden="true"></i>'+
-      '</button>'+
-        '</td>'+
-    '</tr>';
-    $('#table_order').append(row);
-    changeJumlah();
-    changeHarga();
+        function visibleSimpan() {
+            var inpNominal = document.getElementsByClassName( 'nominal' ),
+                nominal  = [].map.call(inpNominal, function( input ) {
+                    return input.value;
+                });
 
-    $('.select2').select2({
-      theme: "bootstrap",
-      dropdownAutoWidth: true,
-      width: '100%'
-    });
+            var tot_harga = $("#tot_hrg").val();
 
-    $('.barang').on('click', function(e){
-      idxBarang = $('.barang').index(this);
-    });
+            var nomTot = 0;
 
-    $(".barang").on("keyup", function () {
-      $(".itemid").eq(idxBarang).val('');
-      $(".kode").eq(idxBarang).val('');
-    });
+            for (var i =0; i < nominal.length; i++) {
+                var nomTermin = nominal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                nomTot += parseInt(nomTermin);
+            }
 
-    setArrayCode();
-
-    $('.input-rupiah').maskMoney({
-      thousands: ".",
-      precision: 0,
-      decimal: ",",
-      prefix: "Rp. "
-    });
-    updateTotalTampil();
-  }
-
-  function updateTotalTampil() {
-    var total = 0;
-
-    var inputs = document.getElementsByClassName('subtotal'),
-      subtotal = [].map.call(inputs, function (input) {
-        return input.value;
-      });
-
-    for (var i = 0; i < subtotal.length; i++) {
-      total += parseInt(subtotal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", ""));
-    }
-    $("#tot_hrg").val(total);
-    if (isNaN(total)) {
-      total = 0;
-    }
-    $("#total_harga").val(convertToRupiah(total));
-  }
-
-  function setItem(info) {
-    idItem = info.data.i_id;
-    namaItem = info.data.i_name;
-    kode = info.data.i_code;
-    $(".kode").eq(idxBarang).val(kode);
-    $(".itemid").eq(idxBarang).val(idItem);
-    setArrayCode();
-    $.ajax({
-      url: '{{ url('/produksi/orderproduksi/get-satuan/') }}'+'/'+idItem,
-      type: 'GET',
-      success: function( resp ) {
-        var option = '';
-        option += '<option value="'+resp.id1+'">'+resp.unit1+'</option>';
-        if (resp.id2 != null && resp.id2 != resp.id1) {
-            option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+            if (
+                parseInt(nomTot) == parseInt(tot_harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")) &&
+                parseInt(tot_harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")) != 0
+            ) {
+                $("#btn_submit").attr("disabled", false);
+                $("#btn_submit").attr("style", "cursor: pointer");
+            } else {
+                $("#btn_submit").attr("disabled", true);
+                $("#btn_submit").attr("style", "cursor: not-allowed");
+            }
         }
-        if (resp.id3 != null && resp.id3 != resp.id1) {
-            option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+
+        function updateSisaPembayaran() {
+            var inpNominal = document.getElementsByClassName( 'nominal' ),
+                nominal  = [].map.call(inpNominal, function( input ) {
+                    return input.value;
+                });
+
+            var tot_harga = $("#tot_hrg").val();
+
+            var nomTot = 0;
+
+            for (var i =0; i < nominal.length; i++) {
+                var nomTermin = nominal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                nomTot += parseInt(nomTermin);
+            }
+
+            var sisa = parseInt(tot_harga.replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "")) - parseInt(nomTot);
+
+            $("#sisapembayaran").html(convertToCurrency(sisa));
+
+            visibleSimpan();
+
         }
-        $(".satuan").eq(idxBarang).append(option);
-      }
-    });
-  }
 
-  function setTerimin() {
-    var inputs = document.getElementsByClassName('termin'),
-        termin  = [].map.call(inputs, function( input ) {
-            return parseInt(input.value);
-        });
+        function updateTotalTampil() {
+            var total = 0;
 
-    for (var i=0; i < termin.length; i++) {
-        $(".termin").eq(i).val('');
-        $(".termin").eq(i).val(i+1);
-    }
-  }
+            var inputs = document.getElementsByClassName('subtotal'),
+                subtotal = [].map.call(inputs, function (input) {
+                    return input.value;
+                });
 
-  function setArrayCode() {
-    var inputs = document.getElementsByClassName('kode'),
-        code  = [].map.call(inputs, function( input ) {
-            return input.value.toString();
-        });
+            for (var i = 0; i < subtotal.length; i++) {
+                if (subtotal[i] == "") {
+                    total += 0;
+                } else {
+                    total += parseInt(subtotal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", ""));
+                }
+            }
+            $("#tot_hrg").val(total);
+            if (isNaN(total)) {
+                total = 0;
+            }
+            $("#total_harga").val(convertToRupiah(total));
 
-    for (var i=0; i < code.length; i++) {
-        if (code[i] != "") {
-            icode.push(code[i]);
         }
-    }
 
-    var item = [];
-    var inpItemid = document.getElementsByClassName( 'itemid' ),
-        item  = [].map.call(inpItemid, function( input ) {
-            return input.value;
-        });
-
-    var supp = $('#supplier').val();
-    $( ".barang" ).autocomplete({
-        source: function( request, response ) {
+        function setItem(info) {
+            idItem = info.data.i_id;
+            namaItem = info.data.i_name;
+            kode = info.data.i_code;
+            $(".kode").eq(idxBarang).val(kode);
+            $(".itemid").eq(idxBarang).val(idItem);
+            setArrayCode();
             $.ajax({
-                url: '{{ url('/produksi/orderproduksi/cari-barang') }}',
-                data: {
-                    idItem: item,
-                    supp: supp,
-                    term: $(".barang").eq(idxBarang).val()
-                },
-                success: function( data ) {
-                    response( data );
+                url: '{{ url('/produksi/orderproduksi/get-satuan/') }}'+'/'+idItem,
+                type: 'GET',
+                success: function( resp ) {
+                    $(".satuan").eq(idxBarang).find('option').remove();
+                    var option = '';
+                    option += '<option value="'+resp.id1+'">'+resp.unit1+'</option>';
+                    if (resp.id2 != null && resp.id2 != resp.id1) {
+                        option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                    }
+                    if (resp.id3 != null && resp.id3 != resp.id1) {
+                        option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                    }
+                    $(".satuan").eq(idxBarang).append(option);
                 }
             });
-        },
-        minLength: 1,
-        select: function(event, data) {
-            setItem(data.item);
         }
-    });
-  }
-</script>
+
+        function setTerimin() {
+            var inputs = document.getElementsByClassName('termin'),
+                termin  = [].map.call(inputs, function( input ) {
+                    return parseInt(input.value);
+                });
+
+            for (var i=0; i < termin.length; i++) {
+                $(".termin").eq(i).val('');
+                $(".termin").eq(i).val(i+1);
+            }
+            changeNominalTermin();
+        }
+
+        function setArrayCode() {
+            var inputs = document.getElementsByClassName('kode'),
+                code  = [].map.call(inputs, function( input ) {
+                    return input.value.toString();
+                });
+
+            for (var i=0; i < code.length; i++) {
+                if (code[i] != "") {
+                    icode.push(code[i]);
+                }
+            }
+
+            var item = [];
+            var inpItemid = document.getElementsByClassName( 'itemid' ),
+                item  = [].map.call(inpItemid, function( input ) {
+                    return input.value;
+                });
+
+            var supp = $('#supplier').val();
+            $( ".barang" ).autocomplete({
+                source: function( request, response ) {
+                    $.ajax({
+                        url: '{{ url('/produksi/orderproduksi/cari-barang') }}',
+                        data: {
+                            idItem: item,
+                            supp: supp,
+                            term: $(".barang").eq(idxBarang).val()
+                        },
+                        success: function( data ) {
+                            response( data );
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function(event, data) {
+                    setItem(data.item);
+                }
+            });
+        }
+
+        function itemSupplier() {
+            window.open("{{ url('masterdatautama/suplier/index') }}");
+        }
+    </script>
 @endsection
