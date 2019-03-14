@@ -196,9 +196,8 @@
 					$('#table_detail > tbody:last-child').append('<tr><td>'+ index +'</td><td>'+ val.sm_reff +'</td><td>'+ val.sm_qty +'</td><td>'+ unit_name +'</td><td><span class="float-left">Rp </span><span class="float-right">'+ hpp +'</span></td></tr>');
 				});
 				$('#modal_detail').modal('show');
-			},
-
-		})
+			}
+		});
 	}
 
 	$(document).ready(function(){

@@ -7,8 +7,9 @@ use App\Http\Controllers\Controller;
 
 use DB;
 use App\m_item;
-use App\d_opnameauth;
 use App\d_stock;
+use App\m_company;
+use App\d_opnameauth;
 use Validator;
 use CodeGenerator;
 use carbon\Carbon;
@@ -167,8 +168,9 @@ class OpnameController extends Controller
       })
       ->addColumn('action', function($datas) {
         return '<td><div class="btn-group btn-group-sm">
-                <button class="btn btn-warning hint--bottom-left hint--warning" onclick="Edit('.$datas->oa_id.')" rel="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
-                <button class="btn btn-danger btn-disable-tunjangan" type="button" title="Delete" onclick="Delete('. $datas->oa_id .')"><i class="fa fa-times-circle"></i></button></div></td>';
+                <button class="btn btn-info" data-toggle="tooltip" data-placement="bottom" title="Detail data" onclick="Detail('. $datas->oa_id .')"><i class="fa fa-folder"></i></button>
+                <button class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Edit data" onclick="Edit('. $datas->oa_id .')"><i class="fa fa-pencil"></i></button>
+                <button class="btn btn-danger" data-toggle="tooltip" data-placement="bottom" title="Hapus data" onclick="Delete('. $datas->oa_id .')"><i class="fa fa-times-circle"></i></button></div></td>';
       })
       ->rawColumns(['name', 'status', 'action'])
       ->make(true);
@@ -242,6 +244,19 @@ class OpnameController extends Controller
         ]);
       }
 
+    }
+
+    // show specific resource
+    public function show($id)
+    {
+      $data = d_opnameauth::where('oa_id', $id)
+        ->with('getItem')
+        ->with('getUnitReal')
+        ->with('getUnitSystem')
+        ->with('getPosition')
+        ->with('getOwner')
+        ->first();
+      return $data;
     }
 
     /**
