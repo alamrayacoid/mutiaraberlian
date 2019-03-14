@@ -58,13 +58,17 @@
 								<thead class="bg-primary">
 									<tr>
 										<th width="1%">No</th>
+                                        <th>Golongan</th>
 										<th>Nama Barang</th>
-										<th>Keterangan</th>
+										<th>Jenis</th>
 										<th>Qty</th>
-										<th>User</th>
+                                        <th>Harga</th>
 										<th width="20%">Aksi</th>
 									</tr>
 								</thead>
+
+
+
 							</table>
 
 						</div>
@@ -86,13 +90,13 @@
 	$(document).ready(function(){
 		var table1, table2;
 
-		table1 = $('#table_otorisasi').DataTable({
+        table1 = $('#table_otorisasi').DataTable({
             responsive: true,
             // language: dataTableLanguage,
             // processing: true,
             serverSide: true,
             ajax: {
-                url: "{{ route('dataproduk.list') }}",
+                url: "{{ url('notifikasiotorisasi/otorisasi/perubahanhargajual/getdataperubahan') }}",
                 type: "get",
                 data: {
                     "_token": "{{ csrf_token() }}"
@@ -100,10 +104,12 @@
             },
             columns: [
                 {data: 'DT_RowIndex'},
-                {data: 'i_code', name: 'i_code'},
-                {data: 'it_name', name: 'it_name'},
-                {data: 'i_name', name: 'i_name'},
-                {data: 'action', name: 'action'}
+                {data: 'pc_name', name: 'pc_name'},
+                {data: 'nama', name: 'name'},
+                {data: 'pcad_payment', name: 'pcad_payment'},
+                {data: 'qty', name: 'qty'},
+                {data: 'pcad_price', name: 'pcad_price'},
+                {data: 'aksi', name: 'aksi'}
             ],
             pageLength: 10,
             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
@@ -114,5 +120,42 @@
 			$('#detail').modal('show');
 		})
 	});
+
+	function approve(id, detailid) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin akan menyetujui data ini?',
+            theme: 'sukses',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        /*axios.get(baseUrl+'/produksi/orderproduksi/hapus'+'/'+id).then(function(response) {
+                            loadingShow();
+                            if(response.data.status == 'Success'){
+                                loadingHide();
+                                messageSuccess("Berhasil", "Data Order Produksi Berhasil Dihapus");
+                                TableIndex();
+                            }else{
+                                loadingHide();
+                                messageFailed("Gagal", "Data Order Produksi Gagal Dihapus");
+                            }
+                        })*/
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
 </script>
 @endsection

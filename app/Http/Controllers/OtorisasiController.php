@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use function foo\func;
 use Illuminate\Http\Request;
 use DB;
@@ -201,13 +202,57 @@ class OtorisasiController extends Controller
         }
     }
 //    ================End Order Produksi===============
-// ============= Perubahan Harga Jual ==============
 
+// ============= Perubahan Harga Jual ==============
     public function getDataPerubahanHarga()
     {
         $data = DB::table('m_priceclass')
             ->join('d_priceclassauthdt', 'pc_id', '=', 'pcad_classprice')
+            ->join('m_item', 'i_id', '=', 'pcad_item')
+            ->join('m_unit', 'u_id', '=', 'pcad_unit')
+            ->select('pc_id', 'pc_name', DB::raw('concat(i_code, "-", i_name) as nama'), 'u_name', 'd_priceclassauthdt.*')
             ->get();
-        dd($data);
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->editColumn('pcad_type', function ($data){
+                if ($data->pcad_type == 'U'){
+                    return 'Unit';
+                } else {
+                    return 'Range';
+                }
+            })
+            ->editColumn('pcad_payment', function ($data){
+                if ($data->pcad_payment == 'C'){
+                    return 'Cash';
+                } else {
+                    return 'Konsinyasi';
+                }
+            })
+            ->addColumn('qty', function ($data){
+                if ($data->pcad_type == 'U'){
+                    return '1 ' . $data->u_name;
+                } else {
+                    return $data->pcad_rangeqtystart . '-' . $data->pcad_rangeqtyend . ' ' . $data->u_name;
+                }
+            })
+            ->addColumn('aksi', function ($data){
+                return '<div class="text-center"><div class="btn-group btn-group-sm">
+												<button class="btn btn-info btn-detail" onclick="detail(\''.encrypt($data->pcad_classprice).'\',\'' .encrypt($data->pcad_detailid). '\')" type="button"><i class="fa fa-folder"></i></button>
+												<button class="btn btn-success" type="button" onclick="approve(\''.encrypt($data->pcad_classprice).'\',\'' .encrypt($data->pcad_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
+												<button class="btn btn-danger" type="button" onclick="reject(\''.encrypt($data->pcad_classprice).'\',\'' .encrypt($data->pcad_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
+											</div></div>';
+            })
+            ->editColumn('pcad_price', function ($data){
+                $harga = (int)$data->pcad_price;
+                return '<div class="text-right">Rp. ' . number_format($harga, '0', '', '.') .'</div>';
+            })
+            ->rawColumns(['aksi', 'pcad_price'])
+            ->make(true);
+    }
+
+    public function approvePerubahanHarga($id, $detail)
+    {
+
     }
 }

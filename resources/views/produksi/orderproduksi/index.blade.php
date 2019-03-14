@@ -202,8 +202,8 @@
 					btnClass: 'btn-blue',
 					text: 'Ya',
 					action: function () {
+                        loadingShow();
 						axios.get(baseUrl+'/produksi/orderproduksi/hapus'+'/'+id).then(function(response) {
-							loadingShow();
 							if(response.data.status == 'Success'){
 								loadingHide();
 								messageSuccess("Berhasil", "Data Order Produksi Berhasil Dihapus");
