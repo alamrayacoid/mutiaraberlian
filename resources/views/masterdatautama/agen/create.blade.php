@@ -303,7 +303,7 @@
       success: function(data) {
         $('#address_city').empty();
         $('#address_district').empty();
-        $('#address_village').empty();
+        $('#address_village').empty(); 
         $.each(data, function(key, val) {
           $("#address_city").append('<option value="'+ val.wc_id +'">'+ val.wc_name +'</option>');
         });

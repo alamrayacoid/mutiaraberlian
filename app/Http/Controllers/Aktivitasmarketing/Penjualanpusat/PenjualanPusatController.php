@@ -37,6 +37,15 @@ class PenjualanPusatController extends Controller
 		return view('marketing.penjualanpusat.targetrealisasi.create', compact('company'));
 	}
 
+	public function getComp()
+	{
+		$company = DB::table('m_company')->select('c_id', 'c_name')->get();
+        return Response::json(array(
+			'success' => true,
+			'data'    => $company
+        )); 
+	}
+
 	public function cariBarang(Request $request)
     {
         $is_item = array();
@@ -77,5 +86,68 @@ class PenjualanPusatController extends Controller
             })
             ->first();
         return Response::json($data);
+    }
+
+    public function targetRealStore(Request $request)
+    {
+		$data          = $request->all();
+		$salesTarget   = [];
+		$salesTargetDt = [];
+        // DB::beginTransaction();
+        // try{
+			$stId= (DB::table('d_salestarget')->max('st_id')) ? (DB::table('d_salestarget')->max('st_id')) + 1 : 1;
+			$detail = (DB::table('d_salestargetdt')->where('std_salestarget', '=', $stId)->max('std_detailid')) ? (DB::table('d_salestargetdt')->where('std_salestarget', '=', $stId)->max('std_detailid')) + 1 : 1;
+			$checkComp = DB::table('d_salestarget')
+			    ->where('st_comp', '=', $data['t_comp'])
+			    ->where('st_periode', '=', $data['t_periode'])->first();
+
+			if ($checkComp) {
+				$stDetail = $detail;
+				for ($i=0; $i < count($data['idItem']); $i++) {
+					$salesTargetDt[] = [
+						'std_salestarget' => $stId,
+						'std_detailid'    => $stDetail,
+						'std_item'        => $data['idItem'][$i],
+						'std_qty'         => $data['t_qty'][$i],
+						'std_unit'        => $data['t_unit'][$i]
+					];
+					$stDetail++;
+				}
+			} else {
+				for ($i=0; $i < count($data['idItem']); $i++) { 
+					$salesTarget[] = [
+						'st_id'      => $stId,
+						'st_comp'    => $data['t_comp'][$i],
+						'st_periode' => date('Y-m-d', strtotime($data['t_periode'][$i]))
+					];
+					$stId++;
+				}
+
+				$stDetail = $detail;
+				for ($i=0; $i < count($data['idItem']); $i++) {
+					$salesTargetDt[] = [
+						'std_salestarget' => $stId,
+						'std_detailid'    => $stDetail,
+						'std_item'        => $data['idItem'][$i],
+						'std_qty'         => $data['t_qty'][$i],
+						'std_unit'        => $data['t_unit'][$i]
+					];
+					$stDetail++;
+				}
+			}
+            DB::table('d_salestarget')->insert($salesTarget);
+            DB::table('d_salestargetdt')->insert($salesTargetDt);
+			
+        //     return json_encode([
+        //         'status' => 'Success'
+        //     ]);
+        // }catch (\Exception $e){
+        //     DB::rollBack();
+        //     return json_encode([
+        //         'status' => 'Failed',
+        //         'msg' => $e
+        //     ]);
+        // }		
+
     }
 }

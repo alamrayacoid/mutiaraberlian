@@ -239,6 +239,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/marketing/penjualanpusat/targetrealisasi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@createTargetReal')->name('targetReal.create');
         Route::get('/marketing/penjualanpusat/targetrealisasi/cari-barang', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@cariBarang')->name('targetReal.caribarang');
         Route::get('/marketing/penjualanpusat/targetrealisasi/get-satuan/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getSatuan')->name('targetReal.getsatuan');
+        Route::get('/marketing/penjualanpusat/targetrealisasi/get-company', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getComp')->name('targetReal.getcomp');
+        Route::get('/marketing/penjualanpusat/targetrealisasi/store', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetRealStore')->name('targetReal.store');
         // End ---
         // Return Penjualan
         Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
