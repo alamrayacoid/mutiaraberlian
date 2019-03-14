@@ -188,7 +188,7 @@ class ItemController extends Controller
                     'ia_update_at' => Carbon::now(),
                 ]);
 
-                otorisasi::otorisasiup();
+                otorisasi::otorisasiup('m_item_auth', 'Master Produk', '#');
 
             DB::commit();
             return response()->json([
@@ -301,7 +301,7 @@ class ItemController extends Controller
                   ]);
         }
 
-        otorisasi::otorisasiup();
+        otorisasi::otorisasiup('m_item_auth', 'Master Produk', '#');
 
             DB::commit();
             return response()->json([
@@ -334,7 +334,7 @@ class ItemController extends Controller
                     'ia_update_at' => Carbon::now(),
                 ]);
 
-                otorisasi::otorisasiup();
+                otorisasi::otorisasiup('m_item_auth', 'Master Produk', '#');
 
             DB::commit();
             return response()->json([
@@ -361,7 +361,7 @@ class ItemController extends Controller
                     'ia_update_at' => Carbon::now(),
                 ]);
 
-                otorisasi::otorisasiup();
+                otorisasi::otorisasiup('m_item_auth', 'Master Produk', '#');
 
             DB::commit();
             return response()->json([

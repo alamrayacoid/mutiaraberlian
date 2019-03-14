@@ -14,6 +14,7 @@ use Validator;
 use CodeGenerator;
 use carbon\Carbon;
 use Yajra\DataTables\DataTables;
+use App\Http\Controllers\pushotorisasiController as otorisasi;
 
 class OpnameController extends Controller
 {
@@ -232,6 +233,9 @@ class OpnameController extends Controller
           $opname->oa_unitsystem = 1;
           $opname->oa_insert = Carbon::now();
           $opname->save();
+
+          otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
+
         DB::commit();
         return response()->json([
           'status' => 'berhasil'
@@ -308,6 +312,9 @@ class OpnameController extends Controller
           $opname->oa_unitsystem = 1;
           $opname->oa_insert = Carbon::now();
           $opname->save();
+
+          otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
+
         DB::commit();
         return response()->json([
           'status' => 'berhasil'
@@ -332,9 +339,12 @@ class OpnameController extends Controller
       // start: execute delete data
       DB::beginTransaction();
       try {
+
         DB::table('d_opnameauth')
           ->where('oa_id', $id)
           ->delete();
+
+          otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
 
         DB::commit();
         return response()->json([

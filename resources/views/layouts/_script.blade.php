@@ -421,15 +421,23 @@
 
     var channel = pusher.subscribe('my-channel');
     channel.bind('my-event', function(data) {
-      otorisasi();
+      otorisasi(data.table, data.menu, data.url);
     });
 
-    otorisasi();
+    $.ajax({
+      type: 'get',
+      dataType: 'json',
+      url: baseUrl + '/gettmpoto',
+      success : function(response){        
+          otorisasi(response[0].table, response[0].menu, response[0].url);
+      }
+    });
 
-    function otorisasi(){
+    function otorisasi(table, menu, url){
       var html = "";
       $.ajax({
         type: 'get',
+        data: {table, menu, url},
         dataType: 'json',
         url: baseUrl + '/getoto',
         success : function(response){

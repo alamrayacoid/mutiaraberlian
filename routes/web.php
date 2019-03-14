@@ -1,7 +1,5 @@
 <?php
 
-use App\Events\PusherEvent;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -338,6 +336,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     //Get ototitasi
     Route::get('/getoto', 'getotorisasiController@get');
+    Route::get('/gettmpoto', 'getotorisasiController@gettmpoto');
+
 });
 // End Route Group
 
