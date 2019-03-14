@@ -65,38 +65,6 @@
 										<th width="20%">Aksi</th>
 									</tr>
 								</thead>
-
-								<tbody>
-									<tr>
-										<td>1</td>
-										<td>01001 - Botol Aqua</td>
-										<td>Satuan</td>
-										<td>1 Botol</td>
-										<td>Charlie</td>
-										<td align="center">
-											<div class="btn-group btn-group-sm">
-												<button class="btn btn-info btn-detail"><i class="fa fa-list"></i></button>
-												<button class="btn btn-success" type="button" title="Setuju"><i class="fa fa-check-circle"></i></button>
-												<button class="btn btn-danger" type="button" title="Tolak"><i class="fa fa-times-circle"></i></button>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<td>2</td>
-										<td>01001 - Botol Aqua</td>
-										<td>Range</td>
-										<td>1-4 Botol</td>
-										<td>developer</td>
-										<td align="center">
-											<div class="btn-group btn-group-sm">
-												<button class="btn btn-info btn-detail" type="button"><i class="fa fa-list"></i></button>
-												<button class="btn btn-success" type="button" title="Setuju"><i class="fa fa-check-circle"></i></button>
-												<button class="btn btn-danger" type="button" title="Tolak"><i class="fa fa-times-circle"></i></button>
-											</div>
-										</td>
-									</tr>
-								</tbody>
-								
 							</table>
 
 						</div>
@@ -118,7 +86,28 @@
 	$(document).ready(function(){
 		var table1, table2;
 
-		table1 = $('#table_otorisasi').DataTable();
+		table1 = $('#table_otorisasi').DataTable({
+            responsive: true,
+            // language: dataTableLanguage,
+            // processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('dataproduk.list') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}"
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'i_code', name: 'i_code'},
+                {data: 'it_name', name: 'it_name'},
+                {data: 'i_name', name: 'i_name'},
+                {data: 'action', name: 'action'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
 		table2 = $('#table_detail').DataTable();
 
 		$('#table_otorisasi tbody').on('click', '.btn-detail' ,function(){

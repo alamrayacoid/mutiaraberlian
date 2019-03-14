@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1c8b318e-c138-400d-afca-6445ceb3fae0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/index.blade.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <ignored path="$PROJECT_DIR$/.idea/" />
@@ -117,11 +118,50 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="172">
-              <caret line="88" column="101" selection-start-line="88" selection-start-column="101" selection-end-line="88" selection-end-column="101" />
+              <caret line="314" column="106" selection-start-line="314" selection-start-column="106" selection-end-line="314" selection-end-column="106" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="353">
+              <caret line="210" column="18" selection-start-line="210" selection-start-column="18" selection-end-line="210" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="230">
+              <caret line="109" column="47" lean-forward="true" selection-start-line="109" selection-start-column="47" selection-end-line="109" selection-end-column="47" />
+              <folding>
+                <element signature="e#47#75#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="456">
+              <caret line="293" column="13" selection-start-line="272" selection-start-column="53" selection-end-line="293" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/index.blade.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="507">
+              <caret line="109" column="9" selection-start-line="109" selection-start-column="9" selection-end-line="109" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -130,7 +170,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>auth</find>
       <find>||</find>
       <find>pengaturan</find>
       <find>dataproduk.store</find>
@@ -148,7 +187,6 @@
       <find>masterdatautama/cabang/index</find>
       <find>datatable</find>
       <find>table_produk</find>
-      <find>masterdatautama/produk/index</find>
       <find>getdata</find>
       <find>revisi</find>
       <find>notifikasiotorisasi/otorisasi/revisi/index</find>
@@ -160,6 +198,8 @@
       <find>formEditGolHrgRange</find>
       <find>table_golonganharga</find>
       <find>get-golongan-harga</find>
+      <find>masterdatautama/produk/index</find>
+      <find>notifikasiotorisasi/otorisasi/perubahanhargajual/index</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -198,7 +238,6 @@
         <option value="$PROJECT_DIR$/app/Http/Controllers/Master/CabangController.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php" />
         <option value="$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/index.blade.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/PenerimaanProduksiController.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/agen/orderproduk/create.blade.php" />
         <option value="$PROJECT_DIR$/routes/web.php" />
@@ -206,6 +245,9 @@
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/index.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/pushotorisasiController.php" />
+        <option value="$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/index.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php" />
       </list>
     </option>
   </component>
@@ -525,7 +567,7 @@
       <workItem from="1552350598174" duration="12743000" />
       <workItem from="1552443103154" duration="13184000" />
       <workItem from="1552529734950" duration="723000" />
-      <workItem from="1552531228438" duration="203000" />
+      <workItem from="1552531228438" duration="3606000" />
     </task>
     <task id="LOCAL-00001" summary="roliz">
       <created>1551435407765</created>
@@ -723,16 +765,31 @@
       <option name="project" value="LOCAL" />
       <updated>1552469667355</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="roliz">
+      <created>1552531492187</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1552531492187</updated>
+    </task>
+    <task id="LOCAL-00030" summary="roliz">
+      <created>1552534435403</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1552534435403</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="88545000" />
+    <option name="totallyTimeSpent" value="91915000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="0" width="1368" height="740" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23636363" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23636363" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="npm" order="3" side_tool="true" />
@@ -762,14 +819,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="roliz" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/_ide_helper.php" />
-    <entry file="file://$PROJECT_DIR$/resources/views/auth/login.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1320">
-          <caret line="66" column="38" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/produk/edit.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3560">
@@ -957,13 +1006,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SettingController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="87" column="54" selection-start-line="87" selection-start-column="54" selection-end-line="87" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/d_username.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="304">
@@ -1021,23 +1063,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="284" column="19" lean-forward="true" selection-start-line="272" selection-start-column="12" selection-end-line="293" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="108" column="47" selection-start-line="108" selection-start-column="47" selection-end-line="108" selection-end-column="47" />
-          <folding>
-            <element signature="e#47#75#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="123">
@@ -1052,13 +1077,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="600">
           <caret line="40" column="31" selection-start-line="40" selection-start-column="31" selection-end-line="40" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="507">
-          <caret line="137" selection-start-line="137" selection-end-line="137" />
         </state>
       </provider>
     </entry>
@@ -1122,10 +1140,58 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SettingController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1392">
+          <caret line="87" column="23" selection-start-line="87" selection-start-column="23" selection-end-line="87" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/pushotorisasiController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="320">
+          <caret line="16" column="29" lean-forward="true" selection-start-line="16" selection-start-column="29" selection-end-line="16" selection-end-column="29" />
+          <folding>
+            <element signature="e#38#66#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="293" column="13" selection-start-line="272" selection-start-column="53" selection-end-line="293" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="109" column="47" lean-forward="true" selection-start-line="109" selection-start-column="47" selection-end-line="109" selection-end-column="47" />
+          <folding>
+            <element signature="e#47#75#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="507">
+          <caret line="109" column="9" selection-start-line="109" selection-start-column="9" selection-end-line="109" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="172">
-          <caret line="88" column="101" selection-start-line="88" selection-start-column="101" selection-end-line="88" selection-end-column="101" />
+          <caret line="314" column="106" selection-start-line="314" selection-start-column="106" selection-end-line="314" selection-end-column="106" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="353">
+          <caret line="210" column="18" selection-start-line="210" selection-start-column="18" selection-end-line="210" selection-end-column="18" />
         </state>
       </provider>
     </entry>
