@@ -27,29 +27,7 @@
 
           <div class="card-block">
             <section>
-              <form id="formAdd">
-              <div class="row">
-                {{-- <div class="col-md-2 col-sm-6 col-xs-12">
-                  <label>Bulan/Tahun</label>
-                </div>
-                <div class="col-md-10 col-sm-6 col-xs-12">
-                  <div class="form-group">
-                    <input type="text" class="form-control form-control-sm" id="datepicker" name="t_periode">
-                  </div>
-                </div> --}}
-                <div class="col-md-2 col-sm-6 col-xs-12">
-                  <label>Pilihan Cabang</label>
-                </div>
-                <div class="col-md-10 col-sm-6 col-xs-12">
-                  <div class="form-group">
-                    <select name="t_comp[]" id="" class="form-control form-control-sm select2">
-                      <option value="{{$target->st_comp}}" selected="">{{$target->c_name}}</option>
-                      @foreach($company->where('c_id', '!=', $target->st_comp) as $comp)
-                        <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                </div>
+              <form>
                 <div class="container">
                   <hr style="border:0.7px solid grey; margin-bottom:30px;">
                   <div class="table-responsive">
@@ -72,14 +50,13 @@
                            		<select name="t_unit[]" class="form-control form-control-sm select2 satuan"></select>
                           	</td>
                       		<td>
-                        		<input type="number" class="form-control form-control-sm" min="0" value="" name="t_qty[]" value="{{$target->std_qty}}">
+                        		<input type="number" class="form-control form-control-sm" min="0" name="t_qty[]" value="{{$target->std_qty}}">
                           	</td>
                       	</tr>
                       </tbody>
                     </table>
                   </div>                                
                 </div>
-              </div>
               </form>
             </section>
           </div>
@@ -92,5 +69,95 @@
     </div>
   </section>
 </article>
+@endsection
 
+@section('extra_script')
+<script type="text/javascript">
+var idItem    = [];
+var namaItem  = null;
+var kode      = null;
+var idxBarang = null;
+var icode     = [];
+$.ajaxSetup({
+	headers: {
+	'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+}
+});
+$(document).ready(function(){
+	$('.barang').on('click', function(e){
+		idxBarang = $('.barang').index(this);
+		setArrayCode();
+	});
+
+	$(".barang").eq(idxBarang).on("keyup", function () {
+		$(".itemid").eq(idxBarang).val('');
+		$(".kode").eq(idxBarang).val('');
+	});
+
+	function setItem(info) {
+		idItem   = info.data.i_id;
+		namaItem = info.data.i_name;
+		kode     = info.data.i_code;
+		$(".kode").eq(idxBarang).val(kode);
+		$(".itemid").eq(idxBarang).val(idItem);
+		setArrayCode();
+		$.ajax({
+			url : '{{ url('/marketing/penjualanpusat/targetrealisasi/get-satuan/') }}'+'/'+idItem,
+			type: 'GET',
+			success: function( resp ) {
+				$(".satuan").eq(idxBarang).find('option').remove();
+				var option = '';
+				if (resp.id1 != null) {
+					option += '<option value="'+resp.id1+'">'+resp.unit1+'</option>'
+				}
+				if (resp.id2 != null && resp.id2 != resp.id1) {
+					option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+				}
+				if (resp.id3 != null && resp.id3 != resp.id1) {
+					option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+				}
+				$(".satuan").eq(idxBarang).append(option);
+			}
+		});
+	}
+
+	function setArrayCode() {
+		var inputs = document.getElementsByClassName('kode'),
+		code  = [].map.call(inputs, function( input ) {
+			return input.value.toString();
+		});
+
+		for (var i=0; i < code.length; i++) {
+			if (code[i] != "") {
+				icode.push(code[i]);
+			}
+		}
+
+		var item = [];
+		var inpItemid = document.getElementsByClassName( 'itemid' ),
+		item  = [].map.call(inpItemid, function( input ) {
+			return input.value;
+		});
+
+		$( ".barang" ).autocomplete({
+			source: function( request, response ) {
+				$.ajax({
+					url : "{{ url('/marketing/penjualanpusat/targetrealisasi/cari-barang') }}",
+					data: {
+					  idItem: item,
+					  term  : $(".barang").eq(idxBarang).val()
+					},
+					success: function( data ) {
+					  response( data );
+					}
+				});
+			},
+			minLength: 1,
+			select: function(event, data) {
+				setItem(data.item);
+			}
+		});
+	}
+});
+</script>
 @endsection
