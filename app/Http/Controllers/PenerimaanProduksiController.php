@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 use DB;
 use DataTables;
 use Illuminate\Http\Request;
+use Crypt;
+use Carbon\Carbon;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class PenerimaanProduksiController extends Controller
 {
@@ -27,12 +30,24 @@ class PenerimaanProduksiController extends Controller
 
         return DataTables::of($data)
             ->addIndexColumn()
+            ->addColumn('nota', function($data){
+                return $data->po_nota;
+            })
+            ->addColumn('supplier', function($data){
+                return $data->s_name;
+            })
+            ->addColumn('tanggal', function($data){
+                return Carbon::createFromFormat('Y-m-d', $data->po_date)->format('d-m-Y');;
+            })
             ->addColumn('action', function($datas) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                        <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.$datas->po_id.'\')"><i class="fa fa-folder"></i>
+                        <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-folder"></i>
+                        </button>
+                        <button class="btn btn-info hint--bottom-left hint--info" aria-label="Terima" onclick="terima(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-check"></i>
                         </button>
                     </div>';
             })
+            ->rawColumns(['nota', 'supplier', 'tanggal', 'action'])
             ->make(true);
     }
 }

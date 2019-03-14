@@ -37,7 +37,7 @@ class OtorisasiController extends Controller
     public function getProduksi()
     {
         $data = DB::table('d_productionorderauth')
-                ->select('d_productionorderauth.poa_id', 'd_productionorderauth.poa_date', 'm_supplier.s_name', 'd_productionorderauth.poa_notatemp')
+                ->select('d_productionorderauth.poa_id', 'd_productionorderauth.poa_date', 'm_supplier.s_name', 'd_productionorderauth.poa_nota')
                 ->join('m_supplier', function ($q){
                     $q->on('d_productionorderauth.poa_supplier', '=', 'm_supplier.s_id');
                 })->get();
@@ -51,7 +51,7 @@ class OtorisasiController extends Controller
                 return $data->s_name;
             })
             ->addColumn('nota', function($data){
-                return $data->poa_notatemp;
+                return $data->poa_nota;
             })
             ->addColumn('aksi', function($data){
                 $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrderProduksi(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-folder"></i></button>';
@@ -100,7 +100,7 @@ class OtorisasiController extends Controller
                 return '<p class="text-right">'. Currency::addRupiah($data->pod_value) .'</p>';
             })
             ->addColumn('totalnet', function($data){
-                return '<p class="text-right">'. Currency::addRupiah($data->pod_totalnet) .'</p><input type="hidden" class="totalnet" value="'.number_format($data->pod_totalnet,0,'','').'">';
+                return '<p class="text-right">'. Currency::addRupiah($data->pod_totalnet) .'</p><input type="hidden" class="totalnetdetail" name="totalnetdetail[]" value="'.number_format($data->pod_totalnet,0,'','').'">';
             })
             ->rawColumns(['item','unit','qty','value','totalnet'])
             ->make(true);

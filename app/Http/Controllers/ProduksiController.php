@@ -153,10 +153,10 @@ class ProduksiController extends Controller
             try{
                 // dd($request);
                 $idpo= (DB::table('d_productionorderdt')->max('pod_productionorder')) ? (DB::table('d_productionorderdt')->max('pod_productionorder')) + 1 : 1;
-                $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_notatemp', 8, 10, 3, 'PO', '-');
+                $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
                 $productionorderauth[] = [
                     'poa_id' => $idpo,
-                    'poa_notatemp' => $nota,
+                    'poa_nota' => $nota,
                     'poa_date' => date('Y-m-d', strtotime($data['po_date'])),
                     'poa_supplier' => $data['supplier'],
                     'poa_totalnet' => $data['tot_hrg'],

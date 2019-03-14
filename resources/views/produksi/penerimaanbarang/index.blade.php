@@ -67,7 +67,7 @@
         table = $('#table_penerimaan').DataTable({
             responsive: true,
             // language: dataTableLanguage,
-            // processing: true,
+            processing: true,
             serverSide: true,
             ajax: {
                 url: "{{ url('produksi/penerimaanbarang/getnotapo') }}",
@@ -78,10 +78,10 @@
             },
             columns: [
                 {data: 'DT_RowIndex'},
-                {data: 'po_nota', name: 'po_nota'},
-                {data: 's_name', name: 's_name'},
-                {data: 'po_date', name: 'po_date'},
-                {data: 'action', name: 'action'}
+                {data: 'nota'},
+                {data: 'supplier'},
+                {data: 'tanggal'},
+                {data: 'action'}
             ],
             pageLength: 10,
             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
@@ -135,6 +135,14 @@
 			$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
 	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 		})
+
+        function detail(id) {
+
+        }
+
+        function terima(id) {
+
+        }
 
 		// function table_hapus(a){
 		// 	table.row($(a).parents('tr')).remove().draw();
