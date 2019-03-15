@@ -26,89 +26,16 @@ class HistoryOpnameController extends Controller
 
       return Datatables::of($datas)
       ->addIndexColumn()
+      ->addColumn('date', function($datas) {
+        return '<td>'. date('d-m-Y', strtotime($datas->oa_date)) .'</td>';
+      })
       ->addColumn('name', function($datas) {
         return '<td>'. $datas->getItem['i_name'] .'</td>';
       })
       ->addColumn('status', function($datas) {
-        return '<td><button class="btn btn-primary status-reject" style="pointer-events: none">-</button></td>';
+        return '<td><button class="btn btn-primary status-pending" style="pointer-events: none">-</button></td>';
       })
-      ->rawColumns(['name', 'status'])
+      ->rawColumns(['date', 'name', 'status'])
       ->make(true);
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

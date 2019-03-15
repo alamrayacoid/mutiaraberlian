@@ -173,7 +173,7 @@
 			},
 			columns: [
 				{data: 'DT_RowIndex'},
-				{data: 'oa_date'},
+				{data: 'date'},
 				{data: 'oa_nota'},
 				{data: 'name'}
 			],

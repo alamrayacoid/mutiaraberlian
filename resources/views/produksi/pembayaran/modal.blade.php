@@ -8,23 +8,21 @@
         <h4 class="modal-title">Detail Item</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
-      <div class="modal-body">      
+      <div class="modal-body">
         <div class="table-responsive">
-          <table class="table table-striped data-table table-hover" cellspacing="0">
+          <table class="table table-striped data-table table-hover" cellspacing="0" id="table_detail">
             <thead class="bg-primary">
               <tr>
                 <th>Kode Barang</th>
-                <th>Satuan</th>
                 <th>Nama Barang</th>
+                <th>Qty</th>
+                <th>Satuan</th>
+                <th>@ Harga</th>
+                <th>Sub Total</th>
               </tr>
             </thead>
             <tbody>
-              
-               <tr>
-                <td>1231</td>
-                <td>-</td>
-                <td>Kulkas</td>
-              </tr>
+
             </tbody>
           </table>
         </div>
@@ -32,12 +30,20 @@
       </div>
       <div class="section-nilai-bayar">
           <div class="row">
-          <div class="col-lg-3 col-sm-4">
-              <label for="" style="margin-right:10px;">Nominal</label>
+            <div class="col-lg-3 col-sm-4">
+                <label for="" style="margin-right:10px;">Total</label>
+            </div>
+            <div class="col-4">
+              <input type="text" class="form-control-plaintext" id="total_nominal">
+            </div>
           </div>
-          <div class="col-4">
-              <p>Rp. 1.000.000,00</p>
-          </div>
+          <div class="row">
+            <div class="col-lg-3 col-sm-4">
+                <label for="" style="margin-right:10px;">Nominal termin</label>
+            </div>
+            <div class="col-4">
+              <input type="text" class="form-control-plaintext" id="nominal_termin">
+            </div>
           </div>
           <div class="row">
           <div class="col-lg-3 col-sm-4">
