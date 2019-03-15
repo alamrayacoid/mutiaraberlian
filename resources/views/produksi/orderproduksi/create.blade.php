@@ -264,8 +264,8 @@
                         '<tr>' +
                         '<td><input type="text" name="termin[]" class="form-control form-control-sm termin" readonly value="' + next_termin + '"></td>' +
                         '<td><input type="text" name="estimasi[]" class="form-control form-control-sm datepicker estimasi" autocomplete="off"></td>' +
-                        '<td><input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah nominal" value="Rp. 0"></td>' +
-                        '<td><button class="btn btn-danger btn-sm btn-hapus-termin" type="button"><i class="fa fa-trash-o"></i></button></td>' +
+                        '<td><input type="text" name="nominal[]" class="form-control form-control-sm input-rupiah nominal" value="Rp. 0" autocomplete="off"></td>' +
+                        '<td><button class="btn btn-danger btn-sm btn-hapus-termin" type="button"><i class="fa fa-remove"></i></button></td>' +
                         '</tr>'
                     );
                 $('.datepicker').datepicker({
@@ -345,11 +345,10 @@
                     loadingShow();
                     var data = $('#form').serialize();
                     axios.post(baseUrl+'/produksi/orderproduksi/create', data).then(function (response){
-
                         if(response.data.status == 'Success'){
                             loadingHide();
                             messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
-                            location.reload();
+                            setInterval(function(){location.reload();}, 3500)
                         }else{
                             loadingHide();
                             messageFailed("Gagal", "Data Order Produksi Gagal Disimpan");

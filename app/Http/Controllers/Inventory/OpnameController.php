@@ -7,11 +7,14 @@ use App\Http\Controllers\Controller;
 
 use DB;
 use App\m_item;
-use App\d_opnameauth;
 use App\d_stock;
+use App\m_company;
+use App\d_opnameauth;
 use Validator;
 use CodeGenerator;
 use carbon\Carbon;
+use Yajra\DataTables\DataTables;
+use App\Http\Controllers\pushotorisasiController as otorisasi;
 
 class OpnameController extends Controller
 {
@@ -87,6 +90,7 @@ class OpnameController extends Controller
         ->where('s_position', $request->position)
         ->where('s_item', $request->itemId)
         ->first();
+      $qtySystem = $itemStock->s_qty;
       if ($request->unit_sys == $item->i_unit1) {
         $qty = $itemStock->s_qty / $item->i_unitcompare1;
       } elseif ($request->unit_sys == $item->i_unit2) {
@@ -95,7 +99,8 @@ class OpnameController extends Controller
         $qty = $itemStock->s_qty / $item->i_unitcompare3;
       }
       return response()->json([
-        'qty' => $qty
+        'qty' => $qty,
+        'qtySystem' => $qtySystem
       ]);
     }
 
@@ -145,6 +150,34 @@ class OpnameController extends Controller
     }
 
     /**
+    * Return DataTable list for view.
+    *
+    * @return Yajra/DataTables
+    */
+    public function getList()
+    {
+      $datas = d_opnameauth::orderBy('oa_id', 'asc')
+      ->with('getItem')
+      ->get();
+      return Datatables::of($datas)
+      ->addIndexColumn()
+      ->addColumn('name', function($datas) {
+        return '<td>'. $datas->getItem['i_name'] .'</td>';
+      })
+      ->addColumn('status', function($datas) {
+        return '<td><button class="btn btn-primary status-reject" style="pointer-events: none">Pending</button></td>';
+      })
+      ->addColumn('action', function($datas) {
+        return '<td><div class="btn-group btn-group-sm">
+                <button class="btn btn-info" data-toggle="tooltip" data-placement="bottom" title="Detail data" onclick="Detail('. $datas->oa_id .')"><i class="fa fa-folder"></i></button>
+                <button class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Edit data" onclick="Edit('. $datas->oa_id .')"><i class="fa fa-pencil"></i></button>
+                <button class="btn btn-danger" data-toggle="tooltip" data-placement="bottom" title="Hapus data" onclick="Delete('. $datas->oa_id .')"><i class="fa fa-times-circle"></i></button></div></td>';
+      })
+      ->rawColumns(['name', 'status', 'action'])
+      ->make(true);
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -191,14 +224,18 @@ class OpnameController extends Controller
           $opname->oa_id = $newId;
           $opname->oa_date = Carbon::now();
           $opname->oa_nota = $nota;
+          $opname->oa_comp = $request->owner;
+          $opname->oa_position = $request->position;
           $opname->oa_item = $request->itemId;
           $opname->oa_qtyreal = $request->qty_real;
           $opname->oa_unitreal = $request->unit_real;
-          $opname->oa_qtysystem = $request->qty_sys;
-          $opname->oa_unitsystem = $request->unit_sys;
-          $opname->oa_status = 'P';
+          $opname->oa_qtysystem = $request->qty_sys_hidden;
+          $opname->oa_unitsystem = 1;
           $opname->oa_insert = Carbon::now();
           $opname->save();
+
+          otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
+
         DB::commit();
         return response()->json([
           'status' => 'berhasil'
@@ -207,21 +244,23 @@ class OpnameController extends Controller
         DB::rollBack();
         return response()->json([
           'status' => 'gagal',
-          'message' => 'Gagal, hubungi pengembang !'
+          'message' => $e->getMessage()
         ]);
       }
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    // show specific resource
     public function show($id)
     {
-        //
+      $data = d_opnameauth::where('oa_id', $id)
+        ->with('getItem')
+        ->with('getUnitReal')
+        ->with('getUnitSystem')
+        ->with('getPosition')
+        ->with('getOwner')
+        ->first();
+      return $data;
     }
 
     /**
@@ -232,7 +271,13 @@ class OpnameController extends Controller
      */
     public function edit($id)
     {
-        //
+      $data['opname'] = d_opnameauth::where('oa_id', $id)
+        ->with('getItem')
+        ->first();
+      $data['company'] = DB::table('m_company')->select('c_id', 'c_name')
+        ->get();
+      // dd($data);
+      return view('inventory/manajemenstok/opname/opnamestock/edit', compact('data'));
     }
 
     /**
@@ -244,7 +289,43 @@ class OpnameController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+      // validate request
+      $isValidRequest = $this->validate_req($request);
+      if ($isValidRequest != '1') {
+        $errors = $isValidRequest;
+        return response()->json([
+          'status' => 'invalid',
+          'message' => $errors
+        ]);
+      }
+      // insert data to db
+      try {
+        DB::beginTransaction();
+          $opname = d_opnameauth::where('oa_id', $id)
+            ->first();
+          $opname->oa_comp = $request->owner;
+          $opname->oa_position = $request->position;
+          $opname->oa_item = $request->itemId;
+          $opname->oa_qtyreal = $request->qty_real;
+          $opname->oa_unitreal = $request->unit_real;
+          $opname->oa_qtysystem = $request->qty_sys_hidden;
+          $opname->oa_unitsystem = 1;
+          $opname->oa_insert = Carbon::now();
+          $opname->save();
+
+          otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json([
+          'status' => 'gagal',
+          'message' => $e->getMessage()
+        ]);
+      }
     }
 
     /**
@@ -255,10 +336,26 @@ class OpnameController extends Controller
      */
     public function destroy($id)
     {
-        //
-    }
+      // start: execute delete data
+      DB::beginTransaction();
+      try {
 
-    public function print_opname(){
-      return view('inventory.manajemenstok.opname.opnamestock.print');
+        DB::table('d_opnameauth')
+          ->where('oa_id', $id)
+          ->delete();
+
+          otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (\Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal',
+          'message' => $e->getMessage()
+        ]);
+      }
     }
 }

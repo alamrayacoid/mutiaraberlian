@@ -62,29 +62,24 @@
 
 @section('extra_script')
 <script type="text/javascript">
-	var sub, detail;
+	var tblOrder;
 	$(document).ready(function(){
-		var table = $('#table_order').DataTable();
+        tblOrder = $('#table_order').DataTable();
 		TableIndex();
 	});
 
 	function TableIndex(){
-		var tglAwal = $('#tglAwal').val();
-		var tglAkhir = $('#tglAkhir').val();
 
-		$('#table_order').dataTable().fnDestroy();
-		sub = $('#table_order').DataTable({
+        if ($.fn.DataTable.isDataTable("#table_order")) {
+            $('#table_order').dataTable().fnDestroy();
+        }
+        tblOrder = $('#table_order').DataTable({
 			responsive: true,
 			autoWidth: false,
 			serverSide: true,
 			ajax: {
-				url: "{{ route('order.gethistory') }}",
-				type: "get",
-				data: {
-					"_token": "{{ csrf_token() }}",
-					"tglAwal": tglAwal,
-					"tglAkkhir": tglAkhir
-				}
+				url: "{{ route('order.getOrderProd') }}",
+				type: "get"
 			},
 			columns: [
 				{data: 'DT_RowIndex'},
@@ -98,33 +93,96 @@
 		});
 	}
 
-	function TableDetail(id){
-		$('#table_detail').dataTable().fnDestroy();
-		detail = $('#table_detail').DataTable({
-			responsive: true,
-			autoWidth: false,
-			serverSide: true,
-			ajax: {
-				url: "{{ route('order.detail') }}",
-				type: "get",
-				data: {
-					"_token": "{{ csrf_token() }}",
-					"id": id
-				}
-			},
-			columns: [
-				{data: 'i_code'},
-				{data: 'i_name'},
-				{data: 'pod_qty'},
-				{data: 'u_name'}
-			],
-		});
+	function detailOrder(id){
+        if ($.fn.DataTable.isDataTable("#tbl_dtlitem") && $.fn.DataTable.isDataTable("#tbl_dtltermin")) {
+            $('#tbl_dtlitem').DataTable().clear().destroy();
+            $('#tbl_dtltermin').DataTable().clear().destroy();
+        }
+
+        $('#tbl_dtlitem').DataTable({
+            "paging":   false,
+            "ordering": false,
+            "info":     false,
+            "searching":     false,
+            responsive: true,
+            autoWidth: false,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('order.detailitem') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "id": id
+                }
+            },
+            columns: [
+                {data: 'item'},
+                {data: 'unit'},
+                {data: 'qty'},
+                {data: 'value'},
+                {data: 'totalnet'}
+            ],
+            drawCallback: function( settings ) {
+                hitungTotalNet();
+            }
+        });
+
+        $('#tbl_dtltermin').DataTable({
+            "paging":   false,
+            "ordering": false,
+            "info":     false,
+            "searching":     false,
+            responsive: true,
+            autoWidth: false,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('order.detailtermin') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "id": id
+                }
+            },
+            columns: [
+                {data: 'termin'},
+                {data: 'date'},
+                {data: 'value'}
+            ],
+            drawCallback: function( settings ) {
+                hitungTotalTermin();
+            }
+        });
+
+		$('#detailOrderProduksi').modal('show');
 	}
 
-	function detailOrder(id){
-		TableDetail(id);
-		$('#detail').modal('show');
-	}
+    function hitungTotalNet() {
+        var inpTotNet = document.getElementsByClassName( 'totalnet' ),
+            totNet  = [].map.call(inpTotNet, function( input ) {
+                return parseInt(input.value);
+            });
+
+        var total = 0;
+        for (var i =0; i < totNet.length; i++) {
+            total += parseInt(totNet[i]);
+        }
+
+        $("#totNet").html(convertToRupiah(total));
+    }
+
+    function hitungTotalTermin() {
+        var inpTotTermin = document.getElementsByClassName( 'totaltermin' ),
+            totTermin  = [].map.call(inpTotTermin, function( input ) {
+                return parseInt(input.value);
+            });
+
+        var total = 0;
+        for (var i =0; i < totTermin.length; i++) {
+            total += parseInt(totTermin[i]);
+        }
+
+        $("#totTermin").html(convertToRupiah(total));
+    }
 
 	function edit(id){
 		window.location.href = baseUrl+'/produksi/orderproduksi/edit?id='+id;
@@ -144,8 +202,8 @@
 					btnClass: 'btn-blue',
 					text: 'Ya',
 					action: function () {
+                        loadingShow();
 						axios.get(baseUrl+'/produksi/orderproduksi/hapus'+'/'+id).then(function(response) {
-							loadingShow();
 							if(response.data.status == 'Success'){
 								loadingHide();
 								messageSuccess("Berhasil", "Data Order Produksi Berhasil Dihapus");
@@ -167,8 +225,8 @@
 		});		
 	}
 
-	$('#table_order tbody').on('click', '.btn-nota', function(){
-		window.open('{{route('order.nota')}}', '_blank');
-	})
+	function printNota(id) {
+        window.open('{{url('/produksi/orderproduksi/nota/')}}'+'/'+id, '_blank');
+    }
 </script>
 @endsection

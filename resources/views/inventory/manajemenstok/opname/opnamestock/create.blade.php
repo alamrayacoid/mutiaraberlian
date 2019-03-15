@@ -84,7 +84,7 @@
                                 </div>
                                 <div class="form-group">
                                   <label class="control-label" for="qty_sys">Qty</label>
-                                  <input type="hidden" name="qty_sys_hiddem" value="">
+                                  <input type="hidden" id="qty_sys_hidden" name="qty_sys_hidden">
                                   <input type="text" class="form-control form-control-sm" id="qty_sys" name="qty_sys" readonly>
                                 </div>
                               </form>
@@ -110,7 +110,7 @@
                     </form>
                     <div class="card-footer text-right">
                       <button class="btn btn-primary btn-submit" type="button" id="btn_simpan">Simpan</button>
-                      <a href="{{route('mngagen.index')}}" class="btn btn-secondary">Kembali</a>
+                      <a href="{{route('opname.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
 
@@ -157,10 +157,13 @@
         url: baseUrl + '/inventory/manajemenstok/opnamestock/getQty',
         success: function(data) {
           $('#qty_sys').val('');
+          $('#qty_sys_hidden').val('');
           $('#qty_sys').val(data.qty);
+          $('#qty_sys_hidden').val(data.qtySystem);
         }
       });
     })
+
 
     $('#btn_simpan').on('click', function() {
       SubmitForm(event);

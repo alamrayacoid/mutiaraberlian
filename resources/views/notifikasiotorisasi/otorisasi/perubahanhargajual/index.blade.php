@@ -58,45 +58,17 @@
 								<thead class="bg-primary">
 									<tr>
 										<th width="1%">No</th>
+                                        <th>Golongan</th>
 										<th>Nama Barang</th>
-										<th>Keterangan</th>
+										<th>Jenis</th>
 										<th>Qty</th>
-										<th>User</th>
+                                        <th>Harga</th>
 										<th width="20%">Aksi</th>
 									</tr>
 								</thead>
 
-								<tbody>
-									<tr>
-										<td>1</td>
-										<td>01001 - Botol Aqua</td>
-										<td>Satuan</td>
-										<td>1 Botol</td>
-										<td>Charlie</td>
-										<td align="center">
-											<div class="btn-group btn-group-sm">
-												<button class="btn btn-info btn-detail"><i class="fa fa-list"></i></button>
-												<button class="btn btn-success" type="button" title="Setuju"><i class="fa fa-check-circle"></i></button>
-												<button class="btn btn-danger" type="button" title="Tolak"><i class="fa fa-times-circle"></i></button>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<td>2</td>
-										<td>01001 - Botol Aqua</td>
-										<td>Range</td>
-										<td>1-4 Botol</td>
-										<td>developer</td>
-										<td align="center">
-											<div class="btn-group btn-group-sm">
-												<button class="btn btn-info btn-detail" type="button"><i class="fa fa-list"></i></button>
-												<button class="btn btn-success" type="button" title="Setuju"><i class="fa fa-check-circle"></i></button>
-												<button class="btn btn-danger" type="button" title="Tolak"><i class="fa fa-times-circle"></i></button>
-											</div>
-										</td>
-									</tr>
-								</tbody>
-								
+
+
 							</table>
 
 						</div>
@@ -115,15 +87,74 @@
 
 @section('extra_script')
 <script type="text/javascript">
+    var table1, table2;
 	$(document).ready(function(){
-		var table1, table2;
-
-		table1 = $('#table_otorisasi').DataTable();
+        table1 = $('#table_otorisasi').DataTable({
+            responsive: true,
+            // language: dataTableLanguage,
+            // processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('notifikasiotorisasi/otorisasi/perubahanhargajual/getdataperubahan') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}"
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'pc_name', name: 'pc_name'},
+                {data: 'nama', name: 'name'},
+                {data: 'pcad_payment', name: 'pcad_payment'},
+                {data: 'qty', name: 'qty'},
+                {data: 'pcad_price', name: 'pcad_price'},
+                {data: 'aksi', name: 'aksi'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
 		table2 = $('#table_detail').DataTable();
 
 		$('#table_otorisasi tbody').on('click', '.btn-detail' ,function(){
 			$('#detail').modal('show');
 		})
 	});
+
+	function approve(id, detailid) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin akan menyetujui data ini?',
+            theme: 'sukses',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/perubahanhargajual/approve'+'/'+id+'/'+detailid).then(function(response) {
+                            loadingShow();
+                            if(response.data.status == 'sukses'){
+                                loadingHide();
+                                messageSuccess("Berhasil", "Data Order Produksi Berhasil Dihapus");
+                                table1.ajax.reload();
+                            }else{
+                                loadingHide();
+                                messageFailed("Gagal", "Data Order Produksi Gagal Dihapus");
+                            }
+                        })
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
 </script>
 @endsection

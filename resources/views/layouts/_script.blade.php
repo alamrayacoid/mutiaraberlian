@@ -421,28 +421,48 @@
 
     var channel = pusher.subscribe('my-channel');
     channel.bind('my-event', function(data) {
-      otorisasi();
+      otorisasi(data.table, data.menu, data.url);
     });
 
-    otorisasi();
+    $.ajax({
+      type: 'get',
+      dataType: 'json',
+      url: baseUrl + '/gettmpoto',
+      success : function(response){        
+          otorisasi(response[0].table, response[0].menu, response[0].url);
+      }
+    });
 
-    function otorisasi(){
+    function otorisasi(table, menu, url){
       var html = "";
       $.ajax({
         type: 'get',
+        data: {table, menu, url},
         dataType: 'json',
         url: baseUrl + '/getoto',
         success : function(response){
-          for (var i = 0; i < response.data.length; i++) {
-            html += '<li>'
-                     +'<a href="'+response.data[i].link+'" class="notification-item">'
+          if (response.count == 0) {
+            html = '<center><li>'
+                     +'<a href="#" class="notification-item">'
                      +'<div class="body-col">'
                      +'<p>'
-                     +      '<span class="accent"> '+response.data[i].menu+' </span> '+response.data[i].isi+''
-                     +      '<span class="accent"> '+response.data[i].count+' </span> . </p>'
+                     +      '<span class="accent">Tidak ada data</span>'
+                     +'</p>'
                      +'</div>'
                      +'</a>'
-                     '</li>';
+                     '</li></center>';
+          } else {
+            for (var i = 0; i < response.data.length; i++) {
+              html += '<li>'
+                       +'<a href="'+response.data[i].link+'" class="notification-item">'
+                       +'<div class="body-col">'
+                       +'<p>'
+                       +      '<span class="accent"> '+response.data[i].menu+' </span> '+response.data[i].isi+''
+                       +      '<span class="accent"> '+response.data[i].count+' </span> . </p>'
+                       +'</div>'
+                       +'</a>'
+                       '</li>';
+            }
           }
           $('#showotorisasi').html(html);
           $('#counter').text(response.count);

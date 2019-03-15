@@ -8,9 +8,9 @@
         <h4 class="modal-title">Detail Item</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
-      <div class="modal-body">      
+      <div class="modal-body">
         <div class="table-responsive">
-          <table class="table table-striped data-table table-hover display nowrap" cellspacing="0">
+          <table class="table table-striped data-table table-hover display" cellspacing="0" id="table_detail">
             <thead class="bg-primary">
               <tr>
                 <th>Nama Barang</th>
