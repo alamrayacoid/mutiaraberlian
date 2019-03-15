@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 use DB;
-use DataTables;
+use Yajra\DataTables\DataTables;
+use Response;
 use Illuminate\Http\Request;
 use Crypt;
 use Carbon\Carbon;
 use Illuminate\Contracts\Encryption\DecryptException;
-use Response;
 
 class PenerimaanProduksiController extends Controller
 {
@@ -171,5 +171,6 @@ class PenerimaanProduksiController extends Controller
             })
             ->rawColumns(['barang', 'satuan', 'jumlah', 'action'])
             ->make(true);
+
     }
 }
