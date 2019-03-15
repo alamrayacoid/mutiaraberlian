@@ -20,7 +20,7 @@
 								<th>Reff</th>
 								<th>Nama Barang</th>
                                 <th>Status</th>
-                                <!-- <th>Aksi</th> -->
+                                <th>Aksi</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -30,12 +30,11 @@
 								<td>-</td>
                                 <td>Obat</td>
 								<td><button class="btn btn-primary status-reject">Pending</button></td>
-                                <!-- <td>
+                                <td>
                                     <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-primary btn-modal" data-toggle="modal" data-target="#detail" type="button" title="Detail"><i class="fa fa-folder"></i></button>
-                                        <button class="btn btn-danger btn-disable-tunjangan" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>
+                                        <button class="btn btn-primary" type="button" onclick="window.location.href='{{ route('adjustment.nota') }}'" title="Print"><i class="fa fa-print"></i></button>
                                     </div>
-                                </td> -->
+                                </td>
 							</tr>
 						</tbody>
 					</table>

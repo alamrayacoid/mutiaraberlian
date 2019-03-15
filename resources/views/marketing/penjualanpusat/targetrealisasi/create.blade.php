@@ -118,9 +118,9 @@
     });
 
     $("#datepicker").datepicker( {
-      format     : "dd/mm/yyyy"
-      // viewMode   : "months", 
-      // minViewMode: "months"
+      format     : "mm/yyyy",
+      viewMode   : "months", 
+      minViewMode: "months"
     });
 
     $(document).on('click', '.btn-hapus', function(){

@@ -24,7 +24,7 @@
     </div>
     <div class="row">
     <div class="col-10">
-        <input type="text" name="harga" id="harga" class="form-control form-control-sm input-rupiah">
+        <input type="text" name="harga" id="harga" class="form-control form-control-sm input-rupiah" autocomplete="off">
     </div>
     <div class="col-2">
         <button class="btn btn-primary btn-md btn-submit btn-block" type="submit">Simpan</button>
