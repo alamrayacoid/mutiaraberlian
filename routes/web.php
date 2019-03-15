@@ -259,7 +259,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/targetrealisasi/get-satuan/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getSatuan')->name('targetReal.getsatuan');
     Route::get('/marketing/penjualanpusat/targetrealisasi/get-company', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getComp')->name('targetReal.getcomp');
     Route::get('/marketing/penjualanpusat/targetrealisasi/store', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetRealStore')->name('targetReal.store');
-    Route::get('/marketing/penjualanpusat/targetrealisasi/editTarget', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@editTarget')->name('targetReal.edit');
+    Route::get('/marketing/penjualanpusat/targetrealisasi/editTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@editTarget')->name('targetReal.edit');
     // End ---
     // Return Penjualan
     Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
@@ -347,6 +347,9 @@ Route::group(['middleware' => 'auth'], function () {
     //Get ototitasi
     Route::get('/getoto', 'getotorisasiController@get');
     Route::get('/gettmpoto', 'getotorisasiController@gettmpoto');
+
+    //Otorisasi Stock Opname
+    Route::get('/notifikasiotorisasi/otorisasi/perubahanhargajual/getdataopname', 'OtorisasiController@getopname');
 
 });
 // End Route Group

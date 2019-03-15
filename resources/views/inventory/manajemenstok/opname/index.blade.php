@@ -48,17 +48,15 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
+		TableOpnameStock();
+		TableOpnameHistory();
+
 		cur_date = new Date();
 		first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
 		last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
 		$('#date_from').datepicker('setDate', first_day);
 		$('#date_to').datepicker('setDate', last_day);
-
-		TableOpnameStock();
-		TableOpnameHistory();
-
 	});
-
 
 	var tb_opnamestock;
 	// function to retrieve DataTable server side
@@ -77,7 +75,7 @@
 			},
 			columns: [
 				{data: 'DT_RowIndex'},
-				{data: 'oa_date'},
+				{data: 'date'},
 				{data: 'oa_nota'},
 				{data: 'name'},
 				{data: 'status'},

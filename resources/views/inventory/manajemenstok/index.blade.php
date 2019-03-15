@@ -52,7 +52,7 @@
 					</div>
 				</a>
 			</div>
-<!-- 
+<!--
 			<div class="col-md-4 col-sm-6 col-12">
 				<a href="{{route('opname_otorisasi')}}">
 					<div class="card text-center p-4 card-custom text-info">

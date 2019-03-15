@@ -17,7 +17,7 @@
 					</div>
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" id="date_from" name="date_from">
+						<input type="text" class="form-control form-control-sm datepicker" id="date_from" name="date_from" autocomplete="off">
 					</div>
 					</div>
 
@@ -26,7 +26,7 @@
 					</div>
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" id="date_to" name="date_to">
+						<input type="text" class="form-control form-control-sm datepicker" id="date_to" name="date_to" autocomplete="">
 					</div>
 					</div>
 
@@ -37,7 +37,7 @@
 				</div>
 			</fieldset>
 				<div class="table-responsive">
-					<table class="table table-hover table-striped" cellspacing="0" id="table_historyopname">
+					<table class="table table-hover table-striped w-100" cellspacing="0" id="table_historyopname">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>

@@ -36,7 +36,7 @@ class InventoryController extends Controller
 
         $mutcat = DB::table('m_mutcat')->select('m_id', 'm_name')->where('m_name', 'like', 'Barang Keluar%')->get();
 
-        
+
         return view('inventory/barangkeluar/create')->with(compact('unit', 'company', 'mutcat'));
     }
 
@@ -66,7 +66,7 @@ class InventoryController extends Controller
     {
         return view('inventory/manajemenstok/index');
     }
-    
+
     public function manajemenstok_create()
     {
         return view('inventory/manajemenstok/create');
@@ -101,6 +101,6 @@ class InventoryController extends Controller
     {
         return view('inventory/manajemenstok/adjustment/adjustmentstock/create');
     }
-    
-       
+
+
 }
