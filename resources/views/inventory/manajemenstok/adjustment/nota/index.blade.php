@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Nota Order Produksi</title>
+	<title>Nota Opname</title>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
@@ -252,7 +252,6 @@ table, td, th {
 }
 .div-width-background{
 	content: "";
-	background-image: url("{{asset('assets/atonergi.png')}}");
 	background-repeat: no-repeat;
 	background-position: center;
 	position: absolute;
@@ -344,9 +343,9 @@ table, td, th {
 	page-break-after: always;
 }
 .btn-print button, .btn-print a{
-		right: 10px;
-		float: right;
-		background-color: #52BCD3;
+	right: 10px;
+	float: right;
+    background-color: #52BCD3;
     border: none;
     color: white;
     padding: 15px 32px;
@@ -471,26 +470,21 @@ table.border-none > tbody > tr > td{
 			<div class="col-6">
 
 				<h1 class="m-unset">Mutiara Berlian</h1>
-				<h3>Nota Order Produksi</h3>
+				<h3>Nota Opname</h3>
 				
 			</div>
 			
 			<div class="col-6">
 				<table class="border-none" width="100%">
 					<tr>
-						<td>No.</td>
+						<td width="20%">No. Nota</td>
 						<td width="1%">:</td>
-						<td>{{ $header->nota }}</td>
+						<td>#</td>
 					</tr>
 					<tr>
 						<td>Tanggal</td>
-						<td width="1%">:</td>
-						<td>{{date('d-m-Y', strtotime($header->tanggal))}}</td>
-					</tr>
-					<tr>
-						<td>Suplier</td>
-						<td width="1%">:</td>
-						<td>{{ $header->supplier }}</td>
+						<td width="5%">:</td>
+						<td>#</td>
 					</tr>
 				</table>
 			</div>
@@ -499,72 +493,23 @@ table.border-none > tbody > tr > td{
 				<thead>
 					<tr>
 						<th width="1%">No</th>
-						<th width="40%">Barang</th>
-						<th width="1%">Qty</th>
-						<th width="15%">Satuan</th>
-						<th>Harga</th>
-						<th>Sub Total</th>
+						<th width="40%">Nama Barang</th>
+						<th>Qty Real</th>
+						<th>Unit Real</th>
+                        <th>Qty System</th>
+                        <th>Unit System</th>
 					</tr>
 				</thead>
 				<tbody>
-                    @foreach($item as $key => $dtItem)
 					<tr>
-						<td align="center">{{ $key+1 }}</td>
-						<td>{{ $dtItem->barang }}</td>
-						<td align="center">{{ $dtItem->qty }}</td>
-						<td>{{ $dtItem->satuan }}</td>
-						<td>
-							<div class="w-100">
-								<div class="float-left">Rp. </div><div class="float-right">{{ Currency::addCurrency($dtItem->value) }}</div>
-							</div>
-						</td>
-						<td>
-							<div class="w-100">
-								<div class="float-left">Rp. </div><div class="float-right">{{ Currency::addCurrency($dtItem->totalnet) }}</div>
-                                <input type="hidden" class="totalnet" value="{{ number_format($dtItem->totalnet,0,'','') }}">
-							</div>
-						</td>
+						<td align="center">#</td>
+						<td align="center">#</td>
+						<td align="center">#</td>
+						<td align="center">#</td>
+						<td align="center">#</td>
+						<td align="center">#</td>
 					</tr>
-                    @endforeach
 				</tbody>
-				<tfoot>
-					<tr>
-						<td class="tebal" align="right" colspan="5">Total Net</td>
-						<td>
-							<div class="float-left">Rp. </div><div class="float-right" id="totalnet"></div>
-						</td>
-					</tr>
-				</tfoot>
-			</table>
-			<h1 class="text-left">Termin Pembayaran</h1>
-			<table width="100%" cellpadding="5px">
-				<thead>
-					<tr>
-						<th width="1%">No</th>
-						<th>Estimasi</th>
-						<th>Nominal</th>
-					</tr>
-				</thead>
-				<tbody>
-                @foreach($termin as $key => $dtTermin)
-					<tr>
-						<td align="center">{{ $dtTermin->termin }}</td>
-						<td align="center">{{ date('d-m-Y', strtotime($dtTermin->tanggal)) }}</td>
-						<td>
-							<div class="float-left">Rp. </div><div class="float-right">{{ Currency::addCurrency($dtTermin->value) }}</div>
-                            <input type="hidden" class="totaltermin" value="{{ number_format($dtTermin->value,0,'','') }}">
-						</td>
-					</tr>
-                @endforeach
-				</tbody>
-                <tfoot>
-                    <tr>
-                        <td class="tebal" align="right" colspan="2">Total Termin</td>
-                        <td>
-                            <div class="float-left">Rp. </div><div class="float-right" id="totaltermin"></div>
-                        </td>
-                    </tr>
-                </tfoot>
 			</table>
 		</div>
 </body>
@@ -572,45 +517,6 @@ table.border-none > tbody > tr > td{
 <script src="{{asset('assets/jquery/jquery-3.1.0.min.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        hitungTotalNet();
-        hitungTotalTermin();
         window.print();
     })
-
-    function convertToCurrency(angka) {
-        var currency = '';
-        var angkarev = angka.toString().split('').reverse().join('');
-        for(var i = 0; i < angkarev.length; i++) if(i%3 == 0) currency += angkarev.substr(i,3)+'.';
-        var hasil = currency.split('',currency.length-1).reverse().join('');
-        return hasil;
-
-    }
-
-    function hitungTotalNet() {
-        var inpTotNet = document.getElementsByClassName( 'totalnet' ),
-            totNet  = [].map.call(inpTotNet, function( input ) {
-                return parseInt(input.value);
-            });
-
-        var total = 0;
-        for (var i =0; i < totNet.length; i++) {
-            total += parseInt(totNet[i]);
-        }
-
-        $("#totalnet").html(convertToCurrency(total));
-    }
-
-    function hitungTotalTermin() {
-        var inpTotTermin = document.getElementsByClassName( 'totaltermin' ),
-            totTermin  = [].map.call(inpTotTermin, function( input ) {
-                return parseInt(input.value);
-            });
-
-        var total = 0;
-        for (var i =0; i < totTermin.length; i++) {
-            total += parseInt(totTermin[i]);
-        }
-
-        $("#totaltermin").html(convertToCurrency(total));
-    }
 </script>

@@ -428,8 +428,10 @@
       type: 'get',
       dataType: 'json',
       url: baseUrl + '/gettmpoto',
-      success : function(response){        
+      success : function(response){
+        if (response.length != 0) {
           otorisasi(response[0].table, response[0].menu, response[0].url);
+        }
       }
     });
 

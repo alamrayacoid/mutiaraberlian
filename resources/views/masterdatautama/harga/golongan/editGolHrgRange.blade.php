@@ -51,7 +51,7 @@
                             <div class="col-sm-9" style="margin-left:7px; margin-top: 20px;">
                                 <input type="text" class="form-control form-control-sm input-rupiah"
                                        id="txtEditGolHrgRange"
-                                       name="edithargarange">
+                                       name="edithargarange" autocomplete="off">
                             </div>
                         </div>
 
