@@ -161,6 +161,9 @@ class OpnameController extends Controller
       ->get();
       return Datatables::of($datas)
       ->addIndexColumn()
+      ->addColumn('date', function($datas) {
+        return '<td>'. date('d-m-Y', strtotime($datas->oa_date)) .'</td>';
+      })
       ->addColumn('name', function($datas) {
         return '<td>'. $datas->getItem['i_name'] .'</td>';
       })
@@ -173,7 +176,7 @@ class OpnameController extends Controller
                 <button class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Edit data" onclick="Edit('. $datas->oa_id .')"><i class="fa fa-pencil"></i></button>
                 <button class="btn btn-danger" data-toggle="tooltip" data-placement="bottom" title="Hapus data" onclick="Delete('. $datas->oa_id .')"><i class="fa fa-times-circle"></i></button></div></td>';
       })
-      ->rawColumns(['name', 'status', 'action'])
+      ->rawColumns(['date', 'name', 'status', 'action'])
       ->make(true);
     }
 

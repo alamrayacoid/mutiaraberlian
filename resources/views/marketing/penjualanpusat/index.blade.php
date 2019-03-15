@@ -157,17 +157,8 @@
 	        lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
 	    });
 	}
-	function editTarget(st_id, dt_id)
-	{
-	 	$.ajax({
-	 		url: "{{url('/marketing/penjualanpusat/targetrealisasi/editTarget/')}}",
-	 		type : "get",
-	 		data: {
-	 			st_id: st_id,
-	 			dt_id: dt_id
-	 		},
-        	dataType : "json"
-	 	});
-	}
+    function editTarget(st_id, dt_id) {
+        window.location = baseUrl + "/marketing/penjualanpusat/targetrealisasi/editTarget/" +st_id+"/"+dt_id;
+    }
 </script>
 @endsection

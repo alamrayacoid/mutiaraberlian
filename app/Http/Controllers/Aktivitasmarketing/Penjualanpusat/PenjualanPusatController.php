@@ -168,11 +168,11 @@ class PenjualanPusatController extends Controller
 
     }
 
-    public function editTarget(Request $request)
+    public function editTarget($st_id, $dt_id)
     {
     	try {
-        	$st_id = Crypt::decrypt($request->st_id);
-    		$dt_id = Crypt::decrypt($request->dt_id);
+        	$st_id = Crypt::decrypt($st_id);
+    		$dt_id = Crypt::decrypt($dt_id);
         } catch (\Exception $e) {
         	return view('errors.404');
         }
