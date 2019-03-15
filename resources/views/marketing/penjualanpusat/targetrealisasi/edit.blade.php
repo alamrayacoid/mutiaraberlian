@@ -42,15 +42,16 @@
                       <tbody>
                       	<tr>
                       		<td>
-	                            <input type="text" name="barang[]" class="form-control form-control-sm barang" style="text-transform:uppercase" value="{{$target->i_code}} - {{$target->i_name}}">
-	                            <input type="hidden" name="idItem[]" class="itemid" value="{{$target->std_item}}">
-	                            <input type="hidden" name="kode[]" class="kode" value="{{$target->i_code}}">
+                      			<input type="text" class="form-control form-control-sm barang" style="text-transform:uppercase" value="{{$target->i_code}}-{{$target->i_name}}">
+	                            <input type="hidden" name="barang[]" class="form-control form-control-sm" style="text-transform:uppercase">
+	                            <input type="hidden" name="idItem[]" class="itemid">
+	                            <input type="hidden" name="kode[]" class="kode">
                          	</td>
                       		<td>
                            		<select name="t_unit[]" class="form-control form-control-sm select2 satuan"></select>
                           	</td>
                       		<td>
-                        		<input type="number" class="form-control form-control-sm" min="0" name="t_qty[]" value="{{$target->std_qty}}">
+                        		<input type="number" class="form-control form-control-sm" min="0" name="t_qty[]">
                           	</td>
                       	</tr>
                       </tbody>

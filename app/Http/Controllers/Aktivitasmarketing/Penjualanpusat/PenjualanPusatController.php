@@ -181,10 +181,43 @@ class PenjualanPusatController extends Controller
     		->join('m_item', 'std_item', 'i_id')
     		->join('m_unit', 'std_unit', 'u_id')
     		->join('m_company', 'st_comp', 'c_id')
-    		->select('d_salestargetdt.*', 'st_id', 'st_comp', 'st_periode', 'i_name', 'i_code', 'c_name')
+    		->select('d_salestargetdt.*', 'st_id', 'st_comp', 'st_periode', 'i_name', 'i_code', 'c_name', 'u_id', 'u_name')
     		->where('std_salestarget', '=', $st_id)
     		->where('std_detailid', '=', $dt_id)->first();
     	$company = DB::table('m_company')->select('m_company.*')->get();
     	return view('marketing.penjualanpusat.targetrealisasi.edit', compact('target', 'company'));
+    }
+
+    public function updateTarget($st_id, $dt_id, Request $request)
+    {
+    	try {
+        	$st_id = Crypt::decrypt($st_id);
+    		$dt_id = Crypt::decrypt($dt_id);
+        } catch (\Exception $e) {
+        	return view('errors.404');
+        }
+
+        $data = $request->all();
+        DB::beginTransaction();
+        try {
+        	DB::table('d_salestargetdt')
+               ->where('std_salestarget', '=', $st_id)
+               ->where('std_detailid', '=', $dt_id)
+               ->update([
+               	'std_item' => $data['idItem'][0],
+               	'std_unit' => $data['t_unit'][0],
+               	'std_qty' => $data['t_qty'][0]
+        	]);
+            DB::commit();
+            return response()->json([
+            	'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+	        	'status'  => 'Gagal',
+	          	'message' => $e
+            ]);
+        }
     }
 }
