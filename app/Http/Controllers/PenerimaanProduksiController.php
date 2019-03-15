@@ -41,9 +41,9 @@ class PenerimaanProduksiController extends Controller
             })
             ->addColumn('action', function($datas) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                        <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-folder"></i>
+                        <button class="btn btn-info hint--top-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-folder"></i>
                         </button>
-                        <button class="btn btn-info hint--bottom-left hint--info" aria-label="Terima" onclick="terima(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-arrow-right"></i>
+                        <button class="btn btn-info hint--top-left hint--info" aria-label="Terima" onclick="terima(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-arrow-right"></i>
                         </button>
                     </div>';
             })
