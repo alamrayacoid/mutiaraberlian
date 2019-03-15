@@ -254,7 +254,7 @@
             $('.div_parent').hide();
             $('#parent').empty();
         }
-    })
+    });
 
     function RetrieveListAgents() {
         $.ajax({
@@ -274,7 +274,7 @@
     // hide datepicker after select any date
     $('#birthday').on('changeDate', function() {
         $(this).datepicker('hide');
-    })
+    });
 
     // set request when area_prov changed
     // set option list area_city
@@ -291,7 +291,7 @@
                 $('#area_city').select2('open');
             }
         });
-    })
+    });
 
     // set request when address_prov changed
     // set option list address_city
@@ -310,25 +310,25 @@
                 $('#address_city').select2('open');
             }
         });
-        $('#area_city').focus();
-        $('#area_city').select2('open');
-      }
+      //   $('#area_city').focus();
+      //   $('#area_city').select2('open');
+      // }
     });
-  })
-
-  // set request when address_prov changed
-  // set option list address_city
-  $('#address_prov').on('change', function() {
-    $.ajax({
-      type: 'get',
-      url: baseUrl + '/masterdatautama/agen/cities/' + $('#address_prov').val(),
-      success: function(data) {
-        $('#address_city').empty();
-        $('#address_district').empty();
-        $('#address_village').empty(); 
-        $.each(data, function(key, val) {
-          $("#address_city").append('<option value="'+ val.wc_id +'">'+ val.wc_name +'</option>');
-    })
+  // })
+  //
+  // // set request when address_prov changed
+  // // set option list address_city
+  // $('#address_prov').on('change', function() {
+  //   $.ajax({
+  //     type: 'get',
+  //     url: baseUrl + '/masterdatautama/agen/cities/' + $('#address_prov').val(),
+  //     success: function(data) {
+  //       $('#address_city').empty();
+  //       $('#address_district').empty();
+  //       $('#address_village').empty();
+  //       $.each(data, function(key, val) {
+  //         $("#address_city").append('<option value="'+ val.wc_id +'">'+ val.wc_name +'</option>');
+  //   })
 
     // set request when address_city changed
     // set option list  address_district
@@ -346,7 +346,7 @@
                 $('#address_district').select2('open');
             }
         });
-    })
+    });
 
     // set request when address_district changed
     // set option list address_village
@@ -363,7 +363,7 @@
                 $('#address_village').select2('open');
             }
         });
-    })
+    });
 
     function readURL(input, target) {
         if (input.files && input.files[0]) {
