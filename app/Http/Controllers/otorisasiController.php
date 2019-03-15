@@ -53,8 +53,8 @@ class OtorisasiController extends Controller
             })
             ->addColumn('aksi', function($data){
                 $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrderProduksi(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-folder"></i></button>';
-                $setujui = '<button class="btn btn-warning btn-edit" type="button" title="Setujui" onclick="setujui(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-check"></i></button>';
-                $tolak = '<button class="btn btn-danger btn-disable" type="button" title="Tolak" onclick="tolak(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-remove"></i></button>';
+                $setujui = '<button class="btn btn-warning btn-edit" type="button" title="Setujui" onclick="agree(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-check"></i></button>';
+                $tolak = '<button class="btn btn-danger btn-disable" type="button" title="Tolak" onclick="rejected(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-remove"></i></button>';
                 return '<div class="btn-group btn-group-sm">'. $detail . $setujui . $tolak . '</div>';
             })
             ->rawColumns(['date','supplier','nota','aksi'])
@@ -64,7 +64,7 @@ class OtorisasiController extends Controller
     public function getProduksiDetailItem(Request $request)
     {
         try{
-            $id = decrypt($request->id);
+            $id = Crypt::decrypt($request->id);
         }catch (DecryptException $e){
             return response()->json(['status'=>'Failed']);
         }
@@ -107,7 +107,7 @@ class OtorisasiController extends Controller
     public function getProduksiDetailTermin(Request $request)
     {
         try{
-            $id = decrypt($request->id);
+            $id = Crypt::decrypt($request->id);
         }catch (DecryptException $e){
             return response()->json(['status'=>'Failed']);
         }
@@ -134,4 +134,70 @@ class OtorisasiController extends Controller
             ->rawColumns(['termin','date','value'])
             ->make(true);
     }
+
+    public function agree($id = null) {
+        try{
+            $id = Crypt::decrypt($id);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>'Failed']);
+        }
+
+        DB::beginTransaction();
+        try{
+            $data = DB::table('d_productionorderauth')
+            ->where('poa_id', '=', $id)->first();
+
+            $values = [
+                'po_id'         => $data->poa_id,
+                'po_nota'       => $data->poa_notatemp,
+                'po_date'       => $data->poa_date,
+                'po_supplier'   => $data->poa_supplier,
+                'po_totalnet'   => $data->poa_totalnet,
+                'po_status'     => $data->poa_status,
+            ];
+
+            DB::table('d_productionorder')->insert($values);
+
+            DB::table('d_productionorderauth')
+                ->where('poa_id', '=', $id)
+                ->delete();
+
+            DB::commit();
+            return response()->json(['status'=>'Success']);
+        }catch (\Exception $e){
+            DB::commit();
+            return response()->json(['status'=>'Failed']);
+        }
+    }
+
+    public function rejected($id = null) {
+        try{
+            $id = Crypt::decrypt($id);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>'Failed']);
+        }
+
+        DB::beginTransaction();
+        try{
+
+            DB::table('d_productionorderpayment')
+                ->where('pop_productionorder', '=', $id)
+                ->delete();
+
+            DB::table('d_productionorderdt')
+                ->where('pod_productionorder', '=', $id)
+                ->delete();
+
+            DB::table('d_productionorderauth')
+                ->where('poa_id', '=', $id)
+                ->delete();
+
+            DB::commit();
+            return response()->json(['status'=>'Success']);
+        }catch (\Exception $e){
+            DB::commit();
+            return response()->json(['status'=>'Failed']);
+        }
+    }
+//    ================End Order Produksi===============
 }
