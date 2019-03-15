@@ -30,10 +30,6 @@
 					</div>
 					</div>
 
-                    <div class="col-2">
-                        <button class="btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
-                    </div>
-
 				</div>
 			</fieldset>
 				<div class="table-responsive">
@@ -44,6 +40,7 @@
 								<th>Tanggal</th>
 								<th>Reff</th>
 								<th>Nama Barang</th>
+								<th>Status</th>
 							</tr>
 						</thead>
 						<tbody>

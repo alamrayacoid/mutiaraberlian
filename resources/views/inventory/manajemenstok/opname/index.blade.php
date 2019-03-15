@@ -173,9 +173,10 @@
 			},
 			columns: [
 				{data: 'DT_RowIndex'},
-				{data: 'oa_date'},
-				{data: 'oa_nota'},
-				{data: 'name'}
+				{data: 'o_date'},
+				{data: 'o_nota'},
+				{data: 'name'},
+				{data: 'status'},
 			],
 			pageLength: 10,
 			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
