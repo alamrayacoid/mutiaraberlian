@@ -114,7 +114,7 @@ class PenjualanPusatController extends Controller
 			$getIdMax = DB::table('d_salestarget')->max('st_id');
 			$stId     = $getIdMax + 1;
         }
-        $periode = Carbon::createFromFormat('d/m/Y', $data['t_periode']);
+        $periode = Carbon::createFromFormat('d/m/Y', '01/'.$data['t_periode']);
         DB::beginTransaction();
         try{
 			
@@ -126,24 +126,40 @@ class PenjualanPusatController extends Controller
 				    ->first();
 				    
 				if ($query1 != null) {
-		            $detail = DB::table('d_salestargetdt')
-	                    ->where('std_salestarget', '=', $query1->st_id)
-	                    ->max('std_detailid');
+					$query2 = DB::table('d_salestargetdt')
+						->join('m_item', 'std_item', 'i_id')
+						->select('d_salestargetdt.*', 'i_id', 'i_name')
+						->where('std_item', '=', $data['idItem'][$i])->first();
+					if ($query2) {
+			            DB::commit();
+			            return response()->json([
+			            	'status' => 'peringatan',
+			            	'data' => $query2
+			            ]);
+					} else {
+		            	$detail = DB::table('d_salestargetdt')
+		                    ->where('std_salestarget', '=', $query1->st_id)
+		                    ->max('std_detailid');
+						$stDetail = $detail + 1;
+						DB::table('d_salestargetdt')->insert([
+							'std_salestarget' => $query1->st_id,
+							'std_detailid'    => $stDetail,
+							'std_item'        => $data['idItem'][$i],
+							'std_qty'         => $data['t_qty'][$i],
+							'std_unit'        => $data['t_unit'][$i]
+						]);
+			            DB::commit();
+			            return response()->json([
+			            	'status' => 'sukses'
+			            ]);
+					}
 
-					$stDetail = $detail + 1;
-					DB::table('d_salestargetdt')->insert([
-						'std_salestarget' => $query1->st_id,
-						'std_detailid'    => $stDetail,
-						'std_item'        => $data['idItem'][$i],
-						'std_qty'         => $data['t_qty'][$i],
-						'std_unit'        => $data['t_unit'][$i]
-					]);
 				} else {
 
 					DB::table('d_salestarget')->insert([
 						'st_id'      => $stId,
 						'st_comp'    => $data['t_comp'][0],
-						'st_periode' => Carbon::createFromFormat('d/m/Y', $data['t_periode'])->format('Y-m-d')
+						'st_periode' => Carbon::createFromFormat('d/m/Y', '01/'.$data['t_periode'])->format('Y-m-d')
 					]);
 					DB::table('d_salestargetdt')->insert([
 						'std_salestarget' => $stId,
@@ -152,12 +168,12 @@ class PenjualanPusatController extends Controller
 						'std_qty'         => $data['t_qty'][$i],
 						'std_unit'        => $data['t_unit'][$i]
 					]);
+		            DB::commit();
+		            return response()->json([
+		            	'status' => 'sukses'
+		            ]);
 				}
 			}
-            DB::commit();
-            return response()->json([
-            	'status' => 'sukses'
-            ]);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([

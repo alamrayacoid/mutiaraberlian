@@ -14,13 +14,13 @@
 			<fieldset class="mb-3">
 			<div class="row">
 				<div class="col-2">
-					<label for="">Nama Item</label>
+					<label for="">Nama Barang</label>
 				</div>
 				<div class="col-3">
 					<input type="text" class="form-control form-control-sm">
 				</div>
 				<div class="col-2">
-					<label for="">Bulan/Tahun</label>
+					<label for="">Periode</label>
 				</div>
 				<div class="col-3">
 					<input type="text" class="form-control form-control-sm" id="datepicker">
