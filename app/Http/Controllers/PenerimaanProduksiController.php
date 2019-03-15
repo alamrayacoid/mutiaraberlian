@@ -137,10 +137,10 @@ class PenerimaanProduksiController extends Controller
         return view('produksi.penerimaanbarang.list')->with(compact('order'));
     }
 
-    public function listTerimaBarang(Request $request)
+    public function listTerimaBarang($order = null)
     {
         try {
-            $order = Crypt::decrypt($request->order);
+            $order = Crypt::decrypt($order);
         } catch (\DecryptException $e) {
             return Response::json(['status' => 'Failed']);
         }
@@ -151,9 +151,8 @@ class PenerimaanProduksiController extends Controller
             ->join('d_productionorderdt', 'd_productionorderdt.pod_productionorder', '=', 'd_productionorder.po_id')
             ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
             ->join('m_unit', 'd_productionorderdt.pod_unit', '=', 'm_unit.u_id')
-            ->where('d_productionorder.po_id', '=', $order)
-            ->get();
-dd($data);
+            ->where('d_productionorder.po_id', '=', $order);
+
         return DataTables::of($data)
             ->addColumn('barang', function($data){
                 return $data->i_name;

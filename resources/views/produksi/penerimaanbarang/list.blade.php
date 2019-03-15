@@ -42,7 +42,7 @@
                                                 <th width="30%">Nama Barang</th>
                                                 <th width="20%">Satuan</th>
                                                 <th width="10%">Jumlah</th>
-                                                <th width="30%">Aksi</th>
+                                                <th width="30%" class="text-center">Aksi</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -82,12 +82,8 @@
                 processing  : true,
                 serverSide  : true,
                 ajax        : {
-                                    url: "{{ route('penerimaan.listterimabarang') }}",
-                                    type: "get",
-                                    data: {
-                                        "_token": "{{ csrf_token() }}",
-                                        "order": $("#order").val()
-                                    }
+                                    url: "{{ url('/produksi/penerimaanbarang/getlistitem') }}"+'/'+$("#order").val(),
+                                    type: "get"
                                 },
                 columns     : [
                                     {data: 'barang'},
