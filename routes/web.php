@@ -213,6 +213,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/historyopname/list', 'Inventory\HistoryOpnameController@getList')->name('history.list');
     Route::get('/inventory/manajemenstok/adjustmentstock/index', 'InventoryController@adjustment_index')->name('adjustment.index');
     Route::get('/inventory/manajemenstok/adjustmentstock/create', 'InventoryController@adjustment_create')->name('adjustment.create');
+    Route::get('/inventory/manajemenstok/adjustmentstock/print', 'InventoryController@adjustment_nota')->name('adjustment.nota');
     // !===================================================== END INVENTORY =====================================================!
 
     // !===================================================== SDM =====================================================!
