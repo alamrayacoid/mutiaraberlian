@@ -161,6 +161,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/penerimaanbarang/getnotapo', 'PenerimaanProduksiController@getNotaPO');
     Route::get('/produksi/penerimaanbarang/detailitem', 'PenerimaanProduksiController@getProduksiDetailItem')->name('penerimaan.detailitem');
     Route::get('/produksi/penerimaanbarang/detailtermin', 'PenerimaanProduksiController@getProduksiDetailTermin')->name('penerimaan.detailtermin');
+    Route::get('/produksi/penerimaanbarang/terima-barang/{id}', 'PenerimaanProduksiController@terimaBarang')->name('penerimaan.terimabarang');
+    Route::get('/produksi/penerimaanbarang/getlistitem', 'PenerimaanProduksiController@listTerimaBarang')->name('penerimaan.listterimabarang');
     Route::get('/produksi/penerimaanbarang/create', 'PenerimaanProduksiController@create_penerimaan_barang')->name('penerimaan.create');
     // Pembayaran
     Route::get('/produksi/pembayaran/index', 'ProduksiController@pembayaran')->name('pembayaran.index');
@@ -351,7 +353,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/gettmpoto', 'getotorisasiController@gettmpoto');
 
     //Otorisasi Stock Opname
-    Route::get('/notifikasiotorisasi/otorisasi/perubahanhargajual/getdataopname', 'OtorisasiController@getopname');
+    Route::get('/notifikasiotorisasi/otorisasi/opname/getdataopname', 'OtorisasiController@getopname');
+    Route::get('/notifikasiotorisasi/otorisasi/opname/approveopname/{id}', 'OtorisasiController@approveopname');
+    Route::get('/notifikasiotorisasi/otorisasi/opname/rejectedopname/{id}', 'OtorisasiController@rejectedopname');
 
 });
 // End Route Group

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Crypt;
 use Carbon\Carbon;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Response;
 
 class PenerimaanProduksiController extends Controller
 {
@@ -37,7 +38,7 @@ class PenerimaanProduksiController extends Controller
                 return $data->s_name;
             })
             ->addColumn('tanggal', function($data){
-                return Carbon::createFromFormat('Y-m-d', $data->po_date)->format('d-m-Y');;
+                return Carbon::createFromFormat('Y-m-d', $data->po_date)->format('d-m-Y');
             })
             ->addColumn('action', function($datas) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
@@ -122,6 +123,54 @@ class PenerimaanProduksiController extends Controller
                 return '<p class="text-right">'. Currency::addRupiah($data->pop_value) .'</p><input type="hidden" class="totaltermin" value="'.number_format($data->pop_value,0,'','').'">';
             })
             ->rawColumns(['termin','date','value'])
+            ->make(true);
+    }
+
+    public function terimaBarang($id = null)
+    {
+        try{
+            $id = Crypt::decrypt($id);
+        }catch(DecryptException $e){
+            return abort(404);
+        }
+        $order = Crypt::encrypt($id);
+        return view('produksi.penerimaanbarang.list')->with(compact('order'));
+    }
+
+    public function listTerimaBarang(Request $request)
+    {
+        try {
+            $order = Crypt::decrypt($request->order);
+        } catch (\DecryptException $e) {
+            return Response::json(['status' => 'Failed']);
+        }
+
+        $data = DB::table('d_productionorder')
+            ->select('d_productionorder.po_id', 'm_item.i_name', 'm_unit.u_name',
+                'd_productionorderdt.pod_qty')
+            ->join('d_productionorderdt', 'd_productionorderdt.pod_productionorder', '=', 'd_productionorder.po_id')
+            ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
+            ->join('m_unit', 'd_productionorderdt.pod_unit', '=', 'm_unit.u_id')
+            ->where('d_productionorder.po_id', '=', $order)
+            ->get();
+dd($data);
+        return DataTables::of($data)
+            ->addColumn('barang', function($data){
+                return $data->i_name;
+            })
+            ->addColumn('satuan', function($data){
+                return $data->u_name;
+            })
+            ->addColumn('jumlah', function($data){
+                return $data->pod_qty;
+            })
+            ->addColumn('action', function($data) {
+                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                        <button class="btn btn-info hint--top-left hint--info" aria-label="Terima" onclick=""><i class="fa fa-check"></i>
+                        </button>
+                    </div>';
+            })
+            ->rawColumns(['barang', 'satuan', 'jumlah', 'action'])
             ->make(true);
     }
 }
