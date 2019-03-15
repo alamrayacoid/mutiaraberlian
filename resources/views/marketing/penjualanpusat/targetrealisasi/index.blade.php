@@ -31,28 +31,19 @@
 			</div>
 			</fieldset>
 				<div class="table-responsive">
-					<table class="table table-hover table-striped" cellspacing="0" id="table_targetrealisasi">
+					<table class="table table-hover table-striped w-100" cellspacing="0" id="table_target">
 						<thead class="bg-primary">
 							<tr>
-								<th width="1%">No</th>
-								<th>Nama Barang</th>
 								<th>Bulan/Tahun</th>
-								<th>Jumlah Terjual</th>
+								<th>Nama Cabang</th>
+								<th>Nama Barang</th>
 								<th>Target</th>
 								<th>Status</th>
 								<th>Aksi</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>Agarilus</td>
-								<td>February/2019</td>
-								<td>500</td>
-                                <td>1000</td>
-								<td><label class="bg-danger status-reject px-3 py-1" disabled>Gagal</label></td>
-								<td><button class="btn btn-warning btn-modal btn-sm" data-toggle="modal" data-target="#edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button></td>
-							</tr>
+							
 						</tbody>
 					</table>
 				</div>

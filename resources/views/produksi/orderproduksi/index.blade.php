@@ -164,7 +164,7 @@
 
         var total = 0;
         for (var i =0; i < totNet.length; i++) {
-            total += parseInt(totNet);
+            total += parseInt(totNet[i]);
         }
 
         $("#totNet").html(convertToRupiah(total));
@@ -178,7 +178,7 @@
 
         var total = 0;
         for (var i =0; i < totTermin.length; i++) {
-            total += parseInt(totTermin);
+            total += parseInt(totTermin[i]);
         }
 
         $("#totTermin").html(convertToRupiah(total));
@@ -202,8 +202,8 @@
 					btnClass: 'btn-blue',
 					text: 'Ya',
 					action: function () {
+                        loadingShow();
 						axios.get(baseUrl+'/produksi/orderproduksi/hapus'+'/'+id).then(function(response) {
-							loadingShow();
 							if(response.data.status == 'Success'){
 								loadingHide();
 								messageSuccess("Berhasil", "Data Order Produksi Berhasil Dihapus");

@@ -153,10 +153,10 @@ class ProduksiController extends Controller
             try{
                 // dd($request);
                 $idpo= (DB::table('d_productionorderdt')->max('pod_productionorder')) ? (DB::table('d_productionorderdt')->max('pod_productionorder')) + 1 : 1;
-                $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_notatemp', 8, 10, 3, 'PO', '-');
+                $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
                 $productionorderauth[] = [
                     'poa_id' => $idpo,
-                    'poa_notatemp' => $nota,
+                    'poa_nota' => $nota,
                     'poa_date' => date('Y-m-d', strtotime($data['po_date'])),
                     'poa_supplier' => $data['supplier'],
                     'poa_totalnet' => $data['tot_hrg'],
@@ -207,17 +207,109 @@ class ProduksiController extends Controller
 
     public function edit_produksi(Request $request)
     {
-        $id = Crypt::decrypt($request->id);
+        try{
+            $id = Crypt::decrypt($request->id);
+        }catch (DecryptException $e){
+            return abort(404);
+        }
+
+        $suppliers = DB::table('m_supplier')
+            ->select('s_id', 's_company')
+            ->get();
+
         $dataEdit = DB::table('d_productionorder')
             ->join('m_supplier', 's_id', '=', 'po_supplier')
             ->where('po_id', $id)->first();
-        $dataEditDT = DB::table('d_productionorderdt')
-            ->join('m_item', 'i_id', '=', 'pod_item')
-            ->join('m_unit', 'u_id', '=', 'pod_unit')
-            ->where('pod_productionorder', $id)->get();
-        $dataEditPmt = DB::table('d_productionorderpayment')->where('pop_productionorder', $id)->get();
 
-        return view('produksi/orderproduksi/edit')->with(compact('dataEdit', 'dataEditDT', 'dataEditPmt'));
+        $dataEditDT = DB::table('d_productionorderdt')
+            ->select('d_productionorderdt.*', 'm_item.*', 'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2',
+                'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
+            ->join('m_item', 'i_id', '=', 'pod_item')
+            ->join('m_unit as a', function ($x){
+                $x->on('m_item.i_unit1', '=', 'a.u_id');
+            })
+            ->leftjoin('m_unit as b', function ($y){
+                $y->on('m_item.i_unit2', '=', 'b.u_id');
+            })
+            ->leftjoin('m_unit as c', function ($z){
+                $z->on('m_item.i_unit3', '=', 'c.u_id');
+            })
+            ->where('pod_productionorder', $id)->get();
+
+        $dataEditPmt = DB::table('d_productionorderpayment')
+            ->where('pop_productionorder', $id)
+            ->get();
+
+        $oid = Crypt::encrypt($id);
+
+        return view('produksi/orderproduksi/edit')->with(compact('dataEdit', 'dataEditDT', 'dataEditPmt', 'suppliers', 'oid'));
+    }
+
+    public function editOrderProduksi(Request $request)
+    {
+        $data                   = $request->all();
+        try{
+            $id = Crypt::decrypt($data['orderId']);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>"Failed"]);
+        }
+
+        $tanggal                = date('Y-m-d', strtotime($data['po_date']));
+        $supplier               = $data['sup'];
+        $totalnet               = $data['tot_hrg'];
+        $productionorder        = [];
+        $productionorderdt      = [];
+        $productionorderpayment = [];
+
+        DB::beginTransaction();
+        try{
+            $productionorder = [
+                'po_date' => $tanggal,
+                'po_supplier' => $supplier,
+                'po_totalnet' => $totalnet
+            ];
+
+            $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->max('pod_detailid')) + 1 : 1;
+            $detailpod = $poddetail;
+            for ($i = 0; $i < count($data['idItem']); $i++) {
+                $productionorderdt[] = [
+                    'pod_productionorder' => $id,
+                    'pod_detailid' => $detailpod,
+                    'pod_item' => $data['idItem'][$i],
+                    'pod_qty' => $data['jumlah'][$i],
+                    'pod_unit' => $data['satuan'][$i],
+                    'pod_value' => $this->removeCurrency($data['harga'][$i]),
+                    'pod_totalnet' => $this->removeCurrency($data['subtotal'][$i])
+                ];
+                $detailpod++;
+            }
+
+            for ($i = 0; $i < count($data['termin']); $i++) {
+                $productionorderpayment[] = [
+                    'pop_productionorder' => $id,
+                    'pop_termin' => $data['termin'][$i],
+                    'pop_datetop' => date('Y-m-d', strtotime($data['estimasi'][$i])),
+                    'pop_value' => $this->removeCurrency($data['nominal'][$i]),
+                ];
+            }
+
+            // dd($productionorderpayment);
+            DB::table('d_productionorder')->where('po_id', '=', $id)->update($productionorder);
+            DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
+            DB::table('d_productionorderdt')->insert($productionorderdt);
+            DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
+            DB::table('d_productionorderpayment')->insert($productionorderpayment);
+            DB::commit();
+            return json_encode([
+                'status' => 'Success'
+            ]);
+        }catch (\Exception $e){
+            DB::rollBack();
+            return json_encode([
+                'status' => 'Failed',
+                'msg' => $e
+            ]);
+        }
     }
 
     public function delete_produksi($id = null){
@@ -233,6 +325,54 @@ class ProduksiController extends Controller
             DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
             DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
             DB::table('d_productionorder')->where('po_id', '=', $id)->delete();
+            DB::commit();
+            return response()->json(['status'=>"Success"]);
+        }catch (\Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>"Failed"]);
+        }
+    }
+
+    public function deleteItemProduksi($order = null, $detail = null, $item = null)
+    {
+        try{
+            $order = Crypt::decrypt($order);
+            $detail = Crypt::decrypt($detail);
+            $item = Crypt::decrypt($item);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>"Failed"]);
+        }
+
+        DB::beginTransaction();
+        try{
+            DB::table('d_productionorderdt')
+            ->where('pod_productionorder', '=', $order)
+            ->where('pod_detailid', '=', $detail)
+            ->where('pod_item', '=', $item)
+            ->delete();
+            DB::commit();
+            return response()->json(['status'=>"Success"]);
+        }catch (\Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>"Failed"]);
+        }
+    }
+
+    public function deleteTerminProduksi($order = null, $termin = null)
+    {
+        try{
+            $order = Crypt::decrypt($order);
+            $termin = Crypt::decrypt($termin);
+        }catch (DecryptException $e){
+            return response()->json(['status'=>"Failed"]);
+        }
+
+        DB::beginTransaction();
+        try{
+            DB::table('d_productionorderpayment')
+                ->where('pop_productionorder', '=', $order)
+                ->where('pop_termin', '=', $termin)
+                ->delete();
             DB::commit();
             return response()->json(['status'=>"Success"]);
         }catch (\Exception $e){

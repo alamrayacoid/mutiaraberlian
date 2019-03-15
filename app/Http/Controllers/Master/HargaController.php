@@ -87,7 +87,7 @@ class HargaController extends Controller
             ->join('m_unit', function ($unit) {
                 $unit->on('d_priceclassauthdt.pcad_unit', '=', 'm_unit.u_id');
             })
-            ->select('m_item.*', 'm_unit.*', 'pcad_classprice as pcd_classprice', 'pcad_unit as pcd_unit', 'pcad_detailid as pcd_detailid', 'pcad_item as pcd_item', 'pcad_price as pcd_price', 'pcad_user as pcd_user', 'pcad_rangeqtyend as pcd_rangeqtyend', 'pcad_rangeqtystart as pcd_rangeqtystart', 'pcad_payment as pcd_payment', 'pcad_type as pcd_type', DB::raw('"N" as status'))
+            ->select('m_item.*', 'm_unit.*', 'pcad_price as pcd_price', 'pcad_classprice as pcd_classprice', 'pcad_unit as pcd_unit', 'pcad_detailid as pcd_detailid', 'pcad_item as pcd_item', 'pcad_user as pcd_user', 'pcad_rangeqtyend as pcd_rangeqtyend', 'pcad_rangeqtystart as pcd_rangeqtystart', 'pcad_payment as pcd_payment', 'pcad_type as pcd_type', DB::raw('"N" as status'))
             ->where('d_priceclassauthdt.pcad_classprice', '=', Crypt::decrypt($id));
 
         $datax = DB::table('m_priceclassdt')
@@ -97,7 +97,7 @@ class HargaController extends Controller
             ->join('m_unit', function ($unit) {
                 $unit->on('m_priceclassdt.pcd_unit', '=', 'm_unit.u_id');
             })
-            ->select('m_item.*', 'm_unit.*', 'pcd_price as pcd_price', 'pcd_unit', 'pcd_classprice', 'pcd_detailid', 'pcd_item', 'pcd_user as pcd_user', 'pcd_rangeqtyend as pcd_rangeqtyend', 'pcd_rangeqtystart as pcd_rangeqtystart', 'pcd_payment as pcd_payment', 'pcd_type as pcd_type', DB::raw('"Y" as status'))
+            ->select('m_item.*', 'm_unit.*', 'pcd_price', 'pcd_unit', 'pcd_classprice', 'pcd_detailid', 'pcd_item', 'pcd_user as pcd_user', 'pcd_rangeqtyend as pcd_rangeqtyend', 'pcd_rangeqtystart as pcd_rangeqtystart', 'pcd_payment as pcd_payment', 'pcd_type as pcd_type', DB::raw('"Y" as status'))
             ->where('m_priceclassdt.pcd_classprice', '=', Crypt::decrypt($id));
 
         $data = $datas->union($datax)->get();

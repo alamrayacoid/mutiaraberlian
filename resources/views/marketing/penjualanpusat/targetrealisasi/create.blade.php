@@ -37,25 +37,33 @@
                     <input type="text" class="form-control form-control-sm" id="datepicker" name="t_periode">
                   </div>
                 </div>
+                <div class="col-md-2 col-sm-6 col-xs-12">
+                  <label>Pilihan Cabang</label>
+                </div>
+                <div class="col-md-10 col-sm-6 col-xs-12">
+                  <div class="form-group">
+                    <select name="t_comp[]" id="" class="form-control form-control-sm select2">
+                      <option value="" selected="" disabled="">== Pilih Cabang ==</option>
+                      @foreach($company as $comp)
+                        <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
                 <div class="container">
                   <hr style="border:0.7px solid grey; margin-bottom:30px;">
                   <div class="table-responsive">
                     <table class="table table-striped table-hover" cellspacing="0" id="table_target">
                       <thead class="bg-primary">
                         <tr>
-                          	<th width="8%">No</th>
-                      		  <th width="30%">Kode/Nama Barang</th>
-                      		  <th width="10%">Satuan</th>
-                      	  	<th width="25%">Jumlah Target</th>
-                            <th width="25%">Cabang</th>
-                      		  <th>Aksi</th>
+                      		  <th width="50%">Kode/Nama Barang</th>
+                      		  <th width="20%">Satuan</th>
+                      	  	<th width="20%">Jumlah Target</th>
+                      		  <th class="text-center">Aksi</th>
                       	</tr>
                       </thead>
                       <tbody>
                       	<tr>
-                      		<td>
-                            <input type="text" class="form-control form-control-sm" value="1">
-                          </td>
                       		<td>
                             <input type="text" name="barang[]" class="form-control form-control-sm barang" style="text-transform:uppercase">
                             <input type="hidden" name="idItem[]" class="itemid">
@@ -67,15 +75,7 @@
                       		<td>
                             <input type="number" class="form-control form-control-sm" min="0" value="" name="t_qty[]">
                           </td>
-                      		<td>
-                            <select name="t_comp[]" id="" class="form-control form-control-sm select2">
-                              <option value="" selected="" disabled="">== Pilih Cabang ==</option>
-                              @foreach($company as $comp)
-                                <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
-                              @endforeach
-                            </select>
-                          </td>
-                      		<td>
+                      		<td class="text-center">
                             <button class="btn btn-success btn-tambah btn-sm" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
                       		</td>
                       	</tr>
@@ -137,7 +137,6 @@
       $('#table_target')
       .append(
         '<tr>'+
-          '<td><input type="text" class="form-control form-control-sm" value="' + next_termin + '"></td>'+
           '<td>'+
             '<input type="text" name="barang[]" class="form-control form-control-sm barang" style="text-transform:uppercase">'+
             '<input type="hidden" name="idItem[]" class="itemid">'+
@@ -150,12 +149,7 @@
           '<td>'+
             '<input type="number" class="form-control form-control-sm" min="0" name="t_qty[]">'+
           '</td>'+
-          '<td>'+
-            '<select name="t_comp[]" id="" class="form-control form-control-sm select2 company">'+
-              '<option value="" selected="" disabled="">== Pilih Cabang ==</option>'+
-            '</select>'+
-          '</td>'+
-          '<td><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
+          '<td class="text-center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
         '</tr>'
       );
 
@@ -174,22 +168,7 @@
         $(".itemid").eq(idxBarang).val('');
         $(".kode").eq(idxBarang).val('');
       });
-      getComp();
     });
-
-    function getComp()
-    {
-      $.ajax({
-        url : "{{url('/marketing/penjualanpusat/targetrealisasi/get-company')}}",
-        type: "GET",
-        success: function(res) {
-          $(".company").find('.option').remove();
-          $.each(res.data, function(key, val) {
-            $(".company").append('<option value="'+ val.c_id +'" class="option">'+ val.c_name +'</option>');
-          });
-        }
-      });
-    }
 
     function setItem(info) {
       idItem   = info.data.i_id;

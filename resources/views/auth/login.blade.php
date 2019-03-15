@@ -19,7 +19,6 @@
         max-width: 100%;
         max-height: 100%;
     / / image is only 880 x880 transform: translate(- 50 %, 0);
-        background: url(assets/img/forestback1.svg) no-repeat center center;
         background-size: cover;
         overflow: hidden;
     }
@@ -278,6 +277,25 @@
 
     leaves.init();
     leaves.render();
+
+    //Dinamic Background
+    setInterval(function () {
+        dinamicbackground();
+    }, 3000);
+
+    dinamicbackground();
+
+    function dinamicbackground(){
+      var today = new Date();
+      var curHr = today.getHours();
+      if (curHr < 12) {
+        document.getElementById("scene").style.background = "url(assets/img/forestback.svg) no-repeat center center";
+      } else if (curHr < 18) {
+        document.getElementById("scene").style.background = "url(assets/img/forestback1.svg) no-repeat center center";
+      } else {
+        document.getElementById("scene").style.background = "url(assets/img/forestback2.svg) no-repeat center center";
+      }
+    }
 
 </script>
 </body>

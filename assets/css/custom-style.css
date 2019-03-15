@@ -124,7 +124,19 @@ body {
     color:white !important;
 }
 
+.btn-hapus-termin {
+    border-radius:50%;
+}
+
+.btn-hapus-termin-1 {
+    border-radius:50%;
+}
+
 .btn-hapus {
+    border-radius:50%;
+}
+
+.btn-hapus-1 {
     border-radius:50%;
 }
 
