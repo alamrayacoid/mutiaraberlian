@@ -45,7 +45,7 @@
 			</div>
 
 			<div class="col-md-4 col-sm-6 col-12">
-				<a href="{{route('history.index')}}">
+				<a href="{{route('adjustment.index')}}">
 					<div class="card text-center p-4 card-custom text-info">
 						<img src="{{asset('assets/img/manufacture.png')}}" height="128px" width="128px">
 						<h6>Adjustment Stock</h6>

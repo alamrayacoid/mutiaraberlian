@@ -94,7 +94,7 @@ class InventoryController extends Controller
 
     public function adjustment_index()
     {
-        return view('invetory/manajemenstok/adjustment/index');
+        return view('inventory/manajemenstok/adjustment/index');
     }
 
     public function adjustment_create()
