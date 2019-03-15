@@ -118,9 +118,9 @@
     });
 
     $("#datepicker").datepicker( {
-      format     : "dd/mm/yyyy"
-      // viewMode   : "months", 
-      // minViewMode: "months"
+      format     : "mm/yyyy",
+      viewMode   : "months", 
+      minViewMode: "months"
     });
 
     $(document).on('click', '.btn-hapus', function(){
@@ -248,6 +248,9 @@
             loadingHide();
             messageSuccess('Success', 'Data berhasil ditambahkan!');
             window.location.href = "{{route('penjualanpusat.index')}}";
+          } else if (response.status == 'peringatan') {
+            loadingHide();
+            messageWarning('Perhatian!', ''+response.data.i_name+' sudah ada dalam periode ini.');
           } else {
             loadingHide();
             messageFailed('Gagal', response.message);
@@ -259,17 +262,6 @@
         }
       });
     });
-
-    $(document).on('click', '.btn-submit', function(){
-			$.toast({
-				heading: 'Success',
-				text: 'Data Berhasil di Simpan',
-				bgColor: '#00b894',
-				textColor: 'white',
-				loaderBg: '#55efc4',
-				icon: 'success'
-			})
-		});
   });
 </script>
 @endsection

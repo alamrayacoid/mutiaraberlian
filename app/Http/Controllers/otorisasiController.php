@@ -26,6 +26,27 @@ class OtorisasiController extends Controller
     public function opname_otorisasi(){
         return view('notifikasiotorisasi.otorisasi.opname.index');
     }
+    public function getopname(){
+      $data = DB::table('d_opnameauth')->join('m_item', 'i_id', '=', 'oa_item')->get();
+
+      return DataTables::of($data)
+          ->addIndexColumn()
+          ->addColumn('item', function($data){
+             $tmp = $data->i_code . ' ' . $data->i->i_name;
+             return $tmp;
+          })
+          ->addColumn('nota', function($data){
+              return $data->oa_nota;
+          })
+          ->addColumn('aksi', function($data){
+              $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrderProduksi(\''. Crypt::encrypt($data->oa_id) .'\')"><i class="fa fa-folder"></i></button>';
+              $setujui = '<button class="btn btn-warning btn-edit" type="button" title="Setujui" onclick="agree(\''. Crypt::encrypt($data->oa_id) .'\')"><i class="fa fa-check"></i></button>';
+              $tolak = '<button class="btn btn-danger btn-disable" type="button" title="Tolak" onclick="rejected(\''. Crypt::encrypt($data->oa_id) .'\')"><i class="fa fa-remove"></i></button>';
+              return '<div class="btn-group btn-group-sm">'. $detail . $setujui . $tolak . '</div>';
+          })
+          ->rawColumns(['nota','aksi'])
+          ->make(true);
+    }
     public function adjustment(){
         return view('notifikasiotorisasi.otorisasi.adjustment.index');
     }

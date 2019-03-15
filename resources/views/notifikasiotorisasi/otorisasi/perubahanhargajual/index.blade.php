@@ -37,7 +37,7 @@
 	<section class="section">
 
 		<div class="row">
-			
+
 			<div class="col-12">
 				<div class="card">
 
@@ -52,7 +52,7 @@
 
 					<div class="card-body">
 						<div class="table-responsive">
-							
+
 							<table class="table table-bordered table-striped table-hover" id="table_otorisasi" cellspacing="0">
 
 								<thead class="bg-primary">
@@ -73,7 +73,7 @@
 
 						</div>
 					</div>
-					
+
 				</div>
 			</div>
 

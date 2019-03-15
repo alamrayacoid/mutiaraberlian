@@ -173,9 +173,16 @@
 			},
 			columns: [
 				{data: 'DT_RowIndex'},
+<<<<<<< HEAD
 				{data: 'date'},
 				{data: 'oa_nota'},
 				{data: 'name'}
+=======
+				{data: 'o_date'},
+				{data: 'o_nota'},
+				{data: 'name'},
+				{data: 'status'},
+>>>>>>> 4e7e672de29fe6cb1e82c5f64af0081af3804a50
 			],
 			pageLength: 10,
 			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]

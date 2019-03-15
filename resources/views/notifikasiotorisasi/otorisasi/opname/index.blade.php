@@ -37,7 +37,7 @@
 	<section class="section">
 
 		<div class="row">
-			
+
 			<div class="col-12">
 				<div class="card">
 
@@ -52,44 +52,29 @@
 
 					<div class="card-body">
 						<div class="table-responsive">
-							
+
 							<table class="table table-bordered table-striped table-hover" id="table_otorisasi" cellspacing="0">
 
 								<thead class="bg-primary">
 									<tr>
 										<th width="1%">No</th>
+										<th>Nota</th>
 										<th>Nama Barang</th>
 										<th>Qty Real</th>
 										<th>Qty Sistem</th>
-										<th>Opname</th>
-										<th>User</th>
+										<th>Selisih</th>
 										<th width="20%">Aksi</th>
 									</tr>
 								</thead>
 
 								<tbody>
-									<tr>
-										<td>1</td>
-										<td>01001 - Barang</td>
-										<td>10</td>
-										<td>10</td>
-										<td>Penerimaan Barang</td>
-										<td>Foxtrot</td>
-										<td align="center">
-											<div class="btn-group btn-group-sm">
-												<button class="btn btn-info btn-detail"><i class="fa fa-list"></i></button>
-												<button class="btn btn-success" type="button" title="Setuju"><i class="fa fa-check-circle"></i></button>
-												<button class="btn btn-danger" type="button" title="Tolak"><i class="fa fa-times-circle"></i></button>
-											</div>
-										</td>
-									</tr>
 								</tbody>
-								
+
 							</table>
 
 						</div>
 					</div>
-					
+
 				</div>
 			</div>
 
@@ -106,12 +91,110 @@
 	$(document).ready(function(){
 		var table1, table2;
 
-		table1 = $('#table_otorisasi').DataTable();
+		table1 = $('#table_otorisasi').DataTable({
+				responsive: true,
+				// language: dataTableLanguage,
+				// processing: true,
+				serverSide: true,
+				ajax: {
+						url: "{{ url('notifikasiotorisasi/otorisasi/opname/getdataopname') }}",
+						type: "get",
+						data: {
+								"_token": "{{ csrf_token() }}"
+						}
+				},
+				columns: [
+						{data: 'DT_RowIndex'},
+						{data: 'item', name: 'item'},
+						{data: 'nota', name: 'nota'},
+						{data: 'oa_qtyreal', name: 'oa_qtyreal'},
+						{data: 'oa_qtysystem', name: 'oa_qtysystem'},
+						{data: 'selisih', name: 'selisih'},
+						{data: 'aksi', name: 'aksi'}
+				],
+				pageLength: 10,
+				lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
+
 		table2 = $('#table_detail').DataTable();
 
 		$('#table_otorisasi tbody').on('click', '.btn-detail' ,function(){
 			$('#detail').modal('show');
 		})
 	});
+
+	function approve(id) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin akan menyetujui data ini?',
+            theme: 'sukses',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+												loadingShow();
+                        axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/opname/approveopname'+'/'+id).then(function(response) {
+                            if(response.status == 'berhasil'){
+                                loadingHide();
+                                messageSuccess("Berhasil", "Data Stock Opname Berhasil Disetujui");
+                                table1.ajax.reload();
+                            }else{
+                                loadingHide();
+                                messageFailed("Gagal", "Data Stock Opname Berhasil Disetujui");
+                            }
+                        })
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
+
+		function rejected(id) {
+					$.confirm({
+							animation: 'RotateY',
+							closeAnimation: 'scale',
+							animationBounce: 1.5,
+							icon: 'fa fa-exclamation-triangle',
+							title: 'Peringatan!',
+							content: 'Apakah anda yakin akan menolak data ini?',
+							theme: 'disable',
+							buttons: {
+									info: {
+											btnClass: 'btn-blue',
+											text: 'Ya',
+											action: function () {
+													loadingShow();
+													axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/opname/rejectedopname'+'/'+id).then(function(response) {
+															if(response.status == 'berhasil'){
+																	loadingHide();
+																	messageSuccess("Berhasil", "Data Stock Opname Berhasil Ditolak");
+																	table1.ajax.reload();
+															}else{
+																	loadingHide();
+																	messageFailed("Gagal", "Data Stock Opname Berhasil Ditolak");
+															}
+													})
+											}
+									},
+									cancel: {
+											text: 'Tidak',
+											action: function () {
+													// tutup confirm
+											}
+									}
+							}
+					});
+			}
 </script>
 @endsection
