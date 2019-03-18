@@ -6,6 +6,7 @@ use function foo\func;
 use Yajra\DataTables\DataTables;
 use Response;
 use Illuminate\Http\Request;
+use Auth;
 use Crypt;
 use Carbon\Carbon;
 use Illuminate\Contracts\Encryption\DecryptException;
@@ -189,11 +190,6 @@ class PenerimaanProduksiController extends Controller
     {
         try {
             $id = Crypt::decrypt($id);
-        } catch (\DecryptException $e) {
-            return Response::json(['status' => 'Failed']);
-        }
-
-        try {
             $item = Crypt::decrypt($item);
         } catch (\DecryptException $e) {
             return Response::json(['status' => 'Failed']);
@@ -229,5 +225,108 @@ class PenerimaanProduksiController extends Controller
         );
 
         return Response::json(['status' => 'Success', 'data' => $data]);
+    }
+
+    public function checkTerima(Request $request)
+    {
+        try{
+            $order   = Crypt::decrypt($request->idOrder);
+            $item    = Crypt::decrypt($request->idItem);
+        }catch (\DecryptException $e){
+            return Response::json(['status' => 'Failed']);
+        }
+
+        DB::beginTransaction();
+        try{
+            $data_check = DB::table('d_productionorder')
+                ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
+                    'd_productionorderdt.pod_qty as jumlah', 'd_itemreceiptdt.ird_qty as terima', 'm_unit.u_name as satuan')
+                ->join('d_productionorderdt', function ($x) use ($item){
+                    $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
+                    $x->where('d_productionorderdt.pod_item', '=', $item);
+                })
+                ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
+                ->join('m_unit', 'd_productionorderdt.pod_unit', '=', 'm_unit.u_id')
+                ->leftjoin('d_itemreceipt', function ($x){
+                    $x->on('d_productionorder.po_nota', '=', 'd_itemreceipt.ir_notapo');
+                })
+                ->leftjoin('d_itemreceiptdt', function($y){
+                    $y->on('d_itemreceipt.ir_id', '=', 'd_itemreceiptdt.ird_goodsreceipt');
+                    $y->where('d_itemreceiptdt.ird_item', '=', 'd_productionorderdt.pod_item');
+                })
+                ->where('d_productionorder.po_id', '=', $order)
+                ->first();
+
+            $result = null;
+            $message = null;
+
+            $sisa = (int)$data_check->jumlah - (int)$data_check->terima;
+
+            if ($request->qty > $sisa) {
+                $result = "Over qty";
+                $message = "Kuantitas melebihi jumlah order/sisa yang sudah diterima, sisa yang belum diterima saat ini ". $sisa . " " . $data_check->satuan;
+            } else {
+                $result = "Success";
+                $message = "Success";
+            }
+
+            DB::commit();
+            return Response::json(['status' => 'Success', 'result' => $result, 'message' => $message]);
+        }catch (\Exception $e){
+            DB::rollback();
+            return Response::json(['status' => 'Failed', 'message' => $e]);
+        }
+    }
+
+    public function receiptItem(Request $request)
+    {
+        try{
+            $order   = Crypt::decrypt($request->idOrder);
+            $item    = Crypt::decrypt($request->idItem);
+        }catch (\DecryptException $e){
+            return Response::json(['status' => 'Failed']);
+        }
+
+        DB::beginTransaction();
+        try{
+            $data_check = DB::table('d_productionorder')
+                ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
+                    'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                    'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                    'm_item.i_unit3 as unit3', 'd_productionorderdt.pod_unit as unit')
+                ->join('d_productionorderdt', function ($x) use ($item){
+                    $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
+                    $x->where('d_productionorderdt.pod_item', '=', $item);
+                })
+                ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
+                ->where('d_productionorder.po_id', '=', $order)
+                ->first();
+
+            $nota_receipt = DB::table('d_itemreceipt')
+                ->where('ir_notapo', '=', $data_check->nota);
+
+            if ($nota_receipt->count() > 0) {
+                $detail_receipt = (DB::table('d_itemreceiptdt')->where('ird_goodsreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) ? (DB::table('d_itemreceiptdt')->where('ird_goodsreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) + 1 : 1;
+                $qty_compare = 0;
+                if ($data_check->unit == $data_check->unit3) {
+
+                }
+
+                $values = [
+                    'ird_goodsreceipt'  => $nota_receipt->first()->ir_id,
+                    'ird_detailid'      => $detail_receipt,
+                    'ird_date'          => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                    'ird_item'          => $item,
+                    'ird_qty'           => ,
+                    'ird_unit'          => $data_check->unit1,
+                    'ird_user'          => Auth::user()->u_id
+                ];
+            } else {
+
+            }
+            DB::commit();
+        }catch (\Exception $e){
+            DB::rollback();
+        }
     }
 }

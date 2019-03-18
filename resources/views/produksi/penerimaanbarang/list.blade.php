@@ -97,12 +97,37 @@
 
             $("#formTerimaBarang").on("submit", function (evt) {
                 evt.preventDefault();
+                var check = false;
                 if ($("#nota").val() == "") {
                     $("#nota").focus();
-                    messageWarning("Pesan", "Masukkan nota order!");
+                    messageWarning("Peringatan", "Masukkan nota order!");
                 } else if ($("#qty").val() == "" || $("#qty").val() == "0" || $("#qty").val() == 0) {
                     $("#qty").focus();
-                    messageWarning("Pesan", "Masukkan qty yang diterima!");
+                    messageWarning("Peringatan", "Masukkan qty yang diterima!");
+                } else {
+
+                    axios.post(baseUrl+'/produksi/penerimaanbarang/checkqty', $("#formTerimaBarang").serialize())
+                    .then(function (response) {
+                        if (response.data.status == "Success") {
+                            if (response.data.result == "Over qty") {
+                                messageWarning("Pesan", response.data.message);
+                            } else {
+                                check = true;
+                            }
+                        } else {
+                            messageFailed("Gagal", "Terjadi kesalahan sistem");
+                        }
+                    })
+                    .catch(function (error) {
+                        messageWarning("Error", error);
+                    })
+                    .then(function(){
+                        if (check == true) {
+                            messageSuccess("Berhasil", "OK, berhasil brooooo..");
+                        }
+                    });
+
+
                 }
             })
 

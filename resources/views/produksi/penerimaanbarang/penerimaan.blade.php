@@ -8,7 +8,7 @@
                 <h4 class="modal-title">Penerimaan Order Produksi</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <form id="formTerimaBarang">
+            <form id="formTerimaBarang">{{csrf_field()}}
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-sm-12">
@@ -37,7 +37,7 @@
                                 <input type="hidden" name="idOrder" id="idOrder">
                                 <input type="hidden" name="idItem" id="idItem">
                                 <div class="form-group row">
-                                    <label for="nota" class="col-sm-2 col-form-label">No. Nota</label>
+                                    <label for="nota" class="col-sm-2 col-form-label">No. Nota DO</label>
                                     <div class="col-sm-10">
                                         <input type="text" class="form-control" name="nota" id="nota"
                                                placeholder="Masukkan nomor nota order produksi" autofocus>
