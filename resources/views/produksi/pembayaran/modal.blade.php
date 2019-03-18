@@ -34,15 +34,15 @@
                 <label for="" style="margin-right:10px;">Total</label>
             </div>
             <div class="col-4">
-              <input type="text" class="form-control-plaintext" id="total_nominal">
+              <input type="text" class="form-control-plaintext" style="font-weight: bold; text-align: right;" id="total_nominal" readonly>
             </div>
           </div>
           <div class="row">
             <div class="col-lg-3 col-sm-4">
-                <label for="" style="margin-right:10px;">Nominal termin</label>
+                <label for="" style="margin-right:10px;" id="nominal_termin_lbl">Nominal termin</label>
             </div>
             <div class="col-4">
-              <input type="text" class="form-control-plaintext" id="nominal_termin">
+              <input type="text" class="form-control-plaintext" style="font-weight: bold; text-align: right;" id="nominal_termin" readonly>
             </div>
           </div>
           <div class="row">
@@ -50,7 +50,7 @@
               <label for="" style="margin-right:10px;">Nilai Bayar</label>
           </div>
           <div class="col-4 mb-3">
-              <input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 1.000.000,00">
+              <input type="text" class="form-control form-control-sm input-rupiah" value="0" id="nilai_bayar">
           </div>
           </div>
           <div class="row">
@@ -58,7 +58,7 @@
               <label for="" style="margin-right:10px;">Kekurangan</label>
           </div>
           <div class="col-4">
-              <p>Rp. 0</p>
+              <input type="text" class="form-control-plaintext" style="font-weight: bold; text-align: right;" id="sisapembayaran" readonly value="Rp 0">
           </div>
           </div>
       </div>

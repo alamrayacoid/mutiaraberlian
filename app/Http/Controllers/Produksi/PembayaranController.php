@@ -98,14 +98,15 @@ class PembayaranController extends Controller
      */
     public function show($id, $termin)
     {
+      // var_dump($termin);
+      // dd($termin);
       $data = d_productionorder::where('po_id', $id)
         ->with('getPODt')
         ->with('getPODt.getItem')
         ->with('getPODt.getUnit')
-        // ->with('getPOPayment')
-        ->whereHas('getPOPayment', function($q) use($termin) {
-          $q->where('pop_termin', 1);
-        })
+        ->with(['getPOPayment' => function($query) use($termin) {
+          $query->where('pop_termin',$termin);
+        }])
         ->first();
       return $data;
     }

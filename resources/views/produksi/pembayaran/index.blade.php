@@ -262,6 +262,9 @@
 					harga_satuan = '<span class="float-left">Rp </span><span class="float-right">'+ harga_satuan +'</span>';
 					sub_total = '<span class="float-left">Rp </span><span class="float-right">'+ sub_total +'</span>';
 					$('#table_detail > tbody:last-child').append('<tr><td>'+ val.get_item.i_code +'</td><td>'+ val.get_item.i_name +'</td><td>'+ val.pod_qty +'</td><td>'+ val.get_unit.u_name +'</td><td>'+ harga_satuan +'</td><td>'+ sub_total +'</td>');
+					$('#total_nominal').val('Rp '+ formatRupiah(response.po_totalnet));
+					$('#nominal_termin_lbl').html('Nominal termin '+ response.get_p_o_payment[0].pop_termin);
+					$('#nominal_termin').val('Rp '+ formatRupiah(response.get_p_o_payment[0].pop_value));
 				})
 				console.log(response);
 				// $('#nominal_termin').val('response.get_p_o_payment')
@@ -270,8 +273,14 @@
 		})
 	}
 
+	$("#nilai_bayar").on('keyup', function (evt) {
+		evt.preventDefault();
+		updateSisaPembayaran();
+	})
+
 	/* Fungsi formatRupiah */
-	function formatRupiah(angka){
+	function formatRupiah(angka)
+	{
 		var number_string = angka.replace(/[^.\d]/g, '').toString();
 		split = number_string.split(',');
 		sisa = split[0].length % 3;
@@ -285,5 +294,34 @@
 		rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
 		return rupiah;
 	}
+
+	/* Fungsi updateSisaPembayaran */
+	function updateSisaPembayaran()
+	{
+			var inpNominal = $('#nilai_bayar'),
+					nominal  = [].map.call(inpNominal, function( input ) {
+							return input.value;
+					});
+			var tot_harga = $("#nominal_termin").val();
+			var nomTot = 0;
+			for (var i =0; i < nominal.length; i++) {
+					var nomTermin = nominal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+					nomTot += parseInt(nomTermin);
+			}
+			var sisa = parseInt(tot_harga.replace("Rp ", "").replace(".", "").replace(".", "").replace(".", "")) - parseInt(nomTot);
+			console.log(parseInt(nomTot));
+			console.log(tot_harga);
+			$("#sisapembayaran").val(convertToCurrency(sisa));
+	}
+
+	// fungsi convertToCurrency
+  function convertToCurrency(angka) {
+      var currency = '';
+      var angkarev = angka.toString().split('').reverse().join('');
+      for(var i = 0; i < angkarev.length; i++) if(i%3 == 0) currency += angkarev.substr(i,3)+'.';
+      var hasil = currency.split('',currency.length-1).reverse().join('');
+      return hasil;
+  }
+
 </script>
 @endsection
