@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use DB;
+use function foo\func;
 use Yajra\DataTables\DataTables;
 use Response;
 use Illuminate\Http\Request;
@@ -146,11 +147,18 @@ class PenerimaanProduksiController extends Controller
         }
 
         $data = DB::table('d_productionorder')
-            ->select('d_productionorder.po_id', 'm_item.i_name', 'm_unit.u_name',
-                'd_productionorderdt.pod_qty')
+            ->select('d_productionorder.po_id', 'd_productionorder.po_nota', 'd_productionorderdt.pod_item', 'm_item.i_name', 'm_unit.u_name',
+                'd_productionorderdt.pod_qty', 'd_itemreceiptdt.ird_qty as terima')
             ->join('d_productionorderdt', 'd_productionorderdt.pod_productionorder', '=', 'd_productionorder.po_id')
             ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
             ->join('m_unit', 'd_productionorderdt.pod_unit', '=', 'm_unit.u_id')
+            ->leftjoin('d_itemreceipt', function ($x){
+                $x->on('d_productionorder.po_nota', '=', 'd_itemreceipt.ir_notapo');
+            })
+            ->leftjoin('d_itemreceiptdt', function($y){
+                $y->on('d_itemreceipt.ir_id', '=', 'd_itemreceiptdt.ird_goodsreceipt');
+                $y->where('d_itemreceiptdt.ird_item', '=', 'd_productionorderdt.pod_item');
+            })
             ->where('d_productionorder.po_id', '=', $order);
 
         return DataTables::of($data)
@@ -163,14 +171,63 @@ class PenerimaanProduksiController extends Controller
             ->addColumn('jumlah', function($data){
                 return $data->pod_qty;
             })
+            ->addColumn('terima', function($data){
+                return ($data->terima == NULL) ? 0 : $data->terima;
+            })
             ->addColumn('action', function($data) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                        <button class="btn btn-info hint--top-left hint--info" aria-label="Terima" onclick=""><i class="fa fa-check"></i>
+                        <button class="btn btn-info hint--top-left hint--info" aria-label="Terima" onclick="receipt(\''.Crypt::encrypt($data->po_id).'\', \''.Crypt::encrypt($data->pod_item).'\')"><i class="fa fa-arrow-down"></i>
                         </button>
                     </div>';
             })
-            ->rawColumns(['barang', 'satuan', 'jumlah', 'action'])
+            ->rawColumns(['barang', 'satuan', 'jumlah', 'terima', 'action'])
             ->make(true);
 
+    }
+
+    public function detailTerimaBarang($id = null, $item = null)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\DecryptException $e) {
+            return Response::json(['status' => 'Failed']);
+        }
+
+        try {
+            $item = Crypt::decrypt($item);
+        } catch (\DecryptException $e) {
+            return Response::json(['status' => 'Failed']);
+        }
+
+        $data = DB::table('d_productionorder')
+            ->select('d_productionorder.po_id as id', 'd_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
+                'm_item.i_name as barang', 'm_unit.u_name as satuan', 'd_productionorderdt.pod_qty as jumlah', 'd_itemreceiptdt.ird_qty as terima')
+            ->join('d_productionorderdt', function ($x) use ($item){
+                $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
+                $x->where('d_productionorderdt.pod_item', '=', $item);
+            })
+            ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
+            ->join('m_unit', 'd_productionorderdt.pod_unit', '=', 'm_unit.u_id')
+            ->leftjoin('d_itemreceipt', function ($x){
+                $x->on('d_productionorder.po_nota', '=', 'd_itemreceipt.ir_notapo');
+            })
+            ->leftjoin('d_itemreceiptdt', function($y){
+                $y->on('d_itemreceipt.ir_id', '=', 'd_itemreceiptdt.ird_goodsreceipt');
+                $y->where('d_itemreceiptdt.ird_item', '=', 'd_productionorderdt.pod_item');
+            })
+            ->where('d_productionorder.po_id', '=', $id)
+            ->first();
+
+        $data = array(
+            'id'        => Crypt::encrypt($data->id),
+            'nota'      => $data->nota,
+            'item'        => Crypt::encrypt($data->item),
+            'barang'    => $data->barang,
+            'satuan'    => $data->satuan,
+            'jumlah'    => $data->jumlah,
+            'terima'    => $data->terima,
+        );
+
+        return Response::json(['status' => 'Success', 'data' => $data]);
     }
 }
