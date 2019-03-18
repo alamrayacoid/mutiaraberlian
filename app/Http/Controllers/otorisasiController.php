@@ -32,20 +32,73 @@ class OtorisasiController extends Controller
       return DataTables::of($data)
           ->addIndexColumn()
           ->addColumn('item', function($data){
-             $tmp = $data->i_code . ' ' . $data->i->i_name;
+             $tmp = $data->i_code . ' ' . $data->i_name;
              return $tmp;
           })
           ->addColumn('nota', function($data){
               return $data->oa_nota;
           })
+          ->addColumn('selisih', function($data){
+              $tmp = $data->oa_qtyreal - $data->oa_qtysystem;
+              return $tmp;
+          })
           ->addColumn('aksi', function($data){
-              $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrderProduksi(\''. Crypt::encrypt($data->oa_id) .'\')"><i class="fa fa-folder"></i></button>';
-              $setujui = '<button class="btn btn-warning btn-edit" type="button" title="Setujui" onclick="agree(\''. Crypt::encrypt($data->oa_id) .'\')"><i class="fa fa-check"></i></button>';
+              $setujui = '<button class="btn btn-warning btn-primary" type="button" title="Setujui" onclick="approve(\''. Crypt::encrypt($data->oa_id) .'\')"><i class="fa fa-check"></i></button>';
               $tolak = '<button class="btn btn-danger btn-disable" type="button" title="Tolak" onclick="rejected(\''. Crypt::encrypt($data->oa_id) .'\')"><i class="fa fa-remove"></i></button>';
-              return '<div class="btn-group btn-group-sm">'. $detail . $setujui . $tolak . '</div>';
+              return '<center><div class="btn-group btn-group-sm">' . $setujui . $tolak . '</div></center>';
           })
           ->rawColumns(['nota','aksi'])
           ->make(true);
+    }
+
+    public function approveopname($id){
+      DB::beginTransaction();
+      try {
+
+        $auth = DB::table('d_opnameauth')->where('oa_id', Crypt::decrypt($id))->first();
+
+        DB::table('d_opnameauth')->where('oa_id', Crypt::decrypt($id))->delete();
+
+        $id = DB::table('d_opname')->max('o_id')+1;
+        DB::table('d_opname')->insert([
+          'o_id' => $id,
+          'o_date' => $auth->oa_date,
+          'o_nota' => $auth->oa_nota,
+          'o_item' => $auth->oa_item,
+          'o_qtyreal' => $auth->oa_qtyreal,
+          'o_qtysystem' => $auth->oa_qtysystem,
+          'o_unitreal' => $auth->oa_unitreal,
+          'o_unitsystem' => $auth->oa_unitsystem,
+          'o_insert' => Carbon::now('Asia/Jakarta')
+        ]);
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal'
+        ]);
+      }
+    }
+    public function rejectedopname($id){
+      DB::beginTransaction();
+      try {
+
+        DB::table('d_opnameauth')->where('oa_id', Crypt::decrypt($id))->delete();
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal'
+        ]);
+      }
     }
     public function adjustment(){
         return view('notifikasiotorisasi.otorisasi.adjustment.index');
