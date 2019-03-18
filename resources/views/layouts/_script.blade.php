@@ -472,5 +472,4 @@
       });
     }
 
-    // Push.create('Hello World!')
 </script>

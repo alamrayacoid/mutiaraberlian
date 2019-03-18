@@ -211,9 +211,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/inventory/manajemenstok/opnamestock/delete/{id}', 'Inventory\OpnameController@destroy')->name('opname.delete');
     Route::get('/inventory/manajemenstok/opnamestock/print', 'Inventory\OpnameController@print_opname')->name('opname.print');
     Route::get('/inventory/manajemenstok/historyopname/list', 'Inventory\HistoryOpnameController@getList')->name('history.list');
-    Route::get('/inventory/manajemenstok/adjustmentstock/index', 'InventoryController@adjustment_index')->name('adjustment.index');
-    Route::get('/inventory/manajemenstok/adjustmentstock/create', 'InventoryController@adjustment_create')->name('adjustment.create');
-    Route::get('/inventory/manajemenstok/adjustmentstock/print', 'InventoryController@adjustment_nota')->name('adjustment.nota');
+    Route::get('/inventory/manajemenstok/adjustmentstock/index', 'Inventory\AdjusmentController@index')->name('adjustment.index');
+    Route::get('/inventory/manajemenstok/adjustmentstock/create', 'Inventory\AdjusmentController@create')->name('adjustment.create');
+    Route::get('/inventory/manajemenstok/adjustmentstock/print', 'Inventory\AdjusmentController@nota')->name('adjustment.nota');
+    Route::get('/inventory/manajemenstok/adjustmentstock/getopname', 'Inventory\AdjusmentController@getopname')->name('adjustment.getopname');
     // !===================================================== END INVENTORY =====================================================!
 
     // !===================================================== SDM =====================================================!
@@ -355,6 +356,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifikasiotorisasi/otorisasi/opname/approveopname/{id}', 'OtorisasiController@approveopname');
     Route::get('/notifikasiotorisasi/otorisasi/opname/rejectedopname/{id}', 'OtorisasiController@rejectedopname');
 
+    Route::get('encrypt', 'Encrypter@rc4encrypt');
+    Route::get('decrypt', 'Encrypter@rc4decrypt');
 });
 // End Route Group
 

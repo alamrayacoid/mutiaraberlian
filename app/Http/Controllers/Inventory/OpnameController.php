@@ -167,6 +167,9 @@ class OpnameController extends Controller
       ->addColumn('status', function($datas) {
         return '<td><button class="btn btn-primary status-reject" style="pointer-events: none">Pending</button></td>';
       })
+      ->addColumn('date', function($datas) {
+        return Carbon::parse($datas->oa_date)->format('d/m/Y');
+      })
       ->addColumn('action', function($datas) {
         return '<td><div class="btn-group btn-group-sm">
                 <button class="btn btn-info" data-toggle="tooltip" data-placement="bottom" title="Detail data" onclick="Detail('. $datas->oa_id .')"><i class="fa fa-folder"></i></button>

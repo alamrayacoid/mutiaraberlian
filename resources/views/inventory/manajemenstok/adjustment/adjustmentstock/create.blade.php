@@ -19,7 +19,7 @@
     <div class="row">
 
       <div class="col-12">
-        
+
         <div class="card">
 
                     <div class="card-header bordered p-2">
@@ -33,16 +33,21 @@
 
                     <div class="card-block">
                         <section>
-                          
+
                             <div class="row">
-                            
+
                                 <div class="col-md-2 col-sm-6 col-xs-12">
                                     <label>Nota Opname</label>
-                                </div> 
+                                </div>
 
                                 <div class="col-md-10 col-sm-6 col-xs-12">
                                 <div class="form-group">
-                                    <input type="text" class="form-control form-control-sm" name="">
+                                    <select class="form-control select2" name="nota" id="nota" onchange="getopname()">
+                                      <option value="" disabled selected> - Pilih Nota Opname - </option>
+                                      @foreach ($nota as $key => $value)
+                                        <option value="{{$value->o_nota}}">{{$value->o_nota}}</option>
+                                      @endforeach
+                                    </select>
                                 </div>
                                 </div>
                             <div class="col-12"><hr></div>
@@ -50,11 +55,12 @@
                                 <div class="row">
                                     <div class="col-md-2 col-sm-6 col-xs-12">
                                         <label>Nama Barang</label>
-                                    </div> 
+                                    </div>
 
                                     <div class="col-md-10 col-sm-6 col-xs-12">
                                     <div class="form-group">
-                                        <input type="text" class="form-control form-control-sm" name="" readonly="">
+                                        <input type="text" class="form-control form-control-sm" name="nama" id="item" readonly="">
+                                        <input type="hidden" name="iditem" id="iditem">
                                     </div>
                                     </div>
                                 </div>
@@ -66,13 +72,14 @@
                                 <form role="form">
                                     <div class="form-group">
                                         <label class="control-label" for="formGroupExampleInput">Satuan</label>
-                                        <select type="text" class="form-control form-control-sm select2" id="formGroupExampleInput">
-                                            <option value="">Pilih Satuan</option>
-                                        </select> 
+                                        <select type="text" disabled class="form-control form-control-sm select2" id="satuansystem">
+                                            <option value="" disabled selected> - Pilih Satuan - </option>
+
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="formGroupExampleInput2">Qty</label>
-                                        <input type="number" class="form-control form-control-sm" id="formGroupExampleInput2">
+                                        <input type="number" readonly class="form-control form-control-sm" id="qtysystem">
                                     </div>
                                 </form>
                             </div>
@@ -82,36 +89,23 @@
                                 </div>
                                 <form role="form">
                                     <div class="form-group">
-                                        <label class="control-label" for="formGroupExampleInput">Satuan</label>
-                                        <input type="text" class="form-control form-control-sm">
+                                      <label class="control-label" for="formGroupExampleInput">Satuan</label>
+                                      <select type="text" disabled class="form-control form-control-sm select2" id="satuanreal">
+                                          <option value="" disabled selected> - Pilih Satuan - </option>
+
+                                      </select>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="formGroupExampleInput2">Qty</label>
-                                        <input type="number" class="form-control form-control-sm" id="formGroupExampleInput2">
+                                        <input type="number" readonly class="form-control form-control-sm" id="qtyreal">
                                     </div>
                                 </form>
-                            </div>
-                            </div>
-                            <div class="row">
-                            <div class="col-12 mt-3">
-                            <div class="row">
-                                <div class="col-md-1 col-sm-6 col-xs-12">
-                                    <label for="">Aksi</label>
-                                </div>
-                                <div class="col-md-3 col-sm-12 col-xs-12">
-                                    <select name="" id="" class="form-contor form-control-sm select2">
-                                        <option value="">Pilih Aksi</option>
-                                        <option value="">Samakan System</option>
-                                        <option value="">Samakan Real</option>
-                                    </select>
-                                </div>
-                            </div>
                             </div>
                             </div>
                         </section>
                     </div>
                     <div class="card-footer text-right">
-                      <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+                      <button class="btn btn-primary btn-submit" id="btnsimpan" style="display:none" type="button">Simpan</button>
                       <a href="{{route('mngagen.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
@@ -128,7 +122,10 @@
 
 @section('extra_script')
 <script type="text/javascript">
+var data = [];
   $(document).ready(function(){
+    $('.select2').select2();
+
     $('#type_cus').change(function(){
       if($(this).val() === 'kontrak'){
         $('#label_type_cus').text('Jumlah Bulan');
@@ -191,5 +188,31 @@
 		});
 	});
   });
+
+  function getopname(){
+    var nota = $('#nota').val();
+
+    axios.get(baseUrl + '/inventory/manajemenstok/adjustmentstock/getopname?nota='+nota)
+  .then(function (response) {
+    data = response.data.item;
+    // handle success
+    if (parseInt(response.data.data.o_qtysystem) != parseInt(response.data.stock.s_qty)) {
+      $('#btnsimpan').css('display', 'none');
+      messageFailed('Failed', 'Data Stock System Sudah Berubah');
+    } else {
+      $('#btnsimpan').css('display', '');
+      $('#item').val(response.data.item.i_name);
+      $('#iditem').val(response.data.item.i_id);
+      $('#satuansystem').append('<option value="'+response.data.unitsystem.u_id+'" selected>'+response.data.unitsystem.u_name+'</option>');
+      $('#satuanreal').append('<option value="'+response.data.unitreal.u_id+'" selected>'+response.data.unitreal.u_name+'</option>');
+      $('#qtysystem').val(response.data.data.o_qtysystem);
+      $('#qtyreal').val(response.data.data.o_qtyreal);
+    }
+  })
+  .catch(function (error) {
+    // handle error
+    messageFailed('Failed', 'Data Stock System Sudah Berubah');
+  });
+  }
 </script>
 @endsection
