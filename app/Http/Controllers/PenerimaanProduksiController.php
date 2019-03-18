@@ -214,6 +214,20 @@ class PenerimaanProduksiController extends Controller
             ->where('d_productionorder.po_id', '=', $id)
             ->first();
 
+        $satuan = DB::table('m_item')
+            ->select('a.u_id as id1', 'a.u_name as unit1','b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
+            ->where('m_item.i_id', '=', $item)
+            ->join('m_unit as a', function ($x){
+                $x->on('m_item.i_unit1', '=', 'a.u_id');
+            })
+            ->leftjoin('m_unit as b', function ($y){
+                $y->on('m_item.i_unit2', '=', 'b.u_id');
+            })
+            ->leftjoin('m_unit as c', function ($z){
+                $z->on('m_item.i_unit3', '=', 'c.u_id');
+            })
+            ->first();
+
         $data = array(
             'id'        => Crypt::encrypt($data->id),
             'nota'      => $data->nota,
@@ -224,7 +238,7 @@ class PenerimaanProduksiController extends Controller
             'terima'    => $data->terima,
         );
 
-        return Response::json(['status' => 'Success', 'data' => $data]);
+        return Response::json(['status' => 'Success', 'data' => $data, 'satuan' => $satuan]);
     }
 
     public function checkTerima(Request $request)
@@ -307,6 +321,7 @@ class PenerimaanProduksiController extends Controller
 
             if ($nota_receipt->count() > 0) {
                 $detail_receipt = (DB::table('d_itemreceiptdt')->where('ird_goodsreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) ? (DB::table('d_itemreceiptdt')->where('ird_goodsreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) + 1 : 1;
+
                 $qty_compare = 0;
                 if ($data_check->unit == $data_check->unit3) {
 
@@ -317,7 +332,7 @@ class PenerimaanProduksiController extends Controller
                     'ird_detailid'      => $detail_receipt,
                     'ird_date'          => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
                     'ird_item'          => $item,
-                    'ird_qty'           => ,
+//                    'ird_qty'           => ,
                     'ird_unit'          => $data_check->unit1,
                     'ird_user'          => Auth::user()->u_id
                 ];

@@ -101,6 +101,9 @@
                 if ($("#nota").val() == "") {
                     $("#nota").focus();
                     messageWarning("Peringatan", "Masukkan nota order!");
+                } else if ($("#satuan").val() == "") {
+                    $("#satuan").focus();
+                    messageWarning("Peringatan", "Pilih satuan barang!");
                 } else if ($("#qty").val() == "" || $("#qty").val() == "0" || $("#qty").val() == 0) {
                     $("#qty").focus();
                     messageWarning("Peringatan", "Masukkan qty yang diterima!");
@@ -147,6 +150,19 @@
                         }
 
                         sisa += parseInt(response.data.data.jumlah) - parseInt(terima);
+
+                        //select
+                        $("#satuan").find('option').remove();
+                        var option = '';
+                        option += '<option value="" selected>Pilih satuan</option>';
+                        option += '<option value="'+response.data.satuan.id1+'">'+response.data.satuan.unit1+'</option>';
+                        if (response.data.satuan.id2 != null && response.data.satuan.id2 != response.data.satuan.id1) {
+                            option += '<option value="'+response.data.satuan.id2+'">'+response.data.satuan.unit2+'</option>';
+                        }
+                        if (response.data.satuan.id3 != null && response.data.satuan.id3 != response.data.satuan.id1) {
+                            option += '<option value="'+response.data.satuan.id3+'">'+response.data.satuan.unit3+'</option>';
+                        }
+                        $("#satuan").append(option);
 
                         $("#idOrder").val(response.data.data.id);
                         $("#idItem").val(response.data.data.item);
