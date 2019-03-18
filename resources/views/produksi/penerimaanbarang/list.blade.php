@@ -2,7 +2,7 @@
 
 @section('content')
 
-
+    @include('produksi.penerimaanbarang.penerimaan')
 
     <article class="content animated fadeInLeft">
 
@@ -42,6 +42,7 @@
                                                 <th width="30%">Nama Barang</th>
                                                 <th width="20%">Satuan</th>
                                                 <th width="10%">Jumlah</th>
+                                                <th width="10%">QTY Terima</th>
                                                 <th width="30%" class="text-center">Aksi</th>
                                             </tr>
                                             </thead>
@@ -77,7 +78,7 @@
                 responsive  : true,
                 "paging"    : true,
                 "ordering"  : false,
-                "info"      : false,
+                "info"      : true,
                 "searching" : true,
                 processing  : true,
                 serverSide  : true,
@@ -89,10 +90,48 @@
                                     {data: 'barang'},
                                     {data: 'satuan'},
                                     {data: 'jumlah'},
+                                    {data: 'terima'},
                                     {data: 'action'}
                                 ]
             });
         });
+
+        function receipt(id, item) {
+            var sisa = 0;
+            var terima = 0;
+            axios.get(baseUrl+'/produksi/penerimaanbarang/terimalistitem'+'/'+id+'/'+item)
+                .then(function (response) {
+                    // handle success
+                    if (response.data.status == "Success") {
+                        if (response.data.data.terima == null) {
+                            terima = 0;
+                        } else {
+                            terima = response.data.data.terima
+                        }
+
+                        sisa += parseInt(response.data.data.jumlah) - parseInt(terima);
+
+                        $("#idOrder").val(response.data.data.id);
+                        $("#idItem").val(response.data.data.item);
+                        $("#txtBarang").text(response.data.data.barang);
+                        $("#txtSatuan").text(response.data.data.satuan);
+                        $("#txtJumlah").text(response.data.data.jumlah);
+                        $("#txtTerima").text(terima);
+                        $("#txtSisa").text(sisa);
+                        $("#penerimaanOrderProduksi").modal('show');
+                    } else {
+                        messageFailed("Gagal", "Terjadi kesalahan sistem")
+                    }
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    // handle error
+                    messageWarning('Error', error);
+                })
+                .then(function () {
+                    // always executed
+                });
+        }
 
     </script>
 @endsection

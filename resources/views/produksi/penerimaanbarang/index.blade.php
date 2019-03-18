@@ -3,7 +3,6 @@
 @section('content')
 
     @include('produksi.penerimaanbarang.detail')
-    @include('produksi.penerimaanbarang.penerimaan')
 
 <article class="content animated fadeInLeft">
 
