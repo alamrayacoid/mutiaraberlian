@@ -136,6 +136,7 @@
 	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 		})
 
+
 		// function table_hapus(a){
 		// 	table.row($(a).parents('tr')).remove().draw();
 		// }
@@ -205,7 +206,8 @@
     }
 
     function terima(id) {
-
+        // $('#penerimaanOrderProduksi').modal('show');
+        window.location = baseUrl+'/produksi/penerimaanbarang/terima-barang'+'/'+id;
     }
 
     function hitungTotalNet() {

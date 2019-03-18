@@ -106,7 +106,7 @@
 		});
 
 		$("#datepicker").datepicker( {
-			format: "MM/yyyy",
+			format: "mm/yyyy",
 			viewMode: "months", 
 			minViewMode: "months"
 		});

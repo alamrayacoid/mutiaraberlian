@@ -27,7 +27,6 @@
 
           <div class="card-block">
             <section>
-              <form>
                 <div class="container">
                   <hr style="border:0.7px solid grey; margin-bottom:30px;">
                   <div class="table-responsive">
@@ -40,29 +39,31 @@
                       	</tr>
                       </thead>
                       <tbody>
+                      	<form action="" id="formUpdate">
                       	<tr>
                       		<td>
-                      			<input type="text" class="form-control form-control-sm barang" style="text-transform:uppercase" value="{{$target->i_code}}-{{$target->i_name}}">
-	                            <input type="hidden" name="barang[]" class="form-control form-control-sm" style="text-transform:uppercase">
+	                            <input type="text" name="barang[]" class="form-control form-control-sm barang" style="text-transform:uppercase" value="{{$target->i_code}}-{{$target->i_name}}">
 	                            <input type="hidden" name="idItem[]" class="itemid">
 	                            <input type="hidden" name="kode[]" class="kode">
                          	</td>
                       		<td>
-                           		<select name="t_unit[]" class="form-control form-control-sm select2 satuan"></select>
+                           		<select name="t_unit[]" class="form-control form-control-sm select2 satuan">
+                           			<option value="{{$target->u_id}}">{{$target->u_name}}</option>
+                           		</select>
                           	</td>
                       		<td>
-                        		<input type="number" class="form-control form-control-sm" min="0" name="t_qty[]">
+                        		<input type="number" class="form-control form-control-sm" min="0" name="t_qty[]" value="{{$target->std_qty}}">
                           	</td>
                       	</tr>
+                      	</form>
                       </tbody>
                     </table>
                   </div>                                
                 </div>
-              </form>
             </section>
           </div>
           <div class="card-footer text-right">
-            <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+            <button class="btn btn-primary btn-submit" type="button" onclick="updateTarget('{{Crypt::encrypt($target->std_salestarget)}}','{{Crypt::encrypt($target->std_detailid)}}')">Simpan</button>
             <a href="{{route('penjualanpusat.index')}}" class="btn btn-secondary">Kembali</a>
           </div>
         </div>
@@ -160,5 +161,33 @@ $(document).ready(function(){
 		});
 	}
 });
+
+function updateTarget(st_id,dt_id)
+{
+	$.ajax({
+		url: baseUrl + "/marketing/penjualanpusat/targetrealisasi/updateTarget/" + st_id + "/" + dt_id,
+		type: "get",
+		data: $('#formUpdate').serialize(),
+		dataType : 'json',
+		beforeSend: function() {
+			loadingShow();
+		},
+		success : function (response){
+			if(response.status == 'sukses'){
+			  	loadingHide();
+			  	messageSuccess('Success', 'Data berhasil diperbarui!');
+            	window.location.href = "{{route('penjualanpusat.index')}}";
+			} else if (response.status == 'invalid') {
+				loadingHide();
+				messageWarning('Perhatian', response.message);
+			}
+		},
+		error : function(e){
+			loadingHide();
+			messageWarning('Warning', e.message);
+		}
+
+	});
+}
 </script>
 @endsection
