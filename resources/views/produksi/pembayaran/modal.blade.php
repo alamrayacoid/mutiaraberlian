@@ -50,7 +50,12 @@
               <label for="" style="margin-right:10px;">Nilai Bayar</label>
           </div>
           <div class="col-4 mb-3">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <button class="btn btn-primary" type="button" title="Lunasi" onclick="lunasiTermin()"><i class="fa fa-check-circle"></i></button>
+              </div>
               <input type="text" class="form-control form-control-sm input-rupiah" value="0" id="nilai_bayar">
+            </div>
           </div>
           </div>
           <div class="row">
@@ -64,7 +69,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Simpan</button>
+        <button type="button" class="btn btn-primary" id="btn_simpan">Simpan</button>
       </div>
     </div>
 

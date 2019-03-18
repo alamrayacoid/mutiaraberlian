@@ -262,12 +262,12 @@
 					harga_satuan = '<span class="float-left">Rp </span><span class="float-right">'+ harga_satuan +'</span>';
 					sub_total = '<span class="float-left">Rp </span><span class="float-right">'+ sub_total +'</span>';
 					$('#table_detail > tbody:last-child').append('<tr><td>'+ val.get_item.i_code +'</td><td>'+ val.get_item.i_name +'</td><td>'+ val.pod_qty +'</td><td>'+ val.get_unit.u_name +'</td><td>'+ harga_satuan +'</td><td>'+ sub_total +'</td>');
-					$('#total_nominal').val('Rp '+ formatRupiah(response.po_totalnet));
-					$('#nominal_termin_lbl').html('Nominal termin '+ response.get_p_o_payment[0].pop_termin);
-					$('#nominal_termin').val('Rp '+ formatRupiah(response.get_p_o_payment[0].pop_value));
 				})
-				console.log(response);
-				// $('#nominal_termin').val('response.get_p_o_payment')
+				$('#total_nominal').val('Rp '+ formatRupiah(response.po_totalnet));
+				$('#nominal_termin_lbl').html('Nominal termin '+ response.get_p_o_payment[0].pop_termin);
+				$('#nominal_termin').val('Rp '+ formatRupiah(response.get_p_o_payment[0].pop_value));
+				$('#nilai_bayar').val('Rp. 0');
+				updateSisaPembayaran();
 				$('#detail').modal('show');
 			}
 		})
@@ -277,6 +277,14 @@
 		evt.preventDefault();
 		updateSisaPembayaran();
 	})
+
+	function lunasiTermin()
+	{
+		$('#nilai_bayar').val($('#nominal_termin').val());
+		$('#nilai_bayar').focus();
+		$('#btn_simpan').focus();
+		updateSisaPembayaran();
+	}
 
 	/* Fungsi formatRupiah */
 	function formatRupiah(angka)
@@ -315,7 +323,8 @@
 	}
 
 	// fungsi convertToCurrency
-  function convertToCurrency(angka) {
+  function convertToCurrency(angka)
+	{
       var currency = '';
       var angkarev = angka.toString().split('').reverse().join('');
       for(var i = 0; i < angkarev.length; i++) if(i%3 == 0) currency += angkarev.substr(i,3)+'.';
