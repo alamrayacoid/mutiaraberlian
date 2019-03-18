@@ -94,6 +94,18 @@
                                     {data: 'action'}
                                 ]
             });
+
+            $("#formTerimaBarang").on("submit", function (evt) {
+                evt.preventDefault();
+                if ($("#nota").val() == "") {
+                    $("#nota").focus();
+                    messageWarning("Pesan", "Masukkan nota order!");
+                } else if ($("#qty").val() == "" || $("#qty").val() == "0" || $("#qty").val() == 0) {
+                    $("#qty").focus();
+                    messageWarning("Pesan", "Masukkan qty yang diterima!");
+                }
+            })
+
         });
 
         function receipt(id, item) {
@@ -118,6 +130,7 @@
                         $("#txtJumlah").text(response.data.data.jumlah);
                         $("#txtTerima").text(terima);
                         $("#txtSisa").text(sisa);
+                        document.getElementById("nota").addEventListener("keypress", forceKeyPressUppercase, false);
                         $("#penerimaanOrderProduksi").modal('show');
                     } else {
                         messageFailed("Gagal", "Terjadi kesalahan sistem")
@@ -131,6 +144,21 @@
                 .then(function () {
                     // always executed
                 });
+        }
+
+        function forceKeyPressUppercase(e)
+        {
+            var charInput = e.keyCode;
+            if((charInput >= 97) && (charInput <= 122)) { // lowercase
+                if(!e.ctrlKey && !e.metaKey && !e.altKey) { // no modifier key
+                    var newChar = charInput - 32;
+                    var start = e.target.selectionStart;
+                    var end = e.target.selectionEnd;
+                    e.target.value = e.target.value.substring(0, start) + String.fromCharCode(newChar) + e.target.value.substring(end);
+                    e.target.setSelectionRange(start+1, start+1);
+                    e.preventDefault();
+                }
+            }
         }
 
     </script>
