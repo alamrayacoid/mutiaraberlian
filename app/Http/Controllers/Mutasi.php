@@ -122,6 +122,8 @@ class Mutasi extends Controller
         $hpp = (int)$hpp;
         $qty = (int)$qty;
 
+        $sekarang = Carbon::now('Asia/Jakarta');
+
         $datamutcat = DB::table('m_mutcat')->where('m_status', 'M')->get();
 
         $stock = DB::table('d_stock')

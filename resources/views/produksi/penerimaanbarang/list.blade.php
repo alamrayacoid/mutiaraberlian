@@ -108,7 +108,7 @@
                     $("#qty").focus();
                     messageWarning("Peringatan", "Masukkan qty yang diterima!");
                 } else {
-
+                    loadingShow();
                     axios.post(baseUrl+'/produksi/penerimaanbarang/checkqty', $("#formTerimaBarang").serialize())
                     .then(function (response) {
                         if (response.data.status == "Success") {
@@ -118,15 +118,32 @@
                                 check = true;
                             }
                         } else {
+                            loadingHide();
                             messageFailed("Gagal", "Terjadi kesalahan sistem");
                         }
                     })
                     .catch(function (error) {
+                        loadingHide();
                         messageWarning("Error", error);
                     })
                     .then(function(){
                         if (check == true) {
-                            messageSuccess("Berhasil", "OK, berhasil brooooo..");
+                            axios.post('{{ route('penerimaan.terimaitem') }}', $("#formTerimaBarang").serialize())
+                                .then(function(resp){
+                                    if (resp.data.status == "Success") {
+                                        $("#penerimaanOrderProduksi").modal('hide');
+                                        tbl_receiptitem.ajax.reload();
+                                        loadingHide();
+                                        messageSuccess("Berhasil", resp.data.message);
+                                    } else {
+                                        loadingHide();
+                                        messageFailed("Gagal", resp.data.message);
+                                    }
+                                })
+                                .catch(function (error) {
+                                    loadingHide();
+                                    messageWarning("Error", error);
+                                });
                         }
                     });
 
