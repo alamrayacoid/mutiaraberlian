@@ -95,7 +95,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-striped table-hover" cellspacing="0" id="table_cabang">
+                                    <table class="table table-striped table-hover" cellspacing="0" id="table_order">
                                         <thead class="bg-primary">
                                             <tr>
                                                 <th width="30%">Kode Barang/Nama Barang</th>
@@ -158,16 +158,17 @@
 
 @section('extra_script')
 <script type="text/javascript">
-    var idItem = [];
-    var namaItem = null;
-    var kode = null;
+    var idItem    = [];
+    var namaItem  = null;
+    var kode      = null;
     var idxBarang = null;
-    var icode = [];
+    var icode     = [];
+    // Document Ready -------------------------------------------------
     $(document).ready(function() {
         changeJumlah();
         changeHarga();
 
-        // AutoComplete Agen --------------------------------
+        // AutoComplete Agen ------------------------------------------
         $('#dataAgen').autocomplete({
           source: baseUrl+'/marketing/marketingarea/orderproduk/cari-agen',
           minLength: 2,
@@ -175,9 +176,9 @@
               $('#idAgen').val(data.item.id);
           }
         });
-        // End AutoComplete ---------------------------------
+        // End AutoComplete -------------------------------------------
 
-        // AutoComplete Item --------------------------------
+        // AutoComplete Item ------------------------------------------
         $('.barang').on('click', function (e) {
             idxBarang = $('.barang').index(this);
             setArrayCode();
@@ -217,7 +218,7 @@
 
         function setArrayCode() {
             var inputs = document.getElementsByClassName('kode'),
-                code = [].map.call(inputs, function (input) {
+                code   = [].map.call(inputs, function (input) {
                     return input.value.toString();
                 });
 
@@ -229,7 +230,7 @@
 
             var item = [];
             var inpItemid = document.getElementsByClassName('itemid'),
-                item = [].map.call(inpItemid, function (input) {
+                item      = [].map.call(inpItemid, function (input) {
                     return input.value;
                 });
 
@@ -252,37 +253,11 @@
                 }
             });
         }
-        // End AutoComplete ---------------------------------------
+        // End AutoComplete -------------------------------------------
 
-        $('#type_cus').change(function() {
-            if ($(this).val() === 'kontrak') {
-                $('#label_type_cus').text('Jumlah Bulan');
-                $('#jumlah_hari_bulan').val('');
-                $('#pagu').val('');
-                $('#armada').prop('selectedIndex', 0).trigger('change');
-                $('.120mm').removeClass('d-none');
-                $('.125mm').addClass('d-none');
-                $('.122mm').removeClass('d-none');
-            } else if ($(this).val() === 'harian') {
-                $('#label_type_cus').text('Jumlah Hari');
-                $('#armada').prop('selectedIndex', 0).trigger('change');
-                $('#pagu').val('');
-                $('#jumlah_hari_bulan').val('');
-                $('.122mm').addClass('d-none');
-                $('.120mm').removeClass('d-none');
-                $('.125mm').removeClass('d-none');
-            } else {
-                $('#jumlah_hari_bulan').val('');
-                $('#armada').prop('selectedIndex', 0).trigger('change');
-                $('#pagu').val('');
-                $('.122mm').addClass('d-none');
-                $('.120mm').addClass('d-none');
-                $('.125mm').addClass('d-none');
-            }
-        });
-
+        // Tambah Form Order ------------------------------------------
         $('.btn-tambah-order').on('click', function() {
-            $('#table_cabang')
+            $('#table_order')
                 .append(
                     '<tr>' +
                         '<td>'+
@@ -329,26 +304,31 @@
                 $(".kode").eq(idxBarang).val('');
             });
         });
+        // End Form Order ---------------------------------------------
 
+        // Hapus Form -------------------------------------------------
         $(document).on('click', '.btn-hapus-order', function () {
             $(this).parents('tr').remove();
-        });              
+        });
+        // End Hapus Form
     });
+    // End Document Ready ---------------------------------------------
 
+    // Merubah Sub Total Berdasarkan Jumlah Item ----------------------
     function changeJumlah() {
         $(".jumlah").on('input', function (evt) {
             var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-                jumlah  = [].map.call(inpJumlah, function( input ) {
+                jumlah    = [].map.call(inpJumlah, function( input ) {
                     return parseInt(input.value);
                 });
 
             var inpHarga = document.getElementsByClassName( 'harga' ),
-                harga  = [].map.call(inpHarga, function( input ) {
+                harga    = [].map.call(inpHarga, function( input ) {
                     return input.value;
                 });
 
             var inpSubtotal = document.getElementsByClassName( 'subtotal' ),
-                subtotal  = [].map.call(inpSubtotal, function( input ) {
+                subtotal    = [].map.call(inpSubtotal, function( input ) {
                     return input.value;
                 });
 
@@ -373,21 +353,23 @@
             updateTotalTampil();
         })
     }
+    // End Code -------------------------------------------------------
 
+    // Merubah Sub Total Berdasarkan Harga ----------------------------
     function changeHarga() {
         $(".harga").on('keyup', function (evt) {
             var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-                jumlah  = [].map.call(inpJumlah, function( input ) {
+                jumlah    = [].map.call(inpJumlah, function( input ) {
                     return parseInt(input.value);
                 });
 
             var inpHarga = document.getElementsByClassName( 'harga' ),
-                harga  = [].map.call(inpHarga, function( input ) {
+                harga    = [].map.call(inpHarga, function( input ) {
                     return input.value;
                 });
 
             var inpSubtotal = document.getElementsByClassName( 'subtotal' ),
-                subtotal  = [].map.call(inpSubtotal, function( input ) {
+                subtotal    = [].map.call(inpSubtotal, function( input ) {
                     return input.value;
                 });
 
@@ -411,11 +393,13 @@
             updateTotalTampil();
         })
     }
+    // End Code -------------------------------------------------------
 
+    // Memperbarui Sub Total ------------------------------------------
     function updateTotalTampil() {
         var total = 0;
 
-        var inputs = document.getElementsByClassName('subtotal'),
+        var inputs   = document.getElementsByClassName('subtotal'),
             subtotal = [].map.call(inputs, function (input) {
                 return input.value;
             });
@@ -428,11 +412,11 @@
             total = 0;
         }
         $("#total_harga").val(convertToRupiah(total));
-
     }
+    // End Code -------------------------------------------------------
 
-    function getProvId()
-    {
+    // Menampilkan List Kota Berdasarkan Id Provinsi ------------------
+    function getProvId() {
         var id = document.getElementById("prov").value;
         $.ajax({
             url: "{{route('orderproduk.getCity')}}",
@@ -450,6 +434,7 @@
             }
         });
     }
+    // End Code -------------------------------------------------------
 
 </script>
 <script type="text/javascript">
@@ -472,6 +457,5 @@
             }
         });
     });
-
 </script>
 @endsection
