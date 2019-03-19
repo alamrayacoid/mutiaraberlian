@@ -62,6 +62,8 @@ class OtorisasiController extends Controller
         $id = DB::table('d_opname')->max('o_id')+1;
         DB::table('d_opname')->insert([
           'o_id' => $id,
+          'o_comp' => $auth->oa_comp,
+          'o_position' => $auth->oa_position,
           'o_date' => $auth->oa_date,
           'o_nota' => $auth->oa_nota,
           'o_item' => $auth->oa_item,
