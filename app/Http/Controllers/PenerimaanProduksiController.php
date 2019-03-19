@@ -8,6 +8,7 @@ use Response;
 use Illuminate\Http\Request;
 use Auth;
 use Crypt;
+use Mutasi;
 use Carbon\Carbon;
 use Illuminate\Contracts\Encryption\DecryptException;
 
@@ -148,19 +149,19 @@ class PenerimaanProduksiController extends Controller
         }
 
         $data = DB::table('d_productionorder')
-            ->select('d_productionorder.po_id', 'd_productionorder.po_nota', 'd_productionorderdt.pod_item', 'm_item.i_name', 'm_unit.u_name',
-                'd_productionorderdt.pod_qty', 'd_itemreceiptdt.ird_qty as terima')
+            ->where('d_productionorder.po_id', '=', $order)
             ->join('d_productionorderdt', 'd_productionorderdt.pod_productionorder', '=', 'd_productionorder.po_id')
             ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
             ->join('m_unit', 'd_productionorderdt.pod_unit', '=', 'm_unit.u_id')
-            ->leftjoin('d_itemreceipt', function ($x){
-                $x->on('d_productionorder.po_nota', '=', 'd_itemreceipt.ir_notapo');
-            })
+            ->leftjoin('d_itemreceipt', 'd_productionorder.po_nota', '=', 'd_itemreceipt.ir_notapo')
             ->leftjoin('d_itemreceiptdt', function($y){
                 $y->on('d_itemreceipt.ir_id', '=', 'd_itemreceiptdt.ird_goodsreceipt');
-                $y->where('d_itemreceiptdt.ird_item', '=', 'd_productionorderdt.pod_item');
+                $y->whereRaw('d_itemreceiptdt.ird_item = d_productionorderdt.pod_item');
             })
-            ->where('d_productionorder.po_id', '=', $order);
+            ->groupBy('d_productionorderdt.pod_item')
+            ->select('d_productionorder.po_id', 'd_productionorder.po_nota', 'd_productionorderdt.pod_item', 'm_item.i_name',
+                'm_unit.u_name', 'd_productionorderdt.pod_qty', DB::raw('sum(d_itemreceiptdt.ird_qty) as ird_qty'))
+            ->get();
 
         return DataTables::of($data)
             ->addColumn('barang', function($data){
@@ -173,13 +174,17 @@ class PenerimaanProduksiController extends Controller
                 return $data->pod_qty;
             })
             ->addColumn('terima', function($data){
-                return ($data->terima == NULL) ? 0 : $data->terima;
+                return ($data->ird_qty == NULL) ? 0 : $data->ird_qty;
             })
             ->addColumn('action', function($data) {
-                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                if ($data->ird_qty < $data->pod_qty) {
+                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                         <button class="btn btn-info hint--top-left hint--info" aria-label="Terima" onclick="receipt(\''.Crypt::encrypt($data->po_id).'\', \''.Crypt::encrypt($data->pod_item).'\')"><i class="fa fa-arrow-down"></i>
                         </button>
                     </div>';
+                } else {
+                    return '<div class="text-center"><span class="status-approve" style="padding: 5px;">Diterima</span></div>';
+                }
             })
             ->rawColumns(['barang', 'satuan', 'jumlah', 'terima', 'action'])
             ->make(true);
@@ -197,7 +202,7 @@ class PenerimaanProduksiController extends Controller
 
         $data = DB::table('d_productionorder')
             ->select('d_productionorder.po_id as id', 'd_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
-                'm_item.i_name as barang', 'm_unit.u_name as satuan', 'd_productionorderdt.pod_qty as jumlah', 'd_itemreceiptdt.ird_qty as terima')
+                'm_item.i_name as barang', 'm_unit.u_name as satuan', 'd_productionorderdt.pod_qty as jumlah', DB::raw('sum(d_itemreceiptdt.ird_qty) as terima'))
             ->join('d_productionorderdt', function ($x) use ($item){
                 $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
                 $x->where('d_productionorderdt.pod_item', '=', $item);
@@ -209,8 +214,9 @@ class PenerimaanProduksiController extends Controller
             })
             ->leftjoin('d_itemreceiptdt', function($y){
                 $y->on('d_itemreceipt.ir_id', '=', 'd_itemreceiptdt.ird_goodsreceipt');
-                $y->where('d_itemreceiptdt.ird_item', '=', 'd_productionorderdt.pod_item');
+                $y->whereRaw('d_itemreceiptdt.ird_item = d_productionorderdt.pod_item');
             })
+            ->groupBy('d_productionorderdt.pod_item')
             ->where('d_productionorder.po_id', '=', $id)
             ->first();
 
@@ -254,7 +260,7 @@ class PenerimaanProduksiController extends Controller
         try{
             $data_check = DB::table('d_productionorder')
                 ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
-                    'd_productionorderdt.pod_qty as jumlah', 'd_itemreceiptdt.ird_qty as terima', 'm_unit.u_name as satuan')
+                    'd_productionorderdt.pod_qty as jumlah', DB::raw('sum(d_itemreceiptdt.ird_qty) as terima'), 'm_unit.u_name as satuan')
                 ->join('d_productionorderdt', function ($x) use ($item){
                     $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
                     $x->where('d_productionorderdt.pod_item', '=', $item);
@@ -266,9 +272,10 @@ class PenerimaanProduksiController extends Controller
                 })
                 ->leftjoin('d_itemreceiptdt', function($y){
                     $y->on('d_itemreceipt.ir_id', '=', 'd_itemreceiptdt.ird_goodsreceipt');
-                    $y->where('d_itemreceiptdt.ird_item', '=', 'd_productionorderdt.pod_item');
+                    $y->whereRaw('d_itemreceiptdt.ird_item = d_productionorderdt.pod_item');
                 })
                 ->where('d_productionorder.po_id', '=', $order)
+                ->groupBy('d_productionorderdt.pod_item')
                 ->first();
 
             $result = null;
@@ -307,7 +314,7 @@ class PenerimaanProduksiController extends Controller
                 ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
                     'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
                     'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-                    'm_item.i_unit3 as unit3', 'd_productionorderdt.pod_unit as unit')
+                    'm_item.i_unit3 as unit3', 'd_productionorderdt.pod_unit as unit', 'd_productionorderdt.pod_value as value')
                 ->join('d_productionorderdt', function ($x) use ($item){
                     $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
                     $x->where('d_productionorderdt.pod_item', '=', $item);
@@ -323,8 +330,12 @@ class PenerimaanProduksiController extends Controller
                 $detail_receipt = (DB::table('d_itemreceiptdt')->where('ird_goodsreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) ? (DB::table('d_itemreceiptdt')->where('ird_goodsreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) + 1 : 1;
 
                 $qty_compare = 0;
-                if ($data_check->unit == $data_check->unit3) {
-
+                if ($request->satuan == $data_check->unit1) {
+                    $qty_compare = $request->qty;
+                } else if ($request->satuan == $data_check->unit2) {
+                    $qty_compare = $request->qty * $data_check->compare2;
+                } else if ($request->satuan == $data_check->unit3) {
+                    $qty_compare = $request->qty * $data_check->compare3;
                 }
 
                 $values = [
@@ -332,16 +343,52 @@ class PenerimaanProduksiController extends Controller
                     'ird_detailid'      => $detail_receipt,
                     'ird_date'          => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
                     'ird_item'          => $item,
-//                    'ird_qty'           => ,
+                    'ird_qty'           => $qty_compare,
                     'ird_unit'          => $data_check->unit1,
                     'ird_user'          => Auth::user()->u_id
                 ];
-            } else {
 
+                DB::table('d_itemreceiptdt')->insert($values);
+
+                Mutasi::mutasimasuk(1, Auth::user()->u_company, Auth::user()->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $request->nota);
+            } else {
+                $id = (DB::table('d_itemreceipt')->max('ir_id')) ? (DB::table('d_itemreceipt')->max('ir_id'))+1 : 1;
+
+                $receipt = [
+                    'ir_id'     => $id,
+                    'ir_notapo' => $data_check->nota
+                ];
+
+                $detail_receipt = (DB::table('d_itemreceiptdt')->where('ird_goodsreceipt', '=', $id)->max('ird_detailid')) ? (DB::table('d_itemreceiptdt')->where('ird_goodsreceipt', '=', $id)->max('ird_detailid')) + 1 : 1;
+
+                $qty_compare = 0;
+                if ($request->satuan == $data_check->unit1) {
+                    $qty_compare = $request->qty;
+                } else if ($request->satuan == $data_check->unit2) {
+                    $qty_compare = $request->qty * $data_check->compare2;
+                } else if ($request->satuan == $data_check->unit3) {
+                    $qty_compare = $request->qty * $data_check->compare3;
+                }
+
+                $values = [
+                    'ird_goodsreceipt'  => $id,
+                    'ird_detailid'      => $detail_receipt,
+                    'ird_date'          => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                    'ird_item'          => $item,
+                    'ird_qty'           => $qty_compare,
+                    'ird_unit'          => $data_check->unit1,
+                    'ird_user'          => Auth::user()->u_id
+                ];
+
+                DB::table('d_itemreceipt')->insert($receipt);
+                DB::table('d_itemreceiptdt')->insert($values);
+                Mutasi::mutasimasuk(1, Auth::user()->u_company, Auth::user()->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $request->nota);
             }
             DB::commit();
+            return Response::json(['status' => 'Success', 'message' => "Data berhasil disimpan"]);
         }catch (\Exception $e){
             DB::rollback();
+            return Response::json(['status' => 'Failed', 'message' => $e]);
         }
     }
 }

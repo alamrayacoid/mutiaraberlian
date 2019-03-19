@@ -108,25 +108,43 @@
                     $("#qty").focus();
                     messageWarning("Peringatan", "Masukkan qty yang diterima!");
                 } else {
-
+                    loadingShow();
                     axios.post(baseUrl+'/produksi/penerimaanbarang/checkqty', $("#formTerimaBarang").serialize())
                     .then(function (response) {
                         if (response.data.status == "Success") {
                             if (response.data.result == "Over qty") {
+                                loadingHide();
                                 messageWarning("Pesan", response.data.message);
                             } else {
                                 check = true;
                             }
                         } else {
+                            loadingHide();
                             messageFailed("Gagal", "Terjadi kesalahan sistem");
                         }
                     })
                     .catch(function (error) {
+                        loadingHide();
                         messageWarning("Error", error);
                     })
                     .then(function(){
                         if (check == true) {
-                            messageSuccess("Berhasil", "OK, berhasil brooooo..");
+                            axios.post('{{ route('penerimaan.terimaitem') }}', $("#formTerimaBarang").serialize())
+                                .then(function(resp){
+                                    if (resp.data.status == "Success") {
+                                        $("#penerimaanOrderProduksi").modal('hide');
+                                        tbl_receiptitem.ajax.reload();
+                                        loadingHide();
+                                        messageSuccess("Berhasil", resp.data.message);
+                                    } else {
+                                        loadingHide();
+                                        messageFailed("Gagal", resp.data.message);
+                                    }
+                                })
+                                .catch(function (error) {
+                                    loadingHide();
+                                    messageWarning("Error", error);
+                                });
                         }
                     });
 
@@ -171,12 +189,13 @@
                         $("#txtJumlah").text(response.data.data.jumlah);
                         $("#txtTerima").text(terima);
                         $("#txtSisa").text(sisa);
+                        $("#nota").val('');
+                        $("#qty").val(0);
                         document.getElementById("nota").addEventListener("keypress", forceKeyPressUppercase, false);
                         $("#penerimaanOrderProduksi").modal('show');
                     } else {
                         messageFailed("Gagal", "Terjadi kesalahan sistem")
                     }
-                    console.log(response);
                 })
                 .catch(function (error) {
                     // handle error

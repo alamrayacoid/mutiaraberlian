@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use DB;
 
 use App\d_stock;
+use App\d_stock_mutation;
 
 use Auth;
 
@@ -14,7 +15,7 @@ use Carbon\Carbon;
 
 class Mutasi extends Controller
 {
-    static function mutasimasuk($date, $mutcat, $comp, $position, $item, $qty, $status, $condition, $hpp = 0, $sell = 0, $nota, $reff){
+    static function mutasimasuk($mutcat, $comp, $position, $item, $qty, $status, $condition, $hpp = 0, $sell = 0, $nota, $reff){
       DB::beginTransaction();
       try {
         //========== cek id stock
@@ -22,7 +23,7 @@ class Mutasi extends Controller
                     $hpp = (int)$hpp;
                     $qty = (int)$qty;
 
-                    $sekarang = Carbon::now('Asia/Jakarta')->parse('Y-m-d');
+                    $sekarang = Carbon::now('Asia/Jakarta');
 
                     $idStok = DB::table('d_stock')
                         ->select('s_id')
@@ -47,8 +48,8 @@ class Mutasi extends Controller
                             's_qty' => $qty,
                             's_status' => $status,
                             's_condition' => $condition,
-                            's_insert' => $sekarang,
-                            's_update' => $sekarang
+                            's_created_at' => $sekarang,
+                            's_updated_at' => $sekarang
                         );
 
                         d_stock::insert($stock);
@@ -114,13 +115,15 @@ class Mutasi extends Controller
       }
     }
 
-    static function mutasikeluar($date, $mutcat, $comp, $position, $item, $qty, $status, $condition, $hpp = 0, $sell = 0, $nota, $reff){
+    static function mutasikeluar($mutcat, $comp, $position, $item, $qty, $status, $condition, $hpp = 0, $sell = 0, $nota, $reff){
       DB::beginTransaction();
       try {
 
         $sell = (int)$sell;
         $hpp = (int)$hpp;
         $qty = (int)$qty;
+
+        $sekarang = Carbon::now('Asia/Jakarta');
 
         $datamutcat = DB::table('m_mutcat')->where('m_status', 'M')->get();
 
