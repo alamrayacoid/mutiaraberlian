@@ -20,12 +20,12 @@
 		<div class="row">
 
 			<div class="col-12">
-				<ul class="nav nav-pills mb-3">
+				<ul class="nav nav-pills mb-3" id="Tabzs">
                     <li class="nav-item">
-                        <a href="" class="nav-link active" data-target="#datasuplier" aria-controls="datasuplier" data-toggle="tab" role="tab">Data Suplier</a>
+                        <a href="#datasuplier" class="nav-link active" data-target="#datasuplier" aria-controls="datasuplier" data-toggle="tab" role="tab">Data Suplier</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link" data-target="#itemsuplier" aria-controls="itemsuplier" data-toggle="tab" role="tab">Item Suplier</a>
+                        <a href="#itemsuplier" class="nav-link" data-target="#itemsuplier" aria-controls="itemsuplier" data-toggle="tab" role="tab">Item Suplier</a>
                     </li>
                 </ul>				
 		

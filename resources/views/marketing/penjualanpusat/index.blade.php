@@ -21,18 +21,18 @@
 
 			<div class="col-12" id="choosetab">
 
-                <ul class="nav nav-pills mb-3">
+                <ul class="nav nav-pills mb-3" id="Tabzs">
                     <li class="nav-item" id="tab1">
-                        <a href="" class="nav-link active" data-target="#terimaorder" aria-controls="terimaorder" data-toggle="tab" role="tab">Terima Order Penjualan</a>
+                        <a href="#terimaorder" class="nav-link active" data-target="#terimaorder" aria-controls="terimaorder" data-toggle="tab" role="tab">Terima Order Penjualan</a>
                     </li>
                     <li class="nav-item" id="tab2">
-                        <a href="" class="nav-link" data-target="#promosi_tahunan" aria-controls="promosi_tahunan" data-toggle="tab" role="tab">Distribusi Penjualan</a>
+                        <a href="#promosi_tahunan" class="nav-link" data-target="#promosi_tahunan" aria-controls="promosi_tahunan" data-toggle="tab" role="tab">Distribusi Penjualan</a>
 					</li>
                     <li class="nav-item" id="tab3">
-                        <a href="" class="nav-link" data-target="#returnpenjualan" aria-controls="returnpenjualan" data-toggle="tab" role="tab">Return Penjualan Agen </a>
+                        <a href="#returnpenjualan" class="nav-link" data-target="#returnpenjualan" aria-controls="returnpenjualan" data-toggle="tab" role="tab">Return Penjualan Agen </a>
                     </li>
 					<li class="nav-item" id="tab4">
-                        <a href="" class="nav-link" data-target="#targetrealisasi" aria-controls="targetrealisasi" data-toggle="tab" role="tab">Target & Realisasi Penjualan</a>
+                        <a href="#targetrealisasi" class="nav-link" data-target="#targetrealisasi" aria-controls="targetrealisasi" data-toggle="tab" role="tab">Target & Realisasi Penjualan</a>
                     </li>
                 </ul>
 
