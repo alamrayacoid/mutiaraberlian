@@ -14,7 +14,7 @@ use Carbon\Carbon;
 
 class Mutasi extends Controller
 {
-    static function mutasimasuk($date, $mutcat, $comp, $position, $item, $qty, $status, $condition, $hpp = 0, $sell = 0, $nota, $reff){
+    static function mutasimasuk($mutcat, $comp, $position, $item, $qty, $status, $condition, $hpp = 0, $sell = 0, $nota, $reff){
       DB::beginTransaction();
       try {
         //========== cek id stock

@@ -8,6 +8,7 @@ use Response;
 use Illuminate\Http\Request;
 use Auth;
 use Crypt;
+use Mutasi;
 use Carbon\Carbon;
 use Illuminate\Contracts\Encryption\DecryptException;
 
@@ -312,7 +313,7 @@ class PenerimaanProduksiController extends Controller
                 ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
                     'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
                     'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-                    'm_item.i_unit3 as unit3', 'd_productionorderdt.pod_unit as unit')
+                    'm_item.i_unit3 as unit3', 'd_productionorderdt.pod_unit as unit', 'd_productionorderdt.pod_value as value')
                 ->join('d_productionorderdt', function ($x) use ($item){
                     $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
                     $x->where('d_productionorderdt.pod_item', '=', $item);
@@ -347,6 +348,8 @@ class PenerimaanProduksiController extends Controller
                 ];
 
                 DB::table('d_itemreceiptdt')->insert($values);
+
+                Mutasi::mutasimasuk(1, Auth::user()->u_company, Auth::user()->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $request->nota);
             } else {
                 $id = (DB::table('d_itemreceipt')->max('ir_id')) ? (DB::table('d_itemreceipt')->max('ir_id'))+1 : 1;
 
@@ -378,6 +381,7 @@ class PenerimaanProduksiController extends Controller
 
                 DB::table('d_itemreceipt')->insert($receipt);
                 DB::table('d_itemreceiptdt')->insert($values);
+                Mutasi::mutasimasuk(1, Auth::user()->u_company, Auth::user()->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $request->nota);
             }
             DB::commit();
             return Response::json(['status' => 'Success', 'message' => "Data berhasil disimpan"]);
