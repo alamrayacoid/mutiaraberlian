@@ -21,7 +21,7 @@ class MarketingAreaController extends Controller
         return view('marketing/marketingarea/index');
     }
 
-    // Order Produk Ke Cabang
+    // Order Produk Ke Cabang ==============================================================================
     public function targetList()
     {
         // $target = DB::table('d_salestargetdt')
@@ -265,5 +265,50 @@ class MarketingAreaController extends Controller
                 'message' => $e
             ]);
         }
+    }
+    // Order Produk Ke Cabang End ==========================================================================
+    public function create_keloladataorder()
+    {
+        return view('marketing/marketingarea/keloladataorder/create');
+    }
+
+    public function edit_keloladataorder()
+    {
+        return view('marketing/marketingarea/keloladataorder/edit');
+    }
+
+    public function create_datacanvassing()
+    {
+        return view('marketing/marketingarea/datacanvassing/create');
+    }
+
+    public function edit_datacanvassing()
+    {
+        return view('marketing/marketingarea/datacanvassing/edit');
+    }
+
+    public function create_datakonsinyasi()
+    {
+        return view('marketing/marketingarea/datakonsinyasi/create');
+    }
+
+    public function edit_datakonsinyasi()
+    {
+        return view('marketing/marketingarea/datakonsinyasi/edit');
+    }
+    
+    public function agen()
+    {
+        return view('marketing/agen/index');
+    }
+
+    public function create_orderprodukagenpusat()
+    {
+        return view('marketing/agen/orderproduk/create');
+    }
+
+    public function edit_orderprodukagenpusat()
+    {
+        return view('marketing/agen/orderproduk/edit');
     }
 }
