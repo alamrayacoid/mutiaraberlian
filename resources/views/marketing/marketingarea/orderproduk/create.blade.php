@@ -309,6 +309,7 @@
         // Hapus Form -------------------------------------------------
         $(document).on('click', '.btn-hapus-order', function () {
             $(this).parents('tr').remove();
+            updateTotalTampil();
         });
         // End Hapus Form
     });
