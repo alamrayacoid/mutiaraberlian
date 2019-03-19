@@ -17,21 +17,21 @@
 
 			<div class="col-12">
 
-                <ul class="nav nav-pills mb-3">
+                <ul class="nav nav-pills mb-3" id="Tabzs">
                     <li class="nav-item">
-                        <a href="" class="nav-link active" data-target="#orderprodukagenpusat" aria-controls="orderprodukagenpusat" data-toggle="tab" role="tab">Order Produk ke Agen / Cabang</a>
+                        <a href="#orderprodukagenpusat" class="nav-link active" data-target="#orderprodukagenpusat" aria-controls="orderprodukagenpusat" data-toggle="tab" role="tab">Order Produk ke Agen / Cabang</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link" data-target="#keloladataagen" aria-controls="keloladataagen" data-toggle="tab" role="tab">Kelola Penjualan Langsung </a>
+                        <a href="#keloladataagen" class="nav-link" data-target="#keloladataagen" aria-controls="keloladataagen" data-toggle="tab" role="tab">Kelola Penjualan Langsung </a>
 					</li>
 					<li class="nav-item">
-                        <a href="" class="nav-link" data-target="#monitoringpenjualanagen" aria-controls="monitoringpenjualanagen" data-toggle="tab" role="tab">Kelola Penjualan Via Website</a>
+                        <a href="#monitoringpenjualanagen" class="nav-link" data-target="#monitoringpenjualanagen" aria-controls="monitoringpenjualanagen" data-toggle="tab" role="tab">Kelola Penjualan Via Website</a>
 					</li>
 					<li class="nav-item">
-                        <a href="" class="nav-link" data-target="#datacanvassing" aria-controls="datacanvassing" data-toggle="tab" role="tab">Kelola Laporan Keuangan Sederhana </a>
+                        <a href="#datacanvassing" class="nav-link" data-target="#datacanvassing" aria-controls="datacanvassing" data-toggle="tab" role="tab">Kelola Laporan Keuangan Sederhana </a>
 					</li>
 					<li class="nav-item">
-                        <a href="" class="nav-link" data-target="#datakonsinyasi" aria-controls="datakonsinyasi" data-toggle="tab" role="tab">Kelola Data Inventory Agen</a>
+                        <a href="#datakonsinyasi" class="nav-link" data-target="#datakonsinyasi" aria-controls="datakonsinyasi" data-toggle="tab" role="tab">Kelola Data Inventory Agen</a>
 					</li>
                 </ul>
 

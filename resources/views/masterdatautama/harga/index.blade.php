@@ -40,15 +40,15 @@
 		<div class="row">
 
 			<div class="col-12">
-				<ul class="nav nav-pills mb-3">
+				<ul class="nav nav-pills mb-3" id="Tabzs">
                     <li class="nav-item">
-                        <a href="" class="nav-link active" data-target="#golongan" aria-controls="golongan" data-toggle="tab" role="tab">Data Golongan</a>
+                        <a href="#golongan" class="nav-link active" data-target="#golongan" aria-controls="golongan" data-toggle="tab" role="tab">Data Golongan</a>
                     </li>
                     {{--<li class="nav-item">
                         <a href="" class="nav-link" data-target="#default" aria-controls="default" data-toggle="tab" role="tab">Harga Default</a>
                     </li>--}}
                     <li class="nav-item">
-                        <a href="" class="nav-link" data-target="#needapprove" aria-controls="needapprove" data-toggle="tab" role="tab">Belum Disetujui</a>
+                        <a href="#needapprove" class="nav-link" data-target="#needapprove" aria-controls="needapprove" data-toggle="tab" role="tab">Belum Disetujui</a>
                     </li>
                 </ul>				
 		

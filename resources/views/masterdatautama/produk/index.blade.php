@@ -34,16 +34,16 @@
 
         <section class="section">
 
-            <ul class="nav nav-pills mb-3">
+            <ul class="nav nav-pills mb-3" id="Tabzs">
                 <li class="nav-item">
-                    <a href="" class="nav-link active" data-toggle="tab" data-target="#tab-1">Data Produk</a>
+                    <a href="#tab-1" class="nav-link active" data-toggle="tab" data-target="#tab-1">Data Produk</a>
                 </li>
                 <li class="nav-item">
-                    <a href="" class="nav-link" data-toggle="tab" data-target="#tab-2">Data Jenis Produk</a>
+                    <a href="#tab-2" class="nav-link" data-toggle="tab" data-target="#tab-2">Data Jenis Produk</a>
                 </li>
 
                 <li class="nav-item">
-                    <a href="" class="nav-link" data-toggle="tab" data-target="#tab-3">Data Satuan</a>
+                    <a href="#tab-3" class="nav-link" data-toggle="tab" data-target="#tab-3">Data Satuan</a>
                 </li>
             </ul>
 
@@ -134,7 +134,7 @@
                                 <div class="card-block">
                                     <section>
                                         <div class="table-responsive">
-                                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_satuan">
+                                            <table class="table table-striped table-hover display nowrap w-100" cellspacing="0" id="table_satuan">
                                                 <thead class="bg-primary">
                                                     <tr>
                                                         <th width="1%">No</th>

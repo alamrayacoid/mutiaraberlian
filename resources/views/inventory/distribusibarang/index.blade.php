@@ -24,12 +24,12 @@
 
             <div class="col-12">
 
-                <ul class="nav nav-pills mb-3">
+                <ul class="nav nav-pills mb-3" id="Tabzs">
                     <li class="nav-item">
-                        <a href="" class="nav-link active" data-target="#distribusibarang" aria-controls="distribusibarang" data-toggle="tab" role="tab">Distribusi Barang</a>
+                        <a href="#distribusibarang" class="nav-link active" data-target="#distribusibarang" aria-controls="distribusibarang" data-toggle="tab" role="tab">Distribusi Barang</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link" data-target="#historybarang" aria-controls="historybarang" data-toggle="tab" role="tab">History Distribusi Barang</a>
+                        <a href="#historybarang" class="nav-link" data-target="#historybarang" aria-controls="historybarang" data-toggle="tab" role="tab">History Distribusi Barang</a>
                     </li>
                 </ul>
 

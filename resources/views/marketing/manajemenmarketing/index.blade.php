@@ -19,15 +19,15 @@
 
 			<div class="col-12">
 
-                <ul class="nav nav-pills mb-3">
+                <ul class="nav nav-pills mb-3" id="Tabzs">
                     <li class="nav-item">
-                        <a href="" class="nav-link active" data-target="#approval" aria-controls="approval" data-toggle="tab" role="tab">Approval Promosi</a>
+                        <a href="#approval" class="nav-link active" data-target="#approval" aria-controls="approval" data-toggle="tab" role="tab">Approval Promosi</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link" data-target="#promosi_tahunan" aria-controls="promosi_tahunan" data-toggle="tab" role="tab">Promosi Tahunan</a>
+                        <a href="#promosi_tahunan" class="nav-link" data-target="#promosi_tahunan" aria-controls="promosi_tahunan" data-toggle="tab" role="tab">Promosi Tahunan</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link" data-target="#promosi_bulanan" aria-controls="promosi_bulanan" data-toggle="tab" role="tab">Promosi Bulanan</a>
+                        <a href="#promosi_bulanan" class="nav-link" data-target="#promosi_bulanan" aria-controls="promosi_bulanan" data-toggle="tab" role="tab">Promosi Bulanan</a>
                     </li>
                 </ul>
 
