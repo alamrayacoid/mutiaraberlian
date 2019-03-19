@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use DB;
 
 use App\d_stock;
+use App\d_stock_mutation;
 
 use Auth;
 
@@ -22,7 +23,7 @@ class Mutasi extends Controller
                     $hpp = (int)$hpp;
                     $qty = (int)$qty;
 
-                    $sekarang = Carbon::now('Asia/Jakarta')->parse('Y-m-d');
+                    $sekarang = Carbon::now('Asia/Jakarta');
 
                     $idStok = DB::table('d_stock')
                         ->select('s_id')
@@ -47,8 +48,8 @@ class Mutasi extends Controller
                             's_qty' => $qty,
                             's_status' => $status,
                             's_condition' => $condition,
-                            's_insert' => $sekarang,
-                            's_update' => $sekarang
+                            's_created_at' => $sekarang,
+                            's_updated_at' => $sekarang
                         );
 
                         d_stock::insert($stock);
