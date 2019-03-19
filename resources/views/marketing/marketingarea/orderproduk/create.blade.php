@@ -77,8 +77,9 @@
                                 </div>
 
                                 <div class="col-md-10 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control form-control-sm" name="po_agen">
+                                    <div class="form-group">                                        
+                                        <input type="text" name="agen[]" class="form-control form-control-sm agen" id="dataAgen" style="text-transform:uppercase">
+                                        <input type="hidden" id="idAgen" name="idAgen[]" class="idAgen">
                                     </div>
                                 </div>
 
@@ -106,11 +107,15 @@
                                         <tbody>
                                             <tr>
                                                 <td>
-                                                    <input type="text" class="form-control form-control-sm" value="">
+                                                    <input type="text" name="barang[]"
+                                                                   class="form-control form-control-sm barang"
+                                                                   style="text-transform:uppercase">
+                                                    <input type="hidden" name="idItem[]" class="itemid">
+                                                    <input type="hidden" name="kode[]" class="kode">
                                                 </td>
-                                                <td>
-                                                    <select name="#" id="#" class="form-control form-control-sm select2">
-                                                        <option value=""></option>
+                                                <td>                                                    
+                                                    <select name="t_unit[]"
+                                                            class="form-control form-control-sm select2 satuan">
                                                     </select>
                                                 </td>
                                                 <td>
@@ -150,7 +155,98 @@
 
 @section('extra_script')
 <script type="text/javascript">
+    var idItem = [];
+    var namaItem = null;
+    var kode = null;
+    var idxBarang = null;
+    var icode = [];
     $(document).ready(function() {
+        $('#dataAgen').autocomplete({
+          source: baseUrl+'/marketing/marketingarea/orderproduk/cari-agen',
+          minLength: 2,
+          select: function(event, data){
+              $('#idAgen').val(data.item.id);
+          }
+        });
+
+        // AutoComplete Item --------------------------------
+        $('.barang').on('click', function (e) {
+            idxBarang = $('.barang').index(this);
+            setArrayCode();
+        });
+
+        $(".barang").eq(idxBarang).on("keyup", function () {
+            $(".itemid").eq(idxBarang).val('');
+            $(".kode").eq(idxBarang).val('');
+        });
+
+        function setItem(info) {
+            idItem = info.data.i_id;
+            namaItem = info.data.i_name;
+            kode = info.data.i_code;
+            $(".kode").eq(idxBarang).val(kode);
+            $(".itemid").eq(idxBarang).val(idItem);
+            setArrayCode();
+            $.ajax({
+                url: '{{ url('/marketing/marketingarea/orderproduk/get-satuan') }}' + '/' + idItem,
+                type: 'GET',
+                success: function (resp) {
+                    $(".satuan").eq(idxBarang).find('option').remove();
+                    var option = '';
+                    if (resp.id1 != null) {
+                        option += '<option value="' + resp.id1 + '">' + resp.unit1 + '</option>'
+                    }
+                    if (resp.id2 != null && resp.id2 != resp.id1) {
+                        option += '<option value="' + resp.id2 + '">' + resp.unit2 + '</option>';
+                    }
+                    if (resp.id3 != null && resp.id3 != resp.id1) {
+                        option += '<option value="' + resp.id3 + '">' + resp.unit3 + '</option>';
+                    }
+                    $(".satuan").eq(idxBarang).append(option);
+                }
+            });
+        }
+
+        function setArrayCode() {
+            var inputs = document.getElementsByClassName('kode'),
+                code = [].map.call(inputs, function (input) {
+                    return input.value.toString();
+                });
+
+            for (var i = 0; i < code.length; i++) {
+                if (code[i] != "") {
+                    icode.push(code[i]);
+                }
+            }
+
+            var item = [];
+            var inpItemid = document.getElementsByClassName('itemid'),
+                item = [].map.call(inpItemid, function (input) {
+                    return input.value;
+                });
+
+            $(".barang").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "{{ url('/marketing/marketingarea/orderproduk/cari-barang') }}",
+                        data: {
+                            idItem: item,
+                            term: $(".barang").eq(idxBarang).val()
+                        },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function (event, data) {
+                    setItem(data.item);
+                }
+            });
+        }
+
+        // End AutoComplete Item ---------------------------------------
+
         $('#type_cus').change(function() {
             if ($(this).val() === 'kontrak') {
                 $('#label_type_cus').text('Jumlah Bulan');
@@ -182,29 +278,36 @@
             $('#table_cabang')
                 .append(
                     '<tr>' +
-                    '<td><input type="text" class="form-control form-control-sm"></td>' +
-                    '<td><select name="#" id="#" class="form-control form-control-sm select2"><option value=""></option></select></td>' +
-                    '<td><input type="number" class="form-control form-control-sm" value="0"></td>' +
-                    '<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>' +
-                    '<td><input type="text" class="form-control form-control-sm" readonly=""></td>' +
-                    '<td><button class="btn btn-danger btn-hapus-order btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>' +
+                        '<td>'+
+                            '<input type="text" name="barang[]" class="form-control form-control-sm barang"'+
+                            'style="text-transform:uppercase">'+
+                            '<input type="hidden" name="idItem[]" class="itemid">'+
+                            '<input type="hidden" name="kode[]" class="kode">'+
+                        '</td>' +
+                        '<td><select name="t_unit[]" class="form-control form-control-sm select2 satuan">'+
+                            '</select>'+
+                        '</td>' +
+                        '<td><input type="number" class="form-control form-control-sm" value="0"></td>' +
+                        '<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>' +
+                        '<td><input type="text" class="form-control form-control-sm" readonly=""></td>' +
+                        '<td><button class="btn btn-danger btn-hapus-order btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>' +
                     '</tr>'
                 );
+
+            $('.barang').on('click', function (e) {
+                idxBarang = $('.barang').index(this);
+                setArrayCode();
+            });
+
+            $(".barang").eq(idxBarang).on("keyup", function () {
+                $(".itemid").eq(idxBarang).val('');
+                $(".kode").eq(idxBarang).val('');
+            });
         });
-        $(document).on('click', '.btn-submit', function() {
-            $.toast({
-                heading: 'Success',
-                text: 'Data Berhasil di Simpan',
-                bgColor: '#00b894',
-                textColor: 'white',
-                loaderBg: '#55efc4',
-                icon: 'success'
-            })
-        })
 
         $(document).on('click', '.btn-hapus-order', function () {
             $(this).parents('tr').remove();
-        });
+        });              
     });
 
     function getProvId()

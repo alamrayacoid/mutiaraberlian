@@ -81,8 +81,34 @@ class MarketingAreaController extends Controller
         ));
     }
 
-    public function cariBarang(Request $request)
+    public function cariAgen(Request $request)
     {
+        $cari = $request->term;
+        $agen = DB::table('m_company')
+            ->where('c_type', '=', 'AGEN')
+            ->select('c_id', 'c_name', 'c_type')
+            ->whereRaw("c_name like '%" . $cari . "%'")
+            ->orWhereRaw("c_id like '%" . $cari . "%'")
+            ->get();
+
+        if (count($agen) == 0) {
+            $result[] = [
+                'id' => null,
+                'label' => 'Tidak ditemukan data terkait'
+            ];
+        } else {
+            foreach ($agen as $query) {
+                $result[] = [
+                    'id'    => $query->c_id,
+                    'label' => $query->c_name
+                ];
+            }
+        }
+        return Response::json($result);
+    }
+
+    public function cariBarang(Request $request)
+    {        
         $is_item = array();
         for ($i = 0; $i < count($request->idItem); $i++) {
             if ($request->idItem[$i] != null) {
