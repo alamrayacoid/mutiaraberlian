@@ -115,7 +115,7 @@ class Mutasi extends Controller
       }
     }
 
-    static function mutasikeluar($date, $mutcat, $comp, $position, $item, $qty, $status, $condition, $hpp = 0, $sell = 0, $nota, $reff){
+    static function mutasikeluar($mutcat, $comp, $position, $item, $qty, $status, $condition, $hpp = 0, $sell = 0, $nota, $reff){
       DB::beginTransaction();
       try {
 
