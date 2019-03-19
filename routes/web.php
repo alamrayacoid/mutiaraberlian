@@ -164,6 +164,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/penerimaanbarang/terima-barang/{id}', 'PenerimaanProduksiController@terimaBarang')->name('penerimaan.terimabarang');
     Route::get('/produksi/penerimaanbarang/getlistitem/{order}', 'PenerimaanProduksiController@listTerimaBarang');
     Route::get('/produksi/penerimaanbarang/terimalistitem/{id}/{item}', 'PenerimaanProduksiController@detailTerimaBarang');
+    Route::post('/produksi/penerimaanbarang/terima-item', 'PenerimaanProduksiController@receiptItem')->name('penerimaan.terimaitem');
     Route::post('/produksi/penerimaanbarang/checkqty', 'PenerimaanProduksiController@checkTerima')->name('penerimaan.checkqty');
     Route::get('/produksi/penerimaanbarang/create', 'PenerimaanProduksiController@create_penerimaan_barang')->name('penerimaan.create');
     // Pembayaran
