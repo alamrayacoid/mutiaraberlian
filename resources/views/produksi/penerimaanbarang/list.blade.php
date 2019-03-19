@@ -188,6 +188,8 @@
                         $("#txtJumlah").text(response.data.data.jumlah);
                         $("#txtTerima").text(terima);
                         $("#txtSisa").text(sisa);
+                        $("#nota").val('');
+                        $("#qty").val(0);
                         document.getElementById("nota").addEventListener("keypress", forceKeyPressUppercase, false);
                         $("#penerimaanOrderProduksi").modal('show');
                     } else {

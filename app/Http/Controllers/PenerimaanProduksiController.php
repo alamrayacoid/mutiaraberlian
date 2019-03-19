@@ -182,7 +182,7 @@ class PenerimaanProduksiController extends Controller
                         </button>
                     </div>';
                 } else {
-                    return '<p class="text-center"><span class="status-approve">Diterima</span></p>';
+                    return '<div class="text-center"><span class="status-approve" style="padding: 5px;">Diterima</span></div>';
                 }
             })
             ->rawColumns(['barang', 'satuan', 'jumlah', 'terima', 'action'])
