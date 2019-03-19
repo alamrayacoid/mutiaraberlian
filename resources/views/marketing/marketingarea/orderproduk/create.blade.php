@@ -42,13 +42,16 @@
                                 <div class="col-md-10 col-sm-6 col-xs-12">
                                     <div class="row">
                                         <div class="form-group col-6">
-                                            <select name="#" id="#" class="form-control form-control-sm select2">
-                                                <option value="#">Pilih Provinsi</option>
+                                            <select name="po_prov" id="prov" class="form-control form-control-sm select2" onchange="getProvId()">
+                                                <option value="" selected="" disabled="">=== Pilih Provinsi ===</option>
+                                                @foreach($provinsi as $prov)
+                                                    <option value="{{$prov->wp_id}}">{{$prov->wp_name}}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="form-group col-6">
-                                            <select name="#" id="#" class="form-control form-control-sm select2">
-                                                <option value="#">Pilih Kota</option>
+                                            <select name="po_city" id="city" class="form-control form-control-sm select2 city">
+                                                <option value="" selected disabled>=== Pilih Kota ===</option>
                                             </select>
                                         </div>
                                     </div>
@@ -60,8 +63,11 @@
 
                                 <div class="col-md-10 col-sm-6 col-xs-12">
                                     <div class="form-group">
-                                        <select name="" id="" class="form-control form-control-sm select2">
-                                            <option value="">Pilih Cabang</option>
+                                        <select name="po_comp" id="comp" class="form-control form-control-sm select2">
+                                            <option value="" selected="" disabled="">=== Pilih Cabang ===</option>
+                                            @foreach($company as $comp)
+                                                <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -72,7 +78,7 @@
 
                                 <div class="col-md-10 col-sm-6 col-xs-12">
                                     <div class="form-group">
-                                        <input type="text" class="form-control form-control-sm" name="">
+                                        <input type="text" class="form-control form-control-sm" name="po_agen">
                                     </div>
                                 </div>
 
@@ -181,7 +187,7 @@
                     '<td><input type="number" class="form-control form-control-sm" value="0"></td>' +
                     '<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>' +
                     '<td><input type="text" class="form-control form-control-sm" readonly=""></td>' +
-                    '<td><button class="btn btn-danger btn-hapus-cabang btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>' +
+                    '<td><button class="btn btn-danger btn-hapus-order btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>' +
                     '</tr>'
                 );
         });
@@ -195,7 +201,31 @@
                 icon: 'success'
             })
         })
+
+        $(document).on('click', '.btn-hapus-order', function () {
+            $(this).parents('tr').remove();
+        });
     });
+
+    function getProvId()
+    {
+        var id = document.getElementById("prov").value;
+        $.ajax({
+            url: "{{route('orderproduk.getCity')}}",
+            type: "get",
+            data:{
+                provId: id
+            },
+            success: function (response) {
+                $('#city').empty();
+                $.each(response.data, function( key, val ) {
+                    $("#city").append('<option value="'+val.wc_id+'">'+val.wc_name+'</option>');
+                });
+                $('#city').focus();
+                $('#city').select2('open');
+            }
+        });
+    }
 
 </script>
 <script type="text/javascript">

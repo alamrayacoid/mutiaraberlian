@@ -61,21 +61,6 @@ class MarketingController extends Controller
         return view('marketing/konsinyasipusat/penempatanproduk/edit');
     }
 
-    public function marketing_area()
-    {
-    	return view('marketing/marketingarea/index');
-    }
-
-    public function create_orderproduk()
-    {
-        return view('marketing/marketingarea/orderproduk/create');
-    }
-
-    public function edit_orderproduk()
-    {
-        return view('marketing/marketingarea/orderproduk/edit');
-    }
-
     public function create_keloladataorder()
     {
         return view('marketing/marketingarea/keloladataorder/create');
