@@ -10,15 +10,15 @@
             </div>
             <div class=""></div>
         </div>
-        <form class="card-block">
+        <div class="card-block">
             <section>
                 <fieldset class="mb-3">
-                    <div class="row" id="cari_target">
+                    <form class="row" id="cari_target">
                         <div class="col-2">
                             <label for="">Nama Barang</label>
                         </div>
                         <div class="col-3">
-                            <input type="text" class="form-control form-control-sm" id="cari_namabarang">
+                            <input type="text" class="form-control form-control-sm" id="cari_namabarang" onkeyup="setNull('cari_idbarang')">
                             <input type="hidden" id="cari_idbarang">
                         </div>
                         <div class="col-2">
@@ -28,10 +28,10 @@
                             <input type="text" class="form-control form-control-sm cari_periode" id="datepicker">
                         </div>
                         <div class="col-1">
-                            <button class="btn btn-sm btn-primary" onclick="cariTarget()"><i class="fa fa-search"></i>
+                            <button class="btn btn-sm btn-primary" type="button" onclick="cariTarget()"><i class="fa fa-search"></i>
                             </button>
                         </div>
-                    </div>
+                    </form>
                 </fieldset>
                 <div class="table-responsive">
                     <table class="table table-hover table-striped w-100" cellspacing="0" id="table_target">
@@ -52,6 +52,6 @@
                     </table>
                 </div>
             </section>
-        </form>
+        </div>
     </div>
 </div>

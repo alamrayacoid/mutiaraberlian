@@ -289,4 +289,45 @@ class PenjualanPusatController extends Controller
             ]);
         }
     }
+
+    public function getPeriode(Request $request)
+    {
+        $idItem = $request->barang;
+        $periode = $request->periode;
+
+        $data = DB::table('d_salestarget')
+            ->join('d_salestargetdt', 'st_id', '=', 'std_salestarget')
+            ->join('m_item', 'std_item', 'i_id')
+            ->join('m_unit', 'std_unit', 'u_id')
+            ->join('m_company', 'st_comp', 'c_id')
+            ->select('d_salestargetdt.*', DB::raw('concat(std_qty, " ", u_name) as target'), 'st_id', 'c_name', DB::raw("concat(i_code, '-', i_name) as i_name"), 'st_periode', DB::raw('date_format(st_periode, "%m/%Y") as st_periode'));
+
+        if ($periode != null || $periode != ''){
+            $periode = Carbon::createFromFormat('d/m/Y', '01/' . $periode);
+            $data = $data->whereMonth('st_periode', '=', $periode->month)
+                ->whereYear('st_periode', '=', $periode->year);
+        }
+        if ($idItem != null || $idItem != ''){
+            $data = $data->where('std_item', '=', $idItem);
+        }
+
+        $target = $data->get();
+
+        return Datatables::of($target)
+            ->addIndexColumn()
+            ->addColumn('status', function () {
+                return '<label class="bg-danger status-reject px-3 py-1" disabled>Gagal</label>';
+            })
+            ->addColumn('action', function ($target) {
+                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                        <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Target" onclick="editTarget(\'' . Crypt::encrypt($target->std_salestarget) . '\', \'' . Crypt::encrypt($target->std_detailid) . '\')"><i class="fa fa-pencil"></i>
+                        </button>
+                    </div>';
+            })
+            ->addColumn('realisasi', function (){
+                return '0';
+            })
+            ->rawColumns(['status', 'action'])
+            ->make(true);
+    }
 }

@@ -134,6 +134,26 @@
                 window.location.href = '{{route('rekruitmen.process')}}'
             });
 
+            $("#cari_namabarang").autocomplete({
+                source: function (request, response) {
+                    var id = [''];
+                    $.ajax({
+                        url: "{{ url('marketing/penjualanpusat/targetrealisasi/cari-barang') }}",
+                        data: {
+                            term: $("#cari_namabarang").val(),
+                            idItem: id
+                        },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function (event, data) {
+                    $('#cari_idbarang').val(data.item.id);
+                }
+            });
+
             $(document).on('click', '.btn-rejected', function () {
                 var ini = $(this);
                 $.confirm({
@@ -201,7 +221,7 @@
         });
 
         function targetReal() {
-            tb_barangmasuk = $('#table_target').DataTable({
+            tb_target = $('#table_target').DataTable({
                 responsive: true,
                 serverSide: true,
                 ajax: {
@@ -272,7 +292,6 @@
         function updateTarget() {
             var dt = $('.edit_dt').val();
             var id = $('.edit_id').val();
-            console.log($('#form_update').serialize());
             $.ajax({
                 data: $('#form_updatetarget').serialize(),
                 type: "post",
@@ -281,7 +300,7 @@
                     if (response.status == 'sukses') {
                         messageSuccess('Berhasil', 'Data berhasil diperbarui');
                         $('#edittarget').modal('hide');
-                        tb_barangmasuk.ajax.reload();
+                        tb_target.ajax.reload();
                     } else {
                         messageSuccess('Gagal', 'Silahkan coba beberapa saat lagi');
                     }
@@ -303,6 +322,35 @@
         function cariTarget() {
             var barang = $('#cari_idbarang').val();
             var periode = $('.cari_periode').val();
+            tb_target.destroy();
+            tb_target = $('#table_target').DataTable({
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ url("marketing/penjualanpusat/targetrealisasi/get-periode") }}',
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        barang: barang,
+                        periode: periode
+                    }
+                },
+                columns: [
+                    {data: 'st_periode'},
+                    {data: 'c_name'},
+                    {data: 'i_name'},
+                    {data: 'target'},
+                    {data: 'realisasi'},
+                    {data: 'status'},
+                    {data: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
+
+        function setNull(id) {
+            $('#'+id).val('');
         }
     </script>
 @endsection
