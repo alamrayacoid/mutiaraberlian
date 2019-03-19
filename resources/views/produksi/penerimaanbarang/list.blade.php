@@ -113,6 +113,7 @@
                     .then(function (response) {
                         if (response.data.status == "Success") {
                             if (response.data.result == "Over qty") {
+                                loadingHide();
                                 messageWarning("Pesan", response.data.message);
                             } else {
                                 check = true;
@@ -195,7 +196,6 @@
                     } else {
                         messageFailed("Gagal", "Terjadi kesalahan sistem")
                     }
-                    console.log(response);
                 })
                 .catch(function (error) {
                     // handle error

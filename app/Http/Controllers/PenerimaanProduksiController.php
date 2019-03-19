@@ -260,7 +260,7 @@ class PenerimaanProduksiController extends Controller
         try{
             $data_check = DB::table('d_productionorder')
                 ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
-                    'd_productionorderdt.pod_qty as jumlah', 'd_itemreceiptdt.ird_qty as terima', 'm_unit.u_name as satuan')
+                    'd_productionorderdt.pod_qty as jumlah', DB::raw('sum(d_itemreceiptdt.ird_qty) as terima'), 'm_unit.u_name as satuan')
                 ->join('d_productionorderdt', function ($x) use ($item){
                     $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
                     $x->where('d_productionorderdt.pod_item', '=', $item);
@@ -272,9 +272,10 @@ class PenerimaanProduksiController extends Controller
                 })
                 ->leftjoin('d_itemreceiptdt', function($y){
                     $y->on('d_itemreceipt.ir_id', '=', 'd_itemreceiptdt.ird_goodsreceipt');
-                    $y->where('d_itemreceiptdt.ird_item', '=', 'd_productionorderdt.pod_item');
+                    $y->whereRaw('d_itemreceiptdt.ird_item = d_productionorderdt.pod_item');
                 })
                 ->where('d_productionorder.po_id', '=', $order)
+                ->groupBy('d_productionorderdt.pod_item')
                 ->first();
 
             $result = null;
