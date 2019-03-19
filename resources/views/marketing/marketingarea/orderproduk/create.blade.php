@@ -50,10 +50,22 @@
                                             </select>
                                         </div>
                                         <div class="form-group col-6">
-                                            <select name="po_city" id="city" class="form-control form-control-sm select2 city">
+                                            <select name="po_city" id="city" class="form-control form-control-sm select2 city" onchange="getCityId()">
                                                 <option value="" selected disabled>=== Pilih Kota ===</option>
                                             </select>
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2 col-sm-6 col-xs-12">
+                                    <label>Agen Pembeli</label>
+                                </div>
+
+                                <div class="col-md-10 col-sm-6 col-xs-12">
+                                    <div class="form-group">
+                                        <select name="po_agen[]" id="agen" class="form-control form-control-sm select2 agen">
+                                            <option value="" selected disabled>=== Pilih Agen ===</option>
+                                        </select>
                                     </div>
                                 </div>
 
@@ -69,17 +81,6 @@
                                                 <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
                                             @endforeach
                                         </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Agen Pembeli</label>
-                                </div>
-
-                                <div class="col-md-10 col-sm-6 col-xs-12">
-                                    <div class="form-group">                                        
-                                        <input type="text" name="agen[]" class="form-control form-control-sm agen" id="dataAgen" style="text-transform:uppercase">
-                                        <input type="hidden" id="idAgen" name="idAgen[]" class="idAgen">
                                     </div>
                                 </div>
 
@@ -167,16 +168,6 @@
     $(document).ready(function() {
         changeJumlah();
         changeHarga();
-
-        // AutoComplete Agen ------------------------------------------
-        $('#dataAgen').autocomplete({
-          source: baseUrl+'/marketing/marketingarea/orderproduk/cari-agen',
-          minLength: 2,
-          select: function(event, data){
-              $('#idAgen').val(data.item.id);
-          }
-        });
-        // End AutoComplete -------------------------------------------
 
         // AutoComplete Item ------------------------------------------
         $('.barang').on('click', function (e) {
@@ -427,6 +418,7 @@
             },
             success: function (response) {
                 $('#city').empty();
+                $("#city").append('<option value="" selected disabled>=== Pilih Kota ===</option>');
                 $.each(response.data, function( key, val ) {
                     $("#city").append('<option value="'+val.wc_id+'">'+val.wc_name+'</option>');
                 });
@@ -437,26 +429,31 @@
     }
     // End Code -------------------------------------------------------
 
-</script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#select-order').change(function() {
-            var ini, agen, cabang;
-            ini = $(this).val();
-            agen = $('#agen');
-            cabang = $('#cabang');
-
-            if (ini === '1') {
-                agen.removeClass('d-none');
-                cabang.addClass('d-none');
-            } else if (ini === '2') {
-                agen.addClass('d-none');
-                cabang.removeClass('d-none');
-            } else {
-                agen.addClass('d-none');
-                cabang.addClass('d-none');
+    // Menampilkan List Agen Berdasarkan Id Kota ------------------
+    function getCityId() {
+        var id = document.getElementById("city").value;
+        $.ajax({
+            url: "{{url('/marketing/marketingarea/orderproduk/get-agen')}}",
+            type: "get",
+            data:{
+                cityId: id
+            },
+            success: function (response) {
+                $('#agen').empty();
+                if (response.data.length == 0) {
+                    $("#agen").append('<option value="" selected disabled>=== Pilih Agen ===</option>');
+                } else {
+                    $("#agen").append('<option value="" selected disabled>=== Pilih Agen ===</option>');
+                    $.each(response.data, function( key, val ) {
+                        $("#agen").append('<option value="'+val.c_id+'">'+val.c_name+'</option>');
+                    });                    
+                }
+                $('#agen').focus();
+                $('#agen').select2('open');           
             }
         });
-    });
+    }
+    // End Code -------------------------------------------------------
+
 </script>
 @endsection

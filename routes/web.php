@@ -287,7 +287,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/marketing/marketingarea/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@createOrderProduk')->name('orderproduk.create');
         Route::get('/marketing/marketingarea/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@editOrderProduk')->name('orderproduk.edit');
         Route::get('/marketing/marketingarea/orderproduk/get-city', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getCity')->name('orderproduk.getCity');
-        Route::get('/marketing/marketingarea/orderproduk/cari-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@cariAgen')->name('orderproduk.cariAgen');
+        Route::get('/marketing/marketingarea/orderproduk/get-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getAgen')->name('orderproduk.getAgen');
         Route::get('/marketing/marketingarea/orderproduk/cari-barang', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@cariBarang')->name('orderproduk.cariBarang');
         Route::get('/marketing/marketingarea/orderproduk/get-satuan/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getSatuan')->name('orderproduk.getSatuan');
         // End Order Ke Cabang ==================
