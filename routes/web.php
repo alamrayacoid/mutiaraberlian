@@ -171,7 +171,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/pembayaran/index', 'Produksi\PembayaranController@index')->name('pembayaran.index');
     Route::get('/produksi/pembayaran/list', 'Produksi\PembayaranController@getList')->name('pembayaran.list');
     Route::get('/produksi/pembayaran/show/{id}/{termin}', 'Produksi\PembayaranController@show')->name('pembayaran.show');
-    Route::match(['get', 'post'], '/produksi/pembayaran/bayar', 'Produksi\PembayaranController@bayar')->name('pembayaran.bayar');
+    Route::get('/produksi/pembayaran/bayar-list', 'Produksi\PembayaranController@listBayar')->name('pembayaran.listbayar');
+    Route::post('/produksi/pembayaran/bayar', 'Produksi\PembayaranController@bayar')->name('pembayaran.bayar');
     // Return Produksi
     Route::get('/produksi/returnproduksi/index', 'ProduksiController@return_produksi')->name('return.index');
     Route::get('/produksi/returnproduksi/create', 'ProduksiController@create_return_produksi')->name('return.create');

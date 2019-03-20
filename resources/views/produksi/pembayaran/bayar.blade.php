@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
-        <form id="fromBayarTermin" method="post">
+        <form id="fromBayarTermin" method="post">{{ csrf_field() }}
             <div class="modal-content">
                 <div class="modal-header bg-gradient-info">
                     <h4 class="modal-title">Pembayaran Termin</h4>
@@ -11,7 +11,6 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="poid" id="poid">
-                    <input type="hidden" name="terminid" id="terminid">
                     <div class="row">
                         <div class="col-lg-3 col-sm-8">
                             <label for="" style="margin-right:10px;">Nota</label>

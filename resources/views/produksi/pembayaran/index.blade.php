@@ -202,7 +202,29 @@
 
             $("#fromBayarTermin").on("submit", function(evt){
                 evt.preventDefault();
-               alert("ok");
+                if ($("#nilai_bayar").val() == "" || $("#nilai_bayar").val() == "Rp. 0") {
+                    $("#nilai_bayar").focus();
+                    messageWarning("Peringatan", "Masukkan nominal pembayaran")
+                } else {
+                    loadingShow();
+                    axios.post(baseUrl+'/produksi/pembayaran/bayar', $("#fromBayarTermin").serialize())
+                    .then(function (response) {
+                        if (response.data.status == "Failed") {
+                            loadingHide();
+                            messageFailed("Peringatan", response.data.message);
+                        } else if (response.data.status == "Success") {
+                            tb_pembayaran.ajax.reload();
+                            $("#modalBayar").modal("hide");
+                            loadingHide();
+                            messageSuccess("Berhasil", response.data.message);
+                        }
+                    })
+                    .catch(function (error) {
+                        loadingHide();
+                        messageWarning("Errot", error);
+                    });
+
+                }
             })
 
         });
@@ -243,7 +265,7 @@
 
         function bayar(id,termin){
             loadingShow();
-            axios.get(baseUrl+'/produksi/pembayaran/bayar', {
+            axios.get(baseUrl+'/produksi/pembayaran/bayar-list', {
                 params: {
                     id: id,
                     termin: termin
@@ -255,8 +277,7 @@
                         messageFailed("Gagal", "Terjadi kesalahan sistem");
                     } else if (response.data.status == "Success") {
                         loadingHide();
-                        $("#poi").val(response.data.data.poid);
-                        $("#terminid").val(response.data.data.termin);
+                        $("#poid").val(response.data.data.poid);
                         $("#nota").val(response.data.data.nota);
                         $("#supplier").val(response.data.data.supplier);
                         $("#tgl_beli").val(response.data.data.tanggal_pembelian);
@@ -322,10 +343,10 @@
             })
         }
 
-        $("#nilai_bayar").on('keyup', function (evt) {
-            evt.preventDefault();
-            updateSisaPembayaran();
-        })
+        // $("#nilai_bayar").on('keyup', function (evt) {
+        //     evt.preventDefault();
+        //     updateSisaPembayaran();
+        // })
 
         function lunasiTermin() {
             $('#nilai_bayar').val($('#nominal_termin').val());
