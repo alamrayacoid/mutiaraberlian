@@ -125,11 +125,7 @@
                                                                    value="Rp. 0">
                                                         </td>
                                                         <td>
-                                                            <input type="text"
-                                                                   name="subtotal[]"
-                                                                   style="text-align: right;"
-                                                                   class="form-control form-control-sm subtotal"
-                                                                   readonly>
+                                                            <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" readonly>
                                                             <input type="hidden" name="sbtotal[]" class="sbtotal">
                                                         </td>
                                                         <td>

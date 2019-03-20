@@ -171,6 +171,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/pembayaran/index', 'Produksi\PembayaranController@index')->name('pembayaran.index');
     Route::get('/produksi/pembayaran/list', 'Produksi\PembayaranController@getList')->name('pembayaran.list');
     Route::get('/produksi/pembayaran/show/{id}/{termin}', 'Produksi\PembayaranController@show')->name('pembayaran.show');
+    Route::match(['get', 'post'], '/produksi/pembayaran/bayar', 'Produksi\PembayaranController@bayar')->name('pembayaran.bayar');
     // Return Produksi
     Route::get('/produksi/returnproduksi/index', 'ProduksiController@return_produksi')->name('return.index');
     Route::get('/produksi/returnproduksi/create', 'ProduksiController@create_return_produksi')->name('return.create');
@@ -269,7 +270,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/targetrealisasi/get-company', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getComp')->name('targetReal.getcomp');
     Route::get('/marketing/penjualanpusat/targetrealisasi/store', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetRealStore')->name('targetReal.store');
     Route::get('/marketing/penjualanpusat/targetrealisasi/editTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@editTarget')->name('targetReal.edit');
-    Route::get('/marketing/penjualanpusat/targetrealisasi/updateTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@updateTarget')->name('targetReal.update');
+    Route::post('/marketing/penjualanpusat/targetrealisasi/updateTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@updateTarget')->name('targetReal.update');
+    Route::get('/marketing/penjualanpusat/targetrealisasi/get-target', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTarget');
+    Route::get('/marketing/penjualanpusat/targetrealisasi/get-periode', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getPeriode');
     // End ---
     // Return Penjualan
     Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
@@ -285,6 +288,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/marketing/marketingarea/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@createOrderProduk')->name('orderproduk.create');
         Route::get('/marketing/marketingarea/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@editOrderProduk')->name('orderproduk.edit');
         Route::get('/marketing/marketingarea/orderproduk/get-city', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getCity')->name('orderproduk.getCity');
+        Route::get('/marketing/marketingarea/orderproduk/get-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getAgen')->name('orderproduk.getAgen');
+        Route::get('/marketing/marketingarea/orderproduk/cari-barang', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@cariBarang')->name('orderproduk.cariBarang');
+        Route::get('/marketing/marketingarea/orderproduk/get-satuan/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getSatuan')->name('orderproduk.getSatuan');
         // End Order Ke Cabang ==================
         Route::get('/marketing/marketingarea/keloladataorder/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_keloladataorder')->name('keloladataorder.create');
         Route::get('/marketing/marketingarea/keloladataorder/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_keloladataorder')->name('keloladataorder.edit');

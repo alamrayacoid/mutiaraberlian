@@ -77,7 +77,8 @@
                                                         </td>
                                                         <td>
                                                             <select name="t_unit[]"
-                                                                    class="form-control form-control-sm select2 satuan"></select>
+                                                                    class="form-control form-control-sm select2 satuan">
+                                                            </select>
                                                         </td>
                                                         <td>
                                                             <input type="number" class="form-control qty form-control-sm"

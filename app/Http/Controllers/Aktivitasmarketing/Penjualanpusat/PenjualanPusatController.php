@@ -16,13 +16,36 @@ use CodeGenerator;
 
 class PenjualanPusatController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $active = '';
-        if (isset($request->active)) {
-            $active = $request->active;
-        }
-        return view('marketing/penjualanpusat/index', compact('active'));
+        return view('marketing/penjualanpusat/index');
+    }
+
+    public function getTarget(Request $request)
+    {
+        $id = Crypt::decrypt($request->id);
+        $dt = Crypt::decrypt($request->dt_id);
+        $data = DB::table('d_salestarget')
+            ->join('d_salestargetdt', 'st_id', '=', 'std_salestarget')
+            ->join('m_item', 'i_id', '=', 'std_item')
+            ->leftJoin('m_unit as satuan1', 'satuan1.u_id', 'm_item.i_unit1')
+            ->leftJoin('m_unit as satuan2', 'satuan2.u_id', 'm_item.i_unit2')
+            ->leftJoin('m_unit as satuan3', 'satuan3.u_id', 'm_item.i_unit3')
+            ->join('m_company', 'c_id', '=', 'st_comp')
+            ->select('d_salestarget.*', 'd_salestargetdt.*', 'c_name', DB::raw('concat(date_format(st_periode, "%m/%Y")) as periode'), 'i_unit1', 'i_unit2', 'i_unit3', 'i_name', 'satuan1.u_name as satuan1', 'satuan2.u_name as satuan2', 'satuan3.u_name as satuan3')
+            ->where('st_id', '=', $id)
+            ->where('std_detailid', '=', $dt)
+            ->first();
+
+        $satuan = [];
+        array_push($satuan, array('id' => $data->i_unit1, 'text' => $data->satuan1));
+        array_push($satuan, array('id' => $data->i_unit2, 'text' => $data->satuan2));
+        array_push($satuan, array('id' => $data->i_unit3, 'text' => $data->satuan3));
+
+        return Response::json(array(
+            'data' => $data,
+            'satuan' => $satuan
+        ));
     }
 
     // Target Realisasi
@@ -33,7 +56,7 @@ class PenjualanPusatController extends Controller
             ->join('m_item', 'std_item', 'i_id')
             ->join('m_unit', 'std_unit', 'u_id')
             ->join('m_company', 'st_comp', 'c_id')
-            ->select('d_salestargetdt.*', 'st_id', 'c_name', DB::raw("concat(i_code, '-', i_name) as i_name"), 'st_periode', DB::raw('date_format(st_periode, "%m/%Y") as st_periode'))
+            ->select('d_salestargetdt.*', DB::raw('concat(std_qty, " ", u_name) as target'), 'st_id', 'c_name', DB::raw("concat(i_code, '-', i_name) as i_name"), 'st_periode', DB::raw('date_format(st_periode, "%m/%Y") as st_periode'))
             ->get();
         return Datatables::of($target)
             ->addIndexColumn()
@@ -244,15 +267,15 @@ class PenjualanPusatController extends Controller
         }
 
         $data = $request->all();
+
         DB::beginTransaction();
         try {
             DB::table('d_salestargetdt')
                 ->where('std_salestarget', '=', $st_id)
                 ->where('std_detailid', '=', $dt_id)
                 ->update([
-                    'std_item' => $data['idItem'][0],
-                    'std_unit' => $data['t_unit'][0],
-                    'std_qty' => $data['t_qty'][0]
+                    'std_qty' => $data['targetbaru'],
+                    'std_unit' => $data['satuantarget']
                 ]);
             DB::commit();
             return response()->json([
@@ -265,5 +288,46 @@ class PenjualanPusatController extends Controller
                 'message' => $e
             ]);
         }
+    }
+
+    public function getPeriode(Request $request)
+    {
+        $idItem = $request->barang;
+        $periode = $request->periode;
+
+        $data = DB::table('d_salestarget')
+            ->join('d_salestargetdt', 'st_id', '=', 'std_salestarget')
+            ->join('m_item', 'std_item', 'i_id')
+            ->join('m_unit', 'std_unit', 'u_id')
+            ->join('m_company', 'st_comp', 'c_id')
+            ->select('d_salestargetdt.*', DB::raw('concat(std_qty, " ", u_name) as target'), 'st_id', 'c_name', DB::raw("concat(i_code, '-', i_name) as i_name"), 'st_periode', DB::raw('date_format(st_periode, "%m/%Y") as st_periode'));
+
+        if ($periode != null || $periode != ''){
+            $periode = Carbon::createFromFormat('d/m/Y', '01/' . $periode);
+            $data = $data->whereMonth('st_periode', '=', $periode->month)
+                ->whereYear('st_periode', '=', $periode->year);
+        }
+        if ($idItem != null || $idItem != ''){
+            $data = $data->where('std_item', '=', $idItem);
+        }
+
+        $target = $data->get();
+
+        return Datatables::of($target)
+            ->addIndexColumn()
+            ->addColumn('status', function () {
+                return '<label class="bg-danger status-reject px-3 py-1" disabled>Gagal</label>';
+            })
+            ->addColumn('action', function ($target) {
+                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                        <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Target" onclick="editTarget(\'' . Crypt::encrypt($target->std_salestarget) . '\', \'' . Crypt::encrypt($target->std_detailid) . '\')"><i class="fa fa-pencil"></i>
+                        </button>
+                    </div>';
+            })
+            ->addColumn('realisasi', function (){
+                return '0';
+            })
+            ->rawColumns(['status', 'action'])
+            ->make(true);
     }
 }
