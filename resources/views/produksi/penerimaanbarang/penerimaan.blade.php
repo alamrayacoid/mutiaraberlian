@@ -39,14 +39,22 @@
                                 <div class="form-group row">
                                     <label for="nota" class="col-sm-2 col-form-label">No. Nota DO</label>
                                     <div class="col-sm-10">
-                                        <input type="text" class="form-control" name="nota" id="nota"
+                                        <input type="text" class="form-control form-control-sm" name="nota" id="nota"
                                                placeholder="Masukkan nomor nota order produksi" autofocus>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="satuan" class="col-sm-2 col-form-label">Satuan</label>
+                                    <div class="col-sm-10">
+                                        <select name="satuan" id="satuan" class="form-control form-control-sm select2">
+                                            <option value="">Pilih satuan</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="qty" class="col-sm-2 col-form-label">QTY Terima</label>
                                     <div class="col-sm-10">
-                                        <input type="number" min="0" class="form-control" name="qty" id="qty"
+                                        <input type="number" min="0" class="form-control form-control-sm" name="qty" id="qty"
                                                placeholder="Masukkan qty">
                                     </div>
                                 </div>

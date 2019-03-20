@@ -20,15 +20,15 @@
 
 			<div class="col-12">
 
-                <ul class="nav nav-pills mb-3">
+                <ul class="nav nav-pills mb-3" id="Tabzs">
                     <li class="nav-item">
-                        <a href="" class="nav-link active" data-target="#penempatanproduk" aria-controls="penempatanproduk" data-toggle="tab" role="tab">Penempatan Produk</a>
+                        <a href="#penempatanproduk" class="nav-link active" data-target="#penempatanproduk" aria-controls="penempatanproduk" data-toggle="tab" role="tab">Penempatan Produk</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link" data-target="#monitoringpenjualan" aria-controls="monitoringpenjualan" data-toggle="tab" role="tab">Monitoring Penjualan</a>
+                        <a href="#monitoringpenjualan" class="nav-link" data-target="#monitoringpenjualan" aria-controls="monitoringpenjualan" data-toggle="tab" role="tab">Monitoring Penjualan</a>
 					</li>
                     <li class="nav-item">
-                        <a href="" class="nav-link" data-target="#penerimaanuangpembayaran" aria-controls="penerimaanuangpembayaran" data-toggle="tab" role="tab">Penerimaan Uang Pembayaran</a>
+                        <a href="#penerimaanuangpembayaran" class="nav-link" data-target="#penerimaanuangpembayaran" aria-controls="penerimaanuangpembayaran" data-toggle="tab" role="tab">Penerimaan Uang Pembayaran</a>
 					</li>
                 </ul>
 

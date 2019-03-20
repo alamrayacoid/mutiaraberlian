@@ -20,15 +20,15 @@
 
 		<div class="col-12">
 
-		<ul class="nav nav-pills mb-3">
+		<ul class="nav nav-pills mb-3" id="Tabzs">
 			<li class="nav-item">
-				<a href="" class="nav-link active" data-target="#dataproduk" aria-controls="dataproduk" data-toggle="tab" role="tab">Data Produk</a>
+				<a href="#dataproduk" class="nav-link active" data-target="#dataproduk" aria-controls="dataproduk" data-toggle="tab" role="tab">Data Produk</a>
 			</li>
 			<li class="nav-item">
-				<a href="" class="nav-link" data-target="#datapenjualan" aria-controls="datapenjualan" data-toggle="tab" role="tab">Data Penjualan</a>
+				<a href="#datapenjualan" class="nav-link" data-target="#datapenjualan" aria-controls="datapenjualan" data-toggle="tab" role="tab">Data Penjualan</a>
 			</li>
 			<li class="nav-item">
-				<a href="" class="nav-link" data-target="#orderproduksi" aria-controls="orderproduksi" data-toggle="tab" role="tab">Data Order Produksi</a>
+				<a href="#orderproduksi" class="nav-link" data-target="#orderproduksi" aria-controls="orderproduksi" data-toggle="tab" role="tab">Data Order Produksi</a>
 			</li>
 		</ul>
 

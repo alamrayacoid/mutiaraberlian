@@ -140,6 +140,36 @@ body {
     border-radius:50%;
 }
 
+.label p {
+    margin: auto;
+}
+
+.status-danger {
+    background-color:#ff6b6b;
+    border-radius: 20px;
+}
+
+.status-success {
+    background-color:#1dd1a1;
+    border-radius: 20px;
+}
+
+.status-danger p{
+    color:white;
+    font-size: 9pt;
+    text-align: center;
+    padding:5px 5px 5px 5px;
+    margin: auto;
+}
+
+.status-success p{
+    color:white;
+    font-size: 9pt;
+    text-align: center;
+    padding:5px 5px 5px 5px;
+    margin: auto;
+}
+
 .status-termin-lunas {
     background-color:#1dd1a1;
     border-radius: 20px;

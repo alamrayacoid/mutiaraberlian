@@ -34,18 +34,18 @@
 
 		<div class="col-12">
 
-		<ul class="nav nav-pills mb-3">
+		<ul class="nav nav-pills mb-3" id="Tabzs">
 			<li class="nav-item">
-				<a href="" class="nav-link active" data-target="#list_scoreboardpegawai" aria-controls="list_scoreboardpegawai" data-toggle="tab" role="tab">Scoreboard Pegawai Per Hari</a>
+				<a href="#list_scoreboardpegawai" class="nav-link active" data-target="#list_scoreboardpegawai" aria-controls="list_scoreboardpegawai" data-toggle="tab" role="tab">Scoreboard Pegawai Per Hari</a>
 			</li>
 			<li class="nav-item">
-				<a href="" class="nav-link" data-target="#list_inputkpi" aria-controls="list_inputkpi" data-toggle="tab" role="tab">Input Data KPI</a>
+				<a href="#list_inputkpi" class="nav-link" data-target="#list_inputkpi" aria-controls="list_inputkpi" data-toggle="tab" role="tab">Input Data KPI</a>
 			</li>
 			<li class="nav-item">
-				<a href="" class="nav-link" data-target="#list_manajemenscoreboard" aria-controls="list_manajemenscoreboard" data-toggle="tab" role="tab">Manajemen Scoreboard</a>
+				<a href="#list_manajemenscoreboard" class="nav-link" data-target="#list_manajemenscoreboard" aria-controls="list_manajemenscoreboard" data-toggle="tab" role="tab">Manajemen Scoreboard</a>
 			</li>
 			<li class="nav-item">
-				<a href="" class="nav-link" data-target="#list_manajemenscoreboardkpi" aria-controls="list_manajemenscoreboardkpi" data-toggle="tab" role="tab">Manajemen Scoreboard & KPI</a>
+				<a href="#list_manajemenscoreboardkpi" class="nav-link" data-target="#list_manajemenscoreboardkpi" aria-controls="list_manajemenscoreboardkpi" data-toggle="tab" role="tab">Manajemen Scoreboard & KPI</a>
 			</li>
 		</ul>
 

@@ -2,16 +2,14 @@
 
 @section('content')
 
-    @include('produksi.penerimaanbarang.detail')
+@include('produksi.penerimaanbarang.penerimaan.detail')
 
 <article class="content animated fadeInLeft">
 
 	<div class="title-block text-primary">
-	    <h1 class="title"> Penerimaan Barang</h1>
+	    <h1 class="title"> Penerimaan Barang </h1>
 	    <p class="title-description">
-	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
-	    	 / <span>Aktifitas Produksi</span>
-	    	 / <span class="text-primary" style="font-weight: bold;">Penerimaan Barang</span>
+	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktifitas Produksi</span> / <span class="text-primary" style="font-weight: bold;">Penerimaan Barang</span>
 	     </p>
 	</div>
 
@@ -20,35 +18,22 @@
 		<div class="row">
 
 			<div class="col-12">
-				
-				<div class="card">
-                    <div class="card-header bordered p-2">
-                    	<div class="header-block">
-                            <h3 class="title"> Penerimaan Barang </h3>
-                        </div>
-                    </div>
-                    <div class="card-block">
-                        <section>
-                        	
-                        	<div class="table-responsive">
-	                            <table class="table table-striped table-hover table-bordered" cellspacing="0" id="table_penerimaan">
-	                                <thead class="bg-primary">
-	                                    <tr>
-	                                    	<th width="1%">No</th>
-	                                		<th>Nota Order</th>
-                                            <th>Supplier</th>
-                                            <th>Tanggal</th>
-											<th>Aksi</th>
-	                                	</tr>
-	                                </thead>
-	                                <tbody>
 
-	                                </tbody>
-	                            </table>
-	                        </div>
-                        </section>
-                    </div>
-                </div>
+                <ul class="nav nav-pills mb-3" id="Tabzs">
+                    <li class="nav-item">
+                        <a href="#penerimaan" class="nav-link active" data-target="#penerimaan" aria-controls="penerimaan" data-toggle="tab" role="tab">Penerimaan Barang</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#history" class="nav-link" data-target="#history" aria-controls="history" data-toggle="tab" role="tab">History Penerimaan Barang</a>
+					</li>
+                </ul>
+
+                <div class="tab-content">
+
+					@include('produksi.penerimaanbarang.penerimaan.index')
+                    @include('produksi.penerimaanbarang.history.index')
+
+	            </div>
 
 			</div>
 
@@ -59,8 +44,13 @@
 </article>
 
 @endsection
-
 @section('extra_script')
+<script type="text/javascript">
+
+	$(document).ready(function(){
+		var table_sup = $('#table_history').DataTable();
+	});
+</script>
 <script type="text/javascript">
     var table;
 	$(document).ready(function(){
