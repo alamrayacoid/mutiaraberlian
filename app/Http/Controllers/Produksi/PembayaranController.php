@@ -156,7 +156,7 @@ class PembayaranController extends Controller
                     $y->on('d_productionorder.po_supplier', '=', 'm_supplier.s_id');
                 })
                 ->where('d_productionorder.po_id', '=', $id)
-                ->select('d_productionorder.po_id', 'd_productionorder.po_nota', 'd_productionorder.po_date',
+               ->select('d_productionorder.po_id', 'd_productionorder.po_nota', 'd_productionorder.po_date',
                     'm_supplier.s_name', 'd_productionorderpayment.pop_termin', 'd_productionorderpayment.pop_value', 'd_productionorderpayment.pop_pay')
                 ->first();
 
@@ -175,7 +175,7 @@ class PembayaranController extends Controller
                 'tanggal_pembelian' => Carbon::parse($data->po_date)->format('d-m-Y'),
                 'termin'            => $data->pop_termin,
                 'tagihan'           => number_format($data->pop_value, 0, ',', ''),
-                'terbayar'          => number_format($pay, 0, ',', '.'),
+                'terbayar'          => number_format($pay, 0, ',', ''),
                 'kekurangan'        => number_format($kekurangan, 0, ',', '')
             ];
 

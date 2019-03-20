@@ -199,6 +199,12 @@
             // function table_hapus(a){
             // 	table.row($(a).parents('tr')).remove().draw();
             // }
+
+            $("#fromBayarTermin").on("submit", function(evt){
+                evt.preventDefault();
+               alert("ok");
+            })
+
         });
 
         $('#po_nota').on('select2:select', function () {
