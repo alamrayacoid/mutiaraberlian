@@ -22,7 +22,7 @@ class Mutasi extends Controller
                     $hpp = (int)$hpp;
                     $qty = (int)$qty;
 
-                    $sekarang = Carbon::now('Asia/Jakarta')->parse('Y-m-d');
+                    $sekarang = Carbon::now('Asia/Jakarta');
 
                     $idStok = DB::table('d_stock')
                         ->select('s_id')
@@ -114,15 +114,20 @@ class Mutasi extends Controller
       }
     }
 
-    static function mutasikeluar($date, $mutcat, $comp, $position, $item, $qty, $status, $condition, $hpp = 0, $sell = 0, $nota, $reff){
+    static function mutasikeluar($date, $mutcat, $comp, $position, $item, $qty, $status, $condition, $nota, $reff){
       DB::beginTransaction();
       try {
 
-        $sell = (int)$sell;
-        $hpp = (int)$hpp;
         $qty = (int)$qty;
 
+        $sekarang = Carbon::now('Asia/Jakarta');
+
         $datamutcat = DB::table('m_mutcat')->where('m_status', 'M')->get();
+
+        $datamutcat = DB::table('m_mutcat')->where('m_status', 'M')->get();
+        for ($i=0; $i < count($datamutcat); $i++) {
+          $tmp[] = $datamutcat[$i]->m_id;
+        }
 
         $stock = DB::table('d_stock')
           ->join('d_stock_mutation', 'sm_stock', '=', 's_id')
@@ -130,9 +135,9 @@ class Mutasi extends Controller
           ->where('s_comp', '=', $comp)
           ->where('s_position', '=', $position)
           ->where('s_item', '=', $item)
-          ->where('s_status', '=', $status)
-          ->where('s_condition', '=', $condition)
-          ->whereIn('sm_mutcat', $datamutcat)
+          ->where('s_status', '=', 'ON DESTINATION')
+          ->where('s_condition', '=', 'FINE')
+          ->whereIn('sm_mutcat', $tmp)
           ->where(DB::raw('(sm_qty - sm_use)'), '>', 0)
           ->get();
 
@@ -174,7 +179,7 @@ class Mutasi extends Controller
                           'sm_mutcat' => $mutcat,
                           'sm_qty' => $stock[$j]->sm_sisa,
                           'sm_use' => 0,
-                          'sm_residue' => $qty,
+                          'sm_residue' => 0,
                           'sm_hpp' => $stock[$j]->sm_hpp,
                           'sm_sell' => $stock[$j]->sm_sell,
                           'sm_nota' => $nota,
@@ -203,7 +208,7 @@ class Mutasi extends Controller
                           'sm_mutcat' => $mutcat,
                           'sm_qty' => $stock[$j]->sm_sisa,
                           'sm_use' => 0,
-                          'sm_residue' => $qty,
+                          'sm_residue' => 0,
                           'sm_hpp' => $stock[$j]->sm_hpp,
                           'sm_sell' => $stock[$j]->sm_sell,
                           'sm_nota' => $nota,
@@ -215,6 +220,158 @@ class Mutasi extends Controller
                   $j = count($stock) + 1;
               }
           }
+
+        DB::commit();
+        return true;
+      } catch (Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'error' => $e
+        ]);
+      }
+    }
+
+    static function opname($date, $mutcat, $comp, $position, $item, $qtysistem, $qtyreal, $sisa, $nota, $reff){
+      DB::beginTransaction();
+      try {
+
+        $qtyreal = (int)$qtyreal;
+        $qtysistem = (int)$qtysistem;
+        $sisa = (int)$sisa;
+
+        $sekarang = Carbon::now('Asia/Jakarta');
+
+        $datamutcat = DB::table('m_mutcat')->where('m_status', 'M')->get();
+        for ($i=0; $i < count($datamutcat); $i++) {
+          $tmp[] = $datamutcat[$i]->m_id;
+        }
+
+        $mutasi = DB::table('d_stock')
+            ->join('d_stock_mutation', 's_id', '=', 'sm_stock')
+            ->select('d_stock.*', 'd_stock_mutation.*', DB::raw('(sm_qty - sm_use) as sm_sisa'))
+            ->where('s_comp', '=', $comp)
+            ->where('s_position', '=', $position)
+            ->where('s_item', '=', $item)
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('s_condition', '=', 'FINE')
+            ->whereIn('sm_mutcat', $tmp)
+            ->where(DB::raw('(sm_qty - sm_use)'), '>', 0)
+            ->get();
+
+            if ($sisa > 0){
+                //========= mengurangi stock
+                for ($i = 0; $i < count($mutasi); $i++){
+                    if ($mutasi[$i]->sm_sisa >= $sisa){
+                        DB::table('d_stock_mutation')
+                            ->where('sm_stock', '=', $mutasi[$i]->sm_stock)
+                            ->where('sm_detailid', '=', $mutasi[$i]->sm_detailid)
+                            ->update([
+                                'sm_use' => $mutasi[$i]->sm_use + $sisa
+                            ]);
+
+                        $getdetailid = DB::table('d_stock_mutation')
+                            ->where('sm_stock', '=', $mutasi[$i]->sm_stock)
+                            ->max('sm_detailid');
+
+                        $detailid = $getdetailid + 1;
+
+                        DB::table('d_stock_mutation')
+                            ->insert([
+                                'sm_stock' => $mutasi[$i]->sm_stock,
+                                'sm_detailid' => $detailid,
+                                'sm_date' => $sekarang,
+                                'sm_mutcat' => $mutcat,
+                                'sm_qty' => $sisa,
+                                'sm_use' => 0,
+                                'sm_residue' => 0,
+                                'sm_hpp' => $mutasi[$i]->sm_hpp,
+                                'sm_sell' => $mutasi[$i]->sm_sell,
+                                'sm_nota' => $nota,
+                                'sm_reff' => $mutasi[$i]->sm_nota,
+                                'sm_user' => Auth::user()->u_id,
+                            ]);
+
+                        DB::table('d_stock')
+                            ->where('s_id', '=', $mutasi[$i]->s_id)
+                            ->update([
+                                's_qty' => DB::raw('s_qty - ' . $sisa)
+                            ]);
+                        $sisa = 0;
+                        $i = count($mutasi);
+
+                    } elseif ($mutasi[$i]->sm_sisa < $sisa){
+                        $sisa = $sisa - $mutasi[$i]->sm_qty;
+                        DB::table('d_stock_mutation')
+                            ->where('sm_stock', '=', $mutasi[$i]->sm_stock)
+                            ->where('sm_detailid', '=', $mutasi[$i]->sm_detailid)
+                            ->update([
+                                'sm_use' => $mutasi[$i]->sm_qty
+                            ]);
+
+                        $getdetailid = DB::table('d_stock_mutation')
+                            ->where('sm_stock', '=', $mutasi[$i]->sm_stock)
+                            ->max('sm_detailid');
+
+                        $detailid = $getdetailid + 1;
+
+                        DB::table('d_stock_mutation')
+                            ->insert([
+                                'sm_stock' => $mutasi[$i]->sm_stock,
+                                'sm_detailid' => $detailid,
+                                'sm_date' => $sekarang,
+                                'sm_mutcat' => $mutcat,
+                                'sm_qty' => $mutasi[$i]->sm_qty,
+                                'sm_use' => 0,
+                                'sm_residue' => 0,
+                                'sm_hpp' => $mutasi[$i]->sm_hpp,
+                                'sm_sell' => $mutasi[$i]->sm_sell,
+                                'sm_nota' => $nota,
+                                'sm_reff' => $mutasi[$i]->sm_nota,
+                                'sm_user' => Auth::user()->u_id,
+                            ]);
+
+                        DB::table('d_stock')
+                            ->where('s_id', '=', $mutasi[$i]->s_id)
+                            ->update([
+                                's_qty' => DB::raw('(s_qty - ' . $mutasi[$i]->sm_qty. ')')
+                            ]);
+                    }
+                }
+            } elseif ($sisa < 0){
+                //======== menambah stock
+                $sisa = abs($sisa);
+                $counter = count($mutasi) - 1;
+
+                $getdetailid = DB::table('d_stock_mutation')
+                    ->where('sm_stock', '=', $mutasi[0]->sm_stock)
+                    ->max('sm_detailid');
+
+                $detailid = $getdetailid + 1;
+
+                DB::table('d_stock_mutation')
+                    ->insert([
+                        'sm_stock' => $mutasi[0]->sm_stock,
+                        'sm_detailid' => $detailid,
+                        'sm_date' => $sekarang,
+                        'sm_mutcat' => $mutcat,
+                        'sm_qty' => $sisa,
+                        'sm_use' => 0,
+                        'sm_residue' => 0,
+                        'sm_hpp' => $mutasi[$counter]->sm_hpp,
+                        'sm_sell' => $mutasi[$counter]->sm_sell,
+                        'sm_nota' => $nota,
+                        'sm_reff' => $nota,
+                        'sm_user' => Auth::user()->u_id,
+                    ]);
+
+                DB::table('d_stock')
+                    ->where('s_id', '=', $mutasi[0]->s_id)
+                    ->update([
+                        's_qty' => DB::raw('(s_qty + ' . $sisa. ')')
+                    ]);
+            } else {
+                //======== tidak perlu ada penanganan khusus
+            }
 
         DB::commit();
         return true;

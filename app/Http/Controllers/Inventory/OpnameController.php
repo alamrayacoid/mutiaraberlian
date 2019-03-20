@@ -158,7 +158,8 @@ class OpnameController extends Controller
     {
       $datas = d_opnameauth::orderBy('oa_id', 'asc')
       ->with('getItem')
-      ->get();
+      ->get();      
+
       return Datatables::of($datas)
       ->addIndexColumn()
       ->addColumn('name', function($datas) {

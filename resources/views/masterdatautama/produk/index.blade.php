@@ -240,7 +240,7 @@
                 // processing: true,
                 serverSide: true,
                 ajax: {
-                    url: baseUrl + "/masterdatautama/produk/tablejenis",
+                    url: '{{route("adjustment.list")}}',
                     type: "post",
                     data: {
                         "_token": "{{ csrf_token() }}"

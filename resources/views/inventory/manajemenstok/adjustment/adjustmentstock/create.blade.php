@@ -90,14 +90,14 @@
                                 <form role="form">
                                     <div class="form-group">
                                       <label class="control-label" for="formGroupExampleInput">Satuan</label>
-                                      <select type="text" disabled class="form-control form-control-sm select2" id="satuanreal">
+                                      <select type="text" class="form-control form-control-sm select2" id="satuanreal">
                                           <option value="" disabled selected> - Pilih Satuan - </option>
 
                                       </select>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="formGroupExampleInput2">Qty</label>
-                                        <input type="number" readonly class="form-control form-control-sm" id="qtyreal">
+                                        <input type="number" class="form-control form-control-sm" id="qtyreal">
                                     </div>
                                 </form>
                             </div>
@@ -106,7 +106,7 @@
                     </div>
                     <div class="card-footer text-right">
                       <button class="btn btn-primary btn-submit" id="btnsimpan" style="display:none" type="button">Simpan</button>
-                      <a href="{{route('mngagen.index')}}" class="btn btn-secondary">Kembali</a>
+                      <a href="{{route('adjustment.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
 
@@ -168,14 +168,26 @@ var data = [];
 					btnClass: 'btn-blue',
 					text:'Ya',
 					action : function(){
-                        $.toast({
-                        heading: 'Success',
-                        text: 'Data Berhasil di Simpan',
-                        bgColor: '#00b894',
-                        textColor: 'white',
-                        loaderBg: '#55efc4',
-                        icon: 'success'
-                    })
+            loadingShow();
+            var satuanreal = $('#satuanreal').val();
+            var qtyreal = $('#qtyreal').val();
+            $.ajax({
+              type: 'get',
+              data: {data, satuanreal, qtyreal},
+              dataType: 'json',
+              url: baseUrl + '/inventory/manajemenstok/adjustmentstock/simpan',
+              success : function(response){
+                if (response.status == 'berhasil') {
+                  loadingHide();
+                  messageSuccess('Berhasil', 'Opname berhasil!');
+                  setTimeout(function () {
+                    window.location.href = '{{route('adjustment.index')}}';
+                  }, 1000);
+                } else {
+                  messageFailed('Gagal!', 'Opname gagal!');
+                }
+              }
+            })
 					}
 				},
 				cancel:{
@@ -194,7 +206,7 @@ var data = [];
 
     axios.get(baseUrl + '/inventory/manajemenstok/adjustmentstock/getopname?nota='+nota)
   .then(function (response) {
-    data = response.data.item;
+    data = response.data.data;
     // handle success
     if (parseInt(response.data.data.o_qtysystem) != parseInt(response.data.stock.s_qty)) {
       $('#btnsimpan').css('display', 'none');
@@ -203,8 +215,25 @@ var data = [];
       $('#btnsimpan').css('display', '');
       $('#item').val(response.data.item.i_name);
       $('#iditem').val(response.data.item.i_id);
-      $('#satuansystem').append('<option value="'+response.data.unitsystem.u_id+'" selected>'+response.data.unitsystem.u_name+'</option>');
-      $('#satuanreal').append('<option value="'+response.data.unitreal.u_id+'" selected>'+response.data.unitreal.u_name+'</option>');
+      for (var i = 0; i < response.data.unit.length; i++) {
+        if (response.data.unit[i].u_id == response.data.unitsystem.u_id) {
+          var selected = 'selected';
+        } else {
+          var selected = '';
+        }
+
+        $('#satuansystem').append('<option value="'+response.data.unit[i].u_id+'" '+selected+'>'+response.data.unit[i].u_name+'</option>');
+      }
+
+      for (var i = 0; i < response.data.unit.length; i++) {
+        if (response.data.unit[i].u_id == response.data.unitreal.u_id) {
+          var selected = 'selected';
+        } else {
+          var selected = '';
+        }
+
+        $('#satuanreal').append('<option value="'+response.data.unit[i].u_id+'" '+selected+'>'+response.data.unit[i].u_name+'</option>');
+      }
       $('#qtysystem').val(response.data.data.o_qtysystem);
       $('#qtyreal').val(response.data.data.o_qtyreal);
     }
