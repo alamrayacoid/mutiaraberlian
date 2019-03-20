@@ -221,7 +221,7 @@
                     })
                     .catch(function (error) {
                         loadingHide();
-                        messageWarning("Errot", error);
+                        messageWarning("Error", error);
                     });
 
                 }
