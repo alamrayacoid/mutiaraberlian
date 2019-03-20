@@ -137,38 +137,49 @@ class PembayaranController extends Controller
                 return Response::json(['status' => 'Failed', 'message' => $e]);
             }
 
-            $data = d_productionorder::where('po_id', $id)
-                ->with('getPODt')
-                ->with('getSupplier')
-                ->with('getPODt.getItem')
-                ->with('getPODt.getUnit')
-                ->with(['getPOPayment' => function($query) use($termin) {
-                    $query->where('pop_termin',$termin);
-                }])
+//            $data = d_productionorder::where('po_id', $id)
+//                ->with('getPODt')
+//                ->with('getSupplier')
+//                ->with('getPODt.getItem')
+//                ->with('getPODt.getUnit')
+//                ->with(['getPOPayment' => function($query) use($termin) {
+//                    $query->where('pop_termin',$termin);
+//                }])
+//                ->first();
+
+            $data = DB::table('d_productionorder')
+                ->join('d_productionorderpayment', function($x) use ($termin){
+                    $x->on('d_productionorder.po_id', '=', 'd_productionorderpayment.pop_productionorder');
+                    $x->where('d_productionorderpayment.pop_termin', '=', $termin);
+                })
+                ->join('m_supplier', function($y) use ($termin){
+                    $y->on('d_productionorder.po_supplier', '=', 'm_supplier.s_id');
+                })
+                ->where('d_productionorder.po_id', '=', $id)
+                ->select('d_productionorder.po_id', 'd_productionorder.po_nota', 'd_productionorder.po_date',
+                    'm_supplier.s_name', 'd_productionorderpayment.pop_termin', 'd_productionorderpayment.pop_value', 'd_productionorderpayment.pop_pay')
                 ->first();
 
+            if ($data->pop_pay == null || $data->pop_pay == "") {
+                $pay = 0;
+            } else {
+                $pay = $data->pop_pay;
+            }
 
-            $kekurangan = (int)$data->get_p_o_payment[0]['pop_value'] - (int)$data->get_p_o_payment[0]['pop_pay'];
+            $kekurangan = $data->pop_value - $pay;
 
-            $terbayar = $data->get_p_o_payment[0]['pop_pay'];
+            $data = [
+                'poid'              => Crypt::encrypt($data->po_id),
+                'nota'              => $data->po_nota,
+                'supplier'          => $data->s_name,
+                'tanggal_pembelian' => Carbon::parse($data->po_date)->format('d-m-Y'),
+                'termin'            => $data->pop_termin,
+                'tagihan'           => number_format($data->pop_value, 0, ',', ''),
+                'terbayar'          => number_format($pay, 0, ',', '.'),
+                'kekurangan'        => number_format($kekurangan, 0, ',', '')
+            ];
 
-//            $data = [
-//                'poid'              => Crypt::encrypt($data->po_id),
-//                'terminid'          => Crypt::encrypt($data->get_p_o_payment[0]['pop_termin']),
-//                'nota'              => $data->po_nota,
-//                'supplier'          => $data->get_supplier['s_name'],
-//                'tanggal_pembelian' => Carbon::parse($data->po_date)->format('d-m-Y'),
-//                'terbayar'          => $terbayar,
-//                'kekurangan'        => $kekurangan
-//            ];
-
-//            $data = [
-//                'supplier'          => $data
-//            ];
-
-            return $data;
-
-//            return Response::json(['status' => "Success", 'data' => $data]);
+            return Response::json(['status' => "Success", 'data' => $data]);
         }
     }
 }

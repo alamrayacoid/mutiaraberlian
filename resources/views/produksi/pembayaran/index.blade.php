@@ -58,11 +58,6 @@
                                 </div>
                                 <hr style="border:0.5px solid grey">
                                 <div class="table-responsive termin-table">
-                                    <div>
-                                        <button type="button" class="btn btn-primary btn-tambah-termin-gan">Tambah
-                                            Data
-                                        </button>
-                                    </div>
                                     <table class="table table-striped table-hover w-100" cellspacing="0"
                                            id="table_pembayaran">
                                         <thead class="bg-primary">
@@ -249,20 +244,21 @@
                 }
             })
                 .then(function (response) {
-                    console.log(response);
                     if (response.data.status == "Failed") {
                         loadingHide();
                         messageFailed("Gagal", "Terjadi kesalahan sistem");
                     } else if (response.data.status == "Success") {
                         loadingHide();
-                        $("#nota").val();
-                        $("#supplier").val();
-                        $("#tgl_beli").val();
-                        $("#termin").val();
-                        $("#tagihan").val();
-                        $("#terbayar").val();
-                        $("#kekurangan").val();
-                        // $("#modalBayar").modal("show");
+                        $("#poi").val(response.data.data.poid);
+                        $("#terminid").val(response.data.data.termin);
+                        $("#nota").val(response.data.data.nota);
+                        $("#supplier").val(response.data.data.supplier);
+                        $("#tgl_beli").val(response.data.data.tanggal_pembelian);
+                        $("#termin").val(response.data.data.termin);
+                        $("#tagihan").val(convertToRupiah(response.data.data.tagihan));
+                        $("#terbayar").val(convertToRupiah(response.data.data.terbayar));
+                        $("#kekurangan").val(convertToRupiah(response.data.data.kekurangan));
+                        $("#modalBayar").modal("show");
                     }
                 })
                 .catch(function (error) {
