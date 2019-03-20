@@ -29,9 +29,8 @@ class PembayaranController extends Controller
         return date('d-m-Y', strtotime($datas->pop_datetop));
       })
       ->addColumn('nominal', function($datas) {
-        return '<td><span class="float-left">Rp </span>
-          <span class="float-right">' . number_format($datas->pop_value, 2, ',', '.') . '</span>
-          </td>';
+        return '<p class="float-left">Rp </p>
+                <p class="float-right">' . number_format($datas->pop_value, 2, ',', '.') . '</p>';
       })
       ->addColumn('date', function($datas) {
         return date('d-m-Y', strtotime($datas->pop_date));
@@ -47,9 +46,10 @@ class PembayaranController extends Controller
         }
       })
       ->addColumn('action', function($datas) {
-        return '<td width="15%">
-          <button class="btn btn-primary btn-modal" data-toggle="modal" type="button" onclick="Detail('. $datas->pop_productionorder .','. $datas->pop_termin .')">Detail</button>
-          </td>';
+        return '<div>
+                    <button class="btn btn-primary btn-modal" data-toggle="modal" type="button" onclick="Detail('. $datas->pop_productionorder .','. $datas->pop_termin .')">Detail</button>
+                    <button class="btn btn-primary btn-modal" data-toggle="modal" type="button" onclick="Bayar('. $datas->pop_productionorder .','. $datas->pop_termin .')">Bayar</button>
+                </div>';
       })
       ->rawColumns(['estimasi', 'nominal', 'date', 'status', 'action'])
       ->make(true);

@@ -119,9 +119,9 @@ class ProduksiController extends Controller
             })
             ->addColumn('status', function($data){
                 if($data->po_status == 'BELUM'){
-                    return 'BELUM LUNAS';
+                    return '<div class="status-termin-lunas"><p>BELUM LUNAS</p></div>';
                 }else{
-                    return '';
+                    return '<div class="status-termin-belum"><p>LUNAS</p></div>';
                 }
             })
             ->addColumn('aksi', function($data){
@@ -131,7 +131,7 @@ class ProduksiController extends Controller
                 $nota = '<button class="btn btn-info btn-nota" title="Nota" type="button" onclick="printNota(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-print"></i></button>';
                 return '<div class="btn-group btn-group-sm">'. $detail . $nota . $edit . $hapus . '</div>';
             })
-            ->rawColumns(['detail','totalnet','bayar','aksi'])
+            ->rawColumns(['detail','totalnet','bayar', 'status','aksi'])
             ->make(true);
     }
 
