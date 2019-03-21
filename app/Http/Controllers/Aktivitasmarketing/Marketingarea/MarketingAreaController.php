@@ -128,10 +128,33 @@ class MarketingAreaController extends Controller
 
     public function getPrice(Request $request)
     {
-        dd($request);
         $idItem = $request->item;
         $idUnit = $request->unit;
         $qty = $request->qty;
+
+        $price = DB::table('m_priceclassdt')
+            ->join('m_priceclass', 'pcd_classprice', 'pc_id')
+            ->select('m_priceclassdt.*', 'm_priceclass.*')
+            ->where('pc_name', '=', "Agen")
+            ->where('pcd_item', '=', $idItem)
+            ->whereIn('pcd_unit', $idUnit)
+            ->where('pcd_type', '=', "R")
+            ->first();
+        if($price){
+            if ($price->pcd_rangeqtystart <= $qty && $price->pcd_rangeqtyend >= $qty) {
+                return Response::json(array(
+                    'success' => true,
+                    'data'    => $price->pcd_price
+                ));
+            } else {
+                return Response::json(array(
+                    'success' => true,
+                    'data'    => "0"
+                ));
+            }
+        } else {
+            echo "Failed";
+        }
 
         
     }
