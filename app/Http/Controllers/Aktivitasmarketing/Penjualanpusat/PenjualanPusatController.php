@@ -145,8 +145,6 @@ class PenjualanPusatController extends Controller
     public function targetRealStore(Request $request)
     {
         $data = $request->all();
-        $salesTarget = [];
-        $salesTargetDt = [];
 
         $periode = Carbon::createFromFormat('d/m/Y', '01/' . $data['t_periode']);
         DB::beginTransaction();

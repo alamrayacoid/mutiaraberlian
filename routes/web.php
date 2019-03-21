@@ -285,11 +285,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/index', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@index')->name('marketingarea.index');
         // Order Produk Ke Cabang
         Route::get('/marketing/marketingarea/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@createOrderProduk')->name('orderproduk.create');
+        Route::get('/marketing/marketingarea/orderproduk/store', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@orderProdukStore')->name('orderproduk.store');
         Route::get('/marketing/marketingarea/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@editOrderProduk')->name('orderproduk.edit');
         Route::get('/marketing/marketingarea/orderproduk/get-city', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getCity')->name('orderproduk.getCity');
         Route::get('/marketing/marketingarea/orderproduk/get-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getAgen')->name('orderproduk.getAgen');
         Route::get('/marketing/marketingarea/orderproduk/cari-barang', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@cariBarang')->name('orderproduk.cariBarang');
         Route::get('/marketing/marketingarea/orderproduk/get-satuan/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getSatuan')->name('orderproduk.getSatuan');
+        Route::get('/marketing/marketingarea/orderproduk/get-price', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getPrice')->name('orderproduk.getPrice');
         // End Order Ke Cabang ==================
         Route::get('/marketing/marketingarea/keloladataorder/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_keloladataorder')->name('keloladataorder.create');
         Route::get('/marketing/marketingarea/keloladataorder/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_keloladataorder')->name('keloladataorder.edit');

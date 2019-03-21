@@ -92,6 +92,8 @@ class MarketingAreaController extends Controller
                 $q->orWhereRaw("i_code like '%" . $cari . "%'");
             })
             ->get();
+        $unit = DB::table('m_unit')->select('m_unit.*')
+            ->where('u_id', '=', $request->idUnit)->get();
 
         if (count($nama) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
@@ -99,6 +101,9 @@ class MarketingAreaController extends Controller
             foreach ($nama as $query) {
                 $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' . strtoupper($query->i_name), 'data' => $query];
             }
+
+            $results2[] = ['unit' => $unit];
+
         }
         return Response::json($results);
     }
@@ -121,10 +126,71 @@ class MarketingAreaController extends Controller
         return Response::json($data);
     }
 
-    public function targetRealStore(Request $request)
+    public function getPrice(Request $request)
     {
+        dd($request);
+        $idItem = $request->item;
+        $idUnit = $request->unit;
+        $qty = $request->qty;
+
+        
+    }
+
+    public function orderProdukStore(Request $request)
+    {
+        //dd($request);
+        $data = $request->all();
+        $now = Carbon::now('Asia/Jakarta');
+        $time = date('Y-m-d', strtotime($now));
         // DB::beginTransaction();
         // try {
+            $detailId = 0;
+            $query1 = DB::table('d_productorder')
+                ->where('po_date', '=', $time)
+                ->where('po_comp', '=', $data['po_comp'])
+                ->where('po_agen', '=', $data['po_agen'])
+                ->first();
+            if ($query1) {
+                for ($i=0; $i < count($data['idItem']); $i++) {
+
+                    $detailId = DB::table('d_productorderdt')
+                        ->where('pod_productorder', '=', $query1->po_id)
+                        ->max('pod_detailid');
+
+                    DB::table('d_productorderdt')->insert([
+                        'pod_productorder' => $query1->po_id,
+                        'pod_detailid' => $detailId+1,
+                        'pod_item' => $data['idItem'][$i],
+                        'pod_unit' => $data['po_unit'][$i],
+                        'pod_qty' => $data['po_qty'][$i],
+                        'pod_price' => number_format($data['po_hrg'][$i]),
+                        'pod_totalprice' => number_format($data['tot_hrg'][0])
+                    ]);
+                }
+            } else {
+                $getIdMax = DB::table('d_productorder')->max('po_id');
+                $poId = $getIdMax + 1;
+                DB::table('d_productorder')->insert([
+                    'po_id' => $poId,
+                    'po_comp' => $data['po_comp'][0],
+                    'po_agen' => $data['po_agen'][0],
+                    'po_date' => $time,
+                    'po_nota' => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 8, 10, 4, 'PRO', '-'),
+                    'po_status' => "P"
+                ]);
+
+                for ($i=0; $i < count($data['idItem']) ; $i++) { 
+                    DB::table('d_productorderdt')->insert([
+                        'pod_productorder' => $poId,
+                        'pod_detailid' => ++$detailId,
+                        'pod_item' => $data['idItem'][$i],
+                        'pod_unit' => $data['po_unit'][$i],
+                        'pod_qty' => $data['po_qty'][$i],
+                        'pod_price' => number_format($data['po_hrg'][$i]),
+                        'pod_totalprice' => number_format($data['tot_hrg'][0])
+                    ]);
+                }
+            }
         //     DB::commit();
         //     return response()->json([
         //         'status' => 'sukses'
