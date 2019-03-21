@@ -277,6 +277,7 @@
                         messageFailed("Gagal", "Terjadi kesalahan sistem");
                     } else if (response.data.status == "Success") {
                         loadingHide();
+                        $("#nilai_bayar").val('');
                         $("#poid").val(response.data.data.poid);
                         $("#nota").val(response.data.data.nota);
                         $("#supplier").val(response.data.data.supplier);
