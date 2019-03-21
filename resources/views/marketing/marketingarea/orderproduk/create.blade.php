@@ -314,6 +314,10 @@
     // Merubah Sub Total Berdasarkan Jumlah Item ----------------------
     function changeJumlah() {
         $(".jumlah").on('input', function (evt) {
+            var inpSatuan = document.getElementsByClassName('satuan'),
+                satuan = [].map.call(inpSatuan, function(input){
+                    return parseInt(input.value);
+                })
             var inpJumlah = document.getElementsByClassName( 'jumlah' ),
                 jumlah    = [].map.call(inpJumlah, function( input ) {
                     return parseInt(input.value);
@@ -347,6 +351,19 @@
                 $(".subtotal").eq(i).val(hasil);
 
             }
+            $.ajax({
+                url: "{{url('/marketing/marketingarea/orderproduk/get-price')}}",
+                type: "GET",
+                data: {
+                    item : idItem,
+                    unit: satuan,
+                    qty: jumlah
+                },
+                success:function(res)
+                {
+                    $('.harga').val(convertToRupiah(res.data));
+                }
+            });
             updateTotalTampil();
         })
     }
@@ -413,6 +430,18 @@
         $("#total_harga").val(convertToRupiah(total));
     }
     // End Code -------------------------------------------------------
+
+    // function getHarga() {
+    //     $.ajax({
+    //         url: "",
+    //         type: "GET",
+    //         data: {
+    //             item : idItem,
+    //             unit: satuan,
+    //             qty: jumlah
+    //         }
+    //     });
+    // }
 
     // Menampilkan List Kota Berdasarkan Id Provinsi ------------------
     function getProvId() {
