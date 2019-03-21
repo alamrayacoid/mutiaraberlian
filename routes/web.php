@@ -311,10 +311,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/marketing/marketingarea/datacavassing/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datacanvassing')->name('datacanvassing.edit');
         Route::get('/marketing/marketingarea/datakonsinyasi/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_datakonsinyasi')->name('datakonsinyasi.create');
         Route::get('/marketing/marketingarea/datakonsinyasi/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datakonsinyasi')->name('datakonsinyasi.edit');
-    // Manajemen Agen
-    Route::get('/marketing/agen/index', 'MarketingController@agen')->name('mngagen.index');
-    Route::get('/marketing/agen/orderproduk/create', 'MarketingController@create_orderprodukagenpusat')->name('orderagenpusat.create');
-    Route::get('/marketing/agen/orderproduk/edit', 'MarketingController@edit_orderprodukagenpusat')->name('orderagenpusat.edit');
+        // Manajemen Agen
+        Route::get('/marketing/agen/index', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@agen')->name('mngagen.index');
+        Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_orderprodukagenpusat')->name('orderagenpusat.create');
+        Route::get('/marketing/agen/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_orderprodukagenpusat')->name('orderagenpusat.edit');
     // !===================================================== END Marketing =====================================================!
 
     // !===================================================== KEUANGAN =====================================================!
