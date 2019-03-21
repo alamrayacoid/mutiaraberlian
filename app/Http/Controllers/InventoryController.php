@@ -92,4 +92,19 @@ class InventoryController extends Controller
         return view('inventory/manajemenstok/adjustment/index');
     }
 
+    public function pengelolaanmms_index()
+    {
+        return view('inventory.manajemenstok.pengelolaanmms.index');
+    }
+
+    public function pengelolaanmms_create()
+    {
+        return view('inventory.manajemenstok.pengelolaanmms.create');
+    }
+    
+    public function pengelolaanmms_edit()
+    {
+        return view('inventory.manajemenstok.pengelolaanmms.edit');
+    }
+
 }

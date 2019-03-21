@@ -54,10 +54,10 @@
 			</div>
 
 			<div class="col-md-4 col-sm-6 col-12">
-				<a href="#">
+				<a href="{{route('pengelolaanmms.index')}}">
 					<div class="card text-center p-4 card-custom text-info">
 						<img src="{{asset('assets/img/warehouse.png')}}" height="128px" width="128px">
-						<h6>Penglolaan Data Max/Min Stok, Savety Stok</h6>
+						<h6>Penglolaan Data Max/Min Stok, Safety Stok</h6>
 					</div>
 				</a>
 			</div>
