@@ -2,71 +2,64 @@
 
 @section('content')
 <article class="content animated fadeInLeft">
-
 	<section class="section">
-
 		<div class="row">
-
 			<div class="col-12">
 				
 				<div class="card">
-                    <div class="card-header bordered p-2">
-                    	<div class="header-block">
-	                        <h3 class="title"> February/2019 </h3>
-	                    </div>
-                    </div>
-                    <div class="card-block">
-                        <section>
-                        	
-                        	<div class="table-responsive">
-	                            <table class="table table-striped table-hover" cellspacing="0" id="table_pegawai">
-	                                <thead class="bg-primary">
-	                                    <tr>
-							                <th>No</th>
-							                <th>Kode/Nama Barang</th>
-							                <th>Satuan</th>
-							                <th>Target</th>
-							                <th>Realisasi</th>
-							                <th>Presentase</th>
-							            </tr>
-	                                </thead>
-	                                <tbody>
-	                                	<tr>
-	                                		<td>1</td>
-	                                		<td>BRG001/Rahasia</td>
-	                                		<td>Pcs</td>
-	                                		<td>1000</td>
-	                                		<td>500</td>
-	                                		<td class="bad">50%</td>
-	                                	</tr>
-	                                </tbody>
-                                </table>
-                                <div class="akumulasi">
-                                    <section>
-                                        <fieldset class="mt-2">
-                                        <div class="row">
-                                            <div class="container">
-                                                <input type="text" class="pull-right form-control col-2" style="text-align:center;" value="50%" readonly="">
-                                                <h3 class="pull-right mr-2 akumulasi-txt">Akumulasi Target</h3>
-                                            </div>
-                                        </div>
-                                        </fieldset>
-                                    </section>
-                                </div>
-	                        </div>
-                        </section>
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-secondary pull-right" onclick="window.location.href='{{ route('targetrealisasi.index') }}'">Kembali</button>
-                    </div>
-                </div>
-
+					<div class="card-header bordered p-2">
+						<div class="header-block">
+							<h3 class="title"> February/2019 </h3>
+						</div>
+					</div>
+					<div class="card-block">
+						<section>
+							
+							<div class="table-responsive">
+								<table class="table table-striped table-hover" cellspacing="0" id="table_pegawai">
+									<thead class="bg-primary">
+										<tr>
+											<th>No</th>
+											<th>Kode/Nama Barang</th>
+											<th>Satuan</th>
+											<th>Target</th>
+											<th>Realisasi</th>
+											<th>Presentase</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>1</td>
+											<td>BRG001/Rahasia</td>
+											<td>Pcs</td>
+											<td>1000</td>
+											<td>500</td>
+											<td class="bad">50%</td>
+										</tr>
+									</tbody>
+								</table>
+								<div class="akumulasi">
+									<section>
+										<fieldset class="mt-2">
+											<div class="row">
+												<div class="container">
+													<input type="text" class="pull-right form-control col-2" style="text-align:center;" value="50%" readonly="">
+													<h3 class="pull-right mr-2 akumulasi-txt">Akumulasi Target</h3>
+												</div>
+											</div>
+										</fieldset>
+									</section>
+								</div>
+							</div>
+						</section>
+					</div>
+					<div class="card-footer">
+						<button class="btn btn-secondary pull-right" onclick="window.location.href='{{ route('targetrealisasi.index') }}'">Kembali</button>
+					</div>
+				</div>
 			</div>
-
 		</div>
-
 	</section>
-
 </article>
 
 @endsection

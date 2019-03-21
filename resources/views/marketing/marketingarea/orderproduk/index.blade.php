@@ -4,9 +4,9 @@
 			<div class="header-block">
 				<h3 class="title">Order Produk ke Cabang</h3>
 			</div>
-	        <div class="header-block pull-right">
-                <a class="btn btn-primary" href="{{ route('orderproduk.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>	                    	
-	        </div>
+			<div class="header-block pull-right">
+				<a class="btn btn-primary" href="{{ route('orderproduk.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
+			</div>
 		</div>
 		<div class="card-block">
 			<section>
@@ -41,9 +41,7 @@
 						</tbody>
 					</table>
 				</div>
-
 			</section>
-
 		</div>
 	</div>
 </div>

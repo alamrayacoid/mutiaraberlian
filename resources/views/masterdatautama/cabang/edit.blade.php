@@ -27,12 +27,12 @@
                         <div class="card-block">
                             <section>
                                 <?php
-                    if($data->c_type == 'AGEN'){
-                      $temp = "disabled";
-                    }else{
-                      $temp = "";
-                    }
-                  ?>
+                                if($data->c_type == 'AGEN'){
+                                $temp = "disabled";
+                                }else{
+                                $temp = "";
+                                }
+                                ?>
                                 <div class="row">
                                     <div class="col-md-3 col-sm-6 col-xs-12">
                                         <label>Nama Cabang</label>

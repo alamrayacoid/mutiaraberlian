@@ -6,54 +6,42 @@
 @include('marketing.marketingarea.monitoring.modal')
 
 <article class="content animated fadeInLeft">
-
 	<div class="title-block text-primary">
-	    <h1 class="title"> Manajemen Marketing Area  </h1>
-	    <p class="title-description">
-	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Marketing</span> / <span class="text-primary" style="font-weight: bold;">Manajemen Marketing Area</span>
-	     </p>
+		<h1 class="title"> Manajemen Marketing Area  </h1>
+		<p class="title-description">
+			<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Marketing</span> / <span class="text-primary" style="font-weight: bold;">Manajemen Marketing Area</span>
+		</p>
 	</div>
-
 	<section class="section">
-
 		<div class="row">
-
 			<div class="col-12">
-
-                <ul class="nav nav-pills mb-3" id="Tabzs">
-                    <li class="nav-item">
-                        <a href="#orderproduk" class="nav-link active" data-target="#orderproduk" aria-controls="orderproduk" data-toggle="tab" role="tab">Order Produk ke Cabang</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#keloladataagen" class="nav-link" data-target="#keloladataagen" aria-controls="keloladataagen" data-toggle="tab" role="tab">Kelola Data Order Agen </a>
+				<ul class="nav nav-pills mb-3" id="Tabzs">
+					<li class="nav-item">
+						<a href="#orderproduk" class="nav-link active" data-target="#orderproduk" aria-controls="orderproduk" data-toggle="tab" role="tab">Order Produk ke Cabang</a>
 					</li>
 					<li class="nav-item">
-                        <a href="#monitoringpenjualanagen" class="nav-link" data-target="#monitoringpenjualanagen" aria-controls="monitoringpenjualanagen" data-toggle="tab" role="tab">Monitoring Data Penjualan Agen</a>
+						<a href="#keloladataagen" class="nav-link" data-target="#keloladataagen" aria-controls="keloladataagen" data-toggle="tab" role="tab">Kelola Data Order Agen </a>
 					</li>
 					<li class="nav-item">
-                        <a href="#datacanvassing" class="nav-link" data-target="#datacanvassing" aria-controls="datacanvassing" data-toggle="tab" role="tab">Kelola Data Canvassing</a>
+						<a href="#monitoringpenjualanagen" class="nav-link" data-target="#monitoringpenjualanagen" aria-controls="monitoringpenjualanagen" data-toggle="tab" role="tab">Monitoring Data Penjualan Agen</a>
 					</li>
 					<li class="nav-item">
-                        <a href="#datakonsinyasi" class="nav-link" data-target="#datakonsinyasi" aria-controls="datakonsinyasi" data-toggle="tab" role="tab">Kelola Data Konsinyasi </a>
+						<a href="#datacanvassing" class="nav-link" data-target="#datacanvassing" aria-controls="datacanvassing" data-toggle="tab" role="tab">Kelola Data Canvassing</a>
 					</li>
-                </ul>
-
-                <div class="tab-content">
-
+					<li class="nav-item">
+						<a href="#datakonsinyasi" class="nav-link" data-target="#datakonsinyasi" aria-controls="datakonsinyasi" data-toggle="tab" role="tab">Kelola Data Konsinyasi </a>
+					</li>
+				</ul>
+				<div class="tab-content">
 					@include('marketing.marketingarea.orderproduk.index')
 					@include('marketing.marketingarea.keloladataorder.index')
 					@include('marketing.marketingarea.monitoring.index')
 					@include('marketing.marketingarea.datacanvassing.index')
 					@include('marketing.marketingarea.datakonsinyasi.index')
-
-	            </div>
-
+				</div>
 			</div>
-
 		</div>
-
 	</section>
-
 </article>
 
 @endsection

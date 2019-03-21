@@ -161,7 +161,6 @@
             setArrayCode();
         });
 
-
         $(".barang").eq(idxBarang).on("keyup", function () {
             $(".itemId").eq(idxBarang).val('');
             $(".kode").eq(idxBarang).val('');

@@ -2,111 +2,108 @@
 
 @section('content')
 
-    <article class="content animated fadeInLeft">
-
-        <div class="title-block text-primary">
-            <h1 class="title"> Tambah Data Target </h1>
-            <p class="title-description">
-                <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
-                / <span>Aktivitas Marketing</span>
-                / <a href="{{route('penjualanpusat.index')}}"><span>Manajemen Penjualan Pusat</span></a>
-                / <span class="text-primary" style="font-weight: bold;"> Target dan Realisasi</span>
-                / <span class="text-primary" style="font-weight: bold;"> Tambah Data Target</span>
-            </p>
-        </div>
-
-        <section class="section">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bordered p-2">
-                            <div class="header-block pull-right">
-                                <a href="{{route('penjualanpusat.index')}}" class="btn btn-secondary"><i
-                                        class="fa fa-arrow-left"></i></a>
-                            </div>
+<article class="content animated fadeInLeft">
+    <div class="title-block text-primary">
+        <h1 class="title"> Tambah Data Target </h1>
+        <p class="title-description">
+            <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
+            / <span>Aktivitas Marketing</span>
+            / <a href="{{route('penjualanpusat.index')}}"><span>Manajemen Penjualan Pusat</span></a>
+            / <span class="text-primary" style="font-weight: bold;"> Target dan Realisasi</span>
+            / <span class="text-primary" style="font-weight: bold;"> Tambah Data Target</span>
+        </p>
+    </div>
+    <section class="section">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bordered p-2">
+                        <div class="header-block pull-right">
+                            <a href="{{route('penjualanpusat.index')}}" class="btn btn-secondary"><i
+                            class="fa fa-arrow-left"></i></a>
                         </div>
-
-                        <div class="card-block">
-                            <section>
-                                <form id="formAdd" autocomplete="off">
-                                    <div class="row">
-                                        <div class="col-md-2 col-sm-6 col-xs-12">
-                                            <label>Periode</label>
+                    </div>
+                    <div class="card-block">
+                        <section>
+                            <form id="formAdd" autocomplete="off">
+                                <div class="row">
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Periode</label>
+                                    </div>
+                                    <div class="col-md-4 col-sm-10 col-xs-10">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-sm" id="datepicker"
+                                            name="t_periode">
                                         </div>
-                                        <div class="col-md-4 col-sm-10 col-xs-10">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" id="datepicker"
-                                                       name="t_periode">
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Pilihan Cabang</label>
+                                    </div>
+                                    <div class="col-md-4 col-sm-10 col-xs-10">
+                                        <div class="form-group">
+                                            <select name="t_comp[]" id="cabang"
+                                                class="form-control form-control-sm select2">
+                                                <option value="" selected="" disabled="">== Pilih Cabang ==</option>
+                                                @foreach($company as $comp)
+                                                <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
-                                        <div class="col-md-2 col-sm-6 col-xs-12">
-                                            <label>Pilihan Cabang</label>
-                                        </div>
-                                        <div class="col-md-4 col-sm-10 col-xs-10">
-                                            <div class="form-group">
-                                                <select name="t_comp[]" id="cabang"
-                                                        class="form-control form-control-sm select2">
-                                                    <option value="" selected="" disabled="">== Pilih Cabang ==</option>
-                                                    @foreach($company as $comp)
-                                                        <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="container">
-                                            <hr style="border:0.7px solid grey; margin-bottom:30px;">
-                                            <div class="table-responsive">
-                                                <table class="table table-striped table-hover" cellspacing="0"
-                                                       id="table_target">
-                                                    <thead class="bg-primary">
+                                    </div>
+                                    <div class="container">
+                                        <hr style="border:0.7px solid grey; margin-bottom:30px;">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-hover" cellspacing="0"
+                                                id="table_target">
+                                                <thead class="bg-primary">
                                                     <tr>
                                                         <th width="50%">Kode/Nama Barang</th>
                                                         <th width="20%">Satuan</th>
                                                         <th width="20%">Jumlah Target</th>
                                                         <th class="text-center"></th>
                                                     </tr>
-                                                    </thead>
-                                                    <tbody>
+                                                </thead>
+                                                <tbody>
                                                     <tr>
                                                         <td>
                                                             <input type="text" name="barang[]"
-                                                                   class="form-control form-control-sm barang"
-                                                                   style="text-transform:uppercase">
+                                                            class="form-control form-control-sm barang"
+                                                            style="text-transform:uppercase">
                                                             <input type="hidden" name="idItem[]" class="itemid">
                                                             <input type="hidden" name="kode[]" class="kode">
                                                         </td>
                                                         <td>
                                                             <select name="t_unit[]"
-                                                                    class="form-control form-control-sm select2 satuan">
+                                                                class="form-control form-control-sm select2 satuan">
                                                             </select>
                                                         </td>
                                                         <td>
                                                             <input type="number" class="form-control qty form-control-sm"
-                                                                   min="0" value="" name="t_qty[]">
+                                                            min="0" value="" name="t_qty[]">
                                                         </td>
                                                         <td class="text-center">
                                                             <button class="btn btn-success btn-tambah btn-sm"
-                                                                    type="button"><i class="fa fa-plus"
-                                                                                     aria-hidden="true"></i></button>
+                                                            type="button"><i class="fa fa-plus"
+                                                            aria-hidden="true"></i></button>
                                                         </td>
                                                     </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
-                                </form>
-                            </section>
-                        </div>
-                        <div class="card-footer text-right">
-                            <button class="btn btn-primary btn-submit" type="button">Simpan</button>
-                            <a href="{{route('penjualanpusat.index')}}" class="btn btn-secondary">Kembali</a>
-                        </div>
+                                </div>
+                            </form>
+                        </section>
+                    </div>
+                    <div class="card-footer text-right">
+                        <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+                        <a href="{{route('penjualanpusat.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
             </div>
-        </section>
-    </article>
+        </div>
+    </section>
+</article>
 
 @endsection
 

@@ -2,52 +2,49 @@
 
 @section('content')
 <article class="content animated fadeInLeft">
-
-	<div class="title-block text-primary">
-	    <h1 class="title"> Data Pegawai </h1>
-	    <p class="title-description">
-	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> 
-	    	/ <span>Master Data Utama</span> 
-	    	/ <span class="text-primary font-weight-bold">Data Pegawai</span>
+    <div class="title-block text-primary">
+        <h1 class="title"> Data Pegawai </h1>
+        <p class="title-description">
+            <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
+            / <span>Master Data Utama</span>
+            / <span class="text-primary font-weight-bold">Data Pegawai</span>
         </p>
-	</div>
-
-	<section class="section">
-		<div class="row">
-			<div class="col-12">
-				<div class="card">
+    </div>
+    <section class="section">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
                     <div class="card-header bordered p-2">
-                    	<div class="header-block">
-	                        <h3 class="title"> Data Pegawai </h3>
-	                    </div>
-	                    <div class="header-block pull-right">
-                			<button type="button" class="btn btn-primary" id="btn-tambah"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button>
-	                    </div>
+                        <div class="header-block">
+                            <h3 class="title"> Data Pegawai </h3>
+                        </div>
+                        <div class="header-block pull-right">
+                            <button type="button" class="btn btn-primary" id="btn-tambah"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button>
+                        </div>
                     </div>
                     <div class="card-block">
                         <section>
-                        	<div class="table-responsive">
-	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_pegawai">
-	                                <thead class="bg-primary">
-	                                    <tr>
-							                <th>NIK</th>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_pegawai">
+                                    <thead class="bg-primary">
+                                        <tr>
+                                            <th>NIK</th>
                                             <th>Nama Pegawai</th>
-											<th>Jabatan</th>
+                                            <th>Jabatan</th>
                                             <th class="text-center">Status</th>
-											<th class="text-center">Aksi</th>
-							            </tr>
-	                                </thead>
-	                                <tbody>
-
-	                                </tbody>
-	                            </table>
-	                        </div>
+                                            <th class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
                         </section>
                     </div>
                 </div>
-			</div>
-		</div>
-	</section>
+            </div>
+        </div>
+    </section>
 </article>
 @endsection
 

@@ -10,7 +10,6 @@
             / <span class="text-primary" style="font-weight: bold;">Master Cabang</span>
         </p>
     </div>
-
     <section class="section">
         <div class="row">
             <div class="col-12">
@@ -39,7 +38,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-
                                     </tbody>
                                 </table>
                             </div>
