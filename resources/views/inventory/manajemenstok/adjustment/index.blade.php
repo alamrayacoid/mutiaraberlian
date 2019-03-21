@@ -8,7 +8,7 @@
 <article class="content animated fadeInLeft">
 
 	<div class="title-block text-primary">
-	    <h1 class="title"> Manajemen Penjualan Pusat  </h1>
+	    <h1 class="title"> Manajemen Penjualan Stok  </h1>
 	    <p class="title-description">
 	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Inventory</span> / <span class="text-primary" style="font-weight: bold;">Pengelolaan Manajemen Stok</span>
 	     </p>

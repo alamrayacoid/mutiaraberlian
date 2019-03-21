@@ -65,10 +65,13 @@ class PembayaranController extends Controller
         }
       })
       ->addColumn('action', function($datas) {
-          return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+          if ($datas->pop_status == 'N') {
+              return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                         <button class="btn btn-danger hint--top-left hint--info" aria-label="Bayar" onclick="bayar(\''.Crypt::encrypt($datas->pop_productionorder).'\', \''.Crypt::encrypt($datas->pop_termin).'\')"><i class="fa fa-money"></i>
                         </button>
                     </div>';
+          }
+
 //          return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
 //                        <button class="btn btn-info hint--top-left hint--info" aria-label="Detail" onclick="Detail(\''.Crypt::encrypt($datas->pop_productionorder).'\', \''.Crypt::encrypt($datas->pop_termin).'\')"><i class="fa fa-list"></i>
 //                        </button>
@@ -202,13 +205,15 @@ class PembayaranController extends Controller
                     $y->on('d_productionorder.po_supplier', '=', 'm_supplier.s_id');
                 })
                 ->where('d_productionorder.po_id', '=', $poid)
-                ->select('d_productionorderpayment.pop_value as value')
+                ->select('d_productionorderpayment.pop_value as value', 'd_productionorderpayment.pop_pay as pay')
                 ->first();
         $value = number_format($data_po->value, 0, ',', '');
         $status = "N";
-        if ($bayar > $value) {
+        if ($bayar > $value || $data_po->pay+$bayar > $value) {
             return Response::json(['status' => "Failed", 'message' => "Nilai pembayaran yang Anda masukkan melebihi tagihan termin ke-".$termin]);
         } else if ($bayar == $value) {
+            $status = "Y";
+        } else if ($data_po->pay+$bayar == $value) {
             $status = "Y";
         }
 
@@ -216,7 +221,7 @@ class PembayaranController extends Controller
         try{
             $values = [
                 'pop_date'  => Carbon::now("Asia/Jakarta")->format("Y-m-d"),
-                'pop_pay'   => $bayar,
+                'pop_pay'   => $data_po->pay + $bayar,
                 'pop_status'=> $status
             ];
 
