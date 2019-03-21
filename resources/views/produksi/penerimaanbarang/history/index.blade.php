@@ -17,7 +17,7 @@
 
                         <div class="col-md-3 col-sm-6 col-xs-12">
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-sm datepicker" name="">
+                                <input type="text" class="form-control form-control-sm datepicker" name="tgl_awal" id="tgl_awal">
                             </div>
                         </div>
 
@@ -27,12 +27,12 @@
 
                         <div class="col-md-3 col-sm-6 col-xs-12">
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-sm datepicker" name="">
+                                <input type="text" class="form-control form-control-sm datepicker" name="tgl_akhir" id="tgl_akhir">
                             </div>
                         </div>
 
                         <div class="col-2">
-                            <button class="btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                            <button class="btn btn-sm btn-primary" type="button" id="btn_search"><i class="fa fa-search"></i></button>
                         </div>
 
                     </div>

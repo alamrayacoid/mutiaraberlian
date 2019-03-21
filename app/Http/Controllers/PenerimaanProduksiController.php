@@ -18,6 +18,7 @@ class PenerimaanProduksiController extends Controller
     {
         return view('produksi/penerimaanbarang/index');
     }
+
     public function create_penerimaan_barang()
     {
         return view('produksi/penerimaanbarang/create');
@@ -33,7 +34,7 @@ class PenerimaanProduksiController extends Controller
             })
             ->where('d_productionorder.po_status', '=', 'BELUM')
             ->groupBy('po_id')
-            ->select('po_id', 'po_nota', 's_name', 'po_date')
+            ->select('po_id', 'po_nota', 's_company', 'po_date')
             ->get();
 
         return DataTables::of($data)
@@ -42,7 +43,7 @@ class PenerimaanProduksiController extends Controller
                 return $data->po_nota;
             })
             ->addColumn('supplier', function($data){
-                return $data->s_name;
+                return $data->s_company;
             })
             ->addColumn('tanggal', function($data){
                 return Carbon::createFromFormat('Y-m-d', $data->po_date)->format('d-m-Y');
@@ -398,5 +399,36 @@ class PenerimaanProduksiController extends Controller
             DB::rollback();
             return Response::json(['status' => 'Failed', 'message' => $e]);
         }
+    }
+
+    public function searchHistory(Request $request)
+    {
+        $data = DB::table('d_itemreceipt')
+            ->join('d_itemreceiptdt', 'ird_itemreceipt', '=', 'ir_id')
+            ->whereBetween('ird_date', [Carbon::parse($request->tgl_awal)->format('Y-m-d'), Carbon::parse($request->tgl_akhir)->format('Y-m-d')])
+            ->join('d_productionorder', 'po_nota', '=', 'ir_notapo')
+            ->join('m_supplier', 's_id', '=', 'po_supplier')
+            ->groupBy('ir_id')
+            ->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('nota', function($data){
+                return $data->po_nota;
+            })
+            ->addColumn('supplier', function($data){
+                return $data->s_company;
+            })
+            ->addColumn('tanggal', function($data){
+                return Carbon::createFromFormat('Y-m-d', $data->po_date)->format('d-m-Y');
+            })
+            ->addColumn('action', function($datas) {
+                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                        <button class="btn btn-info hint--top-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-folder"></i>
+                        </button>
+                    </div>';
+            })
+            ->rawColumns(['nota', 'supplier', 'tanggal', 'action'])
+            ->make(true);
     }
 }

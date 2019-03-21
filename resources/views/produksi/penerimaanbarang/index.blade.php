@@ -52,7 +52,7 @@
 	});
 </script>
 <script type="text/javascript">
-    var table;
+    var table, tbl_history;
 	$(document).ready(function(){
         table = $('#table_penerimaan').DataTable({
             responsive: true,
@@ -126,6 +126,46 @@
 	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 		})
 
+        $("#btn_search").on('click', function(evt){
+            evt.preventDefault();
+            if($("#tgl_awal").val() == "" && $("#tgl_akhir").val() == "") {
+                $("#tgl_awal").focus();
+                messageWarning("Peringatan", "Masukkan tanggal pencarian");
+            } else {
+                loadingShow();
+                if ($.fn.DataTable.isDataTable("#table_history")) {
+                    $('#table_history').DataTable().clear().destroy();
+                }
+                tbl_history = $('#table_history').DataTable({
+                    responsive: true,
+                    // language: dataTableLanguage,
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        url: "{{ route('penerimaan.histori') }}",
+                        type: "get",
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "tgl_awal": $("#tgl_awal").val(),
+                            "tgl_akhir": $("#tgl_akhir").val()
+                        }
+                    },
+                    columns: [
+                        {data: 'DT_RowIndex'},
+                        {data: 'nota'},
+                        {data: 'supplier'},
+                        {data: 'tanggal'},
+                        {data: 'action'}
+                    ],
+                    pageLength: 10,
+                    lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
+                    drawCallback: function( settings ) {
+                        loadingHide();
+                    }
+                });
+            }
+
+        })
 
 		// function table_hapus(a){
 		// 	table.row($(a).parents('tr')).remove().draw();
