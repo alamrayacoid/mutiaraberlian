@@ -83,8 +83,8 @@
 			},
 			columns: [
 				{data: 'DT_RowIndex'},
-				{data: 'po_nota'},
-				{data: 's_company'},
+				{data: 'nota'},
+				{data: 'supplier'},
 				{data: 'totalnet'},
 				{data: 'bayar'},
 				{data: 'status'},
