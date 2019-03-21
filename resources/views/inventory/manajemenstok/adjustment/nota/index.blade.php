@@ -460,7 +460,7 @@ table.border-none > tbody > tr > td{
 .empty{
 	height: 25px;
 }
-</style>	
+</style>
 </head>
 <body>
 		<div class="btn-print">
@@ -471,24 +471,24 @@ table.border-none > tbody > tr > td{
 
 				<h1 class="m-unset">Mutiara Berlian</h1>
 				<h3>Nota Opname</h3>
-				
+
 			</div>
-			
+
 			<div class="col-6">
 				<table class="border-none" width="100%">
 					<tr>
 						<td width="20%">No. Nota</td>
 						<td width="1%">:</td>
-						<td>#</td>
+						<td>{{$data->o_nota}}</td>
 					</tr>
 					<tr>
 						<td>Tanggal</td>
 						<td width="5%">:</td>
-						<td>#</td>
+						<td>{{Carbon\Carbon::parse($data->o_date)}}</td>
 					</tr>
 				</table>
 			</div>
-			
+
 			<table width="100%" class="mt-3" cellpadding="5px">
 				<thead>
 					<tr>
@@ -496,18 +496,18 @@ table.border-none > tbody > tr > td{
 						<th width="40%">Nama Barang</th>
 						<th>Qty Real</th>
 						<th>Unit Real</th>
-                        <th>Qty System</th>
-                        <th>Unit System</th>
+            <th>Qty System</th>
+            <th>Unit System</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td align="center">#</td>
-						<td align="center">#</td>
-						<td align="center">#</td>
-						<td align="center">#</td>
-						<td align="center">#</td>
-						<td align="center">#</td>
+						<td align="center">1</td>
+						<td align="center">{{$data->i_name}}</td>
+						<td align="center">{{(int)$data->o_qtyreal}}</td>
+						<td align="center">{{$unitsistem->u_name}}</td>
+						<td align="center">{{(int)$data->o_qtysystem}}</td>
+						<td align="center">{{$unitreal->u_name}}</td>
 					</tr>
 				</tbody>
 			</table>

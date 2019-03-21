@@ -2,7 +2,8 @@
 
 @section('content')
 
-    @include('produksi.pembayaran.modal')
+    {{--@include('produksi.pembayaran.modal')--}}
+    @include('produksi.pembayaran.bayar')
 
     <article class="content animated fadeInLeft">
 
@@ -40,10 +41,12 @@
                                     <div class="col-6">
                                         <select name="po_nota" id="po_nota"
                                                 class="form-control form-control-sm select2">
-                                            @foreach($data['po'] as $po)
-                                                <option value="{{ $po->po_id }}">{{ $po->po_nota }}
-                                                    - {{ $po->getSupplier['s_name'] }}</option>
-                                        @endforeach
+                                            @foreach($data as $po)
+                                                @if($po->terbayar != $po->value)
+                                                    <option value="{{ $po->id }}">{{ $po->nota }}
+                                                        - {{ $po->supplier }}</option>
+                                                @endif
+                                            @endforeach
                                         <!-- <option value="">-</option>
 							<option value="">001533903</option>
 							<option value="">001433953</option> -->
@@ -55,11 +58,6 @@
                                 </div>
                                 <hr style="border:0.5px solid grey">
                                 <div class="table-responsive termin-table">
-                                    <div>
-                                        <button type="button" class="btn btn-primary btn-tambah-termin-gan">Tambah
-                                            Data
-                                        </button>
-                                    </div>
                                     <table class="table table-striped table-hover w-100" cellspacing="0"
                                            id="table_pembayaran">
                                         <thead class="bg-primary">
@@ -67,6 +65,7 @@
                                             <th>Termin</th>
                                             <th>Estimasi</th>
                                             <th>Nominal</th>
+                                            <th>Terbayar</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -133,26 +132,6 @@
 
             TablePembayaran();
             $(".termin-table").show();
-            // Show Table
-            // $( ".btn-go" ).click(function() {
-            // });
-            // End
-
-            // Looping Table
-            // td1 = '<input type="text" class="form-control form-control-sm" readonly="">'
-            // td2 = '<input type="text" class="form-control form-control-sm" readonly="">'
-            // td3 = '<input type="text" class="form-control form-control-sm" readonly="">'
-            // td4 = '<input type="text" class="form-control form-control-sm" readonly="">'
-            // td5 = '<input type="text" class="form-control form-control-sm" readonly="">'
-            // td6 = '<div class="status-termin-belum"><p>Belum</p></div>'
-            // td7 = '<td width="15%"><button class="btn btn-primary btn-modal" data-toggle="modal" data-target="#detail" type="button">Detail</button></td>'
-            // tbody = $('tbody')
-            // num_row = 5;
-            // for(x = 0; x < num_row;x++) {
-            // table.row.add([td1, td2, td3, td4, td5, td6, td7])
-            // }
-            // table.draw()
-            // End
 
             // Tambah Table
             $(document).on('click', '.btn-hapus-termin-gan', function () {
@@ -182,7 +161,7 @@
                                         '<td><input type="text" class="form-control form-control-sm" readonly=""></td>' +
                                         '<td><input type="text" class="form-control form-control-sm" readonly=""></td>' +
                                         '<td><input type="text" class="form-control form-control-sm" readonly=""></td>' +
-                                        '<div class="status-termin-belum"><p>Belum</p></div>' +
+                                        '<div class="status-danger"><p>Belum</p></div>' +
                                         '<td width="15%"><button class="btn btn-primary btn-modal" data-toggle="modal" data-target="#detail" type="button">Detail</button></td>' +
                                         '</tr>'
                                     );
@@ -220,6 +199,34 @@
             // function table_hapus(a){
             // 	table.row($(a).parents('tr')).remove().draw();
             // }
+
+            $("#fromBayarTermin").on("submit", function(evt){
+                evt.preventDefault();
+                if ($("#nilai_bayar").val() == "" || $("#nilai_bayar").val() == "Rp. 0") {
+                    $("#nilai_bayar").focus();
+                    messageWarning("Peringatan", "Masukkan nominal pembayaran")
+                } else {
+                    loadingShow();
+                    axios.post(baseUrl+'/produksi/pembayaran/bayar', $("#fromBayarTermin").serialize())
+                    .then(function (response) {
+                        if (response.data.status == "Failed") {
+                            loadingHide();
+                            messageFailed("Peringatan", response.data.message);
+                        } else if (response.data.status == "Success") {
+                            tb_pembayaran.ajax.reload();
+                            $("#modalBayar").modal("hide");
+                            loadingHide();
+                            messageSuccess("Berhasil", response.data.message);
+                        }
+                    })
+                    .catch(function (error) {
+                        loadingHide();
+                        messageWarning("Error", error);
+                    });
+
+                }
+            })
+
         });
 
         $('#po_nota').on('select2:select', function () {
@@ -245,6 +252,7 @@
                     {data: 'pop_termin'},
                     {data: 'estimasi'},
                     {data: 'nominal'},
+                    {data: 'terbayar'},
                     {data: 'status'},
                     {data: 'action'}
                 ],
@@ -254,22 +262,80 @@
         }
 
         // view-data -> append data to modal with dataTable
+
+        function bayar(id,termin){
+            loadingShow();
+            axios.get(baseUrl+'/produksi/pembayaran/bayar-list', {
+                params: {
+                    id: id,
+                    termin: termin
+                }
+            })
+                .then(function (response) {
+                    if (response.data.status == "Failed") {
+                        loadingHide();
+                        messageFailed("Gagal", "Terjadi kesalahan sistem");
+                    } else if (response.data.status == "Success") {
+                        loadingHide();
+                        $("#poid").val(response.data.data.poid);
+                        $("#nota").val(response.data.data.nota);
+                        $("#supplier").val(response.data.data.supplier);
+                        $("#tgl_beli").val(response.data.data.tanggal_pembelian);
+                        $("#termin").val(response.data.data.termin);
+                        $("#tagihan").val(convertToRupiah(response.data.data.tagihan));
+                        $("#terbayar").val(convertToRupiah(response.data.data.terbayar));
+                        $("#kekurangan").val(convertToRupiah(response.data.data.kekurangan));
+                        $("#modalBayar").modal("show");
+                    }
+                })
+                .catch(function (error) {
+                    loadingHide();
+                    messageWarning("Error", error);
+                })
+                .then(function () {
+                    // always executed
+                });
+
+        }
+
         function Detail(idx, termin) {
+            // loadingShow();
+            // axios.get(baseUrl + "/produksi/pembayaran/show/" + idx + "/" + termin)
+            //     .then(function (response) {
+            //         // handle success
+            //         console.log(response);
+            //         if (response.data.status == "Failed") {
+            //             loadingHide();
+            //             messageFailed("Gagal", "Terjadi kesalahan sistem");
+            //         } else if (response.data.status == "Success") {
+            //             loadingHide();
+            //         }
+            //     })
+            //     .catch(function (error) {
+            //         // handle error
+            //         loadingHide();
+            //         messageWarning("Error", error);
+            //     })
+            //     .then(function () {
+            //         // always executed
+            //     });
+            
             $.ajax({
                 url: baseUrl + "/produksi/pembayaran/show/" + idx + "/" + termin,
                 type: 'get',
+                dataType: 'json',
                 success: function (response) {
                     $('#table_detail tbody').empty();
-                    $.each(response.get_p_o_dt, function (i, val) {
+                    $.each(response.data.get_p_o_dt, function (i, val) {
                         harga_satuan = formatRupiah(val.pod_value);
                         sub_total = formatRupiah(val.pod_totalnet);
                         harga_satuan = '<span class="float-left">Rp </span><span class="float-right">' + harga_satuan + '</span>';
                         sub_total = '<span class="float-left">Rp </span><span class="float-right">' + sub_total + '</span>';
                         $('#table_detail > tbody:last-child').append('<tr><td>' + val.get_item.i_code + '</td><td>' + val.get_item.i_name + '</td><td>' + val.pod_qty + '</td><td>' + val.get_unit.u_name + '</td><td>' + harga_satuan + '</td><td>' + sub_total + '</td>');
                     })
-                    $('#total_nominal').val('Rp ' + formatRupiah(response.po_totalnet));
-                    $('#nominal_termin_lbl').html('Nominal termin ' + response.get_p_o_payment[0].pop_termin);
-                    $('#nominal_termin').val('Rp ' + formatRupiah(response.get_p_o_payment[0].pop_value));
+                    $('#total_nominal').val('Rp ' + formatRupiah(response.data.po_totalnet));
+                    $('#nominal_termin_lbl').html('Nominal termin ' + response.data.get_p_o_payment[0].pop_termin);
+                    $('#nominal_termin').val('Rp ' + formatRupiah(response.data.get_p_o_payment[0].pop_value));
                     $('#nilai_bayar').val('Rp. 0');
                     updateSisaPembayaran();
                     $('#detail').modal('show');
@@ -277,10 +343,10 @@
             })
         }
 
-        $("#nilai_bayar").on('keyup', function (evt) {
-            evt.preventDefault();
-            updateSisaPembayaran();
-        })
+        // $("#nilai_bayar").on('keyup', function (evt) {
+        //     evt.preventDefault();
+        //     updateSisaPembayaran();
+        // })
 
         function lunasiTermin() {
             $('#nilai_bayar').val($('#nominal_termin').val());

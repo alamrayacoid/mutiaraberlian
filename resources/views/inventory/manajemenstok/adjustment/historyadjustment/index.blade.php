@@ -18,7 +18,7 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" id="rekrut_from" name="">
+						<input type="text" class="form-control form-control-sm datepicker" onchange="gettable()" id="rekrut_from" name="">
 					</div>
 					</div>
 
@@ -28,7 +28,7 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" id="rekrut_to" name="">
+						<input type="text" class="form-control form-control-sm datepicker" onchange="gettable()" id="rekrut_to" name="">
 					</div>
 					</div>
 
@@ -39,24 +39,17 @@
 				</div>
 			</fieldset>
 				<div class="table-responsive">
-					<table class="table table-hover table-striped" cellspacing="0" id="table_historyadjusment">
+					<table class="table table-hover table-striped" cellspacing="0" width="100%" id="table_historyadjusment">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>
 								<th>Tanggal</th>
 								<th>Reff</th>
 								<th>Nama Barang</th>
-                                <th>Status</th>
+								<th>Status</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>07/09/2019</td>
-								<td>-</td>
-                                <td>Obat</td>
-								<td><button class="btn btn-primary status-reject">Pending</button></td>
-							</tr>
 						</tbody>
 					</table>
 				</div>

@@ -49,8 +49,15 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		var table_sup = $('#table_adjustment').DataTable();
-		var table_bar= $('#table_historyadjusment').DataTable();
+
+		cur_date = new Date();
+		first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+		last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+		$('#date_from').datepicker('setDate', first_day);
+		$('#date_to').datepicker('setDate', last_day);
+
+		TableAdjusmentHistory();
+		TableAdjusment();
 
 		$(document).on('click', '.btn-rejected', function(){
 			var ini = $(this);
@@ -110,7 +117,71 @@
 			'<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
 		})
 
-
 	});
+
+	function cetak(id){
+		window.location.href = '{{route('adjustment.nota')}}?id='+id;
+	}
+
+	var tb_opnamehistory;
+
+	function TableAdjusmentHistory()
+	{
+		$('#table_historyadjusment').dataTable().fnDestroy();
+		tb_adjusmenthistory = $('#table_historyadjusment').DataTable({
+			responsive: true,
+			serverSide: true,
+			ajax: {
+				url: baseUrl + "/notifikasiotorisasi/otorisasi/adjustment/getList",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}",
+					"date_from" : $('#date_from').val(),
+					"date_to" : $('#date_to').val()
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'date'},
+				{data: 'a_nota'},
+				{data: 'name'},
+				{data: 'status'},
+			],
+			pageLength: 10,
+			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
+	}
+
+	function gettable(){
+		TableAdjusmentHistory();
+	}
+
+	function TableAdjusment(){
+		$('#table_adjustment').dataTable().fnDestroy();
+		table_sup = $('#table_adjustment').DataTable({
+				responsive: true,
+				// language: dataTableLanguage,
+				// processing: true,
+				serverSide: true,
+				ajax: {
+						url: "{{ route('adjustment.list') }}",
+						type: "POST",
+						data: {
+								"_token": "{{ csrf_token() }}"
+						}
+				},
+				columns: [
+						{data: 'DT_RowIndex'},
+						{data: 'tanggal', name: 'tanggal'},
+						{data: 'aa_nota', name: 'aa_nota'},
+						{data: 'i_name', name: 'i_name'},
+						{data: 'status', name: 'status'},
+						{data: 'action', name: 'action'}
+				],
+				pageLength: 10,
+				lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
+	}
+
 </script>
 @endsection

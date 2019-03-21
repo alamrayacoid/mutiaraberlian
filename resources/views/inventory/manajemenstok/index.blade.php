@@ -52,6 +52,33 @@
 					</div>
 				</a>
 			</div>
+
+			<div class="col-md-4 col-sm-6 col-12">
+				<a href="#">
+					<div class="card text-center p-4 card-custom text-info">
+						<img src="{{asset('assets/img/warehouse.png')}}" height="128px" width="128px">
+						<h6>Penglolaan Data Max/Min Stok, Savety Stok</h6>
+					</div>
+				</a>
+			</div>
+
+			<div class="col-md-4 col-sm-6 col-12">
+				<a href="#">
+					<div class="card text-center p-4 card-custom text-info">
+						<img src="{{asset('assets/img/worker-loading-boxes.png')}}" height="128px" width="128px">
+						<h6>Penglolaan Data Re-Order Point, Repeat Order</h6>
+					</div>
+				</a>
+			</div>
+
+			<div class="col-md-4 col-sm-6 col-12">
+				<a href="#">
+					<div class="card text-center p-4 card-custom text-info">
+						<img src="{{asset('assets/img/increasing-stocks-graphic-of-bars.png')}}" height="128px" width="128px">
+						<h6>Analisa Stock Turn Over</h6>
+					</div>
+				</a>
+			</div>
 <!--
 			<div class="col-md-4 col-sm-6 col-12">
 				<a href="{{route('opname_otorisasi')}}">
