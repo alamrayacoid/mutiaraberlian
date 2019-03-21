@@ -140,16 +140,20 @@ class MarketingAreaController extends Controller
             ->whereIn('pcd_unit', $idUnit)
             ->where('pcd_type', '=', "R")
             ->first();
-        if (count(array($price->pcd_rangeqtystart <= $qty && $price->pcd_rangeqtyend >= $qty)) != null) {
-            return Response::json(array(
-                'success' => true,
-                'data'    => $price->pcd_price
-            ));
+        if($price){
+            if ($price->pcd_rangeqtystart <= $qty && $price->pcd_rangeqtyend >= $qty) {
+                return Response::json(array(
+                    'success' => true,
+                    'data'    => $price->pcd_price
+                ));
+            } else {
+                return Response::json(array(
+                    'success' => true,
+                    'data'    => "0"
+                ));
+            }
         } else {
-            return Response::json(array(
-                'success' => true,
-                'data'    => 0
-            ));
+            echo "Failed";
         }
 
         

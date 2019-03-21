@@ -349,21 +349,22 @@
                 }
                 hasil = convertToRupiah(hasil);
                 $(".subtotal").eq(i).val(hasil);
+                $.ajax({
+                    url: "{{url('/marketing/marketingarea/orderproduk/get-price')}}",
+                    type: "GET",
+                    data: {
+                        item : idItem,
+                        unit: satuan,
+                        qty: jumlah
+                    },
+                    success:function(res)
+                    {
+                        console.log(res.data);
+                        $('.harga').val(res.data);
+                    }
+                });
 
             }
-            $.ajax({
-                url: "{{url('/marketing/marketingarea/orderproduk/get-price')}}",
-                type: "GET",
-                data: {
-                    item : idItem,
-                    unit: satuan,
-                    qty: jumlah
-                },
-                success:function(res)
-                {
-                    $('.harga').val(convertToRupiah(res.data));
-                }
-            });
             updateTotalTampil();
         })
     }
