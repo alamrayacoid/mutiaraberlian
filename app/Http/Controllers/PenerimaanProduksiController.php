@@ -28,7 +28,7 @@ class PenerimaanProduksiController extends Controller
         $data = DB::table('d_productionorder')
             ->join('d_productionorderdt', 'pod_productionorder', '=', 'po_id')
             ->join('m_supplier', 's_id', '=', 'po_supplier')
-            ->where('pod_received', '=', 'N')
+            ->where('d_productionorder.po_status', '=', 'BELUM')
             ->groupBy('po_id')
             ->get();
 
@@ -47,7 +47,7 @@ class PenerimaanProduksiController extends Controller
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                         <button class="btn btn-info hint--top-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-folder"></i>
                         </button>
-                        <button class="btn btn-info hint--top-left hint--info" aria-label="Terima" onclick="terima(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-arrow-right"></i>
+                        <button class="btn btn-danger hint--top-left hint--info" aria-label="Terima" onclick="terima(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-arrow-right"></i>
                         </button>
                     </div>';
             })
@@ -179,7 +179,7 @@ class PenerimaanProduksiController extends Controller
             ->addColumn('action', function($data) {
                 if ($data->ird_qty < $data->pod_qty) {
                     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                        <button class="btn btn-info hint--top-left hint--info" aria-label="Terima" onclick="receipt(\''.Crypt::encrypt($data->po_id).'\', \''.Crypt::encrypt($data->pod_item).'\')"><i class="fa fa-arrow-down"></i>
+                        <button class="btn btn-danger hint--top-left hint--info" aria-label="Terima" onclick="receipt(\''.Crypt::encrypt($data->po_id).'\', \''.Crypt::encrypt($data->pod_item).'\')"><i class="fa fa-arrow-down"></i>
                         </button>
                     </div>';
                 } else {
@@ -202,8 +202,6 @@ class PenerimaanProduksiController extends Controller
         }
 
         $data = DB::table('d_productionorder')
-            ->select('d_productionorder.po_id as id', 'd_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
-                'm_item.i_name as barang', 'm_unit.u_name as satuan', 'd_productionorderdt.pod_qty as jumlah', DB::raw('sum(d_itemreceiptdt.ird_qty) as terima'))
             ->join('d_productionorderdt', function ($x) use ($item){
                 $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
                 $x->where('d_productionorderdt.pod_item', '=', $item);
@@ -219,6 +217,10 @@ class PenerimaanProduksiController extends Controller
             })
             ->groupBy('d_productionorderdt.pod_item')
             ->where('d_productionorder.po_id', '=', $id)
+            ->select('d_productionorder.po_id as id', 'd_productionorder.po_nota as nota',
+                'd_productionorderdt.pod_item as item', 'm_item.i_name as barang', 'm_unit.u_name as satuan',
+                'd_productionorderdt.pod_unit as unit', 'd_productionorderdt.pod_qty as jumlah',
+                    DB::raw('sum(d_itemreceiptdt.ird_qty) as terima'))
             ->first();
 
         $satuan = DB::table('m_item')
@@ -238,9 +240,10 @@ class PenerimaanProduksiController extends Controller
         $data = array(
             'id'        => Crypt::encrypt($data->id),
             'nota'      => $data->nota,
-            'item'        => Crypt::encrypt($data->item),
+            'item'      => Crypt::encrypt($data->item),
             'barang'    => $data->barang,
             'satuan'    => $data->satuan,
+            'unit'      => $data->unit,
             'jumlah'    => $data->jumlah,
             'terima'    => $data->terima,
         );

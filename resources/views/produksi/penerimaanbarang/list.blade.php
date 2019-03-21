@@ -170,17 +170,17 @@
                         sisa += parseInt(response.data.data.jumlah) - parseInt(terima);
 
                         //select
-                        $("#satuan").find('option').remove();
-                        var option = '';
-                        option += '<option value="" selected>Pilih satuan</option>';
-                        option += '<option value="'+response.data.satuan.id1+'">'+response.data.satuan.unit1+'</option>';
-                        if (response.data.satuan.id2 != null && response.data.satuan.id2 != response.data.satuan.id1) {
-                            option += '<option value="'+response.data.satuan.id2+'">'+response.data.satuan.unit2+'</option>';
-                        }
-                        if (response.data.satuan.id3 != null && response.data.satuan.id3 != response.data.satuan.id1) {
-                            option += '<option value="'+response.data.satuan.id3+'">'+response.data.satuan.unit3+'</option>';
-                        }
-                        $("#satuan").append(option);
+                        // $("#satuan").find('option').remove();
+                        // var option = '';
+                        // option += '<option value="" selected>Pilih satuan</option>';
+                        // option += '<option value="'+response.data.satuan.id1+'">'+response.data.satuan.unit1+'</option>';
+                        // if (response.data.satuan.id2 != null && response.data.satuan.id2 != response.data.satuan.id1) {
+                        //     option += '<option value="'+response.data.satuan.id2+'">'+response.data.satuan.unit2+'</option>';
+                        // }
+                        // if (response.data.satuan.id3 != null && response.data.satuan.id3 != response.data.satuan.id1) {
+                        //     option += '<option value="'+response.data.satuan.id3+'">'+response.data.satuan.unit3+'</option>';
+                        // }
+                        // $("#satuan").append(option);
 
                         $("#idOrder").val(response.data.data.id);
                         $("#idItem").val(response.data.data.item);
@@ -190,6 +190,7 @@
                         $("#txtTerima").text(terima);
                         $("#txtSisa").text(sisa);
                         $("#nota").val('');
+                        $("#satuan").val(response.data.data.unit);
                         $("#qty").val(0);
                         document.getElementById("nota").addEventListener("keypress", forceKeyPressUppercase, false);
                         $("#penerimaanOrderProduksi").modal('show');

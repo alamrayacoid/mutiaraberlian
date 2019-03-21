@@ -43,14 +43,15 @@
                                                placeholder="Masukkan nomor nota order produksi" autofocus>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label for="satuan" class="col-sm-2 col-form-label">Satuan</label>
-                                    <div class="col-sm-10">
-                                        <select name="satuan" id="satuan" class="form-control form-control-sm select2">
-                                            <option value="">Pilih satuan</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                {{--<div class="form-group row">--}}
+                                    {{--<label for="satuan" class="col-sm-2 col-form-label">Satuan</label>--}}
+                                    {{--<div class="col-sm-10">--}}
+                                        {{--<select name="satuan" id="satuan" class="form-control form-control-sm select2">--}}
+                                            {{--<option value="">Pilih satuan</option>--}}
+                                        {{--</select>--}}
+                                    {{--</div>--}}
+                                {{--</div>--}}
+                                <input type="hidden" name="satuan" id="satuan">
                                 <div class="form-group row">
                                     <label for="qty" class="col-sm-2 col-form-label">QTY Terima</label>
                                     <div class="col-sm-10">
