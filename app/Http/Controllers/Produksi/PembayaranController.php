@@ -221,7 +221,7 @@ class PembayaranController extends Controller
         try{
             $values = [
                 'pop_date'  => Carbon::now("Asia/Jakarta")->format("Y-m-d"),
-                'pop_pay'   => $data_po->pay+$bayar,
+                'pop_pay'   => $data_po->pay + $bayar,
                 'pop_status'=> $status
             ];
 
