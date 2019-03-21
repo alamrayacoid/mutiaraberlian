@@ -171,7 +171,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/pembayaran/index', 'Produksi\PembayaranController@index')->name('pembayaran.index');
     Route::get('/produksi/pembayaran/list', 'Produksi\PembayaranController@getList')->name('pembayaran.list');
     Route::get('/produksi/pembayaran/show/{id}/{termin}', 'Produksi\PembayaranController@show')->name('pembayaran.show');
-    Route::match(['get', 'post'], '/produksi/pembayaran/bayar', 'Produksi\PembayaranController@bayar')->name('pembayaran.bayar');
+    Route::get('/produksi/pembayaran/bayar-list', 'Produksi\PembayaranController@listBayar')->name('pembayaran.listbayar');
+    Route::post('/produksi/pembayaran/bayar', 'Produksi\PembayaranController@bayar')->name('pembayaran.bayar');
     // Return Produksi
     Route::get('/produksi/returnproduksi/index', 'ProduksiController@return_produksi')->name('return.index');
     Route::get('/produksi/returnproduksi/create', 'ProduksiController@create_return_produksi')->name('return.create');
@@ -220,9 +221,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/opnamestock/print', 'Inventory\OpnameController@print_opname')->name('opname.print');
     Route::get('/inventory/manajemenstok/historyopname/list', 'Inventory\HistoryOpnameController@getList')->name('history.list');
     Route::get('/inventory/manajemenstok/adjustmentstock/index', 'Inventory\AdjusmentController@index')->name('adjustment.index');
+    Route::POST('/inventory/manajemenstok/adjustmentstock/list', 'Inventory\AdjusmentController@list')->name('adjustment.list');
+    Route::get('/inventory/manajemenstok/adjustmentstock/list', 'Inventory\AdjusmentController@list')->name('adjustment.list');
     Route::get('/inventory/manajemenstok/adjustmentstock/create', 'Inventory\AdjusmentController@create')->name('adjustment.create');
     Route::get('/inventory/manajemenstok/adjustmentstock/print', 'Inventory\AdjusmentController@nota')->name('adjustment.nota');
     Route::get('/inventory/manajemenstok/adjustmentstock/getopname', 'Inventory\AdjusmentController@getopname')->name('adjustment.getopname');
+    Route::get('/inventory/manajemenstok/adjustmentstock/simpan', 'Inventory\AdjusmentController@simpan')->name('adjustment.simpan');
     // !===================================================== END INVENTORY =====================================================!
 
     // !===================================================== SDM =====================================================!
@@ -346,6 +350,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifikasiotorisasi/otorisasi/pengeluaranlebih/index', 'OtorisasiController@pengeluaranlebih')->name('pengeluaranlebih');
     Route::get('/notifikasiotorisasi/otorisasi/opname/index', 'OtorisasiController@opname_otorisasi')->name('opname_otorisasi');
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/index', 'OtorisasiController@adjustment')->name('adjustment');
+    Route::get('/notifikasiotorisasi/otorisasi/adjustment/getadjusment', 'OtorisasiController@getadjusment')->name('getadjusment');
+    Route::get('/notifikasiotorisasi/otorisasi/adjustment/agreeadjusment/{id}', 'OtorisasiController@agreeadjusment')->name('agreeadjusment');
+    Route::get('/notifikasiotorisasi/otorisasi/adjustment/rejectadjusment/{id}', 'OtorisasiController@rejectadjusment')->name('rejectadjusment');
     Route::get('/notifikasiotorisasi/otorisasi/revisi/index', 'OtorisasiController@revisi')->name('revisi');
 
     //Oerder Produksi
@@ -372,8 +379,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifikasiotorisasi/otorisasi/opname/approveopname/{id}', 'OtorisasiController@approveopname');
     Route::get('/notifikasiotorisasi/otorisasi/opname/rejectedopname/{id}', 'OtorisasiController@rejectedopname');
 
-    Route::get('encrypt', 'Encrypter@rc4encrypt');
-    Route::get('decrypt', 'Encrypter@rc4decrypt');
 });
 // End Route Group
 

@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
 use Crypt;
+use Mockery\Exception;
 use Response;
+use Currency;
 use Carbon\Carbon;
 use App\d_productionorder;
 use App\d_productionorderpayment;
@@ -127,48 +129,107 @@ class PembayaranController extends Controller
         return Response::json(['status' => "Success", 'data' => $data]);
     }
 
-    function bayar(Request $request)
+    function listBayar(Request $request)
     {
-        if ($request->isMethod("get")) {
-            try {
-                $id     = Crypt::decrypt($request->id);
-                $termin = Crypt::decrypt($request->termin);
-            } catch (DecryptException $e) {
-                return Response::json(['status' => 'Failed', 'message' => $e]);
-            }
+        try {
+            $id     = Crypt::decrypt($request->id);
+            $termin = Crypt::decrypt($request->termin);
+        } catch (DecryptException $e) {
+            return Response::json(['status' => 'Failed', 'message' => $e]);
+        }
 
-            $data = d_productionorder::where('po_id', $id)
-                ->with('getPODt')
-                ->with('getSupplier')
-                ->with('getPODt.getItem')
-                ->with('getPODt.getUnit')
-                ->with(['getPOPayment' => function($query) use($termin) {
-                    $query->where('pop_termin',$termin);
-                }])
+//            $data = d_productionorder::where('po_id', $id)
+//                ->with('getPODt')
+//                ->with('getSupplier')
+//                ->with('getPODt.getItem')
+//                ->with('getPODt.getUnit')
+//                ->with(['getPOPayment' => function($query) use($termin) {
+//                    $query->where('pop_termin',$termin);
+//                }])
+//                ->first();
+
+        $data = DB::table('d_productionorder')
+            ->join('d_productionorderpayment', function($x) use ($termin){
+                $x->on('d_productionorder.po_id', '=', 'd_productionorderpayment.pop_productionorder');
+                $x->where('d_productionorderpayment.pop_termin', '=', $termin);
+            })
+            ->join('m_supplier', function($y) use ($termin){
+                $y->on('d_productionorder.po_supplier', '=', 'm_supplier.s_id');
+            })
+            ->where('d_productionorder.po_id', '=', $id)
+            ->select('d_productionorder.po_id', 'd_productionorder.po_nota', 'd_productionorder.po_date',
+                'm_supplier.s_name', 'd_productionorderpayment.pop_termin', 'd_productionorderpayment.pop_value', 'd_productionorderpayment.pop_pay')
+            ->first();
+
+        if ($data->pop_pay == null || $data->pop_pay == "") {
+            $pay = 0;
+        } else {
+            $pay = $data->pop_pay;
+        }
+
+        $kekurangan = $data->pop_value - $pay;
+
+        $data = [
+            'poid'              => Crypt::encrypt($data->po_id),
+            'nota'              => $data->po_nota,
+            'supplier'          => $data->s_name,
+            'tanggal_pembelian' => Carbon::parse($data->po_date)->format('d-m-Y'),
+            'termin'            => $data->pop_termin,
+            'tagihan'           => number_format($data->pop_value, 0, ',', ''),
+            'terbayar'          => number_format($pay, 0, ',', ''),
+            'kekurangan'        => number_format($kekurangan, 0, ',', '')
+        ];
+
+        return Response::json(['status' => "Success", 'data' => $data]);
+    }
+
+    public function bayar(Request $request)
+    {
+        $bayar = Currency::removeRupiah($request->nilai_bayar);
+        $termin = $request->termin;
+        try {
+            $poid = Crypt::decrypt($request->poid);
+        } catch (DecryptException $e) {
+            return Response::json(['status' => "Failed", 'message' => $e]);
+        }
+
+        $data_po = DB::table('d_productionorder')
+                ->join('d_productionorderpayment', function($x) use ($termin){
+                    $x->on('d_productionorder.po_id', '=', 'd_productionorderpayment.pop_productionorder');
+                    $x->where('d_productionorderpayment.pop_termin', '=', $termin);
+                })
+                ->join('m_supplier', function($y) use ($termin){
+                    $y->on('d_productionorder.po_supplier', '=', 'm_supplier.s_id');
+                })
+                ->where('d_productionorder.po_id', '=', $poid)
+                ->select('d_productionorderpayment.pop_value as value')
                 ->first();
+        $value = number_format($data_po->value, 0, ',', '');
+        $status = "N";
+        if ($bayar > $value) {
+            return Response::json(['status' => "Failed", 'message' => "Nilai pembayaran yang Anda masukkan melebihi tagihan termin ke-".$termin]);
+        } else if ($bayar == $value) {
+            $status = "Y";
+        }
 
+        DB::beginTransaction();
+        try{
+            $values = [
+                'pop_date'  => Carbon::now("Asia/Jakarta")->format("Y-m-d"),
+                'pop_pay'   => $bayar,
+                'pop_status'=> $status
+            ];
 
-            $kekurangan = (int)$data->get_p_o_payment[0]['pop_value'] - (int)$data->get_p_o_payment[0]['pop_pay'];
+            DB::table('d_productionorderpayment')
+                ->where('pop_productionorder', '=', $poid)
+                ->where('pop_termin', '=', $termin)
+                ->update($values);
 
-            $terbayar = $data->get_p_o_payment[0]['pop_pay'];
-
-//            $data = [
-//                'poid'              => Crypt::encrypt($data->po_id),
-//                'terminid'          => Crypt::encrypt($data->get_p_o_payment[0]['pop_termin']),
-//                'nota'              => $data->po_nota,
-//                'supplier'          => $data->get_supplier['s_name'],
-//                'tanggal_pembelian' => Carbon::parse($data->po_date)->format('d-m-Y'),
-//                'terbayar'          => $terbayar,
-//                'kekurangan'        => $kekurangan
-//            ];
-
-//            $data = [
-//                'supplier'          => $data
-//            ];
-
-            return $data;
-
-//            return Response::json(['status' => "Success", 'data' => $data]);
+            DB::commit();
+            return Response::json(['status' => "Success", 'message' => "Data berhasil disimpan"]);
+        }catch (Exception $e){
+            DB::rollback();
+            return Response::json(['status' => "Failed", 'message' => $e]);
         }
     }
 }

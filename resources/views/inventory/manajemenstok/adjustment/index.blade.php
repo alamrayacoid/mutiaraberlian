@@ -49,7 +49,30 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		var table_sup = $('#table_adjustment').DataTable();
+		$('#table_adjustment').dataTable().fnDestroy();
+		table_sup = $('#table_adjustment').DataTable({
+				responsive: true,
+				// language: dataTableLanguage,
+				// processing: true,
+				serverSide: true,
+				ajax: {
+						url: "{{ route('adjustment.list') }}",
+						type: "POST",
+						data: {
+								"_token": "{{ csrf_token() }}"
+						}
+				},
+				columns: [
+						{data: 'DT_RowIndex'},
+						{data: 'tanggal', name: 'tanggal'},
+						{data: 'aa_nota', name: 'aa_nota'},
+						{data: 'i_name', name: 'i_name'},
+						{data: 'status', name: 'status'},
+						{data: 'action', name: 'action'}
+				],
+				pageLength: 10,
+				lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
 		var table_bar= $('#table_historyadjusment').DataTable();
 
 		$(document).on('click', '.btn-rejected', function(){
@@ -110,7 +133,11 @@
 			'<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
 		})
 
-
 	});
+
+	function cetak(id){
+		window.location.href = '{{route('adjustment.nota')}}?id='+id;
+	}
+
 </script>
 @endsection

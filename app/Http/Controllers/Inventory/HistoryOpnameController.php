@@ -10,6 +10,8 @@ use Yajra\DataTables\DataTables;
 
 use DB;
 
+use Carbon\Carbon;
+
 class HistoryOpnameController extends Controller
 {
     /**
@@ -25,10 +27,11 @@ class HistoryOpnameController extends Controller
         ->join('m_item', 'i_id', '=', 'o_item')
         ->whereBetween('o_date', [$from, $to])
         ->get();
+
       return Datatables::of($datas)
       ->addIndexColumn()
       ->addColumn('date', function($datas) {
-        return '<td>'. date('d-m-Y', strtotime($datas->oa_date)) .'</td>';
+        return '<td>'. Carbon::parse($datas->o_date)->format('d/m/Y') .'</td>';
       })
       ->addColumn('name', function($datas) {
         return '<td>'. $datas->i_name .'</td>';
