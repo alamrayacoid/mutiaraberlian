@@ -349,23 +349,30 @@
                 }
                 hasil = convertToRupiah(hasil);
                 $(".subtotal").eq(i).val(hasil);
-                $.ajax({
-                    url: "{{url('/marketing/marketingarea/orderproduk/get-price')}}",
-                    type: "GET",
-                    data: {
-                        item : idItem,
-                        unit: satuan,
-                        qty: jumlah
-                    },
-                    success:function(res)
-                    {
-                        console.log(res.data);
-                        $('.harga').val(res.data);
-                    }
-                });
 
             }
-            updateTotalTampil();
+                
+            $.ajax({
+                url: "{{url('/marketing/marketingarea/orderproduk/get-price')}}",
+                type: "GET",
+                data: {
+                    item : idItem,
+                    unit: satuan,
+                    qty: jumlah
+                },
+                success:function(res)
+                {
+                    console.log(res.data);
+                    var price = res.data;
+                    if (isNaN(price)) {
+                        price = 0;
+                    }
+                    $('.harga').val(price);
+                    $('.po_hrg').val(price);
+                    updateTotalTampil();
+                }
+            });
+
         })
     }
     // End Code -------------------------------------------------------
@@ -505,7 +512,7 @@
                 if (response.status == 'sukses') {
                     loadingHide();
                     messageSuccess('Success', 'Data berhasil ditambahkan!');
-                    window.location.href = "{{route('penjualanpusat.index')}}";
+                    window.location.href = "{{route('marketingarea.index')}}";
                 } else {
                     loadingHide();
                     messageFailed('Gagal', response.message);

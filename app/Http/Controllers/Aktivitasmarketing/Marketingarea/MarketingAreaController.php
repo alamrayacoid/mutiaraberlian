@@ -92,8 +92,6 @@ class MarketingAreaController extends Controller
                 $q->orWhereRaw("i_code like '%" . $cari . "%'");
             })
             ->get();
-        $unit = DB::table('m_unit')->select('m_unit.*')
-            ->where('u_id', '=', $request->idUnit)->get();
 
         if (count($nama) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
@@ -101,9 +99,6 @@ class MarketingAreaController extends Controller
             foreach ($nama as $query) {
                 $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' . strtoupper($query->i_name), 'data' => $query];
             }
-
-            $results2[] = ['unit' => $unit];
-
         }
         return Response::json($results);
     }
@@ -141,7 +136,7 @@ class MarketingAreaController extends Controller
             ->where('pcd_type', '=', "R")
             ->first();
         if($price){
-            if ($price->pcd_rangeqtystart <= $qty && $price->pcd_rangeqtyend >= $qty) {
+            if ($price->pcd_rangeqtystart <= $qty[0] && $price->pcd_rangeqtyend >= $qty[0]) {
                 return Response::json(array(
                     'success' => true,
                     'data'    => $price->pcd_price
@@ -149,11 +144,14 @@ class MarketingAreaController extends Controller
             } else {
                 return Response::json(array(
                     'success' => true,
-                    'data'    => "0"
+                    'data'    => "Rp. 0"
                 ));
             }
         } else {
-            echo "Failed";
+            return Response::json(array(
+                'success' => true,
+                'data'    => "Rp. 0"
+            ));
         }
 
         
@@ -161,12 +159,11 @@ class MarketingAreaController extends Controller
 
     public function orderProdukStore(Request $request)
     {
-        //dd($request);
-        $data = $request->all();
-        $now = Carbon::now('Asia/Jakarta');
+         $data = $request->all();
+        $now  = Carbon::now('Asia/Jakarta');
         $time = date('Y-m-d', strtotime($now));
-        // DB::beginTransaction();
-        // try {
+        DB::beginTransaction();
+        try {
             $detailId = 0;
             $query1 = DB::table('d_productorder')
                 ->where('po_date', '=', $time)
@@ -182,50 +179,49 @@ class MarketingAreaController extends Controller
 
                     DB::table('d_productorderdt')->insert([
                         'pod_productorder' => $query1->po_id,
-                        'pod_detailid' => $detailId+1,
-                        'pod_item' => $data['idItem'][$i],
-                        'pod_unit' => $data['po_unit'][$i],
-                        'pod_qty' => $data['po_qty'][$i],
-                        'pod_price' => number_format($data['po_hrg'][$i]),
-                        'pod_totalprice' => number_format($data['tot_hrg'][0])
+                        'pod_detailid'     => $detailId+1,
+                        'pod_item'         => $data['idItem'][$i],
+                        'pod_unit'         => $data['po_unit'][$i],
+                        'pod_qty'          => $data['po_qty'][$i],
+                        'pod_price'        => number_format($data['po_hrg'][$i]),
+                        'pod_totalprice'   => number_format($data['tot_hrg'][0])
                     ]);
                 }
             } else {
                 $getIdMax = DB::table('d_productorder')->max('po_id');
                 $poId = $getIdMax + 1;
                 DB::table('d_productorder')->insert([
-                    'po_id' => $poId,
-                    'po_comp' => $data['po_comp'][0],
-                    'po_agen' => $data['po_agen'][0],
-                    'po_date' => $time,
-                    'po_nota' => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 8, 10, 4, 'PRO', '-'),
+                    'po_id'     => $poId,
+                    'po_comp'   => $data['po_comp'][0],
+                    'po_agen'   => $data['po_agen'][0],
+                    'po_date'   => $time,
+                    'po_nota'   => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 8, 10, 4, 'PRO', '-'),
                     'po_status' => "P"
                 ]);
 
                 for ($i=0; $i < count($data['idItem']) ; $i++) { 
                     DB::table('d_productorderdt')->insert([
                         'pod_productorder' => $poId,
-                        'pod_detailid' => ++$detailId,
-                        'pod_item' => $data['idItem'][$i],
-                        'pod_unit' => $data['po_unit'][$i],
-                        'pod_qty' => $data['po_qty'][$i],
-                        'pod_price' => number_format($data['po_hrg'][$i]),
-                        'pod_totalprice' => number_format($data['tot_hrg'][0])
+                        'pod_detailid'     => ++$detailId,
+                        'pod_item'         => $data['idItem'][$i],
+                        'pod_unit'         => $data['po_unit'][$i],
+                        'pod_qty'          => $data['po_qty'][$i],
+                        'pod_price'        => number_format($data['po_hrg'][$i]),
+                        'pod_totalprice'   => number_format($data['tot_hrg'][0])
                     ]);
                 }
             }
-        //     DB::commit();
-        //     return response()->json([
-        //         'status' => 'sukses'
-        //     ]);
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return response()->json([
-        //         'status' => 'Gagal',
-        //         'message' => $e
-        //     ]);
-        // }
-
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status'  => 'Gagal',
+                'message' => $e
+            ]);
+        }
     }
 
     public function editOrderProduk()

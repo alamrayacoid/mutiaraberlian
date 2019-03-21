@@ -43,7 +43,7 @@ class PenjualanPusatController extends Controller
         array_push($satuan, array('id' => $data->i_unit3, 'text' => $data->satuan3));
 
         return Response::json(array(
-            'data' => $data,
+            'data'   => $data,
             'satuan' => $satuan
         ));
     }
@@ -181,10 +181,10 @@ class PenjualanPusatController extends Controller
 
                         DB::table('d_salestargetdt')->insert([
                             'std_salestarget' => $query1->st_id,
-                            'std_detailid' => $stDetail,
-                            'std_item' => $data['idItem'][$i],
-                            'std_qty' => $data['t_qty'][$i],
-                            'std_unit' => $data['t_unit'][$i]
+                            'std_detailid'    => $stDetail,
+                            'std_item'        => $data['idItem'][$i],
+                            'std_qty'         => $data['t_qty'][$i],
+                            'std_unit'        => $data['t_unit'][$i]
                         ]);
                         DB::commit();
                         return response()->json([
@@ -205,18 +205,18 @@ class PenjualanPusatController extends Controller
                 $getIdMax = DB::table('d_salestarget')->max('st_id');
                 $stId = $getIdMax + 1;
                 DB::table('d_salestarget')->insert([
-                    'st_id' => $stId,
-                    'st_comp' => $data['t_comp'][0],
+                    'st_id'      => $stId,
+                    'st_comp'    => $data['t_comp'][0],
                     'st_periode' => Carbon::createFromFormat('d/m/Y', '01/' . $data['t_periode'])->format('Y-m-d')
                 ]);
 
                 for ($i = 0; $i < count($data['idItem']); $i++) {
                     DB::table('d_salestargetdt')->insert([
                         'std_salestarget' => $stId,
-                        'std_detailid' => ++$stDetail,
-                        'std_item' => $data['idItem'][$i],
-                        'std_qty' => $data['t_qty'][$i],
-                        'std_unit' => $data['t_unit'][$i]
+                        'std_detailid'    => ++$stDetail,
+                        'std_item'        => $data['idItem'][$i],
+                        'std_qty'         => $data['t_qty'][$i],
+                        'std_unit'        => $data['t_unit'][$i]
                     ]);
                 }
 
