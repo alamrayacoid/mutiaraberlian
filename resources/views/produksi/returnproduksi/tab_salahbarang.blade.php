@@ -1,16 +1,5 @@
-<fieldset class="mt-3 d-none animated fadeIn" id="salah_barang">
+<div class="d-none animated fadeIn container" id="salah_barang">
     <div class="row">
-        <div class="col-md-3 col-sm-6 col-12">
-            <label>Nota Penjualan<span class="text-danger">*</span></label>
-        </div>
-        <div class="col-md-3 col-sm-6 col-12">
-            <div class="form-group">
-                <select class="form-control form-control-sm select2">
-                    <option value="">--Pilih Nota--</option>
-                </select>
-            </div>
-        </div>
-
         <div class="col-md-3 col-sm-6 col-12">
             <label>No Resi dari Cus<span class="text-danger">*</span></label>
         </div>
@@ -155,4 +144,4 @@
             </thead>
         </table>
     </div>
-</fieldset>
+</div>
