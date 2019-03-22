@@ -52,45 +52,10 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
+var table;
+var history;
     $(document).ready(function() {
-        var table_sup = $('#table_distribusi').DataTable();
-        var table_bar = $('#table_history').DataTable();
-
-        $(document).on('click', '.btn-disable-distribusi', function() {
-            var ini = $(this);
-            $.confirm({
-                animation: 'RotateY',
-                closeAnimation: 'scale',
-                animationBounce: 1.5,
-                icon: 'fa fa-exclamation-triangle',
-                title: 'Peringatan!',
-                content: 'Apa anda yakin mau menonaktifkan data ini?',
-                theme: 'disable',
-                buttons: {
-                    info: {
-                        btnClass: 'btn-blue',
-                        text: 'Ya',
-                        action: function() {
-                            $.toast({
-                                heading: 'Information',
-                                text: 'Data Berhasil di Nonaktifkan.',
-                                bgColor: '#0984e3',
-                                textColor: 'white',
-                                loaderBg: '#fdcb6e',
-                                icon: 'info'
-                            })
-                            ini.parents('.btn-group').html('<button class="btn btn-success btn-enable-distribusi type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-                        }
-                    },
-                    cancel: {
-                        text: 'Tidak',
-                        action: function() {
-                            // tutup confirm
-                        }
-                    }
-                }
-            });
-        });
+      tabledistribusi();
 
         $(document).on('click', '.btn-enable-distribusi', function() {
             $.toast({
@@ -121,9 +86,81 @@
         })
     });
 
+    function tabledistribusi()
+  	{
+  		$('#table_distribusi').dataTable().fnDestroy();
+  		table = $('#table_distribusi').DataTable({
+  			responsive: true,
+  			serverSide: true,
+  			ajax: {
+  				url: baseUrl + '/inventory/distribusibarang/table',
+  				type: "get",
+  				data: {
+  					"_token": "{{ csrf_token() }}"
+  				}
+  			},
+  			columns: [
+  				{data: 'DT_RowIndex'},
+  				{data: 'tanggal'},
+  				{data: 'tujuan'},
+  				{data: 'sd_nota'},
+  				{data: 'type'},
+  				{data: 'action', name: 'action'}
+  			],
+  			pageLength: 10,
+  			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+  		});
+  	}
+
     $(document).ready(function() {
         $('.datepicker').datepicker();
     })
+
+    function hapus(id){
+      $.confirm({
+          animation: 'RotateY',
+          closeAnimation: 'scale',
+          animationBounce: 1.5,
+          icon: 'fa fa-exclamation-triangle',
+          title: 'Peringatan!',
+          content: 'Apa anda yakin mau menonaktifkan data ini?',
+          theme: 'disable',
+          buttons: {
+              info: {
+                  btnClass: 'btn-blue',
+                  text: 'Ya',
+                  action: function() {
+                    $.ajax({
+                      type: 'get',
+                      data: {id},
+                      dataType: 'json',
+                      url: baseUrl + '/inventory/distribusibarang/hapus',
+                      success : function(response){
+                        if (response.status == 'berhasil') {
+                          $.toast({
+                              heading: 'Information',
+                              text: 'Data Berhasil di Nonaktifkan.',
+                              bgColor: '#0984e3',
+                              textColor: 'white',
+                              loaderBg: '#fdcb6e',
+                              icon: 'info'
+                          })
+                        } else {
+                          messageFailed('Failed', 'Data Berhasil Gagal di Nonaktifkan');
+                        }
+                      }
+                    });
+                  }
+              },
+              cancel: {
+                  text: 'Tidak',
+                  action: function() {
+                      // tutup confirm
+                  }
+              }
+          }
+      });
+    }
 
 </script>
 @endsection

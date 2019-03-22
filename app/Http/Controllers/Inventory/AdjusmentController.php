@@ -28,7 +28,7 @@ class AdjusmentController extends Controller
     })
     ->addColumn('status', function($data) {
         return '<td><button class="btn btn-primary status-pending" style="pointer-events: none">Pending</button></td>';
-    })
+    })    
     ->addColumn('action', function($data) {
       return '<div class="btn-group btn-group-sm">
               <button class="btn btn-primary" type="button" onclick="cetak('.$data->aa_id.')" title="Print"><i class="fa fa-print"></i></button>

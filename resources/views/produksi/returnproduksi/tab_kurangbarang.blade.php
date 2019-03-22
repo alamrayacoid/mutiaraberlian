@@ -91,7 +91,7 @@
     </div>
     <hr>
     <div class="table-responsive">
-        <table class="table table-bordered table-hover table-striped" cellspacing="0" id="tabel_return_5">
+        <table class="table table-bordered table-hover table-striped" cellspacing="0" id="tabel_kurangbarang">
             <thead class="bg-primary">
                 <tr>
                     <th>Nama</th>

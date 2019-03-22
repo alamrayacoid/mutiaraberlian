@@ -513,6 +513,10 @@ class ProduksiController extends Controller
     {
         return view('produksi/returnproduksi/create');
     }
+    public function next_create_return_produksi()
+    {
+        return view('produksi/returnproduksi/next-create');
+    }
     public function nota(){
         return view('produksi/orderproduksi/nota');
     }

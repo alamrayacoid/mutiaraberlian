@@ -55,7 +55,7 @@
                             </section>
                         </div>
                         <div class="card-footer text-right">
-                            <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+                            <button class="btn btn-primary " onclick="simpan()" type="button">Simpan</button>
                             <a href="{{route('distribusibarang.index')}}" class="btn btn-secondary">Kembali</a>
                         </div>
                     </div>
@@ -72,6 +72,17 @@
 
 @section('extra_script')
     <script type="text/javascript">
+    $(document).ready(function(){
+        $(".namabarang").autocomplete({
+          source: '{{route('distribusibarang.getitem')}}',
+          select: function(event, ui) {
+            var iam = $(this).data('counter');
+            $('#idbarang'+iam).val(ui.item.id);
+            getdata(ui.item.id, iam);
+          }
+        });
+      });
+
         $(document).ready(function(){
             $('#type_cus').change(function(){
                 if($(this).val() === 'kontrak'){
@@ -117,6 +128,7 @@
                         '<td><button class="btn btn-danger btn-hapus-agen btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+
                         '</tr>'
                     );
+                    $('.select2').select2();
             });
 
             $(document).on('click', '.btn-hapus-cabang', function(){
@@ -124,17 +136,31 @@
             });
 
             $('.btn-tambah-cabang').on('click',function(){
+              var counter = 1;
                 $('#table_cabang')
                     .append(
                         '<tr>'+
-                        '<td><input type="text" class="form-control form-control-sm"></td>'+
-                        '<td><select name="#" id="#" class="form-control form-control-sm select2"><option value=""></option></select></td>'+
-                        '<td><input type="number" class="form-control form-control-sm" value="0"></td>'+
-                        '<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+
-                        '<td><input type="text" class="form-control form-control-sm" readonly=""></td>'+
+                        '<td><input type="text" name="namabarang[]" id="namabarang'+counter+'" data-counter="'+counter+'" class="form-control form-control-sm namabarang"> <input type="hidden" name="idbarang[]" id="idbarang'+counter+'"></td>'+
+                        '<td><select name="satuan[]" id="satuan'+counter+'" class="form-control form-control-sm select2"><option value="" disabled selected>Pilih Satuan</option></select></td>'+
+                        '<td><input type="number" name="qty[]" id="qty'+counter+'" class="form-control form-control-sm" value="0"></td>'+
+                        '<td><input type="text" name="harga[]" readonly id="harga'+counter+'" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+
+                        '<td><input type="text" name="subtotal[]" id="subtotal'+counter+'" class="form-control form-control-sm" readonly=""></td>'+
                         '<td><button class="btn btn-danger btn-hapus-cabang btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+
                         '</tr>'
                     );
+
+                $(".namabarang").autocomplete({
+                  source: '{{route('distribusibarang.getitem')}}',
+                  select: function(event, ui) {
+                    var iam = $(this).data('counter');
+                    $('#idbarang'+iam).val(ui.item.id);
+                    getdata(ui.item.id, iam);
+                  }
+                });
+
+                counter++;
+
+              $('.select2').select2();
             });
             $(document).on('click', '.btn-submit', function(){
                 $.toast({
@@ -147,6 +173,52 @@
                 })
             })
         });
+
+        function getdata(id, counter){
+          var html = '<option value="" disabled selected>Pilih Satuan</option>';
+          $.ajax({
+            type: 'get',
+            data: {id:id},
+            dataType: 'json',
+            url: baseUrl + '/inventory/distribusibarang/getsatuan',
+            success : function(response){
+              for (var i = 0; i < response.length; i++) {
+                html += '<option value="'+response[i].u_id+'">'+response[i].u_name+'</option>';
+              }
+              $('#satuan'+counter).html(html);
+            }
+          });
+        }
+
+        function simpan(){
+          var tmp = $('#select-order').val();
+
+          if (tmp == 2) {            
+            if ($('#pilihcabang').val() != null) {
+              $.ajax({
+                type: 'get',
+                data: $('#datacabang').serialize(),
+                dataType: 'json',
+                url: baseUrl + '/inventory/distribusibarang/simpancabang',
+                success : function(response){
+                  if (response.status == 'berhasil') {
+                    loadingHide();
+                    messageSuccess('Berhasil', 'Distribusi Cabang disimpan!');
+                    setTimeout(function () {
+                      window.location.href = baseUrl + '/inventory/distribusibarang/index';
+                    }, 1000);
+                  } else {
+                    messageFailed('Gagal!', 'Distribusi Cabang gagal disimpan!');
+                  }
+                }
+              });
+            } else {
+              messageFailed('Alert!', 'Mohon pilih cabang yang dituju!');
+            }
+          } else if (tmp == 1) {
+
+          }
+        }
     </script>
     <script type="text/javascript">
         $(document).ready(function(){
