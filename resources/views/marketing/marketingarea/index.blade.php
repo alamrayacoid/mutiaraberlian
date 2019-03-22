@@ -314,9 +314,9 @@
     });
 	}
 
-	function editOrder(id, dt)
+	function editOrder(id, dt, item)
 	{
-		window.location.href='{{ url('/marketing/marketingarea/orderproduk/edit') }}'+"/"+id+"/"+dt;
+		window.location.href='{{ url('/marketing/marketingarea/orderproduk/edit') }}'+"/"+id+"/"+dt+"/"+item;
 	}
 	// End Order Produk --------------------------------------------
 </script>

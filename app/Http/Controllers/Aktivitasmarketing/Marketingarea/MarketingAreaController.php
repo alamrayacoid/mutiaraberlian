@@ -40,7 +40,7 @@ class MarketingAreaController extends Controller
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                             <button class="btn btn-info hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-folder"></i>
                             </button>
-                            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-pencil"></i>
+                            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\', \'' . Crypt::encrypt($order->pod_item) . '\')"><i class="fa fa-pencil"></i>
                             </button>
                             <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-trash"></i>
                             </button>
@@ -270,11 +270,12 @@ class MarketingAreaController extends Controller
         }
     }
 
-    public function editOrderProduk($id, $dt)
+    public function editOrderProduk($id, $dt, $item)
     {
         try {
             $id = Crypt::decrypt($id);
             $dt = Crypt::decrypt($dt);
+            $item = Crypt::decrypt($item);
         } catch (\Exception $e) {
             return view('errors.404');
         }
@@ -285,7 +286,17 @@ class MarketingAreaController extends Controller
             ->where('pod_productorder', $id)
             ->where('pod_detailid', $dt)
             ->first();
-        return view('marketing/marketingarea/orderproduk/edit', compact('produk'));
+        $item = DB::table('m_item')
+            ->select('m_item.*')
+            ->where('i_id', '=', $item)
+            ->first();
+        $unit = DB::table('m_unit')
+            ->select('m_unit.*')
+            ->where('u_id', '=', $item->i_unit1)
+            ->orWhere('u_id', '=', $item->i_unit2)
+            ->orWhere('u_id', '=', $item->i_unit3)
+            ->get();
+        return view('marketing/marketingarea/orderproduk/edit', compact('produk', 'unit'));
     }
 
     public function updateTarget($st_id, $dt_id, Request $request)

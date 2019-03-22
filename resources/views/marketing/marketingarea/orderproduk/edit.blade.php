@@ -35,7 +35,7 @@
                 </div>
                 <div class="col-md-10 col-sm-6 col-xs-12">
                   <div class="form-group">
-                    <input type="text" name="barang" class="form-control form-control-sm barang" style="text-transform:uppercase" autocomplete="off" value="{{$produk->i_name}}">
+                    <input type="text" name="barang" class="form-control form-control-sm barang" style="text-transform:uppercase" autocomplete="off" value="{{$produk->i_code}} - {{$produk->i_name}}">
                     <input type="hidden" name="idItem" class="itemId" value="{{$produk->i_id}}">
                     <input type="hidden" name="kode" class="kode" value="{{$produk->i_code}}">
                   </div>
@@ -46,6 +46,10 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                   <div class="form-group">
                     <select name="po_unit" class="form-control form-control-sm select2 satuan">
+                      <option value="{{$produk->u_id}}" selected="">{{$produk->u_name}}</option>
+                      @foreach($unit->where('u_id', '!=', $produk->pod_unit) as $u)
+                        <option value="{{$u->u_id}}">{{$u->u_name}}</option>                    
+                      @endforeach
                     </select>
                   </div>
                 </div>
@@ -54,7 +58,7 @@
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
                   <div class="form-group">
-                    <input type="number" name="po_qty" min="0" class="form-control form-control-sm jumlah" value="0">
+                    <input type="number" name="po_qty" min="0" class="form-control form-control-sm jumlah" value="{{$produk->pod_qty}}">
                   </div>
                 </div>
                 <div class="col-md-2 col-sm-6 col-xs-12">
@@ -62,8 +66,8 @@
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
                   <div class="form-group">
-                    <input type="text" name="po_harga" class="form-control form-control-sm input-rupiah harga" value="Rp. 0">
-                    <input type="hidden" name="po_hrg" class="po_hrg">
+                    <input type="text" name="po_harga" class="form-control form-control-sm input-rupiah harga" value="{{Currency::addRupiah($produk->pod_price)}}">
+                    <input type="hidden" name="po_hrg" class="po_hrg" value="{{$produk->pod_price}}">
                   </div>
                 </div>
                 <div class="col-md-2 col-sm-6 col-xs-12">
@@ -71,8 +75,8 @@
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
                   <div class="form-group">
-                    <input type="text" class="form-control form-control-sm" name="total_harga" id="total_harga" readonly>
-                    <input type="hidden" name="tot_hrg" id="tot_hrg">
+                    <input type="text" class="form-control form-control-sm" name="total_harga" id="total_harga" readonly value="{{Currency::addRupiah($produk->pod_totalprice)}}">
+                    <input type="hidden" name="tot_hrg" id="tot_hrg" value="{{$produk->pod_totalprice}}">
                   </div>
                 </div>
               </div>
@@ -100,6 +104,7 @@
     $(document).ready(function() {
         changeJumlah();
         changeSatuan();
+        setArrayCode();
 
         // AutoComplete Item ------------------------------------------
         $('.barang').on('click', function (e) {
@@ -110,76 +115,76 @@
             $(".itemId").val('');
             $(".kode").val('');
         });
-
-        function setArrayCode() {
-            var inputs = document.getElementsByClassName('kode'),
-                code   = [].map.call(inputs, function (input) {
-                    return input.value.toString();
-                });
-
-            for (var i = 0; i < code.length; i++) {
-                if (code[i] != "") {
-                    icode.push(code[i]);
-                }
-            }
-
-            var item = [];
-            var inpItemId = document.getElementsByClassName('itemId'),
-                item      = [].map.call(inpItemId, function (input) {
-                    return input.value;
-                });
-
-            $(".barang").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "{{ url('/marketing/marketingarea/orderproduk/cari-barang') }}",
-                        data: {
-                            idItem: item,
-                            term: $(".barang").val()
-                        },
-                        success: function (data) {
-                            response(data);
-                            console.log(data);
-                        }
-                    });
-                },
-                minLength: 1,
-                select: function (event, data) {
-                    setItem(data.item);
-                }
-            });
-        }
-
-        function setItem(info) {
-          idItem   = info.data.i_id;
-          namaItem = info.data.i_name;
-          kode     = info.data.i_code;
-          $(".kode").val(kode);
-          $(".itemId").val(idItem);
-          setArrayCode();
-          $.ajax({
-            url: '{{ url('/marketing/marketingarea/orderproduk/get-satuan') }}' + '/' + idItem,
-            type: 'GET',
-            success: function (resp) {
-              $(".satuan").find('option').remove();
-              var option = '';
-              if (resp.id1 != null) {
-                  option += '<option value="' + resp.id1 + '">' + resp.unit1 + '</option>'
-              }
-              if (resp.id2 != null && resp.id2 != resp.id1) {
-                  option += '<option value="' + resp.id2 + '">' + resp.unit2 + '</option>';
-              }
-              if (resp.id3 != null && resp.id3 != resp.id1) {
-                  option += '<option value="' + resp.id3 + '">' + resp.unit3 + '</option>';
-              }
-              $(".satuan").append(option);
-            }
-          });
-          everyChange();
-        }
         // End AutoComplete -------------------------------------------
     });
     // End Document Ready ---------------------------------------------
+
+    function setArrayCode() {
+        var inputs = document.getElementsByClassName('kode'),
+            code   = [].map.call(inputs, function (input) {
+                return input.value.toString();
+            });
+
+        for (var i = 0; i < code.length; i++) {
+            if (code[i] != "") {
+                icode.push(code[i]);
+            }
+        }
+
+        var item = [];
+        var inpItemId = document.getElementsByClassName('itemId'),
+            item      = [].map.call(inpItemId, function (input) {
+                return input.value;
+            });
+
+        $(".barang").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "{{ url('/marketing/marketingarea/orderproduk/cari-barang') }}",
+                    data: {
+                        idItem: item,
+                        term: $(".barang").val()
+                    },
+                    success: function (data) {
+                        response(data);
+                        console.log(data);
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, data) {
+                setItem(data.item);
+            }
+        });
+    }
+
+    function setItem(info) {
+      idItem   = info.data.i_id;
+      namaItem = info.data.i_name;
+      kode     = info.data.i_code;
+      $(".kode").val(kode);
+      $(".itemId").val(idItem);
+      setArrayCode();
+      $.ajax({
+        url: '{{ url('/marketing/marketingarea/orderproduk/get-satuan') }}' + '/' + idItem,
+        type: 'GET',
+        success: function (resp) {
+          $(".satuan").find('option').remove();
+          var option = '';
+          if (resp.id1 != null) {
+              option += '<option value="' + resp.id1 + '">' + resp.unit1 + '</option>'
+          }
+          if (resp.id2 != null && resp.id2 != resp.id1) {
+              option += '<option value="' + resp.id2 + '">' + resp.unit2 + '</option>';
+          }
+          if (resp.id3 != null && resp.id3 != resp.id1) {
+              option += '<option value="' + resp.id3 + '">' + resp.unit3 + '</option>';
+          }
+          $(".satuan").append(option);
+          everyChange();
+        }
+      });
+    }
     
     // Merubah Sub Total Berdasarkan Jumlah Item ----------------------
     function changeJumlah() {
@@ -213,7 +218,7 @@
           jumlah    = [].map.call(inpJumlah, function( input ) {
               return parseInt(input.value);
           });
-          
+
       $.ajax({
           url: "{{url('/marketing/marketingarea/orderproduk/get-price')}}",
           type: "GET",
