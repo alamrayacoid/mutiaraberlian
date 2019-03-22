@@ -8,7 +8,7 @@
         <h4 class="modal-title">Detail Data</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
-      <div class="modal-body">      =
+      <div class="modal-body">
           <table class="table table-striped data-table table-hover" cellspacing="0">
             <thead class="bg-primary">
               <tr align="center">

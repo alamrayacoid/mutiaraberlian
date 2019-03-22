@@ -177,6 +177,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Return Produksi
     Route::get('/produksi/returnproduksi/index', 'ProduksiController@return_produksi')->name('return.index');
     Route::get('/produksi/returnproduksi/create', 'ProduksiController@create_return_produksi')->name('return.create');
+    Route::get('/produksi/returnproduksi/create/next', 'ProduksiController@next_create_return_produksi')->name('return.nextcreate');
     // !===================================================== END PRODUKSI =====================================================!
 
     // !===================================================== INVENTORY =====================================================!
