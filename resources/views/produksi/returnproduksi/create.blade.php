@@ -46,35 +46,42 @@
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <button class="btn btn-md btn-primary" title="Pencarian No. Nota" data-toggle="modal" data-target="#search-modal"><i class="fa fa-search"></i></button>
+                                    <button class="btn btn-md btn-primary" title="Pencarian No. Nota" data-toggle="modal" data-target="#search-modal" data-backdrop="static" data-keyboard="false"><i class="fa fa-search"></i></button>
                                 </div>
 
                         	</div>
 
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover table-striped display nowrap" cellspacing="0" id="tabel_return">
-                                    <thead class="bg-primary">
-                                        <tr>
-                                            <th></th>
-                                            <th width="40%">Nama Barang</th>
-                                            <th width="20%">Kode Spesifik/Qty</th>
-                                            <th width="20%">Nota DO</th>
-                                        </tr>
-                                    </thead>	
-                                    <tbody>
-                                        <tr>
-                                            <td style="text-align:center;" width="10%"><input type="checkbox"></td>
-                                            <td>Obat</td>
-                                            <td>KUY001</td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <fieldset>
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-6 col-12">
+                                        <label>Metode Return</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-6 col-12">
+                        			<div class="form-group">
+                        				<select class="form-control form-control-sm" id="header-metodereturn">
+                        					<option value="">--Pilih Metode Return--</option>
+                        					<option value="1">Potong Nota</option>
+                        					<option value="2">Tukar Barang</option>
+                        					<option value="3">Salah Barang</option>
+                        					<option value="4">Salah Alamat</option>
+                        					<option value="5">Kurang Barang</option>
+                        				</select>
+                        			</div>
+                                    </div>
+                                    @include('produksi.returnproduksi.tab_potongnota')
+                                    @include('produksi.returnproduksi.tab_tukarbarang')
+                                    @include('produksi.returnproduksi.tab_salahbarang')
+                                    @include('produksi.returnproduksi.tab_salahalamat')
+                                    @include('produksi.returnproduksi.tab_kurangbarang')
+                        		</div>
+                            </fieldset>
+
+
+
                         </section>
                     </div>
                     <div class="card-footer text-right">
-                    	<button class="btn btn-primary" type="button" onclick="window.location.href='{{ route('return.nextcreate') }}'">Lanjutkan Return</button>
+                    	<button class="btn btn-primary" type="button">Simpan</button>
                     	<a href="{{route('return.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
@@ -92,7 +99,64 @@
 @section('extra_script')
 <script type="text/javascript">
 	$(document).ready(function(){
-        $('#tabel_return').DataTable();
+        var eueue, crmpie, table3, table4, table5, table_salahkirim_1, table_salahkirim_2;
+
+        eueue = $('#tabel_return_1').DataTable();
+        crmpie = $('#tabel_return_2').DataTable();
+        table3 = $('#tabel_return_3').DataTable();
+        table4 = $('#tabel_return_4').DataTable();
+		table5 = $('#tabel_return_5').DataTable();
+        table_salahkirim_1 = $('#table_salahkirim_1').DataTable();
+        table_salahkirim_2 = $('#table_salahkirim_2').DataTable();
+
+        $('#header-metodereturn').change(function(){
+            var ini, potong_nota, tukar_barang, salah_barang, salah_alamat, kurang_barang;
+            ini             = $(this).val();
+            potong_nota     = $('#potong_nota');
+            tukar_barang     = $('#tukar_barang');
+            salah_barang     = $('#salah_barang');
+            salah_alamat     = $('#salah_alamat');
+            kurang_barang     = $('#kurang_barang');
+
+            if (ini === '1') {
+                potong_nota.removeClass('d-none');
+                tukar_barang.addClass('d-none');
+                salah_barang.addClass('d-none');
+                salah_alamat.addClass('d-none');
+                kurang_barang.addClass('d-none');
+            } else if(ini === '2'){
+                potong_nota.addClass('d-none');
+                tukar_barang.removeClass('d-none');
+                salah_barang.addClass('d-none');
+                salah_alamat.addClass('d-none');
+                kurang_barang.addClass('d-none');
+            } else if(ini === '3'){
+                potong_nota.addClass('d-none');
+                tukar_barang.addClass('d-none');
+                salah_barang.removeClass('d-none');
+                salah_alamat.addClass('d-none');
+                kurang_barang.addClass('d-none');
+            } else if(ini === '4'){
+                potong_nota.addClass('d-none');
+                tukar_barang.addClass('d-none');
+                salah_barang.addClass('d-none');
+                salah_alamat.removeClass('d-none');
+                kurang_barang.addClass('d-none');
+            } else if(ini === '5'){
+                potong_nota.addClass('d-none');
+                tukar_barang.addClass('d-none');
+                salah_barang.addClass('d-none');
+                salah_alamat.addClass('d-none');
+                kurang_barang.removeClass('d-none');
+            } else {
+
+                potong_nota.addClass('d-none');
+                tukar_barang.addClass('d-none');
+                salah_barang.addClass('d-none');
+                salah_alamat.addClass('d-none');
+                kurang_barang.addClass('d-none');
+            }
+        });
 	});
 </script>
 @endsection
