@@ -1,16 +1,15 @@
 @extends('main')
 
 @section('content')
-
 <article class="content animated fadeInLeft">
   <div class="title-block text-primary">
-      <h1 class="title"> Edit Data Pegawai </h1>
-      <p class="title-description">
-        <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
-        / <span>Master Data Utama</span>
-        / <a href="{{route('pegawai.index')}}"><span>Data Pegawai</span></a>
-        / <span class="text-primary font-weight-bold">Detail Data Pegawai</span>
-      </p>
+    <h1 class="title"> Edit Data Pegawai </h1>
+    <p class="title-description">
+      <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
+      / <span>Master Data Utama</span>
+      / <a href="{{route('pegawai.index')}}"><span>Data Pegawai</span></a>
+      / <span class="text-primary font-weight-bold">Detail Data Pegawai</span>
+    </p>
   </div>
   <section class="section">
     <div class="row">
@@ -33,9 +32,9 @@
                       <div class="col-12" align="center">
                         <div class="form-group">
                           @if($employee->e_foto != null)
-                            <img src="{{asset('assets/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" style="max-height: 254px;max-width: 100%;">
+                          <img src="{{asset('assets/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" style="max-height: 254px;max-width: 100%;">
                           @else
-                            <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" style="max-height: 254px;max-width: 100%;">
+                          <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" style="max-height: 254px;max-width: 100%;">
                           @endif
                         </div>
                       </div>
@@ -51,7 +50,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_nip}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Nama Pegawai</label>
                       </div>
@@ -60,7 +58,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_name}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>NIK</label>
                       </div>
@@ -69,7 +66,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_nik}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Pemilik Cabang</label>
                       </div>
@@ -78,7 +74,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->c_name}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Nomor HP</label>
                       </div>
@@ -87,7 +82,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_telp}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Agama</label>
                       </div>
@@ -96,23 +90,21 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_religion}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Jenis Kelamin</label>
                       </div>
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <div class="form-group">
                           <?php
-                            if ($employee->e_gender == 'L') {
-                              $kelamin = "Laki-laki";
-                            } else {
-                              $kelamin = "Perempuan";
-                            }
+                          if ($employee->e_gender == 'L') {
+                          $kelamin = "Laki-laki";
+                          } else {
+                          $kelamin = "Perempuan";
+                          }
                           ?>
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$kelamin}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Nama Pasangan</label>
                       </div>
@@ -121,23 +113,21 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_matename}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Status</label>
                       </div>
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <div class="form-group">
                           <?php
-                            if ($employee->e_maritalstatus == 'Y') {
-                              $status = "Sudah Menikah";
-                            } else {
-                              $status = "Belum Menikah";
-                            }
+                          if ($employee->e_maritalstatus == 'Y') {
+                          $status = "Sudah Menikah";
+                          } else {
+                          $status = "Belum Menikah";
+                          }
                           ?>
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$status}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Jumlah Anak</label>
                       </div>
@@ -146,7 +136,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_child}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Tanggal Lahir</label>
                       </div>
@@ -155,7 +144,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_birth}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Tanggal Masuk</label>
                       </div>
@@ -164,7 +152,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_workingyear}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Pendidikan</label>
                       </div>
@@ -173,7 +160,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_education}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>E-mail</label>
                       </div>
@@ -182,7 +168,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_email}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Jabatan</label>
                       </div>
@@ -191,7 +176,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->j_name}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Divisi</label>
                       </div>
@@ -200,7 +184,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->m_name}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-12 col-xs-12">
                         <label>Alamat</label>
                       </div>
@@ -209,7 +192,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_address}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Bank</label>
                       </div>
@@ -218,7 +200,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_bank}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>No. Rekening</label>
                       </div>
@@ -227,7 +208,6 @@
                           <input type="text" readonly disabled style="background-color: white;" class="form-control form-control-sm" value="{{$employee->e_rekening}}">
                         </div>
                       </div>
-
                       <div class="col-md-3 col-sm-6 col-xs-12">
                         <label>Atas Nama</label>
                       </div>

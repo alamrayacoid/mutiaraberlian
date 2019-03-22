@@ -6,7 +6,7 @@
             </div>
             <div class="header-block pull-right">
                 <a class="btn btn-primary" href="{{ route('targetReal.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah
-                    Data</a>
+                Data</a>
             </div>
             <div class=""></div>
         </div>
@@ -36,18 +36,17 @@
                 <div class="table-responsive">
                     <table class="table table-hover table-striped w-100" cellspacing="0" id="table_target">
                         <thead class="bg-primary">
-                        <tr>
-                            <th>Periode</th>
-                            <th>Nama Cabang</th>
-                            <th>Nama Barang</th>
-                            <th>Target</th>
-                            <th>Realisasi</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
+                            <tr>
+                                <th>Periode</th>
+                                <th>Nama Cabang</th>
+                                <th>Nama Barang</th>
+                                <th>Target</th>
+                                <th>Realisasi</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
                         </thead>
                         <tbody>
-
                         </tbody>
                     </table>
                 </div>

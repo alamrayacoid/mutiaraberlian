@@ -105,23 +105,34 @@ class ProduksiController extends Controller
     public function get_order(Request $request){
         $data = '';
         $getData = DB::table('d_productionorder')
-            ->join('m_supplier', 's_id', '=', 'po_supplier');
+            ->join('m_supplier', 's_id', '=', 'po_supplier')
+            ->join('d_productionorderpayment', 'pop_productionorder', '=', 'po_id')
+            ->groupBy('po_id')
+            ->select('po_id', 'po_nota as nota', 's_company as supplier', 'po_totalnet as nilai_order', 'po_status as status', DB::raw('sum(pop_pay) as terbayar'));
 
         $data = $getData->get();
 
         return DataTables::of($data)
             ->addIndexColumn()
+            ->addColumn('nota', function($data){
+                return $data->nota;
+            })
+            ->addColumn('supplier', function($data){
+                return $data->supplier;
+            })
             ->addColumn('totalnet', function($data){
-                return Currency::addRupiah($data->po_totalnet);
+                return '<div class="text-right">'.Currency::addRupiah($data->nilai_order).'</div>';
             })
             ->addColumn('bayar', function($data){
-                return Currency::addRupiah(0);
+                return '<div class="text-right">'.Currency::addRupiah($data->terbayar).'</div>';
             })
             ->addColumn('status', function($data){
-                if($data->po_status == 'BELUM'){
-                    return '<div class="status-termin-lunas"><p>BELUM LUNAS</p></div>';
+                if($data->status == 'BELUM'){
+//                    return '<div class="status-termin-lunas"><p>BELUM LUNAS</p></div>';
+                    return '<div class="text-center">BELUM LUNAS</div>';
                 }else{
-                    return '<div class="status-termin-belum"><p>LUNAS</p></div>';
+//                    return '<div class="status-termin-belum"><p>LUNAS</p></div>';
+                    return '<div class="text-center">LUNAS</div>';
                 }
             })
             ->addColumn('aksi', function($data){
@@ -131,7 +142,7 @@ class ProduksiController extends Controller
                 $nota = '<button class="btn btn-info btn-nota" title="Nota" type="button" onclick="printNota(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-print"></i></button>';
                 return '<div class="btn-group btn-group-sm">'. $detail . $nota . $edit . $hapus . '</div>';
             })
-            ->rawColumns(['detail','totalnet','bayar', 'status','aksi'])
+            ->rawColumns(['totalnet','bayar', 'status','aksi'])
             ->make(true);
     }
 
@@ -501,6 +512,10 @@ class ProduksiController extends Controller
     public function create_return_produksi()
     {
         return view('produksi/returnproduksi/create');
+    }
+    public function next_create_return_produksi()
+    {
+        return view('produksi/returnproduksi/next-create');
     }
     public function nota(){
         return view('produksi/orderproduksi/nota');

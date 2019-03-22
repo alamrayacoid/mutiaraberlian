@@ -6,54 +6,42 @@
 @include('marketing.marketingarea.monitoring.modal')
 
 <article class="content animated fadeInLeft">
-
 	<div class="title-block text-primary">
-	    <h1 class="title"> Manajemen Marketing Area  </h1>
-	    <p class="title-description">
-	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Marketing</span> / <span class="text-primary" style="font-weight: bold;">Manajemen Marketing Area</span>
-	     </p>
+		<h1 class="title"> Manajemen Marketing Area  </h1>
+		<p class="title-description">
+			<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Marketing</span> / <span class="text-primary" style="font-weight: bold;">Manajemen Marketing Area</span>
+		</p>
 	</div>
-
 	<section class="section">
-
 		<div class="row">
-
 			<div class="col-12">
-
-                <ul class="nav nav-pills mb-3" id="Tabzs">
-                    <li class="nav-item">
-                        <a href="#orderproduk" class="nav-link active" data-target="#orderproduk" aria-controls="orderproduk" data-toggle="tab" role="tab">Order Produk ke Cabang</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#keloladataagen" class="nav-link" data-target="#keloladataagen" aria-controls="keloladataagen" data-toggle="tab" role="tab">Kelola Data Order Agen </a>
+				<ul class="nav nav-pills mb-3" id="Tabzs">
+					<li class="nav-item">
+						<a href="#orderproduk" class="nav-link active" data-target="#orderproduk" aria-controls="orderproduk" data-toggle="tab" role="tab">Order Produk ke Cabang</a>
 					</li>
 					<li class="nav-item">
-                        <a href="#monitoringpenjualanagen" class="nav-link" data-target="#monitoringpenjualanagen" aria-controls="monitoringpenjualanagen" data-toggle="tab" role="tab">Monitoring Data Penjualan Agen</a>
+						<a href="#keloladataagen" class="nav-link" data-target="#keloladataagen" aria-controls="keloladataagen" data-toggle="tab" role="tab">Kelola Data Order Agen </a>
 					</li>
 					<li class="nav-item">
-                        <a href="#datacanvassing" class="nav-link" data-target="#datacanvassing" aria-controls="datacanvassing" data-toggle="tab" role="tab">Kelola Data Canvassing</a>
+						<a href="#monitoringpenjualanagen" class="nav-link" data-target="#monitoringpenjualanagen" aria-controls="monitoringpenjualanagen" data-toggle="tab" role="tab">Monitoring Data Penjualan Agen</a>
 					</li>
 					<li class="nav-item">
-                        <a href="#datakonsinyasi" class="nav-link" data-target="#datakonsinyasi" aria-controls="datakonsinyasi" data-toggle="tab" role="tab">Kelola Data Konsinyasi </a>
+						<a href="#datacanvassing" class="nav-link" data-target="#datacanvassing" aria-controls="datacanvassing" data-toggle="tab" role="tab">Kelola Data Canvassing</a>
 					</li>
-                </ul>
-
-                <div class="tab-content">
-
+					<li class="nav-item">
+						<a href="#datakonsinyasi" class="nav-link" data-target="#datakonsinyasi" aria-controls="datakonsinyasi" data-toggle="tab" role="tab">Kelola Data Konsinyasi </a>
+					</li>
+				</ul>
+				<div class="tab-content">
 					@include('marketing.marketingarea.orderproduk.index')
 					@include('marketing.marketingarea.keloladataorder.index')
 					@include('marketing.marketingarea.monitoring.index')
 					@include('marketing.marketingarea.datacanvassing.index')
 					@include('marketing.marketingarea.datakonsinyasi.index')
-
-	            </div>
-
+				</div>
 			</div>
-
 		</div>
-
 	</section>
-
 </article>
 
 @endsection
@@ -61,6 +49,7 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
+		orderProdukList();
 		var table_sup = $('#table_orderproduk').DataTable();
 		var table_pus = $('#table_keloladataagen').DataTable();
 		var table_bar = $('#table_monitoringpenjualanagen').DataTable();
@@ -68,7 +57,7 @@
 		var table_bro = $('#table_konsinyasi').DataTable();
 
 		$(document).on('click','.btn-edit',function(){
-			window.location.href='{{ route('orderproduk.edit') }}'
+			window.location.href='{{ route('orderProduk.edit') }}'
 		});
 
 		$(document).on('click','.btn-edit-order',function(){
@@ -236,7 +225,6 @@
 			});
 		});
 
-
 		$(document).on('click', '.btn-enable-canv', function(){
 			$.toast({
 				heading: 'Information',
@@ -298,11 +286,37 @@
 				textColor: 'white',
 				loaderBg: '#fdcb6e',
 				icon: 'info'
-			})
+			});
 			$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit-kons" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
 	                                		'<button class="btn btn-danger btn-disable-kons" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-		})
+		});
 		
 	});
+
+	// Order Produk Ke Cabang -------------------------------
+	function orderProdukList()
+	{
+    tb_target = $('#table_orderproduk').DataTable({
+        responsive: true,
+        serverSide: true,
+        ajax: {
+            url: "{{ route('orderProduk.list') }}",
+            type: "get",
+            data: {
+                "_token": "{{ csrf_token() }}"
+            }
+        },
+        columns: [
+            {data: 'po_date'},
+            {data: 'i_name'},
+            {data: 'u_name'},
+            {data: 'pod_qty'},
+            {data: 'price'},
+            {data: 'action'}
+        ],
+        pageLength: 10,
+        lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+    });
+	}
 </script>
 @endsection

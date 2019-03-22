@@ -3,7 +3,6 @@
 @section('content')
 
 <article class="content animated fadeInLeft">
-
     <div class="title-block text-primary">
         <h1 class="title"> Tambah Data Order Produk ke Cabang</h1>
         <p class="title-description">
@@ -13,15 +12,10 @@
             / <span class="text-primary" style="font-weight: bold;"> Tambah Data Order Produk ke Cabang </span>
         </p>
     </div>
-
     <section class="section">
-
         <div class="row">
-
             <div class="col-12">
-
                 <div class="card">
-
                     <div class="card-header bordered p-2">
                         <div class="header-block">
                             <h3 class="title"> Tambah Data Order Produk ke Cabang </h3>
@@ -30,118 +24,111 @@
                             <a href="{{route('marketingarea.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
                         </div>
                     </div>
-
                     <div class="card-block">
                         <form action="" id="formOrder">
-                        <section>
-                        
-                            <div class="row">
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Area</label>
-                                </div>
-
-                                <div class="col-md-10 col-sm-6 col-xs-12">
-                                    <div class="row">
-                                        <div class="form-group col-6">
-                                            <select name="po_prov" id="prov" class="form-control form-control-sm select2" onchange="getProvId()">
-                                                <option value="" selected="" disabled="">=== Pilih Provinsi ===</option>
-                                                @foreach($provinsi as $prov)
+                            <section>
+                                
+                                <div class="row">
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Area</label>
+                                    </div>
+                                    <div class="col-md-10 col-sm-6 col-xs-12">
+                                        
+                                        <div class="row">
+                                            <div class="form-group col-6">
+                                                <select name="po_prov" id="prov" class="form-control form-control-sm select2" onchange="getProvId()">
+                                                    <option value="" selected="" disabled="">=== Pilih Provinsi ===</option>
+                                                    @foreach($provinsi as $prov)
                                                     <option value="{{$prov->wp_id}}">{{$prov->wp_name}}</option>
-                                                @endforeach
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <select name="po_city" id="city" class="form-control form-control-sm select2 city" onchange="getCityId()">
+                                                    <option value="" selected disabled>=== Pilih Kota ===</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Agen Pembeli</label>
+                                    </div>
+                                    <div class="col-md-10 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select name="po_agen[]" id="agen" class="form-control form-control-sm select2 agen">
+                                                <option value="" selected disabled>=== Pilih Agen ===</option>
                                             </select>
                                         </div>
-                                        <div class="form-group col-6">
-                                            <select name="po_city" id="city" class="form-control form-control-sm select2 city" onchange="getCityId()">
-                                                <option value="" selected disabled>=== Pilih Kota ===</option>
+                                    </div>
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Cabang</label>
+                                    </div>
+                                    <div class="col-md-10 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select name="po_comp[]" id="comp" class="form-control form-control-sm select2">
+                                                <option value="" selected="" disabled="">=== Pilih Cabang ===</option>
+                                                <?php foreach($company as $comp){?>
+                                                <option value="<?php echo $comp->c_id;?>"><?php echo $comp->c_name;?></option>
+                                                <?php } ?>
                                             </select>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Agen Pembeli</label>
-                                </div>
-
-                                <div class="col-md-10 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <select name="po_agen[]" id="agen" class="form-control form-control-sm select2 agen">
-                                            <option value="" selected disabled>=== Pilih Agen ===</option>
-                                        </select>
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Total Harga</label>
                                     </div>
-                                </div>
-
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Cabang</label>
-                                </div>
-
-                                <div class="col-md-10 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <select name="po_comp[]" id="comp" class="form-control form-control-sm select2">
-                                            <option value="" selected="" disabled="">=== Pilih Cabang ===</option>
-                                            @foreach($company as $comp)
-                                                <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="col-md-10 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-sm"
+                                            name="total_harga[]" id="total_harga" readonly>
+                                            <input type="hidden" name="tot_hrg[]" id="tot_hrg">
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Total Harga</label>
-                                </div>
-
-                                <div class="col-md-10 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control form-control-sm"
-                                               name="total_harga[]" id="total_harga" readonly>
-                                        <input type="hidden" name="tot_hrg[]" id="tot_hrg">
-                                    </div>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-hover" cellspacing="0" id="table_order">
-                                        <thead class="bg-primary">
-                                            <tr>
-                                                <th width="30%">Kode Barang/Nama Barang</th>
-                                                <th width="10%">Satuan</th>
-                                                <th width="10%">Jumlah</th>
-                                                <th width="25%">Harga Satuan</th>
-                                                <th width="25%">Sub Total</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <input type="text" name="barang[]"
-                                                                   class="form-control form-control-sm barang"
-                                                                   style="text-transform:uppercase">
-                                                    <input type="hidden" name="idItem[]" class="itemId">
-                                                    <input type="hidden" name="kode[]" class="kode">
-                                                </td>
-                                                <td>                                                    
-                                                    <select name="po_unit[]"
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" cellspacing="0" id="table_order">
+                                            <thead class="bg-primary">
+                                                <tr>
+                                                    <th width="30%">Kode Barang/Nama Barang</th>
+                                                    <th width="10%">Satuan</th>
+                                                    <th width="10%">Jumlah</th>
+                                                    <th width="25%">Harga Satuan</th>
+                                                    <th width="25%">Sub Total</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <input type="text" name="barang[]"
+                                                        class="form-control form-control-sm barang"
+                                                        style="text-transform:uppercase" autocomplete="off">
+                                                        <input type="hidden" name="idItem[]" class="itemId">
+                                                        <input type="hidden" name="kode[]" class="kode">
+                                                    </td>
+                                                    <td>
+                                                        <select name="po_unit[]"
                                                             class="form-control form-control-sm select2 satuan">
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="number" name="po_qty[]" min="0" class="form-control form-control-sm jumlah" value="0">
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="po_harga[]" class="form-control form-control-sm input-rupiah harga" value="Rp. 0">
-                                                    <input type="hidden" name="po_hrg[]" class="po_hrg">
-                                                </td>
-                                                <td>                                                    
-                                                    <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" readonly>
-                                                    <input type="hidden" name="sbtotal[]" class="sbtotal">
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-success btn-tambah-order btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" name="po_qty[]" min="0" class="form-control form-control-sm jumlah" value="0">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="po_harga[]" class="form-control form-control-sm input-rupiah harga" value="Rp. 0">
+                                                        <input type="hidden" name="po_hrg[]" class="po_hrg">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" readonly>
+                                                        <input type="hidden" name="sbtotal[]" class="sbtotal">
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-success btn-tambah-order btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
-                        </section>
+                            </section>
                         </form>
                     </div>
                     <div class="card-footer text-right">
@@ -149,13 +136,9 @@
                         <a href="{{route('marketingarea.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
 </article>
 
 @endsection
@@ -177,6 +160,10 @@
             idxBarang = $('.barang').index(this);
             setArrayCode();
         });
+        $('.jumlah').on('click change', function (e) {
+                idxBarang = $('.jumlah').index(this);
+                setArrayCode();
+            });
 
         $(".barang").eq(idxBarang).on("keyup", function () {
             $(".itemId").eq(idxBarang).val('');
@@ -256,7 +243,7 @@
                     '<tr>' +
                         '<td>'+
                             '<input type="text" name="barang[]" class="form-control form-control-sm barang"'+
-                            'style="text-transform:uppercase">'+
+                            'style="text-transform:uppercase" autocomplete="off">'+
                             '<input type="hidden" name="idItem[]" class="itemId">'+
                             '<input type="hidden" name="kode[]" class="kode">'+
                         '</td>' +
@@ -273,9 +260,6 @@
                         '<td><button class="btn btn-danger btn-hapus-order btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>' +
                     '</tr>'
                 );
-
-            changeJumlah();
-            changeHarga();
 
             $('.select2').select2({
                 theme: "bootstrap",
@@ -295,10 +279,17 @@
                 setArrayCode();
             });
 
+            $('.jumlah').on('click change', function (e) {
+                idxBarang = $('.jumlah').index(this);
+                setArrayCode();
+            });
+
             $(".barang").eq(idxBarang).on("keyup", function () {
                 $(".itemId").eq(idxBarang).val('');
                 $(".kode").eq(idxBarang).val('');
             });
+            changeJumlah();
+            changeHarga();
         });
         // End Form Order ---------------------------------------------
 
@@ -314,41 +305,66 @@
     // Merubah Sub Total Berdasarkan Jumlah Item ----------------------
     function changeJumlah() {
         $(".jumlah").on('input', function (evt) {
+            evt.preventDefault();
+
+            var inpSatuan = document.getElementsByClassName('satuan'),
+                satuan = [].map.call(inpSatuan, function(input){
+                    return parseInt(input.value);
+                })
             var inpJumlah = document.getElementsByClassName( 'jumlah' ),
                 jumlah    = [].map.call(inpJumlah, function( input ) {
                     return parseInt(input.value);
                 });
 
-            var inpHarga = document.getElementsByClassName( 'harga' ),
-                harga    = [].map.call(inpHarga, function( input ) {
-                    return input.value;
-                });
+            $.ajax({
+                url: "{{url('/marketing/marketingarea/orderproduk/get-price')}}",
+                type: "GET",
+                data: {
+                    item : $('.itemId').eq(idxBarang).val(),
+                    unit: $('.satuan').eq(idxBarang).val(),
+                    qty: $('.jumlah').eq(idxBarang).val()
+                },
+                success:function(res)
+                {
+                    
+                    var price = res.data;
+                    if (isNaN(price)) {
+                        price = 0;
+                    }
+                    $('.harga').eq(idxBarang).val(convertToRupiah(price));
+                    $('.po_hrg').eq(idxBarang).val(price);
 
-            var inpSubtotal = document.getElementsByClassName( 'subtotal' ),
-                subtotal    = [].map.call(inpSubtotal, function( input ) {
-                    return input.value;
-                });
+                    var inpHarga = document.getElementsByClassName( 'harga' ),
+                        harga    = [].map.call(inpHarga, function( input ) {
+                            return input.value;
+                        });
 
-            for (var i = 0; i < jumlah.length; i++) {
-                var hasil = 0;
-                var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                var jml = jumlah[i];
+                    var inpSubtotal = document.getElementsByClassName( 'subtotal' ),
+                        subtotal    = [].map.call(inpSubtotal, function( input ) {
+                            return input.value;
+                        });
 
-                if (jml == "") {
-                    jml = 0;
+                    for (var i = 0; i < jumlah.length; i++) {
+                        var hasil = 0;
+                        var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                        var jml = jumlah[i];
+
+                        if (jml == "") {
+                            jml = 0;
+                        }
+
+                        hasil += parseInt(hrg) * parseInt(jml);
+
+                        if (isNaN(hasil)) {
+                            hasil = 0;
+                        }
+                        hasil = convertToRupiah(hasil);
+                        $(".subtotal").eq(i).val(hasil);
+                    }
+                    updateTotalTampil();
                 }
-
-                hasil += parseInt(hrg) * parseInt(jml);
-
-                if (isNaN(hasil)) {
-                    hasil = 0;
-                }
-                hasil = convertToRupiah(hasil);
-                $(".subtotal").eq(i).val(hasil);
-
-            }
-            updateTotalTampil();
-        })
+            });
+        });
     }
     // End Code -------------------------------------------------------
 
@@ -390,7 +406,7 @@
                 $(".subtotal").eq(i).val(hasil);
             }
             updateTotalTampil();
-        })
+        });
     }
     // End Code -------------------------------------------------------
 
@@ -405,6 +421,7 @@
 
         for (var i = 0; i < subtotal.length; i++) {
             total += parseInt(subtotal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", ""));
+            $('.sbtotal').eq(i).val(subtotal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", ""));
         }
         $("#tot_hrg").val(total);
         if (isNaN(total)) {
@@ -418,7 +435,7 @@
     function getProvId() {
         var id = document.getElementById("prov").value;
         $.ajax({
-            url: "{{route('orderproduk.getCity')}}",
+            url: "{{route('orderProduk.getCity')}}",
             type: "get",
             data:{
                 provId: id
@@ -465,7 +482,7 @@
     // Simpan Order Produk --------------------------------------------
     $('.btn-submit').on('click', function(){
         $.ajax({
-            url: "{{route('orderproduk.store')}}",
+            url: "{{route('orderProduk.store')}}",
             type: "get",
             data: $('#formOrder').serialize(),
             beforeSend: function () {
@@ -475,7 +492,7 @@
                 if (response.status == 'sukses') {
                     loadingHide();
                     messageSuccess('Success', 'Data berhasil ditambahkan!');
-                    window.location.href = "{{route('penjualanpusat.index')}}";
+                    window.location.href = "{{route('marketingarea.index')}}";
                 } else {
                     loadingHide();
                     messageFailed('Gagal', response.message);
@@ -485,8 +502,7 @@
                 loadingHide();
                 messageWarning('Peringatan', e.message);
             }
-        })
-    })
-
+        });
+    });
 </script>
 @endsection

@@ -5,10 +5,10 @@
   <div class="title-block text-primary">
     <h1 class="title"> Tambah Data Pegawai </h1>
     <p class="title-description">
-    <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
-    / <span>Master Data Utama</span>
-    / <a href="{{route('pegawai.index')}}"><span>Data Pegawai</span></a>
-    / <span class="text-primary font-weight-bold">Tambah Data Pegawai</span>
+      <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
+      / <span>Master Data Utama</span>
+      / <a href="{{route('pegawai.index')}}"><span>Data Pegawai</span></a>
+      / <span class="text-primary font-weight-bold">Tambah Data Pegawai</span>
     </p>
   </div>
   <section class="section">
@@ -52,7 +52,6 @@
                             <input type="text" class="form-control form-control-sm" name="e_nip" required>
                           </div>
                         </div>
-
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <label>Nama Pegawai <span class="text-danger">*</span></label>
                         </div>
@@ -61,7 +60,6 @@
                             <input type="text" class="form-control form-control-sm" name="e_name" required>
                           </div>
                         </div>
-
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <label>NIK <span class="text-danger">*</span></label>
                         </div>
@@ -70,7 +68,6 @@
                             <input type="text" class="form-control form-control-sm" name="e_nik" required>
                           </div>
                         </div>
-
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <label>Pemilik Cabang <span class="text-danger">*</span></label>
                         </div>
@@ -84,7 +81,6 @@
                             </select>
                           </div>
                         </div>
-
                         {{-- <div class="col-md-3 col-sm-6 col-xs-12">
                           <label>Hari Kerja</label>
                         </div>
@@ -93,7 +89,6 @@
                             <input type="text" class="form-control form-control-sm" name="e_workingdays">
                           </div>
                         </div> --}}
-
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <label>Nomor HP <span class="text-danger">*</span></label>
                         </div>
@@ -102,7 +97,6 @@
                             <input type="text" class="form-control form-control-sm" name="e_telp" required>
                           </div>
                         </div>
-
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <label>Agama <span class="text-danger">*</span></label>
                         </div>
@@ -111,7 +105,6 @@
                             <input type="text" class="form-control form-control-sm" name="e_religion" required>
                           </div>
                         </div>
-
                         <div class="col-md-2 col-sm-6 col-xs-12">
                           <label>Jenis Kelamin <span class="text-danger">*</span></label>
                         </div>
@@ -124,7 +117,6 @@
                             </select>
                           </div>
                         </div>
-
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <label>Nama Pasangan</label>
                         </div>
@@ -149,7 +141,6 @@
                         </select>
                       </div>
                     </div>
-
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>Jumlah Anak</label>
                     </div>
@@ -158,7 +149,6 @@
                         <input type="text" class="form-control form-control-sm" name="e_child">
                       </div>
                     </div>
-
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>Tanggal Lahir <span class="text-danger">*</span></label>
                     </div>
@@ -170,7 +160,6 @@
                         </div>
                       </div>
                     </div>
-
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>Tanggal Masuk</label>
                     </div>
@@ -182,7 +171,6 @@
                         </div>
                       </div>
                     </div>
-
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>Pendidikan <span class="text-danger">*</span></label>
                     </div>
@@ -191,7 +179,6 @@
                         <input type="text" class="form-control form-control-sm" name="e_education" required>
                       </div>
                     </div>
-
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>E-mail <span class="text-danger">*</span></label>
                     </div>
@@ -200,7 +187,6 @@
                         <input type="text" class="form-control form-control-sm" name="e_email" required>
                       </div>
                     </div>
-
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>Jabatan <span class="text-danger">*</span></label>
                     </div>
@@ -209,12 +195,11 @@
                         <select name="e_position" id="" class="form-control form-control-sm select2">
                           <option value="" disabled selected="">== Pilih Jabatan ==</option>
                           @foreach($jabatan as $jab)
-                            <option value="{{$jab->j_id}}">{{$jab->j_name}}</option>
+                          <option value="{{$jab->j_id}}">{{$jab->j_name}}</option>
                           @endforeach
                         </select>
                       </div>
                     </div>
-
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>Divisi <span class="text-danger">*</span></label>
                     </div>
@@ -223,12 +208,11 @@
                         <select name="e_department" id="" class="form-control form-control-sm select2">
                           <option value="" disabled selected="">== Pilih Divisi ==</option>
                           @foreach($divisi as $div)
-                            <option value="{{$div->m_id}}">{{$div->m_name}}</option>
+                          <option value="{{$div->m_id}}">{{$div->m_name}}</option>
                           @endforeach
                         </select>
                       </div>
                     </div>
-
                     <div class="col-md-3 col-sm-12 col-xs-12">
                       <label>Alamat <span class="text-danger">*</span></label>
                     </div>
@@ -237,7 +221,6 @@
                         <textarea type="text" class="form-control form-control-sm mb-3" name="e_address" required></textarea>
                       </div>
                     </div>
-
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>Bank <span class="text-danger">*</span></label>
                     </div>
@@ -246,7 +229,6 @@
                         <input type="text" class="form-control form-control-sm" name="e_bank" required>
                       </div>
                     </div>
-
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>No. Rekening <span class="text-danger">*</span></label>
                     </div>
@@ -255,7 +237,6 @@
                         <input type="text" class="form-control form-control-sm" name="e_rekening" required>
                       </div>
                     </div>
-
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <label>Atas Nama <span class="text-danger">*</span></label>
                     </div>
@@ -263,7 +244,7 @@
                       <div class="form-group">
                         <input type="text" class="form-control form-control-sm" name="e_an" required>
                       </div>
-                    </div>                        
+                    </div>
                   </div>
                 </form>
               </fieldset>

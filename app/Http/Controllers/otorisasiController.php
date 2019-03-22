@@ -39,7 +39,7 @@ class OtorisasiController extends Controller
               return $data->oa_nota;
           })
           ->addColumn('selisih', function($data){
-              $tmp = $data->oa_qtyreal - $data->oa_qtysystem;
+              $tmp = $data->oa_qtysystem - $data->oa_qtyreal;
               return $tmp;
           })
           ->addColumn('aksi', function($data){
@@ -105,6 +105,127 @@ class OtorisasiController extends Controller
     public function adjustment(){
         return view('notifikasiotorisasi.otorisasi.adjustment.index');
     }
+    public function getadjusment(){
+      $data = DB::table('d_adjusmentauth')->join('m_item', 'i_id', '=', 'aa_item')->get();
+
+      return DataTables::of($data)
+          ->addIndexColumn()
+          ->addColumn('item', function($data){
+             $tmp = $data->i_code . ' ' . $data->i_name;
+             return $tmp;
+          })
+          ->addColumn('nota', function($data){
+              return $data->aa_nota;
+          })
+          ->addColumn('selisih', function($data){
+              $tmp = $data->aa_qtysystem - $data->aa_qtyreal;
+              return $tmp;
+          })
+          ->addColumn('unitsystem', function($data){
+              $tmp = DB::table('m_unit')->where('u_id', '=', $data->aa_unitreal)->first();
+              return $tmp->u_name;
+          })
+          ->addColumn('unitreal', function($data){
+              $tmp = DB::table('m_unit')->where('u_id', '=', $data->aa_unitsystem)->first();
+              return $tmp->u_name;
+          })
+          ->addColumn('aksi', function($data){
+              $setujui = '<button class="btn btn-warning btn-primary" type="button" title="Setujui" onclick="approve(\''. Crypt::encrypt($data->aa_id) .'\')"><i class="fa fa-check"></i></button>';
+              $tolak = '<button class="btn btn-danger btn-disable" type="button" title="Tolak" onclick="rejected(\''. Crypt::encrypt($data->aa_id) .'\')"><i class="fa fa-remove"></i></button>';
+              return '<center><div class="btn-group btn-group-sm">' . $setujui . $tolak . '</div></center>';
+          })
+          ->rawColumns(['nota','aksi'])
+          ->make(true);
+    }
+    public function agreeadjusment($id){
+      DB::beginTransaction();
+      try {
+        $id = Decrypt($id);
+
+        $data = DB::table('d_adjusmentauth')->where('aa_id', $id)->first();
+
+        $date = Carbon::now('Asia/Jakarta');
+
+        $item = DB::table('m_item')->where('i_id', $data->aa_item)->first();
+
+        if ($item->i_unit1 == $data->aa_unitreal) {
+          $tmp = $item->i_unitcompare1 * $data->aa_qtyreal;
+        } elseif ($item->i_unit2 == $data->aa_unitreal) {
+          $tmp = $item->i_unitcompare2 * $data->aa_qtyreal;
+        } elseif ($item->i_unit3 == $data->aa_unitreal) {
+          $tmp = $item->i_unitcompare3 * $data->aa_qtyreal;
+        }
+
+        $sisa = (int)$data->aa_qtysystem - (int)$tmp;
+
+        if ($sisa < 0) {
+          $tmp = DB::table('m_mutcat')->where('m_name', 'Barang Masuk Dari Opname')->first();
+          $mutcat = $tmp->m_id;
+        } else {
+          $tmp = DB::table('m_mutcat')->where('m_name', 'Barang Keluar Dari Opname')->first();
+          $mutcat = $tmp->m_id;
+        }
+
+        $comp = $data->aa_comp;
+        $position = $data->aa_position;
+
+        $qtysistem = $data->aa_qtysystem;
+
+        $qtyreal = $data->aa_qtyreal;
+
+        $nota = $data->aa_nota;
+
+        $reff = $data->aa_nota;
+
+        Mutasi::opname($date, (int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff);
+
+        DB::table('d_adjusmentauth')->where('aa_id', $id)->delete();
+
+        DB::table('d_adjusment')->insert([
+          'a_id' => $data->aa_id,
+          'a_comp' => $data->aa_comp,
+          'a_position' => $data->aa_position,
+          'a_date' => $data->aa_date,
+          'a_nota' => $data->aa_nota,
+          'a_item' => $data->aa_item,
+          'a_qtyreal' => $data->aa_qtyreal,
+          'a_unitreal' => $data->aa_unitreal,
+          'a_qtysystem' => $data->aa_qtysystem,
+          'a_unitsystem' => $data->aa_unitsystem,
+          'a_insert' => $data->aa_insert
+        ]);
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal'
+        ]);
+      }
+    }
+    public function rejectadjusment($id){
+      DB::beginTransaction();
+      try {
+
+        $id = Decrypt($id);
+
+        DB::table('d_adjusmentauth')->where('aa_id', $id)->delete();
+
+        DB::commit();
+        return response()->json([
+          'status' => 'berhasil'
+        ]);
+      } catch (Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status' => 'gagal'
+        ]);
+      }
+
+    }
     public function revisi(){
         return view('notifikasiotorisasi.otorisasi.revisi.index');
     }
@@ -133,7 +254,7 @@ class OtorisasiController extends Controller
                 $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrderProduksi(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-folder"></i></button>';
                 $setujui = '<button class="btn btn-warning btn-edit" type="button" title="Setujui" onclick="agree(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-check"></i></button>';
                 $tolak = '<button class="btn btn-danger btn-disable" type="button" title="Tolak" onclick="rejected(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-remove"></i></button>';
-                return '<div class="btn-group btn-group-sm">'. $detail . $setujui . $tolak . '</div>';
+                return '<div class="text-center"><div class="btn-group btn-group-sm">'. $detail . $setujui . $tolak . '</div></div>';
             })
             ->rawColumns(['date','supplier','nota','aksi'])
             ->make(true);
