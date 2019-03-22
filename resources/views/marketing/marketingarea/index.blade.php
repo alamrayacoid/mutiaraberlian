@@ -49,6 +49,7 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
+		orderProdukList();
 		var table_sup = $('#table_orderproduk').DataTable();
 		var table_pus = $('#table_keloladataagen').DataTable();
 		var table_bar = $('#table_monitoringpenjualanagen').DataTable();
@@ -56,7 +57,7 @@
 		var table_bro = $('#table_konsinyasi').DataTable();
 
 		$(document).on('click','.btn-edit',function(){
-			window.location.href='{{ route('orderproduk.edit') }}'
+			window.location.href='{{ route('orderProduk.edit') }}'
 		});
 
 		$(document).on('click','.btn-edit-order',function(){
@@ -224,7 +225,6 @@
 			});
 		});
 
-
 		$(document).on('click', '.btn-enable-canv', function(){
 			$.toast({
 				heading: 'Information',
@@ -286,11 +286,37 @@
 				textColor: 'white',
 				loaderBg: '#fdcb6e',
 				icon: 'info'
-			})
+			});
 			$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit-kons" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
 	                                		'<button class="btn btn-danger btn-disable-kons" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-		})
+		});
 		
 	});
+
+	// Order Produk Ke Cabang -------------------------------
+	function orderProdukList()
+	{
+    tb_target = $('#table_orderproduk').DataTable({
+        responsive: true,
+        serverSide: true,
+        ajax: {
+            url: "{{ route('orderProduk.list') }}",
+            type: "get",
+            data: {
+                "_token": "{{ csrf_token() }}"
+            }
+        },
+        columns: [
+            {data: 'po_date'},
+            {data: 'i_name'},
+            {data: 'u_name'},
+            {data: 'pod_qty'},
+            {data: 'price'},
+            {data: 'action'}
+        ],
+        pageLength: 10,
+        lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+    });
+	}
 </script>
 @endsection

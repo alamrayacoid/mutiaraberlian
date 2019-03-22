@@ -435,7 +435,7 @@
     function getProvId() {
         var id = document.getElementById("prov").value;
         $.ajax({
-            url: "{{route('orderproduk.getCity')}}",
+            url: "{{route('orderProduk.getCity')}}",
             type: "get",
             data:{
                 provId: id
@@ -482,7 +482,7 @@
     // Simpan Order Produk --------------------------------------------
     $('.btn-submit').on('click', function(){
         $.ajax({
-            url: "{{route('orderproduk.store')}}",
+            url: "{{route('orderProduk.store')}}",
             type: "get",
             data: $('#formOrder').serialize(),
             beforeSend: function () {

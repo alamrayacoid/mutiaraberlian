@@ -9,6 +9,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 
 use DB;
 use Auth;
+use Currency;
 use Response;
 use DataTables;
 use Carbon\Carbon;
@@ -24,7 +25,29 @@ class MarketingAreaController extends Controller
     // Order Produk Ke Cabang ==============================================================================
     public function orderList()
     {
-        
+        $order = DB::table('d_productorderdt')
+            ->join('d_productorder', 'pod_productorder', 'po_id')
+            ->join('m_item', 'pod_item', 'i_id')
+            ->join('m_unit', 'pod_unit', 'u_id')
+            ->select('d_productorderdt.*', 'd_productorder.*', DB::raw('date_format(po_date, "%m/%Y") as po_date'), 'i_name', 'u_name')
+            ->get();
+        return Datatables::of($order)
+            ->addIndexColumn()
+            ->addColumn('price', function ($order) {
+                return Currency::addRupiah($order->pod_totalprice);
+            })
+            ->addColumn('action', function ($order) {
+                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                            <button class="btn btn-info hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-folder"></i>
+                            </button>
+                            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-pencil"></i>
+                            </button>
+                            <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-trash"></i>
+                            </button>
+                        </div>';
+            })
+            ->rawColumns(['price','action'])
+            ->make(true);
     }
 
     public function createOrderProduk()
