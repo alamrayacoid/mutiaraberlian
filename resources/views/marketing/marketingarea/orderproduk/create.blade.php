@@ -67,9 +67,9 @@
                                         <div class="form-group">
                                             <select name="po_comp[]" id="comp" class="form-control form-control-sm select2">
                                                 <option value="" selected="" disabled="">=== Pilih Cabang ===</option>
-                                                @foreach($company as $comp)
-                                                <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
-                                                @endforeach
+                                                <?php foreach($company as $comp){?>
+                                                <option value="<?php echo $comp->c_id;?>"><?php echo $comp->c_name;?></option>
+                                                <?php } ?>
                                             </select>
                                         </div>
                                     </div>
@@ -100,7 +100,7 @@
                                                     <td>
                                                         <input type="text" name="barang[]"
                                                         class="form-control form-control-sm barang"
-                                                        style="text-transform:uppercase">
+                                                        style="text-transform:uppercase" autocomplete="off">
                                                         <input type="hidden" name="idItem[]" class="itemId">
                                                         <input type="hidden" name="kode[]" class="kode">
                                                     </td>
@@ -160,6 +160,10 @@
             idxBarang = $('.barang').index(this);
             setArrayCode();
         });
+        $('.jumlah').on('click change', function (e) {
+                idxBarang = $('.jumlah').index(this);
+                setArrayCode();
+            });
 
         $(".barang").eq(idxBarang).on("keyup", function () {
             $(".itemId").eq(idxBarang).val('');
@@ -239,7 +243,7 @@
                     '<tr>' +
                         '<td>'+
                             '<input type="text" name="barang[]" class="form-control form-control-sm barang"'+
-                            'style="text-transform:uppercase">'+
+                            'style="text-transform:uppercase" autocomplete="off">'+
                             '<input type="hidden" name="idItem[]" class="itemId">'+
                             '<input type="hidden" name="kode[]" class="kode">'+
                         '</td>' +
@@ -256,9 +260,6 @@
                         '<td><button class="btn btn-danger btn-hapus-order btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>' +
                     '</tr>'
                 );
-
-            changeJumlah();
-            changeHarga();
 
             $('.select2').select2({
                 theme: "bootstrap",
@@ -278,10 +279,17 @@
                 setArrayCode();
             });
 
+            $('.jumlah').on('click change', function (e) {
+                idxBarang = $('.jumlah').index(this);
+                setArrayCode();
+            });
+
             $(".barang").eq(idxBarang).on("keyup", function () {
                 $(".itemId").eq(idxBarang).val('');
                 $(".kode").eq(idxBarang).val('');
             });
+            changeJumlah();
+            changeHarga();
         });
         // End Form Order ---------------------------------------------
 
@@ -297,6 +305,8 @@
     // Merubah Sub Total Berdasarkan Jumlah Item ----------------------
     function changeJumlah() {
         $(".jumlah").on('input', function (evt) {
+            evt.preventDefault();
+
             var inpSatuan = document.getElementsByClassName('satuan'),
                 satuan = [].map.call(inpSatuan, function(input){
                     return parseInt(input.value);
@@ -306,57 +316,55 @@
                     return parseInt(input.value);
                 });
 
-            var inpHarga = document.getElementsByClassName( 'harga' ),
-                harga    = [].map.call(inpHarga, function( input ) {
-                    return input.value;
-                });
-
-            var inpSubtotal = document.getElementsByClassName( 'subtotal' ),
-                subtotal    = [].map.call(inpSubtotal, function( input ) {
-                    return input.value;
-                });
-
-            for (var i = 0; i < jumlah.length; i++) {
-                var hasil = 0;
-                var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                var jml = jumlah[i];
-
-                if (jml == "") {
-                    jml = 0;
-                }
-
-                hasil += parseInt(hrg) * parseInt(jml);
-
-                if (isNaN(hasil)) {
-                    hasil = 0;
-                }
-                hasil = convertToRupiah(hasil);
-                $(".subtotal").eq(i).val(hasil);
-
-            }
-                
             $.ajax({
                 url: "{{url('/marketing/marketingarea/orderproduk/get-price')}}",
                 type: "GET",
                 data: {
-                    item : idItem,
-                    unit: satuan,
-                    qty: jumlah
+                    item : $('.itemId').eq(idxBarang).val(),
+                    unit: $('.satuan').eq(idxBarang).val(),
+                    qty: $('.jumlah').eq(idxBarang).val()
                 },
                 success:function(res)
                 {
-                    console.log(res.data);
+                    
                     var price = res.data;
                     if (isNaN(price)) {
                         price = 0;
                     }
-                    $('.harga').val(price);
-                    $('.po_hrg').val(price);
+                    $('.harga').eq(idxBarang).val(convertToRupiah(price));
+                    $('.po_hrg').eq(idxBarang).val(price);
+
+                    var inpHarga = document.getElementsByClassName( 'harga' ),
+                        harga    = [].map.call(inpHarga, function( input ) {
+                            return input.value;
+                        });
+
+                    var inpSubtotal = document.getElementsByClassName( 'subtotal' ),
+                        subtotal    = [].map.call(inpSubtotal, function( input ) {
+                            return input.value;
+                        });
+
+                    for (var i = 0; i < jumlah.length; i++) {
+                        var hasil = 0;
+                        var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                        var jml = jumlah[i];
+
+                        if (jml == "") {
+                            jml = 0;
+                        }
+
+                        hasil += parseInt(hrg) * parseInt(jml);
+
+                        if (isNaN(hasil)) {
+                            hasil = 0;
+                        }
+                        hasil = convertToRupiah(hasil);
+                        $(".subtotal").eq(i).val(hasil);
+                    }
                     updateTotalTampil();
                 }
             });
-
-        })
+        });
     }
     // End Code -------------------------------------------------------
 
@@ -398,7 +406,7 @@
                 $(".subtotal").eq(i).val(hasil);
             }
             updateTotalTampil();
-        })
+        });
     }
     // End Code -------------------------------------------------------
 
@@ -413,6 +421,7 @@
 
         for (var i = 0; i < subtotal.length; i++) {
             total += parseInt(subtotal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", ""));
+            $('.sbtotal').eq(i).val(subtotal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", ""));
         }
         $("#tot_hrg").val(total);
         if (isNaN(total)) {
@@ -421,18 +430,6 @@
         $("#total_harga").val(convertToRupiah(total));
     }
     // End Code -------------------------------------------------------
-
-    // function getHarga() {
-    //     $.ajax({
-    //         url: "",
-    //         type: "GET",
-    //         data: {
-    //             item : idItem,
-    //             unit: satuan,
-    //             qty: jumlah
-    //         }
-    //     });
-    // }
 
     // Menampilkan List Kota Berdasarkan Id Provinsi ------------------
     function getProvId() {
@@ -505,8 +502,7 @@
                 loadingHide();
                 messageWarning('Peringatan', e.message);
             }
-        })
-    })
-
+        });
+    });
 </script>
 @endsection

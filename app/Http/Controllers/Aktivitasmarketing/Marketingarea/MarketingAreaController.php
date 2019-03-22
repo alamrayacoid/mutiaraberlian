@@ -125,21 +125,21 @@ class MarketingAreaController extends Controller
     {
         $idItem = $request->item;
         $idUnit = $request->unit;
-        $qty = $request->qty;
+        $qty    = $request->qty;
 
         $price = DB::table('m_priceclassdt')
             ->join('m_priceclass', 'pcd_classprice', 'pc_id')
             ->select('m_priceclassdt.*', 'm_priceclass.*')
             ->where('pc_name', '=', "Agen")
             ->where('pcd_item', '=', $idItem)
-            ->whereIn('pcd_unit', $idUnit)
+            ->where('pcd_unit', '=', $idUnit)
             ->where('pcd_type', '=', "R")
             ->first();
         if($price){
             if ($price->pcd_rangeqtystart <= $qty[0] && $price->pcd_rangeqtyend >= $qty[0]) {
                 return Response::json(array(
                     'success' => true,
-                    'data'    => $price->pcd_price
+                    'data'    => number_format($price->pcd_price,0, ',', '')
                 ));
             } else {
                 return Response::json(array(
@@ -153,64 +153,87 @@ class MarketingAreaController extends Controller
                 'data'    => "Rp. 0"
             ));
         }
-
-        
     }
 
     public function orderProdukStore(Request $request)
     {
-         $data = $request->all();
+        //dd($request);
+        $data = $request->all();
         $now  = Carbon::now('Asia/Jakarta');
         $time = date('Y-m-d', strtotime($now));
         DB::beginTransaction();
         try {
             $detailId = 0;
-            $query1 = DB::table('d_productorder')
-                ->where('po_date', '=', $time)
-                ->where('po_comp', '=', $data['po_comp'])
-                ->where('po_agen', '=', $data['po_agen'])
-                ->first();
-            if ($query1) {
-                for ($i=0; $i < count($data['idItem']); $i++) {
+            for ($i=0; $i < count($data['idItem']); $i++) {
 
-                    $detailId = DB::table('d_productorderdt')
-                        ->where('pod_productorder', '=', $query1->po_id)
-                        ->max('pod_detailid');
+                $query1 = DB::table('d_productorder')
+                        ->where('po_date', '=', $time)
+                        ->where('po_comp', '=', $data['po_comp'][0])
+                        ->where('po_agen', '=', $data['po_agen'][0])
+                        ->first();
 
-                    DB::table('d_productorderdt')->insert([
-                        'pod_productorder' => $query1->po_id,
-                        'pod_detailid'     => $detailId+1,
-                        'pod_item'         => $data['idItem'][$i],
-                        'pod_unit'         => $data['po_unit'][$i],
-                        'pod_qty'          => $data['po_qty'][$i],
-                        'pod_price'        => number_format($data['po_hrg'][$i]),
-                        'pod_totalprice'   => number_format($data['tot_hrg'][0])
+                if ($query1) {
+                    
+                    $query2 = DB::table('d_productorderdt')
+                            ->where('pod_productorder', '=', $query1->po_id)
+                            ->where('pod_item', '=', $data['idItem'][$i])
+                            ->where('pod_unit', '=', $data['po_unit'][$i])
+                            ->first();
+                    if ($query2) {
+
+                        $qtyAkhir = $query2->pod_qty + $data['po_qty'][$i];
+                        $priceAkhir = $query2->pod_totalprice + $data['sbtotal'][$i];
+
+                        DB::table('d_productorderdt')
+                            ->where('pod_productorder', '=', $query1->po_id)
+                            ->where('pod_item', '=', $data['idItem'][$i])
+                            ->where('pod_unit', '=', $data['po_unit'][$i])
+                            ->update([
+                            'pod_qty'          => $qtyAkhir,
+                            'pod_totalprice'   => $priceAkhir
+                        ]);
+                    } else {
+
+                        $detailId = DB::table('d_productorderdt')
+                                  ->where('pod_productorder', '=', $query1->po_id)
+                                  ->max('pod_detailid');
+
+                        DB::table('d_productorderdt')->insert([
+                            'pod_productorder' => $query1->po_id,
+                            'pod_detailid'     => $detailId+1,
+                            'pod_item'         => $data['idItem'][$i],
+                            'pod_unit'         => $data['po_unit'][$i],
+                            'pod_qty'          => $data['po_qty'][$i],
+                            'pod_price'        => $data['po_hrg'][$i],
+                            'pod_totalprice'   => $data['sbtotal'][$i]
+                        ]);
+                    }
+                } else {
+
+                    $getIdMax = DB::table('d_productorder')->max('po_id');
+                    $poId = $getIdMax + 1;
+
+                    DB::table('d_productorder')->insert([
+                        'po_id'     => $poId,
+                        'po_comp'   => $data['po_comp'][0],
+                        'po_agen'   => $data['po_agen'][0],
+                        'po_date'   => $time,
+                        'po_nota'   => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 8, 10, 4, 'PRO', '-'),
+                        'po_status' => "P"
                     ]);
-                }
-            } else {
-                $getIdMax = DB::table('d_productorder')->max('po_id');
-                $poId = $getIdMax + 1;
-                DB::table('d_productorder')->insert([
-                    'po_id'     => $poId,
-                    'po_comp'   => $data['po_comp'][0],
-                    'po_agen'   => $data['po_agen'][0],
-                    'po_date'   => $time,
-                    'po_nota'   => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 8, 10, 4, 'PRO', '-'),
-                    'po_status' => "P"
-                ]);
 
-                for ($i=0; $i < count($data['idItem']) ; $i++) { 
                     DB::table('d_productorderdt')->insert([
                         'pod_productorder' => $poId,
                         'pod_detailid'     => ++$detailId,
                         'pod_item'         => $data['idItem'][$i],
                         'pod_unit'         => $data['po_unit'][$i],
                         'pod_qty'          => $data['po_qty'][$i],
-                        'pod_price'        => number_format($data['po_hrg'][$i]),
-                        'pod_totalprice'   => number_format($data['tot_hrg'][0])
+                        'pod_price'        => $data['po_hrg'][$i],
+                        'pod_totalprice'   => $data['sbtotal'][$i]
                     ]);
                 }
             }
+            
             DB::commit();
             return response()->json([
                 'status' => 'sukses'
