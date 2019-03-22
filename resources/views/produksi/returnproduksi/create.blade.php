@@ -2,7 +2,9 @@
 
 @section('content')
 
+@include('produksi.returnproduksi.modal-search')
 
+@include('produksi.returnproduksi.modal-detail')
 
 <article class="content animated fadeInLeft">
 
@@ -35,11 +37,26 @@
                         <section>
                         	
                         	<div class="row">
-                        		<div class="col-md-3 col-sm-6 col-12">
-                        			<label>Metode Return</label>
-                        		</div>
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <label>No. Nota</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <button class="btn btn-md btn-primary" title="Pencarian No. Nota" data-toggle="modal" data-target="#search-modal"><i class="fa fa-search"></i></button>
+                                </div>
 
-                        		<div class="col-md-3 col-sm-6 col-12">
+                        	</div>
+
+                            <fieldset>
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-6 col-12">
+                                        <label>Metode Return</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-6 col-12">
                         			<div class="form-group">
                         				<select class="form-control form-control-sm" id="header-metodereturn">
                         					<option value="">--Pilih Metode Return--</option>
@@ -50,14 +67,15 @@
                         					<option value="5">Kurang Barang</option>
                         				</select>
                         			</div>
+                                    </div>
+                                    @include('produksi.returnproduksi.tab_potongnota')
+                                    @include('produksi.returnproduksi.tab_tukarbarang')
+                                    @include('produksi.returnproduksi.tab_salahbarang')
+                                    @include('produksi.returnproduksi.tab_salahalamat')
+                                    @include('produksi.returnproduksi.tab_kurangbarang')
                         		</div>
-                        	</div>
+                            </fieldset>
 
-                            @include('marketing.penjualanpusat.returnpenjualan.tab_potongnota')
-                            @include('marketing.penjualanpusat.returnpenjualan.tab_tukarbarang')
-                            @include('marketing.penjualanpusat.returnpenjualan.tab_salahbarang')
-                            @include('marketing.penjualanpusat.returnpenjualan.tab_salahalamat')
-                        	@include('marketing.penjualanpusat.returnpenjualan.tab_kurangbarang')
 
 
 

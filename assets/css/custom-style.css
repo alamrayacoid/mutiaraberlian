@@ -523,6 +523,10 @@ body {
     border:unset;
 
 }
+
+.total-modal {
+    margin-right: -45px;
+}
 /* End */
 /* .btn.btn-primary {
     background-color: #ff4757;
