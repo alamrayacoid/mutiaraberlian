@@ -199,9 +199,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/inventory/barangkeluar/update', 'Inventory\BarangKeluarController@update')->name('barangkeluar.update');
 
     // Distribusi Barang
-    Route::get('/inventory/distribusibarang/index', 'InventoryController@distribusibarang_index')->name('distribusibarang.index');
-    Route::get('/inventory/distribusibarang/create', 'InventoryController@distribusibarang_create')->name('distribusibarang.create');
-    Route::get('/inventory/distribusibarang/edit', 'InventoryController@distribusibarang_edit')->name('distribusibarang.edit');
+    Route::get('/inventory/distribusibarang/index', 'Inventory\DistribusiController@distribusibarang_index')->name('distribusibarang.index');
+    Route::get('/inventory/distribusibarang/create', 'Inventory\DistribusiController@distribusibarang_create')->name('distribusibarang.create');
+    Route::get('/inventory/distribusibarang/edit', 'Inventory\DistribusiController@distribusibarang_edit')->name('distribusibarang.edit');
+    Route::get('/inventory/distribusibarang/getitem', 'Inventory\DistribusiController@getitem')->name('distribusibarang.getitem');
+    Route::get('/inventory/distribusibarang/getsatuan', 'Inventory\DistribusiController@getsatuan');
+    Route::get('/inventory/distribusibarang/simpancabang', 'Inventory\DistribusiController@simpancabang');
+    Route::get('/inventory/distribusibarang/table', 'Inventory\DistribusiController@table');
+    Route::get('/inventory/distribusibarang/hapus', 'Inventory\DistribusiController@hapus');
     // Manajemen Stok
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
     Route::get('/inventory/manajemenstok/create', 'InventoryController@manajemenstok_create')->name('manajemenstok.create');

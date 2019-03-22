@@ -20,26 +20,10 @@
                                 <th>Tujuan</th>
                                 <th>Nota</th>
                                 <th>Jenis</th>
-                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>07/09/2019</td>
-                                <td>Cabang</td>
-                                <td>1231213</td>
-                                <td>Penjualan</td>
-                                <td>Pending</td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-primary btn-modal-detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
-                                        <button class="btn btn-warning btn-edit-distribusi" onclick="window.location.href='{{ route('distribusibarang.edit') }}'" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-                                        <button class="btn btn-danger btn-disable-distribusi" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
