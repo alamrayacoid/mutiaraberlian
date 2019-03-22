@@ -41,7 +41,7 @@
                 <td>KUY001</td>
                 <td>
                     <div class="btn-group btn-group-sm">
-                        <button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
+                        <button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail" data-backdrop="static" data-keyboard="false"><i class="fa fa-folder"></i></button>
                         <button class="btn btn-success btn-ambil" type="button" title="Ambil"><i class="fa fa-hand-lizard-o"></i></button>
                     </div>
                 </td>
@@ -51,7 +51,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
         <button type="button" class="btn btn-primary btn-submit" data-dismiss="modal">Simpan</button>
       </div>
     </div>

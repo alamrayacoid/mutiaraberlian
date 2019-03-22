@@ -239,6 +239,8 @@ Route::group(['middleware' => 'auth'], function () {
     // Pengelolaan Data Max/Min, Safety stok
     Route::get('/inventory/manajemenstok/pengelolaanmms/index', 'InventoryController@pengelolaanmms_index')->name('pengelolaanmms.index');
     Route::get('/inventory/manajemenstok/pengelolaanmms/create', 'InventoryController@pengelolaanmms_create')->name('pengelolaanmms.create');
+    Route::get('/inventory/manajemenstok/pengelolaanmms/cari-barang', 'InventoryController@cariBarang')->name('pengelolaanmms.caribarang');
+    Route::post('/inventory/manajemenstok/pengelolaanmms/add-pengelolaanms', 'InventoryController@addPengelolaanms')->name('pengelolaanmms.addpengelolaanms');
     Route::get('/inventory/manajemenstok/pengelolaanmms/edit', 'InventoryController@pengelolaanmms_edit')->name('pengelolaanmms.edit');
 
     // !===================================================== END INVENTORY =====================================================!
