@@ -50,15 +50,10 @@
 
 	$(document).ready(function(){
 		orderProdukList();
-		var table_sup = $('#table_orderproduk').DataTable();
 		var table_pus = $('#table_keloladataagen').DataTable();
 		var table_bar = $('#table_monitoringpenjualanagen').DataTable();
 		var table_rab = $('#table_canvassing').DataTable();
 		var table_bro = $('#table_konsinyasi').DataTable();
-
-		$(document).on('click','.btn-edit',function(){
-			window.location.href='{{ route('orderProduk.edit') }}'
-		});
 
 		$(document).on('click','.btn-edit-order',function(){
 			window.location.href='{{ route('keloladataorder.edit') }}'
@@ -318,5 +313,11 @@
         lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
     });
 	}
+
+	function editOrder(id, dt)
+	{
+		window.location.href='{{ url('/marketing/marketingarea/orderproduk/edit') }}'+"/"+id+"/"+dt;
+	}
+	// End Order Produk --------------------------------------------
 </script>
 @endsection

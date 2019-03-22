@@ -298,7 +298,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/marketing/marketingarea/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@createOrderProduk')->name('orderProduk.create');
         Route::get('/marketing/marketingarea/orderproduk/list', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@orderList')->name('orderProduk.list');
         Route::get('/marketing/marketingarea/orderproduk/store', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@orderProdukStore')->name('orderProduk.store');
-        Route::get('/marketing/marketingarea/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@editOrderProduk')->name('orderProduk.edit');
+        Route::get('/marketing/marketingarea/orderproduk/edit/{id}/{dt}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@editOrderProduk')->name('orderProduk.edit');
         Route::get('/marketing/marketingarea/orderproduk/get-city', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getCity')->name('orderProduk.getCity');
         Route::get('/marketing/marketingarea/orderproduk/get-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getAgen')->name('orderProduk.getAgen');
         Route::get('/marketing/marketingarea/orderproduk/cari-barang', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@cariBarang')->name('orderProduk.cariBarang');

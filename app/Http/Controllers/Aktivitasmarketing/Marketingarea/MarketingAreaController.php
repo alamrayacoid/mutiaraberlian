@@ -270,15 +270,22 @@ class MarketingAreaController extends Controller
         }
     }
 
-    public function editOrderProduk()
+    public function editOrderProduk($id, $dt)
     {
-        // try {
-        //     $st_id = Crypt::decrypt($st_id);
-        //     $dt_id = Crypt::decrypt($dt_id);
-        // } catch (\Exception $e) {
-        //     return view('errors.404');
-        // }
-        return view('marketing/marketingarea/orderproduk/edit');
+        try {
+            $id = Crypt::decrypt($id);
+            $dt = Crypt::decrypt($dt);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+        $produk = DB::table('d_productorderdt')
+            ->join('m_item', 'pod_item', 'i_id')
+            ->join('m_unit', 'pod_unit', 'u_id')
+            ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*')
+            ->where('pod_productorder', $id)
+            ->where('pod_detailid', $dt)
+            ->first();
+        return view('marketing/marketingarea/orderproduk/edit', compact('produk'));
     }
 
     public function updateTarget($st_id, $dt_id, Request $request)
