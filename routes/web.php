@@ -245,6 +245,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/pengelolaanmms/cari-barang', 'InventoryController@cariBarang')->name('pengelolaanmms.caribarang');
     Route::post('/inventory/manajemenstok/pengelolaanmms/add-pengelolaanms', 'InventoryController@addPengelolaanms')->name('pengelolaanmms.addpengelolaanms');
     Route::match(['get', 'post'], '/inventory/manajemenstok/pengelolaanmms/edit/{id}', 'InventoryController@pengelolaanmms_edit')->name('pengelolaanmms.edit');
+    Route::get('/inventory/manajemenstok/pengelolaanmms/cari-stock', 'InventoryController@searchStock')->name('pengelolaanmms.caristock');
 
     // !===================================================== END INVENTORY =====================================================!
 

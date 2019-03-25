@@ -158,6 +158,45 @@ class InventoryController extends Controller
 
     }
 
+    public function searchStock(Request $request)
+    {
+        $datas = Stock::join('m_company as comp', 'd_stock.s_comp', '=', 'comp.c_id')
+            ->join('m_company as position', 'd_stock.s_position', '=', 'position.c_id')
+            ->join('m_item', 'd_stock.s_item', '=', 'm_item.i_id')
+            ->select('d_stock.s_id as id', 'comp.c_name as pemilik', 'position.c_name as posisi', 'm_item.i_name as item',
+                'd_stock.s_qty as qty');
+
+        if ($request->pemilik != "") {
+            $datas->where('d_stock.s_comp', '=', $request->pemilik);
+        } else if ($request->posisi != "") {
+            $datas->where('d_stock.s_position', '=', $request->posisi);
+        } else if ($request->item != "") {
+            $datas->where('d_stock.s_item', '=', $request->item);
+        }
+
+        return Datatables::of($datas)
+            ->addColumn('pemilik', function($datas) {
+                return strtoupper($datas->pemilik);
+            })
+            ->addColumn('posisi', function($datas) {
+                return strtoupper($datas->posisi);
+            })
+            ->addColumn('item', function($datas) {
+                return strtoupper($datas->item);
+            })
+            ->addColumn('qty', function($datas) {
+                return '<div class="text-center">'.$datas->qty.'</div>';
+            })
+            ->addColumn('action', function($datas) {
+                return '<div class="btn-group btn-group-sm">
+                            <button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''. Crypt::encrypt($datas->id) .'\')"><i class="fa fa-folder"></i></button>
+                            <button class="btn btn-warning btn-edit" type="button" title="Edit" onclick="edit(\''. Crypt::encrypt($datas->id) .'\')"><i class="fa fa-pencil"></i></button>
+                        </div>';
+            })
+            ->rawColumns(['pemilik', 'posisi', 'item', 'qty', 'action'])
+            ->make(true);
+    }
+
     public function pengelolaanmms_create()
     {
         $companies = Company::get();
