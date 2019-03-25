@@ -321,7 +321,7 @@
 
 	function deleteOrder(id, dt)
 	{
-		var delete = "{{url('/marketing/marketingarea/orderproduk/delete-order')}}"+"/"+id+"/"+dt;
+		var hapus_order = "{{url('/marketing/marketingarea/orderproduk/delete-order')}}"+"/"+id+"/"+dt;
     $.confirm({
       animation: 'RotateY',
       closeAnimation: 'scale',
@@ -337,7 +337,7 @@
           action: function() {
             return $.ajax({
               type: "get",
-              url: delete,
+              url: hapus_order,
               beforeSend: function() {
                 loadingShow();
               },
