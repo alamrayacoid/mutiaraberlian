@@ -291,7 +291,7 @@
 	// Order Produk Ke Cabang -------------------------------
 	function orderProdukList()
 	{
-    tb_target = $('#table_orderproduk').DataTable({
+    tb_order = $('#table_orderproduk').DataTable({
       responsive: true,
       serverSide: true,
       ajax: {
@@ -321,18 +321,51 @@
 
 	function deleteOrder(id, dt)
 	{
-		$.ajax({
-			url: "{{url('/marketing/marketingarea/orderproduk/delete-order')}}",
-			type: "get",
-			data: {
-				id: id,
-				dt: dt
-			},
-			success:function(res)
-			{
-				
-			}
-		})
+		var delete = "{{url('/marketing/marketingarea/orderproduk/delete-order')}}"+"/"+id+"/"+dt;
+    $.confirm({
+      animation: 'RotateY',
+      closeAnimation: 'scale',
+      animationBounce: 1.5,
+      icon: 'fa fa-exclamation-triangle',
+      title: 'Pesan!',
+      content: 'Apakah anda yakin ingin menghapus data ini?',
+      theme: 'disable',
+      buttons: {
+        info: {
+          btnClass: 'btn-blue',
+          text: 'Ya',
+          action: function() {
+            return $.ajax({
+              type: "get",
+              url: delete,
+              beforeSend: function() {
+                loadingShow();
+              },
+              success: function(response) {
+                if (response.status == 'sukses') {
+                  loadingHide();
+                  messageSuccess('Berhasil', 'Data berhasil dihapus!');
+                  tb_order.ajax.reload();
+                } else {
+                  loadingHide();
+                  messageFailed('Gagal', response.message);
+                }
+              },
+              error: function(e) {
+                  loadingHide();
+                  messageWarning('Peringatan', e.message);
+              }
+            });
+          }
+        },
+        cancel: {
+            text: 'Tidak',
+            action: function() {
+
+            }
+        }
+      }
+    });
 	}
 	// End Order Produk --------------------------------------------
 </script>
