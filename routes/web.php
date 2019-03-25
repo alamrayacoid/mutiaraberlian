@@ -210,6 +210,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/distribusibarang/simpancabang', 'Inventory\DistribusiController@simpancabang');
     Route::get('/inventory/distribusibarang/table', 'Inventory\DistribusiController@table');
     Route::get('/inventory/distribusibarang/hapus', 'Inventory\DistribusiController@hapus');
+    Route::get('/inventory/distribusibarang/nota', 'Inventory\DistribusiController@nota')->name('ditribusibarang.nota');
     // Manajemen Stok
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
     Route::get('/inventory/manajemenstok/create', 'InventoryController@manajemenstok_create')->name('manajemenstok.create');

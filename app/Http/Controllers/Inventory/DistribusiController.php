@@ -36,6 +36,11 @@ class DistribusiController extends Controller
       return view('inventory/distribusibarang/distribusi/edit');
   }
 
+  public function nota()
+  {
+      return view('inventory/distribusibarang/distribusi/nota');
+  }
+
   public function getitem(Request $request){
     $keyword = $request->term;
     $results = [];
