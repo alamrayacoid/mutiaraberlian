@@ -167,13 +167,13 @@ class MarketingAreaController extends Controller
             } else {
                 return Response::json(array(
                     'success' => true,
-                    'data'    => "Rp. 0"
+                    'data'    => 0
                 ));
             }
         } else {
             return Response::json(array(
                 'success' => true,
-                'data'    => "Rp. 0"
+                'data'    => 0
             ));
         }
     }
@@ -364,9 +364,31 @@ class MarketingAreaController extends Controller
                 'message' => $e
             ]);
         }
+    }
 
+    public function detailOrder($id, $dt)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $dt = Crypt::decrypt($dt);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
 
+        DB::beginTransaction();
+        try {
 
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e
+            ]);
+        }
     }
     // Order Produk Ke Cabang End ==========================================================================
     public function create_keloladataorder()
