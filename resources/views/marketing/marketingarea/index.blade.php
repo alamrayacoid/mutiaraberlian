@@ -292,31 +292,47 @@
 	function orderProdukList()
 	{
     tb_target = $('#table_orderproduk').DataTable({
-        responsive: true,
-        serverSide: true,
-        ajax: {
-            url: "{{ route('orderProduk.list') }}",
-            type: "get",
-            data: {
-                "_token": "{{ csrf_token() }}"
-            }
-        },
-        columns: [
-            {data: 'po_date'},
-            {data: 'i_name'},
-            {data: 'u_name'},
-            {data: 'pod_qty'},
-            {data: 'price'},
-            {data: 'action'}
-        ],
-        pageLength: 10,
-        lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+      responsive: true,
+      serverSide: true,
+      ajax: {
+          url: "{{ route('orderProduk.list') }}",
+          type: "get",
+          data: {
+              "_token": "{{ csrf_token() }}"
+          }
+      },
+      columns: [
+          {data: 'po_date'},
+          {data: 'i_name'},
+          {data: 'u_name'},
+          {data: 'pod_qty'},
+          {data: 'price'},
+          {data: 'action'}
+      ],
+      pageLength: 10,
+      lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
     });
 	}
 
 	function editOrder(id, dt, item)
 	{
 		window.location.href='{{ url('/marketing/marketingarea/orderproduk/edit') }}'+"/"+id+"/"+dt+"/"+item;
+	}
+
+	function deleteOrder(id, dt)
+	{
+		$.ajax({
+			url: "{{url('/marketing/marketingarea/orderproduk/delete-order')}}",
+			type: "get",
+			data: {
+				id: id,
+				dt: dt
+			},
+			success:function(res)
+			{
+				
+			}
+		})
 	}
 	// End Order Produk --------------------------------------------
 </script>
