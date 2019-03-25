@@ -38,23 +38,29 @@
                                 <label for="">Pemilik</label>
                             </div>
                             <div class="col-md-2 col-sm-12">
-                                <select name="" id="" class="form-control form-control-sm select2">
+                                <select name="q_pemilik" id="q_pemilik" class="form-control form-control-sm select2">
                                     <option value="">Pilih</option>
+                                    @foreach($companies as $key => $comp)
+                                        <option value="{{ $comp->c_id }}">{{ strtoupper($comp->c_name) }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col-md-1 col-sm-12">
                                 <label for="">Posisi</label>
                             </div>
                             <div class="col-md-3 col-sm-12">
-                                <select name="" id="" class="form-control form-control-sm select2">
+                                <select name="q_posisi" id="q_posisi" class="form-control form-control-sm select2">
                                     <option value="">Pilih</option>
+                                    @foreach($companies as $key => $comp)
+                                        <option value="{{ $comp->c_id }}">{{ strtoupper($comp->c_name) }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col-md-1 col-sm-12">
                                 <label for="">Barang</label>
                             </div>
                             <div class="col-md-3 col-sm-12">
-                                <input type="text" class="form-control form-control-sm">
+                                <input type="text" name="q_barang" id="q_barang" class="form-control form-control-sm">
                             </div>
                             <div class="col-1">
                                 <button class="btn btn-md btn-primary"><i class="fa fa-search"></i></button>
@@ -68,7 +74,6 @@
 	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_pengelolaanmms">
 	                                <thead class="bg-primary">
 	                                    <tr>
-							                <th width="1%">No</th>
 											<th>Pemilik</th>
 											<th>Posisi</th>
 							                <th>Barang</th>
@@ -77,19 +82,19 @@
 							            </tr>
 	                                </thead>
 	                                <tbody>
-	                                	<tr>
-	                                		<td>1</td>
-											<td>Agung</td>
-	                                		<td>Rungkut</td>
-											<td>Kode - Nama Barang</td>
-											<td>12</td>
-	                                		<td>
-	                                			<div class="btn-group btn-group-sm">
-	                                				<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
-	                                				<button class="btn btn-warning btn-edit" type="button" title="Edit" onclick="window.location.href='{{route('pengelolaanmms.edit')}}'"><i class="fa fa-pencil"></i></button>
-	                                			</div>
-	                                		</td>
-	                                	</tr>
+	                                	{{--<tr>--}}
+	                                		{{--<td>1</td>--}}
+											{{--<td>Agung</td>--}}
+	                                		{{--<td>Rungkut</td>--}}
+											{{--<td>Kode - Nama Barang</td>--}}
+											{{--<td>12</td>--}}
+	                                		{{--<td>--}}
+	                                			{{--<div class="btn-group btn-group-sm">--}}
+	                                				{{--<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>--}}
+	                                				{{--<button class="btn btn-warning btn-edit" type="button" title="Edit" onclick="window.location.href='{{route('pengelolaanmms.edit')}}'"><i class="fa fa-pencil"></i></button>--}}
+	                                			{{--</div>--}}
+	                                		{{--</td>--}}
+	                                	{{--</tr>--}}
 							        </tbody>
 	                            </table>
 	                        </div>
@@ -108,9 +113,49 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-
+    var table;
 	$(document).ready(function(){
-		var table = $('#table_pengelolaanmms').DataTable();
+		table = $('#table_pengelolaanmms').DataTable({
+            responsive: true,
+            serverSide: true,
+            processing: true,
+            ajax: {
+                url: "{{ route('pengelolaanmms.liststock') }}",
+                type: "get"
+            },
+            columns: [
+                {data: 'pemilik'},
+                {data: 'posisi'},
+                {data: 'item'},
+                {data: 'qty'},
+                {data: 'action'}
+            ]
+        });
 	});
+
+	function detail(id) {
+	    loadingShow();
+	    axios.get(baseUrl+'/inventory/manajemenstok/pengelolaanmms/detail-stock/'+id)
+            .then(function (resp) {
+                if (resp.data.status == "Failed") {
+                    loadingHide();
+                    messageFailed("Gagal", resp.data.message);
+                } else if (resp.data.status == "Success") {
+                    $("#pemilik").val(resp.data.message.pemilik);
+                    $("#posisi").val(resp.data.message.posisi);
+                    $("#item").val(resp.data.message.item);
+                    $("#minstock").val(resp.data.message.qtymin);
+                    $("#maxstock").val(resp.data.message.qtymax);
+                    $("#rangemin").val(resp.data.message.rangemin);
+                    $("#rangemax").val(resp.data.message.rangemax);
+                    loadingHide();
+                    $("#detailPengelolaanms").modal("show");
+                }
+            })
+            .catch(function (error) {
+                loadingHide();
+                messageWarning("Error", error);
+            })
+    }
 </script>
 @endsection
