@@ -319,9 +319,10 @@
 		window.location.href='{{ url('/marketing/marketingarea/orderproduk/edit') }}'+"/"+id+"/"+dt+"/"+item;
 	}
 
-	function printNota()
+	function printNota(id, dt)
 	{
-		window.location.href='{{ url('/marketing/marketingarea/orderproduk/nota') }}';
+		var url = '{{ url('/marketing/marketingarea/orderproduk/nota') }}'+"/"+id+"/"+dt;
+		window.open(url);
 	}
 
 	function deleteOrder(id, dt)

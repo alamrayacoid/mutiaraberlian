@@ -209,7 +209,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/distribusibarang/getsatuan', 'Inventory\DistribusiController@getsatuan');
     Route::get('/inventory/distribusibarang/simpancabang', 'Inventory\DistribusiController@simpancabang');
     Route::get('/inventory/distribusibarang/table', 'Inventory\DistribusiController@table');
-    Route::get('/inventory/distribusibarang/hapus', 'Inventory\DistribusiController@hapus');
+    Route::get('/inventory/distribusibarang/hapus', 'Inventory\DistribusiController@hapus');    
     Route::get('/inventory/distribusibarang/nota', 'Inventory\DistribusiController@printNota')->name('ditribusibarang.nota');
     // Manajemen Stok
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
@@ -244,7 +244,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/pengelolaanmms/create', 'InventoryController@pengelolaanmms_create')->name('pengelolaanmms.create');
     Route::get('/inventory/manajemenstok/pengelolaanmms/cari-barang', 'InventoryController@cariBarang')->name('pengelolaanmms.caribarang');
     Route::post('/inventory/manajemenstok/pengelolaanmms/add-pengelolaanms', 'InventoryController@addPengelolaanms')->name('pengelolaanmms.addpengelolaanms');
-    Route::get('/inventory/manajemenstok/pengelolaanmms/edit', 'InventoryController@pengelolaanmms_edit')->name('pengelolaanmms.edit');
+    Route::match(['get', 'post'], '/inventory/manajemenstok/pengelolaanmms/edit/{id}', 'InventoryController@pengelolaanmms_edit')->name('pengelolaanmms.edit');
+    Route::get('/inventory/manajemenstok/pengelolaanmms/cari-stock', 'InventoryController@searchStock')->name('pengelolaanmms.caristock');
 
     // !===================================================== END INVENTORY =====================================================!
 
@@ -316,7 +317,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/orderproduk/get-satuan/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getSatuan')->name('orderProduk.getSatuan');
     Route::get('/marketing/marketingarea/orderproduk/get-price', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getPrice')->name('orderProduk.getPrice');
     Route::get('/marketing/marketingarea/orderproduk/delete-order/{id}/{dt}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@deleteOrder')->name('orderProduk.delete');
-    Route::get('/marketing/marketingarea/orderproduk/nota', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@printNota')->name('orderProduk.nota');
+    Route::get('/marketing/marketingarea/orderproduk/nota/{id}/{dt}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@printNota')->name('orderProduk.nota');
     // End Order Ke Cabang ==================
     Route::get('/marketing/marketingarea/keloladataorder/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_keloladataorder')->name('keloladataorder.create');
     Route::get('/marketing/marketingarea/keloladataorder/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_keloladataorder')->name('keloladataorder.edit');

@@ -116,9 +116,9 @@ var history;
         $('.datepicker').datepicker();
     })
 
-    function printNota()
+    function printNota(id)
 	{
-		window.location.href='{{ url('inventory/distribusibarang/distribusi/nota') }}';
+		window.location.href='{{ url('inventory/distribusibarang/nota') }}?id='+id;
 	}
 
     function hapus(id){
