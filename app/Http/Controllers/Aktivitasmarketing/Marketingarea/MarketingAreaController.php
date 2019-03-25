@@ -22,9 +22,23 @@ class MarketingAreaController extends Controller
         return view('marketing/marketingarea/index');
     }
 
-    public function printNota()
+    public function printNota($id, $dt)
     {
-        return view('marketing/marketingarea/orderproduk/nota');
+        try {
+            $id = Crypt::decrypt($id);
+            $dt = Crypt::decrypt($dt);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+        $nota = DB::table('d_productorderdt')
+            ->join('d_productorder', 'pod_productorder', 'po_id')
+            ->join('m_item', 'pod_item', 'i_id')
+            ->join('m_unit', 'pod_unit', 'u_id')
+            ->select('d_productorderdt.*', 'd_productorder.*', 'm_item.*', 'm_unit.*')
+            ->where('pod_productorder', $id)
+            ->where('pod_detailid', $dt)
+            ->first();
+        return view('marketing/marketingarea/orderproduk/nota', compact('nota'));
     }
 
     // Order Produk Ke Cabang ==============================================================================
@@ -45,7 +59,7 @@ class MarketingAreaController extends Controller
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                             <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-folder"></i>
                             </button>
-                            <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota()"><i class="fa fa-print"></i>
+                            <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-print"></i>
                             </button>
                             <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\', \'' . Crypt::encrypt($order->pod_item) . '\')"><i class="fa fa-pencil"></i>
                             </button>

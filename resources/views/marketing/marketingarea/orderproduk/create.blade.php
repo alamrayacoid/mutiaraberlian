@@ -158,6 +158,7 @@
         // AutoComplete Item ------------------------------------------
         $('.barang').on('click change', function (e) {
             idxBarang = $('.barang').index(this);
+            $(".jumlah").eq(idxBarang).attr("readonly", false);
             setArrayCode();
         });
         $('.jumlah').on('click change input', function (e) {
@@ -204,7 +205,6 @@
         }
 
         function setArrayCode() {
-            $(".jumlah").eq(idxBarang).attr("readonly", false);
             var inputs = document.getElementsByClassName('kode'),
                 code   = [].map.call(inputs, function (input) {
                     return input.value.toString();
@@ -283,6 +283,7 @@
 
             $('.barang').on('click change', function (e) {
                 idxBarang = $('.barang').index(this);
+                $(".jumlah").eq(idxBarang).attr("readonly", false);
                 setArrayCode();
             });
 
@@ -318,6 +319,7 @@
     function changeBarang() {
         $(".barang").on('change', function (evt) {
             evt.preventDefault();
+            $(".jumlah").eq(idxBarang).attr("readonly", false);
             everyChange();
         });
     }
