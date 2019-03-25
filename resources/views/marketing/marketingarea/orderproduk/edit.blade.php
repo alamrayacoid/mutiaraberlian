@@ -66,7 +66,7 @@
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
                   <div class="form-group">
-                    <input type="text" name="po_harga" class="form-control form-control-sm input-rupiah harga" value="{{Currency::addRupiah($produk->pod_price)}}">
+                    <input type="text" name="po_harga" class="form-control form-control-sm input-rupiah harga" value="{{Currency::addRupiah($produk->pod_price)}}" readonly="">
                     <input type="hidden" name="po_hrg" class="po_hrg" value="{{$produk->pod_price}}">
                   </div>
                 </div>

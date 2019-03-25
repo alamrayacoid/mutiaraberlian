@@ -56,16 +56,30 @@ class MarketingAreaController extends Controller
                 return Currency::addRupiah($order->pod_totalprice);
             })
             ->addColumn('action', function ($order) {
-                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                            <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-folder"></i>
-                            </button>
-                            <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-print"></i>
-                            </button>
-                            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\', \'' . Crypt::encrypt($order->pod_item) . '\')"><i class="fa fa-pencil"></i>
-                            </button>
-                            <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-trash"></i>
-                            </button>
-                        </div>';
+                if ($order->po_status == "Y") {
+                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-folder"></i>
+                                </button>
+                                <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-print"></i>
+                                </button>
+                                <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\', \'' . Crypt::encrypt($order->pod_item) . '\')"><i class="fa fa-fw fa-pencil"></i>
+                                </button>
+                                <button class="btn btn-light text-secondary disabled" role="button" aria-disabled="true"><i class="fa fa-fw fa-trash"></i>
+                                </button>
+                            </div>';
+                } else {
+                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-folder"></i>
+                                </button>
+                                <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-print"></i>
+                                </button>
+                                <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\', \'' . Crypt::encrypt($order->pod_item) . '\')"><i class="fa fa-fw fa-pencil"></i>
+                                </button>
+                                <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-trash"></i>
+                                </button>
+                            </div>';
+                }
+                
             })
             ->rawColumns(['price','action'])
             ->make(true);
