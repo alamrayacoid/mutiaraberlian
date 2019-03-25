@@ -157,5 +157,9 @@
                 messageWarning("Error", error);
             })
     }
+
+    function edit(id) {
+	    window.location.href = baseUrl+"/inventory/manajemenstok/pengelolaanmms/edit/"+id;
+    }
 </script>
 @endsection

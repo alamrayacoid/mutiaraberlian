@@ -240,9 +240,60 @@ class InventoryController extends Controller
         }
     }
     
-    public function pengelolaanmms_edit()
+    public function pengelolaanmms_edit(Request $request, $id = null)
     {
-        return view('inventory.manajemenstok.pengelolaanmms.edit');
+        try{
+            $id = Crypt::decrypt($id);
+        }catch (DecryptException $e){
+            return abort(404);
+        }
+
+        if ($request->isMethod('get')) {
+            $data = Stock::join('m_company as comp', 'd_stock.s_comp', '=', 'comp.c_id')
+                ->join('m_company as position', 'd_stock.s_position', '=', 'position.c_id')
+                ->join('m_item', 'd_stock.s_item', '=', 'm_item.i_id')
+                ->where('d_stock.s_id', '=', $id)
+                ->select('d_stock.s_comp as pemilik', 'd_stock.s_position as posisi', 'd_stock.s_item as idItem', 'm_item.i_name as item',
+                    'd_stock.s_qty as qty', 'd_stock.s_qtymin as qtymin', 'd_stock.s_qtymax as qtymax',
+                    'd_stock.s_qtysafetystart as rangemin', 'd_stock.s_qtysafetyend as rangemax')
+                ->first();
+
+            $companies = Company::get();
+            $idx = Crypt::encrypt($id);
+            return view('inventory.manajemenstok.pengelolaanmms.edit')->with(compact('data', 'companies', 'idx'));
+        } else if ($request->isMethod('post')) {
+            DB::beginTransaction();
+            try{
+                if ($request->idBarang == "") {
+                    $iditem = $request->idItem;
+                } else {
+                    $iditem = $request->idBarang;
+                }
+
+                $values = [
+                    's_comp'            => $request->pemilik,
+                    's_position'        => $request->posisi,
+                    's_item'            => $iditem,
+                    's_qtymin'          => $request->qtymin,
+                    's_qtymax'          => $request->qtymax,
+                    's_qtysafetystart'  => $request->rangemin,
+                    's_qtysafetyend'    => $request->rangemax
+                ];
+
+                Stock::where('s_id', $id)->update($values);
+                DB::commit();
+                return Response::json([
+                    'status' => "Success",
+                    'message' => "Data berhasil diperbarui"
+                ]);
+            }catch (Exception $e){
+                DB::rollback();
+                return Response::json([
+                    'status' => "Failed",
+                    'message' => $e
+                ]);
+            }
+        }
     }
 
 }
