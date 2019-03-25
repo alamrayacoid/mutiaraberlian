@@ -291,32 +291,81 @@
 	// Order Produk Ke Cabang -------------------------------
 	function orderProdukList()
 	{
-    tb_target = $('#table_orderproduk').DataTable({
-        responsive: true,
-        serverSide: true,
-        ajax: {
-            url: "{{ route('orderProduk.list') }}",
-            type: "get",
-            data: {
-                "_token": "{{ csrf_token() }}"
-            }
-        },
-        columns: [
-            {data: 'po_date'},
-            {data: 'i_name'},
-            {data: 'u_name'},
-            {data: 'pod_qty'},
-            {data: 'price'},
-            {data: 'action'}
-        ],
-        pageLength: 10,
-        lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+    tb_order = $('#table_orderproduk').DataTable({
+      responsive: true,
+      serverSide: true,
+      ajax: {
+          url: "{{ route('orderProduk.list') }}",
+          type: "get",
+          data: {
+              "_token": "{{ csrf_token() }}"
+          }
+      },
+      columns: [
+          {data: 'po_date'},
+          {data: 'i_name'},
+          {data: 'u_name'},
+          {data: 'pod_qty'},
+          {data: 'price'},
+          {data: 'action'}
+      ],
+      pageLength: 10,
+      lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
     });
 	}
 
 	function editOrder(id, dt, item)
 	{
 		window.location.href='{{ url('/marketing/marketingarea/orderproduk/edit') }}'+"/"+id+"/"+dt+"/"+item;
+	}
+
+	function deleteOrder(id, dt)
+	{
+		var delete = "{{url('/marketing/marketingarea/orderproduk/delete-order')}}"+"/"+id+"/"+dt;
+    $.confirm({
+      animation: 'RotateY',
+      closeAnimation: 'scale',
+      animationBounce: 1.5,
+      icon: 'fa fa-exclamation-triangle',
+      title: 'Pesan!',
+      content: 'Apakah anda yakin ingin menghapus data ini?',
+      theme: 'disable',
+      buttons: {
+        info: {
+          btnClass: 'btn-blue',
+          text: 'Ya',
+          action: function() {
+            return $.ajax({
+              type: "get",
+              url: delete,
+              beforeSend: function() {
+                loadingShow();
+              },
+              success: function(response) {
+                if (response.status == 'sukses') {
+                  loadingHide();
+                  messageSuccess('Berhasil', 'Data berhasil dihapus!');
+                  tb_order.ajax.reload();
+                } else {
+                  loadingHide();
+                  messageFailed('Gagal', response.message);
+                }
+              },
+              error: function(e) {
+                  loadingHide();
+                  messageWarning('Peringatan', e.message);
+              }
+            });
+          }
+        },
+        cancel: {
+            text: 'Tidak',
+            action: function() {
+
+            }
+        }
+      }
+    });
 	}
 	// End Order Produk --------------------------------------------
 </script>

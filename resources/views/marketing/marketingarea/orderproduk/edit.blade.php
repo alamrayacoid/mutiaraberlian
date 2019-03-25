@@ -48,7 +48,7 @@
                     <select name="po_unit" class="form-control form-control-sm select2 satuan">
                       <option value="{{$produk->u_id}}" selected="">{{$produk->u_name}}</option>
                       @foreach($unit->where('u_id', '!=', $produk->pod_unit) as $u)
-                        <option value="{{$u->u_id}}">{{$u->u_name}}</option>                    
+                      <option value="{{$u->u_id}}">{{$u->u_name}}</option>
                       @endforeach
                     </select>
                   </div>
@@ -120,42 +120,42 @@
     // End Document Ready ---------------------------------------------
 
     function setArrayCode() {
-        var inputs = document.getElementsByClassName('kode'),
-            code   = [].map.call(inputs, function (input) {
-                return input.value.toString();
-            });
+      var inputs = document.getElementsByClassName('kode'),
+          code   = [].map.call(inputs, function (input) {
+            return input.value.toString();
+          });
 
-        for (var i = 0; i < code.length; i++) {
-            if (code[i] != "") {
-                icode.push(code[i]);
-            }
+      for (var i = 0; i < code.length; i++) {
+        if (code[i] != "") {
+          icode.push(code[i]);
         }
+      }
 
-        var item = [];
-        var inpItemId = document.getElementsByClassName('itemId'),
-            item      = [].map.call(inpItemId, function (input) {
-                return input.value;
-            });
+      var item = [];
+      var inpItemId = document.getElementsByClassName('itemId'),
+          item      = [].map.call(inpItemId, function (input) {
+            return input.value;
+          });
 
-        $(".barang").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "{{ url('/marketing/marketingarea/orderproduk/cari-barang') }}",
-                    data: {
-                        idItem: item,
-                        term: $(".barang").val()
-                    },
-                    success: function (data) {
-                        response(data);
-                        console.log(data);
-                    }
-                });
+      $(".barang").autocomplete({
+        source: function (request, response) {
+          $.ajax({
+            url: "{{ url('/marketing/marketingarea/orderproduk/cari-barang') }}",
+            data: {
+              idItem: item,
+              term: $(".barang").val()
             },
-            minLength: 1,
-            select: function (event, data) {
-                setItem(data.item);
+            success: function (data) {
+              response(data);
+              console.log(data);
             }
-        });
+          });
+        },
+        minLength: 1,
+        select: function (event, data) {
+          setItem(data.item);
+        }
+      });
     }
 
     function setItem(info) {
@@ -189,8 +189,8 @@
     // Merubah Sub Total Berdasarkan Jumlah Item ----------------------
     function changeJumlah() {
       $(".jumlah").on('input', function (evt) {
-          evt.preventDefault();
-          everyChange();
+        evt.preventDefault();
+        everyChange();
       });
     }
     // End Code -------------------------------------------------------
@@ -198,8 +198,8 @@
     // Merubah Sub Total Berdasarkan Jumlah Item ----------------------
     function changeSatuan() {
       $(".satuan").on('change', function (evt) {
-          evt.preventDefault();
-          everyChange();
+        evt.preventDefault();
+        everyChange();
       });
     }
     // End Code -------------------------------------------------------
@@ -208,58 +208,58 @@
     {
       var inpBarang = document.getElementsByClassName( 'barang' ),
           barang    = [].map.call(inpBarang, function( input ) {
-              return parseInt(input.value);
+            return parseInt(input.value);
           });
       var inpSatuan = document.getElementsByClassName( 'satuan' ),
           satuan    = [].map.call(inpSatuan, function( input ) {
-              return parseInt(input.value);
+            return parseInt(input.value);
           });
       var inpJumlah = document.getElementsByClassName( 'jumlah' ),
           jumlah    = [].map.call(inpJumlah, function( input ) {
-              return parseInt(input.value);
+            return parseInt(input.value);
           });
 
       $.ajax({
-          url: "{{url('/marketing/marketingarea/orderproduk/get-price')}}",
-          type: "GET",
-          data: {
-              item : $('.itemId').val(),
-              unit: $('.satuan').val(),
-              qty: $('.jumlah').val()
-          },
-          success:function(res)
-          {                    
-            var price = res.data;
-            if (isNaN(price)) {
-                price = 0;
-            }
-            $('.harga').val(convertToRupiah(price));
-            $('.po_hrg').val(price);
-
-            var inpHarga = document.getElementsByClassName( 'harga' ),
-                harga    = [].map.call(inpHarga, function( input ) {
-                    return input.value;
-                });
-
-            for (var i = 0; i < jumlah.length; i++) {
-              var hasil = 0;
-              var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-              var jml = jumlah[i];
-
-              if (jml == "") {
-                  jml = 0;
-              }
-
-              hasil += parseInt(hrg) * parseInt(jml);
-
-              if (isNaN(hasil)) {
-                  hasil = 0;
-              }
-              $("#tot_harga").eq(i).val(hasil);
-              hasil = convertToRupiah(hasil);
-              $("#total_harga").eq(i).val(hasil);
-            }                    
+        url: "{{url('/marketing/marketingarea/orderproduk/get-price')}}",
+        type: "GET",
+        data: {
+          item : $('.itemId').val(),
+          unit: $('.satuan').val(),
+          qty: $('.jumlah').val()
+        },
+        success:function(res)
+        {                    
+          var price = res.data;
+          if (isNaN(price)) {
+              price = 0;
           }
+          $('.harga').val(convertToRupiah(price));
+          $('.po_hrg').val(price);
+
+          var inpHarga = document.getElementsByClassName( 'harga' ),
+              harga    = [].map.call(inpHarga, function( input ) {
+                return input.value;
+              });
+
+          for (var i = 0; i < jumlah.length; i++) {
+            var hasil = 0;
+            var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+            var jml = jumlah[i];
+
+            if (jml == "") {
+              jml = 0;
+            }
+
+            hasil += parseInt(hrg) * parseInt(jml);
+
+            if (isNaN(hasil)) {
+              hasil = 0;
+            }
+            $("#tot_harga").eq(i).val(hasil);
+            hasil = convertToRupiah(hasil);
+            $("#total_harga").eq(i).val(hasil);
+          }                    
+        }
       });
     }
 </script>
