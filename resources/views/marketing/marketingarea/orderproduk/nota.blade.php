@@ -495,6 +495,6 @@
 <script src="{{asset('assets/jquery/jquery-3.1.0.min.js')}}"></script>
 <script type="text/javascript">
 $(document).ready(function () {
-window.print();
+	window.print();
 })
 </script>
