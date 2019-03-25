@@ -6,7 +6,11 @@ use Illuminate\Http\Request;
 use DB;
 use App\m_company as Company;
 use App\d_stock as Stock;
+use App\m_item as Item;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Mockery\Exception;
+use DataTables;
 use Response;
 class InventoryController extends Controller
 {
@@ -97,7 +101,61 @@ class InventoryController extends Controller
 
     public function pengelolaanmms_index()
     {
-        return view('inventory.manajemenstok.pengelolaanmms.index');
+        $companies = Company::get();
+        return view('inventory.manajemenstok.pengelolaanmms.index')->with(compact('companies'));
+    }
+
+    public function dataStock()
+    {
+        $datas = Stock::join('m_company as comp', 'd_stock.s_comp', '=', 'comp.c_id')
+                ->join('m_company as position', 'd_stock.s_position', '=', 'position.c_id')
+                ->join('m_item', 'd_stock.s_item', '=', 'm_item.i_id')
+                ->select('d_stock.s_id as id', 'comp.c_name as pemilik', 'position.c_name as posisi', 'm_item.i_name as item',
+                    'd_stock.s_qty as qty');
+        return Datatables::of($datas)
+            ->addColumn('pemilik', function($datas) {
+                return strtoupper($datas->pemilik);
+            })
+            ->addColumn('posisi', function($datas) {
+                return strtoupper($datas->posisi);
+            })
+            ->addColumn('item', function($datas) {
+                return strtoupper($datas->item);
+            })
+            ->addColumn('qty', function($datas) {
+                return '<div class="text-center">'.$datas->qty.'</div>';
+            })
+            ->addColumn('action', function($datas) {
+                return '<div class="btn-group btn-group-sm">
+                            <button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''. Crypt::encrypt($datas->id) .'\')"><i class="fa fa-folder"></i></button>
+                            <button class="btn btn-warning btn-edit" type="button" title="Edit" onclick="edit(\''. Crypt::encrypt($datas->id) .'\')"><i class="fa fa-pencil"></i></button>
+                        </div>';
+            })
+            ->rawColumns(['pemilik', 'posisi', 'item', 'qty', 'action'])
+            ->make(true);
+    }
+
+    public function detailStock($id = null)
+    {
+        try{
+            $id = Crypt::decrypt($id);
+        }catch (DecryptException $e){
+            return Response::json(['status' => "Failed", 'message' => $e]);
+        }
+
+        $data = Stock::join('m_company as comp', 'd_stock.s_comp', '=', 'comp.c_id')
+            ->join('m_company as position', 'd_stock.s_position', '=', 'position.c_id')
+            ->join('m_item', 'd_stock.s_item', '=', 'm_item.i_id')
+            ->where('d_stock.s_id', '=', $id)
+            ->select('comp.c_name as pemilik', 'position.c_name as posisi', 'm_item.i_name as item',
+                'd_stock.s_qty as qty', 'd_stock.s_qtymin as qtymin', 'd_stock.s_qtymax as qtymax',
+                'd_stock.s_qtysafetystart as rangemin', 'd_stock.s_qtysafetyend as rangemax')
+            ->first();
+        return Response::json([
+                    'status' => "Success",
+                    'message' => $data
+                ]);
+
     }
 
     public function pengelolaanmms_create()

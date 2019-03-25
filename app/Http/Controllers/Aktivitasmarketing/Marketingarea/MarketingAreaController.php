@@ -335,11 +335,24 @@ class MarketingAreaController extends Controller
 
         DB::beginTransaction();
         try {
-            DB::table('d_productorderdt')
+            $query1 = DB::table('d_productorderdt')
+                ->join('d_productorder', 'pod_productorder', 'po_id')
+                ->select('d_productorderdt.*', 'd_productorder.*')
                 ->where('pod_productorder', $id)
                 ->where('pod_detailid', $dt)
-                ->delete();
-                
+                ->first();
+            if ($query1->po_status == "P" || $query1->po_status == "N") {
+                DB::table('d_productorderdt')
+                    ->where('pod_productorder', $id)
+                    ->where('pod_detailid', $dt)
+                    ->delete();
+            } else {
+                DB::commit();
+                return response()->json([
+                    'status' => 'warning'
+                ]);
+            }
+
             DB::commit();
             return response()->json([
                 'status' => 'sukses'

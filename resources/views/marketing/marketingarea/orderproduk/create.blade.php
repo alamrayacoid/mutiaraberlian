@@ -113,7 +113,7 @@
                                                         <input type="number" name="po_qty[]" min="0" class="form-control form-control-sm jumlah" value="0">
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="po_harga[]" class="form-control form-control-sm input-rupiah harga" value="Rp. 0">
+                                                        <input type="text" name="po_harga[]" class="form-control form-control-sm input-rupiah harga" value="Rp. 0" readonly="">
                                                         <input type="hidden" name="po_hrg[]" class="po_hrg">
                                                     </td>
                                                     <td>
@@ -154,6 +154,7 @@
     $(document).ready(function() {
         changeJumlah();
         changeHarga();
+        changeSatuan();
 
         // AutoComplete Item ------------------------------------------
         $('.barang').on('click', function (e) {
@@ -251,7 +252,7 @@
                             '</select>'+
                         '</td>' +
                         '<td><input type="number" name="po_qty[]" min="0" class="form-control form-control-sm jumlah" value="0"></td>' +
-                        '<td><input type="text" name="po_harga[]" class="form-control form-control-sm input-rupiah harga" value="Rp. 0">'+
+                        '<td><input type="text" name="po_harga[]" class="form-control form-control-sm input-rupiah harga" value="Rp. 0" readonly>'+
                             '<input type="hidden" name="po_hrg[]" class="po_hrg">'+
                         '</td>' +
                         '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" readonly>'+
@@ -290,6 +291,7 @@
             });
             changeJumlah();
             changeHarga();
+            changeSatuan();
         });
         // End Form Order ---------------------------------------------
 
@@ -301,6 +303,69 @@
         // End Hapus Form
     });
     // End Document Ready ---------------------------------------------
+    function changeSatuan() {
+        $('.satuan').on('change', function (evt) {
+            evt.preventDefault();
+
+            var inpSatuan = document.getElementsByClassName('satuan'),
+                satuan = [].map.call(inpSatuan, function(input){
+                    return parseInt(input.value);
+                })
+            var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                jumlah    = [].map.call(inpJumlah, function( input ) {
+                    return parseInt(input.value);
+                });
+
+            $.ajax({
+                url: "{{url('/marketing/marketingarea/orderproduk/get-price')}}",
+                type: "GET",
+                data: {
+                    item : $('.itemId').eq(idxBarang).val(),
+                    unit: $('.satuan').eq(idxBarang).val(),
+                    qty: $('.jumlah').eq(idxBarang).val()
+                },
+                success:function(res)
+                {
+                    
+                    var price = res.data;
+                    if (isNaN(price)) {
+                        price = 0;
+                    }
+                    $('.harga').eq(idxBarang).val(convertToRupiah(price));
+                    $('.po_hrg').eq(idxBarang).val(price);
+
+                    var inpHarga = document.getElementsByClassName( 'harga' ),
+                        harga    = [].map.call(inpHarga, function( input ) {
+                            return input.value;
+                        });
+
+                    var inpSubtotal = document.getElementsByClassName( 'subtotal' ),
+                        subtotal    = [].map.call(inpSubtotal, function( input ) {
+                            return input.value;
+                        });
+
+                    for (var i = 0; i < jumlah.length; i++) {
+                        var hasil = 0;
+                        var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                        var jml = jumlah[i];
+
+                        if (jml == "") {
+                            jml = 0;
+                        }
+
+                        hasil += parseInt(hrg) * parseInt(jml);
+
+                        if (isNaN(hasil)) {
+                            hasil = 0;
+                        }
+                        hasil = convertToRupiah(hasil);
+                        $(".subtotal").eq(i).val(hasil);
+                    }
+                    updateTotalTampil();
+                }
+            });
+        });
+    }
     
     // Merubah Sub Total Berdasarkan Jumlah Item ----------------------
     function changeJumlah() {

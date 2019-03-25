@@ -321,7 +321,7 @@
 
 	function deleteOrder(id, dt)
 	{
-		var delete = "{{url('/marketing/marketingarea/orderproduk/delete-order')}}"+"/"+id+"/"+dt;
+		var hapus_order = "{{url('/marketing/marketingarea/orderproduk/delete-order')}}"+"/"+id+"/"+dt;
     $.confirm({
       animation: 'RotateY',
       closeAnimation: 'scale',
@@ -337,7 +337,7 @@
           action: function() {
             return $.ajax({
               type: "get",
-              url: delete,
+              url: hapus_order,
               beforeSend: function() {
                 loadingShow();
               },
@@ -345,6 +345,10 @@
                 if (response.status == 'sukses') {
                   loadingHide();
                   messageSuccess('Berhasil', 'Data berhasil dihapus!');
+                  tb_order.ajax.reload();
+                } else if (response.status == 'warning') {
+                  loadingHide();
+                  messageWarning('Peringatan', 'Data ini tidak boleh dihapus!');
                   tb_order.ajax.reload();
                 } else {
                   loadingHide();
