@@ -319,6 +319,11 @@
 		window.location.href='{{ url('/marketing/marketingarea/orderproduk/edit') }}'+"/"+id+"/"+dt+"/"+item;
 	}
 
+	function printNota()
+	{
+		window.location.href='{{ url('/marketing/marketingarea/orderproduk/nota') }}';
+	}
+
 	function deleteOrder(id, dt)
 	{
 		var hapus_order = "{{url('/marketing/marketingarea/orderproduk/delete-order')}}"+"/"+id+"/"+dt;

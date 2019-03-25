@@ -36,7 +36,7 @@ class DistribusiController extends Controller
       return view('inventory/distribusibarang/distribusi/edit');
   }
 
-  public function nota()
+  public function printNota()
   {
       return view('inventory/distribusibarang/distribusi/nota');
   }
@@ -147,6 +147,7 @@ class DistribusiController extends Controller
     ->addColumn('action', function($data) {
       return '<div class="btn-group btn-group-sm">
               <button class="btn btn-primary btn-modal-detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
+              <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota()"><i class="fa fa-print"></i></button>
               <button class="btn btn-warning btn-edit-distribusi" onclick="window.location.href=' . route('distribusibarang.edit') . '" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
               <button class="btn btn-danger btn-disable-distribusi" onclick="hapus('.$data->sd_id.')" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
               </div>';

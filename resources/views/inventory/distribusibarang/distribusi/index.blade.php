@@ -24,16 +24,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    <button class="btn btn-sm btn-info btn-nota" title="Nota" onclick="window.location.href='{{ route('ditribusibarang.nota') }}'"><i class="fa fa-print"></i></button>
-                                </td>
-                            </tr>
+                        
                         </tbody>
                     </table>
                 </div>
