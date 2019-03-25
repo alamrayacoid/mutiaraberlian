@@ -346,6 +346,10 @@
                   loadingHide();
                   messageSuccess('Berhasil', 'Data berhasil dihapus!');
                   tb_order.ajax.reload();
+                } else if (response.status == 'warning') {
+                  loadingHide();
+                  messageWarning('Peringatan', 'Data ini tidak boleh dihapus!');
+                  tb_order.ajax.reload();
                 } else {
                   loadingHide();
                   messageFailed('Gagal', response.message);
