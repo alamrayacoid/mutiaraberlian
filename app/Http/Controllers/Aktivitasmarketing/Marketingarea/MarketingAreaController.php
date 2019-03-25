@@ -22,6 +22,11 @@ class MarketingAreaController extends Controller
         return view('marketing/marketingarea/index');
     }
 
+    public function printNota()
+    {
+        return view('marketing/marketingarea/orderproduk/nota');
+    }
+
     // Order Produk Ke Cabang ==============================================================================
     public function orderList()
     {
@@ -38,7 +43,9 @@ class MarketingAreaController extends Controller
             })
             ->addColumn('action', function ($order) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                            <button class="btn btn-info hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-folder"></i>
+                            <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-folder"></i>
+                            </button>
+                            <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota()"><i class="fa fa-print"></i>
                             </button>
                             <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\', \'' . Crypt::encrypt($order->pod_item) . '\')"><i class="fa fa-pencil"></i>
                             </button>

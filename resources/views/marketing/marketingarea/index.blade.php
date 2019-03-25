@@ -319,6 +319,11 @@
 		window.location.href='{{ url('/marketing/marketingarea/orderproduk/edit') }}'+"/"+id+"/"+dt+"/"+item;
 	}
 
+	function printNota()
+	{
+		window.location.href='{{ url('/marketing/marketingarea/orderproduk/nota') }}';
+	}
+
 	function deleteOrder(id, dt)
 	{
 		var hapus_order = "{{url('/marketing/marketingarea/orderproduk/delete-order')}}"+"/"+id+"/"+dt;
@@ -372,5 +377,79 @@
     });
 	}
 	// End Order Produk --------------------------------------------
+</script>
+<script type="text/javascript">
+
+$(document).ready(function(){
+	$(document).on('click', '.btn-accept', function(){
+		var ini = $(this);
+		$.confirm({
+			animation: 'RotateY',
+			closeAnimation: 'scale',
+			animationBounce: 1.5,
+			icon: 'fa fa-exclamation-triangle',
+			title: 'Peringatan!',
+			content: 'Apa anda yakin?',
+			theme: 'disable',
+				buttons: {
+						info: {
+							btnClass: 'btn-blue',
+							text:'Ya',
+							action : function(){
+								$.toast({
+									heading: 'Information',
+									text: 'Data Berhasil di Setujui.',
+									bgColor: '#0984e3',
+									textColor: 'white',
+									loaderBg: '#fdcb6e',
+									icon: 'info'
+								})
+							}
+						},
+						cancel:{
+							text: 'Tidak',
+							action: function () {
+										// tutup confirm
+							}
+						}
+				}
+		});
+	});
+
+	$(document).on('click', '.btn-reject', function(){
+		var ini = $(this);
+		$.confirm({
+			animation: 'RotateY',
+			closeAnimation: 'scale',
+			animationBounce: 1.5,
+			icon: 'fa fa-exclamation-triangle',
+			title: 'Peringatan!',
+			content: 'Apa anda yakin?',
+			theme: 'disable',
+				buttons: {
+						info: {
+							btnClass: 'btn-blue',
+							text:'Ya',
+							action : function(){
+								$.toast({
+									heading: 'Information',
+									text: 'Data Berhasil di Tolak.',
+									bgColor: '#0984e3',
+									textColor: 'white',
+									loaderBg: '#fdcb6e',
+									icon: 'info'
+								})
+							}
+						},
+						cancel:{
+							text: 'Tidak',
+							action: function () {
+										// tutup confirm
+							}
+						}
+				}
+		});
+	});
+});
 </script>
 @endsection

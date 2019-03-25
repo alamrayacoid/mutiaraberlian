@@ -36,9 +36,17 @@ class DistribusiController extends Controller
       return view('inventory/distribusibarang/distribusi/edit');
   }
 
-  public function nota()
+  public function printNota(Request $request)
   {
-      return view('inventory/distribusibarang/distribusi/nota');
+      $data = DB::table('d_stockdistribution')->where('sd_id', $request->id)->first();
+
+      $tujuan = DB::table('m_company')->where('c_id', $data->sd_destination)->first();
+
+      $cabang = DB::table('m_company')->where('c_id', $data->sd_from)->first();
+
+      $dt = DB::table('d_stockdistributiondt')->join('m_item', 'i_id', '=', 'sdd_item')->join('m_unit', 'u_id', '=', 'sdd_unit')->where('sdd_stockdistribution', $request->id)->get();
+
+      return view('inventory/distribusibarang/distribusi/nota', compact('data', 'tujuan', 'cabang', 'dt'));
   }
 
   public function getitem(Request $request){
@@ -147,6 +155,7 @@ class DistribusiController extends Controller
     ->addColumn('action', function($data) {
       return '<div class="btn-group btn-group-sm">
               <button class="btn btn-primary btn-modal-detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
+              <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota('.$data->sd_id.')"><i class="fa fa-print"></i></button>
               <button class="btn btn-warning btn-edit-distribusi" onclick="window.location.href=' . route('distribusibarang.edit') . '" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
               <button class="btn btn-danger btn-disable-distribusi" onclick="hapus('.$data->sd_id.')" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
               </div>';
@@ -227,7 +236,6 @@ class DistribusiController extends Controller
         'status' => 'gagal'
       ]);
     }
-
   }
 
 }

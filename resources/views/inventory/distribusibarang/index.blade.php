@@ -116,6 +116,11 @@ var history;
         $('.datepicker').datepicker();
     })
 
+    function printNota(id)
+	{
+		window.location.href='{{ url('inventory/distribusibarang/nota') }}?id='+id;
+	}
+
     function hapus(id){
       $.confirm({
           animation: 'RotateY',
