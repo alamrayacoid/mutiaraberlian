@@ -496,7 +496,7 @@ table.border-none > tbody > tr > td{
 						<th>Tujuan</th>
 						<th width="40%">Nama - Kode Barang</th>
 						<th>Satuan</th>
-						<th>Qty</th>
+						<th>Jumlah</th>
 					</tr>
 				</thead>
 				<tbody>
