@@ -479,12 +479,22 @@ table.border-none > tbody > tr > td{
 					<tr>
 						<td width="20%">No. Nota</td>
 						<td width="1%">:</td>
-						<td>~</td>
+						<td>{{$data->sd_nota}}</td>
 					</tr>
 					<tr>
 						<td>Tanggal</td>
 						<td width="5%">:</td>
-						<td>~</td>
+						<td>{{Carbon\Carbon::parse($data->sd_date)->format('d/m/Y')}}</td>
+					</tr>
+					<tr>
+						<td>Cabang Asal</td>
+						<td width="5%">:</td>
+						<td>{{$cabang->c_name}}</td>
+					</tr>
+					<tr>
+						<td>Cabang Tujuan</td>
+						<td width="5%">:</td>
+						<td>{{$tujuan->c_name}}</td>
 					</tr>
 				</table>
 			</div>
@@ -493,20 +503,20 @@ table.border-none > tbody > tr > td{
 				<thead>
 					<tr>
 						<th width="1%">No</th>
-						<th>Tujuan</th>
 						<th width="40%">Nama - Kode Barang</th>
 						<th>Satuan</th>
 						<th>Qty</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td align="center">1</td>
-						<td align="center">~</td>
-						<td align="center">~</td>
-						<td align="center">~</td>
-						<td align="center">~</td>
-					</tr>
+					@foreach ($dt as $key => $value)
+						<tr>
+							<td align="center">{{$key + 1}}</td>
+							<td align="center">{{$value->i_code}} - {{$value->i_name}}</td>
+							<td align="center">{{$value->u_name}}</td>
+							<td align="center">{{$value->sdd_qty}}</td>
+						</tr>
+					@endforeach
 				</tbody>
 			</table>
 		</div>
