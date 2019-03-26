@@ -178,6 +178,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/returnproduksi/index', 'ProduksiController@return_produksi')->name('return.index');
     Route::get('/produksi/returnproduksi/create', 'ProduksiController@create_return_produksi')->name('return.create');
     Route::get('/produksi/returnproduksi/get-nota', 'ProduksiController@getNotaProductionOrder')->name('return.getnota');
+    Route::get('/produksi/returnproduksi/cari-supplier', 'ProduksiController@searchSupplier')->name('return.carisupplier');
     Route::get('/produksi/returnproduksi/create/next', 'ProduksiController@next_create_return_produksi')->name('return.nextcreate');
     // !===================================================== END PRODUKSI =====================================================!
 
