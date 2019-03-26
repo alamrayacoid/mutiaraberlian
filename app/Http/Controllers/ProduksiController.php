@@ -531,12 +531,12 @@ class ProduksiController extends Controller
             ->addColumn('nota', function($data){
                 return $data->nota;
             })
-            ->addColumn('aksi', function($data){
-                $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrder(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-folder"></i></button>';
-                $ambil = '<button class="btn btn-warning btn-edit" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-pencil"></i></button>';
+            ->addColumn('action', function($data){
+                $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail" data-backdrop="static" data-keyboard="false"><i class="fa fa-folder"></i></button>';
+                $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Ambil"><i class="fa fa-hand-lizard-o"></i></button>';
                 return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
             })
-            ->rawColumns(['totalnet','bayar', 'status','aksi'])
+            ->rawColumns(['supplier','tanggal', 'nota','action'])
             ->make(true);
     }
 

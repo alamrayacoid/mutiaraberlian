@@ -46,7 +46,7 @@
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <button class="btn btn-md btn-primary" title="Pencarian No. Nota" data-toggle="modal" data-target="#search-modal" data-backdrop="static" data-keyboard="false"><i class="fa fa-search"></i></button>
+                                    <button class="btn btn-md btn-primary" title="Pencarian No. Nota" id="btn_searchnota"><i class="fa fa-search"></i></button>
                                 </div>
 
                         	</div>
@@ -97,6 +97,34 @@
         tbl_gb = $('#tabel_gb').DataTable();
         tbl_gu = $('#tabel_gu').DataTable();
         tbl_pn = $('#tabel_pn').DataTable();
+
+        $("#btn_searchnota").on("click", function (evt) {
+            evt.preventDefault();
+            loadingShow();
+            if ($.fn.DataTable.isDataTable("#tbl_nota")) {
+                $('#tbl_nota').DataTable().clear().destroy();
+            }
+
+            $('#tbl_nota').DataTable({
+                responsive: true,
+                serverSide: true,
+                processing: true,
+                ajax: {
+                    url: "{{ route('return.getnota') }}",
+                    type: "get"
+                },
+                columns: [
+                    {data: 'supplier'},
+                    {data: 'tanggal'},
+                    {data: 'nota'},
+                    {data: 'action'}
+                ],
+                drawCallback: function( settings ) {
+                    loadingHide();
+                    $("#search-modal").modal({backdrop: 'static', keyboard: false});
+                }
+            });
+        })
 
         $('#header-metodereturn').change(function(){
             var ini, potong_nota, ganti_uang, ganti_barang;
