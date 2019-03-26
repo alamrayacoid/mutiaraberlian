@@ -110,11 +110,12 @@
                                                         </select>
                                                     </td>
                                                     <td>
-                                                        <input type="number" name="po_qty[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly="">
+                                                        <input type="number" name="po_qty[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly="" disabled="">
                                                     </td>
                                                     <td>
                                                         <input type="text" name="po_harga[]" class="form-control form-control-sm input-rupiah harga bg-light" value="Rp. 0" readonly disabled>
                                                         <input type="hidden" name="po_hrg[]" class="po_hrg">
+                                                        <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p>
                                                     </td>
                                                     <td>
                                                         <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" readonly>
@@ -154,15 +155,18 @@
     $(document).ready(function() {
         changeJumlah();
         changeSatuan();
+        changeBarang();
 
         // AutoComplete Item ------------------------------------------
         $('.barang').on('click change', function (e) {
             idxBarang = $('.barang').index(this);
             $(".jumlah").eq(idxBarang).attr("readonly", false);
+            $(".jumlah").eq(idxBarang).attr("disabled", false);
             setArrayCode();
         });
-        $('.jumlah').on('click change input', function (e) {
+        $('.jumlah').on('click', function (e) {
             idxBarang = $('.jumlah').index(this);
+            console.log(idxBarang);
             setArrayCode();
         });
 
@@ -199,7 +203,6 @@
                         option += '<option value="' + resp.id3 + '">' + resp.unit3 + '</option>';
                     }
                     $(".satuan").eq(idxBarang).append(option);
-                    changeBarang()
                 }
             });
         }
@@ -247,25 +250,27 @@
         $('.btn-tambah-order').on('click', function() {
             $('#table_order')
                 .append(
-                    '<tr>' +
-                        '<td>'+
-                            '<input type="text" name="barang[]" class="form-control form-control-sm barang"'+
-                            'style="text-transform:uppercase" autocomplete="off">'+
-                            '<input type="hidden" name="idItem[]" class="itemId">'+
-                            '<input type="hidden" name="kode[]" class="kode">'+
-                        '</td>' +
-                        '<td><select name="po_unit[]" class="form-control form-control-sm select2 satuan">'+
-                            '</select>'+
-                        '</td>' +
-                        '<td><input type="number" name="po_qty[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly=""></td>' +
-                        '<td><input type="text" name="po_harga[]" class="form-control form-control-sm input-rupiah harga bg-light" value="Rp. 0" readonly disabled>'+
-                            '<input type="hidden" name="po_hrg[]" class="po_hrg">'+
-                        '</td>' +
-                        '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" readonly>'+
-                            '<input type="hidden" name="sbtotal[]" class="sbtotal">'+
-                        '</td>' +
-                        '<td><button class="btn btn-danger btn-hapus-order btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>' +
-                    '</tr>'
+                    `<tr>
+                        <td>
+                            <input type="text" name="barang[]" class="form-control form-control-sm barang"
+                            style="text-transform:uppercase" autocomplete="off">
+                            <input type="hidden" name="idItem[]" class="itemId">
+                            <input type="hidden" name="kode[]" class="kode">
+                        </td>
+                        <td><select name="po_unit[]" class="form-control form-control-sm select2 satuan">
+                            </select>
+                        </td>
+                        <td><input type="number" name="po_qty[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly="" disabled=""></td>
+                        <td>
+                            <input type="text" name="po_harga[]" class="form-control form-control-sm input-rupiah harga bg-light" value="Rp. 0" readonly disabled>
+                            <input type="hidden" name="po_hrg[]" class="po_hrg">
+                            <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p>
+                        </td>
+                        <td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" readonly>
+                            <input type="hidden" name="sbtotal[]" class="sbtotal">
+                        </td>
+                        <td><button class="btn btn-danger btn-hapus-order btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>
+                    </tr>`
                 );
 
             $('.select2').select2({
@@ -284,11 +289,13 @@
             $('.barang').on('click change', function (e) {
                 idxBarang = $('.barang').index(this);
                 $(".jumlah").eq(idxBarang).attr("readonly", false);
+                $(".jumlah").eq(idxBarang).attr("disabled", false);
                 setArrayCode();
             });
 
-            $('.jumlah').on('click change input', function (e) {
+            $('.jumlah').on('click', function (e) {
                 idxBarang = $('.jumlah').index(this);
+                console.log(idxBarang);
                 setArrayCode();             
             });
 
@@ -320,13 +327,14 @@
         $(".barang").on('change', function (evt) {
             evt.preventDefault();
             $(".jumlah").eq(idxBarang).attr("readonly", false);
+            $(".jumlah").eq(idxBarang).attr("disabled", false);
             everyChange();
         });
     }
     
     // Merubah Sub Total Berdasarkan Jumlah Item ----------------------
     function changeJumlah() {
-        $(".jumlah").on('click change input', function (evt) {
+        $('.jumlah').on('click', function (evt) {
             evt.preventDefault();
             everyChange();
         });
@@ -340,11 +348,15 @@
     }
 
     function everyChange()
-    {
-        var inpSatuan = document.getElementsByClassName('satuan'),
-            satuan = [].map.call(inpSatuan, function(input){
+    {        
+        var inpBarang = document.getElementsByClassName( 'barang' ),
+            barang    = [].map.call(inpBarang, function( input ) {
                 return parseInt(input.value);
-            })
+            });
+        var inpSatuan = document.getElementsByClassName( 'satuan' ),
+            satuan    = [].map.call(inpSatuan, function( input ) {
+                return parseInt(input.value);
+            });
         var inpJumlah = document.getElementsByClassName( 'jumlah' ),
             jumlah    = [].map.call(inpJumlah, function( input ) {
                 return parseInt(input.value);
@@ -360,10 +372,14 @@
             },
             success:function(res)
             {
-                
                 var price = res.data;
                 if (isNaN(price)) {
                     price = 0;
+                }
+                if (price == 0) {
+                    $('.unknow').eq(idxBarang).css('display', 'block');
+                } else {
+                    $('.unknow').eq(idxBarang).css('display', 'none');
                 }
                 $('.harga').eq(idxBarang).val(convertToRupiah(price));
                 $('.po_hrg').eq(idxBarang).val(price);

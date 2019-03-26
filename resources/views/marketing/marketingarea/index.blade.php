@@ -43,6 +43,26 @@
 		</div>
 	</section>
 </article>
+{{-- Modal Order Ke Cabang --}}
+<div class="modal fade" id="modalOrderCabang" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				...
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary">Save changes</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 @endsection
 @section('extra_script')
@@ -312,6 +332,21 @@
       pageLength: 10,
       lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
     });
+	}
+
+	function detailOrder(id, dt)
+	{
+		$.ajax({
+			url: "{{ url('/marketing/marketingarea/orderproduk/detail') }}"+"/"+id+"/"+dt,
+			type: "get",
+			data:{
+				id: id,
+				dt: dt
+			},
+			success:function(res) {
+				$('#modalOrderCabang').modal('show');
+			}
+		})
 	}
 
 	function editOrder(id, dt, item)
