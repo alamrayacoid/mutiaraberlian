@@ -28,6 +28,8 @@
 <script src="{{asset('assets/js/vue.js')}}"></script>
 <script src="{{asset('assets/js/axios/axios.min.js')}}"></script>
 <script src="{{asset('assets/pushjs/bin/push.min.js')}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.3/mousetrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.3/plugins/bind-dictionary/mousetrap-bind-dictionary.min.js"></script>
 <script type="text/javascript">
     var getstorage;
     $('#sidebar-collapse-btn, #sidebar-overlay').click(function () {
@@ -511,4 +513,20 @@ $(document).ready(function(){
 
 });
 
+</script>
+<script>
+    function search() {
+        var search = $('#filterInput');
+        search.val('');
+        search.focus();
+    }
+
+    function hideMenu() {
+        document.getElementById("sidebar-collapse-btn").click();
+    }
+
+    Mousetrap.bind ({
+        '/': search,
+        'ctrl+shift+h': hideMenu
+    });
 </script>

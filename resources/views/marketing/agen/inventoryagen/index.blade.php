@@ -1,8 +1,8 @@
-<div class="tab-pane animated fadeIn show" id="monitoringpenjualanagen">
+<div class="tab-pane animated fadeIn show" id="inventoryagen">
 	<div class="card">
 		<div class="card-header bordered p-2">
 			<div class="header-block">
-				<h3 class="title">Monitoring Data Penjualan Agen </h3>
+				<h3 class="title">Kelola Data Inventory Agen</h3>
 			</div>
 			<div class=""></div>
 		</div>
@@ -10,11 +10,10 @@
 			<section>
 			<div class="row mb-3">
 				<div class="col-md-3 col-sm-12">
-					<input type="text" class="form-control form-control-sm datepicker" placeholder="Tanggal Awal">
+					<input type="text" class="form-control form-control-sm" placeholder="Provinsi">
 				</div>
-				<span>-</span>
 				<div class="col-md-3 col-sm-12">
-					<input type="text" class="form-control form-control-sm datepicker" placeholder="Tanggal Akhir">
+					<input type="text" class="form-control form-control-sm" placeholder="Kota">
 				</div>
 				<div class="col-md-4 col-sm-12" style="padding-right:0px;">
 				<div class="input-group">
@@ -27,29 +26,23 @@
 				</div>
 			</div>
 				<div class="table-responsive">
-					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_monitoringpenjualanagen">
+					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_inventoryagen">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>
-								<th>Nama Agen</th>
-								<th>Tanggal</th>
-								<th>Nota Penjualan</th>
-								<th>Total Transaksi</th>
-								<th>Aksi</th>
+								<th>Nama Barang</th>
+								<th>Pemilik</th>
+                                <th>Kondisi</th>
+								<th>Qty</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td>1</td>
-								<td>Brad</td>
-								<td>07-09-2019</td>
-								<td>KUY001</td>
-								<td>Rp. 500.000,00</td>
-								<td>
-									<div class="btn-group btn-group-sm">
-										<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detailm"><i class="fa fa-folder"></i></button>
-									</div>
-								</td>
+								<td>Obat</td>
+								<td>Dr. Bambang</td>
+                                <td>~</td>
+								<td>1</td>
 							</tr>
 						</tbody>
 					</table>
