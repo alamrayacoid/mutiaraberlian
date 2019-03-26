@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\d_productionorder as ProductionOrder;
 use DB;
 use Response;
 use Carbon\Carbon;
@@ -513,6 +514,30 @@ class ProduksiController extends Controller
     public function create_return_produksi()
     {
         return view('produksi/returnproduksi/create');
+    }
+
+    public function getNotaProductionOrder()
+    {
+        $data = ProductionOrder::join('m_supplier', 's_id', '=', 'po_supplier')
+            ->select('po_id', 'po_nota as nota', 's_company as supplier', 'po_date as tanggal');
+
+        return DataTables::of($data)
+            ->addColumn('supplier', function($data){
+                return $data->supplier;
+            })
+            ->addColumn('tanggal', function($data){
+                return date('d-m-Y', strtotime($data->tanggal));
+            })
+            ->addColumn('nota', function($data){
+                return $data->nota;
+            })
+            ->addColumn('aksi', function($data){
+                $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrder(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-folder"></i></button>';
+                $ambil = '<button class="btn btn-warning btn-edit" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-pencil"></i></button>';
+                return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
+            })
+            ->rawColumns(['totalnet','bayar', 'status','aksi'])
+            ->make(true);
     }
 
     public function nota(){
