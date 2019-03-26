@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\d_productionorder as ProductionOrder;
+use App\m_supplier as Supplier;
 use DB;
 use Response;
 use Carbon\Carbon;
@@ -516,10 +517,95 @@ class ProduksiController extends Controller
         return view('produksi/returnproduksi/create');
     }
 
-    public function getNotaProductionOrder()
+    public function getNotaProductionOrder(Request $request)
+    {
+
+        if ($request->dateStart != null) {
+            $data = ProductionOrder::join('m_supplier', 's_id', '=', 'po_supplier')
+                ->select('po_id', 'po_nota as nota', 's_company as supplier', 'po_date as tanggal');
+
+            if ($request->dateStart != "" && $request->dateEnd != "") {
+                $data->whereBetween('po_date', [Carbon::parse($request->dateStart)->format('Y-m-d'), Carbon::parse($request->dateEnd)->format('Y-m-d')]);
+            } else if ($request->dateStart != "" && $request->dateEnd == "") {
+                $data->where('po_date', Carbon::parse($request->dateStart)->format('Y-m-d'));
+            } else if ($request->dateStart == "" && $request->dateEnd != "") {
+                $data->where('po_date', Carbon::parse($request->dateEnd)->format('Y-m-d'));
+            } else if ($request->supplier != "") {
+                $data->where('po_supplier', $request->supplier);
+            }
+
+            return DataTables::of($data)
+                ->addColumn('supplier', function($data){
+                    return $data->supplier;
+                })
+                ->addColumn('tanggal', function($data){
+                    return date('d-m-Y', strtotime($data->tanggal));
+                })
+                ->addColumn('nota', function($data){
+                    return $data->nota;
+                })
+                ->addColumn('action', function($data){
+                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail" data-backdrop="static" data-keyboard="false"><i class="fa fa-folder"></i></button>';
+                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Ambil"><i class="fa fa-hand-lizard-o"></i></button>';
+                    return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
+                })
+                ->rawColumns(['supplier','tanggal', 'nota','action'])
+                ->make(true);
+        } else {
+            $data = ProductionOrder::join('m_supplier', 's_id', '=', 'po_supplier')
+                ->select('po_id', 'po_nota as nota', 's_company as supplier', 'po_date as tanggal');
+
+            return DataTables::of($data)
+                ->addColumn('supplier', function($data){
+                    return $data->supplier;
+                })
+                ->addColumn('tanggal', function($data){
+                    return date('d-m-Y', strtotime($data->tanggal));
+                })
+                ->addColumn('nota', function($data){
+                    return $data->nota;
+                })
+                ->addColumn('action', function($data){
+                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail" data-backdrop="static" data-keyboard="false"><i class="fa fa-folder"></i></button>';
+                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Ambil"><i class="fa fa-hand-lizard-o"></i></button>';
+                    return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
+                })
+                ->rawColumns(['supplier','tanggal', 'nota','action'])
+                ->make(true);
+        }
+    }
+
+    public function searchSupplier(Request $request)
+    {
+        $cari = $request->term;
+        $nama = Supplier::where(function ($q) use ($cari){
+                $q->orWhere('s_company', 'like', '%'.$cari.'%');
+                $q->orWhere('s_name', 'like', '%'.$cari.'%');
+            })
+            ->get();
+
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = ['id' => $query->s_id, 'label' => strtoupper($query->s_name) . ' - ' .strtoupper($query->s_company), 'data' => $query];
+            }
+        }
+        return Response::json($results);
+    }
+
+    public function searchNota(Request $request)
     {
         $data = ProductionOrder::join('m_supplier', 's_id', '=', 'po_supplier')
             ->select('po_id', 'po_nota as nota', 's_company as supplier', 'po_date as tanggal');
+
+        if ($request->pemilik != "") {
+            $data->where('d_stock.s_comp', '=', $request->pemilik);
+        } else if ($request->posisi != "") {
+            $data->where('d_stock.s_position', '=', $request->posisi);
+        } else if ($request->item != "") {
+            $data->where('d_stock.s_item', '=', $request->item);
+        }
 
         return DataTables::of($data)
             ->addColumn('supplier', function($data){

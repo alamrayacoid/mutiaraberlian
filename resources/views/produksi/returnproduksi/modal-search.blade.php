@@ -12,15 +12,16 @@
       <section>
         <div class="row">
             <div class="input-group input-daterange col-5">
-                <input type="text" class="form-control form-control-sm" placeholder="Date Start">
+                <input type="text" name="dateStart" id="dateStart" class="form-control form-control-sm" placeholder="Date Start">
             <label class="input-group-addon">-</label>
-                <input type="text" class="form-control form-control-sm" placeholder="Date End">
+                <input type="text" name="dateEnd" id="dateEnd" class="form-control form-control-sm" placeholder="Date End">
             </div>
             <div class="col-5">
-                <input type="text" class="form-control form-control-sm" placeholder="Cari Supplier">
+                <input type="hidden" name="idSupplier" id="idSupplier">
+                <input type="text" name="supplier" id="supplier" class="form-control form-control-sm" placeholder="Cari Supplier">
             </div>
             <div class="2">
-                <button class="btn btn-md btn-primary"><i class="fa fa-search"></i></button>
+                <button class="btn btn-md btn-primary" id="btn_searchNotainTbl"><i class="fa fa-search"></i></button>
             </div>
         </div>
       </section>      

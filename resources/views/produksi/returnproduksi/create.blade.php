@@ -6,6 +6,13 @@
 
 @include('produksi.returnproduksi.modal-detail')
 
+@section('extra_style')
+    <style type="text/css">
+        .ui-autocomplete { z-index:2147483647; }
+    </style>
+@endsection
+
+
 <article class="content animated fadeInLeft">
 
 	<div class="title-block text-primary">
@@ -98,9 +105,71 @@
         tbl_gu = $('#tabel_gu').DataTable();
         tbl_pn = $('#tabel_pn').DataTable();
 
+        $("#supplier").on("keyup", function () {
+            $("#idSupplier").val('');
+        });
+
+        $("#supplier").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '{{ route('return.carisupplier') }}',
+                    data: {
+                        term: $("#supplier").val()
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, data) {
+                $("#idSupplier").val(data.item.id);
+            }
+        });
+
+        $("#btn_searchNotainTbl").on("click", function (evt) {
+            evt.preventDefault();
+            var dateStart = $("#dateStart").val(), dateEnd = $("#dateEnd").val(), supplier = $("#idSupplier").val();
+            if (dateStart == "" && dateEnd == "" && supplier == "") {
+                messageWarning("Peringatan", "Masukkan parameter pencarian");
+                $("#dateStart").focus();
+            } else {
+                loadingShow();
+
+                if ($.fn.DataTable.isDataTable("#tbl_nota")) {
+                    $('#tbl_nota').DataTable().clear().destroy();
+                }
+
+                $('#tbl_nota').DataTable({
+                    responsive: true,
+                    serverSide: true,
+                    processing: true,
+                    ajax: {
+                        url: "{{ route('return.getnota') }}",
+                        data: {
+                            dateStart: dateStart,
+                            dateEnd: dateEnd,
+                            supplier: supplier
+                        },
+                        type: "get"
+                    },
+                    columns: [
+                        {data: 'supplier'},
+                        {data: 'tanggal'},
+                        {data: 'nota'},
+                        {data: 'action'}
+                    ],
+                    drawCallback: function( settings ) {
+                        loadingHide();
+                    }
+                });
+            }
+        })
+
         $("#btn_searchnota").on("click", function (evt) {
             evt.preventDefault();
             loadingShow();
+
             if ($.fn.DataTable.isDataTable("#tbl_nota")) {
                 $('#tbl_nota').DataTable().clear().destroy();
             }
