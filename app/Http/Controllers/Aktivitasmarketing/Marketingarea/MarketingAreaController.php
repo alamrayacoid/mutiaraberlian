@@ -228,6 +228,7 @@ class MarketingAreaController extends Controller
                             ->where('pod_item', '=', $data['idItem'][$i])
                             ->where('pod_unit', '=', $data['po_unit'][$i])
                             ->first();
+
                     if ($query2) {
 
                         $qtyAkhir = $query2->pod_qty + $data['po_qty'][$i];
@@ -296,33 +297,28 @@ class MarketingAreaController extends Controller
         }
     }
 
-    public function editOrderProduk($id, $dt, $item)
+    public function editOrderProduk($id)
     {
         try {
             $id = Crypt::decrypt($id);
-            $dt = Crypt::decrypt($dt);
-            $item = Crypt::decrypt($item);
         } catch (\Exception $e) {
             return view('errors.404');
-        }
-        $produk = DB::table('d_productorderdt')
+        }        
+
+        $produk = DB::table('d_productorder')
+            ->join('m_company as comp', 'po_comp', 'comp.c_id')
+            ->join('m_company as agen', 'po_agen', 'agen.c_id')
+            ->select('d_productorder.*', DB::raw('date_format(po_date, "%d/%m/%Y") as po_date'), 'comp.c_name as comp', 'agen.c_name as agen')
+            ->where('po_id', $id)
+            ->first();
+
+        $detail = DB::table('d_productorderdt')
             ->join('m_item', 'pod_item', 'i_id')
             ->join('m_unit', 'pod_unit', 'u_id')
             ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*')
             ->where('pod_productorder', $id)
-            ->where('pod_detailid', $dt)
-            ->first();
-        $item = DB::table('m_item')
-            ->select('m_item.*')
-            ->where('i_id', '=', $item)
-            ->first();
-        $unit = DB::table('m_unit')
-            ->select('m_unit.*')
-            ->where('u_id', '=', $item->i_unit1)
-            ->orWhere('u_id', '=', $item->i_unit2)
-            ->orWhere('u_id', '=', $item->i_unit3)
             ->get();
-        return view('marketing/marketingarea/orderproduk/edit', compact('produk', 'unit'));
+        return view('marketing/marketingarea/orderproduk/edit', compact('produk', 'detail'));
     }
 
     public function updateOrderProduk($id, $dt, Request $request)
@@ -414,7 +410,7 @@ class MarketingAreaController extends Controller
         $detail = DB::table('d_productorderdt')
             ->join('m_item', 'pod_item', 'i_id')
             ->join('m_unit', 'pod_unit', 'u_id')
-            ->select('d_productorderdt.*', 'i_name', 'u_name')
+            ->select('d_productorderdt.*', 'm_item.*', 'm_item.*')
             ->where('pod_productorder', $id)
             ->get();
         foreach ($detail as $key => $dt) {

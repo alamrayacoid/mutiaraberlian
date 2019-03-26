@@ -390,9 +390,9 @@
 		});
 	}
 
-	function editOrder(id, dt, item)
+	function editOrder(id)
 	{
-		window.location.href='{{ url('/marketing/marketingarea/orderproduk/edit') }}'+"/"+id+"/"+dt+"/"+item;
+		window.location.href='{{ url('/marketing/marketingarea/orderproduk/edit') }}'+"/"+id;
 	}
 
 	function printNota(id, dt)
