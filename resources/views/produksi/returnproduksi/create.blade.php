@@ -219,6 +219,30 @@
 	});
 
 	function detail(id) {
+        loadingShow();
+
+        if ($.fn.DataTable.isDataTable("#tbl_detailnota")) {
+            $('#tbl_detailnota').DataTable().clear().destroy();
+        }
+
+        $('#tbl_detailnota').DataTable({
+            responsive: true,
+            serverSide: true,
+            processing: true,
+            ajax: {
+                url: "{{ url('/produksi/returnproduksi/detail-nota') }}"+"/"+id,
+                type: "get"
+            },
+            columns: [
+                {data: 'barang'},
+                {data: 'qty'},
+                {data: 'harga'}
+            ],
+            drawCallback: function( settings ) {
+                loadingHide();
+            }
+        });
+
         $("#detail").modal("show");
     }
 </script>

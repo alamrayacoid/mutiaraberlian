@@ -575,7 +575,26 @@ class ProduksiController extends Controller
         }
     }
 
+    public function detailNota($id = null)
+    {
+        $data = ProductionOrder::where('po_id', Crypt::decrypt($id))
+            ->join('d_productionorderdt', 'po_id', '=', 'pod_productionorder')
+            ->join('m_item', 'pod_item', '=', 'i_id')
+            ->select('m_item.i_name as barang', 'd_productionorderdt.pod_qty as qty', DB::raw("CONCAT('Rp. ',FORMAT(d_productionorderdt.pod_totalnet, 0, 'de_DE')) as harga"));
 
+        return DataTables::of($data)
+            ->addColumn('barang', function($data){
+                return $data->barang;
+            })
+            ->addColumn('qty', function($data){
+                return $data->qty;
+            })
+            ->addColumn('harga', function($data){
+                return $data->harga;
+            })
+            ->rawColumns(['barang','qty', 'harga'])
+            ->make(true);
+    }
 
     public function searchSupplier(Request $request)
     {
