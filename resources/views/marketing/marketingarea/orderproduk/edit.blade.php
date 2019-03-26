@@ -83,7 +83,7 @@
             </section>
           </div>
           <div class="card-footer text-right">
-            <button class="btn btn-primary btn-submit" type="button" onclick="updateOrder('{{$produk->pod_productorder}}, {{$produk->pod_detailid}}')">Simpan</button>
+            <button class="btn btn-primary btn-submit" type="button" onclick="updateOrder('{{Crypt::encrypt($produk->pod_productorder)}}','{{Crypt::encrypt($produk->pod_detailid)}}')">Simpan</button>
             <a href="{{route('marketingarea.index')}}" class="btn btn-secondary">Kembali</a>
           </div>
         </div>
@@ -266,11 +266,12 @@
     function updateOrder(id, dt)
     {
       $.ajax({
-        url: "{{url('/marketing/marketingarea/orderproduk/update')}}"+id+"/"+dt,
+        url: "{{url('/marketing/marketingarea/orderproduk/update')}}"+"/"+id+"/"+dt,
         type: "get",
         data: $('#formUpdate').serialize(),
+        dataType : 'json',
         success:function(response) {
-          
+
         }
       });
     }

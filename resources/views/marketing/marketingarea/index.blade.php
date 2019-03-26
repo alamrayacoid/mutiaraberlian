@@ -43,6 +43,7 @@
 		</div>
 	</section>
 </article>
+
 {{-- Modal Order Ke Cabang --}}
 <div class="modal fade" id="modalOrderCabang" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg" role="document">
@@ -85,14 +86,8 @@
 				  			<th>Total Harga</th>
 				  		</tr>
 				  	</thead>
-				  	<tbody>
-				  		<tr>
-				  			<td id="item"></td>
-				  			<td id="unit"></td>
-				  			<td id="qty"></td>
-				  			<td id="hrg_satuan"></td>
-				  			<td id="total_hrg"></td>
-				  		</tr>
+				  	<tbody class="empty">
+				  		
 				  	</tbody>
 				  </table>
 				</div>
@@ -100,7 +95,6 @@
 		</div>
 	</div>
 </div>
-
 @endsection
 @section('extra_script')
 <script type="text/javascript">
@@ -360,10 +354,10 @@
       },
       columns: [
           {data: 'po_date'},
-          {data: 'i_name'},
-          {data: 'u_name'},
-          {data: 'pod_qty'},
-          {data: 'price'},
+          {data: 'po_nota'},
+          {data: 'comp'},
+          {data: 'agen'},
+          {data: 'totalprice'},
           {data: 'action'}
       ],
       pageLength: 10,
@@ -371,26 +365,27 @@
     });
 	}
 
-	function detailOrder(id, dt)
+	function detailOrder(id)
 	{
 		$.ajax({
-			url: "{{ url('/marketing/marketingarea/orderproduk/detail') }}"+"/"+id+"/"+dt,
+			url: "{{ url('/marketing/marketingarea/orderproduk/detail') }}"+"/"+id,
 			type: "get",
-			data:{
-				id: id,
-				dt: dt
-			},
 			success:function(res) {
 				$('#modalOrderCabang').modal('show');
-				$('#cabang').val(res.data.comp);
-				$('#agen').val(res.data.agen);
-				$('#nota').val(res.data.nota);
-				$('#tanggal').val(res.data.tanggal);
-				$('#item').text(res.data.barang);
-				$('#unit').text(res.data.unit);
-				$('#qty').text(res.data.qty);
-				$('#hrg_satuan').text(res.data.price);
-				$('#total_hrg').text(res.data.totalprice);
+				$('#cabang').val(res.data2.comp);
+				$('#agen').val(res.data2.agen);
+				$('#nota').val(res.data2.po_nota);
+				$('#tanggal').val(res.data2.po_date);
+        $('.empty').empty();
+				$.each(res.data1, function(key, val){
+					$('#detailOrder tbody').append('<tr>'+
+																					'<td>'+val.barang+'</td>'+
+																					'<td>'+val.unit+'</td>'+
+																					'<td>'+val.qty+'</td>'+
+																					'<td>'+val.price+'</td>'+
+																					'<td>'+val.totalprice+'</td>'+
+																				'</tr>');
+				});				
 			}
 		});
 	}

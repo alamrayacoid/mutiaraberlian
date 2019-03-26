@@ -30,11 +30,13 @@ class MarketingAreaController extends Controller
         } catch (\Exception $e) {
             return view('errors.404');
         }
-        $nota = DB::table('d_productorderdt')
-            ->join('d_productorder', 'pod_productorder', 'po_id')
+        $nota = DB::table('d_productorder')
+            ->join('d_productorderdt', 'po_id', 'pod_productorder')
+            ->join('m_company as comp', 'po_comp', 'comp.c_id')
+            ->join('m_company as agen', 'po_agen', 'agen.c_id')
             ->join('m_item', 'pod_item', 'i_id')
             ->join('m_unit', 'pod_unit', 'u_id')
-            ->select('d_productorderdt.*', 'd_productorder.*', 'm_item.*', 'm_unit.*')
+            ->select('d_productorderdt.*', 'd_productorder.*', 'm_item.*', 'm_unit.*', 'comp.c_name as comp', 'agen.c_name as agen')
             ->where('pod_productorder', $id)
             ->where('pod_detailid', $dt)
             ->first();
@@ -44,44 +46,33 @@ class MarketingAreaController extends Controller
     // Order Produk Ke Cabang ==============================================================================
     public function orderList()
     {
-        $order = DB::table('d_productorderdt')
-            ->join('d_productorder', 'pod_productorder', 'po_id')
+        $order = DB::table('d_productorder')
+            ->join('d_productorderdt', 'po_id', 'pod_productorder')
+            ->join('m_company as comp', 'po_comp', 'comp.c_id')
+            ->join('m_company as agen', 'po_agen', 'agen.c_id')
             ->join('m_item', 'pod_item', 'i_id')
             ->join('m_unit', 'pod_unit', 'u_id')
-            ->select('d_productorderdt.*', 'd_productorder.*', DB::raw('date_format(po_date, "%m/%Y") as po_date'), 'i_name', 'u_name')
+            ->select('d_productorder.*', DB::raw('date_format(po_date, "%m/%Y") as po_date'), 'i_name', 'u_name', 'comp.c_name as comp', 'agen.c_name as agen', DB::raw('SUM(pod_totalprice) as totalprice'))
+            ->groupBy('po_id')
             ->get();
         return Datatables::of($order)
             ->addIndexColumn()
-            ->addColumn('price', function ($order) {
-                return Currency::addRupiah($order->pod_totalprice);
+            ->addColumn('totalprice', function ($order) {
+                return Currency::addRupiah($order->totalprice);
             })
             ->addColumn('action', function ($order) {
-                // if ($order->po_status == "Y") {
-                //     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                //                 <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-folder"></i>
-                //                 </button>
-                //                 <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-print"></i>
-                //                 </button>
-                //                 <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\', \'' . Crypt::encrypt($order->pod_item) . '\')"><i class="fa fa-fw fa-pencil"></i>
-                //                 </button>
-                //                 <button class="btn btn-light text-secondary disabled" role="button" aria-disabled="true"><i class="fa fa-fw fa-trash"></i>
-                //                 </button>
-                //             </div>';
-                // } else {
-                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-folder"></i>
-                                </button>
-                                <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-print"></i>
-                                </button>
-                                <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\', \'' . Crypt::encrypt($order->pod_item) . '\')"><i class="fa fa-fw fa-pencil"></i>
-                                </button>
-                                <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-trash"></i>
-                                </button>
-                            </div>';
-               //}
-                
+                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                            <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                            </button>
+                            <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->po_id) . '\')"><i class="fa fa-fw fa-print"></i>
+                            </button>
+                            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->po_id) . '\')"><i class="fa fa-fw fa-pencil"></i>
+                            </button>
+                            <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->po_id) . '\')"><i class="fa fa-fw fa-trash"></i>
+                            </button>
+                        </div>';
             })
-            ->rawColumns(['price','action'])
+            ->rawColumns(['totalprice','action'])
             ->make(true);
     }
 
@@ -334,29 +325,33 @@ class MarketingAreaController extends Controller
         return view('marketing/marketingarea/orderproduk/edit', compact('produk', 'unit'));
     }
 
-    public function updateTarget($st_id, $dt_id, Request $request)
+    public function updateOrderProduk($id, $dt, Request $request)
     {
-        // try {
-        //     $st_id = Crypt::decrypt($st_id);
-        //     $dt_id = Crypt::decrypt($dt_id);
-        // } catch (\Exception $e) {
-        //     return view('errors.404');
-        // }
+        try {
+            $id = Crypt::decrypt($id);
+            $dt = Crypt::decrypt($dt);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+        $data = $request->all();
+        DB::beginTransaction();
+        try {
+            DB::table('d_productorderdt')
+                ->where('pod_productorder', $id)
+                ->where('pod_detailid', $dt)
+                ->delete();
 
-        // $data = $request->all();
-        // DB::beginTransaction();
-        // try {
-        //     DB::commit();
-        //     return response()->json([
-        //         'status' => 'sukses'
-        //     ]);
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return response()->json([
-        //         'status' => 'Gagal',
-        //         'message' => $e
-        //     ]);
-        // }
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e
+            ]);
+        }
     }
 
     public function deleteOrder($id, $dt)
@@ -401,40 +396,42 @@ class MarketingAreaController extends Controller
         }
     }
 
-    public function detailOrder($id, $dt)
+    public function detailOrder($id)
     {
         try {
             $id = Crypt::decrypt($id);
-            $dt = Crypt::decrypt($dt);
         } catch (\Exception $e) {
             return view('errors.404');
         }
 
-        $detail = DB::table('d_productorderdt')
-            ->join('d_productorder', 'pod_productorder', 'po_id')
+        $produk = DB::table('d_productorder')
             ->join('m_company as comp', 'po_comp', 'comp.c_id')
             ->join('m_company as agen', 'po_agen', 'agen.c_id')
+            ->select('d_productorder.*', DB::raw('date_format(po_date, "%d/%m/%Y") as po_date'), 'comp.c_name as comp', 'agen.c_name as agen')
+            ->where('po_id', $id)
+            ->first();
+
+        $detail = DB::table('d_productorderdt')
             ->join('m_item', 'pod_item', 'i_id')
             ->join('m_unit', 'pod_unit', 'u_id')
-            ->select('d_productorderdt.*', DB::raw('date_format(po_date, "%d/%m/%Y") as po_date'), 'po_nota', 'comp.c_name as comp', 'agen.c_name as agen', 'i_name', 'u_name')
+            ->select('d_productorderdt.*', 'i_name', 'u_name')
             ->where('pod_productorder', $id)
-            ->where('pod_detailid', $dt)
-            ->first();
-        $order = [
-            'comp'       => $detail->comp,
-            'agen'       => $detail->agen,
-            'nota'       => $detail->po_nota,
-            'tanggal'    => $detail->po_date,
-            'barang'     => $detail->i_name,
-            'unit'       => $detail->u_name,
-            'qty'        => $detail->pod_qty,
-            'price'      => Currency::addRupiah($detail->pod_price),
-            'totalprice' => Currency::addRupiah($detail->pod_totalprice)
-        ];
+            ->get();
+        foreach ($detail as $key => $dt) {
+            $order[] = [
+                'barang'     => $dt->i_name,
+                'unit'       => $dt->u_name,
+                'qty'        => $dt->pod_qty,
+                'price'      => Currency::addRupiah($dt->pod_price),
+                'totalprice' => Currency::addRupiah($dt->pod_totalprice)
+            ];
+        }
+        
 
         return Response::json(array(
             'success' => true,
-            'data'    => $order
+            'data1'   => $order,
+            'data2'   => $produk
         ));
     }
     // Order Produk Ke Cabang End ==========================================================================
