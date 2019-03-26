@@ -267,7 +267,7 @@ class MarketingAreaController extends Controller
                         'po_comp'   => $data['po_comp'][0],
                         'po_agen'   => $data['po_agen'][0],
                         'po_date'   => $time,
-                        'po_nota'   => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 8, 10, 4, 'PRO', '-'),
+                        'po_nota'   => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 10, 10, 4, 'PRO', '-'),
                         'po_status' => "P"
                     ]);
 
