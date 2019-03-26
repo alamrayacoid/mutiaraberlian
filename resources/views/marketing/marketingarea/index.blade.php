@@ -45,7 +45,7 @@
 </article>
 {{-- Modal Order Ke Cabang --}}
 <div class="modal fade" id="modalOrderCabang" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
+	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
@@ -54,11 +54,48 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				...
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary">Save changes</button>
+				<div class="form-row">
+			    <div class="form-group col-md-6">
+			      <label for="cabang">Nama Cabang</label>
+			      <input type="text" class="form-control bg-light" id="cabang" value="" readonly="" disabled="">
+			    </div>
+			    <div class="form-group col-md-6">
+			      <label for="nota">Nomer Nota</label>
+			      <input type="text" class="form-control bg-light" id="nota" value="" readonly="" disabled="">
+			    </div>
+			  </div>
+				<div class="form-row">
+			    <div class="form-group col-md-6">
+			      <label for="agen">Nama Agen</label>
+			      <input type="text" class="form-control bg-light" id="agen" value="" readonly="" disabled="">
+			    </div>
+			    <div class="form-group col-md-6">
+			      <label for="tanggal">Tanggal Order</label>
+			      <input type="text" class="form-control bg-light" id="tanggal" value="" readonly="" disabled="">
+			    </div>
+			  </div>
+			  <div class="table-responsive">
+				  <table id="detailOrder" class="table table-sm table-hover table-bordered">
+				  	<thead>
+				  		<tr class="bg-primary text-light">
+				  			<th>Nama Barang</th>
+				  			<th>Satuan</th>
+				  			<th>Qty</th>
+				  			<th>Harga Satuan</th>
+				  			<th>Total Harga</th>
+				  		</tr>
+				  	</thead>
+				  	<tbody>
+				  		<tr>
+				  			<td id="item"></td>
+				  			<td id="unit"></td>
+				  			<td id="qty"></td>
+				  			<td id="hrg_satuan"></td>
+				  			<td id="total_hrg"></td>
+				  		</tr>
+				  	</tbody>
+				  </table>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -345,8 +382,17 @@
 			},
 			success:function(res) {
 				$('#modalOrderCabang').modal('show');
+				$('#cabang').val(res.data.comp);
+				$('#agen').val(res.data.agen);
+				$('#nota').val(res.data.nota);
+				$('#tanggal').val(res.data.tanggal);
+				$('#item').text(res.data.barang);
+				$('#unit').text(res.data.unit);
+				$('#qty').text(res.data.qty);
+				$('#hrg_satuan').text(res.data.price);
+				$('#total_hrg').text(res.data.totalprice);
 			}
-		})
+		});
 	}
 
 	function editOrder(id, dt, item)

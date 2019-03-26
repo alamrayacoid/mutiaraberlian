@@ -410,20 +410,32 @@ class MarketingAreaController extends Controller
             return view('errors.404');
         }
 
-        DB::beginTransaction();
-        try {
+        $detail = DB::table('d_productorderdt')
+            ->join('d_productorder', 'pod_productorder', 'po_id')
+            ->join('m_company as comp', 'po_comp', 'comp.c_id')
+            ->join('m_company as agen', 'po_agen', 'agen.c_id')
+            ->join('m_item', 'pod_item', 'i_id')
+            ->join('m_unit', 'pod_unit', 'u_id')
+            ->select('d_productorderdt.*', DB::raw('FORMAT(pod_price,3, "de_ID") as price'), DB::raw('FORMAT(pod_totalprice,3, "de_ID") as total_price'), 'd_productorder.*', 'comp.c_name as comp', 'agen.c_name as agen', 'i_name', 'u_name')
+            ->where('pod_productorder', $id)
+            ->where('pod_detailid', $dt)
+            ->first();
+        $order = [
+            'comp'       => $detail->comp,
+            'agen'       => $detail->agen,
+            'nota'       => $detail->po_nota,
+            'tanggal'    => $detail->po_date,
+            'barang'     => $detail->i_name,
+            'unit'       => $detail->u_name,
+            'qty'        => $detail->pod_qty,
+            'price'      => Currency::addRupiah($detail->pod_price),
+            'totalprice' => Currency::addRupiah($detail->pod_totalprice)
+        ];
 
-            DB::commit();
-            return response()->json([
-                'status' => 'sukses'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json([
-                'status' => 'Gagal',
-                'message' => $e
-            ]);
-        }
+        return Response::json(array(
+            'success' => true,
+            'data'    => $order
+        ));
     }
     // Order Produk Ke Cabang End ==========================================================================
     public function create_keloladataorder()
