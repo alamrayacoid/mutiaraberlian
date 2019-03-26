@@ -545,7 +545,7 @@ class ProduksiController extends Controller
                     return $data->nota;
                 })
                 ->addColumn('action', function($data){
-                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail" data-backdrop="static" data-keyboard="false"><i class="fa fa-folder"></i></button>';
+                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''.Crypt::encrypt($data->po_id).'\')"><i class="fa fa-folder"></i></button>';
                     $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Ambil"><i class="fa fa-hand-lizard-o"></i></button>';
                     return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
                 })
@@ -566,7 +566,7 @@ class ProduksiController extends Controller
                     return $data->nota;
                 })
                 ->addColumn('action', function($data){
-                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail" data-backdrop="static" data-keyboard="false"><i class="fa fa-folder"></i></button>';
+                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''.Crypt::encrypt($data->po_id).'\')"><i class="fa fa-folder"></i></button>';
                     $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Ambil"><i class="fa fa-hand-lizard-o"></i></button>';
                     return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
                 })
@@ -574,6 +574,8 @@ class ProduksiController extends Controller
                 ->make(true);
         }
     }
+
+
 
     public function searchSupplier(Request $request)
     {

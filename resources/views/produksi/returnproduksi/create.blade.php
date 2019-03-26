@@ -217,5 +217,9 @@
             }
         });
 	});
+
+	function detail(id) {
+        $("#detail").modal("show");
+    }
 </script>
 @endsection
