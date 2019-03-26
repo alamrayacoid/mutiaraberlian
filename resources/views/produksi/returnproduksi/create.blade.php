@@ -6,6 +6,13 @@
 
 @include('produksi.returnproduksi.modal-detail')
 
+@section('extra_style')
+    <style type="text/css">
+        .ui-autocomplete { z-index:2147483647; }
+    </style>
+@endsection
+
+
 <article class="content animated fadeInLeft">
 
 	<div class="title-block text-primary">
@@ -46,7 +53,7 @@
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <button class="btn btn-md btn-primary" title="Pencarian No. Nota" data-toggle="modal" data-target="#search-modal" data-backdrop="static" data-keyboard="false"><i class="fa fa-search"></i></button>
+                                    <button class="btn btn-md btn-primary" title="Pencarian No. Nota" id="btn_searchnota"><i class="fa fa-search"></i></button>
                                 </div>
 
                         	</div>
@@ -60,24 +67,17 @@
                         			<div class="form-group">
                         				<select class="form-control form-control-sm" id="header-metodereturn">
                         					<option value="">--Pilih Metode Return--</option>
-                        					<option value="1">Potong Nota</option>
-                        					<option value="2">Tukar Barang</option>
-                        					<option value="3">Salah Barang</option>
-                        					<option value="4">Salah Alamat</option>
-                        					<option value="5">Kurang Barang</option>
+                        					<option value="GB">Ganti Barang</option>
+                        					<option value="GU">Ganti Uang</option>
+                        					<option value="PN">Potong Nota</option>
                         				</select>
                         			</div>
                                     </div>
                                     @include('produksi.returnproduksi.tab_potongnota')
-                                    @include('produksi.returnproduksi.tab_tukarbarang')
-                                    @include('produksi.returnproduksi.tab_salahbarang')
-                                    @include('produksi.returnproduksi.tab_salahalamat')
-                                    @include('produksi.returnproduksi.tab_kurangbarang')
+                                    @include('produksi.returnproduksi.tab_gantiuang')
+                                    @include('produksi.returnproduksi.tab_gantibarang')
                         		</div>
                             </fieldset>
-
-
-
                         </section>
                     </div>
                     <div class="card-footer text-right">
@@ -99,64 +99,151 @@
 @section('extra_script')
 <script type="text/javascript">
 	$(document).ready(function(){
-        var eueue, crmpie, table3, table4, table5, table_salahkirim_1, table_salahkirim_2;
+        var tbl_gb, tbl_gu, tbl_pn;
 
-        eueue = $('#tabel_return_1').DataTable();
-        crmpie = $('#tabel_return_2').DataTable();
-        table3 = $('#tabel_return_3').DataTable();
-        table4 = $('#tabel_return_4').DataTable();
-		table5 = $('#tabel_return_5').DataTable();
-        table_salahkirim_1 = $('#table_salahkirim_1').DataTable();
-        table_salahkirim_2 = $('#table_salahkirim_2').DataTable();
+        tbl_gb = $('#tabel_gb').DataTable();
+        tbl_gu = $('#tabel_gu').DataTable();
+        tbl_pn = $('#tabel_pn').DataTable();
+
+        $("#supplier").on("keyup", function () {
+            $("#idSupplier").val('');
+        });
+
+        $("#supplier").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '{{ route('return.carisupplier') }}',
+                    data: {
+                        term: $("#supplier").val()
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, data) {
+                $("#idSupplier").val(data.item.id);
+            }
+        });
+
+        $("#btn_searchNotainTbl").on("click", function (evt) {
+            evt.preventDefault();
+            var dateStart = $("#dateStart").val(), dateEnd = $("#dateEnd").val(), supplier = $("#idSupplier").val();
+            if (dateStart == "" && dateEnd == "" && supplier == "") {
+                messageWarning("Peringatan", "Masukkan parameter pencarian");
+                $("#dateStart").focus();
+            } else {
+                loadingShow();
+
+                if ($.fn.DataTable.isDataTable("#tbl_nota")) {
+                    $('#tbl_nota').DataTable().clear().destroy();
+                }
+
+                $('#tbl_nota').DataTable({
+                    responsive: true,
+                    serverSide: true,
+                    processing: true,
+                    ajax: {
+                        url: "{{ route('return.getnota') }}",
+                        data: {
+                            dateStart: dateStart,
+                            dateEnd: dateEnd,
+                            supplier: supplier
+                        },
+                        type: "get"
+                    },
+                    columns: [
+                        {data: 'supplier'},
+                        {data: 'tanggal'},
+                        {data: 'nota'},
+                        {data: 'action'}
+                    ],
+                    drawCallback: function( settings ) {
+                        loadingHide();
+                    }
+                });
+            }
+        })
+
+        $("#btn_searchnota").on("click", function (evt) {
+            evt.preventDefault();
+            loadingShow();
+
+            if ($.fn.DataTable.isDataTable("#tbl_nota")) {
+                $('#tbl_nota').DataTable().clear().destroy();
+            }
+
+            $('#tbl_nota').DataTable({
+                responsive: true,
+                serverSide: true,
+                processing: true,
+                ajax: {
+                    url: "{{ route('return.getnota') }}",
+                    type: "get"
+                },
+                columns: [
+                    {data: 'supplier'},
+                    {data: 'tanggal'},
+                    {data: 'nota'},
+                    {data: 'action'}
+                ],
+                drawCallback: function( settings ) {
+                    loadingHide();
+                    $("#search-modal").modal({backdrop: 'static', keyboard: false});
+                }
+            });
+        })
 
         $('#header-metodereturn').change(function(){
-            var ini, potong_nota, tukar_barang, salah_barang, salah_alamat, kurang_barang;
+            var ini, potong_nota, ganti_uang, ganti_barang;
             ini             = $(this).val();
             potong_nota     = $('#potong_nota');
-            tukar_barang     = $('#tukar_barang');
-            salah_barang     = $('#salah_barang');
-            salah_alamat     = $('#salah_alamat');
-            kurang_barang     = $('#kurang_barang');
+            ganti_uang     = $('#ganti_uang');
+            ganti_barang     = $('#ganti_barang');
 
-            if (ini === '1') {
+            if (ini === 'GB') {
+                potong_nota.addClass('d-none');
+                ganti_uang.addClass('d-none');
+                ganti_barang.removeClass('d-none');
+            } else if(ini === 'GU'){
+                potong_nota.addClass('d-none');
+                ganti_uang.removeClass('d-none');
+                ganti_barang.addClass('d-none');
+            } else if(ini === 'PN'){
                 potong_nota.removeClass('d-none');
-                tukar_barang.addClass('d-none');
-                salah_barang.addClass('d-none');
-                salah_alamat.addClass('d-none');
-                kurang_barang.addClass('d-none');
-            } else if(ini === '2'){
-                potong_nota.addClass('d-none');
-                tukar_barang.removeClass('d-none');
-                salah_barang.addClass('d-none');
-                salah_alamat.addClass('d-none');
-                kurang_barang.addClass('d-none');
-            } else if(ini === '3'){
-                potong_nota.addClass('d-none');
-                tukar_barang.addClass('d-none');
-                salah_barang.removeClass('d-none');
-                salah_alamat.addClass('d-none');
-                kurang_barang.addClass('d-none');
-            } else if(ini === '4'){
-                potong_nota.addClass('d-none');
-                tukar_barang.addClass('d-none');
-                salah_barang.addClass('d-none');
-                salah_alamat.removeClass('d-none');
-                kurang_barang.addClass('d-none');
-            } else if(ini === '5'){
-                potong_nota.addClass('d-none');
-                tukar_barang.addClass('d-none');
-                salah_barang.addClass('d-none');
-                salah_alamat.addClass('d-none');
-                kurang_barang.removeClass('d-none');
-            } else {
-
-                potong_nota.addClass('d-none');
-                tukar_barang.addClass('d-none');
-                salah_barang.addClass('d-none');
-                salah_alamat.addClass('d-none');
-                kurang_barang.addClass('d-none');
+                ganti_uang.addClass('d-none');
+                ganti_barang.addClass('d-none');
             }
         });
 	});
+
+	function detail(id) {
+        loadingShow();
+
+        if ($.fn.DataTable.isDataTable("#tbl_detailnota")) {
+            $('#tbl_detailnota').DataTable().clear().destroy();
+        }
+
+        $('#tbl_detailnota').DataTable({
+            responsive: true,
+            serverSide: true,
+            processing: true,
+            ajax: {
+                url: "{{ url('/produksi/returnproduksi/detail-nota') }}"+"/"+id,
+                type: "get"
+            },
+            columns: [
+                {data: 'barang'},
+                {data: 'qty'},
+                {data: 'harga'}
+            ],
+            drawCallback: function( settings ) {
+                loadingHide();
+            }
+        });
+
+        $("#detail").modal("show");
+    }
 </script>
 @endsection

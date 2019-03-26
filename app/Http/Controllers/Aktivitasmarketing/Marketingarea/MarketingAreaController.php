@@ -56,18 +56,18 @@ class MarketingAreaController extends Controller
                 return Currency::addRupiah($order->pod_totalprice);
             })
             ->addColumn('action', function ($order) {
-                if ($order->po_status == "Y") {
-                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-folder"></i>
-                                </button>
-                                <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-print"></i>
-                                </button>
-                                <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\', \'' . Crypt::encrypt($order->pod_item) . '\')"><i class="fa fa-fw fa-pencil"></i>
-                                </button>
-                                <button class="btn btn-light text-secondary disabled" role="button" aria-disabled="true"><i class="fa fa-fw fa-trash"></i>
-                                </button>
-                            </div>';
-                } else {
+                // if ($order->po_status == "Y") {
+                //     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                //                 <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-folder"></i>
+                //                 </button>
+                //                 <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-print"></i>
+                //                 </button>
+                //                 <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\', \'' . Crypt::encrypt($order->pod_item) . '\')"><i class="fa fa-fw fa-pencil"></i>
+                //                 </button>
+                //                 <button class="btn btn-light text-secondary disabled" role="button" aria-disabled="true"><i class="fa fa-fw fa-trash"></i>
+                //                 </button>
+                //             </div>';
+                // } else {
                     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                                 <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-folder"></i>
                                 </button>
@@ -78,7 +78,7 @@ class MarketingAreaController extends Controller
                                 <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-fw fa-trash"></i>
                                 </button>
                             </div>';
-                }
+               //}
                 
             })
             ->rawColumns(['price','action'])
@@ -410,20 +410,32 @@ class MarketingAreaController extends Controller
             return view('errors.404');
         }
 
-        DB::beginTransaction();
-        try {
+        $detail = DB::table('d_productorderdt')
+            ->join('d_productorder', 'pod_productorder', 'po_id')
+            ->join('m_company as comp', 'po_comp', 'comp.c_id')
+            ->join('m_company as agen', 'po_agen', 'agen.c_id')
+            ->join('m_item', 'pod_item', 'i_id')
+            ->join('m_unit', 'pod_unit', 'u_id')
+            ->select('d_productorderdt.*', DB::raw('date_format(po_date, "%d/%m/%Y") as po_date'), 'po_nota', 'comp.c_name as comp', 'agen.c_name as agen', 'i_name', 'u_name')
+            ->where('pod_productorder', $id)
+            ->where('pod_detailid', $dt)
+            ->first();
+        $order = [
+            'comp'       => $detail->comp,
+            'agen'       => $detail->agen,
+            'nota'       => $detail->po_nota,
+            'tanggal'    => $detail->po_date,
+            'barang'     => $detail->i_name,
+            'unit'       => $detail->u_name,
+            'qty'        => $detail->pod_qty,
+            'price'      => Currency::addRupiah($detail->pod_price),
+            'totalprice' => Currency::addRupiah($detail->pod_totalprice)
+        ];
 
-            DB::commit();
-            return response()->json([
-                'status' => 'sukses'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json([
-                'status' => 'Gagal',
-                'message' => $e
-            ]);
-        }
+        return Response::json(array(
+            'success' => true,
+            'data'    => $order
+        ));
     }
     // Order Produk Ke Cabang End ==========================================================================
     public function create_keloladataorder()
