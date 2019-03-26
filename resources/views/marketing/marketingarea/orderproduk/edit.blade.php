@@ -27,9 +27,8 @@
           </div>
           <div class="card-block">
             <section>
-              
+              <form action="" id="formUpdate">
               <div class="row">
-                
                 <div class="col-md-2 col-sm-6 col-xs-12">
                   <label>Nama Barang</label>
                 </div>
@@ -66,7 +65,7 @@
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
                   <div class="form-group">
-                    <input type="text" name="po_harga" class="form-control form-control-sm input-rupiah harga" value="{{Currency::addRupiah($produk->pod_price)}}" readonly="">
+                    <input type="text" name="po_harga" class="form-control form-control-sm input-rupiah harga text-left" value="{{Currency::addRupiah($produk->pod_price)}}" readonly="">
                     <input type="hidden" name="po_hrg" class="po_hrg" value="{{$produk->pod_price}}">
                   </div>
                 </div>
@@ -80,10 +79,11 @@
                   </div>
                 </div>
               </div>
+              </form>
             </section>
           </div>
           <div class="card-footer text-right">
-            <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+            <button class="btn btn-primary btn-submit" type="button" onclick="updateOrder('{{$produk->pod_productorder}}, {{$produk->pod_detailid}}')">Simpan</button>
             <a href="{{route('marketingarea.index')}}" class="btn btn-secondary">Kembali</a>
           </div>
         </div>
@@ -259,6 +259,18 @@
             hasil = convertToRupiah(hasil);
             $("#total_harga").eq(i).val(hasil);
           }                    
+        }
+      });
+    }
+
+    function updateOrder(id, dt)
+    {
+      $.ajax({
+        url: "{{url('/marketing/marketingarea/orderproduk/update')}}"+id+"/"+dt,
+        type: "get",
+        data: $('#formUpdate').serialize(),
+        success:function(response) {
+          
         }
       });
     }

@@ -443,16 +443,17 @@
                 }
               },
               error: function(e) {
-                  loadingHide();
-                  messageWarning('Peringatan', e.message);
+                loadingHide();
+                messageWarning('Peringatan', e.message);
               }
             });
           }
         },
         cancel: {
             text: 'Tidak',
-            action: function() {
-
+            action: function(response) {
+              loadingHide();
+              messageWarning('Peringatan', 'Anda telah membatalkannya!');
             }
         }
       }

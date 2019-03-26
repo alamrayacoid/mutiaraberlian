@@ -416,7 +416,7 @@ class MarketingAreaController extends Controller
             ->join('m_company as agen', 'po_agen', 'agen.c_id')
             ->join('m_item', 'pod_item', 'i_id')
             ->join('m_unit', 'pod_unit', 'u_id')
-            ->select('d_productorderdt.*', DB::raw('FORMAT(pod_price,3, "de_ID") as price'), DB::raw('FORMAT(pod_totalprice,3, "de_ID") as total_price'), 'd_productorder.*', 'comp.c_name as comp', 'agen.c_name as agen', 'i_name', 'u_name')
+            ->select('d_productorderdt.*', DB::raw('date_format(po_date, "%d/%m/%Y") as po_date'), 'po_nota', 'comp.c_name as comp', 'agen.c_name as agen', 'i_name', 'u_name')
             ->where('pod_productorder', $id)
             ->where('pod_detailid', $dt)
             ->first();
