@@ -205,6 +205,7 @@
                             if (response.data.status == "Success") {
                                 loadingHide();
                                 messageSuccess("Berhasil", response.data.message);
+                                setInterval(function(){location.reload();}, 3500)
                             } else if (response.data.status == "Failed") {
                                 loadingHide();
                                 messageFailed("Gagal", response.data.message)
