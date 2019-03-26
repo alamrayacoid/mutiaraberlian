@@ -50,7 +50,7 @@
                                 <div class="col-md-4 col-sm-6 col-12">
                                     <div class="form-group">
                                         <input type="hidden" name="q_idpo" id="q_idpo">
-                                        <input type="text" name="q_nota" id="q_nota" class="form-control form-control-sm">
+                                        <input type="text" name="q_nota" id="q_nota" class="form-control form-control-sm" oninput="handleInput(event)">
                                     </div>
                                 </div>
                                 <div class="col-2">
