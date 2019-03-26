@@ -9,7 +9,7 @@
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
-          <table class="table table-striped data-table table-hover" cellspacing="0">
+          <table class="table table-striped data-table table-hover" cellspacing="0" id="tbl_detailnota">
             <thead class="bg-primary">
               <tr align="center">
                 <th>Nama Barang</th>
@@ -18,11 +18,11 @@
               </tr>
             </thead>
             <tbody>             
-               <tr>
-                <td>Rahasia</td>
-                <td>Rahasia Uga</td>
-                <td class="input-rupiah">Rp.20,000.00</td>
-              </tr>
+               {{--<tr>--}}
+                {{--<td>Rahasia</td>--}}
+                {{--<td>Rahasia Uga</td>--}}
+                {{--<td class="input-rupiah">Rp.20,000.00</td>--}}
+              {{--</tr>--}}
             </tbody>
           </table>
             <div class="mt-3">

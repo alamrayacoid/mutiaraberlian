@@ -49,7 +49,8 @@
                                 </div>
                                 <div class="col-md-4 col-sm-6 col-12">
                                     <div class="form-group">
-                                        <input type="text" class="form-control form-control-sm">
+                                        <input type="hidden" name="q_idpo" id="q_idpo">
+                                        <input type="text" name="q_nota" id="q_nota" class="form-control form-control-sm" oninput="handleInput(event)">
                                     </div>
                                 </div>
                                 <div class="col-2">
@@ -124,6 +125,28 @@
             minLength: 1,
             select: function (event, data) {
                 $("#idSupplier").val(data.item.id);
+            }
+        });
+
+        $("#q_nota").on("keyup", function () {
+            $("#q_idpo").val('');
+        });
+
+        $("#q_nota").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '{{ route('return.carinota') }}',
+                    data: {
+                        term: $("#q_nota").val()
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, data) {
+                $("#q_idpo").val(data.item.id);
             }
         });
 
@@ -217,5 +240,33 @@
             }
         });
 	});
+
+	function detail(id) {
+        loadingShow();
+
+        if ($.fn.DataTable.isDataTable("#tbl_detailnota")) {
+            $('#tbl_detailnota').DataTable().clear().destroy();
+        }
+
+        $('#tbl_detailnota').DataTable({
+            responsive: true,
+            serverSide: true,
+            processing: true,
+            ajax: {
+                url: "{{ url('/produksi/returnproduksi/detail-nota') }}"+"/"+id,
+                type: "get"
+            },
+            columns: [
+                {data: 'barang'},
+                {data: 'qty'},
+                {data: 'harga'}
+            ],
+            drawCallback: function( settings ) {
+                loadingHide();
+            }
+        });
+
+        $("#detail").modal("show");
+    }
 </script>
 @endsection

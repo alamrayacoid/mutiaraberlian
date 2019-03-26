@@ -545,7 +545,7 @@ class ProduksiController extends Controller
                     return $data->nota;
                 })
                 ->addColumn('action', function($data){
-                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail" data-backdrop="static" data-keyboard="false"><i class="fa fa-folder"></i></button>';
+                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''.Crypt::encrypt($data->po_id).'\')"><i class="fa fa-folder"></i></button>';
                     $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Ambil"><i class="fa fa-hand-lizard-o"></i></button>';
                     return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
                 })
@@ -566,13 +566,34 @@ class ProduksiController extends Controller
                     return $data->nota;
                 })
                 ->addColumn('action', function($data){
-                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail" data-backdrop="static" data-keyboard="false"><i class="fa fa-folder"></i></button>';
+                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''.Crypt::encrypt($data->po_id).'\')"><i class="fa fa-folder"></i></button>';
                     $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Ambil"><i class="fa fa-hand-lizard-o"></i></button>';
                     return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
                 })
                 ->rawColumns(['supplier','tanggal', 'nota','action'])
                 ->make(true);
         }
+    }
+
+    public function detailNota($id = null)
+    {
+        $data = ProductionOrder::where('po_id', Crypt::decrypt($id))
+            ->join('d_productionorderdt', 'po_id', '=', 'pod_productionorder')
+            ->join('m_item', 'pod_item', '=', 'i_id')
+            ->select('m_item.i_name as barang', 'd_productionorderdt.pod_qty as qty', DB::raw("CONCAT('Rp. ',FORMAT(d_productionorderdt.pod_totalnet, 0, 'de_DE')) as harga"));
+
+        return DataTables::of($data)
+            ->addColumn('barang', function($data){
+                return $data->barang;
+            })
+            ->addColumn('qty', function($data){
+                return $data->qty;
+            })
+            ->addColumn('harga', function($data){
+                return $data->harga;
+            })
+            ->rawColumns(['barang','qty', 'harga'])
+            ->make(true);
     }
 
     public function searchSupplier(Request $request)
@@ -624,6 +645,24 @@ class ProduksiController extends Controller
             })
             ->rawColumns(['supplier','tanggal', 'nota','action'])
             ->make(true);
+    }
+
+    public function cariNota(Request $request)
+    {
+        $cari = $request->term;
+        $nama = ProductionOrder::where(function ($q) use ($cari){
+            $q->orWhere('po_nota', 'like', '%'.$cari.'%');
+        })
+            ->get();
+
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = ['id' => $query->po_id, 'label' => $query->po_nota, 'data' => $query];
+            }
+        }
+        return Response::json($results);
     }
 
     public function nota(){
