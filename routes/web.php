@@ -181,6 +181,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/returnproduksi/detail-nota/{id}', 'ProduksiController@detailNota')->name('return.detailnota');
     Route::get('/produksi/returnproduksi/cari-supplier', 'ProduksiController@searchSupplier')->name('return.carisupplier');
     Route::get('/produksi/returnproduksi/cari-nota', 'ProduksiController@cariNota')->name('return.carinota');
+    Route::get('/produksi/returnproduksi/cari-barang-po/{id}', 'ProduksiController@cariBarangPO')->name('return.caribarangpo');
     Route::get('/produksi/returnproduksi/create/next', 'ProduksiController@next_create_return_produksi')->name('return.nextcreate');
     // !===================================================== END PRODUKSI =====================================================!
 
@@ -315,7 +316,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/orderproduk/list', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@orderList')->name('orderProduk.list');
     Route::get('/marketing/marketingarea/orderproduk/store', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@orderProdukStore')->name('orderProduk.store');
     Route::get('/marketing/marketingarea/orderproduk/edit/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@editOrderProduk')->name('orderProduk.edit');
-    Route::get('/marketing/marketingarea/orderproduk/update/{id}/{dt}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@updateOrderProduk')->name('orderProduk.update');
+    Route::get('/marketing/marketingarea/orderproduk/update/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@updateOrderProduk')->name('orderProduk.update');
     Route::get('/marketing/marketingarea/orderproduk/get-city', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getCity')->name('orderProduk.getCity');
     Route::get('/marketing/marketingarea/orderproduk/get-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getAgen')->name('orderProduk.getAgen');
     Route::get('/marketing/marketingarea/orderproduk/cari-barang', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@cariBarang')->name('orderProduk.cariBarang');
@@ -424,9 +425,10 @@ Route::group(['middleware' => 'auth'], function () {
 
 //============== Route Mobile Apps ================
 Route::prefix('mobile')->group(function () {
-    Route::post('login', 'mobile\loginController@login');
+    Route::group(['middleware' => 'auth:api'], function() {
+        Route::post('login', 'mobile\loginController@login');
+    });
 });
-
 
 /*
 

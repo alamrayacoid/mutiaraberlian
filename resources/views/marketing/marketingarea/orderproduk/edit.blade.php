@@ -73,23 +73,29 @@
                                                     <td>
                                                         <select name="po_unit[]"
                                                             class="form-control form-control-sm select2 satuan">
-                                                            <option value="{{$dt->pod_unit}}" selected="">{{$dt->u_name}}</option>
-                                                            {{-- @foreach($unit->where('u_id', '!=', $dt->pod_unit) as $key => $u)
-                                                                <option value="{{$u->u_id}}">{{$u->u_name}}</option>
-                                                            @endforeach --}}
+                                                            <option value="{{$dt->pod_unit}}" selected>{{$dt->u_name}}</option>
+                                                            @if($dt->uid_1 != $dt->pod_unit)
+                                                                <option value="{{$dt->uid_1}}">{{$dt->uname_1}}</option>
+                                                            @endif
+                                                            @if($dt->uid_2 != $dt->pod_unit)
+                                                                <option value="{{$dt->uid_2}}">{{$dt->uname_2}}</option>
+                                                            @endif
+                                                            @if($dt->uid_3 != $dt->pod_unit)
+                                                                <option value="{{$dt->uid_3}}">{{$dt->uname_3}}</option>
+                                                            @endif
                                                         </select>
                                                     </td>
                                                     <td>
-                                                        <input type="number" name="po_qty[]" min="0" class="form-control form-control-sm jumlah" value="{{$dt->pod_qty}}" readonly="" disabled="">
+                                                        <input type="number" name="po_qty[]" min="0" class="form-control form-control-sm jumlah" value="{{$dt->pod_qty}}">
                                                     </td>
                                                     <td>
                                                         <input type="text" name="po_harga[]" class="form-control form-control-sm input-rupiah harga bg-light" value="{{Currency::addRupiah($dt->pod_price)}}" readonly disabled>
-                                                        <input type="hidden" name="po_hrg[]" class="po_hrg">
+                                                        <input type="hidden" name="po_hrg[]" class="po_hrg" value="{{$dt->pod_price}}">
                                                         <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p>
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" readonly value="{{Currency::addRupiah($dt->pod_totalprice)}}">
-                                                        <input type="hidden" name="sbtotal[]" class="sbtotal">
+                                                        <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="{{Currency::addRupiah($dt->pod_totalprice)}}" readonly disabled>
+                                                        <input type="hidden" name="sbtotal[]" class="sbtotal" value=" {{$dt->pod_totalprice}}">
                                                     </td>
                                                     <td>
                                                         <button class="btn btn-success btn-tambah-order btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
@@ -103,7 +109,7 @@
                         </form>
                     </div>
                     <div class="card-footer text-right">
-                        <button class="btn btn-primary" type="button" onclick="updateOrder('{{$produk->po_id}}')">Simpan</button>
+                        <button class="btn btn-primary" type="button" onclick="updateOrder('{{Crypt::encrypt($produk->po_id)}}')">Simpan</button>
                         <a href="{{route('marketingarea.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
@@ -448,7 +454,7 @@
                     });                    
                 }
                 $('#agen').focus();
-                $('#agen').select2('open');           
+                $('#agen').select2('open');
             }
         });
     }
@@ -457,7 +463,7 @@
     // Simpan Order Produk --------------------------------------------
     function updateOrder(id){
         $.ajax({
-            url: "{{route('orderProduk.update')}}"+"/"+id,
+            url: "{{url('/marketing/marketingarea/orderproduk/update')}}"+"/"+id,
             type: "get",
             data: $('#formOrder').serialize(),
             beforeSend: function () {
@@ -465,9 +471,9 @@
             },
             success: function (response) {
                 if (response.status == 'sukses') {
-                    loadingHide();
-                    messageSuccess('Success', 'Data berhasil ditambahkan!');
                     window.location.href = "{{route('marketingarea.index')}}";
+                    loadingHide();
+                    messageSuccess('Success', 'Data berhasil diperbarui!');
                 } else {
                     loadingHide();
                     messageFailed('Gagal', response.message);
@@ -478,6 +484,6 @@
                 messageWarning('Peringatan', e.message);
             }
         });
-    });
+    }
 </script>
 @endsection

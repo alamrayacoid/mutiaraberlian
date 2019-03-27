@@ -3,14 +3,21 @@
 namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Passport\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 use Auth;
 
 class d_username extends Authenticatable
 {
+    use Notifiable, HasApiTokens;
+
     protected $table       = 'd_username';
     protected $primaryKey  = 'u_id';
     public $incrementing   = false;
     public $remember_token = false;
+    protected $hidden = [
+        'u_password', 'remember_token',
+    ];
     const CREATED_AT       = 'u_created_at';
     const UPDATED_AT       = 'u_updated_at';
 

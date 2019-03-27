@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\d_productionorder as ProductionOrder;
+use App\d_productionorderdt as ProductionOrderDT;
 use App\m_supplier as Supplier;
 use DB;
 use Response;
@@ -546,7 +547,7 @@ class ProduksiController extends Controller
                 })
                 ->addColumn('action', function($data){
                     $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''.Crypt::encrypt($data->po_id).'\')"><i class="fa fa-folder"></i></button>';
-                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Pilih"><i class="fa fa-arrow-down"></i></button>';
+                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Pilih" onclick="pilih(\''.Crypt::encrypt($data->po_id).'\', \''.$data->nota.'\')"><i class="fa fa-arrow-down"></i></button>';
                     return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
                 })
                 ->rawColumns(['supplier','tanggal', 'nota','action'])
@@ -567,7 +568,7 @@ class ProduksiController extends Controller
                 })
                 ->addColumn('action', function($data){
                     $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''.Crypt::encrypt($data->po_id).'\')"><i class="fa fa-folder"></i></button>';
-                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Pilih" onclick="pilih(\''.$data->nota.'\')"><i class="fa fa-arrow-down"></i></button>';
+                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Pilih" onclick="pilih(\''.Crypt::encrypt($data->po_id).'\', \''.$data->nota.'\')"><i class="fa fa-arrow-down"></i></button>';
                     return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
                 })
                 ->rawColumns(['supplier','tanggal', 'nota','action'])
@@ -660,10 +661,40 @@ class ProduksiController extends Controller
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->po_id, 'label' => $query->po_nota . ' - ' . $query->s_company, 'data' => $query];
+                $results[] = ['id' => Crypt::encrypt($query->po_id), 'label' => $query->po_nota . ' - ' . $query->s_company, 'nota' => $query->po_nota];
             }
         }
         return Response::json($results);
+    }
+
+    public function cariBarangPO($id = null)
+    {
+        $data = ProductionOrderDT::join('m_item', 'i_id', '=', 'pod_item')
+            ->join('m_unit', 'u_id', '=', 'pod_unit')
+            ->where('pod_productionorder', '=', Crypt::decrypt($id))
+            ->select('pod_productionorder', 'pod_item', 'i_name', 'pod_qty', 'u_name',
+                DB::raw("CONCAT('Rp. ',FORMAT(pod_value, 0, 'de_DE')) as harga"),
+                DB::raw("CONCAT('Rp. ',FORMAT(pod_totalnet, 0, 'de_DE')) as total"));
+
+        return DataTables::of($data)
+            ->addColumn('barang', function($data){
+                return $data->i_name;
+            })
+            ->addColumn('qty', function($data){
+                return $data->pod_qty . ' - ' . $data->u_name;
+            })
+            ->addColumn('harga', function($data){
+                return $data->harga;
+            })
+            ->addColumn('total', function($data){
+                return $data->total;
+            })
+            ->addColumn('action', function($data){
+                $pilih = '<button class="btn btn-sm btn-primary" title="Pilih" onclick="selectItem(\''.Crypt::encrypt($data->pod_productionorder).'\', \''.$data->pod_item.'\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
+                return '<div class="btn-group btn-group-sm">'. $pilih . '</div>';
+            })
+            ->rawColumns(['barang','qty', 'harga', 'total', 'action'])
+            ->make(true);
     }
 
     public function nota(){
