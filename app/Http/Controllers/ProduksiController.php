@@ -647,6 +647,24 @@ class ProduksiController extends Controller
             ->make(true);
     }
 
+    public function cariNota(Request $request)
+    {
+        $cari = $request->term;
+        $nama = ProductionOrder::where(function ($q) use ($cari){
+            $q->orWhere('po_nota', 'like', '%'.$cari.'%');
+        })
+            ->get();
+
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = ['id' => $query->po_id, 'label' => $query->po_nota, 'data' => $query];
+            }
+        }
+        return Response::json($results);
+    }
+
     public function nota(){
         return view('produksi/orderproduksi/nota');
     }

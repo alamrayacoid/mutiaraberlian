@@ -14,10 +14,10 @@
 					<table class="table table-hover table-striped display nowrap w-100" cellspacing="0" id="table_orderproduk">
 						<thead class="bg-primary">
 							<tr>
-								<th>Tanggal Order</th>
-								<th>Nama Barang</th>
-								<th>Satuan</th>
-								<th>Jumlah</th>
+								<th>Tanggal Periode</th>
+								<th>Nomer Nota</th>
+								<th>Nama Cabang</th>
+								<th>Nama Agen</th>
 								<th>Total Harga</th>
 								<th>Aksi</th>
 							</tr>
