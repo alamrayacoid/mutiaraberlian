@@ -3,6 +3,7 @@
 @section('content')
 
 @include('marketing.marketingarea.keloladataorder.modal')
+@include('marketing.marketingarea.keloladataorder.modal-search')
 @include('marketing.marketingarea.monitoring.modal')
 
 <article class="content animated fadeInLeft">
@@ -528,6 +529,16 @@ $(document).ready(function(){
 				}
 		});
 	});
+
+	// Modal Kelola Data Order Agen
+	$("#search-list-agen").on("click", function() {
+			$(".table-modal").removeClass('d-none');
+	});
+
 });
+
+
+
+
 </script>
 @endsection
