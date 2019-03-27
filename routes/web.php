@@ -422,6 +422,11 @@ Route::group(['middleware' => 'auth'], function () {
 });
 // End Route Group
 
+//============== Route Mobile Apps ================
+Route::prefix('mobile')->group(function () {
+    Route::post('login', 'mobile\loginController@login');
+});
+
 
 /*
 
