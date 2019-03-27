@@ -247,7 +247,7 @@
                         animationBounce: 1.5,
                         icon: 'fa fa-exclamation-triangle',
                         title: 'Peringatan!',
-                        content: 'Apakah anda yakin akan membuat return barang?',
+                        content: 'Apakah anda yakin akan membuat return produksi untuk barang ini?',
                         theme: 'disable',
                         buttons: {
                             info: {
