@@ -7,6 +7,7 @@ use App\d_productionorder as ProductionOrder;
 use App\d_productionorderdt as ProductionOrderDT;
 use App\m_supplier as Supplier;
 use DB;
+use Mockery\Exception;
 use Response;
 use Carbon\Carbon;
 use CodeGenerator;
@@ -714,6 +715,71 @@ class ProduksiController extends Controller
             })
             ->first();
         return Response::json($data);
+    }
+
+    public function addReturn(Request $request)
+    {
+        try{
+            $poid = Crypt::decrypt($request->idPO);
+            $idItem = Crypt::decrypt($request->idItem);
+        }catch (DecryptException $e){
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e
+            ]);
+        }
+
+        $detailid = (DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')) ? DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')+1 : 1;
+//        return-po/001/23/03/2019
+        $nota = CodeGenerator::codeWithSeparator('d_returnproductionorder', 'rpo_nota', 11, 10, 3, 'RETURN-PO', '/');
+
+        $data_check = DB::table('d_productionorder')
+            ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
+                'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                'm_item.i_unit3 as unit3', 'd_productionorderdt.pod_unit as unit', 'd_productionorderdt.pod_value as value')
+            ->join('d_productionorderdt', function ($x) use ($idItem){
+                $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
+                $x->where('d_productionorderdt.pod_item', '=', $idItem);
+            })
+            ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
+            ->where('d_productionorder.po_id', '=', $poid)
+            ->first();
+
+        $qty_compare = 0;
+        if ($request->satuan_return == $data_check->unit1) {
+            $qty_compare = $request->qty_return;
+        } else if ($request->satuan_return == $data_check->unit2) {
+            $qty_compare = $request->qty_return * $data_check->compare2;
+        } else if ($request->satuan_return == $data_check->unit3) {
+            $qty_compare = $request->qty_return * $data_check->compare3;
+        }
+
+        DB::beginTransaction();
+        try{
+            $values = [
+                'rpo_productionorder' => $poid,
+                'rpo_detailid'        => $detailid,
+                'rpo_nota'            => $nota,
+                'rpo_item'            => $idItem,
+                'rpo_qty'             => $qty_compare,
+                'rpo_action'          => $request->methode_return,
+                'rpo_note'            => $request->note_return
+            ];
+
+            DB::table('d_returnproductionorder')->insert($values);
+            DB::commit();
+            return Response::json([
+                'status' => "Success",
+                'message'=> "Data berhasil disimpan"
+            ]);
+        }catch (Exception $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e
+            ]);
+        }
     }
 
     public function nota(){

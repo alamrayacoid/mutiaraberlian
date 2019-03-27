@@ -232,6 +232,42 @@
                 });
             })
 
+            $("#formCreateReturn").on("submit", function (evt) {
+                evt.preventDefault();
+                if ($("#qty_return").val() == "" || $("#qty_return").val() == 0) {
+                    messageWarning("Peringatan", "Masukkan qty return");
+                    $("#qty_return").focus();
+                } else if ($("#satuan_return").val() == "") {
+                    messageWarning("Peringatan", "Pilih satuan barang");
+                    $("#satuan_return").focus();
+                } else {
+                    $.confirm({
+                        animation: 'RotateY',
+                        closeAnimation: 'scale',
+                        animationBounce: 1.5,
+                        icon: 'fa fa-exclamation-triangle',
+                        title: 'Peringatan!',
+                        content: 'Apakah anda yakin akan membuat return barang?',
+                        theme: 'disable',
+                        buttons: {
+                            info: {
+                                btnClass: 'btn-blue',
+                                text: 'Ya',
+                                action: function () {
+                                    createReturn();
+                                }
+                            },
+                            cancel: {
+                                text: 'Tidak',
+                                action: function () {
+                                    // tutup confirm
+                                }
+                            }
+                        }
+                    });
+                }
+            })
+
             $('#header-metodereturn').change(function(){
                 var ini, potong_nota, ganti_uang, ganti_barang;
                 ini             = $(this).val();
@@ -253,6 +289,26 @@
                 }
             });
         });
+
+        function createReturn() {
+            loadingShow();
+            axios.post('{{ route('return.add') }}', $("#formCreateReturn").serialize())
+                .then(function (resp) {
+                    loadingHide();
+                    if (resp.data.status == "Failed") {
+                        messageFailed("Gagal", resp.data.message);
+                    } else if (resp.data.status == "Success") {
+                        messageSuccess("Berhasil", resp.data.message);
+                        $("#qty_return").val(0);
+                        $("#note_return").val('');
+                        $("#createReturn").modal("hide");
+                    }
+                })
+                .catch(function (error) {
+                    loadingHide();
+                    messageWarning("Error", error);
+                })
+        }
 
         function detail(id) {
             loadingShow();
@@ -325,6 +381,7 @@
             axios.get(baseUrl+"/produksi/returnproduksi/set-satuan/"+item)
                 .then(function (resp) {
                     loadingHide();
+                    $("#satuan_return").find('option').remove();
                     var option = '<option value="">Pilih Satuan</option>';
                     option += '<option value="'+resp.data.id1+'">'+resp.data.unit1+'</option>';
                     if (resp.data.id2 != null && resp.data.id2 != resp.data.id1) {

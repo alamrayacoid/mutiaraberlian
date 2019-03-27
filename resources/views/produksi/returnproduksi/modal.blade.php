@@ -50,7 +50,7 @@
                                 <label>Qty <span class="text-danger">*</span></label>
                             </div>
                             <div>
-                                <input type="number" name="qty_return" min="0" value="0" class="form-control form-control-sm"/>
+                                <input type="number" name="qty_return" id="qty_return" min="0" value="0" class="form-control form-control-sm"/>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12">
@@ -80,7 +80,7 @@
                             <label>Keterangan</label>
                         </div>
                         <div class="col-md-10">
-                            <textarea name="" id="" rows="10" class="form-control"></textarea>
+                            <textarea name="note_return" id="note_return" rows="10" class="form-control"></textarea>
                         </div>
                     </div>
                 </div>
