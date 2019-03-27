@@ -98,7 +98,11 @@
                                                         <input type="hidden" name="sbtotal[]" class="sbtotal" value=" {{$dt->pod_totalprice}}">
                                                     </td>
                                                     <td>
-                                                        <button class="btn btn-success btn-tambah-order btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        @if($key > 0)
+                                                            <button class="btn btn-danger btn-hapus-order btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button>
+                                                        @else
+                                                            <button class="btn btn-success btn-tambah-order btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                                 @endforeach

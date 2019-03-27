@@ -172,6 +172,7 @@ class MarketingAreaController extends Controller
 
     public function getPrice(Request $request)
     {
+        //dd($request);
         $idItem = $request->item;
         $idUnit = $request->unit;
         $qty    = $request->qty;
@@ -183,19 +184,22 @@ class MarketingAreaController extends Controller
             ->where('pcd_item', '=', $idItem)
             ->where('pcd_unit', '=', $idUnit)
             ->where('pcd_type', '=', "R")
+            ->where('pcd_rangeqtystart', '<=', $qty)
+            ->orWhere('pcd_rangeqtyend', '>=', $qty)
             ->first();
+            dd($price);
         if($price){
-            if ($price->pcd_rangeqtystart <= $qty[0] && $price->pcd_rangeqtyend >= $qty[0]) {
+            //if ($price->pcd_rangeqtystart <= $qty[0] && $price->pcd_rangeqtyend >= $qty[0]) {
                 return Response::json(array(
                     'success' => true,
                     'data'    => number_format($price->pcd_price,0, ',', '')
                 ));
-            } else {
-                return Response::json(array(
-                    'success' => true,
-                    'data'    => 0
-                ));
-            }
+            //} else {
+                // return Response::json(array(
+                //     'success' => true,
+                //     'data'    => 0
+                // ));
+            //}
         } else {
             return Response::json(array(
                 'success' => true,
@@ -268,7 +272,7 @@ class MarketingAreaController extends Controller
                         'po_comp'   => $data['po_comp'][0],
                         'po_agen'   => $data['po_agen'][0],
                         'po_date'   => $time,
-                        'po_nota'   => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 10, 10, 4, 'PRO', '-'),
+                        'po_nota'   => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-'),
                         'po_status' => "P"
                     ]);
 
