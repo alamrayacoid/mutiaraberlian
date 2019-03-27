@@ -77,6 +77,7 @@
                     	<button class="btn btn-primary" type="button">Simpan</button>
                     	<a href="{{route('return.create')}}" class="btn btn-secondary">Kembali</a>
                     </div>
+                    <!-- a -->
                 </div>
 
 			</div>
