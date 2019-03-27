@@ -525,8 +525,13 @@ $(document).ready(function(){
         document.getElementById("sidebar-collapse-btn").click();
     }
 
+    function easyCreate(){
+        document.getElementById("e-create").click();
+    }
+
     Mousetrap.bind ({
         '/': search,
-        'ctrl+shift+h': hideMenu
+        'ctrl+shift+h': hideMenu,
+        'f1' : easyCreate
     });
 </script>

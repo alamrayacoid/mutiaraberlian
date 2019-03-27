@@ -25,7 +25,7 @@
                             <h3 class="title"> Data Agen </h3>
                         </div>
                         <div class="header-block pull-right">
-                            <a class="btn btn-primary" href="{{route('agen.create')}}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
+                            <a class="btn btn-primary" href="{{route('agen.create')}}" id="e-create"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
 
                         </div>
                     </div>
