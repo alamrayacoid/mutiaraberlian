@@ -164,7 +164,7 @@
             $(".jumlah").eq(idxBarang).attr("disabled", false);
             setArrayCode();
         });
-        $('.jumlah').on('click', function (e) {
+        $('.jumlah').on('click input', function (e) {
             idxBarang = $('.jumlah').index(this);
             console.log(idxBarang);
             setArrayCode();
@@ -293,7 +293,7 @@
                 setArrayCode();
             });
 
-            $('.jumlah').on('click', function (e) {
+            $('.jumlah').on('click input', function (e) {
                 idxBarang = $('.jumlah').index(this);
                 console.log(idxBarang);
                 setArrayCode();             
@@ -334,7 +334,7 @@
     
     // Merubah Sub Total Berdasarkan Jumlah Item ----------------------
     function changeJumlah() {
-        $('.jumlah').on('click', function (evt) {
+        $('.jumlah').on('click input', function (evt) {
             evt.preventDefault();
             everyChange();
         });

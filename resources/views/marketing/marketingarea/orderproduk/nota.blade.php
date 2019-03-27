@@ -462,12 +462,12 @@
 					<tr>
 						<td width="20%">No. Nota</td>
 						<td width="1%">:</td>
-						<td>{{$nota->po_nota}}</td>
+						<td></td>
 					</tr>
 					<tr>
 						<td>Tanggal</td>
 						<td width="5%">:</td>
-						<td>{{$nota->po_date}}</td>
+						<td></td>
 					</tr>
 				</table>
 			</div>
@@ -478,15 +478,21 @@
 						<th width="40%">Nama - Kode Barang</th>
 						<th>Satuan</th>
 						<th>Qty</th>
+						<th>Harga Satuan</th>
+						<th>Total Harga</th>
 					</tr>
 				</thead>
 				<tbody>
+					@foreach($nota as $n)
 					<tr>
 						<td align="center">1</td>
-						<td align="center">{{$nota->i_name}} - {{$nota->i_code}}</td>
-						<td align="center">{{$nota->u_name}}</td>
-						<td align="center">{{$nota->pod_qty}}</td>
+						<td align="center">{{$n->i_name}} - {{$n->i_code}}</td>
+						<td align="center">{{$n->u_name}}</td>
+						<td align="center">{{$n->pod_qty}}</td>
+						<td align="center">{{$n->pod_price}}</td>
+						<td align="center">{{$n->pod_totalprice}}</td>
 					</tr>
+					@endforeach
 				</tbody>
 			</table>
 		</div>
