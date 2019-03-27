@@ -453,7 +453,7 @@
 			<button type="button" onclick="javascript:window.print();">Print</button>
 		</div>
 		<div class="div-width page-break">
-			<div class="col-6">
+			<div class="col-12">
 				<h1 class="m-unset">Mutiara Berlian</h1>
 				<h3>Nota Order Produk Ke Cabang</h3>
 			</div>
@@ -466,6 +466,21 @@
 					</tr>
 					<tr>
 						<td>Tanggal</td>
+						<td width="5%">:</td>
+						<td></td>
+					</tr>
+				</table>
+			</div>
+
+			<div class="col-6" style="margin-bottom:20px;">
+				<table class="border-none" width="100%">
+					<tr>
+						<td width="30%">Nama Cabang</td>
+						<td width="1%">:</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Nama Agen</td>
 						<td width="5%">:</td>
 						<td></td>
 					</tr>
