@@ -103,7 +103,7 @@
                         </form>
                     </div>
                     <div class="card-footer text-right">
-                        <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+                        <button class="btn btn-primary" type="button" onclick="updateOrder('{{$produk->po_id}}')">Simpan</button>
                         <a href="{{route('marketingarea.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
@@ -127,8 +127,8 @@
         changeSatuan();
         changeBarang();
         updateTotalTampil();
+        setArrayCode();
 
-        // AutoComplete Item ------------------------------------------
         $('.barang').on('click change', function (e) {
             idxBarang = $('.barang').index(this);
             $(".jumlah").eq(idxBarang).attr("readonly", false);
@@ -215,7 +215,6 @@
                 }
             });
         }
-        // End AutoComplete -------------------------------------------
 
         // Tambah Form Order ------------------------------------------
         $('.btn-tambah-order').on('click', function() {
@@ -266,7 +265,6 @@
 
             $('.jumlah').on('click', function (e) {
                 idxBarang = $('.jumlah').index(this);
-                console.log(idxBarang);
                 setArrayCode();             
             });
 
@@ -294,6 +292,7 @@
         // End Hapus Form
     });
     // End Document Ready ---------------------------------------------
+
     function changeBarang() {
         $(".barang").on('change', function (evt) {
             evt.preventDefault();
@@ -303,14 +302,13 @@
         });
     }
     
-    // Merubah Sub Total Berdasarkan Jumlah Item ----------------------
     function changeJumlah() {
         $('.jumlah').on('click', function (evt) {
             evt.preventDefault();
             everyChange();
         });
     }
-    // End Code -------------------------------------------------------
+
     function changeSatuan() {
         $(".satuan").on('change', function (evt) {
             evt.preventDefault();
@@ -347,11 +345,13 @@
                 if (isNaN(price)) {
                     price = 0;
                 }
+
                 if (price == 0) {
                     $('.unknow').eq(idxBarang).css('display', 'block');
                 } else {
                     $('.unknow').eq(idxBarang).css('display', 'none');
                 }
+
                 $('.harga').eq(idxBarang).val(convertToRupiah(price));
                 $('.po_hrg').eq(idxBarang).val(price);
 
@@ -455,9 +455,9 @@
     // End Code -------------------------------------------------------
 
     // Simpan Order Produk --------------------------------------------
-    $('.btn-submit').on('click', function(){
+    function updateOrder(id){
         $.ajax({
-            url: "{{route('orderProduk.store')}}",
+            url: "{{route('orderProduk.update')}}"+"/"+id,
             type: "get",
             data: $('#formOrder').serialize(),
             beforeSend: function () {
