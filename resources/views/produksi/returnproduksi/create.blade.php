@@ -314,8 +314,14 @@
             }
         }
 
-        function selectItem(poid, item) {
-
+        function selectItem(poid, item, barang, qty, harga, total) {
+            $("#idPO").val(poid);
+            $("#idItem").val(item);
+            $("#txt_barang").val(barang);
+            $("#txt_qty").val(qty);
+            $("#txt_harga").val(harga);
+            $("#txt_total").val(total);
+            $("#createReturn").modal({backdrop: 'static', keyboard: false});
         }
     </script>
     <script>

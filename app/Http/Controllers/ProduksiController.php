@@ -690,7 +690,8 @@ class ProduksiController extends Controller
                 return $data->total;
             })
             ->addColumn('action', function($data){
-                $pilih = '<button class="btn btn-sm btn-primary" title="Pilih" onclick="selectItem(\''.Crypt::encrypt($data->pod_productionorder).'\', \''.$data->pod_item.'\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
+                $qty = $data->pod_qty . ' - ' . $data->u_name;
+                $pilih = '<button class="btn btn-sm btn-primary" title="Pilih" onclick="selectItem(\''.Crypt::encrypt($data->pod_productionorder).'\', \''.$data->pod_item.'\', \''.$data->i_name.'\', \''.$qty.'\', \''.$data->harga.'\', \''.$data->total.'\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
                 return '<div class="btn-group btn-group-sm">'. $pilih . '</div>';
             })
             ->rawColumns(['barang','qty', 'harga', 'total', 'action'])
