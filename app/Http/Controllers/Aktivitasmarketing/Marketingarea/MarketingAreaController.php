@@ -315,27 +315,43 @@ class MarketingAreaController extends Controller
         $detail = DB::table('d_productorderdt')
             ->join('m_item', 'pod_item', 'i_id')
             ->join('m_unit', 'pod_unit', 'u_id')
-            ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*')
+            ->join('m_unit as unit1', 'm_item.i_unit1', 'unit1.u_id')
+            ->join('m_unit as unit2', 'm_item.i_unit2', 'unit2.u_id')
+            ->join('m_unit as unit3', 'm_item.i_unit3', 'unit3.u_id')
+            ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*', 'unit1.u_id as uid_1', 'unit2.u_id as uid_2', 'unit3.u_id as uid_3', 'unit1.u_name as uname_1', 'unit2.u_name as uname_2', 'unit3.u_name as uname_3')
             ->where('pod_productorder', $id)
             ->get();
         return view('marketing/marketingarea/orderproduk/edit', compact('produk', 'detail'));
     }
 
-    public function updateOrderProduk($id, $dt, Request $request)
+    public function updateOrderProduk($id, Request $request)
     {
+        //dd($request);
         try {
             $id = Crypt::decrypt($id);
-            $dt = Crypt::decrypt($dt);
         } catch (\Exception $e) {
             return view('errors.404');
         }
+
         $data = $request->all();
         DB::beginTransaction();
         try {
             DB::table('d_productorderdt')
                 ->where('pod_productorder', $id)
-                ->where('pod_detailid', $dt)
                 ->delete();
+
+            $detailId = 0;
+            for ($i=0; $i < count($data['idItem']) ; $i++) { 
+                DB::table('d_productorderdt')->insert([
+                    'pod_productorder' => $id,
+                    'pod_detailid'     => ++$detailId,
+                    'pod_item'         => $data['idItem'][$i],
+                    'pod_unit'         => $data['po_unit'][$i],
+                    'pod_qty'          => $data['po_qty'][$i],
+                    'pod_price'        => $data['po_hrg'][$i],
+                    'pod_totalprice'   => $data['sbtotal'][$i]
+                ]);
+            }
 
             DB::commit();
             return response()->json([
@@ -410,9 +426,10 @@ class MarketingAreaController extends Controller
         $detail = DB::table('d_productorderdt')
             ->join('m_item', 'pod_item', 'i_id')
             ->join('m_unit', 'pod_unit', 'u_id')
-            ->select('d_productorderdt.*', 'm_item.*', 'm_item.*')
+            ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*')
             ->where('pod_productorder', $id)
             ->get();
+
         foreach ($detail as $key => $dt) {
             $order[] = [
                 'barang'     => $dt->i_name,
