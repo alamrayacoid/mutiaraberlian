@@ -26,7 +26,6 @@ class MarketingAreaController extends Controller
     {
         try {
             $id = Crypt::decrypt($id);
-            $dt = Crypt::decrypt($dt);
         } catch (\Exception $e) {
             return view('errors.404');
         }
@@ -38,8 +37,7 @@ class MarketingAreaController extends Controller
             ->join('m_unit', 'pod_unit', 'u_id')
             ->select('d_productorderdt.*', 'd_productorder.*', 'm_item.*', 'm_unit.*', 'comp.c_name as comp', 'agen.c_name as agen')
             ->where('pod_productorder', $id)
-            ->where('pod_detailid', $dt)
-            ->first();
+            ->get();
         return view('marketing/marketingarea/orderproduk/nota', compact('nota'));
     }
 

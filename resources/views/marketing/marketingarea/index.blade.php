@@ -108,15 +108,15 @@
 	    var table_bro = $('#table_konsinyasi').DataTable();
 
 	    $(document).on('click', '.btn-edit-order', function() {
-	        window.location.href = '{{ route('keloladataorder.edit ') }}';
+	        window.location.href = '{{ route('keloladataorder.edit') }}';
 	    });
 
 	    $(document).on('click', '.btn-edit-canv', function() {
-	        window.location.href = '{{ route('datacanvassing.edit ') }}';
+	        window.location.href = '{{ route('datacanvassing.edit') }}';
 	    });
 
 	    $(document).on('click', '.btn-edit-kons', function() {
-	        window.location.href = '{{ route('datakonsinyasi.edit ') }}';
+	        window.location.href = '{{ route('datakonsinyasi.edit') }}';
 	    });
 
 	    $(document).on('click', '.btn-disable', function() {
