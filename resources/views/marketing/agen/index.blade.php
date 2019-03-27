@@ -31,13 +31,14 @@
                         <a href="#datacanvassing" class="nav-link" data-target="#datacanvassing" aria-controls="datacanvassing" data-toggle="tab" role="tab">Kelola Laporan Keuangan Sederhana </a>
 					</li>
 					<li class="nav-item">
-                        <a href="#datakonsinyasi" class="nav-link" data-target="#datakonsinyasi" aria-controls="datakonsinyasi" data-toggle="tab" role="tab">Kelola Data Inventory Agen</a>
+                        <a href="#inventoryagen" class="nav-link" data-target="#inventoryagen" aria-controls="inventoryagen" data-toggle="tab" role="tab">Kelola Data Inventory Agen</a>
 					</li>
                 </ul>
 
                 <div class="tab-content">
 
 					@include('marketing.agen.orderproduk.index')
+					@include('marketing.agen.inventoryagen.index')
 
 	            </div>
 
@@ -55,6 +56,7 @@
 
 	$(document).ready(function(){
 		var table_sup = $('#table_orderprodukagenpusat').DataTable();
+		var table_pus = $('#table_inventoryagen').DataTable();
 
 		$(document).on('click','.btn-edit',function(){
 			window.location.href='{{ route('orderagenpusat.edit') }}'

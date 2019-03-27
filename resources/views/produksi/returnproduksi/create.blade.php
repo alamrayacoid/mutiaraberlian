@@ -2,6 +2,8 @@
 
 @section('content')
 
+@include('produksi.returnproduksi.modal')
+
 @include('produksi.returnproduksi.modal-search')
 
 @include('produksi.returnproduksi.modal-detail')
@@ -48,37 +50,41 @@
                                     <label>No. Nota</label>
                                 </div>
                                 <div class="col-md-4 col-sm-6 col-12">
-                                    <div class="form-group">
+                                    <div class="input-group">
                                         <input type="hidden" name="q_idpo" id="q_idpo">
                                         <input type="text" name="q_nota" id="q_nota" class="form-control form-control-sm" oninput="handleInput(event)">
+
+                                    <button class="btn btn-md btn-secondary" title="Pencarian No. Nota" id="btn_searchnota" style="border-left:none;"><i class="fa fa-search"></i></button>
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <button class="btn btn-md btn-primary" title="Pencarian No. Nota" id="btn_searchnota"><i class="fa fa-search"></i></button>
+                                    <button type="button" class="btn btn-md btn-primary" id="go">Go</button>
                                 </div>
-
+                                <hr>
                         	</div>
-
-                            <fieldset>
-                                <div class="row">
-                                    <div class="col-md-3 col-sm-6 col-12">
-                                        <label>Metode Return</label>
-                                    </div>
-                                    <div class="col-md-9 col-sm-6 col-12">
-                        			<div class="form-group">
-                        				<select class="form-control form-control-sm" id="header-metodereturn">
-                        					<option value="">--Pilih Metode Return--</option>
-                        					<option value="GB">Ganti Barang</option>
-                        					<option value="GU">Return Dana</option>
-                        					<option value="PN">Potong Tagihan</option>
-                        				</select>
-                        			</div>
-                                    </div>
-                                    @include('produksi.returnproduksi.tab_potongnota')
-                                    @include('produksi.returnproduksi.tab_gantiuang')
-                                    @include('produksi.returnproduksi.tab_gantibarang')
-                        		</div>
-                            </fieldset>
+                            <div class="table-responsive table-returnp d-none">
+                                    <table class="table table-striped table-hover" cellspacing="0" id="table_rp">
+                                    <thead class="bg-primary">
+                                        <tr>
+                                            <th>Nama Barang</th>
+                                            <th>Qty</th>
+                                            <th>Harga @</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Obat</td>
+                                            <td>1</td>
+                                            <td>Rp. 50,000.000</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#create"><i class="fa fa-arrow-right" aria-hidden="true"></i>
+</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </section>
                     </div>
                     <div class="card-footer text-right">
@@ -100,11 +106,15 @@
 @section('extra_script')
 <script type="text/javascript">
 	$(document).ready(function(){
-        var tbl_gb, tbl_gu, tbl_pn;
+        var tbl_rp, tbl_gu, tbl_pn;
 
-        tbl_gb = $('#tabel_gb').DataTable();
+        tbl_rp = $('#table_rp').DataTable();
         tbl_gu = $('#tabel_gu').DataTable();
         tbl_pn = $('#tabel_pn').DataTable();
+
+        $("#go").on("click", function() {
+            $(".table-returnp").removeClass('d-none');
+        });
 
         $("#supplier").on("keyup", function () {
             $("#idSupplier").val('');
@@ -273,5 +283,7 @@
 	    $("#q_nota").val(nota);
         $("#search-modal").modal("hide");
     }
+</script>
+<script>
 </script>
 @endsection
