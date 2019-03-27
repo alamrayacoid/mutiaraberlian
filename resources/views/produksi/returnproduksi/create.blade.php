@@ -314,7 +314,32 @@
             }
         }
 
-        function selectItem(poid, item) {
+        function selectItem(poid, item, barang, qty, harga, total) {
+            loadingShow();
+            $("#idPO").val(poid);
+            $("#idItem").val(item);
+            $("#txt_barang").val(barang);
+            $("#txt_qty").val(qty);
+            $("#txt_harga").val(harga);
+            $("#txt_total").val(total)
+            axios.get(baseUrl+"/produksi/returnproduksi/set-satuan/"+item)
+                .then(function (resp) {
+                    loadingHide();
+                    var option = '<option value="">Pilih Satuan</option>';
+                    option += '<option value="'+resp.data.id1+'">'+resp.data.unit1+'</option>';
+                    if (resp.data.id2 != null && resp.data.id2 != resp.data.id1) {
+                        option += '<option value="'+resp.data.id2+'">'+resp.data.unit2+'</option>';
+                    }
+                    if (resp.data.id3 != null && resp.data.id3 != resp.data.id1) {
+                        option += '<option value="'+resp.data.id3+'">'+resp.data.unit3+'</option>';
+                    }
+                    $("#satuan_return").append(option);
+                    $("#createReturn").modal({backdrop: 'static', keyboard: false});
+                })
+                .catch(function (error) {
+                    loadingHide();
+                    messageWarning("Error", error);
+                })
 
         }
     </script>
