@@ -32,7 +32,7 @@
                 <hr> 
               </div>
               <div class="col-12">
-                <h5>Return</h5>
+                <h5 style="font-weight:bold;">Return</h5>
               </div>
              <div class="col-md-4 col-sm-12">
                 <div class="col-12">
@@ -66,6 +66,7 @@
           </div>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Simpan</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
       </div>
     </div>
