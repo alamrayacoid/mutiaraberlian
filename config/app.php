@@ -175,7 +175,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
-
+        Laravel\Passport\PassportServiceProvider::class
     ],
 
     /*
@@ -230,6 +230,7 @@ return [
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         'Image' => Intervention\Image\Facades\Image::class,
         'Pusher' => Pusher\Pusher::class,
+        'Passport' => Laravel\Passport\PassportServiceProvider::class
     ],
 
 ];

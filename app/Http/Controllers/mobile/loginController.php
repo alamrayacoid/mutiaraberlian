@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 
 class loginController extends Controller
 {
-    public function login()
+    public function login(Request $request)
     {
         return json_encode([
             'data' => 'sukses'

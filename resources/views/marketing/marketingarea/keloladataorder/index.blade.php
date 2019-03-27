@@ -11,6 +11,31 @@
 		</div>
 		<div class="card-block">
 			<section>
+			<div class="row mb-4">
+				<div class="col-md-2 col-sm-12">
+					<input type="text" class="form-control form-control-sm datepicker" placeholder="Tanggal Awal">
+				</div>
+				<span>-</span>
+				<div class="col-md-2 col-sm-12">
+					<input type="text" class="form-control form-control-sm datepicker" placeholder="Tanggal Akhir">
+				</div>
+				<div class="col-md-2 col-sm-12">
+					<select name="" id="" class="form-control form-control-sm select2">
+						<option value="">Disetujui</option>
+						<option value="">Ditolak</option>
+						<option value="">Menunggu</option>
+					</select>
+				</div>
+				<div class="col-md-4 col-sm-12">
+					<div class="input-group">
+						<input type="text" class="form-control form-control-sm" placeholder="Cari Agen">
+						<button class="btn btn-secondary btn-md" style="border-left:none;" data-toggle="modal" data-target="#search"><i class="fa fa-search"></i></button>
+					</div>
+				</div>
+				<div class="col-1">
+					<button class="btn btn-primary btn-md" title="Cari Berdasarkan Filter">Filter</button>
+				</div>
+			</div>
 				<div class="table-responsive">
 					<table class="table table-hover table-striped" cellspacing="0" id="table_keloladataagen">
 						<thead class="bg-primary">
