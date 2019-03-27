@@ -47,26 +47,28 @@
                         </div>
                         <div class="col-md-4 col-sm-12">
                             <div class="col-12">
-                                <label>Qty</label>
+                                <label>Qty <span class="text-danger">*</span></label>
                             </div>
                             <div>
-                                <input type="number" value="" class="form-control form-control-sm"/>
+                                <input type="number" name="qty_return" min="0" value="0" class="form-control form-control-sm"/>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12">
                             <div class="col-12">
-                                <label>Satuan</label>
+                                <label>Satuan <span class="text-danger">*</span></label>
                             </div>
                             <div>
-                                <input type="text" value="" class="form-control form-control-sm"/>
+                                <select name="satuan_return" id="satuan_return" class="form-control form-control-sm">
+
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12 mb-4">
                             <div class="col-12">
-                                <label>Metode</label>
+                                <label>Metode <span class="text-danger">*</span></label>
                             </div>
                             <div>
-                                <select name="some_name" id="some_name" class="form-control form-control-sm">
+                                <select name="methode_return" id="methode_return" class="form-control form-control-sm">
                                     <option value="GB">Ganti Barang</option>
                                     <option value="PT">Potong Tagihan</option>
                                     <option value="RD">Return Dana</option>

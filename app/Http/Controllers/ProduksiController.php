@@ -691,11 +691,29 @@ class ProduksiController extends Controller
             })
             ->addColumn('action', function($data){
                 $qty = $data->pod_qty . ' - ' . $data->u_name;
-                $pilih = '<button class="btn btn-sm btn-primary" title="Pilih" onclick="selectItem(\''.Crypt::encrypt($data->pod_productionorder).'\', \''.$data->pod_item.'\', \''.$data->i_name.'\', \''.$qty.'\', \''.$data->harga.'\', \''.$data->total.'\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
+                $pilih = '<button class="btn btn-sm btn-primary" title="Pilih" onclick="selectItem(\''.Crypt::encrypt($data->pod_productionorder).'\', \''.Crypt::encrypt($data->pod_item).'\', \''.$data->i_name.'\', \''.$qty.'\', \''.$data->harga.'\', \''.$data->total.'\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
                 return '<div class="btn-group btn-group-sm">'. $pilih . '</div>';
             })
             ->rawColumns(['barang','qty', 'harga', 'total', 'action'])
             ->make(true);
+    }
+
+    public function setSatuan($id = null)
+    {
+        $data = DB::table('m_item')
+            ->select('m_item.*', 'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
+            ->where('m_item.i_id', '=', Crypt::decrypt($id))
+            ->join('m_unit as a', function ($x){
+                $x->on('m_item.i_unit1', '=', 'a.u_id');
+            })
+            ->leftjoin('m_unit as b', function ($y){
+                $y->on('m_item.i_unit2', '=', 'b.u_id');
+            })
+            ->leftjoin('m_unit as c', function ($z){
+                $z->on('m_item.i_unit3', '=', 'c.u_id');
+            })
+            ->first();
+        return Response::json($data);
     }
 
     public function nota(){
