@@ -69,8 +69,8 @@
                         				<select class="form-control form-control-sm" id="header-metodereturn">
                         					<option value="">--Pilih Metode Return--</option>
                         					<option value="GB">Ganti Barang</option>
-                        					<option value="GU">Ganti Uang</option>
-                        					<option value="PN">Potong Nota</option>
+                        					<option value="GU">Return Dana</option>
+                        					<option value="PN">Potong Tagihan</option>
                         				</select>
                         			</div>
                                     </div>
@@ -267,6 +267,11 @@
         });
 
         $("#detail").modal("show");
+    }
+
+    function pilih(nota) {
+	    $("#q_nota").val(nota);
+        $("#search-modal").modal("hide");
     }
 </script>
 @endsection

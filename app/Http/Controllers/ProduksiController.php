@@ -546,7 +546,7 @@ class ProduksiController extends Controller
                 })
                 ->addColumn('action', function($data){
                     $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''.Crypt::encrypt($data->po_id).'\')"><i class="fa fa-folder"></i></button>';
-                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Ambil"><i class="fa fa-hand-lizard-o"></i></button>';
+                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Pilih"><i class="fa fa-arrow-down"></i></button>';
                     return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
                 })
                 ->rawColumns(['supplier','tanggal', 'nota','action'])
@@ -567,7 +567,7 @@ class ProduksiController extends Controller
                 })
                 ->addColumn('action', function($data){
                     $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''.Crypt::encrypt($data->po_id).'\')"><i class="fa fa-folder"></i></button>';
-                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Ambil"><i class="fa fa-hand-lizard-o"></i></button>';
+                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Pilih" onclick="pilih(\''.$data->nota.'\')"><i class="fa fa-arrow-down"></i></button>';
                     return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
                 })
                 ->rawColumns(['supplier','tanggal', 'nota','action'])
@@ -653,13 +653,14 @@ class ProduksiController extends Controller
         $nama = ProductionOrder::where(function ($q) use ($cari){
             $q->orWhere('po_nota', 'like', '%'.$cari.'%');
         })
-            ->get();
+        ->join('m_supplier', 's_id', '=', 'po_supplier')
+        ->get();
 
         if (count($nama) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->po_id, 'label' => $query->po_nota, 'data' => $query];
+                $results[] = ['id' => $query->po_id, 'label' => $query->po_nota . ' - ' . $query->s_company, 'data' => $query];
             }
         }
         return Response::json($results);
