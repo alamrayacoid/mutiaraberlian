@@ -185,9 +185,9 @@ class MarketingAreaController extends Controller
             ->where('pcd_unit', '=', $idUnit)
             ->where('pcd_type', '=', "R")
             ->where('pcd_rangeqtystart', '<=', $qty)
-            ->orWhere('pcd_rangeqtyend', '>=', $qty)
+            ->where('pcd_rangeqtyend', '>=', $qty)
             ->first();
-            dd($price);
+        //dd($price);
         if($price){
             //if ($price->pcd_rangeqtystart <= $qty[0] && $price->pcd_rangeqtyend >= $qty[0]) {
                 return Response::json(array(
