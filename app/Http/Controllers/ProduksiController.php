@@ -557,6 +557,52 @@ class ProduksiController extends Controller
             ->make(true);
     }
 
+    public function detailReturn($id = null, $detail = null)
+    {
+        try{
+            $id     = Crypt::decrypt($id);
+            $detail = Crypt::decrypt($detail);
+        }catch (DecryptException $e){
+            return Response::json([
+                'status' => "Failed",
+                'message'=> "Data tidak ditemukan"
+            ]);
+        }
+
+        $data = DB::table('d_returnproductionorder')
+            ->join('m_item', 'rpo_item', '=', 'i_id')
+            ->join('m_unit', 'i_unit1', '=', 'u_id')
+            ->where('rpo_productionorder', $id)
+            ->where('rpo_detailid', $detail);
+
+        if ($data->count() == 0) {
+            return Response::json([
+                'status' => "Failed",
+                'message'=> "Data tidak ditemukan"
+            ]);
+        } else {
+            if ($data->first()->rpo_action == "GB") {
+                $metode = "Ganti Barang";
+            } else if ($data->first()->rpo_action == "PT") {
+                $metode = "Potong Tagihan";
+            } else if ($data->first()->rpo_action == "RD") {
+                $metode = "Return Dana";
+            }
+            $val = [
+                'tanggal'    => Carbon::parse($data->first()->rpo_date)->format('d-m-Y'),
+                'nota'       => $data->first()->rpo_nota,
+                'barang'     => $data->first()->i_name,
+                'qty'        => $data->first()->rpo_qty . ' ' . $data->first()->u_name,
+                'metode'     => $metode,
+                'keterangan' => $data->first()->rpo_note
+            ];
+            return Response::json([
+                'status' => "Success",
+                'message'=> $val
+            ]);
+        }
+    }
+
     public function create_return_produksi()
     {
         return view('produksi/returnproduksi/create');
