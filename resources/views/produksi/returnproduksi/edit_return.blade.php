@@ -8,7 +8,7 @@
                 <h4 class="modal-title">Edit Data Return</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <form id="formEditReturn">
+            <form id="formEditReturn">{{ csrf_field() }}
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-2 col-sm-12 mt-2">
