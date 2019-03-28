@@ -10,11 +10,11 @@
 			<section>
 			<div class="row mb-4">
 				<div class="col-md-2 col-sm-12">
-					<input type="text" class="form-control form-control-sm datepicker" placeholder="Tanggal Awal">
+					<input type="text" name="start_date" class="form-control form-control-sm datepicker" placeholder="Tanggal Awal">
 				</div>
 				<span>-</span>
 				<div class="col-md-2 col-sm-12">
-					<input type="text" class="form-control form-control-sm datepicker" placeholder="Tanggal Akhir">
+					<input type="text" name="end_date" class="form-control form-control-sm datepicker" placeholder="Tanggal Akhir">
 				</div>
 				<div class="col-md-2 col-sm-12">
 					<select name="status" id="status" class="form-control form-control-sm select2">
@@ -25,12 +25,12 @@
 				</div>
 				<div class="col-md-4 col-sm-12">
 					<div class="input-group">
-						<input type="text" class="form-control form-control-sm" placeholder="Cari Agen">
+						<input type="text" name="agen_name" id="idAgen" class="form-control form-control-sm" placeholder="Cari Agen">
 						<button class="btn btn-secondary btn-md" style="border-left:none;" data-toggle="modal" data-target="#search"><i class="fa fa-search"></i></button>
 					</div>
 				</div>
-				<div class="col-1">
-					<button class="btn btn-primary btn-md" title="Cari Berdasarkan Filter">Filter</button>
+				<div class="col-md-1">
+					<button class="btn btn-primary btn-md" title="Cari Berdasarkan Filter"><i class="fa fa-filter" aria-hidden="true"></i> &nbspFilter</button>
 				</div>
 			</div>
 				<div class="table-responsive">

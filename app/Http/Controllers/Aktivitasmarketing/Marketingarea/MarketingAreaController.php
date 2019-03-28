@@ -19,7 +19,9 @@ class MarketingAreaController extends Controller
 {
     public function index()
     {
-        return view('marketing/marketingarea/index');
+        $provinsi = DB::table('m_wil_provinsi')->select('m_wil_provinsi.*')->get();
+        $city = DB::table('m_wil_kota')->select('m_wil_kota.*')->get();
+        return view('marketing/marketingarea/index', compact('provinsi', 'city'));
     }
 
     public function printNota($id, $dt)
@@ -464,28 +466,31 @@ class MarketingAreaController extends Controller
                 return Currency::addRupiah($data_agen->total_price);
             })
             ->addColumn('action_agen', function ($data_agen) {
-                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                            <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
-                            </button>
-                            <button class="btn btn-danger hint--top-left hint--error" aria-label="Edit Order" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i>
-                            </button>
-                            <button class="btn btn-success hint--top-left hint--success" aria-label="Hapus Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-check"></i>
-                            </button>
-                        </div>';
+                if ($data_agen->po_status == "Y") {
+                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                                </button>
+                                <button class="btn btn-disabled" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-times"></i>
+                                </button>
+                                <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i>
+                                </button>
+                            </div>';
+                } else {
+                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                                </button>
+                                <button class="btn btn-danger hint--top-left hint--error" aria-label="Reject" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i>
+                                </button>
+                                <button class="btn btn-success hint--top-left hint--success" aria-label="Approve" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-check"></i>
+                                </button>
+                            </div>';
+                }
+                
             })
             ->rawColumns(['totalprice','action_agen'])
             ->make(true);
     }
     // Kelola Data Order Agen End ==========================================================================
-    public function create_keloladataorder()
-    {
-        return view('marketing/marketingarea/keloladataorder/create');
-    }
-
-    public function edit_keloladataorder()
-    {
-        return view('marketing/marketingarea/keloladataorder/edit');
-    }
 
     public function create_datacanvassing()
     {
