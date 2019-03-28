@@ -2,8 +2,6 @@
 
 @section('content')
 
-
-
 <article class="content animated fadeInLeft">
 
 	<div class="title-block text-primary">
@@ -37,14 +35,11 @@
 	                            <table class="table table-striped table-hover" cellspacing="0" id="table_return">
 	                                <thead class="bg-primary">
 	                                    <tr>
-	                                    	<th>No</th>
 	                                    	<th>Tgl Return</th>
 	                                    	<th>Nota</th>
 	                                    	<th>Metode</th>
-	                                    	<th>Jenis Return</th>
-	                                    	<th>Type Sales</th>
-	                                    	<th>Status</th>
-	                                    	<th>Resi dari Cus</th>
+	                                    	<th>Barang</th>
+	                                    	<th>Qty</th>
 	                                    	<th>Aksi</th>
 	                                	</tr>
 	                                </thead>
@@ -69,9 +64,25 @@
 
 @section('extra_script')
 <script type="text/javascript">
-
+    var table;
 	$(document).ready(function(){
-		var table = $('#table_return').DataTable();
+        table = $('#table_return').DataTable({
+            responsive: true,
+            autoWidth: false,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('return.list') }}",
+                type: "get"
+            },
+            columns: [
+                {data: 'tanggal'},
+                {data: 'nota'},
+                {data: 'metode'},
+                {data: 'barang'},
+                {data: 'qty'},
+                {data: 'action'}
+            ],
+        });
 
 		$(document).on('click', '.btn-disable', function(){
 			var ini = $(this);

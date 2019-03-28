@@ -517,6 +517,46 @@ class ProduksiController extends Controller
     	return view('produksi/returnproduksi/index');
     }
 
+    public function listReturn()
+    {
+        $data = DB::table('d_returnproductionorder')
+            ->join('m_item', 'rpo_item', '=', 'i_id')
+            ->join('m_unit', 'i_unit1', '=', 'u_id')
+            ->select('rpo_productionorder as id', 'rpo_detailid as detail', 'rpo_date as tanggal', 'rpo_nota as nota', 'rpo_action as metode', 'i_name as barang',
+                'rpo_qty as qty', 'u_name as satuan');
+
+        return DataTables::of($data)
+            ->addColumn('tanggal', function($data){
+                return Carbon::parse($data->tanggal)->format('d-m-Y');
+            })
+            ->addColumn('nota', function($data){
+                return $data->nota;
+            })
+            ->addColumn('metode', function($data){
+                if ($data->metode == "GB") {
+                    return "Ganti Barang";
+                } else if ($data->metode == "PT") {
+                    return "Potong Tagihan";
+                } else if ($data->metode == "RD") {
+                    return "Return Dana";
+                }
+            })
+            ->addColumn('barang', function($data){
+                return $data->barang;
+            })
+            ->addColumn('qty', function($data){
+                return $data->qty . ' ' . $data->satuan;
+            })
+            ->addColumn('action', function($data){
+                $detail = '<button class="btn btn-primary" type="button" title="Detail" onclick="detailReturn(\''.Crypt::encrypt($data->id).'\', \''.Crypt::encrypt($data->detail).'\')"><i class="fa fa-folder"></i></button>';
+                $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editReturn(\''.Crypt::encrypt($data->id).'\', \''.Crypt::encrypt($data->detail).'\')"><i class="fa fa-pencil-square-o"></i></button>';
+                $hapus = '<button class="btn btn-danger" type="button" title="Hapus" onclick="hapusReturn(\''.Crypt::encrypt($data->id).'\', \''.Crypt::encrypt($data->detail).'\')"><i class="fa fa-trash-o"></i></button>';
+                return '<div class="btn-group btn-group-sm">'. $detail . $edit . $hapus .'</div>';
+            })
+            ->rawColumns(['tanggal','nota', 'metode', 'barang', 'qty', 'action'])
+            ->make(true);
+    }
+
     public function create_return_produksi()
     {
         return view('produksi/returnproduksi/create');
@@ -766,6 +806,7 @@ class ProduksiController extends Controller
             $values = [
                 'rpo_productionorder' => $poid,
                 'rpo_detailid'        => $detailid,
+                'rpo_date'            => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
                 'rpo_nota'            => $nota,
                 'rpo_item'            => $idItem,
                 'rpo_qty'             => $qty_compare,
