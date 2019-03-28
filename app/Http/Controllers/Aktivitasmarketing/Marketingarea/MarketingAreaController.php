@@ -176,7 +176,6 @@ class MarketingAreaController extends Controller
 
     public function getPrice(Request $request)
     {
-        //dd($request);
         $idItem = $request->item;
         $idUnit = $request->unit;
         $qty    = $request->qty;
@@ -191,19 +190,12 @@ class MarketingAreaController extends Controller
             ->where('pcd_rangeqtystart', '<=', $qty)
             ->where('pcd_rangeqtyend', '>=', $qty)
             ->first();
-        //dd($price);
+        
         if($price){
-            //if ($price->pcd_rangeqtystart <= $qty[0] && $price->pcd_rangeqtyend >= $qty[0]) {
-                return Response::json(array(
-                    'success' => true,
-                    'data'    => number_format($price->pcd_price,0, ',', '')
-                ));
-            //} else {
-                // return Response::json(array(
-                //     'success' => true,
-                //     'data'    => 0
-                // ));
-            //}
+            return Response::json(array(
+                'success' => true,
+                'data'    => number_format($price->pcd_price,0, ',', '')
+            ));
         } else {
             return Response::json(array(
                 'success' => true,
@@ -214,7 +206,6 @@ class MarketingAreaController extends Controller
 
     public function orderProdukStore(Request $request)
     {
-        //dd($request);
         $data = $request->all();
         $now  = Carbon::now('Asia/Jakarta');
         $time = date('Y-m-d', strtotime($now));
@@ -224,10 +215,10 @@ class MarketingAreaController extends Controller
             for ($i=0; $i < count($data['idItem']); $i++) {
 
                 $query1 = DB::table('d_productorder')
-                        ->where('po_date', '=', $time)
-                        ->where('po_comp', '=', $data['po_comp'][0])
-                        ->where('po_agen', '=', $data['po_agen'][0])
-                        ->first();
+                    ->where('po_date', '=', $time)
+                    ->where('po_comp', '=', $data['po_comp'][0])
+                    ->where('po_agen', '=', $data['po_agen'][0])
+                    ->first();
 
                 if ($query1) {
                     
@@ -334,7 +325,6 @@ class MarketingAreaController extends Controller
 
     public function updateOrderProduk($id, Request $request)
     {
-        //dd($request);
         try {
             $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
@@ -456,6 +446,37 @@ class MarketingAreaController extends Controller
         ));
     }
     // Order Produk Ke Cabang End ==========================================================================
+
+    // Kelola Data Order Agen ==============================================================================
+    public function listAgen($status)
+    {
+        $data_agen = DB::table('d_productorder')
+            ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
+            ->join('m_company', 'po_agen', '=', 'c_id')
+            ->select('d_productorder.*', DB::raw('SUM(pod_totalprice) as total_price'), 'c_name as agen')
+            ->where('po_status', '=', $status)
+            ->groupBy('po_id')
+            ->get();
+
+        return Datatables::of($data_agen)
+            ->addIndexColumn()
+            ->addColumn('totalprice', function ($data_agen) {
+                return Currency::addRupiah($data_agen->total_price);
+            })
+            ->addColumn('action_agen', function ($data_agen) {
+                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                            <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                            </button>
+                            <button class="btn btn-danger hint--top-left hint--error" aria-label="Edit Order" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i>
+                            </button>
+                            <button class="btn btn-success hint--top-left hint--success" aria-label="Hapus Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-check"></i>
+                            </button>
+                        </div>';
+            })
+            ->rawColumns(['totalprice','action_agen'])
+            ->make(true);
+    }
+    // Kelola Data Order Agen End ==========================================================================
     public function create_keloladataorder()
     {
         return view('marketing/marketingarea/keloladataorder/create');

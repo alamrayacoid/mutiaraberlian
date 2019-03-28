@@ -21,7 +21,7 @@
 						<a href="#orderproduk" class="nav-link active" data-target="#orderproduk" aria-controls="orderproduk" data-toggle="tab" role="tab">Order Produk ke Cabang</a>
 					</li>
 					<li class="nav-item">
-						<a href="#keloladataagen" class="nav-link" data-target="#keloladataagen" aria-controls="keloladataagen" data-toggle="tab" role="tab">Kelola Data Order Agen </a>
+						<a href="#keloladataagen" class="nav-link" data-target="#keloladataagen" aria-controls="keloladataagen" data-toggle="tab" role="tab" onclick="kelolaDataAgen()">Kelola Data Order Agen </a>
 					</li>
 					<li class="nav-item">
 						<a href="#monitoringpenjualanagen" class="nav-link" data-target="#monitoringpenjualanagen" aria-controls="monitoringpenjualanagen" data-toggle="tab" role="tab">Monitoring Data Penjualan Agen</a>
@@ -99,13 +99,12 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-
+	var table_agen, table_bar, table_rab, table_bro;
 	$(document).ready(function() {
 	    orderProdukList();
-	    var table_pus = $('#table_keloladataagen').DataTable();
-	    var table_bar = $('#table_monitoringpenjualanagen').DataTable();
-	    var table_rab = $('#table_canvassing').DataTable();
-	    var table_bro = $('#table_konsinyasi').DataTable();
+	    table_bar = $('#table_monitoringpenjualanagen').DataTable();
+	    table_rab = $('#table_canvassing').DataTable();
+	    table_bro = $('#table_konsinyasi').DataTable();
 
 	    $(document).on('click', '.btn-edit-order', function() {
 	        window.location.href = '{{ route('keloladataorder.edit') }}';
@@ -456,7 +455,36 @@
     });
 	}
 	// End Order Produk --------------------------------------------
+
+	// Kelola Data Order Agen --------------------------------------
+	function kelolaDataAgen() {
+		var st = $("#status").val();
+
+		$('#table_dataAgen').DataTable().clear().destroy();
+    table_agen = $('#table_dataAgen').DataTable({
+      responsive: true,
+      serverSide: true,
+      ajax: {
+          url: "{{ url('/marketing/marketingarea/keloladataorder/list-agen') }}"+"/"+st,
+          type: "get",
+          data: {
+              "_token": "{{ csrf_token() }}"
+          }
+      },
+      columns: [
+          {data: 'po_date'},
+          {data: 'po_nota'},
+          {data: 'agen'},
+          {data: 'totalprice'},
+          {data: 'action_agen'}
+      ],
+      pageLength: 10,
+      lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+    });
+	}
+	// End Data Order Agen -----------------------------------------
 </script>
+
 <script type="text/javascript">
 
 $(document).ready(function() {
