@@ -506,7 +506,7 @@
 																											'<td>'+val.wc_name+'</td>'+
 																											'<td>'+val.a_name+'</td>'+
 																											'<td>'+val.a_type+'</td>'+
-																											'<td class="text-center"><button class="btn btn-success hint--top-left hint--success"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''+val.a_name+'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>'+
+																											'<td class="text-center"><button class="btn btn-success hint--top-left hint--success"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''+val.c_id+'\',\''+val.a_name+'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>'+
 																										'</tr>');
 						});
 					} else {
@@ -517,9 +517,18 @@
 				}
 			})
 	});
-	function chooseAgen(name) {
-		$('#search').modal('hide');
-		$('#idAgen').val(name);
+	function chooseAgen(id, name) {
+		$('#searchAgen').modal('hide');
+		$('#idAgen').val(id);
+		$('#nameAgen').val(name);
+	}
+
+	function rejectAgen(id) {
+
+	}
+
+	function approveAgen(id) {
+		
 	}
 	// End Data Order Agen -----------------------------------------
 </script>
