@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Auth;
+use DB;
 
 class d_username extends Authenticatable
 {
@@ -22,6 +23,21 @@ class d_username extends Authenticatable
     const UPDATED_AT       = 'u_updated_at';
 
     protected $fillable = ['u_id','u_company', 'u_username', 'u_password', 'u_user', 'u_lastlogin', 'u_lastlogout'];
+
+    public function findForPassport($username)
+    {
+        return $this->where(DB::raw('BINARY u_username'), $username)->first();
+    }
+
+    public function validateForPassportPasswordGrant($password)
+    {
+        $login = $this->select('u_password')->first();
+        $login = $login->u_password;
+        if (sha1(md5('islamjaya') . $password) == $login){
+            return true;
+        }
+        return false;
+    }
 
     public static function getName()
     {
