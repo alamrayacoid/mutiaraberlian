@@ -3,6 +3,7 @@
 @section('content')
 
     @include('produksi.returnproduksi.detail_return')
+    @include('produksi.returnproduksi.edit_return')
 
 <article class="content animated fadeInLeft">
 
@@ -111,8 +112,46 @@
             })
     }
 
-    function editReturn(id, detail) {
+    function editReturn(id, detail, item) {
+	    loadingShow();
+	    axios.get(baseUrl+'/produksi/returnproduksi/get-editreturn/'+id+'/'+detail)
+            .then(function (resp) {
+                loadingHide();
+                if (resp.data.status == "Success") {
+                    $("#satuan_return_edit").find('option').remove();
+                    var option = '<option value="">Pilih Satuan</option>';
+                    option += '<option value="'+resp.data.satuan.original.id1+'">'+resp.data.satuan.original.unit1+'</option>';
+                    if (resp.data.satuan.original.id2 != null && resp.data.satuan.original.id2 != resp.data.satuan.original.id1) {
+                        option += '<option value="'+resp.data.satuan.original.id2+'">'+resp.data.satuan.original.unit2+'</option>';
+                    }
+                    if (resp.data.satuan.original.id3 != null && resp.data.satuan.original.id3 != resp.data.satuan.original.id1) {
+                        option += '<option value="'+resp.data.satuan.original.id3+'">'+resp.data.satuan.original.unit3+'</option>';
+                    }
+                    $("#satuan_return_edit").append(option);
 
+                    $('#idPO_edit').val(id);
+                    $('#idDetail_edit').val(detail);
+                    $('#idItem_edit').val(item);
+                    $('#txt_tanggal_edit').val(resp.data.message.tanggal);
+                    $('#txt_nota_edit').val(resp.data.message.nota);
+                    $('#txt_metode_edit').val(resp.data.message.txtmetode);
+                    $('#txt_barang_edit').val(resp.data.message.barang);
+                    $('#txt_qty_edit').val(resp.data.message.qty_return);
+                    $('#qty_current').val(resp.data.message.qty);
+                    $('#qty_return_edit').val(resp.data.message.qty);
+                    $('#satuan_return_edit').val(resp.data.message.unit);
+                    $('#methode_return_edit').val(resp.data.message.metode);
+                    $('#note_return_edit').text(resp.data.message.keterangan);
+
+                    $("#editReturn").modal({backdrop: 'static', keyboard: false});
+                } else {
+                    messageFailed("Gagal", resp.data.message);
+                }
+            })
+            .catch(function (error) {
+                loadingHide();
+                messageWarning("Error", error);
+            })
     }
 
     function hapusReturn(id, detail) {
