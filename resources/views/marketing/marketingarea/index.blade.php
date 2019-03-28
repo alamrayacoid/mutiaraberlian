@@ -106,10 +106,6 @@
 	    table_rab = $('#table_canvassing').DataTable();
 	    table_bro = $('#table_konsinyasi').DataTable();
 
-	    $(document).on('click', '.btn-edit-order', function() {
-	        window.location.href = '{{ route('keloladataorder.edit') }}';
-	    });
-
 	    $(document).on('click', '.btn-edit-canv', function() {
 	        window.location.href = '{{ route('datacanvassing.edit') }}';
 	    });
@@ -336,12 +332,10 @@
 	        $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit-kons" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
 	            '<button class="btn btn-danger btn-disable-kons" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 	    });
-
 	});
 
 	// Order Produk Ke Cabang -------------------------------
-	function orderProdukList()
-	{
+	function orderProdukList() {
     tb_order = $('#table_orderproduk').DataTable({
       responsive: true,
       serverSide: true,
@@ -365,8 +359,7 @@
     });
 	}
 
-	function detailOrder(id)
-	{
+	function detailOrder(id) {
 		$.ajax({
 			url: "{{ url('/marketing/marketingarea/orderproduk/detail') }}"+"/"+id,
 			type: "get",
@@ -390,19 +383,16 @@
 		});
 	}
 
-	function editOrder(id)
-	{
+	function editOrder(id) {
 		window.location.href='{{ url('/marketing/marketingarea/orderproduk/edit') }}'+"/"+id;
 	}
 
-	function printNota(id, dt)
-	{
+	function printNota(id, dt) {
 		var url = '{{ url('/marketing/marketingarea/orderproduk/nota') }}'+"/"+id+"/"+dt;
 		window.open(url);
 	}
 
-	function deleteOrder(id, dt)
-	{
+	function deleteOrder(id, dt) {
 		var hapus_order = "{{url('/marketing/marketingarea/orderproduk/delete-order')}}"+"/"+id+"/"+dt;
     $.confirm({
         animation: 'RotateY',
@@ -482,6 +472,34 @@
       lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
     });
 	}
+
+  function getProvId() {
+    var id = document.getElementById("prov_agen").value;
+    $.ajax({
+        url: "{{route('orderProduk.getCity')}}",
+        type: "get",
+        data:{
+            provId: id
+        },
+        success: function (response) {
+            $('#city_agen').empty();
+            $("#city_agen").append('<option value="" selected disabled>=== Pilih Kota ===</option>');
+            $.each(response.data, function( key, val ) {
+                $("#city_agen").append('<option value="'+val.wc_id+'">'+val.wc_name+'</option>');
+            });
+            $('#city_agen').focus();
+            $('#city_agen').select2('open');
+        }
+    });
+  }
+
+	// Modal Kelola Data Order Agen
+	$("#search-list-agen").on("click", function() {
+			$(".table-modal").removeClass('d-none');
+			$.ajax({
+				url: 
+			})
+	});
 	// End Data Order Agen -----------------------------------------
 </script>
 
@@ -558,10 +576,6 @@ $(document).ready(function() {
       });
   });
 
-	// Modal Kelola Data Order Agen
-	$("#search-list-agen").on("click", function() {
-			$(".table-modal").removeClass('d-none');
-	});
 });
 
 </script>
