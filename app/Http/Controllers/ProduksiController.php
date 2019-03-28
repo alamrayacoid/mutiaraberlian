@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use App\d_productionorder as ProductionOrder;
 use App\d_productionorderdt as ProductionOrderDT;
 use App\m_supplier as Supplier;
+use App\d_stock as Stock;
+use App\d_stock_mutation as StockMutation;
 use DB;
+use Auth;
 use Mockery\Exception;
 use Response;
 use Carbon\Carbon;
@@ -523,7 +526,8 @@ class ProduksiController extends Controller
     {
 
         if ($request->dateStart != null) {
-            $data = ProductionOrder::join('m_supplier', 's_id', '=', 'po_supplier')
+            $data = ProductionOrder::rightJoin('d_itemreceipt', 'ir_notapo', '=', 'po_nota')
+                ->join('m_supplier', 's_id', '=', 'po_supplier')
                 ->select('po_id', 'po_nota as nota', 's_company as supplier', 'po_date as tanggal');
 
             if ($request->dateStart != "" && $request->dateEnd != "") {
@@ -554,7 +558,8 @@ class ProduksiController extends Controller
                 ->rawColumns(['supplier','tanggal', 'nota','action'])
                 ->make(true);
         } else {
-            $data = ProductionOrder::join('m_supplier', 's_id', '=', 'po_supplier')
+            $data = ProductionOrder::rightJoin('d_itemreceipt', 'ir_notapo', '=', 'po_nota')
+                ->join('m_supplier', 's_id', '=', 'po_supplier')
                 ->select('po_id', 'po_nota as nota', 's_company as supplier', 'po_date as tanggal');
 
             return DataTables::of($data)
@@ -652,8 +657,9 @@ class ProduksiController extends Controller
     public function cariNota(Request $request)
     {
         $cari = $request->term;
-        $nama = ProductionOrder::where(function ($q) use ($cari){
-            $q->orWhere('po_nota', 'like', '%'.$cari.'%');
+        $nama = ProductionOrder::rightJoin('d_itemreceipt', 'ir_notapo', '=', 'po_nota')
+        ->where(function ($q) use ($cari){
+            $q->orWhere('ir_notapo', 'like', '%'.$cari.'%');
         })
         ->join('m_supplier', 's_id', '=', 'po_supplier')
         ->get();
@@ -731,7 +737,7 @@ class ProduksiController extends Controller
 
         $detailid = (DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')) ? DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')+1 : 1;
 //        return-po/001/23/03/2019
-        $nota = CodeGenerator::codeWithSeparator('d_returnproductionorder', 'rpo_nota', 11, 10, 3, 'RETURN-PO', '/');
+        $nota = CodeGenerator::codeWithSeparator('d_returnproductionorder', 'rpo_nota', 15, 10, 3, 'RETURN-PO', '/');
 
         $data_check = DB::table('d_productionorder')
             ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
@@ -767,7 +773,17 @@ class ProduksiController extends Controller
                 'rpo_note'            => $request->note_return
             ];
 
+//            insert return
             DB::table('d_returnproductionorder')->insert($values);
+
+//            update stock
+            $comp = Auth::user()->u_company;
+            $get_stock = Stock::where('s_comp', $comp)
+                ->where('s_position', $comp)
+                ->where('s_item', $idItem)
+                ->where('s_status', 'ON DESTINATION')
+                ->where('s_condition', 'FINE')
+                ->first();
             DB::commit();
             return Response::json([
                 'status' => "Success",
