@@ -39,7 +39,7 @@
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm" name="cabang_name" value="{{ $data->c_name }}" style="text-transform: uppercase;">
+                                            <input type="text" readonly class="form-control form-control-sm" name="cabang_name" value="{{ $data->c_name }}" style="text-transform: uppercase;">
                                         </div>
                                     </div>
                                     <div class="col-md-3 col-sm-6 col-xs-12">

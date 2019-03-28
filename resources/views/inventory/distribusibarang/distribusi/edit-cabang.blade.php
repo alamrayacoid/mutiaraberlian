@@ -87,9 +87,10 @@
                                                   @foreach ($dt as $key => $value)
                                                     <tr>
                                                         <td>
-                                                            <input type="text" name="namabarang[]" @if($status[$key] == 'yes') readonly @endif id="namabarang{{$key}}" data-counter="0" class="form-control form-control-sm namabarang" value="{{$value->i_name}} ({{$value->i_code}})">
+                                                            <input type="text" name="namabarang[]" @if($status[$key] == 'yes') readonly @endif id="namabarang{{$key}}" data-counter="0" class="form-control form-control-sm namabarang" value="{{$value->i_code}} - {{$value->i_name}}">
                                                             <input type="hidden" name="idbarang[]" id="idbarang{{$key}}" value="{{$value->i_id}}" class="idbarang">
                                                             <input type="hidden" name="sdd_detailid[]" value="{{$value->sdd_detailid}}">
+                                                            <input type="hidden" name="stock[]" id="stock0" class="stock">
                                                         </td>
                                                         <td>
                                                             <select id="satuan{{$key}}" name="satuan[]" class="form-control form-control-sm select2">
@@ -209,8 +210,9 @@
             if (tmp == 'no') {
               var iam = counter;
               $('#idbarang'+iam).val(id);
+              $('#stock'+iam).val(response.stock);
               for (var i = 0; i < response.length; i++) {
-                html += '<option value="'+response[i].u_id+'">'+response[i].u_name+'</option>';
+                html += '<option value="'+response.unit[i].u_id+'">'+response.unit[i].u_name+'</option>';
               }
               $('#satuan'+counter).html(html);
             } else {
@@ -246,9 +248,13 @@
       function filterqty(status, index){
         var qty = $('#qty'+index).val();
         var batas = $('#qtybatas'+index).val();
+        var stock = $('#stock'+index).val();
         if (parseInt(qty) < parseInt(batas)) {
-          messageFailed('Notice!', 'Tidak boleh kurang dari qty awal!');
+          messageFailed('Notice!', 'Tidak boleh kurang dari qty yang sudah digunakan!');
           $('#qty'+index).val(parseInt(batas));
+        } else if (parseInt(qty) > parseInt(stock)) {
+          messageFailed('Notice!', 'Tidak boleh kurang dari stock!');
+          $('#qty'+index).val(parseInt(stock));
         }
       }
   </script>

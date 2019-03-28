@@ -313,7 +313,7 @@ class Mutasi extends Controller
                             ->where('sm_detailid', '=', $mutasi[$i]->sm_detailid)
                             ->update([
                                 'sm_use' => $mutasi[$i]->sm_qty,
-                                'sm_residue' => $stock[$i]->sm_residue - $permintaan
+                                'sm_residue' => $mutasi[$i]->sm_residue - $sisa
                             ]);
 
                         $getdetailid = DB::table('d_stock_mutation')
@@ -687,7 +687,7 @@ class Mutasi extends Controller
                           );
 
                           d_stock_mutation::insert($mutasi);
-                      }                      
+                      }
 
                   $permintaan = 0;
                   $j = count($stock) + 1;

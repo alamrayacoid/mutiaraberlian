@@ -56,12 +56,7 @@
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <select id="cabang_type" class="form-control form-control-sm select2" name="cabang_type">
-                                                <option value="" selected disabled>=== Pilih Type ===</option>
-                                                <option value="PUSAT">PUSAT</option>
-                                                <option value="CABANG">CABANG</option>
-                                                <option value="AGEN">AGEN</option>
-                                            </select>
+                                          <input type="text" class="form-control" name="cabang_type" value="CABANG">                                        
                                         </div>
                                     </div>
                                     <div class="col-md-3 col-sm-6 col-xs-12">
