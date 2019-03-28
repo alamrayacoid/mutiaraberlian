@@ -655,6 +655,7 @@ class Mutasi extends Controller
 
           //========== update qty jika data sudah ada
                       } else {
+
                           $idStok = $idStok[0]->s_id;
 
                           $stock = DB::table('d_stock')
@@ -686,7 +687,7 @@ class Mutasi extends Controller
                           );
 
                           d_stock_mutation::insert($mutasi);
-                      }
+                      }                      
 
                   $permintaan = 0;
                   $j = count($stock) + 1;
