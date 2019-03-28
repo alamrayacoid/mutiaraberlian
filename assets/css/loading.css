@@ -1,0 +1,133 @@
+*{
+    padding:0;
+    margin:0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+}
+
+#logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+}
+
+#logo path:nth-child(1){
+    stroke-dasharray: 333 !important;
+    stroke-dashoffset: 333 !important;
+    animation: line-anim-1 2s ease forwards;
+    stroke: #009e52 !important;
+    
+}
+#logo path:nth-child(2){
+    stroke-dasharray: 333 !important;
+    stroke-dashoffset: 333   !important;
+    animation: line-anim-2 2s ease forwards 0.5s;
+    stroke: #2b3a8d !important;
+}
+#logo path:nth-child(3){
+    stroke-dasharray: 333 !important;
+    stroke-dashoffset: 333 !important;
+    animation: line-anim-3 2s ease forwards 1.0s;
+    stroke: #9dca23 !important;
+}
+#logo path:nth-child(4){
+    stroke-dasharray: 145 !important;
+    stroke-dashoffset: 145 !important;
+    animation: line-anim-4 2s ease forwards 1.5s;
+    stroke: #0091c2 !important
+}
+
+
+#gradient-vertical1 {
+    --color-stop-1: #009e52;
+    --color-stop-2: #0091c2;
+    --color-stop-3: #0091c2;
+}
+
+#gradient-vertical2 {
+    --color-stop-1: #2b3a8d;
+    --color-stop-2: #0299e0;
+    --color-stop-3: #0299e0;
+
+}
+
+#gradient-horizontal3 {
+    --color-stop-1: #159f43;
+    --color-stop-2: #9dca23;
+    --color-stop-3: #9dca23;
+
+}
+
+#gradient-vertical4 {
+    --color-stop-1: #0299e0;
+    --color-stop-2: #2b3a8d;
+    --color-stop-3: #2b3a8d;
+
+}
+
+@keyframes line-anim-1{
+    25%{
+        stroke-dashoffset: 0;
+        fill:transparent;
+    }
+    100%{
+        fill: url(#gradient-vertical1) gray;
+    }
+}
+
+@keyframes line-anim-2{
+    25%{
+        stroke-dashoffset: 0;
+        fill:transparent;
+    }
+    100%{
+        fill: url(#gradient-vertical2) gray;
+    }
+}
+
+@keyframes line-anim-3{
+    25%{
+        stroke-dashoffset: 0;
+        fill:transparent;
+    }
+    100%{
+        fill: url(#gradient-horizontal3) gray;
+    }
+}
+
+@keyframes line-anim-4{
+    10%{
+        stroke-dashoffset: 0;
+        fill:transparent;
+    }
+    100%{
+        fill: url(#gradient-vertical4) gray;
+    }
+}
+
+#loading-text {
+    position: absolute;
+    top: 63%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 20px;
+    opacity:0;
+    animation: text-anim 2s ease forwards 2.0s;
+}
+
+@keyframes text-anim{
+    0%{
+        opacity:0
+    }
+    100%{
+        opacity: 1;
+    }
+}
