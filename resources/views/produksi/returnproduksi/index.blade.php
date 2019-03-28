@@ -89,7 +89,26 @@
 	});
 
 	function detailReturn(id, detail) {
-        $("#detailReturn").modal("show");
+	    loadingShow();
+	    axios.get(baseUrl+'/produksi/returnproduksi/detail-return/'+id+'/'+detail)
+            .then(function (resp) {
+                loadingHide();
+                if (resp.data.status == "Failed") {
+                    messageFailed("Gagal", resp.data.message);
+                } else if (resp.data.status == "Success") {
+                    $('#txt_tanggal').val(resp.data.message.tanggal);
+                    $('#txt_nota').val(resp.data.message.nota);
+                    $('#txt_barang').val(resp.data.message.barang);
+                    $('#txt_qty').val(resp.data.message.qty);
+                    $('#txt_metode').val(resp.data.message.metode);
+                    $('#txt_ket').text(resp.data.message.keterangan);
+                    $("#detailReturn").modal("show");
+                }
+            })
+            .catch(function (error) {
+                loadingHide();
+                messageWarning("Error", error);
+            })
     }
 
     function editReturn(id, detail) {

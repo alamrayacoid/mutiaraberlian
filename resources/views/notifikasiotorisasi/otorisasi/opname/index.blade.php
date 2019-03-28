@@ -88,8 +88,8 @@
 
 @section('extra_script')
 <script type="text/javascript">
+var table1, table2;
 	$(document).ready(function(){
-		var table1, table2;
 
 		table1 = $('#table_otorisasi').DataTable({
 				responsive: true,
@@ -139,13 +139,13 @@
                     action: function () {
 												loadingShow();
                         axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/opname/approveopname'+'/'+id).then(function(response) {
-                            if(response.status == 'berhasil'){
+                            if(response.data.status == 'berhasil'){
                                 loadingHide();
                                 messageSuccess("Berhasil", "Data Stock Opname Berhasil Disetujui");
                                 table1.ajax.reload();
                             }else{
                                 loadingHide();
-                                messageFailed("Gagal", "Data Stock Opname Berhasil Disetujui");
+                                messageFailed("Gagal", "Data Stock Opname Gagal Disetujui");
                             }
                         })
                     }
