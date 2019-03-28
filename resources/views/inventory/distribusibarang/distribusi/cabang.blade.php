@@ -32,6 +32,7 @@
                     <td>
                         <input type="text" name="namabarang[]" id="namabarang0" data-counter="0" class="form-control form-control-sm namabarang" value="">
                         <input type="hidden" name="idbarang[]" id="idbarang0" class="idbarang">
+                        <input type="hidden" name="stock[]" id="stock0" class="stock">
                     </td>
                     <td>
                         <select id="satuan0" name="satuan[]" class="form-control form-control-sm select2">
@@ -39,7 +40,7 @@
                         </select>
                     </td>
                     <td>
-                        <input type="number" name="qty[]" id="qty0" class="form-control form-control-sm" value="0">
+                        <input type="number" name="qty[]" id="qty0" onkeyup="filterqty(0)" class="form-control form-control-sm" value="0">
                     </td>
                     <td>
                         <button class="btn btn-success btn-tambah-cabang btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>

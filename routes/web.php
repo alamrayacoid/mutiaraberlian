@@ -30,6 +30,7 @@ Route::group(['middleware' => 'guest'], function () {
     ]);
 });
 
+Route::get('/loading', 'RecruitmentController@loading')->name('loading.index');
 Route::get('/recruitment', 'RecruitmentController@index')->name('recruitment.index');
 Route::post('/recruitment/store', 'RecruitmentController@store')->name('recruitment.store');
 Route::get('/recruitment/isduplicated/{field}/{value}', 'RecruitmentController@isDuplicated')->name('recruitment.isduplicated');

@@ -155,6 +155,11 @@ class RecruitmentController extends Controller
         return view('recruitment');
     }
 
+    public function loading()
+    {
+      return view('loading');
+    }
+
     /**
      * Store a newly created resource in storage.
      *
