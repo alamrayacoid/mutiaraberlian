@@ -21,7 +21,7 @@
 						<a href="#orderproduk" class="nav-link active" data-target="#orderproduk" aria-controls="orderproduk" data-toggle="tab" role="tab">Order Produk ke Cabang</a>
 					</li>
 					<li class="nav-item">
-						<a href="#keloladataagen" class="nav-link" data-target="#keloladataagen" aria-controls="keloladataagen" data-toggle="tab" role="tab">Kelola Data Order Agen </a>
+						<a href="#keloladataagen" class="nav-link" data-target="#keloladataagen" aria-controls="keloladataagen" data-toggle="tab" role="tab" onclick="kelolaDataAgen()">Kelola Data Order Agen </a>
 					</li>
 					<li class="nav-item">
 						<a href="#monitoringpenjualanagen" class="nav-link" data-target="#monitoringpenjualanagen" aria-controls="monitoringpenjualanagen" data-toggle="tab" role="tab">Monitoring Data Penjualan Agen</a>
@@ -99,17 +99,12 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-
+	var table_agen, table_bar, table_rab, table_bro;
 	$(document).ready(function() {
 	    orderProdukList();
-	    var table_pus = $('#table_keloladataagen').DataTable();
-	    var table_bar = $('#table_monitoringpenjualanagen').DataTable();
-	    var table_rab = $('#table_canvassing').DataTable();
-	    var table_bro = $('#table_konsinyasi').DataTable();
-
-	    $(document).on('click', '.btn-edit-order', function() {
-	        window.location.href = '{{ route('keloladataorder.edit') }}';
-	    });
+	    table_bar = $('#table_monitoringpenjualanagen').DataTable();
+	    table_rab = $('#table_canvassing').DataTable();
+	    table_bro = $('#table_konsinyasi').DataTable();
 
 	    $(document).on('click', '.btn-edit-canv', function() {
 	        window.location.href = '{{ route('datacanvassing.edit') }}';
@@ -222,12 +217,6 @@
 	    })
 
 	    $(document).ready(function() {
-	        $('#modal-order').DataTable({
-	            "iDisplayLength": 5
-	        });
-	    });
-
-	    $(document).ready(function() {
 	        $('#detail-monitoring').DataTable({
 	            "iDisplayLength": 5
 	        });
@@ -337,12 +326,10 @@
 	        $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit-kons" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
 	            '<button class="btn btn-danger btn-disable-kons" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 	    });
-
 	});
 
 	// Order Produk Ke Cabang -------------------------------
-	function orderProdukList()
-	{
+	function orderProdukList() {
     tb_order = $('#table_orderproduk').DataTable({
       responsive: true,
       serverSide: true,
@@ -366,8 +353,7 @@
     });
 	}
 
-	function detailOrder(id)
-	{
+	function detailOrder(id) {
 		$.ajax({
 			url: "{{ url('/marketing/marketingarea/orderproduk/detail') }}"+"/"+id,
 			type: "get",
@@ -386,24 +372,21 @@
 																					'<td>'+val.price+'</td>'+
 																					'<td>'+val.totalprice+'</td>'+
 																				'</tr>');
-				});				
+				});
 			}
 		});
 	}
 
-	function editOrder(id)
-	{
+	function editOrder(id) {
 		window.location.href='{{ url('/marketing/marketingarea/orderproduk/edit') }}'+"/"+id;
 	}
 
-	function printNota(id, dt)
-	{
+	function printNota(id, dt) {
 		var url = '{{ url('/marketing/marketingarea/orderproduk/nota') }}'+"/"+id+"/"+dt;
 		window.open(url);
 	}
 
-	function deleteOrder(id, dt)
-	{
+	function deleteOrder(id, dt) {
 		var hapus_order = "{{url('/marketing/marketingarea/orderproduk/delete-order')}}"+"/"+id+"/"+dt;
     $.confirm({
         animation: 'RotateY',
@@ -456,7 +439,91 @@
     });
 	}
 	// End Order Produk --------------------------------------------
+
+	// Kelola Data Order Agen --------------------------------------
+	function kelolaDataAgen() {
+		var st = $("#status").val();
+
+		$('#table_dataAgen').DataTable().clear().destroy();
+    table_agen = $('#table_dataAgen').DataTable({
+      responsive: true,
+      serverSide: true,
+      ajax: {
+          url: "{{ url('/marketing/marketingarea/keloladataorder/list-agen') }}"+"/"+st,
+          type: "get",
+          data: {
+              "_token": "{{ csrf_token() }}"
+          }
+      },
+      columns: [
+          {data: 'po_date'},
+          {data: 'po_nota'},
+          {data: 'agen'},
+          {data: 'totalprice'},
+          {data: 'action_agen'}
+      ],
+      pageLength: 10,
+      lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+    });
+	}
+
+  function getProvId() {
+    var id = document.getElementById("prov_agen").value;
+    $.ajax({
+        url: "{{route('orderProduk.getCity')}}",
+        type: "get",
+        data:{
+            provId: id
+        },
+        success: function (response) {
+            $('#city_agen').empty();
+            $("#city_agen").append('<option value="" selected disabled>=== Pilih Kota ===</option>');
+            $.each(response.data, function( key, val ) {
+                $("#city_agen").append('<option value="'+val.wc_id+'">'+val.wc_name+'</option>');
+            });
+            $('#city_agen').focus();
+            $('#city_agen').select2('open');
+        }
+    });
+  }
+
+	// Modal Kelola Data Order Agen
+	$("#search-list-agen").on("click", function() {
+			$.ajax({
+				url: "{{url('/marketing/marketingarea/keloladataorder/get-agen')}}",
+				type: "get",
+				data:{
+					id : $('#city_agen').val()
+				},
+				success:function(res)
+				{
+					$(".table-modal").removeClass('d-none');
+					$('tbody').empty();
+					if(res.data.length > 0) {
+						$.each(res.data, function(key, val){
+							$('#table_search_agen tbody').append('<tr>'+
+																											'<td>'+val.wp_name+'</td>'+
+																											'<td>'+val.wc_name+'</td>'+
+																											'<td>'+val.a_name+'</td>'+
+																											'<td>'+val.a_type+'</td>'+
+																											'<td class="text-center"><button class="btn btn-success hint--top-left hint--success"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''+val.a_name+'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>'+
+																										'</tr>');
+						});
+					} else {
+						$('#table_search_agen tbody').append('<tr>'+
+																										'<td colspan="4" class="text-center">Data tidak ditemukan</td>'+
+																									'</tr>');
+					}
+				}
+			})
+	});
+	function chooseAgen(name) {
+		$('#search').modal('hide');
+		$('#idAgen').val(name);
+	}
+	// End Data Order Agen -----------------------------------------
 </script>
+
 <script type="text/javascript">
 
 $(document).ready(function() {
@@ -530,10 +597,6 @@ $(document).ready(function() {
       });
   });
 
-	// Modal Kelola Data Order Agen
-	$("#search-list-agen").on("click", function() {
-			$(".table-modal").removeClass('d-none');
-	});
 });
 
 </script>

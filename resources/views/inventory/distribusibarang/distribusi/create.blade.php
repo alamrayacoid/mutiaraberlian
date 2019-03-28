@@ -77,7 +77,6 @@
           source: '{{route('distribusibarang.getitem')}}',
           select: function(event, ui) {
             var iam = $(this).data('counter');
-            $('#idbarang'+iam).val(ui.item.id);
             getdata(ui.item.id, iam);
           }
         });
@@ -141,10 +140,8 @@
                     .append(
                         '<tr>'+
                         '<td><input type="text" name="namabarang[]" id="namabarang'+counter+'" data-counter="'+counter+'" class="form-control form-control-sm namabarang"> <input type="hidden" name="idbarang[]" id="idbarang'+counter+'"></td>'+
-                        '<td><select name="satuan[]" id="satuan'+counter+'" class="form-control form-control-sm select2"><option value="" disabled selected>Pilih Satuan</option></select></td>'+
+                        '<td><select id="satuan'+counter+'" name="satuan[]" class="form-control form-control-sm select2"><option value="" disabled selected>Pilih Satuan</option></select></td>'+
                         '<td><input type="number" name="qty[]" id="qty'+counter+'" class="form-control form-control-sm" value="0"></td>'+
-                        '<td><input type="text" name="harga[]" readonly id="harga'+counter+'" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+
-                        '<td><input type="text" name="subtotal[]" id="subtotal'+counter+'" class="form-control form-control-sm" readonly=""></td>'+
                         '<td><button class="btn btn-danger btn-hapus-cabang btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+
                         '</tr>'
                     );
@@ -153,7 +150,6 @@
                   source: '{{route('distribusibarang.getitem')}}',
                   select: function(event, ui) {
                     var iam = $(this).data('counter');
-                    $('#idbarang'+iam).val(ui.item.id);
                     getdata(ui.item.id, iam);
                   }
                 });
@@ -182,10 +178,26 @@
             dataType: 'json',
             url: baseUrl + '/inventory/distribusibarang/getsatuan',
             success : function(response){
-              for (var i = 0; i < response.length; i++) {
-                html += '<option value="'+response[i].u_id+'">'+response[i].u_name+'</option>';
+              var myArray = $('.idbarang').get().map(function(el) { return el.value });
+              var tmp = 'no';
+              for (var i = 0; i < myArray.length; i++) {
+                if (myArray[i] == id) {
+                  tmp = 'yes'
+                }
               }
-              $('#satuan'+counter).html(html);
+
+              if (tmp == 'no') {
+                var iam = counter;
+                $('#idbarang'+iam).val(id);
+                for (var i = 0; i < response.length; i++) {
+                  html += '<option value="'+response[i].u_id+'">'+response[i].u_name+'</option>';
+                }
+                $('#satuan'+counter).html(html);
+              } else {
+                var iam = counter;
+                  messageFailed('Failed', 'Barang tidak boleh sama!');
+                  $('#namabarang'+iam).val("");
+              }
             }
           });
         }
@@ -193,7 +205,7 @@
         function simpan(){
           var tmp = $('#select-order').val();
 
-          if (tmp == 2) {            
+          if (tmp == 2) {
             if ($('#pilihcabang').val() != null) {
               $.ajax({
                 type: 'get',

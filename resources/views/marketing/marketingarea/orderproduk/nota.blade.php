@@ -462,12 +462,12 @@
 					<tr>
 						<td width="20%">No. Nota</td>
 						<td width="1%">:</td>
-						<td></td>
+						<td>{{$order->po_nota}}</td>
 					</tr>
 					<tr>
 						<td>Tanggal</td>
 						<td width="5%">:</td>
-						<td></td>
+						<td>{{$order->po_date}}</td>
 					</tr>
 				</table>
 			</div>
@@ -477,12 +477,12 @@
 					<tr>
 						<td width="30%">Nama Cabang</td>
 						<td width="1%">:</td>
-						<td></td>
+						<td>{{$order->comp}}</td>
 					</tr>
 					<tr>
 						<td>Nama Agen</td>
 						<td width="5%">:</td>
-						<td></td>
+						<td>{{$order->agen}}</td>
 					</tr>
 				</table>
 			</div>
@@ -498,14 +498,14 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach($nota as $n)
+					@foreach($nota as $key => $n)
 					<tr>
-						<td align="center">1</td>
+						<td align="center">{{++$key}}</td>
 						<td align="center">{{$n->i_name}} - {{$n->i_code}}</td>
 						<td align="center">{{$n->u_name}}</td>
 						<td align="center">{{$n->pod_qty}}</td>
-						<td align="center">{{$n->pod_price}}</td>
-						<td align="center">{{$n->pod_totalprice}}</td>
+						<td align="center">{{Currency::addRupiah($n->pod_price)}}</td>
+						<td align="center">{{Currency::addRupiah($n->pod_totalprice)}}</td>
 					</tr>
 					@endforeach
 				</tbody>

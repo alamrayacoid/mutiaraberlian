@@ -21,17 +21,17 @@
         <table class="table table-striped table-hover" cellspacing="0" id="table_cabang">
             <thead class="bg-primary">
                 <tr>
-                    <th>Kode Barang/Nama Barang</th>
-                    <th>Satuan</th>
-                    <th>Jumlah</th>
-                    <th>Aksi</th>
+                    <th width="50%">Kode Barang/Nama Barang</th>
+                    <th width="25%">Satuan</th>
+                    <th width="15%">Jumlah</th>
+                    <th width="20%">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>
                         <input type="text" name="namabarang[]" id="namabarang0" data-counter="0" class="form-control form-control-sm namabarang" value="">
-                        <input type="hidden" name="idbarang[]" id="idbarang0">
+                        <input type="hidden" name="idbarang[]" id="idbarang0" class="idbarang">
                     </td>
                     <td>
                         <select id="satuan0" name="satuan[]" class="form-control form-control-sm select2">

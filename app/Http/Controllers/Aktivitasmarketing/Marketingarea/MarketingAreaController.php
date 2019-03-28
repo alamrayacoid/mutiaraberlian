@@ -19,7 +19,9 @@ class MarketingAreaController extends Controller
 {
     public function index()
     {
-        return view('marketing/marketingarea/index');
+        $provinsi = DB::table('m_wil_provinsi')->select('m_wil_provinsi.*')->get();
+        $city = DB::table('m_wil_kota')->select('m_wil_kota.*')->get();
+        return view('marketing/marketingarea/index', compact('provinsi', 'city'));
     }
 
     public function printNota($id, $dt)
@@ -29,6 +31,12 @@ class MarketingAreaController extends Controller
         } catch (\Exception $e) {
             return view('errors.404');
         }
+        $order = DB::table('d_productorder')
+            ->join('m_company as comp', 'po_comp', 'comp.c_id')
+            ->join('m_company as agen', 'po_agen', 'agen.c_id')
+            ->select('d_productorder.*', 'comp.c_name as comp', 'agen.c_name as agen')
+            ->where('po_id', $id)
+            ->first();
         $nota = DB::table('d_productorder')
             ->join('d_productorderdt', 'po_id', 'pod_productorder')
             ->join('m_company as comp', 'po_comp', 'comp.c_id')
@@ -38,7 +46,7 @@ class MarketingAreaController extends Controller
             ->select('d_productorderdt.*', 'd_productorder.*', 'm_item.*', 'm_unit.*', 'comp.c_name as comp', 'agen.c_name as agen')
             ->where('pod_productorder', $id)
             ->get();
-        return view('marketing/marketingarea/orderproduk/nota', compact('nota'));
+        return view('marketing/marketingarea/orderproduk/nota', compact('order','nota'));
     }
 
     // Order Produk Ke Cabang ==============================================================================
@@ -170,7 +178,6 @@ class MarketingAreaController extends Controller
 
     public function getPrice(Request $request)
     {
-        //dd($request);
         $idItem = $request->item;
         $idUnit = $request->unit;
         $qty    = $request->qty;
@@ -185,19 +192,12 @@ class MarketingAreaController extends Controller
             ->where('pcd_rangeqtystart', '<=', $qty)
             ->where('pcd_rangeqtyend', '>=', $qty)
             ->first();
-        //dd($price);
+        
         if($price){
-            //if ($price->pcd_rangeqtystart <= $qty[0] && $price->pcd_rangeqtyend >= $qty[0]) {
-                return Response::json(array(
-                    'success' => true,
-                    'data'    => number_format($price->pcd_price,0, ',', '')
-                ));
-            //} else {
-                // return Response::json(array(
-                //     'success' => true,
-                //     'data'    => 0
-                // ));
-            //}
+            return Response::json(array(
+                'success' => true,
+                'data'    => number_format($price->pcd_price,0, ',', '')
+            ));
         } else {
             return Response::json(array(
                 'success' => true,
@@ -208,7 +208,6 @@ class MarketingAreaController extends Controller
 
     public function orderProdukStore(Request $request)
     {
-        //dd($request);
         $data = $request->all();
         $now  = Carbon::now('Asia/Jakarta');
         $time = date('Y-m-d', strtotime($now));
@@ -218,10 +217,10 @@ class MarketingAreaController extends Controller
             for ($i=0; $i < count($data['idItem']); $i++) {
 
                 $query1 = DB::table('d_productorder')
-                        ->where('po_date', '=', $time)
-                        ->where('po_comp', '=', $data['po_comp'][0])
-                        ->where('po_agen', '=', $data['po_agen'][0])
-                        ->first();
+                    ->where('po_date', '=', $time)
+                    ->where('po_comp', '=', $data['po_comp'][0])
+                    ->where('po_agen', '=', $data['po_agen'][0])
+                    ->first();
 
                 if ($query1) {
                     
@@ -328,7 +327,6 @@ class MarketingAreaController extends Controller
 
     public function updateOrderProduk($id, Request $request)
     {
-        //dd($request);
         try {
             $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
@@ -450,15 +448,66 @@ class MarketingAreaController extends Controller
         ));
     }
     // Order Produk Ke Cabang End ==========================================================================
-    public function create_keloladataorder()
+
+    // Kelola Data Order Agen ==============================================================================
+    public function listAgen($status)
     {
-        return view('marketing/marketingarea/keloladataorder/create');
+        $data_agen = DB::table('d_productorder')
+            ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
+            ->join('m_company', 'po_agen', '=', 'c_id')
+            ->select('d_productorder.*', DB::raw('SUM(pod_totalprice) as total_price'), 'c_name as agen')
+            ->where('po_status', '=', $status)
+            ->groupBy('po_id')
+            ->get();
+
+        return Datatables::of($data_agen)
+            ->addIndexColumn()
+            ->addColumn('totalprice', function ($data_agen) {
+                return Currency::addRupiah($data_agen->total_price);
+            })
+            ->addColumn('action_agen', function ($data_agen) {
+                if ($data_agen->po_status == "Y") {
+                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                                </button>
+                                <button class="btn btn-disabled" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-times"></i>
+                                </button>
+                                <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i>
+                                </button>
+                            </div>';
+                } else {
+                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                                </button>
+                                <button class="btn btn-danger hint--top-left hint--error" aria-label="Reject" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i>
+                                </button>
+                                <button class="btn btn-success hint--top-left hint--success" aria-label="Approve" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-check"></i>
+                                </button>
+                            </div>';
+                }
+                
+            })
+            ->rawColumns(['totalprice','action_agen'])
+            ->make(true);
     }
 
-    public function edit_keloladataorder()
+    public function getDataAgen(Request $request)
     {
-        return view('marketing/marketingarea/keloladataorder/edit');
+        $id = $request->id;
+        $agen = DB::table('m_company')
+            ->join('m_agen', 'c_user', 'a_code')
+            ->join('m_wil_provinsi', 'a_provinsi', 'wp_id')
+            ->join('m_wil_kota', 'a_area', 'wc_id')
+            ->select('m_company.*', 'm_agen.*', 'm_wil_provinsi.*', 'm_wil_kota.*')
+            ->where('c_type', '=', 'AGEN')
+            ->where('a_area', '=', $id)
+            ->get();
+        return Response::json(array(
+            'success' => true,
+            'data'    => $agen
+        ));
     }
+    // Kelola Data Order Agen End ==========================================================================
 
     public function create_datacanvassing()
     {

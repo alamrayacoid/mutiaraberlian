@@ -177,6 +177,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/produksi/pembayaran/bayar', 'Produksi\PembayaranController@bayar')->name('pembayaran.bayar');
     // Return Produksi
     Route::get('/produksi/returnproduksi/index', 'ProduksiController@return_produksi')->name('return.index');
+    Route::get('/produksi/returnproduksi/list', 'ProduksiController@listReturn')->name('return.list');
+    Route::get('/produksi/returnproduksi/detail-return/{id}/{detail}', 'ProduksiController@detailReturn')->name('return.detailreturn');
     Route::get('/produksi/returnproduksi/create', 'ProduksiController@create_return_produksi')->name('return.create');
     Route::get('/produksi/returnproduksi/get-nota', 'ProduksiController@getNotaProductionOrder')->name('return.getnota');
     Route::get('/produksi/returnproduksi/detail-nota/{id}', 'ProduksiController@detailNota')->name('return.detailnota');
@@ -212,12 +214,13 @@ Route::group(['middleware' => 'auth'], function () {
     // Distribusi Barang
     Route::get('/inventory/distribusibarang/index', 'Inventory\DistribusiController@distribusibarang_index')->name('distribusibarang.index');
     Route::get('/inventory/distribusibarang/create', 'Inventory\DistribusiController@distribusibarang_create')->name('distribusibarang.create');
-    Route::get('/inventory/distribusibarang/edit', 'Inventory\DistribusiController@distribusibarang_edit')->name('distribusibarang.edit');
+    Route::get('/inventory/distribusibarang/edit/{id}', 'Inventory\DistribusiController@distribusibarang_edit')->name('distribusibarang.edit');
     Route::get('/inventory/distribusibarang/getitem', 'Inventory\DistribusiController@getitem')->name('distribusibarang.getitem');
     Route::get('/inventory/distribusibarang/getsatuan', 'Inventory\DistribusiController@getsatuan');
     Route::get('/inventory/distribusibarang/simpancabang', 'Inventory\DistribusiController@simpancabang');
     Route::get('/inventory/distribusibarang/table', 'Inventory\DistribusiController@table');
-    Route::get('/inventory/distribusibarang/hapus', 'Inventory\DistribusiController@hapus');    
+    Route::get('/inventory/distribusibarang/hapus', 'Inventory\DistribusiController@hapus');
+    Route::get('/inventory/distribusibarang/updatecabang', 'Inventory\DistribusiController@updatecabang');
     Route::get('/inventory/distribusibarang/nota', 'Inventory\DistribusiController@printNota')->name('ditribusibarang.nota');
     // Manajemen Stok
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
@@ -329,8 +332,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/orderproduk/nota/{id}/{dt}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@printNota')->name('orderProduk.nota');
     Route::get('/marketing/marketingarea/orderproduk/detail/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@detailOrder')->name('orderProduk.detail');
     // End Order Ke Cabang ==================
+
+    // Kelola Data Order Agen ========================================================================================
+    Route::get('/marketing/marketingarea/keloladataorder/list-agen/{status}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@listAgen')->name('keloladataorder.listAgen');
+    Route::get('/marketing/marketingarea/keloladataorder/get-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getDataAgen')->name('keloladataorder.getDataAgen');
     Route::get('/marketing/marketingarea/keloladataorder/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_keloladataorder')->name('keloladataorder.create');
     Route::get('/marketing/marketingarea/keloladataorder/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_keloladataorder')->name('keloladataorder.edit');
+    // End Order Agen ================================================================================================
     Route::get('/marketing/marketingarea/datacavassing/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_datacanvassing')->name('datacanvassing.create');
     Route::get('/marketing/marketingarea/datacavassing/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datacanvassing')->name('datacanvassing.edit');
     Route::get('/marketing/marketingarea/datakonsinyasi/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_datakonsinyasi')->name('datakonsinyasi.create');
@@ -415,13 +423,6 @@ Route::group(['middleware' => 'auth'], function () {
 
 });
 // End Route Group
-
-//============== Route Mobile Apps ================
-Route::prefix('mobile')->group(function () {
-    Route::group(['middleware' => 'auth:api'], function() {
-        Route::post('login', 'mobile\loginController@login');
-    });
-});
 
 /*
 
