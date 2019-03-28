@@ -17,6 +17,7 @@
                         <div class="col-md-10 col-sm-12 mb-3">
                             <input type="hidden" name="idPO" id="idPO">
                             <input type="hidden" name="idItem" id="idItem">
+                            <input type="hidden" name="notaPO" id="notaPO">
                             <input type="text" id="txt_barang" class="form-control-plaintext form-control-sm" readonly/>
                         </div>
                         <div class="col-md-2 col-sm-12 mt-2">

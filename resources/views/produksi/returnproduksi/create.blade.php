@@ -166,6 +166,7 @@
                 minLength: 1,
                 select: function (event, data) {
                     $("#q_idpo").val(data.item.id);
+                    $("#notaPO").val(data.item.nota);
                     pilih(data.item.id, data.item.nota);
                 }
             });
@@ -338,6 +339,7 @@
         function pilih(id, nota) {
             $("#q_nota").val(nota);
             $("#q_idpo").val(id);
+            $("#notaPO").val(nota);
             loadingShow();
             if ($.fn.DataTable.isDataTable("#table_rp")) {
                 $('#table_rp').DataTable().clear().destroy();
