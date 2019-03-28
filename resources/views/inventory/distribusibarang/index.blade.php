@@ -150,6 +150,9 @@ var history;
                               loaderBg: '#fdcb6e',
                               icon: 'info'
                           })
+                          table.ajax.reload();
+                        } else if (response.status == 'failed') {
+                          messageFailed('Failed', response.ex);
                         } else {
                           messageFailed('Failed', 'Data Berhasil Gagal di Nonaktifkan');
                         }
@@ -165,6 +168,10 @@ var history;
               }
           }
       });
+    }
+
+     function edit(id){
+      window.location.href = baseUrl + '/inventory/distribusibarang/edit/'+id;
     }
 
 </script>
