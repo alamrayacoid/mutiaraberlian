@@ -773,18 +773,54 @@ class ProduksiController extends Controller
                 'rpo_note'            => $request->note_return
             ];
 
-//            insert return
-            DB::table('d_returnproductionorder')->insert($values);
-
 //            update stock
             $comp = Auth::user()->u_company;
             $get_stock = Stock::where('s_comp', $comp)
                 ->where('s_position', $comp)
                 ->where('s_item', $idItem)
                 ->where('s_status', 'ON DESTINATION')
-                ->where('s_condition', 'FINE')
-                ->first();
+                ->where('s_condition', 'FINE');
+
+            $get_stockmutation = StockMutation::where('sm_stock', $get_stock->first()->s_id)
+                ->where('sm_nota', $request->notaPO);
+
+            if ($get_stock->count() > 0) {
+                $val_stock = [
+                    's_qty' => $get_stock->first()->s_qty - $qty_compare
+                ];
+            } else {
+                return Response::json([
+                    'status' => "Failed",
+                    'message' => "Stock tidak ditemukan"
+                ]);
+            }
+
+            if ($get_stockmutation->count() > 0) {
+                if ($get_stockmutation->first()->sm_use == $get_stockmutation->first()->sm_qty || $get_stockmutation->first()->sm_residue == 0) {
+                    return Response::json([
+                        'status' => "Failed",
+                        'message' => "Jumlah barang tidak tersedia"
+                    ]);
+                } else if ($get_stockmutation->first()->sm_use < $get_stockmutation->first()->sm_qty) {
+                    $sm_qty = $get_stockmutation->first()->sm_qty - $qty_compare;
+                    $val_stockmutation = [
+                        'sm_qty'     => $sm_qty,
+                        'sm_residue' => $sm_qty
+                    ];
+                }
+            } else {
+                return Response::json([
+                    'status' => "Failed",
+                    'message' => "Stock mutasi tidak ditemukan"
+                ]);
+            }
+
+            //            insert return
+            DB::table('d_returnproductionorder')->insert($values);
+            $get_stock->update($val_stock);
+            $get_stockmutation->update($val_stockmutation);
             DB::commit();
+
             return Response::json([
                 'status' => "Success",
                 'message'=> "Data berhasil disimpan"
