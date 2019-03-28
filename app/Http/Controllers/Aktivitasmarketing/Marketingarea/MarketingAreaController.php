@@ -490,6 +490,23 @@ class MarketingAreaController extends Controller
             ->rawColumns(['totalprice','action_agen'])
             ->make(true);
     }
+
+    public function getDataAgen(Request $request)
+    {
+        $id = $request->id;
+        $agen = DB::table('m_company')
+            ->join('m_agen', 'c_user', 'a_code')
+            ->join('m_wil_provinsi', 'a_provinsi', 'wp_id')
+            ->join('m_wil_kota', 'a_area', 'wc_id')
+            ->select('m_company.*', 'm_agen.*', 'm_wil_provinsi.*', 'm_wil_kota.*')
+            ->where('c_type', '=', 'AGEN')
+            ->where('a_area', '=', $id)
+            ->get();
+        return Response::json(array(
+            'success' => true,
+            'data'    => $agen
+        ));
+    }
     // Kelola Data Order Agen End ==========================================================================
 
     public function create_datacanvassing()

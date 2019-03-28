@@ -217,12 +217,6 @@
 	    })
 
 	    $(document).ready(function() {
-	        $('#modal-order').DataTable({
-	            "iDisplayLength": 5
-	        });
-	    });
-
-	    $(document).ready(function() {
 	        $('#detail-monitoring').DataTable({
 	            "iDisplayLength": 5
 	        });
@@ -378,7 +372,7 @@
 																					'<td>'+val.price+'</td>'+
 																					'<td>'+val.totalprice+'</td>'+
 																				'</tr>');
-				});				
+				});
 			}
 		});
 	}
@@ -495,11 +489,38 @@
 
 	// Modal Kelola Data Order Agen
 	$("#search-list-agen").on("click", function() {
-			$(".table-modal").removeClass('d-none');
 			$.ajax({
-				url: 
+				url: "{{url('/marketing/marketingarea/keloladataorder/get-agen')}}",
+				type: "get",
+				data:{
+					id : $('#city_agen').val()
+				},
+				success:function(res)
+				{
+					$(".table-modal").removeClass('d-none');
+					$('tbody').empty();
+					if(res.data.length > 0) {
+						$.each(res.data, function(key, val){
+							$('#table_search_agen tbody').append('<tr>'+
+																											'<td>'+val.wp_name+'</td>'+
+																											'<td>'+val.wc_name+'</td>'+
+																											'<td>'+val.a_name+'</td>'+
+																											'<td>'+val.a_type+'</td>'+
+																											'<td class="text-center"><button class="btn btn-success hint--top-left hint--success"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''+val.a_name+'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>'+
+																										'</tr>');
+						});
+					} else {
+						$('#table_search_agen tbody').append('<tr>'+
+																										'<td colspan="4" class="text-center">Data tidak ditemukan</td>'+
+																									'</tr>');
+					}
+				}
 			})
 	});
+	function chooseAgen(name) {
+		$('#search').modal('hide');
+		$('#idAgen').val(name);
+	}
 	// End Data Order Agen -----------------------------------------
 </script>
 

@@ -31,22 +31,18 @@
       </div>
       </section>  
         <div class="table-responsive table-modal d-none">
-          <table class="table table-striped table-hover display nowrap data-table" cellspacing="0" id="modal-order" width="100%">
+          <table class="table table-striped table-hover display nowrap data-table" cellspacing="0" id="table_search_agen" width="100%">
             <thead class="bg-primary">
               <tr>
                 <th>Provinsi</th>
                 <th>Kota</th>
                 <th>Nama Agen</th>
                 <th>Jenis</th>
+                <th class="text-center">Aksi</th>
               </tr>
             </thead>
-            <tbody>     
-               <tr>
-                <td>Jawa Timur</td>
-                <td>Surabaya</td>
-                <td>Bambang</td>
-                <td>~</td>
-              </tr>     
+            <tbody>
+
             </tbody>
           </table>
         </div>

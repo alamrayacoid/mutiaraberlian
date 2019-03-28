@@ -333,6 +333,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Kelola Data Order Agen ========================================================================================
     Route::get('/marketing/marketingarea/keloladataorder/list-agen/{status}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@listAgen')->name('keloladataorder.listAgen');
+    Route::get('/marketing/marketingarea/keloladataorder/get-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getDataAgen')->name('keloladataorder.getDataAgen');
     Route::get('/marketing/marketingarea/keloladataorder/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_keloladataorder')->name('keloladataorder.create');
     Route::get('/marketing/marketingarea/keloladataorder/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_keloladataorder')->name('keloladataorder.edit');
     // End Order Agen ================================================================================================
