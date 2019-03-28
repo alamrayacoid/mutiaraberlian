@@ -28,6 +28,8 @@
 <script src="{{asset('assets/js/vue.js')}}"></script>
 <script src="{{asset('assets/js/axios/axios.min.js')}}"></script>
 <script src="{{asset('assets/pushjs/bin/push.min.js')}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.3/mousetrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.3/plugins/bind-dictionary/mousetrap-bind-dictionary.min.js"></script>
 <script type="text/javascript">
     var getstorage;
     $('#sidebar-collapse-btn, #sidebar-overlay').click(function () {
@@ -173,6 +175,14 @@
         var hasil = currency.split('',currency.length-1).reverse().join('');
         return hasil;
 
+    }
+
+    function handleInput(e) {
+        var ss = e.target.selectionStart;
+        var se = e.target.selectionEnd;
+        e.target.value = e.target.value.toUpperCase();
+        e.target.selectionStart = ss;
+        e.target.selectionEnd = se;
     }
 
     function find_duplicate_in_array(arra1) {
@@ -511,4 +521,25 @@ $(document).ready(function(){
 
 });
 
+</script>
+<script>
+    function search() {
+        var search = $('#filterInput');
+        search.val('');
+        search.focus();
+    }
+
+    function hideMenu() {
+        document.getElementById("sidebar-collapse-btn").click();
+    }
+
+    function easyCreate(){
+        document.getElementById("e-create").click();
+    }
+
+    Mousetrap.bind ({
+        '/': search,
+        'ctrl+shift+h': hideMenu,
+        'f1' : easyCreate
+    });
 </script>

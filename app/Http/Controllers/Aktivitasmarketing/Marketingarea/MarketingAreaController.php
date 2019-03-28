@@ -22,38 +22,61 @@ class MarketingAreaController extends Controller
         return view('marketing/marketingarea/index');
     }
 
-    public function printNota()
+    public function printNota($id, $dt)
     {
-        return view('marketing/marketingarea/orderproduk/nota');
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+        $order = DB::table('d_productorder')
+            ->join('m_company as comp', 'po_comp', 'comp.c_id')
+            ->join('m_company as agen', 'po_agen', 'agen.c_id')
+            ->select('d_productorder.*', 'comp.c_name as comp', 'agen.c_name as agen')
+            ->where('po_id', $id)
+            ->first();
+        $nota = DB::table('d_productorder')
+            ->join('d_productorderdt', 'po_id', 'pod_productorder')
+            ->join('m_company as comp', 'po_comp', 'comp.c_id')
+            ->join('m_company as agen', 'po_agen', 'agen.c_id')
+            ->join('m_item', 'pod_item', 'i_id')
+            ->join('m_unit', 'pod_unit', 'u_id')
+            ->select('d_productorderdt.*', 'd_productorder.*', 'm_item.*', 'm_unit.*', 'comp.c_name as comp', 'agen.c_name as agen')
+            ->where('pod_productorder', $id)
+            ->get();
+        return view('marketing/marketingarea/orderproduk/nota', compact('order','nota'));
     }
 
     // Order Produk Ke Cabang ==============================================================================
     public function orderList()
     {
-        $order = DB::table('d_productorderdt')
-            ->join('d_productorder', 'pod_productorder', 'po_id')
+        $order = DB::table('d_productorder')
+            ->join('d_productorderdt', 'po_id', 'pod_productorder')
+            ->join('m_company as comp', 'po_comp', 'comp.c_id')
+            ->join('m_company as agen', 'po_agen', 'agen.c_id')
             ->join('m_item', 'pod_item', 'i_id')
             ->join('m_unit', 'pod_unit', 'u_id')
-            ->select('d_productorderdt.*', 'd_productorder.*', DB::raw('date_format(po_date, "%m/%Y") as po_date'), 'i_name', 'u_name')
+            ->select('d_productorder.*', DB::raw('date_format(po_date, "%m/%Y") as po_date'), 'i_name', 'u_name', 'comp.c_name as comp', 'agen.c_name as agen', DB::raw('SUM(pod_totalprice) as totalprice'))
+            ->groupBy('po_id')
             ->get();
         return Datatables::of($order)
             ->addIndexColumn()
-            ->addColumn('price', function ($order) {
-                return Currency::addRupiah($order->pod_totalprice);
+            ->addColumn('totalprice', function ($order) {
+                return Currency::addRupiah($order->totalprice);
             })
             ->addColumn('action', function ($order) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                            <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-folder"></i>
+                            <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
                             </button>
-                            <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota()"><i class="fa fa-print"></i>
+                            <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->po_id) . '\')"><i class="fa fa-fw fa-print"></i>
                             </button>
-                            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\', \'' . Crypt::encrypt($order->pod_item) . '\')"><i class="fa fa-pencil"></i>
+                            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->po_id) . '\')"><i class="fa fa-fw fa-pencil"></i>
                             </button>
-                            <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->pod_productorder) . '\', \'' . Crypt::encrypt($order->pod_detailid) . '\')"><i class="fa fa-trash"></i>
+                            <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->po_id) . '\')"><i class="fa fa-fw fa-trash"></i>
                             </button>
                         </div>';
             })
-            ->rawColumns(['price','action'])
+            ->rawColumns(['totalprice','action'])
             ->make(true);
     }
 
@@ -164,30 +187,25 @@ class MarketingAreaController extends Controller
             ->where('pcd_item', '=', $idItem)
             ->where('pcd_unit', '=', $idUnit)
             ->where('pcd_type', '=', "R")
+            ->where('pcd_rangeqtystart', '<=', $qty)
+            ->where('pcd_rangeqtyend', '>=', $qty)
             ->first();
+        
         if($price){
-            if ($price->pcd_rangeqtystart <= $qty[0] && $price->pcd_rangeqtyend >= $qty[0]) {
-                return Response::json(array(
-                    'success' => true,
-                    'data'    => number_format($price->pcd_price,0, ',', '')
-                ));
-            } else {
-                return Response::json(array(
-                    'success' => true,
-                    'data'    => "Rp. 0"
-                ));
-            }
+            return Response::json(array(
+                'success' => true,
+                'data'    => number_format($price->pcd_price,0, ',', '')
+            ));
         } else {
             return Response::json(array(
                 'success' => true,
-                'data'    => "Rp. 0"
+                'data'    => 0
             ));
         }
     }
 
     public function orderProdukStore(Request $request)
     {
-        //dd($request);
         $data = $request->all();
         $now  = Carbon::now('Asia/Jakarta');
         $time = date('Y-m-d', strtotime($now));
@@ -197,10 +215,10 @@ class MarketingAreaController extends Controller
             for ($i=0; $i < count($data['idItem']); $i++) {
 
                 $query1 = DB::table('d_productorder')
-                        ->where('po_date', '=', $time)
-                        ->where('po_comp', '=', $data['po_comp'][0])
-                        ->where('po_agen', '=', $data['po_agen'][0])
-                        ->first();
+                    ->where('po_date', '=', $time)
+                    ->where('po_comp', '=', $data['po_comp'][0])
+                    ->where('po_agen', '=', $data['po_agen'][0])
+                    ->first();
 
                 if ($query1) {
                     
@@ -209,6 +227,7 @@ class MarketingAreaController extends Controller
                             ->where('pod_item', '=', $data['idItem'][$i])
                             ->where('pod_unit', '=', $data['po_unit'][$i])
                             ->first();
+
                     if ($query2) {
 
                         $qtyAkhir = $query2->pod_qty + $data['po_qty'][$i];
@@ -248,7 +267,7 @@ class MarketingAreaController extends Controller
                         'po_comp'   => $data['po_comp'][0],
                         'po_agen'   => $data['po_agen'][0],
                         'po_date'   => $time,
-                        'po_nota'   => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 8, 10, 4, 'PRO', '-'),
+                        'po_nota'   => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-'),
                         'po_status' => "P"
                     ]);
 
@@ -277,58 +296,72 @@ class MarketingAreaController extends Controller
         }
     }
 
-    public function editOrderProduk($id, $dt, $item)
+    public function editOrderProduk($id)
     {
         try {
             $id = Crypt::decrypt($id);
-            $dt = Crypt::decrypt($dt);
-            $item = Crypt::decrypt($item);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }        
+
+        $produk = DB::table('d_productorder')
+            ->join('m_company as comp', 'po_comp', 'comp.c_id')
+            ->join('m_company as agen', 'po_agen', 'agen.c_id')
+            ->select('d_productorder.*', DB::raw('date_format(po_date, "%d/%m/%Y") as po_date'), 'comp.c_name as comp', 'agen.c_name as agen')
+            ->where('po_id', $id)
+            ->first();
+
+        $detail = DB::table('d_productorderdt')
+            ->join('m_item', 'pod_item', 'i_id')
+            ->join('m_unit', 'pod_unit', 'u_id')
+            ->join('m_unit as unit1', 'm_item.i_unit1', 'unit1.u_id')
+            ->join('m_unit as unit2', 'm_item.i_unit2', 'unit2.u_id')
+            ->join('m_unit as unit3', 'm_item.i_unit3', 'unit3.u_id')
+            ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*', 'unit1.u_id as uid_1', 'unit2.u_id as uid_2', 'unit3.u_id as uid_3', 'unit1.u_name as uname_1', 'unit2.u_name as uname_2', 'unit3.u_name as uname_3')
+            ->where('pod_productorder', $id)
+            ->get();
+        return view('marketing/marketingarea/orderproduk/edit', compact('produk', 'detail'));
+    }
+
+    public function updateOrderProduk($id, Request $request)
+    {
+        try {
+            $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
             return view('errors.404');
         }
-        $produk = DB::table('d_productorderdt')
-            ->join('m_item', 'pod_item', 'i_id')
-            ->join('m_unit', 'pod_unit', 'u_id')
-            ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*')
-            ->where('pod_productorder', $id)
-            ->where('pod_detailid', $dt)
-            ->first();
-        $item = DB::table('m_item')
-            ->select('m_item.*')
-            ->where('i_id', '=', $item)
-            ->first();
-        $unit = DB::table('m_unit')
-            ->select('m_unit.*')
-            ->where('u_id', '=', $item->i_unit1)
-            ->orWhere('u_id', '=', $item->i_unit2)
-            ->orWhere('u_id', '=', $item->i_unit3)
-            ->get();
-        return view('marketing/marketingarea/orderproduk/edit', compact('produk', 'unit'));
-    }
 
-    public function updateTarget($st_id, $dt_id, Request $request)
-    {
-        // try {
-        //     $st_id = Crypt::decrypt($st_id);
-        //     $dt_id = Crypt::decrypt($dt_id);
-        // } catch (\Exception $e) {
-        //     return view('errors.404');
-        // }
+        $data = $request->all();
+        DB::beginTransaction();
+        try {
+            DB::table('d_productorderdt')
+                ->where('pod_productorder', $id)
+                ->delete();
 
-        // $data = $request->all();
-        // DB::beginTransaction();
-        // try {
-        //     DB::commit();
-        //     return response()->json([
-        //         'status' => 'sukses'
-        //     ]);
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return response()->json([
-        //         'status' => 'Gagal',
-        //         'message' => $e
-        //     ]);
-        // }
+            $detailId = 0;
+            for ($i=0; $i < count($data['idItem']) ; $i++) { 
+                DB::table('d_productorderdt')->insert([
+                    'pod_productorder' => $id,
+                    'pod_detailid'     => ++$detailId,
+                    'pod_item'         => $data['idItem'][$i],
+                    'pod_unit'         => $data['po_unit'][$i],
+                    'pod_qty'          => $data['po_qty'][$i],
+                    'pod_price'        => $data['po_hrg'][$i],
+                    'pod_totalprice'   => $data['sbtotal'][$i]
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e
+            ]);
+        }
     }
 
     public function deleteOrder($id, $dt)
@@ -371,11 +404,79 @@ class MarketingAreaController extends Controller
                 'message' => $e
             ]);
         }
+    }
 
+    public function detailOrder($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
 
+        $produk = DB::table('d_productorder')
+            ->join('m_company as comp', 'po_comp', 'comp.c_id')
+            ->join('m_company as agen', 'po_agen', 'agen.c_id')
+            ->select('d_productorder.*', DB::raw('date_format(po_date, "%d/%m/%Y") as po_date'), 'comp.c_name as comp', 'agen.c_name as agen')
+            ->where('po_id', $id)
+            ->first();
 
+        $detail = DB::table('d_productorderdt')
+            ->join('m_item', 'pod_item', 'i_id')
+            ->join('m_unit', 'pod_unit', 'u_id')
+            ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*')
+            ->where('pod_productorder', $id)
+            ->get();
+
+        foreach ($detail as $key => $dt) {
+            $order[] = [
+                'barang'     => $dt->i_name,
+                'unit'       => $dt->u_name,
+                'qty'        => $dt->pod_qty,
+                'price'      => Currency::addRupiah($dt->pod_price),
+                'totalprice' => Currency::addRupiah($dt->pod_totalprice)
+            ];
+        }
+        
+
+        return Response::json(array(
+            'success' => true,
+            'data1'   => $order,
+            'data2'   => $produk
+        ));
     }
     // Order Produk Ke Cabang End ==========================================================================
+
+    // Kelola Data Order Agen ==============================================================================
+    public function listAgen($status)
+    {
+        $data_agen = DB::table('d_productorder')
+            ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
+            ->join('m_company', 'po_agen', '=', 'c_id')
+            ->select('d_productorder.*', DB::raw('SUM(pod_totalprice) as total_price'), 'c_name as agen')
+            ->where('po_status', '=', $status)
+            ->groupBy('po_id')
+            ->get();
+
+        return Datatables::of($data_agen)
+            ->addIndexColumn()
+            ->addColumn('totalprice', function ($data_agen) {
+                return Currency::addRupiah($data_agen->total_price);
+            })
+            ->addColumn('action_agen', function ($data_agen) {
+                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                            <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                            </button>
+                            <button class="btn btn-danger hint--top-left hint--error" aria-label="Edit Order" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i>
+                            </button>
+                            <button class="btn btn-success hint--top-left hint--success" aria-label="Hapus Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-check"></i>
+                            </button>
+                        </div>';
+            })
+            ->rawColumns(['totalprice','action_agen'])
+            ->make(true);
+    }
+    // Kelola Data Order Agen End ==========================================================================
     public function create_keloladataorder()
     {
         return view('marketing/marketingarea/keloladataorder/create');

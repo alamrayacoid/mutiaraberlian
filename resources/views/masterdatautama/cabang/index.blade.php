@@ -19,7 +19,7 @@
                             <h3 class="title"> Data Cabang </h3>
                         </div>
                         <div class="header-block pull-right">
-                            <a class="btn btn-primary" href="{{route('cabang.create')}}">
+                            <a class="btn btn-primary" href="{{route('cabang.create')}}" id="e-create">
                                 <i class="fa fa-plus"></i>&nbsp;Tambah Data
                             </a>
                         </div>

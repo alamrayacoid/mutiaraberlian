@@ -19,7 +19,7 @@
                             <h3 class="title"> Data Pegawai </h3>
                         </div>
                         <div class="header-block pull-right">
-                            <button type="button" class="btn btn-primary" id="btn-tambah"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button>
+                            <button type="button" class="btn btn-primary" id="e-create" onclick="window.location.href = '{{route('pegawai.create')}}'"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button>
                         </div>
                     </div>
                     <div class="card-block">
