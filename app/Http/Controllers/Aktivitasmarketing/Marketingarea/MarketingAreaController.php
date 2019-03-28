@@ -475,11 +475,20 @@ class MarketingAreaController extends Controller
                                 <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i>
                                 </button>
                             </div>';
+                } else if ($data_agen->po_status == "N") {
+                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                                </button>
+                                <button class="btn btn-disabled" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-times"></i>
+                                </button>
+                                <button class="btn btn-success hint--top-left hint--success" aria-label="Aktifkan" onclick="activateAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-check-circle-o"></i>
+                                </button>
+                            </div>';
                 } else {
                     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                                 <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
                                 </button>
-                                <button class="btn btn-danger hint--top-left hint--error" aria-label="Reject" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i>
+                                <button class="btn btn-danger hint--top-left hint--error" aria-label="Nonaktif" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i>
                                 </button>
                                 <button class="btn btn-success hint--top-left hint--success" aria-label="Approve" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-check"></i>
                                 </button>
@@ -506,6 +515,93 @@ class MarketingAreaController extends Controller
             'success' => true,
             'data'    => $agen
         ));
+    }
+
+    public function rejectAgen($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_productorder')
+                ->where('po_id', $id)
+                ->update([
+                    'po_status' => "N"
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function activateAgen($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_productorder')
+                ->where('po_id', $id)
+                ->update([
+                    'po_status' => "P"
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function approveAgen($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_productorder')
+                ->where('po_id', $id)
+                ->update([
+                    'po_status' => "Y"
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e
+            ]);
+        }
     }
     // Kelola Data Order Agen End ==========================================================================
 
