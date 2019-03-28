@@ -29,6 +29,12 @@ class MarketingAreaController extends Controller
         } catch (\Exception $e) {
             return view('errors.404');
         }
+        $order = DB::table('d_productorder')
+            ->join('m_company as comp', 'po_comp', 'comp.c_id')
+            ->join('m_company as agen', 'po_agen', 'agen.c_id')
+            ->select('d_productorder.*', 'comp.c_name as comp', 'agen.c_name as agen')
+            ->where('po_id', $id)
+            ->first();
         $nota = DB::table('d_productorder')
             ->join('d_productorderdt', 'po_id', 'pod_productorder')
             ->join('m_company as comp', 'po_comp', 'comp.c_id')
@@ -38,7 +44,7 @@ class MarketingAreaController extends Controller
             ->select('d_productorderdt.*', 'd_productorder.*', 'm_item.*', 'm_unit.*', 'comp.c_name as comp', 'agen.c_name as agen')
             ->where('pod_productorder', $id)
             ->get();
-        return view('marketing/marketingarea/orderproduk/nota', compact('nota'));
+        return view('marketing/marketingarea/orderproduk/nota', compact('order','nota'));
     }
 
     // Order Produk Ke Cabang ==============================================================================
