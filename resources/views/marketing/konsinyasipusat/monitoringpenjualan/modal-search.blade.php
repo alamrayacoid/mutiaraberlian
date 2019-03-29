@@ -5,23 +5,20 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header bg-gradient-info">
-        <h4 class="modal-title">Detail</h4>
+        <h4 class="modal-title">Cari Agen</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">    
       <section>
       <div class="row mb-3">
         <div class="col-md-5 col-sm-12">
-          <select name="prov" id="prov_agen" class="form-control form-control-sm select2" onchange="getProvId()">
+          <select name="" id="" class="form-control form-control-sm select2">
             <option value="" selected="" disabled="">=== Pilih Provinsi ===</option>
-            @foreach($provinsi as $prov)
-            <option value="{{$prov->wp_id}}">{{$prov->wp_name}}</option>
-            @endforeach
           </select>
         </div>
         <span>-</span>
         <div class="col-md-5 col-sm-12">
-          <select name="city" id="city_agen" class="form-control form-control-sm select2 city">
+          <select name="" id="" class="form-control form-control-sm select2">
             <option value="" selected disabled>=== Pilih Kota ===</option>
           </select>
         </div>

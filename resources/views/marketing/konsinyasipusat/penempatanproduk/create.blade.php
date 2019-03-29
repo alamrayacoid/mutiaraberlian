@@ -36,43 +36,76 @@
                           
                           <div id="sectionsuplier" class="row">
                             
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                              <label>Penempatan</label>
+                            <div class="col-md-2 col-sm-6 col-xs-12">
+                              <label>Area</label>
                             </div> 
 
-                            <div class="col-md-9 col-sm-6 col-xs-12">
+                            <div class="col-md-5 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="">
+                                <select name="" id="" class="form-control form-control-sm select2">
+                                  <option value="">Pilih Provinsi</option>
+                                </select>
                               </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-5 col-sm-6 col-xs-12">
+                              <div class="form-group">
+                                <select name="" id="" class="form-control form-control-sm select2">
+                                  <option value="">Pilih Kota</option>
+                                </select>
+                              </div>
+                            </div>
 
+                            <div class="col-md-2 col-sm-6 col-xs-12">
+                              <label>Konsigner</label>
+                            </div> 
+
+                            <div class="col-md-10 col-sm-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm">
+                              </div>
+                            </div>
+
+                            <div class="col-md-2 col-sm-6 col-xs-12">
+                              <label>Total</label>
+                            </div> 
+
+                            <div class="col-md-10 col-sm-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control form-control-sm" readonly="">
+                              </div>
                             </div>
 
                             <div class="container">
                             <div class="table-responsive mt-3">
-                            <div class="pull-right mb-3">
-                              <button class="btn btn-primary btn-tambahp"><i class="fa fa-plus"></i>&nbsp;Tambah Produk</button>
-                            </div>
-                            <table class="table table-hover table-striped table-bordered" id="table_rencana">
+                            <table class="table table-hover table-striped" id="table_rencana" cellspacing="0">
                               <thead class="bg-primary">
                               <tr>
                                 <th>Kode/Nama Barang</th>
-                                <th>Harga</th>
+                                <th width="10%">Satuan</th>
                                 <th>Jumlah</th>
+                                <th>Harga Satuan</th>
+                                <th>Sub Total</th>
                                 <th>Aksi</th>
                               </tr>
                             </thead>
                             <tbody>
-                              </tbody>
+                              <tr>
+                                <td><input type="text" class="form-control form-control-sm"></td>
+                                <td><select name="" id="" class="form-control form-control-sm select2"></select></td>
+                                <td><input type="number" class="form-control form-control-sm"></td>
+                                <td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>
+                                <td><input type="text" class="form-control form-control-sm" readonly=""></td>
+                                <td><button class="btn btn-sm btn-success rounded-circle btn-tambahp"><i class="fa fa-plus"></i></button></td>
+                              </tr>
+                            </tbody>
                             </table>
 
                           </div>
                           </div>
                         </section>
                         <section>
-                        <fieldset>
+                        <!-- <fieldset>
                         <div class="row">
                         <div class="container">
                           <div class="col-5 pull-right">
@@ -94,7 +127,7 @@
                           </div>
                         </div>
                         </div>
-                        </fieldset>
+                        </fieldset> -->
                         </section>
                     </div>
                     <div class="card-footer text-right">
@@ -152,8 +185,10 @@
       .append(
         '<tr>'+
           '<td><input type="text" class="form-control form-control-sm"></td>'+
-          '<td><input type="text" class="form-control form-control-sm input-rupiah" readonly=""></td>'+
+          '<td><select name="" id="" class="form-control form-control-sm select2"></select></td>'+
           '<td><input type="number" class="form-control form-control-sm"></td>'+
+          '<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+
+          '<td><input type="text" class="form-control form-control-sm" readonly=""></td>'+
           '<td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
         '</tr>'
         );

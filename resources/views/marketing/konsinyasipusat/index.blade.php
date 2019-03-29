@@ -4,6 +4,7 @@
 
 @include('marketing.konsinyasipusat.penempatanproduk.modal')
 @include('marketing.konsinyasipusat.monitoringpenjualan.modal')
+@include('marketing.konsinyasipusat.monitoringpenjualan.modal-search')
 
 <article class="content animated fadeInLeft">
 
@@ -133,6 +134,11 @@
 				icon: 'success'
 			})
 		})
+
+		$("#search-list-agen").on("click", function() {
+			$(".table-modal").removeClass('d-none');
+		});
+
 	});
 </script>
 @endsection

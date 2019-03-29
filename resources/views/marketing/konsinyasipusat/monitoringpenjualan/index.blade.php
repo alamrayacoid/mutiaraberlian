@@ -8,6 +8,24 @@
 		</div>
 		<div class="card-block">
 			<section>
+			<div class="row mb-3">
+				<div class="col-md-3 col-sm-12">
+					<input type="text" class="form-control form-control-sm datepicker" placeholder="Tanggal Awal">
+				</div>
+				<span>-</span>
+				<div class="col-md-3 col-sm-12">
+					<input type="text" class="form-control form-control-sm datepicker" placeholder="Tanggal Akhir">
+				</div>
+				<div class="col-md-4 col-sm-12" style="padding-right:0px;">
+				<div class="input-group">
+					<input type="text" class="form-control form-control-sm" placeholder="Cari Agen"> 
+					<button class="btn btn-secondary btn-md" title="Cari Agen" style="border-left:none;" data-toggle="modal" data-target="#searchAgen"><i class="fa fa-search"></i></button>
+				</div>
+				</div>
+				<div class="col-1">
+					<button class="btn btn-primary btn-md" title="Cari Berdasarkan Filter">Filter</button>
+				</div>
+			</div>
 				<div class="table-responsive">
 					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_monitoringpenjualan">
 						<thead class="bg-primary">

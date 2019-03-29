@@ -165,6 +165,8 @@
    <img src="{{asset('assets/img/loading-text.png')}}" alt="" id="loading-text">
 </div>
 
+<div class="loader"></div>
+
 <script src="{{asset('assets/js/loading.js')}}"></script>
 </body>
 </html>
