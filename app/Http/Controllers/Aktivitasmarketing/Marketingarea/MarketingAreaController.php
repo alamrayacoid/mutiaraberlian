@@ -463,7 +463,7 @@ class MarketingAreaController extends Controller
         return Datatables::of($data_agen)
             ->addIndexColumn()
             ->addColumn('totalprice', function ($data_agen) {
-                return Currency::addRupiah($data_agen->total_price);
+                return Currency::addRupiah((int)$data_agen->total_price);
             })
             ->addColumn('action_agen', function ($data_agen) {
                 if ($data_agen->po_status == "Y") {
@@ -551,6 +551,65 @@ class MarketingAreaController extends Controller
             }
         }
         return Response::json($results);
+    }
+
+    public function filterDataAgen(Request $request)
+    {
+        //dd($request->start, $request->end);
+        //$start  = Carbon::parse($request->start)->format('Y-m-d');
+        //$end    = Carbon::parse($request->end)->format('Y-m-d');
+        $status = $request->state;
+        $id     = $request->agen;
+
+        // dd($start, $end, $status, $id);
+        $data_agen = DB::table('d_productorder')
+            ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
+            ->join('m_company', 'po_agen', '=', 'c_id')
+            ->select('po_agen', 'po_id', 'po_status', 'po_nota as nota', DB::raw('date_format(po_date, "%d/%m/%Y") as date'), DB::raw('SUM(pod_totalprice) as total_price'), 'c_name')
+            //->whereBetween('po_date', [$start, $end])
+            ->where('po_status', '=', $status)
+            ->where('po_agen', '=', $id)
+            ->groupBy('po_id')
+            ->get();
+        //dd($data_agen);
+        return DataTables::of($data_agen)
+            ->addIndexColumn()
+            ->addColumn('total_price', function ($data_agen) {
+                return Currency::addRupiah($data_agen->total_price);
+            })
+            ->addColumn('action_agen', function ($data_agen) {
+                if ($data_agen->po_status == "Y") {
+                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                                </button>
+                                <button class="btn btn-danger hint--top-left hint--error" aria-label="Reject Approve" onclick="rejectApproveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i>
+                                </button>
+                                <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i>
+                                </button>
+                            </div>';
+                } else if ($data_agen->po_status == "N") {
+                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                                </button>
+                                <button class="btn btn-disabled" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-times"></i>
+                                </button>
+                                <button class="btn btn-success hint--top-left hint--success" aria-label="Aktifkan" onclick="activateAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-check-circle-o"></i>
+                                </button>
+                            </div>';
+                } else {
+                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                                </button>
+                                <button class="btn btn-danger hint--top-left hint--error" aria-label="Reject" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i>
+                                </button>
+                                <button class="btn btn-success hint--top-left hint--success" aria-label="Approve" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-check"></i>
+                                </button>
+                            </div>';
+                }
+                
+            })
+            ->rawColumns(['total_price','action_agen'])
+            ->make(true);
     }
 
     public function rejectAgen($id)

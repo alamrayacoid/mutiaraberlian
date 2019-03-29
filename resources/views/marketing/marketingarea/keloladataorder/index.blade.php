@@ -10,11 +10,11 @@
 			<section>
 			<div class="row mb-4">
 				<div class="col-md-2 col-sm-12">
-					<input type="text" id="start_date" name="start_date" class="form-control form-control-sm datepicker text-center" placeholder="Tanggal Awal">
+					<input type="text" id="start_date" name="start_date" class="form-control form-control-sm datepicker text-center" placeholder="Tanggal Awal" autocomplete="off">
 				</div>
 				<span>-</span>
 				<div class="col-md-2 col-sm-12">
-					<input type="text" id="end_date" name="end_date" class="form-control form-control-sm datepicker text-center" placeholder="Tanggal Akhir">
+					<input type="text" id="end_date" name="end_date" class="form-control form-control-sm datepicker text-center" placeholder="Tanggal Akhir" autocomplete="off">
 				</div>
 				<div class="col-md-2 col-sm-12">
 					<select name="status" id="status" class="form-control form-control-sm select2">

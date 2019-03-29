@@ -403,9 +403,9 @@
 	// End Order Produk --------------------------------------------
 
 	// Kelola Data Order Agen --------------------------------------
-	$('#status').on('change', function(){
-		kelolaDataAgen();
-	});
+	// $('#status').on('change', function(){
+	// 	kelolaDataAgen();
+	// });
 
 	function kelolaDataAgen() {
 		var st = $("#status").val();
@@ -431,7 +431,6 @@
       pageLength: 10,
       lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
     });
-
 	}
 
   function getProvId() {
@@ -543,6 +542,38 @@
 		$('.agenId').val(id);
 		$('.agen').val(name);
 		$('.codeAgen').val(code);
+	}
+
+	function filterAgen() {
+		var start_date = $('#start_date').val();
+		var end_date   = $('#end_date').val();
+		var status     = $('#status').val();
+		var agen       = $('.agenId').val();
+
+		$('#table_dataAgen').DataTable().clear().destroy();
+    table_agen = $('#table_dataAgen').DataTable({
+      responsive: true,
+      serverSide: true,
+      ajax: {
+          url: "{{ url('/marketing/marketingarea/keloladataorder/filter-agen') }}",
+          type: "get",
+          data: {
+              //start: start_date,
+              //end  : end_date,
+              state: status,
+              agen : agen
+          }
+      },
+      columns: [
+          {data: 'date'},
+          {data: 'nota'},
+          {data: 'c_name'},
+          {data: 'total_price'},
+          {data: 'action_agen'}
+      ],
+      pageLength: 10,
+      lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+    });
 	}
 
 	function rejectAgen(id) {
