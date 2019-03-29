@@ -99,10 +99,15 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-	var table_agen, table_bar, table_rab, table_bro;
+	var table_agen, table_search, table_bar, table_rab, table_bro;
+
+  var idAgen    = [];
+  var namaAgen  = null;
+  var kode      = null;
+  var icode     = [];
 	$(document).ready(function() {
 	    orderProdukList();
-	    table_agen = $('#table_dataAgen').DataTable();
+	    table_search = $('#table_search_agen').DataTable();
 	    table_bar  = $('#table_monitoringpenjualanagen').DataTable();
 	    table_rab  = $('#table_canvassing').DataTable();
 	    table_bro  = $('#table_konsinyasi').DataTable();
@@ -392,11 +397,15 @@
 	// End Order Produk --------------------------------------------
 
 	// Kelola Data Order Agen --------------------------------------
+	$('#status').on('change', function(){
+		kelolaDataAgen();
+	});
+
 	function kelolaDataAgen() {
 		var st = $("#status").val();
 
 		$('#table_dataAgen').DataTable().clear().destroy();
-    $('#table_dataAgen').DataTable({
+    table_agen = $('#table_dataAgen').DataTable({
       responsive: true,
       serverSide: true,
       ajax: {
@@ -416,6 +425,16 @@
       pageLength: 10,
       lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
     });
+	    
+	  $('.agen').on('click change', function () {
+	      setArrayAgen();
+	  });
+
+	  $(".agen").on("keyup", function () {
+	      $(".agenId").val('');
+	      $(".codeAgen").val('');
+	  });
+
 	}
 
   function getProvId() {
@@ -438,41 +457,92 @@
     });
   }
 
-	// Modal Kelola Data Order Agen
+  // Autocomplete Data Agen -------------------------------------------
+  function setArrayAgen() {
+    var inputs = document.getElementsByClassName('codeAgen'),
+        code   = [].map.call(inputs, function (input) {
+            return input.value.toString();
+        });
+
+    for (var i = 0; i < code.length; i++) {
+        if (code[i] != "") {
+            icode.push(code[i]);
+        }
+    }
+
+    var agen = [];
+    var inpAgenId = document.getElementsByClassName('agenId'),
+        agen      = [].map.call(inpAgenId, function (input) {
+            return input.value;
+        });
+
+    $(".agen").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "{{ url('/marketing/marketingarea/keloladataorder/cari-agen') }}",
+                data: {
+                    idAgen: agen,
+                    term: $(".agen").val()
+                },
+                success: function (data) {
+                    response(data);
+                }
+            });
+        },
+        minLength: 1,
+        select: function (event, data) {
+            setAgen(data.item);
+        }
+    });
+  }
+
+  function setAgen(info) {
+    idAgen = info.data.a_id;
+    namaAgen = info.data.a_name;
+    kode = info.data.a_code;
+    $(".codeAgen").val(kode);
+    $(".agenId").val(idAgen);
+    setArrayAgen();
+  }
+  // End Autocomplete -----------------------------------------------------
+
+	// Modal Kelola Data Order Agen -----------------------------------------
+	function getAgen() {
+		getDataAgen();
+	}
+
 	$("#search-list-agen").on("click", function() {
-			$.ajax({
-				url: "{{url('/marketing/marketingarea/keloladataorder/get-agen')}}",
-				type: "get",
-				data:{
-					id : $('#city_agen').val()
-				},
-				success:function(res)
-				{
-					$(".table-modal").removeClass('d-none');
-					$('tbody').empty();
-					if(res.data.length > 0) {
-						$.each(res.data, function(key, val){
-							$('#table_search_agen tbody').append('<tr>'+
-																											'<td>'+val.wp_name+'</td>'+
-																											'<td>'+val.wc_name+'</td>'+
-																											'<td>'+val.a_name+'</td>'+
-																											'<td>'+val.a_type+'</td>'+
-																											'<td class="text-center"><button class="btn btn-success hint--top-left hint--success"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''+val.c_id+'\',\''+val.a_name+'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>'+
-																										'</tr>');
-						});
-					} else {
-						$('#table_search_agen tbody').append('<tr>'+
-																										'<td colspan="4" class="text-center">Data tidak ditemukan</td>'+
-																									'</tr>');
-					}
-				}
-			})
+		getDataAgen();
 	});
+
+	function getDataAgen() {
+		$.ajax({
+			url: "{{url('/marketing/marketingarea/keloladataorder/get-agen')}}",
+			type: "get",
+			data:{
+				id : $('#city_agen').val()
+			},
+			success:function(res)
+			{
+				$(".table-modal").removeClass('d-none');
+				$('tbody').empty();
+				$.each(res.data, function(key, val){
+					$('#table_search_agen').find('tbody').append('<tr>'+
+																									'<td>'+val.wp_name+'</td>'+
+																									'<td>'+val.wc_name+'</td>'+
+																									'<td>'+val.a_name+'</td>'+
+																									'<td>'+val.a_type+'</td>'+
+																									'<td class="text-center"><button class="btn btn-primary hint--top-left hint--primary"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''+val.c_id+'\',\''+val.a_name+'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>'+
+																								'</tr>');
+				});
+			}
+		});
+	}
 
 	function chooseAgen(id, name) {
 		$('#searchAgen').modal('hide');
-		$('#idAgen').val(id);
-		$('#nameAgen').val(name);
+		$('.agenId').val(id);
+		$('.agen').val(name);
 	}
 
 	function rejectAgen(id) {
@@ -500,6 +570,7 @@
                             loadingShow();
                         },
                         success: function(response) {
+                        	//var table_agen = $('#table_dataAgen').DataTable();
                             if (response.status == 'sukses') {
                                 loadingHide();
                                 messageSuccess('Berhasil', 'Penolakan berhasil!');
@@ -631,8 +702,56 @@
     });
 	}
 
-	function approveAgen(id) {
-		window.location.href = "{{url('/marketing/marketingarea/keloladataorder/approve-agen')}}"+"/"+id;
+	function rejectApproveAgen(id) {
+		var reject_approve_agen = "{{url('/marketing/marketingarea/keloladataorder/reject-approve-agen')}}"+"/"+id;
+    $.confirm({
+        animation: 'RotateY',
+        closeAnimation: 'scale',
+        animationBounce: 1.5,
+        icon: 'fa fa-exclamation-triangle',
+        title: 'Pesan!',
+        content: 'Apakah anda yakin ingin approve agen ini?',
+        theme: 'disable',
+        buttons: {
+            info: {
+                btnClass: 'btn-blue',
+                text: 'Ya',
+                action: function() {
+                    return $.ajax({
+                        type: "post",
+                        url: reject_approve_agen,
+							          data: {
+							              "_token": "{{ csrf_token() }}"
+							          },
+                        beforeSend: function() {
+                            loadingShow();
+                        },
+                        success: function(response) {
+                            if (response.status == 'sukses') {
+                                loadingHide();
+                                messageSuccess('Berhasil', 'Approve berhasil dibatalkan!');
+                                table_agen.ajax.reload();
+                            } else {
+                                loadingHide();
+                                messageFailed('Gagal', response.message);
+                            }
+                        },
+                        error: function(e) {
+                            loadingHide();
+                            messageWarning('Peringatan', e.message);
+                        }
+                    });
+                }
+            },
+            cancel: {
+                text: 'Tidak',
+                action: function(response) {
+                    loadingHide();
+                    messageWarning('Peringatan', 'Anda telah membatalkan!');
+                }
+            }
+        }
+    });
 	}
 	// End Data Order Agen -----------------------------------------
 </script>

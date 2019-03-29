@@ -247,7 +247,7 @@
                         closeAnimation: 'scale',
                         animationBounce: 1.5,
                         icon: 'fa fa-exclamation-triangle',
-                        title: 'Peringatan!',
+                        title: 'Konfirmasi!',
                         content: 'Apakah anda yakin akan membuat return produksi untuk barang ini?',
                         theme: 'disable',
                         buttons: {
