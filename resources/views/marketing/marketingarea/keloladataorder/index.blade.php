@@ -25,8 +25,9 @@
 				</div>
 				<div class="col-md-4 col-sm-12">
 					<div class="input-group">
-						<input type="text" name="nameAgen" id="nameAgen" class="form-control form-control-sm" placeholder="Cari Agen">
-						<input type="hidden" id="idAgen" name="idAgen">
+						<input type="text" name="nameAgen[]" class="form-control form-control-sm agen" autocomplete="off">
+            <input type="hidden" name="idAgen[]" class="agenId">
+            <input type="hidden" name="codeAgen[]" class="codeAgen">
 						<button class="btn btn-secondary btn-md" style="border-left:none;" data-toggle="modal" data-target="#searchAgen"><i class="fa fa-search"></i></button>
 					</div>
 				</div>
@@ -38,8 +39,8 @@
 					<table class="table table-hover table-striped" cellspacing="0" id="table_dataAgen">
 						<thead class="bg-primary">
 							<tr>
-								<th width="15%">Tanggal</th>
-								<th width="25%" style="text-align:center;">Nota</th>
+								<th width="10%">Tanggal</th>
+								<th width="30%" style="text-align:center;">Nota</th>
 								<th width="20%">Nama Agen</th>
 								<th width="20%">Total Transaksi</th>
 								<th width="20%" style="text-align:center;">Aksi</th>

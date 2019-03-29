@@ -517,6 +517,35 @@ class MarketingAreaController extends Controller
         ));
     }
 
+    public function cariDataAgen(Request $request)
+    {        
+        $is_agen = array();
+        for ($i = 0; $i < count($request->idAgen); $i++) {
+            if ($request->idAgen[$i] != null) {
+                array_push($is_agen, $request->idAgen[$i]);
+            }
+        }
+
+        $cari = $request->term;
+        $nama = DB::table('m_agen')
+            ->select('m_agen.*')
+            ->whereNotIn('a_id', $is_agen)
+            ->where(function ($q) use ($cari) {
+                $q->whereRaw("a_name like '%" . $cari . "%'");
+                $q->orWhereRaw("a_code like '%" . $cari . "%'");
+            })
+            ->get();
+
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = ['id' => $query->a_id, 'label' => $query->a_code . ' - ' . strtoupper($query->a_name), 'data' => $query];
+            }
+        }
+        return Response::json($results);
+    }
+
     public function rejectAgen($id)
     {
         try {

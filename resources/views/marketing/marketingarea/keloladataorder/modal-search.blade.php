@@ -11,7 +11,7 @@
       <div class="modal-body">    
       <section>
       <div class="row mb-3">
-        <div class="col-md-5 col-sm-12">
+        <div class="col-md-6 col-sm-12">
           <select name="prov" id="prov_agen" class="form-control form-control-sm select2" onchange="getProvId()">
             <option value="" selected="" disabled="">=== Pilih Provinsi ===</option>
             @foreach($provinsi as $prov)
@@ -19,14 +19,11 @@
             @endforeach
           </select>
         </div>
-        <span>-</span>
-        <div class="col-md-5 col-sm-12">
-          <select name="city" id="city_agen" class="form-control form-control-sm select2 city">
+        {{-- <span>-</span> --}}
+        <div class="col-md-6 col-sm-12">
+          <select name="city" id="city_agen" class="form-control form-control-sm select2 city" onchange="getAgen()">
             <option value="" selected disabled>=== Pilih Kota ===</option>
           </select>
-        </div>
-        <div class="col-md-1 col-sm-12">
-            <button class="btn btn-md btn-primary" id="search-list-agen">Cari</button>
         </div>
       </div>
       </section>  
