@@ -102,7 +102,6 @@
 	var table_agen, table_bar, table_rab, table_bro;
 	$(document).ready(function() {
 	    orderProdukList();
-	    table_agen = $('#table_dataAgen').DataTable();
 	    table_bar  = $('#table_monitoringpenjualanagen').DataTable();
 	    table_rab  = $('#table_canvassing').DataTable();
 	    table_bro  = $('#table_konsinyasi').DataTable();
@@ -392,11 +391,15 @@
 	// End Order Produk --------------------------------------------
 
 	// Kelola Data Order Agen --------------------------------------
+	$('#status').on('change', function(){
+		kelolaDataAgen();
+	});
+
 	function kelolaDataAgen() {
 		var st = $("#status").val();
 
 		$('#table_dataAgen').DataTable().clear().destroy();
-    $('#table_dataAgen').DataTable({
+    table_agen = $('#table_dataAgen').DataTable({
       responsive: true,
       serverSide: true,
       ajax: {
@@ -500,6 +503,7 @@
                             loadingShow();
                         },
                         success: function(response) {
+                        	//var table_agen = $('#table_dataAgen').DataTable();
                             if (response.status == 'sukses') {
                                 loadingHide();
                                 messageSuccess('Berhasil', 'Penolakan berhasil!');
@@ -631,8 +635,56 @@
     });
 	}
 
-	function approveAgen(id) {
-		window.location.href = "{{url('/marketing/marketingarea/keloladataorder/approve-agen')}}"+"/"+id;
+	function rejectApproveAgen(id) {
+		var reject_approve_agen = "{{url('/marketing/marketingarea/keloladataorder/reject-approve-agen')}}"+"/"+id;
+    $.confirm({
+        animation: 'RotateY',
+        closeAnimation: 'scale',
+        animationBounce: 1.5,
+        icon: 'fa fa-exclamation-triangle',
+        title: 'Pesan!',
+        content: 'Apakah anda yakin ingin approve agen ini?',
+        theme: 'disable',
+        buttons: {
+            info: {
+                btnClass: 'btn-blue',
+                text: 'Ya',
+                action: function() {
+                    return $.ajax({
+                        type: "post",
+                        url: reject_approve_agen,
+							          data: {
+							              "_token": "{{ csrf_token() }}"
+							          },
+                        beforeSend: function() {
+                            loadingShow();
+                        },
+                        success: function(response) {
+                            if (response.status == 'sukses') {
+                                loadingHide();
+                                messageSuccess('Berhasil', 'Approve berhasil dibatalkan!');
+                                table_agen.ajax.reload();
+                            } else {
+                                loadingHide();
+                                messageFailed('Gagal', response.message);
+                            }
+                        },
+                        error: function(e) {
+                            loadingHide();
+                            messageWarning('Peringatan', e.message);
+                        }
+                    });
+                }
+            },
+            cancel: {
+                text: 'Tidak',
+                action: function(response) {
+                    loadingHide();
+                    messageWarning('Peringatan', 'Anda telah membatalkan!');
+                }
+            }
+        }
+    });
 	}
 	// End Data Order Agen -----------------------------------------
 </script>

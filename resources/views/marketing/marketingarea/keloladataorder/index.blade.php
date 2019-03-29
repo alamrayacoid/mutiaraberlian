@@ -38,8 +38,8 @@
 					<table class="table table-hover table-striped" cellspacing="0" id="table_dataAgen">
 						<thead class="bg-primary">
 							<tr>
-								<th width="20%">Tanggal</th>
-								<th width="20%" style="text-align:center;">Nota</th>
+								<th width="15%">Tanggal</th>
+								<th width="25%" style="text-align:center;">Nota</th>
 								<th width="20%">Nama Agen</th>
 								<th width="20%">Total Transaksi</th>
 								<th width="20%" style="text-align:center;">Aksi</th>
