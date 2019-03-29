@@ -107,10 +107,10 @@
   var icode     = [];
 	$(document).ready(function() {
 	    orderProdukList();
-	    table_search = $('#table_search_agen').DataTable();
-	    table_bar  = $('#table_monitoringpenjualanagen').DataTable();
-	    table_rab  = $('#table_canvassing').DataTable();
-	    table_bro  = $('#table_konsinyasi').DataTable();
+			table_search = $('#table_search_agen').DataTable();
+			table_bar    = $('#table_monitoringpenjualanagen').DataTable();
+			table_rab    = $('#table_canvassing').DataTable();
+			table_bro    = $('#table_konsinyasi').DataTable();
 	    // Code Dummy --------------------------------------------------
 	    $(document).on('click', '.btn-edit-canv', function() {
 	        window.location.href = '{{ route('datacanvassing.edit') }}';
@@ -156,7 +156,6 @@
 	        });
 	    });
 
-
 	    $(document).on('click', '.btn-enable', function() {
 	        $.toast({
 	            heading: 'Information',
@@ -177,8 +176,6 @@
 	    });
 
 	    // canvassing
-
-
 	    $(document).on('click', '.btn-disable-canv', function() {
 	        var ini = $(this);
 	        $.confirm({
@@ -281,6 +278,15 @@
 	            '<button class="btn btn-danger btn-disable-kons" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 	    });
 	    // End Code Dummy -----------------------------------------------
+	    
+	  $('.agen').on('click change', function () {
+	      setArrayAgen();
+	  });
+
+	  $(".agen").on("keyup", function () {
+	      $(".agenId").val('');
+	      $(".codeAgen").val('');
+	  });
 	});
 	// End Document Ready -------------------------------------------
 
@@ -425,15 +431,6 @@
       pageLength: 10,
       lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
     });
-	    
-	  $('.agen').on('click change', function () {
-	      setArrayAgen();
-	  });
-
-	  $(".agen").on("keyup", function () {
-	      $(".agenId").val('');
-	      $(".codeAgen").val('');
-	  });
 
 	}
 
@@ -497,7 +494,7 @@
   }
 
   function setAgen(info) {
-    idAgen = info.data.a_id;
+    idAgen = info.data.c_id;
     namaAgen = info.data.a_name;
     kode = info.data.a_code;
     $(".codeAgen").val(kode);
@@ -515,34 +512,37 @@
 		getDataAgen();
 	});
 
-	function getDataAgen() {
-		$.ajax({
-			url: "{{url('/marketing/marketingarea/keloladataorder/get-agen')}}",
-			type: "get",
-			data:{
-				id : $('#city_agen').val()
-			},
-			success:function(res)
-			{
-				$(".table-modal").removeClass('d-none');
-				$('tbody').empty();
-				$.each(res.data, function(key, val){
-					$('#table_search_agen').find('tbody').append('<tr>'+
-																									'<td>'+val.wp_name+'</td>'+
-																									'<td>'+val.wc_name+'</td>'+
-																									'<td>'+val.a_name+'</td>'+
-																									'<td>'+val.a_type+'</td>'+
-																									'<td class="text-center"><button class="btn btn-primary hint--top-left hint--primary"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''+val.c_id+'\',\''+val.a_name+'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>'+
-																								'</tr>');
-				});
-			}
-		});
+	function getDataAgen() {		
+		$(".table-modal").removeClass('d-none');
+		$('#table_search_agen').DataTable().clear().destroy();
+    table_agen = $('#table_search_agen').DataTable({
+      responsive: true,
+      serverSide: true,
+      ajax: {
+          url: "{{ url('/marketing/marketingarea/keloladataorder/get-agen') }}",
+          type: "get",
+          data: {
+              "_token": "{{ csrf_token() }}",
+              id : $('#city_agen').val()
+          }
+      },
+      columns: [
+          {data: 'wp_name'},
+          {data: 'wc_name'},
+          {data: 'a_name'},
+          {data: 'a_type'},
+          {data: 'action_agen'}
+      ],
+      pageLength: 10,
+      lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+    });
 	}
 
-	function chooseAgen(id, name) {
+	function chooseAgen(id, name, code) {
 		$('#searchAgen').modal('hide');
 		$('.agenId').val(id);
 		$('.agen').val(name);
+		$('.codeAgen').val(code);
 	}
 
 	function rejectAgen(id) {

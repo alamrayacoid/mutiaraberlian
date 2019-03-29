@@ -511,10 +511,16 @@ class MarketingAreaController extends Controller
             ->where('c_type', '=', 'AGEN')
             ->where('a_area', '=', $id)
             ->get();
-        return Response::json(array(
-            'success' => true,
-            'data'    => $agen
-        ));
+        return Datatables::of($agen)
+            ->addIndexColumn()
+            ->addColumn('action_agen', function ($agen) {
+                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                            <button class="btn btn-primary hint--top-left hint--primary"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''.$agen->c_id.'\',\''.$agen->a_name.'\',\''.$agen->c_user.'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
+                        </div>';
+                
+            })
+            ->rawColumns(['action_agen'])
+            ->make(true);
     }
 
     public function cariDataAgen(Request $request)
@@ -528,7 +534,8 @@ class MarketingAreaController extends Controller
 
         $cari = $request->term;
         $nama = DB::table('m_agen')
-            ->select('m_agen.*')
+            ->join('m_company', 'a_code', 'c_user')
+            ->select('m_agen.*', 'm_company.*')
             ->whereNotIn('a_id', $is_agen)
             ->where(function ($q) use ($cari) {
                 $q->whereRaw("a_name like '%" . $cari . "%'");
@@ -540,7 +547,7 @@ class MarketingAreaController extends Controller
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->a_id, 'label' => $query->a_code . ' - ' . strtoupper($query->a_name), 'data' => $query];
+                $results[] = ['id' => $query->c_id, 'label' => strtoupper($query->a_name), 'data' => $query];
             }
         }
         return Response::json($results);

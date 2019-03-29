@@ -10,11 +10,11 @@
 			<section>
 			<div class="row mb-4">
 				<div class="col-md-2 col-sm-12">
-					<input type="text" name="start_date" class="form-control form-control-sm datepicker text-center" placeholder="Tanggal Awal">
+					<input type="text" id="start_date" name="start_date" class="form-control form-control-sm datepicker text-center" placeholder="Tanggal Awal">
 				</div>
 				<span>-</span>
 				<div class="col-md-2 col-sm-12">
-					<input type="text" name="end_date" class="form-control form-control-sm datepicker text-center" placeholder="Tanggal Akhir">
+					<input type="text" id="end_date" name="end_date" class="form-control form-control-sm datepicker text-center" placeholder="Tanggal Akhir">
 				</div>
 				<div class="col-md-2 col-sm-12">
 					<select name="status" id="status" class="form-control form-control-sm select2">
@@ -25,14 +25,14 @@
 				</div>
 				<div class="col-md-4 col-sm-12">
 					<div class="input-group">
-						<input type="text" name="nameAgen[]" class="form-control form-control-sm agen" autocomplete="off">
+						<input type="text" name="nameAgen[]" class="form-control form-control-sm agen" autocomplete="off" style="text-transform: uppercase;">
             <input type="hidden" name="idAgen[]" class="agenId">
             <input type="hidden" name="codeAgen[]" class="codeAgen">
 						<button class="btn btn-secondary btn-md" style="border-left:none;" data-toggle="modal" data-target="#searchAgen"><i class="fa fa-search"></i></button>
 					</div>
 				</div>
 				<div class="col-md-1">
-					<button class="btn btn-primary btn-md" title="Cari Berdasarkan Filter"><i class="fa fa-filter" aria-hidden="true"></i> &nbspFilter</button>
+					<button class="btn btn-primary btn-md" title="Cari Berdasarkan Filter" onclick="filterAgen();"><i class="fa fa-filter" aria-hidden="true"></i> &nbspFilter</button>
 				</div>
 			</div>
 				<div class="table-responsive">
