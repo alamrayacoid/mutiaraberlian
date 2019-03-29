@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div id="search" class="modal fade animated fadeIn" role="dialog">
+<div id="searchAgen" class="modal fade animated fadeIn" role="dialog">
   <div class="modal-dialog modal-lg">
 
     <!-- Modal content-->

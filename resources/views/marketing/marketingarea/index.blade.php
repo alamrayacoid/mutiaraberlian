@@ -102,10 +102,11 @@
 	var table_agen, table_bar, table_rab, table_bro;
 	$(document).ready(function() {
 	    orderProdukList();
-	    table_bar = $('#table_monitoringpenjualanagen').DataTable();
-	    table_rab = $('#table_canvassing').DataTable();
-	    table_bro = $('#table_konsinyasi').DataTable();
-
+	    table_agen = $('#table_dataAgen').DataTable();
+	    table_bar  = $('#table_monitoringpenjualanagen').DataTable();
+	    table_rab  = $('#table_canvassing').DataTable();
+	    table_bro  = $('#table_konsinyasi').DataTable();
+	    // Code Dummy --------------------------------------------------
 	    $(document).on('click', '.btn-edit-canv', function() {
 	        window.location.href = '{{ route('datacanvassing.edit') }}';
 	    });
@@ -162,58 +163,6 @@
 	        })
 	        $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
 	            '<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-	    })
-
-	    // order agen
-
-	    $(document).on('click', '.btn-disable-order', function() {
-	        var ini = $(this);
-	        $.confirm({
-	            animation: 'RotateY',
-	            closeAnimation: 'scale',
-	            animationBounce: 1.5,
-	            icon: 'fa fa-exclamation-triangle',
-	            title: 'Peringatan!',
-	            content: 'Apa anda yakin mau menonaktifkan data ini?',
-	            theme: 'disable',
-	            buttons: {
-	                info: {
-	                    btnClass: 'btn-blue',
-	                    text: 'Ya',
-	                    action: function() {
-	                        $.toast({
-	                            heading: 'Information',
-	                            text: 'Data Berhasil di Nonaktifkan.',
-	                            bgColor: '#0984e3',
-	                            textColor: 'white',
-	                            loaderBg: '#fdcb6e',
-	                            icon: 'info'
-	                        })
-	                        ini.parents('.btn-group').html('<button class="btn btn-success btn-enable-order" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-	                    }
-	                },
-	                cancel: {
-	                    text: 'Tidak',
-	                    action: function() {
-	                        // tutup confirm
-	                    }
-	                }
-	            }
-
-	        });
-	    });
-
-	    $(document).on('click', '.btn-enable-order', function() {
-	        $.toast({
-	            heading: 'Information',
-	            text: 'Data Berhasil di Aktifkan.',
-	            bgColor: '#0984e3',
-	            textColor: 'white',
-	            loaderBg: '#fdcb6e',
-	            icon: 'info'
-	        })
-	        $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit-order" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
-	            '<button class="btn btn-danger btn-disable-order" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 	    })
 
 	    $(document).ready(function() {
@@ -326,7 +275,9 @@
 	        $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit-kons" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
 	            '<button class="btn btn-danger btn-disable-kons" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 	    });
+	    // End Code Dummy -----------------------------------------------
 	});
+	// End Document Ready -------------------------------------------
 
 	// Order Produk Ke Cabang -------------------------------
 	function orderProdukList() {
@@ -445,7 +396,7 @@
 		var st = $("#status").val();
 
 		$('#table_dataAgen').DataTable().clear().destroy();
-    table_agen = $('#table_dataAgen').DataTable({
+    $('#table_dataAgen').DataTable({
       responsive: true,
       serverSide: true,
       ajax: {
@@ -506,7 +457,7 @@
 																											'<td>'+val.wc_name+'</td>'+
 																											'<td>'+val.a_name+'</td>'+
 																											'<td>'+val.a_type+'</td>'+
-																											'<td class="text-center"><button class="btn btn-success hint--top-left hint--success"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''+val.a_name+'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>'+
+																											'<td class="text-center"><button class="btn btn-success hint--top-left hint--success"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''+val.c_id+'\',\''+val.a_name+'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>'+
 																										'</tr>');
 						});
 					} else {
@@ -517,9 +468,171 @@
 				}
 			})
 	});
-	function chooseAgen(name) {
-		$('#search').modal('hide');
-		$('#idAgen').val(name);
+
+	function chooseAgen(id, name) {
+		$('#searchAgen').modal('hide');
+		$('#idAgen').val(id);
+		$('#nameAgen').val(name);
+	}
+
+	function rejectAgen(id) {
+		var reject_agen = "{{url('/marketing/marketingarea/keloladataorder/reject-agen')}}"+"/"+id;
+    $.confirm({
+        animation: 'RotateY',
+        closeAnimation: 'scale',
+        animationBounce: 1.5,
+        icon: 'fa fa-exclamation-triangle',
+        title: 'Pesan!',
+        content: 'Apakah anda yakin ingin menolak agen ini?',
+        theme: 'disable',
+        buttons: {
+            info: {
+                btnClass: 'btn-blue',
+                text: 'Ya',
+                action: function() {
+                    return $.ajax({
+                        type: "post",
+                        url: reject_agen,
+							          data: {
+							              "_token": "{{ csrf_token() }}"
+							          },
+                        beforeSend: function() {
+                            loadingShow();
+                        },
+                        success: function(response) {
+                            if (response.status == 'sukses') {
+                                loadingHide();
+                                messageSuccess('Berhasil', 'Penolakan berhasil!');
+                                table_agen.ajax.reload();
+                            } else {
+                                loadingHide();
+                                messageFailed('Gagal', response.message);
+                            }
+                        },
+                        error: function(e) {
+                            loadingHide();
+                            messageWarning('Peringatan', e.message);
+                        }
+                    });
+                }
+            },
+            cancel: {
+                text: 'Tidak',
+                action: function(response) {
+                    loadingHide();
+                    messageWarning('Peringatan', 'Anda telah membatalkan!');
+                }
+            }
+        }
+    });
+	}
+
+	function activateAgen(id) {
+		var aktif_agen = "{{url('/marketing/marketingarea/keloladataorder/activate-agen')}}"+"/"+id;
+    $.confirm({
+        animation: 'RotateY',
+        closeAnimation: 'scale',
+        animationBounce: 1.5,
+        icon: 'fa fa-exclamation-triangle',
+        title: 'Pesan!',
+        content: 'Apakah anda yakin ingin mengaktifkan agen ini?',
+        theme: 'disable',
+        buttons: {
+            info: {
+                btnClass: 'btn-blue',
+                text: 'Ya',
+                action: function() {
+                    return $.ajax({
+                        type: "post",
+                        url: aktif_agen,
+							          data: {
+							              "_token": "{{ csrf_token() }}"
+							          },
+                        beforeSend: function() {
+                            loadingShow();
+                        },
+                        success: function(response) {
+                            if (response.status == 'sukses') {
+                                loadingHide();
+                                messageSuccess('Berhasil', 'Agen berhasil diaktifkan!');
+                                table_agen.ajax.reload();
+                            } else {
+                                loadingHide();
+                                messageFailed('Gagal', response.message);
+                            }
+                        },
+                        error: function(e) {
+                            loadingHide();
+                            messageWarning('Peringatan', e.message);
+                        }
+                    });
+                }
+            },
+            cancel: {
+                text: 'Tidak',
+                action: function(response) {
+                    loadingHide();
+                    messageWarning('Peringatan', 'Anda telah membatalkan!');
+                }
+            }
+        }
+    });
+	}
+
+	function approveAgen(id) {
+		var approve_agen = "{{url('/marketing/marketingarea/keloladataorder/approve-agen')}}"+"/"+id;
+    $.confirm({
+        animation: 'RotateY',
+        closeAnimation: 'scale',
+        animationBounce: 1.5,
+        icon: 'fa fa-exclamation-triangle',
+        title: 'Pesan!',
+        content: 'Apakah anda yakin ingin approve agen ini?',
+        theme: 'disable',
+        buttons: {
+            info: {
+                btnClass: 'btn-blue',
+                text: 'Ya',
+                action: function() {
+                    return $.ajax({
+                        type: "post",
+                        url: approve_agen,
+							          data: {
+							              "_token": "{{ csrf_token() }}"
+							          },
+                        beforeSend: function() {
+                            loadingShow();
+                        },
+                        success: function(response) {
+                            if (response.status == 'sukses') {
+                                loadingHide();
+                                messageSuccess('Berhasil', 'Agen berhasil diapprove!');
+                                table_agen.ajax.reload();
+                            } else {
+                                loadingHide();
+                                messageFailed('Gagal', response.message);
+                            }
+                        },
+                        error: function(e) {
+                            loadingHide();
+                            messageWarning('Peringatan', e.message);
+                        }
+                    });
+                }
+            },
+            cancel: {
+                text: 'Tidak',
+                action: function(response) {
+                    loadingHide();
+                    messageWarning('Peringatan', 'Anda telah membatalkan!');
+                }
+            }
+        }
+    });
+	}
+
+	function approveAgen(id) {
+		window.location.href = "{{url('/marketing/marketingarea/keloladataorder/approve-agen')}}"+"/"+id;
 	}
 	// End Data Order Agen -----------------------------------------
 </script>
