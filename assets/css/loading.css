@@ -117,8 +117,8 @@ body {
     top: 63%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100px;
-    height: 20px;
+    width: 200px;
+    height: 40px;
     opacity:0;
     animation: text-anim 2s ease forwards 2.0s;
 }
