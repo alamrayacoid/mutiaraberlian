@@ -946,10 +946,11 @@ class ProduksiController extends Controller
                         'message' => "Jumlah barang tidak tersedia"
                     ]);
                 } else if ($get_stockmutation->first()->sm_use < $get_stockmutation->first()->sm_qty) {
-                    $sm_qty = $get_stockmutation->first()->sm_qty - $qty_compare;
+                    $sm_qty     = $get_stockmutation->first()->sm_qty - $qty_compare;
+                    $sm_residue = $sm_qty  - $get_stockmutation->first()->sm_use;
                     $val_stockmutation = [
                         'sm_qty'     => $sm_qty,
-                        'sm_residue' => $sm_qty
+                        'sm_residue' => $sm_residue
                     ];
                 }
             } else {
@@ -968,6 +969,88 @@ class ProduksiController extends Controller
             return Response::json([
                 'status' => "Success",
                 'message'=> "Data berhasil disimpan"
+            ]);
+        }catch (Exception $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e
+            ]);
+        }
+    }
+
+    public function editReturn(Request $request)
+    {
+        $comp = Auth::user()->u_company;
+        try{
+            $rpoid      = Crypt::decrypt($request->idRPO);
+            $rpo_detail = Crypt::decrypt($request->idDetail);
+            $item       = Crypt::decrypt($request->idItem);
+        }catch (DecryptException $e){
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e
+            ]);
+        }
+
+        $data_check = DB::table('m_item')
+            ->select('i_unitcompare1 as compare1', 'i_unitcompare2 as compare2',
+                'i_unitcompare3 as compare3', 'i_unit1 as unit1', 'i_unit2 as unit2', 'i_unit3 as unit3')
+            ->where('i_id', '=', $item)
+            ->first();
+
+        $qty_compare = 0;
+        if ($request->satuan_return_edit == $data_check->unit1) {
+            $qty_compare = $request->qty_return_edit;
+        } else if ($request->satuan_return_edit == $data_check->unit2) {
+            $qty_compare = $request->qty_return_edit * $data_check->compare2;
+        } else if ($request->satuan_return_edit == $data_check->unit3) {
+            $qty_compare = $request->qty_return_edit * $data_check->compare3;
+        }
+
+        DB::beginTransaction();
+        try{
+            $stock = Stock::where('s_comp', $comp)
+                    ->where('s_position', $comp)
+                    ->where('s_item', $item)
+                    ->where('s_status', 'ON DESTINATION')
+                    ->where('s_condition', 'FINE');
+
+            $stock_mutation = StockMutation::where('sm_stock', $stock->first()->s_id);
+
+            $stock_awal = $stock->first()->s_qty + $request->qty_current;
+
+            $sm_qtyawal     = $stock_mutation->first()->sm_qty + $request->qty_current;
+            $sm_residueawal = $sm_qtyawal - $stock_mutation->first()->sm_use;
+            $sm_qty         = $sm_qtyawal - $qty_compare;
+            $sm_residue     = $sm_qty - $stock_mutation->first()->sm_use;
+
+            $val_mutasi = [
+                'sm_qty'     => $sm_qty,
+                'sm_residue' => $sm_residue
+            ];
+
+            $val_stock = [
+                's_qty' => $stock_awal - $qty_compare
+            ];
+
+            $val_return = [
+                'rpo_qty'    => $qty_compare,
+                'rpo_action' => $request->methode_return_edit,
+                'rpo_note'   => $request->note_return_edit
+            ];
+
+            $stock_mutation->update($val_mutasi);
+            $stock->update($val_stock);
+            DB::table('d_returnproductionorder')
+                ->where('rpo_productionorder', $rpoid)
+                ->where('rpo_detailid', $rpo_detail)
+                ->update($val_return);
+
+            DB::commit();
+            return Response::json([
+                'status' => "Success",
+                'message'=> "Data berhasil diperbarui"
             ]);
         }catch (Exception $e){
             DB::rollBack();

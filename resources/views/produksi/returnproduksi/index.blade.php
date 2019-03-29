@@ -87,6 +87,34 @@
             ],
         });
 
+        $("#formEditReturn").on("submit", function (evt) {
+            evt.preventDefault();
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Konfirmasi!',
+                content: 'Apakah anda yakin akan memperbarui return produksi untuk barang ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            updateReturn();
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+        })
+
 	});
 
 	function detailReturn(id, detail) {
@@ -129,7 +157,7 @@
                     }
                     $("#satuan_return_edit").append(option);
 
-                    $('#idPO_edit').val(id);
+                    $('#idRPO_edit').val(id);
                     $('#idDetail_edit').val(detail);
                     $('#idItem_edit').val(item);
                     $('#txt_tanggal_edit').val(resp.data.message.tanggal);
@@ -145,6 +173,26 @@
 
                     $("#editReturn").modal({backdrop: 'static', keyboard: false});
                 } else {
+                    messageFailed("Gagal", resp.data.message);
+                }
+            })
+            .catch(function (error) {
+                loadingHide();
+                messageWarning("Error", error);
+            })
+    }
+
+    function updateReturn() {
+        loadingShow();
+        axios.post('{{ route('return.edit') }}', $("#formEditReturn").serialize())
+            .then(function (resp) {
+                loadingHide();
+                if (resp.data.status == "Success") {
+                    $('#formEditReturn')[0].reset();
+                    $("#editReturn").modal("hide");
+                    table.ajax.reload();
+                    messageSuccess("Berhasil", resp.data.message);
+                } else if (resp.data.status == "Failed") {
                     messageFailed("Gagal", resp.data.message);
                 }
             })
