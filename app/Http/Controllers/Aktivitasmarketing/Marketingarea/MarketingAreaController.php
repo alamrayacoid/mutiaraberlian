@@ -455,7 +455,7 @@ class MarketingAreaController extends Controller
         $data_agen = DB::table('d_productorder')
             ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
             ->join('m_company', 'po_agen', '=', 'c_id')
-            ->select('d_productorder.*', DB::raw('SUM(pod_totalprice) as total_price'), 'c_name as agen')
+            ->select('d_productorder.*', DB::raw('date_format(po_date, "%d/%m/%Y") as po_date'), DB::raw('SUM(pod_totalprice) as total_price'), 'c_name as agen')
             ->where('po_status', '=', $status)
             ->groupBy('po_id')
             ->get();
@@ -470,7 +470,7 @@ class MarketingAreaController extends Controller
                     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                                 <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
                                 </button>
-                                <button class="btn btn-disabled" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-times"></i>
+                                <button class="btn btn-danger hint--top-left hint--error" aria-label="Reject Approve" onclick="rejectApproveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i>
                                 </button>
                                 <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i>
                                 </button>
@@ -488,7 +488,7 @@ class MarketingAreaController extends Controller
                     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                                 <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
                                 </button>
-                                <button class="btn btn-danger hint--top-left hint--error" aria-label="Nonaktif" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i>
+                                <button class="btn btn-danger hint--top-left hint--error" aria-label="Reject" onclick="rejectAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i>
                                 </button>
                                 <button class="btn btn-success hint--top-left hint--success" aria-label="Approve" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-check"></i>
                                 </button>
@@ -589,6 +589,35 @@ class MarketingAreaController extends Controller
                 ->where('po_id', $id)
                 ->update([
                     'po_status' => "Y"
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function rejectApproveAgen($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_productorder')
+                ->where('po_id', $id)
+                ->update([
+                    'po_status' => "P"
                 ]);
 
             DB::commit();
