@@ -187,6 +187,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/returnproduksi/cari-nota', 'ProduksiController@cariNota')->name('return.carinota');
     Route::get('/produksi/returnproduksi/cari-barang-po/{id}', 'ProduksiController@cariBarangPO')->name('return.caribarangpo');
     Route::get('/produksi/returnproduksi/set-satuan/{id}', 'ProduksiController@setSatuan')->name('return.setunit');
+    Route::get('/produksi/returnproduksi/hapus-return/{id}/{detail}/{qty}', 'ProduksiController@deleteReturn')->name('return.delete');
     Route::post('/produksi/returnproduksi/tambah-return', 'ProduksiController@addReturn')->name('return.add');
     Route::post('/produksi/returnproduksi/edit-return', 'ProduksiController@editReturn')->name('return.edit');
     Route::get('/produksi/returnproduksi/create/next', 'ProduksiController@next_create_return_produksi')->name('return.nextcreate');

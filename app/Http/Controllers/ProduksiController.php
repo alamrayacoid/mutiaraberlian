@@ -550,7 +550,7 @@ class ProduksiController extends Controller
             ->addColumn('action', function($data){
                 $detail = '<button class="btn btn-primary" type="button" title="Detail" onclick="detailReturn(\''.Crypt::encrypt($data->id).'\', \''.Crypt::encrypt($data->detail).'\')"><i class="fa fa-folder"></i></button>';
                 $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editReturn(\''.Crypt::encrypt($data->id).'\', \''.Crypt::encrypt($data->detail).'\', \''.Crypt::encrypt($data->idItem).'\')"><i class="fa fa-pencil-square-o"></i></button>';
-                $hapus = '<button class="btn btn-danger" type="button" title="Hapus" onclick="hapusReturn(\''.Crypt::encrypt($data->id).'\', \''.Crypt::encrypt($data->detail).'\')"><i class="fa fa-trash-o"></i></button>';
+                $hapus = '<button class="btn btn-danger" type="button" title="Hapus" onclick="hapusReturn(\''.Crypt::encrypt($data->id).'\', \''.Crypt::encrypt($data->detail).'\', \''.$data->qty.'\')"><i class="fa fa-trash-o"></i></button>';
                 return '<div class="btn-group btn-group-sm">'. $detail . $edit . $hapus .'</div>';
             })
             ->rawColumns(['tanggal','nota', 'metode', 'barang', 'qty', 'action'])
@@ -1058,6 +1058,77 @@ class ProduksiController extends Controller
                 'status' => "Failed",
                 'message'=> $e
             ]);
+        }
+    }
+
+    function deleteReturn($id = null, $detail = null, $qty = null)
+    {
+        $comp = Auth::user()->u_company;
+        try{
+            $id = Crypt::decrypt($id);
+            $detail = Crypt::decrypt($detail);
+        }catch (DecryptException $e){
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e
+            ]);
+        }
+
+        if ($qty == null || $qty == "") {
+            return Response::json([
+                'status' => "Failed",
+                'message'=> "Kuantitas barang tidak diketahui"
+            ]);
+        }
+
+        $return_po = DB::table('d_returnproductionorder')
+            ->where('rpo_productionorder', $id)
+            ->where('rpo_detailid', $detail);
+
+        if ($return_po->count() == 0) {
+            return Response::json([
+                'status' => "Failed",
+                'message'=> "Data return produksi tidak ditemukan"
+            ]);
+        } else {
+            $stock = Stock::where('s_comp', $comp)
+                ->where('s_position', $comp)
+                ->where('s_item', $return_po->first()->rpo_item)
+                ->where('s_status', 'ON DESTINATION')
+                ->where('s_condition', 'FINE');
+
+            $stock_mutation = StockMutation::where('sm_stock', $stock->first()->s_id);
+
+            $s_qty      = $stock->first()->s_qty + $qty;
+            $sm_qty     = $stock_mutation->first()->sm_qty + $qty;
+            $sm_residue = $sm_qty - $stock_mutation->first()->sm_use;
+
+            $val_mutasi = [
+                'sm_qty'     => $sm_qty,
+                'sm_residue' => $sm_residue
+            ];
+
+            $val_stock = [
+                's_qty' => $s_qty
+            ];
+
+            DB::beginTransaction();
+            try{
+                $stock_mutation->update($val_mutasi);
+                $stock->update($val_stock);
+                $return_po->delete();
+                DB::commit();
+                return Response::json([
+                    'status' => "Success",
+                    'message'=> "Data berhasil dihapus"
+                ]);
+            }catch (Exception $e){
+                DB::rollBack();
+                return Response::json([
+                    'status' => "Failed",
+                    'message'=> $e
+                ]);
+            }
         }
     }
 

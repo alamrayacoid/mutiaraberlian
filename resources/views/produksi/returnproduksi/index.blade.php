@@ -202,8 +202,49 @@
             })
     }
 
-    function hapusReturn(id, detail) {
+    function hapusReturn(id, detail, qty) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Konfirmasi!',
+            content: 'Apakah anda yakin akan menghapus return produksi untuk barang ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        deleteReturn(id, detail, qty);
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
 
+    function deleteReturn(id, detail, qty) {
+	    loadingShow();
+	    axios.get(baseUrl+'/produksi/returnproduksi/hapus-return/'+id+'/'+detail+'/'+qty)
+            .then(function (resp) {
+                loadingHide();
+                if (resp.data.status == "Success") {
+                    table.ajax.reload();
+                    messageSuccess("Berhasil", resp.data.message);
+                } else if (resp.data.status == "Failed") {
+                    messageFailed("Gagal", resp.data.message);
+                }
+            })
+            .catch(function (error) {
+                loadingHide();
+                messageWarning("Error", error);
+            })
     }
 </script>
 @endsection
