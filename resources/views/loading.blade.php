@@ -161,7 +161,9 @@
     </linearGradient>
 </svg>
 
-<img src="{{asset('assets/img/loading-text.png')}}" alt="" id="loading-text">
+<div>
+   <img src="{{asset('assets/img/loading-text.png')}}" alt="" id="loading-text">
+</div>
 
 <script src="{{asset('assets/js/loading.js')}}"></script>
 </body>
