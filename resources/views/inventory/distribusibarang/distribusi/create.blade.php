@@ -141,7 +141,7 @@
                         '<tr>'+
                         '<td><input type="text" name="namabarang[]" id="namabarang'+counter+'" data-counter="'+counter+'" class="form-control form-control-sm namabarang"> <input type="hidden" name="idbarang[]" id="idbarang'+counter+'"></td>'+
                         '<td><select id="satuan'+counter+'" name="satuan[]" class="form-control form-control-sm select2"><option value="" disabled selected>Pilih Satuan</option></select></td>'+
-                        '<td><input type="number" name="qty[]" id="qty'+counter+'" class="form-control form-control-sm" value="0"></td>'+
+                        '<td><input type="number" name="qty[]" id="qty'+counter+'" onkeyup="filterqty('+counter+')" class="form-control form-control-sm" value="0"></td>'+
                         '<td><button class="btn btn-danger btn-hapus-cabang btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+
                         '</tr>'
                     );
@@ -189,8 +189,9 @@
               if (tmp == 'no') {
                 var iam = counter;
                 $('#idbarang'+iam).val(id);
+                $('#stock'+iam).val(parseInt(response.stock));
                 for (var i = 0; i < response.length; i++) {
-                  html += '<option value="'+response[i].u_id+'">'+response[i].u_name+'</option>';
+                  html += '<option value="'+response.unit[i].u_id+'">'+response.unit[i].u_name+'</option>';
                 }
                 $('#satuan'+counter).html(html);
               } else {
@@ -200,6 +201,15 @@
               }
             }
           });
+        }
+
+        function filterqty(index){
+          var qty = $('#qty'+index).val();
+          var stock = $('#stock'+index).val();
+           if (parseInt(qty) > parseInt(stock)) {
+            messageFailed('Notice!', 'Tidak boleh kurang dari stock!');
+            $('#qty'+index).val(parseInt(stock));
+          }
         }
 
         function simpan(){

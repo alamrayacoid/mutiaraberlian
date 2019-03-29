@@ -106,7 +106,7 @@ class DistribusiController extends Controller
             } else {
 
                 foreach ($data as $query) {
-                    $results[] = ['id' => $query->i_id, 'label' => $query->i_name . ' (' . $query->i_code . ')'];
+                    $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' . $query->i_name];
                 }
             }
 
@@ -132,7 +132,12 @@ class DistribusiController extends Controller
 
     $unit[] = $tmp;
 
-    return response()->json($unit);
+    $stock = DB::table('d_stock')->where('s_item', $request->id)->where('s_position', Auth::user()->u_company)->where('s_status', 'ON DESTINATION')->where('s_condition', 'FINE')->sum('s_qty');
+
+    return response()->json([
+      'unit' => $unit,
+      'stock' => $stock
+      ]);
   }
 
   public function simpancabang(Request $request){
@@ -496,7 +501,7 @@ class DistribusiController extends Controller
                       ->where('s_status', 'ON DESTINATION')
                       ->where('s_condition', 'FINE')
                       ->whereIn('sm_mutcat', $tmp)
-                      ->sum('sm_residue');                      
+                      ->sum('sm_residue');
 
                   $mutcatkeluar = DB::table('m_mutcat')->where('m_name','Distribusi Cabang Keluar')->first();
 
