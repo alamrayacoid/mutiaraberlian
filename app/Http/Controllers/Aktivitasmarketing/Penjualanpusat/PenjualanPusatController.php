@@ -21,6 +21,11 @@ class PenjualanPusatController extends Controller
         return view('marketing/penjualanpusat/index');
     }
 
+    public function orderpenjualan_proses()
+    {
+        return view('marketing.penjualanpusat.terimaorder.proses');
+    }
+
     public function getTarget(Request $request)
     {
         $id = Crypt::decrypt($request->id);

@@ -16,19 +16,26 @@
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>
+								<th>Tanggal</th>
 								<th>Nama Agen</th>
-								<th>List Orderan</th>
-								<th>Status</th>
+								<th>Nomer Nota</th>
+								<th>Total Transaksi</th>
+								<th>Aksi</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td>1</td>
-								<td>Agen Rahasia</td>
+								<td>07-09-2019</td>
+								<td>Dr. Bambang</td>
+								<td>KUY001</td>
+								<td>~</td>
 								<td>
-                                <button class="btn btn-primary btn-modal" data-toggle="modal" data-target="#detail" type="button">Detail</button>
-                                </td>
-								<td><button class="btn btn-primary status-approve">Prepare</button></td>
+									<div class="btn-group btn-group-sm">
+										<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
+										<button class="btn btn-success btn-proses" type="button" title="Proses" onclick="window.location.href='{{route('orderpenjualan.proses')}}'"><i class="fa fa-arrow-right"></i></button>
+									</div>
+								</td>
 							</tr>
 						</tbody>
 					</table>
