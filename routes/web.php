@@ -139,6 +139,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/datasatuan/store', 'Master\SatuanController@tambahSatuan')->name('tambah_satuan');
     Route::get('/masterdatautama/datasatuan/update', 'Master\SatuanController@updateSatuan')->name('update_satuan');
     Route::post('/masterdatautama/datasatuan/delete/{id}', 'Master\SatuanController@deleteSatuan')->name('delete_satuan');
+
+    // Master Member
+    Route::get('/masterdatautama/member/index', 'Master\MemberController@index')->name('member.index');
+    Route::get('/masterdatautama/member/create', 'Master\MemberController@create')->name('member.create');
+    Route::get('/masterdatautama/member/edit', 'Master\MemberController@edit')->name('member.edit');
     // !===================================================== End Master Data Utama =====================================================!
 
     // !===================================================== PRODUKSI =====================================================!

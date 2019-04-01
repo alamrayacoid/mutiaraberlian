@@ -197,6 +197,9 @@
                         <li class="{{Request::is('masterdatautama/agen/*') ? 'active' : ''}}">
                             <a href="{{ route('agen.index')}}">Master Agen</a>
                         </li>
+                        <li class="{{Request::is('masterdatautama/member/*') ? 'active' : ''}}">
+                            <a href="{{ route('member.index')}}">Master Member</a>
+                        </li>
                       @endif
                        {{--  <li class="{{Request::is('masterdatautama/datasatuan/*') ? 'active' : ''}}">
                             <a href="{{route('datasatuan.index')}}">Master Satuan</a>
