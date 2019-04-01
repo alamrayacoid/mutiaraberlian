@@ -589,8 +589,8 @@
 	}
 
 	function filterAgen() {
-		var start_date = $('#start_date').val();
-		var end_date   = $('#end_date').val();
+		var start = $('#start_date').val();
+		var end   = $('#end_date').val();
 		var status     = $('#status').val();
 		var agen       = $('.agenId').val();
 
@@ -602,15 +602,15 @@
           url: "{{ url('/marketing/marketingarea/keloladataorder/filter-agen') }}",
           type: "get",
           data: {
-              start: start_date,
-              end  : end_date,
+              start_date: start,
+              end_date  : end,
               state: status,
               agen : agen
           }
       },
       columns: [
           {data: 'date'},
-          {data: 'nota'},
+          {data: 'po_nota'},
           {data: 'c_name'},
           {data: 'total_price'},
           {data: 'action_agen'}
