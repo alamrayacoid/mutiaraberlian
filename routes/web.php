@@ -142,8 +142,14 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Master Member
     Route::get('/masterdatautama/member/index', 'Master\MemberController@index')->name('member.index');
+    Route::get('/masterdatautama/member/list-member', 'Master\MemberController@listDataMember')->name('member.list');
     Route::get('/masterdatautama/member/create', 'Master\MemberController@create')->name('member.create');
-    Route::get('/masterdatautama/member/edit', 'Master\MemberController@edit')->name('member.edit');
+    Route::get('/masterdatautama/member/store', 'Master\MemberController@memberStore')->name('member.store');
+    Route::get('/masterdatautama/member/get-agen', 'Master\MemberController@getDataAgen')->name('member.getDataAgen');
+    Route::get('/masterdatautama/member/cari-agen', 'Master\MemberController@cariDataAgen')->name('member.cariDataAgen');
+    Route::get('/masterdatautama/member/edit/{id}', 'Master\MemberController@editMember')->name('member.edit');
+    Route::get('/masterdatautama/member/update/{id}', 'Master\MemberController@updateMember')->name('member.update');
+    Route::post('/masterdatautama/member/nonactivate/{id}', 'Master\MemberController@nonActivateMember')->name('member.nonActivate');
     // !===================================================== End Master Data Utama =====================================================!
 
     // !===================================================== PRODUKSI =====================================================!
