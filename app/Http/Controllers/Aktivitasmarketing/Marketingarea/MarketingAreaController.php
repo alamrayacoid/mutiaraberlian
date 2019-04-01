@@ -556,17 +556,17 @@ class MarketingAreaController extends Controller
     public function filterDataAgen(Request $request)
     {
         // dd($request->start, $request->end);
-        // $start  = Carbon::parse($request->start)->format('Y-m-d');
-        // $end    = Carbon::parse($request->end)->format('Y-m-d');
+        $start  = Carbon::parse($request->start)->format('Y-m-d');
+        $end    = Carbon::parse($request->end)->format('Y-m-d');
         $status = $request->state;
         $id     = $request->agen;
 
-        // dd($start, $end, $status, $id);
+        //dd($start, $end, $status, $id);
         $data_agen = DB::table('d_productorder')
             ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
             ->join('m_company', 'po_agen', '=', 'c_id')
             ->select('po_agen', 'po_id', 'po_status', 'po_nota as nota', DB::raw('date_format(po_date, "%d/%m/%Y") as date'), DB::raw('SUM(pod_totalprice) as total_price'), 'c_name')
-            // ->whereBetween('po_date', [$start, $end])
+            ->whereBetween('po_date', [$start, $end])
             ->where('po_status', '=', $status)
             ->where('po_agen', '=', $id)
             ->groupBy('po_id')
