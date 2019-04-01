@@ -30,8 +30,9 @@
             <form id="createMember">
             <section>
               <div class="row">
+
                 <div class="col-md-2 col-sm-6 col-xs-12">
-                  <label>Nama</label>
+                  <label>Nama <span class="text-danger">*</span></label>
                 </div>
                 <div class="col-md-10 col-sm-6 col-xs-12">
                   <div class="form-group">
@@ -40,23 +41,25 @@
                 </div>
                 
                 <div class="col-md-2 col-sm-6 col-xs-12">
-                  <label>NIK</label>
+                  <label>NIK <span class="text-danger">*</span></label>
                 </div>
                 <div class="col-md-10 col-sm-6 col-xs-12">
                   <div class="form-group">
                     <input name="m_nik" type="text" class="form-control form-control-sm">
                   </div>
                 </div>
+
                 <div class="col-md-2 col-sm-6 col-xs-12">
-                  <label>Nomer Telp</label>
+                  <label>Nomer Telp <span class="text-danger">*</span></label>
                 </div>
                 <div class="col-md-10 col-sm-6 col-xs-12">
                   <div class="form-group">
                     <input name="m_tlp" type="text" class="form-control form-control-sm">
                   </div>
                 </div>
+
                 <div class="col-md-2 col-sm-6 col-xs-12">
-                  <label>Provinsi</label>
+                  <label>Provinsi <span class="text-danger">*</span></label>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
                   <div class="form-group">
@@ -68,8 +71,9 @@
                     </select>
                   </div>
                 </div>
+
                 <div class="col-md-2 col-sm-6 col-xs-12">
-                  <label>Kota</label>
+                  <label>Kota/Kabupaten <span class="text-danger">*</span></label>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
                   <div class="form-group">
@@ -78,16 +82,18 @@
                     </select>
                   </div>
                 </div>
+
                 <div class="col-md-2 col-sm-6 col-xs-12">
-                  <label>Alamat</label>
+                  <label>Alamat <span class="text-danger">*</span></label>
                 </div>
                 <div class="col-md-10 col-sm-6 col-xs-12">
                   <div class="form-group">
                     <input name="m_address" type="text" class="form-control form-control-sm">
                   </div>
                 </div>
+
                 <div class="col-md-2 col-sm-6 col-xs-12">
-                  <label>Agen</label>
+                  <label>Agen <span class="text-danger">*</span></label>
                 </div>
                 <div class="col-md-10 col-sm-6 col-xs-12">
                   <div class="input-group">
@@ -97,6 +103,7 @@
                     <a class="btn btn-primary rounded-right btn-modal" style="border-left:none;"><i class="fa fa-search"></i></a>
                   </div>
                 </div>
+
               </div>
             </section>
             </form>
