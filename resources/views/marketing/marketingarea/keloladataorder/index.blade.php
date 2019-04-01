@@ -28,7 +28,7 @@
 						<input type="text" name="nameAgen[]" class="form-control form-control-sm agen" autocomplete="off" style="text-transform: uppercase;">
             <input type="hidden" name="idAgen[]" class="agenId">
             <input type="hidden" name="codeAgen[]" class="codeAgen">
-						<button class="btn btn-secondary btn-md rounded" style="border-left:none;" data-toggle="modal" data-target="#searchAgen"><i class="fa fa-search"></i></button>
+						<button class="btn btn-secondary btn-md rounded-right" style="border-left:none;" data-toggle="modal" data-target="#searchAgen"><i class="fa fa-search"></i></button>
 					</div>
 				</div>
 				<div class="col-md-1">
