@@ -203,8 +203,10 @@ class DistribusiController extends Controller
 
   }
 
-  public function table(){
-    $data = DB::table('d_stockdistribution')->get();
+  public function table(Request $request){
+    $from = Carbon::parse($request->date_from)->format('Y-m-d');
+    $to = Carbon::parse($request->date_to)->format('Y-m-d');
+    $data = DB::table('d_stockdistribution')->whereBetween('sd_date', array($from, $to))->get();
 
     return Datatables::of($data)
     ->addIndexColumn()
