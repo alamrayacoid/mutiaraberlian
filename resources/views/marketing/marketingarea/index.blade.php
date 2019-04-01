@@ -96,6 +96,57 @@
 		</div>
 	</div>
 </div>
+{{-- Modal Kelola Data Agen --}}
+<div class="modal fade" id="modalOrderAgen" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-row">
+			    <div class="form-group col-md-6">
+			      <label for="cabang">Nama Cabang</label>
+			      <input type="text" class="form-control bg-light" id="cabang2" value="" readonly="" disabled="">
+			    </div>
+			    <div class="form-group col-md-6">
+			      <label for="nota">Nomer Nota</label>
+			      <input type="text" class="form-control bg-light" id="nota2" value="" readonly="" disabled="">
+			    </div>
+			  </div>
+				<div class="form-row">
+			    <div class="form-group col-md-6">
+			      <label for="agen">Nama Agen</label>
+			      <input type="text" class="form-control bg-light" id="agen2" value="" readonly="" disabled="">
+			    </div>
+			    <div class="form-group col-md-6">
+			      <label for="tanggal">Tanggal Order</label>
+			      <input type="text" class="form-control bg-light" id="tanggal2" value="" readonly="" disabled="">
+			    </div>
+			  </div>
+			  <div class="table-responsive">
+				  <table id="detailAgen" class="table table-sm table-hover table-bordered">
+				  	<thead>
+				  		<tr class="bg-primary text-light">
+				  			<th>Nama Barang</th>
+				  			<th>Satuan</th>
+				  			<th>Qty</th>
+				  			<th>Harga Satuan</th>
+				  			<th>Total Harga</th>
+				  		</tr>
+				  	</thead>
+				  	<tbody class="emptyAgen">
+				  		
+				  	</tbody>
+				  </table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 @endsection
 @section('extra_script')
 <script type="text/javascript">
@@ -558,8 +609,8 @@
           url: "{{ url('/marketing/marketingarea/keloladataorder/filter-agen') }}",
           type: "get",
           data: {
-              //start: start_date,
-              //end  : end_date,
+              // start: start_date,
+              // end  : end_date,
               state: status,
               agen : agen
           }
@@ -574,6 +625,30 @@
       pageLength: 10,
       lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
     });
+	}
+
+	function detailAgen(id) {
+		$.ajax({
+			url: "{{ url('/marketing/marketingarea/keloladataorder/detail-agen') }}"+"/"+id,
+			type: "get",
+			success:function(res) {
+				$('#modalOrderAgen').modal('show');
+				$('#cabang2').val(res.agen2.comp);
+				$('#agen2').val(res.agen2.agen);
+				$('#nota2').val(res.agen2.po_nota);
+				$('#tanggal2').val(res.agen2.po_date);
+        $('.emptyAgen').empty();
+				$.each(res.agen1, function(key, val){
+					$('#detailAgen tbody').append('<tr>'+
+																					'<td>'+val.barang+'</td>'+
+																					'<td>'+val.unit+'</td>'+
+																					'<td>'+val.qty+'</td>'+
+																					'<td>'+val.price+'</td>'+
+																					'<td>'+val.totalprice+'</td>'+
+																				'</tr>');
+				});
+			}
+		});
 	}
 
 	function rejectAgen(id) {

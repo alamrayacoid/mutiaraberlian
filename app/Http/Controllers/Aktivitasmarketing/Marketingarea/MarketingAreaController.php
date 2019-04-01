@@ -555,9 +555,9 @@ class MarketingAreaController extends Controller
 
     public function filterDataAgen(Request $request)
     {
-        //dd($request->start, $request->end);
-        //$start  = Carbon::parse($request->start)->format('Y-m-d');
-        //$end    = Carbon::parse($request->end)->format('Y-m-d');
+        // dd($request->start, $request->end);
+        // $start  = Carbon::parse($request->start)->format('Y-m-d');
+        // $end    = Carbon::parse($request->end)->format('Y-m-d');
         $status = $request->state;
         $id     = $request->agen;
 
@@ -566,7 +566,7 @@ class MarketingAreaController extends Controller
             ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
             ->join('m_company', 'po_agen', '=', 'c_id')
             ->select('po_agen', 'po_id', 'po_status', 'po_nota as nota', DB::raw('date_format(po_date, "%d/%m/%Y") as date'), DB::raw('SUM(pod_totalprice) as total_price'), 'c_name')
-            //->whereBetween('po_date', [$start, $end])
+            // ->whereBetween('po_date', [$start, $end])
             ->where('po_status', '=', $status)
             ->where('po_agen', '=', $id)
             ->groupBy('po_id')
@@ -726,6 +726,46 @@ class MarketingAreaController extends Controller
                 'message' => $e
             ]);
         }
+    }
+
+    public function detailAgen($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        $produk = DB::table('d_productorder')
+            ->join('m_company as comp', 'po_comp', 'comp.c_id')
+            ->join('m_company as agen', 'po_agen', 'agen.c_id')
+            ->select('d_productorder.*', DB::raw('date_format(po_date, "%d/%m/%Y") as po_date'), 'comp.c_name as comp', 'agen.c_name as agen')
+            ->where('po_id', $id)
+            ->first();
+
+        $detail = DB::table('d_productorderdt')
+            ->join('m_item', 'pod_item', 'i_id')
+            ->join('m_unit', 'pod_unit', 'u_id')
+            ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*')
+            ->where('pod_productorder', $id)
+            ->get();
+
+        foreach ($detail as $key => $dt) {
+            $order[] = [
+                'barang'     => $dt->i_name,
+                'unit'       => $dt->u_name,
+                'qty'        => $dt->pod_qty,
+                'price'      => Currency::addRupiah($dt->pod_price),
+                'totalprice' => Currency::addRupiah($dt->pod_totalprice)
+            ];
+        }
+        
+
+        return Response::json(array(
+            'success' => true,
+            'agen1'   => $order,
+            'agen2'   => $produk
+        ));
     }
     // Kelola Data Order Agen End ==========================================================================
 
