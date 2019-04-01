@@ -108,9 +108,15 @@
             </section>
             </form>
           </div>
-          <div class="card-footer text-right">
-            <button class="btn btn-primary btn-submit" onclick="createMember()" type="button">Simpan</button>
-            <a href="{{route('member.index')}}" class="btn btn-secondary">Kembali</a>
+          <div class="card-footer">
+            <div class="row">
+              <div class="col-md-6"><p>(<span class="text-danger">*</span>) Wajib diisi.</p></div>
+              <div class="col-md-6 text-right" style="align-self: center;">
+                <button class="btn btn-primary btn-submit" onclick="createMember()" type="button">Simpan</button>
+                <a href="{{route('member.index')}}" class="btn btn-secondary">Kembali</a>
+              </div>
+            </div>
+            
           </div>
         </div>
       </div>

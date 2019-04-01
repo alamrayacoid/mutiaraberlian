@@ -97,16 +97,21 @@
                     <input type="text" name="nameAgen" class="form-control form-control-sm agen" autocomplete="off" style="text-transform: uppercase;" value="{{$member->a_name}}">
                     <input type="hidden" name="idAgen" class="agenId" value="{{$member->c_id}}">
                     <input type="hidden" name="codeAgen" class="codeAgen" value="{{$member->a_code}}">
-                    <a class="btn btn-md btn-primary rounded-right" data-toggle="modal" data-target="#modal-edit"><i class="fa fa-search"></i></a>
+                    <a class="btn btn-primary rounded-right" data-toggle="modal" data-target="#modal-edit"><i class="fa fa-search"></i></a>
                   </div>
                 </div>
               </div>
             </section>
             </form>
           </div>
-          <div class="card-footer text-right">
-            <button class="btn btn-primary btn-submit" onclick="updateMember('{{Crypt::encrypt($member->m_id)}}')" type="button">Simpan</button>
-            <a href="{{route('member.index')}}" class="btn btn-secondary">Kembali</a>
+          <div class="card-footer">
+            <div class="row">
+              <div class="col-md-6"><p>(<span class="text-danger">*</span>) Wajib diisi.</p></div>
+              <div class="col-md-6 text-right" style="align-self: center;">
+                <button class="btn btn-primary btn-submit" onclick="updateMember('{{Crypt::encrypt($member->m_id)}}')" type="button">Simpan</button>
+                <a href="{{route('member.index')}}" class="btn btn-secondary">Kembali</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>

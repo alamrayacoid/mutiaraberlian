@@ -45,7 +45,7 @@ class MemberController extends Controller
                             </div>';
                 } else {
                     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                                <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Member" onclick="editMember(\'' . Crypt::encrypt($data_member->m_id) . '\')"><i class="fa fa-fw fa-pencil"></i>
+                                <button class="btn btn-disabled" onclick="editMember(\'' . Crypt::encrypt($data_member->m_id) . '\')" disabled><i class="fa fa-fw fa-pencil"></i>
                                 </button>
                                 <button class="btn btn-success hint--top-left hint--success" aria-label="Aktifkan Member" onclick="activateMember(\'' . Crypt::encrypt($data_member->m_id) . '\')"><i class="fa fa-fw fa-check-circle"></i>
                                 </button>
@@ -110,7 +110,8 @@ class MemberController extends Controller
             ->addIndexColumn()
             ->addColumn('action_agen', function ($agen) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                            <button class="btn btn-primary hint--top-left hint--primary"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''.$agen->c_id.'\',\''.$agen->a_name.'\',\''.$agen->c_user.'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
+                            <button class="btn btn-primary hint--top-left hint--primary"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''.$agen->c_id.'\',\''.$agen->a_name.'\',\''.$agen->c_user.'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i>
+                            </button>
                         </div>';
                 
             })
@@ -120,7 +121,6 @@ class MemberController extends Controller
 
     public function memberStore(Request $request)
     {
-        //dd($request);
         $messages = [
             'm_name.required'    => 'Nama masih kosong, silahkan isi terlebih dahulu !',
             'm_nik.required'     => 'NIK masih kosong, silahkan isi terlebih dahulu !',
