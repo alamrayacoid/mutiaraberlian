@@ -50,7 +50,7 @@
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+				<h5 class="modal-title" id="exampleModalLabel">Detail Order Ke Cabang</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 				<span aria-hidden="true">&times;</span>
 				</button>
@@ -101,7 +101,7 @@
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+				<h5 class="modal-title" id="exampleModalLabel">Detail Kelola Data Agen</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 				<span aria-hidden="true">&times;</span>
 				</button>
@@ -277,8 +277,6 @@
 	    })
 
 	    // Konsinyasi
-
-
 	    $(document).on('click', '.btn-disable-kons', function() {
 	        var ini = $(this);
 	        $.confirm({
@@ -314,7 +312,6 @@
 	            }
 	        });
 	    });
-
 
 	    $(document).on('click', '.btn-enable-kons', function() {
 	        $.toast({
@@ -454,10 +451,6 @@
 	// End Order Produk --------------------------------------------
 
 	// Kelola Data Order Agen --------------------------------------
-	// $('#status').on('change', function(){
-	// 	kelolaDataAgen();
-	// });
-
 	function kelolaDataAgen() {
 		var st = $("#status").val();
 
@@ -596,8 +589,8 @@
 	}
 
 	function filterAgen() {
-		var start_date = $('#start_date').val();
-		var end_date   = $('#end_date').val();
+		var start = $('#start_date').val();
+		var end   = $('#end_date').val();
 		var status     = $('#status').val();
 		var agen       = $('.agenId').val();
 
@@ -609,15 +602,15 @@
           url: "{{ url('/marketing/marketingarea/keloladataorder/filter-agen') }}",
           type: "get",
           data: {
-              // start: start_date,
-              // end  : end_date,
+              start_date: start,
+              end_date  : end,
               state: status,
               agen : agen
           }
       },
       columns: [
           {data: 'date'},
-          {data: 'nota'},
+          {data: 'po_nota'},
           {data: 'c_name'},
           {data: 'total_price'},
           {data: 'action_agen'}

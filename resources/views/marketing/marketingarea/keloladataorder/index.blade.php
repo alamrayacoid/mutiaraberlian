@@ -28,18 +28,18 @@
 						<input type="text" name="nameAgen[]" class="form-control form-control-sm agen" autocomplete="off" style="text-transform: uppercase;">
             <input type="hidden" name="idAgen[]" class="agenId">
             <input type="hidden" name="codeAgen[]" class="codeAgen">
-						<button class="btn btn-secondary btn-md" style="border-left:none;" data-toggle="modal" data-target="#searchAgen"><i class="fa fa-search"></i></button>
+						<button class="btn btn-secondary btn-md rounded" style="border-left:none;" data-toggle="modal" data-target="#searchAgen"><i class="fa fa-search"></i></button>
 					</div>
 				</div>
 				<div class="col-md-1">
-					<button class="btn btn-primary btn-md" title="Cari Berdasarkan Filter" onclick="filterAgen();"><i class="fa fa-filter" aria-hidden="true"></i> &nbspFilter</button>
+					<button class="btn btn-primary btn-md rounded" title="Cari Berdasarkan Filter" onclick="filterAgen();"><i class="fa fa-filter" aria-hidden="true"></i> &nbspFilter</button>
 				</div>
 			</div>
 				<div class="table-responsive">
 					<table class="table table-hover table-striped" cellspacing="0" id="table_dataAgen">
 						<thead class="bg-primary">
 							<tr>
-								<th width="10%">Tanggal</th>
+								<th width="">Tanggal</th>
 								<th width="30%" style="text-align:center;">Nota</th>
 								<th width="20%">Nama Agen</th>
 								<th width="20%">Total Transaksi</th>

@@ -42,14 +42,11 @@
 
                                     <div class="col-md-10 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <select name="" id="select-order" class="form-control form-control-sm select2">
-                                                <option value="0">Pilih Tujuan</option>
-                                                <option value="1">Agen</option>
-                                                <option value="2">Cabang</option>
+                                            <select name="" id="select-order" readonly class="form-control form-control-sm select2">
+                                                <option value="2" selected>Cabang</option>
                                             </select>
                                         </div>
                                     </div>
-                                    @include('inventory.distribusibarang.distribusi.agen')
                                     @include('inventory.distribusibarang.distribusi.cabang')
                                 </div>
                             </section>
@@ -244,9 +241,8 @@
     </script>
     <script type="text/javascript">
         $(document).ready(function(){
-            $('#select-order').change(function(){
                 var ini, agen, cabang;
-                ini         = $(this).val();
+                ini         = $('#select-order').val();
                 agen        = $('#agen');
                 cabang      = $('#cabang');
 
@@ -260,7 +256,6 @@
                     agen.addClass('d-none');
                     cabang.addClass('d-none');
                 }
-            });
         });
     </script>
 @endsection

@@ -28,16 +28,11 @@
                     <li class="nav-item">
                         <a href="#distribusibarang" class="nav-link active" data-target="#distribusibarang" aria-controls="distribusibarang" data-toggle="tab" role="tab">Distribusi Barang</a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#historybarang" class="nav-link" data-target="#historybarang" aria-controls="historybarang" data-toggle="tab" role="tab">History Distribusi Barang</a>
-                    </li>
                 </ul>
 
                 <div class="tab-content">
 
                     @include('inventory.distribusibarang.distribusi.index')
-                    @include('inventory.distribusibarang.history.index')
-
 
                 </div>
 
@@ -55,6 +50,11 @@
 var table;
 var history;
     $(document).ready(function() {
+      cur_date = new Date();
+      first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+      last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+      $('#rekrut_from').datepicker('setDate', first_day);
+      $('#rekrut_to').datepicker('setDate', last_day);
       tabledistribusi();
 
         $(document).on('click', '.btn-enable-distribusi', function() {
@@ -86,7 +86,7 @@ var history;
         })
     });
 
-    function tabledistribusi()
+    function tabledistribusi(start, end)
   	{
   		$('#table_distribusi').dataTable().fnDestroy();
   		table = $('#table_distribusi').DataTable({
@@ -96,7 +96,9 @@ var history;
   				url: baseUrl + '/inventory/distribusibarang/table',
   				type: "get",
   				data: {
-  					"_token": "{{ csrf_token() }}"
+  					"_token": "{{ csrf_token() }}",
+            "date_from" : $('#rekrut_from').val(),
+  					"date_to" : $('#rekrut_to').val()
   				}
   			},
   			columns: [
@@ -169,6 +171,13 @@ var history;
           }
       });
     }
+
+    $('#rekrut_from').on('change', function() {
+      tabledistribusi();
+    })
+    $('#rekrut_to').on('change', function() {
+      tabledistribusi();
+    })
 
      function edit(id){
       window.location.href = baseUrl + '/inventory/distribusibarang/edit/'+id;
