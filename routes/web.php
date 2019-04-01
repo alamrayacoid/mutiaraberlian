@@ -150,6 +150,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/member/edit/{id}', 'Master\MemberController@editMember')->name('member.edit');
     Route::get('/masterdatautama/member/update/{id}', 'Master\MemberController@updateMember')->name('member.update');
     Route::post('/masterdatautama/member/nonactivate/{id}', 'Master\MemberController@nonActivateMember')->name('member.nonActivate');
+    Route::post('/masterdatautama/member/activate/{id}', 'Master\MemberController@activateMember')->name('member.activate');
     // !===================================================== End Master Data Utama =====================================================!
 
     // !===================================================== PRODUKSI =====================================================!

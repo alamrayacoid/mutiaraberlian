@@ -197,5 +197,58 @@
         }
     });
 	}
+
+	function activateMember(id) {
+		var active_member = "{{url('/masterdatautama/member/activate')}}"+"/"+id;
+    $.confirm({
+        animation: 'RotateY',
+        closeAnimation: 'scale',
+        animationBounce: 1.5,
+        icon: 'fa fa-exclamation-triangle',
+        title: 'Pesan!',
+        content: 'Apakah anda yakin ingin aktifkan member ini?',
+        theme: 'disable',
+        buttons: {
+            info: {
+                btnClass: 'btn-blue',
+                text: 'Ya',
+                action: function() {
+                    return $.ajax({
+                        type: "post",
+                        url: active_member,
+							          data: {
+							              "_token": "{{ csrf_token() }}"
+							          },
+                        beforeSend: function() {
+                            loadingShow();
+                        },
+                        success: function(response) {
+                        	//var table_agen = $('#table_dataAgen').DataTable();
+                            if (response.status == 'sukses') {
+                                loadingHide();
+                                messageSuccess('Berhasil', 'Member berhasil diaktifkan!');
+                                table_member.ajax.reload();
+                            } else {
+                                loadingHide();
+                                messageFailed('Gagal', response.message);
+                            }
+                        },
+                        error: function(e) {
+                            loadingHide();
+                            messageWarning('Peringatan', e.message);
+                        }
+                    });
+                }
+            },
+            cancel: {
+                text: 'Tidak',
+                action: function(response) {
+                    loadingHide();
+                    messageWarning('Peringatan', 'Anda telah membatalkan!');
+                }
+            }
+        }
+    });
+	}
 </script>
 @endsection

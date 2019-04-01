@@ -31,18 +31,27 @@ class MemberController extends Controller
             ->leftJoin('m_wil_kota', 'm_city', 'wc_id')
             ->leftJoin('m_wil_provinsi', 'm_province', 'wp_id')
             ->select('m_member.*', 'a_name', 'wp_name', 'wc_name')
-            ->where('m_status', '=', 'Y')
             ->get();
 
         return Datatables::of($data_member)
             ->addIndexColumn()
             ->addColumn('action', function ($data_member) {
-                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Member" onclick="editMember(\'' . Crypt::encrypt($data_member->m_id) . '\')"><i class="fa fa-fw fa-pencil"></i>
-                            </button>
-                            <button class="btn btn-danger hint--top-left hint--error" aria-label="Nonaktifkan Member" onclick="nonActivateMember(\'' . Crypt::encrypt($data_member->m_id) . '\')"><i class="fa fa-fw fa-times"></i>
-                            </button>
-                        </div>';
+                if ($data_member->m_status == "Y") {
+                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                                <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Member" onclick="editMember(\'' . Crypt::encrypt($data_member->m_id) . '\')"><i class="fa fa-fw fa-pencil"></i>
+                                </button>
+                                <button class="btn btn-danger hint--top-left hint--error" aria-label="Nonaktifkan Member" onclick="nonActivateMember(\'' . Crypt::encrypt($data_member->m_id) . '\')"><i class="fa fa-fw fa-times"></i>
+                                </button>
+                            </div>';
+                } else {
+                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                                <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Member" onclick="editMember(\'' . Crypt::encrypt($data_member->m_id) . '\')"><i class="fa fa-fw fa-pencil"></i>
+                                </button>
+                                <button class="btn btn-success hint--top-left hint--success" aria-label="Aktifkan Member" onclick="activateMember(\'' . Crypt::encrypt($data_member->m_id) . '\')"><i class="fa fa-fw fa-check-circle"></i>
+                                </button>
+                            </div>';
+                }
+                
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -273,6 +282,35 @@ class MemberController extends Controller
                 ->where('m_id', $id)
                 ->update([
                     'm_status' => "N"
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function activateMember($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('m_member')
+                ->where('m_id', $id)
+                ->update([
+                    'm_status' => "Y"
                 ]);
 
             DB::commit();
