@@ -26,45 +26,45 @@
     <div class="col-6">
         <table class="border-none" width="100%">
             <tr>
-                <td>No.</td>
+                <td>Nota Order Produksi</td>
                 <td width="1%">:</td>
-                <td></td>
+                <td>{{ $val['nota_po'] }}</td>
+            </tr>
+            <tr>
+                <td>Nota Return</td>
+                <td width="1%">:</td>
+                <td>{{ $val['nota'] }}</td>
             </tr>
             <tr>
                 <td>Tanggal</td>
                 <td width="1%">:</td>
-                <td></td>
+                <td>{{ $val['tanggal'] }}</td>
             </tr>
             <tr>
-                <td>Suplier</td>
+                <td>Supplier</td>
                 <td width="1%">:</td>
-                <td></td>
+                <td>{{ $val['supplier'] }}</td>
             </tr>
         </table>
     </div>
 
     <table width="100%" class="mt-3" cellpadding="5px">
         <thead>
-        <tr>
-            <th width="1%">No</th>
-            <th width="40%">Barang</th>
-            <th width="1%">Qty</th>
-            <th width="15%">Satuan</th>
-            <th>Harga</th>
-            <th>Sub Total</th>
-        </tr>
+            <tr>
+                <th width="40%">Barang</th>
+                <th width="10%">Qty</th>
+                <th width="15%">Metode</th>
+                <th width="35%">Keterangan</th>
+            </tr>
         </thead>
         <tbody>
-
+            <tr>
+                <td>{{ $val['barang'] }}</td>
+                <td>{{ $val['qty'] }}</td>
+                <td>{{ $val['metode'] }}</td>
+                <td>{{ $val['keterangan'] }}</td>
+            </tr>
         </tbody>
-        <tfoot>
-        <tr>
-            <td class="tebal" align="right" colspan="5">Total Net</td>
-            <td>
-                <div class="float-left">Rp. </div><div class="float-right" id="totalnet"></div>
-            </td>
-        </tr>
-        </tfoot>
     </table>
 </div>
 </body>
@@ -72,6 +72,6 @@
 <script src="{{asset('assets/jquery/jquery-3.1.0.min.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        // window.print();
+        window.print();
     })
 </script>

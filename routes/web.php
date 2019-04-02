@@ -202,6 +202,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/returnproduksi/hapus-return/{id}/{detail}/{qty}', 'ProduksiController@deleteReturn')->name('return.delete');
     Route::post('/produksi/returnproduksi/tambah-return', 'ProduksiController@addReturn')->name('return.add');
     Route::post('/produksi/returnproduksi/edit-return', 'ProduksiController@editReturn')->name('return.edit');
+    Route::get('/produksi/returnproduksi/nota-return/{id}/{detail}', 'ProduksiController@notaReturn')->name('return.nota');
     Route::get('/produksi/returnproduksi/create/next', 'ProduksiController@next_create_return_produksi')->name('return.nextcreate');
     // !===================================================== END PRODUKSI =====================================================!
 
