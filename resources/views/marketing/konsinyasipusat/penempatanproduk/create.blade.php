@@ -167,6 +167,7 @@
             getKota();
             changeJumlah();
             changeHarga();
+            visibleTableItem();
 
             $("#kota").on("change", function (evt) {
                 evt.preventDefault();
@@ -196,6 +197,7 @@
                 minLength: 1,
                 select: function(event, data) {
                     $( "#idKonsigner" ).val(data.item.id);
+                    visibleTableItem();
                 }
             });
 
@@ -454,6 +456,14 @@
                     setItem(data.item);
                 }
             });
+        }
+        
+        function visibleTableItem() {
+            if ($("#provinsi").val() != "" && $("#kota").val() != "" && $("#idKonsigner").val() != "") {
+                $("#tbl_item").show('slow');
+            }else{
+                $("#tbl_item").hide('slow');
+            }
         }
 
         function getProv() {
