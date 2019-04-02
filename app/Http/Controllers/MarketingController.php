@@ -148,6 +148,24 @@ class MarketingController extends Controller
         return Response::json($results);
     }
 
+    public function getSatuan($id)
+    {
+        $data = DB::table('m_item')
+            ->select('m_item.*', 'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
+            ->where('m_item.i_id', '=', $id)
+            ->join('m_unit as a', function ($x){
+                $x->on('m_item.i_unit1', '=', 'a.u_id');
+            })
+            ->leftjoin('m_unit as b', function ($y){
+                $y->on('m_item.i_unit2', '=', 'b.u_id');
+            })
+            ->leftjoin('m_unit as c', function ($z){
+                $z->on('m_item.i_unit3', '=', 'c.u_id');
+            })
+            ->first();
+        return Response::json($data);
+    }
+
     public function konsinyasipusat()
     {
     	return view('marketing/konsinyasipusat/index');
