@@ -103,7 +103,7 @@
                                                         <td><input type="text" class="form-control form-control-sm"
                                                                    readonly=""></td>
                                                         <td>
-                                                            <button
+                                                            <button type="button"
                                                                 class="btn btn-sm btn-success rounded-circle btn-tambahp"><i
                                                                     class="fa fa-plus"></i></button>
                                                         </td>
