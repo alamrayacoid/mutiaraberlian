@@ -336,6 +336,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/konsinyasipusat/cari-barang', 'MarketingController@cariBarangKonsinyasi')->name('konsinyasipusat.caribarang');
     Route::get('/marketing/konsinyasipusat/get-satuan/{id}', 'MarketingController@getSatuan')->name('konsinyasipusat.getsatuan');
     Route::get('/marketing/konsinyasipusat/penempatanproduk/create', 'MarketingController@create_penempatanproduk')->name('penempatanproduk.create');
+    Route::post('/marketing/konsinyasipusat/penempatanproduk/add', 'MarketingController@add_penempatanproduk')->name('penempatanproduk.add');
     Route::get('/marketing/konsinyasipusat/penempatanproduk/edit', 'MarketingController@edit_penempatanproduk')->name('penempatanproduk.edit');
     // Marketing Area
     Route::get('/marketing/marketingarea/index', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@index')->name('marketingarea.index');

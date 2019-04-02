@@ -31,7 +31,7 @@
                                         class="fa fa-arrow-left"></i></a>
                             </div>
                         </div>
-                        <form id="formKonsinyasi">
+                        <form id="formKonsinyasi" method="post">{{ csrf_field() }}
                             <div class="card-block">
                                 <section>
 
@@ -62,6 +62,7 @@
                                         <div class="col-md-10 col-sm-12">
                                             <div class="form-group">
                                                 <input type="hidden" name="idKonsigner" id="idKonsigner">
+                                                <input type="hidden" name="kodeKonsigner" id="kodeKonsigner">
                                                 <input type="text" name="konsigner" id="konsigner" class="form-control form-control-sm" oninput="handleInput(event)" disabled>
                                             </div>
                                         </div>
@@ -97,6 +98,7 @@
                                                         <td>
                                                             <input type="hidden" name="idItem[]" class="itemid">
                                                             <input type="hidden" name="kode[]" class="kode">
+                                                            <input type="hidden" name="idStock[]" class="idStock">
                                                             <input type="text"
                                                                    name="barang[]"
                                                                    class="form-control form-control-sm barang"
@@ -156,6 +158,7 @@
 
 @section('extra_script')
     <script type="text/javascript">
+        var idStock = [];
         var idItem = [];
         var namaItem = null;
         var kode = null;
@@ -173,11 +176,13 @@
                 evt.preventDefault();
                 if ($("#kota").val() == "") {
                     $("#idKonsigner").val('');
+                    $("#kodeKonsigner").val('');
                     $("#konsigner").val('');
                     $("#konsigner").attr("disabled", true);
                 } else {
                     $("#konsigner").attr("disabled", false);
                     $("#idKonsigner").val('');
+                    $("#kodeKonsigner").val('');
                     $("#konsigner").val('');
                 }
             })
@@ -185,6 +190,7 @@
             $("#konsigner").on("keyup", function (evt) {
                 evt.preventDefault();
                 $("#idKonsigner").val('');
+                $("#kodeKonsigner").val('');
                 visibleTableItem();
             })
 
@@ -203,6 +209,7 @@
                 minLength: 1,
                 select: function(event, data) {
                     $( "#idKonsigner" ).val(data.item.id);
+                    $( "#kodeKonsigner" ).val(data.item.kode);
                     visibleTableItem();
                 }
             });
@@ -215,13 +222,13 @@
             $(".barang").eq(idxBarang).on("keyup", function () {
                 $(".itemid").eq(idxBarang).val('');
                 $(".kode").eq(idxBarang).val('');
+                $(".idStock").eq(idxBarang).val('');
                 setArrayCode();
             });
 
             $(document).on('click', '.btn-hapus', function () {
                 $(this).parents('tr').remove();
                 updateTotalTampil();
-                updateSisaPembayaran();
                 setArrayCode();
             });
 
@@ -257,6 +264,34 @@
 
             $(document).on('click', '.btn-submit', function (evt) {
                 evt.preventDefault();
+                if (checkForm() == "cek form") {
+                    messageWarning('Peringatan', 'Lengkapi data penempatan produk');
+                } else {
+                    $.confirm({
+                        animation: 'RotateY',
+                        closeAnimation: 'scale',
+                        animationBounce: 1.5,
+                        icon: 'fa fa-exclamation-triangle',
+                        title: 'Konfirmasi!',
+                        content: 'Apakah anda yakin akan menyimpan data penempatan produk ini?',
+                        theme: 'disable',
+                        buttons: {
+                            info: {
+                                btnClass: 'btn-blue',
+                                text: 'Ya',
+                                action: function () {
+                                    simpan();
+                                }
+                            },
+                            cancel: {
+                                text: 'Tidak',
+                                action: function () {
+                                    // tutup confirm
+                                }
+                            }
+                        }
+                    });
+                }
             })
         });
 
@@ -291,7 +326,6 @@
 
                 }
                 updateTotalTampil();
-                updateSisaPembayaran();
             })
         }
 
@@ -325,14 +359,13 @@
                     $(".subtotal").eq(i).val(hasil);
                 }
                 updateTotalTampil();
-                updateSisaPembayaran();
             })
         }
 
         function tambah() {
             var row = '';
             row = '<tr>' +
-                '<td><input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"></td>'+
+                '<td><input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"><input type="hidden" name="idStock[]" class="idStock"></td>'+
                 '<td>'+
                 '<select name="satuan[]" class="form-control form-control-sm select2 satuan">'+
                 '</select>'+
@@ -376,6 +409,27 @@
             updateTotalTampil();
         }
 
+        function simpan() {
+            loadingShow();
+            var data = $('#formKonsinyasi').serialize();
+            axios.post('{{ route('penempatanproduk.add') }}', data)
+                .then(function (response){
+                    if(response.data.status == 'Success'){
+                        loadingHide();
+                        messageSuccess("Berhasil", response.data.message);
+                        setInterval(function(){location.reload();}, 3500)
+                    }else{
+                        loadingHide();
+                        messageFailed("Gagal", response.data.message);
+                    }
+
+                })
+                .catch(function (error) {
+                    loadingHide();
+                    messageWarning("Error", error);
+                })
+        }
+
         function updateTotalTampil() {
             var total = 0;
 
@@ -396,11 +450,13 @@
         }
 
         function setItem(info) {
+            idStock = info.stock
             idItem = info.data.i_id;
             namaItem = info.data.i_name;
             kode = info.data.i_code;
             $(".kode").eq(idxBarang).val(kode);
             $(".itemid").eq(idxBarang).val(idItem);
+            $(".idStock").eq(idxBarang).val(idStock);
             setArrayCode();
             $.ajax({
                 url: '{{ url('/marketing/konsinyasipusat/get-satuan/') }}'+'/'+idItem,
@@ -494,6 +550,7 @@
             $("#provinsi").on("change", function (evt) {
                 evt.preventDefault();
                 $("#idKonsigner").val('');
+                $("#kodeKonsigner").val('');
                 $("#konsigner").val('');
                 $("#kota").find('option').remove();
                 $("#kota").attr("disabled", true);

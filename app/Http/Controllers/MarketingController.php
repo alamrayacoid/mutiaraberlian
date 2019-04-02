@@ -8,7 +8,11 @@ use Auth;
 use DataTables;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
+use CodeGenerator;
+use Currency;
+use Mutasi;
 use Carbon\Carbon;
+use Mockery\Exception;
 use Response;
 
 class MarketingController extends Controller
@@ -82,7 +86,7 @@ class MarketingController extends Controller
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->c_id, 'label' => strtoupper($query->a_name), 'data' => $query];
+                $results[] = ['id' => $query->c_id, 'label' => strtoupper($query->a_name), 'data' => $query, 'kode' => $query->a_code];
             }
         }
         return Response::json($results);
@@ -142,7 +146,7 @@ class MarketingController extends Controller
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query];
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query, 'stock' => $query->s_id];
             }
         }
         return Response::json($results);
@@ -164,6 +168,107 @@ class MarketingController extends Controller
             })
             ->first();
         return Response::json($data);
+    }
+
+    public function add_penempatanproduk(Request $request)
+    {
+        $data   = $request->all();
+        $comp   = Auth::user()->u_company;
+        $member = $data['kodeKonsigner'];
+        $user   = Auth::user()->u_id;
+        $type   = 'K';
+        $date   = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+        $total  = $data['tot_hrg'];
+        $insert = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
+        $update = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
+        $nota   = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PK', '-');
+        $idSales= (DB::table('d_sales')->max('s_id')) ? DB::table('d_sales')->max('s_id') + 1 : 1;
+
+        DB::beginTransaction();
+        try{
+            $val_sales = [
+                's_id'      => $idSales,
+                's_comp'    => $comp,
+                's_member'  => $member,
+                's_type'    => $type,
+                's_date'    => $date,
+                's_nota'    => $nota,
+                's_total'   => $total,
+                's_user'    => $user,
+                's_insert'  => $insert,
+                's_update'  => $update
+            ];
+
+            $sddetail = (DB::table('d_salesdt')->where('sd_sales', '=', $idSales)->max('sd_detailid')) ? (DB::table('d_salesdt')->where('sd_sales', '=', $idSales)->max('sd_detailid')) + 1 : 1;
+            $detailsd = $sddetail;
+            $val_salesdt = [];
+            for ($i = 0; $i < count($data['idItem']); $i++) {
+                $val_salesdt[] = [
+                    'sd_sales' => $idSales,
+                    'sd_detailid' => $detailsd,
+                    'sd_comp' => $comp,
+                    'sd_item' => $data['idItem'][$i],
+                    'sd_qty' => $data['jumlah'][$i],
+                    'sd_unit' => $data['satuan'][$i],
+                    'sd_value' => Currency::removeRupiah($data['harga'][$i]),
+                    'sd_discpersen' => 0,
+                    'sd_discvalue' => 0,
+                    'sd_totalnet' => Currency::removeRupiah($data['subtotal'][$i])
+                ];
+                $detailsd++;
+
+                //mutasi
+                $data_check = DB::table('m_item')
+                    ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                        'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                        'm_item.i_unit3 as unit3')
+                    ->where('i_id', '=', $data['idItem'][$i])
+                    ->first();
+
+                $qty_compare = 0;
+                if ($data['satuan'][$i] == $data_check->unit1) {
+                    $qty_compare = $data['jumlah'][$i];
+                } else if ($data['satuan'][$i] == $data_check->unit2) {
+                    $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
+                } else if ($data['satuan'][$i] == $data_check->unit3) {
+                    $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
+                }
+
+                $stock = DB::table('d_stock')
+                    ->where('s_id', '=', $data['idStock'][$i])
+                    ->where('s_comp', '=', $comp)
+                    ->where('s_position', '=', $comp)
+                    ->where('s_item', '=', $data['idItem'][$i])
+                    ->where('s_status', '=', 'ON DESTINATION')
+                    ->where('s_condition', '=', 'FINE')
+                    ->first();
+
+                $stock_mutasi = DB::table('d_stock_mutation')
+                    ->where('sm_stock', '=', $stock->s_id)
+                    ->first();
+
+                $posisi = DB::table('m_company')
+                    ->where('c_user', '=', $member)
+                    ->first();
+
+                Mutasi::mutasikeluar(13, $comp, $comp, $data['idItem'][$i], $qty_compare, $nota);
+                Mutasi::mutasimasuk(12, $posisi->c_id, $posisi->c_id, $data['idItem'][$i], $qty_compare, 'ON DESTINATION', 'FINE', $stock_mutasi->sm_hpp, $stock_mutasi->sm_sell, $nota, $stock_mutasi->sm_nota);
+            }
+
+            DB::table('d_sales')->insert($val_sales);
+            DB::table('d_salesdt')->insert($val_salesdt);
+            DB::commit();
+            return Response::json([
+                'status' => "Success",
+                'message'=> "Data berhasil disimpan"
+            ]);
+        }catch (Exception $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e
+            ]);
+        }
     }
 
     public function konsinyasipusat()
