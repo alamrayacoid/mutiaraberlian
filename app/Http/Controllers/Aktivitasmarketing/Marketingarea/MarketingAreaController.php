@@ -786,11 +786,6 @@ class MarketingAreaController extends Controller
     {
         return view('marketing/marketingarea/datakonsinyasi/edit');
     }
-    
-    public function agen()
-    {
-        return view('marketing/agen/index');
-    }
 
     public function create_orderprodukagenpusat()
     {

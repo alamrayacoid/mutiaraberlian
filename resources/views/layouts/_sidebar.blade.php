@@ -305,7 +305,7 @@
                       @endif
                       @if ($sidebar[22]->ua_read == 'Y')
                         <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                            <a href="{{ route('mngagen.index') }}">Manajemen Agen</a>
+                            <a href="{{ route('manajemenagen.index') }}">Manajemen Agen</a>
                         </li>
                       @endif
                     </ul>
@@ -407,37 +407,37 @@
                             <ul class="sidebar-nav">
                               @if ($sidebar[37]->ua_read == 'Y')
                                 <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('mngagen.index') }}">Analisa Progress Terhadap Perencanaan</a>
+                                    <a href="{{ route('manajemenagen.index') }}">Analisa Progress Terhadap Perencanaan</a>
                                 </li>
                               @endif
                               @if ($sidebar[38]->ua_read == 'Y')
                                 <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('mngagen.index') }}">Analisa Net Profit Terhadap OCF</a>
+                                    <a href="{{ route('manajemenagen.index') }}">Analisa Net Profit Terhadap OCF</a>
                                 </li>
                               @endif
                               @if ($sidebar[39]->ua_read == 'Y')
                                 <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('mngagen.index') }}">Analisa Pertumbuhan Aset Terhadap ETA</a>
+                                    <a href="{{ route('manajemenagen.index') }}">Analisa Pertumbuhan Aset Terhadap ETA</a>
                                 </li>
                               @endif
                               @if ($sidebar[40]->ua_read == 'Y')
                                 <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('mngagen.index') }}">Analisa Cashflow</a>
+                                    <a href="{{ route('manajemenagen.index') }}">Analisa Cashflow</a>
                                 </li>
                               @endif
                               @if ($sidebar[41]->ua_read == 'Y')
                                 <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('mngagen.index') }}">Analisa Common Size</a>
+                                    <a href="{{ route('manajemenagen.index') }}">Analisa Common Size</a>
                                 </li>
                               @endif
                               @if ($sidebar[42]->ua_read == 'Y')
                                 <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('mngagen.index') }}">Analisa Ratio Liquiditas</a>
+                                    <a href="{{ route('manajemenagen.index') }}">Analisa Ratio Liquiditas</a>
                                 </li>
                               @endif
                               @if ($sidebar[43]->ua_read == 'Y')
                                 <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('mngagen.index') }}">Analisa Return on Equity</a>
+                                    <a href="{{ route('manajemenagen.index') }}">Analisa Return on Equity</a>
                                 </li>
                               @endif
                             </ul>
