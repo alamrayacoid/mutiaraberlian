@@ -182,6 +182,12 @@
                 }
             })
 
+            $("#konsigner").on("keyup", function (evt) {
+                evt.preventDefault();
+                $("#idKonsigner").val('');
+                visibleTableItem();
+            })
+
             $( "#konsigner" ).autocomplete({
                 source: function( request, response ) {
                     $.ajax({
@@ -249,15 +255,8 @@
                 return checkitem;
             }
 
-            $(document).on('click', '.btn-submit', function () {
-                $.toast({
-                    heading: 'Success',
-                    text: 'Data Berhasil di Simpan',
-                    bgColor: '#00b894',
-                    textColor: 'white',
-                    loaderBg: '#55efc4',
-                    icon: 'success'
-                })
+            $(document).on('click', '.btn-submit', function (evt) {
+                evt.preventDefault();
             })
         });
 
@@ -461,8 +460,12 @@
         function visibleTableItem() {
             if ($("#provinsi").val() != "" && $("#kota").val() != "" && $("#idKonsigner").val() != "") {
                 $("#tbl_item").show('slow');
+                $(".btn-submit").attr("disabled", false);
+                $(".btn-submit").css({"cursor":"pointer"});
             }else{
                 $("#tbl_item").hide('slow');
+                $(".btn-submit").attr("disabled", true);
+                $(".btn-submit").css({"cursor":"not-allowed"});
             }
         }
 
