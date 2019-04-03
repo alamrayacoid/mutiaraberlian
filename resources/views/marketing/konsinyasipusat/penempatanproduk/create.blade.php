@@ -185,6 +185,7 @@
                     $("#idKonsigner").val('');
                     $("#kodeKonsigner").val('');
                     $("#konsigner").val('');
+                    $("#konsigner").attr('autofocus', true);
                 }
             })
 
@@ -664,6 +665,7 @@
                             })
                             $("#kota").append(option);
                             loadingHide();
+                            $("#kota").focus();
                         })
                         .catch(function (error) {
                             loadingHide();
