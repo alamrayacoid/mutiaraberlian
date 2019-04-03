@@ -170,6 +170,21 @@ class MarketingController extends Controller
         return Response::json($data);
     }
 
+    public function checkStock($stock = null, $item = null)
+    {
+        $data = DB::table('d_stock')
+            ->join('d_stock_mutation', function($sm){
+                $sm->on('sm_stock', '=', 's_id');
+            })
+            ->where('s_id', '=', $stock)
+            ->where('s_item', '=', $item)
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('s_condition', '=', 'FINE')
+            ->select('sm_residue as sisa')
+            ->first();
+        return Response::json($data);
+    }
+
     public function add_penempatanproduk(Request $request)
     {
         $data   = $request->all();
