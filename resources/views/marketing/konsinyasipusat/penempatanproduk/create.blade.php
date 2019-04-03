@@ -113,13 +113,13 @@
                                                                    name="jumlah[]"
                                                                    min="0"
                                                                    class="form-control form-control-sm jumlah"
-                                                                   value="0">
+                                                                   value="0" readonly>
                                                         </td>
                                                         <td>
                                                             <input type="text"
                                                                    name="harga[]"
                                                                    class="form-control form-control-sm input-rupiah harga"
-                                                                   value="Rp. 0">
+                                                                   value="Rp. 0" readonly>
                                                         </td>
                                                         <td>
                                                             <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly>
@@ -224,6 +224,14 @@
                 $(".kode").eq(idxBarang).val('');
                 $(".idStock").eq(idxBarang).val('');
                 setArrayCode();
+                if ($(".itemid").eq(idxBarang).val() == "") {
+                    $(".jumlah").eq(idxBarang).attr("readonly", true);
+                    $(".harga").eq(idxBarang).attr("readonly", true);
+                    $(".satuan").eq(idxBarang).find('option').remove();
+                }else{
+                    $(".jumlah").eq(idxBarang).attr("readonly", false);
+                    $(".harga").eq(idxBarang).attr("readonly", false);
+                }
             });
 
             $(document).on('click', '.btn-hapus', function () {
@@ -231,6 +239,15 @@
                 updateTotalTampil();
                 setArrayCode();
             });
+
+            if ($(".itemid").eq(idxBarang).val() == "") {
+                $(".jumlah").eq(idxBarang).attr("readonly", true);
+                $(".harga").eq(idxBarang).attr("readonly", true);
+                $(".satuan").eq(idxBarang).find('option').remove();
+            }else{
+                $(".jumlah").eq(idxBarang).attr("readonly", false);
+                $(".harga").eq(idxBarang).attr("readonly", false);
+            }
 
             $('.btn-tambahp').on('click', function () {
                 tambah();
@@ -370,8 +387,8 @@
                 '<select name="satuan[]" class="form-control form-control-sm select2 satuan">'+
                 '</select>'+
                 '</td>'+
-                '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0"></td>'+
-                '<td><input type="text" name="harga[]" class="form-control form-control-sm input-rupiah harga" value="Rp. 0"></td>'+
+                '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>'+
+                '<td><input type="text" name="harga[]" class="form-control form-control-sm input-rupiah harga" value="Rp. 0" readonly></td>'+
                 '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
                 '<td>'+
                 '<button class="btn btn-danger btn-hapus btn-sm" type="button">'+
@@ -396,6 +413,15 @@
             $(".barang").on("keyup", function () {
                 $(".itemid").eq(idxBarang).val('');
                 $(".kode").eq(idxBarang).val('');
+                setArrayCode();
+                if ($(".itemid").eq(idxBarang).val() == "") {
+                    $(".jumlah").eq(idxBarang).attr("readonly", true);
+                    $(".harga").eq(idxBarang).attr("readonly", true);
+                    $(".satuan").eq(idxBarang).find('option').remove();
+                }else{
+                    $(".jumlah").eq(idxBarang).attr("readonly", false);
+                    $(".harga").eq(idxBarang).attr("readonly", false);
+                }
             });
 
             setArrayCode();
@@ -472,6 +498,14 @@
                         option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
                     }
                     $(".satuan").eq(idxBarang).append(option);
+                    if ($(".itemid").eq(idxBarang).val() == "") {
+                        $(".jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".harga").eq(idxBarang).attr("readonly", true);
+                        $(".satuan").eq(idxBarang).find('option').remove();
+                    }else{
+                        $(".jumlah").eq(idxBarang).attr("readonly", false);
+                        $(".harga").eq(idxBarang).attr("readonly", false);
+                    }
                 }
             });
         }
