@@ -52,10 +52,25 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-
+    var table_sup, table_pus;
 	$(document).ready(function(){
-		var table_sup = $('#table_penempatan').DataTable();
-		var table_pus = $('#table_monitoringpenjualan').DataTable();
+		table_sup = $('#table_penempatan').DataTable({
+            responsive: true,
+            autoWidth: false,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('konsinyasipusat.getData') }}",
+                type: "get"
+            },
+            columns: [
+                {data: 'tanggal'},
+                {data: 'nota'},
+                {data: 'konsigner'},
+                {data: 'total'},
+                {data: 'action'}
+            ],
+        });
+		table_pus = $('#table_monitoringpenjualan').DataTable();
 
 		$(document).on('click','.btn-edit-pp',function(){
 			window.location.href='{{route('penempatanproduk.edit')}}'
