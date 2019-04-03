@@ -168,6 +168,7 @@
         $(document).ready(function () {
             getProv();
             getKota();
+            changeSatuan();
             changeJumlah();
             changeHarga();
             visibleTableItem();
@@ -312,6 +313,53 @@
             })
         });
 
+        function changeSatuan() {
+            $(".satuan").on("change", function (evt) {
+                var idx = $('.satuan').index(this);
+                var jumlah = $('.jumlah').eq(idx).val();
+                if (jumlah == "") {
+                    jumlah = null;
+                }
+                axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
+                    .then(function (resp) {
+                        $(".jumlah").eq(idx).val(resp.data);
+
+                        var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                            jumlah  = [].map.call(inpJumlah, function( input ) {
+                                return parseInt(input.value);
+                            });
+
+                        var inpHarga = document.getElementsByClassName( 'harga' ),
+                            harga  = [].map.call(inpHarga, function( input ) {
+                                return input.value;
+                            });
+
+                        for (var i = 0; i < jumlah.length; i++) {
+                            var hasil = 0;
+                            var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                            var jml = jumlah[i];
+
+                            if (jml == "") {
+                                jml = 0;
+                            }
+
+                            hasil += parseInt(hrg) * parseInt(jml);
+
+                            if (isNaN(hasil)) {
+                                hasil = 0;
+                            }
+                            hasil = convertToRupiah(hasil);
+                            $(".subtotal").eq(i).val(hasil);
+
+                        }
+                        updateTotalTampil();
+                    })
+                    .catch(function (error) {
+                        messageWarning("Error", error);
+                    })
+            })
+        }
+
         function changeJumlah() {
             $(".jumlah").on('input', function (evt) {
                 var idx = $('.jumlah').index(this);
@@ -410,6 +458,7 @@
                 '</td>'+
                 '</tr>';
             $('#table_rencana tbody').append(row);
+            changeSatuan();
             changeJumlah();
             changeHarga();
 
