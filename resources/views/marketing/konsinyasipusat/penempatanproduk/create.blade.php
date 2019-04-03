@@ -315,11 +315,13 @@
         function changeJumlah() {
             $(".jumlah").on('input', function (evt) {
                 var idx = $('.jumlah').index(this);
-                axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val())
+                var jumlah = $('.jumlah').eq(idx).val();
+                if (jumlah == "") {
+                    jumlah = null;
+                }
+                axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
                     .then(function (resp) {
-                        if ($(".jumlah").eq(idx).val() > resp.data.sisa) {
-                            $(".jumlah").eq(idx).val(resp.data.sisa);
-                        }
+                        $(".jumlah").eq(idx).val(resp.data);
 
                         var inpJumlah = document.getElementsByClassName( 'jumlah' ),
                             jumlah  = [].map.call(inpJumlah, function( input ) {

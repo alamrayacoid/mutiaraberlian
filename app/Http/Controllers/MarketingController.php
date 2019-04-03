@@ -170,8 +170,15 @@ class MarketingController extends Controller
         return Response::json($data);
     }
 
-    public function checkStock($stock = null, $item = null)
+    public function checkStock($stock = null, $item = null, $satuan = null, $qty = null)
     {
+        $data_check = DB::table('m_item')
+            ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                'm_item.i_unit3 as unit3')
+            ->where('i_id', '=', $item)
+            ->first();
+
         $data = DB::table('d_stock')
             ->join('d_stock_mutation', function($sm){
                 $sm->on('sm_stock', '=', 's_id');
@@ -182,7 +189,30 @@ class MarketingController extends Controller
             ->where('s_condition', '=', 'FINE')
             ->select('sm_residue as sisa')
             ->first();
-        return Response::json($data);
+
+        $qty_compare = 0;
+        if ($satuan == $data_check->unit1) {
+            if ((int)$qty > (int)$data->sisa) {
+                $qty_compare = $data->sisa;
+            } else {
+                $qty_compare = $qty;
+            }
+        } else if ($satuan == $data_check->unit2) {
+            $compare = (int)$qty * (int)$data_check->compare2;
+            if ((int)$compare > (int)$data->sisa) {
+                $qty_compare = (int)$data->sisa/(int)$data_check->compare2;
+            } else {
+                $qty_compare = $qty;
+            }
+        } else if ($satuan == $data_check->unit3) {
+            $compare = (int)$qty * (int)$data_check->compare3;
+            if ((int)$compare > (int)$data->sisa) {
+                $qty_compare = (int)$data->sisa/(int)$data_check->compare3;
+            } else {
+                $qty_compare = $qty;
+            }
+        }
+        return Response::json($qty_compare);
     }
 
     public function add_penempatanproduk(Request $request)
