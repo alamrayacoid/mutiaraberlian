@@ -144,10 +144,9 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="519">
-              <caret line="187" column="41" selection-start-line="187" selection-start-column="41" selection-end-line="187" selection-end-column="41" />
+            <state relative-caret-position="267">
+              <caret line="193" column="37" selection-start-line="193" selection-start-column="37" selection-end-line="193" selection-end-column="37" />
               <folding>
-                <element signature="e#10450#10627#0#HTML" />
                 <element signature="e#10673#11440#0#HTML" />
                 <element signature="e#11660#11862#0#HTML" />
                 <element signature="e#11928#12060#0#HTML" />
@@ -656,14 +655,7 @@
       <workItem from="1553824711879" duration="12858000" />
       <workItem from="1554168735626" duration="5124000" />
       <workItem from="1554176903212" duration="17794000" />
-      <workItem from="1554260564206" duration="5885000" />
-    </task>
-    <task id="LOCAL-00053" summary="mutiara">
-      <created>1553074455951</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1553074455957</updated>
+      <workItem from="1554260564206" duration="6556000" />
     </task>
     <task id="LOCAL-00054" summary="mutiara">
       <created>1553074500835</created>
@@ -1001,11 +993,18 @@
       <option name="project" value="LOCAL" />
       <updated>1554266537643</updated>
     </task>
-    <option name="localTasksCounter" value="102" />
+    <task id="LOCAL-00102" summary="mutiara">
+      <created>1554266941734</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1554266941735</updated>
+    </task>
+    <option name="localTasksCounter" value="103" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="342887000" />
+    <option name="totallyTimeSpent" value="343558000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1366" height="768" extended-state="6" />
@@ -1446,10 +1445,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="519">
-          <caret line="187" column="41" selection-start-line="187" selection-start-column="41" selection-end-line="187" selection-end-column="41" />
+        <state relative-caret-position="267">
+          <caret line="193" column="37" selection-start-line="193" selection-start-column="37" selection-end-line="193" selection-end-column="37" />
           <folding>
-            <element signature="e#10450#10627#0#HTML" />
             <element signature="e#10673#11440#0#HTML" />
             <element signature="e#11660#11862#0#HTML" />
             <element signature="e#11928#12060#0#HTML" />

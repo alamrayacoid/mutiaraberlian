@@ -191,9 +191,18 @@
 
             $("#konsigner").on("keyup", function (evt) {
                 evt.preventDefault();
-                $("#idKonsigner").val('');
-                $("#kodeKonsigner").val('');
-                visibleTableItem();
+                if (evt.which == 8 || evt.which == 46)
+                {
+                    $("#idKonsigner").val('');
+                    $("#kodeKonsigner").val('');
+                    visibleTableItem();
+                } else if (evt.which <= 90 && evt.which >= 48)
+                {
+                    $("#idKonsigner").val('');
+                    $("#kodeKonsigner").val('');
+                    visibleTableItem();
+                }
+
             })
 
             $( "#konsigner" ).autocomplete({
