@@ -316,6 +316,39 @@ class MarketingController extends Controller
         }
     }
 
+    public function getKonsinyasi()
+    {
+        $data = DB::table('d_sales')
+            ->join('d_salesdt', function ($sd){
+                $sd->on('sd_sales', '=', 's_id');
+            })
+            ->join('m_company', 'c_user', '=', 's_member')
+            ->where('s_type', '=', 'K')
+            ->select('s_date as tanggal', 's_nota as nota', 'c_name as konsigner', DB::raw("CONCAT('Rp. ',FORMAT(s_total, 0, 'de_DE')) as total"));
+
+        return DataTables::of($data)
+            ->addColumn('tanggal', function($data){
+                return date('d-m-Y', strtotime($data->tanggal));
+            })
+            ->addColumn('nota', function($data){
+                return $data->nota;
+            })
+            ->addColumn('konsigner', function($data){
+                return $data->konsigner;
+            })
+            ->addColumn('total', function($data){
+                return $data->total;
+            })
+            ->addColumn('action', function($data){
+                $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail"><i class="fa fa-folder"></i></button>';
+                $edit = '<button class="btn btn-warning btn-edit-pp" type="button" title="Edit"><i class="fa fa-pencil"></i></button>';
+                $delete = '<button class="btn btn-danger btn-disable-pp" type="button" title="Hapus"><i class="fa fa-times-circle"></i></button>';
+                return '<div class="btn-group btn-group-sm">'. $detail . $edit . $delete . '</div>';
+            })
+            ->rawColumns(['tanggal','nota', 'konsigner', 'total','action'])
+            ->make(true);
+    }
+
     public function konsinyasipusat()
     {
     	return view('marketing/konsinyasipusat/index');
