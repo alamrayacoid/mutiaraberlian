@@ -230,19 +230,51 @@
                 setArrayCode();
             });
 
-            $(".barang").eq(idxBarang).on("keyup", function () {
-                $(".itemid").eq(idxBarang).val('');
-                $(".kode").eq(idxBarang).val('');
-                $(".idStock").eq(idxBarang).val('');
-                setArrayCode();
-                if ($(".itemid").eq(idxBarang).val() == "") {
-                    $(".jumlah").eq(idxBarang).attr("readonly", true);
-                    $(".harga").eq(idxBarang).attr("readonly", true);
-                    $(".satuan").eq(idxBarang).find('option').remove();
-                }else{
-                    $(".jumlah").eq(idxBarang).attr("readonly", false);
-                    $(".harga").eq(idxBarang).attr("readonly", false);
+            $(".barang").eq(idxBarang).on("keyup", function (evt) {
+                if (evt.which == 8 || evt.which == 46)
+                {
+                    $(".itemid").eq(idxBarang).val('');
+                    $(".kode").eq(idxBarang).val('');
+                    $(".idStock").eq(idxBarang).val('');
+                    setArrayCode();
+                    if ($(".itemid").eq(idxBarang).val() == "") {
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".harga").eq(idxBarang).attr("readonly", true);
+                        $(".satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampil();
+                    }else{
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", false);
+                        $(".harga").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampil();
+                    }
+                } else if (evt.which <= 90 && evt.which >= 48)
+                {
+                    $(".itemid").eq(idxBarang).val('');
+                    $(".kode").eq(idxBarang).val('');
+                    $(".idStock").eq(idxBarang).val('');
+                    setArrayCode();
+                    if ($(".itemid").eq(idxBarang).val() == "") {
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".harga").eq(idxBarang).attr("readonly", true);
+                        $(".satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampil();
+                    }else{
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", false);
+                        $(".harga").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampil();
+                    }
                 }
+
             });
 
             $(document).on('click', '.btn-hapus', function () {
@@ -483,17 +515,49 @@
                 setArrayCode();
             });
 
-            $(".barang").on("keyup", function () {
-                $(".itemid").eq(idxBarang).val('');
-                $(".kode").eq(idxBarang).val('');
-                setArrayCode();
-                if ($(".itemid").eq(idxBarang).val() == "") {
-                    $(".jumlah").eq(idxBarang).attr("readonly", true);
-                    $(".harga").eq(idxBarang).attr("readonly", true);
-                    $(".satuan").eq(idxBarang).find('option').remove();
-                }else{
-                    $(".jumlah").eq(idxBarang).attr("readonly", false);
-                    $(".harga").eq(idxBarang).attr("readonly", false);
+            $(".barang").on("keyup", function (evt) {
+                if (evt.which == 8 || evt.which == 46)
+                {
+                    $(".itemid").eq(idxBarang).val('');
+                    $(".kode").eq(idxBarang).val('');
+                    $(".idStock").eq(idxBarang).val('');
+                    setArrayCode();
+                    if ($(".itemid").eq(idxBarang).val() == "") {
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".harga").eq(idxBarang).attr("readonly", true);
+                        $(".satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampil();
+                    }else{
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", false);
+                        $(".harga").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampil();
+                    }
+                } else if (evt.which <= 90 && evt.which >= 48)
+                {
+                    $(".itemid").eq(idxBarang).val('');
+                    $(".kode").eq(idxBarang).val('');
+                    $(".idStock").eq(idxBarang).val('');
+                    setArrayCode();
+                    if ($(".itemid").eq(idxBarang).val() == "") {
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".harga").eq(idxBarang).attr("readonly", true);
+                        $(".satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampil();
+                    }else{
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", false);
+                        $(".harga").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampil();
+                    }
                 }
             });
 
