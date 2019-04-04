@@ -316,6 +316,24 @@ class MarketingController extends Controller
         }
     }
 
+    public function detailKonsinyasi($id = null, $action = null)
+    {
+        try{
+            $id = Crypt::decrypt($id);
+        }catch (DecryptException $e){
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e
+            ]);
+        }
+
+        if ($action == "detail") {
+            //
+        } else {
+            //
+        }
+    }
+
     public function getKonsinyasi()
     {
         $data = DB::table('d_sales')
@@ -324,7 +342,7 @@ class MarketingController extends Controller
             })
             ->join('m_company', 'c_user', '=', 's_member')
             ->where('s_type', '=', 'K')
-            ->select('s_date as tanggal', 's_nota as nota', 'c_name as konsigner', DB::raw("CONCAT('Rp. ',FORMAT(s_total, 0, 'de_DE')) as total"));
+            ->select('s_id as id', 's_date as tanggal', 's_nota as nota', 'c_name as konsigner', DB::raw("CONCAT('Rp. ',FORMAT(s_total, 0, 'de_DE')) as total"));
 
         return DataTables::of($data)
             ->addColumn('tanggal', function($data){
@@ -340,9 +358,9 @@ class MarketingController extends Controller
                 return $data->total;
             })
             ->addColumn('action', function($data){
-                $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail"><i class="fa fa-folder"></i></button>';
-                $edit = '<button class="btn btn-warning btn-edit-pp" type="button" title="Edit"><i class="fa fa-pencil"></i></button>';
-                $delete = '<button class="btn btn-danger btn-disable-pp" type="button" title="Hapus"><i class="fa fa-times-circle"></i></button>';
+                $detail = '<button class="btn btn-primary" type="button" title="Detail" onclick="detailKonsinyasi(\''.Crypt::encrypt($data->id).'\')"><i class="fa fa-folder"></i></button>';
+                $edit = '<button class="btn btn-warning" type="button" title="Edit"><i class="fa fa-pencil"></i></button>';
+                $delete = '<button class="btn btn-danger" type="button" title="Hapus"><i class="fa fa-trash"></i></button>';
                 return '<div class="btn-group btn-group-sm">'. $detail . $edit . $delete . '</div>';
             })
             ->rawColumns(['tanggal','nota', 'konsigner', 'total','action'])

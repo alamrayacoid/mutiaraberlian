@@ -126,13 +126,6 @@
 	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 		})
 
-		
-		$(document).ready(function() {
-			$('#modal-penempatan').DataTable( {
-				"iDisplayLength" : 5
-			});
-		});
-
 		$(document).ready(function() {
 			$('#detail-monitoring').DataTable( {
 				"iDisplayLength" : 5
@@ -155,5 +148,17 @@
 		});
 
 	});
+
+	function detailKonsinyasi(id) {
+        if ($.fn.DataTable.isDataTable("#modal-penempatan")) {
+            $('#modal-penempatan').dataTable().fnDestroy();
+        }
+
+        $('#modal-penempatan').DataTable({
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
+        });
+
+	    $("#detailKonsinyasi").modal('show');
+    }
 </script>
 @endsection
