@@ -462,19 +462,19 @@
 
     // Show name File Upload
     $('#imageupload').on('change',function(){
-        var fileName = $(this).val();
+        var fileName = $(this).val().replace('C:\\fakepath\\', " ");;
         $(this).next('.custom-file-label').html(fileName);
     })
     $('#ktpupload').on('change',function(){
-        var fileName = $(this).val();
+        var fileName = $(this).val().replace('C:\\fakepath\\', " ");;
         $(this).next('.custom-file-label').html(fileName);
     })
     $('#ijazahupload').on('change',function(){
-        var fileName = $(this).val();
+        var fileName = $(this).val().replace('C:\\fakepath\\', " ");;
         $(this).next('.custom-file-label').html(fileName);
     })
     $('#etcupload').on('change',function(){
-        var fileName = $(this).val();
+        var fileName = $(this).val().replace('C:\\fakepath\\', " ");;
         $(this).next('.custom-file-label').html(fileName);
     })
 
