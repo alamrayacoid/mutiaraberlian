@@ -40,14 +40,14 @@ class RekrutmentController extends Controller
     return Datatables::of($datas)
       ->addIndexColumn()
       ->addColumn('tgl_apply', function($datas) {
-        return '<td>'. Carbon::parse($datas->p_created)->format('d M Y') .'</td>';
+        return '<td>'. Carbon::parse($datas->p_created)->format('D, d M Y') .'</td>';
       })
       ->addColumn('status', function($datas) {
         if ($datas->p_state == 'Y') {
           return '<td>Diterima</td>';
         } elseif ($datas->p_state == 'P') {
           return '<td>Pending</td>';
-        } elseif ($datas->p_state == 'N') {
+        } else {
           return '<td>Ditolak</td>';
         }
       })
@@ -56,10 +56,10 @@ class RekrutmentController extends Controller
       })
       ->addColumn('action', function($datas) {
         return '<div class="btn-group btn-group-sm">
-            <button class="btn btn-primary btn-preview-rekruitmen hint--bottom-left hint--info" type="button" aria-label="Lihat Data"><i class="fa fa-search"></i></button>
-            <button class="btn btn-warning btn-proses-rekruitmen hint--bottom-left hint--warning" type="button" aria-label="Proses Data"><i class="fa fa-file-powerpoint-o"></i></button>
-            <button class="btn btn-danger btn-disable-rekruitmen hint--bottom-left hint--error" type="button" aria-label="Nonaktifkan Data"><i class="fa fa-times-circle"></i></button>
-            </div>';
+                  <button class="btn btn-primary btn-preview-rekruitmen hint--top-left hint--info" type="button" aria-label="Detail Pelamar" onclick="detail(\''.$datas->p_id.'\')"><i class="fa fa-fw fa-file"></i></button>
+                  <button class="btn btn-warning btn-proses-rekruitmen hint--top-left hint--warning" type="button" aria-label="Proses Data" onclick="proses(\''.$datas->p_id.'\')"><i class="fa fa-fw fa-file-powerpoint-o"></i></button>
+                  <button class="btn btn-danger btn-disable-rekruitmen hint--top-left hint--error" type="button" aria-label="Nonaktifkan Data" onclick="nonActivate(\''.$datas->p_id.'\')"><i class="fa fa-fw fa-times-circle"></i></button>
+                </div>';
       })
       ->rawColumns(['tgl_apply', 'status', 'approval', 'action'])
       ->make(true);

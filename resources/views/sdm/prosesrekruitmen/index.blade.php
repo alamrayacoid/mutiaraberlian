@@ -5,42 +5,30 @@
 @include('sdm.prosesrekruitmen.modal_calonkaryawan')
 
 <article class="content">
-
 	<div class="title-block text-primary">
-	    <h1 class="title"> Proses Rekruitmen </h1>
-	    <p class="title-description">
-	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas SDM</span> / <span class="text-primary" style="font-weight: bold;">Proses Rekruitmen</span>
-	     </p>
+		<h1 class="title"> Proses Rekruitmen </h1>
+		<p class="title-description">
+			<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas SDM</span> / <span class="text-primary" style="font-weight: bold;">Proses Rekruitmen</span>
+		</p>
 	</div>
-
 	<section class="section">
-
 		<div class="row">
-
 			<div class="col-12">
-
-                <ul class="nav nav-pills mb-3" id="Tabzs">
-                    <li class="nav-item">
-                        <a href="#list_rekruitmen" class="nav-link active" data-target="#list_rekruitmen" aria-controls="list_rekruitmen" data-toggle="tab" role="tab">Rekruitmen</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#list_pelamarditerima" class="nav-link" data-target="#list_pelamarditerima" aria-controls="list_pelamarditerima" data-toggle="tab" role="tab">Daftar Pelamar Diterima</a>
-                    </li>
-                </ul>
-
-                <div class="tab-content">
-
-                	@include('sdm.prosesrekruitmen.tab_rekruitmen')
-                	@include('sdm.prosesrekruitmen.tab_pelamarditerima')
-
-	            </div>
-
+				<ul class="nav nav-pills mb-3" id="Tabzs">
+					<li class="nav-item">
+						<a href="#list_rekruitmen" class="nav-link active" data-target="#list_rekruitmen" aria-controls="list_rekruitmen" data-toggle="tab" role="tab">Rekruitmen</a>
+					</li>
+					<li class="nav-item">
+						<a href="#list_pelamarditerima" class="nav-link" data-target="#list_pelamarditerima" aria-controls="list_pelamarditerima" data-toggle="tab" role="tab">Daftar Pelamar Diterima</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					@include('sdm.prosesrekruitmen.tab_rekruitmen')
+					@include('sdm.prosesrekruitmen.tab_pelamarditerima')
+				</div>
 			</div>
-
 		</div>
-
 	</section>
-
 </article>
 
 @endsection
