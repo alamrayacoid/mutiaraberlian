@@ -43,14 +43,14 @@
 
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <select name="provinsi" id="provinsi" class="form-control form-control-sm select2" disabled>
+                                                <select name="provinsi" id="provinsi" class="form-control form-control-sm select2">
                                                 </select>
                                             </div>
                                         </div>
 
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <select name="kota" id="kota" class="form-control form-control-sm select2" disabled>
+                                                <select name="kota" id="kota" class="form-control form-control-sm select2">
                                                 </select>
                                             </div>
                                         </div>
@@ -61,9 +61,10 @@
 
                                         <div class="col-md-10 col-sm-12">
                                             <div class="form-group">
-                                                <input type="hidden" name="idKonsigner" id="idKonsigner">
-                                                <input type="hidden" name="kodeKonsigner" id="kodeKonsigner">
-                                                <input type="text" name="konsigner" id="konsigner" class="form-control form-control-sm" oninput="handleInput(event)" disabled>
+                                                <input type="hidden" name="idKonsigner" id="idKonsigner" value="{{ $detail->c_id }}">
+                                                <input type="hidden" name="kodeKonsigner" id="kodeKonsigner" value="{{ $detail->c_user }}">
+                                                <input type="text" name="konsigner" id="konsigner" class="form-control form-control-sm"
+                                                       value="{{ strtoupper($detail->c_name) }}" oninput="handleInput(event)">
                                             </div>
                                         </div>
 
@@ -74,13 +75,18 @@
                                         <div class="col-md-10 col-sm-12">
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm"
-                                                       name="total_harga" id="total_harga" value="Rp. 0" readonly>
-                                                <input type="hidden" name="tot_hrg" id="tot_hrg">
+                                                       name="total_harga"
+                                                       id="total_harga" value="{{ Currency::addRupiah($detail->s_total) }}" readonly>
                                             </div>
                                         </div>
 
                                         <div class="container" id="tbl_item" style="display: none;">
                                             <div class="table-responsive mt-3">
+                                                <div class="text-right">
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-success btn-tambahp"><i
+                                                            class="fa fa-plus"></i> Tambah Baris</button>
+                                                </div>
                                                 <table class="table table-hover table-striped" id="table_rencana"
                                                        cellspacing="0">
                                                     <thead class="bg-primary">
@@ -94,18 +100,27 @@
                                                     </tr>
                                                     </thead>
                                                     <tbody>
+                                                    @foreach($data_item as $data)
                                                     <tr>
                                                         <td>
-                                                            <input type="hidden" name="idItem[]" class="itemid">
-                                                            <input type="hidden" name="kode[]" class="kode">
-                                                            <input type="hidden" name="idStock[]" class="idStock">
+                                                            <input type="hidden" name="idItem[]" class="itemid" value="{{ $data->itemId }}">
+                                                            <input type="hidden" name="kode[]" class="kode" value="{{ $data->itemCode }}">
+                                                            <input type="hidden" name="idStock[]" class="idStock" value="{{ $data->stock }}">
                                                             <input type="text"
                                                                    name="barang[]"
                                                                    class="form-control form-control-sm barang"
+                                                                   value="{{ strtoupper($data->item) }}"
                                                                    autocomplete="off">
                                                         </td>
                                                         <td><select name="satuan[]"
                                                                     class="form-control form-control-sm select2 satuan">
+                                                                <option value="{{ $data->id1 }}" @if($data->unit == $data->id1) selected @endif>{{ $data->unit1 }}</option>
+                                                                @if ($data->id2 != null && $data->id2 != $data->id1)
+                                                                <option value="{{ $data->id2 }}" @if($data->unit == $data->id2) selected @endif>{{ $data->unit2 }}</option>
+                                                                @endif
+                                                                @if ($data->id3 != null && $data->id3 != $data->id1 && $data->id3 != $data->id2)
+                                                                    <option value="{{ $data->id3 }}" @if($data->unit == $data->id3) selected @endif>{{ $data->unit3 }}</option>
+                                                                @endif
                                                             </select>
                                                         </td>
                                                         <td>
@@ -113,24 +128,26 @@
                                                                    name="jumlah[]"
                                                                    min="0"
                                                                    class="form-control form-control-sm jumlah"
-                                                                   value="0" readonly>
+                                                                   value="{{ $data->qty }}" readonly>
                                                         </td>
                                                         <td>
                                                             <input type="text"
                                                                    name="harga[]"
                                                                    class="form-control form-control-sm input-rupiah harga"
-                                                                   value="Rp. 0" readonly>
+                                                                   value="{{ Currency::addRupiah($data->harga) }}" readonly>
                                                         </td>
                                                         <td>
-                                                            <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly>
-                                                            <input type="hidden" name="sbtotal[]" class="sbtotal">
+                                                            <input type="text" name="subtotal[]" style="text-align: right;"
+                                                                   class="form-control form-control-sm subtotal"
+                                                                   value="{{ Currency::addRupiah($data->totalnet) }}" readonly>
                                                         </td>
                                                         <td>
-                                                            <button type="button"
-                                                                    class="btn btn-sm btn-success rounded-circle btn-tambahp"><i
-                                                                    class="fa fa-plus"></i></button>
+                                                            <button class="btn btn-danger btn-hapus btn-sm" type="button">
+                                                                <i class="fa fa-remove" aria-hidden="true"></i>
+                                                            </button>
                                                         </td>
                                                     </tr>
+                                                    @endforeach
                                                     </tbody>
                                                 </table>
 
@@ -165,6 +182,8 @@
         var idxBarang = null;
         var icode = [];
         var checkitem = null;
+        var selectProv = '{{ $detail->a_provinsi }}';
+        var selectKota = '{{ $detail->a_kabupaten }}';
         $(document).ready(function () {
             getProv();
             getKota();
@@ -604,7 +623,7 @@
             for (var i = 0; i < subtotal.length; i++) {
                 total += parseInt(subtotal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", ""));
             }
-            $("#tot_hrg").val(total);
+
             if (isNaN(total)) {
                 total = 0;
             }
@@ -706,9 +725,32 @@
                     var option = '<option value="">Pilih Provinsi</option>';
                     var prov = resp.data;
                     prov.forEach(function (data) {
-                        option += '<option value="'+data.wp_id+'">'+data.wp_name+'</option>';
+                        if (selectProv == data.wp_id) {
+                            option += '<option value="'+data.wp_id+'" selected>'+data.wp_name+'</option>';
+                        }else{
+                            option += '<option value="'+data.wp_id+'">'+data.wp_name+'</option>';
+                        }
                     })
                     $("#provinsi").append(option);
+                    axios.get(baseUrl+'/marketing/konsinyasipusat/get-kota/'+$("#provinsi").val())
+                        .then(function (resp) {
+                            $("#kota").attr("disabled", false);
+                            var option = '<option value="">Pilih Kota</option>';
+                            var kota = resp.data;
+                            kota.forEach(function (data) {
+                                if (selectKota == data.wc_id) {
+                                    option += '<option value="'+data.wc_id+'" selected>'+data.wc_name+'</option>';
+                                }else{
+                                    option += '<option value="'+data.wc_id+'">'+data.wc_name+'</option>';
+                                }
+                            })
+                            $("#kota").append(option);
+                            loadingHide();
+                        })
+                        .catch(function (error) {
+                            loadingHide();
+                            messageWarning("Error", error)
+                        })
                     loadingHide();
                 })
                 .catch(function (error) {
