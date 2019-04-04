@@ -32,6 +32,7 @@
                             </div>
                         </div>
                         <form id="formKonsinyasi" method="post">{{ csrf_field() }}
+                            <input type="hidden" name="idSales" id="idSales" value="{{ $ids }}">
                             <div class="card-block">
                                 <section>
 
@@ -63,6 +64,7 @@
                                             <div class="form-group">
                                                 <input type="hidden" name="idKonsigner" id="idKonsigner" value="{{ $detail->c_id }}">
                                                 <input type="hidden" name="kodeKonsigner" id="kodeKonsigner" value="{{ $detail->c_user }}">
+                                                <input type="hidden" name="nota" id="nota" value="{{ $detail->s_nota }}">
                                                 <input type="text" name="konsigner" id="konsigner" class="form-control form-control-sm"
                                                        value="{{ strtoupper($detail->c_name) }}" oninput="handleInput(event)">
                                             </div>
@@ -596,7 +598,7 @@
         function simpan() {
             loadingShow();
             var data = $('#formKonsinyasi').serialize();
-            axios.post('{{ route('penempatanproduk.add') }}', data)
+            axios.post(baseUrl+'/marketing/konsinyasipusat/penempatanproduk/edit/'+$("#idSales").val(), data)
                 .then(function (response){
                     if(response.data.status == 'Success'){
                         loadingHide();
