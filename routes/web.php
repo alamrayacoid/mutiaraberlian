@@ -278,11 +278,21 @@ Route::group(['middleware' => 'auth'], function () {
 
     // !===================================================== SDM =====================================================!
     // Rekruitmen
-    Route::get('/sdm/prosesrekruitmen/index', 'SDMController@proses_rekruitmen')->name('rekruitmen.index');
-    Route::get('/sdm/prosesrekruitmen/list/{status}', 'SDM\RecruitmentController@getList')->name('rekruitmen.list');
+    Route::get('/sdm/prosesrekruitmen/index', 'SDM\RecruitmentController@index')->name('rekruitmen.index');
+    Route::get('/sdm/prosesrekruitmen/listRecruitment', 'SDM\RecruitmentController@getList')->name('rekruitmen.list');
+    Route::get('/sdm/prosesrekruitmen/simpanLoker', 'SDM\RecruitmentController@simpanLoker')->name('rekruitmen.simpanLoker');
     Route::get('/sdm/prosesrekruitmen/detail/{id}', 'SDM\RecruitmentController@detail')->name('rekruitmen.detail');
     Route::get('/sdm/prosesrekruitmen/proses/{id}', 'SDM\RecruitmentController@proses')->name('rekruitmen.proses');
+
+    Route::get('/sdm/prosesrekruitmen/listTerima', 'SDM\RecruitmentController@getListTerima')->name('rekruitmen.listTerima');
+
+    Route::get('/sdm/prosesrekruitmen/listLoker', 'SDM\RecruitmentController@getListLoker')->name('rekruitmen.listLoker');
     Route::get('/sdm/prosesrekruitment/kelolarekruitment', 'SDM\RecruitmentController@kelola_rekruitment')->name('rekruitment.kelola');
+    Route::post('/sdm/prosesrekruitment/activateLoker/{id}', 'SDM\RecruitmentController@activateLoker')->name('rekruitment.activateLoker');
+    Route::post('/sdm/prosesrekruitment/nonLoker/{id}', 'SDM\RecruitmentController@nonLoker')->name('rekruitment.nonLoker');
+    Route::get('/sdm/prosesrekruitment/editLoker/{id}', 'SDM\RecruitmentController@editLoker')->name('rekruitment.editLoker');
+    Route::get('/sdm/prosesrekruitment/updateLoker', 'SDM\RecruitmentController@updateLoker')->name('rekruitment.updateLoker');
+
     // Kinerja
     Route::get('/sdm/kinerjasdm/index', 'SDMController@kinerja')->name('kinerjasdm.index');
     // Absensi

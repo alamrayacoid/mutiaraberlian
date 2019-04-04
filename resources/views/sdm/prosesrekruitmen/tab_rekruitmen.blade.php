@@ -11,7 +11,7 @@
 		<div class="row mb-3">
 		<h6 class="col-11">Pencarian Berdasarkan :</h6>
 		<div class="d-flex justify-content-end col-1">
-			<button class="btn btn-primary rounded" type="button" onclick="filterRekrutmen()"><i class="fa fa-fw fa-filter"></i> Filter</button>
+			<button class="btn btn-primary rounded" type="button" onclick="TableRekrutmen()"><i class="fa fa-fw fa-filter"></i> Filter</button>
 		</div>
 		</div>
 			<fieldset class="mb-3 col-12">
@@ -44,7 +44,7 @@
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
 						<select class="form-control form-control-sm select2" id="education">
-							<option value="" selected disabled>Tampilkan Semua</option>
+							<option value="" selected>Tampilkan Semua</option>
 							<option value="SD">SD</option>
 							<option value="SMP">SMP</option>
 							<option value="SMA">SMA</option>

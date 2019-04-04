@@ -185,7 +185,7 @@
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <label>Sekolah/Universitas</label>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-md-7 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_schoolname}}" name="p_schoolname">
                                             </div>
@@ -195,7 +195,7 @@
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <label>Tahun Masuk</label>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-md-7 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_yearin}}" name="p_yearin">
                                             </div>
@@ -205,7 +205,7 @@
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <label>Tahun Lulus</label>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-md-7 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_yearout}}" name="p_yearout">
                                             </div>
@@ -215,7 +215,7 @@
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <label>Jurusan</label>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-md-7 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_jurusan}}" name="p_jurusan">
                                             </div>
@@ -225,7 +225,7 @@
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <label>Nilai</label>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-md-7 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_nilai}}" name="p_nilai">
                                             </div>
@@ -236,7 +236,7 @@
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <label>Nama Perusahaan</label>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-md-7 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_jobcompany1}}" name="p_jobcompany1">
                                             </div>
@@ -246,7 +246,7 @@
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <label>Tahun Awal</label>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-md-7 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_jobyear1}}" name="p_jobyear1">
                                             </div>
@@ -256,7 +256,7 @@
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <label>Tahun Akhir</label>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-md-7 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm" readonly="" value="" name="">
                                             </div>
@@ -266,7 +266,7 @@
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <label>Job Desc</label>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-md-7 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <textarea type="text" class="form-control form-control-sm" readonly="" name="p_jobdesc1">{{$data->p_jobdesc1}}</textarea>
                                             </div>
@@ -277,7 +277,7 @@
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <label>Nama Perusahaan</label>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-md-7 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm" readonly="" value="" name="">
                                             </div>
@@ -287,7 +287,7 @@
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <label>Tahun Awal</label>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-md-7 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm" readonly="" value="" name="">
                                             </div>
@@ -297,7 +297,7 @@
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <label>Tahun Akhir</label>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-md-7 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm" readonly="" value="" name="">
                                             </div>
@@ -307,7 +307,7 @@
                                         <div class="col-md-5 col-sm-6 col-xs-12">
                                             <label>Job Desc</label>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-md-7 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <textarea type="text" class="form-control form-control-sm" readonly="" name=""></textarea>
                                             </div>
@@ -324,10 +324,10 @@
                                                 <label for="">Foto</label>
                                             </div>
                                             <div class="outline-img col-12 d-flex align-items-end justify-content-center justify-content-center">
-                                                <img src="{{url('storage/uploads/recruitment', $data->p_imgfoto)}}" alt="" class="img-fluid" style="max-width:200px; max-height:300px;">
+                                                <img src="{{url('storage/uploads/recruitment', $data->p_imgfoto)}}" alt="" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;">
                                             </div>
                                             <div>
-                                                <button class="btn btn-sm btn-primary btn-block" data-toggle="modal" data-target="#view">View Image</button>
+                                                <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{url('storage/uploads/recruitment', $data->p_imgfoto)}}')">Lihat Berkas</button>
                                             </div>
                                         </div>
 
@@ -336,10 +336,10 @@
                                                 <label for="">KTP</label>
                                             </div>
                                             <div class="outline-img col-12 d-flex align-items-end justify-content-center">
-                                                <img src="{{url('storage/uploads/recruitment', $data->p_imgktp)}}" alt="" class="img-fluid" style="max-width:200px; max-height:300px;">
+                                                <img src="{{url('storage/uploads/recruitment', $data->p_imgktp)}}" alt="" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;">
                                             </div>
                                             <div>
-                                                <button class="btn btn-sm btn-primary btn-block" data-toggle="modal" data-target="#view">View Image</button>
+                                                <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{url('storage/uploads/recruitment', $data->p_imgktp)}}')">Lihat Berkas</button>
                                             </div>
                                         </div>
 
@@ -348,10 +348,10 @@
                                                 <label for="">Ijazah</label>
                                             </div>
                                             <div class="outline-img col-12 d-flex align-items-end justify-content-center">
-                                                <img src="{{url('storage/uploads/recruitment', $data->img_ijazah)}}" alt="" class="img-fluid" style="max-width:200px; max-height:300px;">
+                                                <img src="{{url('storage/uploads/recruitment', $data->img_ijazah)}}" alt="" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;">
                                             </div>
                                             <div>
-                                                <button class="btn btn-sm btn-primary btn-block" data-toggle="modal" data-target="#view">View Image</button>
+                                                <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{url('storage/uploads/recruitment', $data->img_ijazah)}}')">Lihat Berkas</button>
                                             </div>
                                         </div>
 
@@ -360,10 +360,10 @@
                                                 <label for="">Lain - Lain</label>
                                             </div>
                                             <div class="outline-img col-12 d-flex align-items-end justify-content-center">
-                                                <img src="{{url('storage/uploads/recruitment', $data->img_other)}}" alt="" class="img-fluid" style="max-width:200px; max-height:300px;">
+                                                <img src="{{url('storage/uploads/recruitment', $data->img_other)}}" alt="" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;">
                                             </div>
                                             <div>
-                                                <button class="btn btn-sm btn-primary btn-block" data-toggle="modal" data-target="#view">View Image</button>
+                                                <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{url('storage/uploads/recruitment', $data->img_other)}}')">Lihat Berkas</button>
                                             </div>
                                         </div>
                                     </div>
@@ -395,5 +395,11 @@
 			})
 		})
   });
+
+  function priview(img) {
+    $('#view_img').modal('show');
+    //$('#img_priview').remove();
+    $("#img_priview").attr("src", img);
+  }
 </script>
 @endsection

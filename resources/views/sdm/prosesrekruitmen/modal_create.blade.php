@@ -1,6 +1,6 @@
 <!-- Modal -->
 <div id="create" class="modal fade" role="dialog">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog">
 
     <!-- Modal content-->
     <div class="modal-content">
@@ -9,41 +9,43 @@
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
-
+        <form id="simpanLoker">
         <section>
-
-        <div class="row">
-            <div class="col-md-2 col-sm-12">
-                <label for="">Tanggal Awal</label>
-            </div>
-            <div class="col-md-10 col-sm-12">
-            <div class="form-group">
-                <input type="text" class="form-control form-control-sm datepicker">
-            </div>
-            </div>
-            <div class="col-md-2 col-sm-12">
-                <label for="">Tanggal Akhir</label>
-            </div>
-            <div class="col-md-10 col-sm-12">
-            <div class="form-group">
-                <input type="text" class="form-control form-control-sm datepicker">
-            </div>
-            </div>
-            <div class="col-md-2 col-sm-12">
-                <label for="">Posisi</label>
-            </div>
-            <div class="col-md-10 col-sm-12">
-            <div class="form-group">
-                <select name="" id="" class="form-control form-control-sm select2">
-                    <option value="">Pilih</option>
-                </select>
-            </div>
+            <div class="row">
+                <div class="col-md-3 col-sm-12">
+                    <label for="">Tanggal Awal</label>
+                </div>
+                <div class="col-md-9 col-sm-12">
+                <div class="form-group">
+                    <input type="text" name="a_startdate" class="form-control form-control-sm datepicker">
+                </div>
+                </div>
+                <div class="col-md-3 col-sm-12">
+                    <label for="">Tanggal Akhir</label>
+                </div>
+                <div class="col-md-9 col-sm-12">
+                <div class="form-group">
+                    <input type="text" name="a_enddate" class="form-control form-control-sm datepicker">
+                </div>
+                </div>
+                <div class="col-md-3 col-sm-12">
+                    <label for="">Posisi</label>
+                </div>
+                <div class="col-md-9 col-sm-12">
+                <div class="form-group">
+                    <select name="a_position" id="Position" class="form-control form-control-sm select2">
+                        <option value="" selected="" disabled="">=== Pilih Posisi ===</option>
+                        @foreach($jabatan as $key => $j)
+                            <option value="{{$j->j_id}}">{{$j->j_name}}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
         </section>
-
+        </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary btn-simpan-modal" data-dismiss="modal">Simpan</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="simpanLoker()">Simpan</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
