@@ -129,4 +129,9 @@ class RecruitmentController extends Controller
 
     return view('sdm/prosesrekruitmen/process', compact('data'));
   }
+
+  public function kelola_rekruitment()
+  {
+    return view('sdm/prosesrekruitmen/kelola_rekruitment');
+  }
 }

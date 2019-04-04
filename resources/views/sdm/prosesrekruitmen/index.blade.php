@@ -4,6 +4,10 @@
 
 @include('sdm.prosesrekruitmen.modal_calonkaryawan')
 
+@include('sdm.prosesrekruitmen.modal_create')
+
+@include('sdm.prosesrekruitmen.modal_edit')
+
 <article class="content">
 	<div class="title-block text-primary">
 		<h1 class="title"> Proses Rekruitmen </h1>
@@ -21,10 +25,14 @@
 					<li class="nav-item">
 						<a href="#list_pelamarditerima" class="nav-link" data-target="#list_pelamarditerima" aria-controls="list_pelamarditerima" data-toggle="tab" role="tab">Daftar Pelamar Diterima</a>
 					</li>
+					<li class="nav-item">
+						<a href="#kelola_rekruitment" class="nav-link" data-target="#kelola_rekruitment" aria-controls="kelola_rekruitment" data-toggle="tab" role="tab">Kelola Rekruitment</a>
+					</li>
 				</ul>
 				<div class="tab-content">
 					@include('sdm.prosesrekruitmen.tab_rekruitmen')
 					@include('sdm.prosesrekruitmen.tab_pelamarditerima')
+					@include('sdm.prosesrekruitmen.kelola_rekruitment')
 				</div>
 			</div>
 		</div>
@@ -166,6 +174,75 @@
 		TableDiterima();
 	});
 
+	$(document).on('click', '.btn-accepted', function(){
+			var ini = $(this);
+			$.confirm({
+				animation: 'RotateY',
+				closeAnimation: 'scale',
+				animationBounce: 1.5,
+				icon: 'fa fa-exclamation-triangle',
+				title: 'Peringatan!',
+				content: 'Apa anda yakin?',
+				theme: 'disable',
+			    buttons: {
+			        info: {
+						btnClass: 'btn-blue',
+			        	text:'Ya',
+			        	action : function(){
+							$.toast({
+								heading: 'Information',
+								text: 'Data Berhasil di Terima.',
+								bgColor: '#0984e3',
+								textColor: 'white',
+								loaderBg: '#fdcb6e',
+								icon: 'info'
+							})
+				        }
+			        },
+			        cancel:{
+			        	text: 'Tidak',
+					    action: function () {
+    			            // tutup confirm
+    			        }
+    			    }
+			    }
+			});
+		});
+
+		$(document).on('click', '.btn-rejected', function(){
+			var ini = $(this);
+			$.confirm({
+				animation: 'RotateY',
+				closeAnimation: 'scale',
+				animationBounce: 1.5,
+				icon: 'fa fa-exclamation-triangle',
+				title: 'Peringatan!',
+				content: 'Apa anda yakin?',
+				theme: 'disable',
+			    buttons: {
+			        info: {
+						btnClass: 'btn-blue',
+			        	text:'Ya',
+			        	action : function(){
+							$.toast({
+								heading: 'Information',
+								text: 'Data Berhasil di Terima.',
+								bgColor: '#0984e3',
+								textColor: 'white',
+								loaderBg: '#fdcb6e',
+								icon: 'info'
+							})
+				        }
+			        },
+			        cancel:{
+			        	text: 'Tidak',
+					    action: function () {
+    			            // tutup confirm
+    			        }
+    			    }
+			    }
+			});
+		});
 	// function to retrieve DataTable server side
 	function TableRekrutmen()
 	{
