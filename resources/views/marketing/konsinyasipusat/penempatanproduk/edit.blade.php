@@ -32,6 +32,7 @@
                             </div>
                         </div>
                         <form id="formKonsinyasi" method="post">{{ csrf_field() }}
+                            <input type="hidden" name="idSales" id="idSales" value="{{ $ids }}">
                             <div class="card-block">
                                 <section>
 
@@ -63,6 +64,7 @@
                                             <div class="form-group">
                                                 <input type="hidden" name="idKonsigner" id="idKonsigner" value="{{ $detail->c_id }}">
                                                 <input type="hidden" name="kodeKonsigner" id="kodeKonsigner" value="{{ $detail->c_user }}">
+                                                <input type="hidden" name="nota" id="nota" value="{{ $detail->s_nota }}">
                                                 <input type="text" name="konsigner" id="konsigner" class="form-control form-control-sm"
                                                        value="{{ strtoupper($detail->c_name) }}" oninput="handleInput(event)">
                                             </div>
@@ -82,11 +84,6 @@
 
                                         <div class="container" id="tbl_item" style="display: none;">
                                             <div class="table-responsive mt-3">
-                                                <div class="text-right">
-                                                    <button type="button"
-                                                            class="btn btn-sm btn-success btn-tambahp"><i
-                                                            class="fa fa-plus"></i> Tambah Baris</button>
-                                                </div>
                                                 <table class="table table-hover table-striped" id="table_rencana"
                                                        cellspacing="0">
                                                     <thead class="bg-primary">
@@ -100,7 +97,7 @@
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    @foreach($data_item as $data)
+                                                    @foreach($data_item as $key => $data)
                                                     <tr>
                                                         <td>
                                                             <input type="hidden" name="idItem[]" class="itemid" value="{{ $data->itemId }}">
@@ -142,9 +139,16 @@
                                                                    value="{{ Currency::addRupiah($data->totalnet) }}" readonly>
                                                         </td>
                                                         <td>
-                                                            <button class="btn btn-danger btn-hapus btn-sm" type="button">
-                                                                <i class="fa fa-remove" aria-hidden="true"></i>
-                                                            </button>
+                                                            @if ($key == 0)
+                                                                <button type="button"
+                                                                        class="btn btn-sm btn-success rounded-circle btn-tambahp"><i
+                                                                        class="fa fa-plus"></i></button>
+                                                            @else
+                                                                <button class="btn btn-danger btn-hapus-item btn-sm" type="button">
+                                                                    <i class="fa fa-remove" aria-hidden="true"></i>
+                                                                </button>
+                                                            @endif
+
                                                         </td>
                                                     </tr>
                                                     @endforeach
@@ -594,7 +598,7 @@
         function simpan() {
             loadingShow();
             var data = $('#formKonsinyasi').serialize();
-            axios.post('{{ route('penempatanproduk.add') }}', data)
+            axios.post(baseUrl+'/marketing/konsinyasipusat/penempatanproduk/edit/'+$("#idSales").val(), data)
                 .then(function (response){
                     if(response.data.status == 'Success'){
                         loadingHide();

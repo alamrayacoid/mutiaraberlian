@@ -427,7 +427,7 @@ class MarketingController extends Controller
         return view('marketing/konsinyasipusat/penempatanproduk/create');
     }
 
-    public function edit_penempatanproduk($id = null)
+    public function edit_penempatanproduk(Request $request, $id = null)
     {
         try{
             $id = Crypt::decrypt($id);
@@ -435,55 +435,60 @@ class MarketingController extends Controller
             return abort(404);
         }
 
-        $detail = DB::table('d_sales')
-            ->where('d_sales.s_id', '=', $id)
-            ->join('m_company', function ($c){
-                $c->on('m_company.c_user', '=', 'd_sales.s_member');
-            })
-            ->join('m_agen', function ($a){
-                $a->on('m_agen.a_code', '=', 'm_company.c_user');
-            })
-            ->join('m_wil_provinsi', function ($p){
-                $p->on('m_wil_provinsi.wp_id', '=', 'm_agen.a_provinsi');
-            })
-            ->join('m_wil_kota', function ($k){
-                $k->on('m_wil_kota.wc_id', '=', 'm_agen.a_kabupaten');
-            })
-            ->first();
+        if ($request->isMethod('post')) {
 
-        $data_item = DB::table('d_sales')
-            ->where('d_sales.s_id', '=', $id)
-            ->join('d_salesdt', function ($sd){
-                $sd->on('d_salesdt.sd_sales', '=', 'd_sales.s_id');
-            })
-            ->join('m_item', function ($i){
-                $i->on('m_item.i_id', '=', 'd_salesdt.sd_item');
-            })
-            ->join('m_unit as a', function ($x){
-                $x->on('m_item.i_unit1', '=', 'a.u_id');
-            })
-            ->leftjoin('m_unit as b', function ($y){
-                $y->on('m_item.i_unit2', '=', 'b.u_id');
-            })
-            ->leftjoin('m_unit as c', function ($z){
-                $z->on('m_item.i_unit3', '=', 'c.u_id');
-            })
-            ->join('d_stock_mutation', function ($sm){
-                $sm->on('d_stock_mutation.sm_nota', '=', 'd_sales.s_nota');
-            })
-            ->join('d_stock', function ($s){
-                $s->on('d_stock.s_id', '=', 'd_stock_mutation.sm_stock');
-                $s->where('d_stock.s_comp', '=', Auth::user()->u_company);
-                $s->where('d_stock.s_position', '=', Auth::user()->u_company);
-                $s->on('d_stock.s_item', '=', 'd_salesdt.sd_item');
-            })
-            ->select('d_salesdt.sd_item as itemId', 'd_salesdt.sd_unit as unit', 'd_salesdt.sd_qty as qty',
-                'd_salesdt.sd_value as harga', 'd_salesdt.sd_totalnet as totalnet', 'm_item.i_code as itemCode', 'm_item.i_name as item',
-                'd_stock_mutation.sm_stock as stock',
-                'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2',
-                'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
-            ->get();
+        } else {
+            $detail = DB::table('d_sales')
+                ->where('d_sales.s_id', '=', $id)
+                ->join('m_company', function ($c){
+                    $c->on('m_company.c_user', '=', 'd_sales.s_member');
+                })
+                ->join('m_agen', function ($a){
+                    $a->on('m_agen.a_code', '=', 'm_company.c_user');
+                })
+                ->join('m_wil_provinsi', function ($p){
+                    $p->on('m_wil_provinsi.wp_id', '=', 'm_agen.a_provinsi');
+                })
+                ->join('m_wil_kota', function ($k){
+                    $k->on('m_wil_kota.wc_id', '=', 'm_agen.a_kabupaten');
+                })
+                ->first();
 
-        return view('marketing/konsinyasipusat/penempatanproduk/edit')->with(compact('detail', 'data_item'));
+            $data_item = DB::table('d_sales')
+                ->where('d_sales.s_id', '=', $id)
+                ->join('d_salesdt', function ($sd){
+                    $sd->on('d_salesdt.sd_sales', '=', 'd_sales.s_id');
+                })
+                ->join('m_item', function ($i){
+                    $i->on('m_item.i_id', '=', 'd_salesdt.sd_item');
+                })
+                ->join('m_unit as a', function ($x){
+                    $x->on('m_item.i_unit1', '=', 'a.u_id');
+                })
+                ->leftjoin('m_unit as b', function ($y){
+                    $y->on('m_item.i_unit2', '=', 'b.u_id');
+                })
+                ->leftjoin('m_unit as c', function ($z){
+                    $z->on('m_item.i_unit3', '=', 'c.u_id');
+                })
+                ->join('d_stock_mutation', function ($sm){
+                    $sm->on('d_stock_mutation.sm_nota', '=', 'd_sales.s_nota');
+                    $sm->where('d_stock_mutation.sm_mutcat', '=', 13);
+                })
+                ->join('d_stock', function ($s){
+                    $s->on('d_stock.s_id', '=', 'd_stock_mutation.sm_stock');
+                    $s->on('d_stock.s_item', '=', 'd_salesdt.sd_item');
+                })
+                ->select('d_salesdt.sd_item as itemId', 'd_salesdt.sd_unit as unit', 'd_salesdt.sd_qty as qty',
+                    'd_salesdt.sd_value as harga', 'd_salesdt.sd_totalnet as totalnet', 'm_item.i_code as itemCode', 'm_item.i_name as item',
+                    'd_stock_mutation.sm_stock as stock',
+                    'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2',
+                    'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
+                ->get();
+
+            $ids = Crypt::encrypt($id);
+
+            return view('marketing/konsinyasipusat/penempatanproduk/edit')->with(compact('detail', 'data_item', 'ids'));
+        }
     }
 }

@@ -8,8 +8,13 @@
 		</div>
 		<div class="card-block">
 			<section>
-		<h6>Pencarian Berdasarkan :</h6>
-			<fieldset class="mb-3">
+		<div class="row mb-3">
+		<h6 class="col-11">Pencarian Berdasarkan :</h6>
+		<div class="d-flex justify-content-end col-1">
+			<button class="btn btn-sm btn-primary">Filter</button>
+		</div>
+		</div>
+			<fieldset class="mb-3 col-12">
 				<div class="row">
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
@@ -72,7 +77,7 @@
 			</fieldset>
 
 				<div class="table-responsive">
-					<table class="table table-hover table-striped display" cellspacing="0" style="width: 100%" id="table_rekrutmen">
+					<table class="table table-hover table-striped display nowrap" cellspacing="0" style="width: 100%" id="table_rekrutmen">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>
