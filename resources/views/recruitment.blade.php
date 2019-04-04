@@ -327,7 +327,7 @@
                                     <label for="">File Foto<span style="color:red;">*</span></label>
                                 </div>
                                 <div class="custom-file col-lg-9 col-sm-12 mb-3">
-                                    <input type="file" class="custom-file-input" name="filephoto" accept="image/*">
+                                    <input type="file" class="custom-file-input" name="filephoto" accept="image/*" id="imageupload">
                                     <label class="custom-file-label">Pilih Foto</label>
                                 </div>
 
@@ -335,7 +335,7 @@
                                     <label for="">File KTP</label>
                                 </div>
                                 <div class="custom-file col-lg-9 col-sm-12 mb-3">
-                                    <input type="file" class="custom-file-input" name="filektp" accept="image/*">
+                                    <input type="file" class="custom-file-input" name="filektp" accept="image/*" id="ktpupload">
                                     <label class="custom-file-label">Pilih File</label>
                                 </div>
 
@@ -343,7 +343,7 @@
                                     <label for="">File Ijazah</label>
                                 </div>
                                 <div class="custom-file col-lg-9 col-sm-12 mb-3">
-                                    <input type="file" class="custom-file-input" name="fileijazah" accept="image/*">
+                                    <input type="file" class="custom-file-input" name="fileijazah" accept="image/*" id="ijazahupload">
                                     <label class="custom-file-label">Pilih File</label>
                                 </div>
 
@@ -351,7 +351,7 @@
                                     <label for="">File Lain-lain</label>
                                 </div>
                                 <div class="custom-file col-lg-9 col-sm-12 mb-3">
-                                    <input type="file" class="custom-file-input" name="fileanother" accept="image/*">
+                                    <input type="file" class="custom-file-input" name="fileanother" accept="image/*" id="etcupload">
                                     <label class="custom-file-label">Pilih File</label>
                                 </div>
                             </div>
@@ -459,6 +459,24 @@
     });
 
     $('.nav-tabs > li a[title]').tooltip();
+
+    // Show name File Upload
+    $('#imageupload').on('change',function(){
+        var fileName = $(this).val();
+        $(this).next('.custom-file-label').html(fileName);
+    })
+    $('#ktpupload').on('change',function(){
+        var fileName = $(this).val();
+        $(this).next('.custom-file-label').html(fileName);
+    })
+    $('#ijazahupload').on('change',function(){
+        var fileName = $(this).val();
+        $(this).next('.custom-file-label').html(fileName);
+    })
+    $('#etcupload').on('change',function(){
+        var fileName = $(this).val();
+        $(this).next('.custom-file-label').html(fileName);
+    })
 
     //Wizard
     $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
