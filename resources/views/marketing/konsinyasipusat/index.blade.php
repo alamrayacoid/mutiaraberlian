@@ -66,7 +66,7 @@
                 {data: 'tanggal'},
                 {data: 'nota'},
                 {data: 'konsigner'},
-                {data: 'total'},
+                {data: 'total', className: "text-right"},
                 {data: 'action'}
             ],
         });
@@ -150,15 +150,51 @@
 	});
 
 	function detailKonsinyasi(id) {
+	    loadingShow();
+	    var detail = false, tabel = false, err = null, tipe = "";
         if ($.fn.DataTable.isDataTable("#modal-penempatan")) {
             $('#modal-penempatan').dataTable().fnDestroy();
         }
 
-        $('#modal-penempatan').DataTable({
-            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
-        });
+        axios.get(baseUrl+'/marketing/konsinyasipusat/detail-konsinyasi/'+id+'/detail')
+            .then(function (resp) {
+                if (resp.data.tipe == "K") {
+                    tipe = "KONSINYASI";
+                } else {
+                    tipe = "Cash";
+                }
+                $("#txt_tanggal").val(resp.data.tanggal);
+                $("#txt_area").val(resp.data.area);
+                $("#txt_nota").val(resp.data.nota);
+                $("#txt_konsigner").val(resp.data.konsigner);
+                $("#txt_tipe").val(tipe);
+                $("#txt_total").val(resp.data.total);
 
-	    $("#detailKonsinyasi").modal('show');
+                $('#modal-penempatan').DataTable({
+                    responsive: true,
+                    autoWidth: false,
+                    serverSide: true,
+                    ajax: {
+                        url: baseUrl+'/marketing/konsinyasipusat/detail-konsinyasi/'+id+'/table',
+                        type: "get"
+                    },
+                    columns: [
+                        {data: 'barang'},
+                        {data: 'jumlah'},
+                        {data: 'harga', className: "text-right"},
+                        {data: 'total_harga', className: "text-right"}
+                    ],
+                    "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, 100]],
+                    "drawCallback": function( settings ) {
+                        loadingHide();
+                        $("#detailKonsinyasi").modal('show');
+                    }
+                });
+            })
+            .catch(function (error) {
+                loadingHide();
+                messageWarning("Error", error);
+            })
     }
 </script>
 @endsection
