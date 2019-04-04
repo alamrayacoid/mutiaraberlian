@@ -35,13 +35,11 @@ class RecruitmentController extends Controller
     if ($status == 'All') {
       $datas = DB::table('d_pelamar')
         ->whereBetween('p_created', [$from, $to])
-        ->where('p_education', '=', $edu)
         ->orderBy('p_name', 'asc')
         ->get();
     } elseif ($status == 'Y') {
       $datas = DB::table('d_pelamar')
         ->where('p_state', 'Y')
-        ->where('p_education', '=', $edu)
         ->whereBetween('p_created', [$from, $to])
         ->orderBy('p_name', 'asc')
         ->get();
