@@ -23,7 +23,7 @@ class RecruitmentController extends Controller
    * @param string 'All'/'Y' (status)
    * @return Yajra/DataTables
    */
-  public function getList(Request $request, $status)
+  public function getList(Request $request, $st)
   {
     // change the date format request
     $date_fr = strtotime($request->date_from);
@@ -31,42 +31,42 @@ class RecruitmentController extends Controller
     $date_to = strtotime($request->date_to);
     $to      = date('Y-m-d', $date_to);
     $edu     = $request->education;
-    $state   = $request->state;
+    $status   = $request->status;
 
     if ($status == 'A') {
       $datas = DB::table('d_pelamar')
         ->whereBetween('p_created', [$from, $to])
         ->orderBy('p_name', 'asc')
         ->get();
-    } elseif ($status == 'Y') {
+    } elseif ($st == 'Y') {
       $datas = DB::table('d_pelamar')
         ->where('p_state', 'Y')
         ->whereBetween('p_created', [$from, $to])
         ->orderBy('p_name', 'asc')
         ->get();
-    } else if($status == 'F'){
-      if ($edu == null && $state == null) {
+    } else if($st == 'F'){
+      if ($edu == null && $status == null) {
         $datas = DB::table('d_pelamar')
           ->whereBetween('p_created', [$from, $to])
           ->orderBy('p_name', 'asc')
           ->get();
-      } else if($edu != null && $state == null) {
+      } else if($edu != null && $status == null) {
         $datas = DB::table('d_pelamar')
           ->whereBetween('p_created', [$from, $to])
           ->where('p_education', '=', $edu)
           ->orderBy('p_name', 'asc')
           ->get();
-      } else if($edu == null && $state != null) {
+      } else if($edu == null && $status != null) {
         $datas = DB::table('d_pelamar')
           ->whereBetween('p_created', [$from, $to])
-          ->where('p_stateapprove', '=', $state)
+          ->where('p_stateapprove', '=', $status)
           ->orderBy('p_name', 'asc')
           ->get();
       } else{
         $datas = DB::table('d_pelamar')
           ->whereBetween('p_created', [$from, $to])
           ->where('p_education', '=', $edu)
-          ->where('p_stateapprove', '=', $state)
+          ->where('p_stateapprove', '=', $status)
           ->orderBy('p_name', 'asc')
           ->get();
       }
