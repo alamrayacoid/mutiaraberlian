@@ -72,10 +72,6 @@
         });
 		table_pus = $('#table_monitoringpenjualan').DataTable();
 
-		$(document).on('click','.btn-edit-pp',function(){
-			window.location.href='{{route('penempatanproduk.edit')}}'
-		});
-
 		$(document).on('click', '.btn-disable-pp', function(){
 			var ini = $(this);
 			$.confirm({
@@ -195,6 +191,10 @@
                 loadingHide();
                 messageWarning("Error", error);
             })
+    }
+
+    function editKonsinyasi(id) {
+	    window.location = baseUrl+'/marketing/konsinyasipusat/penempatanproduk/edit/'+id;
     }
 </script>
 @endsection

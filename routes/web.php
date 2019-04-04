@@ -340,7 +340,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/konsinyasipusat/cek-stok/{stock}/{item}/{satuan}/{qty}', 'MarketingController@checkStock')->name('konsinyasipusat.checkstock');
     Route::get('/marketing/konsinyasipusat/penempatanproduk/create', 'MarketingController@create_penempatanproduk')->name('penempatanproduk.create');
     Route::post('/marketing/konsinyasipusat/penempatanproduk/add', 'MarketingController@add_penempatanproduk')->name('penempatanproduk.add');
-    Route::get('/marketing/konsinyasipusat/penempatanproduk/edit', 'MarketingController@edit_penempatanproduk')->name('penempatanproduk.edit');
+    Route::get('/marketing/konsinyasipusat/penempatanproduk/edit/{id}', 'MarketingController@edit_penempatanproduk')->name('penempatanproduk.edit');
     // Marketing Area
     Route::get('/marketing/marketingarea/index', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@index')->name('marketingarea.index');
     // Order Produk Ke Cabang
@@ -460,6 +460,13 @@ Route::group(['middleware' => 'auth'], function () {
 
 });
 // End Route Group
+
+Route::prefix('mobile')->group(function () {
+    Route::post('login', 'mobile\loginController@login');
+    Route::group(['middleware' => 'auth:api'], function() {
+        Route::post('logout', 'mobile\loginController@login');
+    });
+});
 
 /*
 

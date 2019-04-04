@@ -2,6 +2,8 @@
 
 @section('content')
 
+@include('sdm.prosesrekruitmen.modal_view')
+
 <article class="content">
     <div class="title-block text-primary">
         <h1 class="title"> Proses Data Rekruitmen </h1>
@@ -348,23 +350,52 @@
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm" readonly="" name="">
+                                        <div class="section-1 col-md-3 col-sm-12">
+                                            <div class="col-12" style="text-align:center;">
+                                                <label for="">Foto</label>
+                                            </div>
+                                            <div class="outline-img col-12 d-flex align-items-end">
+                                                <img src="#" alt="" class="img-fluid" style="max-width:200px; max-height:300px;">
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-sm btn-primary btn-block" data-toggle="modal" data-target="#view">View Image</button>
                                             </div>
                                         </div>
-                                        <div>
-                                            <button class="btn btn-primary">Lihat Berkas</button>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3 col-sm-6 col-xs-12">
-                                            <label>Lain-lain</label>
-                                        </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" name="">
+
+                                        <div class="section-2 col-md-3 col-sm-12">
+                                            <div class="col-12" style="text-align:center;">
+                                                <label for="">KTP</label>
+                                            </div>
+                                            <div class="outline-img col-12 d-flex align-items-end">
+                                                <img src="#" alt="" class="img-fluid" style="max-width:200px; max-height:300px;">
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-sm btn-primary btn-block" data-toggle="modal" data-target="#view">View Image</button>
                                             </div>
                                         </div>
-                                        <div>
-                                            <button class="btn btn-primary">Lihat Berkas</button>
+
+                                        <div class="section-3 col-md-3 col-sm-12">
+                                            <div class="col-12" style="text-align:center;">
+                                                <label for="">Ijazah</label>
+                                            </div>
+                                            <div class="outline-img col-12 d-flex align-items-end">
+                                                <img src="#" alt="" class="img-fluid" style="max-width:200px; max-height:300px;">
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-sm btn-primary btn-block" data-toggle="modal" data-target="#view">View Image</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="section-4 col-md-3 col-sm-12">
+                                            <div class="col-12" style="text-align:center;">
+                                                <label for="">Lain - Lain</label>
+                                            </div>
+                                            <div class="outline-img col-12 d-flex align-items-end">
+                                                <img src="#" alt="" class="img-fluid" style="max-width:200px; max-height:300px;">
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-sm btn-primary btn-block" data-toggle="modal" data-target="#view">View Image</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </section>

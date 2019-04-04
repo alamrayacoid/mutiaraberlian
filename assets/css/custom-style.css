@@ -527,6 +527,13 @@ body {
 .total-modal {
     margin-right: -45px;
 }
+
+.outline-img {
+    max-height: 300px !important;
+    height: 350px;
+    padding:10px !important;
+    background-color: transparent;
+}
 /* End */
 /* .btn.btn-primary {
     background-color: #ff4757;
