@@ -10,10 +10,6 @@ class SDMController extends Controller
     {
     	return view('sdm/prosesrekruitmen/index');
     }
-    public function process()
-    {
-        return view('sdm/prosesrekruitmen/process');
-    }
     public function kinerja()
     {
     	return view('sdm/kinerjasdm/index');

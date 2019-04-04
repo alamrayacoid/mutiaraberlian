@@ -38,17 +38,17 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<select class="form-control form-control-sm">
-							<option value="">Tampilkan Semua</option>
-							<option value="">SD</option>
-							<option value="">SMP</option>
-							<option value="">SMA</option>
-							<option value="">SMK</option>
-							<option value="">D1</option>
-							<option value="">D3</option>
-							<option value="">S1</option>
-							<option value="">S2</option>
-							<option value="">S3</option>
+						<select class="form-control form-control-sm select2" id="education">
+							<option value="" selected disabled>Tampilkan Semua</option>
+							<option value="SD">SD</option>
+							<option value="SMP">SMP</option>
+							<option value="SMA">SMA</option>
+							<option value="SMK">SMK</option>
+							<option value="D1">D1</option>
+							<option value="D3">D3</option>
+							<option value="S1">S1</option>
+							<option value="S2">S2</option>
+							<option value="S3">S3</option>
 						</select>
 					</div>
 					</div>
@@ -59,7 +59,7 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<select class="form-control form-control-sm">
+						<select class="form-control form-control-sm" id="statusRec">
 							<option value="">Tampilkan Semua</option>
 							<option value="">Released</option>
 							<option value="">Approve 1</option>

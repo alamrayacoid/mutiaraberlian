@@ -317,20 +317,7 @@
                                     <h6 style="font-weight:bold; text-decoration:underline;">Kelengkapan Berkas</h6>
                                     <div class="row">
                                         <div class="col-md-3 col-sm-6 col-xs-12">
-                                            <label>CV</label>
-                                        </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" name="">
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <button class="btn btn-primary">Lihat Berkas</button>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3 col-sm-6 col-xs-12">
-                                            <label>Ijazah</label>
+                                            <label>Foto</label>
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
@@ -344,6 +331,19 @@
                                     <div class="row">
                                         <div class="col-md-3 col-sm-6 col-xs-12">
                                             <label>KTP</label>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-sm" readonly="" name="">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-primary">Lihat Berkas</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3 col-sm-6 col-xs-12">
+                                            <label>Ijazah</label>
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">

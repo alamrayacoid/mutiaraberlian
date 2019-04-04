@@ -27,18 +27,21 @@ class RecruitmentController extends Controller
   {
     // change the date format request
     $date_fr = strtotime($request->date_from);
-    $from = date('Y-m-d', $date_fr);
+    $from    = date('Y-m-d', $date_fr);
     $date_to = strtotime($request->date_to);
-    $to = date('Y-m-d', $date_to);
+    $to      = date('Y-m-d', $date_to);
+    $edu     = $request->education;
 
     if ($status == 'All') {
       $datas = DB::table('d_pelamar')
         ->whereBetween('p_created', [$from, $to])
+        ->where('p_education', '=', $edu)
         ->orderBy('p_name', 'asc')
         ->get();
     } elseif ($status == 'Y') {
       $datas = DB::table('d_pelamar')
         ->where('p_state', 'Y')
+        ->where('p_education', '=', $edu)
         ->whereBetween('p_created', [$from, $to])
         ->orderBy('p_name', 'asc')
         ->get();
@@ -51,7 +54,7 @@ class RecruitmentController extends Controller
       ->addColumn('status', function($datas) {
         if ($datas->p_state == 'Y') {
           return '<td>Diterima</td>';
-        } elseif ($datas->p_state == 'P') {
+        } else if ($datas->p_state == 'P') {
           return '<td>Pending</td>';
         } else {
           return '<td>Ditolak</td>';
@@ -84,5 +87,20 @@ class RecruitmentController extends Controller
       ->first();
 
     return view('sdm/prosesrekruitmen/preview', compact('data'));
+  }
+
+  public function proses($id)
+  {
+    try {
+        $id = Crypt::decrypt($id);
+    } catch (\Exception $e) {
+        return view('errors.404');
+    }
+
+    $data = DB::table('d_pelamar')
+      ->where('p_id', $id)
+      ->first();
+
+    return view('sdm/prosesrekruitmen/process', compact('data'));
   }
 }

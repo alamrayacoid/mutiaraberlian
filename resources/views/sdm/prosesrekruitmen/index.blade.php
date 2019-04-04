@@ -116,10 +116,6 @@
 		TableRekrutmen();
 		TableDiterima();
 
-		$(document).on('click','.btn-proses-rekruitmen',function(){
-			window.location.href='{{route('rekruitmen.process')}}'
-		});
-
 		$(document).on('click', '.btn-disable-rekruitmen', function(){
 			var ini = $(this);
 			$.confirm({
@@ -238,17 +234,23 @@
 		window.location.href='{{url('/sdm/prosesrekruitmen/detail')}}'+'/'+id;
 	}
 
+	function proses(id) {
+		window.location.href='{{url('/sdm/prosesrekruitmen/proses')}}'+'/'+id;
+	}
+
 	$("#rekrut_from").on('change', function() {
 		TableRekrutmen();
-	})
+	});
+
 	$("#rekrut_to").on('change', function() {
 		TableRekrutmen();
-	})
+	});
+
 	$("#diterima_from").on('change', function() {
 		TableDiterima();
-	})
+	});
 	$("#diterima_to").on('change', function() {
 		TableDiterima();
-	})
+	});
 </script>
 @endsection
