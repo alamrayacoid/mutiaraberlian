@@ -41,6 +41,131 @@
 		}
 	});
 
+	$(document).ready(function(){
+
+		var cur_date = new Date();
+		$("#rekrut_from").datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth(), 1));
+		$("#rekrut_to").datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth()+1, 0));
+		$("#diterima_from").datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth(), 1));
+		$("#diterima_to").datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth()+1, 0));
+
+		$(document).on('click', '.btn-disable-rekruitmen', function(){
+			var ini = $(this);
+			$.confirm({
+				animation: 'RotateY',
+				closeAnimation: 'scale',
+				animationBounce: 1.5,
+				icon: 'fa fa-exclamation-triangle',
+				title: 'Peringatan!',
+				content: 'Apa anda yakin mau menonaktifkan data ini?',
+				theme: 'disable',
+			    buttons: {
+			        info: {
+						btnClass: 'btn-blue',
+			        	text:'Ya',
+			        	action : function(){
+							$.toast({
+								heading: 'Information',
+								text: 'Data Berhasil di Nonaktifkan.',
+								bgColor: '#0984e3',
+								textColor: 'white',
+								loaderBg: '#fdcb6e',
+								icon: 'info'
+							})
+					        ini.parents('.btn-group').html('<button class="btn btn-success btn-enable-rekruitmen" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
+				        }
+			        },
+			        cancel:{
+			        	text: 'Tidak',
+					    action: function () {
+    			            // tutup confirm
+    			        }
+    			    }
+			    }
+			});
+		});
+
+		$(document).on('click', '.btn-enable-rekruitmen', function(){
+			$.toast({
+				heading: 'Information',
+				text: 'Data Berhasil di Enable.',
+				bgColor: '#0984e3',
+				textColor: 'white',
+				loaderBg: '#fdcb6e',
+				icon: 'info'
+			})
+			$(this).parents('.btn-group').html('<button class="btn btn-primary" data-toggle="modal" data-target="#list_suplier_membawa" type="button" title="Preview"><i class="fa fa-search"></i></i></button>'+
+											'<button class="btn btn-warning btn-edit-rekruitmen" type="button" title="Process"><i class="fa fa-file-powerpoint-o"></i></button>'+
+	                    '<button class="btn btn-danger btn-disable-rekruitmen" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>');
+		});
+
+
+
+		$(document).on('click', '.btn-disable-pelamar', function(){
+			var ini = $(this);
+			$.confirm({
+				animation: 'RotateY',
+				closeAnimation: 'scale',
+				animationBounce: 1.5,
+				icon: 'fa fa-exclamation-triangle',
+				title: 'Peringatan!',
+				content: 'Apa anda yakin mau menonaktifkan data ini?',
+				theme: 'disable',
+			    buttons: {
+			        info: {
+						btnClass: 'btn-blue',
+			        	text:'Ya',
+			        	action : function(){
+							$.toast({
+								heading: 'Information',
+								text: 'Data Berhasil di Nonaktifkan.',
+								bgColor: '#0984e3',
+								textColor: 'white',
+								loaderBg: '#fdcb6e',
+								icon: 'info'
+							})
+					        ini.parents('.btn-group').html('<button class="btn btn-success btn-enable-pelamar" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
+				        }
+			        },
+			        cancel:{
+			        	text: 'Tidak',
+					    action: function () {
+    			            // tutup confirm
+    			        }
+    			    }
+			    }
+			});
+		});
+
+		$(document).on('click', '.btn-enable-pelamar', function(){
+			$.toast({
+				heading: 'Information',
+				text: 'Data Berhasil di Enable.',
+				bgColor: '#0984e3',
+				textColor: 'white',
+				loaderBg: '#fdcb6e',
+				icon: 'info'
+			})
+			$(this).parents('.btn-group').html('<button class="btn btn-primary" data-toggle="modal" data-target="#list_barang_dibawa" type="button" title="Preview"><i class="fa fa-search"></i></button>'+
+											'<button class="btn btn-warning btn-edit-pelamar" type="button" title="Process"><i class="fa fa-file-powerpoint-o"></i></button>'+
+	                                		'<button class="btn btn-danger btn-disable-pelamar" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>')
+		});
+
+		$(document).on('click', '.btn-simpan-modal', function(){
+			$.toast({
+				heading: 'Success',
+				text: 'Data Berhasil di Simpan',
+				bgColor: '#00b894',
+				textColor: 'white',
+				loaderBg: '#55efc4',
+				icon: 'success'
+			})
+		});
+
+		TableRekrutmen();
+		TableDiterima();
+	});
+
 	// function to retrieve DataTable server side
 	function TableRekrutmen()
 	{
@@ -49,7 +174,7 @@
 			responsive: true,
 			serverSide: true,
 			ajax: {
-				url: "{{ url('/sdm/prosesrekruitmen/list/All') }}",
+				url: "{{ url('/sdm/prosesrekruitmen/list/A') }}",
 				type: "get",
 				data: {
 					"_token": "{{ csrf_token() }}",
@@ -105,137 +230,45 @@
 		});
 	}
 
-	$(document).ready(function(){
-
-		var cur_date = new Date();
-		$("#rekrut_from").datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth(), 1));
-		$("#rekrut_to").datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth()+1, 0));
-		$("#diterima_from").datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth(), 1));
-		$("#diterima_to").datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth()+1, 0));
-
-		TableRekrutmen();
-		TableDiterima();
-
-		$(document).on('click', '.btn-disable-rekruitmen', function(){
-			var ini = $(this);
-			$.confirm({
-				animation: 'RotateY',
-				closeAnimation: 'scale',
-				animationBounce: 1.5,
-				icon: 'fa fa-exclamation-triangle',
-				title: 'Peringatan!',
-				content: 'Apa anda yakin mau menonaktifkan data ini?',
-				theme: 'disable',
-			    buttons: {
-			        info: {
-						btnClass: 'btn-blue',
-			        	text:'Ya',
-			        	action : function(){
-							$.toast({
-								heading: 'Information',
-								text: 'Data Berhasil di Nonaktifkan.',
-								bgColor: '#0984e3',
-								textColor: 'white',
-								loaderBg: '#fdcb6e',
-								icon: 'info'
-							})
-					        ini.parents('.btn-group').html('<button class="btn btn-success btn-enable-rekruitmen" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-				        }
-			        },
-			        cancel:{
-			        	text: 'Tidak',
-					    action: function () {
-    			            // tutup confirm
-    			        }
-    			    }
-			    }
-			});
-		});
-
-		$(document).on('click', '.btn-enable-rekruitmen', function(){
-			$.toast({
-				heading: 'Information',
-				text: 'Data Berhasil di Enable.',
-				bgColor: '#0984e3',
-				textColor: 'white',
-				loaderBg: '#fdcb6e',
-				icon: 'info'
-			})
-			$(this).parents('.btn-group').html('<button class="btn btn-primary" data-toggle="modal" data-target="#list_suplier_membawa" type="button" title="Preview"><i class="fa fa-search"></i></i></button>'+
-											'<button class="btn btn-warning btn-edit-rekruitmen" type="button" title="Process"><i class="fa fa-file-powerpoint-o"></i></button>'+
-	                                		'<button class="btn btn-danger btn-disable-rekruitmen" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>')
-		})
-
-
-
-		$(document).on('click', '.btn-disable-pelamar', function(){
-			var ini = $(this);
-			$.confirm({
-				animation: 'RotateY',
-				closeAnimation: 'scale',
-				animationBounce: 1.5,
-				icon: 'fa fa-exclamation-triangle',
-				title: 'Peringatan!',
-				content: 'Apa anda yakin mau menonaktifkan data ini?',
-				theme: 'disable',
-			    buttons: {
-			        info: {
-						btnClass: 'btn-blue',
-			        	text:'Ya',
-			        	action : function(){
-							$.toast({
-								heading: 'Information',
-								text: 'Data Berhasil di Nonaktifkan.',
-								bgColor: '#0984e3',
-								textColor: 'white',
-								loaderBg: '#fdcb6e',
-								icon: 'info'
-							})
-					        ini.parents('.btn-group').html('<button class="btn btn-success btn-enable-pelamar" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-				        }
-			        },
-			        cancel:{
-			        	text: 'Tidak',
-					    action: function () {
-    			            // tutup confirm
-    			        }
-    			    }
-			    }
-			});
-		});
-
-		$(document).on('click', '.btn-enable-pelamar', function(){
-			$.toast({
-				heading: 'Information',
-				text: 'Data Berhasil di Enable.',
-				bgColor: '#0984e3',
-				textColor: 'white',
-				loaderBg: '#fdcb6e',
-				icon: 'info'
-			})
-			$(this).parents('.btn-group').html('<button class="btn btn-primary" data-toggle="modal" data-target="#list_barang_dibawa" type="button" title="Preview"><i class="fa fa-search"></i></button>'+
-											'<button class="btn btn-warning btn-edit-pelamar" type="button" title="Process"><i class="fa fa-file-powerpoint-o"></i></button>'+
-	                                		'<button class="btn btn-danger btn-disable-pelamar" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>')
-		})
-
-		$(document).on('click', '.btn-simpan-modal', function(){
-			$.toast({
-				heading: 'Success',
-				text: 'Data Berhasil di Simpan',
-				bgColor: '#00b894',
-				textColor: 'white',
-				loaderBg: '#55efc4',
-				icon: 'success'
-			})
-		})
-	});
-
 	function detail(id) {
 		window.location.href='{{url('/sdm/prosesrekruitmen/detail')}}'+'/'+id;
 	}
 
 	function proses(id) {
 		window.location.href='{{url('/sdm/prosesrekruitmen/proses')}}'+'/'+id;
+	}
+
+	function filterRekrutmen()
+	{
+		$('#table_rekrutmen').dataTable().fnDestroy();
+		tb_rekrutmen = $('#table_rekrutmen').DataTable({
+			responsive: true,
+			serverSide: true,
+			ajax: {
+				url: "{{ url('/sdm/prosesrekruitmen/list/F') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}",
+					"date_from": $('#rekrut_from').val(),
+					"date_to": $('#rekrut_to').val(),
+					"education": $('#education').val(),
+					"state": $('#statusRec').val()
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'tgl_apply'},
+				{data: 'p_name'},
+				{data: 'p_tlp'},
+				{data: 'p_email'},
+				{data: 'p_education'},
+				{data: 'status'},
+				{data: 'approval'},
+				{data: 'action'}
+			],
+			pageLength: 10,
+			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
 	}
 
 	$("#rekrut_from").on('change', function() {

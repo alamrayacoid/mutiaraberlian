@@ -11,7 +11,7 @@
 		<div class="row mb-3">
 		<h6 class="col-11">Pencarian Berdasarkan :</h6>
 		<div class="d-flex justify-content-end col-1">
-			<button class="btn btn-sm btn-primary">Filter</button>
+			<button class="btn btn-primary rounded" type="button" onclick="filterRekrutmen()"><i class="fa fa-fw fa-filter"></i> Filter</button>
 		</div>
 		</div>
 			<fieldset class="mb-3 col-12">
@@ -66,10 +66,9 @@
 					<div class="form-group">
 						<select class="form-control form-control-sm" id="statusRec">
 							<option value="">Tampilkan Semua</option>
-							<option value="">Released</option>
-							<option value="">Approve 1</option>
-							<option value="">Approve 2</option>
-							<option value="">Approve 3</option>
+							<option value="1">Approve 1</option>
+							<option value="2">Approve 2</option>
+							<option value="3">Approve 3</option>
 						</select>
 					</div>
 					</div>

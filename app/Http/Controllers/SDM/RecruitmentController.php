@@ -31,8 +31,9 @@ class RecruitmentController extends Controller
     $date_to = strtotime($request->date_to);
     $to      = date('Y-m-d', $date_to);
     $edu     = $request->education;
+    $state   = $request->state;
 
-    if ($status == 'All') {
+    if ($status == 'A') {
       $datas = DB::table('d_pelamar')
         ->whereBetween('p_created', [$from, $to])
         ->orderBy('p_name', 'asc')
@@ -43,6 +44,33 @@ class RecruitmentController extends Controller
         ->whereBetween('p_created', [$from, $to])
         ->orderBy('p_name', 'asc')
         ->get();
+    } else if($status == 'F'){
+      if ($edu == null && $state == null) {
+        $datas = DB::table('d_pelamar')
+          ->whereBetween('p_created', [$from, $to])
+          ->orderBy('p_name', 'asc')
+          ->get();
+      } else if($edu != null && $state == null) {
+        $datas = DB::table('d_pelamar')
+          ->whereBetween('p_created', [$from, $to])
+          ->where('p_education', '=', $edu)
+          ->orderBy('p_name', 'asc')
+          ->get();
+      } else if($edu == null && $state != null) {
+        $datas = DB::table('d_pelamar')
+          ->whereBetween('p_created', [$from, $to])
+          ->where('p_stateapprove', '=', $state)
+          ->orderBy('p_name', 'asc')
+          ->get();
+      } else{
+        $datas = DB::table('d_pelamar')
+          ->whereBetween('p_created', [$from, $to])
+          ->where('p_education', '=', $edu)
+          ->where('p_stateapprove', '=', $state)
+          ->orderBy('p_name', 'asc')
+          ->get();
+      }
+      
     }
     return Datatables::of($datas)
       ->addIndexColumn()
