@@ -279,9 +279,9 @@ Route::group(['middleware' => 'auth'], function () {
     // !===================================================== SDM =====================================================!
     // Rekruitmen
     Route::get('/sdm/prosesrekruitmen/index', 'SDMController@proses_rekruitmen')->name('rekruitmen.index');
-    Route::get('/sdm/prosesrekruitmen/list/{status}', 'SDM\RekrutmentController@getList')->name('rekruitmen.list');
+    Route::get('/sdm/prosesrekruitmen/list/{status}', 'SDM\RecruitmentController@getList')->name('rekruitmen.list');
     Route::get('/sdm/prosesrekruitmen/process', 'SDMController@process')->name('rekruitmen.process');
-    Route::get('/sdm/prosesrekruitmen/preview', 'SDMController@preview')->name('rekruitmen.preview');
+    Route::get('/sdm/prosesrekruitmen/detail/{id}', 'SDM\RecruitmentController@detail')->name('rekruitmen.detail');
     // Kinerja
     Route::get('/sdm/kinerjasdm/index', 'SDMController@kinerja')->name('kinerjasdm.index');
     // Absensi

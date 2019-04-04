@@ -61,7 +61,10 @@ class ManajemenAgenController extends Controller
       		return "Rusak";
       	}
       })
-      ->rawColumns(['kondisi'])
+      ->addColumn('qty', function ($data) {
+      	return "<div class='text-center'>$data->s_qty</div>";
+      })
+      ->rawColumns(['kondisi', 'qty'])
       ->make(true);
   }
 	// End Code ----------------------------------

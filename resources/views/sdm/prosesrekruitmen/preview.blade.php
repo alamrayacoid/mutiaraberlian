@@ -36,7 +36,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="Brad" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_name}}" name="p_name">
                                             </div>
                                         </div>
                                     </div>
@@ -46,7 +46,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="1234567890" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_nik}}" name="p_nik">
                                             </div>
                                         </div>
                                     </div>
@@ -56,7 +56,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="Rungkut" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_address}}" name="p_address">
                                             </div>
                                         </div>
                                     </div>
@@ -66,7 +66,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="Rungkut" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_address_now}}" name="p_address_now">
                                             </div>
                                         </div>
                                     </div>
@@ -76,7 +76,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="Surabaya" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_birth_place}}" name="p_birth_place">
                                             </div>
                                         </div>
                                     </div>
@@ -86,7 +86,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="07 sep 1999" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_birthday}}" name="p_birthday">
                                             </div>
                                         </div>
                                     </div>
@@ -96,7 +96,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="S3" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_education}}" name="p_education">
                                             </div>
                                         </div>
                                     </div>
@@ -106,7 +106,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="Brad@pit.com" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_email}}" name="p_email">
                                             </div>
                                         </div>
                                     </div>
@@ -116,7 +116,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="1234567789" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_tlp}}" name="p_tlp">
                                             </div>
                                         </div>
                                     </div>
@@ -126,7 +126,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="Islam" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_religion}}" name="p_religion">
                                             </div>
                                         </div>
                                     </div>
@@ -135,8 +135,14 @@
                                             <label>Status</label>
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <?php if($data->p_status == "S") {
+                                                $status = "Belum Menikah";
+                                            } else {
+                                                $status = "Sudah Menikah";
+                                            } ?>
+                                            
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="Belum Menikah" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$status}}" name="p_status">
                                             </div>
                                         </div>
                                     </div>
@@ -146,7 +152,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="-" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_wife_name}}" name="p_wife_name">
                                             </div>
                                         </div>
                                     </div>
@@ -156,7 +162,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="-" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_child}}" name="p_child">
                                             </div>
                                         </div>
                                     </div>
@@ -166,7 +172,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <textarea type="text" class="form-control form-control-sm" readonly="" name="">Saya Artis</textarea>
+                                                <textarea type="text" class="form-control form-control-sm" readonly="" name="p_promo">{{$data->p_promo}}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -179,7 +185,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="Rahasia" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_schoolname}}" name="p_schoolname">
                                             </div>
                                         </div>
                                     </div>
@@ -189,7 +195,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="2015" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_yearin}}" name="p_yearin">
                                             </div>
                                         </div>
                                     </div>
@@ -199,7 +205,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="2015" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_yearout}}" name="p_yearout">
                                             </div>
                                         </div>
                                     </div>
@@ -209,7 +215,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="IPA" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_jurusan}}" name="p_jurusan">
                                             </div>
                                         </div>
                                     </div>
@@ -219,7 +225,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="100" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_nilai}}" name="p_nilai">
                                             </div>
                                         </div>
                                     </div>
@@ -230,7 +236,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="Rahasia" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_jobcompany1}}" name="p_jobcompany1">
                                             </div>
                                         </div>
                                     </div>
@@ -240,7 +246,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="2016" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="{{$data->p_jobyear1}}" name="p_jobyear1">
                                             </div>
                                         </div>
                                     </div>
@@ -250,7 +256,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="2016" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="" name="">
                                             </div>
                                         </div>
                                     </div>
@@ -260,7 +266,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <textarea type="text" class="form-control form-control-sm" readonly="" name="">Duduk Manis</textarea>
+                                                <textarea type="text" class="form-control form-control-sm" readonly="" name="p_jobdesc1">{{$data->p_jobdesc1}}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -271,7 +277,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="Rahasia" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="" name="">
                                             </div>
                                         </div>
                                     </div>
@@ -281,7 +287,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="2016" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="" name="">
                                             </div>
                                         </div>
                                     </div>
@@ -291,7 +297,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm" readonly="" value="2016" name="">
+                                                <input type="text" class="form-control form-control-sm" readonly="" value="" name="">
                                             </div>
                                         </div>
                                     </div>
@@ -301,7 +307,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <textarea type="text" class="form-control form-control-sm" readonly="" name="">Duduk Manis</textarea>
+                                                <textarea type="text" class="form-control form-control-sm" readonly="" name=""></textarea>
                                             </div>
                                         </div>
                                     </div>
