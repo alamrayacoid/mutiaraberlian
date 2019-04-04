@@ -115,7 +115,7 @@ class Mutasi extends Controller
       }
     }
 
-    static function mutasikeluar($mutcat, $comp, $position, $item, $qty, $status, $condition, $hpp = 0, $sell = 0, $nota, $reff){
+    static function mutasikeluar($mutcat, $comp, $position, $item, $qty, $nota){
       DB::beginTransaction();
       try {
 
@@ -123,7 +123,7 @@ class Mutasi extends Controller
 
         $sekarang = Carbon::now('Asia/Jakarta');
 
-        $datamutcat = DB::table('m_mutcat')->where('m_status', 'M')->get();
+        $datamutcat = DB::table('m_mutcat')->where('m_status', '=', 'M')->get();
 
         for ($i=0; $i < count($datamutcat); $i++) {
           $tmp[] = $datamutcat[$i]->m_id;
@@ -144,8 +144,8 @@ class Mutasi extends Controller
           $permintaan = $qty;
 
           DB::table('d_stock')
-              ->where('s_id', $stock[0]->sm_stock)
-              ->where('s_item', $stock[0]->sm_item)
+              ->where('s_id', $stock[0]->s_id)
+              ->where('s_item', $stock[0]->s_item)
               ->where('s_comp', $stock[0]->s_comp)
               ->where('s_position', $stock[0]->s_position)
               ->where('s_status', $stock[0]->s_status)
@@ -157,8 +157,7 @@ class Mutasi extends Controller
           for ($j = 0; $j < count($stock); $j++) {
               //Terdapat sisa permintaan
 
-              $detailid = DB::table('d_stock_mutation')
-                  ->max('sm_detailid');
+              $detailid = (DB::table('d_stock_mutation')->max('sm_detailid')) ? DB::table('d_stock_mutation')->max('sm_detailid') + 1 : 1;
 
               if ($permintaan > $stock[$j]->sm_sisa && $permintaan != 0) {
 
@@ -175,7 +174,7 @@ class Mutasi extends Controller
                   DB::table('d_stock_mutation')
                       ->insert([
                           'sm_stock' => $stock[$j]->sm_stock,
-                          'sm_detailid' => $detailid + 1,
+                          'sm_detailid' => $detailid,
                           'sm_date' => $sekarang,
                           'sm_mutcat' => $mutcat,
                           'sm_qty' => $stock[$j]->sm_sisa,
@@ -191,8 +190,8 @@ class Mutasi extends Controller
               } elseif ($permintaan <= $stock[$j]->sm_sisa && $permintaan != 0) {
                   //Langsung Eksekusi
 
-                  $detailid = DB::table('d_stock_mutation')
-                      ->max('sm_detailid');
+                  $detailid = (DB::table('d_stock_mutation')
+                      ->max('sm_detailid')) ? (DB::table('d_stock_mutation')->max('sm_detailid')) + 1 : 1;
 
                   DB::table('d_stock_mutation')
                       ->where('sm_stock', '=', $stock[$j]->sm_stock)
@@ -205,7 +204,7 @@ class Mutasi extends Controller
                   DB::table('d_stock_mutation')
                       ->insert([
                           'sm_stock' => $stock[$j]->sm_stock,
-                          'sm_detailid' => $detailid + 1,
+                          'sm_detailid' => $detailid,
                           'sm_date' => $sekarang,
                           'sm_mutcat' => $mutcat,
                           'sm_qty' => $permintaan,

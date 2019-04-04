@@ -52,10 +52,25 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-
+    var table_sup, table_pus;
 	$(document).ready(function(){
-		var table_sup = $('#table_penempatan').DataTable();
-		var table_pus = $('#table_monitoringpenjualan').DataTable();
+		table_sup = $('#table_penempatan').DataTable({
+            responsive: true,
+            autoWidth: false,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('konsinyasipusat.getData') }}",
+                type: "get"
+            },
+            columns: [
+                {data: 'tanggal'},
+                {data: 'nota'},
+                {data: 'konsigner'},
+                {data: 'total'},
+                {data: 'action'}
+            ],
+        });
+		table_pus = $('#table_monitoringpenjualan').DataTable();
 
 		$(document).on('click','.btn-edit-pp',function(){
 			window.location.href='{{route('penempatanproduk.edit')}}'
@@ -111,13 +126,6 @@
 	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 		})
 
-		
-		$(document).ready(function() {
-			$('#modal-penempatan').DataTable( {
-				"iDisplayLength" : 5
-			});
-		});
-
 		$(document).ready(function() {
 			$('#detail-monitoring').DataTable( {
 				"iDisplayLength" : 5
@@ -140,5 +148,17 @@
 		});
 
 	});
+
+	function detailKonsinyasi(id) {
+        if ($.fn.DataTable.isDataTable("#modal-penempatan")) {
+            $('#modal-penempatan').dataTable().fnDestroy();
+        }
+
+        $('#modal-penempatan').DataTable({
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
+        });
+
+	    $("#detailKonsinyasi").modal('show');
+    }
 </script>
 @endsection

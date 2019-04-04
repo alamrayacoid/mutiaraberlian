@@ -192,6 +192,7 @@
                     $("#editReturn").modal("hide");
                     table.ajax.reload();
                     messageSuccess("Berhasil", resp.data.message);
+                    window.open(baseUrl+'/produksi/returnproduksi/nota-return/'+resp.data.id+'/'+resp.data.detail);
                 } else if (resp.data.status == "Failed") {
                     messageFailed("Gagal", resp.data.message);
                 }

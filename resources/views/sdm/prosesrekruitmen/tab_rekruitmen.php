@@ -75,7 +75,7 @@
 					<table class="table table-hover table-striped display" cellspacing="0" style="width: 100%" id="table_rekrutmen">
 						<thead class="bg-primary">
 							<tr>
-								<th width="1%">No</th>
+								<th width="1%">Nomer</th>
 								<th>Tanggal Apply</th>
 								<th>Nama Pelamar</th>
 								<th>No. HP</th>
