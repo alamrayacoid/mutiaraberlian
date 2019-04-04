@@ -279,9 +279,9 @@ Route::group(['middleware' => 'auth'], function () {
     // !===================================================== SDM =====================================================!
     // Rekruitmen
     Route::get('/sdm/prosesrekruitmen/index', 'SDMController@proses_rekruitmen')->name('rekruitmen.index');
-    Route::get('/sdm/prosesrekruitmen/list/{status}', 'SDM\RekrutmentController@getList')->name('rekruitmen.list');
+    Route::get('/sdm/prosesrekruitmen/list/{status}', 'SDM\RecruitmentController@getList')->name('rekruitmen.list');
     Route::get('/sdm/prosesrekruitmen/process', 'SDMController@process')->name('rekruitmen.process');
-    Route::get('/sdm/prosesrekruitmen/preview', 'SDMController@preview')->name('rekruitmen.preview');
+    Route::get('/sdm/prosesrekruitmen/detail/{id}', 'SDM\RecruitmentController@detail')->name('rekruitmen.detail');
     // Kinerja
     Route::get('/sdm/kinerjasdm/index', 'SDMController@kinerja')->name('kinerjasdm.index');
     // Absensi
@@ -331,6 +331,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Konsinyasi Pusat
     Route::get('/marketing/konsinyasipusat/index', 'MarketingController@konsinyasipusat')->name('konsinyasipusat.index');
     Route::get('/marketing/konsinyasipusat/get-konsinyasi', 'MarketingController@getKonsinyasi')->name('konsinyasipusat.getData');
+    Route::get('/marketing/konsinyasipusat/detail-konsinyasi/{id}/{action}', 'MarketingController@detailKonsinyasi')->name('konsinyasipusat.detail');
     Route::get('/marketing/konsinyasipusat/get-provinsi', 'MarketingController@getProv')->name('konsinyasipusat.getProv');
     Route::get('/marketing/konsinyasipusat/get-kota/{idprov}', 'MarketingController@getKota')->name('konsinyasipusat.getKota');
     Route::get('/marketing/konsinyasipusat/cari-konsigner/{idprov}/{idkota}', 'MarketingController@cariKonsigner')->name('konsinyasipusat.carikonsigner');

@@ -15,11 +15,11 @@
 					<table class="table table-hover table-striped" cellspacing="0" id="table_penempatan">
 						<thead class="bg-primary">
 							<tr>
-								<th>Tanggal</th>
-								<th>Nota</th>
-								<th>Konsigner</th>
-								<th>Total</th>
-								<th>Aksi</th>
+								<th class="text-center">Tanggal</th>
+								<th class="text-center">Nota</th>
+								<th class="text-center">Konsigner</th>
+								<th class="text-center">Total</th>
+								<th class="text-center">Aksi</th>
 							</tr>
 						</thead>
 						<tbody>

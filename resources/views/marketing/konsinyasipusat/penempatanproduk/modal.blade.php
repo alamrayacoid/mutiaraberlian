@@ -83,10 +83,10 @@
           <table class="table table-striped table-hover display nowrap" cellspacing="0" id="modal-penempatan" width="100%">
             <thead class="bg-primary">
               <tr>
-                <th>Kode/Nama Barang</th>
-                <th>Jumlah</th>
-                <th>Harga</th>
-                <th>Total Harga</th>
+                <th class="text-center">Nama Barang</th>
+                <th class="text-center">Jumlah</th>
+                <th class="text-center">Harga</th>
+                <th class="text-center">Total Harga</th>
               </tr>
             </thead>
             <tbody>     

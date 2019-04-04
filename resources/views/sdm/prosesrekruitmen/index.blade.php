@@ -116,9 +116,6 @@
 		TableRekrutmen();
 		TableDiterima();
 
-		$(document).on('click','.btn-preview-rekruitmen',function(){
-			window.location.href='{{route('rekruitmen.preview')}}'
-		});
 		$(document).on('click','.btn-proses-rekruitmen',function(){
 			window.location.href='{{route('rekruitmen.process')}}'
 		});
@@ -174,9 +171,6 @@
 		})
 
 
-		$(document).on('click','.btn-preview-pelamar',function(){
-			window.location.href='{{route('rekruitmen.preview')}}'
-		});
 
 		$(document).on('click', '.btn-disable-pelamar', function(){
 			var ini = $(this);
@@ -239,6 +233,10 @@
 			})
 		})
 	});
+
+	function detail(id) {
+		window.location.href='{{url('/sdm/prosesrekruitmen/detail')}}'+'/'+id;
+	}
 
 	$("#rekrut_from").on('change', function() {
 		TableRekrutmen();

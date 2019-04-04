@@ -203,7 +203,7 @@
           {data: 'comp'},
           {data: 'i_name'},
           {data: 'kondisi'},
-          {data: 's_qty'}
+          {data: 'qty'}
       ],
       pageLength: 10,
       lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],

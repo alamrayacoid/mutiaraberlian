@@ -208,7 +208,7 @@ class RecruitmentController extends Controller
         DB::table('d_pelamar')
           ->insert([
             'p_id' => $id,
-            // 'p_date' => "",
+            'p_date' => Carbon::now('Asia/Jakarta'),
             'p_nik' => $request->nik,
             'p_name' => $request->name,
             'p_address' => $request->address,

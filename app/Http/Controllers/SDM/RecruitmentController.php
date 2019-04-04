@@ -4,12 +4,18 @@ namespace App\Http\Controllers\SDM;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 use DB;
-use carbon\Carbon;
-use Yajra\DataTables\DataTables;
+use Auth;
+use Currency;
+use Response;
+use DataTables;
+use Carbon\Carbon;
+use CodeGenerator;
 
-class RekrutmentController extends Controller
+class RecruitmentController extends Controller
 {
   /**
    * Return DataTable list for view.
@@ -56,12 +62,27 @@ class RekrutmentController extends Controller
       })
       ->addColumn('action', function($datas) {
         return '<div class="btn-group btn-group-sm">
-                  <button class="btn btn-primary btn-preview-rekruitmen hint--top-left hint--info" type="button" aria-label="Detail Pelamar" onclick="detail(\''.$datas->p_id.'\')"><i class="fa fa-fw fa-file"></i></button>
-                  <button class="btn btn-warning btn-proses-rekruitmen hint--top-left hint--warning" type="button" aria-label="Proses Data" onclick="proses(\''.$datas->p_id.'\')"><i class="fa fa-fw fa-file-powerpoint-o"></i></button>
-                  <button class="btn btn-danger btn-disable-rekruitmen hint--top-left hint--error" type="button" aria-label="Nonaktifkan Data" onclick="nonActivate(\''.$datas->p_id.'\')"><i class="fa fa-fw fa-times-circle"></i></button>
+                  <button class="btn btn-primary btn-preview-rekruitmen hint--top-left hint--info" type="button" aria-label="Detail Pelamar" onclick="detail(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file"></i></button>
+                  <button class="btn btn-warning btn-proses-rekruitmen hint--top-left hint--warning" type="button" aria-label="Proses Data" onclick="proses(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file-powerpoint-o"></i></button>
+                  <button class="btn btn-danger btn-disable-rekruitmen hint--top-left hint--error" type="button" aria-label="Nonaktifkan Data" onclick="nonActivate(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-times-circle"></i></button>
                 </div>';
       })
       ->rawColumns(['tgl_apply', 'status', 'approval', 'action'])
       ->make(true);
+  }
+
+  public function detail($id)
+  {
+    try {
+        $id = Crypt::decrypt($id);
+    } catch (\Exception $e) {
+        return view('errors.404');
+    }
+
+    $data = DB::table('d_pelamar')
+      ->where('p_id', $id)
+      ->first();
+
+    return view('sdm/prosesrekruitmen/preview', compact('data'));
   }
 }
