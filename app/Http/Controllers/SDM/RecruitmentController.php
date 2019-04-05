@@ -118,6 +118,11 @@ class RecruitmentController extends Controller
 
     return view('sdm/prosesrekruitmen/rekrutmen/process', compact('data'));
   }
+
+  public function prosesPelamar()
+  {
+    
+  }
   // End Code =============================================================================================
 
   // Recruitment Diterima =================================================================================
@@ -162,7 +167,6 @@ class RecruitmentController extends Controller
       ->rawColumns(['tgl_apply', 'status', 'approval', 'action'])
       ->make(true);
   }
-
   // End Code =============================================================================================
 
   // Kelola Recruitment ===================================================================================
