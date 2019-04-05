@@ -20,6 +20,7 @@
 <script src="https://js.pusher.com/4.4/pusher.min.js"></script>
 {{--<script src="{{asset('assets/jquery/jquery-3.1.0.min.js')}}"></script>--}}
 <script src="{{asset('assets/jquery-ui/jquery-ui.min.js')}}"></script>
+<script src="{{asset('assets/jquery-magnify/dist/jquery.magnify.min.js')}}"></script>
 <script src="{{asset('assets/bootstrap-datetimepicker/js/moment.js')}}"></script>
 <script src="{{asset('assets/datepicker/js/bootstrap-datepicker.min.js')}}"></script>
 <script src="{{asset('assets/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js')}}"></script>
