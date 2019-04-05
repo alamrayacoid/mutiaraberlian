@@ -259,7 +259,7 @@ class MarketingController extends Controller
         }
 
 
-        return Response::json($qty_compare_old);
+        return Response::json(floor($qty_compare_old));
     }
 
     public function add_penempatanproduk(Request $request)
