@@ -2,7 +2,7 @@
 
 @section('content')
 
-@include('sdm.prosesrekruitmen.modal_view')
+@include('sdm.prosesrekruitmen.rekrutmen.modal_view_img')
 
 <article class="content">
     <div class="title-block text-primary">

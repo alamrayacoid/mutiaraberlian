@@ -4,13 +4,13 @@ namespace App\Http\Controllers\mobile;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Laravel\Passport\Passport;
 
 class loginController extends Controller
 {
-    public function login(Request $request)
+    public function logout(Request $request)
     {
-        return json_encode([
-            'data' => 'sukses'
-        ]);
+        Passport::routes();
+        return $request;
     }
 }

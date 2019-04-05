@@ -472,13 +472,6 @@ Route::group(['middleware' => 'auth'], function () {
 });
 // End Route Group
 
-Route::prefix('mobile')->group(function () {
-    Route::post('login', 'mobile\loginController@login');
-    Route::group(['middleware' => 'auth:api'], function() {
-        Route::post('logout', 'mobile\loginController@login');
-    });
-});
-
 /*
 
 

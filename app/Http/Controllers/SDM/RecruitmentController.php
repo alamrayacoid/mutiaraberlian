@@ -101,7 +101,7 @@ class RecruitmentController extends Controller
       ->where('p_id', $id)
       ->first();
 
-    return view('sdm/prosesrekruitmen/preview', compact('data'));
+    return view('sdm/prosesrekruitmen/rekrutmen/preview', compact('data'));
   }
 
   public function proses($id)
@@ -116,7 +116,7 @@ class RecruitmentController extends Controller
       ->where('p_id', $id)
       ->first();
 
-    return view('sdm/prosesrekruitmen/process', compact('data'));
+    return view('sdm/prosesrekruitmen/rekrutmen/process', compact('data'));
   }
   // End Code =============================================================================================
 
@@ -206,8 +206,7 @@ class RecruitmentController extends Controller
                       <button class="btn btn-disabled" type="button" onclick="editLoker(\''.Crypt::encrypt($loker->a_id).'\')" disabled><i class="fa fa-fw fa-pencil"></i></button>
                     </div>
                   </div>';
-        }
-        
+        }        
       })
       ->rawColumns(['start', 'end', 'status', 'action'])
       ->make(true);
@@ -314,7 +313,11 @@ class RecruitmentController extends Controller
       ->select('d_applicant.*', DB::raw('date_format(a_startdate, "%d-%m-%Y") as start_date'), DB::raw('date_format(a_enddate, "%d-%m-%Y") as end_date'), 'm_jabatan.*')
       ->where('a_id', $id)
       ->first();
-    $data2 = DB::table('m_jabatan')->select('m_jabatan.*')->where('j_id', '!=', $data1->a_position)->get();
+    $data2 = DB::table('m_jabatan')
+      ->select('m_jabatan.*')
+      ->where('j_id', '!=', $data1->a_position)
+      ->where('j_id', '<', 7)
+      ->get();
 
     return Response::json(array(
       'success' => true,
