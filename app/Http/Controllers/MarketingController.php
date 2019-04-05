@@ -392,6 +392,7 @@ class MarketingController extends Controller
             })
             ->join('m_company', 'c_user', '=', 's_member')
             ->where('s_type', '=', 'K')
+            ->groupBy('d_sales.s_nota')
             ->select('s_id as id', 's_date as tanggal', 's_nota as nota', 'c_name as konsigner', DB::raw("CONCAT('Rp. ',FORMAT(s_total, 0, 'de_DE')) as total"));
 
         return DataTables::of($data)
@@ -410,7 +411,7 @@ class MarketingController extends Controller
             ->addColumn('action', function($data){
                 $detail = '<button class="btn btn-primary" type="button" title="Detail" onclick="detailKonsinyasi(\''.Crypt::encrypt($data->id).'\')"><i class="fa fa-folder"></i></button>';
                 $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editKonsinyasi(\''.Crypt::encrypt($data->id).'\')"><i class="fa fa-pencil"></i></button>';
-                $delete = '<button class="btn btn-danger" type="button" title="Hapus"><i class="fa fa-trash"></i></button>';
+                $delete = '<button class="btn btn-danger" type="button" title="Hapus" onclick="hapusKonsinyasi(\''.Crypt::encrypt($data->id).'\', \''.$data->nota.'\')"><i class="fa fa-trash"></i></button>';
                 return '<div class="btn-group btn-group-sm">'. $detail . $edit . $delete . '</div>';
             })
             ->rawColumns(['tanggal','nota', 'konsigner', 'total','action'])
@@ -601,6 +602,51 @@ class MarketingController extends Controller
             $ids = Crypt::encrypt($id);
 
             return view('marketing/konsinyasipusat/penempatanproduk/edit')->with(compact('detail', 'data_item', 'ids'));
+        }
+    }
+
+    public function deletePenempatanproduk(Request $request)
+    {
+        try{
+            $id = Crypt::decrypt($request->id);
+        }catch (DecryptException $e){
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e
+            ]);
+        }
+
+        DB::beginTransaction();
+        try{
+            $rollback_mutasi = Mutasi::rollback($request->nota); //return true/false(error)
+
+            if ($rollback_mutasi == true){
+                DB::table('d_salesdt')
+                    ->where('sd_sales', '=', $id)
+                    ->delete();
+                DB::table('d_sales')
+                    ->where('s_id', '=', $id)
+                    ->delete();
+
+                DB::commit();
+                return Response::json([
+                    'status' => "Success",
+                    'message'=> 'Data berhasil dihapus'
+                ]);
+            }else{
+                DB::rollBack();
+                return Response::json([
+                    'status' => "Failed",
+                    'message'=> $rollback_mutasi
+                ]);
+            }
+
+        }catch (Exception $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e
+            ]);
         }
     }
 }

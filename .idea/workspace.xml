@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1c8b318e-c138-400d-afca-6445ceb3fae0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/MarketingController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/MarketingController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Mutasi.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Mutasi.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/edit.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <ignored path="$PROJECT_DIR$/.idea/" />
@@ -121,8 +122,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7659">
-              <caret line="353" column="86" selection-start-line="353" selection-start-column="84" selection-end-line="353" selection-end-column="86" />
+            <state relative-caret-position="482">
+              <caret line="354" column="144" selection-start-line="354" selection-start-column="121" selection-end-line="354" selection-end-column="144" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
               </folding>
@@ -130,11 +131,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/MarketingController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="188">
-              <caret line="472" column="159" selection-start-line="472" selection-start-column="159" selection-end-line="472" selection-end-column="159" />
+            <state relative-caret-position="420">
+              <caret line="413" column="110" selection-start-line="413" selection-start-column="95" selection-end-line="413" selection-end-column="110" />
               <folding>
                 <element signature="e#40#68#0#PHP" expanded="true" />
                 <element signature="e#1313#1440#0#PHP" />
@@ -144,7 +145,6 @@
                 <element signature="e#5025#5726#0#PHP" />
                 <element signature="e#7514#12039#0#PHP" />
                 <element signature="e#12045#14881#0#PHP" />
-                <element signature="e#14887#16591#0#PHP" />
                 <element signature="e#16597#16695#0#PHP" />
                 <element signature="e#16701#16828#0#PHP" />
               </folding>
@@ -152,11 +152,15 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
-              <caret line="55" column="32" selection-start-line="55" selection-start-column="32" selection-end-line="55" selection-end-column="32" />
+            <state relative-caret-position="654">
+              <caret line="233" column="11" selection-start-line="233" selection-start-column="11" selection-end-line="233" selection-end-column="11" />
+              <folding>
+                <element signature="e#2019#4594#0#HTML" />
+                <element signature="e#4629#6515#0#HTML" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -164,8 +168,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/edit.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="34" column="45" selection-start-line="34" selection-start-column="45" selection-end-line="34" selection-end-column="45" />
+            <state relative-caret-position="102">
+              <caret line="121" column="69" lean-forward="true" selection-start-line="121" selection-start-column="69" selection-end-line="121" selection-end-column="69" />
               <folding>
                 <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
               </folding>
@@ -189,7 +193,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>.barang</find>
       <find>handleInput</find>
       <find>produksi/returnproduksi/create</find>
       <find>produksi/orderproduksi/create</find>
@@ -219,6 +222,7 @@
       <find>update</find>
       <find>idItem</find>
       <find>$idSales</find>
+      <find>confirm</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -274,11 +278,11 @@
         <option value="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/modal.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/index.blade.php" />
-        <option value="$PROJECT_DIR$/routes/web.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Mutasi.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/edit.blade.php" />
+        <option value="$PROJECT_DIR$/routes/web.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/MarketingController.php" />
+        <option value="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/index.blade.php" />
       </list>
     </option>
   </component>
@@ -675,21 +679,7 @@
       <workItem from="1554176903212" duration="17794000" />
       <workItem from="1554260564206" duration="12772000" />
       <workItem from="1554339589669" duration="17635000" />
-      <workItem from="1554428962267" duration="6296000" />
-    </task>
-    <task id="LOCAL-00066" summary="mutiara">
-      <created>1553572481872</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
-      <option name="project" value="LOCAL" />
-      <updated>1553572481872</updated>
-    </task>
-    <task id="LOCAL-00067" summary="mutiara">
-      <created>1553573824366</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1553573824366</updated>
+      <workItem from="1554428962267" duration="9094000" />
     </task>
     <task id="LOCAL-00068" summary="mutiara">
       <created>1553582777911</created>
@@ -1020,11 +1010,25 @@
       <option name="project" value="LOCAL" />
       <updated>1554434975352</updated>
     </task>
-    <option name="localTasksCounter" value="115" />
+    <task id="LOCAL-00115" summary="mutiara">
+      <created>1554436994720</created>
+      <option name="number" value="00115" />
+      <option name="presentableId" value="LOCAL-00115" />
+      <option name="project" value="LOCAL" />
+      <updated>1554436994720</updated>
+    </task>
+    <task id="LOCAL-00116" summary="mutiara">
+      <created>1554437214366</created>
+      <option name="number" value="00116" />
+      <option name="presentableId" value="LOCAL-00116" />
+      <option name="project" value="LOCAL" />
+      <updated>1554437214366</updated>
+    </task>
+    <option name="localTasksCounter" value="117" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="373705000" />
+    <option name="totallyTimeSpent" value="376503000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1366" height="768" extended-state="6" />
@@ -1335,13 +1339,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/orderproduksi/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="122">
-          <caret line="74" column="9" lean-forward="true" selection-start-line="74" selection-start-column="9" selection-end-line="74" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/modal-detail.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-34">
@@ -1398,16 +1395,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/web.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7659">
-          <caret line="353" column="86" selection-start-line="353" selection-start-column="84" selection-end-line="353" selection-end-column="86" />
-          <folding>
-            <element signature="e#7#389#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5106">
@@ -1455,25 +1442,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/edit.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="34" column="45" selection-start-line="34" selection-start-column="45" selection-end-line="34" selection-end-column="45" />
+        <state relative-caret-position="102">
+          <caret line="121" column="69" lean-forward="true" selection-start-line="121" selection-start-column="69" selection-end-line="121" selection-end-column="69" />
           <folding>
             <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/index.blade.php">
+    <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="55" column="32" selection-start-line="55" selection-start-column="32" selection-end-line="55" selection-end-column="32" />
+        <state relative-caret-position="482">
+          <caret line="354" column="144" selection-start-line="354" selection-start-column="121" selection-end-line="354" selection-end-column="144" />
+          <folding>
+            <element signature="e#7#389#0#PHP" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/MarketingController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="472" column="159" selection-start-line="472" selection-start-column="159" selection-end-line="472" selection-end-column="159" />
+        <state relative-caret-position="420">
+          <caret line="413" column="110" selection-start-line="413" selection-start-column="95" selection-end-line="413" selection-end-column="110" />
           <folding>
             <element signature="e#40#68#0#PHP" expanded="true" />
             <element signature="e#1313#1440#0#PHP" />
@@ -1483,9 +1473,26 @@
             <element signature="e#5025#5726#0#PHP" />
             <element signature="e#7514#12039#0#PHP" />
             <element signature="e#12045#14881#0#PHP" />
-            <element signature="e#14887#16591#0#PHP" />
             <element signature="e#16597#16695#0#PHP" />
             <element signature="e#16701#16828#0#PHP" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/produksi/orderproduksi/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="363">
+          <caret line="220" column="40" lean-forward="true" selection-start-line="220" selection-start-column="40" selection-end-line="220" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="654">
+          <caret line="233" column="11" selection-start-line="233" selection-start-column="11" selection-end-line="233" selection-end-column="11" />
+          <folding>
+            <element signature="e#2019#4594#0#HTML" />
+            <element signature="e#4629#6515#0#HTML" />
           </folding>
         </state>
       </provider>
