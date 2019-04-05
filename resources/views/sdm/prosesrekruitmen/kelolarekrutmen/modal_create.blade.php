@@ -34,7 +34,7 @@
                 <div class="col-md-9 col-sm-12">
                 <div class="form-group">
                     <select name="a_position" id="Position" class="form-control form-control-sm select2">
-                        <option value="" selected="" disabled="">=== Pilih Posisi ===</option>
+                        <option value="" selected="" disabled="">=== Pilih Posisi/Jabatan ===</option>
                         @foreach($jabatan as $key => $j)
                             <option value="{{$j->j_id}}">{{$j->j_name}}</option>
                         @endforeach

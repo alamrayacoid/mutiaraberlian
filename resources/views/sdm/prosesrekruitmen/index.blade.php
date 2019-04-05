@@ -19,9 +19,9 @@
 
 @include('sdm.prosesrekruitmen.modal_calonkaryawan')
 
-@include('sdm.prosesrekruitmen.modal_create')
+@include('sdm.prosesrekruitmen.kelolarekrutmen.modal_create')
 
-@include('sdm.prosesrekruitmen.modal_edit')
+@include('sdm.prosesrekruitmen.kelolarekrutmen.modal_edit')
 
 <article class="content">
 	<div class="title-block text-primary">
@@ -45,9 +45,9 @@
 					</li>
 				</ul>
 				<div class="tab-content">
-					@include('sdm.prosesrekruitmen.tab_rekruitmen')
-					@include('sdm.prosesrekruitmen.tab_pelamarditerima')
-					@include('sdm.prosesrekruitmen.kelola_rekruitment')
+					@include('sdm.prosesrekruitmen.rekrutmen.tab_rekruitmen')
+					@include('sdm.prosesrekruitmen.pelamarditerima.tab_pelamarditerima')
+					@include('sdm.prosesrekruitmen.kelolarekrutmen.kelola_rekruitment')
 				</div>
 			</div>
 		</div>
