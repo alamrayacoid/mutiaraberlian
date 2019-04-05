@@ -121,6 +121,7 @@
                                                                     <option value="{{ $data->id3 }}" @if($data->unit == $data->id3) selected @endif>{{ $data->unit3 }}</option>
                                                                 @endif
                                                             </select>
+                                                            <input type="hidden" name="oldSatuan" class="oldSatuan" value="{{ $data->unit }}">
                                                         </td>
                                                         <td>
                                                             <input type="number"
@@ -448,7 +449,7 @@
                 }
                 
                 if ($('.jumlah').eq(idx).attr("data-label") == "old") {
-                    axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok-old/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+qtyOld+'/'+jumlah)
+                    axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok-old/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".oldSatuan").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+qtyOld+'/'+jumlah)
                         .then(function (resp) {
                             $(".jumlah").eq(idx).val(resp.data);
 

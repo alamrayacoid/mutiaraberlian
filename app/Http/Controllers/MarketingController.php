@@ -215,7 +215,7 @@ class MarketingController extends Controller
         return Response::json($qty_compare);
     }
 
-    public function checkStockOld($stock = null, $item = null, $satuan = null, $qtyOld = null, $qty = null)
+    public function checkStockOld($stock = null, $item = null, $oldSatuan = null, $satuan = null, $qtyOld = null, $qty = null)
     {
         $data_check = DB::table('m_item')
             ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
@@ -235,29 +235,31 @@ class MarketingController extends Controller
             ->select('sm_residue as sisa')
             ->first();
 
-        $qty_compare = 0;
-        if ($satuan == $data_check->unit1) {
+        $qty_compare_old = 0;
+        if ($oldSatuan == $data_check->unit1) {
             if ((int)$qty > (int)$data->sisa) {
-                $qty_compare = $data->sisa;
+                $qty_compare_old = $data->sisa + $qtyOld;
             } else {
-                $qty_compare = $qty;
+                $qty_compare_old = $qty;
             }
-        } else if ($satuan == $data_check->unit2) {
+        } else if ($oldSatuan == $data_check->unit2) {
             $compare = (int)$qty * (int)$data_check->compare2;
-            if ((int)$compare > (int)$data->sisa) {
-                $qty_compare = (int)$data->sisa/(int)$data_check->compare2;
+            if ((int)$compare > (int)($data->sisa + $qtyOld)) {
+                $qty_compare_old = (int)($data->sisa+$qtyOld)/(int)$data_check->compare2;
             } else {
-                $qty_compare = $qty;
+                $qty_compare_old = $qty;
             }
-        } else if ($satuan == $data_check->unit3) {
+        } else if ($oldSatuan == $data_check->unit3) {
             $compare = (int)$qty * (int)$data_check->compare3;
-            if ((int)$compare > (int)$data->sisa) {
-                $qty_compare = (int)$data->sisa/(int)$data_check->compare3;
+            if ((int)$compare > (int)($data->sisa+$qtyOld)) {
+                $qty_compare_old = (int)($data->sisa+$qtyOld)/(int)$data_check->compare3;
             } else {
-                $qty_compare = $qty;
+                $qty_compare_old = $qty;
             }
         }
-        return Response::json($qty_compare);
+
+
+        return Response::json(floor($qty_compare_old));
     }
 
     public function add_penempatanproduk(Request $request)
