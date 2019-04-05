@@ -3,29 +3,29 @@
 @section('content')
 <?php 
   if ($data->p_stateapprove == 1 && $data->p_state == "Y") {
-    $approve1  = "disabled";
-    $app_name  = "Approve 1";
+    $approve1    = "disabled";
+    $app_name    = "Approve 1";
     $status_name = "Test Interview";
-    $checkedN1 = "";
-    $checkedP1 = "";
-    $checkedY1 = "checked";
-    $name1     = "status_app1";
+    $checkedN1   = "";
+    $checkedP1   = "";
+    $checkedY1   = "checked";
+    $name1       = "status_app1";
   } else if ($data->p_stateapprove == 1 && $data->p_state == "N") {
-    $approve1  = "disabled";
-    $app_name  = "Approve 1";
+    $approve1    = "disabled";
+    $app_name    = "Approve 1";
     $status_name = "Ditolak Administrasi(tidak bisa diproses lagi)";
-    $checkedN1 = "checked";
-    $checkedP1 = "";
-    $checkedY1 = "";
-    $name1     = "status_app";
+    $checkedN1   = "checked";
+    $checkedP1   = "";
+    $checkedY1   = "";
+    $name1       = "status_app";
   } else if ($data->p_stateapprove == 1 && $data->p_state == "P") {
-    $approve1  = "";
-    $app_name  = "Approve 1";
+    $approve1    = "";
+    $app_name    = "Approve 1";
     $status_name = "Pending Tahap 1";
-    $checkedN1 = "";
-    $checkedP1 = "checked";
-    $checkedY1 = "";
-    $name1     = "status_app";
+    $checkedN1   = "";
+    $checkedP1   = "checked";
+    $checkedY1   = "";
+    $name1       = "status_app";
   } else if ($data->p_stateapprove > 1) {
     $approve1  = "disabled";
     $checkedN1 = "";
@@ -33,46 +33,46 @@
     $checkedY1 = "checked";
     $name1     = "status_app1";
   } else {
-    $approve1  = "";
-    $app_name  = "Belum Terapprove!";
+    $approve1    = "";
+    $app_name    = "Belum Terapprove!";
     $status_name = "";
-    $checkedN1 = "";
-    $checkedP1 = "";
-    $checkedY1 = "";
-    $name1     = "status_app";
+    $checkedN1   = "";
+    $checkedP1   = "";
+    $checkedY1   = "";
+    $name1       = "status_app";
   }
   if ($data->p_stateapprove == 1 && $data->p_state == "Y") {
-    $approve2  = "";
-    $app_name  = "Approve 1";
+    $approve2    = "";
+    $app_name    = "Approve 1";
     $status_name = "Test Interview";
-    $checkedN2 = "";
-    $checkedP2 = "";
-    $checkedY2 = "";
-    $name2     = "status_app";
+    $checkedN2   = "";
+    $checkedP2   = "";
+    $checkedY2   = "";
+    $name2       = "status_app";
   } else if ($data->p_stateapprove == 2 && $data->p_state == "N") {
-    $approve2  = "disabled";
-    $app_name  = "Approve 2";
+    $approve2    = "disabled";
+    $app_name    = "Approve 2";
     $status_name = "Ditolak Administrasi(tidak bisa diproses lagi)";
-    $checkedN2 = "checked";
-    $checkedP2 = "";
-    $checkedY2 = "";
-    $name2     = "status_app";
+    $checkedN2   = "checked";
+    $checkedP2   = "";
+    $checkedY2   = "";
+    $name2       = "status_app";
   } else if ($data->p_stateapprove == 2 && $data->p_state == "P") {
-    $approve2  = "";
-    $app_name  = "Approve 2";
+    $approve2    = "";
+    $app_name    = "Approve 2";
     $status_name = "Pending Tahap 2";
-    $checkedN2 = "";
-    $checkedP2 = "checked";
-    $checkedY2 = "";
-    $name2     = "status_app";
+    $checkedN2   = "";
+    $checkedP2   = "checked";
+    $checkedY2   = "";
+    $name2       = "status_app";
   } else if ($data->p_stateapprove == 2 && $data->p_state == "Y") {
-    $approve2  = "disabled";
-    $app_name  = "Approve 2";
+    $approve2    = "disabled";
+    $app_name    = "Approve 2";
     $status_name = "Test Presentasi";
-    $checkedN2 = "";
-    $checkedP2 = "";
-    $checkedY2 = "checked";
-    $name2     = "status_app2";
+    $checkedN2   = "";
+    $checkedP2   = "";
+    $checkedY2   = "checked";
+    $name2       = "status_app2";
   } else if ($data->p_stateapprove > 2) {
     $approve2  = "disabled";
     $checkedN2 = "";
@@ -87,26 +87,26 @@
     $name2     = "status_app2";
   }
   if ($data->p_stateapprove == 2 && $data->p_state == "Y") {
-    $approve3  = "";
-    $app_name  = "Approve 2";
+    $approve3    = "";
+    $app_name    = "Approve 2";
     $status_name = "Test Presentasi";
-    $checkedN3 = "";
-    $checkedY3 = "";
-    $name3     = "status_app";
+    $checkedN3   = "";
+    $checkedY3   = "";
+    $name3       = "status_app";
   } else if ($data->p_stateapprove == 3 && $data->p_state == "N") {
-    $approve3  = "disabled";
-    $app_name  = "Approve 3";
+    $approve3    = "disabled";
+    $app_name    = "Approve 3";
     $status_name = "Ditolak Final";
-    $checkedN3 = "checked";
-    $checkedY3 = "";
-    $name3     = "status_app";
+    $checkedN3   = "checked";
+    $checkedY3   = "";
+    $name3       = "status_app";
   } else if ($data->p_stateapprove == 3 && $data->p_state == "Y") {
-    $approve3  = "disabled";
-    $app_name  = "Approve 3";
+    $approve3    = "disabled";
+    $app_name    = "Approve 3";
     $status_name = "Diterima Sebagai Karyawan";
-    $checkedN3 = "";
-    $checkedY3 = "checked";
-    $name3     = "status_app";
+    $checkedN3   = "";
+    $checkedY3   = "checked";
+    $name3       = "status_app";
   } else {
     $approve3  = "disabled";
     $checkedN3 = "";
