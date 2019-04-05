@@ -436,65 +436,30 @@ class MarketingController extends Controller
         }
 
         if ($request->isMethod('post')) {
+            $data   = $request->all();
+            $comp   = Auth::user()->u_company;
+            $member = $data['kodeKonsigner'];
+            $user   = Auth::user()->u_id;
+            $type   = 'K';
+            $date   = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+            $total  = $data['tot_hrg'];
+            $insert = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
+            $update = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
+            $nota   = $request->nota;
+            $idSales= $data['idSales'];
+
             DB::beginTransaction();
             try{
                 //Rollback mutasi
-                $get_sm = DB::table('d_stock_mutation')
-                    ->join('d_stock', 'sm_stock', '=', 's_id')
-                    ->where('sm_nota', '=', $request->nota)
-                    ->get();
-
-                foreach ($get_sm as $sm){
-                    if ($sm->sm_mutcat == 13){
-                        $select_sm = DB::table('d_stock_mutation')
-                            ->where('sm_stock', '=', $sm->sm_stock)
-                            ->where('sm_nota', '=', $sm->sm_reff)
-                            ->first();
-
-                        $use  = $select_sm->sm_use - $sm->sm_qty;
-                        $sisa = $select_sm->sm_residue + $sm->sm_qty;
-
-                        DB::table('d_stock_mutation')
-                            ->where('sm_stock', '=', $select_sm->sm_stock)
-                            ->where('sm_nota', '=', $select_sm->sm_nota)
-                            ->update([
-                                'sm_use'        => $use,
-                                'sm_residue'    => $sisa
-                            ]);
-
-                        DB::table('d_stock')
-                            ->where('s_id', '=', $select_sm->sm_stock)
-                            ->update([
-                                's_qty' => $sisa
-                            ]);
-                    } else if ($sm->sm_mutcat == 12) {
-                        $select_sm = DB::table('d_stock_mutation')
-                            ->where('sm_stock', '=', $sm->sm_stock)
-                            ->where('sm_nota', '=', $sm->sm_nota)
-                            ->first();
-
-                        $select_stock = DB::table('d_stock')
-                            ->where('s_id', '=', $select_sm->sm_stock)
-                            ->first();
-
-                        $sisa = $select_stock->s_qty - $select_sm->sm_qty;
-
-                        DB::table('d_stock')
-                            ->where('s_id', '=', $select_sm->sm_stock)
-                            ->update([
-                                's_qty' => $sisa
-                            ]);
-                    }
-
-                    DB::table('d_stock_mutation')
-                        ->where('sm_stock', '=', $sm->sm_stock)
-                        ->where('sm_nota', '=', $sm->sm_nota)
-                        ->delete();
-                }
+                $rollback_mutasi = Mutasi::rollback($request->nota);
                 //end rollback mutasi
 
+                //Reinsert
+
+                //End reinsert
+
                 DB::commit();
-                dd($get_sm);
+                dd($rollback_mutasi);
             }catch (Exception $e){
                 DB::rollBack();
             }

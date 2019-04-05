@@ -79,6 +79,7 @@
                                                 <input type="text" class="form-control form-control-sm"
                                                        name="total_harga"
                                                        id="total_harga" value="{{ Currency::addRupiah($detail->s_total) }}" readonly>
+                                                <input type="hidden" name="tot_hrg" id="tot_hrg">
                                             </div>
                                         </div>
 
@@ -627,7 +628,7 @@
             for (var i = 0; i < subtotal.length; i++) {
                 total += parseInt(subtotal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", ""));
             }
-
+            $("#tot_hrg").val(total);
             if (isNaN(total)) {
                 total = 0;
             }
