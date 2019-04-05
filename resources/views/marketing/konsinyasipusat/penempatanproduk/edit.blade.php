@@ -111,6 +111,7 @@
                                                                    autocomplete="off">
                                                         </td>
                                                         <td><select name="satuan[]"
+                                                                    data-label="old"
                                                                     class="form-control form-control-sm select2 satuan">
                                                                 <option value="{{ $data->id1 }}" @if($data->unit == $data->id1) selected @endif>{{ $data->unit1 }}</option>
                                                                 @if ($data->id2 != null && $data->id2 != $data->id1)
@@ -126,7 +127,9 @@
                                                                    name="jumlah[]"
                                                                    min="0"
                                                                    class="form-control form-control-sm jumlah"
+                                                                   data-label="old"
                                                                    value="{{ $data->qty }}">
+                                                            <input type="hidden" name="qtyOld" class="qtyOld" value="{{ $data->qty }}">
                                                         </td>
                                                         <td>
                                                             <input type="text"
@@ -436,46 +439,92 @@
             $(".jumlah").on('input', function (evt) {
                 var idx = $('.jumlah').index(this);
                 var jumlah = $('.jumlah').eq(idx).val();
+                var qtyOld = $('.qtyOld').eq(idx).val();
                 if (jumlah == "") {
                     jumlah = null;
                 }
-                axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
-                    .then(function (resp) {
-                        $(".jumlah").eq(idx).val(resp.data);
+                if (qtyOld == "") {
+                    qtyOld = null;
+                }
+                
+                if ($('.jumlah').eq(idx).attr("data-label") == "old") {
+                    axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok-old/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+qtyOld+'/'+jumlah)
+                        .then(function (resp) {
+                            $(".jumlah").eq(idx).val(resp.data);
 
-                        var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-                            jumlah  = [].map.call(inpJumlah, function( input ) {
-                                return parseInt(input.value);
-                            });
+                            var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                                jumlah  = [].map.call(inpJumlah, function( input ) {
+                                    return parseInt(input.value);
+                                });
 
-                        var inpHarga = document.getElementsByClassName( 'harga' ),
-                            harga  = [].map.call(inpHarga, function( input ) {
-                                return input.value;
-                            });
+                            var inpHarga = document.getElementsByClassName( 'harga' ),
+                                harga  = [].map.call(inpHarga, function( input ) {
+                                    return input.value;
+                                });
 
-                        for (var i = 0; i < jumlah.length; i++) {
-                            var hasil = 0;
-                            var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                            var jml = jumlah[i];
+                            for (var i = 0; i < jumlah.length; i++) {
+                                var hasil = 0;
+                                var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                                var jml = jumlah[i];
 
-                            if (jml == "") {
-                                jml = 0;
+                                if (jml == "") {
+                                    jml = 0;
+                                }
+
+                                hasil += parseInt(hrg) * parseInt(jml);
+
+                                if (isNaN(hasil)) {
+                                    hasil = 0;
+                                }
+                                hasil = convertToRupiah(hasil);
+                                $(".subtotal").eq(i).val(hasil);
+
                             }
+                            updateTotalTampil();
+                        })
+                        .catch(function (error) {
+                            messageWarning("Error", error);
+                        })
+                }else{
+                    axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
+                        .then(function (resp) {
+                            $(".jumlah").eq(idx).val(resp.data);
 
-                            hasil += parseInt(hrg) * parseInt(jml);
+                            var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                                jumlah  = [].map.call(inpJumlah, function( input ) {
+                                    return parseInt(input.value);
+                                });
 
-                            if (isNaN(hasil)) {
-                                hasil = 0;
+                            var inpHarga = document.getElementsByClassName( 'harga' ),
+                                harga  = [].map.call(inpHarga, function( input ) {
+                                    return input.value;
+                                });
+
+                            for (var i = 0; i < jumlah.length; i++) {
+                                var hasil = 0;
+                                var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                                var jml = jumlah[i];
+
+                                if (jml == "") {
+                                    jml = 0;
+                                }
+
+                                hasil += parseInt(hrg) * parseInt(jml);
+
+                                if (isNaN(hasil)) {
+                                    hasil = 0;
+                                }
+                                hasil = convertToRupiah(hasil);
+                                $(".subtotal").eq(i).val(hasil);
+
                             }
-                            hasil = convertToRupiah(hasil);
-                            $(".subtotal").eq(i).val(hasil);
+                            updateTotalTampil();
+                        })
+                        .catch(function (error) {
+                            messageWarning("Error", error);
+                        })
+                }
 
-                        }
-                        updateTotalTampil();
-                    })
-                    .catch(function (error) {
-                        messageWarning("Error", error);
-                    })
             })
         }
 
@@ -517,10 +566,10 @@
             row = '<tr>' +
                 '<td><input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"><input type="hidden" name="idStock[]" class="idStock"></td>'+
                 '<td>'+
-                '<select name="satuan[]" class="form-control form-control-sm select2 satuan">'+
+                '<select name="satuan[]" class="form-control form-control-sm select2 satuan" data-label="new">'+
                 '</select>'+
                 '</td>'+
-                '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>'+
+                '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" data-label="new" value="0" readonly></td>'+
                 '<td><input type="text" name="harga[]" class="form-control form-control-sm input-rupiah harga" value="Rp. 0" readonly></td>'+
                 '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
                 '<td>'+
