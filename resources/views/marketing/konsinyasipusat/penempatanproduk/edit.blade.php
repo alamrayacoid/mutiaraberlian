@@ -145,7 +145,7 @@
                                                                         class="btn btn-sm btn-success rounded-circle btn-tambahp"><i
                                                                         class="fa fa-plus"></i></button>
                                                             @else
-                                                                <button class="btn btn-danger rounded-circle btn-hapus-item btn-sm" type="button">
+                                                                <button class="btn btn-danger rounded-circle btn-hapus btn-sm" type="button">
                                                                     <i class="fa fa-remove" aria-hidden="true"></i>
                                                                 </button>
                                                             @endif
@@ -377,6 +377,12 @@
                     });
                 }
             })
+
+            $('#formKonsinyasi').data('serialize',$('#formKonsinyasi').serialize()); // On load save form current state
+            $(window).bind('beforeunload', function(e){
+                if($('#formKonsinyasi').serialize() != $('#formKonsinyasi').data('serialize'))return true;
+                else e=null; // i.e; if form state change show box not.
+            });
         });
 
         function changeSatuan() {
