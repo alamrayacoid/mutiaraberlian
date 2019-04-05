@@ -23,9 +23,12 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
-
         parent::boot();
+        // header('Access-Control-Allow-Origin: *');
+        // header('Access-Control-Allow-Credentials: true');
+        // header('Access-Control-Allow-Methods: GET');
+        // header('Access-Control-Allow-Headers: Content-Type, Accept, User-Agent, Referer, X-Requested-With, Authorization');
+        // header('Content-Type: application/json');
     }
 
     /**
