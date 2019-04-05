@@ -126,13 +126,13 @@
                                                                    name="jumlah[]"
                                                                    min="0"
                                                                    class="form-control form-control-sm jumlah"
-                                                                   value="{{ $data->qty }}" readonly>
+                                                                   value="{{ $data->qty }}">
                                                         </td>
                                                         <td>
                                                             <input type="text"
                                                                    name="harga[]"
                                                                    class="form-control form-control-sm input-rupiah harga"
-                                                                   value="{{ Currency::addRupiah($data->harga) }}" readonly>
+                                                                   value="{{ Currency::addRupiah($data->harga) }}" >
                                                         </td>
                                                         <td>
                                                             <input type="text" name="subtotal[]" style="text-align: right;"
@@ -145,7 +145,7 @@
                                                                         class="btn btn-sm btn-success rounded-circle btn-tambahp"><i
                                                                         class="fa fa-plus"></i></button>
                                                             @else
-                                                                <button class="btn btn-danger btn-hapus-item btn-sm" type="button">
+                                                                <button class="btn btn-danger rounded-circle btn-hapus-item btn-sm" type="button">
                                                                     <i class="fa fa-remove" aria-hidden="true"></i>
                                                                 </button>
                                                             @endif
