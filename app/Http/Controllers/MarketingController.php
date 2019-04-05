@@ -212,7 +212,7 @@ class MarketingController extends Controller
                 $qty_compare = $qty;
             }
         }
-        return Response::json($qty_compare);
+        return Response::json(floor($qty_compare));
     }
 
     public function checkStockOld($stock = null, $item = null, $oldSatuan = null, $satuan = null, $qtyOld = null, $qty = null)
