@@ -324,9 +324,7 @@
                                                 <label for="">Foto</label>
                                             </div>
                                             <div class="outline-img col-12 d-flex align-items-end justify-content-center justify-content-center">
-                                            <a href="{{url('storage/uploads/recruitment', $data->p_imgfoto)}}" data-magnify="gallery" data-caption="Foto" data-group="">
-                                                <img src="{{url('storage/uploads/recruitment', $data->p_imgfoto)}}" alt="" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;">
-                                            </a>
+                                                <img src="{{url('storage/uploads/recruitment', $data->p_imgfoto)}}" alt="Foto" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;" id="image">
                                             </div>
                                             <div>
                                                 <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{url('storage/uploads/recruitment', $data->p_imgfoto)}}')">Lihat Berkas</button>
@@ -403,45 +401,5 @@
     //$('#img_priview').remove();
     $("#img_priview").attr("src", img);
   }
-</script>
-<script>
-$(document).ready(function(){
-    $('[data-magnify=gallery]').magnify({
-        draggable: true,
-        modalWidth: 320,
-        modalHeight: 320,
-
-  headToolbar: [
-      'maximize',
-      'close'
-  ],
-  footToolbar: [
-      'zoomIn',
-      'zoomOut',
-      'prev',
-      'fullscreen',
-      'next',
-      'actualSize',
-      'rotateRight'
-  ],
-  icons: {
-    minimize: 'fa fa-window-minimize',
-    maximize: 'fa fa-window-maximize',
-    close: 'fa fa-close',
-    zoomIn: 'fa fa-search-plus',
-    zoomOut: 'fa fa-search-minus',
-    prev: 'fa fa-arrow-left',
-    next: 'fa fa-arrow-right',
-    fullscreen: 'fa fa-photo',
-    actualSize: 'fa fa-arrows-alt',
-    rotateLeft: 'fa fa-rotate-left',
-    rotateRight: 'fa fa-rotate-right',
-    loader: 'fa fa-spinner fa-pulse'
-  },
-  dragHandle: '.magnify-modal',
-  zIndex: 1090,
-
-    });
-});
 </script>
 @endsection

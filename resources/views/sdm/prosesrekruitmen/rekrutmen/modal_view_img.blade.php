@@ -6,7 +6,7 @@
       <div style="background-color:transparent;">
         <button type="button" class="close" data-dismiss="modal" style="padding:10px;">&times;</button>
       </div>
-      <div class="modal-body p-0">
+      <div class="modal-body p-0 col-12">
         <section>
           <div class="col-12 p-0 text-center">
             <img id="img_priview" src="" alt="" class="img-fluid">
