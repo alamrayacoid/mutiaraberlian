@@ -30,7 +30,6 @@
 <script src="{{asset('assets/pushjs/bin/push.min.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.3/mousetrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.3/plugins/bind-dictionary/mousetrap-bind-dictionary.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.3.2/viewer.js"></script>
 <script type="text/javascript">
     var getstorage;
     $('#sidebar-collapse-btn, #sidebar-overlay').click(function () {
@@ -543,4 +542,9 @@ $(document).ready(function(){
         'ctrl+shift+h': hideMenu,
         'f1' : easyCreate
     });
+</script>
+<script>
+$(document).ready(function(){
+    $('[data-gallery=example]').photoviewer();
+});
 </script>

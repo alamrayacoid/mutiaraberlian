@@ -1,6 +1,30 @@
 @extends('main')
 
 @section('content')
+@section('extra_style')
+<style>
+	#img_priview {
+    transform-origin: top left; /* IE 10+, Firefox, etc. */
+    -webkit-transform-origin: top left; /* Chrome */
+    -ms-transform-origin: top left; /* IE 9 */
+	}
+	#img_priview.rotate90 {
+		transform: rotate(90deg) translateY(-100%);
+		-webkit-transform: rotate(90deg) translateY(-100%);
+		-ms-transform: rotate(90deg) translateY(-100%);
+	}
+	#img_priview.rotate180 {
+		transform: rotate(180deg) translate(-100%,-100%);
+		-webkit-transform: rotate(180deg) translate(-100%,-100%);
+		-ms-transform: rotate(180deg) translateX(-100%,-100%);
+	}
+	#img_priview.rotate270 {
+		transform: rotate(270deg) translateX(-100%);
+		-webkit-transform: rotate(270deg) translateX(-100%);
+		-ms-transform: rotate(270deg) translateX(-100%);
+	}
+</style>
+@endsection
 
 @include('sdm.prosesrekruitmen.rekrutmen.modal_view_img')
 
@@ -323,7 +347,7 @@
                                             <div class="col-12" style="text-align:center;">
                                                 <label for="">Foto</label>
                                             </div>
-                                            <div class="outline-img col-12 d-flex align-items-end justify-content-center justify-content-center">
+                                            <div class="outline-img col-12 d-flex align-items-end justify-content-center justify-content-center">   
                                                 <img src="{{url('storage/uploads/recruitment', $data->p_imgfoto)}}" alt="Foto" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;" id="image">
                                             </div>
                                             <div>
@@ -401,5 +425,12 @@
     //$('#img_priview').remove();
     $("#img_priview").attr("src", img);
   }
+</script>
+<script>
+var angle = 0, img = document.getElementById('img_priview');
+document.getElementById('button').onclick = function() {
+    angle = (angle+90)%360;
+    img.className = "rotate"+angle;
+}
 </script>
 @endsection

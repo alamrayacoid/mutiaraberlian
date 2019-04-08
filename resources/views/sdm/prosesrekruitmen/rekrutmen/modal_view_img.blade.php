@@ -4,11 +4,12 @@
     <!-- Modal content-->
     <div class="modal-content border-0" style="background-color:transparent;">
       <div style="background-color:transparent;">
-        <button type="button" class="close" data-dismiss="modal" style="padding:10px;">&times;</button>
+        <button type="button" class="close" data-dismiss="modal" style="padding:10px; color:white; opacity:unset;" title="Exit">&times;</button>
+        <button id="button" class="btn btn-secondary btn-sm" style="float:right; background-color:transparent; border:none; color:white; margin-top:11px;" title="Rotate"><i class="fa fa-repeat" aria-hidden="true"></i></button>
       </div>
       <div class="modal-body p-0 col-12">
         <section>
-          <div class="col-12 p-0 text-center">
+          <div class="col-12 p-0 text-center">            
             <img id="img_priview" src="" alt="" class="img-fluid">
           </div>
         </section>

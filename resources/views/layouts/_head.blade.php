@@ -20,7 +20,6 @@
         <link rel="stylesheet" type="text/css" href="{{asset('assets/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css')}}">
         <link rel="stylesheet" href="{{asset('assets/css/animate.min.css')}}">
         <link rel="stylesheet" href="{{asset('assets/css/hint.css')}}">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.3.2/viewer.css">
 
 
         <!-- Theme initialization -->
