@@ -24,11 +24,25 @@
 		-ms-transform: rotate(270deg) translateX(-100%);
 	}
     #overlay {
-    border: 1px solid black;
-    width: 200px;
-    height: 200px;
-    display: inline-block;
-    background-repeat: no-repeat;
+        border: 1px solid black;
+        width: 200px;
+        height: 200px;
+        display: inline-block;
+        background-repeat: no-repeat;
+    }
+    .zoom-title {
+        background-color:rgba(45, 52, 54,0.3);
+        width: 200px;
+        height: 217px;
+        z-index:99999999;
+    }
+
+    .zoom-title span {
+        color:white;
+    }
+
+    .zoom-title i {
+        color:white;
     }
 </style>
 @endsection

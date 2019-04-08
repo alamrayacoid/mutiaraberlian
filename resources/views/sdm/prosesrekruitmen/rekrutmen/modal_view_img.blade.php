@@ -9,9 +9,14 @@
       </div>
       <div class="modal-body p-0 col-12">
         <section>
-          <div class="col-12 p-0 text-center">
-            <img id="img_priview" src="" alt="" class="img-fluid" style="max-height: 550px;">
-            <div id="overlay" onmousemove="zoomIn(event)" style=""></div>
+          <div class="row col-12 p-0 text-center d-flex justify-content-center">
+            <div class="col-9">
+              <img id="img_priview" src="" alt="" class="img-fluid" style="max-height: 550px;">
+            </div>
+            <div class="zoom-title d-md-block d-none d-sm-block">
+              <span>Zoom Here</span><i class="fa fa-search-plus ml-2" aria-hidden="true"></i>
+              <div id="overlay" onmousemove="zoomIn(event)" style=""></div>
+            </div>
           </div>
         </section>
       </div>
