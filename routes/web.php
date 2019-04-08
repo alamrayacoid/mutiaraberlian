@@ -283,6 +283,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/prosesrekruitmen/simpanLoker', 'SDM\RecruitmentController@simpanLoker')->name('rekruitmen.simpanLoker');
     Route::get('/sdm/prosesrekruitmen/detail/{id}', 'SDM\RecruitmentController@detail')->name('rekruitmen.detail');
     Route::get('/sdm/prosesrekruitmen/proses/{id}', 'SDM\RecruitmentController@proses')->name('rekruitmen.proses');
+    Route::get('/sdm/prosesrekruitmen/addProses/{id}', 'SDM\RecruitmentController@addProses')->name('rekruitmen.addProses');
 
     Route::get('/sdm/prosesrekruitmen/listTerima', 'SDM\RecruitmentController@getListTerima')->name('rekruitmen.listTerima');
 

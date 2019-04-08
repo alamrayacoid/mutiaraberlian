@@ -260,7 +260,7 @@
         if (response.status == 'sukses') {
             loadingHide();
             messageSuccess('Success', 'Data berhasil ditambahkan!');
-            kelola_rekrutmen.ajax.reload();
+            window.location.href="{{route('rekruitmen.index')}}";
         } else {
             loadingHide();
             messageFailed('Gagal', response.message);

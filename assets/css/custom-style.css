@@ -21,14 +21,17 @@ body {
     margin-top:10px;
 }
 .approval-2 {
-    background-color:#e9ecef;
+   /* background-color:#e9ecef;*/
     margin-top:10px;
     margin-left:5px;
 }
 .approval-3 {
-    background-color:#e9ecef;
+    /*background-color:#e9ecef;*/
     margin-top:10px;
     margin-left:5px;
+}
+.bg-secondary-smooth {
+    background-color: #c0c5ca;
 }
 .radio-box p{
     margin-left:10px;

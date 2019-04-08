@@ -67,12 +67,22 @@ class RecruitmentController extends Controller
         return '<td>'. Carbon::parse($datas->p_created)->format('d M Y') .'</td>';
       })
       ->addColumn('status', function($datas) {
-        if ($datas->p_state == 'Y') {
-          return '<td>Diterima</td>';
-        } else if ($datas->p_state == 'P') {
-          return '<td>Pending</td>';
-        } else {
-          return '<td>Ditolak</td>';
+        if ($datas->p_state == 'Y' && $datas->p_stateapprove == 1) {
+          return '<div class="text-success">Test Interview</div>';
+        } else if ($datas->p_state == 'P' && $datas->p_stateapprove == 1) {
+          return '<div class="text-primary">Pending Tahap 1</div>';
+        } else if ($datas->p_state == 'N' && $datas->p_stateapprove == 1) {
+          return '<div class="text-danger">Ditolak Administrasi</div>';
+        } else if ($datas->p_state == 'Y' && $datas->p_stateapprove == 2) {
+          return '<div class="text-success">Test Presentasi</div>';
+        } else if ($datas->p_state == 'P' && $datas->p_stateapprove == 2) {
+          return '<div class="text-primary">Pending Tahap 2</div>';
+        } else if ($datas->p_state == 'N' && $datas->p_stateapprove == 2) {
+          return '<div class="text-danger">Ditolak Administrasi</div>';
+        } else if ($datas->p_state == 'Y' && $datas->p_stateapprove == 3) {
+          return '<div class="text-success">Diterima</div>';
+        }else if ($datas->p_state == 'N' && $datas->p_stateapprove == 3) {
+          return '<div class="text-danger">Ditolak Final</div>';
         }
       })
       ->addColumn('approval', function($datas) {
@@ -119,8 +129,36 @@ class RecruitmentController extends Controller
     return view('sdm/prosesrekruitmen/rekrutmen/process', compact('data'));
   }
 
-  public function prosesPelamar()
+  public function addProses($id, Request $request)
   {
+    try {
+        $id = Crypt::decrypt($id);
+    } catch (\Exception $e) {
+        return view('errors.404');
+    }
+
+    $statusApp = $request->p_stateapprove;
+    $status    = $request->p_state;
+
+    DB::beginTransaction();
+    try {
+      DB::table('d_pelamar')->where('p_id', '=', $id)->update([
+        'p_state'   => $status,
+        'p_stateapprove'  => $statusApp
+      ]);
+
+      DB::commit();
+      return response()->json([
+        'status' => 'sukses'
+      ]);
+    } catch (\Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status'  => 'Gagal',
+          'message' => $e
+        ]);
+    }
+
     
   }
   // End Code =============================================================================================
@@ -146,12 +184,22 @@ class RecruitmentController extends Controller
         return '<td>'. Carbon::parse($datas->p_created)->format('d M Y') .'</td>';
       })
       ->addColumn('status', function($datas) {
-        if ($datas->p_state == 'Y') {
-          return '<td>Diterima</td>';
-        } else if ($datas->p_state == 'P') {
-          return '<td>Pending</td>';
-        } else {
-          return '<td>Ditolak</td>';
+        if ($datas->p_state == 'Y' && $datas->p_stateapprove == 1) {
+          return '<td class="text-success">Test Interview</td>';
+        } else if ($datas->p_state == 'P' && $datas->p_stateapprove == 1) {
+          return '<td class="text-primary">Pending Tahap 1</td>';
+        } else if ($datas->p_state == 'N' && $datas->p_stateapprove == 1) {
+          return '<td class="text-danger">Ditolak Administrasi</td>';
+        } else if ($datas->p_state == 'Y' && $datas->p_stateapprove == 2) {
+          return '<td class="text-success">Test Presentasi</td>';
+        } else if ($datas->p_state == 'P' && $datas->p_stateapprove == 2) {
+          return '<td class="text-primary">Pending Tahap 2</td>';
+        } else if ($datas->p_state == 'N' && $datas->p_stateapprove == 2) {
+          return '<td class="text-danger">Ditolak Administrasi</td>';
+        } else if ($datas->p_state == 'Y' && $datas->p_stateapprove == 3) {
+          return '<td class="text-success">Diterima</td>';
+        }else if ($datas->p_state == 'N' && $datas->p_stateapprove == 3) {
+          return '<td class="text-danger">Ditolak Final</td>';
         }
       })
       ->addColumn('approval', function($datas) {
