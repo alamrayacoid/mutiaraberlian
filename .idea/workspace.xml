@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
+    <list default="true" id="1c8b318e-c138-400d-afca-6445ceb3fae0" name="Default Changelist" comment="" />
+=======
     <list default="true" id="1c8b318e-c138-400d-afca-6445ceb3fae0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/index.blade.php" afterDir="false" />
     </list>
+>>>>>>> e803fc66194c073bc67b00de2d8b67a6ea8e6c0c
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <ignored path="$PROJECT_DIR$/.idea/" />
     <ignored path="$PROJECT_DIR$/vendor/barryvdh/laravel-ide-helper/" />
@@ -203,7 +207,6 @@
     </findStrings>
   </component>
   <component name="Git.Settings">
-    <option name="UPDATE_TYPE" value="REBASE" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
@@ -639,12 +642,145 @@
       <workItem from="1553824711879" duration="12858000" />
       <workItem from="1554168735626" duration="5124000" />
       <workItem from="1554176903212" duration="17794000" />
+<<<<<<< HEAD
+      <workItem from="1554260564206" duration="8691000" />
+      <workItem from="1554352065785" duration="2446000" />
+      <workItem from="1554382002509" duration="4036000" />
+      <workItem from="1554429606914" duration="4219000" />
+    </task>
+    <task id="LOCAL-00058" summary="mutiara">
+      <created>1553152837664</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1553152837664</updated>
+    </task>
+    <task id="LOCAL-00059" summary="mutiara">
+      <created>1553162439513</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1553162439513</updated>
+    </task>
+    <task id="LOCAL-00060" summary="mutiara">
+      <created>1553226301298</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1553226301303</updated>
+    </task>
+    <task id="LOCAL-00061" summary="mutiara">
+      <created>1553249322453</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1553249322453</updated>
+    </task>
+    <task id="LOCAL-00062" summary="mutiara">
+      <created>1553486829841</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1553486829842</updated>
+    </task>
+    <task id="LOCAL-00063" summary="mutiara">
+      <created>1553503039430</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1553503039430</updated>
+    </task>
+    <task id="LOCAL-00064" summary="mutiara">
+      <created>1553508989322</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1553508989323</updated>
+    </task>
+    <task id="LOCAL-00065" summary="mutiara">
+      <created>1553571485401</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1553571485402</updated>
+    </task>
+    <task id="LOCAL-00066" summary="mutiara">
+      <created>1553572481872</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1553572481872</updated>
+    </task>
+    <task id="LOCAL-00067" summary="mutiara">
+      <created>1553573824366</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1553573824366</updated>
+    </task>
+    <task id="LOCAL-00068" summary="mutiara">
+      <created>1553582777911</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1553582777911</updated>
+    </task>
+    <task id="LOCAL-00069" summary="mutiara">
+      <created>1553583745430</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1553583745430</updated>
+    </task>
+    <task id="LOCAL-00070" summary="mutiara">
+      <created>1553585089260</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1553585089260</updated>
+    </task>
+    <task id="LOCAL-00071" summary="mutiara">
+      <created>1553586143117</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1553586143117</updated>
+    </task>
+    <task id="LOCAL-00072" summary="mutiara">
+      <created>1553586555881</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1553586555881</updated>
+    </task>
+    <task id="LOCAL-00073" summary="mutiara">
+      <created>1553652694145</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1553652694147</updated>
+    </task>
+    <task id="LOCAL-00074" summary="mutiara">
+      <created>1553657593360</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1553657593360</updated>
+    </task>
+    <task id="LOCAL-00075" summary="mutiara">
+      <created>1553661914091</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1553661914091</updated>
+=======
       <workItem from="1554260564206" duration="12772000" />
       <workItem from="1554339589669" duration="17635000" />
       <workItem from="1554428962267" duration="15270000" />
       <workItem from="1554457857086" duration="161000" />
       <workItem from="1554462779657" duration="462000" />
       <workItem from="1554689996298" duration="3057000" />
+>>>>>>> e803fc66194c073bc67b00de2d8b67a6ea8e6c0c
     </task>
     <task id="LOCAL-00076" summary="mutiara">
       <created>1553670971404</created>
@@ -857,6 +993,19 @@
       <updated>1554271359289</updated>
     </task>
     <task id="LOCAL-00106" summary="mutiara">
+<<<<<<< HEAD
+      <created>1554434194267</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1554434194276</updated>
+    </task>
+    <option name="localTasksCounter" value="107" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="356394000" />
+=======
       <created>1554273921663</created>
       <option name="number" value="00106" />
       <option name="presentableId" value="LOCAL-00106" />
@@ -994,6 +1143,7 @@
   </component>
   <component name="TimeTrackingManager">
     <option name="totallyTimeSpent" value="386359000" />
+>>>>>>> e803fc66194c073bc67b00de2d8b67a6ea8e6c0c
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1366" height="768" extended-state="6" />
