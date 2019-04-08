@@ -426,6 +426,7 @@
     $("#img_priview").attr("src", img);
   }
 </script>
+<!-- Rotate -->
 <script>
 var angle = 0, img = document.getElementById('img_priview');
 document.getElementById('button').onclick = function() {
