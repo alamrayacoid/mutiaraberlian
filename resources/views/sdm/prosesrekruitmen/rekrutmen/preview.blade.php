@@ -23,6 +23,13 @@
 		-webkit-transform: rotate(270deg) translateX(-100%);
 		-ms-transform: rotate(270deg) translateX(-100%);
 	}
+    #overlay {
+    border: 1px solid black;
+    width: 200px;
+    height: 200px;
+    display: inline-block;
+    background-repeat: no-repeat;
+    }
 </style>
 @endsection
 
@@ -348,7 +355,7 @@
                                                 <label for="">Foto</label>
                                             </div>
                                             <div class="outline-img col-12 d-flex align-items-end justify-content-center justify-content-center">   
-                                                <img src="{{url('storage/uploads/recruitment', $data->p_imgfoto)}}" alt="Foto" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;" id="image">
+                                                <img src="{{url('storage/uploads/recruitment', $data->p_imgfoto)}}" alt="Foto" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;" id="foto">
                                             </div>
                                             <div>
                                                 <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{url('storage/uploads/recruitment', $data->p_imgfoto)}}')">Lihat Berkas</button>
@@ -360,7 +367,7 @@
                                                 <label for="">KTP</label>
                                             </div>
                                             <div class="outline-img col-12 d-flex align-items-end justify-content-center">
-                                                <img src="{{url('storage/uploads/recruitment', $data->p_imgktp)}}" alt="" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;">
+                                                <img src="{{url('storage/uploads/recruitment', $data->p_imgktp)}}" alt="" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;" id="ktp">
                                             </div>
                                             <div>
                                                 <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{url('storage/uploads/recruitment', $data->p_imgktp)}}')">Lihat Berkas</button>
@@ -426,12 +433,33 @@
     $("#img_priview").attr("src", img);
   }
 </script>
-<!-- Rotate -->
 <script>
 var angle = 0, img = document.getElementById('img_priview');
 document.getElementById('button').onclick = function() {
     angle = (angle+90)%360;
     img.className = "rotate"+angle;
+}
+function zoomIn(event) {
+  var element = document.getElementById("overlay");
+  element.style.display = "inline-block";
+  if ($('#foto').is(':hover')) {
+        var img = document.getElementById("overlay");
+		element.style.backgroundImage = "url('{{url('storage/uploads/recruitment', $data->p_imgfoto)}}')";
+    }
+  if ($('#ktp').is(':hover')){
+		var img = document.getElementById("overlay");
+		element.style.backgroundImage = "url('{{url('storage/uploads/recruitment', $data->p_imgktp)}}')";
+  }
+  var img = document.getElementById("img_priview");
+  var posX = event.offsetX ? (event.offsetX) : event.pageX - img.offsetLeft;
+  var posY = event.offsetY ? (event.offsetY) : event.pageY - img.offsetTop;
+  element.style.backgroundPosition = (-posX * 4) + "px " + (-posY * 4) + "px";
+
+}
+
+function zoomOut() {
+  var element = document.getElementById("overlay");
+  element.style.display = "none";
 }
 </script>
 @endsection
