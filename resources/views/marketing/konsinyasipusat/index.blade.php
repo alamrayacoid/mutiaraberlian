@@ -52,7 +52,7 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-    var table_sup, table_pus;
+    var table_sup, table_pus, table_monitoring;
 	$(document).ready(function(){
 		table_sup = $('#table_penempatan').DataTable({
             responsive: true,
@@ -73,7 +73,7 @@
 
 		table_pus = $('#table_monitoringpenjualan').DataTable();
 
-        $('#detail-monitoring').DataTable( {
+        table_monitoring = $('#detail-monitoring').DataTable( {
             "iDisplayLength" : 5
         });
 
