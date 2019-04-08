@@ -310,8 +310,8 @@
       success: function (response) {
         if (response.status == 'sukses') {
             loadingHide();
-            messageSuccess('Success', 'Data berhasil ditambahkan!');
-            $('#table_diterima').dataTable().ajax.reload();
+            messageSuccess('Success', 'Data berhasil disimpan!');
+            window.location.href="{{route('rekruitmen.index')}}";
         } else {
             loadingHide();
             messageFailed('Gagal', response.message);

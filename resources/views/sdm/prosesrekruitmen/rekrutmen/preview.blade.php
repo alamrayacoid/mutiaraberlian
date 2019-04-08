@@ -429,7 +429,6 @@
 
   function priview(img) {
     $('#view_img').modal('show');
-    //$('#img_priview').remove();
     $("#img_priview").attr("src", img);
     $("#overlay").attr("style", "background-image: url('"+img+"')");
   }
@@ -447,7 +446,6 @@ function zoomIn(event) {
   var posX = event.offsetX ? (event.offsetX) : event.pageX - img.offsetLeft;
   var posY = event.offsetY ? (event.offsetY) : event.pageY - img.offsetTop;
   element.style.backgroundPosition = (-posX * 4) + "px " + (-posY * 4) + "px";
-
 }
 
 function zoomOut() {
