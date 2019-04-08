@@ -73,6 +73,10 @@
 
 		table_pus = $('#table_monitoringpenjualan').DataTable();
 
+        $('#detail-monitoring').DataTable( {
+            "iDisplayLength" : 5
+        });
+
 		$(document).on('click', '.btn-disable-pp', function(){
 			var ini = $(this);
 			$.confirm({
@@ -121,12 +125,6 @@
 			$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
 	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 		})
-
-		$(document).ready(function() {
-			$('#detail-monitoring').DataTable( {
-				"iDisplayLength" : 5
-			});
-		});
 
 		$(document).on('click', '.btn-submit', function(){
 			$.toast({
