@@ -185,21 +185,11 @@ class RecruitmentController extends Controller
       })
       ->addColumn('status', function($datas) {
         if ($datas->p_state == 'Y' && $datas->p_stateapprove == 1) {
-          return '<td class="text-success">Test Interview</td>';
-        } else if ($datas->p_state == 'P' && $datas->p_stateapprove == 1) {
-          return '<td class="text-primary">Pending Tahap 1</td>';
-        } else if ($datas->p_state == 'N' && $datas->p_stateapprove == 1) {
-          return '<td class="text-danger">Ditolak Administrasi</td>';
+          return '<div class="text-success">Test Interview</div>';
         } else if ($datas->p_state == 'Y' && $datas->p_stateapprove == 2) {
-          return '<td class="text-success">Test Presentasi</td>';
-        } else if ($datas->p_state == 'P' && $datas->p_stateapprove == 2) {
-          return '<td class="text-primary">Pending Tahap 2</td>';
-        } else if ($datas->p_state == 'N' && $datas->p_stateapprove == 2) {
-          return '<td class="text-danger">Ditolak Administrasi</td>';
+          return '<div class="text-success">Test Presentasi</div>';
         } else if ($datas->p_state == 'Y' && $datas->p_stateapprove == 3) {
-          return '<td class="text-success">Diterima</td>';
-        }else if ($datas->p_state == 'N' && $datas->p_stateapprove == 3) {
-          return '<td class="text-danger">Ditolak Final</td>';
+          return '<div class="text-success">Diterima</div>';
         }
       })
       ->addColumn('approval', function($datas) {
