@@ -442,14 +442,6 @@ document.getElementById('button').onclick = function() {
 function zoomIn(event) {
   var element = document.getElementById("overlay");
   element.style.display = "inline-block";
-  if ($('#foto').is(':hover')) {
-        var img = document.getElementById("overlay");
-		element.style.backgroundImage = "url('{{url('storage/uploads/recruitment', $data->p_imgfoto)}}')";
-    }
-  if ($('#ktp').is(':hover')){
-		var img = document.getElementById("overlay");
-		element.style.backgroundImage = "url('{{url('storage/uploads/recruitment', $data->p_imgktp)}}')";
-  }
   var img = document.getElementById("img_priview");
   var posX = event.offsetX ? (event.offsetX) : event.pageX - img.offsetLeft;
   var posY = event.offsetY ? (event.offsetY) : event.pageY - img.offsetTop;
