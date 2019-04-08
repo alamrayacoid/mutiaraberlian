@@ -1,27 +1,28 @@
 @extends('main')
-
 @section('content')
 <?php 
   if ($data->p_stateapprove == 1 && $data->p_state == "Y") {
     $approve1    = "disabled";
     $app_name    = "Approve 1";
     $status_name = "(Test Interview)";
-    $class_bg1    = "";
+    $class_bg1   = "";
     $checkedN1   = "";
     $checkedP1   = "";
     $checkedY1   = "checked";
     $app1        = "p_stateapprove1";
     $name1       = "p_state1";
+    $date1       = "p_date1";
   } else if ($data->p_stateapprove == 1 && $data->p_state == "N") {
     $approve1    = "disabled";
     $app_name    = "Approve 1";
     $status_name = "(Ditolak Administrasi(tidak bisa diproses lagi))";
-    $class_bg1    = "";
+    $class_bg1   = "";
     $checkedN1   = "checked";
     $checkedP1   = "";
     $checkedY1   = "";
     $app1        = "p_stateapprove";
     $name1       = "p_state";
+    $date1       = "p_date1";
   } else if ($data->p_stateapprove == 1 && $data->p_state == "P") {
     $approve1    = "";
     $app_name    = "Approve 1";
@@ -32,81 +33,90 @@
     $checkedY1   = "";
     $app1        = "p_stateapprove";
     $name1       = "p_state";
+    $date1       = "p_date";
   } else if ($data->p_stateapprove > 1) {
     $approve1  = "disabled";
-    $class_bg1  = "";
+    $class_bg1 = "";
     $checkedN1 = "";
     $checkedP1 = "";
     $checkedY1 = "checked";
     $app1      = "p_stateapprove1";
     $name1     = "p_state1";
+    $date1     = "p_date1";
   } else {
     $approve1    = "";
     $app_name    = "(Belum Terapprove!)";
-    $class_bg1    = "";
+    $class_bg1   = "";
     $status_name = "";
     $checkedN1   = "";
     $checkedP1   = "";
     $checkedY1   = "";
     $app1        = "p_stateapprove";
     $name1       = "p_state";
+    $date1       = "p_date";
   }
   if ($data->p_stateapprove == 1 && $data->p_state == "Y") {
     $approve2    = "";
     $app_name    = "Approve 1";
     $status_name = "(Test Interview)";
-    $class_bg2    = "";
+    $class_bg2   = "";
     $checkedN2   = "";
     $checkedP2   = "";
     $checkedY2   = "";
     $app2        = "p_stateapprove";
     $name2       = "p_state";
+    $date2       = "p_date";
   } else if ($data->p_stateapprove == 2 && $data->p_state == "N") {
     $approve2    = "disabled";
     $app_name    = "Approve 2";
     $status_name = "(Ditolak Administrasi(tidak bisa diproses lagi))";
-    $class_bg2    = "";
+    $class_bg2   = "";
     $checkedN2   = "checked";
     $checkedP2   = "";
     $checkedY2   = "";
     $app2        = "p_stateapprove";
     $name2       = "p_state";
+    $date2       = "p_date";
   } else if ($data->p_stateapprove == 2 && $data->p_state == "P") {
     $approve2    = "";
     $app_name    = "Approve 2";
     $status_name = "(Pending Tahap 2)";
-    $class_bg2    = "";
+    $class_bg2   = "";
     $checkedN2   = "";
     $checkedP2   = "checked";
     $checkedY2   = "";
     $app2        = "p_stateapprove";
     $name2       = "p_state";
+    $date2       = "p_date";
   } else if ($data->p_stateapprove == 2 && $data->p_state == "Y") {
     $approve2    = "disabled";
     $app_name    = "Approve 2";
     $status_name = "(Test Presentasi)";
-    $class_bg2    = "";
+    $class_bg2   = "";
     $checkedN2   = "";
     $checkedP2   = "";
     $checkedY2   = "checked";
     $app2        = "p_stateapprove2";
     $name2       = "p_state2";
+    $date2       = "p_date2";
   } else if ($data->p_stateapprove > 2) {
     $approve2  = "disabled";
-    $class_bg2  = "";
+    $class_bg2 = "";
     $checkedN2 = "";
     $checkedP2 = "";
     $checkedY2 = "checked";
     $app2      = "p_stateapprove2";
     $name2     = "p_state2";
+    $date2     = "p_date2";
   } else {
     $approve2  = "disabled";
-    $class_bg2  = "bg-secondary-smooth";
+    $class_bg2 = "bg-secondary-smooth";
     $checkedN2 = "";
     $checkedP2 = "";
     $checkedY2 = "";
     $app2      = "p_stateapprove2";
     $name2     = "p_state2";
+    $date2     = "p_date2";
   }
   if ($data->p_stateapprove == 2 && $data->p_state == "Y") {
     $approve3    = "";
@@ -130,14 +140,14 @@
     $approve3    = "disabled";
     $app_name    = "Approve 3";
     $status_name = "(Diterima Sebagai Karyawan)";
-    $class_bg3    = "";
+    $class_bg3   = "";
     $checkedN3   = "";
     $checkedY3   = "checked";
     $app3        = "p_stateapprove";
     $name3       = "p_state";
   } else {
     $approve3  = "disabled";
-    $class_bg3  = "bg-secondary-smooth";
+    $class_bg3 = "bg-secondary-smooth";
     $checkedN3 = "";
     $checkedY3 = "";
     $app3      = "p_stateapprove3";
@@ -240,28 +250,43 @@
                       <input type="radio" name="{{$name1}}" id="show1" value="Y" {{$checkedY1}} {{$approve1}}>
                       <p>Test Interview</p>
                     </div>
-                    <div class="date1 d-none">
-                      <input type="text" class="form-control form-control-sm datepicker" placeholder="Tanggal">
+                    @if($dateApp1)
+                    <div class="row date1 d-block">
+                      <input type="text" name="{{$date1}}" class="form-control form-control-sm datepicker bg-light" placeholder="Tanggal Interview" value="{{$dateApp1->pl_date}}" disabled="">
                     </div>
+                    @else
+                    <div class="row date1 d-none">
+                      <input type="text" name="{{$date1}}" class="form-control form-control-sm datepicker" placeholder="Tanggal Interview" value="">
+                    </div>
+                    @endif
                   </div>
                 </fieldset>
-                <fieldset class="approval-2 {{$class_bg2}}">
+                <fieldset class="approval-2 {{$class_bg2}}" id="approval2">
                   <div class="container">
                     <input type="hidden" name="{{$app2}}" value="2">
                     <h6 style="font-weight:bold;">Approval 2: </h6>
                     <br>
                     <div class="row radio-box">
-                      <input type="radio" name="{{$name2}}" value="N" {{$checkedN2}} {{$approve2}}>
+                      <input type="radio" name="{{$name2}}" id="hides2" value="N" {{$checkedN2}} {{$approve2}}>
                       <p>Ditolak Administrasi(tidak bisa diproses lagi)</p>
                     </div>
                     <div class="row radio-box">
-                      <input type="radio" name="{{$name2}}" value="P" {{$checkedP2}} {{$approve2}}>
+                      <input type="radio" name="{{$name2}}" id="hide2" value="P" {{$checkedP2}} {{$approve2}}>
                       <p>Pending Tahap 2</p>
                     </div>
                     <div class="row radio-box">
-                      <input type="radio" name="{{$name2}}" value="Y" {{$checkedY2}} {{$approve2}}>
+                      <input type="radio" name="{{$name2}}" id="show2" value="Y" {{$checkedY2}} {{$approve2}}>
                       <p>Test Presentasi</p>
                     </div>
+                    @if($dateApp2)
+                    <div class="row date2 d-block">
+                      <input type="text" name="{{$date2}}" class="form-control form-control-sm datepicker bg-light" placeholder="Tanggal Interview" value="{{$dateApp2->pl_date}}" disabled="">
+                    </div>
+                    @else
+                    <div class="row date2 d-none">
+                      <input type="text" name="{{$date2}}" class="form-control form-control-sm datepicker" placeholder="Tanggal Interview" value="">
+                    </div>
+                    @endif
                   </div>
                 </fieldset>
                 <fieldset class="approval-3 {{$class_bg3}}">
@@ -336,6 +361,15 @@
   });
   $('#hide1').on('click', function(){
     $('#approval1 .date1').addClass('d-none');
+  });
+  $('#show2').on('click', function(){
+    $('#approval2 .date2').removeClass('d-none');
+  });
+  $('#hides2').on('click', function(){
+    $('#approval2 .date2').addClass('d-none');
+  });
+  $('#hide2').on('click', function(){
+    $('#approval2 .date2').addClass('d-none');
   });
 </script>
 @endsection

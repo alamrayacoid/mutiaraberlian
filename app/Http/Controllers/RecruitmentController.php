@@ -242,6 +242,11 @@ class RecruitmentController extends Controller
             'p_updated'     => Carbon::now()
         ]);
 
+        DB::table('d_pelamarlanjutan')->insert([
+          'pl_id' => $id,
+          'pl_detailid' => 1
+        ]);
+
         DB::commit();
         return response()->json([
           'status' => 'berhasil'

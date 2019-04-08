@@ -57,7 +57,6 @@
 								<th>Nama Pelamar</th>
 								<th>No. HP</th>
 								<th>Email</th>
-								<th>Pendidikan</th>
 								<th>Status</th>
 								<th>Approval</th>
 								<th>Aksi</th>

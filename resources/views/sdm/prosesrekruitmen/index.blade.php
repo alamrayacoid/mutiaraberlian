@@ -152,7 +152,9 @@
 	
 	// Recruitment ---------------------------------------------------------------------------------
 	function TableRekrutmen() {
-		$('#table_rekrutmen').dataTable().fnDestroy();
+		if ($.fn.DataTable.isDataTable("#table_rekrutmen")) {
+    	$('#table_rekrutmen').dataTable().fnDestroy();
+    }
 		tb_rekrutmen = $('#table_rekrutmen').DataTable({
 			responsive: true,
 			serverSide: true,
@@ -160,7 +162,6 @@
 				url: "{{ url('/sdm/prosesrekruitmen/listRecruitment') }}",
 				type: "get",
 				data: {
-					"_token"   : "{{ csrf_token() }}",
 					"date_from": $('#rekrut_from').val(),
 					"date_to"  : $('#rekrut_to').val(),
 					"education": $('#education').val(),
@@ -173,9 +174,8 @@
 				{data: 'p_name'},
 				{data: 'p_tlp'},
 				{data: 'p_email'},
-				{data: 'p_education'},
 				{data: 'status'},
-				{data: 'approval'},
+				{data: 'tanggal'},
 				{data: 'action'}
 			],
 			pageLength: 10,
@@ -193,9 +193,10 @@
 	// End Code -----------------------------------------------------------------------------------
 
 	// Daftar Recruitment Diterima ----------------------------------------------------------------
-	function TableDiterima()
-	{
-		$('#table_diterima').dataTable().fnDestroy();
+	function TableDiterima() {
+		if ($.fn.DataTable.isDataTable("#table_diterima")) {
+    	$('#table_diterima').dataTable().fnDestroy();
+    }
 		tb_diterima = $('#table_diterima').DataTable({
 			responsive: true,
 			serverSide: true,
@@ -203,7 +204,6 @@
 				url: "{{ url('/sdm/prosesrekruitmen/listTerima') }}",
 				type: "get",
 				data: {
-					"_token": "{{ csrf_token() }}",
 					"date_from": $('#diterima_from').val(),
 					"date_to": $('#diterima_to').val()
 				}
@@ -214,7 +214,6 @@
 				{data: 'p_name'},
 				{data: 'p_tlp'},
 				{data: 'p_email'},
-				{data: 'p_education'},
 				{data: 'status'},
 				{data: 'approval'},
 				{data: 'action'}
@@ -227,7 +226,9 @@
 
 	// Kelola Data Recruitment --------------------------------------------------------------------
 	function kelolaRekrutmen() {
-		$('#kelola_rekrutmen').dataTable().fnDestroy();
+		if ($.fn.DataTable.isDataTable("#kelola_rekrutmen")) {
+    	$('#kelola_rekrutmen').dataTable().fnDestroy();
+    }
 		kelola_rekrutmen = $('#kelola_rekrutmen').DataTable({
 			responsive: true,
 			serverSide: true,
