@@ -349,9 +349,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/konsinyasipusat/cari-barang', 'MarketingController@cariBarangKonsinyasi')->name('konsinyasipusat.caribarang');
     Route::get('/marketing/konsinyasipusat/get-satuan/{id}', 'MarketingController@getSatuan')->name('konsinyasipusat.getsatuan');
     Route::get('/marketing/konsinyasipusat/cek-stok/{stock}/{item}/{satuan}/{qty}', 'MarketingController@checkStock')->name('konsinyasipusat.checkstock');
+    Route::get('/marketing/konsinyasipusat/cek-stok-old/{stock}/{item}/{oldSatuan}/{satuan}/{qtyOld}/{qty}', 'MarketingController@checkStockOld')->name('konsinyasipusat.checkstockold');
     Route::get('/marketing/konsinyasipusat/penempatanproduk/create', 'MarketingController@create_penempatanproduk')->name('penempatanproduk.create');
     Route::post('/marketing/konsinyasipusat/penempatanproduk/add', 'MarketingController@add_penempatanproduk')->name('penempatanproduk.add');
     Route::match(['get', 'post'],'/marketing/konsinyasipusat/penempatanproduk/edit/{id}', 'MarketingController@edit_penempatanproduk')->name('penempatanproduk.edit');
+    Route::get('/marketing/konsinyasipusat/penempatanproduk/hapus', 'MarketingController@deletePenempatanproduk')->name('penempatanproduk.delete');
     // Marketing Area
     Route::get('/marketing/marketingarea/index', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@index')->name('marketingarea.index');
     // Order Produk Ke Cabang

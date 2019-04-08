@@ -276,6 +276,7 @@ class AgenController extends Controller
                     'a_code'      => $codeAgen,
                     'a_area'      => $request->area_city,
                     'a_name'      => $request->name,
+                    'a_sex'       => $request->jekel,
                     'a_birthday'  => Carbon::parse($request->birthday),
                     'a_email'     => $request->email,
                     'a_telp'      => $request->telp,
@@ -379,6 +380,7 @@ class AgenController extends Controller
                 ->update([
                     'a_area'      => $request->area_city,
                     'a_name'      => $request->name,
+                    'a_sex'      => $request->jekel,
                     'a_birthday'  => Carbon::parse($request->birthday),
                     'a_email'     => $request->email,
                     'a_telp'      => $request->telp,

@@ -212,7 +212,54 @@ class MarketingController extends Controller
                 $qty_compare = $qty;
             }
         }
-        return Response::json($qty_compare);
+        return Response::json(floor($qty_compare));
+    }
+
+    public function checkStockOld($stock = null, $item = null, $oldSatuan = null, $satuan = null, $qtyOld = null, $qty = null)
+    {
+        $data_check = DB::table('m_item')
+            ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                'm_item.i_unit3 as unit3')
+            ->where('i_id', '=', $item)
+            ->first();
+
+        $data = DB::table('d_stock')
+            ->join('d_stock_mutation', function($sm){
+                $sm->on('sm_stock', '=', 's_id');
+            })
+            ->where('s_id', '=', $stock)
+            ->where('s_item', '=', $item)
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('s_condition', '=', 'FINE')
+            ->select('sm_residue as sisa')
+            ->first();
+
+        $qty_compare_old = 0;
+        if ($oldSatuan == $data_check->unit1) {
+            if ((int)$qty > (int)$data->sisa) {
+                $qty_compare_old = $data->sisa + $qtyOld;
+            } else {
+                $qty_compare_old = $qty;
+            }
+        } else if ($oldSatuan == $data_check->unit2) {
+            $compare = (int)$qty * (int)$data_check->compare2;
+            if ((int)$compare > (int)($data->sisa + $qtyOld)) {
+                $qty_compare_old = (int)($data->sisa+$qtyOld)/(int)$data_check->compare2;
+            } else {
+                $qty_compare_old = $qty;
+            }
+        } else if ($oldSatuan == $data_check->unit3) {
+            $compare = (int)$qty * (int)$data_check->compare3;
+            if ((int)$compare > (int)($data->sisa+$qtyOld)) {
+                $qty_compare_old = (int)($data->sisa+$qtyOld)/(int)$data_check->compare3;
+            } else {
+                $qty_compare_old = $qty;
+            }
+        }
+
+
+        return Response::json(floor($qty_compare_old));
     }
 
     public function add_penempatanproduk(Request $request)
@@ -392,6 +439,7 @@ class MarketingController extends Controller
             })
             ->join('m_company', 'c_user', '=', 's_member')
             ->where('s_type', '=', 'K')
+            ->groupBy('d_sales.s_nota')
             ->select('s_id as id', 's_date as tanggal', 's_nota as nota', 'c_name as konsigner', DB::raw("CONCAT('Rp. ',FORMAT(s_total, 0, 'de_DE')) as total"));
 
         return DataTables::of($data)
@@ -410,7 +458,7 @@ class MarketingController extends Controller
             ->addColumn('action', function($data){
                 $detail = '<button class="btn btn-primary" type="button" title="Detail" onclick="detailKonsinyasi(\''.Crypt::encrypt($data->id).'\')"><i class="fa fa-folder"></i></button>';
                 $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editKonsinyasi(\''.Crypt::encrypt($data->id).'\')"><i class="fa fa-pencil"></i></button>';
-                $delete = '<button class="btn btn-danger" type="button" title="Hapus"><i class="fa fa-trash"></i></button>';
+                $delete = '<button class="btn btn-danger" type="button" title="Hapus" onclick="hapusKonsinyasi(\''.Crypt::encrypt($data->id).'\', \''.$data->nota.'\')"><i class="fa fa-trash"></i></button>';
                 return '<div class="btn-group btn-group-sm">'. $detail . $edit . $delete . '</div>';
             })
             ->rawColumns(['tanggal','nota', 'konsigner', 'total','action'])
@@ -436,67 +484,118 @@ class MarketingController extends Controller
         }
 
         if ($request->isMethod('post')) {
+            $data   = $request->all();
+            $comp   = Auth::user()->u_company;
+            $member = $data['kodeKonsigner'];
+            $user   = Auth::user()->u_id;
+            $total  = $data['tot_hrg'];
+            $update = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
+            $nota   = $data['nota'];
+
             DB::beginTransaction();
             try{
                 //Rollback mutasi
-                $get_sm = DB::table('d_stock_mutation')
-                    ->join('d_stock', 'sm_stock', '=', 's_id')
-                    ->where('sm_nota', '=', $request->nota)
-                    ->get();
-
-                foreach ($get_sm as $sm){
-                    if ($sm->sm_mutcat == 13){
-                        $select_sm = DB::table('d_stock_mutation')
-                            ->where('sm_stock', '=', $sm->sm_stock)
-                            ->where('sm_nota', '=', $sm->sm_reff)
-                            ->first();
-
-                        $use  = $select_sm->sm_use - $sm->sm_qty;
-                        $sisa = $select_sm->sm_residue + $sm->sm_qty;
-
-                        DB::table('d_stock_mutation')
-                            ->where('sm_stock', '=', $select_sm->sm_stock)
-                            ->where('sm_nota', '=', $select_sm->sm_nota)
-                            ->update([
-                                'sm_use'        => $use,
-                                'sm_residue'    => $sisa
-                            ]);
-
-                        DB::table('d_stock')
-                            ->where('s_id', '=', $select_sm->sm_stock)
-                            ->update([
-                                's_qty' => $sisa
-                            ]);
-                    } else if ($sm->sm_mutcat == 12) {
-                        $select_sm = DB::table('d_stock_mutation')
-                            ->where('sm_stock', '=', $sm->sm_stock)
-                            ->where('sm_nota', '=', $sm->sm_nota)
-                            ->first();
-
-                        $select_stock = DB::table('d_stock')
-                            ->where('s_id', '=', $select_sm->sm_stock)
-                            ->first();
-
-                        $sisa = $select_stock->s_qty - $select_sm->sm_qty;
-
-                        DB::table('d_stock')
-                            ->where('s_id', '=', $select_sm->sm_stock)
-                            ->update([
-                                's_qty' => $sisa
-                            ]);
-                    }
-
-                    DB::table('d_stock_mutation')
-                        ->where('sm_stock', '=', $sm->sm_stock)
-                        ->where('sm_nota', '=', $sm->sm_nota)
-                        ->delete();
-                }
+                $rollback_mutasi = Mutasi::rollback($request->nota); //return true/false(error)
                 //end rollback mutasi
 
-                DB::commit();
-                dd($get_sm);
+                //Reinsert
+                if ($rollback_mutasi == true){
+                    //hapus salesdt
+                    DB::table('d_salesdt')
+                        ->where('sd_sales', '=', $id)
+                        ->delete();
+
+                    $val_sales = [
+                        's_comp'    => $comp,
+                        's_member'  => $member,
+                        's_total'   => $total,
+                        's_user'    => $user,
+                        's_update'  => $update
+                    ];
+
+                    //Update d_sales
+                    DB::table('d_sales')
+                        ->where('s_id', '=', $id)
+                        ->update($val_sales);
+
+                    $sddetail = (DB::table('d_salesdt')->where('sd_sales', '=', $id)->max('sd_detailid')) ? (DB::table('d_salesdt')->where('sd_sales', '=', $id)->max('sd_detailid')) + 1 : 1;
+                    $detailsd = $sddetail;
+                    $val_salesdt = [];
+                    for ($i = 0; $i < count($data['idItem']); $i++) {
+                        $val_salesdt[] = [
+                            'sd_sales' => $id,
+                            'sd_detailid' => $detailsd,
+                            'sd_comp' => $comp,
+                            'sd_item' => $data['idItem'][$i],
+                            'sd_qty' => $data['jumlah'][$i],
+                            'sd_unit' => $data['satuan'][$i],
+                            'sd_value' => Currency::removeRupiah($data['harga'][$i]),
+                            'sd_discpersen' => 0,
+                            'sd_discvalue' => 0,
+                            'sd_totalnet' => Currency::removeRupiah($data['subtotal'][$i])
+                        ];
+                        $detailsd++;
+
+                        //mutasi
+                        $data_check = DB::table('m_item')
+                            ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                                'm_item.i_unit3 as unit3')
+                            ->where('i_id', '=', $data['idItem'][$i])
+                            ->first();
+
+                        $qty_compare = 0;
+                        if ($data['satuan'][$i] == $data_check->unit1) {
+                            $qty_compare = $data['jumlah'][$i];
+                        } else if ($data['satuan'][$i] == $data_check->unit2) {
+                            $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
+                        } else if ($data['satuan'][$i] == $data_check->unit3) {
+                            $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
+                        }
+
+                        $stock = DB::table('d_stock')
+                            ->where('s_id', '=', $data['idStock'][$i])
+                            ->where('s_comp', '=', $comp)
+                            ->where('s_position', '=', $comp)
+                            ->where('s_item', '=', $data['idItem'][$i])
+                            ->where('s_status', '=', 'ON DESTINATION')
+                            ->where('s_condition', '=', 'FINE')
+                            ->first();
+
+                        $stock_mutasi = DB::table('d_stock_mutation')
+                            ->where('sm_stock', '=', $stock->s_id)
+                            ->first();
+
+                        $posisi = DB::table('m_company')
+                            ->where('c_user', '=', $member)
+                            ->first();
+
+                        Mutasi::mutasikeluar(13, $comp, $comp, $data['idItem'][$i], $qty_compare, $nota);
+                        Mutasi::mutasimasuk(12, $posisi->c_id, $posisi->c_id, $data['idItem'][$i], $qty_compare, 'ON DESTINATION', 'FINE', $stock_mutasi->sm_hpp, $stock_mutasi->sm_sell, $nota, $stock_mutasi->sm_nota);
+                    }
+
+                    DB::table('d_salesdt')->insert($val_salesdt);
+
+                    DB::commit();
+                    return Response::json([
+                        'status' => "Success",
+                        'message'=> "Data berhasil diperbarui"
+                    ]);
+                } else {
+                    DB::rollBack();
+                    return Response::json([
+                        'status' => "Failed",
+                        'message'=> $rollback_mutasi
+                    ]);
+                }
+                //End reinsert
+
             }catch (Exception $e){
                 DB::rollBack();
+                return Response::json([
+                    'status' => "Failed",
+                    'message'=> $e
+                ]);
             }
         } else {
             $detail = DB::table('d_sales')
@@ -550,6 +649,51 @@ class MarketingController extends Controller
             $ids = Crypt::encrypt($id);
 
             return view('marketing/konsinyasipusat/penempatanproduk/edit')->with(compact('detail', 'data_item', 'ids'));
+        }
+    }
+
+    public function deletePenempatanproduk(Request $request)
+    {
+        try{
+            $id = Crypt::decrypt($request->id);
+        }catch (DecryptException $e){
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e
+            ]);
+        }
+
+        DB::beginTransaction();
+        try{
+            $rollback_mutasi = Mutasi::rollback($request->nota); //return true/false(error)
+
+            if ($rollback_mutasi == true){
+                DB::table('d_salesdt')
+                    ->where('sd_sales', '=', $id)
+                    ->delete();
+                DB::table('d_sales')
+                    ->where('s_id', '=', $id)
+                    ->delete();
+
+                DB::commit();
+                return Response::json([
+                    'status' => "Success",
+                    'message'=> 'Data berhasil dihapus'
+                ]);
+            }else{
+                DB::rollBack();
+                return Response::json([
+                    'status' => "Failed",
+                    'message'=> $rollback_mutasi
+                ]);
+            }
+
+        }catch (Exception $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e
+            ]);
         }
     }
 }
