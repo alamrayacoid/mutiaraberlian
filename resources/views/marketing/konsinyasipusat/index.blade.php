@@ -196,5 +196,52 @@
     function editKonsinyasi(id) {
 	    window.location = baseUrl+'/marketing/konsinyasipusat/penempatanproduk/edit/'+id;
     }
+
+    function hapusKonsinyasi(id, nota) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        loadingShow();
+                        axios.get('{{ route('penempatanproduk.delete') }}', {
+                            params: {
+                                id: id,
+                                nota: nota
+                            }
+                        })
+                            .then(function (response) {
+                                if(response.data.status == 'Success'){
+                                    loadingHide();
+                                    messageSuccess("Berhasil", response.data.message);
+                                    table_sup.ajax.reload();
+                                }else{
+                                    loadingHide();
+                                    messageFailed("Gagal", response.data.message);
+                                }
+                            })
+                            .catch(function (error) {
+                                loadingHide();
+                                messageWarning("Error", error);
+                            });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
 </script>
 @endsection
