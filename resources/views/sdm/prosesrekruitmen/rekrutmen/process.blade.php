@@ -223,7 +223,7 @@
                     <p>{{$status_name}}</p>
                   </div>
                 </fieldset>
-                <fieldset class="approval-1 {{$class_bg1}}">
+                <fieldset class="approval-1 {{$class_bg1}}" id="approval1">
                   <div class="container">
                     <input type="hidden" name="{{$app1}}" value="1">
                     <h6 style="font-weight:bold;">Approval 1: </h6>
@@ -237,8 +237,11 @@
                       <p>Pending Tahap 1</p>
                     </div>
                     <div class="row radio-box">
-                      <input type="radio" name="{{$name1}}" value="Y" {{$checkedY1}} {{$approve1}}>
+                      <input type="radio" name="{{$name1}}" id="show1" value="Y" {{$checkedY1}} {{$approve1}}>
                       <p>Test Interview</p>
+                    </div>
+                    <div class="date1 d-none">
+                      <input type="text" class="form-control form-control-sm datepicker" placeholder="Tanggal">
                     </div>
                   </div>
                 </fieldset>
@@ -323,5 +326,10 @@
       }
     });
   }
+</script>
+<script>
+  $('#show1').on('click', function(){
+    $('#approval1 .date1').removeClass('d-none');
+  });
 </script>
 @endsection
