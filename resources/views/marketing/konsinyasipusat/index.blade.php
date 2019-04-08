@@ -70,6 +70,7 @@
                 {data: 'action'}
             ],
         });
+
 		table_pus = $('#table_monitoringpenjualan').DataTable();
 
 		$(document).on('click', '.btn-disable-pp', function(){
@@ -107,7 +108,6 @@
 			    }
 			});
 		});
-
 
 		$(document).on('click', '.btn-enable-pp', function(){
 			$.toast({
