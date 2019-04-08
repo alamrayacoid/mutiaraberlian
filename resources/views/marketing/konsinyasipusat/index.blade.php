@@ -52,7 +52,7 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-    var table_sup, table_pus;
+    var table_sup, table_pus, table_monitoring;
 	$(document).ready(function(){
 		table_sup = $('#table_penempatan').DataTable({
             responsive: true,
@@ -70,7 +70,12 @@
                 {data: 'action'}
             ],
         });
+
 		table_pus = $('#table_monitoringpenjualan').DataTable();
+
+        table_monitoring = $('#detail-monitoring').DataTable( {
+            "iDisplayLength" : 5
+        });
 
 		$(document).on('click', '.btn-disable-pp', function(){
 			var ini = $(this);
@@ -108,7 +113,6 @@
 			});
 		});
 
-
 		$(document).on('click', '.btn-enable-pp', function(){
 			$.toast({
 				heading: 'Information',
@@ -121,12 +125,6 @@
 			$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
 	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 		})
-
-		$(document).ready(function() {
-			$('#detail-monitoring').DataTable( {
-				"iDisplayLength" : 5
-			});
-		});
 
 		$(document).on('click', '.btn-submit', function(){
 			$.toast({
