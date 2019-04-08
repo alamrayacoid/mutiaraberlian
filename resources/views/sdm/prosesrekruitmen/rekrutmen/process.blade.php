@@ -229,11 +229,11 @@
                     <h6 style="font-weight:bold;">Approval 1: </h6>
                     <br>
                     <div class="row radio-box">
-                      <input type="radio" name="{{$name1}}" value="N" {{$checkedN1}} {{$approve1}}>
+                      <input type="radio" name="{{$name1}}" id="hides1" value="N" {{$checkedN1}} {{$approve1}}>
                       <p>Ditolak Administrasi(tidak bisa diproses lagi)</p>
                     </div>
                     <div class="row radio-box">
-                      <input type="radio" name="{{$name1}}" value="P" {{$checkedP1}} {{$approve1}}>
+                      <input type="radio" name="{{$name1}}" id="hide1" value="P" {{$checkedP1}} {{$approve1}}>
                       <p>Pending Tahap 1</p>
                     </div>
                     <div class="row radio-box">
@@ -330,6 +330,12 @@
 <script>
   $('#show1').on('click', function(){
     $('#approval1 .date1').removeClass('d-none');
+  });
+  $('#hides1').on('click', function(){
+    $('#approval1 .date1').addClass('d-none');
+  });
+  $('#hide1').on('click', function(){
+    $('#approval1 .date1').addClass('d-none');
   });
 </script>
 @endsection
