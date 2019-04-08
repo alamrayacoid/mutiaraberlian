@@ -11,7 +11,7 @@
         <section>
           <div class="col-12 p-0 text-center">
             <img id="img_priview" src="" alt="" class="img-fluid" style="max-height: 550px;">
-            <div id="overlay" onmousemove="zoomIn(event)"></div>
+            <div id="overlay" onmousemove="zoomIn(event)" style=""></div>
           </div>
         </section>
       </div>

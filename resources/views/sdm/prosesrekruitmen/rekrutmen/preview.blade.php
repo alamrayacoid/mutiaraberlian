@@ -431,6 +431,7 @@
     $('#view_img').modal('show');
     //$('#img_priview').remove();
     $("#img_priview").attr("src", img);
+    $("#overlay").attr("style", "background-image: url('"+img+"')");
   }
 </script>
 <script>
