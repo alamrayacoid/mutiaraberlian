@@ -433,14 +433,14 @@ class MarketingController extends Controller
 
     public function getKonsinyasi()
     {
-        $data = DB::table('d_sales')
-            ->join('d_salesdt', function ($sd){
-                $sd->on('sd_sales', '=', 's_id');
+        $data = DB::table('d_salescomp')
+            ->join('d_salescompdt', function ($sd){
+                $sd->on('scd_sales', '=', 'sc_id');
             })
-            ->join('m_company', 'c_user', '=', 's_member')
-            ->where('s_type', '=', 'K')
-            ->groupBy('d_sales.s_nota')
-            ->select('s_id as id', 's_date as tanggal', 's_nota as nota', 'c_name as konsigner', DB::raw("CONCAT('Rp. ',FORMAT(s_total, 0, 'de_DE')) as total"));
+            ->join('m_company', 'c_user', '=', 'sc_member')
+            ->where('sc_type', '=', 'K')
+            ->groupBy('d_salescomp.sc_nota')
+            ->select('sc_id as id', 'sc_date as tanggal', 'sc_nota as nota', 'c_name as konsigner', DB::raw("CONCAT('Rp. ',FORMAT(sc_total, 0, 'de_DE')) as total"));
 
         return DataTables::of($data)
             ->addColumn('tanggal', function($data){
