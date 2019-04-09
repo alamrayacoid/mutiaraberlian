@@ -20,6 +20,7 @@ class RecruitmentController extends Controller
     {
       // start: validate data before execute
       $validator = Validator::make($request->all(), [
+        'applicant'     => 'required',
         'name'          => 'required',
         'nik'           => 'required|numeric',
         'address'       => 'required',
@@ -37,12 +38,13 @@ class RecruitmentController extends Controller
         'yearin'        => 'required',
         'yearout'       => 'required',
         'majors'        => 'required',
-        'filephoto'     => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'filektp'       => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'fileijazah'    => 'sometimes|mimes:jpeg,png,jpg,pdf|max:2048',
-        'fileanother'   => 'sometimes|mimes:jpeg,png,jpg,pdf|max:2048'
+        'filephoto'     => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        'filektp'       => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
+        'fileijazah'    => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
+        'fileanother'   => 'sometimes|image|mimes:jpeg,png,jpg|max:2048'
       ],
       [
+        'applicant.required'     => 'Posisi yang ingin dilamar masih kosong !',
         'name.required'          => 'Nama masih kosong !',
         'nik.required'           => 'NIK masih kosong !',
         'nik.numeric'            => 'NIK hanya boleh berisi angka !',
@@ -66,9 +68,7 @@ class RecruitmentController extends Controller
         'filephoto.max'          => 'Ukuran file maksimal 2 MB !',
         'filektp.max'            => 'Ukuran file maksimal 2 MB !',
         'fileijazah.max'         => 'Ukuran file maksimal 2 MB !',
-        'fileanother.max'        => 'Ukuran file maksimal 2 MB !',
-        'fileijazah.mimes'       => 'Type file ijasah harus sesuai !',
-        'fileanother.mimes'      => 'Type file harus sesuai !'
+        'fileanother.max'        => 'Ukuran file maksimal 2 MB !'
       ]);
       if($validator->fails())
       {
@@ -152,7 +152,11 @@ class RecruitmentController extends Controller
      */
     public function index()
     {
-        return view('recruitment');
+      $posisi = DB::table('d_applicant')
+        ->join('m_jabatan', 'a_position', 'j_id')
+        ->where('a_isactive', '=', 'Y')
+        ->get();
+      return view('recruitment', compact('posisi'));
     }
 
     public function loading()
@@ -209,6 +213,7 @@ class RecruitmentController extends Controller
           ->insert([
             'p_id'          => $id,
             'p_date'        => Carbon::now('Asia/Jakarta'),
+            'p_applicant'   => $request->applicant,
             'p_nik'         => $request->nik,
             'p_name'        => $request->name,
             'p_address'     => $request->address,
