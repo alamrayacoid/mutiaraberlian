@@ -26,7 +26,15 @@ class ManajemenAgenController extends Controller
   		->get();
 
     return view('marketing/agen/index', compact('provinsi'));
-  }
+	}
+	
+	// Kelola Penjualan Langsung -----------------
+	public function kelolapenjualan_create()
+	{
+		return view('marketing/agen/kelolapenjualan/create');
+	}
+
+	// End ---------------------------------------
 	// Kelola Data Inventory Agen ----------------
   public function getAgen($city)
   {
@@ -68,4 +76,5 @@ class ManajemenAgenController extends Controller
       ->make(true);
   }
 	// End Code ----------------------------------
+
 }

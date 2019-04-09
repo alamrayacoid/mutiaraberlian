@@ -12,6 +12,8 @@
 @endsection
 @section('content')
 
+@include('marketing.agen.kelolapenjualan.modal-search')
+@include('marketing.agen.kelolapenjualan.modal')
 <article class="content animated fadeInLeft">
 	<div class="title-block text-primary">
 		<h1 class="title"> Manajemen Marketing Area  </h1>
@@ -27,7 +29,7 @@
 						<a href="#orderprodukagenpusat" class="nav-link active" data-target="#orderprodukagenpusat" aria-controls="orderprodukagenpusat" data-toggle="tab" role="tab">Order Produk ke Agen / Cabang</a>
 					</li>
 					<li class="nav-item">
-						<a href="#keloladataagen" class="nav-link" data-target="#keloladataagen" aria-controls="keloladataagen" data-toggle="tab" role="tab">Kelola Penjualan Langsung </a>
+						<a href="#kelolapenjualan" class="nav-link" data-target="#kelolapenjualan" aria-controls="kelolapenjualan" data-toggle="tab" role="tab">Kelola Penjualan Langsung </a>
 					</li>
 					<li class="nav-item">
 						<a href="#monitoringpenjualanagen" class="nav-link" data-target="#monitoringpenjualanagen" aria-controls="monitoringpenjualanagen" data-toggle="tab" role="tab">Kelola Penjualan Via Website</a>
@@ -42,6 +44,7 @@
 				<div class="tab-content">
 					@include('marketing.agen.orderproduk.index')
 					@include('marketing.agen.inventoryagen.index')
+					@include('marketing.agen.kelolapenjualan.index')
 				</div>
 			</div>
 		</div>
@@ -55,6 +58,8 @@
 	$(document).ready(function(){
 		// Code Dummy ----------------------------------------------
 		var table_sup = $('#table_orderprodukagenpusat').DataTable();
+		var table_pus = $('#table_kelolapenjualan').DataTable();
+		var table_modal_detail = $('#detail-kelola').DataTable();
 		//var table_pus = $('#table_inventoryagen').DataTable();
 
 		$(document).on('click','.btn-edit',function(){
@@ -123,6 +128,10 @@
 		})
 		// End Code Dummy -----------------------------------------
 		
+		$("#search-list-agen").on("click", function() {
+			$(".table-modal").removeClass('d-none');
+		});
+
 		$('#table_inventoryagen').DataTable({
       initComplete: function () {
         this.api().columns().every( function () {

@@ -396,6 +396,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/index', 'Aktivitasmarketing\ManajemenAgenController@index')->name('manajemenagen.index');
     Route::get('/marketing/agen/get-agen/{city}', 'Aktivitasmarketing\ManajemenAgenController@getAgen')->name('manajemenagen.getAgen');
     Route::post('/marketing/agen/filter-data/{id}', 'Aktivitasmarketing\ManajemenAgenController@filterData')->name('manajemenagen.filterData');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/create', 'Aktivitasmarketing\ManajemenAgenController@kelolapenjualan_create')->name('kelolapenjulan.create');
     // End Manaemen Agen ============================================================================================
     
     Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_orderprodukagenpusat')->name('orderagenpusat.create');
