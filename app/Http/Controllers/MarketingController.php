@@ -668,11 +668,11 @@ class MarketingController extends Controller
             $rollback_mutasi = Mutasi::rollback($request->nota); //return true/false(error)
 
             if ($rollback_mutasi == true){
-                DB::table('d_salesdt')
-                    ->where('sd_sales', '=', $id)
+                DB::table('d_salescompdt')
+                    ->where('scd_sales', '=', $id)
                     ->delete();
-                DB::table('d_sales')
-                    ->where('s_id', '=', $id)
+                DB::table('d_salescomp')
+                    ->where('sc_id', '=', $id)
                     ->delete();
 
                 DB::commit();
