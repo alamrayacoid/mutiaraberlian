@@ -21,9 +21,53 @@ class PenjualanPusatController extends Controller
         return view('marketing/penjualanpusat/index');
     }
 
-    public function orderpenjualan_proses()
+    public function tableterima(){
+      $data = DB::table('d_productorder')->leftjoin('m_company', 'c_id', '=', 'po_agen')->where('po_status', 'P')->get();
+
+      return Datatables::of($data)
+      ->addIndexColumn()
+      ->addColumn('tanggal', function($data) {
+        return '<td>'. Carbon::parse($data->po_date)->format('d-m-Y') .'</td>';
+      })
+      ->addColumn('action', function($data) {
+        $tmp = DB::table('d_productorderdt')->where('pod_productorder', $data->po_id)->sum('pod_totalprice');
+
+        return '<div class="btn-group btn-group-sm">
+                <button class="btn btn-primary btn-detail" type="button" onclick="getdetail('.$data->po_id.')" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
+                <button class="btn btn-success btn-proses" type="button" title="Proses" onclick="window.location.href=\''. route('orderpenjualan.proses') .'?id='.encrypt($data->po_id).'\'"><i class="fa fa-arrow-right"></i></button>
+                </div>';
+      })
+      ->addColumn('total', function($data){
+        $tmp = DB::table('d_productorderdt')->where('pod_productorder', $data->po_id)->sum('pod_totalprice');
+
+        return "Rp " . number_format($tmp,2,',','.');;
+      })
+      ->rawColumns(['tanggal', 'action', 'total'])
+      ->make(true);
+    }
+
+    public function orderpenjualan_proses(Request $request)
     {
-        return view('marketing.penjualanpusat.terimaorder.proses');
+        try {
+          $tmp = decrypt($request->id);
+        } catch (DecryptException $e) {
+          return abort(404);
+        }
+
+        $data = DB::table('d_productorder')->where('po_id', $tmp)->first();
+
+        $dt = DB::table('d_productorderdt')->join('m_item', 'pod_item', '=', 'i_id')->where('pod_productorder', $tmp)->get();
+
+        $unit1 = [];
+        $unit2 = [];
+        $unit3 = [];
+        for ($i=0; $i < count($dt); $i++) {
+          $unit1[] = DB::table('m_unit', 'u_id', '=', $dt[$i]->i_unit1)->first();
+          $unit2[] = DB::table('m_unit', 'u_id', '=', $dt[$i]->i_unit2)->first();
+          $unit3[] = DB::table('m_unit', 'u_id', '=', $dt[$i]->i_unit3)->first();
+        }
+
+        return view('marketing.penjualanpusat.terimaorder.proses', compact('data', 'dt', 'unit1', 'unit2', 'unit3'));
     }
 
     public function getTarget(Request $request)
@@ -332,5 +376,19 @@ class PenjualanPusatController extends Controller
             })
             ->rawColumns(['status', 'action'])
             ->make(true);
+    }
+
+    public function getdetail(Request $request){
+      $data = DB::table('d_productorder')->leftjoin('m_company', 'c_id', '=', 'po_agen')->where('po_id', $request->id)->select('c_name', DB::raw('DATE_FORMAT(po_date, "%d-%m-%Y") as po_date'), 'po_nota')->first();
+
+      $total = DB::table('d_productorderdt')->where('pod_productorder', $request->id)->sum('pod_totalprice');
+
+      $dt = DB::table('d_productorderdt')->join('m_item', 'i_id', '=', 'pod_item')->join('m_unit', 'u_id', '=', 'pod_unit')->where('pod_productorder', $request->id)->get();
+
+      return response()->json([
+        'data' => $data,
+        'total' => $total,
+        'dt' => $dt
+      ]);
     }
 }

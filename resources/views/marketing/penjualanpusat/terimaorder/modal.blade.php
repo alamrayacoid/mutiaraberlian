@@ -14,25 +14,25 @@
           <label for="">Tanggal</label>
         </div>
         <div class="col-md-10 col-sm-12 mb-3">
-          <input type="text" class="form-control form-control-sm" readonly="">
+          <input type="text" id="dtanggal" class="form-control form-control-sm" readonly="">
         </div>
         <div class="col-md-2 col-sm-12">
           <label for="">Nama Agen</label>
         </div>
         <div class="col-md-10 col-sm-12 mb-3">
-          <input type="text" class="form-control form-control-sm" readonly="">
+          <input type="text" id="dagen" class="form-control form-control-sm" readonly="">
         </div>
         <div class="col-md-2 col-sm-12">
           <label for="">No Nota</label>
         </div>
         <div class="col-md-10 col-sm-12 mb-3">
-          <input type="text" class="form-control form-control-sm" readonly="">
+          <input type="text" id="dnota" class="form-control form-control-sm" readonly="">
         </div>
         <div class="col-md-2 col-sm-12">
           <label for="">Total Transaksi</label>
         </div>
         <div class="col-md-10 col-sm-12 mb-3">
-          <input type="text" class="form-control form-control-sm" readonly="">
+          <input type="text" id="dtotal" class="form-control form-control-sm" readonly="">
         </div>
       </div>
         <div class="table-responsive">
@@ -45,14 +45,8 @@
                 <th>Total Harga</th>
               </tr>
             </thead>
-            <tbody>
-              
-               <tr>
-                <td>BRG001/OBAT</td>
-                <td>1 DUS</td>
-                <td class="input-rupiah">Rp.1.000.000.00</td>
-                <td class="input-rupiah">Rp.1.000.000.00</td>
-              </tr>
+            <tbody id="showdetail">
+
             </tbody>
           </table>
         </div>

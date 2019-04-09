@@ -20,7 +20,7 @@
     <div class="row">
 
       <div class="col-12">
-        
+
         <div class="card">
 
             <div class="card-header bordered p-2">
@@ -38,7 +38,10 @@
                     <div class="pull-right mb-3">
                         <button class="btn btn-primary btn-tambahp"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button>
                     </div>
-
+                    <form id="formdata">
+                    <input type="hidden" name="po_comp" value="{{$data->po_comp}}">
+                    <input type="hidden" name="po_agen" value="{{$data->po_agen}}">
+                    <input type="hidden" name="po_nota" value="{{$data->po_nota}}">
                     <div class="table-responsive mt-3">
                     <table class="table table-hover table-striped" id="table_proses">
                     <thead class="bg-primary">
@@ -52,26 +55,32 @@
                         </tr>
                     </thead>
                     <tbody>
+                      @foreach ($dt as $key => $value)
                         <tr>
-                            <td><input type="text" class="form-control form-control-sm"></td>
-                            <td><input type="number" class="form-control form-control-sm" min="0"></td>
-                            <td><select name="" id="" class="from-control form-control-sm select2"></select></td>
-                            <td><input type="text" class="form-control form-control-sm input-rupiah" readonly=""></td>
-                            <td align="center"><i class="fa fa-check"></i></td>
+                            <td>
+                              <input type="text" name="barang[]" id="barang0" data-counter="0" class="form-control form-control-sm namabarang" value="{{$value->i_code}} - {{$value->i_name}}">
+                              <input type="hidden" name="idbarang[]" id="idbarang0" value="{{$value->i_id}}">
+                            </td>
+                            <td><input style="text-align:right;" type="number" name="request[]" id="request0" class="form-control form-control-sm" min="0" value="{{$value->pod_qty}}"></td>
+                            <td>
+                            <select id="satuan" name="satuan[]" id="satuan0" class="from-control form-control-sm select2">
+                              <option value="" disabled selected> - Pilih Satuan - </option>
+                              <option value="{{$unit1[$key]->u_id}}" @if($value->pod_unit == $unit1[$key]->u_id) selected @endif>{{$unit1[$key]->u_name}}</option>
+                              <option value="{{$unit2[$key]->u_id}}" @if($value->pod_unit == $unit2[$key]->u_id) selected @endif>{{$unit2[$key]->u_name}}</option>
+                              <option value="{{$unit3[$key]->u_id}}" @if($value->pod_unit == $unit3[$key]->u_id) selected @endif>{{$unit3[$key]->u_name}}</option>
+                            </select>
+                            </td>
+                            <td><input style="text-align:right;" type="text" name="harga[]" id="harga0" class="form-control form-control-sm" readonly="" value="{{"Rp " . number_format((int)$value->pod_price,0,',','.')}}"></td>
+                            <td align="center"></td>
                             <td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>
                         </tr>
-                        <tr>
-                            <td><input type="text" class="form-control form-control-sm"></td>
-                            <td><input type="number" class="form-control form-control-sm" min="0"></td>
-                            <td><select name="" id="" class="from-control form-control-sm select2"></select></td>
-                            <td><input type="text" class="form-control form-control-sm input-rupiah" readonly=""></td>
-                            <td align="center"><i class="fa fa-times"></i></td>
-                            <td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>
-                        </tr>
+                        <input type="hidden" name="counter" value="{{$key}}">
+                      @endforeach
                     </tbody>
                     </table>
 
                     </div>
+                    </form>
                 </section>
             </div>
             <div class="card-footer text-right">
@@ -92,23 +101,47 @@
 
 @section('extra_script')
 <script type="text/javascript">
+var counter = $('input[name=counter]').val();
   $(document).ready(function(){
+    $(".namabarang").autocomplete({
+      source: '{{route('distribusibarang.getitem')}}',
+      select: function(event, ui) {
+        var iam = $(this).data('counter');
+        getdata(ui.item.id, iam);
+      }
+    });
+
     $(document).on('click', '.btn-hapus', function(){
       $(this).parents('tr').remove();
     });
 
     $('.btn-tambahp').on('click',function(){
+      counter++
       $('#table_proses tbody')
       .append(
         '<tr>'+
-          '<td><input type="text" class="form-control form-control-sm"></td>'+
-          '<td><input type="number" class="form-control form-control-sm" min="0"></td>'+
-          '<td><select name="" id="" class="from-control form-control-sm select2"></select></td>'+
-          '<td><input type="text" class="form-control form-control-sm input-rupiah" readonly=""></td>'+
-          '<td align="center"><i class="fa fa-times"></i></td>'+
+          '<td><input type="text" name="barang[]" id="barang'+counter+'" class="form-control form-control-sm namabarang"><input type="hidden" name="idbarang[]" id="idbarang'+counter+'" value=""></td>'+
+          '<td><input type="number" name="request[]" id="request'+counter+'" class="form-control form-control-sm" min="0"></td>'+
+          '<td><select id="satuan" name="satuan[]" id="satuan'+counter+'" class="from-control form-control-sm select2"></select></td>'+
+          '<td><input type="text" name="harga[]" id="harga'+counter+'" class="form-control form-control-sm input-rupiah" readonly=""></td>'+
+          '<td align="center"></td>'+
           '<td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
         '</tr>'
         );
+
+        $(".namabarang").autocomplete({
+          source: '{{route('distribusibarang.getitem')}}',
+          select: function(event, ui) {
+            var iam = $(this).data('counter');
+            getdata(ui.item.id, iam);
+          }
+        });
+
+        $('.select2').select2({
+            theme: "bootstrap",
+            dropdownAutoWidth: true,
+            width: '100%'
+        });
     });
 
     $(document).on('click', '.btn-submit', function(){
