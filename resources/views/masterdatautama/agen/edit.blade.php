@@ -126,13 +126,13 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Class</label>
+                                        <label>Golongan Harga</label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
                                             <input type="hidden" id="class_hidden" value="{{ $data['agen']->a_class }}">
                                             <select id="a_class" class="select2 form-control form-control-sm" name="a_class">
-                                                <option value="" selected="">Pilih Class</option>
+                                                <option value="" selected="" disabled>Pilih Golongan Harga</option>
                                                 @foreach($data['classes'] as $class)
                                                 <option value="{{ $class->pc_id }}">{{ $class->pc_name }}</option>
                                                 @endforeach
