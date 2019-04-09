@@ -501,38 +501,38 @@ class MarketingController extends Controller
                 //Reinsert
                 if ($rollback_mutasi == true){
                     //hapus salesdt
-                    DB::table('d_salesdt')
-                        ->where('sd_sales', '=', $id)
+                    DB::table('d_salescompdt')
+                        ->where('scd_sales', '=', $id)
                         ->delete();
 
                     $val_sales = [
-                        's_comp'    => $comp,
-                        's_member'  => $member,
-                        's_total'   => $total,
-                        's_user'    => $user,
-                        's_update'  => $update
+                        'sc_comp'    => $comp,
+                        'sc_member'  => $member,
+                        'sc_total'   => $total,
+                        'sc_user'    => $user,
+                        'sc_update'  => $update
                     ];
 
                     //Update d_sales
-                    DB::table('d_sales')
-                        ->where('s_id', '=', $id)
+                    DB::table('d_salescomp')
+                        ->where('sc_id', '=', $id)
                         ->update($val_sales);
 
-                    $sddetail = (DB::table('d_salesdt')->where('sd_sales', '=', $id)->max('sd_detailid')) ? (DB::table('d_salesdt')->where('sd_sales', '=', $id)->max('sd_detailid')) + 1 : 1;
+                    $sddetail = (DB::table('d_salescompdt')->where('scd_sales', '=', $id)->max('scd_detailid')) ? (DB::table('d_salescompdt')->where('scd_sales', '=', $id)->max('scd_detailid')) + 1 : 1;
                     $detailsd = $sddetail;
                     $val_salesdt = [];
                     for ($i = 0; $i < count($data['idItem']); $i++) {
                         $val_salesdt[] = [
-                            'sd_sales' => $id,
-                            'sd_detailid' => $detailsd,
-                            'sd_comp' => $comp,
-                            'sd_item' => $data['idItem'][$i],
-                            'sd_qty' => $data['jumlah'][$i],
-                            'sd_unit' => $data['satuan'][$i],
-                            'sd_value' => Currency::removeRupiah($data['harga'][$i]),
-                            'sd_discpersen' => 0,
-                            'sd_discvalue' => 0,
-                            'sd_totalnet' => Currency::removeRupiah($data['subtotal'][$i])
+                            'scd_sales' => $id,
+                            'scd_detailid' => $detailsd,
+                            'scd_comp' => $comp,
+                            'scd_item' => $data['idItem'][$i],
+                            'scd_qty' => $data['jumlah'][$i],
+                            'scd_unit' => $data['satuan'][$i],
+                            'scd_value' => Currency::removeRupiah($data['harga'][$i]),
+                            'scd_discpersen' => 0,
+                            'scd_discvalue' => 0,
+                            'scd_totalnet' => Currency::removeRupiah($data['subtotal'][$i])
                         ];
                         $detailsd++;
 
@@ -574,7 +574,7 @@ class MarketingController extends Controller
                         Mutasi::mutasimasuk(12, $posisi->c_id, $posisi->c_id, $data['idItem'][$i], $qty_compare, 'ON DESTINATION', 'FINE', $stock_mutasi->sm_hpp, $stock_mutasi->sm_sell, $nota, $stock_mutasi->sm_nota);
                     }
 
-                    DB::table('d_salesdt')->insert($val_salesdt);
+                    DB::table('d_salescompdt')->insert($val_salesdt);
 
                     DB::commit();
                     return Response::json([
@@ -598,10 +598,10 @@ class MarketingController extends Controller
                 ]);
             }
         } else {
-            $detail = DB::table('d_sales')
-                ->where('d_sales.s_id', '=', $id)
+            $detail = DB::table('d_salescomp')
+                ->where('d_salescomp.sc_id', '=', $id)
                 ->join('m_company', function ($c){
-                    $c->on('m_company.c_user', '=', 'd_sales.s_member');
+                    $c->on('m_company.c_user', '=', 'd_salescomp.sc_member');
                 })
                 ->join('m_agen', function ($a){
                     $a->on('m_agen.a_code', '=', 'm_company.c_user');
@@ -614,13 +614,13 @@ class MarketingController extends Controller
                 })
                 ->first();
 
-            $data_item = DB::table('d_sales')
-                ->where('d_sales.s_id', '=', $id)
-                ->join('d_salesdt', function ($sd){
-                    $sd->on('d_salesdt.sd_sales', '=', 'd_sales.s_id');
+            $data_item = DB::table('d_salescomp')
+                ->where('d_salescomp.sc_id', '=', $id)
+                ->join('d_salescompdt', function ($sd){
+                    $sd->on('d_salescompdt.scd_sales', '=', 'd_salescomp.sc_id');
                 })
                 ->join('m_item', function ($i){
-                    $i->on('m_item.i_id', '=', 'd_salesdt.sd_item');
+                    $i->on('m_item.i_id', '=', 'd_salescompdt.scd_item');
                 })
                 ->join('m_unit as a', function ($x){
                     $x->on('m_item.i_unit1', '=', 'a.u_id');
@@ -632,15 +632,15 @@ class MarketingController extends Controller
                     $z->on('m_item.i_unit3', '=', 'c.u_id');
                 })
                 ->join('d_stock_mutation', function ($sm){
-                    $sm->on('d_stock_mutation.sm_nota', '=', 'd_sales.s_nota');
+                    $sm->on('d_stock_mutation.sm_nota', '=', 'd_salescomp.sc_nota');
                     $sm->where('d_stock_mutation.sm_mutcat', '=', 13);
                 })
                 ->join('d_stock', function ($s){
                     $s->on('d_stock.s_id', '=', 'd_stock_mutation.sm_stock');
-                    $s->on('d_stock.s_item', '=', 'd_salesdt.sd_item');
+                    $s->on('d_stock.s_item', '=', 'd_salescompdt.scd_item');
                 })
-                ->select('d_salesdt.sd_item as itemId', 'd_salesdt.sd_unit as unit', 'd_salesdt.sd_qty as qty',
-                    'd_salesdt.sd_value as harga', 'd_salesdt.sd_totalnet as totalnet', 'm_item.i_code as itemCode', 'm_item.i_name as item',
+                ->select('d_salescompdt.scd_item as itemId', 'd_salescompdt.scd_unit as unit', 'd_salescompdt.scd_qty as qty',
+                    'd_salescompdt.scd_value as harga', 'd_salescompdt.scd_totalnet as totalnet', 'm_item.i_code as itemCode', 'm_item.i_name as item',
                     'd_stock_mutation.sm_stock as stock',
                     'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2',
                     'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
