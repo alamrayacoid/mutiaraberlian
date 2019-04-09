@@ -205,7 +205,8 @@
 				type: "get",
 				data: {
 					"date_from": $('#diterima_from').val(),
-					"date_to": $('#diterima_to').val()
+					"date_to": $('#diterima_to').val(),
+					"education": $('#terima_edu').val()
 				}
 			},
 			columns: [
@@ -215,8 +216,7 @@
 				{data: 'p_tlp'},
 				{data: 'p_email'},
 				{data: 'status'},
-				{data: 'approval'},
-				{data: 'action'}
+				{data: 'approval'}
 			],
 			pageLength: 10,
 			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]

@@ -113,7 +113,9 @@ class RecruitmentController extends Controller
         if ($datas->p_state == 'Y' && $datas->p_stateapprove == 1) {
           return '<div class="text-center">'.Carbon::parse($datas->pl_date)->format('d M Y').'</div>';
         } else if ($datas->p_state == 'Y' && $datas->p_stateapprove == 2) {
-          return '<div class="text-center">'.$datas->pl_date.'</div>';
+          return '<div class="text-center">'.Carbon::parse($datas->pl_date)->format('d M Y').'</div>';
+        } else if ($datas->p_state == 'Y' && $datas->p_stateapprove == 3) {
+          return '<div class="text-center">'.Carbon::parse($datas->pl_date)->format('d M Y').'</div>';
         } else {
           return '<div class="text-danger text-center">-</div>';
         }        
@@ -186,15 +188,17 @@ class RecruitmentController extends Controller
     $statusApp = $request->p_stateapprove;
     $status    = $request->p_state;
     $approve3  = $request->approve3;
+    $status3   = $request->p_state3;
     $date      = $request->p_date;
     $date_fr   = strtotime($date);
     $time      = date('Y-m-d', $date_fr);
+    $accDate   = Carbon::now('Asia/Jakarta');
 
     $dtId = DB::table('d_pelamarlanjutan')->where('pl_id', '=', $id)->max('pl_detailid');
     DB::beginTransaction();
     try {     
 
-      if ($approve3 != null) {
+      if ($approve3 != null && $status3 == null) {
         DB::table('d_pelamar')->where('p_id', '=', $id)->update([
           'p_state'   => "Y",
           'p_stateapprove'  => $approve3
@@ -204,7 +208,21 @@ class RecruitmentController extends Controller
           'pl_id'         => $id,
           'pl_detailid'   => $dtId+1,
           'pl_approve'    => $approve3,
-          'pl_isapproved' => "Y"
+          'pl_isapproved' => "Y",
+          'pl_date'       => $accDate
+        ]);
+      } else if ($approve3 != null && $status3 != null) {
+        DB::table('d_pelamar')->where('p_id', '=', $id)->update([
+          'p_state'        => $status3,
+          'p_stateapprove' => $approve3
+        ]);
+
+        DB::table('d_pelamarlanjutan')->insert([
+          'pl_id'         => $id,
+          'pl_detailid'   => $dtId+1,
+          'pl_approve'    => $approve3,
+          'pl_isapproved' => $status3,
+          'pl_date'       => $accDate
         ]);
       } else {
         DB::table('d_pelamar')->where('p_id', '=', $id)->update([
@@ -227,9 +245,7 @@ class RecruitmentController extends Controller
             'pl_isapproved' => $status
           ]);
         }
-      }
-      
-      
+      }     
 
       DB::commit();
       return response()->json([
@@ -255,13 +271,34 @@ class RecruitmentController extends Controller
     $date_to = strtotime($request->date_to);
     $to      = date('Y-m-d', $date_to);
     $edu     = $request->education;
-    $status  = $request->status;
 
-    $datas = DB::table('d_pelamar')
-      ->where('p_state', 'Y')
-      ->whereBetween('p_created', [$from, $to])
-      ->orderBy('p_name', 'asc')
-      ->get();
+    if ($edu != null) {
+      $datas = DB::table('d_pelamar')
+        ->leftJoin('d_pelamarlanjutan', function($a){
+          $a->on('p_id', '=', 'pl_id');
+          $a->on('pl_isapproved', '=', 'p_state');
+          $a->on('pl_approve', '=', 'p_stateapprove');
+        })
+        ->where('p_state', 'Y')
+        ->whereBetween('p_created', [$from, $to])
+        ->where('p_education', '=', $edu)
+        ->groupBy("p_id")
+        ->orderBy('p_name', 'asc')
+        ->get();
+    } else {
+      $datas = DB::table('d_pelamar')
+        ->leftJoin('d_pelamarlanjutan', function($a){
+          $a->on('p_id', '=', 'pl_id');
+          $a->on('pl_isapproved', '=', 'p_state');
+          $a->on('pl_approve', '=', 'p_stateapprove');
+        })
+        ->where('p_state', 'Y')
+        ->whereBetween('p_created', [$from, $to])
+        ->groupBy("p_id")
+        ->orderBy('p_name', 'asc')
+        ->get();
+    }    
+
     return Datatables::of($datas)
       ->addIndexColumn()
       ->addColumn('tgl_apply', function($datas) {
@@ -277,16 +314,22 @@ class RecruitmentController extends Controller
         }
       })
       ->addColumn('approval', function($datas) {
-        return '<td>---</td>';
+        if ($datas->p_state == 'Y' && $datas->p_stateapprove == 1) {
+          return '<div class="text-center">'.Carbon::parse($datas->pl_date)->format('d M Y').'</div>';
+        } else if ($datas->p_state == 'Y' && $datas->p_stateapprove == 2) {
+          return '<div class="text-center">'.Carbon::parse($datas->pl_date)->format('d M Y').'</div>';
+        } else if ($datas->p_state == 'Y' && $datas->p_stateapprove == 3) {
+          return '<div class="text-center">'.Carbon::parse($datas->pl_date)->format('d M Y').'</div>';
+        }
       })
-      ->addColumn('action', function($datas) {
-        return '<div class="btn-group btn-group-sm">
-                  <button class="btn btn-primary btn-preview-rekruitmen hint--top-left hint--info" type="button" aria-label="Detail Pelamar" onclick="detail(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file"></i></button>
-                  <button class="btn btn-warning btn-proses-rekruitmen hint--top-left hint--warning" type="button" aria-label="Proses Data" onclick="proses(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file-powerpoint-o"></i></button>
-                  <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Nonaktifkan" onclick="nonActivate(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-times-circle"></i></button>
-                </div>';
-      })
-      ->rawColumns(['tgl_apply', 'status', 'approval', 'action'])
+      // ->addColumn('action', function($datas) {
+      //   return '<div class="btn-group btn-group-sm">
+      //             <button class="btn btn-primary btn-preview-rekruitmen hint--top-left hint--info" type="button" aria-label="Detail Pelamar" onclick="detail(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file"></i></button>
+      //             <button class="btn btn-warning btn-proses-rekruitmen hint--top-left hint--warning" type="button" aria-label="Proses Data" onclick="proses(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file-powerpoint-o"></i></button>
+      //             <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Nonaktifkan" onclick="nonActivate(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-times-circle"></i></button>
+      //           </div>';
+      // })
+      ->rawColumns(['tgl_apply', 'status', 'approval'])
       ->make(true);
   }
   // End Code =============================================================================================

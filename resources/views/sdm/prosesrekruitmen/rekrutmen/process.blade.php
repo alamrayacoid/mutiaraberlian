@@ -136,8 +136,8 @@
     $class_bg3   = "";
     $checkedN3   = "";
     $checkedY3   = "";
-    $app3        = "p_stateapprove";
-    $name3       = "p_state";
+    $app3        = "approve3";
+    $name3       = "p_state3";
   } else if ($data->p_stateapprove == 3 && $data->p_state == "N") {
     $approve3    = "disabled";
     $app_name    = "Approve 3";
@@ -145,8 +145,8 @@
     $class_bg3    = "";
     $checkedN3   = "checked";
     $checkedY3   = "";
-    $app3        = "p_stateapprove";
-    $name3       = "p_state";
+    $app3        = "approve3";
+    $name3       = "p_state3";
   } else if ($data->p_stateapprove == 3 && $data->p_state == "Y") {
     $approve3    = "disabled";
     $app_name    = "Approve 3";
@@ -154,15 +154,15 @@
     $class_bg3   = "";
     $checkedN3   = "";
     $checkedY3   = "checked";
-    $app3        = "p_stateapprove";
-    $name3       = "p_state";
+    $app3        = "approve3";
+    $name3       = "p_state3";
   } else {
     $approve3  = "disabled";
     $class_bg3 = "bg-secondary-smooth";
     $checkedN3 = "";
     $checkedY3 = "";
-    $app3      = "p_stateapprove3";
-    $name3     = "p_state3";
+    $app3      = "approve3_none";
+    $name3     = "p_state3_none";
   }
 ?>
 {{-- Content --}}
