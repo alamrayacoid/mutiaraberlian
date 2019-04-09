@@ -52,7 +52,7 @@
             <header class="auth-header">
                 <h1 class="auth-title">
                     <div class="logo">
-                        <img src="{{asset('assets/img/cv-mutiaraberlian-icon.png')}}" height="45px" width="45px"
+                        <img src="{{asset('assets/img/mutiaraberlian.svg')}}" height="45px" width="45px"
                              class="login-logo">
                         <!-- <span class="l l1"></span>
                         <span class="l l2"></span>
