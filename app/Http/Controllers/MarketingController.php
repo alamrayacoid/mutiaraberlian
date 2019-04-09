@@ -273,39 +273,39 @@ class MarketingController extends Controller
         $total  = $data['tot_hrg'];
         $insert = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
         $update = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
-        $nota   = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PK', '-');
-        $idSales= (DB::table('d_sales')->max('s_id')) ? DB::table('d_sales')->max('s_id') + 1 : 1;
+        $nota   = CodeGenerator::codeWithSeparator('d_salescomp', 'sc_nota', 8, 10, 3, 'SK', '-');
+        $idSales= (DB::table('d_salescomp')->max('sc_id')) ? DB::table('d_salescomp')->max('sc_id') + 1 : 1;
 
         DB::beginTransaction();
         try{
             $val_sales = [
-                's_id'      => $idSales,
-                's_comp'    => $comp,
-                's_member'  => $member,
-                's_type'    => $type,
-                's_date'    => $date,
-                's_nota'    => $nota,
-                's_total'   => $total,
-                's_user'    => $user,
-                's_insert'  => $insert,
-                's_update'  => $update
+                'sc_id'      => $idSales,
+                'sc_comp'    => $comp,
+                'sc_member'  => $member,
+                'sc_type'    => $type,
+                'sc_date'    => $date,
+                'sc_nota'    => $nota,
+                'sc_total'   => $total,
+                'sc_user'    => $user,
+                'sc_insert'  => $insert,
+                'sc_update'  => $update
             ];
 
-            $sddetail = (DB::table('d_salesdt')->where('sd_sales', '=', $idSales)->max('sd_detailid')) ? (DB::table('d_salesdt')->where('sd_sales', '=', $idSales)->max('sd_detailid')) + 1 : 1;
+            $sddetail = (DB::table('d_salescompdt')->where('scd_sales', '=', $idSales)->max('scd_detailid')) ? (DB::table('d_salescompdt')->where('scd_sales', '=', $idSales)->max('sd_detailid')) + 1 : 1;
             $detailsd = $sddetail;
             $val_salesdt = [];
             for ($i = 0; $i < count($data['idItem']); $i++) {
                 $val_salesdt[] = [
-                    'sd_sales' => $idSales,
-                    'sd_detailid' => $detailsd,
-                    'sd_comp' => $comp,
-                    'sd_item' => $data['idItem'][$i],
-                    'sd_qty' => $data['jumlah'][$i],
-                    'sd_unit' => $data['satuan'][$i],
-                    'sd_value' => Currency::removeRupiah($data['harga'][$i]),
-                    'sd_discpersen' => 0,
-                    'sd_discvalue' => 0,
-                    'sd_totalnet' => Currency::removeRupiah($data['subtotal'][$i])
+                    'scd_sales' => $idSales,
+                    'scd_detailid' => $detailsd,
+                    'scd_comp' => $comp,
+                    'scd_item' => $data['idItem'][$i],
+                    'scd_qty' => $data['jumlah'][$i],
+                    'scd_unit' => $data['satuan'][$i],
+                    'scd_value' => Currency::removeRupiah($data['harga'][$i]),
+                    'scd_discpersen' => 0,
+                    'scd_discvalue' => 0,
+                    'scd_totalnet' => Currency::removeRupiah($data['subtotal'][$i])
                 ];
                 $detailsd++;
 
@@ -347,8 +347,8 @@ class MarketingController extends Controller
                 Mutasi::mutasimasuk(12, $posisi->c_id, $posisi->c_id, $data['idItem'][$i], $qty_compare, 'ON DESTINATION', 'FINE', $stock_mutasi->sm_hpp, $stock_mutasi->sm_sell, $nota, $stock_mutasi->sm_nota);
             }
 
-            DB::table('d_sales')->insert($val_sales);
-            DB::table('d_salesdt')->insert($val_salesdt);
+            DB::table('d_salescomp')->insert($val_sales);
+            DB::table('d_salescompdt')->insert($val_salesdt);
             DB::commit();
             return Response::json([
                 'status' => "Success",
