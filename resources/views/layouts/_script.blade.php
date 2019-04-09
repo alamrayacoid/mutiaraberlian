@@ -302,6 +302,40 @@
             decimal: ",",
             prefix: "Rp. "
         });
+
+        //mask money
+        $('.currency').inputmask("currency", {
+            radixPoint: ".",
+            groupSeparator: ".",
+            digits: 2,
+            autoGroup: true,
+            prefix: '', //Space after $, this will not truncate the first character.
+            rightAlign: false,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
+        });
+
+        //mask digits
+        $('.digits').inputmask("currency", {
+            radixPoint: ".",
+            groupSeparator: ".",
+            digits: 0,
+            autoGroup: true,
+            prefix: '', //Space after $, this will not truncate the first character.
+            rightAlign: false,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
+        });
+
+        // mask telp-number
+        $('.hp').inputmask("9999 9999 9999", {
+            autoUnmask: true,
+        });
+
+        // mask email
+        $('.email').inputmask({alias: "email"});
     });
 </script>
 <script type="text/javascript">
