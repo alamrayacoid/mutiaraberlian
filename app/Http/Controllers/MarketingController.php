@@ -375,10 +375,10 @@ class MarketingController extends Controller
         }
 
         if ($action == "detail") {
-            $detail = DB::table('d_sales')
-                ->where('d_sales.s_id', '=', $id)
+            $detail = DB::table('d_salescomp')
+                ->where('d_salescomp.sc_id', '=', $id)
                 ->join('m_company', function ($c){
-                    $c->on('m_company.c_user', '=', 'd_sales.s_member');
+                    $c->on('m_company.c_user', '=', 'd_salescomp.sc_member');
                 })
                 ->join('m_agen', function ($a){
                     $a->on('m_agen.a_code', '=', 'm_company.c_user');
@@ -389,29 +389,29 @@ class MarketingController extends Controller
                 ->join('m_wil_kota', function ($k){
                     $k->on('m_wil_kota.wc_id', '=', 'm_agen.a_kabupaten');
                 })
-                ->select(DB::raw('DATE_FORMAT(s_date, "%d-%m-%Y") AS tanggal'),
+                ->select(DB::raw('DATE_FORMAT(sc_date, "%d-%m-%Y") AS tanggal'),
                     DB::raw("CONCAT(m_wil_provinsi.wp_name, ' - ', m_wil_kota.wc_name) as area"),
-                    'd_sales.s_nota as nota', 'm_company.c_name as konsigner', 'd_sales.s_type as tipe',
-                    DB::raw("CONCAT('Rp. ',FORMAT(d_sales.s_total, 0, 'de_DE')) as total"))
+                    'd_salescomp.sc_nota as nota', 'm_company.c_name as konsigner', 'd_sales.s_type as tipe',
+                    DB::raw("CONCAT('Rp. ',FORMAT(d_salescomp.sc_total, 0, 'de_DE')) as total"))
                 ->first();
 
             return Response::json($detail);
         } else {
-            $data = DB::table('d_sales')
-                ->where('s_id', '=', $id)
-                ->join('d_salesdt', function ($sd){
-                    $sd->on('sd_sales', '=', 's_id');
+            $data = DB::table('d_salescomp')
+                ->where('sc_id', '=', $id)
+                ->join('d_salescompdt', function ($sd){
+                    $sd->on('scd_sales', '=', 'sc_id');
                 })
                 ->join('m_item', function ($i){
-                    $i->on('i_id', '=', 'sd_item');
+                    $i->on('i_id', '=', 'scd_item');
                 })
                 ->join('m_unit', function ($u){
-                    $u->on('u_id', '=', 'sd_unit');
+                    $u->on('u_id', '=', 'scd_unit');
                 })
                 ->select('i_name as barang',
-                    DB::raw("CONCAT(sd_qty, ' - ', u_name) as jumlah"),
-                    DB::raw("CONCAT('Rp. ',FORMAT(sd_value, 0, 'de_DE')) as harga"),
-                    DB::raw("CONCAT('Rp. ',FORMAT(sd_totalnet, 0, 'de_DE')) as total_harga"));
+                    DB::raw("CONCAT(scd_qty, ' - ', u_name) as jumlah"),
+                    DB::raw("CONCAT('Rp. ',FORMAT(scd_value, 0, 'de_DE')) as harga"),
+                    DB::raw("CONCAT('Rp. ',FORMAT(scd_totalnet, 0, 'de_DE')) as total_harga"));
 
             return DataTables::of($data)
                 ->addColumn('barang', function($data){
