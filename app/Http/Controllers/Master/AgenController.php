@@ -272,38 +272,39 @@ class AgenController extends Controller
 
             DB::table('m_agen')
                 ->insert([
-                    'a_id' => $id,
-                    'a_code' => $codeAgen,
-                    'a_area' => $request->area_city,
-                    'a_name' => $request->name,
-                    'a_birthday' => Carbon::parse($request->birthday),
-                    'a_email' => $request->email,
-                    'a_telp' => $request->telp,
-                    'a_provinsi' => $request->address_prov,
+                    'a_id'        => $id,
+                    'a_code'      => $codeAgen,
+                    'a_area'      => $request->area_city,
+                    'a_name'      => $request->name,
+                    'a_sex'       => $request->jekel,
+                    'a_birthday'  => Carbon::parse($request->birthday),
+                    'a_email'     => $request->email,
+                    'a_telp'      => $request->telp,
+                    'a_provinsi'  => $request->address_prov,
                     'a_kabupaten' => $request->address_city,
                     'a_kecamatan' => $request->address_district,
-                    'a_desa' => $request->address_village,
-                    'a_address' => $request->address,
-                    'a_class' => $request->a_class,
-                    'a_type' => $request->type_hidden,
-                    'a_parent' => $request->parent,
-                    'a_img' => $photo,
-                    'a_insert' => Carbon::now(),
-                    'a_update' => Carbon::now()
+                    'a_desa'      => $request->address_village,
+                    'a_address'   => $request->address,
+                    'a_class'     => $request->a_class,
+                    'a_type'      => $request->type_hidden,
+                    'a_parent'    => $request->parent,
+                    'a_img'       => $photo,
+                    'a_insert'    => Carbon::now(),
+                    'a_update'    => Carbon::now()
                 ]);
 
             // insert to table m_company
             $codeCompany = CodeGenerator::code('m_company', 'c_id', 7, 'MB');
             DB::table('m_company')
                 ->insert([
-                    'c_id' => $codeCompany,
-                    'c_name' => $request->name,
+                    'c_id'      => $codeCompany,
+                    'c_name'    => $request->name,
                     'c_address' => $request->address,
-                    'c_tlp' => $request->telp,
-                    'c_type' => 'AGEN',
-                    'c_user' => $codeAgen,
-                    'c_insert' => Carbon::now(),
-                    'c_update' => Carbon::now()
+                    'c_tlp'     => $request->telp,
+                    'c_type'    => 'AGEN',
+                    'c_user'    => $codeAgen,
+                    'c_insert'  => Carbon::now(),
+                    'c_update'  => Carbon::now()
                 ]);
 
             DB::commit();
@@ -377,21 +378,22 @@ class AgenController extends Controller
             DB::table('m_agen')
                 ->where('a_id', $id)
                 ->update([
-                    'a_area' => $request->area_city,
-                    'a_name' => $request->name,
-                    'a_birthday' => Carbon::parse($request->birthday),
-                    'a_email' => $request->email,
-                    'a_telp' => $request->telp,
-                    'a_provinsi' => $request->address_prov,
+                    'a_area'      => $request->area_city,
+                    'a_name'      => $request->name,
+                    'a_sex'      => $request->jekel,
+                    'a_birthday'  => Carbon::parse($request->birthday),
+                    'a_email'     => $request->email,
+                    'a_telp'      => $request->telp,
+                    'a_provinsi'  => $request->address_prov,
                     'a_kabupaten' => $request->address_city,
                     'a_kecamatan' => $request->address_district,
-                    'a_desa' => $request->address_village,
-                    'a_address' => $request->address,
-                    'a_class' => $request->a_class,
-                    'a_type' => $request->type_hidden,
-                    'a_parent' => $request->parent,
-                    'a_img' => $photo,
-                    'a_update' => Carbon::now()
+                    'a_desa'      => $request->address_village,
+                    'a_address'   => $request->address,
+                    'a_class'     => $request->a_class,
+                    'a_type'      => $request->type_hidden,
+                    'a_parent'    => $request->parent,
+                    'a_img'       => $photo,
+                    'a_update'    => Carbon::now()
                 ]);
 
             DB::commit();

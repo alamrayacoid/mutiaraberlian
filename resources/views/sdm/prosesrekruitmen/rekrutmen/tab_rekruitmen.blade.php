@@ -8,8 +8,13 @@
 		</div>
 		<div class="card-block">
 			<section>
-		<h6>Pencarian Berdasarkan :</h6>
-			<fieldset class="mb-3">
+		<div class="row mb-3">
+		<h6 class="col-11">Pencarian Berdasarkan :</h6>
+		<div class="d-flex justify-content-end col-1">
+			<button class="btn btn-primary rounded" type="button" onclick="TableRekrutmen()"><i class="fa fa-fw fa-filter"></i> Filter</button>
+		</div>
+		</div>
+			<fieldset class="mb-3 col-12">
 				<div class="row">
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
@@ -38,17 +43,17 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<select class="form-control form-control-sm">
-							<option value="">Tampilkan Semua</option>
-							<option value="">SD</option>
-							<option value="">SMP</option>
-							<option value="">SMA</option>
-							<option value="">SMK</option>
-							<option value="">D1</option>
-							<option value="">D3</option>
-							<option value="">S1</option>
-							<option value="">S2</option>
-							<option value="">S3</option>
+						<select class="form-control form-control-sm select2" id="education">
+							<option value="" selected>Tampilkan Semua</option>
+							<option value="SD">SD</option>
+							<option value="SMP">SMP</option>
+							<option value="SMA">SMA</option>
+							<option value="SMK">SMK</option>
+							<option value="D1">D1</option>
+							<option value="D3">D3</option>
+							<option value="S1">S1</option>
+							<option value="S2">S2</option>
+							<option value="S3">S3</option>
 						</select>
 					</div>
 					</div>
@@ -59,12 +64,11 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<select class="form-control form-control-sm">
+						<select class="form-control form-control-sm" id="statusRec">
 							<option value="">Tampilkan Semua</option>
-							<option value="">Released</option>
-							<option value="">Approve 1</option>
-							<option value="">Approve 2</option>
-							<option value="">Approve 3</option>
+							<option value="1">Approve 1</option>
+							<option value="2">Approve 2</option>
+							<option value="3">Approve 3</option>
 						</select>
 					</div>
 					</div>
@@ -72,7 +76,7 @@
 			</fieldset>
 
 				<div class="table-responsive">
-					<table class="table table-hover table-striped display" cellspacing="0" style="width: 100%" id="table_rekrutmen">
+					<table class="table table-hover table-striped display nowrap" cellspacing="0" style="width: 100%" id="table_rekrutmen">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>
@@ -80,9 +84,8 @@
 								<th>Nama Pelamar</th>
 								<th>No. HP</th>
 								<th>Email</th>
-								<th>Pendidikan</th>
 								<th>Status</th>
-								<th>Approval</th>
+								<th>Tanggal Proses</th>
 								<th>Aksi</th>
 							</tr>
 						</thead>

@@ -52,14 +52,30 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-
+    var table_sup, table_pus, table_monitoring;
 	$(document).ready(function(){
-		var table_sup = $('#table_penempatan').DataTable();
-		var table_pus = $('#table_monitoringpenjualan').DataTable();
+		table_sup = $('#table_penempatan').DataTable({
+            responsive: true,
+            autoWidth: false,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('konsinyasipusat.getData') }}",
+                type: "get"
+            },
+            columns: [
+                {data: 'tanggal'},
+                {data: 'nota'},
+                {data: 'konsigner'},
+                {data: 'total', className: "text-right"},
+                {data: 'action'}
+            ],
+        });
 
-		$(document).on('click','.btn-edit-pp',function(){
-			window.location.href='{{route('penempatanproduk.edit')}}'
-		});
+		table_pus = $('#table_monitoringpenjualan').DataTable();
+
+        table_monitoring = $('#detail-monitoring').DataTable( {
+            "iDisplayLength" : 5
+        });
 
 		$(document).on('click', '.btn-disable-pp', function(){
 			var ini = $(this);
@@ -97,7 +113,6 @@
 			});
 		});
 
-
 		$(document).on('click', '.btn-enable-pp', function(){
 			$.toast({
 				heading: 'Information',
@@ -110,19 +125,6 @@
 			$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
 	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 		})
-
-		
-		$(document).ready(function() {
-			$('#modal-penempatan').DataTable( {
-				"iDisplayLength" : 5
-			});
-		});
-
-		$(document).ready(function() {
-			$('#detail-monitoring').DataTable( {
-				"iDisplayLength" : 5
-			});
-		});
 
 		$(document).on('click', '.btn-submit', function(){
 			$.toast({
@@ -140,5 +142,104 @@
 		});
 
 	});
+
+	function detailKonsinyasi(id) {
+	    loadingShow();
+	    var detail = false, tabel = false, err = null, tipe = "";
+        if ($.fn.DataTable.isDataTable("#modal-penempatan")) {
+            $('#modal-penempatan').dataTable().fnDestroy();
+        }
+
+        axios.get(baseUrl+'/marketing/konsinyasipusat/detail-konsinyasi/'+id+'/detail')
+            .then(function (resp) {
+                if (resp.data.tipe == "K") {
+                    tipe = "KONSINYASI";
+                } else {
+                    tipe = "Cash";
+                }
+                $("#txt_tanggal").val(resp.data.tanggal);
+                $("#txt_area").val(resp.data.area);
+                $("#txt_nota").val(resp.data.nota);
+                $("#txt_konsigner").val(resp.data.konsigner);
+                $("#txt_tipe").val(tipe);
+                $("#txt_total").val(resp.data.total);
+
+                $('#modal-penempatan').DataTable({
+                    responsive: true,
+                    autoWidth: false,
+                    serverSide: true,
+                    ajax: {
+                        url: baseUrl+'/marketing/konsinyasipusat/detail-konsinyasi/'+id+'/table',
+                        type: "get"
+                    },
+                    columns: [
+                        {data: 'barang'},
+                        {data: 'jumlah'},
+                        {data: 'harga', className: "text-right"},
+                        {data: 'total_harga', className: "text-right"}
+                    ],
+                    "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, 100]],
+                    "drawCallback": function( settings ) {
+                        loadingHide();
+                        $("#detailKonsinyasi").modal('show');
+                    }
+                });
+            })
+            .catch(function (error) {
+                loadingHide();
+                messageWarning("Error", error);
+            })
+    }
+
+    function editKonsinyasi(id) {
+	    window.location = baseUrl+'/marketing/konsinyasipusat/penempatanproduk/edit/'+id;
+    }
+
+    function hapusKonsinyasi(id, nota) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        loadingShow();
+                        axios.get('{{ route('penempatanproduk.delete') }}', {
+                            params: {
+                                id: id,
+                                nota: nota
+                            }
+                        })
+                            .then(function (response) {
+                                if(response.data.status == 'Success'){
+                                    loadingHide();
+                                    messageSuccess("Berhasil", response.data.message);
+                                    table_sup.ajax.reload();
+                                }else{
+                                    loadingHide();
+                                    messageFailed("Gagal", response.data.message);
+                                }
+                            })
+                            .catch(function (error) {
+                                loadingHide();
+                                messageWarning("Error", error);
+                            });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
 </script>
 @endsection

@@ -142,8 +142,15 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Master Member
     Route::get('/masterdatautama/member/index', 'Master\MemberController@index')->name('member.index');
+    Route::get('/masterdatautama/member/list-member', 'Master\MemberController@listDataMember')->name('member.list');
     Route::get('/masterdatautama/member/create', 'Master\MemberController@create')->name('member.create');
-    Route::get('/masterdatautama/member/edit', 'Master\MemberController@edit')->name('member.edit');
+    Route::get('/masterdatautama/member/store', 'Master\MemberController@memberStore')->name('member.store');
+    Route::get('/masterdatautama/member/get-agen', 'Master\MemberController@getDataAgen')->name('member.getDataAgen');
+    Route::get('/masterdatautama/member/cari-agen', 'Master\MemberController@cariDataAgen')->name('member.cariDataAgen');
+    Route::get('/masterdatautama/member/edit/{id}', 'Master\MemberController@editMember')->name('member.edit');
+    Route::get('/masterdatautama/member/update/{id}', 'Master\MemberController@updateMember')->name('member.update');
+    Route::post('/masterdatautama/member/nonactivate/{id}', 'Master\MemberController@nonActivateMember')->name('member.nonActivate');
+    Route::post('/masterdatautama/member/activate/{id}', 'Master\MemberController@activateMember')->name('member.activate');
     // !===================================================== End Master Data Utama =====================================================!
 
     // !===================================================== PRODUKSI =====================================================!
@@ -195,6 +202,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/returnproduksi/hapus-return/{id}/{detail}/{qty}', 'ProduksiController@deleteReturn')->name('return.delete');
     Route::post('/produksi/returnproduksi/tambah-return', 'ProduksiController@addReturn')->name('return.add');
     Route::post('/produksi/returnproduksi/edit-return', 'ProduksiController@editReturn')->name('return.edit');
+    Route::get('/produksi/returnproduksi/nota-return/{id}/{detail}', 'ProduksiController@notaReturn')->name('return.nota');
     Route::get('/produksi/returnproduksi/create/next', 'ProduksiController@next_create_return_produksi')->name('return.nextcreate');
     // !===================================================== END PRODUKSI =====================================================!
 
@@ -270,10 +278,22 @@ Route::group(['middleware' => 'auth'], function () {
 
     // !===================================================== SDM =====================================================!
     // Rekruitmen
-    Route::get('/sdm/prosesrekruitmen/index', 'SDMController@proses_rekruitmen')->name('rekruitmen.index');
-    Route::get('/sdm/prosesrekruitmen/list/{status}', 'SDM\RekrutmentController@getList')->name('rekruitmen.list');
-    Route::get('/sdm/prosesrekruitmen/process', 'SDMController@process')->name('rekruitmen.process');
-    Route::get('/sdm/prosesrekruitmen/preview', 'SDMController@preview')->name('rekruitmen.preview');
+    Route::get('/sdm/prosesrekruitmen/index', 'SDM\RecruitmentController@index')->name('rekruitmen.index');
+    Route::get('/sdm/prosesrekruitmen/listRecruitment', 'SDM\RecruitmentController@getList')->name('rekruitmen.list');
+    Route::get('/sdm/prosesrekruitmen/simpanLoker', 'SDM\RecruitmentController@simpanLoker')->name('rekruitmen.simpanLoker');
+    Route::get('/sdm/prosesrekruitmen/detail/{id}', 'SDM\RecruitmentController@detail')->name('rekruitmen.detail');
+    Route::get('/sdm/prosesrekruitmen/proses/{id}', 'SDM\RecruitmentController@proses')->name('rekruitmen.proses');
+    Route::get('/sdm/prosesrekruitmen/addProses/{id}', 'SDM\RecruitmentController@addProses')->name('rekruitmen.addProses');
+
+    Route::get('/sdm/prosesrekruitmen/listTerima', 'SDM\RecruitmentController@getListTerima')->name('rekruitmen.listTerima');
+
+    Route::get('/sdm/prosesrekruitmen/listLoker', 'SDM\RecruitmentController@getListLoker')->name('rekruitmen.listLoker');
+    Route::get('/sdm/prosesrekruitment/kelolarekruitment', 'SDM\RecruitmentController@kelola_rekruitment')->name('rekruitment.kelola');
+    Route::post('/sdm/prosesrekruitment/activateLoker/{id}', 'SDM\RecruitmentController@activateLoker')->name('rekruitment.activateLoker');
+    Route::post('/sdm/prosesrekruitment/nonLoker/{id}', 'SDM\RecruitmentController@nonLoker')->name('rekruitment.nonLoker');
+    Route::get('/sdm/prosesrekruitment/editLoker/{id}', 'SDM\RecruitmentController@editLoker')->name('rekruitment.editLoker');
+    Route::get('/sdm/prosesrekruitment/updateLoker', 'SDM\RecruitmentController@updateLoker')->name('rekruitment.updateLoker');
+
     // Kinerja
     Route::get('/sdm/kinerjasdm/index', 'SDMController@kinerja')->name('kinerjasdm.index');
     // Absensi
@@ -324,8 +344,19 @@ Route::group(['middleware' => 'auth'], function () {
     // End ---
     // Konsinyasi Pusat
     Route::get('/marketing/konsinyasipusat/index', 'MarketingController@konsinyasipusat')->name('konsinyasipusat.index');
+    Route::get('/marketing/konsinyasipusat/get-konsinyasi', 'MarketingController@getKonsinyasi')->name('konsinyasipusat.getData');
+    Route::get('/marketing/konsinyasipusat/detail-konsinyasi/{id}/{action}', 'MarketingController@detailKonsinyasi')->name('konsinyasipusat.detail');
+    Route::get('/marketing/konsinyasipusat/get-provinsi', 'MarketingController@getProv')->name('konsinyasipusat.getProv');
+    Route::get('/marketing/konsinyasipusat/get-kota/{idprov}', 'MarketingController@getKota')->name('konsinyasipusat.getKota');
+    Route::get('/marketing/konsinyasipusat/cari-konsigner/{idprov}/{idkota}', 'MarketingController@cariKonsigner')->name('konsinyasipusat.carikonsigner');
+    Route::get('/marketing/konsinyasipusat/cari-barang', 'MarketingController@cariBarangKonsinyasi')->name('konsinyasipusat.caribarang');
+    Route::get('/marketing/konsinyasipusat/get-satuan/{id}', 'MarketingController@getSatuan')->name('konsinyasipusat.getsatuan');
+    Route::get('/marketing/konsinyasipusat/cek-stok/{stock}/{item}/{satuan}/{qty}', 'MarketingController@checkStock')->name('konsinyasipusat.checkstock');
+    Route::get('/marketing/konsinyasipusat/cek-stok-old/{stock}/{item}/{oldSatuan}/{satuan}/{qtyOld}/{qty}', 'MarketingController@checkStockOld')->name('konsinyasipusat.checkstockold');
     Route::get('/marketing/konsinyasipusat/penempatanproduk/create', 'MarketingController@create_penempatanproduk')->name('penempatanproduk.create');
-    Route::get('/marketing/konsinyasipusat/penempatanproduk/edit', 'MarketingController@edit_penempatanproduk')->name('penempatanproduk.edit');
+    Route::post('/marketing/konsinyasipusat/penempatanproduk/add', 'MarketingController@add_penempatanproduk')->name('penempatanproduk.add');
+    Route::match(['get', 'post'],'/marketing/konsinyasipusat/penempatanproduk/edit/{id}', 'MarketingController@edit_penempatanproduk')->name('penempatanproduk.edit');
+    Route::get('/marketing/konsinyasipusat/penempatanproduk/hapus', 'MarketingController@deletePenempatanproduk')->name('penempatanproduk.delete');
     // Marketing Area
     Route::get('/marketing/marketingarea/index', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@index')->name('marketingarea.index');
     // Order Produk Ke Cabang
@@ -355,12 +386,18 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/marketing/marketingarea/keloladataorder/approve-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@approveAgen')->name('keloladataorder.approveAgen');
     Route::post('/marketing/marketingarea/keloladataorder/reject-approve-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@rejectApproveAgen')->name('keloladataorder.rejectApproveAgen');
     // End Order Agen ================================================================================================
+
     Route::get('/marketing/marketingarea/datacavassing/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_datacanvassing')->name('datacanvassing.create');
     Route::get('/marketing/marketingarea/datacavassing/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datacanvassing')->name('datacanvassing.edit');
     Route::get('/marketing/marketingarea/datakonsinyasi/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_datakonsinyasi')->name('datakonsinyasi.create');
     Route::get('/marketing/marketingarea/datakonsinyasi/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datakonsinyasi')->name('datakonsinyasi.edit');
-    // Manajemen Agen
-    Route::get('/marketing/agen/index', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@agen')->name('mngagen.index');
+
+    // Manajemen Agen ===============================================================================================
+    Route::get('/marketing/agen/index', 'Aktivitasmarketing\ManajemenAgenController@index')->name('manajemenagen.index');
+    Route::get('/marketing/agen/get-agen/{city}', 'Aktivitasmarketing\ManajemenAgenController@getAgen')->name('manajemenagen.getAgen');
+    Route::post('/marketing/agen/filter-data/{id}', 'Aktivitasmarketing\ManajemenAgenController@filterData')->name('manajemenagen.filterData');
+    // End Manaemen Agen ============================================================================================
+    
     Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_orderprodukagenpusat')->name('orderagenpusat.create');
     Route::get('/marketing/agen/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_orderprodukagenpusat')->name('orderagenpusat.edit');
     // !===================================================== END Marketing =====================================================!

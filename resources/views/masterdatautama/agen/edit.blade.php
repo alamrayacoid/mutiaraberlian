@@ -86,6 +86,18 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>Jenis Kelamin</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select name="jekel" id="jekel" class="form-control form-control-sm">
+                                                <option value="L" @if($data['agen']->a_sex == "L") selected @endif>Laki - laki</option>
+                                                <option value="P" @if($data['agen']->a_sex == "P") selected @endif>Perempuan</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
                                         <label>Tipe Agen</label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">

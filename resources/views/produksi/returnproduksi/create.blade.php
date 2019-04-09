@@ -303,6 +303,7 @@
                         $("#qty_return").val(0);
                         $("#note_return").val('');
                         $("#createReturn").modal("hide");
+                        window.open(baseUrl+'/produksi/returnproduksi/nota-return/'+resp.data.id+'/'+resp.data.detail);
                     }
                 })
                 .catch(function (error) {
