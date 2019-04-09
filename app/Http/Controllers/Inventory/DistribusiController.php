@@ -211,7 +211,7 @@ class DistribusiController extends Controller
     return Datatables::of($data)
     ->addIndexColumn()
     ->addColumn('tanggal', function($data) {
-      return '<td>'. Carbon::parse($data->sd_date)->format('d/m/Y') .'</td>';
+      return '<td>'. Carbon::parse($data->sd_date)->format('d-m-Y') .'</td>';
     })
     ->addColumn('type', function($data){
       if ($data->sd_type == 'K') {
@@ -222,7 +222,6 @@ class DistribusiController extends Controller
     })
     ->addColumn('action', function($data) {
       return '<div class="btn-group btn-group-sm">
-              <button class="btn btn-primary btn-modal-detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
               <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota('.$data->sd_id.')"><i class="fa fa-print"></i></button>
               <button class="btn btn-warning btn-edit-distribusi" onclick="edit(\''.encrypt($data->sd_id).'\')" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
               <button class="btn btn-danger btn-disable-distribusi" onclick="hapus('.$data->sd_id.')" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>

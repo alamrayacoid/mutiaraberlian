@@ -5,7 +5,7 @@
 				<h3 class="title">Terima Order Penjualan</h3>
 			</div>
 	        <!-- <div class="header-block pull-right">
-                <a class="btn btn-primary" href="#"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>	                    	
+                <a class="btn btn-primary" href="#"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
 	        </div> -->
 			<div class=""></div>
 		</div>
@@ -24,19 +24,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>07-09-2019</td>
-								<td>Dr. Bambang</td>
-								<td>KUY001</td>
-								<td>~</td>
-								<td>
-									<div class="btn-group btn-group-sm">
-										<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
-										<button class="btn btn-success btn-proses" type="button" title="Proses" onclick="window.location.href='{{route('orderpenjualan.proses')}}'"><i class="fa fa-arrow-right"></i></button>
-									</div>
-								</td>
-							</tr>
+							
 						</tbody>
 					</table>
 				</div>

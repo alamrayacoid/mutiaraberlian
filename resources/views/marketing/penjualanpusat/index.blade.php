@@ -119,10 +119,33 @@
 @endsection
 @section('extra_script')
     <script type="text/javascript">
+        var table_sup;
 
         $(document).ready(function () {
 
-            var table_sup = $('#table_approval').DataTable();
+          		$('#table_approval').dataTable().fnDestroy();
+          		table_sup = $('#table_approval').DataTable({
+          			responsive: true,
+          			serverSide: true,
+          			ajax: {
+          				url: baseUrl + '/marketing/penjualanpusat/tableterima',
+          				type: "get",
+          				data: {
+          					"_token": "{{ csrf_token() }}"
+          				}
+          			},
+          			columns: [
+          				{data: 'DT_RowIndex'},
+          				{data: 'tanggal'},
+          				{data: 'c_name'},
+          				{data: 'po_nota'},
+          				{data: 'total'},
+          				{data: 'action', name: 'action'}
+          			],
+          			pageLength: 10,
+          			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+          		});
+
             var table_bar = $('#table_tahunan').DataTable();
             var table_pus = $('#table_bulanan').DataTable();
             var table_par = $('#table_targetrealisasi').DataTable();
@@ -351,6 +374,32 @@
 
         function setNull(id) {
             $('#'+id).val('');
+        }
+
+        function getdetail(id){
+          var html = '';
+          $.ajax({
+            type: 'get',
+            data: {id},
+            dataType: 'JSON',
+            url: "{{route('penjualanpusat.getdetail')}}",
+            success : function(response){
+              $('#dtanggal').val(response.data.po_date);
+              $('#dagen').val(response.data.c_name);
+              $('#dnota').val(response.data.po_nota);
+              $('#dtotal').val(response.total);
+              for (var i = 0; i < response.dt.length; i++) {
+                html += '<tr>'+
+                        '<td>'+ response.dt[i].i_code + ' - ' + response.dt[i].i_name +'</td>'+
+                        '<td>'+response.dt[i].u_name+'</td>'+
+                        '<td class="input-rupiah">'+convertToRupiah(parseInt(response.dt[i].pod_price))+'</td>'+
+                        '<td class="input-rupiah">'+convertToRupiah(parseInt(response.dt[i].pod_totalprice))+'</td>'+
+                        '</tr>';
+              }
+
+              $('#showdetail').html(html);
+            }
+          });
         }
     </script>
 @endsection
