@@ -57,6 +57,7 @@ class ManajemenAgenController extends Controller
 
         return view('marketing/agen/index', compact('provinsi'));
     }
+
     // Start: Kelola Data Inventory Agen ----------------
     public function getAgen($city)
     {
@@ -98,6 +99,14 @@ class ManajemenAgenController extends Controller
     }
     // End: Kelola Data Inventory Agen ----------------
 
+
+    // Start: Kelola Penjualan Langsung -----------------
+    public function kelolapenjualan_create()
+    {
+        return view('marketing/agen/kelolapenjualan/create');
+    }
+    // End: Kelola Penjualan Langsung -----------------
+
     /**
      * Show the form for creating a new resource.
      *
@@ -129,7 +138,7 @@ class ManajemenAgenController extends Controller
         DB::beginTransaction();
         try {
             // start insert data
-            
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
