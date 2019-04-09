@@ -1,0 +1,191 @@
+<?php
+
+namespace App\Http\Controllers\Aktivitasmarketing\Agen;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\DecryptException;
+
+
+use DB;
+use Auth;
+use Response;
+use Currency;
+use Validator;
+use DataTables;
+use Carbon\Carbon;
+use CodeGenerator;
+
+class ManajemenAgenController extends Controller
+{
+    /**
+    * Validate request before execute command.
+    *
+    * @param  \Illuminate\Http\Request $request
+    * @return 'error message' or '1'
+    */
+    public function validate_req(Request $request)
+    {
+        // start: validate data before execute
+        $validator = Validator::make($request->all(), [
+            'area_prov' => 'required',
+            'telp' => 'required|numeric'
+        ],
+        [
+            'area_prov.required' => 'Area Provinsi masih kosong !',
+            'telp.required' => 'No Telp masih kosong !',
+            'telp.numeric' => 'No Telp hanya berupa angka, tidak boleh mengandung huruf !'
+        ]);
+        if ($validator->fails()) {
+            return $validator->errors()->first();
+        } else {
+            return '1';
+        }
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $provinsi = DB::table('m_wil_provinsi')
+      		->select('m_wil_provinsi.*')
+      		->get();
+
+        return view('marketing/agen/index', compact('provinsi'));
+    }
+    // Start: Kelola Data Inventory Agen ----------------
+    public function getAgen($city)
+    {
+        $agen = DB::table('m_agen')
+        ->join('m_company', 'a_code', 'c_user')
+        ->select('a_code', 'a_name', 'c_id')
+        ->where('a_kabupaten', '=', $city)
+        ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $agen
+        ]);
+    }
+    public function filterData($id)
+    {
+        $data = DB::table('d_stock')
+        ->leftJoin('m_company as comp', 's_position', 'comp.c_id')
+        ->leftJoin('m_company as agen', 's_comp', 'agen.c_id')
+        ->leftJoin('m_item', 's_item', 'i_id')
+        ->where('s_comp', '=', $id)
+        ->select('agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_condition', 's_qty')
+        ->get();
+
+        return Datatables::of($data)
+        ->addIndexColumn()
+        ->addColumn('kondisi', function ($data) {
+            if ($data->s_condition == "FINE") {
+                return "Normal";
+            } else {
+                return "Rusak";
+            }
+        })
+        ->addColumn('qty', function ($data) {
+            return "<div class='text-center'>$data->s_qty</div>";
+        })
+        ->rawColumns(['kondisi', 'qty'])
+        ->make(true);
+    }
+    // End: Kelola Data Inventory Agen ----------------
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        // validate request
+        $isValidRequest = $this->validate_req($request);
+        if ($isValidRequest != '1') {
+            $errors = $isValidRequest;
+            return response()->json([
+                'status' => 'invalid',
+                'message' => $errors
+            ]);
+        }
+
+        DB::beginTransaction();
+        try {
+            // start insert data
+            
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+}
