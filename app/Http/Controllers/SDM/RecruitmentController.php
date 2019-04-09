@@ -111,7 +111,7 @@ class RecruitmentController extends Controller
       })
       ->addColumn('tanggal', function($datas) {
         if ($datas->p_state == 'Y' && $datas->p_stateapprove == 1) {
-          return '<div class="text-center">'.$datas->pl_date.'</div>';
+          return '<div class="text-center">'.Carbon::parse($datas->pl_date)->format('d M Y').'</div>';
         } else if ($datas->p_state == 'Y' && $datas->p_stateapprove == 2) {
           return '<div class="text-center">'.$datas->pl_date.'</div>';
         } else {
@@ -122,7 +122,7 @@ class RecruitmentController extends Controller
         return '<div class="btn-group btn-group-sm">
                   <button class="btn btn-primary btn-preview-rekruitmen hint--top-left hint--info" type="button" aria-label="Detail Pelamar" onclick="detail(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file"></i></button>
                   <button class="btn btn-warning btn-proses-rekruitmen hint--top-left hint--warning" type="button" aria-label="Proses Pelamar" onclick="proses(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file-powerpoint-o"></i></button>
-                  <button class="btn btn-danger btn-disable-rekruitmen hint--top-left hint--error" type="button" aria-label="Nonaktifkan" onclick="nonActivate(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-times-circle"></i></button>
+                  <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Nonaktifkan" onclick="nonActivate(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-times-circle"></i></button>
                 </div>';
       })
       ->rawColumns(['tgl_apply', 'status', 'tanggal', 'action'])
@@ -153,6 +153,8 @@ class RecruitmentController extends Controller
     }
 
     $data = DB::table('d_pelamar')
+      ->join('d_applicant', 'p_applicant', 'a_id')
+      ->join('m_jabatan', 'd_applicant.a_position', 'j_id')
       ->where('p_id', $id)
       ->first();
 
@@ -183,34 +185,50 @@ class RecruitmentController extends Controller
 
     $statusApp = $request->p_stateapprove;
     $status    = $request->p_state;
+    $approve3  = $request->approve3;
     $date      = $request->p_date;
     $date_fr   = strtotime($date);
     $time      = date('Y-m-d', $date_fr);
 
     $dtId = DB::table('d_pelamarlanjutan')->where('pl_id', '=', $id)->max('pl_detailid');
     DB::beginTransaction();
-    try {
-      DB::table('d_pelamar')->where('p_id', '=', $id)->update([
-        'p_state'   => $status,
-        'p_stateapprove'  => $statusApp
-      ]);
+    try {     
 
-      if ($date != null) {
+      if ($approve3 != null) {
+        DB::table('d_pelamar')->where('p_id', '=', $id)->update([
+          'p_state'   => "Y",
+          'p_stateapprove'  => $approve3
+        ]);
+
         DB::table('d_pelamarlanjutan')->insert([
           'pl_id'         => $id,
           'pl_detailid'   => $dtId+1,
-          'pl_approve'    => $statusApp,
-          'pl_isapproved' => $status,
-          'pl_date'       => $time
+          'pl_approve'    => $approve3,
+          'pl_isapproved' => "Y"
         ]);
       } else {
-        DB::table('d_pelamarlanjutan')->insert([
-          'pl_id'         => $id,
-          'pl_detailid'   => $dtId+1,
-          'pl_approve'    => $statusApp,
-          'pl_isapproved' => $status
+        DB::table('d_pelamar')->where('p_id', '=', $id)->update([
+          'p_state'   => $status,
+          'p_stateapprove'  => $statusApp
         ]);
+        if ($date != null) {
+          DB::table('d_pelamarlanjutan')->insert([
+            'pl_id'         => $id,
+            'pl_detailid'   => $dtId+1,
+            'pl_approve'    => $statusApp,
+            'pl_isapproved' => $status,
+            'pl_date'       => $time
+          ]);
+        } else {
+          DB::table('d_pelamarlanjutan')->insert([
+            'pl_id'         => $id,
+            'pl_detailid'   => $dtId+1,
+            'pl_approve'    => $statusApp,
+            'pl_isapproved' => $status
+          ]);
+        }
       }
+      
       
 
       DB::commit();
@@ -265,7 +283,7 @@ class RecruitmentController extends Controller
         return '<div class="btn-group btn-group-sm">
                   <button class="btn btn-primary btn-preview-rekruitmen hint--top-left hint--info" type="button" aria-label="Detail Pelamar" onclick="detail(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file"></i></button>
                   <button class="btn btn-warning btn-proses-rekruitmen hint--top-left hint--warning" type="button" aria-label="Proses Data" onclick="proses(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file-powerpoint-o"></i></button>
-                  <button class="btn btn-danger btn-disable-rekruitmen hint--top-left hint--error" type="button" aria-label="Nonaktifkan" onclick="nonActivate(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-times-circle"></i></button>
+                  <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Nonaktifkan" onclick="nonActivate(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-times-circle"></i></button>
                 </div>';
       })
       ->rawColumns(['tgl_apply', 'status', 'approval', 'action'])
@@ -302,8 +320,9 @@ class RecruitmentController extends Controller
           return '<div class="text-center">
                     <div class="btn-group btn-group-sm">
                       <button class="btn btn-disabled" type="button" onclick="detailLoker(\''.Crypt::encrypt($loker->a_id).'\')" disabled><i class="fa fa-fw fa-check"></i></button>
-                      <button class="btn btn-danger btn-disable-rekruitmen hint--top-left hint--error" type="button" aria-label="Nonaktifkan" onclick="nonLoker(\''.Crypt::encrypt($loker->a_id).'\')"><i class="fa fa-fw fa-times"></i></button>
+                      <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Nonaktifkan" onclick="nonLoker(\''.Crypt::encrypt($loker->a_id).'\')"><i class="fa fa-fw fa-times"></i></button>
                       <button class="btn btn-warning btn-proses-rekruitmen hint--top-left hint--warning" type="button" aria-label="Edit" onclick="editLoker(\''.Crypt::encrypt($loker->a_id).'\')"><i class="fa fa-fw fa-pencil"></i></button>
+                      <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Hapus" onclick="deleteLoker(\''.Crypt::encrypt($loker->a_id).'\')"><i class="fa fa-fw fa-trash"></i></button>
                     </div>
                   </div>';
         } else {
@@ -312,6 +331,7 @@ class RecruitmentController extends Controller
                       <button class="btn btn-success hint--top-left hint--success" type="button" aria-label="Aktifkan" onclick="activateLoker(\''.Crypt::encrypt($loker->a_id).'\')"><i class="fa fa-fw fa-check"></i></button>
                       <button class="btn btn-disabled" type="button" onclick="nonLoker(\''.Crypt::encrypt($loker->a_id).'\')" disabled><i class="fa fa-fw fa-times"></i></button>
                       <button class="btn btn-disabled" type="button" onclick="editLoker(\''.Crypt::encrypt($loker->a_id).'\')" disabled><i class="fa fa-fw fa-pencil"></i></button>
+                      <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Hapus" onclick="deleteLoker(\''.Crypt::encrypt($loker->a_id).'\')"><i class="fa fa-fw fa-trash"></i></button>
                     </div>
                   </div>';
         }        
@@ -394,6 +414,41 @@ class RecruitmentController extends Controller
         ->update([
           'a_isactive' => "N"
         ]);
+
+      DB::commit();
+      return response()->json([
+        'status' => 'sukses'
+      ]);
+    } catch (\Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status'  => 'Gagal',
+          'message' => $e
+        ]);
+    }
+  }
+
+  public function deleteLoker($id)
+  {
+    try {
+        $id = Crypt::decrypt($id);
+    } catch (\Exception $e) {
+        return view('errors.404');
+    }
+
+    DB::beginTransaction();
+    try {
+      $query = DB::table('d_pelamar')->where('p_applicant', '=', $id)->count();
+      if ($query > 0) {
+        DB::commit();
+        return response()->json([
+          'status' => 'warning'
+        ]);
+      } else {
+        DB::table('d_applicant')
+          ->where('a_id', $id)
+          ->delete();
+      }      
 
       DB::commit();
       return response()->json([

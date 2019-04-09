@@ -1,7 +1,6 @@
 <!-- Modal -->
-<div id="create" class="modal fade" role="dialog">
+<div id="modal_create" class="modal fade" role="dialog">
   <div class="modal-dialog">
-
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header bg-gradient-info">
@@ -49,6 +48,5 @@
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
-
   </div>
 </div>

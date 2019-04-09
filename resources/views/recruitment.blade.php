@@ -126,6 +126,16 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-lg-3 col-sm-12">
+                                    <label for="">Posisi Yang Dilamar<span style="color:red;">*</span></label>
+                                </div>
+                                <select name="applicant" id="applicant" class="form-control col-lg-9 col-sm-12 select2">
+                                    <option value="" selected="" disabled="">=== Pilih Posisi ===</option>
+                                    @foreach($posisi as $key => $pos)
+                                        <option value="{{$pos->a_id}}">{{$pos->j_name}}</option>
+                                    @endforeach
+                                </select>
+
+                                <div class="col-lg-3 col-sm-12">
                                     <label for="">Nama<span style="color:red;">*</span></label>
                                 </div>
                                 <input type="text" class="form-control col-lg-9 col-sm-12" name="name">
@@ -413,6 +423,7 @@
 <script>
     $(document).ready(function() {
         $('.datepicker').datepicker();
+        $('#applicant').select2();
     })
 
     $("#datepickers").datepicker({
