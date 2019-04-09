@@ -143,19 +143,12 @@
           				{data: 'action', name: 'action'}
           			],
           			pageLength: 10,
-          			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+          			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 100]]
           		});
 
             var table_bar = $('#table_tahunan').DataTable();
             var table_pus = $('#table_bulanan').DataTable();
             var table_par = $('#table_targetrealisasi').DataTable();
-
-            $(document).on('click', '.btn-preview-rekruitmen', function () {
-                window.location.href = '{{route('rekruitmen.preview')}}'
-            });
-            $(document).on('click', '.btn-proses-rekruitmen', function () {
-                window.location.href = '{{route('rekruitmen.process')}}'
-            });
 
             $("#cari_namabarang").autocomplete({
                 source: function (request, response) {
