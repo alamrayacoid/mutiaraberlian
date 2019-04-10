@@ -11,7 +11,7 @@
             <form method="post" id="formEditGolHrgRange">{{ csrf_field() }}
                 <div class="modal-body">
                     <fieldset class="col-sm-12">
-                        <input type="hidden" name="status" id="status">
+                        <input type="hidden" name="statusRange" id="statusRange">
                         <input type="hidden" name="golIdRange" id="golIdRange">
                         <input type="hidden" name="golDetailRange" id="golDetailRange">
                         <input type="hidden" name="golItemRange" id="golItemRange">

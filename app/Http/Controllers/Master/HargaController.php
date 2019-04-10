@@ -311,6 +311,8 @@ class HargaController extends Controller
                         $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1;
                     } else if ($checkGol1 == 0 && $checkGol2 > 0) {
                         $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1;
+                    } else if ($checkGol1 == 0 &&  $checkGol2 == 0) {
+                        $detailid = 1;
                     }
 
                     $values = [
@@ -331,6 +333,7 @@ class HargaController extends Controller
                 }
             } else {
                 $check = DB::table('d_priceclassauthdt')
+                    ->where('pcad_classprice', '=', $idGol)
                     ->where('pcad_item', '=', $request->idBarang)
                     ->where('pcad_unit', '=', $request->satuanrange)
                     ->where('pcad_type', '=', $request->jenisharga)
@@ -338,6 +341,7 @@ class HargaController extends Controller
                     ->get();
 
                 $check2 = DB::table('m_priceclassdt')
+                    ->where('pcd_classprice', '=', $idGol)
                     ->where('pcd_item', '=', $request->idBarang)
                     ->where('pcd_unit', '=', $request->satuanBarang)
                     ->where('pcd_type', '=', $request->jenisharga)
@@ -572,7 +576,7 @@ class HargaController extends Controller
             }
 
             if ($sts = "Null") {
-                if ($request->status == "N") {
+                if ($request->statusRange == "N") {
                     DB::table('d_priceclassauthdt')
                         ->where('pcad_classprice', '=', $id)
                         ->where('pcad_detailid', '=', $detail)
@@ -584,7 +588,7 @@ class HargaController extends Controller
                         ]);
                     DB::commit();
                     return response()->json(['status' => "Success"]);
-                } else if ($request->status == "Y") {
+                } else if ($request->statusRange == "Y") {
                     $price = DB::table('m_priceclassdt')
                         ->where('pcd_classprice', '=', $id)
                         ->where('pcd_detailid', '=', $detail);

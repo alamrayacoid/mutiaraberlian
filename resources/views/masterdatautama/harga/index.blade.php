@@ -276,7 +276,9 @@
                             $("#range").addClass('d-none');
                         } else if (response.data.status == "Failed") {
                             loadingHide();
-                            messageWarning("Gagal", "Data gagal disimpan!");
+                            // messageWarning("Gagal", "Data gagal disimpan!");
+                            console.log(response.data.error);
+                            messageWarning("Gagal", response.data.error);
                         } else if (response.data.status == "Range Ada") {
                             loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
@@ -430,6 +432,8 @@
     function setItem(info) {
         // idItem = info.data.i_id;
         $("#idBarang").val(info.data.i_id)
+        $("#satuanBarang").find('option').remove();
+        $("#satuanrange").find('option').remove();
         $.ajax({
             url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+info.data.i_id,
             type: 'GET',
@@ -541,7 +545,8 @@
             $("#rangestartakhir").val(rangeEnd);
             $("#rangeendedit").val(rangeEnd);
             $("#txtEditGolHrgRange").val(harga);
-            $("#status").val(status);
+            $("#statusRange").val(status);
+            console.log(status);
             $('#editGolHrgRange').modal({
                 backdrop: 'static',
                 keyboard: false
