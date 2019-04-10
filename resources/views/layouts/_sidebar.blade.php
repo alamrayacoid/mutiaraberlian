@@ -95,7 +95,7 @@
             </li>
             <li class="profile dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    <div class="img" style="background-image: url('https://avatars3.githubusercontent.com/u/3959008?v=3&s=40')"> </div>
+                    <div class="img" style="background-image: url('https://i.mydramalist.com/O5OvYc.jpg')"> </div>
                     <span class="name"> {{ \App\d_username::getName() }} </span>
                 </a>
                 <div class="dropdown-menu profile-dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -123,7 +123,7 @@
     <div class="sidebar-container">
         <div class="sidebar-header">
             <div class="brand">
-                <img src="{{asset('assets/img/cv-mutiaraberlian-icon.png')}}" height="45px" width="45px">
+                <img src="{{asset('assets/img/mutiaraberlian.svg')}}" height="45px" width="45px">
                 {{-- <div class="logo">
                     <span class="l l1"></span>
                     <span class="l l2"></span>

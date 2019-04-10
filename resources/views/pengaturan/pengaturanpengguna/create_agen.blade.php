@@ -21,21 +21,6 @@
     <div class="row">
 
         <div class="col-md-3 col-sm-6 col-12">
-            <label>Cabang</label>
-        </div>
-
-        <div class="col-md-9 col-sm-6 col-12">
-            <div class="form-group">
-                <select name="cabang" id="cabang" class="select2">
-                <option value="" disabled selected="">--Pilih Cabang--</option>
-                @foreach ($company as $key => $value)
-                  <option value="{{$value->c_id}}">{{$value->c_name}}</option>
-                @endforeach
-                </select>
-            </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6 col-12">
             <label>Level</label>
         </div>
 

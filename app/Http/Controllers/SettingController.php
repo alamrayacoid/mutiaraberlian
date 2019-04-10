@@ -12,6 +12,8 @@ use Yajra\DataTables\DataTables;
 
 use Carbon\Carbon;
 
+use CodeGenerator;
+
 class SettingController extends Controller
 {
     public function perubahanhargajual_index()
@@ -121,7 +123,7 @@ class SettingController extends Controller
 
         $employee = DB::table('m_employee')->get();
 
-        $company = DB::table('m_company')->get();
+        $company = DB::table('m_company')->where('c_type', '!=', 'AGEN')->get();
 
         $level = DB::table('m_level')->get();
 
@@ -156,27 +158,36 @@ class SettingController extends Controller
       DB::beginTransaction();
       try {
 
+        if ($request->type == "agen") {
+          $user = 'A';
+          $code = $request->agen;
+        } else {
+          $user = 'E';
+          $code = $request->pegawai;
+        }
+
         $cek = DB::table('d_username')->where('u_username', $request->username)->count();
+        $cek1 = DB::table('d_username')->where('u_code', $code)->count();
 
         if ($cek != 0) {
           return response()->json([
             'status' => 'failed',
             'ex' => 'Username sudah digunakan!'
           ]);
+        } elseif ($cek1 != 0) {
+          return response()->json([
+            'status' => 'failed',
+            'ex' => 'Akun sudah digunakan!'
+          ]);
         } else {
-          if ($request->type == "agen") {
-            $user = 'A';
-            $code = $request->agen;
-          } else {
-            $user = 'E';
-            $code = $request->pegawai;
-          }
+
+          $company = CodeGenerator::code('d_username', 'u_company', 7, 'MB');
 
           $id = DB::table('d_username')->max('u_id')+1;
           DB::table('d_username')
               ->insert([
                 'u_id' => $id,
-                'u_company' => $request->cabang,
+                'u_company' => $company,
                 'u_username' => $request->username,
                 'u_password' => sha1(md5('islamjaya') . $request->password),
                 'u_level' => $request->level,

@@ -14,18 +14,7 @@
         </div>
     </fieldset>
     <fieldset>
-    <div class="row">
-        
-        <div class="col-md-3 col-sm-6 col-12">
-            <label>Cabang</label>
-        </div>
-
-        <div class="col-md-9 col-sm-6 col-12">
-            <div class="form-group">
-                <select name="" id="" class="form-control form-control-sm select2"></select>
-            </div>
-        </div>
-
+    <div class="row">        
 
         <div class="col-md-3 col-sm-6 col-12">
             <label>Username</label>

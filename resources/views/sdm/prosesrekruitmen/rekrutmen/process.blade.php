@@ -10,6 +10,7 @@
     $checkedP1   = "";
     $checkedY1   = "checked";
     $app1        = "p_stateapprove1";
+    $appr3_1     = "approve3_none";
     $name1       = "p_state1";
     $date1       = "p_date1";
   } else if ($data->p_stateapprove == 1 && $data->p_state == "N") {
@@ -21,6 +22,7 @@
     $checkedP1   = "";
     $checkedY1   = "";
     $app1        = "p_stateapprove";
+    $appr3_1     = "approve3_none";
     $name1       = "p_state";
     $date1       = "p_date1";
   } else if ($data->p_stateapprove == 1 && $data->p_state == "P") {
@@ -32,6 +34,7 @@
     $checkedP1   = "checked";
     $checkedY1   = "";
     $app1        = "p_stateapprove";
+    $appr3_1     = "approve3";
     $name1       = "p_state";
     $date1       = "p_date";
   } else if ($data->p_stateapprove > 1) {
@@ -41,6 +44,7 @@
     $checkedP1 = "";
     $checkedY1 = "checked";
     $app1      = "p_stateapprove1";
+    $appr3_1   = "approve3_none";
     $name1     = "p_state1";
     $date1     = "p_date1";
   } else {
@@ -52,6 +56,7 @@
     $checkedP1   = "";
     $checkedY1   = "";
     $app1        = "p_stateapprove";
+    $appr3_1     = "approve3";
     $name1       = "p_state";
     $date1       = "p_date";
   }
@@ -64,6 +69,7 @@
     $checkedP2   = "";
     $checkedY2   = "";
     $app2        = "p_stateapprove";
+    $appr3_2     = "approve3";
     $name2       = "p_state";
     $date2       = "p_date";
   } else if ($data->p_stateapprove == 2 && $data->p_state == "N") {
@@ -75,6 +81,7 @@
     $checkedP2   = "";
     $checkedY2   = "";
     $app2        = "p_stateapprove";
+    $appr3_2     = "approve3_none";
     $name2       = "p_state";
     $date2       = "p_date";
   } else if ($data->p_stateapprove == 2 && $data->p_state == "P") {
@@ -86,6 +93,7 @@
     $checkedP2   = "checked";
     $checkedY2   = "";
     $app2        = "p_stateapprove";
+    $appr3_2     = "approve3";
     $name2       = "p_state";
     $date2       = "p_date";
   } else if ($data->p_stateapprove == 2 && $data->p_state == "Y") {
@@ -97,6 +105,7 @@
     $checkedP2   = "";
     $checkedY2   = "checked";
     $app2        = "p_stateapprove2";
+    $appr3_2     = "approve3_none";
     $name2       = "p_state2";
     $date2       = "p_date2";
   } else if ($data->p_stateapprove > 2) {
@@ -106,6 +115,7 @@
     $checkedP2 = "";
     $checkedY2 = "checked";
     $app2      = "p_stateapprove2";
+    $appr3_2   = "approve3_none";
     $name2     = "p_state2";
     $date2     = "p_date2";
   } else {
@@ -115,6 +125,7 @@
     $checkedP2 = "";
     $checkedY2 = "";
     $app2      = "p_stateapprove2";
+    $appr3_2   = "approve3_none";
     $name2     = "p_state2";
     $date2     = "p_date2";
   }
@@ -125,8 +136,8 @@
     $class_bg3   = "";
     $checkedN3   = "";
     $checkedY3   = "";
-    $app3        = "p_stateapprove";
-    $name3       = "p_state";
+    $app3        = "approve3";
+    $name3       = "p_state3";
   } else if ($data->p_stateapprove == 3 && $data->p_state == "N") {
     $approve3    = "disabled";
     $app_name    = "Approve 3";
@@ -134,8 +145,8 @@
     $class_bg3    = "";
     $checkedN3   = "checked";
     $checkedY3   = "";
-    $app3        = "p_stateapprove";
-    $name3       = "p_state";
+    $app3        = "approve3";
+    $name3       = "p_state3";
   } else if ($data->p_stateapprove == 3 && $data->p_state == "Y") {
     $approve3    = "disabled";
     $app_name    = "Approve 3";
@@ -143,15 +154,15 @@
     $class_bg3   = "";
     $checkedN3   = "";
     $checkedY3   = "checked";
-    $app3        = "p_stateapprove";
-    $name3       = "p_state";
+    $app3        = "approve3";
+    $name3       = "p_state3";
   } else {
     $approve3  = "disabled";
     $class_bg3 = "bg-secondary-smooth";
     $checkedN3 = "";
     $checkedY3 = "";
-    $app3      = "p_stateapprove3";
-    $name3     = "p_state3";
+    $app3      = "approve3_none";
+    $name3     = "p_state3_none";
   }
 ?>
 {{-- Content --}}
@@ -207,21 +218,11 @@
                   </div>
                   <div class="row">
                     <div class="col-md-5 col-sm-6 col-xs-12">
-                      <label>Jabatan yang dilamar</label>
+                      <label>Posisi yang dilamar</label>
                     </div>
                     <div class="col-md-7 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" readonly="" name="" value="">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-5 col-sm-6 col-xs-12">
-                      <label>Posisi</label>
-                    </div>
-                    <div class="col-md-7 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" readonly="" name="" value="">
+                        <input type="text" class="form-control form-control-sm" readonly="" name="" value="{{$data->j_name}}">
                       </div>
                     </div>
                   </div>
@@ -238,6 +239,10 @@
                     <input type="hidden" name="{{$app1}}" value="1">
                     <h6 style="font-weight:bold;">Approval 1: </h6>
                     <br>
+                    <div class="row radio-box">
+                      <input type="checkbox" name="{{$appr3_1}}" id="hide1" value="3" {{$approve1}}>
+                      <p>Terima Sebagai Karyawan</p>
+                    </div>
                     <div class="row radio-box">
                       <input type="radio" name="{{$name1}}" id="hides1" value="N" {{$checkedN1}} {{$approve1}}>
                       <p>Ditolak Administrasi(tidak bisa diproses lagi)</p>
@@ -266,6 +271,10 @@
                     <input type="hidden" name="{{$app2}}" value="2">
                     <h6 style="font-weight:bold;">Approval 2: </h6>
                     <br>
+                    <div class="row radio-box">
+                      <input type="checkbox" name="{{$appr3_2}}" id="hide1" value="3" {{$approve2}}>
+                      <p>Terima Sebagai Karyawan</p>
+                    </div>
                     <div class="row radio-box">
                       <input type="radio" name="{{$name2}}" id="hides2" value="N" {{$checkedN2}} {{$approve2}}>
                       <p>Ditolak Administrasi(tidak bisa diproses lagi)</p>
@@ -328,27 +337,51 @@
   });
 
   function addProses(id) {
-    $.ajax({
-      url: "{{url('/sdm/prosesrekruitmen/addProses')}}"+"/"+id,
-      type: "get",
-      data: $("#formProses").serialize(),
-      beforeSend: function () {
-          loadingShow();
-      },
-      success: function (response) {
-        if (response.status == 'sukses') {
-            loadingHide();
-            messageSuccess('Success', 'Data berhasil disimpan!');
-            window.location.href="{{route('rekruitmen.index')}}";
-        } else {
-            loadingHide();
-            messageFailed('Gagal', response.message);
+    $.confirm({
+        animation: 'RotateY',
+        closeAnimation: 'scale',
+        animationBounce: 1.5,
+        icon: 'fa fa-exclamation-triangle',
+        title: 'Pesan!',
+        content: 'Apakah anda yakin dengan keputusan ini?',
+        theme: 'disable',
+        buttons: {
+            info: {
+                btnClass: 'btn-blue',
+                text: 'Ya',
+                action: function() {
+                    return $.ajax({
+                        url: "{{url('/sdm/prosesrekruitmen/addProses')}}"+"/"+id,
+                        type: "get",
+                        data: $("#formProses").serialize(),
+                        beforeSend: function() {
+                            loadingShow();
+                        },
+                        success: function(response) {
+                            if (response.status == 'sukses') {
+                                loadingHide();
+                                messageSuccess('Berhasil', 'Data berhasil disimpan');
+                                window.location.href="{{route('rekruitmen.index')}}";
+                            } else {
+                                loadingHide();
+                                messageFailed('Gagal', response.message);
+                            }
+                        },
+                        error: function(e) {
+                            loadingHide();
+                            messageWarning('Peringatan', e.message);
+                        }
+                    });
+                }
+            },
+            cancel: {
+                text: 'Tidak',
+                action: function(response) {
+                    loadingHide();
+                    messageWarning('Peringatan', 'Anda telah membatalkan!');
+                }
+            }
         }
-      },
-      error: function (e) {
-          loadingHide();
-          messageWarning('Peringatan', e.message);
-      }
     });
   }
 </script>

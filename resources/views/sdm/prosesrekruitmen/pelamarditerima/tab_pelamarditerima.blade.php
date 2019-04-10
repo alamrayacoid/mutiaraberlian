@@ -8,7 +8,12 @@
 		</div>
 		<div class="card-block">
 			<section>
-				<h6>Pencarian Berdasarkan :</h6>
+				<div class="row mb-3">
+					<h6 class="col-11">Pencarian Berdasarkan :</h6>
+					<div class="d-flex justify-content-end col-1">
+						<button class="btn btn-primary rounded" type="button" onclick="TableDiterima()"><i class="fa fa-fw fa-filter"></i> Filter</button>
+					</div>
+				</div>
 				<fieldset class="mb-3">
 					<div class="row">
 						<div class="col-md-3 col-sm-6 col-xs-12">
@@ -32,17 +37,17 @@
 						</div>
 						<div class="col-md-3 col-sm-6 col-xs-12">
 							<div class="form-group">
-								<select class="form-control form-control-sm">
-									<option value="">Tampilkan Semua</option>
-									<option value="">SD</option>
-									<option value="">SMP</option>
-									<option value="">SMA</option>
-									<option value="">SMK</option>
-									<option value="">D1</option>
-									<option value="">D3</option>
-									<option value="">S1</option>
-									<option value="">S2</option>
-									<option value="">S3</option>
+								<select class="form-control form-control-sm select2" id="terima_edu">
+									<option value="" selected>Tampilkan Semua</option>
+									<option value="SD">SD</option>
+									<option value="SMP">SMP</option>
+									<option value="SMA">SMA</option>
+									<option value="SMK">SMK</option>
+									<option value="D1">D1</option>
+									<option value="D3">D3</option>
+									<option value="S1">S1</option>
+									<option value="S2">S2</option>
+									<option value="S3">S3</option>
 								</select>
 							</div>
 						</div>
@@ -52,14 +57,13 @@
 					<table class="table table-hover table-striped display nowrap" style="width: 100%" cellspacing="0" id="table_diterima">
 						<thead class="bg-primary">
 							<tr>
-								<th width="1%">No</th>
+								<th class="text-center" width="1%">No</th>
 								<th>Tanggal Apply</th>
 								<th>Nama Pelamar</th>
 								<th>No. HP</th>
 								<th>Email</th>
 								<th>Status</th>
-								<th>Approval</th>
-								<th>Aksi</th>
+								<th class="text-center">Tanggal Proses</th>
 							</tr>
 						</thead>
 						<tbody>

@@ -163,7 +163,6 @@
 		if (jenis == 1) {
 			var type = 'agen';
 			var agen = document.getElementById("sagen");
-			var cabang = document.getElementById("cabang");
 			var level = document.getElementById("level");
 			var username = document.getElementById("username");
 			var password = document.getElementById("password");
@@ -172,9 +171,6 @@
 
 			if (agen.value == "" || agen.value == undefined) {
 				messageFailed('Failed', 'agen kosong, mohon lengkapi data!');
-				return false;
-			} else if (cabang.value == "" || cabang.value == undefined) {
-				messageFailed('Failed', 'cabang kosong, mohon lengkapi data!');
 				return false;
 			} else if (level.value == "" || level.value == undefined) {
 				messageFailed('Failed', 'level password kosong, mohon lengkapi data!');
