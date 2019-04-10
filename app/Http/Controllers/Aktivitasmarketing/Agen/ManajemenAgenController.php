@@ -8,7 +8,11 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 use Auth;
+use App\d_sales;
+use App\d_salesdt;
 use App\m_item;
+use App\m_member;
+use App\m_priceclass;
 use DataTables;
 use DB;
 use Carbon\Carbon;
@@ -19,31 +23,6 @@ use Validator;
 
 class ManajemenAgenController extends Controller
 {
-    /**
-    * Validate request before execute command.
-    *
-    * @param  \Illuminate\Http\Request $request
-    * @return 'error message' or '1'
-    */
-    public function validate_req(Request $request)
-    {
-        // start: validate data before execute
-        $validator = Validator::make($request->all(), [
-            'area_prov' => 'required',
-            'telp' => 'required|numeric'
-        ],
-        [
-            'area_prov.required' => 'Area Provinsi masih kosong !',
-            'telp.required' => 'No Telp masih kosong !',
-            'telp.numeric' => 'No Telp hanya berupa angka, tidak boleh mengandung huruf !'
-        ]);
-        if ($validator->fails()) {
-            return $validator->errors()->first();
-        } else {
-            return '1';
-        }
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -101,11 +80,37 @@ class ManajemenAgenController extends Controller
 
 
     // Start: Kelola Penjualan Langsung -----------------
+    /**
+    * Validate request before execute command.
+    *
+    * @param  \Illuminate\Http\Request $request
+    * @return 'error message' or '1'
+    */
+    public function validate_req(Request $request)
+    {
+        // start: validate data before execute
+        $validator = Validator::make($request->all(), [
+            'member' => 'required'
+        ],
+        [
+            'member.required' => 'Pilih member terlebih dahulu !'
+        ]);
+        if ($validator->fails()) {
+            return $validator->errors()->first();
+        } else {
+            return '1';
+        }
+    }
     public function createKPL()
     {
-        return view('marketing/agen/kelolapenjualan/create');
+        $data['member'] = m_member::orWhere('m_id', 1)
+            ->orWhere('m_agen', Auth::user()->u_code)
+            ->get();
+
+        // dd($data['member']);
+        return view('marketing/agen/kelolapenjualan/create', compact('data'));
     }
-    // function to retrieve items using autocomple.js
+    // get items using autocomple.js
     public function findItem(Request $request)
     {
         $term = $request->term;
@@ -127,6 +132,84 @@ class ManajemenAgenController extends Controller
         }
         return response()->json($results);
     }
+    // get price
+    public function getPrice(Request $request)
+    {
+        // dd($request->all());
+        $itemId = $request->itemId;
+        $unitId = $request->unitId;
+        $price = m_priceclass::with(['getPriceClassDt' => function($query) use ($itemId, $unitId) {
+            $query
+                ->where('pcd_item', $itemId)
+                ->where('pcd_unit', $unitId)
+                ->where('pcd_type', 'R')
+                ->where('pcd_payment', 'C')
+                ->first();
+            }])
+            ->first();
+        return response()->json($price);
+    }
+    // store new KPL
+    public function storeKPL(Request $request)
+    {
+        // dd($request->all());
+        // validate request
+        $isValidRequest = $this->validate_req($request);
+        if ($isValidRequest != '1') {
+            $errors = $isValidRequest;
+            return response()->json([
+                'status' => 'invalid',
+                'message' => $errors
+            ]);
+        }
+
+        DB::beginTransaction();
+        try {
+            // start insert data
+            $salesId = d_sales::max('s_id') + 1;
+            $salesNota = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
+            $sales = new d_sales();
+            $sales->s_id = $salesId;
+            // $sales->s_comp = ;
+            // $sales->s_member = ;
+            $sales->s_type = 'C';
+            $sales->s_date = Carbon::now('Asia/Jakarta');
+            $sales->s_nota = $salesNota;
+            $sales->s_total = (int)$request->total;
+            $sales->s_user = Auth::user()->u_id;
+            $sales->save();
+
+            for ($i=0; $i < sizeof($request->itemListId); $i++) {
+                if ($request->itemListId[$i] === null) {
+                    continue;
+                }
+                $salesDtId = d_salesdt::where('sd_sales', $salesId)->max('sd_detailid') + 1;
+                $salesDt = new d_salesdt();
+                $salesDt->sd_sales = $salesId;
+                $salesDt->sd_detailid = $salesDtId;
+                // $salesDt->sd_comp = ;
+                $salesDt->sd_item = $request->itemListId[$i];
+                $salesDt->sd_qty = (int)$request->itemQty[$i];
+                $salesDt->sd_unit = $request->itemUnit[$i];
+                $salesDt->sd_value = (int)$request->itemSubTotal[$i];
+                $salesDt->sd_discpersen = 0;
+                $salesDt->sd_discvalue = 0;
+                $salesDt->sd_totalnet = (int)$request->itemSubTotal[$i];
+                $salesDt->save();
+            }
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
     // End: Kelola Penjualan Langsung -----------------
 
     /**
@@ -147,31 +230,6 @@ class ManajemenAgenController extends Controller
      */
     public function store(Request $request)
     {
-        // validate request
-        $isValidRequest = $this->validate_req($request);
-        if ($isValidRequest != '1') {
-            $errors = $isValidRequest;
-            return response()->json([
-                'status' => 'invalid',
-                'message' => $errors
-            ]);
-        }
-
-        DB::beginTransaction();
-        try {
-            // start insert data
-
-            DB::commit();
-            return response()->json([
-                'status' => 'berhasil'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json([
-                'status' => 'gagal',
-                'message' => $e->getMessage()
-            ]);
-        }
 
     }
 

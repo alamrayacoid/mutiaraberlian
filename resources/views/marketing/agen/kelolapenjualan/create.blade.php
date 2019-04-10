@@ -31,66 +31,72 @@
                       </div>
                     </div>
 
-                    <div class="card-block">
-                        <section>
+                    <form class="myForm" autocomplete="off">
+                        <div class="card-block">
+                            <section>
+                                <div id="sectionsuplier" class="row">
 
-                          <div id="sectionsuplier" class="row">
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Member</label>
+                                    </div>
+                                    <div class="col-md-10 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select name="member" id="member" class="form-control form-control-sm select2">
+                                                <option value="" selected disabled>Pilih Member</option>
+                                                @foreach($data['member'] as $member)
+                                                <option value="{{ $member->m_id }}">{{ $member->m_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
 
-                            <div class="col-md-2 col-sm-6 col-xs-12">
-                              <label>Member</label>
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Total</label>
+                                    </div>
+                                    <div class="col-md-10 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-sm rupiah" name="total" id="total">
+                                        </div>
+                                    </div>
+
+                                    <div class="container">
+                                        <div class="table-responsive mt-3">
+                                            <table class="table table-hover table-striped diplay nowrap" id="table_create">
+                                                <thead class="bg-primary">
+                                                    <tr>
+                                                        <th>Kode/Nama Barang</th>
+                                                        <th width="10%">Satuan</th>
+                                                        <th>Jumlah</th>
+                                                        <th>Harga Satuan</th>
+                                                        <th>Sub Total</th>
+                                                        <th>Aksi</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text"  class="form-control form-control-sm find-item">
+                                                            <input name="itemListId[]" type="hidden" class="item-id">
+                                                        </td>
+                                                        <td>
+                                                            <select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="displayPrice(0)"></select>
+                                                            <input type="hidden" class="item-unitcmp">
+                                                        </td>
+                                                        <td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty"  onchange="sumSubTotalItem(0)"></td>
+                                                        <td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>
+                                                        <td><input name="itemSubTotal[]" type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>
+                                                        <td><button type="button" class="btn btn-sm btn-success btn-tambahp rounded-circle"><i class="fa fa-plus"></i></button></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </section>
                             </div>
-                            <div class="col-md-10 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <select name="" id="" class="form-control form-control-sm select2">
-                                    <option value=""></option>
-                                </select>
-                              </div>
-                            </div>
-
-                            <div class="col-md-2 col-sm-6 col-xs-12">
-                              <label>Total</label>
-                            </div>
-                            <div class="col-md-10 col-sm-6 col-xs-12">
-                              <div class="form-group">
-                                <input type="text" class="form-control form-control-sm rupiah" name="total" id="total">
-                              </div>
-                            </div>
-
-                            <div class="container">
-                            <div class="table-responsive mt-3">
-                            <table class="table table-hover table-striped diplay nowrap" id="table_create">
-                                <thead class="bg-primary">
-                                    <tr>
-                                        <th>Kode/Nama Barang</th>
-                                        <th width="10%">Satuan</th>
-                                        <th>Jumlah</th>
-                                        <th>Harga Satuan</th>
-                                        <th>Sub Total</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><input type="text" name="" class="form-control form-control-sm find-item">
-                                        </td>
-                                        <td>
-                                            <select name="itemUnit[]" class="form-control form-control-sm select2 satuan"></select>
-                                            <input type="hidden" class="item-unitcmp">
-                                        </td>
-                                        <td><input type="text" min="0" value="0" class="form-control form-control-sm digits item-qty"  onchange="sumSubTotalItem(0)"></td>
-                                        <td><input type="text" class="form-control form-control-sm rupiah item-price" readonly></td>
-                                        <td><input type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>
-                                        <td><button class="btn btn-sm btn-success btn-tambahp rounded-circle"><i class="fa fa-plus"></i></button></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                          </div>
-                          </div>
-                        </section>
-                    </div>
+                    </form>
                     <div class="card-footer text-right">
-                      <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+                      <button class="btn btn-primary" id="btn_simpan" type="button">Simpan</button>
                       <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
@@ -123,11 +129,11 @@ $(document).ready(function(){
         $('#table_create tbody')
         .append(
             '<tr>'+
-            '<td><input type="text" name="" class="form-control form-control-sm find-item"></td>'+
-            '<td><select name="itemUnit[]" class="form-control form-control-sm select2 satuan"></select><input type="hidden" class="item-unitcmp"></td>'+
-            '<td><input type="text" min="0" value="0" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem('+ (rowLength - 1) +')"></td>'+
-            '<td><input type="text" class="form-control form-control-sm rupiah item-price" readonly></td>'+
-            '<td><input type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>'+
+            '<td><input type="text" class="form-control form-control-sm find-item"><input name="itemListId[]" type="hidden" class="item-id"></td>'+
+            '<td><select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="displayPrice('+ (rowLength - 1) +')"></select><input type="hidden" class="item-unitcmp"></td>'+
+            '<td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem('+ (rowLength - 1) +')"></td>'+
+            '<td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>'+
+            '<td><input name="itemSubTotal[]" type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>'+
             '<td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
             '</tr>'
         );
@@ -135,17 +141,10 @@ $(document).ready(function(){
         initFunction();
     });
 
-    $(document).on('click', '.btn-submit', function(){
-        $.toast({
-            heading: 'Success',
-            text: 'Data Berhasil di Simpan',
-            bgColor: '#00b894',
-            textColor: 'white',
-            loaderBg: '#55efc4',
-            icon: 'success'
-        })
-    })
-});
+    $('#btn_simpan').one('click', function() {
+        submitForm();
+    });
+}); // end: document ready
 
 // init some function
 function initFunction()
@@ -179,11 +178,14 @@ function initFunction()
     });
     $('.find-item').on('click', function() {
         rowIndex = $('.find-item').index(this);
+        // clear row input
+        $('.find-item').eq(rowIndex).val('');
+        $('.item-id').eq(rowIndex).val('');
+        $('.satuan').eq(rowIndex).find('option').remove();
+        $('.item-qty').eq(rowIndex).val('');
+        $('.item-price').eq(rowIndex).val('');
+        $('.item-sub-total').eq(rowIndex).val('');
         findItem(rowIndex);
-    });
-    $('.satuan').on('change', function() {
-        rowIndex = $('.satuan').index(this);
-        displayPrice(rowIndex);
     });
 }
 
@@ -216,12 +218,12 @@ function appendOptSatuan(rowIndex, item)
 {
     $('.satuan').eq(rowIndex).find('option').remove();
     let optSatuan = '';
-    optSatuan += '<option value="'+ item.get_unit1.u_id +'" data-price="'+ parseInt(item.i_price1) +'" data-unitcmp="'+ parseInt(item.i_unitcompare1) +'" selected>'+ item.get_unit1.u_name +'</option>';
+    optSatuan += '<option value="'+ item.get_unit1.u_id +'" data-unitcmp="'+ parseInt(item.i_unitcompare1) +'" selected>'+ item.get_unit1.u_name +'</option>';
     if (item.get_unit2 != null && item.get_unit2.u_id !== item.get_unit1.u_id) {
-        optSatuan += '<option value="'+ item.get_unit2.u_id +'" data-price="'+ parseInt(item.i_price2) +'" data-unitcmp="'+ parseInt(item.i_unitcompare2) +'">'+ item.get_unit2.u_name +'</option>';
+        optSatuan += '<option value="'+ item.get_unit2.u_id +'" data-unitcmp="'+ parseInt(item.i_unitcompare2) +'">'+ item.get_unit2.u_name +'</option>';
     }
     if (item.get_unit3 != null && item.get_unit3.u_id !== item.get_unit1.u_id) {
-        optSatuan += '<option value="'+ item.get_unit3.u_id +'" data-price="'+ parseInt(item.i_price3) +'" data-unitcmp="'+ parseInt(item.i_unitcompare3) +'">'+ item.get_unit3.u_name +'</option>';
+        optSatuan += '<option value="'+ item.get_unit3.u_id +'" data-unitcmp="'+ parseInt(item.i_unitcompare3) +'">'+ item.get_unit3.u_name +'</option>';
     }
     $('.satuan').eq(rowIndex).append(optSatuan);
     displayPrice(rowIndex);
@@ -231,10 +233,26 @@ function appendOptSatuan(rowIndex, item)
 function displayPrice(rowIndex)
 {
     let selectedOpt = $('.satuan').eq(rowIndex).find('option:selected');
-    price = selectedOpt.data('price');
     unitcmp = selectedOpt.data('unitcmp');
-    $('.item-price').eq(rowIndex).val(price);
     $('.item-unitcmp').eq(rowIndex).val(unitcmp);
+
+    $.ajax({
+        url: baseUrl + '/marketing/agen/kelolapenjualanlangsung/get-price',
+        type: 'get',
+        data: {
+            "_token": "{{ csrf_token() }}",
+            "itemId" : $('.item-id').eq(rowIndex).val(),
+            "unitId" : $('.satuan').eq(rowIndex).val()
+        },
+        success: function(response) {
+            $('.item-price').eq(rowIndex).val(parseInt(response.get_price_class_dt[0].pcd_price));
+            console.log(response);
+        },
+        error: function(e) {
+            console.log(e);
+        }
+
+    });
     sumSubTotalItem(rowIndex);
 }
 
@@ -267,6 +285,53 @@ function sumTotalBruto() {
     }
     $('#total').val(subTotal);
 }
+
+// submit form
+function submitForm()
+{
+    myForm = $('.myForm').serialize();
+
+    $.ajax({
+        data : myForm,
+        type : "post",
+        url : baseUrl + '/marketing/agen/kelolapenjualanlangsung/store',
+        dataType : 'json',
+        success : function (response){
+            console.log('submit form: ' + response);
+            if(response.status == 'berhasil')
+            {
+                messageSuccess('Berhasil', 'Penjualan berhasil ditambahkan !');
+                resetAllInput();
+                // $('#modal_bayar').modal('hide');
+            }
+            else if (response.status == 'invalid')
+            {
+                messageFailed('Perhatian', response.message);
+            }
+            else if (response.status == 'gagal')
+            {
+                messageWarning('Error', response.message);
+            }
+            // activate btn_simpan once again
+            $('#btn_simpan').one('click', function() {
+                submitForm();
+            });
+        },
+        error : function(e){
+            messageWarning('Gagal', 'Data gagal ditambahkan, hubungi pengembang !');
+        }
+    });
+}
+
+// reset all input
+function resetAllInput() {
+    $('.myForm')[0].reset();
+    $('.satuan').find('option').remove();
+    $('#member').find('option:first').attr('selected', 'selected');
+    console.log($('#member').val());
+    $('#table_create tbody').find('tr:gt(0)').remove();
+}
+
 
 </script>
 @endsection
