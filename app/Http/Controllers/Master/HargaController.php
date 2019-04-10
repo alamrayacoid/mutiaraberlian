@@ -294,12 +294,25 @@ class HargaController extends Controller
                 if (count($check) > 0 || count($check2) > 0) {
                     return response()->json(['status' => "Unit Ada"]);
                 } else {
-                    $checkGol = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->count();
-                    if ($checkGol > 0) {
-                        $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) ? (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1 : 1;
-                    } else {
-                        $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) ? (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1 : 1;
+                    $checkGol1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->count();
+                    $checkGol2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->count();
+
+                    if ($checkGol1 > 0 && $checkGol2 > 0) {
+                        $tmp_detail1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid');
+                        $tmp_detail2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid');
+
+                        if ($tmp_detail1 > $tmp_detail2) {
+                            $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1;
+                        } else if ($tmp_detail2 > $tmp_detail1) {
+                            $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1;
+                        }
+
+                    } else if ($checkGol1 > 0 && $checkGol2 == 0) {
+                        $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1;
+                    } else if ($checkGol1 == 0 && $checkGol2 > 0) {
+                        $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1;
                     }
+
                     $values = [
                         'pcad_classprice' => $idGol,
                         'pcad_detailid' => $detailid,
@@ -355,12 +368,25 @@ class HargaController extends Controller
                 }
 
                 if ($sts = "Null") {
-                    $checkGol = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->count();
-                    if ($checkGol > 0) {
-                        $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) ? (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1 : 1;
-                    } else {
-                        $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) ? (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1 : 1;
+                    $checkGol1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->count();
+                    $checkGol2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->count();
+
+                    if ($checkGol1 > 0 && $checkGol2 > 0) {
+                        $tmp_detail1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid');
+                        $tmp_detail2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid');
+
+                        if ($tmp_detail1 > $tmp_detail2) {
+                            $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1;
+                        } else if ($tmp_detail2 > $tmp_detail1) {
+                            $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1;
+                        }
+
+                    } else if ($checkGol1 > 0 && $checkGol2 == 0) {
+                        $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1;
+                    } else if ($checkGol1 == 0 && $checkGol2 > 0) {
+                        $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1;
                     }
+
                     $values = [
                         'pcad_classprice' => $idGol,
                         'pcad_detailid' => $detailid,
