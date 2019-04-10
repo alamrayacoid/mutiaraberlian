@@ -30,6 +30,8 @@
 <script src="{{asset('assets/pushjs/bin/push.min.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.3/mousetrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.3/plugins/bind-dictionary/mousetrap-bind-dictionary.min.js"></script>
+<script src="{{asset('assets/inputmask/min/jquery.inputmask.bundle.min.js')}}"></script>
+
 <script type="text/javascript">
     var getstorage;
     $('#sidebar-collapse-btn, #sidebar-overlay').click(function () {
@@ -304,13 +306,13 @@
         });
 
         //mask money
-        $('.currency').inputmask("currency", {
-            radixPoint: ".",
+        $('.rupiah').inputmask("currency", {
+            radixPoint: ",",
             groupSeparator: ".",
             digits: 2,
             autoGroup: true,
-            prefix: '', //Space after $, this will not truncate the first character.
-            rightAlign: false,
+            prefix: ' Rp ', //Space after $, this will not truncate the first character.
+            rightAlign: true,
             autoUnmask: true,
             nullable: false,
             // unmaskAsNumber: true,
@@ -318,12 +320,12 @@
 
         //mask digits
         $('.digits').inputmask("currency", {
-            radixPoint: ".",
+            radixPoint: ",",
             groupSeparator: ".",
             digits: 0,
             autoGroup: true,
             prefix: '', //Space after $, this will not truncate the first character.
-            rightAlign: false,
+            rightAlign: true,
             autoUnmask: true,
             nullable: false,
             // unmaskAsNumber: true,

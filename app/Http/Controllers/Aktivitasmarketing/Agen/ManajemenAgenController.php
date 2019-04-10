@@ -7,15 +7,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 
-
-use DB;
 use Auth;
-use Response;
-use Currency;
-use Validator;
+use App\m_item;
 use DataTables;
+use DB;
 use Carbon\Carbon;
 use CodeGenerator;
+use Currency;
+use Response;
+use Validator;
 
 class ManajemenAgenController extends Controller
 {
@@ -101,9 +101,31 @@ class ManajemenAgenController extends Controller
 
 
     // Start: Kelola Penjualan Langsung -----------------
-    public function kelolapenjualan_create()
+    public function createKPL()
     {
         return view('marketing/agen/kelolapenjualan/create');
+    }
+    // function to retrieve items using autocomple.js
+    public function findItem(Request $request)
+    {
+        $term = $request->term;
+        $items = m_item::where(function ($q) use ($term){
+                $q->orWhere('i_name', 'like', '%'.$term.'%');
+                $q->orWhere('i_code', 'like', '%'.$term.'%');
+            })
+            ->with('getUnit1')
+            ->with('getUnit2')
+            ->with('getUnit3')
+            ->get();
+
+        if (count($items) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($items as $item) {
+                $results[] = ['id' => $item->i_id, 'label' => $item->i_code . ' - ' .strtoupper($item->i_name), 'data' => $item];
+            }
+        }
+        return response()->json($results);
     }
     // End: Kelola Penjualan Langsung -----------------
 

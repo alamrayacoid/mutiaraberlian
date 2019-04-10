@@ -19,7 +19,7 @@
     <div class="row">
 
       <div class="col-12">
-        
+
         <div class="card">
 
                     <div class="card-header bordered p-2">
@@ -33,13 +33,12 @@
 
                     <div class="card-block">
                         <section>
-                          
+
                           <div id="sectionsuplier" class="row">
-                            
+
                             <div class="col-md-2 col-sm-6 col-xs-12">
                               <label>Member</label>
-                            </div> 
-
+                            </div>
                             <div class="col-md-10 col-sm-6 col-xs-12">
                               <div class="form-group">
                                 <select name="" id="" class="form-control form-control-sm select2">
@@ -50,11 +49,10 @@
 
                             <div class="col-md-2 col-sm-6 col-xs-12">
                               <label>Total</label>
-                            </div> 
-
+                            </div>
                             <div class="col-md-10 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="" value="Rp. 0">
+                                <input type="text" class="form-control form-control-sm rupiah" name="total" id="total">
                               </div>
                             </div>
 
@@ -73,11 +71,15 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td><input type="text" class="form-control form-control-sm"></td>
-                                        <td><select name="" id="" class="form-control form-control-sm select2"></select></td>
-                                        <td><input type="number" min="0" value="0" class="form-control form-control-sm"></td>
-                                        <td><input type="text" class="form-control form-control-sm input-rupiah"></td>
-                                        <td><input type="text" class="form-control form-control-sm input-rupiah"></td>
+                                        <td><input type="text" name="" class="form-control form-control-sm find-item">
+                                        </td>
+                                        <td>
+                                            <select name="itemUnit[]" class="form-control form-control-sm select2 satuan"></select>
+                                            <input type="hidden" class="item-unitcmp">
+                                        </td>
+                                        <td><input type="text" min="0" value="0" class="form-control form-control-sm digits item-qty"  onchange="sumSubTotalItem(0)"></td>
+                                        <td><input type="text" class="form-control form-control-sm rupiah item-price" readonly></td>
+                                        <td><input type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>
                                         <td><button class="btn btn-sm btn-success btn-tambahp rounded-circle"><i class="fa fa-plus"></i></button></td>
                                     </tr>
                                 </tbody>
@@ -105,36 +107,166 @@
 
 @section('extra_script')
 <script type="text/javascript">
-  $(document).ready(function(){
+
+$(document).ready(function(){
+
+    initFunction();
 
     $(document).on('click', '.btn-hapus', function(){
-      $(this).parents('tr').remove();
+        $(this).parents('tr').remove();
     });
 
+    // append a new row to insert more items
     $('.btn-tambahp').on('click',function(){
-      $('#table_create tbody')
-      .append(
-        '<tr>'+
-          '<td><input type="text" class="form-control form-control-sm"></td>'+
-          '<td><select name="" id="" class="form-control form-control-sm select2"></select></td>'+
-          '<td><input type="number" min="0" value="0" class="form-control form-control-sm"></td>'+
-          '<td><input type="text" class="form-control form-control-sm input-rupiah"></td>'+
-          '<td><input type="text" class="form-control form-control-sm input-rupiah"></td>'+
-          '<td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
-        '</tr>'
+        tableRows = document.getElementsByTagName("tr");
+        rowLength = tableRows.length;
+        $('#table_create tbody')
+        .append(
+            '<tr>'+
+            '<td><input type="text" name="" class="form-control form-control-sm find-item"></td>'+
+            '<td><select name="itemUnit[]" class="form-control form-control-sm select2 satuan"></select><input type="hidden" class="item-unitcmp"></td>'+
+            '<td><input type="text" min="0" value="0" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem('+ (rowLength - 1) +')"></td>'+
+            '<td><input type="text" class="form-control form-control-sm rupiah item-price" readonly></td>'+
+            '<td><input type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>'+
+            '<td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
+            '</tr>'
         );
+        // re-initialize som function after append a new row
+        initFunction();
     });
 
     $(document).on('click', '.btn-submit', function(){
-			$.toast({
-				heading: 'Success',
-				text: 'Data Berhasil di Simpan',
-				bgColor: '#00b894',
-				textColor: 'white',
-				loaderBg: '#55efc4',
-				icon: 'success'
-			})
-		})
-  });
+        $.toast({
+            heading: 'Success',
+            text: 'Data Berhasil di Simpan',
+            bgColor: '#00b894',
+            textColor: 'white',
+            loaderBg: '#55efc4',
+            icon: 'success'
+        })
+    })
+});
+
+// init some function
+function initFunction()
+{
+    $('.select2').select2({
+        theme: "bootstrap",
+        dropdownAutoWidth: true,
+        width: '100%'
+    });
+    $('.rupiah').inputmask("currency", {
+        radixPoint: ",",
+        groupSeparator: ".",
+        digits: 2,
+        autoGroup: true,
+        prefix: ' Rp ', //Space after $, this will not truncate the first character.
+        rightAlign: true,
+        autoUnmask: true,
+        nullable: false,
+        // unmaskAsNumber: true,
+    });
+    $('.digits').inputmask("currency", {
+        radixPoint: ",",
+        groupSeparator: ".",
+        digits: 0,
+        autoGroup: true,
+        prefix: '', //Space after $, this will not truncate the first character.
+        rightAlign: true,
+        autoUnmask: true,
+        nullable: false,
+        // unmaskAsNumber: true,
+    });
+    $('.find-item').on('click', function() {
+        rowIndex = $('.find-item').index(this);
+        findItem(rowIndex);
+    });
+    $('.satuan').on('change', function() {
+        rowIndex = $('.satuan').index(this);
+        displayPrice(rowIndex);
+    });
+}
+
+// find-item autocomplete in rowIndex
+function findItem(rowIndex)
+{
+    $('.find-item').autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+                url: baseUrl + '/marketing/agen/kelolapenjualanlangsung/find-item',
+                data: {
+                    term: $(".find-item").eq(rowIndex).val()
+                },
+                success: function( data ) {
+                    response( data );
+                }
+            });
+        },
+        minLength: 1,
+        select: function(event, data) {
+            console.log(data.item);
+            $('.item-id').eq(rowIndex).val(data.item.data.i_id);
+            appendOptSatuan(rowIndex, data.item.data);
+        }
+    });
+}
+
+// append option to select in rowIndex
+function appendOptSatuan(rowIndex, item)
+{
+    $('.satuan').eq(rowIndex).find('option').remove();
+    let optSatuan = '';
+    optSatuan += '<option value="'+ item.get_unit1.u_id +'" data-price="'+ parseInt(item.i_price1) +'" data-unitcmp="'+ parseInt(item.i_unitcompare1) +'" selected>'+ item.get_unit1.u_name +'</option>';
+    if (item.get_unit2 != null && item.get_unit2.u_id !== item.get_unit1.u_id) {
+        optSatuan += '<option value="'+ item.get_unit2.u_id +'" data-price="'+ parseInt(item.i_price2) +'" data-unitcmp="'+ parseInt(item.i_unitcompare2) +'">'+ item.get_unit2.u_name +'</option>';
+    }
+    if (item.get_unit3 != null && item.get_unit3.u_id !== item.get_unit1.u_id) {
+        optSatuan += '<option value="'+ item.get_unit3.u_id +'" data-price="'+ parseInt(item.i_price3) +'" data-unitcmp="'+ parseInt(item.i_unitcompare3) +'">'+ item.get_unit3.u_name +'</option>';
+    }
+    $('.satuan').eq(rowIndex).append(optSatuan);
+    displayPrice(rowIndex);
+}
+
+// set price based on selected option (satuan)
+function displayPrice(rowIndex)
+{
+    let selectedOpt = $('.satuan').eq(rowIndex).find('option:selected');
+    price = selectedOpt.data('price');
+    unitcmp = selectedOpt.data('unitcmp');
+    $('.item-price').eq(rowIndex).val(price);
+    $('.item-unitcmp').eq(rowIndex).val(unitcmp);
+    sumSubTotalItem(rowIndex);
+}
+
+// sum sub-total item in a row
+function sumSubTotalItem(rowIndex)
+{
+    qty = parseInt($('.item-qty').eq(rowIndex).val());
+    price = parseInt($('.item-price').eq(rowIndex).val());
+    unitcmp = parseInt($('.item-unitcmp').eq(rowIndex).val());
+
+    if (qty < 0 || isNaN(qty)) {
+        qty = 0;
+        $('.item-qty').eq(rowIndex).val(0)
+    }
+
+    qtyUnit1 = qty * unitcmp;
+    subTotal = qtyUnit1 * price;
+    $('.item-sub-total').eq(rowIndex).val(subTotal);
+    sumTotalBruto();
+}
+
+// sum total-bruto
+function sumTotalBruto() {
+    tableRows = document.getElementsByTagName("tr");
+    rowLength = tableRows.length;
+    subTotal = 0;
+    for (let i = 0; i < (rowLength-1); i++) {
+        subTotal += parseInt($('.item-sub-total').eq(i).val());
+        console.log(i, subTotal, $('.item-sub-total').eq(i).val());
+    }
+    $('#total').val(subTotal);
+}
+
 </script>
 @endsection
