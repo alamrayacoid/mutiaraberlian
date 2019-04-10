@@ -128,7 +128,7 @@ class HargaController extends Controller
                                             <button class="btn btn-warning" title="Edit"
                                                     type="button" onclick="editGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->pcd_item . '\', \'' . Currency::addRupiah($data->pcd_price) . '\', \'' . $data->pcd_unit . '\', \'' . $data->pcd_type . '\', \'' . $data->pcd_rangeqtystart . '\', \'' . $data->pcd_rangeqtyend . '\')"><i class="fa fa-pencil"></i></button>
                                             <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\')"><i class="fa fa-trash"></i></button>
+                                                    title="Hapus" onclick="hapusGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->status . '\')"><i class="fa fa-trash"></i></button>
                                         </div></center>';
 
             })
@@ -276,6 +276,7 @@ class HargaController extends Controller
             if ($request->jenisharga == "U") {
 
                 $check = DB::table('d_priceclassauthdt')
+                    ->where('pcad_classprice', '=', $idGol)
                     ->where('pcad_item', '=', $request->idBarang)
                     ->where('pcad_unit', '=', $request->satuanBarang)
                     ->where('pcad_type', '=', $request->jenisharga)
@@ -283,6 +284,7 @@ class HargaController extends Controller
                     ->get();
 
                 $check2 = DB::table('m_priceclassdt')
+                    ->where('pcd_classprice', '=', $idGol)
                     ->where('pcd_item', '=', $request->idBarang)
                     ->where('pcd_unit', '=', $request->satuanBarang)
                     ->where('pcd_type', '=', $request->jenisharga)
@@ -382,7 +384,7 @@ class HargaController extends Controller
         }
     }
 
-    public function deleteGolonganHarga($id, $detail)
+    public function deleteGolonganHarga($id, $detail, $status)
     {
         try {
             $id = Crypt::decrypt($id);
@@ -393,10 +395,18 @@ class HargaController extends Controller
 
         DB::beginTransaction();
         try {
-            DB::table('d_priceclassauthdt')
-                ->where('pcad_classprice', '=', $id)
-                ->where('pcad_detailid', '=', $detail)
-                ->delete();
+            if ($status == "N") {
+                DB::table('d_priceclassauthdt')
+                    ->where('pcad_classprice', '=', $id)
+                    ->where('pcad_detailid', '=', $detail)
+                    ->delete();
+            } else if ($status == "Y") {
+                DB::table('m_priceclassdt')
+                    ->where('pcd_classprice', '=', $id)
+                    ->where('pcd_detailid', '=', $detail)
+                    ->delete();
+            }
+
             DB::commit();
             return response()->json(['status' => "Success"]);
         } catch (\Exception $e) {
