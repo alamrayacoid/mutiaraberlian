@@ -122,8 +122,6 @@
         var table_sup;
 
         $(document).ready(function () {
-
-          		$('#table_approval').dataTable().fnDestroy();
           		table_sup = $('#table_approval').DataTable({
           			responsive: true,
           			serverSide: true,

@@ -126,9 +126,9 @@ class HargaController extends Controller
             ->addColumn('action', function ($data) {
                 return '<center><div class="btn-group btn-group-sm">
                                             <button class="btn btn-warning" title="Edit"
-                                                    type="button" onclick="editGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->pcd_item . '\', \'' . Currency::addRupiah($data->pcd_price) . '\', \'' . $data->pcd_unit . '\', \'' . $data->pcd_type . '\', \'' . $data->pcd_rangeqtystart . '\', \'' . $data->pcd_rangeqtyend . '\')"><i class="fa fa-pencil"></i></button>
+                                                    type="button" onclick="editGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->pcd_item . '\', \'' . Currency::addRupiah($data->pcd_price) . '\', \'' . $data->pcd_unit . '\', \'' . $data->pcd_type . '\', \'' . $data->pcd_rangeqtystart . '\', \'' . $data->pcd_rangeqtyend . '\', \'' . $data->status . '\')"><i class="fa fa-pencil"></i></button>
                                             <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\')"><i class="fa fa-trash"></i></button>
+                                                    title="Hapus" onclick="hapusGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->status . '\')"><i class="fa fa-trash"></i></button>
                                         </div></center>';
 
             })
@@ -276,6 +276,7 @@ class HargaController extends Controller
             if ($request->jenisharga == "U") {
 
                 $check = DB::table('d_priceclassauthdt')
+                    ->where('pcad_classprice', '=', $idGol)
                     ->where('pcad_item', '=', $request->idBarang)
                     ->where('pcad_unit', '=', $request->satuanBarang)
                     ->where('pcad_type', '=', $request->jenisharga)
@@ -283,6 +284,7 @@ class HargaController extends Controller
                     ->get();
 
                 $check2 = DB::table('m_priceclassdt')
+                    ->where('pcd_classprice', '=', $idGol)
                     ->where('pcd_item', '=', $request->idBarang)
                     ->where('pcd_unit', '=', $request->satuanBarang)
                     ->where('pcd_type', '=', $request->jenisharga)
@@ -292,12 +294,27 @@ class HargaController extends Controller
                 if (count($check) > 0 || count($check2) > 0) {
                     return response()->json(['status' => "Unit Ada"]);
                 } else {
-                    $checkGol = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->count();
-                    if ($checkGol > 0) {
-                        $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) ? (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1 : 1;
-                    } else {
-                        $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) ? (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1 : 1;
+                    $checkGol1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->count();
+                    $checkGol2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->count();
+
+                    if ($checkGol1 > 0 && $checkGol2 > 0) {
+                        $tmp_detail1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid');
+                        $tmp_detail2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid');
+
+                        if ($tmp_detail1 > $tmp_detail2) {
+                            $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1;
+                        } else if ($tmp_detail2 > $tmp_detail1) {
+                            $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1;
+                        }
+
+                    } else if ($checkGol1 > 0 && $checkGol2 == 0) {
+                        $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1;
+                    } else if ($checkGol1 == 0 && $checkGol2 > 0) {
+                        $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1;
+                    } else if ($checkGol1 == 0 &&  $checkGol2 == 0) {
+                        $detailid = 1;
                     }
+
                     $values = [
                         'pcad_classprice' => $idGol,
                         'pcad_detailid' => $detailid,
@@ -316,6 +333,7 @@ class HargaController extends Controller
                 }
             } else {
                 $check = DB::table('d_priceclassauthdt')
+                    ->where('pcad_classprice', '=', $idGol)
                     ->where('pcad_item', '=', $request->idBarang)
                     ->where('pcad_unit', '=', $request->satuanrange)
                     ->where('pcad_type', '=', $request->jenisharga)
@@ -323,6 +341,7 @@ class HargaController extends Controller
                     ->get();
 
                 $check2 = DB::table('m_priceclassdt')
+                    ->where('pcd_classprice', '=', $idGol)
                     ->where('pcd_item', '=', $request->idBarang)
                     ->where('pcd_unit', '=', $request->satuanBarang)
                     ->where('pcd_type', '=', $request->jenisharga)
@@ -353,12 +372,25 @@ class HargaController extends Controller
                 }
 
                 if ($sts = "Null") {
-                    $checkGol = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->count();
-                    if ($checkGol > 0) {
-                        $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) ? (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1 : 1;
-                    } else {
-                        $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) ? (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1 : 1;
+                    $checkGol1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->count();
+                    $checkGol2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->count();
+
+                    if ($checkGol1 > 0 && $checkGol2 > 0) {
+                        $tmp_detail1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid');
+                        $tmp_detail2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid');
+
+                        if ($tmp_detail1 > $tmp_detail2) {
+                            $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1;
+                        } else if ($tmp_detail2 > $tmp_detail1) {
+                            $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1;
+                        }
+
+                    } else if ($checkGol1 > 0 && $checkGol2 == 0) {
+                        $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1;
+                    } else if ($checkGol1 == 0 && $checkGol2 > 0) {
+                        $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1;
                     }
+
                     $values = [
                         'pcad_classprice' => $idGol,
                         'pcad_detailid' => $detailid,
@@ -382,7 +414,7 @@ class HargaController extends Controller
         }
     }
 
-    public function deleteGolonganHarga($id, $detail)
+    public function deleteGolonganHarga($id, $detail, $status)
     {
         try {
             $id = Crypt::decrypt($id);
@@ -393,10 +425,18 @@ class HargaController extends Controller
 
         DB::beginTransaction();
         try {
-            DB::table('d_priceclassauthdt')
-                ->where('pcad_classprice', '=', $id)
-                ->where('pcad_detailid', '=', $detail)
-                ->delete();
+            if ($status == "N") {
+                DB::table('d_priceclassauthdt')
+                    ->where('pcad_classprice', '=', $id)
+                    ->where('pcad_detailid', '=', $detail)
+                    ->delete();
+            } else if ($status == "Y") {
+                DB::table('m_priceclassdt')
+                    ->where('pcd_classprice', '=', $id)
+                    ->where('pcd_detailid', '=', $detail)
+                    ->delete();
+            }
+
             DB::commit();
             return response()->json(['status' => "Success"]);
         } catch (\Exception $e) {
@@ -416,28 +456,7 @@ class HargaController extends Controller
 
         DB::beginTransaction();
         try {
-            $price = DB::table('m_priceclassdt')
-                ->where('pcd_classprice', '=', $id)
-                ->where('pcd_detailid', '=', $detail);
-
-            if ($price->count() > 0) {
-                //insert in d_priceclassauthdt
-                DB::table('d_priceclassauthdt')->insert([
-                    'pcad_classprice'   => $price->first()->pcd_classprice,
-                    'pcad_detailid'     => $price->first()->pcd_detailid,
-                    'pcad_item'         => $price->first()->pcd_item,
-                    'pcad_unit'         => $request->satuanBarangUnitEdit,
-                    'pcad_type'         => $price->first()->pcd_type,
-                    'pcad_payment'      => $price->first()->pcd_payment,
-                    'pcad_rangeqtystart'=> $price->first()->pcd_rangeqtystart,
-                    'pcad_rangeqtyend'  => $price->first()->pcd_rangeqtyend,
-                    'pcad_price'        => Currency::removeRupiah($request->editharga),
-                    'pcad_user'         => $price->first()->pcd_user
-                ]);
-
-                //delete in m_priceclassdt
-                $price->delete();
-            } else {
+            if ($request->status == "N") {
                 DB::table('d_priceclassauthdt')
                     ->where('pcad_classprice', '=', $id)
                     ->where('pcad_detailid', '=', $detail)
@@ -445,10 +464,40 @@ class HargaController extends Controller
                         'pcad_unit' => $request->satuanBarangUnitEdit,
                         'pcad_price' => Currency::removeRupiah($request->editharga),
                     ]);
+
+                DB::commit();
+                return response()->json(['status' => "Success"]);
+            } else if ($request->status == "Y") {
+                $price = DB::table('m_priceclassdt')
+                    ->where('pcd_classprice', '=', $id)
+                    ->where('pcd_detailid', '=', $detail);
+
+                if ($price->count() > 0) {
+                    //insert in d_priceclassauthdt
+                    $val = [
+                        'pcad_classprice'   => $price->first()->pcd_classprice,
+                        'pcad_detailid'     => $price->first()->pcd_detailid,
+                        'pcad_item'         => $price->first()->pcd_item,
+                        'pcad_unit'         => $request->satuanBarangUnitEdit,
+                        'pcad_type'         => $price->first()->pcd_type,
+                        'pcad_payment'      => $price->first()->pcd_payment,
+                        'pcad_rangeqtystart'=> $price->first()->pcd_rangeqtystart,
+                        'pcad_rangeqtyend'  => $price->first()->pcd_rangeqtyend,
+                        'pcad_price'        => Currency::removeRupiah($request->editharga),
+                        'pcad_user'         => $price->first()->pcd_user
+                    ];
+                    DB::table('d_priceclassauthdt')->insert($val);
+
+                    //delete in m_priceclassdt
+                    $price->delete();
+                    DB::commit();
+                    return response()->json(['status' => "Success"]);
+                } else {
+                    DB::rollBack();
+                    return response()->json(['status' => "Failed"]);
+                }
             }
 
-            DB::commit();
-            return response()->json(['status' => "Success"]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['status' => "Failed"]);
@@ -527,28 +576,7 @@ class HargaController extends Controller
             }
 
             if ($sts = "Null") {
-                $price = DB::table('m_priceclassdt')
-                    ->where('pcd_classprice', '=', $id)
-                    ->where('pcd_detailid', '=', $detail);
-
-                if ($price->count() > 0) {
-                    //insert in d_priceclassauthdt
-                    DB::table('d_priceclassauthdt')->insert([
-                        'pcad_classprice'   => $price->first()->pcd_classprice,
-                        'pcad_detailid'     => $price->first()->pcd_detailid,
-                        'pcad_item'         => $price->first()->pcd_item,
-                        'pcad_unit'         => $request->satuanBarangRangeEdit,
-                        'pcad_type'         => $price->first()->pcd_type,
-                        'pcad_payment'      => $price->first()->pcd_payment,
-                        'pcad_rangeqtystart'=> $request->rangestartedit,
-                        'pcad_rangeqtyend'  => $request->rangeendedit,
-                        'pcad_price'        => Currency::removeRupiah($request->edithargarange),
-                        'pcad_user'         => $price->first()->pcd_user
-                    ]);
-
-                    //delete in m_priceclassdt
-                    $price->delete();
-                } else {
+                if ($request->statusRange == "N") {
                     DB::table('d_priceclassauthdt')
                         ->where('pcad_classprice', '=', $id)
                         ->where('pcad_detailid', '=', $detail)
@@ -558,10 +586,38 @@ class HargaController extends Controller
                             'pcad_rangeqtystart' => $request->rangestartedit,
                             'pcad_rangeqtyend' => $request->rangeendedit
                         ]);
-                }
+                    DB::commit();
+                    return response()->json(['status' => "Success"]);
+                } else if ($request->statusRange == "Y") {
+                    $price = DB::table('m_priceclassdt')
+                        ->where('pcd_classprice', '=', $id)
+                        ->where('pcd_detailid', '=', $detail);
 
-                DB::commit();
-                return response()->json(['status' => "Success"]);
+                    if ($price->count() > 0) {
+                        //insert in d_priceclassauthdt
+                        DB::table('d_priceclassauthdt')->insert([
+                            'pcad_classprice'   => $price->first()->pcd_classprice,
+                            'pcad_detailid'     => $price->first()->pcd_detailid,
+                            'pcad_item'         => $price->first()->pcd_item,
+                            'pcad_unit'         => $request->satuanBarangRangeEdit,
+                            'pcad_type'         => $price->first()->pcd_type,
+                            'pcad_payment'      => $price->first()->pcd_payment,
+                            'pcad_rangeqtystart'=> $request->rangestartedit,
+                            'pcad_rangeqtyend'  => $request->rangeendedit,
+                            'pcad_price'        => Currency::removeRupiah($request->edithargarange),
+                            'pcad_user'         => $price->first()->pcd_user
+                        ]);
+
+                        //delete in m_priceclassdt
+                        $price->delete();
+
+                        DB::commit();
+                        return response()->json(['status' => "Success"]);
+                    } else {
+                        DB::rollBack();
+                        return response()->json(['status' => "Failed"]);
+                    }
+                }
             }
         } catch (\Exception $e) {
             DB::rollBack();

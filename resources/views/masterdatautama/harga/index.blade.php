@@ -192,61 +192,6 @@
 											'<button class="btn btn-danger btn-disable-golonganharga" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 		})
 
-
-		$(document).on('click','.btn-preview-pelamar',function(){
-			window.location.href='{{route('rekruitmen.preview')}}'
-		});
-
-		$(document).on('click', '.btn-disable-pelamar', function(){
-			var ini = $(this);
-			$.confirm({
-				animation: 'RotateY',
-				closeAnimation: 'scale',
-				animationBounce: 1.5,
-				icon: 'fa fa-exclamation-triangle',
-				title: 'Peringatan!',
-				content: 'Apa anda yakin mau menonaktifkan data ini?',
-				theme: 'disable',
-			    buttons: {
-			        info: {
-						btnClass: 'btn-blue',
-			        	text:'Ya',
-			        	action : function(){
-							$.toast({
-								heading: 'Information',
-								text: 'Data Berhasil di Nonaktifkan.',
-								bgColor: '#0984e3',
-								textColor: 'white',
-								loaderBg: '#fdcb6e',
-								icon: 'info'
-							})
-					        ini.parents('.btn-group').html('<button class="btn btn-success btn-enable-pelamar" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-				        }
-			        },
-			        cancel:{
-			        	text: 'Tidak',
-					    action: function () {
-    			            // tutup confirm
-    			        }
-    			    }
-			    }
-			});
-		});
-
-		$(document).on('click', '.btn-enable-pelamar', function(){
-			$.toast({
-				heading: 'Information',
-				text: 'Data Berhasil di Enable.',
-				bgColor: '#0984e3',
-				textColor: 'white',
-				loaderBg: '#fdcb6e',
-				icon: 'info'
-			})
-			$(this).parents('.btn-group').html('<button class="btn btn-primary" data-toggle="modal" data-target="#list_barang_dibawa" type="button" title="Preview"><i class="fa fa-search"></i></button>'+
-											'<button class="btn btn-warning btn-edit-pelamar" type="button" title="Process"><i class="fa fa-file-powerpoint-o"></i></button>'+
-	                                		'<button class="btn btn-danger btn-disable-pelamar" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>')
-		})
-
 		$(document).on('click', '.btn-simpan-modal', function(){
 			$.toast({
 				heading: 'Success',
@@ -331,7 +276,9 @@
                             $("#range").addClass('d-none');
                         } else if (response.data.status == "Failed") {
                             loadingHide();
-                            messageWarning("Gagal", "Data gagal disimpan!");
+                            // messageWarning("Gagal", "Data gagal disimpan!");
+                            console.log(response.data.error);
+                            messageWarning("Gagal", response.data.error);
                         } else if (response.data.status == "Range Ada") {
                             loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
@@ -485,6 +432,8 @@
     function setItem(info) {
         // idItem = info.data.i_id;
         $("#idBarang").val(info.data.i_id)
+        $("#satuanBarang").find('option').remove();
+        $("#satuanrange").find('option').remove();
         $.ajax({
             url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+info.data.i_id,
             type: 'GET',
@@ -517,7 +466,7 @@
         deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan/"+id);
     }
 
-    function editGolonganHarga(id, detail, item, harga, satuan, tipe, rangestart, rangeEnd) {
+    function editGolonganHarga(id, detail, item, harga, satuan, tipe, rangestart, rangeEnd, status) {
         if (tipe == "U") {
             $.ajax({
                 url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
@@ -552,7 +501,11 @@
             $("#golId").val(id);
             $("#golDetail").val(detail);
             $("#txtEditGolHrg").val(harga);
-            $('#editGolHrgUnit').modal('show');
+            $("#status").val(status);
+            $('#editGolHrgUnit').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
         } else {
             $.ajax({
                 url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
@@ -592,12 +545,17 @@
             $("#rangestartakhir").val(rangeEnd);
             $("#rangeendedit").val(rangeEnd);
             $("#txtEditGolHrgRange").val(harga);
-            $('#editGolHrgRange').modal('show');
+            $("#statusRange").val(status);
+            console.log(status);
+            $('#editGolHrgRange').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
         }
 
     }
 
-    function hapusGolonganHarga(id, detail) {
+    function hapusGolonganHarga(id, detail, status) {
         // deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail);
         $.confirm({
             animation: 'RotateY',
@@ -614,7 +572,7 @@
                     action: function () {
                         return $.ajax({
                             type: "get",
-                            url: baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail,
+                            url: baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail+"/"+status,
                             success: function (response) {
                                 if (response.status == 'Success') {
                                     messageSuccess('Berhasil', 'Data berhasil hapus!');
