@@ -462,7 +462,7 @@
         deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan/"+id);
     }
 
-    function editGolonganHarga(id, detail, item, harga, satuan, tipe, rangestart, rangeEnd) {
+    function editGolonganHarga(id, detail, item, harga, satuan, tipe, rangestart, rangeEnd, status) {
         if (tipe == "U") {
             $.ajax({
                 url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
@@ -497,7 +497,11 @@
             $("#golId").val(id);
             $("#golDetail").val(detail);
             $("#txtEditGolHrg").val(harga);
-            $('#editGolHrgUnit').modal('show');
+            $("#status").val(status);
+            $('#editGolHrgUnit').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
         } else {
             $.ajax({
                 url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
@@ -537,7 +541,11 @@
             $("#rangestartakhir").val(rangeEnd);
             $("#rangeendedit").val(rangeEnd);
             $("#txtEditGolHrgRange").val(harga);
-            $('#editGolHrgRange').modal('show');
+            $("#status").val(status);
+            $('#editGolHrgRange').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
         }
 
     }
