@@ -64,7 +64,7 @@
 
 						<div class="col-md-3 col-sm-6 col-xs-12">
 						<div class="form-group">
-							<select class="form-control form-control-sm" id="statusRec">
+							<select class="form-control form-control-sm select2" id="statusRec">
 								<option value="">Tampilkan Semua</option>
 								<option value="1">Approve 1</option>
 								<option value="2">Approve 2</option>

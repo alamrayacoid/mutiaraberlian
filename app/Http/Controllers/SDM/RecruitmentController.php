@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 use DB;
+use File;
 use Auth;
 use Currency;
 use Response;
@@ -23,7 +24,11 @@ class RecruitmentController extends Controller
       ->select('m_jabatan.*')
       ->where('j_id', '<', 7)
       ->get();
-    return view('sdm/prosesrekruitmen/index', compact('jabatan'));
+    $applicant = DB::table('d_applicant')
+      ->join('m_jabatan', 'a_position', 'j_id')
+      ->where('a_isactive', '=', 'Y')
+      ->get();
+    return view('sdm/prosesrekruitmen/index', compact('jabatan', 'applicant'));
   }
   // Recruitment ============================================================================================
   public function getList(Request $request)
@@ -270,13 +275,20 @@ class RecruitmentController extends Controller
 
     DB::beginTransaction();
     try {
-        DB::table('d_pelamar')
-          ->where('p_id', $id)
-          ->delete();
+        $destroy = DB::table('d_pelamar')->where('p_id', $id)->first();
+        //dd($destroy);
+      if ($destroy) {
+        file::delete(storage_path('/uploads/recruitment/' . $destroy->p_imgktp));
+        file::delete(storage_path('/uploads/recruitment/' . $destroy->p_imgfoto));
+        file::delete(storage_path('/uploads/recruitment/' . $destroy->img_ijazah));
+        file::delete(storage_path('/uploads/recruitment/' . $destroy->img_other));
+      }
 
-        DB::table('d_pelamarlanjutan')
-          ->where('pl_id', $id)
-          ->delete();
+      DB::table('d_pelamar')->where('p_id', $id)->delete();
+
+      DB::table('d_pelamarlanjutan')
+        ->where('pl_id', $id)
+        ->delete();
 
       DB::commit();
       return response()->json([
@@ -300,8 +312,9 @@ class RecruitmentController extends Controller
     $date_to = strtotime($request->date_to);
     $to      = date('Y-m-d', $date_to);
     $edu     = $request->education;
+    $posisi  = $request->position;
 
-    if ($edu != null) {
+    if ($edu != null && $posisi != null) {
       $datas = DB::table('d_pelamar')
         ->leftJoin('d_pelamarlanjutan', function($a){
           $a->on('p_id', '=', 'pl_id');
@@ -311,6 +324,33 @@ class RecruitmentController extends Controller
         ->where('p_state', 'Y')
         ->whereBetween('p_created', [$from, $to])
         ->where('p_education', '=', $edu)
+        ->where('p_applicant', '=', $posisi)
+        ->groupBy("p_id")
+        ->orderBy('p_name', 'asc')
+        ->get();
+    } else if ($edu != null && $posisi == null) {
+      $datas = DB::table('d_pelamar')
+        ->leftJoin('d_pelamarlanjutan', function($a){
+          $a->on('p_id', '=', 'pl_id');
+          $a->on('pl_isapproved', '=', 'p_state');
+          $a->on('pl_approve', '=', 'p_stateapprove');
+        })
+        ->where('p_state', 'Y')
+        ->whereBetween('p_created', [$from, $to])
+        ->where('p_education', '=', $edu)
+        ->groupBy("p_id")
+        ->orderBy('p_name', 'asc')
+        ->get();
+    } else if ($edu == null && $posisi != null) {
+      $datas = DB::table('d_pelamar')
+        ->leftJoin('d_pelamarlanjutan', function($a){
+          $a->on('p_id', '=', 'pl_id');
+          $a->on('pl_isapproved', '=', 'p_state');
+          $a->on('pl_approve', '=', 'p_stateapprove');
+        })
+        ->where('p_state', 'Y')
+        ->whereBetween('p_created', [$from, $to])
+        ->where('p_applicant', '=', $posisi)
         ->groupBy("p_id")
         ->orderBy('p_name', 'asc')
         ->get();

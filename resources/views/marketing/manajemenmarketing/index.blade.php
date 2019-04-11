@@ -56,14 +56,6 @@
 		var table_bar= $('#table_tahunan').DataTable();
 		var table_pus= $('#table_bulanan').DataTable();
 
-
-		$(document).on('click','.btn-preview-rekruitmen',function(){
-			window.location.href='{{route('rekruitmen.preview')}}'
-		});
-		$(document).on('click','.btn-proses-rekruitmen',function(){
-			window.location.href='{{route('rekruitmen.process')}}'
-		});
-
 		$(document).on('click', '.btn-rejected', function(){
 			var ini = $(this);
 			$.confirm({

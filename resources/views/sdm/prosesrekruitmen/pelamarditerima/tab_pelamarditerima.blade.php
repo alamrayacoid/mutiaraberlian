@@ -51,6 +51,19 @@
 								</select>
 							</div>
 						</div>
+						<div class="col-md-3 col-sm-6 col-xs-12">
+							<label>Posisi Yang Dilamar</label>
+						</div>
+						<div class="col-md-3 col-sm-6 col-xs-12">
+							<div class="form-group">
+								<select class="form-control form-control-sm select2" id="terima_position">
+									<option value="" selected>Tampilkan Semua</option>
+									@foreach($applicant as $key => $app)
+										<option value="{{$app->a_id}}">{{$app->j_name}}</option>
+									@endforeach
+								</select>
+							</div>
+						</div>
 					</div>
 				</fieldset>
 				<div class="table-responsive">

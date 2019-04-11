@@ -207,7 +207,7 @@
                 text: 'Ya',
                 action: function() {
                     return $.ajax({
-                        type: "post",
+                        type: "get",
                         url: delete_,
 							          data: {
 							              "_token": "{{ csrf_token() }}"
@@ -258,7 +258,8 @@
 				data: {
 					"date_from": $('#diterima_from').val(),
 					"date_to": $('#diterima_to').val(),
-					"education": $('#terima_edu').val()
+					"education": $('#terima_edu').val(),
+					"position": $('#terima_position').val()
 				}
 			},
 			columns: [
