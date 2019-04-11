@@ -287,7 +287,7 @@ class MarketingController extends Controller
                }
             }
         }
-        return $x;
+        return $idx;
     }
 
     public function checkHarga($konsigner, $item, $unit, $qty)
@@ -329,7 +329,7 @@ class MarketingController extends Controller
                 }
             }
         }
-        dd($z);
+//        dd($z);
         return Response::json($harga);
     }
 
