@@ -100,7 +100,15 @@ class HargaController extends Controller
             ->select('m_item.*', 'm_unit.*', 'pcd_price', 'pcd_unit', 'pcd_classprice', 'pcd_detailid', 'pcd_item', 'pcd_user as pcd_user', 'pcd_rangeqtyend as pcd_rangeqtyend', 'pcd_rangeqtystart as pcd_rangeqtystart', 'pcd_payment as pcd_payment', 'pcd_type as pcd_type', DB::raw('"Y" as status'))
             ->where('m_priceclassdt.pcd_classprice', '=', Crypt::decrypt($id));
 
-        $data = $datas->union($datax)->get();
+        if ($datas->count() > 0 && $datax->count() > 0) {
+            $data = $datas->union($datax)->get();
+        } else if ($datas->count() > 0 && $datax->count() == 0) {
+            $data = $datas->get();
+        } else if ($datas->count() == 0 && $datax->count() > 0) {
+            $data = $datax->get();
+        } else if ($datas->count() == 0 && $datax->count() == 0) {
+            $data = [];
+        }
 
         return Datatables::of($data)
             ->addIndexColumn()
@@ -506,6 +514,7 @@ class HargaController extends Controller
 
     public function editGolonganHargaRange(Request $request)
     {
+        $sts = '';
         try {
             $id = Crypt::decrypt($request->golIdRange);
             $detail = Crypt::decrypt($request->golDetailRange);
@@ -516,20 +525,20 @@ class HargaController extends Controller
         DB::beginTransaction();
         try {
             $check = DB::table('d_priceclassauthdt')
-                ->where('pcad_classprice', '=', Crypt::decrypt($request->golIdRange))
+                ->where('pcad_classprice', '=', $id)
                 ->where('pcad_item', '=', $request->golItemRange)
                 ->where('pcad_unit', '=', $request->satuanBarangRangeEdit)
                 ->where('pcad_type', '=', "R")
                 ->get();
 
             $check2 = DB::table('m_priceclassdt')
-                ->where('pcd_classprice', '=', Crypt::decrypt($request->golIdRange))
+                ->where('pcd_classprice', '=', $id)
                 ->where('pcd_item', '=', $request->golItemRange)
                 ->where('pcd_unit', '=', $request->satuanBarangRangeEdit)
                 ->where('pcd_type', '=', "R")
                 ->get();
 
-            $sts = '';
+
 
             if (count($check) > 0) {
                 if ($request->rangestartedit == $request->rangestartawal && $request->rangeendedit == $request->rangestartakhir) {

@@ -118,8 +118,9 @@
                                                         <td>
                                                             <input type="text"
                                                                    name="harga[]"
-                                                                   class="form-control form-control-sm input-rupiah harga"
+                                                                   class="form-control form-control-sm text-right harga"
                                                                    value="Rp. 0" readonly>
+                                                            <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p>
                                                         </td>
                                                         <td>
                                                             <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly>
@@ -242,7 +243,6 @@
                         $(".harga").eq(idxBarang).val("Rp. 0");
                         $(".subtotal").eq(idxBarang).val("Rp. 0");
                         $(".jumlah").eq(idxBarang).attr("readonly", true);
-                        $(".harga").eq(idxBarang).attr("readonly", true);
                         $(".satuan").eq(idxBarang).find('option').remove();
                         updateTotalTampil();
                     }else{
@@ -250,7 +250,6 @@
                         $(".harga").eq(idxBarang).val("Rp. 0");
                         $(".subtotal").eq(idxBarang).val("Rp. 0");
                         $(".jumlah").eq(idxBarang).attr("readonly", false);
-                        $(".harga").eq(idxBarang).attr("readonly", false);
                         updateTotalTampil();
                     }
                 } else if (evt.which <= 90 && evt.which >= 48)
@@ -263,14 +262,12 @@
                         $(".jumlah").eq(idxBarang).val(0);
                         $(".harga").eq(idxBarang).val("Rp. 0");
                         $(".jumlah").eq(idxBarang).attr("readonly", true);
-                        $(".harga").eq(idxBarang).attr("readonly", true);
                         $(".satuan").eq(idxBarang).find('option').remove();
                         updateTotalTampil();
                     }else{
                         $(".jumlah").eq(idxBarang).val(0);
                         $(".harga").eq(idxBarang).val("Rp. 0");
                         $(".jumlah").eq(idxBarang).attr("readonly", false);
-                        $(".harga").eq(idxBarang).attr("readonly", false);
                         updateTotalTampil();
                     }
                 }
@@ -285,11 +282,9 @@
 
             if ($(".itemid").eq(idxBarang).val() == "") {
                 $(".jumlah").eq(idxBarang).attr("readonly", true);
-                $(".harga").eq(idxBarang).attr("readonly", true);
                 $(".satuan").eq(idxBarang).find('option').remove();
             }else{
                 $(".jumlah").eq(idxBarang).attr("readonly", false);
-                $(".harga").eq(idxBarang).attr("readonly", false);
             }
 
             $('.btn-tambahp').on('click', function () {
@@ -413,35 +408,55 @@
                     .then(function (resp) {
                         $(".jumlah").eq(idx).val(resp.data);
 
-                        var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-                            jumlah  = [].map.call(inpJumlah, function( input ) {
-                                return parseInt(input.value);
-                            });
+                        var tmp_jumlah = $('.jumlah').eq(idx).val();
 
-                        var inpHarga = document.getElementsByClassName( 'harga' ),
-                            harga  = [].map.call(inpHarga, function( input ) {
-                                return input.value;
-                            });
+                        axios.get(baseUrl+'/marketing/konsinyasipusat/cek-harga/'+$("#kodeKonsigner").val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+tmp_jumlah)
+                            .then(function (res) {
+                                console.log(res.data);
+                                var price = res.data;
 
-                        for (var i = 0; i < jumlah.length; i++) {
-                            var hasil = 0;
-                            var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                            var jml = jumlah[i];
+                                if (isNaN(price)) {
+                                    price = 0;
+                                }
+                                if (price == 0) {
+                                    $('.unknow').eq(idx).css('display', 'block');
+                                } else {
+                                    $('.unknow').eq(idx).css('display', 'none');
+                                }
+                                $('.harga').eq(idx).val(convertToRupiah(price));
 
-                            if (jml == "") {
-                                jml = 0;
-                            }
+                                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                                        return parseInt(input.value);
+                                    });
 
-                            hasil += parseInt(hrg) * parseInt(jml);
+                                var inpHarga = document.getElementsByClassName( 'harga' ),
+                                    harga  = [].map.call(inpHarga, function( input ) {
+                                        return input.value;
+                                    });
 
-                            if (isNaN(hasil)) {
-                                hasil = 0;
-                            }
-                            hasil = convertToRupiah(hasil);
-                            $(".subtotal").eq(i).val(hasil);
+                                for (var i = 0; i < jumlah.length; i++) {
+                                    var hasil = 0;
+                                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                                    var jml = jumlah[i];
 
-                        }
-                        updateTotalTampil();
+                                    if (jml == "") {
+                                        jml = 0;
+                                    }
+
+                                    hasil += parseInt(hrg) * parseInt(jml);
+
+                                    if (isNaN(hasil)) {
+                                        hasil = 0;
+                                    }
+                                    hasil = convertToRupiah(hasil);
+                                    $(".subtotal").eq(i).val(hasil);
+
+                                }
+                                updateTotalTampil();
+                            })
+
+
                     })
                     .catch(function (error) {
                         messageWarning("Error", error);
@@ -491,7 +506,7 @@
                 '</select>'+
                 '</td>'+
                 '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>'+
-                '<td><input type="text" name="harga[]" class="form-control form-control-sm input-rupiah harga" value="Rp. 0" readonly></td>'+
+                '<td><input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="Rp. 0" readonly><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>'+
                 '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
                 '<td>'+
                 '<button class="btn btn-danger btn-hapus btn-sm" type="button">'+
@@ -527,7 +542,6 @@
                         $(".harga").eq(idxBarang).val("Rp. 0");
                         $(".subtotal").eq(idxBarang).val("Rp. 0");
                         $(".jumlah").eq(idxBarang).attr("readonly", true);
-                        $(".harga").eq(idxBarang).attr("readonly", true);
                         $(".satuan").eq(idxBarang).find('option').remove();
                         updateTotalTampil();
                     }else{
@@ -535,7 +549,6 @@
                         $(".harga").eq(idxBarang).val("Rp. 0");
                         $(".subtotal").eq(idxBarang).val("Rp. 0");
                         $(".jumlah").eq(idxBarang).attr("readonly", false);
-                        $(".harga").eq(idxBarang).attr("readonly", false);
                         updateTotalTampil();
                     }
                 } else if (evt.which <= 90 && evt.which >= 48)
@@ -548,14 +561,12 @@
                         $(".jumlah").eq(idxBarang).val(0);
                         $(".harga").eq(idxBarang).val("Rp. 0");
                         $(".jumlah").eq(idxBarang).attr("readonly", true);
-                        $(".harga").eq(idxBarang).attr("readonly", true);
                         $(".satuan").eq(idxBarang).find('option').remove();
                         updateTotalTampil();
                     }else{
                         $(".jumlah").eq(idxBarang).val(0);
                         $(".harga").eq(idxBarang).val("Rp. 0");
                         $(".jumlah").eq(idxBarang).attr("readonly", false);
-                        $(".harga").eq(idxBarang).attr("readonly", false);
                         updateTotalTampil();
                     }
                 }
@@ -637,11 +648,9 @@
                     $(".satuan").eq(idxBarang).append(option);
                     if ($(".itemid").eq(idxBarang).val() == "") {
                         $(".jumlah").eq(idxBarang).attr("readonly", true);
-                        $(".harga").eq(idxBarang).attr("readonly", true);
                         $(".satuan").eq(idxBarang).find('option').remove();
                     }else{
                         $(".jumlah").eq(idxBarang).attr("readonly", false);
-                        $(".harga").eq(idxBarang).attr("readonly", false);
                     }
                 }
             });
