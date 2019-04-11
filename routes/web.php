@@ -79,14 +79,19 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/masterdatautama/harga/index', 'Master\HargaController@dataharga')->name('dataharga.index');
     Route::get('/masterdatautama/harga/get-golongan', 'Master\HargaController@getGolongan')->name('dataharga.getgolongan');
+    Route::get('/masterdatautama/harga/get-golongan-hpa', 'Master\HargaController@getGolonganHPA')->name('dataharga.getgolonganhpa');
     Route::get('/masterdatautama/harga/delete-golongan/{id}', 'Master\HargaController@deleteGolongan')->name('dataharga.deletegolongan');
+    Route::get('/masterdatautama/harga/delete-golongan-hpa/{id}', 'Master\HargaController@deleteGolonganHPA')->name('dataharga.deletegolonganhpa');
     Route::post('/masterdatautama/harga/add-golongan', 'Master\HargaController@addGolongan')->name('dataharga.addgolongan');
+    Route::post('/masterdatautama/harga/add-golongan-hpa', 'Master\HargaController@addGolonganHPA')->name('dataharga.addgolonganhpa');
     Route::post('/masterdatautama/harga/edit-golongan', 'Master\HargaController@editGolongan')->name('dataharga.editgolongan');
+    Route::post('/masterdatautama/harga/edit-golongan-hpa', 'Master\HargaController@editGolonganHPA')->name('dataharga.editgolonganhpa');
     Route::get('/masterdatautama/harga/cari-barang', 'Master\HargaController@cariBarang')->name('dataharga.caribarang');
     Route::get('/masterdatautama/harga/get-satuan/{id}', 'Master\HargaController@getSatuan')->name('dataharga.getsatuan');
     Route::post('/masterdatautama/harga/add-golongan-harga', 'Master\HargaController@addGolonganHarga')->name('dataharga.addgolonganharga');
     Route::get('/masterdatautama/harga/get-data-need-approve', 'Master\HargaController@getDataNeddApprove')->name('dataharga.getdataneedapprove');
     Route::get('/masterdatautama/harga/get-golongan-harga/{id}', 'Master\HargaController@getGolonganHarga')->name('dataharga.getgolonganharga');
+    Route::get('/masterdatautama/harga/get-golongan-harga-hpa/{id}', 'Master\HargaController@getGolonganHargaHPA')->name('dataharga.getgolonganhargahpa');
     Route::get('/masterdatautama/harga/delete-golongan-harga/{id}/{detail}/{status}', 'Master\HargaController@deleteGolonganHarga')->name('dataharga.deletegolonganharga');
     Route::post('/masterdatautama/harga/edit-golongan-harga-unit', 'Master\HargaController@editGolonganHargaUnit')->name('dataharga.editgolonganhargaunit');
     Route::post('/masterdatautama/harga/edit-golongan-harga-range', 'Master\HargaController@editGolonganHargaRange')->name('dataharga.editgolonganhargarange');

@@ -3,12 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1c8b318e-c138-400d-afca-6445ceb3fae0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/MarketingController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/MarketingController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgRange.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgRange.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/index.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
@@ -126,28 +122,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8165">
-              <caret line="364" column="124" selection-start-line="364" selection-start-column="124" selection-end-line="364" selection-end-column="124" />
+            <state relative-caret-position="206">
+              <caret line="82" column="94" selection-start-line="82" selection-start-column="94" selection-end-line="82" selection-end-column="94" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/MarketingController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1359">
-              <caret line="331" column="13" selection-start-line="331" selection-start-column="13" selection-end-line="331" selection-end-column="13" />
-              <folding>
-                <element signature="e#40#68#0#PHP" expanded="true" />
-                <element signature="e#1313#1440#0#PHP" />
-                <element signature="e#1446#1614#0#PHP" />
-                <element signature="e#2519#5019#0#PHP" />
-                <element signature="e#5025#5726#0#PHP" />
-                <element signature="e#5732#7515#0#PHP" />
-                <element signature="e#7521#9437#0#PHP" />
               </folding>
             </state>
           </provider>
@@ -156,21 +134,71 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="437">
-              <caret line="548" column="123" selection-start-line="548" selection-start-column="32" selection-end-line="548" selection-end-column="123" />
+            <state relative-caret-position="101">
+              <caret line="348" column="42" selection-start-line="348" selection-start-column="42" selection-end-line="348" selection-end-column="42" />
+              <folding>
+                <element signature="e#2050#3379#0#PHP" />
+                <element signature="e#3385#7880#0#PHP" />
+                <element signature="e#9226#13721#0#PHP" />
+                <element signature="e#7886#8637#0#PHP" />
+                <element signature="e#14493#15244#0#PHP" />
+                <element signature="e#8643#9370#0#PHP" />
+                <element signature="e#16018#16745#0#PHP" />
+                <element signature="e#9376#9925#0#PHP" />
+                <element signature="e#17327#17876#0#PHP" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="208">
+              <caret line="253" column="60" selection-start-line="253" selection-start-column="60" selection-end-line="253" selection-end-column="60" />
+              <folding>
+                <element signature="e#2765#3316#0#HTML" />
+                <element signature="e#4581#5550#0#HTML" />
+                <element signature="e#5619#6105#0#HTML" />
+                <element signature="e#6165#6343#0#HTML" />
+                <element signature="e#6406#6940#0#HTML" />
+                <element signature="e#8688#9222#0#HTML" />
+                <element signature="e#7007#7593#0#HTML" />
+                <element signature="e#10091#10677#0#HTML" />
+                <element signature="e#7899#13689#0#HTML" />
+                <element signature="e#13755#13984#0#HTML" />
+                <element signature="e#14059#15669#0#HTML" />
+                <element signature="e#15744#17637#0#HTML" />
+                <element signature="e#17672#18608#0#HTML" />
+                <element signature="e#24597#25708#0#HTML" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/hargaAgen.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="414" column="52" selection-start-line="414" selection-start-column="52" selection-end-line="414" selection-end-column="52" />
-              <folding>
-                <element signature="n#style#0;n#p#0;n#td#3;n#tr#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-              </folding>
+            <state relative-caret-position="49">
+              <caret line="13" column="58" lean-forward="true" selection-start-line="13" selection-start-column="58" selection-end-line="13" selection-end-column="58" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/rangeHPA.blade.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="588">
+              <caret line="26" column="48" lean-forward="true" selection-start-line="24" selection-start-column="12" selection-end-line="26" selection-end-column="48" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/satuanHPA.blade.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="598">
+              <caret line="26" column="59" selection-start-line="26" selection-start-column="59" selection-end-line="26" selection-end-column="59" />
             </state>
           </provider>
         </entry>
@@ -179,36 +207,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>masterdatautama/harga/get-golongan-harga</find>
-      <find>hapusGolonganHarga</find>
-      <find>editGolHrgUnit</find>
-      <find>masterdatautama/harga/delete-golongan-harga</find>
-      <find>dataharga.editgolonganhargaunit</find>
-      <find>formEditGolHrgUnit</find>
-      <find>status</find>
-      <find>editGolonganHarga</find>
-      <find>table_golonganharga</find>
-      <find>formsetharga</find>
-      <find>dataharga.addgolonganharga</find>
-      <find>marketing/konsinyasipusat/penempatanproduk/create</find>
-      <find>barang</find>
-      <find>harga</find>
-      <find>jumlah</find>
-      <find>marketing/konsinyasipusat/cek-stok</find>
-      <find>marketing/konsinyasipusat/cari-konsigner</find>
-      <find>notifikasiotorisasi/otorisasi/perubahanhargajual/index</find>
-      <find>idKonsigner</find>
-      <find>satuanBarangUnitEdit</find>
-      <find>consol</find>
-      <find>cons</find>
-      <find>formEditGolHrgRange</find>
-      <find>golIdRange</find>
       <find>id</find>
       <find>dd(</find>
-      <find>masterdatautama/harga/index</find>
       <find>checkHarga</find>
       <find>marketing/marketingarea/orderproduk/create</find>
       <find>unknow</find>
+      <find>masterdatautama/harga/index</find>
+      <find>golongan</find>
+      <find>dataharga.getgolongan</find>
+      <find>tbl_gln</find>
+      <find>addGolonganHarga</find>
+      <find>barang</find>
+      <find>jenisharga</find>
+      <find>idGol</find>
+      <find>txtGol</find>
+      <find>table_golonganharga</find>
+      <find>masterdatautama/harga/get-golongan-harga/</find>
+      <find>addGolonganHargaHPA</find>
+      <find>tbl_glnHPA</find>
+      <find>btngolongan</find>
+      <find>formgln</find>
+      <find>dataharga.addgolongan</find>
+      <find>btngolonganHPA</find>
+      <find>editGolongan</find>
+      <find>formedtgln</find>
+      <find>dataharga.editgolongan</find>
+      <find>idGolonganHPA</find>
+      <find>formedtglnHPA</find>
+      <find>oninput=&quot;handleInput(event)&quot;</find>
+      <find>hapusGolongan</find>
+      <find>masterdatautama/harga/delete-golongan</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -218,11 +246,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/d_productionorder.php" />
-        <option value="$PROJECT_DIR$/assets/css/custom-style.css" />
-        <option value="$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/list.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/penerimaan.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/produksi/pembayaran/bayar.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/produksi/pembayaran/index.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Produksi/PembayaranController.php" />
         <option value="$PROJECT_DIR$/resources/views/produksi/orderproduksi/index.blade.php" />
@@ -263,12 +286,17 @@
         <option value="$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgRange.blade.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" />
-        <option value="$PROJECT_DIR$/routes/web.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/MarketingController.php" />
+        <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/rangeHPA.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/satuanHPA.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/hargaAgen.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolonganHPA.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/addGolonganHPA.blade.php" />
+        <option value="$PROJECT_DIR$/routes/web.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" />
+        <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" />
       </list>
     </option>
   </component>
@@ -584,6 +612,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="add_unversioned_files" value="$PROJECT_DIR$/storage/framework/views/7e90beb819008f4b53e71a93efed7e8f70f73df7.php" />
     <property name="editor.config.ad.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/.idea/workspace.xml" />
     <property name="nodejs_package_manager_path" value="npm" />
@@ -673,42 +702,7 @@
       <workItem from="1554689996298" duration="7307000" />
       <workItem from="1554776933486" duration="10576000" />
       <workItem from="1554860650962" duration="18355000" />
-      <workItem from="1554947942967" duration="5333000" />
-    </task>
-    <task id="LOCAL-00090" summary="mutiara">
-      <created>1553833671732</created>
-      <option name="number" value="00090" />
-      <option name="presentableId" value="LOCAL-00090" />
-      <option name="project" value="LOCAL" />
-      <updated>1553833671732</updated>
-    </task>
-    <task id="LOCAL-00091" summary="mutiara">
-      <created>1554170359609</created>
-      <option name="number" value="00091" />
-      <option name="presentableId" value="LOCAL-00091" />
-      <option name="project" value="LOCAL" />
-      <updated>1554170359610</updated>
-    </task>
-    <task id="LOCAL-00092" summary="mutiara">
-      <created>1554178346817</created>
-      <option name="number" value="00092" />
-      <option name="presentableId" value="LOCAL-00092" />
-      <option name="project" value="LOCAL" />
-      <updated>1554178346820</updated>
-    </task>
-    <task id="LOCAL-00093" summary="mutiara">
-      <created>1554180065560</created>
-      <option name="number" value="00093" />
-      <option name="presentableId" value="LOCAL-00093" />
-      <option name="project" value="LOCAL" />
-      <updated>1554180065560</updated>
-    </task>
-    <task id="LOCAL-00094" summary="mutiara">
-      <created>1554187479529</created>
-      <option name="number" value="00094" />
-      <option name="presentableId" value="LOCAL-00094" />
-      <option name="project" value="LOCAL" />
-      <updated>1554187479529</updated>
+      <workItem from="1554947942967" duration="16663000" />
     </task>
     <task id="LOCAL-00095" summary="mutiara">
       <created>1554187931003</created>
@@ -1018,16 +1012,52 @@
       <option name="project" value="LOCAL" />
       <updated>1554878371693</updated>
     </task>
-    <option name="localTasksCounter" value="139" />
+    <task id="LOCAL-00139" summary="mutiara">
+      <created>1554953403707</created>
+      <option name="number" value="00139" />
+      <option name="presentableId" value="LOCAL-00139" />
+      <option name="project" value="LOCAL" />
+      <updated>1554953403708</updated>
+    </task>
+    <task id="LOCAL-00140" summary="mutiara">
+      <created>1554953441956</created>
+      <option name="number" value="00140" />
+      <option name="presentableId" value="LOCAL-00140" />
+      <option name="project" value="LOCAL" />
+      <updated>1554953441956</updated>
+    </task>
+    <task id="LOCAL-00141" summary="mutiara">
+      <created>1554957259673</created>
+      <option name="number" value="00141" />
+      <option name="presentableId" value="LOCAL-00141" />
+      <option name="project" value="LOCAL" />
+      <updated>1554957259673</updated>
+    </task>
+    <task id="LOCAL-00142" summary="mutiara">
+      <created>1554972665867</created>
+      <option name="number" value="00142" />
+      <option name="presentableId" value="LOCAL-00142" />
+      <option name="project" value="LOCAL" />
+      <updated>1554972665867</updated>
+    </task>
+    <task id="LOCAL-00143" summary="mutiara">
+      <created>1554973710559</created>
+      <option name="number" value="00143" />
+      <option name="presentableId" value="LOCAL-00143" />
+      <option name="project" value="LOCAL" />
+      <updated>1554973710559</updated>
+    </task>
+    <option name="localTasksCounter" value="144" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="424873000" />
+    <option name="totallyTimeSpent" value="436203000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1366" height="768" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2090909" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17272727" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="npm" order="3" side_tool="true" />
@@ -1080,79 +1110,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="mutiara" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/tab_gantibarang.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="62" selection-start-column="62" selection-end-column="62" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/InventoryController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2898">
-          <caret line="194" column="14" selection-start-line="194" selection-start-column="14" selection-end-line="194" selection-end-column="14" />
-          <folding>
-            <element signature="e#40#68#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/modal-search.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="28" column="102" selection-start-line="28" selection-start-column="94" selection-end-line="28" selection-end-column="102" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/PenerimaanProduksiController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="361" column="22" selection-start-line="361" selection-start-column="16" selection-end-line="361" selection-end-column="22" />
-          <folding>
-            <element signature="e#39#46#0#PHP" expanded="true" />
-            <element signature="e#313#416#0#PHP" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/modal.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1256">
-          <caret line="10" column="38" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/orderproduksi/nota.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="7" column="57" lean-forward="true" selection-start-line="7" selection-start-column="57" selection-end-line="7" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/nota.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="23">
-          <caret line="21" column="12" selection-start-line="21" selection-start-column="12" selection-end-line="21" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/pembayaran/bayar.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="89" column="50" selection-start-line="89" selection-start-column="39" selection-end-line="89" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/create.blade.php">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/create.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="54" column="150" lean-forward="true" selection-start-line="54" selection-start-column="122" selection-end-line="54" selection-end-column="150" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/edit_return.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="179">
@@ -1296,23 +1253,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/layouts/_script.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
-          <caret line="181" column="39" lean-forward="true" selection-start-line="181" selection-start-column="39" selection-end-line="181" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="385" column="40" selection-start-line="385" selection-start-column="40" selection-end-line="385" selection-end-column="40" />
-          <folding>
-            <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/assets/img/leaf.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -1366,22 +1306,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/addGolongan.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-27" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/storage/framework/views/c5d88770846b0d46dd724b9bb07d434c6727566e.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="196">
           <caret line="541" column="13" selection-start-line="541" selection-start-column="13" selection-end-line="541" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="23">
-          <caret line="27" column="42" selection-start-line="27" selection-start-column="38" selection-end-line="27" selection-end-column="42" />
         </state>
       </provider>
     </entry>
@@ -1413,16 +1341,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-235">
-          <caret line="529" column="49" lean-forward="true" selection-start-line="529" selection-start-column="49" selection-end-line="529" selection-end-column="49" />
-          <folding>
-            <element signature="e#89#95#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/marketing/marketingarea/orderproduk/create.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="179">
@@ -1437,16 +1355,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/web.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8165">
-          <caret line="364" column="124" selection-start-line="364" selection-start-column="124" selection-end-line="364" selection-end-column="124" />
-          <folding>
-            <element signature="e#7#389#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="184">
@@ -1458,17 +1366,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="548" column="123" selection-start-line="548" selection-start-column="32" selection-end-line="548" selection-end-column="123" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/MarketingController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1359">
-          <caret line="331" column="13" selection-start-line="331" selection-start-column="13" selection-end-line="331" selection-end-column="13" />
+        <state relative-caret-position="252">
+          <caret line="282" column="32" lean-forward="true" selection-start-line="282" selection-start-column="32" selection-end-line="282" selection-end-column="32" />
           <folding>
             <element signature="e#40#68#0#PHP" expanded="true" />
             <element signature="e#1313#1440#0#PHP" />
@@ -1477,6 +1378,158 @@
             <element signature="e#5025#5726#0#PHP" />
             <element signature="e#5732#7515#0#PHP" />
             <element signature="e#7521#9437#0#PHP" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="46">
+          <caret line="2" column="46" lean-forward="true" selection-start-line="2" selection-start-column="46" selection-end-line="2" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/range.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="46">
+          <caret line="2" column="35" lean-forward="true" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/satuan.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="322">
+          <caret line="14" column="72" selection-start-line="14" selection-start-column="72" selection-end-line="14" selection-end-column="72" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/rangeHPA.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="588">
+          <caret line="26" column="48" lean-forward="true" selection-start-line="24" selection-start-column="12" selection-end-line="26" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/satuanHPA.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="598">
+          <caret line="26" column="59" selection-start-line="26" selection-start-column="59" selection-end-line="26" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/addGolongan.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="8" column="18" lean-forward="true" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/hargaAgen.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="49">
+          <caret line="13" column="58" lean-forward="true" selection-start-line="13" selection-start-column="58" selection-end-line="13" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolongan.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="9" column="64" lean-forward="true" selection-start-line="9" selection-start-column="64" selection-end-line="9" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="385" column="40" selection-start-line="385" selection-start-column="40" selection-end-line="385" selection-end-column="40" />
+          <folding>
+            <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="54" column="150" selection-start-line="54" selection-start-column="122" selection-end-line="54" selection-end-column="150" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/layouts/_script.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="259">
+          <caret line="181" column="24" selection-start-line="181" selection-start-column="13" selection-end-line="181" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolonganHPA.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="17" column="161" selection-start-line="17" selection-start-column="161" selection-end-line="17" selection-end-column="161" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/web.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="206">
+          <caret line="82" column="94" selection-start-line="82" selection-start-column="94" selection-end-line="82" selection-end-column="94" />
+          <folding>
+            <element signature="e#7#389#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="101">
+          <caret line="348" column="42" selection-start-line="348" selection-start-column="42" selection-end-line="348" selection-end-column="42" />
+          <folding>
+            <element signature="e#2050#3379#0#PHP" />
+            <element signature="e#3385#7880#0#PHP" />
+            <element signature="e#9226#13721#0#PHP" />
+            <element signature="e#7886#8637#0#PHP" />
+            <element signature="e#14493#15244#0#PHP" />
+            <element signature="e#8643#9370#0#PHP" />
+            <element signature="e#16018#16745#0#PHP" />
+            <element signature="e#9376#9925#0#PHP" />
+            <element signature="e#17327#17876#0#PHP" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/storage/framework/views/7e90beb819008f4b53e71a93efed7e8f70f73df7.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1038">
+          <caret line="140" column="67" lean-forward="true" selection-start-line="140" selection-start-column="67" selection-end-line="140" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/addGolonganHPA.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="368">
+          <caret line="16" column="115" selection-start-line="16" selection-start-column="108" selection-end-line="16" selection-end-column="115" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="253" column="60" selection-start-line="253" selection-start-column="60" selection-end-line="253" selection-end-column="60" />
+          <folding>
+            <element signature="e#2765#3316#0#HTML" />
+            <element signature="e#4581#5550#0#HTML" />
+            <element signature="e#5619#6105#0#HTML" />
+            <element signature="e#6165#6343#0#HTML" />
+            <element signature="e#6406#6940#0#HTML" />
+            <element signature="e#8688#9222#0#HTML" />
+            <element signature="e#7007#7593#0#HTML" />
+            <element signature="e#10091#10677#0#HTML" />
+            <element signature="e#7899#13689#0#HTML" />
+            <element signature="e#13755#13984#0#HTML" />
+            <element signature="e#14059#15669#0#HTML" />
+            <element signature="e#15744#17637#0#HTML" />
+            <element signature="e#17672#18608#0#HTML" />
+            <element signature="e#24597#25708#0#HTML" />
           </folding>
         </state>
       </provider>

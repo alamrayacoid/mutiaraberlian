@@ -8,7 +8,7 @@
         <p class="title-description">
             <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
             / <span>Marketing</span>
-            / <a href="{{route('mngagen.index')}}"><span>Manajemen Marketing Area </span></a>
+            / <a href="{{route('manajemenagen.index')}}"><span>Manajemen Marketing Area </span></a>
             / <span class="text-primary" style="font-weight: bold;"> Tambah Data Order Produk ke Cabang </span>
         </p>
     </div>

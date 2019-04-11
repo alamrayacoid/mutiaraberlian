@@ -42,13 +42,16 @@
 			<div class="col-12">
 				<ul class="nav nav-pills mb-3" id="Tabzs">
                     <li class="nav-item">
-                        <a href="#golongan" class="nav-link active" data-target="#golongan" aria-controls="golongan" data-toggle="tab" role="tab">Data Golongan</a>
+                        <a href="#golongan" class="nav-link active" data-target="#golongan" aria-controls="golongan" data-toggle="tab" role="tab">Harga Golongan</a>
                     </li>
                     {{--<li class="nav-item">
                         <a href="" class="nav-link" data-target="#default" aria-controls="default" data-toggle="tab" role="tab">Harga Default</a>
                     </li>--}}
                     <li class="nav-item">
                         <a href="#needapprove" class="nav-link" data-target="#needapprove" aria-controls="needapprove" data-toggle="tab" role="tab">Belum Disetujui</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#hpa" class="nav-link" data-target="#hpa" aria-controls="hpa" data-toggle="tab" role="tab">Harga Penjualan Agen</a>
                     </li>
                 </ul>				
 		
@@ -57,7 +60,10 @@
 					@include('masterdatautama.harga.golongan.index')
 					@include('masterdatautama.harga.default.index')
 					@include('masterdatautama.harga.golongan.addGolongan')
+					@include('masterdatautama.harga.golongan.addGolonganHPA')
 					@include('masterdatautama.harga.golongan.editGolongan')
+					@include('masterdatautama.harga.golongan.editGolonganHPA')
+					@include('masterdatautama.harga.golongan.hargaAgen')
 					@include('masterdatautama.harga.golongan.editGolHrgUnit')
 					@include('masterdatautama.harga.golongan.editGolHrgRange')
                     @include('masterdatautama.harga.pending.index')
@@ -74,7 +80,7 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-    var tbl_gln, tbl_item, tbl_napp;
+    var tbl_gln, tbl_item, tbl_itemHPA, tbl_napp, tbl_glnHPA;
 	$(document).ready(function(){
 	    if ($("#idGol").val() == "") {
 	        $(".barang").attr('disabled', true);
@@ -82,6 +88,15 @@
         } else {
             $(".barang").attr('disabled', false);
             $("#jenisharga").attr('disabled', false);
+        }
+
+	    //
+        if ($("#idGolHPA").val() == "") {
+            $(".barangHPA").attr('disabled', true);
+            $("#jenishargaHPA").attr('disabled', true);
+        } else {
+            $(".barangHPA").attr('disabled', false);
+            $("#jenishargaHPA").attr('disabled', false);
         }
 
         tbl_napp = $('#table-needappr').DataTable({
@@ -122,8 +137,29 @@
             ],
             dom: 'l<"toolbar">frtip',
             initComplete: function(){
-                $("div.toolbar")
-                    .html('<button type="button" id="btngolongan" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Tambah</button>');
+                $("div.toolbar").html('<button type="button" id="btngolongan" class="btn btn-primary"><i class="fa fa-plus"></i></button>');
+            }
+        });
+
+        tbl_glnHPA = $('#table_golonganHPA').DataTable({
+            "paging":   false,
+            "ordering": false,
+            "info":     false,
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('dataharga.getgolonganhpa') }}",
+                type: "get"
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'sp_name'},
+                {data: 'action'}
+            ],
+            dom: 'l<"toolbar">frtip',
+            initComplete: function(){
+                $("div.toolbar").html('<button type="button" id="btngolonganHPA" class="btn btn-primary"><i class="fa fa-plus"></i></button>');
             }
         });
 
@@ -134,9 +170,21 @@
             "searching": false,
     	});
 
+        tbl_itemHPA = $('#table_golonganhargaHPA').DataTable({
+            "paging":   false,
+            "ordering": false,
+            "info":     false,
+            "searching": false,
+        });
+
 		$(document).on('click','#btngolongan', function (evt) {
             evt.preventDefault();
             $('#addgolongan').modal('show');
+        })
+
+        $(document).on('click','#btngolonganHPA', function (evt) {
+            evt.preventDefault();
+            $('#addgolonganHPA').modal('show');
         })
 
 		$(document).on('click','.btn-edit-golonganharga',function(){
@@ -205,16 +253,38 @@
 
         $(document).on('submit', '#formgln', function (evt) {
             evt.preventDefault();
-            var data = $('#formgln').serialize();
-            axios.post('{{route("dataharga.addgolongan")}}', data).then(function (response) {
-                if (response.data.status == "Success") {
-                    messageSuccess("Berhasil", "Data berhasil disimpan!");
-                    $('#formgln').trigger("reset");
-                    reloadTable();
-                } else {
-                    messageWarning("Gagal", "Data gagal disimpan");
-                }
-            })
+            if ($("#nama").val() == "") {
+                messageWarning("Peringatan", "Kolom nama golongan tidak boleh kosong");
+            } else {
+                var data = $('#formgln').serialize();
+                axios.post('{{route("dataharga.addgolongan")}}', data).then(function (response) {
+                    if (response.data.status == "Success") {
+                        messageSuccess("Berhasil", "Data berhasil disimpan!");
+                        $('#formgln').trigger("reset");
+                        reloadTable();
+                    } else {
+                        messageWarning("Gagal", "Data gagal disimpan");
+                    }
+                })
+            }
+        });
+
+        $(document).on('submit', '#formglnHPA', function (evt) {
+            evt.preventDefault();
+            if ($("#namaHPA").val() == "") {
+                messageWarning("Peringatan", "Kolom nama golongan tidak boleh kosong");
+            } else {
+                var data = $('#formglnHPA').serialize();
+                axios.post('{{route("dataharga.addgolonganhpa")}}', data).then(function (response) {
+                    if (response.data.status == "Success") {
+                        messageSuccess("Berhasil", "Data berhasil disimpan!");
+                        $('#formglnHPA').trigger("reset");
+                        tbl_glnHPA.ajax.reload();
+                    } else {
+                        messageWarning("Gagal", "Data gagal disimpan");
+                    }
+                })
+            }
         });
 
         $(document).on('submit', '#formedtgln', function (evt) {
@@ -233,11 +303,35 @@
             })
         })
 
+        $(document).on('submit', '#formedtglnHPA', function (evt) {
+            evt.preventDefault();
+            loadingShow();
+            var data = $('#formedtglnHPA').serialize();
+            axios.post('{{route("dataharga.editgolonganhpa")}}', data).then(function (response) {
+                if (response.data.status == "Success") {
+                    loadingHide();
+                    messageSuccess("Berhasil", "Data berhasil perbarui!");
+                    tbl_glnHPA.ajax.reload();
+                } else {
+                    loadingHide();
+                    messageWarning("Gagal", "Data gagal diperbarui!");
+                }
+            })
+        })
+
         $(".barang").autocomplete({
             source: baseUrl + '/masterdatautama/harga/cari-barang',
             minLength: 1,
             select: function (event, data) {
                 setItem(data.item);
+            }
+        });
+
+        $(".barangHPA").autocomplete({
+            source: baseUrl + '/masterdatautama/harga/cari-barang',
+            minLength: 1,
+            select: function (event, data) {
+                setItemHPA(data.item);
             }
         });
 
@@ -450,8 +544,31 @@
         });
     }
 
+    function setItemHPA(info) {
+        $("#idBarangHPA").val(info.data.i_id)
+        $("#satuanBarangHPA").find('option').remove();
+        $("#satuanrangeHPA").find('option').remove();
+        $.ajax({
+            url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+info.data.i_id,
+            type: 'GET',
+            success: function( resp ) {
+                var option = '';
+                option += '<option value="'+resp.id1+'">'+resp.unit1+'</option>';
+                if (resp.id2 != null && resp.id2 != resp.id1) {
+                    option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                }
+                if (resp.id3 != null && resp.id3 != resp.id1) {
+                    option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                }
+                $("#satuanBarangHPA").append(option);
+                $("#satuanrangeHPA").append(option);
+            }
+        });
+    }
+
 	function reloadTable() {
         tbl_gln.ajax.reload();
+        tbl_glnHPA.ajax.reload();
     }
 
     function editGolongan(id, name) {
@@ -460,8 +577,18 @@
         $('#editgolongan').modal('show');
     }
 
+    function editGolonganHPA(id, name) {
+        $('#idGolonganHPA').val(id);
+        $('#namaGolonganHPA').val(name);
+        $('#editgolonganHPA').modal('show');
+    }
+
 	function hapusGolongan(id) {
         deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan/"+id);
+    }
+
+    function hapusGolonganHPA(id) {
+        deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan-hpa/"+id);
     }
 
     function editGolonganHarga(id, detail, item, harga, satuan, tipe, rangestart, rangeEnd, status) {
@@ -614,6 +741,40 @@
             serverSide: true,
             ajax: {
                 url: "{{ url('/masterdatautama/harga/get-golongan-harga/') }}"+"/"+$("#idGol").val(),
+                type: "get"
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'item'},
+                {data: 'jenis'},
+                {data: 'range'},
+                {data: 'satuan'},
+                {data: 'harga'},
+                {data: 'jenis_pembayaran'},
+                {data: 'status'},
+                {data: 'action'}
+            ]
+        });
+    }
+
+    function addGolonganHargaHPA(id, name) {
+        $(".barangHPA").attr('disabled', false);
+        $("#jenishargaHPA").attr('disabled', false);
+        $('#idGolHPA').val(id);
+        $('#txtGolHPA').text(name);
+        if ($.fn.DataTable.isDataTable("#table_golonganhargaHPA")) {
+            $('#table_golonganhargaHPA').DataTable().clear().destroy();
+        }
+        tbl_itemHPA = $('#table_golonganhargaHPA').DataTable({
+            "paging":   false,
+            "ordering": false,
+            "info":     false,
+            "searching": false,
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('/masterdatautama/harga/get-golongan-harga-hpa/') }}"+"/"+$("#idGolHPA").val(),
                 type: "get"
             },
             columns: [

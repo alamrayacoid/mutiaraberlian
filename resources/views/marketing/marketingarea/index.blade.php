@@ -367,7 +367,11 @@
 		$.ajax({
 			url: "{{ url('/marketing/marketingarea/orderproduk/detail') }}"+"/"+id,
 			type: "get",
+      beforeSend: function () {
+          loadingShow();
+      },
 			success:function(res) {
+        loadingHide();
 				$('#modalOrderCabang').modal('show');
 				$('#cabang').val(res.data2.comp);
 				$('#agen').val(res.data2.agen);

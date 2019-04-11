@@ -78,6 +78,27 @@ class HargaController extends Controller
             ->make(true);
     }
 
+    public function getGolonganHPA()
+    {
+        $datas = DB::table('d_salesprice')->orderBy('sp_name', 'asc');
+        return Datatables::of($datas)
+            ->addIndexColumn()
+            ->addColumn('action', function ($datas) {
+                return '<center><div class="btn-group btn-group-sm">
+                                            <button class="btn btn-warning" title="Edit"
+                                                    type="button" onclick="editGolonganHPA(\'' . Crypt::encrypt($datas->sp_id) . '\', \'' . $datas->sp_name . '\')"><i class="fa fa-pencil"></i></button>
+                                            <button class="btn btn-danger" type="button"
+                                                    title="Hapus" onclick="hapusGolonganHPA(\'' . Crypt::encrypt($datas->sp_id) . '\')"><i class="fa fa-trash"></i></button>
+                                            <button class="btn btn-primary" title="add"
+                                                    type="button" onclick="addGolonganHargaHPA(\'' . Crypt::encrypt($datas->sp_id) . '\', \'' . $datas->sp_name . '\')"><i class="fa fa-arrow-right"></i>
+                                            </button>
+                                        </div></center>';
+
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+
     public function getGolonganHarga($id)
     {
         $datas = DB::table('d_priceclassauthdt')
@@ -151,17 +172,115 @@ class HargaController extends Controller
             ->make(true);
     }
 
+    public function getGolonganHargaHPA($id)
+    {
+        $datas = DB::table('d_salespriceauth')
+            ->join('m_item', function ($item) {
+                $item->on('d_salespriceauth.spa_item', '=', 'm_item.i_id');
+            })
+            ->join('m_unit', function ($unit) {
+                $unit->on('d_salespriceauth.spa_unit', '=', 'm_unit.u_id');
+            })
+            ->select('m_item.*', 'm_unit.*', 'spa_price as pcd_price', 'spa_salesprice as pcd_classprice', 'spa_unit as pcd_unit', 'spa_detailid as pcd_detailid', 'spa_item as pcd_item', 'spa_user as pcd_user', 'spa_rangeqtyend as pcd_rangeqtyend', 'spa_rangeqtystart as pcd_rangeqtystart', 'spa_payment as pcd_payment', 'spa_type as pcd_type', DB::raw('"N" as status'))
+            ->where('d_salespriceauth.spa_salesprice', '=', Crypt::decrypt($id));
+
+        $datax = DB::table('d_salespricedt')
+            ->join('m_item', function ($item) {
+                $item->on('d_salespricedt.spd_item', '=', 'm_item.i_id');
+            })
+            ->join('m_unit', function ($unit) {
+                $unit->on('d_salespricedt.spd_unit', '=', 'm_unit.u_id');
+            })
+            ->select('m_item.*', 'm_unit.*', 'spd_price as pcd_price', 'spd_unit as pcd_unit', 'spd_salesprice as pcd_classprice', 'spd_detailid as pcd_detailid', 'spd_item as pcd_item', 'spd_user as pcd_user', 'spd_rangeqtyend as pcd_rangeqtyend', 'spd_rangeqtystart as pcd_rangeqtystart', 'spd_payment as pcd_payment', 'spd_type as pcd_type', DB::raw('"Y" as status'))
+            ->where('d_salespricedt.spd_salesprice', '=', Crypt::decrypt($id));
+
+        if ($datas->count() > 0 && $datax->count() > 0) {
+            $data = $datas->union($datax)->get();
+        } else if ($datas->count() > 0 && $datax->count() == 0) {
+            $data = $datas->get();
+        } else if ($datas->count() == 0 && $datax->count() > 0) {
+            $data = $datax->get();
+        } else if ($datas->count() == 0 && $datax->count() == 0) {
+            $data = [];
+        }
+
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('item', function ($data) {
+                return $data->i_name;
+            })
+            ->addColumn('jenis', function ($data) {
+                return $data->pcd_type == "R" ? "Range" : "Unit";
+            })
+            ->addColumn('range', function ($data) {
+                $end = ($data->pcd_rangeqtyend == "0") ? "~" : $data->pcd_rangeqtyend;
+                return $data->pcd_rangeqtystart . '-' . $end;
+            })
+            ->addColumn('satuan', function ($data) {
+                return $data->u_name;
+            })
+            ->addColumn('harga', function ($data) {
+                return '<span class="text-right">' . Currency::addRupiah($data->pcd_price) . '</span>';
+            })
+            ->addColumn('jenis_pembayaran', function ($data) {
+                if ($data->pcd_payment == "MA") {
+                    return "Marketing Area";
+                } else if ($data->pcd_payment == "A") {
+                    return "Agen";
+                } else if ($data->pcd_payment == "SA") {
+                    return "Sub Agen";
+                }
+            })
+            ->addColumn('action', function ($data) {
+                return '<center><div class="btn-group btn-group-sm">
+                                            <button class="btn btn-warning" title="Edit"
+                                                    type="button" onclick="editGolonganHargaHPA(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->pcd_item . '\', \'' . Currency::addRupiah($data->pcd_price) . '\', \'' . $data->pcd_unit . '\', \'' . $data->pcd_type . '\', \'' . $data->pcd_rangeqtystart . '\', \'' . $data->pcd_rangeqtyend . '\', \'' . $data->status . '\')"><i class="fa fa-pencil"></i></button>
+                                            <button class="btn btn-danger" type="button"
+                                                    title="Hapus" onclick="hapusGolonganHargaHPA(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->status . '\')"><i class="fa fa-trash"></i></button>
+                                        </div></center>';
+
+            })
+            ->addColumn('status', function ($data) {
+                if ($data->status == 'Y') {
+                    return '<span class="btn btn-sm btn-success btn-khusus">Disetujui</span>';
+                } else {
+                    return '<span class="btn btn-sm btn-danger btn-khusus">Pending</span>';
+                }
+            })
+            ->rawColumns(['item', 'jenis', 'range', 'satuan', 'harga', 'jenis_pembayaran', 'action', 'status'])
+            ->make(true);
+    }
+
     public function addGolongan(Request $request)
     {
         DB::beginTransaction();
         try {
             $values = [
                 'pc_id' => (DB::table('m_priceclass')->max('pc_id')) ? (DB::table('m_priceclass')->max('pc_id')) + 1 : 1,
-                'pc_name' => $request->nama,
+                'pc_name' => strtoupper($request->nama),
                 'pc_insert' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'pc_update' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s')
             ];
             DB::table('m_priceclass')->insert($values);
+            DB::commit();
+            return response()->json(['status' => "Success"]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => "Failed"]);
+        }
+    }
+
+    public function addGolonganHPA(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $values = [
+                'sp_id' => (DB::table('d_salesprice')->max('sp_id')) ? (DB::table('d_salesprice')->max('sp_id')) + 1 : 1,
+                'sp_name' => strtoupper($request->namaHPA),
+                'sp_insert' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s'),
+                'sp_update' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s')
+            ];
+            DB::table('d_salesprice')->insert($values);
             DB::commit();
             return response()->json(['status' => "Success"]);
         } catch (\Exception $e) {
@@ -192,6 +311,28 @@ class HargaController extends Controller
         }
     }
 
+    public function editGolonganHPA(Request $request)
+    {
+        try {
+            $id = Crypt::decrypt($request->idGolonganHPA);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => "Failed"]);
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_salesprice')->where('sp_id', $id)->update([
+                'sp_name' => strtoupper($request->namaGolonganHPA),
+                'sp_update' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s')
+            ]);
+            DB::commit();
+            return response()->json(['status' => "Success"]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => "Failed"]);
+        }
+    }
+
     public function deleteGolongan($id)
     {
         try {
@@ -203,6 +344,25 @@ class HargaController extends Controller
         DB::beginTransaction();
         try {
             DB::table('m_priceclass')->where('pc_id', $id)->delete();
+            DB::commit();
+            return response()->json(['status' => "Success"]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => "Failed"]);
+        }
+    }
+
+    public function deleteGolonganHPA($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => "Failed"]);
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_salesprice')->where('sp_id', $id)->delete();
             DB::commit();
             return response()->json(['status' => "Success"]);
         } catch (\Exception $e) {
