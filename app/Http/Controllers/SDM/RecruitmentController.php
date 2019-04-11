@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 use DB;
+use File;
 use Auth;
 use Currency;
 use Response;
@@ -23,7 +24,11 @@ class RecruitmentController extends Controller
       ->select('m_jabatan.*')
       ->where('j_id', '<', 7)
       ->get();
-    return view('sdm/prosesrekruitmen/index', compact('jabatan'));
+    $applicant = DB::table('d_applicant')
+      ->join('m_jabatan', 'a_position', 'j_id')
+      ->where('a_isactive', '=', 'Y')
+      ->get();
+    return view('sdm/prosesrekruitmen/index', compact('jabatan', 'applicant'));
   }
   // Recruitment ============================================================================================
   public function getList(Request $request)
@@ -122,9 +127,9 @@ class RecruitmentController extends Controller
       })
       ->addColumn('action', function($datas) {
         return '<div class="btn-group btn-group-sm">
-                  <button class="btn btn-primary btn-preview-rekruitmen hint--top-left hint--info" type="button" aria-label="Detail Pelamar" onclick="detail(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file"></i></button>
+                  <button class="btn btn-primary btn-preview-rekruitmen hint--top-left hint--info" type="button" aria-label="Detail Pelamar" onclick="detail(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file-text"></i></button>
                   <button class="btn btn-warning btn-proses-rekruitmen hint--top-left hint--warning" type="button" aria-label="Proses Pelamar" onclick="proses(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file-powerpoint-o"></i></button>
-                  <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Nonaktifkan" onclick="nonActivate(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-times-circle"></i></button>
+                  <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Hapus Data" onclick="deletePelamar(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-trash"></i></button>
                 </div>';
       })
       ->rawColumns(['tgl_apply', 'status', 'tanggal', 'action'])
@@ -257,9 +262,45 @@ class RecruitmentController extends Controller
           'status'  => 'Gagal',
           'message' => $e
         ]);
+    }    
+  }
+
+  public function deletePelamar($id)
+  {
+    try {
+        $id = Crypt::decrypt($id);
+    } catch (\Exception $e) {
+        return view('errors.404');
     }
 
-    
+    DB::beginTransaction();
+    try {
+        $destroy = DB::table('d_pelamar')->where('p_id', $id)->first();
+        //dd($destroy);
+      if ($destroy) {
+        file::delete(storage_path('/uploads/recruitment/' . $destroy->p_imgktp));
+        file::delete(storage_path('/uploads/recruitment/' . $destroy->p_imgfoto));
+        file::delete(storage_path('/uploads/recruitment/' . $destroy->img_ijazah));
+        file::delete(storage_path('/uploads/recruitment/' . $destroy->img_other));
+      }
+
+      DB::table('d_pelamar')->where('p_id', $id)->delete();
+
+      DB::table('d_pelamarlanjutan')
+        ->where('pl_id', $id)
+        ->delete();
+
+      DB::commit();
+      return response()->json([
+        'status' => 'sukses'
+      ]);
+    } catch (\Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status'  => 'Gagal',
+          'message' => $e
+        ]);
+    }
   }
   // End Code =============================================================================================
 
@@ -271,8 +312,9 @@ class RecruitmentController extends Controller
     $date_to = strtotime($request->date_to);
     $to      = date('Y-m-d', $date_to);
     $edu     = $request->education;
+    $posisi  = $request->position;
 
-    if ($edu != null) {
+    if ($edu != null && $posisi != null) {
       $datas = DB::table('d_pelamar')
         ->leftJoin('d_pelamarlanjutan', function($a){
           $a->on('p_id', '=', 'pl_id');
@@ -282,6 +324,33 @@ class RecruitmentController extends Controller
         ->where('p_state', 'Y')
         ->whereBetween('p_created', [$from, $to])
         ->where('p_education', '=', $edu)
+        ->where('p_applicant', '=', $posisi)
+        ->groupBy("p_id")
+        ->orderBy('p_name', 'asc')
+        ->get();
+    } else if ($edu != null && $posisi == null) {
+      $datas = DB::table('d_pelamar')
+        ->leftJoin('d_pelamarlanjutan', function($a){
+          $a->on('p_id', '=', 'pl_id');
+          $a->on('pl_isapproved', '=', 'p_state');
+          $a->on('pl_approve', '=', 'p_stateapprove');
+        })
+        ->where('p_state', 'Y')
+        ->whereBetween('p_created', [$from, $to])
+        ->where('p_education', '=', $edu)
+        ->groupBy("p_id")
+        ->orderBy('p_name', 'asc')
+        ->get();
+    } else if ($edu == null && $posisi != null) {
+      $datas = DB::table('d_pelamar')
+        ->leftJoin('d_pelamarlanjutan', function($a){
+          $a->on('p_id', '=', 'pl_id');
+          $a->on('pl_isapproved', '=', 'p_state');
+          $a->on('pl_approve', '=', 'p_stateapprove');
+        })
+        ->where('p_state', 'Y')
+        ->whereBetween('p_created', [$from, $to])
+        ->where('p_applicant', '=', $posisi)
         ->groupBy("p_id")
         ->orderBy('p_name', 'asc')
         ->get();

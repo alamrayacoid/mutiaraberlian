@@ -276,9 +276,7 @@
                             $("#range").addClass('d-none');
                         } else if (response.data.status == "Failed") {
                             loadingHide();
-                            // messageWarning("Gagal", "Data gagal disimpan!");
-                            console.log(response.data.error);
-                            messageWarning("Gagal", response.data.error);
+                            messageWarning("Gagal", "Data gagal disimpan!");
                         } else if (response.data.status == "Range Ada") {
                             loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
@@ -468,6 +466,7 @@
 
     function editGolonganHarga(id, detail, item, harga, satuan, tipe, rangestart, rangeEnd, status) {
         if (tipe == "U") {
+            $("#satuanBarangUnitEdit").find('option').remove();
             $.ajax({
                 url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
                 type: 'GET',
@@ -507,6 +506,7 @@
                 keyboard: false
             });
         } else {
+            $("#satuanBarangRangeEdit").find('option').remove();
             $.ajax({
                 url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
                 type: 'GET',
@@ -546,7 +546,6 @@
             $("#rangeendedit").val(rangeEnd);
             $("#txtEditGolHrgRange").val(harga);
             $("#statusRange").val(status);
-            console.log(status);
             $('#editGolHrgRange').modal({
                 backdrop: 'static',
                 keyboard: false

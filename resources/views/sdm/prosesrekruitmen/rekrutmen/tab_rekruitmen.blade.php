@@ -64,7 +64,7 @@
 
 						<div class="col-md-3 col-sm-6 col-xs-12">
 						<div class="form-group">
-							<select class="form-control form-control-sm" id="statusRec">
+							<select class="form-control form-control-sm select2" id="statusRec">
 								<option value="">Tampilkan Semua</option>
 								<option value="1">Approve 1</option>
 								<option value="2">Approve 2</option>
@@ -79,14 +79,14 @@
 					<table class="table table-hover table-striped display nowrap" cellspacing="0" style="width: 100%" id="table_rekrutmen">
 						<thead class="bg-primary">
 							<tr>
-								<th width="1%">No</th>
-								<th>Tanggal Apply</th>
+								<th class="text-center" width="1%">No</th>
+								<th class="text-center">Tanggal Apply</th>
 								<th>Nama Pelamar</th>
 								<th>No. HP</th>
 								<th>Email</th>
 								<th>Status</th>
-								<th>Tanggal Proses</th>
-								<th>Aksi</th>
+								<th class="text-center">Tanggal Proses</th>
+								<th class="text-center">Aksi</th>
 							</tr>
 						</thead>
 						<tbody>

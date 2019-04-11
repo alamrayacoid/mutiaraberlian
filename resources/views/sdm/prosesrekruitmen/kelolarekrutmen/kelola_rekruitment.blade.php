@@ -16,8 +16,8 @@
 							<tr>
 								<th class="w-5 text-center">No</th>
 								<th class="w-35">Posisi</th>
-								<th class="w-15">Start</th>
-								<th class="w-15">End</th>
+								<th class="w-15">Tgl Mulai</th>
+								<th class="w-15">Tgl Akhir</th>
 								<th class="w-15 text-center">Status</th>
 								<th class="w-15 text-center">Aksi</th>
 							</tr>

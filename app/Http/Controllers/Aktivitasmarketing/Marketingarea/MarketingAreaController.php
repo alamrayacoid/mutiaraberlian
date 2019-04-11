@@ -176,35 +176,112 @@ class MarketingAreaController extends Controller
         return Response::json($data);
     }
 
+    // public function getPrice(Request $request)
+    // {
+    //     $idItem = $request->item;
+    //     $idUnit = $request->unit;
+    //     $qty    = $request->qty; 
+
+    //     $price = DB::table('m_priceclassdt')
+    //         ->join('m_priceclass', 'pcd_classprice', 'pc_id')
+    //         ->select('m_priceclassdt.*', 'm_priceclass.*')
+    //         ->where('pc_name', '=', "Agen")
+    //         ->where('pcd_item', '=', $idItem)
+    //         ->where('pcd_unit', '=', $idUnit)
+    //         ->where('pcd_type', '=', "R")
+    //         ->where('pcd_rangeqtystart', '<=', $qty)
+    //         ->where('pcd_rangeqtyend', '>=', $qty)
+    //         ->first();
+        
+    //     if($price){
+    //         return Response::json(array(
+    //             'success' => true,
+    //             'data'    => number_format($price->pcd_price,0, ',', '')
+    //         ));
+    //     } else {
+    //         return Response::json(array(
+    //             'success' => true,
+    //             'data'    => 0
+    //         ));
+    //     }
+    // }
+    // 
+
+    function existsInArray($entry, $array)
+    {
+        $x = false;
+        foreach ($array as $compare) {
+            if ($compare->pcd_type == $entry) {
+                $x = true;
+            }
+        }
+        return $x;
+    }
+
+    function inRange($value, $array)
+    {
+//        in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
+        $idx = null;
+        foreach ($array as $key =>  $val) {
+            $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
+            if ($x == true) {
+                $idx = $key;
+            } 
+            else {
+               if ($value >= $val->pcd_rangeqtystart) {
+                   $idx = $key;
+               }
+            }
+        }
+        return $idx;
+    }
+
     public function getPrice(Request $request)
     {
+
         $idItem = $request->item;
         $idUnit = $request->unit;
-        $qty    = $request->qty;
+        $qty    = (int)$request->qty; 
 
-        $price = DB::table('m_priceclassdt')
+        $get_price = DB::table('m_priceclassdt')
             ->join('m_priceclass', 'pcd_classprice', 'pc_id')
             ->select('m_priceclassdt.*', 'm_priceclass.*')
             ->where('pc_name', '=', "Agen")
             ->where('pcd_item', '=', $idItem)
             ->where('pcd_unit', '=', $idUnit)
-            ->where('pcd_type', '=', "R")
-            ->where('pcd_rangeqtystart', '<=', $qty)
-            ->where('pcd_rangeqtyend', '>=', $qty)
-            ->first();
-        
-        if($price){
-            return Response::json(array(
-                'success' => true,
-                'data'    => number_format($price->pcd_price,0, ',', '')
-            ));
-        } else {
-            return Response::json(array(
-                'success' => true,
-                'data'    => 0
-            ));
+            ->get();
+
+            // dd($get_price);
+
+        $harga = 0;
+        $z = false;
+        foreach ($get_price as $key => $price) {
+            if ($qty == 1) {
+                if ($this->existsInArray("U", $get_price) == true) {
+                    if ($get_price[$key]->pcd_type == "U") {
+                        $harga = number_format($get_price[$key]->pcd_price,0, ',', '');
+                    }
+                } else {
+                    if ($price->pcd_rangeqtystart == 1) {
+                        $harga = number_format($get_price[$key]->pcd_price,0, ',', '');
+                    } else {
+                        $harga = 0;
+                    }
+                }
+            } else if ($qty > 1) {
+                $z = $this->inRange($qty, $get_price);
+                if ($z != null) {
+                    $harga = number_format($get_price[$z]->pcd_price,0, ',', '');
+                } else {
+                    $harga = 0;
+                }
+            }
         }
+       // dd($z);
+        return Response::json($harga);
     }
+
+    // 
 
     public function orderProdukStore(Request $request)
     {
