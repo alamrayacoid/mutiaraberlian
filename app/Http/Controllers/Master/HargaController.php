@@ -78,7 +78,101 @@ class HargaController extends Controller
             ->make(true);
     }
 
+    public function getGolonganHPA()
+    {
+        $datas = DB::table('d_salesprice')->orderBy('sp_name', 'asc');
+        return Datatables::of($datas)
+            ->addIndexColumn()
+            ->addColumn('action', function ($datas) {
+                return '<center><div class="btn-group btn-group-sm">
+                                            <button class="btn btn-warning" title="Edit"
+                                                    type="button" onclick="editGolonganHPA(\'' . Crypt::encrypt($datas->sp_id) . '\', \'' . $datas->sp_name . '\')"><i class="fa fa-pencil"></i></button>
+                                            <button class="btn btn-danger" type="button"
+                                                    title="Hapus" onclick="hapusGolonganHPA(\'' . Crypt::encrypt($datas->sp_id) . '\')"><i class="fa fa-trash"></i></button>
+                                            <button class="btn btn-primary" title="add"
+                                                    type="button" onclick="addGolonganHargaHPA(\'' . Crypt::encrypt($datas->sp_id) . '\', \'' . $datas->sp_name . '\')"><i class="fa fa-arrow-right"></i>
+                                            </button>
+                                        </div></center>';
+
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+
     public function getGolonganHarga($id)
+    {
+        $datas = DB::table('d_priceclassauthdt')
+            ->join('m_item', function ($item) {
+                $item->on('d_priceclassauthdt.pcad_item', '=', 'm_item.i_id');
+            })
+            ->join('m_unit', function ($unit) {
+                $unit->on('d_priceclassauthdt.pcad_unit', '=', 'm_unit.u_id');
+            })
+            ->select('m_item.*', 'm_unit.*', 'pcad_price as pcd_price', 'pcad_classprice as pcd_classprice', 'pcad_unit as pcd_unit', 'pcad_detailid as pcd_detailid', 'pcad_item as pcd_item', 'pcad_user as pcd_user', 'pcad_rangeqtyend as pcd_rangeqtyend', 'pcad_rangeqtystart as pcd_rangeqtystart', 'pcad_payment as pcd_payment', 'pcad_type as pcd_type', DB::raw('"N" as status'))
+            ->where('d_priceclassauthdt.pcad_classprice', '=', Crypt::decrypt($id));
+
+        $datax = DB::table('m_priceclassdt')
+            ->join('m_item', function ($item) {
+                $item->on('m_priceclassdt.pcd_item', '=', 'm_item.i_id');
+            })
+            ->join('m_unit', function ($unit) {
+                $unit->on('m_priceclassdt.pcd_unit', '=', 'm_unit.u_id');
+            })
+            ->select('m_item.*', 'm_unit.*', 'pcd_price', 'pcd_unit', 'pcd_classprice', 'pcd_detailid', 'pcd_item', 'pcd_user as pcd_user', 'pcd_rangeqtyend as pcd_rangeqtyend', 'pcd_rangeqtystart as pcd_rangeqtystart', 'pcd_payment as pcd_payment', 'pcd_type as pcd_type', DB::raw('"Y" as status'))
+            ->where('m_priceclassdt.pcd_classprice', '=', Crypt::decrypt($id));
+
+        if ($datas->count() > 0 && $datax->count() > 0) {
+            $data = $datas->union($datax)->get();
+        } else if ($datas->count() > 0 && $datax->count() == 0) {
+            $data = $datas->get();
+        } else if ($datas->count() == 0 && $datax->count() > 0) {
+            $data = $datax->get();
+        } else if ($datas->count() == 0 && $datax->count() == 0) {
+            $data = [];
+        }
+
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('item', function ($data) {
+                return $data->i_name;
+            })
+            ->addColumn('jenis', function ($data) {
+                return $data->pcd_type == "R" ? "Range" : "Unit";
+            })
+            ->addColumn('range', function ($data) {
+                $end = ($data->pcd_rangeqtyend == "0") ? "~" : $data->pcd_rangeqtyend;
+                return $data->pcd_rangeqtystart . '-' . $end;
+            })
+            ->addColumn('satuan', function ($data) {
+                return $data->u_name;
+            })
+            ->addColumn('harga', function ($data) {
+                return '<span class="text-right">' . Currency::addRupiah($data->pcd_price) . '</span>';
+            })
+            ->addColumn('jenis_pembayaran', function ($data) {
+                return $data->pcd_payment == "K" ? "Konsinyasi" : "Cash";
+            })
+            ->addColumn('action', function ($data) {
+                return '<center><div class="btn-group btn-group-sm">
+                                            <button class="btn btn-warning" title="Edit"
+                                                    type="button" onclick="editGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->pcd_item . '\', \'' . Currency::addRupiah($data->pcd_price) . '\', \'' . $data->pcd_unit . '\', \'' . $data->pcd_type . '\', \'' . $data->pcd_rangeqtystart . '\', \'' . $data->pcd_rangeqtyend . '\', \'' . $data->status . '\')"><i class="fa fa-pencil"></i></button>
+                                            <button class="btn btn-danger" type="button"
+                                                    title="Hapus" onclick="hapusGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->status . '\')"><i class="fa fa-trash"></i></button>
+                                        </div></center>';
+
+            })
+            ->addColumn('status', function ($data) {
+                if ($data->status == 'Y') {
+                    return '<span class="btn btn-sm btn-success btn-khusus">Disetujui</span>';
+                } else {
+                    return '<span class="btn btn-sm btn-danger btn-khusus">Pending</span>';
+                }
+            })
+            ->rawColumns(['item', 'jenis', 'range', 'satuan', 'harga', 'jenis_pembayaran', 'action', 'status'])
+            ->make(true);
+    }
+
+    public function getGolonganHargaHPA($id)
     {
         $datas = DB::table('d_priceclassauthdt')
             ->join('m_item', function ($item) {
@@ -157,11 +251,30 @@ class HargaController extends Controller
         try {
             $values = [
                 'pc_id' => (DB::table('m_priceclass')->max('pc_id')) ? (DB::table('m_priceclass')->max('pc_id')) + 1 : 1,
-                'pc_name' => $request->nama,
+                'pc_name' => strtoupper($request->nama),
                 'pc_insert' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'pc_update' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s')
             ];
             DB::table('m_priceclass')->insert($values);
+            DB::commit();
+            return response()->json(['status' => "Success"]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => "Failed"]);
+        }
+    }
+
+    public function addGolonganHPA(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $values = [
+                'sp_id' => (DB::table('d_salesprice')->max('sp_id')) ? (DB::table('d_salesprice')->max('sp_id')) + 1 : 1,
+                'sp_name' => strtoupper($request->namaHPA),
+                'sp_insert' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s'),
+                'sp_update' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s')
+            ];
+            DB::table('d_salesprice')->insert($values);
             DB::commit();
             return response()->json(['status' => "Success"]);
         } catch (\Exception $e) {
