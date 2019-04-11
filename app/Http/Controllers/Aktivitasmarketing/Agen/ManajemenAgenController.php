@@ -10,6 +10,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Auth;
 use App\d_sales;
 use App\d_salesdt;
+use App\d_stock;
 use App\m_item;
 use App\m_member;
 use App\m_priceclass;
@@ -90,16 +91,64 @@ class ManajemenAgenController extends Controller
     {
         // start: validate data before execute
         $validator = Validator::make($request->all(), [
-            'member' => 'required'
+            'member' => 'required',
+            'itemListId.*' => 'required'
         ],
         [
-            'member.required' => 'Pilih member terlebih dahulu !'
+            'member.required' => 'Pilih member terlebih dahulu !',
+            'itemListId.*.required' => 'List item ada yang kosong !'
         ]);
         if ($validator->fails()) {
             return $validator->errors()->first();
         } else {
             return '1';
         }
+    }
+    /**
+    * Return DataTable list for view.
+    *
+    * @return Yajra/DataTables
+    */
+    public function getListKPL(Request $request)
+    {
+        $from = Carbon::parse($request->date_from)->format('Y-m-d');
+        $to = Carbon::parse($request->date_to)->format('Y-m-d');
+        $datas = d_sales::whereBetween('s_date', [$from, $to])
+        ->with('getMember')
+        // ->where('s_comp', Session::get('user_comp'))
+        // ->with('getStaff')
+        ->orderBy('s_nota', 'desc')
+        ->get();
+
+        return Datatables::of($datas)
+        ->addIndexColumn()
+        ->addColumn('date', function($datas) {
+            return Carbon::parse($datas->s_date)->format('d M Y');
+        })
+        ->addColumn('member', function($datas) {
+            return $datas->getMember['m_name'];
+        })
+        ->addColumn('total', function($datas) {
+            return 'Rp '. number_format($datas->s_total, '2', ',', '.');
+        })
+        ->addColumn('action', function($datas) {
+            return
+            '<div class="btn-group btn-group-sm">
+            <button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="showDetailPenjualan('. $datas->s_id .')"><i class="fa fa-folder"></i></button>
+            <button class="btn btn-danger btn-delete" type="button" title="Delete"><i class="fa fa-trash"></i></button>
+            </div>';
+        })
+        ->rawColumns(['customer', 'staff', 'action'])
+        ->make(true);
+    }
+    // get detail-kpl
+    public function getDetailPenjualan(Request $request)
+    {
+        $detail = d_sales::where('s_id', $request->id)
+        ->with('getSalesDt.getItem')
+        ->with('getSalesDt.getUnit')
+        ->first();
+        return response()->json($detail);
     }
     public function createKPL()
     {
@@ -132,27 +181,38 @@ class ManajemenAgenController extends Controller
         }
         return response()->json($results);
     }
-    // get price
+    // get stock
+    public function getItemStock(Request $request)
+    {
+        $stock = d_stock::where('s_item', $request->itemId)
+            ->where('s_position', Auth::user()->u_company)
+            ->first();
+        if ($stock !== null) {
+            return response()->json($stock);
+        }
+        return response()->json();
+    }
+    // ---------------------------------------------------------
+    // get price (need to be repaired, changed table and system)
     public function getPrice(Request $request)
     {
-        // dd($request->all());
         $itemId = $request->itemId;
         $unitId = $request->unitId;
-        $price = m_priceclass::with(['getPriceClassDt' => function($query) use ($itemId, $unitId) {
-            $query
-                ->where('pcd_item', $itemId)
-                ->where('pcd_unit', $unitId)
-                ->where('pcd_type', 'R')
-                ->where('pcd_payment', 'C')
-                ->first();
-            }])
+        $price = m_priceclass::where('pc_id', 1)
+            ->with(['getPriceClassDt' => function($query) use ($itemId, $unitId) {
+                $query
+                    ->where('pcd_item', $itemId)
+                    ->where('pcd_unit', $unitId)
+                    ->where('pcd_type', 'R')
+                    ->where('pcd_payment', 'C')
+                    ->first();
+                }])
             ->first();
         return response()->json($price);
     }
     // store new KPL
     public function storeKPL(Request $request)
     {
-        // dd($request->all());
         // validate request
         $isValidRequest = $this->validate_req($request);
         if ($isValidRequest != '1') {
@@ -170,8 +230,8 @@ class ManajemenAgenController extends Controller
             $salesNota = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
             $sales = new d_sales();
             $sales->s_id = $salesId;
-            // $sales->s_comp = ;
-            // $sales->s_member = ;
+            $sales->s_comp = Auth::user()->u_company;
+            $sales->s_member = $request->member;
             $sales->s_type = 'C';
             $sales->s_date = Carbon::now('Asia/Jakarta');
             $sales->s_nota = $salesNota;
@@ -187,7 +247,7 @@ class ManajemenAgenController extends Controller
                 $salesDt = new d_salesdt();
                 $salesDt->sd_sales = $salesId;
                 $salesDt->sd_detailid = $salesDtId;
-                // $salesDt->sd_comp = ;
+                $salesDt->sd_comp = $request->itemOwner[$i];
                 $salesDt->sd_item = $request->itemListId[$i];
                 $salesDt->sd_qty = (int)$request->itemQty[$i];
                 $salesDt->sd_unit = $request->itemUnit[$i];

@@ -44,7 +44,7 @@
                                             <select name="member" id="member" class="form-control form-control-sm select2">
                                                 <option value="" selected disabled>Pilih Member</option>
                                                 @foreach($data['member'] as $member)
-                                                <option value="{{ $member->m_id }}">{{ $member->m_name }}</option>
+                                                <option value="{{ $member->m_code }}">{{ $member->m_name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -77,6 +77,8 @@
                                                         <td>
                                                             <input type="text"  class="form-control form-control-sm find-item">
                                                             <input name="itemListId[]" type="hidden" class="item-id">
+                                                            <input type="hidden" class="item-stock">
+                                                            <input type="hidden" class="item-owner" name="itemOwner[]">
                                                         </td>
                                                         <td>
                                                             <select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="displayPrice(0)"></select>
@@ -114,7 +116,8 @@
 @section('extra_script')
 <script type="text/javascript">
 
-$(document).ready(function(){
+$(document).ready(function()
+{
 
     initFunction();
 
@@ -129,7 +132,7 @@ $(document).ready(function(){
         $('#table_create tbody')
         .append(
             '<tr>'+
-            '<td><input type="text" class="form-control form-control-sm find-item"><input name="itemListId[]" type="hidden" class="item-id"></td>'+
+            '<td><input type="text" class="form-control form-control-sm find-item"><input name="itemListId[]" type="hidden" class="item-id"><input type="hidden" class="item-stock"><input type="hidden" class="item-owner" name="itemOwner[]"></td>'+
             '<td><select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="displayPrice('+ (rowLength - 1) +')"></select><input type="hidden" class="item-unitcmp"></td>'+
             '<td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem('+ (rowLength - 1) +')"></td>'+
             '<td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>'+
@@ -181,6 +184,8 @@ function initFunction()
         // clear row input
         $('.find-item').eq(rowIndex).val('');
         $('.item-id').eq(rowIndex).val('');
+        $('.item-stock').eq(rowIndex).val('');
+        $('.item-owner').eq(rowIndex).val('');
         $('.satuan').eq(rowIndex).find('option').remove();
         $('.item-qty').eq(rowIndex).val('');
         $('.item-price').eq(rowIndex).val('');
@@ -206,9 +211,40 @@ function findItem(rowIndex)
         },
         minLength: 1,
         select: function(event, data) {
-            console.log(data.item);
+            // console.log(data.item);
             $('.item-id').eq(rowIndex).val(data.item.data.i_id);
+            getItemStock(rowIndex);
             appendOptSatuan(rowIndex, data.item.data);
+        }
+    });
+}
+
+// get item stock
+function getItemStock(rowIndex)
+{
+    $.ajax({
+        data : {
+            "itemId": $('.item-id').eq(rowIndex).val()
+        },
+        type : "get",
+        url : "{{ route('kelolapenjulan.getItemStock') }}",
+        dataType : 'json',
+        success : function (response){
+            if (! $.trim(response)) {
+                messageFailed('Perhatian', 'Stock item tidak ditemukan !');
+                $('.find-item').eq(rowIndex).trigger('click');
+                console.log('stock: null');
+                $('.item-stock').eq(rowIndex).val('');
+                $('.item-owner').eq(rowIndex).val('');
+            } else {
+                console.log('stock: ' + response.s_qty);
+                $('.item-stock').eq(rowIndex).val(response.s_qty);
+                $('.item-owner').eq(rowIndex).val(response.s_comp);
+                displayPrice(rowIndex);
+            }
+        },
+        error : function(e){
+            console.error(e);
         }
     });
 }
@@ -226,7 +262,6 @@ function appendOptSatuan(rowIndex, item)
         optSatuan += '<option value="'+ item.get_unit3.u_id +'" data-unitcmp="'+ parseInt(item.i_unitcompare3) +'">'+ item.get_unit3.u_name +'</option>';
     }
     $('.satuan').eq(rowIndex).append(optSatuan);
-    displayPrice(rowIndex);
 }
 
 // set price based on selected option (satuan)
@@ -245,13 +280,16 @@ function displayPrice(rowIndex)
             "unitId" : $('.satuan').eq(rowIndex).val()
         },
         success: function(response) {
-            $('.item-price').eq(rowIndex).val(parseInt(response.get_price_class_dt[0].pcd_price));
-            console.log(response);
+            if (! $.trim(response.get_price_class_dt)) {
+                messageFailed('Perhatian', 'Harga item belum ditentukan !');
+                $('.item-price').eq(rowIndex).val('0');
+            } else {
+                $('.item-price').eq(rowIndex).val(parseInt(response.get_price_class_dt[0].pcd_price));
+            }
         },
         error: function(e) {
-            console.log(e);
+            console.log('getPrice error: ' + e);
         }
-
     });
     sumSubTotalItem(rowIndex);
 }
@@ -275,13 +313,14 @@ function sumSubTotalItem(rowIndex)
 }
 
 // sum total-bruto
-function sumTotalBruto() {
+function sumTotalBruto()
+{
     tableRows = document.getElementsByTagName("tr");
     rowLength = tableRows.length;
     subTotal = 0;
     for (let i = 0; i < (rowLength-1); i++) {
         subTotal += parseInt($('.item-sub-total').eq(i).val());
-        console.log(i, subTotal, $('.item-sub-total').eq(i).val());
+        // console.log(i, subTotal, $('.item-sub-total').eq(i).val());
     }
     $('#total').val(subTotal);
 }
@@ -319,17 +358,22 @@ function submitForm()
         },
         error : function(e){
             messageWarning('Gagal', 'Data gagal ditambahkan, hubungi pengembang !');
+            // activate btn_simpan once again
+            $('#btn_simpan').one('click', function() {
+                submitForm();
+            });
         }
     });
 }
 
 // reset all input
-function resetAllInput() {
+function resetAllInput()
+{
     $('.myForm')[0].reset();
     $('.satuan').find('option').remove();
     $('#member').find('option:first').attr('selected', 'selected');
-    console.log($('#member').val());
     $('#table_create tbody').find('tr:gt(0)').remove();
+    $('.find-item').eq(0).trigger('click');
 }
 
 

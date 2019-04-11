@@ -13,6 +13,10 @@ class d_sales extends Model
 
     public function getSalesDt()
     {
-      return $this->hasMany('App\d_sales_dt', 'sd_sales', 's_id');
+      return $this->hasMany('App\d_salesdt', 'sd_sales', 's_id');
+    }
+    public function getMember()
+    {
+        return $this->belongsTo('App\m_member', 's_member', 'm_code');
     }
 }
