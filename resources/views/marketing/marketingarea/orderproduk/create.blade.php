@@ -372,7 +372,7 @@
             },
             success:function(res)
             {
-                var price = res;
+                var price = res.data;
                 if (isNaN(price)) {
                     price = 0;
                 }
