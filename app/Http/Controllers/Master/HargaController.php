@@ -346,6 +346,25 @@ class HargaController extends Controller
         }
     }
 
+    public function deleteGolonganHPA($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => "Failed"]);
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_salesprice')->where('sp_id', $id)->delete();
+            DB::commit();
+            return response()->json(['status' => "Success"]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => "Failed"]);
+        }
+    }
+
     public function cariBarang(Request $request)
     {
         $cari = $request->term;

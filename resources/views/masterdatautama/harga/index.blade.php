@@ -253,30 +253,38 @@
 
         $(document).on('submit', '#formgln', function (evt) {
             evt.preventDefault();
-            var data = $('#formgln').serialize();
-            axios.post('{{route("dataharga.addgolongan")}}', data).then(function (response) {
-                if (response.data.status == "Success") {
-                    messageSuccess("Berhasil", "Data berhasil disimpan!");
-                    $('#formgln').trigger("reset");
-                    reloadTable();
-                } else {
-                    messageWarning("Gagal", "Data gagal disimpan");
-                }
-            })
+            if ($("#nama").val() == "") {
+                messageWarning("Peringatan", "Kolom nama golongan tidak boleh kosong");
+            } else {
+                var data = $('#formgln').serialize();
+                axios.post('{{route("dataharga.addgolongan")}}', data).then(function (response) {
+                    if (response.data.status == "Success") {
+                        messageSuccess("Berhasil", "Data berhasil disimpan!");
+                        $('#formgln').trigger("reset");
+                        reloadTable();
+                    } else {
+                        messageWarning("Gagal", "Data gagal disimpan");
+                    }
+                })
+            }
         });
 
         $(document).on('submit', '#formglnHPA', function (evt) {
             evt.preventDefault();
-            var data = $('#formglnHPA').serialize();
-            axios.post('{{route("dataharga.addgolonganhpa")}}', data).then(function (response) {
-                if (response.data.status == "Success") {
-                    messageSuccess("Berhasil", "Data berhasil disimpan!");
-                    $('#formglnHPA').trigger("reset");
-                    tbl_glnHPA.ajax.reload();
-                } else {
-                    messageWarning("Gagal", "Data gagal disimpan");
-                }
-            })
+            if ($("#namaHPA").val() == "") {
+                messageWarning("Peringatan", "Kolom nama golongan tidak boleh kosong");
+            } else {
+                var data = $('#formglnHPA').serialize();
+                axios.post('{{route("dataharga.addgolonganhpa")}}', data).then(function (response) {
+                    if (response.data.status == "Success") {
+                        messageSuccess("Berhasil", "Data berhasil disimpan!");
+                        $('#formglnHPA').trigger("reset");
+                        tbl_glnHPA.ajax.reload();
+                    } else {
+                        messageWarning("Gagal", "Data gagal disimpan");
+                    }
+                })
+            }
         });
 
         $(document).on('submit', '#formedtgln', function (evt) {
@@ -560,6 +568,7 @@
 
 	function reloadTable() {
         tbl_gln.ajax.reload();
+        tbl_glnHPA.ajax.reload();
     }
 
     function editGolongan(id, name) {
@@ -576,6 +585,10 @@
 
 	function hapusGolongan(id) {
         deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan/"+id);
+    }
+
+    function hapusGolonganHPA(id) {
+        deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan-hpa/"+id);
     }
 
     function editGolonganHarga(id, detail, item, harga, satuan, tipe, rangestart, rangeEnd, status) {
