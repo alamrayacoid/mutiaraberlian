@@ -31,7 +31,7 @@
                                         <input type="hidden" name="rangestartakhir" id="rangestartakhir">
                                         <input type="text" class="form-control form-control-sm" name="rangeendedit"
                                                id="rangeendedit">
-                                        <span class="text-danger" style="margin-top: 5px;">*)Tak terhingga = 0</span>
+                                        <span class="text-danger" style="margin-top: 5px;">*)Tak terhingga = ~</span>
                                     </div>
 
                                 </div>

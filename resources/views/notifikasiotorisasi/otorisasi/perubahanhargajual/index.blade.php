@@ -138,7 +138,7 @@
                             loadingShow();
                             if(response.data.status == 'sukses'){
                                 loadingHide();
-                                messageSuccess("Berhasil", "Data Order Produksi Berhasil Dihapus");
+                                messageSuccess("Berhasil", "Data Order Produksi Berhasil Disetujui");
                                 table1.ajax.reload();
                             }else{
                                 loadingHide();
