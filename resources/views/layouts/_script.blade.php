@@ -272,13 +272,12 @@
                 $('#search-container').css('display', 'block');
             }
 
-
         });
 
         $('.input-daterange').datepicker({
             format: 'dd-mm-yyyy',
-            enableOnReadonly: false
-
+            enableOnReadonly: false,
+            autoclose: true
         });
 
         $('.datetimepicker').datetimepicker({

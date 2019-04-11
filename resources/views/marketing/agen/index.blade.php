@@ -111,7 +111,7 @@
 				$('#detail-monitoring').DataTable( {
 					"iDisplayLength" : 5
 				});
-			});	
+			});
 		});
 
 		$(document).on('click', '.btn-enable', function(){
@@ -127,7 +127,7 @@
 	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 		})
 		// End Code Dummy -----------------------------------------
-		
+
 		$("#search-list-agen").on("click", function() {
 			$(".table-modal").removeClass('d-none');
 		});
@@ -189,7 +189,7 @@
           });
           $('#agen').focus();
           $('#agen').select2('open');
-      }  		
+      }
   	});
   });
 
@@ -239,5 +239,106 @@
       }
     });
   }
+</script>
+
+<!-- kelola penjualan -->
+<script type="text/javascript">
+$(document).ready(function() {
+	cur_date = new Date();
+	first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+	last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+	$('#date_from_kpl').datepicker('setDate', first_day);
+	$('#date_to_kpl').datepicker('setDate', last_day);
+
+	$('#date_from_kpl').on('change', function() {
+		TableListKPL();
+	});
+	$('#date_to_kpl').on('change', function() {
+		TableListKPL();
+	});
+	$('#btn_search_date_kpl').on('click', function() {
+		TableListKPL();
+	});
+	$('#btn_refresh_date_kpl').on('click', function() {
+		$('#date_from_kpl').datepicker('setDate', first_day);
+		$('#date_to_kpl').datepicker('setDate', last_day);
+	});
+	TableListKPL();
+});
+
+// data-table -> function to retrieve DataTable server side
+var tb_listkpl;
+function TableListKPL()
+{
+	$('#table_kelolapenjualan').dataTable().fnDestroy();
+	tb_listkpl = $('#table_kelolapenjualan').DataTable({
+		responsive: true,
+		serverSide: true,
+		ajax: {
+			url: "{{ route('kelolapenjulan.getListKPL') }}",
+			type: "get",
+			data: {
+				"_token": "{{ csrf_token() }}",
+				"date_from" : $('#date_from_kpl').val(),
+				"date_to" : $('#date_to_kpl').val()
+			}
+		},
+		columns: [
+			{data: 'DT_RowIndex'},
+			{data: 'date'},
+			{data: 's_nota'},
+			{data: 'member', width: "40%"},
+			{data: 'total'},
+			{data: 'action'}
+		],
+		pageLength: 10,
+		lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+	});
+}
+// show detail penjualan
+function showDetailPenjualan(idPenjualan) {
+	$.ajax({
+		url: "{{ route('kelolapenjulan.getDetailPenjualan') }}",
+		type: 'get',
+		data: {
+			'id': idPenjualan
+		},
+		success: function(response) {
+			console.log(response.get_sales_dt);
+			$.each(response.get_sales_dt, function(key, val) {
+				$('#table_detail_kelola tbody').empty();
+				$('#table_detail_kelola > tbody:last-child').append('<tr><td>'+ val.get_item.i_name +'</td><td>'+ val.get_unit.u_name +'</td><td class="digits">'+ val.sd_qty +'</td><td> (dummy) </td><td class="rupiah">'+ val.sd_value +'</td></tr>');
+			});
+		    $('.rupiah').inputmask("currency", {
+		        radixPoint: ",",
+		        groupSeparator: ".",
+		        digits: 2,
+		        autoGroup: true,
+		        prefix: ' Rp ', //Space after $, this will not truncate the first character.
+		        rightAlign: true,
+		        autoUnmask: true,
+		        nullable: false,
+		        // unmaskAsNumber: true,
+		    });
+		    $('.digits').inputmask("currency", {
+		        radixPoint: ",",
+		        groupSeparator: ".",
+		        digits: 0,
+		        autoGroup: true,
+		        prefix: '', //Space after $, this will not truncate the first character.
+		        rightAlign: true,
+		        autoUnmask: true,
+		        nullable: false,
+		        // unmaskAsNumber: true,
+		    });
+	        $('#detailkpl').modal('show');
+		},
+		error: function(e) {
+			console.error(e);
+		}
+
+	});
+}
+
 </script>
 @endsection
