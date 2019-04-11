@@ -180,7 +180,8 @@ class MarketingAreaController extends Controller
     {
         $idItem = $request->item;
         $idUnit = $request->unit;
-        $qty    = $request->qty; 
+        $qty    = $request->qty;
+        
         if ($qty != null || $qty != "") {
             if ($qty == 1) {
                 $price = DB::table('m_priceclassdt')

@@ -166,7 +166,6 @@
         });
         $('.jumlah').on('click input', function (e) {
             idxBarang = $('.jumlah').index(this);
-            console.log(idxBarang);
             setArrayCode();
         });
 
@@ -295,7 +294,6 @@
 
             $('.jumlah').on('click input', function (e) {
                 idxBarang = $('.jumlah').index(this);
-                console.log(idxBarang);
                 setArrayCode();             
             });
 
@@ -444,7 +442,11 @@
             data:{
                 provId: id
             },
+            beforeSend: function () {
+                loadingShow();
+            },
             success: function (response) {
+                loadingHide();
                 $('#city').empty();
                 $("#city").append('<option value="" selected disabled>=== Pilih Kota ===</option>');
                 $.each(response.data, function( key, val ) {
@@ -466,7 +468,11 @@
             data:{
                 cityId: id
             },
+            beforeSend: function () {
+                loadingShow();
+            },
             success: function (response) {
+                loadingHide();
                 $('#agen').empty();
                 if (response.data.length == 0) {
                     $("#agen").append('<option value="" selected disabled>=== Pilih Agen ===</option>');
