@@ -19,6 +19,7 @@ use DB;
 use Carbon\Carbon;
 use CodeGenerator;
 use Currency;
+use Mutasi;
 use Response;
 use Validator;
 
@@ -162,8 +163,20 @@ class ManajemenAgenController extends Controller
     // get items using autocomple.js
     public function findItem(Request $request)
     {
-        $term = $request->term;
-        $items = m_item::where(function ($q) use ($term){
+        $term = $request->termToFind;
+        // set list of item where already exist in shopping-list
+        $itemList = array();
+        if ($request->itemListId !== null) {
+            foreach ($request->itemListId as $itemId) {
+                if ($itemId === null) {
+                    $itemId = 0;
+                }
+                array_push($itemList, $itemId);
+            }
+        }
+        // startu query to find specific item
+        $items = m_item::whereNotIn('i_id', $itemList)
+            ->where(function ($q) use ($term){
                 $q->orWhere('i_name', 'like', '%'.$term.'%');
                 $q->orWhere('i_code', 'like', '%'.$term.'%');
             })
@@ -222,7 +235,6 @@ class ManajemenAgenController extends Controller
                 'message' => $errors
             ]);
         }
-
         DB::beginTransaction();
         try {
             // start insert data
@@ -240,9 +252,6 @@ class ManajemenAgenController extends Controller
             $sales->save();
 
             for ($i=0; $i < sizeof($request->itemListId); $i++) {
-                if ($request->itemListId[$i] === null) {
-                    continue;
-                }
                 $salesDtId = d_salesdt::where('sd_sales', $salesId)->max('sd_detailid') + 1;
                 $salesDt = new d_salesdt();
                 $salesDt->sd_sales = $salesId;
@@ -256,6 +265,26 @@ class ManajemenAgenController extends Controller
                 $salesDt->sd_discvalue = 0;
                 $salesDt->sd_totalnet = (int)$request->itemSubTotal[$i];
                 $salesDt->save();
+
+                // get total qty with base-unit item
+                $itemQtyUnitBase = 0;
+                $itemQtyUnitBase = (int)$request->itemQty[$i] * (int)$request->itemUnitCmp[$i];
+
+                // mutasi keluar
+                $mutasi = Mutasi::mutasikeluar(
+                    12,
+                    $request->itemOwner[$i],
+                    Auth::user()->u_company,
+                    $request->itemListId[$i],
+                    $itemQtyUnitBase,
+                    $salesNota);
+                if ($mutasi !== true) {
+                    DB::rollback();
+                    return response()->json([
+                        'status' => 'Mutasi gagal',
+                        'message' => $mutasi->error->getMessage()
+                    ]);
+                }
             }
 
             DB::commit();

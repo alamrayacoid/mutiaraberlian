@@ -304,10 +304,9 @@ function showDetailPenjualan(idPenjualan) {
 			'id': idPenjualan
 		},
 		success: function(response) {
-			console.log(response.get_sales_dt);
+			$('#table_detail_kelola tbody').empty();
 			$.each(response.get_sales_dt, function(key, val) {
-				$('#table_detail_kelola tbody').empty();
-				$('#table_detail_kelola > tbody:last-child').append('<tr><td>'+ val.get_item.i_name +'</td><td>'+ val.get_unit.u_name +'</td><td class="digits">'+ val.sd_qty +'</td><td> (dummy) </td><td class="rupiah">'+ val.sd_value +'</td></tr>');
+				$('#table_detail_kelola > tbody:last-child').append('<tr><td>'+ val.get_item.i_name +'</td><td>'+ val.get_unit.u_name +'</td><td class="digits">'+ parseInt(val.sd_qty) +'</td><td> (dummy) </td><td class="rupiah">'+ parseInt(val.sd_value) +'</td></tr>');
 			});
 		    $('.rupiah').inputmask("currency", {
 		        radixPoint: ",",

@@ -75,14 +75,14 @@
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                            <input type="text"  class="form-control form-control-sm find-item">
+                                                            <input type="text"  class="form-control form-control-sm find-item" name="termToFind">
                                                             <input name="itemListId[]" type="hidden" class="item-id">
                                                             <input type="hidden" class="item-stock">
                                                             <input type="hidden" class="item-owner" name="itemOwner[]">
                                                         </td>
                                                         <td>
                                                             <select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="displayPrice(0)"></select>
-                                                            <input type="hidden" class="item-unitcmp">
+                                                            <input type="hidden" class="item-unitcmp" name="itemUnitCmp[]">
                                                         </td>
                                                         <td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty"  onchange="sumSubTotalItem(0)"></td>
                                                         <td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>
@@ -132,8 +132,8 @@ $(document).ready(function()
         $('#table_create tbody')
         .append(
             '<tr>'+
-            '<td><input type="text" class="form-control form-control-sm find-item"><input name="itemListId[]" type="hidden" class="item-id"><input type="hidden" class="item-stock"><input type="hidden" class="item-owner" name="itemOwner[]"></td>'+
-            '<td><select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="displayPrice('+ (rowLength - 1) +')"></select><input type="hidden" class="item-unitcmp"></td>'+
+            '<td><input type="text" class="form-control form-control-sm find-item" name="termToFind"><input name="itemListId[]" type="hidden" class="item-id"><input type="hidden" class="item-stock"><input type="hidden" class="item-owner" name="itemOwner[]"></td>'+
+            '<td><select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="displayPrice('+ (rowLength - 1) +')"></select><input type="hidden" class="item-unitcmp" name="itemUnitCmp[]"></td>'+
             '<td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem('+ (rowLength - 1) +')"></td>'+
             '<td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>'+
             '<td><input name="itemSubTotal[]" type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>'+
@@ -197,13 +197,16 @@ function initFunction()
 // find-item autocomplete in rowIndex
 function findItem(rowIndex)
 {
+    let itemListId = $('.item-id[value != ""]').serialize();
+    console.log(itemListId);
     $('.find-item').autocomplete({
         source: function( request, response ) {
+            dataToSend = $(".find-item").eq(rowIndex).serialize() +'&'+ itemListId;
+            console.log(dataToSend);
             $.ajax({
                 url: baseUrl + '/marketing/agen/kelolapenjualanlangsung/find-item',
-                data: {
-                    term: $(".find-item").eq(rowIndex).val()
-                },
+                data: dataToSend,
+                dataType: 'json',
                 success: function( data ) {
                     response( data );
                 }
@@ -258,7 +261,7 @@ function appendOptSatuan(rowIndex, item)
     if (item.get_unit2 != null && item.get_unit2.u_id !== item.get_unit1.u_id) {
         optSatuan += '<option value="'+ item.get_unit2.u_id +'" data-unitcmp="'+ parseInt(item.i_unitcompare2) +'">'+ item.get_unit2.u_name +'</option>';
     }
-    if (item.get_unit3 != null && item.get_unit3.u_id !== item.get_unit1.u_id) {
+    if (item.get_unit3 != null && item.get_unit3.u_id !== item.get_unit1.u_id && item.get_unit3.u_id !== item.get_unit2.u_id) {
         optSatuan += '<option value="'+ item.get_unit3.u_id +'" data-unitcmp="'+ parseInt(item.i_unitcompare3) +'">'+ item.get_unit3.u_name +'</option>';
     }
     $('.satuan').eq(rowIndex).append(optSatuan);
