@@ -305,6 +305,28 @@ class HargaController extends Controller
         }
     }
 
+    public function editGolonganHPA(Request $request)
+    {
+        try {
+            $id = Crypt::decrypt($request->idGolonganHPA);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => "Failed"]);
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_salesprice')->where('sp_id', $id)->update([
+                'sp_name' => strtoupper($request->namaGolonganHPA),
+                'sp_update' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s')
+            ]);
+            DB::commit();
+            return response()->json(['status' => "Success"]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => "Failed"]);
+        }
+    }
+
     public function deleteGolongan($id)
     {
         try {

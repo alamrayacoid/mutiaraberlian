@@ -62,6 +62,7 @@
 					@include('masterdatautama.harga.golongan.addGolongan')
 					@include('masterdatautama.harga.golongan.addGolonganHPA')
 					@include('masterdatautama.harga.golongan.editGolongan')
+					@include('masterdatautama.harga.golongan.editGolonganHPA')
 					@include('masterdatautama.harga.golongan.hargaAgen')
 					@include('masterdatautama.harga.golongan.editGolHrgUnit')
 					@include('masterdatautama.harga.golongan.editGolHrgRange')
@@ -287,6 +288,22 @@
                     loadingHide();
                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                     reloadTable();
+                } else {
+                    loadingHide();
+                    messageWarning("Gagal", "Data gagal diperbarui!");
+                }
+            })
+        })
+
+        $(document).on('submit', '#formedtglnHPA', function (evt) {
+            evt.preventDefault();
+            loadingShow();
+            var data = $('#formedtglnHPA').serialize();
+            axios.post('{{route("dataharga.editgolonganhpa")}}', data).then(function (response) {
+                if (response.data.status == "Success") {
+                    loadingHide();
+                    messageSuccess("Berhasil", "Data berhasil perbarui!");
+                    tbl_glnHPA.ajax.reload();
                 } else {
                     loadingHide();
                     messageWarning("Gagal", "Data gagal diperbarui!");
@@ -549,6 +566,12 @@
 	    $('#idGolongan').val(id);
 	    $('#namaGolongan').val(name);
         $('#editgolongan').modal('show');
+    }
+
+    function editGolonganHPA(id, name) {
+        $('#idGolonganHPA').val(id);
+        $('#namaGolonganHPA').val(name);
+        $('#editgolonganHPA').modal('show');
     }
 
 	function hapusGolongan(id) {
