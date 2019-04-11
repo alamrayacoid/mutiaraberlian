@@ -174,25 +174,25 @@ class HargaController extends Controller
 
     public function getGolonganHargaHPA($id)
     {
-        $datas = DB::table('d_priceclassauthdt')
+        $datas = DB::table('d_salespriceauth')
             ->join('m_item', function ($item) {
-                $item->on('d_priceclassauthdt.pcad_item', '=', 'm_item.i_id');
+                $item->on('d_salespriceauth.spa_item', '=', 'm_item.i_id');
             })
             ->join('m_unit', function ($unit) {
-                $unit->on('d_priceclassauthdt.pcad_unit', '=', 'm_unit.u_id');
+                $unit->on('d_salespriceauth.spa_unit', '=', 'm_unit.u_id');
             })
-            ->select('m_item.*', 'm_unit.*', 'pcad_price as pcd_price', 'pcad_classprice as pcd_classprice', 'pcad_unit as pcd_unit', 'pcad_detailid as pcd_detailid', 'pcad_item as pcd_item', 'pcad_user as pcd_user', 'pcad_rangeqtyend as pcd_rangeqtyend', 'pcad_rangeqtystart as pcd_rangeqtystart', 'pcad_payment as pcd_payment', 'pcad_type as pcd_type', DB::raw('"N" as status'))
-            ->where('d_priceclassauthdt.pcad_classprice', '=', Crypt::decrypt($id));
+            ->select('m_item.*', 'm_unit.*', 'spa_price as pcd_price', 'spa_salesprice as pcd_classprice', 'spa_unit as pcd_unit', 'spa_detailid as pcd_detailid', 'spa_item as pcd_item', 'spa_user as pcd_user', 'spa_rangeqtyend as pcd_rangeqtyend', 'spa_rangeqtystart as pcd_rangeqtystart', 'spa_payment as pcd_payment', 'spa_type as pcd_type', DB::raw('"N" as status'))
+            ->where('d_salespriceauth.spa_salesprice', '=', Crypt::decrypt($id));
 
-        $datax = DB::table('m_priceclassdt')
+        $datax = DB::table('d_salespricedt')
             ->join('m_item', function ($item) {
-                $item->on('m_priceclassdt.pcd_item', '=', 'm_item.i_id');
+                $item->on('d_salespricedt.spd_item', '=', 'm_item.i_id');
             })
             ->join('m_unit', function ($unit) {
-                $unit->on('m_priceclassdt.pcd_unit', '=', 'm_unit.u_id');
+                $unit->on('d_salespricedt.spd_unit', '=', 'm_unit.u_id');
             })
-            ->select('m_item.*', 'm_unit.*', 'pcd_price', 'pcd_unit', 'pcd_classprice', 'pcd_detailid', 'pcd_item', 'pcd_user as pcd_user', 'pcd_rangeqtyend as pcd_rangeqtyend', 'pcd_rangeqtystart as pcd_rangeqtystart', 'pcd_payment as pcd_payment', 'pcd_type as pcd_type', DB::raw('"Y" as status'))
-            ->where('m_priceclassdt.pcd_classprice', '=', Crypt::decrypt($id));
+            ->select('m_item.*', 'm_unit.*', 'spd_price as pcd_price', 'spd_unit as pcd_unit', 'spd_salesprice as pcd_classprice', 'spd_detailid as pcd_detailid', 'spd_item as pcd_item', 'spd_user as pcd_user', 'spd_rangeqtyend as pcd_rangeqtyend', 'spd_rangeqtystart as pcd_rangeqtystart', 'spd_payment as pcd_payment', 'spd_type as pcd_type', DB::raw('"Y" as status'))
+            ->where('d_salespricedt.spd_salesprice', '=', Crypt::decrypt($id));
 
         if ($datas->count() > 0 && $datax->count() > 0) {
             $data = $datas->union($datax)->get();
@@ -223,14 +223,20 @@ class HargaController extends Controller
                 return '<span class="text-right">' . Currency::addRupiah($data->pcd_price) . '</span>';
             })
             ->addColumn('jenis_pembayaran', function ($data) {
-                return $data->pcd_payment == "K" ? "Konsinyasi" : "Cash";
+                if ($data->pcd_payment == "MA") {
+                    return "Marketing Area";
+                } else if ($data->pcd_payment == "A") {
+                    return "Agen";
+                } else if ($data->pcd_payment == "SA") {
+                    return "Sub Agen";
+                }
             })
             ->addColumn('action', function ($data) {
                 return '<center><div class="btn-group btn-group-sm">
                                             <button class="btn btn-warning" title="Edit"
-                                                    type="button" onclick="editGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->pcd_item . '\', \'' . Currency::addRupiah($data->pcd_price) . '\', \'' . $data->pcd_unit . '\', \'' . $data->pcd_type . '\', \'' . $data->pcd_rangeqtystart . '\', \'' . $data->pcd_rangeqtyend . '\', \'' . $data->status . '\')"><i class="fa fa-pencil"></i></button>
+                                                    type="button" onclick="editGolonganHargaHPA(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->pcd_item . '\', \'' . Currency::addRupiah($data->pcd_price) . '\', \'' . $data->pcd_unit . '\', \'' . $data->pcd_type . '\', \'' . $data->pcd_rangeqtystart . '\', \'' . $data->pcd_rangeqtyend . '\', \'' . $data->status . '\')"><i class="fa fa-pencil"></i></button>
                                             <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->status . '\')"><i class="fa fa-trash"></i></button>
+                                                    title="Hapus" onclick="hapusGolonganHargaHPA(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->status . '\')"><i class="fa fa-trash"></i></button>
                                         </div></center>';
 
             })
