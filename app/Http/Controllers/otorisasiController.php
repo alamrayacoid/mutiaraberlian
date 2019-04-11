@@ -430,7 +430,12 @@ class OtorisasiController extends Controller
                 if ($data->pcad_type == 'U'){
                     return '1 ' . $data->u_name;
                 } else {
-                    return $data->pcad_rangeqtystart . '-' . $data->pcad_rangeqtyend . ' ' . $data->u_name;
+                    if ($data->pcad_rangeqtyend == 0) {
+                        $end = "~";
+                    }else{
+                        $end = $data->pcad_rangeqtyend;
+                    }
+                    return $data->pcad_rangeqtystart . '-' . $end . ' ' . $data->u_name;
                 }
             })
             ->addColumn('aksi', function ($data){

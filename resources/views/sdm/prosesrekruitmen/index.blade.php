@@ -190,6 +190,58 @@
 	function proses(id) {
 		window.location.href='{{url('/sdm/prosesrekruitmen/proses')}}'+'/'+id;
 	}
+
+	function deletePelamar(id) {
+		var delete_ = "{{url('/sdm/prosesrekruitmen/delete-pelamar')}}"+"/"+id;
+    $.confirm({
+        animation: 'RotateY',
+        closeAnimation: 'scale',
+        animationBounce: 1.5,
+        icon: 'fa fa-exclamation-triangle',
+        title: 'Pesan!',
+        content: 'Apakah anda yakin ingin menghapus data ini?',
+        theme: 'disable',
+        buttons: {
+            info: {
+                btnClass: 'btn-blue',
+                text: 'Ya',
+                action: function() {
+                    return $.ajax({
+                        type: "post",
+                        url: delete_,
+							          data: {
+							              "_token": "{{ csrf_token() }}"
+							          },
+                        beforeSend: function() {
+                            loadingShow();
+                        },
+                        success: function(response) {
+                            if (response.status == 'sukses') {
+                                loadingHide();
+                                messageSuccess('Berhasil', 'Data berhasil dihapus!');
+                                tb_rekrutmen.ajax.reload();
+                            } else {
+                                loadingHide();
+                                messageFailed('Gagal', response.message);
+                            }
+                        },
+                        error: function(e) {
+                            loadingHide();
+                            messageWarning('Peringatan', e.message);
+                        }
+                    });
+                }
+            },
+            cancel: {
+                text: 'Tidak',
+                action: function(response) {
+                    loadingHide();
+                    messageWarning('Peringatan', 'Anda telah membatalkan!');
+                }
+            }
+        }
+    });
+	}
 	// End Code -----------------------------------------------------------------------------------
 
 	// Daftar Recruitment Diterima ----------------------------------------------------------------

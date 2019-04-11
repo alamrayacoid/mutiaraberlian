@@ -122,9 +122,9 @@ class RecruitmentController extends Controller
       })
       ->addColumn('action', function($datas) {
         return '<div class="btn-group btn-group-sm">
-                  <button class="btn btn-primary btn-preview-rekruitmen hint--top-left hint--info" type="button" aria-label="Detail Pelamar" onclick="detail(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file"></i></button>
+                  <button class="btn btn-primary btn-preview-rekruitmen hint--top-left hint--info" type="button" aria-label="Detail Pelamar" onclick="detail(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file-text"></i></button>
                   <button class="btn btn-warning btn-proses-rekruitmen hint--top-left hint--warning" type="button" aria-label="Proses Pelamar" onclick="proses(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file-powerpoint-o"></i></button>
-                  <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Nonaktifkan" onclick="nonActivate(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-times-circle"></i></button>
+                  <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Hapus Data" onclick="deletePelamar(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-trash"></i></button>
                 </div>';
       })
       ->rawColumns(['tgl_apply', 'status', 'tanggal', 'action'])
@@ -257,9 +257,38 @@ class RecruitmentController extends Controller
           'status'  => 'Gagal',
           'message' => $e
         ]);
+    }    
+  }
+
+  public function deletePelamar($id)
+  {
+    try {
+        $id = Crypt::decrypt($id);
+    } catch (\Exception $e) {
+        return view('errors.404');
     }
 
-    
+    DB::beginTransaction();
+    try {
+        DB::table('d_pelamar')
+          ->where('p_id', $id)
+          ->delete();
+
+        DB::table('d_pelamarlanjutan')
+          ->where('pl_id', $id)
+          ->delete();
+
+      DB::commit();
+      return response()->json([
+        'status' => 'sukses'
+      ]);
+    } catch (\Exception $e) {
+        DB::rollback();
+        return response()->json([
+          'status'  => 'Gagal',
+          'message' => $e
+        ]);
+    }
   }
   // End Code =============================================================================================
 
