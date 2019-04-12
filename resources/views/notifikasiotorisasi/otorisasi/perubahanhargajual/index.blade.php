@@ -72,7 +72,7 @@
         table1 = $('#table_otorisasi').DataTable({
             responsive: true,
             // language: dataTableLanguage,
-            // processing: true,
+            processing: true,
             serverSide: true,
             ajax: {
                 url: "{{ url('notifikasiotorisasi/otorisasi/perubahanhargajual/getdataperubahan') }}",
@@ -100,7 +100,30 @@
 		})
 	});
 
-    tableagen = $('#table_otorisasi_agen').DataTable();
+    tableagen = $('#table_otorisasi_agen').DataTable({
+        responsive: true,
+        // language: dataTableLanguage,
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "{{ url('notifikasiotorisasi/otorisasi/perubahanhargajual/getdataperubahanhpa') }}",
+            type: "get",
+            data: {
+                "_token": "{{ csrf_token() }}"
+            }
+        },
+        columns: [
+            {data: 'DT_RowIndex'},
+            {data: 'sp_name', name: 'sp_name'},
+            {data: 'nama', name: 'name'},
+            {data: 'spa_payment', name: 'spa_payment'},
+            {data: 'qty', name: 'qty'},
+            {data: 'spa_price', name: 'spa_price'},
+            {data: 'aksi', name: 'aksi'}
+        ],
+        pageLength: 10,
+        lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+    });
 
 	function approve(id, detailid) {
         $.confirm({
@@ -125,6 +148,43 @@
                             }else{
                                 loadingHide();
                                 messageFailed("Gagal", "Data Order Produksi Gagal Dihapus");
+                            }
+                        })
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
+
+	function approveHPA(id, detailid) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin akan menyetujui data ini?',
+            theme: 'sukses',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/perubahanhargajual/approve-hpa'+'/'+id+'/'+detailid).then(function(response) {
+                            loadingShow();
+                            if(response.data.status == 'sukses'){
+                                loadingHide();
+                                messageSuccess("Berhasil", "Data Order Produksi Berhasil Disetujui");
+                                tableagen.ajax.reload();
+                            }else{
+                                loadingHide();
+                                messageFailed("Gagal", "Terjadi kesalahan sistem");
                             }
                         })
                     }

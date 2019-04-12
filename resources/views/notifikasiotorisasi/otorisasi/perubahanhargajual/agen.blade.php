@@ -14,7 +14,7 @@
         <div class="card-body">
             <div class="table-responsive">
 
-                <table class="table table-striped table-hover display nowrap" id="table_otorisasi_agen" cellspacing="0">
+                <table class="table table-striped table-hover display nowrap" id="table_otorisasi_agen" cellspacing="0" style="width: 100%">
 
                     <thead class="bg-primary">
                         <tr>

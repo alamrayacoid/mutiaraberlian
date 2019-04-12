@@ -460,7 +460,9 @@ Route::group(['middleware' => 'auth'], function () {
     //== otorisasi perubahan harga jual
     Route::get('/notifikasiotorisasi/otorisasi/perubahanhargajual/index', 'OtorisasiController@perubahanhargajual')->name('perubahanhargajual');
     Route::get('notifikasiotorisasi/otorisasi/perubahanhargajual/getdataperubahan', 'OtorisasiController@getDataPerubahanHarga');
+    Route::get('notifikasiotorisasi/otorisasi/perubahanhargajual/getdataperubahanhpa', 'OtorisasiController@getDataPerubahanHargaHPA');
     Route::get('notifikasiotorisasi/otorisasi/perubahanhargajual/approve/{id}/{detail}', 'OtorisasiController@approvePerubahanHarga');
+    Route::get('notifikasiotorisasi/otorisasi/perubahanhargajual/approve-hpa/{id}/{detail}', 'OtorisasiController@approvePerubahanHargaHPA');
     //== end otorisasi perubahan harga jual
     Route::get('/notifikasiotorisasi/otorisasi/pengeluaranlebih/index', 'OtorisasiController@pengeluaranlebih')->name('pengeluaranlebih');
     Route::get('/notifikasiotorisasi/otorisasi/opname/index', 'OtorisasiController@opname_otorisasi')->name('opname_otorisasi');
