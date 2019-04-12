@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1c8b318e-c138-400d-afca-6445ceb3fae0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgRangeHPA.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgUnitHPA.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <ignored path="$PROJECT_DIR$/.idea/" />
@@ -123,8 +121,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1863">
-              <caret line="90" column="93" selection-start-line="90" selection-start-column="93" selection-end-line="90" selection-end-column="93" />
+            <state relative-caret-position="229">
+              <caret line="97" column="104" selection-start-line="97" selection-start-column="104" selection-end-line="97" selection-end-column="104" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
               </folding>
@@ -132,11 +130,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="236" column="95" selection-start-line="236" selection-start-column="95" selection-end-line="236" selection-end-column="95" />
+            <state relative-caret-position="756">
+              <caret line="846" column="42" selection-start-line="846" selection-start-column="42" selection-end-line="846" selection-end-column="42" />
               <folding>
                 <element signature="e#2050#3379#0#PHP" />
                 <element signature="e#14013#14776#0#PHP" />
@@ -158,11 +156,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="520">
-              <caret line="876" lean-forward="true" selection-start-line="876" selection-end-line="876" />
+            <state relative-caret-position="223">
+              <caret line="600" column="90" selection-start-line="600" selection-start-column="90" selection-end-line="600" selection-end-column="90" />
               <folding>
                 <element signature="e#2913#3020#0#HTML" />
                 <element signature="e#3191#3310#0#HTML" />
@@ -197,6 +195,7 @@
                 <element signature="e#29700#29784#0#HTML" />
                 <element signature="e#29820#29908#0#HTML" />
                 <element signature="e#30010#33804#0#HTML" />
+                <element signature="e#34281#38075#0#HTML" />
                 <element signature="e#33858#35524#0#HTML" />
                 <element signature="e#35566#36677#0#HTML" />
                 <element signature="e#36722#37864#0#HTML" />
@@ -219,8 +218,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgUnitHPA.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="520">
-              <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
+            <state relative-caret-position="253">
+              <caret line="11" column="40" lean-forward="true" selection-start-line="11" selection-start-column="40" selection-end-line="11" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -229,8 +228,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>golongan</find>
-      <find>dataharga.getgolongan</find>
       <find>tbl_gln</find>
       <find>addGolonganHarga</find>
       <find>barang</find>
@@ -259,6 +256,8 @@
       <find>rangestart</find>
       <find>formsethargaHPA</find>
       <find>editGolonganHarga</find>
+      <find>formEditGolHrgUnit</find>
+      <find>dataharga.editgolonganhargaunit</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -314,11 +313,11 @@
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/addGolonganHPA.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/hargaAgen.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/index.blade.php" />
-        <option value="$PROJECT_DIR$/routes/web.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgUnitHPA.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgRangeHPA.blade.php" />
+        <option value="$PROJECT_DIR$/routes/web.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" />
       </list>
     </option>
   </component>
@@ -725,14 +724,7 @@
       <workItem from="1554776933486" duration="10576000" />
       <workItem from="1554860650962" duration="18355000" />
       <workItem from="1554947942967" duration="19282000" />
-      <workItem from="1555034802806" duration="3759000" />
-    </task>
-    <task id="LOCAL-00099" summary="mutiara">
-      <created>1554263336391</created>
-      <option name="number" value="00099" />
-      <option name="presentableId" value="LOCAL-00099" />
-      <option name="project" value="LOCAL" />
-      <updated>1554263336392</updated>
+      <workItem from="1555034802806" duration="4714000" />
     </task>
     <task id="LOCAL-00100" summary="mutiara">
       <created>1554266284601</created>
@@ -1070,15 +1062,21 @@
       <option name="project" value="LOCAL" />
       <updated>1555037380756</updated>
     </task>
-    <option name="localTasksCounter" value="148" />
+    <task id="LOCAL-00148" summary="mutiara">
+      <created>1555038635259</created>
+      <option name="number" value="00148" />
+      <option name="presentableId" value="LOCAL-00148" />
+      <option name="project" value="LOCAL" />
+      <updated>1555038635259</updated>
+    </task>
+    <option name="localTasksCounter" value="149" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="442581000" />
+    <option name="totallyTimeSpent" value="443536000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1366" height="768" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23787878" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -1457,16 +1455,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/web.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1863">
-          <caret line="90" column="93" selection-start-line="90" selection-start-column="93" selection-end-line="90" selection-end-column="93" />
-          <folding>
-            <element signature="e#7#389#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/rangeHPA.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-273">
@@ -1488,41 +1476,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="236" column="95" selection-start-line="236" selection-start-column="95" selection-end-line="236" selection-end-column="95" />
-          <folding>
-            <element signature="e#2050#3379#0#PHP" />
-            <element signature="e#14013#14776#0#PHP" />
-            <element signature="e#14782#15551#0#PHP" />
-            <element signature="e#15557#16284#0#PHP" />
-            <element signature="e#16290#17038#0#PHP" />
-            <element signature="e#17044#17593#0#PHP" />
-            <element signature="e#17599#18151#0#PHP" />
-            <element signature="e#18157#19687#0#PHP" />
-            <element signature="e#19693#20398#0#PHP" />
-            <element signature="e#20404#28424#0#PHP" />
-            <element signature="e#28430#36456#0#PHP" />
-            <element signature="e#36462#37487#0#PHP" />
-            <element signature="e#37493#40066#0#PHP" />
-            <element signature="e#40072#46067#0#PHP" />
-            <element signature="e#46073#46306#0#PHP" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgUnit.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="205">
           <caret line="14" column="60" lean-forward="true" selection-start-line="14" selection-start-column="60" selection-end-line="14" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgUnitHPA.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="520">
-          <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
         </state>
       </provider>
     </entry>
@@ -1540,10 +1497,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgUnitHPA.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="253">
+          <caret line="11" column="40" lean-forward="true" selection-start-line="11" selection-start-column="40" selection-end-line="11" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="520">
-          <caret line="876" lean-forward="true" selection-start-line="876" selection-end-line="876" />
+        <state relative-caret-position="223">
+          <caret line="600" column="90" selection-start-line="600" selection-start-column="90" selection-end-line="600" selection-end-column="90" />
           <folding>
             <element signature="e#2913#3020#0#HTML" />
             <element signature="e#3191#3310#0#HTML" />
@@ -1578,11 +1542,46 @@
             <element signature="e#29700#29784#0#HTML" />
             <element signature="e#29820#29908#0#HTML" />
             <element signature="e#30010#33804#0#HTML" />
+            <element signature="e#34281#38075#0#HTML" />
             <element signature="e#33858#35524#0#HTML" />
             <element signature="e#35566#36677#0#HTML" />
             <element signature="e#36722#37864#0#HTML" />
             <element signature="e#37937#38413#0#HTML" />
             <element signature="e#37974#38409#0#HTML" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/web.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="97" column="104" selection-start-line="97" selection-start-column="104" selection-end-line="97" selection-end-column="104" />
+          <folding>
+            <element signature="e#7#389#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="756">
+          <caret line="846" column="42" selection-start-line="846" selection-start-column="42" selection-end-line="846" selection-end-column="42" />
+          <folding>
+            <element signature="e#2050#3379#0#PHP" />
+            <element signature="e#14013#14776#0#PHP" />
+            <element signature="e#14782#15551#0#PHP" />
+            <element signature="e#15557#16284#0#PHP" />
+            <element signature="e#16290#17038#0#PHP" />
+            <element signature="e#17044#17593#0#PHP" />
+            <element signature="e#17599#18151#0#PHP" />
+            <element signature="e#18157#19687#0#PHP" />
+            <element signature="e#19693#20398#0#PHP" />
+            <element signature="e#20404#28424#0#PHP" />
+            <element signature="e#28430#36456#0#PHP" />
+            <element signature="e#36462#37487#0#PHP" />
+            <element signature="e#37493#40066#0#PHP" />
+            <element signature="e#40072#46067#0#PHP" />
+            <element signature="e#46073#46306#0#PHP" />
           </folding>
         </state>
       </provider>

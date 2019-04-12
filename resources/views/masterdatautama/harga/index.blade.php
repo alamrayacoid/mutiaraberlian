@@ -581,6 +581,46 @@
 
         })
 
+        $(document).on('submit', '#formEditGolHrgUnitHPA', function (evt) {
+            evt.preventDefault();
+            var data = $('#formEditGolHrgUnitHPA').serialize();
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 2.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apakah anda yakin ingin memperbarui data ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            loadingShow();
+                            return axios.post('{{route("dataharga.editgolonganhargaunithpa")}}', data).then(function (response) {
+                                if (response.data.status == "Success") {
+                                    loadingHide();
+                                    messageSuccess("Berhasil", "Data berhasil perbarui!");
+                                    tbl_itemHPA.ajax.reload();
+                                } else {
+                                    loadingHide();
+                                    messageWarning("Gagal", "Data gagal diperbarui!");
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+
+        })
+
         $(document).on('submit', '#formEditGolHrgRange', function (evt) {
             evt.preventDefault();
             var data = $('#formEditGolHrgRange').serialize();

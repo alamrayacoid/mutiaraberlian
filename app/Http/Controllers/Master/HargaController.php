@@ -822,6 +822,65 @@ class HargaController extends Controller
         }
     }
 
+    public function editGolonganHargaUnitHPA(Request $request)
+    {
+        try {
+            $id = Crypt::decrypt($request->golIdHPA);
+            $detail = Crypt::decrypt($request->golDetailHPA);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => "Failed"]);
+        }
+
+        DB::beginTransaction();
+        try {
+            if ($request->statusHPA == "N") {
+                DB::table('d_salespriceauth')
+                    ->where('spa_salesprice', '=', $id)
+                    ->where('spa_detailid', '=', $detail)
+                    ->update([
+                        'spa_unit' => $request->satuanBarangUnitEditHPA,
+                        'spa_price' => Currency::removeRupiah($request->edithargaHPA),
+                    ]);
+
+                DB::commit();
+                return response()->json(['status' => "Success"]);
+            } else if ($request->statusHPA == "Y") {
+                $price = DB::table('d_salespricedt')
+                    ->where('spd_salesprice', '=', $id)
+                    ->where('spd_detailid', '=', $detail);
+
+                if ($price->count() > 0) {
+                    //insert in d_priceclassauthdt
+                    $val = [
+                        'spa_salesprice'   => $price->first()->spd_salesprice,
+                        'spa_detailid'     => $price->first()->spd_detailid,
+                        'spa_item'         => $price->first()->spd_item,
+                        'spa_unit'         => $request->satuanBarangUnitEditHPA,
+                        'spa_type'         => $price->first()->spd_type,
+                        'spa_payment'      => $price->first()->spd_payment,
+                        'spa_rangeqtystart'=> $price->first()->spd_rangeqtystart,
+                        'spa_rangeqtyend'  => $price->first()->spd_rangeqtyend,
+                        'spa_price'        => Currency::removeRupiah($request->edithargaHPA),
+                        'spa_user'         => $price->first()->spd_user
+                    ];
+                    DB::table('d_salespricedt')->insert($val);
+
+                    //delete in m_priceclassdt
+                    $price->delete();
+                    DB::commit();
+                    return response()->json(['status' => "Success"]);
+                } else {
+                    DB::rollBack();
+                    return response()->json(['status' => "Failed"]);
+                }
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => "Failed"]);
+        }
+    }
+
     public function editGolonganHargaRange(Request $request)
     {
         $sts = '';
