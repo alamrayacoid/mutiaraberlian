@@ -2,7 +2,9 @@
 
 @section('content')
 
+@include('marketing.penjualanpusat.returnpenjualan.modal-search')
 
+@include('marketing.penjualanpusat.returnpenjualan.modal-detail')
 
 <article class="content animated fadeInLeft">
 
@@ -34,29 +36,46 @@
                     <div class="card-block">
                         <section>
                         	
-                        	<div class="row">
-                        		<div class="col-md-3 col-sm-6 col-12">
-                        			<label>Metode Return</label>
-                        		</div>
-
-                        		<div class="col-md-3 col-sm-6 col-12">
-                        			<div class="form-group">
-                        				<select class="form-control form-control-sm" id="header-metodereturn">
-                        					<option value="">--Pilih Metode Return--</option>
-                        					<option value="1">Potong Nota</option>
-                        					<option value="2">Tukar Barang</option>
-                        					<option value="3">Salah Barang</option>
-                        					<option value="4">Salah Alamat</option>
-                        					<option value="5">Kurang Barang</option>
-                        				</select>
-                        			</div>
-                        		</div>
-                        	</div>
-                            @include('marketing.penjualanpusat.returnpenjualan.tab_potongnota')
-                            @include('marketing.penjualanpusat.returnpenjualan.tab_tukarbarang')
-                            @include('marketing.penjualanpusat.returnpenjualan.tab_salahbarang')
-                            @include('marketing.penjualanpusat.returnpenjualan.tab_salahalamat')
-                        	@include('marketing.penjualanpusat.returnpenjualan.tab_kurangbarang')
+                            <div class="row">
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <label>No. Nota</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-12">
+                                    <div class="input-group">
+                                        <input type="hidden" name="" id="">
+                                        <input type="text" name="" id="" class="form-control form-control-sm">
+                                        <button class="btn btn-md btn-secondary" title="Pencarian No. Nota" id="btn_searchnota" style="border-left:none;" data-toggle="modal" data-target="#search-modal"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <button type="button" class="btn btn-md btn-primary" id="go">Lanjutkan</button>
+                                </div>
+                                <hr>
+                            </div>
+                            <div class="table-responsive table-returnp d-none">
+                                <table class="table table-striped table-hover" cellspacing="0" id="table_rp">
+                                    <thead class="bg-primary">
+                                    <tr>
+                                        <th>Nama Barang</th>
+                                        <th>Qty</th>
+                                        <th>Harga @</th>
+                                        <th>Total</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>Obat</td>
+                                        <td>1</td>
+                                        <td>Rp. 50,000.000</td>
+                                        <td>Rp. 50,000.000</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#create"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </section>
                     </div>
                     <div class="card-footer text-right">
@@ -78,64 +97,14 @@
 @section('extra_script')
 <script type="text/javascript">
 	$(document).ready(function(){
-        var eueue, crmpie, table3, table4, table5, table_salahkirim_1, table_salahkirim_2;
+        var table_returnp;
 
-        eueue = $('#tabel_return_1').DataTable();
-        crmpie = $('#tabel_return_2').DataTable();
-        table3 = $('#tabel_return_3').DataTable();
-        table4 = $('#tabel_return_4').DataTable();
-		table5 = $('#tabel_return_5').DataTable();
-        table_salahkirim_1 = $('#table_salahkirim_1').DataTable();
-        table_salahkirim_2 = $('#table_salahkirim_2').DataTable();
+        table_returnp = $('#table_rp').DataTable();
 
-        $('#header-metodereturn').change(function(){
-            var ini, potong_nota, tukar_barang, salah_barang, salah_alamat, kurang_barang;
-            ini             = $(this).val();
-            potong_nota     = $('#potong_nota');
-            tukar_barang     = $('#tukar_barang');
-            salah_barang     = $('#salah_barang');
-            salah_alamat     = $('#salah_alamat');
-            kurang_barang     = $('#kurang_barang');
-
-            if (ini === '1') {
-                potong_nota.removeClass('d-none');
-                tukar_barang.addClass('d-none');
-                salah_barang.addClass('d-none');
-                salah_alamat.addClass('d-none');
-                kurang_barang.addClass('d-none');
-            } else if(ini === '2'){
-                potong_nota.addClass('d-none');
-                tukar_barang.removeClass('d-none');
-                salah_barang.addClass('d-none');
-                salah_alamat.addClass('d-none');
-                kurang_barang.addClass('d-none');
-            } else if(ini === '3'){
-                potong_nota.addClass('d-none');
-                tukar_barang.addClass('d-none');
-                salah_barang.removeClass('d-none');
-                salah_alamat.addClass('d-none');
-                kurang_barang.addClass('d-none');
-            } else if(ini === '4'){
-                potong_nota.addClass('d-none');
-                tukar_barang.addClass('d-none');
-                salah_barang.addClass('d-none');
-                salah_alamat.removeClass('d-none');
-                kurang_barang.addClass('d-none');
-            } else if(ini === '5'){
-                potong_nota.addClass('d-none');
-                tukar_barang.addClass('d-none');
-                salah_barang.addClass('d-none');
-                salah_alamat.addClass('d-none');
-                kurang_barang.removeClass('d-none');
-            } else {
-
-                potong_nota.addClass('d-none');
-                tukar_barang.addClass('d-none');
-                salah_barang.addClass('d-none');
-                salah_alamat.addClass('d-none');
-                kurang_barang.addClass('d-none');
-            }
+        $('#go').on('click', function(){
+            $('.table-returnp').removeClass('d-none');
         });
+
 	});
 </script>
 @endsection
