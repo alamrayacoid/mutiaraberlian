@@ -278,15 +278,9 @@ class MarketingController extends Controller
 //        in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
         $idx = null;
         foreach ($array as $key =>  $val) {
-            if ($array[$key]->pcd_rangeqtyend == "0") {
-                if ($value >= $array[$key]->pcd_rangeqtystart) {
-                    $idx = $key;
-                }
-            } else {
-                $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
-                if ($x == true) {
-                    $idx = $key;
-                }
+            $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
+            if ($x == true) {
+                $idx = $key;
             }
         }
         return $idx;
@@ -313,26 +307,29 @@ class MarketingController extends Controller
             if ($qty == 1) {
                 if ($this->existsInArray("U", $get_price) == true) {
                     if ($get_price[$key]->pcd_type == "U") {
-                        $harga = number_format($get_price[$key]->pcd_price,0, ',', '');
+                        $harga = $get_price[$key]->pcd_price;
                     }
                 } else {
                     if ($price->pcd_rangeqtystart == 1) {
-                        $harga = number_format($get_price[$key]->pcd_price,0, ',', '');
-                    } else {
-                        $harga = 0;
+                        $harga = $get_price[$key]->pcd_price;
                     }
                 }
             } else if ($qty > 1) {
-                $z = $this->inRange($qty, $get_price);
-                if ($z != null) {
-                    $harga = number_format($get_price[$z]->pcd_price,0, ',', '');
+                if ($price->pcd_rangeqtyend == 0){
+                    if ($qty >= $price->pcd_rangeqtystart) {
+                        $harga = $price->pcd_price;
+                    }
                 } else {
-                    $harga = 0;
+                    $z = $this->inRange($qty, $get_price);
+                    if ($z != null) {
+                        $harga = $get_price[$z]->pcd_price;
+                    }
                 }
+
             }
         }
 
-        return Response::json($harga);
+        return Response::json(number_format($harga, 0, '', ''));
     }
 
     public function add_penempatanproduk(Request $request)

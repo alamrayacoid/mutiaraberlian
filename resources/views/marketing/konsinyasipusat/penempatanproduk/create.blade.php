@@ -412,7 +412,6 @@
 
                         axios.get(baseUrl+'/marketing/konsinyasipusat/cek-harga/'+$("#kodeKonsigner").val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+tmp_jumlah)
                             .then(function (res) {
-                                console.log(res.data);
                                 var price = res.data;
 
                                 if (isNaN(price)) {
