@@ -544,11 +544,16 @@ class RecruitmentController extends Controller
     DB::beginTransaction();
     try {
       $query = DB::table('d_applicant')
-        ->join('d_pelamar', 'a_id', 'p_applicant')
+        ->join('d_pelamar', function($p){
+          $p->on('a_id', '=', 'p_applicant');
+        })
+        ->where('a_id', '=', $id)
+        ->where('a_isactive', '=', "Y")
         ->where('p_applicant', '=', $id)
-        ->orWhere('a_isactive', '=', "Y")
         ->count();
-        
+
+      dd($query);
+
       if ($query > 0) {
         DB::commit();
         return response()->json([
