@@ -1000,6 +1000,48 @@
         });
     }
 
+    function hapusGolonganHargaHPA(id, detail, status) {
+        // deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail);
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "get",
+                            url: baseUrl+"/masterdatautama/harga/delete-golongan-harga-hpa/"+id+"/"+detail+"/"+status,
+                            success: function (response) {
+                                if (response.status == 'Success') {
+                                    messageSuccess('Berhasil', 'Data berhasil hapus!');
+                                    tbl_item.ajax.reload();
+                                } else {
+                                    messageWarning('Gagal', 'Gagal menghapus data!');
+                                }
+                            },
+                            error: function (e) {
+                                messageFailed('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
+
     function addGolonganHarga(id, name) {
         $(".barang").attr('disabled', false);
         $("#jenisharga").attr('disabled', false);

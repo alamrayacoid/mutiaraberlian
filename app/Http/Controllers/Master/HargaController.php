@@ -236,7 +236,7 @@ class HargaController extends Controller
                                             <button class="btn btn-warning" title="Edit"
                                                     type="button" onclick="editGolonganHargaHPA(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->pcd_item . '\', \'' . Currency::addRupiah($data->pcd_price) . '\', \'' . $data->pcd_unit . '\', \'' . $data->pcd_type . '\', \'' . $data->pcd_rangeqtystart . '\', \'' . $data->pcd_rangeqtyend . '\', \'' . $data->status . '\')"><i class="fa fa-pencil"></i></button>
                                             <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->status . '\')"><i class="fa fa-trash"></i></button>
+                                                    title="Hapus" onclick="hapusGolonganHargaHPA(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->status . '\')"><i class="fa fa-trash"></i></button>
                                         </div></center>';
 
             })
@@ -752,6 +752,37 @@ class HargaController extends Controller
                 DB::table('m_priceclassdt')
                     ->where('pcd_classprice', '=', $id)
                     ->where('pcd_detailid', '=', $detail)
+                    ->delete();
+            }
+
+            DB::commit();
+            return response()->json(['status' => "Success"]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['status' => "Failed"]);
+        }
+    }
+
+    public function deleteGolonganHargaHPA($id, $detail, $status)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $detail = Crypt::decrypt($detail);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => "Failed"]);
+        }
+
+        DB::beginTransaction();
+        try {
+            if ($status == "N") {
+                DB::table('d_salespriceauth')
+                    ->where('spa_salesprice', '=', $id)
+                    ->where('spa_detailid', '=', $detail)
+                    ->delete();
+            } else if ($status == "Y") {
+                DB::table('d_salespricedt')
+                    ->where('spd_salesprice', '=', $id)
+                    ->where('spd_detailid', '=', $detail)
                     ->delete();
             }
 
