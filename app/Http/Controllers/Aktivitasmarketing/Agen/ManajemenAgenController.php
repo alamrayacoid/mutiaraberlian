@@ -136,7 +136,7 @@ class ManajemenAgenController extends Controller
             return
             '<div class="btn-group btn-group-sm">
             <button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="showDetailPenjualan('. $datas->s_id .')"><i class="fa fa-folder"></i></button>
-            <button class="btn btn-danger btn-delete" type="button" title="Delete"><i class="fa fa-trash"></i></button>
+            <button class="btn btn-danger btn-delete" type="button" title="Delete" onclick="deleteDetailPenjualan('. $datas->s_id .')"><i class="fa fa-trash"></i></button>
             </div>';
         })
         ->rawColumns(['customer', 'staff', 'action'])
@@ -151,6 +151,30 @@ class ManajemenAgenController extends Controller
         ->first();
         return response()->json($detail);
     }
+    // delete detail-kpl
+    public function deleteDetailPenjualan(Request $request)
+    {
+        $id = $request->id;
+        DB::beginTransaction();
+        try {
+            $penjualan = d_sales::where('s_id', $id)
+            ->firstOrFail();
+            $penjualan->getSalesDt()->delete();
+            $penjualan->delete();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    // show page to create new KPL
     public function createKPL()
     {
         $data['member'] = m_member::orWhere('m_id', 1)
@@ -239,7 +263,7 @@ class ManajemenAgenController extends Controller
         try {
             // start insert data
             $salesId = d_sales::max('s_id') + 1;
-            $salesNota = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
+            $salesNota = CodeGenerator::codeSalesWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
             $sales = new d_sales();
             $sales->s_id = $salesId;
             $sales->s_comp = Auth::user()->u_company;

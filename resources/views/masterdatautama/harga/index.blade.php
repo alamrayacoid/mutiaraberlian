@@ -65,7 +65,9 @@
 					@include('masterdatautama.harga.golongan.editGolonganHPA')
 					@include('masterdatautama.harga.golongan.hargaAgen')
 					@include('masterdatautama.harga.golongan.editGolHrgUnit')
+					@include('masterdatautama.harga.golongan.editGolHrgUnitHPA')
 					@include('masterdatautama.harga.golongan.editGolHrgRange')
+					@include('masterdatautama.harga.golongan.editGolHrgRangeHPA')
                     @include('masterdatautama.harga.pending.index')
 
 		        </div>
@@ -428,12 +430,114 @@
             }
         });
 
+        $(document).on('submit', '#formsethargaHPA', function (evt) {
+            evt.preventDefault();
+            if ($("#jenishargaHPA").val() == "U") {
+                if ($("#idBarangHPA").val() == "") {
+                    messageWarning("Peringatan", "Masukkan nama barang dengan benar!");
+                } else if ($("#satuanBarangHPA").val() == "") {
+                    messageWarning("Peringatan", "Pilih satuan barang!");
+                } else if ($("#jenis_pembayaranHPA").val() == "") {
+                    messageWarning("Peringatan", "Pilih jenis pembayaran!");
+                } else if ($("#hargaHPA").val() == "" || $("#hargaHPA").val() == "Rp. 0") {
+                    messageWarning("Peringatan", "Masukkan harga barang dengan benar!");
+                } else {
+                    loadingShow();
+                    var data = $('#formsethargaHPA').serialize();
+                    axios.post('{{route("dataharga.addgolonganhargahpa")}}', data).then(function (response) {
+                        if (response.data.status == "Success") {
+                            loadingHide();
+                            messageSuccess("Berhasil", "Data berhasil disimpan!");
+                            $("#idBarangHPA").val("");
+                            $(".barangHPA").val("");
+                            $("#jenishargaHPA").val("");
+                            $("#select2-jenishargaHPA-container").text('Pilih Jenis Harga');
+                            tbl_itemHPA.ajax.reload();
+                            $("#rangestartHPA").val("");
+                            $("#rangeendHPA").val("");
+                            $("#hargarangeHPA").val("");
+                            $("#satuanrangeHPA option").remove();
+                            $("#satuanrangeHPA").prepend('<option value="">Pilih Satuan</option>');
+                            $("#satuanrangeHPA").val(null);
+                            $("#select2-satuanrangeHPA-container").text('Pilih Satuan');
+                            $("#rangeendHPA").attr("readonly", true);
+                            $("#satuanHPA").addClass('d-none');
+                            $("#rangeHPA").addClass('d-none');
+                        } else if (response.data.status == "Failed") {
+                            loadingHide();
+                            messageWarning("Gagal", "Data gagal disimpan!");
+                        } else if (response.data.status == "Range Ada") {
+                            loadingHide();
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
+                        } else if (response.data.status == "Unit Ada") {
+                            loadingHide();
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
+                        }
+                    });
+                }
+            } else if ($("#jenishargaHPA").val() == "R") {
+                if ($("#idBarangHPA").val() == "") {
+                    messageWarning("Peringatan", "Masukkan nama barang dengan benar!");
+                } else if ($("#rangestartHPA").val() == "") {
+                    messageWarning("Peringatan", "Masukkan range awal dengan benar!");
+                } else if ($("#rangeendHPA").val() == "") {
+                    messageWarning("Peringatan", "Masukkan range akhir dengan benar!");
+                } else if ($("#satuanrangeHPA").val() == "") {
+                    messageWarning("Peringatan", "Pilih satuan barang!");
+                } else if ($("#hargarangeHPA").val() == "" || $("#hargarangeHPA").val() == "Rp. 0") {
+                    messageWarning("Peringatan", "Masukkan harga barang dengan benar!");
+                } else {
+                    loadingShow();
+                    var data = $('#formsethargaHPA').serialize();
+                    axios.post('{{route("dataharga.addgolonganhargahpa")}}', data).then(function (response) {
+                        if (response.data.status == "Success") {
+                            loadingHide();
+                            messageSuccess("Berhasil", "Data berhasil disimpan!");
+                            $("#idBarangHPA").val("");
+                            $(".barangHPA").val("");
+                            $("#jenishargaHPA").val("");
+                            $("#select2-jenishargaHPA-container").text('Pilih Jenis Harga');
+                            tbl_itemHPA.ajax.reload();
+                            $("#rangestartHPA").val("");
+                            $("#rangeendHPA").val("");
+                            $("#hargarangeHPA").val("");
+                            $("#satuanrangeHPA option").remove();
+                            $("#satuanrangeHPA").prepend('<option value="">Pilih Satuan</option>');
+                            $("#satuanrangeHPA").val(null);
+                            $("#select2-satuanrangeHPA-container").text('Pilih Satuan');
+                            $("#rangeendHPA").attr("readonly", true);
+                            $("#satuanHPA").addClass('d-none');
+                            $("#rangeHPA").addClass('d-none');
+                        } else if (response.data.status == "Failed") {
+                            loadingHide();
+                            messageWarning("Gagal", "Data gagal disimpan!");
+                        } else if (response.data.status == "Range Ada") {
+                            loadingHide();
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range, satuan dan jenis pembayaran tersebut!");
+                        } else if (response.data.status == "Unit Ada") {
+                            loadingHide();
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
+                        }
+                    });
+                }
+            }
+        });
+
         $(document).on('keyup', '#rangestart', function (evt) {
             evt.preventDefault();
             if ($(this).val() != "") {
                 $("#rangeend").removeAttr('readonly');
             } else {
                 $("#rangeend").attr('readonly', true);
+            }
+        });
+
+        $(document).on('keyup', '#rangestartHPA', function (evt) {
+            evt.preventDefault();
+            if ($(this).val() != "") {
+                $("#rangeendHPA").removeAttr('readonly');
+            } else {
+                $("#rangeendHPA").attr('readonly', true);
             }
         });
 
@@ -459,6 +563,46 @@
                                     loadingHide();
                                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                                     tbl_item.ajax.reload();
+                                } else {
+                                    loadingHide();
+                                    messageWarning("Gagal", "Data gagal diperbarui!");
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+
+        })
+
+        $(document).on('submit', '#formEditGolHrgUnitHPA', function (evt) {
+            evt.preventDefault();
+            var data = $('#formEditGolHrgUnitHPA').serialize();
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 2.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apakah anda yakin ingin memperbarui data ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            loadingShow();
+                            return axios.post('{{route("dataharga.editgolonganhargaunithpa")}}', data).then(function (response) {
+                                if (response.data.status == "Success") {
+                                    loadingHide();
+                                    messageSuccess("Berhasil", "Data berhasil perbarui!");
+                                    tbl_itemHPA.ajax.reload();
                                 } else {
                                     loadingHide();
                                     messageWarning("Gagal", "Data gagal diperbarui!");
@@ -681,6 +825,96 @@
 
     }
 
+    function editGolonganHargaHPA(id, detail, item, harga, satuan, tipe, rangestart, rangeEnd, status) {
+        if (tipe == "U") {
+            $("#satuanBarangUnitEdiHPAt").find('option').remove();
+            $.ajax({
+                url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
+                type: 'GET',
+                success: function( resp ) {
+                    var option = '';
+                    if (resp.id1 == satuan) {
+                        option += '<option value="'+resp.id1+'" selected>'+resp.unit1+'</option>';
+                    } else {
+                        option += '<option value="'+resp.id1+'" >'+resp.unit1+'</option>';
+                    }
+
+                    if (resp.id2 != null && resp.id2 != resp.id1) {
+                        if (resp.id2 == satuan) {
+                            option += '<option value="'+resp.id2+'" selected>'+resp.unit2+'</option>';
+                        } else {
+                            option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                        }
+
+                    }
+                    if (resp.id3 != null && resp.id3 != resp.id1) {
+                        if (resp.id3 == satuan) {
+                            option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                        } else {
+                            option += '<option value="'+resp.id3+'" selected>'+resp.unit3+'</option>';
+                        }
+
+                    }
+                    $("#satuanBarangUnitEditHPA").append(option);
+                }
+            });
+            $("#golIdHPA").val(id);
+            $("#golDetailHPA").val(detail);
+            $("#txtEditGolHrgHPA").val(harga);
+            $("#statusHPA").val(status);
+            $('#editGolHrgUnitHPA').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        } else {
+            $("#satuanBarangRangeEditHPA").find('option').remove();
+            $.ajax({
+                url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
+                type: 'GET',
+                success: function( resp ) {
+                    var option = '';
+                    if (resp.id1 == satuan) {
+                        option += '<option value="'+resp.id1+'" selected>'+resp.unit1+'</option>';
+                    } else {
+                        option += '<option value="'+resp.id1+'" >'+resp.unit1+'</option>';
+                    }
+
+                    if (resp.id2 != null && resp.id2 != resp.id1) {
+                        if (resp.id2 == satuan) {
+                            option += '<option value="'+resp.id2+'" selected>'+resp.unit2+'</option>';
+                        } else {
+                            option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                        }
+
+                    }
+                    if (resp.id3 != null && resp.id3 != resp.id1) {
+                        if (resp.id3 == satuan) {
+                            option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                        } else {
+                            option += '<option value="'+resp.id3+'" selected>'+resp.unit3+'</option>';
+                        }
+
+                    }
+                    $("#satuanBarangRangeEditHPA").append(option);
+                }
+            });
+            $("#golIdRangeHPA").val(id);
+            $("#golDetailRangeHPA").val(detail);
+            $("#golItemRangeHPA").val(item);
+            $("#rangestartawalHPA").val(rangestart);
+            $("#rangestarteditHPA").val(rangestart);
+            $("#rangestartakhirHPA").val(rangeEnd);
+            $("#rangeendeditHPA").val(rangeEnd);
+            $("#txtEditGolHrgRangeHPA").val(harga);
+            $("#statusRangeHPA").val(status);
+            $('#editGolHrgRangeHPA').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        }
+
+    }
+
     function hapusGolonganHarga(id, detail, status) {
         // deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail);
         $.confirm({
@@ -804,6 +1038,26 @@ $(document).ready(function(){
 		if (ini === 'U') {
 		    $("#qty").val(1);
 		    $("#qty").attr('readonly', true);
+			satuan.removeClass('d-none');
+			range.addClass('d-none');
+		} else if(ini === 'R'){
+			satuan.addClass('d-none');
+			range.removeClass('d-none');
+		} else {
+			satuan.addClass('d-none');
+			range.addClass('d-none');
+		}
+	});
+
+	$('#jenishargaHPA').change(function(){
+		var ini, satuan, range;
+		ini             = $(this).val();
+		satuan     		= $('#satuanHPA');
+		range     		= $('#rangeHPA');
+
+		if (ini === 'U') {
+		    $("#qtyHPA").val(1);
+		    $("#qtyHPA").attr('readonly', true);
 			satuan.removeClass('d-none');
 			range.addClass('d-none');
 		} else if(ini === 'R'){

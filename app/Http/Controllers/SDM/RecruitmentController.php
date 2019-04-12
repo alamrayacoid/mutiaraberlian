@@ -543,13 +543,24 @@ class RecruitmentController extends Controller
 
     DB::beginTransaction();
     try {
-      $query = DB::table('d_applicant')
-        ->join('d_pelamar', 'a_id', 'p_applicant')
+      $query1 = DB::table('d_applicant')
+        ->join('d_pelamar', function($p){
+          $p->on('a_id', '=', 'p_applicant');
+        })
         ->where('p_applicant', '=', $id)
-        ->orWhere('a_isactive', '=', "Y")
         ->count();
-        
-      if ($query > 0) {
+
+      $query2 = DB::table('d_applicant')
+        ->where('a_id', '=', $id)
+        ->where('a_isactive', '=', "Y")
+        ->count();
+
+      if ($query1 > 0) {
+        DB::commit();
+        return response()->json([
+          'status' => 'warning'
+        ]);
+      } else if ($query2 > 0) {
         DB::commit();
         return response()->json([
           'status' => 'warning'

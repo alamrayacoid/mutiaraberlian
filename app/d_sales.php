@@ -19,4 +19,13 @@ class d_sales extends Model
     {
         return $this->belongsTo('App\m_member', 's_member', 'm_code');
     }
+    // public static function boot()
+    // {
+    //     parent::boot();
+    //     self::deleting(function () {
+    //         foreach ($this->getSalesDt as $salesDt) {
+    //             $salesDt->delete();
+    //         }
+    //     });
+    // }
 }

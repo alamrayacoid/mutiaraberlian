@@ -296,7 +296,8 @@ function TableListKPL()
 	});
 }
 // show detail penjualan
-function showDetailPenjualan(idPenjualan) {
+function showDetailPenjualan(idPenjualan)
+{
 	$.ajax({
 		url: "{{ route('kelolapenjulan.getDetailPenjualan') }}",
 		type: 'get',
@@ -338,6 +339,26 @@ function showDetailPenjualan(idPenjualan) {
 
 	});
 }
-
+// delete penjualan
+function deleteDetailPenjualan(idPenjualan) {
+	$.ajax({
+		url: "{{ route('kelolapenjulan.deleteDetailPenjualan') }}",
+		type: 'post',
+		data: {
+			'id': idPenjualan
+		},
+		success: function (response) {
+			if (response.status === 'berhasil') {
+				messageSuccess('Berhasil', 'Penjualan berhasil dihapus !');
+				tb_listkpl.ajax.reload();
+			} else if (response.status === 'gagal') {
+				messageFailed('Gagal', response.message)
+			}
+		},
+		error: function (e) {
+			messageWarning('Gagal', 'Delete penjualan gagal, hubungi pengembang !');
+		}
+	})
+}
 </script>
 @endsection

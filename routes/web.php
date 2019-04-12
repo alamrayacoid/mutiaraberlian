@@ -89,11 +89,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/harga/cari-barang', 'Master\HargaController@cariBarang')->name('dataharga.caribarang');
     Route::get('/masterdatautama/harga/get-satuan/{id}', 'Master\HargaController@getSatuan')->name('dataharga.getsatuan');
     Route::post('/masterdatautama/harga/add-golongan-harga', 'Master\HargaController@addGolonganHarga')->name('dataharga.addgolonganharga');
+    Route::post('/masterdatautama/harga/add-golongan-harga-hpa', 'Master\HargaController@addGolonganHargaHPA')->name('dataharga.addgolonganhargahpa');
     Route::get('/masterdatautama/harga/get-data-need-approve', 'Master\HargaController@getDataNeddApprove')->name('dataharga.getdataneedapprove');
     Route::get('/masterdatautama/harga/get-golongan-harga/{id}', 'Master\HargaController@getGolonganHarga')->name('dataharga.getgolonganharga');
     Route::get('/masterdatautama/harga/get-golongan-harga-hpa/{id}', 'Master\HargaController@getGolonganHargaHPA')->name('dataharga.getgolonganhargahpa');
     Route::get('/masterdatautama/harga/delete-golongan-harga/{id}/{detail}/{status}', 'Master\HargaController@deleteGolonganHarga')->name('dataharga.deletegolonganharga');
     Route::post('/masterdatautama/harga/edit-golongan-harga-unit', 'Master\HargaController@editGolonganHargaUnit')->name('dataharga.editgolonganhargaunit');
+    Route::post('/masterdatautama/harga/edit-golongan-harga-unit-hpa', 'Master\HargaController@editGolonganHargaUnitHPA')->name('dataharga.editgolonganhargaunithpa');
     Route::post('/masterdatautama/harga/edit-golongan-harga-range', 'Master\HargaController@editGolonganHargaRange')->name('dataharga.editgolonganhargarange');
     Route::get('/masterdatautama/harga/satuan/create/{id}', 'Master\HargaController@create_golonganharga')->name('golonganharga.create');
     Route::get('/masterdatautama/harga/satuan/edit', 'Master\HargaController@edit_golonganharga')->name('golonganharga.edit');
@@ -297,7 +299,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/prosesrekruitment/kelolarekruitment', 'SDM\RecruitmentController@kelola_rekruitment')->name('rekruitment.kelola');
     Route::post('/sdm/prosesrekruitment/activateLoker/{id}', 'SDM\RecruitmentController@activateLoker')->name('rekruitment.activateLoker');
     Route::post('/sdm/prosesrekruitment/nonLoker/{id}', 'SDM\RecruitmentController@nonLoker')->name('rekruitment.nonLoker');
-    Route::post('/sdm/prosesrekruitment/deleteLoker/{id}', 'SDM\RecruitmentController@deleteLoker')->name('rekruitment.deleteLoker');
+    Route::get('/sdm/prosesrekruitment/deleteLoker/{id}', 'SDM\RecruitmentController@deleteLoker')->name('rekruitment.deleteLoker');
     Route::get('/sdm/prosesrekruitment/editLoker/{id}', 'SDM\RecruitmentController@editLoker')->name('rekruitment.editLoker');
     Route::get('/sdm/prosesrekruitment/updateLoker', 'SDM\RecruitmentController@updateLoker')->name('rekruitment.updateLoker');
 
@@ -407,6 +409,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpl', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPL')->name('kelolapenjulan.getListKPL');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-detail-penjualan', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailPenjualan')->name('kelolapenjulan.getDetailPenjualan');
+    Route::post('/marketing/agen/kelolapenjualanlangsung/delete-detail-penjualan', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteDetailPenjualan')->name('kelolapenjulan.deleteDetailPenjualan');
     Route::get('/marketing/agen/kelolapenjualanlangsung/create', 'Aktivitasmarketing\Agen\ManajemenAgenController@createKPL')->name('kelolapenjulan.create');
     Route::get('/marketing/agen/kelolapenjualanlangsung/find-item', 'Aktivitasmarketing\Agen\ManajemenAgenController@findItem')->name('kelolapenjulan.findItem');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-item-stock', 'Aktivitasmarketing\Agen\ManajemenAgenController@getItemStock')->name('kelolapenjulan.getItemStock');
