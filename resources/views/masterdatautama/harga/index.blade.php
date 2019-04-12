@@ -65,7 +65,9 @@
 					@include('masterdatautama.harga.golongan.editGolonganHPA')
 					@include('masterdatautama.harga.golongan.hargaAgen')
 					@include('masterdatautama.harga.golongan.editGolHrgUnit')
+					@include('masterdatautama.harga.golongan.editGolHrgUnitHPA')
 					@include('masterdatautama.harga.golongan.editGolHrgRange')
+					@include('masterdatautama.harga.golongan.editGolHrgRangeHPA')
                     @include('masterdatautama.harga.pending.index')
 
 		        </div>
@@ -776,6 +778,96 @@
             $("#txtEditGolHrgRange").val(harga);
             $("#statusRange").val(status);
             $('#editGolHrgRange').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        }
+
+    }
+
+    function editGolonganHargaHPA(id, detail, item, harga, satuan, tipe, rangestart, rangeEnd, status) {
+        if (tipe == "U") {
+            $("#satuanBarangUnitEdiHPAt").find('option').remove();
+            $.ajax({
+                url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
+                type: 'GET',
+                success: function( resp ) {
+                    var option = '';
+                    if (resp.id1 == satuan) {
+                        option += '<option value="'+resp.id1+'" selected>'+resp.unit1+'</option>';
+                    } else {
+                        option += '<option value="'+resp.id1+'" >'+resp.unit1+'</option>';
+                    }
+
+                    if (resp.id2 != null && resp.id2 != resp.id1) {
+                        if (resp.id2 == satuan) {
+                            option += '<option value="'+resp.id2+'" selected>'+resp.unit2+'</option>';
+                        } else {
+                            option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                        }
+
+                    }
+                    if (resp.id3 != null && resp.id3 != resp.id1) {
+                        if (resp.id3 == satuan) {
+                            option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                        } else {
+                            option += '<option value="'+resp.id3+'" selected>'+resp.unit3+'</option>';
+                        }
+
+                    }
+                    $("#satuanBarangUnitEditHPA").append(option);
+                }
+            });
+            $("#golIdHPA").val(id);
+            $("#golDetailHPA").val(detail);
+            $("#txtEditGolHrgHPA").val(harga);
+            $("#statusHPA").val(status);
+            $('#editGolHrgUnitHPA').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        } else {
+            $("#satuanBarangRangeEditHPA").find('option').remove();
+            $.ajax({
+                url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
+                type: 'GET',
+                success: function( resp ) {
+                    var option = '';
+                    if (resp.id1 == satuan) {
+                        option += '<option value="'+resp.id1+'" selected>'+resp.unit1+'</option>';
+                    } else {
+                        option += '<option value="'+resp.id1+'" >'+resp.unit1+'</option>';
+                    }
+
+                    if (resp.id2 != null && resp.id2 != resp.id1) {
+                        if (resp.id2 == satuan) {
+                            option += '<option value="'+resp.id2+'" selected>'+resp.unit2+'</option>';
+                        } else {
+                            option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                        }
+
+                    }
+                    if (resp.id3 != null && resp.id3 != resp.id1) {
+                        if (resp.id3 == satuan) {
+                            option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                        } else {
+                            option += '<option value="'+resp.id3+'" selected>'+resp.unit3+'</option>';
+                        }
+
+                    }
+                    $("#satuanBarangRangeEditHPA").append(option);
+                }
+            });
+            $("#golIdRangeHPA").val(id);
+            $("#golDetailRangeHPA").val(detail);
+            $("#golItemRangeHPA").val(item);
+            $("#rangestartawalHPA").val(rangestart);
+            $("#rangestarteditHPA").val(rangestart);
+            $("#rangestartakhirHPA").val(rangeEnd);
+            $("#rangeendeditHPA").val(rangeEnd);
+            $("#txtEditGolHrgRangeHPA").val(harga);
+            $("#statusRangeHPA").val(status);
+            $('#editGolHrgRangeHPA').modal({
                 backdrop: 'static',
                 keyboard: false
             });

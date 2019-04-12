@@ -234,7 +234,7 @@ class HargaController extends Controller
             ->addColumn('action', function ($data) {
                 return '<center><div class="btn-group btn-group-sm">
                                             <button class="btn btn-warning" title="Edit"
-                                                    type="button" onclick="editGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->pcd_item . '\', \'' . Currency::addRupiah($data->pcd_price) . '\', \'' . $data->pcd_unit . '\', \'' . $data->pcd_type . '\', \'' . $data->pcd_rangeqtystart . '\', \'' . $data->pcd_rangeqtyend . '\', \'' . $data->status . '\')"><i class="fa fa-pencil"></i></button>
+                                                    type="button" onclick="editGolonganHargaHPA(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->pcd_item . '\', \'' . Currency::addRupiah($data->pcd_price) . '\', \'' . $data->pcd_unit . '\', \'' . $data->pcd_type . '\', \'' . $data->pcd_rangeqtystart . '\', \'' . $data->pcd_rangeqtyend . '\', \'' . $data->status . '\')"><i class="fa fa-pencil"></i></button>
                                             <button class="btn btn-danger" type="button"
                                                     title="Hapus" onclick="hapusGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->status . '\')"><i class="fa fa-trash"></i></button>
                                         </div></center>';
