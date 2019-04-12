@@ -489,14 +489,18 @@
         data:{
             provId: id
         },
+        beforeSend: function() {
+            loadingShow();
+        },
         success: function (response) {
-            $('#city_agen').empty();
-            $("#city_agen").append('<option value="" selected disabled>=== Pilih Kota ===</option>');
-            $.each(response.data, function( key, val ) {
-                $("#city_agen").append('<option value="'+val.wc_id+'">'+val.wc_name+'</option>');
-            });
-            $('#city_agen').focus();
-            $('#city_agen').select2('open');
+          loadingHide();
+          $('#city_agen').empty();
+          $("#city_agen").append('<option value="" selected disabled>=== Pilih Kota ===</option>');
+          $.each(response.data, function( key, val ) {
+              $("#city_agen").append('<option value="'+val.wc_id+'">'+val.wc_name+'</option>');
+          });
+          $('#city_agen').focus();
+          $('#city_agen').select2('open');
         }
     });
   }
@@ -552,14 +556,12 @@
 
 	// Modal Kelola Data Order Agen -----------------------------------------
 	function getAgen() {
+    loadingShow();
 		getDataAgen();
 	}
 
-	$("#search-list-agen").on("click", function() {
-		getDataAgen();
-	});
-
-	function getDataAgen() {		
+	function getDataAgen() {
+		loadingHide();
 		$(".table-modal").removeClass('d-none');
 		$('#table_search_agen').DataTable().clear().destroy();
     table_agen = $('#table_search_agen').DataTable({
@@ -587,37 +589,39 @@
 
 	function chooseAgen(id, name, code) {
 		$('#searchAgen').modal('hide');
+		loadingShow();
 		$('.agenId').val(id);
+		loadingHide();
 		$('.agen').val(name);
 		$('.codeAgen').val(code);
 	}
 
 	function filterAgen() {
-		var start = $('#start_date').val();
-		var end   = $('#end_date').val();
-		var status     = $('#status').val();
-		var agen       = $('.agenId').val();
+		var start  = $('#start_date').val();
+		var end    = $('#end_date').val();
+		var status = $('#status').val();
+		var agen   = $('.agenId').val();
 
 		$('#table_dataAgen').DataTable().clear().destroy();
     table_agen = $('#table_dataAgen').DataTable({
       responsive: true,
       serverSide: true,
       ajax: {
-          url: "{{ url('/marketing/marketingarea/keloladataorder/filter-agen') }}",
-          type: "get",
-          data: {
-              start_date: start,
-              end_date  : end,
-              state: status,
-              agen : agen
-          }
+        url: "{{ url('/marketing/marketingarea/keloladataorder/filter-agen') }}",
+        type: "get",
+        data: {
+            start_date: start,
+            end_date  : end,
+            state: status,
+            agen : agen
+        },
       },
       columns: [
-          {data: 'date'},
-          {data: 'po_nota'},
-          {data: 'c_name'},
-          {data: 'total_price'},
-          {data: 'action_agen'}
+        {data: 'date'},
+        {data: 'po_nota'},
+        {data: 'c_name'},
+        {data: 'total_price'},
+        {data: 'action_agen'}
       ],
       pageLength: 10,
       lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
@@ -628,7 +632,11 @@
 		$.ajax({
 			url: "{{ url('/marketing/marketingarea/keloladataorder/detail-agen') }}"+"/"+id,
 			type: "get",
+      beforeSend: function() {
+          loadingShow();
+      },
 			success:function(res) {
+				loadingHide();
 				$('#modalOrderAgen').modal('show');
 				$('#cabang2').val(res.agen2.comp);
 				$('#agen2').val(res.agen2.agen);
