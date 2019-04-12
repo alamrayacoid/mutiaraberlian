@@ -428,12 +428,114 @@
             }
         });
 
+        $(document).on('submit', '#formsethargaHPA', function (evt) {
+            evt.preventDefault();
+            if ($("#jenishargaHPA").val() == "U") {
+                if ($("#idBarangHPA").val() == "") {
+                    messageWarning("Peringatan", "Masukkan nama barang dengan benar!");
+                } else if ($("#satuanBarangHPA").val() == "") {
+                    messageWarning("Peringatan", "Pilih satuan barang!");
+                } else if ($("#jenis_pembayaranHPA").val() == "") {
+                    messageWarning("Peringatan", "Pilih jenis pembayaran!");
+                } else if ($("#hargaHPA").val() == "" || $("#hargaHPA").val() == "Rp. 0") {
+                    messageWarning("Peringatan", "Masukkan harga barang dengan benar!");
+                } else {
+                    loadingShow();
+                    var data = $('#formsethargaHPA').serialize();
+                    axios.post('{{route("dataharga.addgolonganhargahpa")}}', data).then(function (response) {
+                        if (response.data.status == "Success") {
+                            loadingHide();
+                            messageSuccess("Berhasil", "Data berhasil disimpan!");
+                            $("#idBarangHPA").val("");
+                            $(".barangHPA").val("");
+                            $("#jenishargaHPA").val("");
+                            $("#select2-jenishargaHPA-container").text('Pilih Jenis Harga');
+                            tbl_itemHPA.ajax.reload();
+                            $("#rangestartHPA").val("");
+                            $("#rangeendHPA").val("");
+                            $("#hargarangeHPA").val("");
+                            $("#satuanrangeHPA option").remove();
+                            $("#satuanrangeHPA").prepend('<option value="">Pilih Satuan</option>');
+                            $("#satuanrangeHPA").val(null);
+                            $("#select2-satuanrangeHPA-container").text('Pilih Satuan');
+                            $("#rangeendHPA").attr("readonly", true);
+                            $("#satuanHPA").addClass('d-none');
+                            $("#rangeHPA").addClass('d-none');
+                        } else if (response.data.status == "Failed") {
+                            loadingHide();
+                            messageWarning("Gagal", "Data gagal disimpan!");
+                        } else if (response.data.status == "Range Ada") {
+                            loadingHide();
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
+                        } else if (response.data.status == "Unit Ada") {
+                            loadingHide();
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
+                        }
+                    });
+                }
+            } else if ($("#jenishargaHPA").val() == "R") {
+                if ($("#idBarangHPA").val() == "") {
+                    messageWarning("Peringatan", "Masukkan nama barang dengan benar!");
+                } else if ($("#rangestartHPA").val() == "") {
+                    messageWarning("Peringatan", "Masukkan range awal dengan benar!");
+                } else if ($("#rangeendHPA").val() == "") {
+                    messageWarning("Peringatan", "Masukkan range akhir dengan benar!");
+                } else if ($("#satuanrangeHPA").val() == "") {
+                    messageWarning("Peringatan", "Pilih satuan barang!");
+                } else if ($("#hargarangeHPA").val() == "" || $("#hargarangeHPA").val() == "Rp. 0") {
+                    messageWarning("Peringatan", "Masukkan harga barang dengan benar!");
+                } else {
+                    loadingShow();
+                    var data = $('#formsethargaHPA').serialize();
+                    axios.post('{{route("dataharga.addgolonganhargahpa")}}', data).then(function (response) {
+                        if (response.data.status == "Success") {
+                            loadingHide();
+                            messageSuccess("Berhasil", "Data berhasil disimpan!");
+                            $("#idBarangHPA").val("");
+                            $(".barangHPA").val("");
+                            $("#jenishargaHPA").val("");
+                            $("#select2-jenishargaHPA-container").text('Pilih Jenis Harga');
+                            tbl_itemHPA.ajax.reload();
+                            $("#rangestartHPA").val("");
+                            $("#rangeendHPA").val("");
+                            $("#hargarangeHPA").val("");
+                            $("#satuanrangeHPA option").remove();
+                            $("#satuanrangeHPA").prepend('<option value="">Pilih Satuan</option>');
+                            $("#satuanrangeHPA").val(null);
+                            $("#select2-satuanrangeHPA-container").text('Pilih Satuan');
+                            $("#rangeendHPA").attr("readonly", true);
+                            $("#satuanHPA").addClass('d-none');
+                            $("#rangeHPA").addClass('d-none');
+                        } else if (response.data.status == "Failed") {
+                            loadingHide();
+                            messageWarning("Gagal", "Data gagal disimpan!");
+                        } else if (response.data.status == "Range Ada") {
+                            loadingHide();
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range, satuan dan jenis pembayaran tersebut!");
+                        } else if (response.data.status == "Unit Ada") {
+                            loadingHide();
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
+                        }
+                    });
+                }
+            }
+        });
+
         $(document).on('keyup', '#rangestart', function (evt) {
             evt.preventDefault();
             if ($(this).val() != "") {
                 $("#rangeend").removeAttr('readonly');
             } else {
                 $("#rangeend").attr('readonly', true);
+            }
+        });
+
+        $(document).on('keyup', '#rangestartHPA', function (evt) {
+            evt.preventDefault();
+            if ($(this).val() != "") {
+                $("#rangeendHPA").removeAttr('readonly');
+            } else {
+                $("#rangeendHPA").attr('readonly', true);
             }
         });
 
@@ -804,6 +906,26 @@ $(document).ready(function(){
 		if (ini === 'U') {
 		    $("#qty").val(1);
 		    $("#qty").attr('readonly', true);
+			satuan.removeClass('d-none');
+			range.addClass('d-none');
+		} else if(ini === 'R'){
+			satuan.addClass('d-none');
+			range.removeClass('d-none');
+		} else {
+			satuan.addClass('d-none');
+			range.addClass('d-none');
+		}
+	});
+
+	$('#jenishargaHPA').change(function(){
+		var ini, satuan, range;
+		ini             = $(this).val();
+		satuan     		= $('#satuanHPA');
+		range     		= $('#rangeHPA');
+
+		if (ini === 'U') {
+		    $("#qtyHPA").val(1);
+		    $("#qtyHPA").attr('readonly', true);
 			satuan.removeClass('d-none');
 			range.addClass('d-none');
 		} else if(ini === 'R'){
