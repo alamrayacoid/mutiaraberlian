@@ -439,8 +439,12 @@ class OtorisasiController extends Controller
                 }
             })
             ->addColumn('aksi', function ($data){
+//                return '<div class="text-center"><div class="btn-group btn-group-sm">
+//												<button class="btn btn-info" onclick="detail(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" type="button"><i class="fa fa-folder"></i></button>
+//												<button class="btn btn-success" type="button" onclick="approve(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
+//												<button class="btn btn-danger" type="button" onclick="reject(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
+//											</div></div>';
                 return '<div class="text-center"><div class="btn-group btn-group-sm">
-												<button class="btn btn-info" onclick="detail(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" type="button"><i class="fa fa-folder"></i></button>
 												<button class="btn btn-success" type="button" onclick="approve(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
 												<button class="btn btn-danger" type="button" onclick="reject(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
 											</div></div>';
@@ -491,8 +495,12 @@ class OtorisasiController extends Controller
                 }
             })
             ->addColumn('aksi', function ($data){
+//                return '<div class="text-center"><div class="btn-group btn-group-sm">
+//												<button class="btn btn-info" onclick="detailHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" type="button"><i class="fa fa-folder"></i></button>
+//												<button class="btn btn-success" type="button" onclick="approveHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
+//												<button class="btn btn-danger" type="button" onclick="rejectHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
+//											</div></div>';
                 return '<div class="text-center"><div class="btn-group btn-group-sm">
-												<button class="btn btn-info" onclick="detailHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" type="button"><i class="fa fa-folder"></i></button>
 												<button class="btn btn-success" type="button" onclick="approveHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
 												<button class="btn btn-danger" type="button" onclick="rejectHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
 											</div></div>';
