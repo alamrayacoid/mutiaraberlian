@@ -28,7 +28,7 @@
                         <form method="post" id="formsetharga">{{csrf_field()}}
                             <div class="row">
                                 <div class="col-md-2">
-                                    <label for="txtGol">Gologan :</label>
+                                    <label for="txtGol">Golongan :</label>
                                 </div>
                                 <div class="col-md-9">
                                     <input type="hidden" name="idGol" id="idGol">

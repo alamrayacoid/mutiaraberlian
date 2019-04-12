@@ -428,6 +428,99 @@
             }
         });
 
+        $(document).on('submit', '#formsethargaHPA', function (evt) {
+            evt.preventDefault();
+            if ($("#jenishargaHPA").val() == "U") {
+                if ($("#idBarangHPA").val() == "") {
+                    messageWarning("Peringatan", "Masukkan nama barang dengan benar!");
+                } else if ($("#satuanBarangHPA").val() == "") {
+                    messageWarning("Peringatan", "Pilih satuan barang!");
+                } else if ($("#jenis_pembayaranHPA").val() == "") {
+                    messageWarning("Peringatan", "Pilih jenis pembayaran!");
+                } else if ($("#hargaHPA").val() == "" || $("#hargaHPA").val() == "Rp. 0") {
+                    messageWarning("Peringatan", "Masukkan harga barang dengan benar!");
+                } else {
+                    loadingShow();
+                    var data = $('#formsethargaHPA').serialize();
+                    axios.post('{{route("dataharga.addgolonganhargahpa")}}', data).then(function (response) {
+                        if (response.data.status == "Success") {
+                            loadingHide();
+                            messageSuccess("Berhasil", "Data berhasil disimpan!");
+                            $("#idBarangHPA").val("");
+                            $(".barangHPA").val("");
+                            $("#jenishargaHPA").val("");
+                            $("#select2-jenishargaHPA-container").text('Pilih Jenis Harga');
+                            tbl_itemHPA.ajax.reload();
+                            $("#rangestartHPA").val("");
+                            $("#rangeendHPA").val("");
+                            $("#hargarangeHPA").val("");
+                            $("#satuanrangeHPA option").remove();
+                            $("#satuanrangeHPA").prepend('<option value="">Pilih Satuan</option>');
+                            $("#satuanrangeHPA").val(null);
+                            $("#select2-satuanrangeHPA-container").text('Pilih Satuan');
+                            $("#rangeendHPA").attr("readonly", true);
+                            $("#satuanHPA").addClass('d-none');
+                            $("#rangeHPA").addClass('d-none');
+                        } else if (response.data.status == "Failed") {
+                            loadingHide();
+                            messageWarning("Gagal", "Data gagal disimpan!");
+                        } else if (response.data.status == "Range Ada") {
+                            loadingHide();
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
+                        } else if (response.data.status == "Unit Ada") {
+                            loadingHide();
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
+                        }
+                    });
+                }
+            } else if ($("#jenisharga").val() == "R") {
+                if ($("#idBarang").val() == "") {
+                    messageWarning("Peringatan", "Masukkan nama barang dengan benar!");
+                } else if ($("#rangestart").val() == "") {
+                    messageWarning("Peringatan", "Masukkan range awal dengan benar!");
+                } else if ($("#rangeend").val() == "") {
+                    messageWarning("Peringatan", "Masukkan range akhir dengan benar!");
+                } else if ($("#satuanrange").val() == "") {
+                    messageWarning("Peringatan", "Pilih satuan barang!");
+                } else if ($("#hargarange").val() == "" || $("#hargarange").val() == "Rp. 0") {
+                    messageWarning("Peringatan", "Masukkan harga barang dengan benar!");
+                } else {
+                    loadingShow();
+                    var data = $('#formsetharga').serialize();
+                    axios.post('{{route("dataharga.addgolonganharga")}}', data).then(function (response) {
+                        if (response.data.status == "Success") {
+                            loadingHide();
+                            messageSuccess("Berhasil", "Data berhasil disimpan!");
+                            $("#idBarang").val("");
+                            $(".barang").val("");
+                            $("#jenisharga").val("");
+                            $("#select2-jenisharga-container").text('Pilih Jenis Harga');
+                            tbl_item.ajax.reload();
+                            $("#rangestart").val("");
+                            $("#rangeend").val("");
+                            $("#hargarange").val("");
+                            $("#satuanrange option").remove();
+                            $("#satuanrange").prepend('<option value="">Pilih Satuan</option>');
+                            $("#satuanrange").val(null);
+                            $("#select2-satuanrange-container").text('Pilih Satuan');
+                            $("#rangeend").attr("readonly", true);
+                            $("#satuan").addClass('d-none');
+                            $("#range").addClass('d-none');
+                        } else if (response.data.status == "Failed") {
+                            loadingHide();
+                            messageWarning("Gagal", "Data gagal disimpan!");
+                        } else if (response.data.status == "Range Ada") {
+                            loadingHide();
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range, satuan dan jenis pembayaran tersebut!");
+                        } else if (response.data.status == "Unit Ada") {
+                            loadingHide();
+                            messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
+                        }
+                    });
+                }
+            }
+        });
+
         $(document).on('keyup', '#rangestart', function (evt) {
             evt.preventDefault();
             if ($(this).val() != "") {

@@ -28,7 +28,7 @@
                         <form method="post" id="formsethargaHPA">{{csrf_field()}}
                             <div class="row">
                                 <div class="col-md-2">
-                                    <label for="txtGolHPA">Gologan :</label>
+                                    <label for="txtGolHPA">Golongan :</label>
                                 </div>
                                 <div class="col-md-9">
                                     <input type="hidden" name="idGolHPA" id="idGolHPA">
