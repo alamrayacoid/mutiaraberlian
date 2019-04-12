@@ -663,6 +663,49 @@
             });
 
         })
+
+        $(document).on('submit', '#formEditGolHrgRangeHPA', function (evt) {
+            evt.preventDefault();
+            var data = $('#formEditGolHrgRangeHPA').serialize();
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 2.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apakah anda yakin ingin memperbarui data ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            loadingShow();
+                            return axios.post('{{route("dataharga.editgolonganhargarangehpa")}}', data).then(function (response) {
+                                if (response.data.status == "Success") {
+                                    loadingHide();
+                                    messageSuccess("Berhasil", "Data berhasil perbarui!");
+                                    tbl_itemHPA.ajax.reload();
+                                } else if (response.data.status == "Range Ada") {
+                                    loadingHide();
+                                    messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
+                                } else {
+                                    loadingHide();
+                                    messageWarning("Gagal", "Data gagal diperbarui!");
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+
+        })
 	});
 
     function setItem(info) {
@@ -933,6 +976,48 @@
                         return $.ajax({
                             type: "get",
                             url: baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail+"/"+status,
+                            success: function (response) {
+                                if (response.status == 'Success') {
+                                    messageSuccess('Berhasil', 'Data berhasil hapus!');
+                                    tbl_item.ajax.reload();
+                                } else {
+                                    messageWarning('Gagal', 'Gagal menghapus data!');
+                                }
+                            },
+                            error: function (e) {
+                                messageFailed('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
+
+    function hapusGolonganHargaHPA(id, detail, status) {
+        // deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail);
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "get",
+                            url: baseUrl+"/masterdatautama/harga/delete-golongan-harga-hpa/"+id+"/"+detail+"/"+status,
                             success: function (response) {
                                 if (response.status == 'Success') {
                                     messageSuccess('Berhasil', 'Data berhasil hapus!');

@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1c8b318e-c138-400d-afca-6445ceb3fae0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
@@ -121,8 +122,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="229">
-              <caret line="97" column="104" selection-start-line="97" selection-start-column="104" selection-end-line="97" selection-end-column="104" />
+            <state relative-caret-position="206">
+              <caret line="95" column="122" selection-start-line="95" selection-start-column="122" selection-end-line="95" selection-end-column="122" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
               </folding>
@@ -133,8 +134,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="756">
-              <caret line="846" column="42" selection-start-line="846" selection-start-column="42" selection-end-line="846" selection-end-column="42" />
+            <state relative-caret-position="320">
+              <caret line="783" column="43" selection-start-line="783" selection-start-column="43" selection-end-line="783" selection-end-column="43" />
               <folding>
                 <element signature="e#2050#3379#0#PHP" />
                 <element signature="e#14013#14776#0#PHP" />
@@ -149,8 +150,11 @@
                 <element signature="e#28430#36456#0#PHP" />
                 <element signature="e#36462#37487#0#PHP" />
                 <element signature="e#37493#40066#0#PHP" />
+                <element signature="e#40105#42678#0#PHP" />
                 <element signature="e#40072#46067#0#PHP" />
+                <element signature="e#48687#54682#0#PHP" />
                 <element signature="e#46073#46306#0#PHP" />
+                <element signature="e#46312#46420#0#PHP" />
               </folding>
             </state>
           </provider>
@@ -159,8 +163,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="223">
-              <caret line="600" column="90" selection-start-line="600" selection-start-column="90" selection-end-line="600" selection-end-column="90" />
+            <state relative-caret-position="300">
+              <caret line="1019" column="90" selection-start-line="1019" selection-start-column="90" selection-end-line="1019" selection-end-column="90" />
               <folding>
                 <element signature="e#2913#3020#0#HTML" />
                 <element signature="e#3191#3310#0#HTML" />
@@ -186,7 +190,9 @@
                 <element signature="e#23448#23677#0#HTML" />
                 <element signature="e#23751#23980#0#HTML" />
                 <element signature="e#23752#25362#0#HTML" />
+                <element signature="e#25944#27554#0#HTML" />
                 <element signature="e#25437#27330#0#HTML" />
+                <element signature="e#29609#31502#0#HTML" />
                 <element signature="e#27365#28301#0#HTML" />
                 <element signature="e#28333#29248#0#HTML" />
                 <element signature="e#29274#29346#0#HTML" />
@@ -228,8 +234,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>tbl_gln</find>
-      <find>addGolonganHarga</find>
       <find>barang</find>
       <find>idGol</find>
       <find>txtGol</find>
@@ -258,6 +262,8 @@
       <find>editGolonganHarga</find>
       <find>formEditGolHrgUnit</find>
       <find>dataharga.editgolonganhargaunit</find>
+      <find>hapusGolonganHarga</find>
+      <find>masterdatautama/harga/delete-golongan-harga/</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -315,8 +321,8 @@
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgUnitHPA.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgRangeHPA.blade.php" />
-        <option value="$PROJECT_DIR$/routes/web.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" />
+        <option value="$PROJECT_DIR$/routes/web.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" />
       </list>
     </option>
@@ -724,21 +730,7 @@
       <workItem from="1554776933486" duration="10576000" />
       <workItem from="1554860650962" duration="18355000" />
       <workItem from="1554947942967" duration="19282000" />
-      <workItem from="1555034802806" duration="4714000" />
-    </task>
-    <task id="LOCAL-00100" summary="mutiara">
-      <created>1554266284601</created>
-      <option name="number" value="00100" />
-      <option name="presentableId" value="LOCAL-00100" />
-      <option name="project" value="LOCAL" />
-      <updated>1554266284601</updated>
-    </task>
-    <task id="LOCAL-00101" summary="mutiara">
-      <created>1554266537642</created>
-      <option name="number" value="00101" />
-      <option name="presentableId" value="LOCAL-00101" />
-      <option name="project" value="LOCAL" />
-      <updated>1554266537643</updated>
+      <workItem from="1555034802806" duration="5938000" />
     </task>
     <task id="LOCAL-00102" summary="mutiara">
       <created>1554266941734</created>
@@ -1069,14 +1061,29 @@
       <option name="project" value="LOCAL" />
       <updated>1555038635259</updated>
     </task>
-    <option name="localTasksCounter" value="149" />
+    <task id="LOCAL-00149" summary="mutiara">
+      <created>1555039535477</created>
+      <option name="number" value="00149" />
+      <option name="presentableId" value="LOCAL-00149" />
+      <option name="project" value="LOCAL" />
+      <updated>1555039535477</updated>
+    </task>
+    <task id="LOCAL-00150" summary="mutiara">
+      <created>1555040563047</created>
+      <option name="number" value="00150" />
+      <option name="presentableId" value="LOCAL-00150" />
+      <option name="project" value="LOCAL" />
+      <updated>1555040563047</updated>
+    </task>
+    <option name="localTasksCounter" value="151" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="443536000" />
+    <option name="totallyTimeSpent" value="444760000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1366" height="768" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23787878" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -1506,8 +1513,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="600" column="90" selection-start-line="600" selection-start-column="90" selection-end-line="600" selection-end-column="90" />
+        <state relative-caret-position="300">
+          <caret line="1019" column="90" selection-start-line="1019" selection-start-column="90" selection-end-line="1019" selection-end-column="90" />
           <folding>
             <element signature="e#2913#3020#0#HTML" />
             <element signature="e#3191#3310#0#HTML" />
@@ -1533,7 +1540,9 @@
             <element signature="e#23448#23677#0#HTML" />
             <element signature="e#23751#23980#0#HTML" />
             <element signature="e#23752#25362#0#HTML" />
+            <element signature="e#25944#27554#0#HTML" />
             <element signature="e#25437#27330#0#HTML" />
+            <element signature="e#29609#31502#0#HTML" />
             <element signature="e#27365#28301#0#HTML" />
             <element signature="e#28333#29248#0#HTML" />
             <element signature="e#29274#29346#0#HTML" />
@@ -1554,8 +1563,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="97" column="104" selection-start-line="97" selection-start-column="104" selection-end-line="97" selection-end-column="104" />
+        <state relative-caret-position="206">
+          <caret line="95" column="122" selection-start-line="95" selection-start-column="122" selection-end-line="95" selection-end-column="122" />
           <folding>
             <element signature="e#7#389#0#PHP" expanded="true" />
           </folding>
@@ -1564,8 +1573,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="756">
-          <caret line="846" column="42" selection-start-line="846" selection-start-column="42" selection-end-line="846" selection-end-column="42" />
+        <state relative-caret-position="320">
+          <caret line="783" column="43" selection-start-line="783" selection-start-column="43" selection-end-line="783" selection-end-column="43" />
           <folding>
             <element signature="e#2050#3379#0#PHP" />
             <element signature="e#14013#14776#0#PHP" />
@@ -1580,8 +1589,11 @@
             <element signature="e#28430#36456#0#PHP" />
             <element signature="e#36462#37487#0#PHP" />
             <element signature="e#37493#40066#0#PHP" />
+            <element signature="e#40105#42678#0#PHP" />
             <element signature="e#40072#46067#0#PHP" />
+            <element signature="e#48687#54682#0#PHP" />
             <element signature="e#46073#46306#0#PHP" />
+            <element signature="e#46312#46420#0#PHP" />
           </folding>
         </state>
       </provider>
