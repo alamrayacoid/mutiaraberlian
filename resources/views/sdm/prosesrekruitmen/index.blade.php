@@ -447,7 +447,7 @@
                 text: 'Ya',
                 action: function() {
                     return $.ajax({
-                        type: "post",
+                        type: "get",
                         url: non_loker,
 							          data: {
 							              "_token": "{{ csrf_token() }}"

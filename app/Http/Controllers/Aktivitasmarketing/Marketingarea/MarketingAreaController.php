@@ -181,7 +181,7 @@ class MarketingAreaController extends Controller
         $idItem = $request->item;
         $idUnit = $request->unit;
         $qty    = $request->qty;
-        
+
         if ($qty != null || $qty != "") {
             if ($qty == 1) {
                 $price = DB::table('m_priceclassdt')
@@ -597,20 +597,49 @@ class MarketingAreaController extends Controller
 
     public function filterDataAgen(Request $request)
     {
-        $start  = Carbon::parse($request->start_date)->format('Y-m-d');
-        $end    = Carbon::parse($request->end_date)->format('Y-m-d');
-        $status = $request->state;
-        $id     = $request->agen;
+        $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
+        $end_date   = Carbon::parse($request->end_date)->format('Y-m-d');
+        $status     = $request->state;
+        $id         = $request->agen;
 
-        $data_agen = DB::table('d_productorder')
-            ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
-            ->join('m_company', 'po_agen', '=', 'c_id')
-            ->select('d_productorder.*', 'd_productorderdt.*', DB::raw('date_format(po_date, "%d/%m/%Y") as date'), DB::raw('SUM(pod_totalprice) as total_price'), 'm_company.*')
-            ->whereBetween('po_date', [$start, $end])
-            ->where('po_status', '=', $status)
-            ->where('po_agen', '=', $id)
-            ->groupBy('po_id')
-            ->get();
+        if ($start_date != null && $end_date != null && $id != null) {
+            $data_agen = DB::table('d_productorder')
+                ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
+                ->join('m_company', 'po_agen', '=', 'c_id')
+                ->select('d_productorder.*', 'd_productorderdt.*', DB::raw('date_format(po_date, "%d/%m/%Y") as date'), DB::raw('SUM(pod_totalprice) as total_price'), 'm_company.*')
+                ->whereBetween('po_date', [$start_date, $end_date])
+                ->where('po_status', '=', $status)
+                ->where('po_agen', '=', $id)
+                ->groupBy('po_id')
+                ->get();
+        } else if ($start_date != null && $end_date != null && $id == null) {
+            $data_agen = DB::table('d_productorder')
+                ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
+                ->join('m_company', 'po_agen', '=', 'c_id')
+                ->select('d_productorder.*', 'd_productorderdt.*', DB::raw('date_format(po_date, "%d/%m/%Y") as date'), DB::raw('SUM(pod_totalprice) as total_price'), 'm_company.*')
+                ->whereBetween('po_date', [$start_date, $end_date])
+                ->where('po_status', '=', $status)
+                ->groupBy('po_id')
+                ->get();
+        } else if ($start_date == null && $end_date == null && $id != null) {
+            $data_agen = DB::table('d_productorder')
+                ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
+                ->join('m_company', 'po_agen', '=', 'c_id')
+                ->select('d_productorder.*', 'd_productorderdt.*', DB::raw('date_format(po_date, "%d/%m/%Y") as date'), DB::raw('SUM(pod_totalprice) as total_price'), 'm_company.*')
+                ->where('po_status', '=', $status)
+                ->where('po_agen', '=', $id)
+                ->groupBy('po_id')
+                ->get();
+            dd($data_agen);
+        } else {
+            $data_agen = DB::table('d_productorder')
+                ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
+                ->join('m_company', 'po_agen', '=', 'c_id')
+                ->select('d_productorder.*', 'd_productorderdt.*', DB::raw('date_format(po_date, "%d/%m/%Y") as date'), DB::raw('SUM(pod_totalprice) as total_price'), 'm_company.*')
+                ->where('po_status', '=', $status)
+                ->groupBy('po_id')
+                ->get();
+        }
             
         return DataTables::of($data_agen)
             ->addIndexColumn()

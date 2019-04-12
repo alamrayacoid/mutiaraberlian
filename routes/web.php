@@ -89,6 +89,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/harga/cari-barang', 'Master\HargaController@cariBarang')->name('dataharga.caribarang');
     Route::get('/masterdatautama/harga/get-satuan/{id}', 'Master\HargaController@getSatuan')->name('dataharga.getsatuan');
     Route::post('/masterdatautama/harga/add-golongan-harga', 'Master\HargaController@addGolonganHarga')->name('dataharga.addgolonganharga');
+    Route::post('/masterdatautama/harga/add-golongan-harga-hpa', 'Master\HargaController@addGolonganHargaHPA')->name('dataharga.addgolonganhargahpa');
     Route::get('/masterdatautama/harga/get-data-need-approve', 'Master\HargaController@getDataNeddApprove')->name('dataharga.getdataneedapprove');
     Route::get('/masterdatautama/harga/get-golongan-harga/{id}', 'Master\HargaController@getGolonganHarga')->name('dataharga.getgolonganharga');
     Route::get('/masterdatautama/harga/get-golongan-harga-hpa/{id}', 'Master\HargaController@getGolonganHargaHPA')->name('dataharga.getgolonganhargahpa');
@@ -297,7 +298,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/prosesrekruitment/kelolarekruitment', 'SDM\RecruitmentController@kelola_rekruitment')->name('rekruitment.kelola');
     Route::post('/sdm/prosesrekruitment/activateLoker/{id}', 'SDM\RecruitmentController@activateLoker')->name('rekruitment.activateLoker');
     Route::post('/sdm/prosesrekruitment/nonLoker/{id}', 'SDM\RecruitmentController@nonLoker')->name('rekruitment.nonLoker');
-    Route::post('/sdm/prosesrekruitment/deleteLoker/{id}', 'SDM\RecruitmentController@deleteLoker')->name('rekruitment.deleteLoker');
+    Route::get('/sdm/prosesrekruitment/deleteLoker/{id}', 'SDM\RecruitmentController@deleteLoker')->name('rekruitment.deleteLoker');
     Route::get('/sdm/prosesrekruitment/editLoker/{id}', 'SDM\RecruitmentController@editLoker')->name('rekruitment.editLoker');
     Route::get('/sdm/prosesrekruitment/updateLoker', 'SDM\RecruitmentController@updateLoker')->name('rekruitment.updateLoker');
 

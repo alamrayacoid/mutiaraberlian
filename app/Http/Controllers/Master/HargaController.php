@@ -236,7 +236,7 @@ class HargaController extends Controller
                                             <button class="btn btn-warning" title="Edit"
                                                     type="button" onclick="editGolonganHargaHPA(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->pcd_item . '\', \'' . Currency::addRupiah($data->pcd_price) . '\', \'' . $data->pcd_unit . '\', \'' . $data->pcd_type . '\', \'' . $data->pcd_rangeqtystart . '\', \'' . $data->pcd_rangeqtyend . '\', \'' . $data->status . '\')"><i class="fa fa-pencil"></i></button>
                                             <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolonganHargaHPA(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->status . '\')"><i class="fa fa-trash"></i></button>
+                                                    title="Hapus" onclick="hapusGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->status . '\')"><i class="fa fa-trash"></i></button>
                                         </div></center>';
 
             })
@@ -572,6 +572,156 @@ class HargaController extends Controller
                         'pcad_user' => Auth::user()->u_id
                     ];
                     DB::table('d_priceclassauthdt')->insert($values);
+                    DB::commit();
+                    return response()->json(['status' => "Success"]);
+                }
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['status' => "Failed"]);
+        }
+    }
+
+    public function addGolonganHargaHPA(Request $request)
+    {
+        try {
+            $idGol = Crypt::decrypt($request->idGolHPA);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => "Failed"]);
+        }
+        DB::beginTransaction();
+        try {
+            if ($request->jenishargaHPA == "U") {
+
+                $check = DB::table('d_salespriceauth')
+                    ->where('spa_salesprice', '=', $idGol)
+                    ->where('spa_item', '=', $request->idBarangHPA)
+                    ->where('spa_unit', '=', $request->satuanBarangHPA)
+                    ->where('spa_type', '=', $request->jenishargaHPA)
+                    ->where('spa_payment', '=', $request->jenis_pembayaranHPA)
+                    ->get();
+
+                $check2 = DB::table('d_salespricedt')
+                    ->where('spd_salesprice', '=', $idGol)
+                    ->where('spd_item', '=', $request->idBarangHPA)
+                    ->where('spd_unit', '=', $request->satuanBarangHPA)
+                    ->where('spd_type', '=', $request->jenishargaHPA)
+                    ->where('spd_payment', '=', $request->jenis_pembayaranHPA)
+                    ->get();
+
+                if (count($check) > 0 || count($check2) > 0) {
+                    return response()->json(['status' => "Unit Ada"]);
+                } else {
+                    $checkGol1 = DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->count();
+                    $checkGol2 = DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->count();
+
+                    if ($checkGol1 > 0 && $checkGol2 > 0) {
+                        $tmp_detail1 = DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->max('spd_detailid');
+                        $tmp_detail2 = DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->max('spa_detailid');
+
+                        if ($tmp_detail1 > $tmp_detail2) {
+                            $detailid = (DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->max('spd_detailid')) + 1;
+                        } else if ($tmp_detail2 > $tmp_detail1) {
+                            $detailid = (DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->max('spa_detailid')) + 1;
+                        }
+
+                    } else if ($checkGol1 > 0 && $checkGol2 == 0) {
+                        $detailid = (DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->max('spd_detailid')) + 1;
+                    } else if ($checkGol1 == 0 && $checkGol2 > 0) {
+                        $detailid = (DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->max('spa_detailid')) + 1;
+                    } else if ($checkGol1 == 0 &&  $checkGol2 == 0) {
+                        $detailid = 1;
+                    }
+
+                    $values = [
+                        'spa_salesprice' => $idGol,
+                        'spa_detailid' => $detailid,
+                        'spa_item' => $request->idBarangHPA,
+                        'spa_unit' => $request->satuanBarangHPA,
+                        'spa_type' => $request->jenishargaHPA,
+                        'spa_payment' => $request->jenis_pembayaranHPA,
+                        'spa_rangeqtystart' => 1,
+                        'spa_rangeqtyend' => 1,
+                        'spa_price' => Currency::removeRupiah($request->hargaHPA),
+                        'spa_user' => Auth::user()->u_id
+                    ];
+                    DB::table('d_salespriceauth')->insert($values);
+                    DB::commit();
+                    return response()->json(['status' => "Success"]);
+                }
+            } else {
+                $check = DB::table('d_salespriceauth')
+                    ->where('spa_salesprice', '=', $idGol)
+                    ->where('spa_item', '=', $request->idBarangHPA)
+                    ->where('spa_unit', '=', $request->satuanrangeHPA)
+                    ->where('spa_type', '=', $request->jenishargaHPA)
+                    ->where('spa_payment', '=', $request->jenis_pembayaranrangeHPA)
+                    ->get();
+
+                $check2 = DB::table('d_salespricedt')
+                    ->where('spd_salesprice', '=', $idGol)
+                    ->where('spd_item', '=', $request->idBarangHPA)
+                    ->where('spd_unit', '=', $request->satuanBarangHPA)
+                    ->where('spd_type', '=', $request->jenishargaHPA)
+                    ->where('spd_payment', '=', $request->jenis_pembayaranrangeHPA)
+                    ->get();
+
+                $sts = '';
+                foreach ($check as $key => $val) {
+                    if (in_array($request->rangestartHPA, range($val->spa_rangeqtystart, $val->spa_rangeqtyend))) {
+                        $sts = 'Not Null';
+                        return response()->json(['status' => "Range Ada"]);
+                        break;
+                    } else {
+                        $sts = 'Null';
+                        continue;
+                    }
+                }
+
+                foreach ($check2 as $key => $val) {
+                    if (in_array($request->rangestartHPA, range($val->spd_rangeqtystart, $val->spd_rangeqtyend))) {
+                        $sts = 'Not Null';
+                        return response()->json(['status' => "Range Ada"]);
+                        break;
+                    } else {
+                        $sts = 'Null';
+                        continue;
+                    }
+                }
+
+                if ($sts = "Null") {
+                    $checkGol1 = DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->count();
+                    $checkGol2 = DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->count();
+
+                    if ($checkGol1 > 0 && $checkGol2 > 0) {
+                        $tmp_detail1 = DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->max('spd_detailid');
+                        $tmp_detail2 = DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->max('spa_detailid');
+
+                        if ($tmp_detail1 > $tmp_detail2) {
+                            $detailid = (DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->max('spd_detailid')) + 1;
+                        } else if ($tmp_detail2 > $tmp_detail1) {
+                            $detailid = (DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->max('spa_detailid')) + 1;
+                        }
+
+                    } else if ($checkGol1 > 0 && $checkGol2 == 0) {
+                        $detailid = (DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->max('spd_detailid')) + 1;
+                    } else if ($checkGol1 == 0 && $checkGol2 > 0) {
+                        $detailid = (DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->max('spa_detailid')) + 1;
+                    }
+
+                    $values = [
+                        'spa_salesprice' => $idGol,
+                        'spa_detailid' => $detailid,
+                        'spa_item' => $request->idBarangHPA,
+                        'spa_unit' => $request->satuanrangeHPA,
+                        'spa_type' => $request->jenishargaHPA,
+                        'spa_payment' => $request->jenis_pembayaranrangeHPA,
+                        'spa_rangeqtystart' => $request->rangestartHPA,
+                        'spa_rangeqtyend' => ($request->rangeendHPA == "~") ? 0 : $request->rangeendHPA,
+                        'spa_price' => Currency::removeRupiah($request->hargarangeHPA),
+                        'spa_user' => Auth::user()->u_id
+                    ];
+                    DB::table('d_salespriceauth')->insert($values);
                     DB::commit();
                     return response()->json(['status' => "Success"]);
                 }
