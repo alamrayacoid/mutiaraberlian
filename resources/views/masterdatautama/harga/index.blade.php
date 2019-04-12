@@ -473,39 +473,39 @@
                         }
                     });
                 }
-            } else if ($("#jenisharga").val() == "R") {
-                if ($("#idBarang").val() == "") {
+            } else if ($("#jenishargaHPA").val() == "R") {
+                if ($("#idBarangHPA").val() == "") {
                     messageWarning("Peringatan", "Masukkan nama barang dengan benar!");
-                } else if ($("#rangestart").val() == "") {
+                } else if ($("#rangestartHPA").val() == "") {
                     messageWarning("Peringatan", "Masukkan range awal dengan benar!");
-                } else if ($("#rangeend").val() == "") {
+                } else if ($("#rangeendHPA").val() == "") {
                     messageWarning("Peringatan", "Masukkan range akhir dengan benar!");
-                } else if ($("#satuanrange").val() == "") {
+                } else if ($("#satuanrangeHPA").val() == "") {
                     messageWarning("Peringatan", "Pilih satuan barang!");
-                } else if ($("#hargarange").val() == "" || $("#hargarange").val() == "Rp. 0") {
+                } else if ($("#hargarangeHPA").val() == "" || $("#hargarangeHPA").val() == "Rp. 0") {
                     messageWarning("Peringatan", "Masukkan harga barang dengan benar!");
                 } else {
                     loadingShow();
-                    var data = $('#formsetharga').serialize();
-                    axios.post('{{route("dataharga.addgolonganharga")}}', data).then(function (response) {
+                    var data = $('#formsethargaHPA').serialize();
+                    axios.post('{{route("dataharga.addgolonganhargahpa")}}', data).then(function (response) {
                         if (response.data.status == "Success") {
                             loadingHide();
                             messageSuccess("Berhasil", "Data berhasil disimpan!");
-                            $("#idBarang").val("");
-                            $(".barang").val("");
-                            $("#jenisharga").val("");
-                            $("#select2-jenisharga-container").text('Pilih Jenis Harga');
-                            tbl_item.ajax.reload();
-                            $("#rangestart").val("");
-                            $("#rangeend").val("");
-                            $("#hargarange").val("");
-                            $("#satuanrange option").remove();
-                            $("#satuanrange").prepend('<option value="">Pilih Satuan</option>');
-                            $("#satuanrange").val(null);
-                            $("#select2-satuanrange-container").text('Pilih Satuan');
-                            $("#rangeend").attr("readonly", true);
-                            $("#satuan").addClass('d-none');
-                            $("#range").addClass('d-none');
+                            $("#idBarangHPA").val("");
+                            $(".barangHPA").val("");
+                            $("#jenishargaHPA").val("");
+                            $("#select2-jenishargaHPA-container").text('Pilih Jenis Harga');
+                            tbl_itemHPA.ajax.reload();
+                            $("#rangestartHPA").val("");
+                            $("#rangeendHPA").val("");
+                            $("#hargarangeHPA").val("");
+                            $("#satuanrangeHPA option").remove();
+                            $("#satuanrangeHPA").prepend('<option value="">Pilih Satuan</option>');
+                            $("#satuanrangeHPA").val(null);
+                            $("#select2-satuanrangeHPA-container").text('Pilih Satuan');
+                            $("#rangeendHPA").attr("readonly", true);
+                            $("#satuanHPA").addClass('d-none');
+                            $("#rangeHPA").addClass('d-none');
                         } else if (response.data.status == "Failed") {
                             loadingHide();
                             messageWarning("Gagal", "Data gagal disimpan!");
@@ -527,6 +527,15 @@
                 $("#rangeend").removeAttr('readonly');
             } else {
                 $("#rangeend").attr('readonly', true);
+            }
+        });
+
+        $(document).on('keyup', '#rangestartHPA', function (evt) {
+            evt.preventDefault();
+            if ($(this).val() != "") {
+                $("#rangeendHPA").removeAttr('readonly');
+            } else {
+                $("#rangeendHPA").attr('readonly', true);
             }
         });
 
@@ -897,6 +906,26 @@ $(document).ready(function(){
 		if (ini === 'U') {
 		    $("#qty").val(1);
 		    $("#qty").attr('readonly', true);
+			satuan.removeClass('d-none');
+			range.addClass('d-none');
+		} else if(ini === 'R'){
+			satuan.addClass('d-none');
+			range.removeClass('d-none');
+		} else {
+			satuan.addClass('d-none');
+			range.addClass('d-none');
+		}
+	});
+
+	$('#jenishargaHPA').change(function(){
+		var ini, satuan, range;
+		ini             = $(this).val();
+		satuan     		= $('#satuanHPA');
+		range     		= $('#rangeHPA');
+
+		if (ini === 'U') {
+		    $("#qtyHPA").val(1);
+		    $("#qtyHPA").attr('readonly', true);
 			satuan.removeClass('d-none');
 			range.addClass('d-none');
 		} else if(ini === 'R'){
