@@ -505,6 +505,11 @@ class OtorisasiController extends Controller
             ->make(true);
     }
 
+    public function detailPerubahanHarga($id, $detail)
+    {
+        //
+    }
+
     public function approvePerubahanHarga($id, $detail)
     {
         try{

@@ -93,37 +93,36 @@
             pageLength: 10,
             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
         });
+        tableagen = $('#table_otorisasi_agen').DataTable({
+            responsive: true,
+            // language: dataTableLanguage,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('notifikasiotorisasi/otorisasi/perubahanhargajual/getdataperubahanhpa') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}"
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'sp_name', name: 'sp_name'},
+                {data: 'nama', name: 'name'},
+                {data: 'spa_payment', name: 'spa_payment'},
+                {data: 'qty', name: 'qty'},
+                {data: 'spa_price', name: 'spa_price'},
+                {data: 'aksi', name: 'aksi'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
 		table2 = $('#table_detail').DataTable();
 
 		$('#table_otorisasi tbody').on('click', '.btn-detail' ,function(){
 			$('#detail').modal('show');
 		})
 	});
-
-    tableagen = $('#table_otorisasi_agen').DataTable({
-        responsive: true,
-        // language: dataTableLanguage,
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: "{{ url('notifikasiotorisasi/otorisasi/perubahanhargajual/getdataperubahanhpa') }}",
-            type: "get",
-            data: {
-                "_token": "{{ csrf_token() }}"
-            }
-        },
-        columns: [
-            {data: 'DT_RowIndex'},
-            {data: 'sp_name', name: 'sp_name'},
-            {data: 'nama', name: 'name'},
-            {data: 'spa_payment', name: 'spa_payment'},
-            {data: 'qty', name: 'qty'},
-            {data: 'spa_price', name: 'spa_price'},
-            {data: 'aksi', name: 'aksi'}
-        ],
-        pageLength: 10,
-        lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-    });
 
 	function approve(id, detailid) {
         $.confirm({
