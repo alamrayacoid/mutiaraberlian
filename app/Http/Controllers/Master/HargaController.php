@@ -1003,6 +1003,126 @@ class HargaController extends Controller
         }
     }
 
+    public function editGolonganHargaRangeHPA(Request $request)
+    {
+        $sts = '';
+        try {
+            $id = Crypt::decrypt($request->golIdRangeHPA);
+            $detail = Crypt::decrypt($request->golDetailRangeHPA);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => "Failed"]);
+        }
+
+        DB::beginTransaction();
+        try {
+            $check = DB::table('d_salespriceauth')
+                ->where('spa_salesprice', '=', $id)
+                ->where('spa_item', '=', $request->golItemRangeHPA)
+                ->where('spa_unit', '=', $request->satuanBarangRangeEditHPA)
+                ->where('spa_type', '=', "R")
+                ->get();
+
+            $check2 = DB::table('d_salespricedt')
+                ->where('spd_salesprice', '=', $id)
+                ->where('spd_item', '=', $request->golItemRangeHPA)
+                ->where('spd_unit', '=', $request->satuanBarangRangeEditHPA)
+                ->where('spd_type', '=', "R")
+                ->get();
+
+            if (count($check) > 0) {
+                if ($request->rangestarteditHPA == $request->rangestartawalHPA && $request->rangeendeditHPA == $request->rangestartakhirHPA) {
+                    $sts = 'Null';
+                } else {
+                    foreach ($check as $key => $val) {
+                        if ($val->spa_salesprice != $id && $val->spa_detailid != $detail) {
+                            if (in_array($request->rangestarteditHPA, range($val->spa_rangeqtystart, $val->spa_rangeqtyend))) {
+                                $sts = 'Not Null';
+                                return response()->json(['status' => "Range Ada"]);
+                                break;
+                            } else if (in_array($request->rangeendeditHPA, range($val->spa_rangeqtystart, $val->spa_rangeqtyend))) {
+                                $sts = 'Not Null';
+                                return response()->json(['status' => "Range Ada"]);
+                                break;
+                            } else {
+                                $sts = 'Null';
+                                continue;
+                            }
+                        }
+                    }
+                }
+            } else if (count($check2) > 0) {
+                if ($request->rangestarteditHPA == $request->rangestartawalHPA && $request->rangeendeditHPA == $request->rangestartakhirHPA) {
+                    $sts = 'Null';
+                } else {
+                    foreach ($check2 as $key => $val) {
+                        if ($val->spd_salesprice != $id && $val->spd_detailid != $detail) {
+                            if (in_array($request->rangestarteditHPA, range($val->spd_rangeqtystart, $val->spd_rangeqtyend))) {
+                                $sts = 'Not Null';
+                                return response()->json(['status' => "Range Ada"]);
+                                break;
+                            } else if (in_array($request->rangeendeditHPA, range($val->spd_rangeqtystart, $val->spd_rangeqtyend))) {
+                                $sts = 'Not Null';
+                                return response()->json(['status' => "Range Ada"]);
+                                break;
+                            } else {
+                                $sts = 'Null';
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ($sts = "Null") {
+                if ($request->statusRangeHPA == "N") {
+                    DB::table('d_salespriceauth')
+                        ->where('spa_salesprice', '=', $id)
+                        ->where('spa_detailid', '=', $detail)
+                        ->update([
+                            'spa_unit' => $request->satuanBarangRangeEditHPA,
+                            'spa_price' => Currency::removeRupiah($request->edithargarangeHPA),
+                            'spa_rangeqtystart' => $request->rangestarteditHPA,
+                            'spa_rangeqtyend' => $request->rangeendeditHPA
+                        ]);
+                    DB::commit();
+                    return response()->json(['status' => "Success"]);
+                } else if ($request->statusRangeHPA == "Y") {
+                    $price = DB::table('d_salespricedt')
+                        ->where('spd_salesprice', '=', $id)
+                        ->where('spd_detailid', '=', $detail);
+
+                    if ($price->count() > 0) {
+                        //insert in d_priceclassauthdt
+                        DB::table('d_salespriceauth')->insert([
+                            'spa_salesprice'   => $price->first()->pcd_classprice,
+                            'spa_detailid'     => $price->first()->pcd_detailid,
+                            'spa_item'         => $price->first()->pcd_item,
+                            'spa_unit'         => $request->satuanBarangRangeEditHPA,
+                            'spa_type'         => $price->first()->pcd_type,
+                            'spa_payment'      => $price->first()->pcd_payment,
+                            'spa_rangeqtystart'=> $request->rangestarteditHPA,
+                            'spa_rangeqtyend'  => $request->rangeendeditHPA,
+                            'spa_price'        => Currency::removeRupiah($request->edithargarangeHPA),
+                            'spa_user'         => $price->first()->pcd_user
+                        ]);
+
+                        //delete in m_priceclassdt
+                        $price->delete();
+
+                        DB::commit();
+                        return response()->json(['status' => "Success"]);
+                    } else {
+                        DB::rollBack();
+                        return response()->json(['status' => "Failed"]);
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => "Failed", "msg" => $e]);
+        }
+    }
+
     public function create_golonganharga($id)
     {
         if (in_array($id, range(1, 7))) {
