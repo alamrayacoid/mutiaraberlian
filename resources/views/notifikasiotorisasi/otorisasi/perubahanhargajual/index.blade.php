@@ -20,7 +20,7 @@
 
 @section('content')
 
-@include('notifikasiotorisasi.otorisasi.perubahanhargajual.modal')
+@include('notifikasiotorisasi.otorisasi.perubahanhargajual.detail')
 
 <article class="content">
 
@@ -118,11 +118,15 @@
             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
         });
 		table2 = $('#table_detail').DataTable();
-
-		$('#table_otorisasi tbody').on('click', '.btn-detail' ,function(){
-			$('#detail').modal('show');
-		})
 	});
+
+	function detail(id, detail) {
+        $('#detail').modal('show');
+    }
+
+    function detailHPA(id, detail) {
+        $('#detailHPA').modal('show');
+    }
 
 	function approve(id, detailid) {
         $.confirm({
@@ -186,6 +190,88 @@
                                 messageFailed("Gagal", "Terjadi kesalahan sistem");
                             }
                         })
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
+
+    function reject(id, detail) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "get",
+                            url: baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail+"/N",
+                            success: function (response) {
+                                if (response.status == 'Success') {
+                                    messageSuccess('Berhasil', 'Data berhasil hapus!');
+                                    table1.ajax.reload();
+                                } else {
+                                    messageWarning('Gagal', 'Gagal menghapus data!');
+                                }
+                            },
+                            error: function (e) {
+                                messageFailed('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
+
+    function rejectHPA(id, detail) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "get",
+                            url: baseUrl+"/masterdatautama/harga/delete-golongan-harga-hpa/"+id+"/"+detail+"/N",
+                            success: function (response) {
+                                if (response.status == 'Success') {
+                                    messageSuccess('Berhasil', 'Data berhasil hapus!');
+                                    tableagen.ajax.reload();
+                                } else {
+                                    messageWarning('Gagal', 'Gagal menghapus data!');
+                                }
+                            },
+                            error: function (e) {
+                                messageFailed('Peringatan', e.message);
+                            }
+                        });
                     }
                 },
                 cancel: {
