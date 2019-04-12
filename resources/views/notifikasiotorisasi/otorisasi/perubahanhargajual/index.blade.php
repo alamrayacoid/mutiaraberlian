@@ -24,13 +24,12 @@
 
 <article class="content">
 
-	<div class="title-block text-primary">
-	    <h1 class="title"> Otorisasi Perubahan Harga Jual </h1>
+    <div class="title-block text-primary">
+	    <h1 class="title"> Otorisasi</h1>
 	    <p class="title-description">
 	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
 	    	 / <span>Notifikasi & Otorisasi</span>
 	    	 / <a href="{{route('otorisasi')}}">Otorisasi</a>
-	    	 / <span class="text-primary font-weight-bold">Otorisasi Perubahan Harga Jual</span>
 	     </p>
 	</div>
 
@@ -39,42 +38,24 @@
 		<div class="row">
 
 			<div class="col-12">
-				<div class="card">
 
-					<div class="card-header bordered p-2">
-						<div class="header-block">
-							<h3 class="title">Otorisasi Perubahan Harga Jual</h3>
-						</div>
-						<div class="header-block pull-right">
-							<a class="btn btn-secondary btn-sm" href="{{route('otorisasi')}}"><i class="fa fa-arrow-left"></i></a>
-						</div>
-					</div>
-
-					<div class="card-body">
-						<div class="table-responsive">
-
-							<table class="table table-bordered table-striped table-hover" id="table_otorisasi" cellspacing="0">
-
-								<thead class="bg-primary">
-									<tr>
-										<th width="1%">No</th>
-                                        <th>Golongan</th>
-										<th>Nama Barang</th>
-										<th>Jenis</th>
-										<th>Qty</th>
-                                        <th>Harga</th>
-										<th width="20%">Aksi</th>
-									</tr>
-								</thead>
+				<ul class="nav nav-pills mb-3" id="Tabzs">
+                    <li class="nav-item">
+                        <a href="#hargajualkeagen" class="nav-link active" data-target="#hargajualkeagen" aria-controls="hargajualkeagen" data-toggle="tab" role="tab">Perubahan Harga Jual Ke Agen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#hargajualagen" class="nav-link" data-target="#hargajualagen" aria-controls="hargajualagen" data-toggle="tab" role="tab">Perubahan Harga Jual Agen</a>
+                    </li>
+                </ul>
 
 
+				<div class="tab-content">
 
-							</table>
+					@include('notifikasiotorisasi.otorisasi.perubahanhargajual.keagen')
+                    @include('notifikasiotorisasi.otorisasi.perubahanhargajual.agen')
 
-						</div>
-					</div>
+	            </div>
 
-				</div>
 			</div>
 
 		</div>
@@ -84,10 +65,9 @@
 </article>
 
 @endsection
-
 @section('extra_script')
 <script type="text/javascript">
-    var table1, table2;
+    var table1, table2, tableagen;
 	$(document).ready(function(){
         table1 = $('#table_otorisasi').DataTable({
             responsive: true,
@@ -119,6 +99,8 @@
 			$('#detail').modal('show');
 		})
 	});
+
+    tableagen = $('#table_otorisasi_agen').DataTable();
 
 	function approve(id, detailid) {
         $.confirm({
