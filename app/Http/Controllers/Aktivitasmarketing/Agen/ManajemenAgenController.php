@@ -159,6 +159,8 @@ class ManajemenAgenController extends Controller
         try {
             $penjualan = d_sales::where('s_id', $id)
             ->firstOrFail();
+
+            $mutasi = Mutasi::rollback($penjualan->s_nota);
             $penjualan->getSalesDt()->delete();
             $penjualan->delete();
 
@@ -296,7 +298,7 @@ class ManajemenAgenController extends Controller
 
                 // mutasi keluar
                 $mutasi = Mutasi::mutasikeluar(
-                    12,
+                    14,
                     $request->itemOwner[$i],
                     Auth::user()->u_company,
                     $request->itemListId[$i],

@@ -243,7 +243,8 @@ class Mutasi extends Controller
                 ->get();
 
             foreach ($get_sm as $sm){
-                if ($sm->sm_mutcat == 13){
+                if ($sm->sm_mutcat == 13 || $sm->sm_mutcat == 14)
+                {
                     $select_sm = DB::table('d_stock_mutation')
                         ->where('sm_stock', '=', $sm->sm_stock)
                         ->where('sm_nota', '=', $sm->sm_reff)
@@ -265,7 +266,9 @@ class Mutasi extends Controller
                         ->update([
                             's_qty' => $sisa
                         ]);
-                } else if ($sm->sm_mutcat == 12) {
+                }
+                else if ($sm->sm_mutcat == 12)
+                {
                     $select_sm = DB::table('d_stock_mutation')
                         ->where('sm_stock', '=', $sm->sm_stock)
                         ->where('sm_nota', '=', $sm->sm_nota)

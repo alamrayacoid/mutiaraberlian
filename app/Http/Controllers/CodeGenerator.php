@@ -62,7 +62,6 @@ class CodeGenerator extends Controller
         $maxId = DB::table($table)->max('s_id');
         $nomor = $maxId + 1;
 
-
         if ($lebar > 0) {
             $angka = $awalan . $separator . str_pad($nomor, $lebar, "0", STR_PAD_LEFT) . '/' . Carbon::now('Asia/Jakarta')->format('d/m/Y');
         } else {
