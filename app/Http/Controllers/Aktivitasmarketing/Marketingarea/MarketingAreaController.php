@@ -628,7 +628,7 @@ class MarketingAreaController extends Controller
                 ->select('d_productorder.*', 'd_productorderdt.*', DB::raw('date_format(po_date, "%d/%m/%Y") as date'), DB::raw('SUM(pod_totalprice) as total_price'), 'm_company.*')
                 ->where('po_status', '=', $status)
                 ->where('po_agen', '=', $id)
-                ///->groupBy('po_id')
+                ->groupBy('po_id')
                 ->get();
             dd($data_agen);
         } else {

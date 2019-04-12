@@ -391,13 +391,6 @@ class RecruitmentController extends Controller
           return '<div class="text-center">'.Carbon::parse($datas->pl_date)->format('d M Y').'</div>';
         }
       })
-      // ->addColumn('action', function($datas) {
-      //   return '<div class="btn-group btn-group-sm">
-      //             <button class="btn btn-primary btn-preview-rekruitmen hint--top-left hint--info" type="button" aria-label="Detail Pelamar" onclick="detail(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file"></i></button>
-      //             <button class="btn btn-warning btn-proses-rekruitmen hint--top-left hint--warning" type="button" aria-label="Proses Data" onclick="proses(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-file-powerpoint-o"></i></button>
-      //             <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Nonaktifkan" onclick="nonActivate(\''.Crypt::encrypt($datas->p_id).'\')"><i class="fa fa-fw fa-times-circle"></i></button>
-      //           </div>';
-      // })
       ->rawColumns(['tgl_apply', 'status', 'approval'])
       ->make(true);
   }
@@ -550,7 +543,12 @@ class RecruitmentController extends Controller
 
     DB::beginTransaction();
     try {
-      $query = DB::table('d_pelamar')->where('p_applicant', '=', $id)->count();
+      $query = DB::table('d_applicant')
+        ->join('d_pelamar', 'a_id', 'p_applicant')
+        ->where('p_applicant', '=', $id)
+        ->orWhere('a_isactive', '=', "Y")
+        ->count();
+        
       if ($query > 0) {
         DB::commit();
         return response()->json([
@@ -567,11 +565,11 @@ class RecruitmentController extends Controller
         'status' => 'sukses'
       ]);
     } catch (\Exception $e) {
-        DB::rollback();
-        return response()->json([
-          'status'  => 'Gagal',
-          'message' => $e
-        ]);
+      DB::rollback();
+      return response()->json([
+        'status'  => 'Gagal',
+        'message' => $e
+      ]);
     }
   }
 
