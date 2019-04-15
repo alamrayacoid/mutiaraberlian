@@ -60,6 +60,14 @@ class AgenController extends Controller
         return $classes;
     }
 
+    public function getSalesPrice()
+    {
+        $classes = DB::table('d_salesprice')
+            ->orderBy('sp_name', 'asc')
+            ->get();
+        return $classes;
+    }
+
     /**
      * Return list of provinces.
      *
@@ -237,6 +245,7 @@ class AgenController extends Controller
     {
         $data['provinces'] = $this->getProvinces();
         $data['classes'] = $this->getClasses();
+        $data['salesPrice'] = $this->getSalesPrice();
         return view('masterdatautama.agen.create', compact('data'));
     }
 
@@ -286,6 +295,7 @@ class AgenController extends Controller
                     'a_desa'      => $request->address_village,
                     'a_address'   => $request->address,
                     'a_class'     => $request->a_class,
+                    'a_salesprice'=> $request->a_salesprice,
                     'a_type'      => $request->type_hidden,
                     'a_parent'    => $request->parent,
                     'a_img'       => $photo,
@@ -335,6 +345,7 @@ class AgenController extends Controller
 
         $data['provinces'] = $this->getProvinces();
         $data['classes'] = $this->getClasses();
+        $data['salesPrice'] = $this->getSalesPrice();
         $data['area_prov'] = $provinceId;
         $data['area_cities'] = $this->getCities($provinceId);
         $data['address_cities'] = $this->getCities($data['agen']->a_provinsi);
@@ -390,6 +401,7 @@ class AgenController extends Controller
                     'a_desa'      => $request->address_village,
                     'a_address'   => $request->address,
                     'a_class'     => $request->a_class,
+                    'a_salesprice'=> $request->a_salesprice,
                     'a_type'      => $request->type_hidden,
                     'a_parent'    => $request->parent,
                     'a_img'       => $photo,
