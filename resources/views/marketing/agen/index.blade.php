@@ -16,9 +16,9 @@
 @include('marketing.agen.kelolapenjualan.modal')
 <article class="content animated fadeInLeft">
 	<div class="title-block text-primary">
-		<h1 class="title"> Manajemen Marketing Area  </h1>
+		<h1 class="title"> Manajemen Agen  </h1>
 		<p class="title-description">
-			<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Marketing</span> / <span class="text-primary" style="font-weight: bold;">Manajemen Marketing Area</span>
+			<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Marketing</span> / <span class="text-primary" style="font-weight: bold;">Manajemen Agen</span>
 		</p>
 	</div>
 	<section class="section">
