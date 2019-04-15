@@ -280,6 +280,27 @@ class PenerimaanProduksiController extends Controller
             })
             ->first();
 
+        if($data->terima == NULL) {
+            $qty_compare = 0;
+        } else {
+            $check = DB::table('m_item')
+                ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                    'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                    'm_item.i_unit3 as unit3')
+                ->where('m_item.i_id', '=', $item)
+                ->first();
+            $qty_compare = 0;
+            if ($data->unit == $check->unit1) {
+                $qty_compare = $data->terima/$check->compare1;
+            } else if ($data->unit == $check->unit2) {
+                $qty_compare = $data->terima/$check->compare2;
+            } else if ($data->unit == $check->unit3) {
+                $qty_compare = $data->terima/$check->compare3;
+            }
+        }
+
+//        $sisa = (int)$data->jumlah - (int)$qty_compare;
+
         $data = array(
             'id'        => Crypt::encrypt($data->id),
             'nota'      => $data->nota,
@@ -288,7 +309,7 @@ class PenerimaanProduksiController extends Controller
             'satuan'    => $data->satuan,
             'unit'      => $data->unit,
             'jumlah'    => $data->jumlah,
-            'terima'    => $data->terima,
+            'terima'    => $qty_compare,
         );
 
         return Response::json(['status' => 'Success', 'data' => $data, 'satuan' => $satuan]);
