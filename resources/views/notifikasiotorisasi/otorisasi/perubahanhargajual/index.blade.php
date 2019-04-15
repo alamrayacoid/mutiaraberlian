@@ -20,7 +20,7 @@
 
 @section('content')
 
-@include('notifikasiotorisasi.otorisasi.perubahanhargajual.modal')
+@include('notifikasiotorisasi.otorisasi.perubahanhargajual.detail')
 
 <article class="content">
 
@@ -72,7 +72,7 @@
         table1 = $('#table_otorisasi').DataTable({
             responsive: true,
             // language: dataTableLanguage,
-            // processing: true,
+            processing: true,
             serverSide: true,
             ajax: {
                 url: "{{ url('notifikasiotorisasi/otorisasi/perubahanhargajual/getdataperubahan') }}",
@@ -93,14 +93,40 @@
             pageLength: 10,
             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
         });
+        tableagen = $('#table_otorisasi_agen').DataTable({
+            responsive: true,
+            // language: dataTableLanguage,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('notifikasiotorisasi/otorisasi/perubahanhargajual/getdataperubahanhpa') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}"
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'sp_name', name: 'sp_name'},
+                {data: 'nama', name: 'name'},
+                {data: 'spa_payment', name: 'spa_payment'},
+                {data: 'qty', name: 'qty'},
+                {data: 'spa_price', name: 'spa_price'},
+                {data: 'aksi', name: 'aksi'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
 		table2 = $('#table_detail').DataTable();
-
-		$('#table_otorisasi tbody').on('click', '.btn-detail' ,function(){
-			$('#detail').modal('show');
-		})
 	});
 
-    tableagen = $('#table_otorisasi_agen').DataTable();
+	function detail(id, detail) {
+        $('#detail').modal('show');
+    }
+
+    function detailHPA(id, detail) {
+        $('#detailHPA').modal('show');
+    }
 
 	function approve(id, detailid) {
         $.confirm({
@@ -127,6 +153,125 @@
                                 messageFailed("Gagal", "Data Order Produksi Gagal Dihapus");
                             }
                         })
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
+
+	function approveHPA(id, detailid) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin akan menyetujui data ini?',
+            theme: 'sukses',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/perubahanhargajual/approve-hpa'+'/'+id+'/'+detailid).then(function(response) {
+                            loadingShow();
+                            if(response.data.status == 'sukses'){
+                                loadingHide();
+                                messageSuccess("Berhasil", "Data Order Produksi Berhasil Disetujui");
+                                tableagen.ajax.reload();
+                            }else{
+                                loadingHide();
+                                messageFailed("Gagal", "Terjadi kesalahan sistem");
+                            }
+                        })
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
+
+    function reject(id, detail) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "get",
+                            url: baseUrl+"/masterdatautama/harga/delete-golongan-harga/"+id+"/"+detail+"/N",
+                            success: function (response) {
+                                if (response.status == 'Success') {
+                                    messageSuccess('Berhasil', 'Data berhasil hapus!');
+                                    table1.ajax.reload();
+                                } else {
+                                    messageWarning('Gagal', 'Gagal menghapus data!');
+                                }
+                            },
+                            error: function (e) {
+                                messageFailed('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
+
+    function rejectHPA(id, detail) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "get",
+                            url: baseUrl+"/masterdatautama/harga/delete-golongan-harga-hpa/"+id+"/"+detail+"/N",
+                            success: function (response) {
+                                if (response.status == 'Success') {
+                                    messageSuccess('Berhasil', 'Data berhasil hapus!');
+                                    tableagen.ajax.reload();
+                                } else {
+                                    messageWarning('Gagal', 'Gagal menghapus data!');
+                                }
+                            },
+                            error: function (e) {
+                                messageFailed('Peringatan', e.message);
+                            }
+                        });
                     }
                 },
                 cancel: {

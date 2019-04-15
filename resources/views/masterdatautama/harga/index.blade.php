@@ -139,7 +139,7 @@
             ],
             dom: 'l<"toolbar">frtip',
             initComplete: function(){
-                $("div.toolbar").html('<button type="button" id="btngolongan" class="btn btn-primary"><i class="fa fa-plus"></i></button>');
+                $("div.toolbar").html('<button type="button" id="btngolongan" class="btn btn-primary" title="Tambah Golongan"><i class="fa fa-plus"></i></button>');
             }
         });
 
@@ -161,7 +161,7 @@
             ],
             dom: 'l<"toolbar">frtip',
             initComplete: function(){
-                $("div.toolbar").html('<button type="button" id="btngolonganHPA" class="btn btn-primary"><i class="fa fa-plus"></i></button>');
+                $("div.toolbar").html('<button type="button" id="btngolonganHPA" class="btn btn-primary" title="Tambah Golongan"><i class="fa fa-plus"></i></button>');
             }
         });
 

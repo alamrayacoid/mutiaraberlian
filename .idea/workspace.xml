@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="1c8b318e-c138-400d-afca-6445ceb3fae0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/MarketingController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/MarketingController.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <ignored path="$PROJECT_DIR$/.idea/" />
@@ -122,8 +120,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="206">
-              <caret line="95" column="122" selection-start-line="95" selection-start-column="122" selection-end-line="95" selection-end-column="122" />
+            <state relative-caret-position="179">
+              <caret line="361" column="102" lean-forward="true" selection-start-line="361" selection-start-column="102" selection-end-line="361" selection-end-column="102" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
               </folding>
@@ -131,101 +129,47 @@
           </provider>
         </entry>
       </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Marketingarea/MarketingAreaController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="380">
+              <caret line="84" column="20" selection-start-line="84" selection-start-column="20" selection-end-line="84" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/MarketingController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="320">
-              <caret line="783" column="43" selection-start-line="783" selection-start-column="43" selection-end-line="783" selection-end-column="43" />
+            <state relative-caret-position="206">
+              <caret line="310" column="31" lean-forward="true" selection-start-line="310" selection-start-column="31" selection-end-line="310" selection-end-column="31" />
               <folding>
-                <element signature="e#2050#3379#0#PHP" />
-                <element signature="e#14013#14776#0#PHP" />
-                <element signature="e#14782#15551#0#PHP" />
-                <element signature="e#15557#16284#0#PHP" />
-                <element signature="e#16290#17038#0#PHP" />
-                <element signature="e#17044#17593#0#PHP" />
-                <element signature="e#17599#18151#0#PHP" />
-                <element signature="e#18157#19687#0#PHP" />
-                <element signature="e#19693#20398#0#PHP" />
-                <element signature="e#20404#28424#0#PHP" />
-                <element signature="e#28430#36456#0#PHP" />
-                <element signature="e#36462#37487#0#PHP" />
-                <element signature="e#37493#40066#0#PHP" />
-                <element signature="e#40105#42678#0#PHP" />
-                <element signature="e#40072#46067#0#PHP" />
-                <element signature="e#48687#54682#0#PHP" />
-                <element signature="e#46073#46306#0#PHP" />
-                <element signature="e#46312#46420#0#PHP" />
+                <element signature="e#40#68#0#PHP" expanded="true" />
+                <element signature="e#1313#1440#0#PHP" />
+                <element signature="e#1446#1614#0#PHP" />
+                <element signature="e#1620#2513#0#PHP" />
+                <element signature="e#2519#5019#0#PHP" />
+                <element signature="e#5025#5726#0#PHP" />
+                <element signature="e#5732#7515#0#PHP" />
+                <element signature="e#7521#9437#0#PHP" />
+                <element signature="e#21126#21224#0#PHP" />
+                <element signature="e#21230#21357#0#PHP" />
+                <element signature="e#21363#29650#0#PHP" />
+                <element signature="e#29656#30979#0#PHP" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="1019" column="90" selection-start-line="1019" selection-start-column="90" selection-end-line="1019" selection-end-column="90" />
+            <state relative-caret-position="259">
+              <caret line="414" column="54" lean-forward="true" selection-start-line="414" selection-start-column="54" selection-end-line="414" selection-end-column="54" />
               <folding>
-                <element signature="e#2913#3020#0#HTML" />
-                <element signature="e#3191#3310#0#HTML" />
-                <element signature="e#3489#4040#0#HTML" />
-                <element signature="e#4093#4760#0#HTML" />
-                <element signature="e#4819#5519#0#HTML" />
-                <element signature="e#5578#5684#0#HTML" />
-                <element signature="e#5749#5885#0#HTML" />
-                <element signature="e#5945#6035#0#HTML" />
-                <element signature="e#6103#6196#0#HTML" />
-                <element signature="e#6260#6323#0#HTML" />
-                <element signature="e#6393#7362#0#HTML" />
-                <element signature="e#7431#7917#0#HTML" />
-                <element signature="e#7977#8155#0#HTML" />
-                <element signature="e#8218#8957#0#HTML" />
-                <element signature="e#9024#9786#0#HTML" />
-                <element signature="e#9853#10439#0#HTML" />
-                <element signature="e#10508#11111#0#HTML" />
-                <element signature="e#11148#11348#0#HTML" />
-                <element signature="e#11389#11592#0#HTML" />
-                <element signature="e#11661#17451#0#HTML" />
-                <element signature="e#17523#23382#0#HTML" />
-                <element signature="e#23448#23677#0#HTML" />
-                <element signature="e#23751#23980#0#HTML" />
-                <element signature="e#23752#25362#0#HTML" />
-                <element signature="e#25944#27554#0#HTML" />
-                <element signature="e#25437#27330#0#HTML" />
-                <element signature="e#29609#31502#0#HTML" />
-                <element signature="e#27365#28301#0#HTML" />
-                <element signature="e#28333#29248#0#HTML" />
-                <element signature="e#29274#29346#0#HTML" />
-                <element signature="e#29384#29499#0#HTML" />
-                <element signature="e#29540#29670#0#HTML" />
-                <element signature="e#29700#29784#0#HTML" />
-                <element signature="e#29820#29908#0#HTML" />
-                <element signature="e#30010#33804#0#HTML" />
-                <element signature="e#34281#38075#0#HTML" />
-                <element signature="e#33858#35524#0#HTML" />
-                <element signature="e#35566#36677#0#HTML" />
-                <element signature="e#36722#37864#0#HTML" />
-                <element signature="e#37937#38413#0#HTML" />
-                <element signature="e#37974#38409#0#HTML" />
+                <element signature="n#style#0;n#p#0;n#td#3;n#tr#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgRangeHPA.blade.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="520">
-              <caret line="69" lean-forward="true" selection-start-line="69" selection-end-line="69" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgUnitHPA.blade.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="253">
-              <caret line="11" column="40" lean-forward="true" selection-start-line="11" selection-start-column="40" selection-end-line="11" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -234,16 +178,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>barang</find>
-      <find>idGol</find>
-      <find>txtGol</find>
-      <find>table_golonganharga</find>
-      <find>masterdatautama/harga/get-golongan-harga/</find>
-      <find>tbl_glnHPA</find>
-      <find>btngolongan</find>
-      <find>formgln</find>
-      <find>dataharga.addgolongan</find>
-      <find>btngolonganHPA</find>
       <find>editGolongan</find>
       <find>formedtgln</find>
       <find>dataharga.editgolongan</find>
@@ -264,6 +198,16 @@
       <find>dataharga.editgolonganhargaunit</find>
       <find>hapusGolonganHarga</find>
       <find>masterdatautama/harga/delete-golongan-harga/</find>
+      <find>notifikasiotorisasi/otorisasi/perubahanhargajual/index</find>
+      <find>table_otorisasi_agen</find>
+      <find>detail</find>
+      <find>notifikasiotorisasi/otorisasi/perubahanhargajual/getdataperubahan</find>
+      <find>notifikasiotorisasi/otorisasi/perubahanhargajual/approve</find>
+      <find>approveHPA</find>
+      <find>masterdatautama/harga/index</find>
+      <find>marketing/marketingarea/orderproduk/create</find>
+      <find>marketing/konsinyasipusat/penempatanproduk/create</find>
+      <find>marketing/konsinyasipusat/cari-konsigner</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -273,8 +217,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/resources/views/produksi/orderproduksi/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/history/index.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/PenerimaanProduksiController.php" />
         <option value="$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/inventory/manajemenstok/pengelolaanmms/create.blade.php" />
@@ -308,11 +250,8 @@
         <option value="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgUnit.blade.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php" />
-        <option value="$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgRange.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/MarketingController.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/rangeHPA.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/satuanHPA.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolonganHPA.blade.php" />
@@ -321,9 +260,14 @@
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgUnitHPA.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgRangeHPA.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" />
-        <option value="$PROJECT_DIR$/routes/web.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" />
+        <option value="$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/agen.blade.php" />
+        <option value="$PROJECT_DIR$/routes/web.php" />
+        <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/detailHPA.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/index.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/MarketingController.php" />
       </list>
     </option>
   </component>
@@ -509,24 +453,24 @@
               <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="masterdatautama" type="462c0819:PsiDirectoryNode" />
+              <item name="notifikasiotorisasi" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
               <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="masterdatautama" type="462c0819:PsiDirectoryNode" />
-              <item name="harga" type="462c0819:PsiDirectoryNode" />
+              <item name="notifikasiotorisasi" type="462c0819:PsiDirectoryNode" />
+              <item name="otorisasi" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
               <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="masterdatautama" type="462c0819:PsiDirectoryNode" />
-              <item name="harga" type="462c0819:PsiDirectoryNode" />
-              <item name="golongan" type="462c0819:PsiDirectoryNode" />
+              <item name="notifikasiotorisasi" type="462c0819:PsiDirectoryNode" />
+              <item name="otorisasi" type="462c0819:PsiDirectoryNode" />
+              <item name="perubahanhargajual" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
@@ -730,49 +674,7 @@
       <workItem from="1554776933486" duration="10576000" />
       <workItem from="1554860650962" duration="18355000" />
       <workItem from="1554947942967" duration="19282000" />
-      <workItem from="1555034802806" duration="5938000" />
-    </task>
-    <task id="LOCAL-00102" summary="mutiara">
-      <created>1554266941734</created>
-      <option name="number" value="00102" />
-      <option name="presentableId" value="LOCAL-00102" />
-      <option name="project" value="LOCAL" />
-      <updated>1554266941735</updated>
-    </task>
-    <task id="LOCAL-00103" summary="mutiara">
-      <created>1554267498302</created>
-      <option name="number" value="00103" />
-      <option name="presentableId" value="LOCAL-00103" />
-      <option name="project" value="LOCAL" />
-      <updated>1554267498302</updated>
-    </task>
-    <task id="LOCAL-00104" summary="mutiara">
-      <created>1554270798262</created>
-      <option name="number" value="00104" />
-      <option name="presentableId" value="LOCAL-00104" />
-      <option name="project" value="LOCAL" />
-      <updated>1554270798262</updated>
-    </task>
-    <task id="LOCAL-00105" summary="mutiara">
-      <created>1554271359289</created>
-      <option name="number" value="00105" />
-      <option name="presentableId" value="LOCAL-00105" />
-      <option name="project" value="LOCAL" />
-      <updated>1554271359289</updated>
-    </task>
-    <task id="LOCAL-00106" summary="mutiara">
-      <created>1554273921663</created>
-      <option name="number" value="00106" />
-      <option name="presentableId" value="LOCAL-00106" />
-      <option name="project" value="LOCAL" />
-      <updated>1554273921663</updated>
-    </task>
-    <task id="LOCAL-00107" summary="mutiara">
-      <created>1554343697051</created>
-      <option name="number" value="00107" />
-      <option name="presentableId" value="LOCAL-00107" />
-      <option name="project" value="LOCAL" />
-      <updated>1554343697052</updated>
+      <workItem from="1555034802806" duration="17017000" />
     </task>
     <task id="LOCAL-00108" summary="mutiara">
       <created>1554347038962</created>
@@ -1075,17 +977,59 @@
       <option name="project" value="LOCAL" />
       <updated>1555040563047</updated>
     </task>
-    <option name="localTasksCounter" value="151" />
+    <task id="LOCAL-00151" summary="mutiara">
+      <created>1555040776162</created>
+      <option name="number" value="00151" />
+      <option name="presentableId" value="LOCAL-00151" />
+      <option name="project" value="LOCAL" />
+      <updated>1555040776162</updated>
+    </task>
+    <task id="LOCAL-00152" summary="mutiara">
+      <created>1555051529507</created>
+      <option name="number" value="00152" />
+      <option name="presentableId" value="LOCAL-00152" />
+      <option name="project" value="LOCAL" />
+      <updated>1555051529507</updated>
+    </task>
+    <task id="LOCAL-00153" summary="mutiara">
+      <created>1555052980737</created>
+      <option name="number" value="00153" />
+      <option name="presentableId" value="LOCAL-00153" />
+      <option name="project" value="LOCAL" />
+      <updated>1555052980738</updated>
+    </task>
+    <task id="LOCAL-00154" summary="mutiara">
+      <created>1555053285461</created>
+      <option name="number" value="00154" />
+      <option name="presentableId" value="LOCAL-00154" />
+      <option name="project" value="LOCAL" />
+      <updated>1555053285461</updated>
+    </task>
+    <task id="LOCAL-00155" summary="mutiara">
+      <created>1555054370145</created>
+      <option name="number" value="00155" />
+      <option name="presentableId" value="LOCAL-00155" />
+      <option name="project" value="LOCAL" />
+      <updated>1555054370145</updated>
+    </task>
+    <task id="LOCAL-00156" summary="mutiara">
+      <created>1555055424631</created>
+      <option name="number" value="00156" />
+      <option name="presentableId" value="LOCAL-00156" />
+      <option name="project" value="LOCAL" />
+      <updated>1555055424632</updated>
+    </task>
+    <option name="localTasksCounter" value="157" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="444760000" />
+    <option name="totallyTimeSpent" value="455839000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1366" height="768" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23787878" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15984848" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="npm" order="3" side_tool="true" />
@@ -1107,7 +1051,7 @@
       <window_info anchor="right" id="Database" order="3" />
     </layout>
     <layout-to-restore>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18560606" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15984848" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="npm" order="3" side_tool="true" />
@@ -1138,48 +1082,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="mutiara" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/config/app.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="229" column="19" selection-start-line="229" selection-start-column="9" selection-end-line="229" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/modal-detail.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-34">
-          <caret line="4" column="25" lean-forward="true" selection-start-line="4" selection-start-column="25" selection-end-line="4" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/detail_return.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="12" column="22" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
-          <folding>
-            <element signature="n#div#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" />
-            <element signature="n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="86" column="14" lean-forward="true" selection-start-line="86" selection-start-column="14" selection-end-line="86" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/modal.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="385">
-          <caret line="88" column="39" selection-start-line="88" selection-start-column="39" selection-end-line="88" selection-end-column="39" />
-          <folding>
-            <element signature="n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/_ide_helper.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="179">
@@ -1320,65 +1222,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/storage/framework/views/c5d88770846b0d46dd724b9bb07d434c6727566e.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="541" column="13" selection-start-line="541" selection-start-column="13" selection-end-line="541" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="140" column="98" selection-start-line="140" selection-start-column="98" selection-end-line="140" selection-end-column="98" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="20" column="72" selection-start-line="20" selection-start-column="72" selection-end-line="20" selection-end-column="72" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/marketing/marketingarea/orderproduk/create.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="179">
           <caret line="266" column="144" lean-forward="true" selection-start-line="266" selection-start-column="28" selection-end-line="266" selection-end-column="144" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Marketingarea/MarketingAreaController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="92" column="60" lean-forward="true" selection-start-line="92" selection-start-column="60" selection-end-line="92" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="414" column="52" selection-start-line="414" selection-start-column="52" selection-end-line="414" selection-end-column="52" />
-          <folding>
-            <element signature="n#style#0;n#p#0;n#td#3;n#tr#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/MarketingController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="282" column="32" lean-forward="true" selection-start-line="282" selection-start-column="32" selection-end-line="282" selection-end-column="32" />
-          <folding>
-            <element signature="e#40#68#0#PHP" expanded="true" />
-            <element signature="e#1313#1440#0#PHP" />
-            <element signature="e#1446#1614#0#PHP" />
-            <element signature="e#2519#5019#0#PHP" />
-            <element signature="e#5025#5726#0#PHP" />
-            <element signature="e#5732#7515#0#PHP" />
-            <element signature="e#7521#9437#0#PHP" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1393,13 +1240,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="322">
           <caret line="14" column="72" selection-start-line="14" selection-start-column="72" selection-end-line="14" selection-end-column="72" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/addGolongan.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="8" column="18" lean-forward="true" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="18" />
         </state>
       </provider>
     </entry>
@@ -1511,89 +1351,146 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1780" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/addGolongan.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="8" column="18" lean-forward="true" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="1019" column="90" selection-start-line="1019" selection-start-column="90" selection-end-line="1019" selection-end-column="90" />
+        <state relative-caret-position="284">
+          <caret line="141" column="125" selection-start-line="141" selection-start-column="125" selection-end-line="141" selection-end-column="125" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/detailHPA.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="12" column="86" selection-start-line="12" selection-start-column="86" selection-end-line="12" selection-end-column="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/storage/framework/views/c5d88770846b0d46dd724b9bb07d434c6727566e.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="911">
+          <caret line="996" column="11" lean-forward="true" selection-start-line="996" selection-start-column="11" selection-end-line="996" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="159" column="84" lean-forward="true" selection-start-line="159" selection-start-column="84" selection-end-line="159" selection-end-column="84" />
           <folding>
-            <element signature="e#2913#3020#0#HTML" />
-            <element signature="e#3191#3310#0#HTML" />
-            <element signature="e#3489#4040#0#HTML" />
-            <element signature="e#4093#4760#0#HTML" />
-            <element signature="e#4819#5519#0#HTML" />
-            <element signature="e#5578#5684#0#HTML" />
-            <element signature="e#5749#5885#0#HTML" />
-            <element signature="e#5945#6035#0#HTML" />
-            <element signature="e#6103#6196#0#HTML" />
-            <element signature="e#6260#6323#0#HTML" />
-            <element signature="e#6393#7362#0#HTML" />
-            <element signature="e#7431#7917#0#HTML" />
-            <element signature="e#7977#8155#0#HTML" />
-            <element signature="e#8218#8957#0#HTML" />
-            <element signature="e#9024#9786#0#HTML" />
-            <element signature="e#9853#10439#0#HTML" />
-            <element signature="e#10508#11111#0#HTML" />
-            <element signature="e#11148#11348#0#HTML" />
-            <element signature="e#11389#11592#0#HTML" />
-            <element signature="e#11661#17451#0#HTML" />
-            <element signature="e#17523#23382#0#HTML" />
-            <element signature="e#23448#23677#0#HTML" />
-            <element signature="e#23751#23980#0#HTML" />
-            <element signature="e#23752#25362#0#HTML" />
-            <element signature="e#25944#27554#0#HTML" />
-            <element signature="e#25437#27330#0#HTML" />
-            <element signature="e#29609#31502#0#HTML" />
-            <element signature="e#27365#28301#0#HTML" />
-            <element signature="e#28333#29248#0#HTML" />
-            <element signature="e#29274#29346#0#HTML" />
-            <element signature="e#29384#29499#0#HTML" />
-            <element signature="e#29540#29670#0#HTML" />
-            <element signature="e#29700#29784#0#HTML" />
-            <element signature="e#29820#29908#0#HTML" />
-            <element signature="e#30010#33804#0#HTML" />
-            <element signature="e#34281#38075#0#HTML" />
-            <element signature="e#33858#35524#0#HTML" />
-            <element signature="e#35566#36677#0#HTML" />
-            <element signature="e#36722#37864#0#HTML" />
-            <element signature="e#37937#38413#0#HTML" />
-            <element signature="e#37974#38409#0#HTML" />
+            <element signature="e#2050#3379#0#PHP" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/agen.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="16" column="138" selection-start-line="16" selection-start-column="138" selection-end-line="16" selection-end-column="138" />
+          <folding>
+            <element signature="n#style#0;n#table#0;n#div#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/keagen.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/detail.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="18" column="20" lean-forward="true" selection-start-line="18" selection-start-column="20" selection-end-line="18" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/perubahanhargajual/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="445">
+          <caret line="245" column="35" selection-start-line="245" selection-start-column="35" selection-end-line="245" selection-end-column="35" />
+          <folding>
+            <element signature="e#1839#2723#0#HTML" />
+            <element signature="e#2780#3568#0#HTML" />
+            <element signature="e#2970#4388#0#HTML" />
+            <element signature="e#5206#6624#0#HTML" />
+            <element signature="e#6728#6741#0#HTML" />
+            <element signature="e#6860#6875#0#HTML" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="301">
+          <caret line="502" column="85" selection-start-line="502" selection-start-column="85" selection-end-line="502" selection-end-column="85" />
+          <folding>
+            <element signature="e#40#58#0#PHP" expanded="true" />
+            <element signature="e#14797#17355#0#PHP" />
+            <element signature="e#17361#19195#0#PHP" />
+            <element signature="e#21745#23579#0#PHP" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="95" column="122" selection-start-line="95" selection-start-column="122" selection-end-line="95" selection-end-column="122" />
+        <state relative-caret-position="179">
+          <caret line="361" column="102" lean-forward="true" selection-start-line="361" selection-start-column="102" selection-end-line="361" selection-end-column="102" />
           <folding>
             <element signature="e#7#389#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php">
+    <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="783" column="43" selection-start-line="783" selection-start-column="43" selection-end-line="783" selection-end-column="43" />
+        <state relative-caret-position="259">
+          <caret line="414" column="54" lean-forward="true" selection-start-line="414" selection-start-column="54" selection-end-line="414" selection-end-column="54" />
           <folding>
-            <element signature="e#2050#3379#0#PHP" />
-            <element signature="e#14013#14776#0#PHP" />
-            <element signature="e#14782#15551#0#PHP" />
-            <element signature="e#15557#16284#0#PHP" />
-            <element signature="e#16290#17038#0#PHP" />
-            <element signature="e#17044#17593#0#PHP" />
-            <element signature="e#17599#18151#0#PHP" />
-            <element signature="e#18157#19687#0#PHP" />
-            <element signature="e#19693#20398#0#PHP" />
-            <element signature="e#20404#28424#0#PHP" />
-            <element signature="e#28430#36456#0#PHP" />
-            <element signature="e#36462#37487#0#PHP" />
-            <element signature="e#37493#40066#0#PHP" />
-            <element signature="e#40105#42678#0#PHP" />
-            <element signature="e#40072#46067#0#PHP" />
-            <element signature="e#48687#54682#0#PHP" />
-            <element signature="e#46073#46306#0#PHP" />
-            <element signature="e#46312#46420#0#PHP" />
+            <element signature="n#style#0;n#p#0;n#td#3;n#tr#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Marketingarea/MarketingAreaController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="84" column="20" selection-start-line="84" selection-start-column="20" selection-end-line="84" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/MarketingController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="206">
+          <caret line="310" column="31" lean-forward="true" selection-start-line="310" selection-start-column="31" selection-end-line="310" selection-end-column="31" />
+          <folding>
+            <element signature="e#40#68#0#PHP" expanded="true" />
+            <element signature="e#1313#1440#0#PHP" />
+            <element signature="e#1446#1614#0#PHP" />
+            <element signature="e#1620#2513#0#PHP" />
+            <element signature="e#2519#5019#0#PHP" />
+            <element signature="e#5025#5726#0#PHP" />
+            <element signature="e#5732#7515#0#PHP" />
+            <element signature="e#7521#9437#0#PHP" />
+            <element signature="e#21126#21224#0#PHP" />
+            <element signature="e#21230#21357#0#PHP" />
+            <element signature="e#21363#29650#0#PHP" />
+            <element signature="e#29656#30979#0#PHP" />
           </folding>
         </state>
       </provider>
