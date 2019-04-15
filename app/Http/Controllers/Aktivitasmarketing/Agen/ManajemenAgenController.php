@@ -325,6 +325,19 @@ class ManajemenAgenController extends Controller
             ]);
         }
     }
+    // edit selected kpl
+    public function editKPL(Request $request, $id)
+    {
+        $data['kpl'] = d_sales::where('s_id', $id)
+        ->firstOrFail();
+        
+        return view('marketing/agen/kelolapenjualan/edit', compact('data'));
+    }
+    // update selected kpl
+    public function updateKPL(Request $request)
+    {
+        // code...
+    }
     // End: Kelola Penjualan Langsung -----------------
 
     /**

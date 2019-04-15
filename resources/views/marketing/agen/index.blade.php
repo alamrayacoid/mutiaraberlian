@@ -295,6 +295,10 @@ function TableListKPL()
 		lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
 	});
 }
+// edit detail penjualan
+function editDetailPenjualan(idPenjualan) {
+	window.location.href(baseUrl + '/marketing/agen/kelolapenjualanlangsung/edit/' + idPenjualan);
+}
 // show detail penjualan
 function showDetailPenjualan(idPenjualan)
 {
