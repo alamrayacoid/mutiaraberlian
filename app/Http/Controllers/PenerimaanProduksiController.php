@@ -32,6 +32,8 @@ class PenerimaanProduksiController extends Controller
             ->leftjoin('d_itemreceiptdt', function($x){
                 $x->on('ird_itemreceipt', '=', 'ir_id');
             })
+            ->join('d_productionorderdt', 'pod_productionorder', '=', 'po_id')
+            ->where('pod_received', '=', 'N')
             ->where('d_productionorder.po_status', '=', 'BELUM')
             ->groupBy('po_id')
             ->select('po_id', 'po_nota', 's_company', 'po_date')
@@ -386,12 +388,43 @@ class PenerimaanProduksiController extends Controller
         }
     }
 
-    public function UpdateStatus($id)
+    public function UpdateStatus($id, $item)
     {
         $data = DB::table('d_productionorder')
             ->join('d_productionorderdt', 'po_id', '=', 'pod_productionorder')
+            ->join('m_item', 'i_id', '=', 'pod_item')
             ->where('po_id', '=', $id)
+            ->where('pod_item', '=', $item)
             ->get();
+
+        $terima = DB::table('d_itemreceipt')
+            ->join('d_itemreceiptdt', 'ir_id', '=', 'ird_itemreceipt')
+            ->select(DB::raw('sum(ird_qty) as diterima'), 'ird_unit')
+            ->where('ir_notapo', '=', $data[0]->po_nota)
+            ->where('ird_item', '=', $item)
+            ->get();
+
+        //konversi ke satuan terkecil
+        $pesan = 0;
+        if ($data[0]->pod_unit == $data[0]->i_unit1){
+            $pesan = $data[0]->pod_qty * $data[0]->i_unitcompare1;
+        }
+        elseif ($data[0]->pod_unit == $data[0]->i_unit2){
+            $pesan = $data[0]->pod_qty * $data[0]->i_unitcompare2;
+        }
+        elseif ($data[0]->pod_unit == $data[0]->i_unit3){
+            $pesan = $data[0]->pod_qty * $data[0]->i_unitcompare3;
+        }
+
+        if ($pesan == $terima[0]->diterima){
+            DB::table('d_productionorderdt')
+                ->where('pod_item', '=', $item)
+                ->where('pod_productionorder', '=', $id)
+                ->update([
+                    'pod_received' => 'Y'
+                ]);
+        }
+
     }
 
     public function receiptItem(Request $request)
@@ -479,8 +512,8 @@ class PenerimaanProduksiController extends Controller
                 DB::table('d_itemreceiptdt')->insert($values);
                 Mutasi::mutasimasuk(1, Auth::user()->u_company, Auth::user()->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $request->nota);
             }
+            $this->UpdateStatus($order, $item);
             DB::commit();
-            $this->UpdateStatus($order);
             return Response::json(['status' => 'Success', 'message' => "Data berhasil disimpan"]);
         }catch (\Exception $e){
             DB::rollback();
