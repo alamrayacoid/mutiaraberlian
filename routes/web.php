@@ -196,6 +196,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/pembayaran/show/{id}/{termin}', 'Produksi\PembayaranController@show')->name('pembayaran.show');
     Route::get('/produksi/pembayaran/bayar-list', 'Produksi\PembayaranController@listBayar')->name('pembayaran.listbayar');
     Route::post('/produksi/pembayaran/bayar', 'Produksi\PembayaranController@bayar')->name('pembayaran.bayar');
+    Route::get('/produksi/pembayaran/find-nota-history', 'Produksi\PembayaranController@findNotaHistory')->name('pembayaran.findNotaHistory');
+    Route::get('/produksi/pembayaran/find-supplier', 'Produksi\PembayaranController@findSupplier')->name('pembayaran.findSupplier');
+    Route::get('/produksi/pembayaran/get-list-history', 'Produksi\PembayaranController@getListHistory')->name('pembayaran.getListHistory');
+    Route::get('/produksi/pembayaran/get-list-nota', 'Produksi\PembayaranController@getListNota')->name('pembayaran.getListNota');
     // Return Produksi
     Route::get('/produksi/returnproduksi/index', 'ProduksiController@return_produksi')->name('return.index');
     Route::get('/produksi/returnproduksi/list', 'ProduksiController@listReturn')->name('return.list');

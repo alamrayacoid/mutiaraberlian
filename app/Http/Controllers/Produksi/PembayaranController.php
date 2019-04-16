@@ -3,17 +3,18 @@
 namespace App\Http\Controllers\Produksi;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use DB;
-use Crypt;
-use Mockery\Exception;
-use Response;
-use Currency;
-use Carbon\Carbon;
+use Illuminate\Contracts\Encryption\DecryptException;
 use App\d_productionorder;
 use App\d_productionorderpayment;
+use App\m_supplier;
+use App\Http\Controllers\Controller;
+use Carbon\Carbon;
+use Crypt;
+use Currency;
+use DB;
+use Mockery\Exception;
+use Response;
 use Yajra\DataTables\DataTables;
-use Illuminate\Contracts\Encryption\DecryptException;
 
 class PembayaranController extends Controller
 {
@@ -50,18 +51,18 @@ class PembayaranController extends Controller
       ->addColumn('status', function($datas) {
         if ($datas->pop_status == 'Y') {
             return '<div class="text-center">LUNAS</div>';
-//          return '<div class="text-center">
-//                    <div class="status-success">
-//                        <p>Lunas</p>
-//                    </div>
-//                   </div>';
+         // return '<div class="text-center">
+         //           <div class="status-success">
+         //               <p>Lunas</p>
+         //           </div>
+         //          </div>';
         } elseif ($datas->pop_status == 'N') {
             return '<div class="text-center">BELUM LUNAS</div>';
-//          return '<div class="text-center">
-//                    <div class="status-danger">
-//                        <p>Belum</p>
-//                    </div>
-//                  </div>';
+         // return '<div class="text-center">
+         //           <div class="status-danger">
+         //               <p>Belum</p>
+         //           </div>
+         //         </div>';
         }
       })
       ->addColumn('action', function($datas) {
@@ -72,12 +73,12 @@ class PembayaranController extends Controller
                     </div>';
           }
 
-//          return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-//                        <button class="btn btn-info hint--top-left hint--info" aria-label="Detail" onclick="Detail(\''.Crypt::encrypt($datas->pop_productionorder).'\', \''.Crypt::encrypt($datas->pop_termin).'\')"><i class="fa fa-list"></i>
-//                        </button>
-//                        <button class="btn btn-danger hint--top-left hint--info" aria-label="Detail" onclick="Bayar(\''.Crypt::encrypt($datas->pop_productionorder).'\', \''.Crypt::encrypt($datas->pop_termin).'\')"><i class="fa fa-money"></i>
-//                        </button>
-//                    </div>';
+         // return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+         //               <button class="btn btn-info hint--top-left hint--info" aria-label="Detail" onclick="Detail(\''.Crypt::encrypt($datas->pop_productionorder).'\', \''.Crypt::encrypt($datas->pop_termin).'\')"><i class="fa fa-list"></i>
+         //               </button>
+         //               <button class="btn btn-danger hint--top-left hint--info" aria-label="Detail" onclick="Bayar(\''.Crypt::encrypt($datas->pop_productionorder).'\', \''.Crypt::encrypt($datas->pop_termin).'\')"><i class="fa fa-money"></i>
+         //               </button>
+         //           </div>';
       })
       ->rawColumns(['estimasi', 'nominal', 'terbayar', 'date', 'status', 'action'])
       ->make(true);
@@ -90,11 +91,11 @@ class PembayaranController extends Controller
      */
     public function index()
     {
-//      $data = d_productionorder::with('getSupplier')
-//        ->with('getPOPayment')
-//          ->selectRaw('sum(pop_pay) as terbayar, po_id, po_nota')
-//        ->orderBy('po_nota', 'asc')
-//        ->get();
+     // $data = d_productionorder::with('getSupplier')
+     //   ->with('getPOPayment')
+     //     ->selectRaw('sum(pop_pay) as terbayar, po_id, po_nota')
+     //   ->orderBy('po_nota', 'asc')
+     //   ->get();
 
         $data = DB::table('d_productionorder')
             ->join('m_supplier', function($s){
@@ -119,7 +120,7 @@ class PembayaranController extends Controller
         } catch (DecryptException $e) {
             return Response::json(['status' => 'Failed', 'message' => $e]);
         }
-        
+
         $data = d_productionorder::where('po_id', $id)
             ->with('getPODt')
             ->with('getPODt.getItem')
@@ -128,7 +129,7 @@ class PembayaranController extends Controller
               $query->where('pop_termin',$termin);
             }])
             ->first();
-        
+
         return Response::json(['status' => "Success", 'data' => $data]);
     }
 
@@ -141,15 +142,15 @@ class PembayaranController extends Controller
             return Response::json(['status' => 'Failed', 'message' => $e]);
         }
 
-//            $data = d_productionorder::where('po_id', $id)
-//                ->with('getPODt')
-//                ->with('getSupplier')
-//                ->with('getPODt.getItem')
-//                ->with('getPODt.getUnit')
-//                ->with(['getPOPayment' => function($query) use($termin) {
-//                    $query->where('pop_termin',$termin);
-//                }])
-//                ->first();
+           // $data = d_productionorder::where('po_id', $id)
+           //     ->with('getPODt')
+           //     ->with('getSupplier')
+           //     ->with('getPODt.getItem')
+           //     ->with('getPODt.getUnit')
+           //     ->with(['getPOPayment' => function($query) use($termin) {
+           //         $query->where('pop_termin',$termin);
+           //     }])
+           //     ->first();
 
         $data = DB::table('d_productionorder')
             ->join('d_productionorderpayment', function($x) use ($termin){
@@ -237,4 +238,117 @@ class PembayaranController extends Controller
             return Response::json(['status' => "Failed", 'message' => $e]);
         }
     }
+
+    // ======================= History ======================
+    public function findNotaHistory(Request $request)
+    {
+        $term = $request->term;
+        $pos = d_productionorder::where('po_nota', 'like', '%'.$term.'%')
+        ->with('getPOPayment')
+        ->get();
+
+        if (count($pos) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($pos as $po) {
+                $results[] = ['id' => $po->po_id, 'label' => $po->po_nota, 'data' => $po];
+            }
+        }
+        return response()->json($results);
+    }
+
+    public function findSupplier(Request $request)
+    {
+        $term = $request->term;
+        $suppliers = m_supplier::where('s_name', 'like', '%'.$term.'%')
+        ->has('getPO')
+        ->get();
+
+        if (count($suppliers) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($suppliers as $supp) {
+                $results[] = ['id' => $supp->s_id, 'label' => $supp->s_name, 'data' => $supp];
+            }
+        }
+        return response()->json($results);
+    }
+
+    public function getListHistory(Request $request)
+    {
+        $nota = $request->nota;
+        // dd($nota);
+
+        if ($nota !== null) {
+            $datas = d_productionorder::where('po_nota', $nota)
+            ->with('getSupplier')
+            ->orderBy('po_nota', 'desc')
+            ->get();
+        } else {
+            $datas = d_productionorder::with('getSupplier')
+            ->orderBy('po_nota', 'desc')
+            ->get();
+        }
+
+        return Datatables::of($datas)
+        ->addIndexColumn()
+        ->addColumn('supplier', function($datas) {
+            return $datas->getSupplier->s_name;
+        })
+        ->addColumn('date', function($datas) {
+            return Carbon::parse($datas->po_date)->format('d M Y');
+        })
+        ->addColumn('action', function($datas) {
+            return
+            '<div class="btn-group btn-group-sm">
+            <button type="button" class="btn btn-sm btn-primary" onclick="addFilter(\''. $datas->po_nota .'\')"><i class="fa fa-download"></i></button>
+            </div>';
+        })
+        ->rawColumns(['date', 'supplier', 'action'])
+        ->make(true);
+    }
+
+    public function getListNota(Request $request)
+    {
+        $date_from = null;
+        $date_to = null;
+        if ($request->date_from !== null) {
+            $date_from = Carbon::parse($request->date_from)->format('Y-m-d');
+        }
+        if ($request->date_to !== null) {
+            $date_to = Carbon::parse($request->date_to)->format('Y-m-d');
+        }
+        $supplierId = $request->supplier;
+
+        if ($date_from !== null) {
+            $datas = d_productionorder::whereBetween('po_date', [$date_from, $date_to])
+            ->where('po_supplier', $supplierId)
+            ->with('getSupplier')
+            ->orderBy('po_nota', 'desc')
+            ->get();
+        } else {
+            $datas = d_productionorder::where('po_supplier', $supplierId)
+            ->with('getSupplier')
+            ->orderBy('po_nota', 'desc')
+            ->get();
+        }
+
+        return Datatables::of($datas)
+        ->addIndexColumn()
+        ->addColumn('date', function($datas) {
+            return Carbon::parse($datas->po_date)->format('d M Y');
+        })
+        ->addColumn('supplier', function($datas) {
+            return $datas->getSupplier->s_name;
+        })
+        ->addColumn('action', function($datas) {
+            return
+            '<div class="btn-group btn-group-sm">
+            <button type="button" class="btn btn-sm btn-primary" onclick="addFilter(\''. $datas->po_nota .'\')"><i class="fa fa-download"></i></button>
+            </div>';
+        })
+        ->rawColumns(['date', 'supplier', 'action'])
+        ->make(true);
+    }
+
 }
