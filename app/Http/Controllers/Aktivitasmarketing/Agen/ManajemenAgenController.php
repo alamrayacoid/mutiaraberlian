@@ -120,24 +120,20 @@ class ManajemenAgenController extends Controller
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
         // dd($agentCode);
 
-        $datas = d_sales::whereBetween('s_date', [$from, $to])
-        ->with('getMember')
-        ->orderBy('s_nota', 'desc')
-        ->get();
-        // if ($agentCode !== null) {
-        //     $company = m_company::where('c_user', $agentCode)
-        //     ->first();
-        //     $datas = d_sales::whereBetween('s_date', [$from, $to])
-        //     ->where('s_comp', $company->c_id)
-        //     ->with('getMember')
-        //     ->orderBy('s_nota', 'desc')
-        //     ->get();
-        // } else {
-        //     $datas = d_sales::whereBetween('s_date', [$from, $to])
-        //     ->with('getMember')
-        //     ->orderBy('s_nota', 'desc')
-        //     ->get();
-        // }
+        if ($agentCode !== null) {
+            $company = m_company::where('c_user', $agentCode)
+            ->first();
+            $datas = d_sales::whereBetween('s_date', [$from, $to])
+            ->where('s_comp', $company->c_id)
+            ->with('getMember')
+            ->orderBy('s_nota', 'desc')
+            ->get();
+        } else {
+            $datas = d_sales::whereBetween('s_date', [$from, $to])
+            ->with('getMember')
+            ->orderBy('s_nota', 'desc')
+            ->get();
+        }
 
         return Datatables::of($datas)
         ->addIndexColumn()

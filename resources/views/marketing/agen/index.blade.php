@@ -260,10 +260,14 @@ $(document).ready(function() {
 		TableListKPL();
 	});
 	$('#btn_refresh_date_kpl').on('click', function() {
+		$('#filter_agent_code_kpl').val('');
 		$('#date_from_kpl').datepicker('setDate', first_day);
 		$('#date_to_kpl').datepicker('setDate', last_day);
 	});
 	TableListKPL();
+	$('#filter_agent_name_kpl').on('click', function() {
+		$('#searchAgen').modal('show');
+	});
 	$('#provKPL').on('change', function() {
 		getCitiesKPL();
 	});
@@ -406,9 +410,13 @@ function appendListAgentsKPL() {
 			cityId: $('#citiesKPL').val()
 		},
 		success: function(response) {
-			console.log('zxc');
+			// console.log('zxc');
 			console.log(response);
-			$('#table_search_agen_kpl tbody').empty();
+			console.log(response.length);
+			if (response.length <= 0) {
+				$('#table_search_agen_kpl tbody').empty();
+				return 0;
+			}
 			$.each(response, function(index, val) {
 				listAgents = '<tr><td>'+ val.get_province.wp_name +'</td>';
 				listAgents += '<td>'+ val.get_city.wc_name +'</td>';
@@ -416,9 +424,8 @@ function appendListAgentsKPL() {
 				listAgents += '<td>'+ val.a_type +'</td>';
 				listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgent(\''+ val.a_code +'\',\''+ val.a_name +'\')"><i class="fa fa-download"></i></button></td></tr>';
 			});
-
 			$('#table_search_agen_kpl > tbody:last-child').append(listAgents);
-			console.log($('#table_search_agen_kpl'));
+			// console.log($('#table_search_agen_kpl'));
 		}
 	});
 }

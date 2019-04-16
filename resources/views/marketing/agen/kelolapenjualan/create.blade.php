@@ -198,11 +198,9 @@ function initFunction()
 function findItem(rowIndex)
 {
     let itemListId = $('.item-id[value != ""]').serialize();
-    console.log(itemListId);
     $('.find-item').autocomplete({
         source: function( request, response ) {
             dataToSend = $(".find-item").eq(rowIndex).serialize() +'&'+ itemListId;
-            console.log(dataToSend);
             $.ajax({
                 url: baseUrl + '/marketing/agen/kelolapenjualanlangsung/find-item',
                 data: dataToSend,
@@ -214,7 +212,6 @@ function findItem(rowIndex)
         },
         minLength: 1,
         select: function(event, data) {
-            // console.log(data.item);
             $('.item-id').eq(rowIndex).val(data.item.data.i_id);
             getItemStock(rowIndex);
             appendOptSatuan(rowIndex, data.item.data);
@@ -236,11 +233,9 @@ function getItemStock(rowIndex)
             if (! $.trim(response)) {
                 messageFailed('Perhatian', 'Stock item tidak ditemukan !');
                 $('.find-item').eq(rowIndex).trigger('click');
-                console.log('stock: null');
                 $('.item-stock').eq(rowIndex).val('');
                 $('.item-owner').eq(rowIndex).val('');
             } else {
-                console.log('stock: ' + response.s_qty);
                 $('.item-stock').eq(rowIndex).val(response.s_qty);
                 $('.item-owner').eq(rowIndex).val(response.s_comp);
             }
@@ -301,7 +296,6 @@ function sumTotalBruto()
     subTotal = 0;
     for (let i = 0; i < (rowLength-1); i++) {
         subTotal += parseInt($('.item-sub-total').eq(i).val());
-        // console.log(i, subTotal, $('.item-sub-total').eq(i).val());
     }
     $('#total').val(subTotal);
 }
@@ -317,7 +311,6 @@ function submitForm()
         url : baseUrl + '/marketing/agen/kelolapenjualanlangsung/store',
         dataType : 'json',
         success : function (response){
-            console.log('submit form: ' + response);
             if(response.status == 'berhasil')
             {
                 messageSuccess('Berhasil', 'Penjualan berhasil ditambahkan !');

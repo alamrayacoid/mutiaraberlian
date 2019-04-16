@@ -24,7 +24,7 @@
 				</div>
 				<div class="col-md-4 col-sm-12" style="padding-right:0px;">
 				<div class="input-group">
-					<input type="text" class="form-control form-control-sm" placeholder="Cari Agen" id="filter_agent_name_kpl">
+					<input type="text" class="form-control form-control-sm" placeholder="Cari Agen" id="filter_agent_name_kpl" autocomplete="off">
                     <input type="hidden" id="filter_agent_code_kpl">
 					<button class="btn btn-secondary btn-md" title="Cari Agen" style="border-left:none;" data-toggle="modal" data-target="#searchAgen"><i class="fa fa-search"></i></button>
 				</div>
