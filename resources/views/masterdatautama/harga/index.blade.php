@@ -44,12 +44,12 @@
                     <li class="nav-item">
                         <a href="#golongan" class="nav-link active" data-target="#golongan" aria-controls="golongan" data-toggle="tab" role="tab">Harga Golongan</a>
                     </li>
-                    {{--<li class="nav-item">
-                        <a href="" class="nav-link" data-target="#default" aria-controls="default" data-toggle="tab" role="tab">Harga Default</a>
-                    </li>--}}
-                    <li class="nav-item">
-                        <a href="#needapprove" class="nav-link" data-target="#needapprove" aria-controls="needapprove" data-toggle="tab" role="tab">Belum Disetujui</a>
-                    </li>
+                    {{--<li class="nav-item">--}}
+                        {{--<a href="" class="nav-link" data-target="#default" aria-controls="default" data-toggle="tab" role="tab">Harga Default</a>--}}
+                    {{--</li>--}}
+                    {{--<li class="nav-item">--}}
+                        {{--<a href="#needapprove" class="nav-link" data-target="#needapprove" aria-controls="needapprove" data-toggle="tab" role="tab">Belum Disetujui</a>--}}
+                    {{--</li>--}}
                     <li class="nav-item">
                         <a href="#hpa" class="nav-link" data-target="#hpa" aria-controls="hpa" data-toggle="tab" role="tab">Harga Penjualan Agen</a>
                     </li>

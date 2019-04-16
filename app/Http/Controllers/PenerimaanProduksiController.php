@@ -164,8 +164,9 @@ class PenerimaanProduksiController extends Controller
                 $y->whereRaw('d_itemreceiptdt.ird_item = d_productionorderdt.pod_item');
             })
             ->groupBy('d_productionorderdt.pod_item')
-            ->select('d_productionorder.po_id', 'd_productionorder.po_nota', 'd_productionorderdt.pod_item', 'm_item.i_name',
-                'm_unit.u_name', 'd_productionorderdt.pod_qty', DB::raw('sum(d_itemreceiptdt.ird_qty) as ird_qty'))
+            ->select('d_productionorder.po_id', 'd_productionorder.po_nota', 'd_productionorderdt.pod_item',
+                'd_productionorderdt.pod_unit', 'm_item.i_name', 'm_unit.u_name', 'd_productionorderdt.pod_qty',
+                DB::raw('sum(d_itemreceiptdt.ird_qty) as ird_qty'))
             ->get();
 
         return DataTables::of($data)
@@ -179,10 +180,47 @@ class PenerimaanProduksiController extends Controller
                 return $data->pod_qty;
             })
             ->addColumn('terima', function($data){
-                return ($data->ird_qty == NULL) ? 0 : $data->ird_qty;
+                if($data->ird_qty == NULL) {
+                    $qty_compare = 0;
+                } else {
+                    $data_check = DB::table('m_item')
+                        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                            'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                            'm_item.i_unit3 as unit3')
+                        ->where('m_item.i_id', '=', $data->pod_item)
+                        ->first();
+                    $qty_compare = 0;
+                    if ($data->pod_unit == $data_check->unit1) {
+                        $qty_compare = $data->ird_qty/$data_check->compare1;
+                    } else if ($data->pod_unit == $data_check->unit2) {
+                        $qty_compare = $data->ird_qty/$data_check->compare2;
+                    } else if ($data->pod_unit == $data_check->unit3) {
+                        $qty_compare = $data->ird_qty/$data_check->compare3;
+                    }
+                }
+
+                return $qty_compare;
             })
             ->addColumn('action', function($data) {
-                if ($data->ird_qty < $data->pod_qty) {
+                if($data->ird_qty == NULL) {
+                    $qty_compare = 0;
+                } else {
+                    $data_check = DB::table('m_item')
+                        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                            'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                            'm_item.i_unit3 as unit3')
+                        ->where('m_item.i_id', '=', $data->pod_item)
+                        ->first();
+                    $qty_compare = 0;
+                    if ($data->pod_unit == $data_check->unit1) {
+                        $qty_compare = $data->ird_qty/$data_check->compare1;
+                    } else if ($data->pod_unit == $data_check->unit2) {
+                        $qty_compare = $data->ird_qty/$data_check->compare2;
+                    } else if ($data->pod_unit == $data_check->unit3) {
+                        $qty_compare = $data->ird_qty/$data_check->compare3;
+                    }
+                }
+                if ($qty_compare < $data->pod_qty) {
                     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                         <button class="btn btn-danger hint--top-left hint--info" aria-label="Terima" onclick="receipt(\''.Crypt::encrypt($data->po_id).'\', \''.Crypt::encrypt($data->pod_item).'\')"><i class="fa fa-arrow-down"></i>
                         </button>
@@ -242,6 +280,27 @@ class PenerimaanProduksiController extends Controller
             })
             ->first();
 
+        if($data->terima == NULL) {
+            $qty_compare = 0;
+        } else {
+            $check = DB::table('m_item')
+                ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                    'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                    'm_item.i_unit3 as unit3')
+                ->where('m_item.i_id', '=', $item)
+                ->first();
+            $qty_compare = 0;
+            if ($data->unit == $check->unit1) {
+                $qty_compare = $data->terima/$check->compare1;
+            } else if ($data->unit == $check->unit2) {
+                $qty_compare = $data->terima/$check->compare2;
+            } else if ($data->unit == $check->unit3) {
+                $qty_compare = $data->terima/$check->compare3;
+            }
+        }
+
+//        $sisa = (int)$data->jumlah - (int)$qty_compare;
+
         $data = array(
             'id'        => Crypt::encrypt($data->id),
             'nota'      => $data->nota,
@@ -250,7 +309,7 @@ class PenerimaanProduksiController extends Controller
             'satuan'    => $data->satuan,
             'unit'      => $data->unit,
             'jumlah'    => $data->jumlah,
-            'terima'    => $data->terima,
+            'terima'    => $qty_compare,
         );
 
         return Response::json(['status' => 'Success', 'data' => $data, 'satuan' => $satuan]);
@@ -269,7 +328,7 @@ class PenerimaanProduksiController extends Controller
         try{
             $data_check = DB::table('d_productionorder')
                 ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
-                    'd_productionorderdt.pod_qty as jumlah', DB::raw('sum(d_itemreceiptdt.ird_qty) as terima'), 'm_unit.u_name as satuan')
+                    'd_productionorderdt.pod_qty as jumlah', 'd_productionorderdt.pod_unit', DB::raw('sum(d_itemreceiptdt.ird_qty) as terima'), 'm_unit.u_name as satuan')
                 ->join('d_productionorderdt', function ($x) use ($item){
                     $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
                     $x->where('d_productionorderdt.pod_item', '=', $item);
@@ -290,7 +349,26 @@ class PenerimaanProduksiController extends Controller
             $result = null;
             $message = null;
 
-            $sisa = (int)$data_check->jumlah - (int)$data_check->terima;
+            if($data_check->terima == NULL) {
+                $qty_compare = 0;
+            } else {
+                $check = DB::table('m_item')
+                    ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                        'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                        'm_item.i_unit3 as unit3')
+                    ->where('m_item.i_id', '=', $item)
+                    ->first();
+                $qty_compare = 0;
+                if ($data_check->pod_unit == $check->unit1) {
+                    $qty_compare = $data_check->terima/$check->compare1;
+                } else if ($data_check->pod_unit == $check->unit2) {
+                    $qty_compare = $data_check->terima/$check->compare2;
+                } else if ($data_check->pod_unit == $check->unit3) {
+                    $qty_compare = $data_check->terima/$check->compare3;
+                }
+            }
+
+            $sisa = (int)$data_check->jumlah - (int)$qty_compare;
 
             if ($request->qty > $sisa) {
                 $result = "Over qty";

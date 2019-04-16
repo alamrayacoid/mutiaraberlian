@@ -141,6 +141,20 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>Harga Agen</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select id="a_salesprice" class="select2 form-control form-control-sm" name="a_salesprice">
+                                                <option value="" selected="" disabled>Pilih Harga Agen</option>
+                                                @foreach($data['salesPrice'] as $class)
+                                                    <option value="{{ $class->sp_id }}" @if($data['agen']->a_salesprice == $class->sp_id) selected @endif>{{ $class->sp_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
                                         <label>Tanggal Lahir</label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
