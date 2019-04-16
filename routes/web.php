@@ -423,7 +423,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/marketing/agen/kelolapenjualanlangsung/update/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@updateKPL')->name('kelolapenjualan.update');
     // End Manajemen Agen ============================================================================================
 
-    Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_orderprodukagenpusat')->name('orderagenpusat.create');
+    Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Agen\ManajemenAgenController@create_orderprodukagencabang')->name('orderagenpusat.create');
+    Route::get('/marketing/agen/orderproduk/get-provinsi', 'Aktivitasmarketing\Agen\ManajemenAgenController@getProv')->name('orderagenpusat.getprovinsi');
+    Route::get('/marketing/agen/orderproduk/get-kota/{idprov}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getKota')->name('orderagenpusat.getkota');
     Route::get('/marketing/agen/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_orderprodukagenpusat')->name('orderagenpusat.edit');
     // !===================================================== END Marketing =====================================================!
 

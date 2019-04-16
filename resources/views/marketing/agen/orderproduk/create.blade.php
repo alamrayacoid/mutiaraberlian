@@ -79,27 +79,17 @@
                     $('#jumlah_hari_bulan').val('');
                     $('#pagu').val('');
                     $('#armada').prop('selectedIndex', 0).trigger('change');
-                    $('.120mm').removeClass('d-none');
-                    $('.125mm').addClass('d-none');
-                    $('.122mm').removeClass('d-none');
                 } else if($(this).val() === 'harian'){
                     $('#label_type_cus').text('Jumlah Hari');
                     $('#armada').prop('selectedIndex', 0).trigger('change');
                     $('#pagu').val('');
                     $('#jumlah_hari_bulan').val('');
-                    $('.122mm').addClass('d-none');
-                    $('.120mm').removeClass('d-none');
-                    $('.125mm').removeClass('d-none');
                 } else {
                     $('#jumlah_hari_bulan').val('');
                     $('#armada').prop('selectedIndex', 0).trigger('change');
                     $('#pagu').val('');
-                    $('.122mm').addClass('d-none');
-                    $('.120mm').addClass('d-none');
-                    $('.125mm').addClass('d-none');
                 }
             });
-
 
             $(document).on('click', '.btn-hapus-agen', function(){
                 $(this).parents('tr').remove();
@@ -150,6 +140,8 @@
     </script>
     <script type="text/javascript">
         $(document).ready(function(){
+            getProvAgen();
+            getKotaAgen();
             $('#select-order').change(function(){
                 var ini, agen, cabang;
                 ini         = $(this).val();
@@ -168,5 +160,53 @@
                 }
             });
         });
+
+        function getProvAgen() {
+            loadingShow();
+            $("#a_prov").find('option').remove();
+            $("#a_prov").attr("disabled", true);
+            axios.get('{{ route('orderagenpusat.getprovinsi') }}')
+                .then(function (resp) {
+                    $("#a_prov").attr("disabled", false);
+                    var option = '<option value="">Pilih Provinsi</option>';
+                    var prov = resp.data;
+                    prov.forEach(function (data) {
+                        option += '<option value="'+data.wp_id+'">'+data.wp_name+'</option>';
+                    })
+                    $("#a_prov").append(option);
+                    loadingHide();
+                })
+                .catch(function (error) {
+                    loadingHide();
+                    messageWarning("Error", error)
+                })
+        }
+
+        function getKotaAgen() {
+            $("#a_prov").on("change", function (evt) {
+                evt.preventDefault();
+                $("#a_kota").find('option').remove();
+                $("#a_kota").attr("disabled", true);
+                if ($("#a_prov").val() != "") {
+                    loadingShow();
+                    axios.get(baseUrl+'/marketing/agen/orderproduk/get-kota/'+$("#a_prov").val())
+                        .then(function (resp) {
+                            $("#a_kota").attr("disabled", false);
+                            var option = '<option value="">Pilih Kota</option>';
+                            var kota = resp.data;
+                            kota.forEach(function (data) {
+                                option += '<option value="'+data.wc_id+'">'+data.wc_name+'</option>';
+                            })
+                            $("#a_kota").append(option);
+                            loadingHide();
+                            $("#a_kota").focus();
+                        })
+                        .catch(function (error) {
+                            loadingHide();
+                            messageWarning("Error", error)
+                        })
+                }
+            })
+        }
     </script>
 @endsection

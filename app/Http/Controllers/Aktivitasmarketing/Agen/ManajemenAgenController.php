@@ -33,6 +33,24 @@ class ManajemenAgenController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function getProv()
+    {
+        $prov = DB::table('m_wil_provinsi')->get();
+        return Response::json($prov);
+    }
+
+    public function getKota($idprov = null)
+    {
+        $kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->get();
+        return Response::json($kota);
+    }
+
+    public function create_orderprodukagencabang()
+    {
+        return view('marketing/agen/orderproduk/create');
+    }
+
     public function index()
     {
         $provinsi = DB::table('m_wil_provinsi')
@@ -56,6 +74,7 @@ class ManajemenAgenController extends Controller
             'data' => $agen
         ]);
     }
+
     public function filterData($id)
     {
         $data = DB::table('d_stock')
