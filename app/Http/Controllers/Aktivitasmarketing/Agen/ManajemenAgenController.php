@@ -337,13 +337,15 @@ class ManajemenAgenController extends Controller
                 $itemQtyUnitBase = (int)$request->itemQty[$i] * (int)$request->itemUnitCmp[$i];
 
                 // mutasi keluar
-                $mutasi = Mutasi::mutasikeluar(
+                $mutasi = Mutasi::mutasikeluarcustomsell(
                     14,
                     $request->itemOwner[$i],
                     Auth::user()->u_company,
                     $request->itemListId[$i],
                     $itemQtyUnitBase,
-                    $salesNota);
+                    $salesNota,
+                    $request->itemPrice[$i]
+                );
                 if ($mutasi !== true) {
                     DB::rollback();
                     return response()->json([
@@ -433,13 +435,15 @@ class ManajemenAgenController extends Controller
                 $itemQtyUnitBase = (int)$request->itemQty[$i] * (int)$request->itemUnitCmp[$i];
 
                 // mutasi keluar
-                $mutasi = Mutasi::mutasikeluar(
+                $mutasi = Mutasi::mutasikeluarcustomsell(
                     14,
                     $request->itemOwner[$i],
                     Auth::user()->u_company,
                     $request->itemListId[$i],
                     $itemQtyUnitBase,
-                    $sales->s_nota);
+                    $sales->s_nota,
+                    $request->itemPrice[$i]
+                );
                 if ($mutasi !== true) {
                     DB::rollback();
                     return response()->json([
