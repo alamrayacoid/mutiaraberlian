@@ -386,6 +386,14 @@ class PenerimaanProduksiController extends Controller
         }
     }
 
+    public function UpdateStatus($id)
+    {
+        $data = DB::table('d_productionorder')
+            ->join('d_productionorderdt', 'po_id', '=', 'pod_productionorder')
+            ->where('po_id', '=', $id)
+            ->get();
+    }
+
     public function receiptItem(Request $request)
     {
         try{
@@ -472,6 +480,7 @@ class PenerimaanProduksiController extends Controller
                 Mutasi::mutasimasuk(1, Auth::user()->u_company, Auth::user()->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $request->nota);
             }
             DB::commit();
+            $this->UpdateStatus($order);
             return Response::json(['status' => 'Success', 'message' => "Data berhasil disimpan"]);
         }catch (\Exception $e){
             DB::rollback();
