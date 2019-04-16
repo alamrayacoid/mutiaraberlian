@@ -166,6 +166,7 @@
                 {
                     $("#a_idapj").val('');
                     $("#a_kodeapj").val('');
+                    $("#a_compapj").val('');
                 } else if (evt.which <= 90 && evt.which >= 48)
                 {
                     $("#a_idapj").val('');

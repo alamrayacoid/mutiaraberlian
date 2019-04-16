@@ -25,6 +25,7 @@
             <div class="form-group">
                 <input type="hidden" name="a_idapj" id="a_idapj">
                 <input type="hidden" name="a_kodeapj" id="a_kodeapj">
+                <input type="hidden" name="a_compapj" id="a_compapj">
                 <input type="text" class="form-control form-control-sm" name="a_apj" id="a_apj">
             </div>
         </div>
@@ -37,6 +38,7 @@
             <div class="form-group">
                 <input type="hidden" name="a_idapb" id="a_idapb">
                 <input type="hidden" name="a_kodeapb" id="a_kodeapb">
+                <input type="hidden" name="a_compapb" id="a_compapb">
                 <input type="text" class="form-control form-control-sm" name="a_apb" id="a_apb">
             </div>
         </div>

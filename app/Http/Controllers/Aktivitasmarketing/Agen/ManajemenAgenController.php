@@ -38,6 +38,7 @@ class ManajemenAgenController extends Controller
     {
         $cari = $request->term;
         $nama = DB::table('m_agen')
+            ->join('m_company', 'a_code', '=', 'c_user')
             ->where('a_parent', '=', $kode)
             ->where(function ($q) use ($cari){
                 $q->orWhere('a_name', 'like', '%'.$cari.'%');
@@ -48,7 +49,13 @@ class ManajemenAgenController extends Controller
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->a_id, 'label' => strtoupper($query->a_name), 'data' => $query, 'kode' => $query->a_code];
+                $results[] = [
+                    'id' => $query->a_id,
+                    'label' => strtoupper($query->a_name),
+                    'data' => $query,
+                    'kode' => $query->a_code,
+                    'comp' => $query->c_id
+                ];
             }
         }
         return Response::json($results);
@@ -58,7 +65,7 @@ class ManajemenAgenController extends Controller
     {
         $cari = $request->term;
         $nama = DB::table('m_agen')
-//            ->join('m_company', 'a_code', '=', 'c_user')
+            ->join('m_company', 'a_code', '=', 'c_user')
             ->where('m_agen.a_provinsi', '=', $prov)
             ->where('m_agen.a_kabupaten', '=', $kota)
 //            ->where('m_company.c_type', '=', 'AGEN')
@@ -71,7 +78,13 @@ class ManajemenAgenController extends Controller
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->a_id, 'label' => strtoupper($query->a_name), 'data' => $query, 'kode' => $query->a_code];
+                $results[] = [
+                    'id' => $query->a_id,
+                    'label' => strtoupper($query->a_name),
+                    'data' => $query,
+                    'kode' => $query->a_code,
+                    'comp' => $query->c_id
+                ];
             }
         }
         return Response::json($results);
