@@ -33,6 +33,80 @@ class ManajemenAgenController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function cariPembeli(Request $request, $kode)
+    {
+        $cari = $request->term;
+        $nama = DB::table('m_agen')
+            ->join('m_company', 'a_code', '=', 'c_user')
+            ->where('a_parent', '=', $kode)
+            ->where(function ($q) use ($cari){
+                $q->orWhere('a_name', 'like', '%'.$cari.'%');
+            })
+            ->get();
+
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = [
+                    'id' => $query->a_id,
+                    'label' => strtoupper($query->a_name),
+                    'data' => $query,
+                    'kode' => $query->a_code,
+                    'comp' => $query->c_id
+                ];
+            }
+        }
+        return Response::json($results);
+    }
+
+    public function cariPenjual(Request $request, $prov = null, $kota = null)
+    {
+        $cari = $request->term;
+        $nama = DB::table('m_agen')
+            ->join('m_company', 'a_code', '=', 'c_user')
+            ->where('m_agen.a_provinsi', '=', $prov)
+            ->where('m_agen.a_kabupaten', '=', $kota)
+//            ->where('m_company.c_type', '=', 'AGEN')
+            ->where(function ($q) use ($cari){
+                $q->orWhere('a_name', 'like', '%'.$cari.'%');
+            })
+            ->get();
+
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = [
+                    'id' => $query->a_id,
+                    'label' => strtoupper($query->a_name),
+                    'data' => $query,
+                    'kode' => $query->a_code,
+                    'comp' => $query->c_id
+                ];
+            }
+        }
+        return Response::json($results);
+    }
+
+    public function getProv()
+    {
+        $prov = DB::table('m_wil_provinsi')->get();
+        return Response::json($prov);
+    }
+
+    public function getKota($idprov = null)
+    {
+        $kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->get();
+        return Response::json($kota);
+    }
+
+    public function create_orderprodukagencabang()
+    {
+        return view('marketing/agen/orderproduk/create');
+    }
+
     public function index()
     {
         $provinsi = DB::table('m_wil_provinsi')
@@ -56,6 +130,7 @@ class ManajemenAgenController extends Controller
             'data' => $agen
         ]);
     }
+
     public function filterData($id)
     {
         $data = DB::table('d_stock')

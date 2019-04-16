@@ -114,6 +114,7 @@ class ProduksiController extends Controller
         $getData = DB::table('d_productionorder')
             ->join('m_supplier', 's_id', '=', 'po_supplier')
             ->join('d_productionorderpayment', 'pop_productionorder', '=', 'po_id')
+            ->where('d_productionorder.po_status', '=', 'BELUM')
             ->groupBy('po_id')
             ->select('po_id', 'po_nota as nota', 's_company as supplier', 'po_totalnet as nilai_order', 'po_status as status', DB::raw('sum(pop_pay) as terbayar'));
 

@@ -7,13 +7,11 @@
         <div class="col-md-10 col-sm-6 col-xs-12">
             <div class="row">
                 <div class="form-group col-6">
-                    <select name="#" id="#" class="form-control form-control-sm select2">
-                        <option value="#">Pilih Provinsi</option>
+                    <select name="a_prov" id="a_prov" class="form-control form-control-sm select2">
                     </select>
                 </div>
                 <div class="form-group col-6">
-                    <select name="#" id="#" class="form-control form-control-sm select2">
-                        <option value="#">Pilih Kota</option>
+                    <select name="a_kota" id="a_kota" class="form-control form-control-sm select2">
                     </select>
                 </div>
             </div>
@@ -25,7 +23,10 @@
 
         <div class="col-md-10 col-sm-6 col-xs-12">
             <div class="form-group">
-                <input type="text" class="form-control form-control-sm" name="">
+                <input type="hidden" name="a_idapj" id="a_idapj">
+                <input type="hidden" name="a_kodeapj" id="a_kodeapj">
+                <input type="hidden" name="a_compapj" id="a_compapj">
+                <input type="text" class="form-control form-control-sm" name="a_apj" id="a_apj">
             </div>
         </div>
 
@@ -35,7 +36,10 @@
 
         <div class="col-md-10 col-sm-6 col-xs-12">
             <div class="form-group">
-                <input type="text" class="form-control form-control-sm" name="">
+                <input type="hidden" name="a_idapb" id="a_idapb">
+                <input type="hidden" name="a_kodeapb" id="a_kodeapb">
+                <input type="hidden" name="a_compapb" id="a_compapb">
+                <input type="text" class="form-control form-control-sm" name="a_apb" id="a_apb">
             </div>
         </div>
 
@@ -45,7 +49,7 @@
 
         <div class="col-md-10 col-sm-6 col-xs-12">
             <div class="form-group">
-                <input type="text" class="form-control form-control-sm" name="" readonly="">
+                <input type="text" class="form-control form-control-sm" name="a_th" id="a_th" readonly="" value="Rp. 0">
             </div>
         </div>
     </div>
