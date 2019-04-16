@@ -22,7 +22,7 @@ class d_salesdt extends Model
     {
         return $this->belongsTo('App\d_sales', 'sd_sales', 's_id');
     }
-    public function getItemOwner($value='')
+    public function getItemOwner()
     {
         return $this->belongsTo('App\m_company', 'sd_comp', 'c_id');
     }

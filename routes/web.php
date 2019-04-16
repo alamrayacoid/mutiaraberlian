@@ -409,16 +409,18 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/get-agen/{city}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getAgen')->name('manajemenagen.getAgen');
     Route::post('/marketing/agen/filter-data/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@filterData')->name('manajemenagen.filterData');
 
-    Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpl', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPL')->name('kelolapenjulan.getListKPL');
-    Route::get('/marketing/agen/kelolapenjualanlangsung/get-detail-penjualan', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailPenjualan')->name('kelolapenjulan.getDetailPenjualan');
-    Route::post('/marketing/agen/kelolapenjualanlangsung/delete-detail-penjualan', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteDetailPenjualan')->name('kelolapenjulan.deleteDetailPenjualan');
-    Route::get('/marketing/agen/kelolapenjualanlangsung/create', 'Aktivitasmarketing\Agen\ManajemenAgenController@createKPL')->name('kelolapenjulan.create');
-    Route::get('/marketing/agen/kelolapenjualanlangsung/find-item', 'Aktivitasmarketing\Agen\ManajemenAgenController@findItem')->name('kelolapenjulan.findItem');
-    Route::get('/marketing/agen/kelolapenjualanlangsung/get-item-stock', 'Aktivitasmarketing\Agen\ManajemenAgenController@getItemStock')->name('kelolapenjulan.getItemStock');
-    Route::get('/marketing/agen/kelolapenjualanlangsung/get-price', 'Aktivitasmarketing\Agen\ManajemenAgenController@getPrice')->name('kelolapenjulan.getPrice');
-    Route::post('/marketing/agen/kelolapenjualanlangsung/store', 'Aktivitasmarketing\Agen\ManajemenAgenController@storeKPL')->name('kelolapenjulan.storeKPL');
-    Route::get('/marketing/agen/kelolapenjualanlangsung/edit/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@editKPL')->name('kelolapenjulan.edit');
-    Route::get('/marketing/agen/kelolapenjualanlangsung/update', 'Aktivitasmarketing\Agen\ManajemenAgenController@updateKPL')->name('kelolapenjulan.update');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpl', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPL')->name('kelolapenjualan.getListKPL');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/get-cities', 'Aktivitasmarketing\Agen\ManajemenAgenController@getCitiesKPL')->name('kelolapenjualan.getCitiesKPL');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/get-agents-kpl', 'Aktivitasmarketing\Agen\ManajemenAgenController@getAgentsKPL')->name('kelolapenjualan.getAgentsKPL');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/get-detail-penjualan', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailPenjualan')->name('kelolapenjualan.getDetailPenjualan');
+    Route::post('/marketing/agen/kelolapenjualanlangsung/delete-detail-penjualan', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteDetailPenjualan')->name('kelolapenjualan.deleteDetailPenjualan');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/create', 'Aktivitasmarketing\Agen\ManajemenAgenController@createKPL')->name('kelolapenjualan.create');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/find-item', 'Aktivitasmarketing\Agen\ManajemenAgenController@findItem')->name('kelolapenjualan.findItem');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/get-item-stock', 'Aktivitasmarketing\Agen\ManajemenAgenController@getItemStock')->name('kelolapenjualan.getItemStock');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/get-price', 'Aktivitasmarketing\Agen\ManajemenAgenController@getPrice')->name('kelolapenjualan.getPrice');
+    Route::post('/marketing/agen/kelolapenjualanlangsung/store', 'Aktivitasmarketing\Agen\ManajemenAgenController@storeKPL')->name('kelolapenjualan.storeKPL');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/edit/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@editKPL')->name('kelolapenjualan.edit');
+    Route::post('/marketing/agen/kelolapenjualanlangsung/update/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@updateKPL')->name('kelolapenjualan.update');
     // End Manajemen Agen ============================================================================================
 
     Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_orderprodukagenpusat')->name('orderagenpusat.create');

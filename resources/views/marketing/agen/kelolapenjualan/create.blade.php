@@ -55,7 +55,7 @@
                                     </div>
                                     <div class="col-md-10 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm rupiah" name="total" id="total">
+                                            <input type="text" class="form-control form-control-sm rupiah" name="total" id="total" readonly>
                                         </div>
                                     </div>
 
@@ -81,11 +81,11 @@
                                                             <input type="hidden" class="item-owner" name="itemOwner[]">
                                                         </td>
                                                         <td>
-                                                            <select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="displayPrice(0)"></select>
+                                                            <select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="setUnitCmp(0)"></select>
                                                             <input type="hidden" class="item-unitcmp" name="itemUnitCmp[]">
                                                         </td>
-                                                        <td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty"  onchange="sumSubTotalItem(0)"></td>
-                                                        <td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>
+                                                        <td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem(0)"></td>
+                                                        <td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" onchange="sumSubTotalItem(0)"></td>
                                                         <td><input name="itemSubTotal[]" type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>
                                                         <td><button type="button" class="btn btn-sm btn-success btn-tambahp rounded-circle"><i class="fa fa-plus"></i></button></td>
                                                     </tr>
@@ -118,11 +118,11 @@
 
 $(document).ready(function()
 {
-
     initFunction();
 
     $(document).on('click', '.btn-hapus', function(){
         $(this).parents('tr').remove();
+        sumTotalBruto();
     });
 
     // append a new row to insert more items
@@ -133,9 +133,9 @@ $(document).ready(function()
         .append(
             '<tr>'+
             '<td><input type="text" class="form-control form-control-sm find-item" name="termToFind"><input name="itemListId[]" type="hidden" class="item-id"><input type="hidden" class="item-stock"><input type="hidden" class="item-owner" name="itemOwner[]"></td>'+
-            '<td><select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="displayPrice('+ (rowLength - 1) +')"></select><input type="hidden" class="item-unitcmp" name="itemUnitCmp[]"></td>'+
+            '<td><select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="setUnitCmp('+ (rowLength - 1) +')"></select><input type="hidden" class="item-unitcmp" name="itemUnitCmp[]"></td>'+
             '<td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem('+ (rowLength - 1) +')"></td>'+
-            '<td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>'+
+            '<td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" onchange="sumSubTotalItem('+ (rowLength - 1) +')"></td>'+
             '<td><input name="itemSubTotal[]" type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>'+
             '<td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
             '</tr>'
@@ -230,7 +230,7 @@ function getItemStock(rowIndex)
             "itemId": $('.item-id').eq(rowIndex).val()
         },
         type : "get",
-        url : "{{ route('kelolapenjulan.getItemStock') }}",
+        url : "{{ route('kelolapenjualan.getItemStock') }}",
         dataType : 'json',
         success : function (response){
             if (! $.trim(response)) {
@@ -243,7 +243,6 @@ function getItemStock(rowIndex)
                 console.log('stock: ' + response.s_qty);
                 $('.item-stock').eq(rowIndex).val(response.s_qty);
                 $('.item-owner').eq(rowIndex).val(response.s_comp);
-                displayPrice(rowIndex);
             }
         },
         error : function(e){
@@ -256,6 +255,7 @@ function getItemStock(rowIndex)
 function appendOptSatuan(rowIndex, item)
 {
     $('.satuan').eq(rowIndex).find('option').remove();
+    $('.item-unitcmp').eq(rowIndex).val(1);
     let optSatuan = '';
     optSatuan += '<option value="'+ item.get_unit1.u_id +'" data-unitcmp="'+ parseInt(item.i_unitcompare1) +'" selected>'+ item.get_unit1.u_name +'</option>';
     if (item.get_unit2 != null && item.get_unit2.u_id !== item.get_unit1.u_id) {
@@ -267,33 +267,11 @@ function appendOptSatuan(rowIndex, item)
     $('.satuan').eq(rowIndex).append(optSatuan);
 }
 
-// set price based on selected option (satuan)
-function displayPrice(rowIndex)
+function setUnitCmp(rowIndex)
 {
     let selectedOpt = $('.satuan').eq(rowIndex).find('option:selected');
     unitcmp = selectedOpt.data('unitcmp');
     $('.item-unitcmp').eq(rowIndex).val(unitcmp);
-
-    $.ajax({
-        url: baseUrl + '/marketing/agen/kelolapenjualanlangsung/get-price',
-        type: 'get',
-        data: {
-            "_token": "{{ csrf_token() }}",
-            "itemId" : $('.item-id').eq(rowIndex).val(),
-            "unitId" : $('.satuan').eq(rowIndex).val()
-        },
-        success: function(response) {
-            if (! $.trim(response.get_price_class_dt)) {
-                messageFailed('Perhatian', 'Harga item belum ditentukan !');
-                $('.item-price').eq(rowIndex).val('0');
-            } else {
-                $('.item-price').eq(rowIndex).val(parseInt(response.get_price_class_dt[0].pcd_price));
-            }
-        },
-        error: function(e) {
-            console.log('getPrice error: ' + e);
-        }
-    });
     sumSubTotalItem(rowIndex);
 }
 

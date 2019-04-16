@@ -5,12 +5,12 @@
 <article class="content animated fadeInLeft">
 
   <div class="title-block text-primary">
-      <h1 class="title"> Tambah Data Kelola Penjualan Langsung </h1>
+      <h1 class="title"> Edit Data Kelola Penjualan Langsung </h1>
       <p class="title-description">
         <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
          / <span>Aktivitas Marketing</span>
          / <a href="{{route('manajemenagen.index')}}"><span>Manajemen Agen</span></a>
-         / <span class="text-primary" style="font-weight: bold;"> Tambah Data Kelola Penjualan Langsung</span>
+         / <span class="text-primary" style="font-weight: bold;"> Edit Data Kelola Penjualan Langsung</span>
        </p>
   </div>
 
@@ -24,7 +24,7 @@
 
                     <div class="card-header bordered p-2">
                       <div class="header-block">
-                        <h3 class="title"> Tambah Data Kelola Penjualan Langsung </h3>
+                        <h3 class="title"> Edit Data Kelola Penjualan Langsung </h3>
                       </div>
                       <div class="header-block pull-right">
                         <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
@@ -35,7 +35,7 @@
                         <div class="card-block">
                             <section>
                                 <div id="sectionsuplier" class="row">
-
+                                    <input type="hidden" id="salesId" value="{{ $data['kpl']->s_id }}">
                                     <div class="col-md-2 col-sm-6 col-xs-12">
                                         <label>Member</label>
                                     </div>
@@ -44,7 +44,11 @@
                                             <select name="member" id="member" class="form-control form-control-sm select2">
                                                 <option value="" selected disabled>Pilih Member</option>
                                                 @foreach($data['member'] as $member)
+                                                @if($member->m_code == $data['kpl']->s_member)
+                                                <option value="{{ $member->m_code }}" selected>{{ $member->m_name }}</option>
+                                                @else
                                                 <option value="{{ $member->m_code }}">{{ $member->m_name }}</option>
+                                                @endif
                                                 @endforeach
                                             </select>
                                         </div>
@@ -55,7 +59,7 @@
                                     </div>
                                     <div class="col-md-10 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm rupiah" name="total" id="total">
+                                            <input type="text" class="form-control form-control-sm rupiah" name="total" id="total" value="{{ (int)$data['kpl']->s_total }}" readonly>
                                         </div>
                                     </div>
 
@@ -75,20 +79,93 @@
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                            <input type="text"  class="form-control form-control-sm find-item" name="termToFind">
-                                                            <input name="itemListId[]" type="hidden" class="item-id">
+                                                            <input type="text"  class="form-control form-control-sm find-item" name="termToFind" value="{{ $data['kpl']->getSalesDt[0]->getItem->i_code }} - {{ $data['kpl']->getSalesDt[0]->getItem->i_name }}">
+                                                            <input name="itemListId[]" type="hidden" class="item-id" value="{{ $data['kpl']->getSalesDt[0]->sd_item }}">
                                                             <input type="hidden" class="item-stock">
-                                                            <input type="hidden" class="item-owner" name="itemOwner[]">
+                                                            <input type="hidden" class="item-owner" name="itemOwner[]" value="{{ $data['kpl']->getSalesDt[0]->sd_comp }}">
                                                         </td>
                                                         <td>
-                                                            <select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="displayPrice(0)"></select>
-                                                            <input type="hidden" class="item-unitcmp" name="itemUnitCmp[]">
+                                                            <input type="hidden" class="itemUnitHidden" value="{{ $data['kpl']->getSalesDt[0]->sd_unit }}">
+                                                            <select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="setUnitCmp(0)">
+                                                                @if($data['kpl']->getSalesDt[0]->getItem->getUnit1->u_id == $data['kpl']->getSalesDt[0]->sd_unit)
+                                                                    <option value="{{ $data['kpl']->getSalesDt[0]->getItem->getUnit1->u_id }}" data-unitcmp="{{ (int)$data['kpl']->getSalesDt[0]->getItem->i_unitcompare1 }}" selected>{{ $data['kpl']->getSalesDt[0]->getItem->getUnit1->u_name }}</option>
+                                                                @else
+                                                                    <option value="{{ $data['kpl']->getSalesDt[0]->getItem->getUnit1->u_id }}" data-unitcmp="{{ (int)$data['kpl']->getSalesDt[0]->getItem->i_unitcompare1 }}">{{ $data['kpl']->getSalesDt[0]->getItem->getUnit1->u_name }}</option>
+                                                                @endif
+                                                                @if($data['kpl']->getSalesDt[0]->getItem->getUnit2->u_id == $data['kpl']->getSalesDt[0]->sd_unit)
+                                                                    <option value="{{ $data['kpl']->getSalesDt[0]->getItem->getUnit2->u_id }}" data-unitcmp="{{ (int)$data['kpl']->getSalesDt[0]->getItem->i_unitcompare2 }}" selected>{{ $data['kpl']->getSalesDt[0]->getItem->getUnit2->u_name }}</option>
+                                                                @else
+                                                                    <option value="{{ $data['kpl']->getSalesDt[0]->getItem->getUnit2->u_id }}" data-unitcmp="{{ (int)$data['kpl']->getSalesDt[0]->getItem->i_unitcompare2 }}">{{ $data['kpl']->getSalesDt[0]->getItem->getUnit2->u_name }}</option>
+                                                                @endif
+                                                                @if($data['kpl']->getSalesDt[0]->getItem->getUnit3->u_id == $data['kpl']->getSalesDt[0]->sd_unit)
+                                                                    <option value="{{ $data['kpl']->getSalesDt[0]->getItem->getUnit3->u_id }}" data-unitcmp="{{ (int)$data['kpl']->getSalesDt[0]->getItem->i_unitcompare3 }}" selected>{{ $data['kpl']->getSalesDt[0]->getItem->getUnit3->u_name }}</option>
+                                                                @else
+                                                                    <option value="{{ $data['kpl']->getSalesDt[0]->getItem->getUnit3->u_id }}" data-unitcmp="{{ (int)$data['kpl']->getSalesDt[0]->getItem->i_unitcompare3 }}" >{{ $data['kpl']->getSalesDt[0]->getItem->getUnit3->u_name }}</option>
+                                                                @endif
+                                                            </select>
+                                                            @if($data['kpl']->getSalesDt[0]->getItem->getUnit1->u_id == $data['kpl']->getSalesDt[0]->sd_unit)
+                                                                <input type="hidden" class="item-unitcmp" name="itemUnitCmp[]" value="{{ (int)$data['kpl']->getSalesDt[0]->getItem->i_unitcompare1 }}">
+                                                            @elseif($data['kpl']->getSalesDt[0]->getItem->getUnit2->u_id == $data['kpl']->getSalesDt[0]->sd_unit)
+                                                                <input type="hidden" class="item-unitcmp" name="itemUnitCmp[]" value="{{ (int)$data['kpl']->getSalesDt[0]->getItem->i_unitcompare2 }}">
+                                                            @elseif($data['kpl']->getSalesDt[0]->getItem->getUnit3->u_id == $data['kpl']->getSalesDt[0]->sd_unit)
+                                                                <input type="hidden" class="item-unitcmp" name="itemUnitCmp[]" value="{{ (int)$data['kpl']->getSalesDt[0]->getItem->i_unitcompare3 }}">
+                                                            @endif
                                                         </td>
-                                                        <td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty"  onchange="sumSubTotalItem(0)"></td>
-                                                        <td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>
-                                                        <td><input name="itemSubTotal[]" type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>
+                                                        <td><input name="itemQty[]" type="text" min="0" value="{{ $data['kpl']->getSalesDt[0]->sd_qty }}" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem(0)"></td>
+                                                        <td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" value="{{ (int)$data['kpl']->getSalesDt[0]->sd_value }}" onchange="sumSubTotalItem(0)"></td>
+                                                        <td><input name="itemSubTotal[]" type="text" value="{{ (int)$data['kpl']->getSalesDt[0]->sd_value }}" class="form-control form-control-sm rupiah item-sub-total" readonly></td>
                                                         <td><button type="button" class="btn btn-sm btn-success btn-tambahp rounded-circle"><i class="fa fa-plus"></i></button></td>
                                                     </tr>
+                                                    @foreach($data['kpl']->getSalesDt as $index => $salesDt)
+                                                    @if($index < 1)
+                                                    @continue
+                                                    @endif
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text"  class="form-control form-control-sm find-item" name="termToFind" value="{{ $salesDt->getItem->i_code }} - {{ $salesDt->getItem->i_name }}">
+                                                            <input name="itemListId[]" type="hidden" class="item-id" value="{{ $salesDt->sd_item }}">
+                                                            <input type="hidden" class="item-stock">
+                                                            <input type="hidden" class="item-owner" name="itemOwner[]" value="{{ $salesDt->sd_comp }}">
+                                                        </td>
+                                                        <td>
+                                                            <input type="hidden" class="itemUnitHidden" value="{{ $salesDt->sd_unit }}">
+                                                            <select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="setUnitCmp({{ $index }})">
+                                                                @if($salesDt->getItem->getUnit1->u_id == $salesDt->sd_unit)
+                                                                    <option value="{{ $salesDt->getItem->getUnit1->u_id }}" data-unitcmp="{{ (int)$salesDt->getItem->i_unitcompare1 }}" selected>{{ $salesDt->getItem->getUnit1->u_name }}</option>
+                                                                @else
+                                                                    <option value="{{ $salesDt->getItem->getUnit1->u_id }}" data-unitcmp="{{ (int)$salesDt->getItem->i_unitcompare1 }}">{{ $salesDt->getItem->getUnit1->u_name }}</option>
+                                                                @endif
+                                                                @if($salesDt->getItem->getUnit2->u_id == $salesDt->sd_unit)
+                                                                    <option value="{{ $salesDt->getItem->getUnit2->u_id }}" data-unitcmp="{{ (int)$salesDt->getItem->i_unitcompare2 }}" selected>{{ $salesDt->getItem->getUnit2->u_name }}</option>
+                                                                @else
+                                                                    <option value="{{ $salesDt->getItem->getUnit2->u_id }}" data-unitcmp="{{ (int)$salesDt->getItem->i_unitcompare2 }}">{{ $salesDt->getItem->getUnit2->u_name }}</option>
+                                                                @endif
+                                                                @if($salesDt->getItem->getUnit3->u_id == $salesDt->sd_unit)
+                                                                    <option value="{{ $salesDt->getItem->getUnit3->u_id }}" data-unitcmp="{{ (int)$salesDt->getItem->i_unitcompare3 }}" selected>{{ $salesDt->getItem->getUnit3->u_name }}</option>
+                                                                @else
+                                                                    <option value="{{ $salesDt->getItem->getUnit3->u_id }}" data-unitcmp="{{ (int)$salesDt->getItem->i_unitcompare3 }}">{{ $salesDt->getItem->getUnit3->u_name }}</option>
+                                                                @endif
+                                                            </select>
+                                                            @if($salesDt->getItem->getUnit1->u_id == $salesDt->sd_unit)
+                                                            <input type="hidden" class="item-unitcmp" name="itemUnitCmp[]" value="{{ (int)$salesDt->getItem->i_unitcompare1 }}">
+                                                            @elseif($salesDt->getItem->getUnit2->u_id == $salesDt->sd_unit)
+                                                            <input type="hidden" class="item-unitcmp" name="itemUnitCmp[]" value="{{ (int)$salesDt->getItem->i_unitcompare2 }}">
+                                                            @elseif($salesDt->getItem->getUnit3->u_id == $salesDt->sd_unit)
+                                                            <input type="hidden" class="item-unitcmp" name="itemUnitCmp[]" value="{{ (int)$salesDt->getItem->i_unitcompare3 }}">
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            <input name="itemQty[]" type="text" min="0" value="{{ $salesDt->sd_qty }}" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem({{ $index }})">
+                                                        </td>
+                                                        <td>
+                                                            <input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" value="{{ (int)$salesDt->sd_value }}" onchange="sumSubTotalItem({{ $index }})">
+                                                        </td>
+                                                        <td>
+                                                            <input name="itemSubTotal[]" type="text" value="{{ (int)$salesDt->sd_value }}" class="form-control form-control-sm rupiah item-sub-total" readonly>
+                                                        </td>
+                                                        <td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>
+                                                    </tr>
+                                                    @endforeach
                                                 </tbody>
                                             </table>
 
@@ -118,11 +195,11 @@
 
 $(document).ready(function()
 {
-
     initFunction();
 
     $(document).on('click', '.btn-hapus', function(){
         $(this).parents('tr').remove();
+        sumTotalBruto();
     });
 
     // append a new row to insert more items
@@ -133,9 +210,9 @@ $(document).ready(function()
         .append(
             '<tr>'+
             '<td><input type="text" class="form-control form-control-sm find-item" name="termToFind"><input name="itemListId[]" type="hidden" class="item-id"><input type="hidden" class="item-stock"><input type="hidden" class="item-owner" name="itemOwner[]"></td>'+
-            '<td><select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="displayPrice('+ (rowLength - 1) +')"></select><input type="hidden" class="item-unitcmp" name="itemUnitCmp[]"></td>'+
+            '<td><select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="setUnitCmp('+ (rowLength - 1) +')"></select><input type="hidden" class="item-unitcmp" name="itemUnitCmp[]"></td>'+
             '<td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem('+ (rowLength - 1) +')"></td>'+
-            '<td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>'+
+            '<td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" onchange="sumSubTotalItem('+ (rowLength - 1) +')"></td>'+
             '<td><input name="itemSubTotal[]" type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>'+
             '<td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
             '</tr>'
@@ -230,7 +307,7 @@ function getItemStock(rowIndex)
             "itemId": $('.item-id').eq(rowIndex).val()
         },
         type : "get",
-        url : "{{ route('kelolapenjulan.getItemStock') }}",
+        url : "{{ route('kelolapenjualan.getItemStock') }}",
         dataType : 'json',
         success : function (response){
             if (! $.trim(response)) {
@@ -243,7 +320,7 @@ function getItemStock(rowIndex)
                 console.log('stock: ' + response.s_qty);
                 $('.item-stock').eq(rowIndex).val(response.s_qty);
                 $('.item-owner').eq(rowIndex).val(response.s_comp);
-                displayPrice(rowIndex);
+                // displayPrice(rowIndex);
             }
         },
         error : function(e){
@@ -256,6 +333,7 @@ function getItemStock(rowIndex)
 function appendOptSatuan(rowIndex, item)
 {
     $('.satuan').eq(rowIndex).find('option').remove();
+    $('.item-unitcmp').eq(rowIndex).val(1);
     let optSatuan = '';
     optSatuan += '<option value="'+ item.get_unit1.u_id +'" data-unitcmp="'+ parseInt(item.i_unitcompare1) +'" selected>'+ item.get_unit1.u_name +'</option>';
     if (item.get_unit2 != null && item.get_unit2.u_id !== item.get_unit1.u_id) {
@@ -267,33 +345,11 @@ function appendOptSatuan(rowIndex, item)
     $('.satuan').eq(rowIndex).append(optSatuan);
 }
 
-// set price based on selected option (satuan)
-function displayPrice(rowIndex)
+function setUnitCmp(rowIndex)
 {
     let selectedOpt = $('.satuan').eq(rowIndex).find('option:selected');
     unitcmp = selectedOpt.data('unitcmp');
     $('.item-unitcmp').eq(rowIndex).val(unitcmp);
-
-    $.ajax({
-        url: baseUrl + '/marketing/agen/kelolapenjualanlangsung/get-price',
-        type: 'get',
-        data: {
-            "_token": "{{ csrf_token() }}",
-            "itemId" : $('.item-id').eq(rowIndex).val(),
-            "unitId" : $('.satuan').eq(rowIndex).val()
-        },
-        success: function(response) {
-            if (! $.trim(response.get_price_class_dt)) {
-                messageFailed('Perhatian', 'Harga item belum ditentukan !');
-                $('.item-price').eq(rowIndex).val('0');
-            } else {
-                $('.item-price').eq(rowIndex).val(parseInt(response.get_price_class_dt[0].pcd_price));
-            }
-        },
-        error: function(e) {
-            console.log('getPrice error: ' + e);
-        }
-    });
     sumSubTotalItem(rowIndex);
 }
 
@@ -336,14 +392,14 @@ function submitForm()
     $.ajax({
         data : myForm,
         type : "post",
-        url : baseUrl + '/marketing/agen/kelolapenjualanlangsung/store',
+        url : baseUrl + '/marketing/agen/kelolapenjualanlangsung/update/' + $('#salesId').val(),
         dataType : 'json',
         success : function (response){
             console.log('submit form: ' + response);
             if(response.status == 'berhasil')
             {
                 messageSuccess('Berhasil', 'Penjualan berhasil ditambahkan !');
-                resetAllInput();
+                // resetAllInput();
                 // $('#modal_bayar').modal('hide');
             }
             else if (response.status == 'invalid')

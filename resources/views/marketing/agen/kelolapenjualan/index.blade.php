@@ -5,7 +5,7 @@
                 <h3 class="title">Kelola Penjualan Langsung</h3>
             </div>
             <div class="header-block pull-right">
-                <a class="btn btn-primary" href="{{ route('kelolapenjulan.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
+                <a class="btn btn-primary" href="{{ route('kelolapenjualan.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
             </div>
         </div>
         <div class="card-block">
@@ -24,12 +24,13 @@
 				</div>
 				<div class="col-md-4 col-sm-12" style="padding-right:0px;">
 				<div class="input-group">
-					<input type="text" class="form-control form-control-sm" placeholder="Cari Agen">
+					<input type="text" class="form-control form-control-sm" placeholder="Cari Agen" id="filter_agent_name_kpl">
+                    <input type="hidden" id="filter_agent_code_kpl">
 					<button class="btn btn-secondary btn-md" title="Cari Agen" style="border-left:none;" data-toggle="modal" data-target="#searchAgen"><i class="fa fa-search"></i></button>
 				</div>
 				</div>
 				<div class="col-1">
-					<button class="btn btn-primary btn-md" title="Cari Berdasarkan Filter">Filter</button>
+					<button class="btn btn-primary btn-md" title="Cari Berdasarkan Filter" id="btn_filter_kpl">Filter</button>
 				</div>
 			</div>
                 <div class="table-responsive">

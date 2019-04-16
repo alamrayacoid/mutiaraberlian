@@ -439,10 +439,14 @@ class OtorisasiController extends Controller
                 }
             })
             ->addColumn('aksi', function ($data){
+//                return '<div class="text-center"><div class="btn-group btn-group-sm">
+//												<button class="btn btn-info" onclick="detail(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" type="button"><i class="fa fa-folder"></i></button>
+//												<button class="btn btn-success" type="button" onclick="approve(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
+//												<button class="btn btn-danger" type="button" onclick="reject(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
+//											</div></div>';
                 return '<div class="text-center"><div class="btn-group btn-group-sm">
-												<button class="btn btn-info btn-detail" onclick="detail(\''.encrypt($data->pcad_classprice).'\',\'' .encrypt($data->pcad_detailid). '\')" type="button"><i class="fa fa-folder"></i></button>
-												<button class="btn btn-success" type="button" onclick="approve(\''.encrypt($data->pcad_classprice).'\',\'' .encrypt($data->pcad_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
-												<button class="btn btn-danger" type="button" onclick="reject(\''.encrypt($data->pcad_classprice).'\',\'' .encrypt($data->pcad_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
+												<button class="btn btn-success" type="button" onclick="approve(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
+												<button class="btn btn-danger" type="button" onclick="reject(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
 											</div></div>';
             })
             ->editColumn('pcad_price', function ($data){
@@ -453,10 +457,78 @@ class OtorisasiController extends Controller
             ->make(true);
     }
 
+    public function getDataPerubahanHargaHPA()
+    {
+        $data = DB::table('d_salesprice')
+            ->join('d_salespriceauth', 'sp_id', '=', 'spa_salesprice')
+            ->join('m_item', 'i_id', '=', 'spa_item')
+            ->join('m_unit', 'u_id', '=', 'spa_unit')
+            ->select('sp_id', 'sp_name', DB::raw('concat(i_code, "-", i_name) as nama'), 'u_name', 'd_salespriceauth.*')
+            ->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->editColumn('spa_type', function ($data){
+                if ($data->spa_type == 'U'){
+                    return 'Unit';
+                } else {
+                    return 'Range';
+                }
+            })
+            ->editColumn('spa_payment', function ($data){
+                if ($data->spa_payment == 'C'){
+                    return 'Cash';
+                } else {
+                    return 'Konsinyasi';
+                }
+            })
+            ->addColumn('qty', function ($data){
+                if ($data->spa_type == 'U'){
+                    return '1 ' . $data->u_name;
+                } else {
+                    if ($data->spa_rangeqtyend == 0) {
+                        $end = "~";
+                    }else{
+                        $end = $data->spa_rangeqtyend;
+                    }
+                    return $data->spa_rangeqtystart . '-' . $end . ' ' . $data->u_name;
+                }
+            })
+            ->addColumn('aksi', function ($data){
+//                return '<div class="text-center"><div class="btn-group btn-group-sm">
+//												<button class="btn btn-info" onclick="detailHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" type="button"><i class="fa fa-folder"></i></button>
+//												<button class="btn btn-success" type="button" onclick="approveHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
+//												<button class="btn btn-danger" type="button" onclick="rejectHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
+//											</div></div>';
+                return '<div class="text-center"><div class="btn-group btn-group-sm">
+												<button class="btn btn-success" type="button" onclick="approveHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
+												<button class="btn btn-danger" type="button" onclick="rejectHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
+											</div></div>';
+            })
+            ->addColumn('spa_price', function ($data){
+                $harga = (int)$data->spa_price;
+                return '<div class="text-right">Rp. ' . number_format($harga, '0', '', '.') .'</div>';
+            })
+            ->rawColumns(['aksi', 'spa_price'])
+            ->make(true);
+    }
+
+    public function detailPerubahanHarga($id, $detail)
+    {
+        //
+    }
+
     public function approvePerubahanHarga($id, $detail)
     {
-        $id = decrypt($id);
-        $detail = decrypt($detail);
+        try{
+            $id = Crypt::decrypt($id);
+            $detail = Crypt::decrypt($detail);
+        }catch (DecryptException $e){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e
+            ]);
+        }
 
         DB::beginTransaction();
         try {
@@ -494,6 +566,68 @@ class OtorisasiController extends Controller
             DB::table('d_priceclassauthdt')
                 ->where('pcad_classprice', '=', $id)
                 ->where('pcad_detailid', '=', $detail)
+                ->delete();
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function approvePerubahanHargaHPA($id, $detail)
+    {
+        try{
+            $id = Crypt::decrypt($id);
+            $detail = Crypt::decrypt($detail);
+        }catch (DecryptException $e){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e
+            ]);
+        }
+
+        DB::beginTransaction();
+        try {
+            $data = DB::table('d_salespriceauth')
+                ->where('spa_salesprice', '=', $id)
+                ->where('spa_detailid', '=', $detail)
+                ->first();
+
+            if ($data == null) {
+                return response()->json([
+                    'status' => 'gagal'
+                ]);
+            }
+
+            $max = DB::table('d_salespricedt')
+                ->where('spd_salesprice', '=', $data->spa_salesprice)
+                ->max('spd_detailid');
+
+            ++$max;
+
+            DB::table('d_salespricedt')
+                ->insert([
+                    'spd_salesprice'        => $data->spa_salesprice,
+                    'spd_detailid'          => $max,
+                    'spd_item'              => $data->spa_item,
+                    'spd_unit'              => $data->spa_unit,
+                    'spd_type'              => $data->spa_type,
+                    'spd_payment'           => $data->spa_payment,
+                    'spd_rangeqtystart'     => $data->spa_rangeqtystart,
+                    'spd_rangeqtyend'       => $data->spa_rangeqtyend,
+                    'spd_price'             => $data->spa_price,
+                    'spd_user'              => $data->spa_user
+                ]);
+
+            DB::table('d_salespriceauth')
+                ->where('spa_salesprice', '=', $id)
+                ->where('spa_detailid', '=', $detail)
                 ->delete();
             DB::commit();
             return response()->json([

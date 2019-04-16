@@ -11,9 +11,12 @@ use Auth;
 use App\d_sales;
 use App\d_salesdt;
 use App\d_stock;
+use App\m_agen;
+use App\m_company;
 use App\m_item;
 use App\m_member;
 use App\m_priceclass;
+use App\m_wil_provinsi;
 use DataTables;
 use DB;
 use Carbon\Carbon;
@@ -112,14 +115,29 @@ class ManajemenAgenController extends Controller
     */
     public function getListKPL(Request $request)
     {
+        $agentCode = $request->agent_code;
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
+        // dd($agentCode);
+
         $datas = d_sales::whereBetween('s_date', [$from, $to])
         ->with('getMember')
-        // ->where('s_comp', Session::get('user_comp'))
-        // ->with('getStaff')
         ->orderBy('s_nota', 'desc')
         ->get();
+        // if ($agentCode !== null) {
+        //     $company = m_company::where('c_user', $agentCode)
+        //     ->first();
+        //     $datas = d_sales::whereBetween('s_date', [$from, $to])
+        //     ->where('s_comp', $company->c_id)
+        //     ->with('getMember')
+        //     ->orderBy('s_nota', 'desc')
+        //     ->get();
+        // } else {
+        //     $datas = d_sales::whereBetween('s_date', [$from, $to])
+        //     ->with('getMember')
+        //     ->orderBy('s_nota', 'desc')
+        //     ->get();
+        // }
 
         return Datatables::of($datas)
         ->addIndexColumn()
@@ -135,12 +153,34 @@ class ManajemenAgenController extends Controller
         ->addColumn('action', function($datas) {
             return
             '<div class="btn-group btn-group-sm">
-            <button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="showDetailPenjualan('. $datas->s_id .')"><i class="fa fa-folder"></i></button>
+            <button class="btn btn-primary btn-detailKPL" type="button" title="Detail" onclick="showDetailPenjualan('. $datas->s_id .')"><i class="fa fa-folder"></i></button>
+            <button class="btn btn-warning btn-editKPL" type="button" title="Edit" onclick="editDetailPenjualan('. $datas->s_id .')"><i class="fa fa-pencil"></i></button>
             <button class="btn btn-danger btn-delete" type="button" title="Delete" onclick="deleteDetailPenjualan('. $datas->s_id .')"><i class="fa fa-trash"></i></button>
             </div>';
         })
         ->rawColumns(['customer', 'staff', 'action'])
         ->make(true);
+    }
+    // get list-cities based on province-id
+    public function getCitiesKPL(Request $request)
+    {
+        $cities = m_wil_provinsi::where('wp_id', $request->provId)
+        ->with('getCities')
+        ->firstOrFail();
+        return response()->json($cities);
+    }
+    // get list-cities based on province-id
+    public function getAgentsKPL(Request $request)
+    {
+        $agents = m_agen::where('a_area', $request->cityId)
+        ->where('a_type', 'AGEN')
+        ->with('getProvince')
+        ->with('getCity')
+        ->orderBy('a_code', 'desc')
+        ->get();
+        // dd($agents);
+        // var_dump($agents);
+        return response()->json($agents);
     }
     // get detail-kpl
     public function getDetailPenjualan(Request $request)
@@ -286,7 +326,7 @@ class ManajemenAgenController extends Controller
                 $salesDt->sd_item = $request->itemListId[$i];
                 $salesDt->sd_qty = (int)$request->itemQty[$i];
                 $salesDt->sd_unit = $request->itemUnit[$i];
-                $salesDt->sd_value = (int)$request->itemSubTotal[$i];
+                $salesDt->sd_value = (int)$request->itemPrice[$i];
                 $salesDt->sd_discpersen = 0;
                 $salesDt->sd_discvalue = 0;
                 $salesDt->sd_totalnet = (int)$request->itemSubTotal[$i];
@@ -326,17 +366,100 @@ class ManajemenAgenController extends Controller
         }
     }
     // edit selected kpl
-    public function editKPL(Request $request, $id)
+    public function editKPL($id)
     {
         $data['kpl'] = d_sales::where('s_id', $id)
+        ->with(['getSalesDt.getItem' => function($query) {
+            $query
+                ->with('getUnit1')
+                ->with('getUnit2')
+                ->with('getUnit3');
+        }])
         ->firstOrFail();
-        
+        $data['member'] = m_member::orWhere('m_id', 1)
+        ->orWhere('m_agen', Auth::user()->u_code)
+        ->get();
+        // dd($data['kpl']);
         return view('marketing/agen/kelolapenjualan/edit', compact('data'));
     }
     // update selected kpl
-    public function updateKPL(Request $request)
+    public function updateKPL(Request $request, $id)
     {
-        // code...
+        // dd($request->all());
+        // validate request
+        $isValidRequest = $this->validate_req($request);
+        if ($isValidRequest != '1') {
+            $errors = $isValidRequest;
+            return response()->json([
+                'status' => 'invalid',
+                'message' => $errors
+            ]);
+        }
+        DB::beginTransaction();
+        try {
+            // start insert data
+            $sales = d_sales::where('s_id', $id)->first();
+            // dd($sales);
+            $sales->s_comp = Auth::user()->u_company;
+            $sales->s_member = $request->member;
+            $sales->s_type = 'C';
+            $sales->s_date = Carbon::now('Asia/Jakarta');
+            $sales->s_total = (int)$request->total;
+            $sales->s_user = Auth::user()->u_id;
+            $sales->save();
+
+            // rollback mutasi-sales which is updated
+            $mutasi = Mutasi::rollback($sales->s_nota);
+            // delete all item from this sales in sales-dt
+            $sales->getSalesDt()->delete();
+
+            for ($i=0; $i < sizeof($request->itemListId); $i++) {
+                $salesDtId = d_salesdt::where('sd_sales', $sales->s_id)->max('sd_detailid') + 1;
+                $salesDt = new d_salesdt();
+                $salesDt->sd_sales = $sales->s_id;
+                $salesDt->sd_detailid = $salesDtId;
+                $salesDt->sd_comp = $request->itemOwner[$i];
+                $salesDt->sd_item = $request->itemListId[$i];
+                $salesDt->sd_qty = (int)$request->itemQty[$i];
+                $salesDt->sd_unit = $request->itemUnit[$i];
+                $salesDt->sd_value = (int)$request->itemPrice[$i];
+                $salesDt->sd_discpersen = 0;
+                $salesDt->sd_discvalue = 0;
+                $salesDt->sd_totalnet = (int)$request->itemSubTotal[$i];
+                $salesDt->save();
+
+                // get total qty with base-unit item
+                $itemQtyUnitBase = 0;
+                $itemQtyUnitBase = (int)$request->itemQty[$i] * (int)$request->itemUnitCmp[$i];
+
+                // mutasi keluar
+                $mutasi = Mutasi::mutasikeluar(
+                    14,
+                    $request->itemOwner[$i],
+                    Auth::user()->u_company,
+                    $request->itemListId[$i],
+                    $itemQtyUnitBase,
+                    $sales->s_nota);
+                if ($mutasi !== true) {
+                    DB::rollback();
+                    return response()->json([
+                        'status' => 'Mutasi gagal',
+                        'message' => $mutasi->error->getMessage()
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
     // End: Kelola Penjualan Langsung -----------------
 

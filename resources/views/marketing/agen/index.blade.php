@@ -264,6 +264,16 @@ $(document).ready(function() {
 		$('#date_to_kpl').datepicker('setDate', last_day);
 	});
 	TableListKPL();
+	$('#provKPL').on('change', function() {
+		getCitiesKPL();
+	});
+	$('#citiesKPL').on('change', function(){
+		$(".table-modal").removeClass('d-none');
+		appendListAgentsKPL();
+	});
+	$('#btn_filter_kpl').on('click', function() {
+		TableListKPL();
+	});
 });
 
 // data-table -> function to retrieve DataTable server side
@@ -275,12 +285,13 @@ function TableListKPL()
 		responsive: true,
 		serverSide: true,
 		ajax: {
-			url: "{{ route('kelolapenjulan.getListKPL') }}",
+			url: "{{ route('kelolapenjualan.getListKPL') }}",
 			type: "get",
 			data: {
 				"_token": "{{ csrf_token() }}",
 				"date_from" : $('#date_from_kpl').val(),
-				"date_to" : $('#date_to_kpl').val()
+				"date_to" : $('#date_to_kpl').val(),
+				"agent_code" : $('#filter_agent_code_kpl').val()
 			}
 		},
 		columns: [
@@ -297,13 +308,13 @@ function TableListKPL()
 }
 // edit detail penjualan
 function editDetailPenjualan(idPenjualan) {
-	window.location.href(baseUrl + '/marketing/agen/kelolapenjualanlangsung/edit/' + idPenjualan);
+	window.location.href = baseUrl + '/marketing/agen/kelolapenjualanlangsung/edit/' + idPenjualan;
 }
 // show detail penjualan
 function showDetailPenjualan(idPenjualan)
 {
 	$.ajax({
-		url: "{{ route('kelolapenjulan.getDetailPenjualan') }}",
+		url: "{{ route('kelolapenjualan.getDetailPenjualan') }}",
 		type: 'get',
 		data: {
 			'id': idPenjualan
@@ -311,7 +322,7 @@ function showDetailPenjualan(idPenjualan)
 		success: function(response) {
 			$('#table_detail_kelola tbody').empty();
 			$.each(response.get_sales_dt, function(key, val) {
-				$('#table_detail_kelola > tbody:last-child').append('<tr><td>'+ val.get_item.i_name +'</td><td>'+ val.get_unit.u_name +'</td><td class="digits">'+ parseInt(val.sd_qty) +'</td><td> (dummy) </td><td class="rupiah">'+ parseInt(val.sd_value) +'</td></tr>');
+				$('#table_detail_kelola > tbody:last-child').append('<tr><td>'+ val.get_item.i_name +'</td><td>'+ val.get_unit.u_name +'</td><td class="digits">'+ parseInt(val.sd_qty) +'</td><td class="rupiah">'+ parseInt(val.sd_value) +'</td><td class="rupiah">'+ parseInt(val.sd_totalnet) +'</td></tr>');
 			});
 		    $('.rupiah').inputmask("currency", {
 		        radixPoint: ",",
@@ -346,7 +357,7 @@ function showDetailPenjualan(idPenjualan)
 // delete penjualan
 function deleteDetailPenjualan(idPenjualan) {
 	$.ajax({
-		url: "{{ route('kelolapenjulan.deleteDetailPenjualan') }}",
+		url: "{{ route('kelolapenjualan.deleteDetailPenjualan') }}",
 		type: 'post',
 		data: {
 			'id': idPenjualan
@@ -364,5 +375,60 @@ function deleteDetailPenjualan(idPenjualan) {
 		}
 	})
 }
+
+// get provinces for search-agen
+function getCitiesKPL() {
+	var id = $('#provKPL').val();
+	$.ajax({
+		url: "{{route('kelolapenjualan.getCitiesKPL')}}",
+		type: "get",
+		data:{
+			provId: id
+		},
+		success: function (response) {
+			$('#citiesKPL').empty();
+			$("#citiesKPL").append('<option value="" selected="" disabled="">=== Pilih Kota ===</option>');
+			$.each(response.get_cities, function( key, val ) {
+				$("#citiesKPL").append('<option value="'+ val.wc_id +'">'+ val.wc_name +'</option>');
+			});
+			$('#citiesKPL').focus();
+			$('#citiesKPL').select2('open');
+		}
+	});
+}
+
+// append data to table-list-agens
+function appendListAgentsKPL() {
+	$.ajax({
+		url: "{{ route('kelolapenjualan.getAgentsKPL') }}",
+		type: 'get',
+		data: {
+			cityId: $('#citiesKPL').val()
+		},
+		success: function(response) {
+			console.log('zxc');
+			console.log(response);
+			$('#table_search_agen_kpl tbody').empty();
+			$.each(response, function(index, val) {
+				listAgents = '<tr><td>'+ val.get_province.wp_name +'</td>';
+				listAgents += '<td>'+ val.get_city.wc_name +'</td>';
+				listAgents += '<td>'+ val.a_name +'</td>';
+				listAgents += '<td>'+ val.a_type +'</td>';
+				listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgent(\''+ val.a_code +'\',\''+ val.a_name +'\')"><i class="fa fa-download"></i></button></td></tr>';
+			});
+
+			$('#table_search_agen_kpl > tbody:last-child').append(listAgents);
+			console.log($('#table_search_agen_kpl'));
+		}
+	});
+}
+
+// add filter-agent
+function addFilterAgent(agentCode, agentName) {
+	$('#filter_agent_name_kpl').val(agentName);
+	$('#filter_agent_code_kpl').val(agentCode);
+	$('#searchAgen').modal('hide');
+}
+
 </script>
 @endsection
