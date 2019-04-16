@@ -71,77 +71,89 @@
 @endsection
 
 @section('extra_script')
-    <script type="text/javascript">
-        $(document).ready(function(){
-            $('#type_cus').change(function(){
-                if($(this).val() === 'kontrak'){
-                    $('#label_type_cus').text('Jumlah Bulan');
-                    $('#jumlah_hari_bulan').val('');
-                    $('#pagu').val('');
-                    $('#armada').prop('selectedIndex', 0).trigger('change');
-                } else if($(this).val() === 'harian'){
-                    $('#label_type_cus').text('Jumlah Hari');
-                    $('#armada').prop('selectedIndex', 0).trigger('change');
-                    $('#pagu').val('');
-                    $('#jumlah_hari_bulan').val('');
-                } else {
-                    $('#jumlah_hari_bulan').val('');
-                    $('#armada').prop('selectedIndex', 0).trigger('change');
-                    $('#pagu').val('');
-                }
-            });
+    {{--<script type="text/javascript">--}}
+        {{--$(document).ready(function(){--}}
+            {{--$('#type_cus').change(function(){--}}
+                {{--if($(this).val() === 'kontrak'){--}}
+                    {{--$('#label_type_cus').text('Jumlah Bulan');--}}
+                    {{--$('#jumlah_hari_bulan').val('');--}}
+                    {{--$('#pagu').val('');--}}
+                    {{--$('#armada').prop('selectedIndex', 0).trigger('change');--}}
+                {{--} else if($(this).val() === 'harian'){--}}
+                    {{--$('#label_type_cus').text('Jumlah Hari');--}}
+                    {{--$('#armada').prop('selectedIndex', 0).trigger('change');--}}
+                    {{--$('#pagu').val('');--}}
+                    {{--$('#jumlah_hari_bulan').val('');--}}
+                {{--} else {--}}
+                    {{--$('#jumlah_hari_bulan').val('');--}}
+                    {{--$('#armada').prop('selectedIndex', 0).trigger('change');--}}
+                    {{--$('#pagu').val('');--}}
+                {{--}--}}
+            {{--});--}}
 
-            $(document).on('click', '.btn-hapus-agen', function(){
-                $(this).parents('tr').remove();
-            });
+            {{--$(document).on('click', '.btn-hapus-agen', function(){--}}
+                {{--$(this).parents('tr').remove();--}}
+            {{--});--}}
 
-            $('.btn-tambah-agen').on('click',function(){
-                $('#table_agen')
-                    .append(
-                        '<tr>'+
-                        '<td><input type="text" class="form-control form-control-sm"></td>'+
-                        '<td><select name="#" id="#" class="form-control form-control-sm select2"><option value=""></option></select></td>'+
-                        '<td><input type="number" class="form-control form-control-sm" value="0"></td>'+
-                        '<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+
-                        '<td><input type="text" class="form-control form-control-sm" readonly=""></td>'+
-                        '<td><button class="btn btn-danger btn-hapus-agen btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+
-                        '</tr>'
-                    );
-            });
+            {{--$('.btn-tambah-agen').on('click',function(){--}}
+                {{--$('#table_agen')--}}
+                    {{--.append(--}}
+                        {{--'<tr>'+--}}
+                        {{--'<td><input type="text" class="form-control form-control-sm"></td>'+--}}
+                        {{--'<td><select name="#" id="#" class="form-control form-control-sm select2"><option value=""></option></select></td>'+--}}
+                        {{--'<td><input type="number" class="form-control form-control-sm" value="0"></td>'+--}}
+                        {{--'<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+--}}
+                        {{--'<td><input type="text" class="form-control form-control-sm" readonly=""></td>'+--}}
+                        {{--'<td><button class="btn btn-danger btn-hapus-agen btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+--}}
+                        {{--'</tr>'--}}
+                    {{--);--}}
+            {{--});--}}
 
-            $(document).on('click', '.btn-hapus-cabang', function(){
-                $(this).parents('tr').remove();
-            });
+            {{--$(document).on('click', '.btn-hapus-cabang', function(){--}}
+                {{--$(this).parents('tr').remove();--}}
+            {{--});--}}
 
-            $('.btn-tambah-cabang').on('click',function(){
-                $('#table_cabang')
-                    .append(
-                        '<tr>'+
-                        '<td><input type="text" class="form-control form-control-sm"></td>'+
-                        '<td><select name="#" id="#" class="form-control form-control-sm select2"><option value=""></option></select></td>'+
-                        '<td><input type="number" class="form-control form-control-sm" value="0"></td>'+
-                        '<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+
-                        '<td><input type="text" class="form-control form-control-sm" readonly=""></td>'+
-                        '<td><button class="btn btn-danger btn-hapus-cabang btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+
-                        '</tr>'
-                    );
-            });
-            $(document).on('click', '.btn-submit', function(){
-                $.toast({
-                    heading: 'Success',
-                    text: 'Data Berhasil di Simpan',
-                    bgColor: '#00b894',
-                    textColor: 'white',
-                    loaderBg: '#55efc4',
-                    icon: 'success'
-                })
-            })
-        });
-    </script>
+            {{--$('.btn-tambah-cabang').on('click',function(){--}}
+                {{--$('#table_cabang')--}}
+                    {{--.append(--}}
+                        {{--'<tr>'+--}}
+                        {{--'<td><input type="text" class="form-control form-control-sm"></td>'+--}}
+                        {{--'<td><select name="#" id="#" class="form-control form-control-sm select2"><option value=""></option></select></td>'+--}}
+                        {{--'<td><input type="number" class="form-control form-control-sm" value="0"></td>'+--}}
+                        {{--'<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+--}}
+                        {{--'<td><input type="text" class="form-control form-control-sm" readonly=""></td>'+--}}
+                        {{--'<td><button class="btn btn-danger btn-hapus-cabang btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+--}}
+                        {{--'</tr>'--}}
+                    {{--);--}}
+            {{--});--}}
+            {{--$(document).on('click', '.btn-submit', function(){--}}
+                {{--$.toast({--}}
+                    {{--heading: 'Success',--}}
+                    {{--text: 'Data Berhasil di Simpan',--}}
+                    {{--bgColor: '#00b894',--}}
+                    {{--textColor: 'white',--}}
+                    {{--loaderBg: '#55efc4',--}}
+                    {{--icon: 'success'--}}
+                {{--})--}}
+            {{--})--}}
+        {{--});--}}
+    {{--</script>--}}
     <script type="text/javascript">
         $(document).ready(function(){
             getProvAgen();
             getKotaAgen();
+
+            if ($('#select-order').val() == "1") {
+                $('#agen').removeClass('d-none');
+                $('#cabang').addClass('d-none');
+            } else if ($('#select-order').val() == "2") {
+                $('#agen').addClass('d-none');
+                $('#cabang').removeClass('d-none');
+            } else {
+                $('#agen').addClass('d-none');
+                $('#cabang').addClass('d-none');
+            }
+
             $('#select-order').change(function(){
                 var ini, agen, cabang;
                 ini         = $(this).val();
