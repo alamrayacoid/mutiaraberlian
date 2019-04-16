@@ -426,6 +426,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Agen\ManajemenAgenController@create_orderprodukagencabang')->name('orderagenpusat.create');
     Route::get('/marketing/agen/orderproduk/get-provinsi', 'Aktivitasmarketing\Agen\ManajemenAgenController@getProv')->name('orderagenpusat.getprovinsi');
     Route::get('/marketing/agen/orderproduk/get-kota/{idprov}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getKota')->name('orderagenpusat.getkota');
+    Route::get('/marketing/agen/orderproduk/cari-penjual/{prov}/{kota}', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariPenjual')->name('orderagenpusat.caripenjual');
+    Route::get('/marketing/agen/orderproduk/cari-pembeli/{kode}', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariPembeli')->name('orderagenpusat.caripembeli');
     Route::get('/marketing/agen/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_orderprodukagenpusat')->name('orderagenpusat.edit');
     // !===================================================== END Marketing =====================================================!
 

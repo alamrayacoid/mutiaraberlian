@@ -159,6 +159,72 @@
                     cabang.addClass('d-none');
                 }
             });
+
+            $("#a_apj").on("keyup", function (evt) {
+                evt.preventDefault();
+                if (evt.which == 8 || evt.which == 46)
+                {
+                    $("#a_idapj").val('');
+                    $("#a_kodeapj").val('');
+                } else if (evt.which <= 90 && evt.which >= 48)
+                {
+                    $("#a_idapj").val('');
+                    $("#a_kodeapj").val('');
+                }
+
+            })
+
+            $( "#a_apj" ).autocomplete({
+                source: function( request, response ) {
+                    $.ajax({
+                        url: baseUrl+'/marketing/agen/orderproduk/cari-penjual/'+$("#a_prov").val()+'/'+$("#a_kota").val(),
+                        data: {
+                            term: $( "#a_apj" ).val()
+                        },
+                        success: function( data ) {
+                            response( data );
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function(event, data) {
+                    $( "#a_idapj" ).val(data.item.id);
+                    $( "#a_kodeapj" ).val(data.item.kode);
+                }
+            });
+
+            $("#a_apb").on("keyup", function (evt) {
+                evt.preventDefault();
+                if (evt.which == 8 || evt.which == 46)
+                {
+                    $("#a_idapb").val('');
+                    $("#a_kodeapb").val('');
+                } else if (evt.which <= 90 && evt.which >= 48)
+                {
+                    $("#a_idapb").val('');
+                    $("#a_kodeapb").val('');
+                }
+
+            })
+
+            $( "#a_apb" ).autocomplete({
+                source: function( request, response ) {
+                    $.ajax({
+                        url: baseUrl+'/marketing/agen/orderproduk/cari-pembeli/'+$("#a_kodeapj").val(),
+                        data: {
+                            term: $( "#a_apb" ).val()
+                        },
+                        success: function( data ) {
+                            response( data );
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function(event, data) {
+                    $( "#a_idapb" ).val(data.item.id);
+                    $( "#a_kodeapb" ).val(data.item.kode);
+                }
+            });
         });
 
         function getProvAgen() {
@@ -200,6 +266,7 @@
                             $("#a_kota").append(option);
                             loadingHide();
                             $("#a_kota").focus();
+                            $("#a_kota").select2('open');
                         })
                         .catch(function (error) {
                             loadingHide();

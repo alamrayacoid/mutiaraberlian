@@ -34,6 +34,49 @@ class ManajemenAgenController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    public function cariPembeli(Request $request, $kode)
+    {
+        $cari = $request->term;
+        $nama = DB::table('m_agen')
+            ->where('a_parent', '=', $kode)
+            ->where(function ($q) use ($cari){
+                $q->orWhere('a_name', 'like', '%'.$cari.'%');
+            })
+            ->get();
+
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = ['id' => $query->a_id, 'label' => strtoupper($query->a_name), 'data' => $query, 'kode' => $query->a_code];
+            }
+        }
+        return Response::json($results);
+    }
+
+    public function cariPenjual(Request $request, $prov = null, $kota = null)
+    {
+        $cari = $request->term;
+        $nama = DB::table('m_agen')
+//            ->join('m_company', 'a_code', '=', 'c_user')
+            ->where('m_agen.a_provinsi', '=', $prov)
+            ->where('m_agen.a_kabupaten', '=', $kota)
+//            ->where('m_company.c_type', '=', 'AGEN')
+            ->where(function ($q) use ($cari){
+                $q->orWhere('a_name', 'like', '%'.$cari.'%');
+            })
+            ->get();
+
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = ['id' => $query->a_id, 'label' => strtoupper($query->a_name), 'data' => $query, 'kode' => $query->a_code];
+            }
+        }
+        return Response::json($results);
+    }
+
     public function getProv()
     {
         $prov = DB::table('m_wil_provinsi')->get();
