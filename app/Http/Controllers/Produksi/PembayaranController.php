@@ -277,7 +277,6 @@ class PembayaranController extends Controller
     public function getListHistory(Request $request)
     {
         $nota = $request->nota;
-        // dd($nota);
 
         if ($nota !== null) {
             $datas = d_productionorder::where('po_nota', $nota)
@@ -301,11 +300,19 @@ class PembayaranController extends Controller
         ->addColumn('action', function($datas) {
             return
             '<div class="btn-group btn-group-sm">
-            <button type="button" class="btn btn-sm btn-primary" onclick="addFilter(\''. $datas->po_nota .'\')"><i class="fa fa-download"></i></button>
+            <button type="button" class="btn btn-sm btn-primary" onclick="showDetailHistory(\''. $datas->po_id .'\')"><i class="fa fa-folder"></i></button>
             </div>';
         })
         ->rawColumns(['date', 'supplier', 'action'])
         ->make(true);
+    }
+
+    public function showDetailHistory($id)
+    {
+        $detail = d_productionorderpayment::where('pop_productionorder', $id)
+        ->get();
+
+        return response()->json($detail);
     }
 
     public function getListNota(Request $request)

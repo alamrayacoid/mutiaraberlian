@@ -12,6 +12,6 @@ class d_productionorderpayment extends Model
 
     public function getPO()
     {
-        return $this->hasMany('App\d_productionorder', 'po_id', 'pop_productionorder');
+        return $this->belongsTo('App\d_productionorder', 'pop_productionorder', 'po_id');
     }
 }

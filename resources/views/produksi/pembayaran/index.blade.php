@@ -2,7 +2,7 @@
 
 @section('content')
 
-    {{--@include('produksi.pembayaran.modal')--}}
+    @include('produksi.pembayaran.history.modal-detail')
     @include('produksi.pembayaran.bayar')
     @include('produksi.pembayaran.history.modal-search')
 
@@ -93,6 +93,56 @@
         tableListHistory();
     });
 
+    // show detail pembayaran
+    function showDetailHistory(idPO)
+    {
+        $.ajax({
+            url: baseUrl + "/produksi/pembayaran/show-detail-history/" + idPO,
+            type: 'get',
+            dataType: 'json',
+            success: function (response) {
+                $('#table_detail_history tbody').empty();
+                $.each(response, function (i, val) {
+                    termin = val.pop_termin;
+                    estimasi = GetFormattedDate(val.pop_datetop);
+                    nominal = '<span class="float-right rupiah">' + parseInt(val.pop_value) + '</span>';
+                    terbayar = '<span class="float-right rupiah">' + parseInt(val.pop_pay) + '</span>';
+                    if(val.pop_status === 'N') {
+                        status = 'Belum Lunas';
+                    } else {
+                        status = 'Lunas';
+                    }
+                    $('#table_detail_history > tbody:last-child').append('<tr><td>' + termin + '</td><td>' + estimasi + '</td><td>' + nominal + '</td><td>' + terbayar + '</td><td>' + status + '</td>');
+                });
+                //mask money
+                $('.rupiah').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 2,
+                        autoGroup: true,
+                        prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
+                    });
+                $('#detailModal').modal('show');
+            }
+        })
+    }
+
+    // change date format using js (params: yyyy-mm-dd, output: d M Y)
+    function GetFormattedDate(date) {
+        const monthNames = ["January", "February", "March", "April", "May",
+        "June", "July", "August", "September", "October", "November", "December"
+        ];
+        var dateX = new Date(date);
+        var month = dateX .getMonth();
+        var day = ('0' + dateX.getDate()).slice(-2);
+        var year = dateX .getFullYear();
+        return day + ' ' + monthNames[month] + ' ' + year;
+    }
+
     var tb_listhistory;
     function tableListHistory()
     {
@@ -149,7 +199,8 @@
     }
 
     // add-filter from modal-search-nota
-    function addFilter(nota) {
+    function addFilter(nota)
+    {
         $('#searchNotaModal').modal('hide');
         $('#findNota').val(nota);
         tableListHistory();

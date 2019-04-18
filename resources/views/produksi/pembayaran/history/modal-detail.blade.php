@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div id="detail" class="modal fade animated fadeIn" role="dialog">
+<div id="detailModal" class="modal fade animated fadeIn" role="dialog">
   <div class="modal-dialog modal-lg">
 
     <!-- Modal content-->
@@ -10,15 +10,14 @@
       </div>
       <div class="modal-body">
         <div class="table-responsive">
-          <table class="table table-striped data-table table-hover" cellspacing="0" id="table_detail">
+          <table class="table table-striped data-table table-hover" cellspacing="0" id="table_detail_history">
             <thead class="bg-primary">
               <tr>
-                <th>Kode Barang</th>
-                <th>Nama Barang</th>
-                <th>Qty</th>
-                <th>Satuan</th>
-                <th>@ Harga</th>
-                <th>Sub Total</th>
+                <th>Termin</th>
+                <th>Estimasi</th>
+                <th>Nominal</th>
+                <th>Terbayar</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -28,10 +27,10 @@
         </div>
         <hr style="border:0.3px solid #000;">
       </div>
-      <div class="section-nilai-bayar">
+      <!-- <div class="section-nilai-bayar">
           <div class="row">
             <div class="col-lg-3 col-sm-4">
-                <label for="" style="margin-right:10px;">Total</label>
+                <label for="" style="margin-right:10px;">Tot    al</label>
             </div>
             <div class="col-4">
               <input type="text" class="form-control-plaintext" style="font-weight: bold; text-align: right;" id="total_nominal" readonly>
@@ -67,9 +66,10 @@
           </div>
           </div>
       </div>
+       -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="btn_simpan">Simpan</button>
+        <!-- <button type="button" class="btn btn-primary" id="btn_simpan">Simpan</button> -->
       </div>
     </div>
 
