@@ -139,13 +139,50 @@
         {{--});--}}
     {{--</script>--}}
     <script type="text/javascript">
+        var idStock = [];
+        var idItem = [];
+        var namaItem = null;
+        var kode = null;
+        var idxBarang = null;
+        var icode = [];
+        var checkitem = null;
+
         $(document).ready(function(){
             getProvAgen();
             getKotaAgen();
+            changeSatuanAgen();
+            changeJumlahAgen();
+            changeHargaAgen();
+            visibleTableItemAgen();
+
+            $("#a_kota").on("change", function (evt) {
+                evt.preventDefault();
+                if ($("#a_kota").val() == "") {
+                    $("#a_idapj").val('');
+                    $("#a_kodeapj").val('');
+                    $("#a_compapj").val('');
+                    $("#a_apj").val('');
+                    $("#a_idapb").val('');
+                    $("#a_kodeapb").val('');
+                    $("#a_compapb").val('');
+                    $("#a_apb").val('');
+                    $("#a_apj").attr("disabled", true);
+                    $("#a_apb").attr("disabled", true);
+                } else {
+                    $("#a_apj").attr("disabled", false);
+                    $("#a_idapj").val('');
+                    $("#a_kodeapj").val('');
+                    $("#a_compapj").val('');
+                    $("#a_apj").val('');
+                    $("#a_apj").attr('autofocus', true);
+                }
+            })
 
             if ($('#select-order').val() == "1") {
                 $('#agen').removeClass('d-none');
                 $('#cabang').addClass('d-none');
+                $("#a_prov").focus();
+                $("#a_prov").select2('open');
             } else if ($('#select-order').val() == "2") {
                 $('#agen').addClass('d-none');
                 $('#cabang').removeClass('d-none');
@@ -179,10 +216,13 @@
                     $("#a_idapj").val('');
                     $("#a_kodeapj").val('');
                     $("#a_compapj").val('');
+                    $("#a_apb").attr("disabled", true);
                 } else if (evt.which <= 90 && evt.which >= 48)
                 {
                     $("#a_idapj").val('');
                     $("#a_kodeapj").val('');
+                    $("#a_compapj").val('');
+                    $("#a_apb").attr("disabled", true);
                 }
 
             })
@@ -203,6 +243,7 @@
                 select: function(event, data) {
                     $( "#a_idapj" ).val(data.item.id);
                     $( "#a_kodeapj" ).val(data.item.kode);
+                    $("#a_apb").attr("disabled", false);
                 }
             });
 
@@ -212,10 +253,14 @@
                 {
                     $("#a_idapb").val('');
                     $("#a_kodeapb").val('');
+                    $("#a_compapb").val('');
+                    visibleTableItemAgen();
                 } else if (evt.which <= 90 && evt.which >= 48)
                 {
                     $("#a_idapb").val('');
                     $("#a_kodeapb").val('');
+                    $("#a_compapb").val('');
+                    visibleTableItemAgen();
                 }
 
             })
@@ -236,6 +281,7 @@
                 select: function(event, data) {
                     $( "#a_idapb" ).val(data.item.id);
                     $( "#a_kodeapb" ).val(data.item.kode);
+                    visibleTableItemAgen();
                 }
             });
         });
@@ -285,8 +331,43 @@
                             loadingHide();
                             messageWarning("Error", error)
                         })
+                } else if ($('#a_prov').val() == "") {
+                    $("#a_idapj").val('');
+                    $("#a_kodeapj").val('');
+                    $("#a_compapj").val('');
+                    $("#a_apj").val('');
+                    $("#a_idapb").val('');
+                    $("#a_kodeapb").val('');
+                    $("#a_compapb").val('');
+                    $("#a_apb").val('');
+                    $("#a_apj").attr("disabled", true);
+                    $("#a_apb").attr("disabled", true);
                 }
             })
+        }
+
+        function changeSatuanAgen() {
+            //
+        }
+
+        function changeJumlahAgen() {
+            //
+        }
+
+        function changeHargaAgen() {
+            //
+        }
+
+        function visibleTableItemAgen() {
+            if ($("#a_prov").val() != "" && $("#a_kota").val() != "" && $("#a_idapj").val() != "" && $("#a_idapb").val() != "") {
+                $("#tbl_item").show('slow');
+                $(".btn-submit").attr("disabled", false);
+                $(".btn-submit").css({"cursor":"pointer"});
+            }else{
+                $("#tbl_item").hide('slow');
+                $(".btn-submit").attr("disabled", true);
+                $(".btn-submit").css({"cursor":"not-allowed"});
+            }
         }
     </script>
 @endsection

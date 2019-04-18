@@ -359,7 +359,7 @@ Route::group(['middleware' => 'auth'], function () {
     // End ---
     // End ---
     // Konsinyasi Pusat
-    Route::get('/marketing/konsinyasipusat/index', 'MarketingController@konsinyasipusat')->name('konsinyasipusat.index');
+    Route::get('/marketing/konsinyasipusat/index', 'MarketingController@konsinyasimarketing/konsinyasipusat/penempatanproduk/createpusat')->name('konsinyasipusat.index');
     Route::get('/marketing/konsinyasipusat/get-konsinyasi', 'MarketingController@getKonsinyasi')->name('konsinyasipusat.getData');
     Route::get('/marketing/konsinyasipusat/detail-konsinyasi/{id}/{action}', 'MarketingController@detailKonsinyasi')->name('konsinyasipusat.detail');
     Route::get('/marketing/konsinyasipusat/get-provinsi', 'MarketingController@getProv')->name('konsinyasipusat.getProv');

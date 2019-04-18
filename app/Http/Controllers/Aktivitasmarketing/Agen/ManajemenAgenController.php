@@ -102,6 +102,246 @@ class ManajemenAgenController extends Controller
         return Response::json($kota);
     }
 
+    public function cariBarang(Request $request)
+    {
+        $is_item = array();
+        for($i = 0; $i < count($request->idItem); $i++){
+            if($request->idItem[$i] != null){
+                array_push($is_item, $request->idItem[$i]);
+            }
+        }
+
+        $cari = $request->term;
+        $comp = Auth::user()->u_company;
+        if(count($is_item) == 0){
+            $nama = DB::table('m_item')
+                ->join('d_stock', function ($s) use ($comp){
+                    $s->on('i_id', '=', 's_item');
+                    $s->where('s_comp', '=', $comp);
+                    $s->where('s_position', '=', $comp);
+                    $s->where('s_status', '=', 'ON DESTINATION');
+                    $s->where('s_condition', '=', 'FINE');
+                })
+                ->join('d_stock_mutation', function ($sm){
+                    $sm->on('sm_stock', '=', 's_id');
+                    $sm->where('sm_residue', '!=', 0);
+                })
+                ->where(function ($q) use ($cari){
+                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
+                    $q->orWhere('i_code', 'like', '%'.$cari.'%');
+                })
+                ->get();
+        }else{
+            $nama = DB::table('m_item')
+                ->join('d_stock', function ($s) use ($comp){
+                    $s->on('i_id', '=', 's_item');
+                    $s->where('s_comp', '=', $comp);
+                    $s->where('s_position', '=', $comp);
+                    $s->where('s_status', '=', 'ON DESTINATION');
+                    $s->where('s_condition', '=', 'FINE');
+                })
+                ->join('d_stock_mutation', function ($sm){
+                    $sm->on('sm_stock', '=', 's_id');
+                    $sm->where('sm_residue', '!=', 0);
+                })
+                ->whereNotIn('i_id', $is_item)
+                ->where(function ($q) use ($cari){
+                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
+                    $q->orWhere('i_code', 'like', '%'.$cari.'%');
+                })
+                ->get();
+        }
+
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query, 'stock' => $query->s_id];
+            }
+        }
+        return Response::json($results);
+    }
+
+    public function getSatuan($id)
+    {
+        $data = DB::table('m_item')
+            ->select('m_item.*', 'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
+            ->where('m_item.i_id', '=', $id)
+            ->join('m_unit as a', function ($x){
+                $x->on('m_item.i_unit1', '=', 'a.u_id');
+            })
+            ->leftjoin('m_unit as b', function ($y){
+                $y->on('m_item.i_unit2', '=', 'b.u_id');
+            })
+            ->leftjoin('m_unit as c', function ($z){
+                $z->on('m_item.i_unit3', '=', 'c.u_id');
+            })
+            ->first();
+        return Response::json($data);
+    }
+
+    public function checkStock($stock = null, $item = null, $satuan = null, $qty = null)
+    {
+        $data_check = DB::table('m_item')
+            ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                'm_item.i_unit3 as unit3')
+            ->where('i_id', '=', $item)
+            ->first();
+
+        $data = DB::table('d_stock')
+            ->join('d_stock_mutation', function($sm){
+                $sm->on('sm_stock', '=', 's_id');
+            })
+            ->where('s_id', '=', $stock)
+            ->where('s_item', '=', $item)
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('s_condition', '=', 'FINE')
+            ->select('sm_residue as sisa')
+            ->first();
+
+        $qty_compare = 0;
+        if ($satuan == $data_check->unit1) {
+            if ((int)$qty > (int)$data->sisa) {
+                $qty_compare = $data->sisa;
+            } else {
+                $qty_compare = $qty;
+            }
+        } else if ($satuan == $data_check->unit2) {
+            $compare = (int)$qty * (int)$data_check->compare2;
+            if ((int)$compare > (int)$data->sisa) {
+                $qty_compare = (int)$data->sisa/(int)$data_check->compare2;
+            } else {
+                $qty_compare = $qty;
+            }
+        } else if ($satuan == $data_check->unit3) {
+            $compare = (int)$qty * (int)$data_check->compare3;
+            if ((int)$compare > (int)$data->sisa) {
+                $qty_compare = (int)$data->sisa/(int)$data_check->compare3;
+            } else {
+                $qty_compare = $qty;
+            }
+        }
+        return Response::json(floor($qty_compare));
+    }
+
+    public function checkStockOld($stock = null, $item = null, $oldSatuan = null, $satuan = null, $qtyOld = null, $qty = null)
+    {
+        $data_check = DB::table('m_item')
+            ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                'm_item.i_unit3 as unit3')
+            ->where('i_id', '=', $item)
+            ->first();
+
+        $data = DB::table('d_stock')
+            ->join('d_stock_mutation', function($sm){
+                $sm->on('sm_stock', '=', 's_id');
+            })
+            ->where('s_id', '=', $stock)
+            ->where('s_item', '=', $item)
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('s_condition', '=', 'FINE')
+            ->select('sm_residue as sisa')
+            ->first();
+
+        $qty_compare_old = 0;
+        if ($oldSatuan == $data_check->unit1) {
+            if ((int)$qty > (int)$data->sisa) {
+                $qty_compare_old = $data->sisa + $qtyOld;
+            } else {
+                $qty_compare_old = $qty;
+            }
+        } else if ($oldSatuan == $data_check->unit2) {
+            $compare = (int)$qty * (int)$data_check->compare2;
+            if ((int)$compare > (int)($data->sisa + $qtyOld)) {
+                $qty_compare_old = (int)($data->sisa+$qtyOld)/(int)$data_check->compare2;
+            } else {
+                $qty_compare_old = $qty;
+            }
+        } else if ($oldSatuan == $data_check->unit3) {
+            $compare = (int)$qty * (int)$data_check->compare3;
+            if ((int)$compare > (int)($data->sisa+$qtyOld)) {
+                $qty_compare_old = (int)($data->sisa+$qtyOld)/(int)$data_check->compare3;
+            } else {
+                $qty_compare_old = $qty;
+            }
+        }
+
+
+        return Response::json(floor($qty_compare_old));
+    }
+
+    function existsInArray($entry, $array)
+    {
+        $x = false;
+        foreach ($array as $compare) {
+            if ($compare->pcd_type == $entry) {
+                $x = true;
+            }
+        }
+        return $x;
+    }
+
+    function inRange($value, $array)
+    {
+//        in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
+        $idx = null;
+        foreach ($array as $key =>  $val) {
+            $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
+            if ($x == true) {
+                $idx = $key;
+            }
+        }
+        return $idx;
+    }
+
+    public function checkHarga($konsigner, $item, $unit, $qty)
+    {
+
+        $type = DB::table('m_agen')
+            ->where('a_code', '=', $konsigner)
+            ->first();
+
+        $get_price = DB::table('m_priceclassdt')
+            ->join('m_priceclass', 'pcd_classprice', 'pc_id')
+            ->select('m_priceclassdt.*', 'm_priceclass.*')
+            ->where('pc_name', '=', $type->a_type)
+            ->where('pcd_item', '=', $item)
+            ->where('pcd_unit', '=', $unit)
+            ->get();
+
+        $harga = 0;
+        $z = false;
+        foreach ($get_price as $key => $price) {
+            if ($qty == 1) {
+                if ($this->existsInArray("U", $get_price) == true) {
+                    if ($get_price[$key]->pcd_type == "U") {
+                        $harga = $get_price[$key]->pcd_price;
+                    }
+                } else {
+                    if ($price->pcd_rangeqtystart == 1) {
+                        $harga = $get_price[$key]->pcd_price;
+                    }
+                }
+            } else if ($qty > 1) {
+                if ($price->pcd_rangeqtyend == 0){
+                    if ($qty >= $price->pcd_rangeqtystart) {
+                        $harga = $price->pcd_price;
+                    }
+                } else {
+                    $z = $this->inRange($qty, $get_price);
+                    if ($z != null) {
+                        $harga = $get_price[$z]->pcd_price;
+                    }
+                }
+
+            }
+        }
+
+        return Response::json(number_format($harga, 0, '', ''));
+    }
+
     public function create_orderprodukagencabang()
     {
         return view('marketing/agen/orderproduk/create');
