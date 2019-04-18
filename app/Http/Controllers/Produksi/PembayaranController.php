@@ -310,6 +310,7 @@ class PembayaranController extends Controller
     public function showDetailHistory($id)
     {
         $detail = d_productionorderpayment::where('pop_productionorder', $id)
+        ->with('getPO')
         ->get();
 
         return response()->json($detail);

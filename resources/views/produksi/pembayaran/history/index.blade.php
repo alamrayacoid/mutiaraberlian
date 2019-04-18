@@ -11,7 +11,8 @@
                 <fieldset class="mb-3">
                     <div class="input-group col-md-6 col-lg-6">
                         <input type="text" class="form-control form-control-sm" placeholder="Cari Nota" id="findNota" autocomplete="off">
-                        <button class="btn btn-primary btn-md" title="Cari Nota" style="border-left:none;" data-toggle="modal" data-target="#searchNotaModal"><i class="fa fa-search"></i></button>
+                        <button class="btn btn-primary btn-md btn-secondary" title="Cari Nota" style="border-left:none;" data-toggle="modal" data-target="#searchNotaModal"><i class="fa fa-search"></i></button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="refreshHistory()" id="btn_refresh_date_kpl"><i class="fa fa-refresh"></i></button>
                     </div>
                 </fieldset>
                 <div class="table-responsive">

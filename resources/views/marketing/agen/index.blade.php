@@ -311,7 +311,8 @@ function TableListKPL()
 	});
 }
 // edit detail penjualan
-function editDetailPenjualan(idPenjualan) {
+function editDetailPenjualan(idPenjualan)
+{
 	window.location.href = baseUrl + '/marketing/agen/kelolapenjualanlangsung/edit/' + idPenjualan;
 }
 // show detail penjualan
@@ -381,7 +382,8 @@ function deleteDetailPenjualan(idPenjualan) {
 }
 
 // get provinces for search-agen
-function getCitiesKPL() {
+function getCitiesKPL()
+{
 	var id = $('#provKPL').val();
 	$.ajax({
 		url: "{{route('kelolapenjualan.getCitiesKPL')}}",
@@ -402,7 +404,8 @@ function getCitiesKPL() {
 }
 
 // append data to table-list-agens
-function appendListAgentsKPL() {
+function appendListAgentsKPL()
+{
 	$.ajax({
 		url: "{{ route('kelolapenjualan.getAgentsKPL') }}",
 		type: 'get',
@@ -413,8 +416,8 @@ function appendListAgentsKPL() {
 			// console.log('zxc');
 			console.log(response);
 			console.log(response.length);
+			$('#table_search_agen_kpl tbody').empty();
 			if (response.length <= 0) {
-				$('#table_search_agen_kpl tbody').empty();
 				return 0;
 			}
 			$.each(response, function(index, val) {
@@ -431,7 +434,8 @@ function appendListAgentsKPL() {
 }
 
 // add filter-agent
-function addFilterAgent(agentCode, agentName) {
+function addFilterAgent(agentCode, agentName)
+{
 	$('#filter_agent_name_kpl').val(agentName);
 	$('#filter_agent_code_kpl').val(agentCode);
 	$('#searchAgen').modal('hide');

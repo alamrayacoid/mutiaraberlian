@@ -201,12 +201,12 @@ class ManajemenAgenController extends Controller
             $datas = d_sales::whereBetween('s_date', [$from, $to])
             ->where('s_comp', $company->c_id)
             ->with('getMember')
-            ->orderBy('s_nota', 'desc')
+            ->orderBy('s_date', 'desc')
             ->get();
         } else {
             $datas = d_sales::whereBetween('s_date', [$from, $to])
             ->with('getMember')
-            ->orderBy('s_nota', 'desc')
+            ->orderBy('s_date', 'desc')
             ->get();
         }
 
@@ -376,7 +376,7 @@ class ManajemenAgenController extends Controller
         try {
             // start insert data
             $salesId = d_sales::max('s_id') + 1;
-            $salesNota = CodeGenerator::codeSalesWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
+            $salesNota = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
             $sales = new d_sales();
             $sales->s_id = $salesId;
             $sales->s_comp = Auth::user()->u_company;
@@ -452,7 +452,6 @@ class ManajemenAgenController extends Controller
         $data['member'] = m_member::orWhere('m_id', 1)
         ->orWhere('m_agen', Auth::user()->u_code)
         ->get();
-        // dd($data['kpl']);
         return view('marketing/agen/kelolapenjualan/edit', compact('data'));
     }
     // update selected kpl
@@ -476,7 +475,7 @@ class ManajemenAgenController extends Controller
             $sales->s_comp = Auth::user()->u_company;
             $sales->s_member = $request->member;
             $sales->s_type = 'C';
-            $sales->s_date = Carbon::now('Asia/Jakarta');
+            // $sales->s_date = Carbon::now('Asia/Jakarta');
             $sales->s_total = (int)$request->total;
             $sales->s_user = Auth::user()->u_id;
             $sales->save();

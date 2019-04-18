@@ -51,23 +51,4 @@ class CodeGenerator extends Controller
 
         return $angka;
     }
-
-    public static function codeSalesWithSeparator($table, $field, $mulai = 0, $panjang = 0, $lebar = 0, $awalan, $separator)
-    {
-        //        CodeGenerator::codeWithSeparator('m_company', 'c_id', 8, 10, 3, 'MB', '-');
-        $code = DB::table($table)->where(DB::raw('substr(' . $field . ', ' . $mulai . ', ' . $panjang . ')'), '=', Carbon::now('Asia/Jakarta')->format('d/m/Y'));
-
-        // $countData = $code->count();
-        // $nomor = $countData + 1;
-        $maxId = DB::table($table)->max('s_id');
-        $nomor = $maxId + 1;
-
-        if ($lebar > 0) {
-            $angka = $awalan . $separator . str_pad($nomor, $lebar, "0", STR_PAD_LEFT) . '/' . Carbon::now('Asia/Jakarta')->format('d/m/Y');
-        } else {
-            $angka = $awalan . $separator . $nomor . '/' . Carbon::now('Asia/Jakarta')->format('d/m/Y');
-        }
-
-        return $angka;
-    }
 }

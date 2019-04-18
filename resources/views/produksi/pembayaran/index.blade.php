@@ -101,6 +101,8 @@
             type: 'get',
             dataType: 'json',
             success: function (response) {
+                // console.log(response);
+                $('#detail_history_nota').val(response[0].get_p_o.po_nota);
                 $('#table_detail_history tbody').empty();
                 $.each(response, function (i, val) {
                     termin = val.pop_termin;
@@ -129,6 +131,11 @@
                 $('#detailModal').modal('show');
             }
         })
+    }
+
+    // refresh list history pembayaran
+    function refreshHistory() {
+        tableListHistory();
     }
 
     // change date format using js (params: yyyy-mm-dd, output: d M Y)
