@@ -50,6 +50,7 @@
         <div class="col-md-10 col-sm-6 col-xs-12">
             <div class="form-group">
                 <input type="text" class="form-control form-control-sm" name="a_th" id="a_th" readonly="" value="Rp. 0">
+                <input type="hidden" name="a_tot_hrg" id="a_tot_hrg">
             </div>
         </div>
     </div>

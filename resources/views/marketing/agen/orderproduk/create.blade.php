@@ -174,7 +174,7 @@
                     $("#a_kodeapj").val('');
                     $("#a_compapj").val('');
                     $("#a_apj").val('');
-                    $("#a_apj").attr('autofocus', true);
+                    $("#a_apj").focus();
                 }
             })
 
@@ -244,6 +244,7 @@
                     $( "#a_idapj" ).val(data.item.id);
                     $( "#a_kodeapj" ).val(data.item.kode);
                     $("#a_apb").attr("disabled", false);
+                    $("#a_apb").focus();
                 }
             });
 
@@ -283,6 +284,55 @@
                     $( "#a_kodeapb" ).val(data.item.kode);
                     visibleTableItemAgen();
                 }
+            });
+
+            $('.barang').on('click', function(e){
+                e.preventDefault();
+                idxBarang = $('.barang').index(this);
+                setArrayCode();
+            });
+
+            $(".barang").eq(idxBarang).on("keyup", function (evt) {
+                if (evt.which == 8 || evt.which == 46)
+                {
+                    $(".itemid").eq(idxBarang).val('');
+                    $(".kode").eq(idxBarang).val('');
+                    $(".idStock").eq(idxBarang).val('');
+                    setArrayCode();
+                    if ($(".itemid").eq(idxBarang).val() == "") {
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampil();
+                    }else{
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampil();
+                    }
+                } else if (evt.which <= 90 && evt.which >= 48)
+                {
+                    $(".itemid").eq(idxBarang).val('');
+                    $(".kode").eq(idxBarang).val('');
+                    $(".idStock").eq(idxBarang).val('');
+                    setArrayCode();
+                    if ($(".itemid").eq(idxBarang).val() == "") {
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampil();
+                    }else{
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampil();
+                    }
+                }
+
             });
         });
 
@@ -368,6 +418,95 @@
                 $(".btn-submit").attr("disabled", true);
                 $(".btn-submit").css({"cursor":"not-allowed"});
             }
+        }
+
+        function setArrayCode() {
+            var inputs = document.getElementsByClassName('kode'),
+                code  = [].map.call(inputs, function( input ) {
+                    return input.value.toString();
+                });
+
+            for (var i=0; i < code.length; i++) {
+                if (code[i] != "") {
+                    icode.push(code[i]);
+                }
+            }
+
+            var inpItemid = document.getElementsByClassName( 'itemid' ),
+                item  = [].map.call(inpItemid, function( input ) {
+                    return input.value;
+                });
+
+            $( ".barang" ).autocomplete({
+                source: function( request, response ) {
+                    $.ajax({
+                        url: '{{ url('/marketing/agen/orderproduk/cari-barang') }}',
+                        data: {
+                            idItem: item,
+                            term: $(".barang").eq(idxBarang).val()
+                        },
+                        success: function( data ) {
+                            response( data );
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function(event, data) {
+                    setItem(data.item);
+                }
+            });
+        }
+
+        function updateTotalTampil() {
+            var total = 0;
+
+            var inputs = document.getElementsByClassName('subtotal'),
+                subtotal = [].map.call(inputs, function (input) {
+                    return input.value;
+                });
+
+            for (var i = 0; i < subtotal.length; i++) {
+                total += parseInt(subtotal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", ""));
+            }
+            $("#a_tot_hrg").val(total);
+            if (isNaN(total)) {
+                total = 0;
+            }
+            $("#a_th").val(convertToRupiah(total));
+
+        }
+
+        function setItem(info) {
+            idStock = info.stock
+            idItem = info.data.i_id;
+            namaItem = info.data.i_name;
+            kode = info.data.i_code;
+            $(".kode").eq(idxBarang).val(kode);
+            $(".itemid").eq(idxBarang).val(idItem);
+            $(".idStock").eq(idxBarang).val(idStock);
+            setArrayCode();
+            $.ajax({
+                url: '{{ url('/marketing/agen/orderproduk/get-satuan/') }}'+'/'+idItem,
+                type: 'GET',
+                success: function( resp ) {
+                    $(".satuan").eq(idxBarang).find('option').remove();
+                    var option = '';
+                    option += '<option value="'+resp.id1+'">'+resp.unit1+'</option>';
+                    if (resp.id2 != null && resp.id2 != resp.id1) {
+                        option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                    }
+                    if (resp.id3 != null && resp.id3 != resp.id1) {
+                        option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                    }
+                    $(".satuan").eq(idxBarang).append(option);
+                    if ($(".itemid").eq(idxBarang).val() == "") {
+                        $(".jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".satuan").eq(idxBarang).find('option').remove();
+                    }else{
+                        $(".jumlah").eq(idxBarang).attr("readonly", false);
+                    }
+                }
+            });
         }
     </script>
 @endsection

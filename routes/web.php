@@ -359,7 +359,7 @@ Route::group(['middleware' => 'auth'], function () {
     // End ---
     // End ---
     // Konsinyasi Pusat
-    Route::get('/marketing/konsinyasipusat/index', 'MarketingController@konsinyasimarketing/konsinyasipusat/penempatanproduk/createpusat')->name('konsinyasipusat.index');
+    Route::get('/marketing/konsinyasipusat/index', 'MarketingController@konsinyasipusat')->name('konsinyasipusat.index');
     Route::get('/marketing/konsinyasipusat/get-konsinyasi', 'MarketingController@getKonsinyasi')->name('konsinyasipusat.getData');
     Route::get('/marketing/konsinyasipusat/detail-konsinyasi/{id}/{action}', 'MarketingController@detailKonsinyasi')->name('konsinyasipusat.detail');
     Route::get('/marketing/konsinyasipusat/get-provinsi', 'MarketingController@getProv')->name('konsinyasipusat.getProv');
@@ -433,6 +433,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/orderproduk/get-kota/{idprov}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getKota')->name('orderagenpusat.getkota');
     Route::get('/marketing/agen/orderproduk/cari-penjual/{prov}/{kota}', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariPenjual')->name('orderagenpusat.caripenjual');
     Route::get('/marketing/agen/orderproduk/cari-pembeli/{kode}', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariPembeli')->name('orderagenpusat.caripembeli');
+    Route::get('/marketing/agen/orderproduk/cari-barang', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariBarang')->name('orderagenpusat.caribarang');
+    Route::get('/marketing/agen/orderproduk/get-satuan/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getSatuan')->name('orderagenpusat.getunit');
     Route::get('/marketing/agen/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_orderprodukagenpusat')->name('orderagenpusat.edit');
     // !===================================================== END Marketing =====================================================!
 
