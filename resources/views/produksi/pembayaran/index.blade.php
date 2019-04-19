@@ -103,6 +103,7 @@
             success: function (response) {
                 // console.log(response);
                 $('#detail_history_nota').val(response[0].get_p_o.po_nota);
+                $('#detail_history_supplier_name').val(response[0].get_p_o.get_supplier.s_name);
                 $('#table_detail_history tbody').empty();
                 $.each(response, function (i, val) {
                     termin = val.pop_termin;

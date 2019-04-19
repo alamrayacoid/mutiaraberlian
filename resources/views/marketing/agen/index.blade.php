@@ -241,7 +241,7 @@
   }
 </script>
 
-<!-- kelola penjualan -->
+<!-- kelola penjualan langsung -->
 <script type="text/javascript">
 $(document).ready(function() {
 	cur_date = new Date();
@@ -249,6 +249,12 @@ $(document).ready(function() {
 	last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
 	$('#date_from_kpl').datepicker('setDate', first_day);
 	$('#date_to_kpl').datepicker('setDate', last_day);
+
+	if ($('.current_user_type').val() !== 'E' ) {
+		$('.filter_agent').addClass('d-none');
+	} else {
+		$('.filter_agent').removeClass('d-none');
+	}
 
 	$('#date_from_kpl').on('change', function() {
 		TableListKPL();
@@ -293,9 +299,9 @@ function TableListKPL()
 			type: "get",
 			data: {
 				"_token": "{{ csrf_token() }}",
-				"date_from" : $('#date_from_kpl').val(),
-				"date_to" : $('#date_to_kpl').val(),
-				"agent_code" : $('#filter_agent_code_kpl').val()
+				"date_from": $('#date_from_kpl').val(),
+				"date_to": $('#date_to_kpl').val(),
+				"agent_code": $('#filter_agent_code_kpl').val()
 			}
 		},
 		columns: [

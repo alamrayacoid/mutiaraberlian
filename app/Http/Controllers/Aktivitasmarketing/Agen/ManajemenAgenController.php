@@ -352,8 +352,9 @@ class ManajemenAgenController extends Controller
         $provinsi = DB::table('m_wil_provinsi')
       		->select('m_wil_provinsi.*')
       		->get();
-
-        return view('marketing/agen/index', compact('provinsi'));
+        // get current user
+        $user = Auth::user();
+        return view('marketing/agen/index', compact('provinsi', 'user'));
     }
 
     // Start: Kelola Data Inventory Agen ----------------
@@ -430,10 +431,10 @@ class ManajemenAgenController extends Controller
     */
     public function getListKPL(Request $request)
     {
+        $userType = Auth::user()->u_user;
         $agentCode = $request->agent_code;
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
-        // dd($agentCode);
 
         if ($agentCode !== null) {
             $company = m_company::where('c_user', $agentCode)
@@ -444,10 +445,18 @@ class ManajemenAgenController extends Controller
             ->orderBy('s_date', 'desc')
             ->get();
         } else {
-            $datas = d_sales::whereBetween('s_date', [$from, $to])
-            ->with('getMember')
-            ->orderBy('s_date', 'desc')
-            ->get();
+            if ($userType === 'E') {
+                $datas = d_sales::whereBetween('s_date', [$from, $to])
+                ->with('getMember')
+                ->orderBy('s_date', 'desc')
+                ->get();
+            } else {
+                $datas = d_sales::whereBetween('s_date', [$from, $to])
+                ->where('s_comp', Auth::user()->u_company)
+                ->with('getMember')
+                ->orderBy('s_date', 'desc')
+                ->get();
+            }
         }
 
         return Datatables::of($datas)
@@ -689,9 +698,13 @@ class ManajemenAgenController extends Controller
                 ->with('getUnit3');
         }])
         ->firstOrFail();
-        $data['member'] = m_member::orWhere('m_id', 1)
-        ->orWhere('m_agen', Auth::user()->u_code)
-        ->get();
+        if (Auth::user()->u_user === 'E') {
+            $data['member'] = m_member::get();
+        } else {
+            $data['member'] = m_member::orWhere('m_id', 1)
+            ->orWhere('m_agen', Auth::user()->u_code)
+            ->get();
+        }
         return view('marketing/agen/kelolapenjualan/edit', compact('data'));
     }
     // update selected kpl

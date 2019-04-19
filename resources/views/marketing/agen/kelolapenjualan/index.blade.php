@@ -3,6 +3,7 @@
         <div class="card-header bordered p-2">
             <div class="header-block">
                 <h3 class="title">Kelola Penjualan Langsung</h3>
+                <input type="hidden" class="current_user_type" value="{{ $user->u_user }}">
             </div>
             <div class="header-block pull-right">
                 <a class="btn btn-primary" href="{{ route('kelolapenjualan.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
@@ -22,16 +23,16 @@
                         </div>
                     </div>
 				</div>
-				<div class="col-md-4 col-sm-12" style="padding-right:0px;">
-				<div class="input-group">
-					<input type="text" class="form-control form-control-sm" placeholder="Cari Agen" id="filter_agent_name_kpl" autocomplete="off">
-                    <input type="hidden" id="filter_agent_code_kpl">
-					<button class="btn btn-secondary btn-md" title="Cari Agen" style="border-left:none;" data-toggle="modal" data-target="#searchAgen"><i class="fa fa-search"></i></button>
+				<div class="col-md-4 col-sm-6 filter_agent">
+                    <div class="input-group">
+                        <input type="text" class="form-control form-control-sm" placeholder="Cari Agen" id="filter_agent_name_kpl" autocomplete="off">
+                        <input type="hidden" id="filter_agent_code_kpl">
+                        <button class="btn btn-secondary btn-md" title="Cari Agen" style="border-left:none;" data-toggle="modal" data-target="#searchAgen"><i class="fa fa-search"></i></button>
+                    </div>
 				</div>
-				</div>
-				<div class="col-1">
-					<button class="btn btn-primary btn-md" title="Cari Berdasarkan Filter" id="btn_filter_kpl">Filter</button>
-				</div>
+                <div class="col-md-2 col-sm-6 filter_agent">
+                    <button class="btn btn-primary btn-md" title="Cari Berdasarkan Filter" id="btn_filter_kpl">Filter</button>
+                </div>
 			</div>
                 <div class="table-responsive">
                     <table class="table table-hover table-striped display" cellspacing="0" id="table_kelolapenjualan">

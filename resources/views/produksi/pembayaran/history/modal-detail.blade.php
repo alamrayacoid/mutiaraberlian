@@ -12,7 +12,12 @@
             <div class="form-group row">
                 <label for="detail_history_nota" class="col-sm-2 col-form-label">Nota :</label>
                 <div class="col-sm-10">
-                    <input type="text" readonly class="form-control-plaintext" style="font-weight: bold; text-align: left;" id="detail_history_nota" value="email@example.com">
+                    <input type="text" readonly class="form-control-plaintext" style="font-weight: bold; text-align: left;" id="detail_history_nota">
+                </div>
+
+                <label for="detail_history_supplier_name" class="col-sm-2 col-form-label">Supplier :</label>
+                <div class="col-sm-10">
+                    <input type="text" readonly class="form-control-plaintext" style="font-weight: bold; text-align: left;" id="detail_history_supplier_name">
                 </div>
             </div>
 

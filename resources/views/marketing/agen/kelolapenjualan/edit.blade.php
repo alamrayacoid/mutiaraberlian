@@ -113,7 +113,7 @@
                                                         </td>
                                                         <td><input name="itemQty[]" type="text" min="0" value="{{ $data['kpl']->getSalesDt[0]->sd_qty }}" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem(0)"></td>
                                                         <td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" value="{{ (int)$data['kpl']->getSalesDt[0]->sd_value }}" onchange="sumSubTotalItem(0)"></td>
-                                                        <td><input name="itemSubTotal[]" type="text" value="{{ (int)$data['kpl']->getSalesDt[0]->sd_value }}" class="form-control form-control-sm rupiah item-sub-total" readonly></td>
+                                                        <td><input name="itemSubTotal[]" type="text" value="{{ (int)$data['kpl']->getSalesDt[0]->sd_totalnet }}" class="form-control form-control-sm rupiah item-sub-total" readonly></td>
                                                         <td><button type="button" class="btn btn-sm btn-success btn-tambahp rounded-circle"><i class="fa fa-plus"></i></button></td>
                                                     </tr>
                                                     @foreach($data['kpl']->getSalesDt as $index => $salesDt)
@@ -161,7 +161,7 @@
                                                             <input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" value="{{ (int)$salesDt->sd_value }}" onchange="sumSubTotalItem({{ $index }})">
                                                         </td>
                                                         <td>
-                                                            <input name="itemSubTotal[]" type="text" value="{{ (int)$salesDt->sd_value }}" class="form-control form-control-sm rupiah item-sub-total" readonly>
+                                                            <input name="itemSubTotal[]" type="text" value="{{ (int)$salesDt->sd_totalnet }}" class="form-control form-control-sm rupiah item-sub-total" readonly>
                                                         </td>
                                                         <td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>
                                                     </tr>
@@ -315,7 +315,6 @@ function getItemStock(rowIndex)
             } else {
                 $('.item-stock').eq(rowIndex).val(response.s_qty);
                 $('.item-owner').eq(rowIndex).val(response.s_comp);
-                // displayPrice(rowIndex);
             }
         },
         error : function(e){
@@ -392,8 +391,6 @@ function submitForm()
             if(response.status == 'berhasil')
             {
                 messageSuccess('Berhasil', 'Penjualan berhasil ditambahkan !');
-                // resetAllInput();
-                // $('#modal_bayar').modal('hide');
             }
             else if (response.status == 'invalid')
             {
