@@ -14,4 +14,7 @@ use Illuminate\Http\Request;
 */
 Route::middleware('auth:api')->group(function () {
     Route::post('logout', 'mobile\loginController@logout');
+
+    //penerimaan barang
+    Route::post('penerimaan-barang/get-data-penerimaan', 'mobile\PenerimaanBarangController@getData');
 });
