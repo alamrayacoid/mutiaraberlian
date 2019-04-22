@@ -11,4 +11,9 @@ class m_member extends Model
     const CREATED_AT = 'm_insert';
     const UPDATED_AT = 'm_update';
 
+    public function getAgent()
+    {
+        return $this->belongsTo('App\m_agen', 'm_agen', 'a_code');
+    }
+
 }

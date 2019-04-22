@@ -17,4 +17,8 @@ class m_priceclassdt extends Model
         ->where('pcd_detailid', '=', $this->getAttribute('pcd_detailid'));
         return $query;
     }
+    public function getItem()
+    {
+        return $this->belongsTo('App\m_item', 'pcd_item', 'i_id');
+    }
 }

@@ -10,6 +10,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Auth;
 use App\d_sales;
 use App\d_salesdt;
+use App\d_salesprice;
 use App\d_stock;
 use App\m_agen;
 use App\m_company;
@@ -539,12 +540,20 @@ class ManajemenAgenController extends Controller
     // show page to create new KPL
     public function createKPL()
     {
+        $data['user'] = Auth::user()->u_user;
+        $data['agents'] = m_agen::get();
         $data['member'] = m_member::orWhere('m_id', 1)
             ->orWhere('m_agen', Auth::user()->u_code)
             ->get();
-
-        // dd($data['member']);
         return view('marketing/agen/kelolapenjualan/create', compact('data'));
+    }
+    // get member for KPL if the user is Employee, not Agent
+    public function getMemberKPL(Request $request)
+    {
+        $members = m_member::where('m_id', 1)
+        ->orWhere('m_agen', $request->agentCode)
+        ->get();
+        return response()->json($members);
     }
     // get items using autocomple.js
     public function findItem(Request $request)
@@ -591,19 +600,26 @@ class ManajemenAgenController extends Controller
         }
         return response()->json();
     }
-    // ---------------------------------------------------------
-    // get price (need to be repaired, changed table and system)
+    // get price
     public function getPrice(Request $request)
     {
+        if (Auth::user()->u_user === 'E') {
+            $agent = m_agen::where('a_code', $request->agentCode)
+            ->first();
+        } else {
+            $agent = m_agen::where('a_code', Auth::user()->u_code)
+            ->first();
+        }
+
         $itemId = $request->itemId;
         $unitId = $request->unitId;
-        $price = m_priceclass::where('pc_id', 1)
-            ->with(['getPriceClassDt' => function($query) use ($itemId, $unitId) {
+        $price = d_salesprice::where('sp_id', $agent->a_salesprice)
+            ->with(['getSalesPriceDt' => function($query) use ($itemId, $unitId) {
                 $query
-                    ->where('pcd_item', $itemId)
-                    ->where('pcd_unit', $unitId)
-                    ->where('pcd_type', 'R')
-                    ->where('pcd_payment', 'C')
+                    ->where('spd_item', $itemId)
+                    ->where('spd_unit', $unitId)
+                    ->where('spd_type', 'U')
+                    ->where('spd_payment', 'C')
                     ->first();
                 }])
             ->first();
@@ -621,6 +637,7 @@ class ManajemenAgenController extends Controller
                 'message' => $errors
             ]);
         }
+
         DB::beginTransaction();
         try {
             // start insert data
@@ -690,6 +707,9 @@ class ManajemenAgenController extends Controller
     // edit selected kpl
     public function editKPL($id)
     {
+        $data['user'] = Auth::user();
+        $data['agents'] = m_agen::get();
+
         $data['kpl'] = d_sales::where('s_id', $id)
         ->with(['getSalesDt.getItem' => function($query) {
             $query
@@ -697,7 +717,23 @@ class ManajemenAgenController extends Controller
                 ->with('getUnit2')
                 ->with('getUnit3');
         }])
+        ->with('getMember.getAgent')
         ->firstOrFail();
+        // get item stock
+        $data['item-stock'] = array();
+        foreach ($data['kpl']->getSalesDt as $item) {
+            $request = new Request;
+            $request->replace(['itemId' => $item->sd_item]);
+            $stock = $this->getItemStock($request);
+            array_push($data['item-stock'], $stock->original->s_qty);
+        }
+        // prevent null value for getAgent
+        if ($data['kpl']->getMember->getAgent === null) {
+            $data['kpl-agent'] = 0;
+        } else {
+            $data['kpl-agent'] = $data['kpl']->getMember->getAgent->a_code;
+        }
+
         if (Auth::user()->u_user === 'E') {
             $data['member'] = m_member::get();
         } else {
@@ -705,12 +741,12 @@ class ManajemenAgenController extends Controller
             ->orWhere('m_agen', Auth::user()->u_code)
             ->get();
         }
+        
         return view('marketing/agen/kelolapenjualan/edit', compact('data'));
     }
     // update selected kpl
     public function updateKPL(Request $request, $id)
     {
-        // dd($request->all());
         // validate request
         $isValidRequest = $this->validate_req($request);
         if ($isValidRequest != '1') {
@@ -732,9 +768,9 @@ class ManajemenAgenController extends Controller
             $sales->s_total = (int)$request->total;
             $sales->s_user = Auth::user()->u_id;
             $sales->save();
-
             // rollback mutasi-sales which is updated
             $mutasi = Mutasi::rollback($sales->s_nota);
+
             // delete all item from this sales in sales-dt
             $sales->getSalesDt()->delete();
 

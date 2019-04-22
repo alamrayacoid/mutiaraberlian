@@ -14,14 +14,14 @@ class m_item extends Model
 
     public function getUnit1()
     {
-      return $this->belongsTo('App\m_unit', 'i_unit1', 'u_id');
+        return $this->belongsTo('App\m_unit', 'i_unit1', 'u_id');
     }
     public function getUnit2()
     {
-      return $this->belongsTo('App\m_unit', 'i_unit2', 'u_id');
+        return $this->belongsTo('App\m_unit', 'i_unit2', 'u_id');
     }
     public function getUnit3()
     {
-      return $this->belongsTo('App\m_unit', 'i_unit3', 'u_id');
+        return $this->belongsTo('App\m_unit', 'i_unit3', 'u_id');
     }
 }

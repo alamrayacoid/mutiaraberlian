@@ -35,6 +35,20 @@
                         <div class="card-block">
                             <section>
                                 <div id="sectionsuplier" class="row">
+                                    <div class="col-md-2 col-sm-6 col-xs-12 select-agent">
+                                        <label>Agen</label>
+                                    </div>
+                                    <div class="col-md-10 col-sm-6 col-xs-12 select-agent">
+                                        <div class="form-group">
+                                            <input type="hidden" value="{{ $data['user'] }}" id="user">
+                                            <select name="agent" id="agent" class="form-control form-control-sm select2">
+                                                <option value="" selected disabled>Pilih Agent</option>
+                                                @foreach($data['agents'] as $agent)
+                                                <option value="{{ $agent->a_code }}">{{ $agent->a_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
 
                                     <div class="col-md-2 col-sm-6 col-xs-12">
                                         <label>Member</label>
@@ -85,7 +99,7 @@
                                                             <input type="hidden" class="item-unitcmp" name="itemUnitCmp[]">
                                                         </td>
                                                         <td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem(0)"></td>
-                                                        <td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" onchange="sumSubTotalItem(0)"></td>
+                                                        <td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>
                                                         <td><input name="itemSubTotal[]" type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>
                                                         <td><button type="button" class="btn btn-sm btn-success btn-tambahp rounded-circle"><i class="fa fa-plus"></i></button></td>
                                                     </tr>
@@ -120,6 +134,18 @@ $(document).ready(function()
 {
     initFunction();
 
+    if ($('#user').val() === 'E') {
+        $('.select-agent').removeClass('d-none');
+        $('#table_create').addClass('d-none');
+    } else {
+        $('.select-agent').addClass('d-none');
+        $('#table_create').removeClass('d-none');
+    }
+    $('#agent').on('change', function() {
+        $('#table_create').removeClass('d-none');
+        getMember();
+    });
+
     $(document).on('click', '.btn-hapus', function(){
         $(this).parents('tr').remove();
         sumTotalBruto();
@@ -135,7 +161,7 @@ $(document).ready(function()
             '<td><input type="text" class="form-control form-control-sm find-item" name="termToFind"><input name="itemListId[]" type="hidden" class="item-id"><input type="hidden" class="item-stock"><input type="hidden" class="item-owner" name="itemOwner[]"></td>'+
             '<td><select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="setUnitCmp('+ (rowLength - 1) +')"></select><input type="hidden" class="item-unitcmp" name="itemUnitCmp[]"></td>'+
             '<td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem('+ (rowLength - 1) +')"></td>'+
-            '<td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" onchange="sumSubTotalItem('+ (rowLength - 1) +')"></td>'+
+            '<td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>'+
             '<td><input name="itemSubTotal[]" type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>'+
             '<td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+
             '</tr>'
@@ -194,6 +220,35 @@ function initFunction()
     });
 }
 
+// get member based on agent (used for Employee-Login)
+function getMember()
+{
+    $.ajax({
+        data : {
+            "agentCode": $('#agent').val()
+        },
+        type : "get",
+        url : "{{ route('kelolapenjualan.getMemberKPL') }}",
+        dataType : 'json',
+        success : function (response){
+            if (! $.trim(response)) {
+                messageFailed('Perhatian', 'Tidak ada member terdaftar !');
+            } else {
+                let optMember = '';
+                $.each(response, function(index, val) {
+                    optMember += '<option value="'+ val.m_code +'">'+ val.m_name +'</option>';
+                })
+                $('#member').find('option').remove();
+                $('#member').append(optMember);
+                $('#member').selectedIndex = 0;
+            }
+        },
+        error : function(e){
+            console.error(e.message);
+        }
+    });
+}
+
 // find-item autocomplete in rowIndex
 function findItem(rowIndex)
 {
@@ -215,6 +270,35 @@ function findItem(rowIndex)
             $('.item-id').eq(rowIndex).val(data.item.data.i_id);
             getItemStock(rowIndex);
             appendOptSatuan(rowIndex, data.item.data);
+            getItemPrice(rowIndex);
+        }
+    });
+}
+
+// get item price
+function getItemPrice(rowIndex)
+{
+    $.ajax({
+        data : {
+            "itemId": $('.item-id').eq(rowIndex).val(),
+            "unitId": $('.satuan').eq(rowIndex).val(),
+            "agentCode": $('#agent').val()
+        },
+        type : "get",
+        url : "{{ route('kelolapenjualan.getPrice') }}",
+        dataType : 'json',
+        success : function (response){
+            if (! $.trim(response.get_sales_price_dt[0])) {
+                messageFailed('Perhatian', 'Harga item tidak ditemukan !');
+                $('.item-price').eq(rowIndex).val(0);
+            } else {
+                itemPrice = parseInt(response.get_sales_price_dt[0].spd_price);
+                $('.item-price').eq(rowIndex).val(itemPrice);
+            }
+            sumSubTotalItem(rowIndex);
+        },
+        error : function(e){
+            console.error(e);
         }
     });
 }
@@ -267,19 +351,24 @@ function setUnitCmp(rowIndex)
     let selectedOpt = $('.satuan').eq(rowIndex).find('option:selected');
     unitcmp = selectedOpt.data('unitcmp');
     $('.item-unitcmp').eq(rowIndex).val(unitcmp);
-    sumSubTotalItem(rowIndex);
+    getItemPrice(rowIndex);
 }
 
 // sum sub-total item in a row
 function sumSubTotalItem(rowIndex)
 {
     qty = parseInt($('.item-qty').eq(rowIndex).val());
+    qty_stock = parseInt($('.item-stock').eq(rowIndex).val());
     price = parseInt($('.item-price').eq(rowIndex).val());
     unitcmp = parseInt($('.item-unitcmp').eq(rowIndex).val());
 
     if (qty < 0 || isNaN(qty)) {
         qty = 0;
         $('.item-qty').eq(rowIndex).val(0)
+    } else if (qty > qty_stock) {
+        qty = qty_stock;
+        $('.item-qty').eq(rowIndex).val(qty);
+        messageWarning('Perhatian', 'Stock tersisa: ' + qty_stock);
     }
 
     qtyUnit1 = qty * unitcmp;

@@ -15,9 +15,5 @@ class m_priceclass extends Model
     {
         return $this->hasMany('App\m_priceclassdt', 'pcd_classprice', 'pc_id');
     }
-    public function getItem()
-    {
-        return $this->belongsTo('App\m_item', 'pcd_item', 'i_id');
-    }
 
 }
