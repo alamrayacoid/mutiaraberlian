@@ -331,6 +331,10 @@ function showDetailPenjualan(idPenjualan)
 			'id': idPenjualan
 		},
 		success: function(response) {
+			console.log(response);
+			$('#detail_kpl_nota').val(response.s_nota);
+			$('#detail_kpl_member_name').val(response.get_member.m_name);
+			$('#detail_kpl_total').val(parseInt(response.s_total));
 			$('#table_detail_kelola tbody').empty();
 			$.each(response.get_sales_dt, function(key, val) {
 				$('#table_detail_kelola > tbody:last-child').append('<tr><td>'+ val.get_item.i_name +'</td><td>'+ val.get_unit.u_name +'</td><td class="digits">'+ parseInt(val.sd_qty) +'</td><td class="rupiah">'+ parseInt(val.sd_value) +'</td><td class="rupiah">'+ parseInt(val.sd_totalnet) +'</td></tr>');
@@ -342,6 +346,17 @@ function showDetailPenjualan(idPenjualan)
 		        autoGroup: true,
 		        prefix: ' Rp ', //Space after $, this will not truncate the first character.
 		        rightAlign: true,
+		        autoUnmask: true,
+		        nullable: false,
+		        // unmaskAsNumber: true,
+		    });
+			$('.rupiah-x').inputmask("currency", {
+		        radixPoint: ",",
+		        groupSeparator: ".",
+		        digits: 2,
+		        autoGroup: true,
+		        prefix: ' Rp ', //Space after $, this will not truncate the first character.
+		        rightAlign: false,
 		        autoUnmask: true,
 		        nullable: false,
 		        // unmaskAsNumber: true,

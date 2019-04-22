@@ -308,7 +308,8 @@ function getItemStock(rowIndex)
 {
     $.ajax({
         data : {
-            "itemId": $('.item-id').eq(rowIndex).val()
+            "itemId": $('.item-id').eq(rowIndex).val(),
+            "agentCode": $('#agent').val()
         },
         type : "get",
         url : "{{ route('kelolapenjualan.getItemStock') }}",

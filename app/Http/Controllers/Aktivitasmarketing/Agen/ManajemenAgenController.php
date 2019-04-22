@@ -12,6 +12,7 @@ use App\d_sales;
 use App\d_salesdt;
 use App\d_salesprice;
 use App\d_stock;
+use App\d_username;
 use App\m_agen;
 use App\m_company;
 use App\m_item;
@@ -509,6 +510,7 @@ class ManajemenAgenController extends Controller
         $detail = d_sales::where('s_id', $request->id)
         ->with('getSalesDt.getItem')
         ->with('getSalesDt.getUnit')
+        ->with('getMember')
         ->first();
         return response()->json($detail);
     }
@@ -592,9 +594,17 @@ class ManajemenAgenController extends Controller
     // get stock
     public function getItemStock(Request $request)
     {
-        $stock = d_stock::where('s_item', $request->itemId)
+        if ($request->agentCode !== null) {
+            $position = d_username::where('u_code', $request->agentCode)
+            ->first();
+            $stock = d_stock::where('s_item', $request->itemId)
+            ->where('s_position', $position->u_company)
+            ->first();
+        } else {
+            $stock = d_stock::where('s_item', $request->itemId)
             ->where('s_position', Auth::user()->u_company)
             ->first();
+        }
         if ($stock !== null) {
             return response()->json($stock);
         }
@@ -719,19 +729,22 @@ class ManajemenAgenController extends Controller
         }])
         ->with('getMember.getAgent')
         ->firstOrFail();
-        // get item stock
-        $data['item-stock'] = array();
-        foreach ($data['kpl']->getSalesDt as $item) {
-            $request = new Request;
-            $request->replace(['itemId' => $item->sd_item]);
-            $stock = $this->getItemStock($request);
-            array_push($data['item-stock'], $stock->original->s_qty);
-        }
         // prevent null value for getAgent
         if ($data['kpl']->getMember->getAgent === null) {
             $data['kpl-agent'] = 0;
         } else {
             $data['kpl-agent'] = $data['kpl']->getMember->getAgent->a_code;
+        }
+        // get item stock
+        $data['item-stock'] = array();
+        foreach ($data['kpl']->getSalesDt as $item) {
+            $request = new Request;
+            $request->replace([
+                'agentCode' => $data['kpl-agent'],
+                'itemId' => $item->sd_item
+            ]);
+            $stock = $this->getItemStock($request);
+            array_push($data['item-stock'], $stock->original->s_qty);
         }
 
         if (Auth::user()->u_user === 'E') {
@@ -741,7 +754,7 @@ class ManajemenAgenController extends Controller
             ->orWhere('m_agen', Auth::user()->u_code)
             ->get();
         }
-        
+
         return view('marketing/agen/kelolapenjualan/edit', compact('data'));
     }
     // update selected kpl
@@ -758,9 +771,8 @@ class ManajemenAgenController extends Controller
         }
         DB::beginTransaction();
         try {
-            // start insert data
+            // start update data
             $sales = d_sales::where('s_id', $id)->first();
-            // dd($sales);
             $sales->s_comp = Auth::user()->u_company;
             $sales->s_member = $request->member;
             $sales->s_type = 'C';
