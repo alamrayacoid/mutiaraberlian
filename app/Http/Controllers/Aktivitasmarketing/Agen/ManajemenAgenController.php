@@ -470,7 +470,7 @@ class ManajemenAgenController extends Controller
             return $datas->getMember['m_name'];
         })
         ->addColumn('total', function($datas) {
-            return 'Rp '. number_format($datas->s_total, '2', ',', '.');
+            return '<div class="text-right">Rp '. number_format($datas->s_total, '2', ',', '.') .'</div>';
         })
         ->addColumn('action', function($datas) {
             return
@@ -480,7 +480,7 @@ class ManajemenAgenController extends Controller
             <button class="btn btn-danger btn-delete" type="button" title="Delete" onclick="deleteDetailPenjualan('. $datas->s_id .')"><i class="fa fa-trash"></i></button>
             </div>';
         })
-        ->rawColumns(['customer', 'staff', 'action'])
+        ->rawColumns(['date', 'member', 'total', 'action'])
         ->make(true);
     }
     // get list-cities based on province-id

@@ -39,10 +39,10 @@
                         <thead class="bg-primary">
                             <tr>
                                 <th width="10%">No</th>
-                                <th width="10%">Tanggal</th>
-                                <th width="25%">Nota</th>
-                                <th width="30%">Member</th>
-                                <th width="15%">Total</th>
+                                <th width="15%">Tanggal</th>
+                                <th width="20%">Nota</th>
+                                <th width="20%">Member</th>
+                                <th width="20%">Total</th>
                                 <th width="10%">Aksi</th>
                             </tr>
                         </thead>
