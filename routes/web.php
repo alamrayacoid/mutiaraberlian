@@ -433,7 +433,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/orderproduk/get-provinsi', 'Aktivitasmarketing\Agen\ManajemenAgenController@getProv')->name('orderagenpusat.getprovinsi');
     Route::get('/marketing/agen/orderproduk/get-kota/{idprov}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getKota')->name('orderagenpusat.getkota');
     Route::get('/marketing/agen/orderproduk/cari-penjual/{prov}/{kota}', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariPenjual')->name('orderagenpusat.caripenjual');
+    Route::get('/marketing/agen/orderproduk/get-penjual/{prov}/{kota}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getPenjual')->name('orderagenpusat.getpenjual');
     Route::get('/marketing/agen/orderproduk/cari-pembeli/{kode}', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariPembeli')->name('orderagenpusat.caripembeli');
+    Route::get('/marketing/agen/orderproduk/get-pembeli/{kode}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getPembeli')->name('orderagenpusat.getpembeli');
     Route::get('/marketing/agen/orderproduk/cari-barang', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariBarang')->name('orderagenpusat.caribarang');
     Route::get('/marketing/agen/orderproduk/get-satuan/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getSatuan')->name('orderagenpusat.getunit');
     Route::get('/marketing/agen/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_orderprodukagenpusat')->name('orderagenpusat.edit');

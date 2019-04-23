@@ -150,33 +150,13 @@
         $(document).ready(function(){
             getProvAgen();
             getKotaAgen();
+            getAPJAgen();
+            changeAPJAgen();
+            changeAPBAgen();
             changeSatuanAgen();
             changeJumlahAgen();
             changeHargaAgen();
             visibleTableItemAgen();
-
-            $("#a_kota").on("change", function (evt) {
-                evt.preventDefault();
-                if ($("#a_kota").val() == "") {
-                    $("#a_idapj").val('');
-                    $("#a_kodeapj").val('');
-                    $("#a_compapj").val('');
-                    $("#a_apj").val('');
-                    $("#a_idapb").val('');
-                    $("#a_kodeapb").val('');
-                    $("#a_compapb").val('');
-                    $("#a_apb").val('');
-                    $("#a_apj").attr("disabled", true);
-                    $("#a_apb").attr("disabled", true);
-                } else {
-                    $("#a_apj").attr("disabled", false);
-                    $("#a_idapj").val('');
-                    $("#a_kodeapj").val('');
-                    $("#a_compapj").val('');
-                    $("#a_apj").val('');
-                    $("#a_apj").focus();
-                }
-            })
 
             if ($('#select-order').val() == "1") {
                 $('#agen').removeClass('d-none');
@@ -209,82 +189,82 @@
                 }
             });
 
-            $("#a_apj").on("keyup", function (evt) {
-                evt.preventDefault();
-                if (evt.which == 8 || evt.which == 46)
-                {
-                    $("#a_idapj").val('');
-                    $("#a_kodeapj").val('');
-                    $("#a_compapj").val('');
-                    $("#a_apb").attr("disabled", true);
-                } else if (evt.which <= 90 && evt.which >= 48)
-                {
-                    $("#a_idapj").val('');
-                    $("#a_kodeapj").val('');
-                    $("#a_compapj").val('');
-                    $("#a_apb").attr("disabled", true);
-                }
-
-            })
-
-            $( "#a_apj" ).autocomplete({
-                source: function( request, response ) {
-                    $.ajax({
-                        url: baseUrl+'/marketing/agen/orderproduk/cari-penjual/'+$("#a_prov").val()+'/'+$("#a_kota").val(),
-                        data: {
-                            term: $( "#a_apj" ).val()
-                        },
-                        success: function( data ) {
-                            response( data );
-                        }
-                    });
-                },
-                minLength: 1,
-                select: function(event, data) {
-                    $( "#a_idapj" ).val(data.item.id);
-                    $( "#a_kodeapj" ).val(data.item.kode);
-                    $("#a_apb").attr("disabled", false);
-                    $("#a_apb").focus();
-                }
-            });
-
-            $("#a_apb").on("keyup", function (evt) {
-                evt.preventDefault();
-                if (evt.which == 8 || evt.which == 46)
-                {
-                    $("#a_idapb").val('');
-                    $("#a_kodeapb").val('');
-                    $("#a_compapb").val('');
-                    visibleTableItemAgen();
-                } else if (evt.which <= 90 && evt.which >= 48)
-                {
-                    $("#a_idapb").val('');
-                    $("#a_kodeapb").val('');
-                    $("#a_compapb").val('');
-                    visibleTableItemAgen();
-                }
-
-            })
-
-            $( "#a_apb" ).autocomplete({
-                source: function( request, response ) {
-                    $.ajax({
-                        url: baseUrl+'/marketing/agen/orderproduk/cari-pembeli/'+$("#a_kodeapj").val(),
-                        data: {
-                            term: $( "#a_apb" ).val()
-                        },
-                        success: function( data ) {
-                            response( data );
-                        }
-                    });
-                },
-                minLength: 1,
-                select: function(event, data) {
-                    $( "#a_idapb" ).val(data.item.id);
-                    $( "#a_kodeapb" ).val(data.item.kode);
-                    visibleTableItemAgen();
-                }
-            });
+            // $("#a_apj").on("keyup", function (evt) {
+            //     evt.preventDefault();
+            //     if (evt.which == 8 || evt.which == 46)
+            //     {
+            //         $("#a_idapj").val('');
+            //         $("#a_kodeapj").val('');
+            //         $("#a_compapj").val('');
+            //         $("#a_apb").attr("disabled", true);
+            //     } else if (evt.which <= 90 && evt.which >= 48)
+            //     {
+            //         $("#a_idapj").val('');
+            //         $("#a_kodeapj").val('');
+            //         $("#a_compapj").val('');
+            //         $("#a_apb").attr("disabled", true);
+            //     }
+            //
+            // })
+            //
+            // $( "#a_apj" ).autocomplete({
+            //     source: function( request, response ) {
+            //         $.ajax({
+            //             url: baseUrl+'/marketing/agen/orderproduk/cari-penjual/'+$("#a_prov").val()+'/'+$("#a_kota").val(),
+            //             data: {
+            //                 term: $( "#a_apj" ).val()
+            //             },
+            //             success: function( data ) {
+            //                 response( data );
+            //             }
+            //         });
+            //     },
+            //     minLength: 1,
+            //     select: function(event, data) {
+            //         $( "#a_idapj" ).val(data.item.id);
+            //         $( "#a_kodeapj" ).val(data.item.kode);
+            //         $("#a_apb").attr("disabled", false);
+            //         $("#a_apb").focus();
+            //     }
+            // });
+            //
+            // $("#a_apb").on("keyup", function (evt) {
+            //     evt.preventDefault();
+            //     if (evt.which == 8 || evt.which == 46)
+            //     {
+            //         $("#a_idapb").val('');
+            //         $("#a_kodeapb").val('');
+            //         $("#a_compapb").val('');
+            //         visibleTableItemAgen();
+            //     } else if (evt.which <= 90 && evt.which >= 48)
+            //     {
+            //         $("#a_idapb").val('');
+            //         $("#a_kodeapb").val('');
+            //         $("#a_compapb").val('');
+            //         visibleTableItemAgen();
+            //     }
+            //
+            // })
+            //
+            // $( "#a_apb" ).autocomplete({
+            //     source: function( request, response ) {
+            //         $.ajax({
+            //             url: baseUrl+'/marketing/agen/orderproduk/cari-pembeli/'+$("#a_kodeapj").val(),
+            //             data: {
+            //                 term: $( "#a_apb" ).val()
+            //             },
+            //             success: function( data ) {
+            //                 response( data );
+            //             }
+            //         });
+            //     },
+            //     minLength: 1,
+            //     select: function(event, data) {
+            //         $( "#a_idapb" ).val(data.item.id);
+            //         $( "#a_kodeapb" ).val(data.item.kode);
+            //         visibleTableItemAgen();
+            //     }
+            // });
 
             $('.barang').on('click', function(e){
                 e.preventDefault();
@@ -362,6 +342,19 @@
                 evt.preventDefault();
                 $("#a_kota").find('option').remove();
                 $("#a_kota").attr("disabled", true);
+                $("#a_idapj").val('');
+                $("#a_kodeapj").val('');
+                $("#a_compapj").val('');
+                $("#a_apj").val('');
+                $("#a_idapb").val('');
+                $("#a_kodeapb").val('');
+                $("#a_compapb").val('');
+                $("#a_apb").val('');
+                $("#a_apj").find('option').remove();
+                $("#a_apj").attr("disabled", true);
+                $("#a_apb").find('option').remove();
+                $("#a_apb").attr("disabled", true);
+                visibleTableItemAgen();
                 if ($("#a_prov").val() != "") {
                     loadingShow();
                     axios.get(baseUrl+'/marketing/agen/orderproduk/get-kota/'+$("#a_prov").val())
@@ -390,8 +383,128 @@
                     $("#a_kodeapb").val('');
                     $("#a_compapb").val('');
                     $("#a_apb").val('');
+                    $("#a_apj").find('option').remove();
                     $("#a_apj").attr("disabled", true);
+                    $("#a_apb").find('option').remove();
                     $("#a_apb").attr("disabled", true);
+                    visibleTableItemAgen();
+                }
+            })
+        }
+
+        function getAPJAgen() {
+            $("#a_kota").on("change", function (evt) {
+                evt.preventDefault();
+                $("#a_idapj").val('');
+                $("#a_kodeapj").val('');
+                $("#a_compapj").val('');
+                $("#a_apj").val('');
+                $("#a_idapb").val('');
+                $("#a_kodeapb").val('');
+                $("#a_compapb").val('');
+                $("#a_apb").val('');
+                $("#a_apj").find('option').remove();
+                $("#a_apj").attr("disabled", true);
+                $("#a_apb").find('option').remove();
+                $("#a_apb").attr("disabled", true);
+                visibleTableItemAgen();
+                if ($("#a_prov").val() != "" && $("#a_kota").val() != "") {
+                    loadingShow();
+                    axios.get(baseUrl+'/marketing/agen/orderproduk/get-penjual/'+$("#a_prov").val()+'/'+$("#a_kota").val())
+                        .then(function (resp) {
+                            $("#a_apj").attr("disabled", false);
+                            var option = '<option value="">Pilih Agen Penjual</option>';
+                            var penjual = resp.data;
+                            penjual.forEach(function (data) {
+                                option += '<option value="'+data.a_id+'" data-code="'+data.a_code+'" data-comp="'+data.c_id+'">'+data.a_name+'</option>';
+                            })
+                            $("#a_apj").append(option);
+                            loadingHide();
+                            $("#a_apj").focus();
+                            $("#a_apj").select2('open');
+                        })
+                        .catch(function (error) {
+                            loadingHide();
+                            messageWarning("Error", error)
+                        })
+                } else if ($("#a_prov").val() == "" && $("#a_kota").val() == "") {
+                    $("#a_idapj").val('');
+                    $("#a_kodeapj").val('');
+                    $("#a_compapj").val('');
+                    $("#a_apj").val('');
+                    $("#a_idapb").val('');
+                    $("#a_kodeapb").val('');
+                    $("#a_compapb").val('');
+                    $("#a_apb").val('');
+                    $("#a_apj").find('option').remove();
+                    $("#a_apj").attr("disabled", true);
+                    $("#a_apb").find('option').remove();
+                    $("#a_apb").attr("disabled", true);
+                    visibleTableItemAgen();
+                }
+            })
+        }
+
+        function changeAPJAgen() {
+            $("#a_apj").on("change", function(evt){
+                evt.preventDefault();
+                var id  = $(this).val();
+                var kode = $(this).select2().find(":selected").data("code");
+                var comp = $(this).select2().find(":selected").data("comp");
+                if (id != "") {
+                    $("#a_idapj").val(id);
+                    $("#a_kodeapj").val(kode);
+                    $("#a_compapj").val(comp);
+                    loadingShow();
+                    $("#a_apb").find('option').remove();
+                    axios.get(baseUrl+'/marketing/agen/orderproduk/get-pembeli/'+$("#a_kodeapj").val())
+                        .then(function (resp) {
+                            $("#a_apb").attr("disabled", false);
+                            var option = '<option value="">Pilih Agen Pembeli</option>';
+                            var pembeli = resp.data;
+                            pembeli.forEach(function (data) {
+                                option += '<option value="'+data.a_id+'" data-code="'+data.a_code+'" data-comp="'+data.c_id+'">'+data.a_name+'</option>';
+                            })
+                            $("#a_apb").append(option);
+                            loadingHide();
+                            $("#a_apb").focus();
+                            $("#a_apb").select2('open');
+                        })
+                        .catch(function (error) {
+                            loadingHide();
+                            messageWarning("Error", error)
+                        })
+                        .done(function () {
+                            visibleTableItemAgen();
+                        })
+                } else {
+                    $("#a_idapj").val('');
+                    $("#a_kodeapj").val('');
+                    $("#a_compapj").val('');
+                    $("#a_apb").find('option').remove();
+                    $("#a_apb").attr("disabled", true);
+                    visibleTableItemAgen();
+                }
+            })
+        }
+
+        function changeAPBAgen() {
+            $("#a_apb").on("change", function(evt){
+                evt.preventDefault();
+                var id  = $(this).val();
+                var kode = $(this).select2().find(":selected").data("code");
+                var comp = $(this).select2().find(":selected").data("comp");
+
+                if (id != "") {
+                    $("#a_idapb").val(id);
+                    $("#a_kodeapb").val(kode);
+                    $("#a_compapb").val(comp);
+                    visibleTableItemAgen();
+                } else {
+                    $("#a_idapb").val('');
+                    $("#a_kodeapb").val('');
+                    $("#a_compapb").val('');
+                    visibleTableItemAgen();
                 }
             })
         }
