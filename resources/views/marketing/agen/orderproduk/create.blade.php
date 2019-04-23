@@ -158,29 +158,6 @@
             changeHargaAgen();
             visibleTableItemAgen();
 
-            $("#a_kota").on("change", function (evt) {
-                evt.preventDefault();
-                if ($("#a_kota").val() == "") {
-                    $("#a_idapj").val('');
-                    $("#a_kodeapj").val('');
-                    $("#a_compapj").val('');
-                    $("#a_apj").val('');
-                    $("#a_idapb").val('');
-                    $("#a_kodeapb").val('');
-                    $("#a_compapb").val('');
-                    $("#a_apb").val('');
-                    $("#a_apj").attr("disabled", true);
-                    $("#a_apb").attr("disabled", true);
-                } else {
-                    $("#a_apj").attr("disabled", false);
-                    $("#a_idapj").val('');
-                    $("#a_kodeapj").val('');
-                    $("#a_compapj").val('');
-                    $("#a_apj").val('');
-                    $("#a_apj").focus();
-                }
-            })
-
             if ($('#select-order').val() == "1") {
                 $('#agen').removeClass('d-none');
                 $('#cabang').addClass('d-none');
