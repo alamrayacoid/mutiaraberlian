@@ -101,7 +101,6 @@
                                                         <td>
                                                             <input type="text"  class="form-control form-control-sm find-item" name="termToFind" value="{{ $data['kpl']->getSalesDt[0]->getItem->i_code }} - {{ $data['kpl']->getSalesDt[0]->getItem->i_name }}">
                                                             <input name="itemListId[]" type="hidden" class="item-id" value="{{ $data['kpl']->getSalesDt[0]->sd_item }}">
-                                                            <input type="hidden" class="item-stock" value="{{ $data['item-stock'][0] }}">
                                                             <input type="hidden" class="item-owner" name="itemOwner[]" value="{{ $data['kpl']->getSalesDt[0]->sd_comp }}">
                                                         </td>
                                                         <td>
@@ -144,7 +143,6 @@
                                                         <td>
                                                             <input type="text"  class="form-control form-control-sm find-item" name="termToFind" value="{{ $salesDt->getItem->i_code }} - {{ $salesDt->getItem->i_name }}">
                                                             <input name="itemListId[]" type="hidden" class="item-id" value="{{ $salesDt->sd_item }}">
-                                                            <input type="hidden" class="item-stock" value="{{ $data['item-stock'][$index] }}">
                                                             <input type="hidden" class="item-owner" name="itemOwner[]" value="{{ $salesDt->sd_comp }}">
                                                         </td>
                                                         <td>
@@ -238,7 +236,7 @@ $(document).ready(function()
         $('#table_create tbody')
         .append(
             '<tr>'+
-            '<td><input type="text" class="form-control form-control-sm find-item" name="termToFind"><input name="itemListId[]" type="hidden" class="item-id"><input type="hidden" class="item-stock"><input type="hidden" class="item-owner" name="itemOwner[]"></td>'+
+            '<td><input type="text" class="form-control form-control-sm find-item" name="termToFind"><input name="itemListId[]" type="hidden" class="item-id"><input type="hidden" class="item-owner" name="itemOwner[]"></td>'+
             '<td><select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="setUnitCmp('+ (rowLength - 1) +')"></select><input type="hidden" class="item-unitcmp" name="itemUnitCmp[]"></td>'+
             '<td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem('+ (rowLength - 1) +')"></td>'+
             '<td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>'+
@@ -290,7 +288,6 @@ function initFunction()
         // clear row input
         $('.find-item').eq(rowIndex).val('');
         $('.item-id').eq(rowIndex).val('');
-        $('.item-stock').eq(rowIndex).val('');
         $('.item-owner').eq(rowIndex).val('');
         $('.satuan').eq(rowIndex).find('option').remove();
         $('.item-qty').eq(rowIndex).val('');
@@ -348,7 +345,6 @@ function findItem(rowIndex)
         minLength: 1,
         select: function(event, data) {
             $('.item-id').eq(rowIndex).val(data.item.data.i_id);
-            getItemStock(rowIndex);
             appendOptSatuan(rowIndex, data.item.data);
             getItemPrice(rowIndex);
         }
@@ -369,7 +365,7 @@ function getItemPrice(rowIndex)
         success : function (response){
             if (! $.trim(response.get_sales_price_dt[0])) {
                 messageFailed('Perhatian', 'Harga item tidak ditemukan !');
-                $('.item-price').eq(rowIndex).val(0);
+                $('.find-item').eq(rowIndex).trigger('click');
             } else {
                 itemPrice = parseInt(response.get_sales_price_dt[0].spd_price);
                 $('.item-price').eq(rowIndex).val(itemPrice);
@@ -381,34 +377,6 @@ function getItemPrice(rowIndex)
         }
     });
 }
-
-// get item stock
-function getItemStock(rowIndex)
-{
-    $.ajax({
-        data : {
-            "itemId": $('.item-id').eq(rowIndex).val()
-        },
-        type : "get",
-        url : "{{ route('kelolapenjualan.getItemStock') }}",
-        dataType : 'json',
-        success : function (response){
-            if (! $.trim(response)) {
-                messageFailed('Perhatian', 'Stock item tidak ditemukan !');
-                $('.find-item').eq(rowIndex).trigger('click');
-                $('.item-stock').eq(rowIndex).val('');
-                $('.item-owner').eq(rowIndex).val('');
-            } else {
-                $('.item-stock').eq(rowIndex).val(response.s_qty);
-                $('.item-owner').eq(rowIndex).val(response.s_comp);
-            }
-        },
-        error : function(e){
-            console.error(e);
-        }
-    });
-}
-
 // append option to select in rowIndex
 function appendOptSatuan(rowIndex, item)
 {
@@ -437,17 +405,12 @@ function setUnitCmp(rowIndex)
 function sumSubTotalItem(rowIndex)
 {
     qty = parseInt($('.item-qty').eq(rowIndex).val());
-    qty_stock = parseInt($('.item-stock').eq(rowIndex).val());
     price = parseInt($('.item-price').eq(rowIndex).val());
     unitcmp = parseInt($('.item-unitcmp').eq(rowIndex).val());
 
     if (qty < 0 || isNaN(qty)) {
         qty = 0;
         $('.item-qty').eq(rowIndex).val(0)
-    } else if (qty > qty_stock) {
-        qty = qty_stock;
-        $('.item-qty').eq(rowIndex).val(qty);
-        messageWarning('Perhatian', 'Stock tersisa: ' + qty_stock);
     }
 
     qtyUnit1 = qty * unitcmp;
@@ -481,7 +444,7 @@ function submitForm()
         success : function (response){
             if(response.status == 'berhasil')
             {
-                messageSuccess('Berhasil', 'Penjualan berhasil ditambahkan !');
+                messageSuccess('Berhasil', 'Penjualan berhasil diperbarui !');
             }
             else if (response.status == 'invalid')
             {
@@ -497,7 +460,7 @@ function submitForm()
             });
         },
         error : function(e){
-            messageWarning('Gagal', 'Data gagal ditambahkan, hubungi pengembang !');
+            messageWarning('Gagal', 'Data gagal diperbarui, hubungi pengembang !');
             // activate btn_simpan once again
             $('#btn_simpan').one('click', function() {
                 submitForm();

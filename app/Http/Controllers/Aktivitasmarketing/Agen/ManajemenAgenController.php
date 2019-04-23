@@ -591,25 +591,6 @@ class ManajemenAgenController extends Controller
         }
         return response()->json($results);
     }
-    // get stock
-    public function getItemStock(Request $request)
-    {
-        if ($request->agentCode !== null) {
-            $position = d_username::where('u_code', $request->agentCode)
-            ->first();
-            $stock = d_stock::where('s_item', $request->itemId)
-            ->where('s_position', $position->u_company)
-            ->first();
-        } else {
-            $stock = d_stock::where('s_item', $request->itemId)
-            ->where('s_position', Auth::user()->u_company)
-            ->first();
-        }
-        if ($stock !== null) {
-            return response()->json($stock);
-        }
-        return response()->json();
-    }
     // get price
     public function getPrice(Request $request)
     {
@@ -664,12 +645,35 @@ class ManajemenAgenController extends Controller
             $sales->s_user = Auth::user()->u_id;
             $sales->save();
 
+            // get item-position based on agent-code
+            if (Auth::user()->u_user === 'E') {
+                $agent = d_username::where('u_code', $request->agent)->first();
+            } else {
+                $agent = Auth::user();
+            }
+
             for ($i=0; $i < sizeof($request->itemListId); $i++) {
+                // get itemStock based on position and item-id
+                $stock = $this->getItemStock($agent->u_company, $request->itemListId[$i]);
+                ($stock === null) ? $itemStock = 0 : $itemStock = $stock->s_qty;
+
+                // is stock sufficient ?
+                if ($stock === null || $stock->s_qty < $request->itemQty[$i]) {
+                    DB::rollback();
+                    // get detail item name
+                    $item = m_item::where('i_id', $request->itemListId[$i])->first();
+                    return response()->json([
+                        'status' => 'invalid',
+                        'message' => 'Stock item '. $item->i_name .' tidak mencukupi. Stock tersedia: '. $itemStock
+                    ]);
+                }
+
+                // start insert sales-detail (each item)
                 $salesDtId = d_salesdt::where('sd_sales', $salesId)->max('sd_detailid') + 1;
                 $salesDt = new d_salesdt();
                 $salesDt->sd_sales = $salesId;
                 $salesDt->sd_detailid = $salesDtId;
-                $salesDt->sd_comp = $request->itemOwner[$i];
+                $salesDt->sd_comp = $stock->s_comp;
                 $salesDt->sd_item = $request->itemListId[$i];
                 $salesDt->sd_qty = (int)$request->itemQty[$i];
                 $salesDt->sd_unit = $request->itemUnit[$i];
@@ -685,13 +689,13 @@ class ManajemenAgenController extends Controller
 
                 // mutasi keluar
                 $mutasi = Mutasi::mutasikeluarcustomsell(
-                    14,
-                    $request->itemOwner[$i],
-                    Auth::user()->u_company,
-                    $request->itemListId[$i],
-                    $itemQtyUnitBase,
-                    $salesNota,
-                    $request->itemPrice[$i]
+                    14, // mutcat
+                    $stock->s_comp, // item-owner
+                    $stock->s_position, // item-position
+                    $request->itemListId[$i], // item-id
+                    $itemQtyUnitBase, // item-qty in smallest unit
+                    $salesNota, // nota
+                    $request->itemPrice[$i] // item-price
                 );
                 if ($mutasi !== true) {
                     DB::rollback();
@@ -714,6 +718,14 @@ class ManajemenAgenController extends Controller
             ]);
         }
     }
+    // getITemStock
+    public function getItemStock($position, $itemId)
+    {
+        $stock = d_stock::where('s_item', $itemId)
+        ->where('s_position', $position)
+        ->first();
+        return $stock;
+    }
     // edit selected kpl
     public function editKPL($id)
     {
@@ -734,17 +746,6 @@ class ManajemenAgenController extends Controller
             $data['kpl-agent'] = 0;
         } else {
             $data['kpl-agent'] = $data['kpl']->getMember->getAgent->a_code;
-        }
-        // get item stock
-        $data['item-stock'] = array();
-        foreach ($data['kpl']->getSalesDt as $item) {
-            $request = new Request;
-            $request->replace([
-                'agentCode' => $data['kpl-agent'],
-                'itemId' => $item->sd_item
-            ]);
-            $stock = $this->getItemStock($request);
-            array_push($data['item-stock'], $stock->original->s_qty);
         }
 
         if (Auth::user()->u_user === 'E') {
@@ -776,7 +777,6 @@ class ManajemenAgenController extends Controller
             $sales->s_comp = Auth::user()->u_company;
             $sales->s_member = $request->member;
             $sales->s_type = 'C';
-            // $sales->s_date = Carbon::now('Asia/Jakarta');
             $sales->s_total = (int)$request->total;
             $sales->s_user = Auth::user()->u_id;
             $sales->save();
@@ -786,12 +786,33 @@ class ManajemenAgenController extends Controller
             // delete all item from this sales in sales-dt
             $sales->getSalesDt()->delete();
 
+            // get item-position based on agent-code
+            if (Auth::user()->u_user === 'E') {
+                $agent = d_username::where('u_code', $request->agent)->first();
+            } else {
+                $agent = Auth::user();
+            }
             for ($i=0; $i < sizeof($request->itemListId); $i++) {
+                // get itemStock based on position and item-id
+                $stock = $this->getItemStock($agent->u_company, $request->itemListId[$i]);
+                ($stock === null) ? $itemStock = 0 : $itemStock = $stock->s_qty;
+                // is stock sufficient ?
+                if ($stock === null || $stock->s_qty < $request->itemQty[$i]) {
+                    DB::rollback();
+                    // get detail item name
+                    $item = m_item::where('i_id', $request->itemListId[$i])->first();
+                    return response()->json([
+                        'status' => 'invalid',
+                        'message' => 'Stock item '. $item->i_name .' tidak mencukupi. Stock tersedia: '. $itemStock
+                    ]);
+                }
+
+                // start update sales-detail
                 $salesDtId = d_salesdt::where('sd_sales', $sales->s_id)->max('sd_detailid') + 1;
                 $salesDt = new d_salesdt();
                 $salesDt->sd_sales = $sales->s_id;
                 $salesDt->sd_detailid = $salesDtId;
-                $salesDt->sd_comp = $request->itemOwner[$i];
+                $salesDt->sd_comp = $stock->s_comp;
                 $salesDt->sd_item = $request->itemListId[$i];
                 $salesDt->sd_qty = (int)$request->itemQty[$i];
                 $salesDt->sd_unit = $request->itemUnit[$i];
@@ -808,8 +829,8 @@ class ManajemenAgenController extends Controller
                 // mutasi keluar
                 $mutasi = Mutasi::mutasikeluarcustomsell(
                     14,
-                    $request->itemOwner[$i],
-                    Auth::user()->u_company,
+                    $stock->s_comp,
+                    $stock->s_position,
                     $request->itemListId[$i],
                     $itemQtyUnitBase,
                     $sales->s_nota,

@@ -235,7 +235,8 @@ class Mutasi extends Controller
 
     // it's the same function as mutasikeluar, but there is additional parameter
     // that is $sellprice -> selling price (used in mng-agent: kelola-pjl-lgs)
-    static function mutasikeluarcustomsell($mutcat, $comp, $position, $item, $qty, $nota, $sellprice){
+    static function mutasikeluarcustomsell($mutcat, $comp, $position, $item, $qty, $nota, $sellprice)
+    {
       DB::beginTransaction();
       try {
 
