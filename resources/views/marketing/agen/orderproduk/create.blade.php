@@ -30,34 +30,35 @@
                                 <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
                             </div>
                         </div>
+                        <form id="formManagemenAgen" method="post">{{ csrf_field() }}
+                            <div class="card-block">
+                                <section>
 
-                        <div class="card-block">
-                            <section>
+                                    <div class="row">
 
-                                <div class="row">
-
-                                    <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Order Ke</label>
-                                    </div>
-
-                                    <div class="col-md-10 col-sm-6 col-xs-12">
-                                        <div class="form-group">
-                                            <select name="" id="select-order" class="form-control form-control-sm select2">
-                                                <option value="0">Pilih</option>
-                                                <option value="1">Agen</option>
-                                                <option value="2">Cabang</option>
-                                            </select>
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>Order Ke</label>
                                         </div>
+
+                                        <div class="col-md-10 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <select name="" id="select-order" class="form-control form-control-sm select2">
+                                                    <option value="0">Pilih</option>
+                                                    <option value="1">Agen</option>
+                                                    <option value="2">Cabang</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        @include('marketing.agen.orderproduk.agen')
+                                        @include('marketing.agen.orderproduk.cabang')
                                     </div>
-                                    @include('marketing.agen.orderproduk.agen')
-                                    @include('marketing.agen.orderproduk.cabang')
-                                </div>
-                            </section>
-                        </div>
-                        <div class="card-footer text-right">
-                            <button class="btn btn-primary btn-submit" type="button">Simpan</button>
-                            <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary">Kembali</a>
-                        </div>
+                                </section>
+                            </div>
+                            <div class="card-footer text-right">
+                                <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+                                <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary">Kembali</a>
+                            </div>
+                        </form>
                     </div>
 
                 </div>
@@ -510,15 +511,149 @@
         }
 
         function changeSatuanAgen() {
-            //
+            $(".satuan").on("change", function (evt) {
+                var idx = $('.satuan').index(this);
+                var jumlah = $('.jumlah').eq(idx).val();
+                if (jumlah == "") {
+                    jumlah = null;
+                }
+                axios.get(baseUrl+'/marketing/agen/orderproduk/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
+                    .then(function (resp) {
+                        $(".jumlah").eq(idx).val(resp.data);
+
+                        var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                            jumlah  = [].map.call(inpJumlah, function( input ) {
+                                return parseInt(input.value);
+                            });
+
+                        var inpHarga = document.getElementsByClassName( 'harga' ),
+                            harga  = [].map.call(inpHarga, function( input ) {
+                                return input.value;
+                            });
+
+                        for (var i = 0; i < jumlah.length; i++) {
+                            var hasil = 0;
+                            var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                            var jml = jumlah[i];
+
+                            if (jml == "") {
+                                jml = 0;
+                            }
+
+                            hasil += parseInt(hrg) * parseInt(jml);
+
+                            if (isNaN(hasil)) {
+                                hasil = 0;
+                            }
+                            hasil = convertToRupiah(hasil);
+                            $(".subtotal").eq(i).val(hasil);
+
+                        }
+                        updateTotalTampil();
+                    })
+                    .catch(function (error) {
+                        messageWarning("Error", error);
+                    })
+            })
         }
 
         function changeJumlahAgen() {
-            //
+            $(".jumlah").on('input', function (evt) {
+                var idx = $('.jumlah').index(this);
+                var jumlah = $('.jumlah').eq(idx).val();
+                if (jumlah == "") {
+                    jumlah = null;
+                }
+                axios.get(baseUrl+'/marketing/agen/orderproduk/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
+                    .then(function (resp) {
+                        $(".jumlah").eq(idx).val(resp.data);
+
+                        var tmp_jumlah = $('.jumlah').eq(idx).val();
+
+                        axios.get(baseUrl+'/marketing/agen/orderproduk/cek-harga/'+$("#a_kodeapb").val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+tmp_jumlah)
+                            .then(function (res) {
+                                var price = res.data;
+
+                                if (isNaN(price)) {
+                                    price = 0;
+                                }
+                                if (price == 0) {
+                                    $('.unknow').eq(idx).css('display', 'block');
+                                } else {
+                                    $('.unknow').eq(idx).css('display', 'none');
+                                }
+                                $('.harga').eq(idx).val(convertToRupiah(price));
+
+                                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                                        return parseInt(input.value);
+                                    });
+
+                                var inpHarga = document.getElementsByClassName( 'harga' ),
+                                    harga  = [].map.call(inpHarga, function( input ) {
+                                        return input.value;
+                                    });
+
+                                for (var i = 0; i < jumlah.length; i++) {
+                                    var hasil = 0;
+                                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                                    var jml = jumlah[i];
+
+                                    if (jml == "") {
+                                        jml = 0;
+                                    }
+
+                                    hasil += parseInt(hrg) * parseInt(jml);
+
+                                    if (isNaN(hasil)) {
+                                        hasil = 0;
+                                    }
+                                    hasil = convertToRupiah(hasil);
+                                    $(".subtotal").eq(i).val(hasil);
+
+                                }
+                                updateTotalTampil();
+                            })
+
+
+                    })
+                    .catch(function (error) {
+                        messageWarning("Error", error);
+                    })
+            })
         }
 
         function changeHargaAgen() {
-            //
+            $(".harga").on('keyup', function (evt) {
+                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                        return parseInt(input.value);
+                    });
+
+                var inpHarga = document.getElementsByClassName( 'harga' ),
+                    harga  = [].map.call(inpHarga, function( input ) {
+                        return input.value;
+                    });
+
+                for (var i = 0; i < harga.length; i++) {
+                    var hasil = 0;
+                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                    var jml = jumlah[i];
+
+                    if (jml == "") {
+                        jml = 0;
+                    }
+
+                    hasil += parseInt(hrg) * parseInt(jml);
+
+                    if (isNaN(hasil)) {
+                        hasil = 0;
+                    }
+                    hasil = convertToRupiah(hasil);
+                    $(".subtotal").eq(i).val(hasil);
+                }
+                updateTotalTampil();
+            })
         }
 
         function visibleTableItemAgen() {

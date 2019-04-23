@@ -438,6 +438,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/orderproduk/get-pembeli/{kode}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getPembeli')->name('orderagenpusat.getpembeli');
     Route::get('/marketing/agen/orderproduk/cari-barang', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariBarang')->name('orderagenpusat.caribarang');
     Route::get('/marketing/agen/orderproduk/get-satuan/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getSatuan')->name('orderagenpusat.getunit');
+    Route::get('/marketing/agen/orderproduk/cek-stok/{stock}/{item}/{satuan}/{qty}', 'Aktivitasmarketing\Agen\ManajemenAgenController@checkStock')->name('orderagenpusat.checkstock');
+    Route::get('/marketing/agen/orderproduk/cek-harga/{konsigner}/{item}/{unit}/{qty}', 'Aktivitasmarketing\Agen\ManajemenAgenController@checkHarga')->name('orderagenpusat.checkharga');
     Route::get('/marketing/agen/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_orderprodukagenpusat')->name('orderagenpusat.edit');
     // !===================================================== END Marketing =====================================================!
 
