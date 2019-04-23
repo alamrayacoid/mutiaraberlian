@@ -190,83 +190,6 @@
                 }
             });
 
-            // $("#a_apj").on("keyup", function (evt) {
-            //     evt.preventDefault();
-            //     if (evt.which == 8 || evt.which == 46)
-            //     {
-            //         $("#a_idapj").val('');
-            //         $("#a_kodeapj").val('');
-            //         $("#a_compapj").val('');
-            //         $("#a_apb").attr("disabled", true);
-            //     } else if (evt.which <= 90 && evt.which >= 48)
-            //     {
-            //         $("#a_idapj").val('');
-            //         $("#a_kodeapj").val('');
-            //         $("#a_compapj").val('');
-            //         $("#a_apb").attr("disabled", true);
-            //     }
-            //
-            // })
-            //
-            // $( "#a_apj" ).autocomplete({
-            //     source: function( request, response ) {
-            //         $.ajax({
-            //             url: baseUrl+'/marketing/agen/orderproduk/cari-penjual/'+$("#a_prov").val()+'/'+$("#a_kota").val(),
-            //             data: {
-            //                 term: $( "#a_apj" ).val()
-            //             },
-            //             success: function( data ) {
-            //                 response( data );
-            //             }
-            //         });
-            //     },
-            //     minLength: 1,
-            //     select: function(event, data) {
-            //         $( "#a_idapj" ).val(data.item.id);
-            //         $( "#a_kodeapj" ).val(data.item.kode);
-            //         $("#a_apb").attr("disabled", false);
-            //         $("#a_apb").focus();
-            //     }
-            // });
-            //
-            // $("#a_apb").on("keyup", function (evt) {
-            //     evt.preventDefault();
-            //     if (evt.which == 8 || evt.which == 46)
-            //     {
-            //         $("#a_idapb").val('');
-            //         $("#a_kodeapb").val('');
-            //         $("#a_compapb").val('');
-            //         visibleTableItemAgen();
-            //     } else if (evt.which <= 90 && evt.which >= 48)
-            //     {
-            //         $("#a_idapb").val('');
-            //         $("#a_kodeapb").val('');
-            //         $("#a_compapb").val('');
-            //         visibleTableItemAgen();
-            //     }
-            //
-            // })
-            //
-            // $( "#a_apb" ).autocomplete({
-            //     source: function( request, response ) {
-            //         $.ajax({
-            //             url: baseUrl+'/marketing/agen/orderproduk/cari-pembeli/'+$("#a_kodeapj").val(),
-            //             data: {
-            //                 term: $( "#a_apb" ).val()
-            //             },
-            //             success: function( data ) {
-            //                 response( data );
-            //             }
-            //         });
-            //     },
-            //     minLength: 1,
-            //     select: function(event, data) {
-            //         $( "#a_idapb" ).val(data.item.id);
-            //         $( "#a_kodeapb" ).val(data.item.kode);
-            //         visibleTableItemAgen();
-            //     }
-            // });
-
             $('.barang').on('click', function(e){
                 e.preventDefault();
                 idxBarang = $('.barang').index(this);
@@ -314,6 +237,16 @@
                     }
                 }
 
+            });
+
+            $('.btn-tambah-agen').on('click', function () {
+                tambahAgen();
+            });
+
+            $(document).on('click', '.btn-hapus-agen', function () {
+                $(this).parents('tr').remove();
+                updateTotalTampil();
+                setArrayCode();
             });
         });
 
@@ -755,6 +688,92 @@
                     }
                 }
             });
+        }
+
+        function tambahAgen() {
+            var row = '';
+            row = '<tr>' +
+                '<td><input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"><input type="hidden" name="idStock[]" class="idStock"></td>'+
+                '<td>'+
+                '<select name="satuan[]" class="form-control form-control-sm select2 satuan">'+
+                '</select>'+
+                '</td>'+
+                '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>'+
+                '<td><input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="Rp. 0" readonly><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>'+
+                '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
+                '<td>'+
+                '<button class="btn btn-danger btn-hapus btn-hapus-agen btn-sm" type="button">'+
+                '<i class="fa fa-remove" aria-hidden="true"></i>'+
+                '</button>'+
+                '</td>'+
+                '</tr>';
+            $('#table_agen tbody').append(row);
+            changeSatuanAgen();
+            changeJumlahAgen();
+            changeHargaAgen();
+
+            $('.select2').select2({
+                theme: "bootstrap",
+                dropdownAutoWidth: true,
+                width: '100%'
+            });
+
+            $('.barang').on('click', function(e){
+                idxBarang = $('.barang').index(this);
+                setArrayCode();
+            });
+
+            $(".barang").on("keyup", function (evt) {
+                if (evt.which == 8 || evt.which == 46)
+                {
+                    $(".itemid").eq(idxBarang).val('');
+                    $(".kode").eq(idxBarang).val('');
+                    $(".idStock").eq(idxBarang).val('');
+                    setArrayCode();
+                    if ($(".itemid").eq(idxBarang).val() == "") {
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampil();
+                    }else{
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampil();
+                    }
+                } else if (evt.which <= 90 && evt.which >= 48)
+                {
+                    $(".itemid").eq(idxBarang).val('');
+                    $(".kode").eq(idxBarang).val('');
+                    $(".idStock").eq(idxBarang).val('');
+                    setArrayCode();
+                    if ($(".itemid").eq(idxBarang).val() == "") {
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampil();
+                    }else{
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampil();
+                    }
+                }
+            });
+
+            setArrayCode();
+
+            $('.input-rupiah').maskMoney({
+                thousands: ".",
+                precision: 0,
+                decimal: ",",
+                prefix: "Rp. "
+            });
+            updateTotalTampil();
         }
     </script>
 @endsection
