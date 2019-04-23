@@ -24,6 +24,7 @@ use DB;
 use Carbon\Carbon;
 use CodeGenerator;
 use Currency;
+use Mockery\Exception;
 use Mutasi;
 use Response;
 use Validator;
@@ -133,7 +134,8 @@ class ManajemenAgenController extends Controller
         }
 
         $cari = $request->term;
-        $comp = Auth::user()->u_company;
+//        $comp = Auth::user()->u_company;
+        $comp = $request->comp;
         if(count($is_item) == 0){
             $nama = DB::table('m_item')
                 ->join('d_stock', function ($s) use ($comp){
@@ -361,6 +363,35 @@ class ManajemenAgenController extends Controller
         }
 
         return Response::json(number_format($harga, 0, '', ''));
+    }
+
+    public function simpanOrderProduk(Request $request)
+    {
+        $data    = $request->all();
+
+        if ($data['select_order'] == "1") {
+            $po_id = (DB::table('d_productorder')->max('po_id')) ? DB::table('d_productorder')->max('po_id') + 1 : 1;
+            $penjual = $data['a_compapj'];
+            $pembeli = $data['a_compapb'];
+            $date   = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+            $nota   = CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-');
+            $status = "P";
+
+            DB::beginTransaction();
+            try{
+                DB::commit();
+                return Response::json([
+                    'status' => "Success",
+                    'message'=> "Data berhasil disimpan"
+                ]);
+            }catch (Exception $e){
+                DB::rollBack();
+                return Response::json([
+                    'status' => "Failed",
+                    'message'=> $e
+                ]);
+            }
+        }
     }
 
     public function create_orderprodukagencabang()

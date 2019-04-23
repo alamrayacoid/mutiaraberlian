@@ -42,7 +42,7 @@
 
                                         <div class="col-md-10 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <select name="" id="select-order" class="form-control form-control-sm select2">
+                                                <select name="select_order" id="select-order" class="form-control form-control-sm select2">
                                                     <option value="0">Pilih</option>
                                                     <option value="1">Agen</option>
                                                     <option value="2">Cabang</option>
@@ -615,6 +615,7 @@
                         url: '{{ url('/marketing/agen/orderproduk/cari-barang') }}',
                         data: {
                             idItem: item,
+                            comp: $("#a_compapj").val(),
                             term: $(".barang").eq(idxBarang).val()
                         },
                         success: function( data ) {
