@@ -72,73 +72,6 @@
 @endsection
 
 @section('extra_script')
-    {{--<script type="text/javascript">--}}
-        {{--$(document).ready(function(){--}}
-            {{--$('#type_cus').change(function(){--}}
-                {{--if($(this).val() === 'kontrak'){--}}
-                    {{--$('#label_type_cus').text('Jumlah Bulan');--}}
-                    {{--$('#jumlah_hari_bulan').val('');--}}
-                    {{--$('#pagu').val('');--}}
-                    {{--$('#armada').prop('selectedIndex', 0).trigger('change');--}}
-                {{--} else if($(this).val() === 'harian'){--}}
-                    {{--$('#label_type_cus').text('Jumlah Hari');--}}
-                    {{--$('#armada').prop('selectedIndex', 0).trigger('change');--}}
-                    {{--$('#pagu').val('');--}}
-                    {{--$('#jumlah_hari_bulan').val('');--}}
-                {{--} else {--}}
-                    {{--$('#jumlah_hari_bulan').val('');--}}
-                    {{--$('#armada').prop('selectedIndex', 0).trigger('change');--}}
-                    {{--$('#pagu').val('');--}}
-                {{--}--}}
-            {{--});--}}
-
-            {{--$(document).on('click', '.btn-hapus-agen', function(){--}}
-                {{--$(this).parents('tr').remove();--}}
-            {{--});--}}
-
-            {{--$('.btn-tambah-agen').on('click',function(){--}}
-                {{--$('#table_agen')--}}
-                    {{--.append(--}}
-                        {{--'<tr>'+--}}
-                        {{--'<td><input type="text" class="form-control form-control-sm"></td>'+--}}
-                        {{--'<td><select name="#" id="#" class="form-control form-control-sm select2"><option value=""></option></select></td>'+--}}
-                        {{--'<td><input type="number" class="form-control form-control-sm" value="0"></td>'+--}}
-                        {{--'<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+--}}
-                        {{--'<td><input type="text" class="form-control form-control-sm" readonly=""></td>'+--}}
-                        {{--'<td><button class="btn btn-danger btn-hapus-agen btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+--}}
-                        {{--'</tr>'--}}
-                    {{--);--}}
-            {{--});--}}
-
-            {{--$(document).on('click', '.btn-hapus-cabang', function(){--}}
-                {{--$(this).parents('tr').remove();--}}
-            {{--});--}}
-
-            {{--$('.btn-tambah-cabang').on('click',function(){--}}
-                {{--$('#table_cabang')--}}
-                    {{--.append(--}}
-                        {{--'<tr>'+--}}
-                        {{--'<td><input type="text" class="form-control form-control-sm"></td>'+--}}
-                        {{--'<td><select name="#" id="#" class="form-control form-control-sm select2"><option value=""></option></select></td>'+--}}
-                        {{--'<td><input type="number" class="form-control form-control-sm" value="0"></td>'+--}}
-                        {{--'<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+--}}
-                        {{--'<td><input type="text" class="form-control form-control-sm" readonly=""></td>'+--}}
-                        {{--'<td><button class="btn btn-danger btn-hapus-cabang btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+--}}
-                        {{--'</tr>'--}}
-                    {{--);--}}
-            {{--});--}}
-            {{--$(document).on('click', '.btn-submit', function(){--}}
-                {{--$.toast({--}}
-                    {{--heading: 'Success',--}}
-                    {{--text: 'Data Berhasil di Simpan',--}}
-                    {{--bgColor: '#00b894',--}}
-                    {{--textColor: 'white',--}}
-                    {{--loaderBg: '#55efc4',--}}
-                    {{--icon: 'success'--}}
-                {{--})--}}
-            {{--})--}}
-        {{--});--}}
-    {{--</script>--}}
     <script type="text/javascript">
         var idStock = [];
         var idItem = [];
@@ -248,6 +181,64 @@
                 updateTotalTampil();
                 setArrayCode();
             });
+
+            function checkForm() {
+                var inpItemid = document.getElementsByClassName( 'itemid' ),
+                    item  = [].map.call(inpItemid, function( input ) {
+                        return input.value;
+                    });
+                var inpHarga = document.getElementsByClassName( 'harga' ),
+                    harga  = [].map.call(inpHarga, function( input ) {
+                        return input.value;
+                    });
+                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                        return parseInt(input.value);
+                    });
+
+                for (var i=0; i < item.length; i++) {
+                    if (item[i] == "" || harga[i] == "Rp. 0" || jumlah[i] == 0) {
+                        return "cek form";
+                        break;
+                    } else {
+                        checkitem = "true";
+                        continue;
+                    }
+                }
+                return checkitem;
+            }
+
+            $(document).on('click', '.btn-submit', function (evt) {
+                evt.preventDefault();
+                if (checkForm() == "cek form") {
+                    messageWarning('Peringatan', 'Lengkapi data order produk ke agen/cabang');
+                } else {
+                    $.confirm({
+                        animation: 'RotateY',
+                        closeAnimation: 'scale',
+                        animationBounce: 1.5,
+                        icon: 'fa fa-exclamation-triangle',
+                        title: 'Konfirmasi!',
+                        content: 'Apakah anda yakin akan menyimpan data order produk ke agen/cabang ini?',
+                        theme: 'disable',
+                        buttons: {
+                            info: {
+                                btnClass: 'btn-blue',
+                                text: 'Ya',
+                                action: function () {
+                                    simpan();
+                                }
+                            },
+                            cancel: {
+                                text: 'Tidak',
+                                action: function () {
+                                    // tutup confirm
+                                }
+                            }
+                        }
+                    });
+                }
+            })
         });
 
         function getProvAgen() {
@@ -774,6 +765,27 @@
                 prefix: "Rp. "
             });
             updateTotalTampil();
+        }
+
+        function simpan() {
+            loadingShow();
+            var data = $('#formManagemenAgen').serialize();
+            axios.post('{{ route('penempatanproduk.add') }}', data)
+                .then(function (response){
+                    if(response.data.status == 'Success'){
+                        loadingHide();
+                        messageSuccess("Berhasil", response.data.message);
+                        setInterval(function(){location.reload();}, 3500)
+                    }else{
+                        loadingHide();
+                        messageFailed("Gagal", response.data.message);
+                    }
+
+                })
+                .catch(function (error) {
+                    loadingHide();
+                    messageWarning("Error", error);
+                })
         }
     </script>
 @endsection
