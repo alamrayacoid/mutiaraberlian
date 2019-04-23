@@ -36,6 +36,15 @@ class ManajemenAgenController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    public function getPembeli($kode)
+    {
+        $data = DB::table('m_agen')
+            ->join('m_company', 'a_code', '=', 'c_user')
+            ->where('a_parent', '=', $kode)
+            ->get();
+        return Response::json($data);
+    }
+
     public function cariPembeli(Request $request, $kode)
     {
         $cari = $request->term;
@@ -61,6 +70,16 @@ class ManajemenAgenController extends Controller
             }
         }
         return Response::json($results);
+    }
+
+    public function getPenjual($prov = null, $kota = null)
+    {
+        $data = DB::table('m_agen')
+            ->join('m_company', 'a_code', '=', 'c_user')
+            ->where('m_agen.a_provinsi', '=', $prov)
+            ->where('m_agen.a_kabupaten', '=', $kota)
+            ->get();
+        return Response::json($data);
     }
 
     public function cariPenjual(Request $request, $prov = null, $kota = null)
