@@ -461,7 +461,7 @@ class MarketingController extends Controller
                 })
                 ->select(DB::raw('DATE_FORMAT(sc_date, "%d-%m-%Y") AS tanggal'),
                     DB::raw("CONCAT(m_wil_provinsi.wp_name, ' - ', m_wil_kota.wc_name) as area"),
-                    'd_salescomp.sc_nota as nota', 'm_company.c_name as konsigner', 'd_sales.s_type as tipe',
+                    'd_salescomp.sc_nota as nota', 'm_company.c_name as konsigner', 'd_salescomp.sc_type as tipe',
                     DB::raw("CONCAT('Rp. ',FORMAT(d_salescomp.sc_total, 0, 'de_DE')) as total"))
                 ->first();
 
