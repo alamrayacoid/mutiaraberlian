@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1c8b318e-c138-400d-afca-6445ceb3fae0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/mobile/PenerimaanBarangController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/mobile/PenerimaanBarangController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
-    </list>
+    <list default="true" id="1c8b318e-c138-400d-afca-6445ceb3fae0" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <ignored path="$PROJECT_DIR$/.idea/" />
     <ignored path="$PROJECT_DIR$/vendor/barryvdh/laravel-ide-helper/" />
@@ -623,14 +620,7 @@
       <workItem from="1555398400404" duration="3824000" />
       <workItem from="1555657151167" duration="1145000" />
       <workItem from="1555669064612" duration="613000" />
-      <workItem from="1556001528477" duration="3550000" />
-    </task>
-    <task id="LOCAL-00114" summary="mutiara">
-      <created>1554434975352</created>
-      <option name="number" value="00114" />
-      <option name="presentableId" value="LOCAL-00114" />
-      <option name="project" value="LOCAL" />
-      <updated>1554434975352</updated>
+      <workItem from="1556001528477" duration="3968000" />
     </task>
     <task id="LOCAL-00115" summary="mutiara">
       <created>1554436994720</created>
@@ -968,11 +958,18 @@
       <option name="project" value="LOCAL" />
       <updated>1555669350679</updated>
     </task>
-    <option name="localTasksCounter" value="163" />
+    <task id="LOCAL-00163" summary="roliz">
+      <created>1556013808069</created>
+      <option name="number" value="00163" />
+      <option name="presentableId" value="LOCAL-00163" />
+      <option name="project" value="LOCAL" />
+      <updated>1556013808070</updated>
+    </task>
+    <option name="localTasksCounter" value="164" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="476088000" />
+    <option name="totallyTimeSpent" value="476506000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="0" width="1368" height="740" extended-state="6" />
