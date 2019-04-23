@@ -314,6 +314,7 @@ class ManajemenAgenController extends Controller
             $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
             if ($x == true) {
                 $idx = $key;
+                break;
             }
         }
         return $idx;

@@ -399,7 +399,7 @@
                             loadingHide();
                             messageWarning("Error", error)
                         })
-                        .done(function () {
+                        .then(function () {
                             visibleTableItemAgen();
                         })
                 } else {
@@ -494,7 +494,7 @@
 
                         var tmp_jumlah = $('.jumlah').eq(idx).val();
 
-                        axios.get(baseUrl+'/marketing/agen/orderproduk/cek-harga/'+$("#a_kodeapb").val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+tmp_jumlah)
+                        axios.get(baseUrl+'/marketing/agen/orderproduk/cek-harga/'+$("#a_kodeapj").val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+tmp_jumlah)
                             .then(function (res) {
                                 var price = res.data;
 
