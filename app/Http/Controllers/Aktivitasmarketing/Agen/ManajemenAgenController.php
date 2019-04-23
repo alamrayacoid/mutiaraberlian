@@ -390,7 +390,7 @@ class ManajemenAgenController extends Controller
 
                 $podetail = (DB::table('d_productorderdt')->where('pod_productorder', '=', $po_id)->max('pod_detailid')) ? (DB::table('d_productorderdt')->where('pod_productorder', '=', $po_id)->max('pod_detailid')) + 1 : 1;
                 $detailpo = $podetail;
-                $val_salesdt = [];
+                $val_podt = [];
                 for ($i = 0; $i < count($data['idItem']); $i++) {
                     $val_podt[] = [
                         'pod_productorder' => $po_id,
@@ -404,36 +404,36 @@ class ManajemenAgenController extends Controller
                     $detailpo++;
 
                     //mutasi
-                    $data_check = DB::table('m_item')
-                        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-                            'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-                            'm_item.i_unit3 as unit3')
-                        ->where('i_id', '=', $data['idItem'][$i])
-                        ->first();
+//                    $data_check = DB::table('m_item')
+//                        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+//                            'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+//                            'm_item.i_unit3 as unit3')
+//                        ->where('i_id', '=', $data['idItem'][$i])
+//                        ->first();
+//
+//                    $qty_compare = 0;
+//                    if ($data['satuan'][$i] == $data_check->unit1) {
+//                        $qty_compare = $data['jumlah'][$i];
+//                    } else if ($data['satuan'][$i] == $data_check->unit2) {
+//                        $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
+//                    } else if ($data['satuan'][$i] == $data_check->unit3) {
+//                        $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
+//                    }
+//
+//                    $stock = DB::table('d_stock')
+//                        ->where('s_id', '=', $data['idStock'][$i])
+//                        ->where('s_comp', '=', $penjual)
+//                        ->where('s_position', '=', $penjual)
+//                        ->where('s_item', '=', $data['idItem'][$i])
+//                        ->where('s_status', '=', 'ON DESTINATION')
+//                        ->where('s_condition', '=', 'FINE')
+//                        ->first();
+//
+//                    $stock_mutasi = DB::table('d_stock_mutation')
+//                        ->where('sm_stock', '=', $stock->s_id)
+//                        ->first();
 
-                    $qty_compare = 0;
-                    if ($data['satuan'][$i] == $data_check->unit1) {
-                        $qty_compare = $data['jumlah'][$i];
-                    } else if ($data['satuan'][$i] == $data_check->unit2) {
-                        $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
-                    } else if ($data['satuan'][$i] == $data_check->unit3) {
-                        $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
-                    }
-
-                    $stock = DB::table('d_stock')
-                        ->where('s_id', '=', $data['idStock'][$i])
-                        ->where('s_comp', '=', $penjual)
-                        ->where('s_position', '=', $penjual)
-                        ->where('s_item', '=', $data['idItem'][$i])
-                        ->where('s_status', '=', 'ON DESTINATION')
-                        ->where('s_condition', '=', 'FINE')
-                        ->first();
-
-                    $stock_mutasi = DB::table('d_stock_mutation')
-                        ->where('sm_stock', '=', $stock->s_id)
-                        ->first();
-
-                    Mutasi::mutasikeluar(5, $penjual, $penjual, $data['idItem'][$i], $qty_compare, $nota);
+//                    Mutasi::mutasikeluar(5, $penjual, $penjual, $data['idItem'][$i], $qty_compare, $nota);
 //                    Mutasi::mutasimasuk(12, $pembeli, $pembeli, $data['idItem'][$i], $qty_compare, 'ON DESTINATION', 'FINE', $stock_mutasi->sm_hpp, $stock_mutasi->sm_sell, $nota, $stock_mutasi->sm_nota);
                 }
 
