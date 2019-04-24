@@ -91,6 +91,7 @@
             changeJumlahAgen();
             changeHargaAgen();
             visibleTableItemAgen();
+            //===============================================
 
             if ($('#select-order').val() == "1") {
                 $('#agen').removeClass('d-none');
