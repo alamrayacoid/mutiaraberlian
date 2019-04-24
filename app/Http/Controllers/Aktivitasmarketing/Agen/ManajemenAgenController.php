@@ -510,6 +510,8 @@ class ManajemenAgenController extends Controller
             })
             ->addColumn('action', function ($data) {
                 return '<center><div class="btn-group btn-group-sm">
+                            <button class="btn btn-info" title="Detail"
+                                    type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
                             <button class="btn btn-warning" title="Edit"
                                     type="button" onclick="editDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-pencil"></i></button>
                             <button class="btn btn-danger" type="button"
@@ -519,6 +521,67 @@ class ManajemenAgenController extends Controller
             })
             ->rawColumns(['tanggal','nota','penjual','pembeli','status', 'action'])
             ->make(true);
+    }
+
+    public function detailDO($id, $action)
+    {
+        if ($action == "detail") {
+            try{
+                $id = Crypt::decrypt($id);
+            }catch (DecryptException $e){
+                return Response::json([
+                    'status' => "Failed",
+                    'message'=> $e
+                ]);
+            }
+
+            $data = DB::table('d_productorder')
+                ->select('d_productorder.po_date as tanggal',
+                    'd_productorder.po_nota as nota',
+                    'seller.c_name as penjual',
+                    'buyer.c_name as pembeli',
+                    'd_productorder.po_status as status')
+                ->join('m_company as seller', function ($s){
+                    $s->on('d_productorder.po_comp', '=', 'seller.c_id');
+                })->join('m_company as buyer', function ($b){
+                    $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
+                })
+                ->where('d_productorder.po_id', '=', $id)
+                ->first();
+
+            return Response::json($data);
+        } else if ($action == "table") {
+            $data = DB::table('d_productorderdt')
+                ->select('m_item.i_code as kode',
+                    'm_item.i_name as barang',
+                    'd_productorderdt.pod_qty as qty',
+                    'm_unit.u_name as satuan',
+                    DB::raw("CONCAT('Rp. ',FORMAT(d_productorderdt.pod_price, 0, 'de_DE')) as harga"),
+                    DB::raw("CONCAT('Rp. ',FORMAT(d_productorderdt.pod_totalprice, 0, 'de_DE')) as total_harga"))
+                ->join('m_item', function ($s){
+                    $s->on('d_productorderdt.pod_item', '=', 'm_item.i_id');
+                })->join('m_unit', function ($b){
+                    $b->on('d_productorderdt.pod_unit', '=', 'm_unit.u_id');
+                })
+                ->where('d_productorderdt.pod_productorder', '=', Crypt::decrypt($id));
+
+            return DataTables::of($data)
+                ->addColumn('barang', function($data){
+                    return $data->kode . ' - ' . $data->barang;
+                })
+                ->addColumn('jumlah', function($data){
+                    return $data->qty . ' - ' . $data->satuan;
+                })
+                ->addColumn('harga', function($data){
+                    return $data->harga;
+                })
+                ->addColumn('total_harga', function($data){
+                    return $data->total_harga;
+                })
+                ->rawColumns(['barang','jumlah','harga','total_harga'])
+                ->make(true);
+        }
+
     }
 
     public function deleteDO($id)
