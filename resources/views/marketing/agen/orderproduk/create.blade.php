@@ -771,7 +771,7 @@
         function simpan() {
             loadingShow();
             var data = $('#formManagemenAgen').serialize();
-            axios.post('{{ route('penempatanproduk.add') }}', data)
+            axios.post('{{ route('orderagenpusat.add') }}', data)
                 .then(function (response){
                     if(response.data.status == 'Success'){
                         loadingHide();

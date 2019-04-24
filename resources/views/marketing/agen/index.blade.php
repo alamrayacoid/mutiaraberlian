@@ -54,10 +54,26 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-
+    var table_do;
 	$(document).ready(function(){
 		// Code Dummy ----------------------------------------------
-		var table_sup = $('#table_orderprodukagenpusat').DataTable();
+		table_do = $('#table_orderprodukagenpusat').DataTable({
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('orderagenpusat.getDO') }}",
+                type: "get"
+            },
+            columns: [
+                {data: 'tanggal'},
+                {data: 'nota'},
+                {data: 'penjual'},
+                {data: 'pembeli'},
+                {data: 'status'},
+                {data: 'action'}
+            ]
+        });
 		var table_pus = $('#table_kelolapenjualan').DataTable();
 		var table_modal_detail = $('#detail-kelola').DataTable();
 		//var table_pus = $('#table_inventoryagen').DataTable();
@@ -460,6 +476,16 @@ function addFilterAgent(agentCode, agentName)
 	$('#filter_agent_name_kpl').val(agentName);
 	$('#filter_agent_code_kpl').val(agentCode);
 	$('#searchAgen').modal('hide');
+}
+
+function reloadTable()
+{
+    table_do.ajax.reload();
+}
+
+function hapusDO(id)
+{
+    deleteConfirm(baseUrl+"/marketing/agen/orderproduk/hapus-delivery-order/"+id);
 }
 
 </script>
