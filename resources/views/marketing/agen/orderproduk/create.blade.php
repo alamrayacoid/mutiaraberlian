@@ -5,12 +5,12 @@
     <article class="content animated fadeInLeft">
 
         <div class="title-block text-primary">
-            <h1 class="title"> Tambah Data Order Produk ke Cabang </h1>
+            <h1 class="title"> Tambah Data Order Produk ke Agen/Cabang </h1>
             <p class="title-description">
                 <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
                 / <span>Aktivitas Marketing</span>
                 / <a href="{{route('manajemenagen.index')}}"><span>Manajemen Agen </span></a>
-                / <span class="text-primary" style="font-weight: bold;"> Tambah Data Order Produk ke Cabang </span>
+                / <span class="text-primary" style="font-weight: bold;"> Tambah Data Order Produk ke Agen/Cabang </span>
             </p>
         </div>
 
@@ -24,7 +24,7 @@
 
                         <div class="card-header bordered p-2">
                             <div class="header-block">
-                                <h3 class="title"> Tambah Data Order Produk ke Cabang </h3>
+                                <h3 class="title"> Tambah Data Order Produk ke Agen/Cabang </h3>
                             </div>
                             <div class="header-block pull-right">
                                 <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
@@ -91,6 +91,9 @@
             changeJumlahAgen();
             changeHargaAgen();
             visibleTableItemAgen();
+            //===============================================
+            getProvCabang();
+            getKotaCabang();
 
             if ($('#select-order').val() == "1") {
                 $('#agen').removeClass('d-none');
@@ -240,6 +243,84 @@
                 }
             })
         });
+
+        function getProvCabang() {
+            loadingShow();
+            $("#c_prov").find('option').remove();
+            $("#c_prov").attr("disabled", true);
+            axios.get('{{ route('orderagenpusat.getprovinsi') }}')
+                .then(function (resp) {
+                    $("#c_prov").attr("disabled", false);
+                    var option = '<option value="">Pilih Provinsi</option>';
+                    var prov = resp.data;
+                    prov.forEach(function (data) {
+                        option += '<option value="'+data.wp_id+'">'+data.wp_name+'</option>';
+                    })
+                    $("#c_prov").append(option);
+                    loadingHide();
+                })
+                .catch(function (error) {
+                    loadingHide();
+                    messageWarning("Error", error)
+                })
+        }
+
+        function getKotaCabang() {
+            $("#c_prov").on("change", function (evt) {
+                evt.preventDefault();
+                $("#c_kota").find('option').remove();
+                $("#c_kota").attr("disabled", true);
+                $("#c_idapb").val('');
+                $("#c_kodeapb").val('');
+                $("#c_compapb").val('');
+                $("#c_apb").val('');
+                $("#c_apb").find('option').remove();
+                $("#c_apb").attr("disabled", true);
+                visibleTableItemCabang();
+                if ($("#c_prov").val() != "") {
+                    loadingShow();
+                    axios.get(baseUrl+'/marketing/agen/orderproduk/get-kota/'+$("#c_prov").val())
+                        .then(function (resp) {
+                            $("#c_kota").attr("disabled", false);
+                            var option = '<option value="">Pilih Kota</option>';
+                            var kota = resp.data;
+                            kota.forEach(function (data) {
+                                option += '<option value="'+data.wc_id+'">'+data.wc_name+'</option>';
+                            })
+                            $("#c_kota").append(option);
+                            loadingHide();
+                            $("#c_kota").focus();
+                            $("#c_kota").select2('open');
+                        })
+                        .catch(function (error) {
+                            loadingHide();
+                            messageWarning("Error", error)
+                        })
+                } else if ($('#c_prov').val() == "") {
+                    $("#c_idapb").val('');
+                    $("#c_kodeapb").val('');
+                    $("#c_compapb").val('');
+                    $("#c_apb").val('');
+                    $("#c_apb").find('option').remove();
+                    $("#c_apb").attr("disabled", true);
+                    visibleTableItemCabang();
+                }
+            })
+        }
+
+        function visibleTableItemCabang() {
+            if ($("#c_prov").val() != "" && $("#c_kota").val() != "" && $("#c_cabang").val() != "" && $("#c_idapb").val() != "") {
+                $("#tbl_item_cabang").show('slow');
+                $(".btn-submit").attr("disabled", false);
+                $(".btn-submit").css({"cursor":"pointer"});
+            }else{
+                $("#tbl_item_cabang").hide('slow');
+                $(".btn-submit").attr("disabled", true);
+                $(".btn-submit").css({"cursor":"not-allowed"});
+            }
+        }
+
+        //==============================================
 
         function getProvAgen() {
             loadingShow();
@@ -399,7 +480,7 @@
                             loadingHide();
                             messageWarning("Error", error)
                         })
-                        .done(function () {
+                        .then(function () {
                             visibleTableItemAgen();
                         })
                 } else {
@@ -494,7 +575,7 @@
 
                         var tmp_jumlah = $('.jumlah').eq(idx).val();
 
-                        axios.get(baseUrl+'/marketing/agen/orderproduk/cek-harga/'+$("#a_kodeapb").val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+tmp_jumlah)
+                        axios.get(baseUrl+'/marketing/agen/orderproduk/cek-harga/'+$("#a_kodeapj").val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+tmp_jumlah)
                             .then(function (res) {
                                 var price = res.data;
 
@@ -771,7 +852,7 @@
         function simpan() {
             loadingShow();
             var data = $('#formManagemenAgen').serialize();
-            axios.post('{{ route('penempatanproduk.add') }}', data)
+            axios.post('{{ route('orderagenpusat.add') }}', data)
                 .then(function (response){
                     if(response.data.status == 'Success'){
                         loadingHide();

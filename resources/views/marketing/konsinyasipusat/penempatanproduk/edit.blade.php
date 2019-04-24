@@ -64,7 +64,7 @@
                                             <div class="form-group">
                                                 <input type="hidden" name="idKonsigner" id="idKonsigner" value="{{ $detail->c_id }}">
                                                 <input type="hidden" name="kodeKonsigner" id="kodeKonsigner" value="{{ $detail->c_user }}">
-                                                <input type="hidden" name="nota" id="nota" value="{{ $detail->s_nota }}">
+                                                <input type="hidden" name="nota" id="nota" value="{{ $detail->sc_nota }}">
                                                 <input type="text" name="konsigner" id="konsigner" class="form-control form-control-sm"
                                                        value="{{ strtoupper($detail->c_name) }}" oninput="handleInput(event)">
                                             </div>
@@ -78,7 +78,7 @@
                                             <div class="form-group">
                                                 <input type="text" class="form-control form-control-sm"
                                                        name="total_harga"
-                                                       id="total_harga" value="{{ Currency::addRupiah($detail->s_total) }}" readonly>
+                                                       id="total_harga" value="{{ Currency::addRupiah($detail->sc_total) }}" readonly>
                                                 <input type="hidden" name="tot_hrg" id="tot_hrg">
                                             </div>
                                         </div>

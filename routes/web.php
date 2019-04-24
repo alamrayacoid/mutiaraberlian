@@ -404,8 +404,18 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/marketing/marketingarea/keloladataorder/reject-approve-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@rejectApproveAgen')->name('keloladataorder.rejectApproveAgen');
     // End Order Agen ================================================================================================
 
-    Route::get('/marketing/marketingarea/datacavassing/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_datacanvassing')->name('datacanvassing.create');
-    Route::get('/marketing/marketingarea/datacavassing/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datacanvassing')->name('datacanvassing.edit');
+    // Start Kelola Data Canvassing ================================================================================================
+    Route::get('/marketing/marketingarea/datacanvassing/get-list', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getListDC')->name('datacanvassing.getListDC');
+    Route::get('/marketing/marketingarea/datacanvassing/get-cities', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getCitiesDC')->name('datacanvassing.getCitiesDC');
+    Route::get('/marketing/marketingarea/datacanvassing/get-agents', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getAgentsDC')->name('datacanvassing.getAgentsDC');
+    Route::get('/marketing/marketingarea/datacanvassing/find-agents-by-au', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@findAgentsByAu')->name('datacanvassing.findAgentsByAu');
+    Route::get('/marketing/marketingarea/datacanvassing/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@createDC')->name('datacanvassing.create');
+    Route::post('/marketing/marketingarea/datacanvassing/store', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@storeDC')->name('datacanvassing.store');
+    Route::get('/marketing/marketingarea/datacanvassing/edit/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@editDC')->name('datacanvassing.edit');
+    Route::post('/marketing/marketingarea/datacanvassing/update/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@updateDC')->name('datacanvassing.update');
+    Route::post('/marketing/marketingarea/datacanvassing/delete/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@deleteDC')->name('datacanvassing.delete');
+    // End Kelola Data Canvassing ================================================================================================
+
     Route::get('/marketing/marketingarea/datakonsinyasi/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_datakonsinyasi')->name('datakonsinyasi.create');
     Route::get('/marketing/marketingarea/datakonsinyasi/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datakonsinyasi')->name('datakonsinyasi.edit');
 
@@ -440,6 +450,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/orderproduk/get-satuan/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getSatuan')->name('orderagenpusat.getunit');
     Route::get('/marketing/agen/orderproduk/cek-stok/{stock}/{item}/{satuan}/{qty}', 'Aktivitasmarketing\Agen\ManajemenAgenController@checkStock')->name('orderagenpusat.checkstock');
     Route::get('/marketing/agen/orderproduk/cek-harga/{konsigner}/{item}/{unit}/{qty}', 'Aktivitasmarketing\Agen\ManajemenAgenController@checkHarga')->name('orderagenpusat.checkharga');
+    Route::post('/marketing/agen/orderproduk/add', 'Aktivitasmarketing\Agen\ManajemenAgenController@simpanOrderProduk')->name('orderagenpusat.add');
+    Route::get('/marketing/agen/orderproduk/delivery-order', 'Aktivitasmarketing\Agen\ManajemenAgenController@getOrder')->name('orderagenpusat.getDO');
+    Route::get('/marketing/agen/orderproduk/hapus-delivery-order/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteDO')->name('orderagenpusat.deleteDO');
+    Route::get('/marketing/agen/orderproduk/detail-delivery-order/{id}/{action}', 'Aktivitasmarketing\Agen\ManajemenAgenController@detailDO')->name('orderagenpusat.detailDO');
     Route::get('/marketing/agen/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_orderprodukagenpusat')->name('orderagenpusat.edit');
     // !===================================================== END Marketing =====================================================!
 
