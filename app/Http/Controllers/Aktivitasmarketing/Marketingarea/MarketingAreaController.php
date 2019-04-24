@@ -14,6 +14,11 @@ use Response;
 use DataTables;
 use Carbon\Carbon;
 use CodeGenerator;
+use Validator;
+use App\d_canvassing;
+use App\d_username;
+use App\m_agen;
+use App\m_wil_provinsi;
 
 class MarketingAreaController extends Controller
 {
@@ -21,7 +26,9 @@ class MarketingAreaController extends Controller
     {
         $provinsi = DB::table('m_wil_provinsi')->select('m_wil_provinsi.*')->get();
         $city = DB::table('m_wil_kota')->select('m_wil_kota.*')->get();
-        return view('marketing/marketingarea/index', compact('provinsi', 'city'));
+        $user = Auth::user();
+
+        return view('marketing/marketingarea/index', compact('provinsi', 'city', 'user'));
     }
 
     public function printNota($id, $dt)
@@ -130,7 +137,7 @@ class MarketingAreaController extends Controller
     }
 
     public function cariBarang(Request $request)
-    {        
+    {
         $is_item = array();
         for ($i = 0; $i < count($request->idItem); $i++) {
             if ($request->idItem[$i] != null) {
@@ -221,7 +228,7 @@ class MarketingAreaController extends Controller
                         ->where('pcd_rangeqtyend', '>=', $qty)
                         ->first();
                 }
-                
+
             } else {
                 return Response::json(array(
                     'success' => true,
@@ -234,7 +241,7 @@ class MarketingAreaController extends Controller
                 'data'    => 0
             ));
         }
-        
+
         if($price){
             return Response::json(array(
                 'success' => true,
@@ -265,7 +272,7 @@ class MarketingAreaController extends Controller
                     ->first();
 
                 if ($query1) {
-                    
+
                     $query2 = DB::table('d_productorderdt')
                             ->where('pod_productorder', '=', $query1->po_id)
                             ->where('pod_item', '=', $data['idItem'][$i])
@@ -326,7 +333,7 @@ class MarketingAreaController extends Controller
                     ]);
                 }
             }
-            
+
             DB::commit();
             return response()->json([
                 'status' => 'sukses'
@@ -346,7 +353,7 @@ class MarketingAreaController extends Controller
             $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
             return view('errors.404');
-        }        
+        }
 
         $produk = DB::table('d_productorder')
             ->join('m_company as comp', 'po_comp', 'comp.c_id')
@@ -383,7 +390,7 @@ class MarketingAreaController extends Controller
                 ->delete();
 
             $detailId = 0;
-            for ($i=0; $i < count($data['idItem']) ; $i++) { 
+            for ($i=0; $i < count($data['idItem']) ; $i++) {
                 DB::table('d_productorderdt')->insert([
                     'pod_productorder' => $id,
                     'pod_detailid'     => ++$detailId,
@@ -481,7 +488,7 @@ class MarketingAreaController extends Controller
                 'totalprice' => Currency::addRupiah($dt->pod_totalprice)
             ];
         }
-        
+
 
         return Response::json(array(
             'success' => true,
@@ -536,7 +543,7 @@ class MarketingAreaController extends Controller
                                 </button>
                             </div>';
                 }
-                
+
             })
             ->rawColumns(['totalprice','action_agen'])
             ->make(true);
@@ -559,14 +566,14 @@ class MarketingAreaController extends Controller
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                             <button class="btn btn-primary hint--top-left hint--primary"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''.$agen->c_id.'\',\''.$agen->a_name.'\',\''.$agen->c_user.'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
                         </div>';
-                
+
             })
             ->rawColumns(['action_agen'])
             ->make(true);
     }
 
     public function cariDataAgen(Request $request)
-    {        
+    {
         $is_agen = array();
         for ($i = 0; $i < count($request->idAgen); $i++) {
             if ($request->idAgen[$i] != null) {
@@ -640,7 +647,7 @@ class MarketingAreaController extends Controller
                 ->groupBy('po_id')
                 ->get();
         }
-            
+
         return DataTables::of($data_agen)
             ->addIndexColumn()
             ->addColumn('total_price', function ($data_agen) {
@@ -675,7 +682,7 @@ class MarketingAreaController extends Controller
                                 </button>
                             </div>';
                 }
-                
+
             })
             ->rawColumns(['total_price','action_agen'])
             ->make(true);
@@ -828,7 +835,7 @@ class MarketingAreaController extends Controller
                 'totalprice' => Currency::addRupiah($dt->pod_totalprice)
             ];
         }
-        
+
 
         return Response::json(array(
             'success' => true,
@@ -838,15 +845,246 @@ class MarketingAreaController extends Controller
     }
     // Kelola Data Order Agen End ==========================================================================
 
-    public function create_datacanvassing()
+    // Kelola Data Canvassing Start ==============================================================================
+    public function getListDC(Request $request)
     {
-        return view('marketing/marketingarea/datacanvassing/create');
-    }
+        $userType = Auth::user()->u_user;
+        $agentCode = $request->agent_code;
+        $from = Carbon::parse($request->date_from)->format('Y-m-d');
+        $to = Carbon::parse($request->date_to)->format('Y-m-d');
 
-    public function edit_datacanvassing()
-    {
-        return view('marketing/marketingarea/datacanvassing/edit');
+        if ($agentCode !== null) {
+            // get user based on agent-code
+            $user = d_username::where('u_code', $agentCode)->first();
+            // get sub-agent's code  from selected-user/agent
+            $subAgents = m_agen::where('a_parent', $user->u_code)
+            ->get();
+            $listAgentCode = array();
+            foreach ($subAgents as $subAgent) {
+                array_push($listAgentCode, $subAgent->a_code);
+            }
+            // add selected-user's code
+            array_push($listAgentCode, $user->u_code);
+            // get user from created list of agent/sub-agent's code
+            $users = d_username::whereIn('u_code', $listAgentCode)->get();
+            $listUserId = array();
+            foreach ($users as $user) {
+                array_push($listUserId, $user->u_id);
+            }
+
+            $datas = d_canvassing::whereBetween('c_date', [$from, $to])
+            ->whereIn('c_user', $listUserId)
+            ->orderBy('c_name', 'asc')
+            ->get();
+        } else {
+            if ($userType === 'E') {
+                $datas = d_canvassing::whereBetween('c_date', [$from, $to])
+                ->orderBy('c_name', 'asc')
+                ->get();
+            } else {
+                // get sub-agent's code  from currently logged in user
+                $subAgents = m_agen::where('a_parent', Auth::user()->u_code)
+                ->get();
+                $listAgentCode = array();
+                foreach ($subAgents as $subAgent) {
+                    array_push($listAgentCode, $subAgent->a_code);
+                }
+                // add logged-in user's code
+                array_push($listAgentCode, Auth::user()->u_code);
+                // get user from created list of agent/sub-agent's code
+                $users = d_username::whereIn('u_code', $listAgentCode)->get();
+                $listUserId = array();
+                foreach ($users as $user) {
+                    array_push($listUserId, $user->u_id);
+                }
+
+                $datas = d_canvassing::whereBetween('c_date', [$from, $to])
+                ->whereIn('c_user', $listUserId)
+                ->orderBy('c_name', 'asc')
+                ->get();
+            }
+        }
+        return Datatables::of($datas)
+        ->addIndexColumn()
+        ->addColumn('action', function($datas) {
+            if (Auth::user()->u_id != $datas->c_user) {
+                return
+                '<div class="btn-group btn-group-sm">
+                (Owned by others)
+                </div>';
+            } else {
+                return
+                '<div class="btn-group btn-group-sm">
+                <button class="btn btn-warning btn-edit-canv" type="button" title="Edit" onclick="editDataCanvassing('. $datas->c_id .')"><i class="fa fa-pencil"></i></button>
+                <button class="btn btn-danger btn-disable-canv" type="button" title="Delete" onclick="deleteDataCanvassing('. $datas->c_id .')"><i class="fa fa-times-circle"></i></button>
+                </div>';
+            }
+        })
+        ->rawColumns(['action'])
+        ->make(true);
     }
+    // get cities based on province-id
+    public function getCitiesDC(Request $request)
+    {
+        $cities = m_wil_provinsi::where('wp_id', $request->provId)
+        ->with('getCities')
+        ->firstOrFail();
+        return response()->json($cities);
+    }
+    // get list-cities based on province-id
+    public function getAgentsDC(Request $request)
+    {
+        $agents = m_agen::where('a_area', $request->cityId)
+        ->where('a_type', 'AGEN')
+        ->with('getProvince')
+        ->with('getCity')
+        ->orderBy('a_code', 'desc')
+        ->get();
+
+        return response()->json($agents);
+    }
+    // find agents and retrieve it by autocomple.js
+    public function findAgentsByAu(Request $request)
+    {
+        $term = $request->termToFind;
+
+        // startu query to find specific item
+        $agents = m_agen::where('a_name', 'like', '%'.$term.'%')
+            ->get();
+
+        if (count($agents) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($agents as $agent) {
+                $results[] = ['id' => $agent->a_id, 'label' => $agent->a_code . ' - ' .strtoupper($agent->a_name), 'agent_code' => $agent->a_code];
+            }
+        }
+        return response()->json($results);
+    }
+    // validate request
+    public function validateDC(Request $request)
+    {
+        // start: validate data before execute
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'telp' => 'required'
+        ],
+        [
+            'name.required' => 'Nama masih kosong !',
+            'telp.required' => 'No telp masih kosong !'
+        ]);
+        if ($validator->fails()) {
+            return $validator->errors()->first();
+        } else {
+            return '1';
+        }
+    }
+    // store item to db
+    public function storeDC(Request $request)
+    {
+        // validate request
+        $isValidRequest = $this->validateDC($request);
+        if ($isValidRequest != '1') {
+            $errors = $isValidRequest;
+            return response()->json([
+                'status' => 'invalid',
+                'message' => $errors
+            ]);
+        }
+
+        // start insert data
+        DB::beginTransaction();
+        try {
+            $canvassingId = d_canvassing::max('c_id') + 1;
+            $canvassing = new d_canvassing();
+            $canvassing->c_id = $canvassingId;
+            $canvassing->c_user = Auth::user()->u_id;
+            $canvassing->c_date = Carbon::now();
+            $canvassing->c_name = $request->name;
+            $canvassing->c_tlp = $request->telp;
+            $canvassing->c_email = $request->email;
+            $canvassing->c_address = $request->address;
+            $canvassing->c_note = $request->note;
+            $canvassing->save();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    // display edit page
+    public function editDC($id)
+    {
+        $data = d_canvassing::where('c_id', $id)->firstOrFail();
+        return response()->json($data);
+    }
+    // update specific item in db
+    public function updateDC(Request $request, $id)
+    {
+        // validate request
+        $isValidRequest = $this->validateDC($request);
+        if ($isValidRequest != '1') {
+            $errors = $isValidRequest;
+            return response()->json([
+                'status' => 'invalid',
+                'message' => $errors
+            ]);
+        }
+
+        // start insert data
+        DB::beginTransaction();
+        try {
+            $canvassing = d_canvassing::where('c_id', $id)->first();
+            $canvassing->c_user = Auth::user()->u_id;
+            $canvassing->c_date = Carbon::now();
+            $canvassing->c_name = $request->name;
+            $canvassing->c_tlp = $request->telp;
+            $canvassing->c_email = $request->email;
+            $canvassing->c_address = $request->address;
+            $canvassing->c_note = $request->note;
+            $canvassing->save();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    // delete specific item from db
+    public function deleteDC($id)
+    {
+        // start insert data
+        DB::beginTransaction();
+        try {
+            $canvassing = d_canvassing::where('c_id', $id)->first();
+            $canvassing->delete();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    // Kelola Data Canvassing End ==============================================================================
 
     public function create_datakonsinyasi()
     {

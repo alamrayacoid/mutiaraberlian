@@ -18,7 +18,7 @@
 				</div>
 				<div class="col-md-4 col-sm-12" style="padding-right:0px;">
 				<div class="input-group">
-					<input type="text" class="form-control form-control-sm" placeholder="Cari Agen"> 
+					<input type="text" class="form-control form-control-sm" placeholder="Cari Agen">
 					<button class="btn btn-secondary btn-md" title="Cari Agen" style="border-left:none;"><i class="fa fa-search"></i></button>
 				</div>
 				</div>

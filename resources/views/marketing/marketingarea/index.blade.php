@@ -5,6 +5,9 @@
 @include('marketing.marketingarea.keloladataorder.modal')
 @include('marketing.marketingarea.keloladataorder.modal-search')
 @include('marketing.marketingarea.monitoring.modal')
+@include('marketing.marketingarea.datacanvassing.modal-create')
+@include('marketing.marketingarea.datacanvassing.modal-edit')
+@include('marketing.marketingarea.datacanvassing.modal-search')
 
 <article class="content animated fadeInLeft">
 	<div class="title-block text-primary">
@@ -88,7 +91,7 @@
 				  		</tr>
 				  	</thead>
 				  	<tbody class="empty">
-				  		
+
 				  	</tbody>
 				  </table>
 				</div>
@@ -139,7 +142,7 @@
 				  		</tr>
 				  	</thead>
 				  	<tbody class="emptyAgen">
-				  		
+
 				  	</tbody>
 				  </table>
 				</div>
@@ -163,10 +166,6 @@
 			table_rab    = $('#table_canvassing').DataTable();
 			table_bro    = $('#table_konsinyasi').DataTable();
 	    // Code Dummy --------------------------------------------------
-	    $(document).on('click', '.btn-edit-canv', function() {
-	        window.location.href = '{{ route('datacanvassing.edit') }}';
-	    });
-
 	    $(document).on('click', '.btn-edit-kons', function() {
 	        window.location.href = '{{ route('datakonsinyasi.edit') }}';
 	    });
@@ -227,54 +226,54 @@
 	    });
 
 	    // canvassing
-	    $(document).on('click', '.btn-disable-canv', function() {
-	        var ini = $(this);
-	        $.confirm({
-	            animation: 'RotateY',
-	            closeAnimation: 'scale',
-	            animationBounce: 1.5,
-	            icon: 'fa fa-exclamation-triangle',
-	            title: 'Peringatan!',
-	            content: 'Apa anda yakin mau menonaktifkan data ini?',
-	            theme: 'disable',
-	            buttons: {
-	                info: {
-	                    btnClass: 'btn-blue',
-	                    text: 'Ya',
-	                    action: function() {
-	                        $.toast({
-	                            heading: 'Information',
-	                            text: 'Data Berhasil di Nonaktifkan.',
-	                            bgColor: '#0984e3',
-	                            textColor: 'white',
-	                            loaderBg: '#fdcb6e',
-	                            icon: 'info'
-	                        })
-	                        ini.parents('.btn-group').html('<button class="btn btn-success btn-enable-canv" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-	                    }
-	                },
-	                cancel: {
-	                    text: 'Tidak',
-	                    action: function() {
-	                        // tutup confirm
-	                    }
-	                }
-	            }
-	        });
-	    });
-
-	    $(document).on('click', '.btn-enable-canv', function() {
-	        $.toast({
-	            heading: 'Information',
-	            text: 'Data Berhasil di Aktifkan.',
-	            bgColor: '#0984e3',
-	            textColor: 'white',
-	            loaderBg: '#fdcb6e',
-	            icon: 'info'
-	        })
-	        $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit-canv" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
-	            '<button class="btn btn-danger btn-disable-canv" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-	    })
+	    // $(document).on('click', '.btn-disable-canv', function() {
+	    //     var ini = $(this);
+	    //     $.confirm({
+	    //         animation: 'RotateY',
+	    //         closeAnimation: 'scale',
+	    //         animationBounce: 1.5,
+	    //         icon: 'fa fa-exclamation-triangle',
+	    //         title: 'Peringatan!',
+	    //         content: 'Apa anda yakin mau menonaktifkan data ini?',
+	    //         theme: 'disable',
+	    //         buttons: {
+	    //             info: {
+	    //                 btnClass: 'btn-blue',
+	    //                 text: 'Ya',
+	    //                 action: function() {
+	    //                     $.toast({
+	    //                         heading: 'Information',
+	    //                         text: 'Data Berhasil di Nonaktifkan.',
+	    //                         bgColor: '#0984e3',
+	    //                         textColor: 'white',
+	    //                         loaderBg: '#fdcb6e',
+	    //                         icon: 'info'
+	    //                     })
+	    //                     ini.parents('.btn-group').html('<button class="btn btn-success btn-enable-canv" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
+	    //                 }
+	    //             },
+	    //             cancel: {
+	    //                 text: 'Tidak',
+	    //                 action: function() {
+	    //                     // tutup confirm
+	    //                 }
+	    //             }
+	    //         }
+	    //     });
+	    // });
+		//
+	    // $(document).on('click', '.btn-enable-canv', function() {
+	    //     $.toast({
+	    //         heading: 'Information',
+	    //         text: 'Data Berhasil di Aktifkan.',
+	    //         bgColor: '#0984e3',
+	    //         textColor: 'white',
+	    //         loaderBg: '#fdcb6e',
+	    //         icon: 'info'
+	    //     })
+	    //     $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit-canv" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
+	    //         '<button class="btn btn-danger btn-disable-canv" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
+	    // })
 
 	    // Konsinyasi
 	    $(document).on('click', '.btn-disable-kons', function() {
@@ -326,7 +325,7 @@
 	            '<button class="btn btn-danger btn-disable-kons" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 	    });
 	    // End Code Dummy -----------------------------------------------
-	    
+
 	  $('.agen').on('click change', function () {
 	      setArrayAgen();
 	  });
@@ -866,7 +865,7 @@
 	}
 	// End Data Order Agen -----------------------------------------
 </script>
-
+<!-- ========================================================================-->
 <script type="text/javascript">
 
 $(document).ready(function() {
@@ -941,6 +940,312 @@ $(document).ready(function() {
   });
 
 });
+
+</script>
+
+<!-- ========================================================================-->
+<!-- script for Data-Canvassing -->
+<script type="text/javascript">
+	$(document).ready(function() {
+		cur_date = new Date();
+		first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+		last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+		$('#date_from_dc').datepicker('setDate', first_day);
+		$('#date_to_dc').datepicker('setDate', last_day);
+
+		if ($('.current_user_type').val() !== 'E' ) {
+			$('.filter_agent').addClass('d-none');
+		} else {
+			$('.filter_agent').removeClass('d-none');
+		}
+
+		$('#date_from_dc').on('change', function() {
+			TableListDC();
+		});
+		$('#date_to_dc').on('change', function() {
+			TableListDC();
+		});
+		$('#btn_search_date_dc').on('click', function() {
+			TableListDC();
+		});
+		$('#btn_refresh_date_dc').on('click', function() {
+			$('#filter_agent_code_dc').val('');
+			$('#filter_agent_name_dc').val('');
+			$('#date_from_dc').datepicker('setDate', first_day);
+			$('#date_to_dc').datepicker('setDate', last_day);
+		});
+		// retrieve data-table
+		TableListDC();
+		$('#filter_agent_name_dc').on('click', function() {
+			$(this).val('');
+		})
+		$('#filter_agent_name_dc').on('keyup', function() {
+			findAgentsByAu();
+		});
+		$('.provDC').on('change', function() {
+			getCitiesDC();
+		});
+		$('.citiesDC').on('change', function(){
+			$(".table-modal").removeClass('d-none');
+			appendListAgentsDC();
+		});
+		$('#btn_filter_dc').on('click', function() {
+			TableListDC();
+		});
+		// modal add-canvassing
+		$('#modalAddCanvassing').on('shown.bs.modal', function() {
+			$('#btn_simpan_addcanvassing').one('click', function() {
+				submitAddCanvassing();
+			});
+		});
+	    $('#modalAddCanvassing').on('hidden.bs.modal', function() {
+			resetAddCanvassing();
+	    });
+	});
+
+	// data-table -> function to retrieve DataTable server side
+	var tb_liscanvas;
+	function TableListDC()
+	{
+		$('#table_canvassing').dataTable().fnDestroy();
+		tb_liscanvas = $('#table_canvassing').DataTable({
+			responsive: true,
+			serverSide: true,
+			ajax: {
+				url: "{{ route('datacanvassing.getListDC') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}",
+					"date_from": $('#date_from_dc').val(),
+					"date_to": $('#date_to_dc').val(),
+					"agent_code": $('#filter_agent_code_dc').val()
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'c_name'},
+				{data: 'c_email'},
+				{data: 'c_tlp'},
+				{data: 'c_address'},
+				{data: 'action'}
+			],
+			pageLength: 10,
+			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
+	}
+	// submit-form add-new-canvassing
+	function submitAddCanvassing()
+	{
+	    myForm = $('#formAddCanvassing').serialize();
+
+	    $.ajax({
+	        data : myForm,
+	        type : "post",
+	        url : baseUrl + '/marketing/marketingarea/datacanvassing/store',
+	        dataType : 'json',
+	        success : function (response){
+	            if(response.status == 'berhasil')
+	            {
+	                messageSuccess('Berhasil', 'Data Canvassing berhasil ditambahkan !');
+					resetAddCanvassing();
+					$('#modalAddCanvassing').modal('hide');
+					tb_liscanvas.ajax.reload();
+	            }
+	            else if (response.status == 'invalid')
+	            {
+	                messageFailed('Perhatian', response.message);
+	            }
+	            else if (response.status == 'gagal')
+	            {
+	                messageWarning('Error', response.message);
+	            }
+	            // activate btn_simpan once again
+				$('#btn_simpan_addcanvassing').one('click', function() {
+					submitAddCanvassing();
+				});
+	        },
+	        error : function(e){
+	            messageWarning('Gagal', 'Data gagal ditambahkan, hubungi pengembang !');
+	            // activate btn_simpan once again
+				$('#btn_simpan_addcanvassing').one('click', function() {
+					submitAddCanvassing();
+				});
+	        }
+	    });
+	}
+	// show modal edit
+	function editDataCanvassing(id)
+	{
+		$.ajax({
+	        type : "get",
+	        url : baseUrl + '/marketing/marketingarea/datacanvassing/edit/' + id,
+	        dataType : 'json',
+	        success : function (response){
+				$('#name_editdc').val(response.c_name);
+				$('#email_editdc').val(response.c_email);
+				$('#telp_editdc').val(response.c_tlp);
+				$('#address_editdc').val(response.c_address);
+				$('#note_editdc').val(response.c_note);
+				$('#btn_simpan_editcanvassing').attr('onclick', 'submitEditCanvassing('+ id +')')
+				$('#modalEditCanvassing').modal('show');
+	        },
+	        error : function(e){
+	            messageWarning('Gagal', 'Gagal mendapatkan data, hubungi pengembang !');
+	        }
+		})
+	}
+	// submit-form edit-canvassing
+	function submitEditCanvassing(id)
+	{
+	    myForm = $('#formEditCanvassing').serialize();
+
+	    $.ajax({
+	        data : myForm,
+	        type : "post",
+	        url : baseUrl + '/marketing/marketingarea/datacanvassing/update/' + id,
+	        dataType : 'json',
+	        success : function (response){
+	            if(response.status == 'berhasil')
+	            {
+	                messageSuccess('Berhasil', 'Data Canvassing berhasil diperbarui !');
+					tb_liscanvas.ajax.reload();
+	            }
+	            else if (response.status == 'invalid')
+	            {
+	                messageFailed('Perhatian', response.message);
+	            }
+	            else if (response.status == 'gagal')
+	            {
+	                messageWarning('Error', response.message);
+	            }
+	        },
+	        error : function(e){
+	            messageWarning('Gagal', 'Data gagal diperbarui, hubungi pengembang !');
+	        }
+	    });
+	}
+	// delete canvassing
+	function deleteDataCanvassing(id)
+	{
+		$.confirm({
+			animation: 'RotateY',
+			closeAnimation: 'scale',
+			animationBounce: 2.5,
+			icon: 'fa fa-exclamation-triangle',
+			title: 'Peringatan!',
+			content: 'Apakah anda yakin ingin menghapus data ini?',
+			theme: 'disable',
+			buttons: {
+				info: {
+					btnClass: 'btn-blue',
+					text: 'Ya',
+					action: function () {
+						return $.ajax({
+							type: "post",
+							url: baseUrl + '/marketing/marketingarea/datacanvassing/delete/' + id,
+							success: function (response) {
+								if (response.status == 'berhasil') {
+									messageSuccess('Berhasil', 'Data berhasil hapus !');
+									tb_liscanvas.ajax.reload();
+								} else {
+									messageWarning('Gagal', 'Data gagal dihapus !');
+								}
+							},
+							error: function (e) {
+								messageFailed('Peringatan', e.message);
+							}
+						});
+					}
+				},
+				cancel: {
+					text: 'Tidak',
+					action: function () {
+						// tutup confirm
+					}
+				}
+			}
+		});
+	}
+	// resel modat-add-canavassing
+	function resetAddCanvassing()
+	{
+		$('#formAddCanvassing')[0].reset();
+	}
+	// autocomple to find-agents
+	function findAgentsByAu()
+	{
+	    $('#filter_agent_name_dc').autocomplete({
+	        source: function( request, response ) {
+	            $.ajax({
+	                url: baseUrl + '/marketing/marketingarea/datacanvassing/find-agents-by-au',
+	                data: {
+						"termToFind": $("#filter_agent_name_dc").val()
+					},
+	                dataType: 'json',
+	                success: function( data ) {
+	                    response( data );
+	                }
+	            });
+	        },
+	        minLength: 1,
+	        select: function(event, data) {
+				$('#filter_agent_code_dc').val(data.item.agent_code);
+	        }
+	    });
+	}
+	// get cities for search-agent
+	function getCitiesDC()
+	{
+		var provId = $('.provDC').val();
+		$.ajax({
+			url: "{{ route('datacanvassing.getCitiesDC') }}",
+			type: "get",
+			data:{
+				provId: provId
+			},
+			success: function (response) {
+				$('.citiesDC').empty();
+				$(".citiesDC").append('<option value="" selected="" disabled="">=== Pilih Kota ===</option>');
+				$.each(response.get_cities, function( key, val ) {
+					$(".citiesDC").append('<option value="'+ val.wc_id +'">'+ val.wc_name +'</option>');
+				});
+				$('.citiesDC').focus();
+				$('.citiesDC').select2('open');
+			}
+		});
+	}
+	// append data to table-list-agens
+	function appendListAgentsDC()
+	{
+		$.ajax({
+			url: "{{ route('datacanvassing.getAgentsDC') }}",
+			type: 'get',
+			data: {
+				cityId: $('.citiesDC').val()
+			},
+			success: function(response) {
+				$('#table_search_dc tbody').empty();
+				if (response.length <= 0) {
+					return 0;
+				}
+				$.each(response, function(index, val) {
+					listAgents = '<tr><td>'+ val.get_province.wp_name +'</td>';
+					listAgents += '<td>'+ val.get_city.wc_name +'</td>';
+					listAgents += '<td>'+ val.a_name +'</td>';
+					listAgents += '<td>'+ val.a_type +'</td>';
+					listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgent(\''+ val.a_code +'\',\''+ val.a_name +'\')"><i class="fa fa-download"></i></button></td></tr>';
+				});
+				$('#table_search_dc > tbody:last-child').append(listAgents);
+			}
+		});
+	}
+	// add filter-agent
+	function addFilterAgent(agentCode, agentName)
+	{
+		$('#filter_agent_name_dc').val(agentCode+ ' - ' +agentName);
+		$('#filter_agent_code_dc').val(agentCode);
+		$('#modalSearchAgentDC').modal('hide');
+	}
 
 </script>
 @endsection

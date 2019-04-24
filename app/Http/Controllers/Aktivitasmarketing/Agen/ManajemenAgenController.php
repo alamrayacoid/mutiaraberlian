@@ -519,8 +519,7 @@ class ManajemenAgenController extends Controller
         ->with('getCity')
         ->orderBy('a_code', 'desc')
         ->get();
-        // dd($agents);
-        // var_dump($agents);
+        
         return response()->json($agents);
     }
     // get detail-kpl
