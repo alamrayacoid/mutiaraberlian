@@ -5,6 +5,7 @@
 @include('marketing.marketingarea.keloladataorder.modal')
 @include('marketing.marketingarea.keloladataorder.modal-search')
 @include('marketing.marketingarea.monitoring.modal')
+@include('marketing.marketingarea.monitoring.modal-search')
 @include('marketing.marketingarea.datacanvassing.modal-create')
 @include('marketing.marketingarea.datacanvassing.modal-edit')
 @include('marketing.marketingarea.datacanvassing.modal-search')
@@ -944,12 +945,24 @@ $(document).ready(function() {
 </script>
 
 <!-- ========================================================================-->
+<!-- script for Data-Monitoring-Penjualan-Agen -->
+<script type="text/javascript">
+	$(document).ready(function() {
+		const cur_date = new Date();
+		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+		const last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+		$('#date_from_mpa').datepicker('setDate', first_day);
+		$('#date_to_mpa').datepicker('setDate', last_day);
+	});
+</script>
+
+<!-- ========================================================================-->
 <!-- script for Data-Canvassing -->
 <script type="text/javascript">
 	$(document).ready(function() {
-		cur_date = new Date();
-		first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
-		last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+		const cur_date = new Date();
+		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+		const last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
 		$('#date_from_dc').datepicker('setDate', first_day);
 		$('#date_to_dc').datepicker('setDate', last_day);
 
