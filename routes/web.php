@@ -450,6 +450,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/orderproduk/get-satuan/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getSatuan')->name('orderagenpusat.getunit');
     Route::get('/marketing/agen/orderproduk/cek-stok/{stock}/{item}/{satuan}/{qty}', 'Aktivitasmarketing\Agen\ManajemenAgenController@checkStock')->name('orderagenpusat.checkstock');
     Route::get('/marketing/agen/orderproduk/cek-harga/{konsigner}/{item}/{unit}/{qty}', 'Aktivitasmarketing\Agen\ManajemenAgenController@checkHarga')->name('orderagenpusat.checkharga');
+    Route::post('/marketing/agen/orderproduk/add', 'Aktivitasmarketing\Agen\ManajemenAgenController@simpanOrderProduk')->name('orderagenpusat.add');
+    Route::get('/marketing/agen/orderproduk/delivery-order', 'Aktivitasmarketing\Agen\ManajemenAgenController@getOrder')->name('orderagenpusat.getDO');
+    Route::get('/marketing/agen/orderproduk/hapus-delivery-order/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteDO')->name('orderagenpusat.deleteDO');
     Route::get('/marketing/agen/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_orderprodukagenpusat')->name('orderagenpusat.edit');
     // !===================================================== END Marketing =====================================================!
 

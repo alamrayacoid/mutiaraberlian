@@ -470,6 +470,90 @@ class ManajemenAgenController extends Controller
         return view('marketing/agen/index', compact('provinsi', 'user'));
     }
 
+//    order produk ke agen
+    public function getOrder()
+    {
+        $data = DB::table('d_productorder')
+            ->select('d_productorder.po_id as id',
+                'd_productorder.po_date as tanggal',
+                'd_productorder.po_nota as nota',
+                'seller.c_name as penjual',
+                'buyer.c_name as pembeli',
+                'd_productorder.po_status as status')
+            ->join('m_company as seller', function ($s){
+                $s->on('d_productorder.po_comp', '=', 'seller.c_id');
+            })->join('m_company as buyer', function ($b){
+                $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
+            });
+
+        return DataTables::of($data)
+            ->addColumn('tanggal', function($data){
+                return $data->tanggal;
+            })
+            ->addColumn('nota', function($data){
+                return $data->nota;
+            })
+            ->addColumn('penjual', function($data){
+                return $data->penjual;
+            })
+            ->addColumn('pembeli', function($data){
+                return $data->pembeli;
+            })
+            ->addColumn('status', function($data){
+                if ($data->status == 'Y') {
+                    return '<span class="btn btn-sm btn-success btn-khusus">Disetujui</span>';
+                } else if ($data->status == 'N') {
+                    return '<span class="btn btn-sm btn-danger btn-khusus">Ditolak</span>';
+                } else {
+                    return '<span class="btn btn-sm btn-danger btn-khusus">Pending</span>';
+                }
+            })
+            ->addColumn('action', function ($data) {
+                return '<center><div class="btn-group btn-group-sm">
+                            <button class="btn btn-warning" title="Edit"
+                                    type="button" onclick="editDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-danger" type="button"
+                                    title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+                        </div></center>';
+
+            })
+            ->rawColumns(['tanggal','nota','penjual','pembeli','status', 'action'])
+            ->make(true);
+    }
+
+    public function deleteDO($id)
+    {
+        try{
+            $id = Crypt::decrypt($id);
+        }catch (DecryptException $e){
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e
+            ]);
+        }
+
+        DB::beginTransaction();
+        try{
+            DB::table('d_productorderdt')
+                ->where('pod_productorder', '=', $id)
+                ->delete();
+            DB::table('d_productorder')
+                ->where('po_id', '=', $id)
+                ->delete();
+            DB::commit();
+            return Response::json([
+                'status' => "Success",
+                'message'=> "Data berhasil dihapus"
+            ]);
+        }catch (Exception $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e
+            ]);
+        }
+    }
+
     // Start: Kelola Data Inventory Agen ----------------
     public function getAgen($city)
     {
