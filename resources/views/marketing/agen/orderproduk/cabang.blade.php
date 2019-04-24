@@ -53,9 +53,10 @@
             </div>
         </div>
     </div>
-    <div class="table-responsive">
-        <table class="table table-striped table-hover" cellspacing="0" id="table_cabang">
-            <thead class="bg-primary">
+    <div class="container" id="tbl_item_cabang" style="display: none;">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover" cellspacing="0" id="table_cabang">
+                <thead class="bg-primary">
                 <tr>
                     <th width="30%">Kode Barang/Nama Barang</th>
                     <th width="10%">Satuan</th>
@@ -64,8 +65,8 @@
                     <th width="25%">Sub Total</th>
                     <th>Aksi</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 <tr>
                     <td>
                         <input type="hidden" name="c_idItem[]" class="c_itemid">
@@ -103,7 +104,8 @@
                         <button class="btn btn-success btn-tambah-cabang btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
                     </td>
                 </tr>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

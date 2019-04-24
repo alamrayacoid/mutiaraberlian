@@ -92,6 +92,8 @@
             changeHargaAgen();
             visibleTableItemAgen();
             //===============================================
+            getProvCabang();
+            getKotaCabang();
 
             if ($('#select-order').val() == "1") {
                 $('#agen').removeClass('d-none');
@@ -241,6 +243,84 @@
                 }
             })
         });
+
+        function getProvCabang() {
+            loadingShow();
+            $("#c_prov").find('option').remove();
+            $("#c_prov").attr("disabled", true);
+            axios.get('{{ route('orderagenpusat.getprovinsi') }}')
+                .then(function (resp) {
+                    $("#c_prov").attr("disabled", false);
+                    var option = '<option value="">Pilih Provinsi</option>';
+                    var prov = resp.data;
+                    prov.forEach(function (data) {
+                        option += '<option value="'+data.wp_id+'">'+data.wp_name+'</option>';
+                    })
+                    $("#c_prov").append(option);
+                    loadingHide();
+                })
+                .catch(function (error) {
+                    loadingHide();
+                    messageWarning("Error", error)
+                })
+        }
+
+        function getKotaCabang() {
+            $("#c_prov").on("change", function (evt) {
+                evt.preventDefault();
+                $("#c_kota").find('option').remove();
+                $("#c_kota").attr("disabled", true);
+                $("#c_idapb").val('');
+                $("#c_kodeapb").val('');
+                $("#c_compapb").val('');
+                $("#c_apb").val('');
+                $("#c_apb").find('option').remove();
+                $("#c_apb").attr("disabled", true);
+                visibleTableItemCabang();
+                if ($("#c_prov").val() != "") {
+                    loadingShow();
+                    axios.get(baseUrl+'/marketing/agen/orderproduk/get-kota/'+$("#c_prov").val())
+                        .then(function (resp) {
+                            $("#c_kota").attr("disabled", false);
+                            var option = '<option value="">Pilih Kota</option>';
+                            var kota = resp.data;
+                            kota.forEach(function (data) {
+                                option += '<option value="'+data.wc_id+'">'+data.wc_name+'</option>';
+                            })
+                            $("#c_kota").append(option);
+                            loadingHide();
+                            $("#c_kota").focus();
+                            $("#c_kota").select2('open');
+                        })
+                        .catch(function (error) {
+                            loadingHide();
+                            messageWarning("Error", error)
+                        })
+                } else if ($('#c_prov').val() == "") {
+                    $("#c_idapb").val('');
+                    $("#c_kodeapb").val('');
+                    $("#c_compapb").val('');
+                    $("#c_apb").val('');
+                    $("#c_apb").find('option').remove();
+                    $("#c_apb").attr("disabled", true);
+                    visibleTableItemCabang();
+                }
+            })
+        }
+
+        function visibleTableItemCabang() {
+            if ($("#c_prov").val() != "" && $("#c_kota").val() != "" && $("#c_cabang").val() != "" && $("#c_idapb").val() != "") {
+                $("#tbl_item_cabang").show('slow');
+                $(".btn-submit").attr("disabled", false);
+                $(".btn-submit").css({"cursor":"pointer"});
+            }else{
+                $("#tbl_item_cabang").hide('slow');
+                $(".btn-submit").attr("disabled", true);
+                $(".btn-submit").css({"cursor":"not-allowed"});
+            }
+        }
+
+        //==============================================
 
         function getProvAgen() {
             loadingShow();
