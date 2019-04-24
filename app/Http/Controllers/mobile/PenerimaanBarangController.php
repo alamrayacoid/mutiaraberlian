@@ -40,7 +40,7 @@ class PenerimaanBarangController extends Controller
             ->get();
 
         return json_encode([
-            "item" => $data
+            "BarangPenerimaan" => $data
         ]);
     }
 }
