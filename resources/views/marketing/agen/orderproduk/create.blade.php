@@ -30,34 +30,35 @@
                                 <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
                             </div>
                         </div>
+                        <form id="formManagemenAgen" method="post">{{ csrf_field() }}
+                            <div class="card-block">
+                                <section>
 
-                        <div class="card-block">
-                            <section>
+                                    <div class="row">
 
-                                <div class="row">
-
-                                    <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Order Ke</label>
-                                    </div>
-
-                                    <div class="col-md-10 col-sm-6 col-xs-12">
-                                        <div class="form-group">
-                                            <select name="" id="select-order" class="form-control form-control-sm select2">
-                                                <option value="0">Pilih</option>
-                                                <option value="1">Agen</option>
-                                                <option value="2">Cabang</option>
-                                            </select>
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>Order Ke</label>
                                         </div>
+
+                                        <div class="col-md-10 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <select name="select_order" id="select-order" class="form-control form-control-sm select2">
+                                                    <option value="0">Pilih</option>
+                                                    <option value="1">Agen</option>
+                                                    <option value="2">Cabang</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        @include('marketing.agen.orderproduk.agen')
+                                        @include('marketing.agen.orderproduk.cabang')
                                     </div>
-                                    @include('marketing.agen.orderproduk.agen')
-                                    @include('marketing.agen.orderproduk.cabang')
-                                </div>
-                            </section>
-                        </div>
-                        <div class="card-footer text-right">
-                            <button class="btn btn-primary btn-submit" type="button">Simpan</button>
-                            <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary">Kembali</a>
-                        </div>
+                                </section>
+                            </div>
+                            <div class="card-footer text-right">
+                                <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+                                <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary">Kembali</a>
+                            </div>
+                        </form>
                     </div>
 
                 </div>
@@ -71,73 +72,6 @@
 @endsection
 
 @section('extra_script')
-    {{--<script type="text/javascript">--}}
-        {{--$(document).ready(function(){--}}
-            {{--$('#type_cus').change(function(){--}}
-                {{--if($(this).val() === 'kontrak'){--}}
-                    {{--$('#label_type_cus').text('Jumlah Bulan');--}}
-                    {{--$('#jumlah_hari_bulan').val('');--}}
-                    {{--$('#pagu').val('');--}}
-                    {{--$('#armada').prop('selectedIndex', 0).trigger('change');--}}
-                {{--} else if($(this).val() === 'harian'){--}}
-                    {{--$('#label_type_cus').text('Jumlah Hari');--}}
-                    {{--$('#armada').prop('selectedIndex', 0).trigger('change');--}}
-                    {{--$('#pagu').val('');--}}
-                    {{--$('#jumlah_hari_bulan').val('');--}}
-                {{--} else {--}}
-                    {{--$('#jumlah_hari_bulan').val('');--}}
-                    {{--$('#armada').prop('selectedIndex', 0).trigger('change');--}}
-                    {{--$('#pagu').val('');--}}
-                {{--}--}}
-            {{--});--}}
-
-            {{--$(document).on('click', '.btn-hapus-agen', function(){--}}
-                {{--$(this).parents('tr').remove();--}}
-            {{--});--}}
-
-            {{--$('.btn-tambah-agen').on('click',function(){--}}
-                {{--$('#table_agen')--}}
-                    {{--.append(--}}
-                        {{--'<tr>'+--}}
-                        {{--'<td><input type="text" class="form-control form-control-sm"></td>'+--}}
-                        {{--'<td><select name="#" id="#" class="form-control form-control-sm select2"><option value=""></option></select></td>'+--}}
-                        {{--'<td><input type="number" class="form-control form-control-sm" value="0"></td>'+--}}
-                        {{--'<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+--}}
-                        {{--'<td><input type="text" class="form-control form-control-sm" readonly=""></td>'+--}}
-                        {{--'<td><button class="btn btn-danger btn-hapus-agen btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+--}}
-                        {{--'</tr>'--}}
-                    {{--);--}}
-            {{--});--}}
-
-            {{--$(document).on('click', '.btn-hapus-cabang', function(){--}}
-                {{--$(this).parents('tr').remove();--}}
-            {{--});--}}
-
-            {{--$('.btn-tambah-cabang').on('click',function(){--}}
-                {{--$('#table_cabang')--}}
-                    {{--.append(--}}
-                        {{--'<tr>'+--}}
-                        {{--'<td><input type="text" class="form-control form-control-sm"></td>'+--}}
-                        {{--'<td><select name="#" id="#" class="form-control form-control-sm select2"><option value=""></option></select></td>'+--}}
-                        {{--'<td><input type="number" class="form-control form-control-sm" value="0"></td>'+--}}
-                        {{--'<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+--}}
-                        {{--'<td><input type="text" class="form-control form-control-sm" readonly=""></td>'+--}}
-                        {{--'<td><button class="btn btn-danger btn-hapus-cabang btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+--}}
-                        {{--'</tr>'--}}
-                    {{--);--}}
-            {{--});--}}
-            {{--$(document).on('click', '.btn-submit', function(){--}}
-                {{--$.toast({--}}
-                    {{--heading: 'Success',--}}
-                    {{--text: 'Data Berhasil di Simpan',--}}
-                    {{--bgColor: '#00b894',--}}
-                    {{--textColor: 'white',--}}
-                    {{--loaderBg: '#55efc4',--}}
-                    {{--icon: 'success'--}}
-                {{--})--}}
-            {{--})--}}
-        {{--});--}}
-    {{--</script>--}}
     <script type="text/javascript">
         var idStock = [];
         var idItem = [];
@@ -189,83 +123,6 @@
                 }
             });
 
-            // $("#a_apj").on("keyup", function (evt) {
-            //     evt.preventDefault();
-            //     if (evt.which == 8 || evt.which == 46)
-            //     {
-            //         $("#a_idapj").val('');
-            //         $("#a_kodeapj").val('');
-            //         $("#a_compapj").val('');
-            //         $("#a_apb").attr("disabled", true);
-            //     } else if (evt.which <= 90 && evt.which >= 48)
-            //     {
-            //         $("#a_idapj").val('');
-            //         $("#a_kodeapj").val('');
-            //         $("#a_compapj").val('');
-            //         $("#a_apb").attr("disabled", true);
-            //     }
-            //
-            // })
-            //
-            // $( "#a_apj" ).autocomplete({
-            //     source: function( request, response ) {
-            //         $.ajax({
-            //             url: baseUrl+'/marketing/agen/orderproduk/cari-penjual/'+$("#a_prov").val()+'/'+$("#a_kota").val(),
-            //             data: {
-            //                 term: $( "#a_apj" ).val()
-            //             },
-            //             success: function( data ) {
-            //                 response( data );
-            //             }
-            //         });
-            //     },
-            //     minLength: 1,
-            //     select: function(event, data) {
-            //         $( "#a_idapj" ).val(data.item.id);
-            //         $( "#a_kodeapj" ).val(data.item.kode);
-            //         $("#a_apb").attr("disabled", false);
-            //         $("#a_apb").focus();
-            //     }
-            // });
-            //
-            // $("#a_apb").on("keyup", function (evt) {
-            //     evt.preventDefault();
-            //     if (evt.which == 8 || evt.which == 46)
-            //     {
-            //         $("#a_idapb").val('');
-            //         $("#a_kodeapb").val('');
-            //         $("#a_compapb").val('');
-            //         visibleTableItemAgen();
-            //     } else if (evt.which <= 90 && evt.which >= 48)
-            //     {
-            //         $("#a_idapb").val('');
-            //         $("#a_kodeapb").val('');
-            //         $("#a_compapb").val('');
-            //         visibleTableItemAgen();
-            //     }
-            //
-            // })
-            //
-            // $( "#a_apb" ).autocomplete({
-            //     source: function( request, response ) {
-            //         $.ajax({
-            //             url: baseUrl+'/marketing/agen/orderproduk/cari-pembeli/'+$("#a_kodeapj").val(),
-            //             data: {
-            //                 term: $( "#a_apb" ).val()
-            //             },
-            //             success: function( data ) {
-            //                 response( data );
-            //             }
-            //         });
-            //     },
-            //     minLength: 1,
-            //     select: function(event, data) {
-            //         $( "#a_idapb" ).val(data.item.id);
-            //         $( "#a_kodeapb" ).val(data.item.kode);
-            //         visibleTableItemAgen();
-            //     }
-            // });
-
             $('.barang').on('click', function(e){
                 e.preventDefault();
                 idxBarang = $('.barang').index(this);
@@ -314,6 +171,74 @@
                 }
 
             });
+
+            $('.btn-tambah-agen').on('click', function () {
+                tambahAgen();
+            });
+
+            $(document).on('click', '.btn-hapus-agen', function () {
+                $(this).parents('tr').remove();
+                updateTotalTampil();
+                setArrayCode();
+            });
+
+            function checkForm() {
+                var inpItemid = document.getElementsByClassName( 'itemid' ),
+                    item  = [].map.call(inpItemid, function( input ) {
+                        return input.value;
+                    });
+                var inpHarga = document.getElementsByClassName( 'harga' ),
+                    harga  = [].map.call(inpHarga, function( input ) {
+                        return input.value;
+                    });
+                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                        return parseInt(input.value);
+                    });
+
+                for (var i=0; i < item.length; i++) {
+                    if (item[i] == "" || harga[i] == "Rp. 0" || jumlah[i] == 0) {
+                        return "cek form";
+                        break;
+                    } else {
+                        checkitem = "true";
+                        continue;
+                    }
+                }
+                return checkitem;
+            }
+
+            $(document).on('click', '.btn-submit', function (evt) {
+                evt.preventDefault();
+                if (checkForm() == "cek form") {
+                    messageWarning('Peringatan', 'Lengkapi data order produk ke agen/cabang');
+                } else {
+                    $.confirm({
+                        animation: 'RotateY',
+                        closeAnimation: 'scale',
+                        animationBounce: 1.5,
+                        icon: 'fa fa-exclamation-triangle',
+                        title: 'Konfirmasi!',
+                        content: 'Apakah anda yakin akan menyimpan data order produk ke agen/cabang ini?',
+                        theme: 'disable',
+                        buttons: {
+                            info: {
+                                btnClass: 'btn-blue',
+                                text: 'Ya',
+                                action: function () {
+                                    simpan();
+                                }
+                            },
+                            cancel: {
+                                text: 'Tidak',
+                                action: function () {
+                                    // tutup confirm
+                                }
+                            }
+                        }
+                    });
+                }
+            })
         });
 
         function getProvAgen() {
@@ -474,7 +399,7 @@
                             loadingHide();
                             messageWarning("Error", error)
                         })
-                        .done(function () {
+                        .then(function () {
                             visibleTableItemAgen();
                         })
                 } else {
@@ -510,15 +435,149 @@
         }
 
         function changeSatuanAgen() {
-            //
+            $(".satuan").on("change", function (evt) {
+                var idx = $('.satuan').index(this);
+                var jumlah = $('.jumlah').eq(idx).val();
+                if (jumlah == "") {
+                    jumlah = null;
+                }
+                axios.get(baseUrl+'/marketing/agen/orderproduk/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
+                    .then(function (resp) {
+                        $(".jumlah").eq(idx).val(resp.data);
+
+                        var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                            jumlah  = [].map.call(inpJumlah, function( input ) {
+                                return parseInt(input.value);
+                            });
+
+                        var inpHarga = document.getElementsByClassName( 'harga' ),
+                            harga  = [].map.call(inpHarga, function( input ) {
+                                return input.value;
+                            });
+
+                        for (var i = 0; i < jumlah.length; i++) {
+                            var hasil = 0;
+                            var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                            var jml = jumlah[i];
+
+                            if (jml == "") {
+                                jml = 0;
+                            }
+
+                            hasil += parseInt(hrg) * parseInt(jml);
+
+                            if (isNaN(hasil)) {
+                                hasil = 0;
+                            }
+                            hasil = convertToRupiah(hasil);
+                            $(".subtotal").eq(i).val(hasil);
+
+                        }
+                        updateTotalTampil();
+                    })
+                    .catch(function (error) {
+                        messageWarning("Error", error);
+                    })
+            })
         }
 
         function changeJumlahAgen() {
-            //
+            $(".jumlah").on('input', function (evt) {
+                var idx = $('.jumlah').index(this);
+                var jumlah = $('.jumlah').eq(idx).val();
+                if (jumlah == "") {
+                    jumlah = null;
+                }
+                axios.get(baseUrl+'/marketing/agen/orderproduk/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
+                    .then(function (resp) {
+                        $(".jumlah").eq(idx).val(resp.data);
+
+                        var tmp_jumlah = $('.jumlah').eq(idx).val();
+
+                        axios.get(baseUrl+'/marketing/agen/orderproduk/cek-harga/'+$("#a_kodeapj").val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+tmp_jumlah)
+                            .then(function (res) {
+                                var price = res.data;
+
+                                if (isNaN(price)) {
+                                    price = 0;
+                                }
+                                if (price == 0) {
+                                    $('.unknow').eq(idx).css('display', 'block');
+                                } else {
+                                    $('.unknow').eq(idx).css('display', 'none');
+                                }
+                                $('.harga').eq(idx).val(convertToRupiah(price));
+
+                                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                                        return parseInt(input.value);
+                                    });
+
+                                var inpHarga = document.getElementsByClassName( 'harga' ),
+                                    harga  = [].map.call(inpHarga, function( input ) {
+                                        return input.value;
+                                    });
+
+                                for (var i = 0; i < jumlah.length; i++) {
+                                    var hasil = 0;
+                                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                                    var jml = jumlah[i];
+
+                                    if (jml == "") {
+                                        jml = 0;
+                                    }
+
+                                    hasil += parseInt(hrg) * parseInt(jml);
+
+                                    if (isNaN(hasil)) {
+                                        hasil = 0;
+                                    }
+                                    hasil = convertToRupiah(hasil);
+                                    $(".subtotal").eq(i).val(hasil);
+
+                                }
+                                updateTotalTampil();
+                            })
+
+
+                    })
+                    .catch(function (error) {
+                        messageWarning("Error", error);
+                    })
+            })
         }
 
         function changeHargaAgen() {
-            //
+            $(".harga").on('keyup', function (evt) {
+                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                        return parseInt(input.value);
+                    });
+
+                var inpHarga = document.getElementsByClassName( 'harga' ),
+                    harga  = [].map.call(inpHarga, function( input ) {
+                        return input.value;
+                    });
+
+                for (var i = 0; i < harga.length; i++) {
+                    var hasil = 0;
+                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                    var jml = jumlah[i];
+
+                    if (jml == "") {
+                        jml = 0;
+                    }
+
+                    hasil += parseInt(hrg) * parseInt(jml);
+
+                    if (isNaN(hasil)) {
+                        hasil = 0;
+                    }
+                    hasil = convertToRupiah(hasil);
+                    $(".subtotal").eq(i).val(hasil);
+                }
+                updateTotalTampil();
+            })
         }
 
         function visibleTableItemAgen() {
@@ -556,6 +615,7 @@
                         url: '{{ url('/marketing/agen/orderproduk/cari-barang') }}',
                         data: {
                             idItem: item,
+                            comp: $("#a_compapj").val(),
                             term: $(".barang").eq(idxBarang).val()
                         },
                         success: function( data ) {
@@ -620,6 +680,113 @@
                     }
                 }
             });
+        }
+
+        function tambahAgen() {
+            var row = '';
+            row = '<tr>' +
+                '<td><input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"><input type="hidden" name="idStock[]" class="idStock"></td>'+
+                '<td>'+
+                '<select name="satuan[]" class="form-control form-control-sm select2 satuan">'+
+                '</select>'+
+                '</td>'+
+                '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>'+
+                '<td><input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="Rp. 0" readonly><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>'+
+                '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
+                '<td>'+
+                '<button class="btn btn-danger btn-hapus btn-hapus-agen btn-sm" type="button">'+
+                '<i class="fa fa-remove" aria-hidden="true"></i>'+
+                '</button>'+
+                '</td>'+
+                '</tr>';
+            $('#table_agen tbody').append(row);
+            changeSatuanAgen();
+            changeJumlahAgen();
+            changeHargaAgen();
+
+            $('.select2').select2({
+                theme: "bootstrap",
+                dropdownAutoWidth: true,
+                width: '100%'
+            });
+
+            $('.barang').on('click', function(e){
+                idxBarang = $('.barang').index(this);
+                setArrayCode();
+            });
+
+            $(".barang").on("keyup", function (evt) {
+                if (evt.which == 8 || evt.which == 46)
+                {
+                    $(".itemid").eq(idxBarang).val('');
+                    $(".kode").eq(idxBarang).val('');
+                    $(".idStock").eq(idxBarang).val('');
+                    setArrayCode();
+                    if ($(".itemid").eq(idxBarang).val() == "") {
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampil();
+                    }else{
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampil();
+                    }
+                } else if (evt.which <= 90 && evt.which >= 48)
+                {
+                    $(".itemid").eq(idxBarang).val('');
+                    $(".kode").eq(idxBarang).val('');
+                    $(".idStock").eq(idxBarang).val('');
+                    setArrayCode();
+                    if ($(".itemid").eq(idxBarang).val() == "") {
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampil();
+                    }else{
+                        $(".jumlah").eq(idxBarang).val(0);
+                        $(".harga").eq(idxBarang).val("Rp. 0");
+                        $(".jumlah").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampil();
+                    }
+                }
+            });
+
+            setArrayCode();
+
+            $('.input-rupiah').maskMoney({
+                thousands: ".",
+                precision: 0,
+                decimal: ",",
+                prefix: "Rp. "
+            });
+            updateTotalTampil();
+        }
+
+        function simpan() {
+            loadingShow();
+            var data = $('#formManagemenAgen').serialize();
+            axios.post('{{ route('penempatanproduk.add') }}', data)
+                .then(function (response){
+                    if(response.data.status == 'Success'){
+                        loadingHide();
+                        messageSuccess("Berhasil", response.data.message);
+                        setInterval(function(){location.reload();}, 3500)
+                    }else{
+                        loadingHide();
+                        messageFailed("Gagal", response.data.message);
+                    }
+
+                })
+                .catch(function (error) {
+                    loadingHide();
+                    messageWarning("Error", error);
+                })
         }
     </script>
 @endsection

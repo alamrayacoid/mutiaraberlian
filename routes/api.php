@@ -17,4 +17,5 @@ Route::middleware('auth:api')->group(function () {
 
     //penerimaan barang
     Route::post('penerimaan-barang/get-data-penerimaan', 'mobile\PenerimaanBarangController@getData');
+    Route::post('penerimaan-barang/get-data-penerimaan/nota', 'mobile\PenerimaanBarangController@getDataNota');
 });

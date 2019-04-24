@@ -363,6 +363,7 @@
                             $("#rangestart").val("");
                             $("#rangeend").val("");
                             $("#hargarange").val("");
+                            $("#harga").val("");
                             $("#satuanrange option").remove();
                             $("#satuanrange").prepend('<option value="">Pilih Satuan</option>');
                             $("#satuanrange").val(null);
