@@ -5,12 +5,12 @@
     <article class="content animated fadeInLeft">
 
         <div class="title-block text-primary">
-            <h1 class="title"> Tambah Data Order Produk ke Cabang </h1>
+            <h1 class="title"> Tambah Data Order Produk ke Agen/Cabang </h1>
             <p class="title-description">
                 <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
                 / <span>Aktivitas Marketing</span>
                 / <a href="{{route('manajemenagen.index')}}"><span>Manajemen Agen </span></a>
-                / <span class="text-primary" style="font-weight: bold;"> Tambah Data Order Produk ke Cabang </span>
+                / <span class="text-primary" style="font-weight: bold;"> Tambah Data Order Produk ke Agen/Cabang </span>
             </p>
         </div>
 
@@ -24,7 +24,7 @@
 
                         <div class="card-header bordered p-2">
                             <div class="header-block">
-                                <h3 class="title"> Tambah Data Order Produk ke Cabang </h3>
+                                <h3 class="title"> Tambah Data Order Produk ke Agen/Cabang </h3>
                             </div>
                             <div class="header-block pull-right">
                                 <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
@@ -73,6 +73,7 @@
 
 @section('extra_script')
     <script type="text/javascript">
+        //Agen
         var idStock = [];
         var idItem = [];
         var namaItem = null;
@@ -80,6 +81,13 @@
         var idxBarang = null;
         var icode = [];
         var checkitem = null;
+
+        //Cabang
+        var c_idStock = [];
+        var c_idItem = [];
+        var c_namaItem = null;
+        var c_kode = null;
+        var c_icode = [];
 
         $(document).ready(function(){
             getProvAgen();
@@ -91,6 +99,16 @@
             changeJumlahAgen();
             changeHargaAgen();
             visibleTableItemAgen();
+            //===============================================
+            getProvCabang();
+            getKotaCabang();
+            getCabang();
+            getPembeliCabang();
+            changeCabang();
+            changePembeliCabang();
+            changeSatuanCabang();
+            changeJumlahCabang();
+            changeHargaCabang();
 
             if ($('#select-order').val() == "1") {
                 $('#agen').removeClass('d-none');
@@ -123,6 +141,7 @@
                 }
             });
 
+            //Agen
             $('.barang').on('click', function(e){
                 e.preventDefault();
                 idxBarang = $('.barang').index(this);
@@ -181,6 +200,68 @@
                 updateTotalTampil();
                 setArrayCode();
             });
+            //End Agen
+
+            //Cabang
+            $('.c_barang').on('click', function(e){
+                e.preventDefault();
+                idxBarang = $('.c_barang').index(this);
+                setArrayCodeCabang();
+            });
+
+            $(".c_barang").eq(idxBarang).on("keyup", function (evt) {
+                if (evt.which == 8 || evt.which == 46)
+                {
+                    $(".c_itemid").eq(idxBarang).val('');
+                    $(".c_kode").eq(idxBarang).val('');
+                    $(".c_idStock").eq(idxBarang).val('');
+                    setArrayCodeCabang();
+                    if ($(".c_itemid").eq(idxBarang).val() == "") {
+                        $(".c_jumlah").eq(idxBarang).val(0);
+                        $(".c_harga").eq(idxBarang).val("Rp. 0");
+                        $(".c_subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".c_jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".c_satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampilCabang();
+                    }else{
+                        $(".c_jumlah").eq(idxBarang).val(0);
+                        $(".c_harga").eq(idxBarang).val("Rp. 0");
+                        $(".c_subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".c_jumlah").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampilCabang();
+                    }
+                } else if (evt.which <= 90 && evt.which >= 48)
+                {
+                    $(".c_itemid").eq(idxBarang).val('');
+                    $(".c_kode").eq(idxBarang).val('');
+                    $(".c_idStock").eq(idxBarang).val('');
+                    setArrayCodeCabang();
+                    if ($(".c_itemid").eq(idxBarang).val() == "") {
+                        $(".c_jumlah").eq(idxBarang).val(0);
+                        $(".c_harga").eq(idxBarang).val("Rp. 0");
+                        $(".c_jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".c_satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampilCabang();
+                    }else{
+                        $(".c_jumlah").eq(idxBarang).val(0);
+                        $(".c_harga").eq(idxBarang).val("Rp. 0");
+                        $(".c_jumlah").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampilCabang();
+                    }
+                }
+
+            });
+
+            $('.btn-tambah-cabang').on('click', function () {
+                tambahCabang();
+            });
+
+            $(document).on('click', '.btn-hapus-cabang', function () {
+                $(this).parents('tr').remove();
+                updateTotalTampilCabang();
+                setArrayCodeCabang();
+            });
+            //End Cabang
 
             function checkForm() {
                 var inpItemid = document.getElementsByClassName( 'itemid' ),
@@ -208,38 +289,599 @@
                 return checkitem;
             }
 
+            function checkFormCabang() {
+                var inpItemid = document.getElementsByClassName( 'c_itemid' ),
+                    item  = [].map.call(inpItemid, function( input ) {
+                        return input.value;
+                    });
+                var inpHarga = document.getElementsByClassName( 'c_harga' ),
+                    harga  = [].map.call(inpHarga, function( input ) {
+                        return input.value;
+                    });
+                var inpJumlah = document.getElementsByClassName( 'c_jumlah' ),
+                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                        return parseInt(input.value);
+                    });
+
+                for (var i=0; i < item.length; i++) {
+                    if (item[i] == "" || harga[i] == "Rp. 0" || jumlah[i] == 0) {
+                        return "cek form";
+                        break;
+                    } else {
+                        checkitem = "true";
+                        continue;
+                    }
+                }
+                return checkitem;
+            }
+
             $(document).on('click', '.btn-submit', function (evt) {
                 evt.preventDefault();
-                if (checkForm() == "cek form") {
-                    messageWarning('Peringatan', 'Lengkapi data order produk ke agen/cabang');
-                } else {
-                    $.confirm({
-                        animation: 'RotateY',
-                        closeAnimation: 'scale',
-                        animationBounce: 1.5,
-                        icon: 'fa fa-exclamation-triangle',
-                        title: 'Konfirmasi!',
-                        content: 'Apakah anda yakin akan menyimpan data order produk ke agen/cabang ini?',
-                        theme: 'disable',
-                        buttons: {
-                            info: {
-                                btnClass: 'btn-blue',
-                                text: 'Ya',
-                                action: function () {
-                                    simpan();
-                                }
-                            },
-                            cancel: {
-                                text: 'Tidak',
-                                action: function () {
-                                    // tutup confirm
+                if ($("#select-order").val() == "1") {
+                    if (checkForm() == "cek form") {
+                        messageWarning('Peringatan', 'Lengkapi data order produk ke agen/cabang');
+                    } else {
+                        $.confirm({
+                            animation: 'RotateY',
+                            closeAnimation: 'scale',
+                            animationBounce: 1.5,
+                            icon: 'fa fa-exclamation-triangle',
+                            title: 'Konfirmasi!',
+                            content: 'Apakah anda yakin akan menyimpan data order produk ke agen/cabang ini?',
+                            theme: 'disable',
+                            buttons: {
+                                info: {
+                                    btnClass: 'btn-blue',
+                                    text: 'Ya',
+                                    action: function () {
+                                        simpan();
+                                    }
+                                },
+                                cancel: {
+                                    text: 'Tidak',
+                                    action: function () {
+                                        // tutup confirm
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
+                } else if ($("#select-order").val() == "2") {
+                    if (checkFormCabang() == "cek form") {
+                        messageWarning('Peringatan', 'Lengkapi data order produk ke agen/cabang');
+                    } else {
+                        $.confirm({
+                            animation: 'RotateY',
+                            closeAnimation: 'scale',
+                            animationBounce: 1.5,
+                            icon: 'fa fa-exclamation-triangle',
+                            title: 'Konfirmasi!',
+                            content: 'Apakah anda yakin akan menyimpan data order produk ke agen/cabang ini?',
+                            theme: 'disable',
+                            buttons: {
+                                info: {
+                                    btnClass: 'btn-blue',
+                                    text: 'Ya',
+                                    action: function () {
+                                        simpan();
+                                    }
+                                },
+                                cancel: {
+                                    text: 'Tidak',
+                                    action: function () {
+                                        // tutup confirm
+                                    }
+                                }
+                            }
+                        });
+                    }
                 }
+
             })
         });
+
+        function getProvCabang() {
+            loadingShow();
+            $("#c_prov").find('option').remove();
+            $("#c_prov").attr("disabled", true);
+            axios.get('{{ route('orderagenpusat.getprovinsi') }}')
+                .then(function (resp) {
+                    $("#c_prov").attr("disabled", false);
+                    var option = '<option value="">Pilih Provinsi</option>';
+                    var prov = resp.data;
+                    prov.forEach(function (data) {
+                        option += '<option value="'+data.wp_id+'">'+data.wp_name+'</option>';
+                    })
+                    $("#c_prov").append(option);
+                    loadingHide();
+                })
+                .catch(function (error) {
+                    loadingHide();
+                    messageWarning("Error", error)
+                })
+        }
+
+        function getKotaCabang() {
+            $("#c_prov").on("change", function (evt) {
+                evt.preventDefault();
+                $("#c_kota").find('option').remove();
+                $("#c_kota").attr("disabled", true);
+                $("#c_idapb").val('');
+                $("#c_kodeapb").val('');
+                $("#c_compapb").val('');
+                $("#c_apb").val('');
+                $("#c_apb").find('option').remove();
+                $("#c_apb").attr("disabled", true);
+                visibleTableItemCabang();
+                if ($("#c_prov").val() != "") {
+                    loadingShow();
+                    axios.get(baseUrl+'/marketing/agen/orderproduk/get-kota/'+$("#c_prov").val())
+                        .then(function (resp) {
+                            $("#c_kota").attr("disabled", false);
+                            var option = '<option value="">Pilih Kota</option>';
+                            var kota = resp.data;
+                            kota.forEach(function (data) {
+                                option += '<option value="'+data.wc_id+'">'+data.wc_name+'</option>';
+                            })
+                            $("#c_kota").append(option);
+                            loadingHide();
+                            $("#c_kota").focus();
+                            $("#c_kota").select2('open');
+                        })
+                        .catch(function (error) {
+                            loadingHide();
+                            messageWarning("Error", error)
+                        })
+                } else if ($('#c_prov').val() == "") {
+                    $("#c_idapb").val('');
+                    $("#c_kodeapb").val('');
+                    $("#c_compapb").val('');
+                    $("#c_apb").val('');
+                    $("#c_apb").find('option').remove();
+                    $("#c_apb").attr("disabled", true);
+                    visibleTableItemCabang();
+                }
+            })
+        }
+
+        function getCabang() {
+            $("#c_kota").on("change", function (evt) {
+                evt.preventDefault();
+                $("#c_cabang").find('option').remove();
+                $("#c_cabang").attr("disabled", true);
+                loadingShow();
+                axios.get(baseUrl+'/marketing/agen/orderproduk/get-cabang')
+                    .then(function (resp) {
+                        $("#c_cabang").attr("disabled", false);
+                        var option = '<option value="">Pilih Cabang</option>';
+                        var cabang = resp.data;
+                        cabang.forEach(function (data) {
+                            option += '<option value="'+data.c_id+'">'+data.c_name+'</option>';
+                        })
+                        $("#c_cabang").append(option);
+                        loadingHide();
+                        $("#c_cabang").focus();
+                        $("#c_cabang").select2('open');
+                    })
+                    .catch(function (error) {
+                        loadingHide();
+                        messageWarning("Error", error)
+                    })
+            })
+        }
+
+        function getPembeliCabang() {
+            $("#c_kota").on("change", function (evt) {
+                evt.preventDefault();
+                $("#c_idapb").val('');
+                $("#c_kodeapb").val('');
+                $("#c_compapb").val('');
+                $("#c_apb").val('');
+                $("#c_apb").find('option').remove();
+                $("#c_apb").attr("disabled", true);
+                visibleTableItemCabang();
+
+                if ($("#c_prov").val() != "" && $("#c_kota").val() != "") {
+                    loadingShow();
+                    axios.get(baseUrl+'/marketing/agen/orderproduk/get-pembeli-cabang/'+$("#c_prov").val()+'/'+$("#c_kota").val())
+                        .then(function (resp) {
+                            $("#c_apb").attr("disabled", false);
+                            var option = '<option value="">Pilih Agen Penjual</option>';
+                            var pembeli = resp.data;
+                            pembeli.forEach(function (data) {
+                                option += '<option value="'+data.a_id+'" data-code="'+data.a_code+'" data-comp="'+data.c_id+'">'+data.a_name+'</option>';
+                            })
+                            $("#c_apb").append(option);
+                            loadingHide();
+                        })
+                        .catch(function (error) {
+                            loadingHide();
+                            messageWarning("Error", error)
+                        })
+                }  else if ($("#c_prov").val() == "" && $("#c_kota").val() == "") {
+                    $("#c_idapb").val('');
+                    $("#c_kodeapb").val('');
+                    $("#c_compapb").val('');
+                    $("#c_apb").val('');
+                    $("#c_apb").find('option').remove();
+                    $("#c_apb").attr("disabled", true);
+                    visibleTableItemCabang();
+                }
+            })
+        }
+
+        function changePembeliCabang() {
+            $("#c_apb").on("change", function (evt) {
+                evt.preventDefault();
+                var id  = $(this).val();
+                var kode = $(this).select2().find(":selected").data("code");
+                var comp = $(this).select2().find(":selected").data("comp");
+
+                if (id != "") {
+                    $("#c_idapb").val(id);
+                    $("#c_kodeapb").val(kode);
+                    $("#c_compapb").val(comp);
+                    visibleTableItemCabang();
+                } else {
+                    $("#c_idapb").val('');
+                    $("#c_kodeapb").val('');
+                    $("#c_compapb").val('');
+                    visibleTableItemCabang();
+                }
+            })
+        }
+
+        function changeCabang() {
+            $("#c_cabang").on("change", function (evt) {
+                evt.preventDefault();
+                if ($(this).val() == "") {
+                    $("#c_idapb").val('');
+                    $("#c_kodeapb").val('');
+                    $("#c_compapb").val('');
+                    $("#c_apb").val('');
+                    $('#c_apb').select2().trigger('change');
+                    visibleTableItemCabang();
+                } else {
+                    visibleTableItemCabang();
+                }
+            })
+        }
+
+        function visibleTableItemCabang() {
+            if ($("#c_prov").val() != "" && $("#c_kota").val() != "" && $("#c_cabang").val() != "" && $("#c_idapb").val() != "" && $("#c_cabang").val() != "") {
+                $("#tbl_item_cabang").show('slow');
+                $(".btn-submit").attr("disabled", false);
+                $(".btn-submit").css({"cursor":"pointer"});
+            }else{
+                $("#tbl_item_cabang").hide('slow');
+                $(".btn-submit").attr("disabled", true);
+                $(".btn-submit").css({"cursor":"not-allowed"});
+            }
+        }
+
+        function setArrayCodeCabang() {
+            var inputs = document.getElementsByClassName('c_kode'),
+                code  = [].map.call(inputs, function( input ) {
+                    return input.value.toString();
+                });
+
+            for (var i=0; i < code.length; i++) {
+                if (code[i] != "") {
+                    c_icode.push(code[i]);
+                }
+            }
+
+            var inpItemid = document.getElementsByClassName( 'c_itemid' ),
+                item  = [].map.call(inpItemid, function( input ) {
+                    return input.value;
+                });
+
+            $( ".c_barang" ).autocomplete({
+                source: function( request, response ) {
+                    $.ajax({
+                        url: '{{ url('/marketing/agen/orderproduk/cari-barang') }}',
+                        data: {
+                            idItem: item,
+                            comp: $("#c_cabang").val(),
+                            term: $(".c_barang").eq(idxBarang).val()
+                        },
+                        success: function( data ) {
+                            response( data );
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function(event, data) {
+                    setItemCabang(data.item);
+                }
+            });
+        }
+
+        function setItemCabang(info) {
+            c_idStock = info.stock
+            c_idItem = info.data.i_id;
+            c_namaItem = info.data.i_name;
+            c_kode = info.data.i_code;
+            $(".c_kode").eq(idxBarang).val(c_kode);
+            $(".c_itemid").eq(idxBarang).val(c_idItem);
+            $(".c_idStock").eq(idxBarang).val(c_idStock);
+            setArrayCodeCabang();
+            $.ajax({
+                url: '{{ url('/marketing/agen/orderproduk/get-satuan/') }}'+'/'+c_idItem,
+                type: 'GET',
+                success: function( resp ) {
+                    $(".c_satuan").eq(idxBarang).find('option').remove();
+                    var option = '';
+                    option += '<option value="'+resp.id1+'">'+resp.unit1+'</option>';
+                    if (resp.id2 != null && resp.id2 != resp.id1) {
+                        option += '<option value="'+resp.id2+'">'+resp.unit2+'</option>';
+                    }
+                    if (resp.id3 != null && resp.id3 != resp.id1) {
+                        option += '<option value="'+resp.id3+'">'+resp.unit3+'</option>';
+                    }
+                    $(".c_satuan").eq(idxBarang).append(option);
+                    if ($(".c_itemid").eq(idxBarang).val() == "") {
+                        $(".c_jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".c_satuan").eq(idxBarang).find('option').remove();
+                    }else{
+                        $(".c_jumlah").eq(idxBarang).attr("readonly", false);
+                    }
+                }
+            });
+        }
+
+        function updateTotalTampilCabang() {
+            var total = 0;
+
+            var inputs = document.getElementsByClassName('c_subtotal'),
+                subtotal = [].map.call(inputs, function (input) {
+                    return input.value;
+                });
+
+            for (var i = 0; i < subtotal.length; i++) {
+                total += parseInt(subtotal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", ""));
+            }
+            $("#c_tot_hrg").val(total);
+            if (isNaN(total)) {
+                total = 0;
+            }
+            $("#c_th").val(convertToRupiah(total));
+
+        }
+
+        function tambahCabang() {
+            var row = '';
+            row = '<tr>' +
+                '<td><input type="text" name="c_barang[]" class="form-control form-control-sm c_barang" autocomplete="off"><input type="hidden" name="c_idItem[]" class="c_itemid"><input type="hidden" name="c_kode[]" class="c_kode"><input type="hidden" name="c_idStock[]" class="c_idStock"></td>'+
+                '<td>'+
+                '<select name="c_satuan[]" class="form-control form-control-sm select2 c_satuan">'+
+                '</select>'+
+                '</td>'+
+                '<td><input type="number" name="c_jumlah[]" min="0" class="form-control form-control-sm c_jumlah" value="0" readonly></td>'+
+                '<td><input type="text" name="c_harga[]" class="form-control form-control-sm text-right c_harga" value="Rp. 0" readonly><p class="text-danger c_unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>'+
+                '<td><input type="text" name="c_subtotal[]" style="text-align: right;" class="form-control form-control-sm c_subtotal" value="Rp. 0" readonly><input type="hidden" name="c_sbtotal[]" class="c_sbtotal"></td>'+
+                '<td>'+
+                '<button class="btn btn-danger btn-hapus btn-hapus-cabang btn-sm" type="button">'+
+                '<i class="fa fa-remove" aria-hidden="true"></i>'+
+                '</button>'+
+                '</td>'+
+                '</tr>';
+            $('#table_cabang tbody').append(row);
+            changeSatuanCabang();
+            changeJumlahCabang();
+            changeHargaCabang();
+
+            $('.select2').select2({
+                theme: "bootstrap",
+                dropdownAutoWidth: true,
+                width: '100%'
+            });
+
+            $('.c_barang').on('click', function(e){
+                idxBarang = $('.c_barang').index(this);
+                setArrayCodeCabang();
+            });
+
+            $(".c_barang").on("keyup", function (evt) {
+                if (evt.which == 8 || evt.which == 46)
+                {
+                    $(".c_itemid").eq(idxBarang).val('');
+                    $(".c_kode").eq(idxBarang).val('');
+                    $(".c_idStock").eq(idxBarang).val('');
+                    setArrayCodeCabang();
+                    if ($(".c_itemid").eq(idxBarang).val() == "") {
+                        $(".c_jumlah").eq(idxBarang).val(0);
+                        $(".c_harga").eq(idxBarang).val("Rp. 0");
+                        $(".c_subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".c_jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".c_satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampilCabang();
+                    }else{
+                        $(".c_jumlah").eq(idxBarang).val(0);
+                        $(".c_harga").eq(idxBarang).val("Rp. 0");
+                        $(".c_subtotal").eq(idxBarang).val("Rp. 0");
+                        $(".c_jumlah").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampilCabang();
+                    }
+                } else if (evt.which <= 90 && evt.which >= 48)
+                {
+                    $(".c_itemid").eq(idxBarang).val('');
+                    $(".c_kode").eq(idxBarang).val('');
+                    $(".c_idStock").eq(idxBarang).val('');
+                    setArrayCodeCabang();
+                    if ($(".c_itemid").eq(idxBarang).val() == "") {
+                        $(".c_jumlah").eq(idxBarang).val(0);
+                        $(".c_harga").eq(idxBarang).val("Rp. 0");
+                        $(".c_jumlah").eq(idxBarang).attr("readonly", true);
+                        $(".c_satuan").eq(idxBarang).find('option').remove();
+                        updateTotalTampilCabang();
+                    }else{
+                        $(".c_jumlah").eq(idxBarang).val(0);
+                        $(".c_harga").eq(idxBarang).val("Rp. 0");
+                        $(".c_jumlah").eq(idxBarang).attr("readonly", false);
+                        updateTotalTampilCabang();
+                    }
+                }
+            });
+
+            setArrayCodeCabang();
+
+            $('.input-rupiah').maskMoney({
+                thousands: ".",
+                precision: 0,
+                decimal: ",",
+                prefix: "Rp. "
+            });
+            updateTotalTampilCabang();
+        }
+
+        function changeSatuanCabang() {
+            $(".c_satuan").on("change", function (evt) {
+                var idx = $('.c_satuan').index(this);
+                var jumlah = $('.c_jumlah').eq(idx).val();
+                if (jumlah == "") {
+                    jumlah = null;
+                }
+                axios.get(baseUrl+'/marketing/agen/orderproduk/cek-stok/'+$(".c_idStock").eq(idx).val()+'/'+$(".c_itemid").eq(idx).val()+'/'+$(".c_satuan").eq(idx).val()+'/'+jumlah)
+                    .then(function (resp) {
+                        $(".c_jumlah").eq(idx).val(resp.data);
+
+                        var inpJumlah = document.getElementsByClassName( 'c_jumlah' ),
+                            jumlah  = [].map.call(inpJumlah, function( input ) {
+                                return parseInt(input.value);
+                            });
+
+                        var inpHarga = document.getElementsByClassName( 'c_harga' ),
+                            harga  = [].map.call(inpHarga, function( input ) {
+                                return input.value;
+                            });
+
+                        for (var i = 0; i < jumlah.length; i++) {
+                            var hasil = 0;
+                            var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                            var jml = jumlah[i];
+
+                            if (jml == "") {
+                                jml = 0;
+                            }
+
+                            hasil += parseInt(hrg) * parseInt(jml);
+
+                            if (isNaN(hasil)) {
+                                hasil = 0;
+                            }
+                            hasil = convertToRupiah(hasil);
+                            $(".c_subtotal").eq(i).val(hasil);
+
+                        }
+                        updateTotalTampilCabang();
+                    })
+                    .catch(function (error) {
+                        messageWarning("Error", error);
+                    })
+            })
+        }
+
+        function changeJumlahCabang() {
+            $(".c_jumlah").on('input', function (evt) {
+                var idx = $('.c_jumlah').index(this);
+                var jumlah = $('.c_jumlah').eq(idx).val();
+                if (jumlah == "") {
+                    jumlah = null;
+                }
+                axios.get(baseUrl+'/marketing/agen/orderproduk/cek-stok/'+$(".c_idStock").eq(idx).val()+'/'+$(".c_itemid").eq(idx).val()+'/'+$(".c_satuan").eq(idx).val()+'/'+jumlah)
+                    .then(function (resp) {
+                        $(".c_jumlah").eq(idx).val(resp.data);
+
+                        var tmp_jumlah = $('.c_jumlah').eq(idx).val();
+
+                        axios.get(baseUrl+'/marketing/agen/orderproduk/cek-harga/'+$("#c_kodeapb").val()+'/'+$(".c_itemid").eq(idx).val()+'/'+$(".c_satuan").eq(idx).val()+'/'+tmp_jumlah)
+                            .then(function (res) {
+                                var price = res.data;
+
+                                if (isNaN(price)) {
+                                    price = 0;
+                                }
+                                if (price == 0) {
+                                    $('.c_unknow').eq(idx).css('display', 'block');
+                                } else {
+                                    $('.c_unknow').eq(idx).css('display', 'none');
+                                }
+                                $('.c_harga').eq(idx).val(convertToRupiah(price));
+
+                                var inpJumlah = document.getElementsByClassName( 'c_jumlah' ),
+                                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                                        return parseInt(input.value);
+                                    });
+
+                                var inpHarga = document.getElementsByClassName( 'c_harga' ),
+                                    harga  = [].map.call(inpHarga, function( input ) {
+                                        return input.value;
+                                    });
+
+                                for (var i = 0; i < jumlah.length; i++) {
+                                    var hasil = 0;
+                                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                                    var jml = jumlah[i];
+
+                                    if (jml == "") {
+                                        jml = 0;
+                                    }
+
+                                    hasil += parseInt(hrg) * parseInt(jml);
+
+                                    if (isNaN(hasil)) {
+                                        hasil = 0;
+                                    }
+                                    hasil = convertToRupiah(hasil);
+                                    $(".c_subtotal").eq(i).val(hasil);
+
+                                }
+                                updateTotalTampilCabang();
+                            })
+
+
+                    })
+                    .catch(function (error) {
+                        messageWarning("Error", error);
+                    })
+            })
+        }
+
+        function changeHargaCabang() {
+            $(".c_harga").on('keyup', function (evt) {
+                var inpJumlah = document.getElementsByClassName( 'c_jumlah' ),
+                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                        return parseInt(input.value);
+                    });
+
+                var inpHarga = document.getElementsByClassName( 'c_harga' ),
+                    harga  = [].map.call(inpHarga, function( input ) {
+                        return input.value;
+                    });
+
+                for (var i = 0; i < harga.length; i++) {
+                    var hasil = 0;
+                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                    var jml = jumlah[i];
+
+                    if (jml == "") {
+                        jml = 0;
+                    }
+
+                    hasil += parseInt(hrg) * parseInt(jml);
+
+                    if (isNaN(hasil)) {
+                        hasil = 0;
+                    }
+                    hasil = convertToRupiah(hasil);
+                    $(".c_subtotal").eq(i).val(hasil);
+                }
+                updateTotalTampilCabang();
+            })
+        }
+
+        //==============================================
 
         function getProvAgen() {
             loadingShow();

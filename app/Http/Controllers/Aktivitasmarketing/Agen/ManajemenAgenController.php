@@ -36,7 +36,7 @@ class ManajemenAgenController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
+// oerder produk ke agen
     public function getPembeli($kode)
     {
         $data = DB::table('m_agen')
@@ -403,39 +403,55 @@ class ManajemenAgenController extends Controller
                         'pod_totalprice' => Currency::removeRupiah($data['subtotal'][$i])
                     ];
                     $detailpo++;
+                }
 
-                    //mutasi
-//                    $data_check = DB::table('m_item')
-//                        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-//                            'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-//                            'm_item.i_unit3 as unit3')
-//                        ->where('i_id', '=', $data['idItem'][$i])
-//                        ->first();
-//
-//                    $qty_compare = 0;
-//                    if ($data['satuan'][$i] == $data_check->unit1) {
-//                        $qty_compare = $data['jumlah'][$i];
-//                    } else if ($data['satuan'][$i] == $data_check->unit2) {
-//                        $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
-//                    } else if ($data['satuan'][$i] == $data_check->unit3) {
-//                        $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
-//                    }
-//
-//                    $stock = DB::table('d_stock')
-//                        ->where('s_id', '=', $data['idStock'][$i])
-//                        ->where('s_comp', '=', $penjual)
-//                        ->where('s_position', '=', $penjual)
-//                        ->where('s_item', '=', $data['idItem'][$i])
-//                        ->where('s_status', '=', 'ON DESTINATION')
-//                        ->where('s_condition', '=', 'FINE')
-//                        ->first();
-//
-//                    $stock_mutasi = DB::table('d_stock_mutation')
-//                        ->where('sm_stock', '=', $stock->s_id)
-//                        ->first();
+                DB::table('d_productorder')->insert($val_po);
+                DB::table('d_productorderdt')->insert($val_podt);
+                DB::commit();
+                return Response::json([
+                    'status' => "Success",
+                    'message'=> "Data berhasil disimpan"
+                ]);
+            }catch (Exception $e){
+                DB::rollBack();
+                return Response::json([
+                    'status' => "Failed",
+                    'message'=> $e
+                ]);
+            }
+        } else if ($data['select_order'] == "2") {
+            $po_id = (DB::table('d_productorder')->max('po_id')) ? DB::table('d_productorder')->max('po_id') + 1 : 1;
+            $penjual = $data['c_cabang'];
+            $pembeli = $data['c_compapb'];
+            $date   = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+            $nota   = CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-');
+            $status = "P";
 
-//                    Mutasi::mutasikeluar(5, $penjual, $penjual, $data['idItem'][$i], $qty_compare, $nota);
-//                    Mutasi::mutasimasuk(12, $pembeli, $pembeli, $data['idItem'][$i], $qty_compare, 'ON DESTINATION', 'FINE', $stock_mutasi->sm_hpp, $stock_mutasi->sm_sell, $nota, $stock_mutasi->sm_nota);
+            DB::beginTransaction();
+            try{
+                $val_po = [
+                    'po_id'     => $po_id,
+                    'po_comp'   => $penjual,
+                    'po_agen'   => $pembeli,
+                    'po_date'   => $date,
+                    'po_nota'   => $nota,
+                    'po_status' => $status
+                ];
+
+                $podetail = (DB::table('d_productorderdt')->where('pod_productorder', '=', $po_id)->max('pod_detailid')) ? (DB::table('d_productorderdt')->where('pod_productorder', '=', $po_id)->max('pod_detailid')) + 1 : 1;
+                $detailpo = $podetail;
+                $val_podt = [];
+                for ($i = 0; $i < count($data['idItem']); $i++) {
+                    $val_podt[] = [
+                        'pod_productorder' => $po_id,
+                        'pod_detailid' => $detailpo,
+                        'pod_item' => $data['c_idItem'][$i],
+                        'pod_qty' => $data['c_jumlah'][$i],
+                        'pod_unit' => $data['c_satuan'][$i],
+                        'pod_price' => Currency::removeRupiah($data['c_harga'][$i]),
+                        'pod_totalprice' => Currency::removeRupiah($data['c_subtotal'][$i])
+                    ];
+                    $detailpo++;
                 }
 
                 DB::table('d_productorder')->insert($val_po);
@@ -454,6 +470,29 @@ class ManajemenAgenController extends Controller
             }
         }
     }
+    // end order produk ke agen
+
+    // order produk ke cabang
+    public function getCabang()
+    {
+        $data = DB::table('m_company')
+            ->where('c_type', '!=', 'AGEN')
+            ->get();
+        return Response::json($data);
+    }
+
+    public function getPembeliCabang($prov, $kota)
+    {
+        $agen = DB::table('m_agen')
+            ->join('m_company', 'a_code', '=', 'c_user')
+            ->select('a_id', 'a_code', 'a_name', 'c_id')
+            ->where('a_provinsi', '=', $prov)
+            ->where('a_kabupaten', '=', $kota)
+            ->get();
+
+        return Response::json($agen);
+    }
+    // end order produk ke cabang
 
     public function create_orderprodukagencabang()
     {
@@ -509,9 +548,17 @@ class ManajemenAgenController extends Controller
                 }
             })
             ->addColumn('action', function ($data) {
+//                return '<center><div class="btn-group btn-group-sm">
+//                            <button class="btn btn-info" title="Detail"
+//                                    type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
+//                            <button class="btn btn-warning" title="Edit"
+//                                    type="button" onclick="editDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-pencil"></i></button>
+//                            <button class="btn btn-danger" type="button"
+//                                    title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+//                        </div></center>';
                 return '<center><div class="btn-group btn-group-sm">
-                            <button class="btn btn-warning" title="Edit"
-                                    type="button" onclick="editDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-info" title="Detail"
+                                    type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
                             <button class="btn btn-danger" type="button"
                                     title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
                         </div></center>';
@@ -519,6 +566,67 @@ class ManajemenAgenController extends Controller
             })
             ->rawColumns(['tanggal','nota','penjual','pembeli','status', 'action'])
             ->make(true);
+    }
+
+    public function detailDO($id, $action)
+    {
+        if ($action == "detail") {
+            try{
+                $id = Crypt::decrypt($id);
+            }catch (DecryptException $e){
+                return Response::json([
+                    'status' => "Failed",
+                    'message'=> $e
+                ]);
+            }
+
+            $data = DB::table('d_productorder')
+                ->select('d_productorder.po_date as tanggal',
+                    'd_productorder.po_nota as nota',
+                    'seller.c_name as penjual',
+                    'buyer.c_name as pembeli',
+                    'd_productorder.po_status as status')
+                ->join('m_company as seller', function ($s){
+                    $s->on('d_productorder.po_comp', '=', 'seller.c_id');
+                })->join('m_company as buyer', function ($b){
+                    $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
+                })
+                ->where('d_productorder.po_id', '=', $id)
+                ->first();
+
+            return Response::json($data);
+        } else if ($action == "table") {
+            $data = DB::table('d_productorderdt')
+                ->select('m_item.i_code as kode',
+                    'm_item.i_name as barang',
+                    'd_productorderdt.pod_qty as qty',
+                    'm_unit.u_name as satuan',
+                    DB::raw("CONCAT('Rp. ',FORMAT(d_productorderdt.pod_price, 0, 'de_DE')) as harga"),
+                    DB::raw("CONCAT('Rp. ',FORMAT(d_productorderdt.pod_totalprice, 0, 'de_DE')) as total_harga"))
+                ->join('m_item', function ($s){
+                    $s->on('d_productorderdt.pod_item', '=', 'm_item.i_id');
+                })->join('m_unit', function ($b){
+                    $b->on('d_productorderdt.pod_unit', '=', 'm_unit.u_id');
+                })
+                ->where('d_productorderdt.pod_productorder', '=', Crypt::decrypt($id));
+
+            return DataTables::of($data)
+                ->addColumn('barang', function($data){
+                    return $data->kode . ' - ' . $data->barang;
+                })
+                ->addColumn('jumlah', function($data){
+                    return $data->qty . ' - ' . $data->satuan;
+                })
+                ->addColumn('harga', function($data){
+                    return $data->harga;
+                })
+                ->addColumn('total_harga', function($data){
+                    return $data->total_harga;
+                })
+                ->rawColumns(['barang','jumlah','harga','total_harga'])
+                ->make(true);
+        }
+
     }
 
     public function deleteDO($id)
@@ -553,7 +661,7 @@ class ManajemenAgenController extends Controller
             ]);
         }
     }
-
+// End order produk ke agen
     // Start: Kelola Data Inventory Agen ----------------
     public function getAgen($city)
     {
@@ -1053,69 +1161,4 @@ class ManajemenAgenController extends Controller
     }
     // End: Kelola Penjualan Langsung -----------------
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

@@ -11,7 +11,7 @@
 </style>
 @endsection
 @section('content')
-
+@include('marketing.agen.orderproduk.detailDO')
 @include('marketing.agen.kelolapenjualan.modal-search')
 @include('marketing.agen.kelolapenjualan.modal')
 <article class="content animated fadeInLeft">
@@ -486,6 +486,66 @@ function reloadTable()
 function hapusDO(id)
 {
     deleteConfirm(baseUrl+"/marketing/agen/orderproduk/hapus-delivery-order/"+id);
+}
+
+function editDO(id)
+{
+    //
+}
+
+function detailDo(id)
+{
+    loadingShow();
+    axios.get(baseUrl+'/marketing/agen/orderproduk/detail-delivery-order/'+id+'/detail')
+        .then(function (resp) {
+            loadingHide();
+            if (resp.data.status == "Failed") {
+                messageFailed("Gagal", resp.data.message)
+            } else {
+                var status = '';
+                if (resp.data.status == "Y") {
+                    status = "Disetujui";
+                } else if (resp.data.status == "N") {
+                    status = "Ditolak";
+                } else {
+                    status = "Pending";
+                }
+                $("#txt_tanggal").val(resp.data.tanggal);
+                $("#txt_nota").val(resp.data.nota);
+                $("#txt_status").val(status);
+                $("#txt_penjual").val(resp.data.penjual);
+                $("#txt_pembeli").val(resp.data.pembeli);
+
+                if ($.fn.DataTable.isDataTable("#table_itemDO")) {
+                    $('#table_itemDO').dataTable().fnDestroy();
+                }
+
+                $('#table_itemDO').DataTable({
+                    responsive: true,
+                    autoWidth: false,
+                    serverSide: true,
+                    ajax: {
+                        url: baseUrl+'/marketing/agen/orderproduk/detail-delivery-order/'+id+'/table',
+                        type: "get"
+                    },
+                    columns: [
+                        {data: 'barang'},
+                        {data: 'jumlah'},
+                        {data: 'harga', className: "text-right"},
+                        {data: 'total_harga', className: "text-right"}
+                    ],
+                    "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, 100]],
+                    "drawCallback": function( settings ) {
+                        loadingHide();
+                        $("#detailDO").modal('show');
+                    }
+                });
+            }
+        })
+        .catch(function (error) {
+            loadingHide();
+            messageWarning("Error", error)
+        })
 }
 
 </script>
