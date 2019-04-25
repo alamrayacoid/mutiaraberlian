@@ -36,7 +36,7 @@ class ManajemenAgenController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
+// oerder produk ke agen
     public function getPembeli($kode)
     {
         $data = DB::table('m_agen')
@@ -454,6 +454,29 @@ class ManajemenAgenController extends Controller
             }
         }
     }
+    // end order produk ke agen
+
+    // order produk ke cabang
+    public function getCabang()
+    {
+        $data = DB::table('m_company')
+            ->where('c_type', '!=', 'AGEN')
+            ->get();
+        return Response::json($data);
+    }
+
+    public function getPembeliCabang($prov, $kota)
+    {
+        $agen = DB::table('m_agen')
+            ->join('m_company', 'a_code', '=', 'c_user')
+            ->select('a_id', 'a_code', 'a_name', 'c_id')
+            ->where('a_provinsi', '=', $prov)
+            ->where('a_kabupaten', '=', $kota)
+            ->get();
+
+        return Response::json($agen);
+    }
+    // end order produk ke cabang
 
     public function create_orderprodukagencabang()
     {
@@ -616,7 +639,7 @@ class ManajemenAgenController extends Controller
             ]);
         }
     }
-
+// End order produk ke agen
     // Start: Kelola Data Inventory Agen ----------------
     public function getAgen($city)
     {
@@ -1116,69 +1139,4 @@ class ManajemenAgenController extends Controller
     }
     // End: Kelola Penjualan Langsung -----------------
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

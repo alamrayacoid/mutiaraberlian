@@ -23,7 +23,7 @@
 
         <div class="col-md-10 col-sm-6 col-xs-12">
             <div class="form-group">
-                <select name="c_cabang" id="c_cabang" class="form-control form-control-sm select2">
+                <select name="c_cabang" id="c_cabang" class="form-control form-control-sm select2" disabled>
                 </select>
             </div>
         </div>

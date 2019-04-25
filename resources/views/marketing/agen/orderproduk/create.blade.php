@@ -94,6 +94,10 @@
             //===============================================
             getProvCabang();
             getKotaCabang();
+            getCabang();
+            getPembeliCabang();
+            changeCabang();
+            changePembeliCabang();
 
             if ($('#select-order').val() == "1") {
                 $('#agen').removeClass('d-none');
@@ -303,6 +307,109 @@
                     $("#c_apb").val('');
                     $("#c_apb").find('option').remove();
                     $("#c_apb").attr("disabled", true);
+                    visibleTableItemCabang();
+                }
+            })
+        }
+
+        function getCabang() {
+            $("#c_kota").on("change", function (evt) {
+                evt.preventDefault();
+                $("#c_cabang").find('option').remove();
+                $("#c_cabang").attr("disabled", true);
+                loadingShow();
+                axios.get(baseUrl+'/marketing/agen/orderproduk/get-cabang')
+                    .then(function (resp) {
+                        $("#c_cabang").attr("disabled", false);
+                        var option = '<option value="">Pilih Cabang</option>';
+                        var cabang = resp.data;
+                        cabang.forEach(function (data) {
+                            option += '<option value="'+data.c_id+'">'+data.c_name+'</option>';
+                        })
+                        $("#c_cabang").append(option);
+                        loadingHide();
+                        $("#c_cabang").focus();
+                        $("#c_cabang").select2('open');
+                    })
+                    .catch(function (error) {
+                        loadingHide();
+                        messageWarning("Error", error)
+                    })
+            })
+        }
+
+        function getPembeliCabang() {
+            $("#c_kota").on("change", function (evt) {
+                evt.preventDefault();
+                $("#c_idapb").val('');
+                $("#c_kodeapb").val('');
+                $("#c_compapb").val('');
+                $("#c_apb").val('');
+                $("#c_apb").find('option').remove();
+                $("#c_apb").attr("disabled", true);
+                visibleTableItemCabang();
+
+                if ($("#c_prov").val() != "" && $("#c_kota").val() != "") {
+                    loadingShow();
+                    axios.get(baseUrl+'/marketing/agen/orderproduk/get-pembeli-cabang/'+$("#c_prov").val()+'/'+$("#c_kota").val())
+                        .then(function (resp) {
+                            $("#c_apb").attr("disabled", false);
+                            var option = '<option value="">Pilih Agen Penjual</option>';
+                            var pembeli = resp.data;
+                            pembeli.forEach(function (data) {
+                                option += '<option value="'+data.a_id+'" data-code="'+data.a_code+'" data-comp="'+data.c_id+'">'+data.a_name+'</option>';
+                            })
+                            $("#c_apb").append(option);
+                            loadingHide();
+                        })
+                        .catch(function (error) {
+                            loadingHide();
+                            messageWarning("Error", error)
+                        })
+                }  else if ($("#c_prov").val() == "" && $("#c_kota").val() == "") {
+                    $("#c_idapb").val('');
+                    $("#c_kodeapb").val('');
+                    $("#c_compapb").val('');
+                    $("#c_apb").val('');
+                    $("#c_apb").find('option').remove();
+                    $("#c_apb").attr("disabled", true);
+                    visibleTableItemCabang();
+                }
+            })
+        }
+
+        function changePembeliCabang() {
+            $("#c_apb").on("change", function (evt) {
+                evt.preventDefault();
+                var id  = $(this).val();
+                var kode = $(this).select2().find(":selected").data("code");
+                var comp = $(this).select2().find(":selected").data("comp");
+
+                if (id != "") {
+                    $("#c_idapb").val(id);
+                    $("#c_kodeapb").val(kode);
+                    $("#c_compapb").val(comp);
+                    visibleTableItemCabang();
+                } else {
+                    $("#c_idapb").val('');
+                    $("#c_kodeapb").val('');
+                    $("#c_compapb").val('');
+                    visibleTableItemCabang();
+                }
+            })
+        }
+
+        function changeCabang() {
+            $("#c_cabang").on("change", function (evt) {
+                evt.preventDefault();
+                if ($(this).val() == "") {
+                    $("#c_idapb").val('');
+                    $("#c_kodeapb").val('');
+                    $("#c_compapb").val('');
+                    $("#c_apb").val('');
+                    $('#c_apb').select2().trigger('change');
+                    visibleTableItemCabang();
+                } else {
                     visibleTableItemCabang();
                 }
             })
