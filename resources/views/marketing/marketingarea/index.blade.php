@@ -4,7 +4,7 @@
 
 @include('marketing.marketingarea.keloladataorder.modal')
 @include('marketing.marketingarea.keloladataorder.modal-search')
-@include('marketing.marketingarea.monitoring.modal')
+@include('marketing.marketingarea.monitoring.modal-detail')
 @include('marketing.marketingarea.monitoring.modal-search')
 @include('marketing.marketingarea.datacanvassing.modal-create')
 @include('marketing.marketingarea.datacanvassing.modal-edit')
@@ -953,6 +953,238 @@ $(document).ready(function() {
 		const last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
 		$('#date_from_mpa').datepicker('setDate', first_day);
 		$('#date_to_mpa').datepicker('setDate', last_day);
+
+		$('#date_from_mpa').on('change', function() {
+			TableListMPA();
+		});
+		$('#date_to_mpa').on('change', function() {
+			TableListMPA();
+		});
+		$('#btn_search_date_mpa').on('click', function() {
+			TableListMPA();
+		});
+		$('#btn_refresh_date_mpa').on('click', function() {
+			$('#filter_agent_code_mpa').val('');
+			$('#filter_agent_name_mpa').val('');
+			$('#date_from_mpa').datepicker('setDate', first_day);
+			$('#date_to_mpa').datepicker('setDate', last_day);
+		});
+		// retrieve data-table
+		TableListMPA();
+		// filter agent based on area (province and city)
+		$('.provMPA').on('change', function() {
+			getCitiesMPA();
+		});
+		$('.citiesMPA').on('change', function(){
+			$(".table-modal").removeClass('d-none');
+			appendListAgentsMPA();
+		});
+		// filter agent field
+		$('#filter_agent_name_mpa').on('click', function() {
+			$(this).val('');
+		});
+		$('#filter_agent_name_mpa').on('keyup', function() {
+			findAgentsByAuMPA();
+		});
+		// btn applyt filter agent
+		$('#btn_filter_mpa').on('click', function() {
+			TableListMPA();
+		});
+	});
+
+	// data-table -> function to retrieve DataTable server side
+	var tb_listmpa;
+	function TableListMPA()
+	{
+		$('#table_monitoringpenjualanagen').dataTable().fnDestroy();
+		tb_listmpa = $('#table_monitoringpenjualanagen').DataTable({
+			responsive: true,
+			serverSide: true,
+			ajax: {
+				url: "{{ route('manajemenpenjualanagen.getListMPA') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}",
+					"date_from": $('#date_from_mpa').val(),
+					"date_to": $('#date_to_mpa').val(),
+					"agent_code": $('#filter_agent_code_mpa').val()
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'name'},
+				{data: 'date'},
+				{data: 's_nota'},
+				{data: 'total'},
+				{data: 'action'}
+			],
+			pageLength: 10,
+			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
+	}
+	// autocomple to find-agents
+	function findAgentsByAuMPA()
+	{
+	    $('#filter_agent_name_mpa').autocomplete({
+	        source: function( request, response ) {
+	            $.ajax({
+	                url: baseUrl + '/marketing/marketingarea/datacanvassing/find-agents-by-au',
+	                data: {
+						"termToFind": $("#filter_agent_name_mpa").val()
+					},
+	                dataType: 'json',
+	                success: function( data ) {
+	                    response( data );
+	                }
+	            });
+	        },
+	        minLength: 1,
+	        select: function(event, data) {
+				$('#filter_agent_code_mpa').val(data.item.agent_code);
+	        }
+	    });
+	}
+	// this following func is using same source with Data-Canvassing
+	// get cities for search-agent
+	function getCitiesMPA()
+	{
+		var provId = $('.provMPA').val();
+		$.ajax({
+			url: "{{ route('datacanvassing.getCitiesDC') }}",
+			type: "get",
+			data:{
+				provId: provId
+			},
+			success: function (response) {
+				$('.citiesMPA').empty();
+				$(".citiesMPA").append('<option value="" selected="" disabled="">=== Pilih Kota ===</option>');
+				$.each(response.get_cities, function( key, val ) {
+					$(".citiesMPA").append('<option value="'+ val.wc_id +'">'+ val.wc_name +'</option>');
+				});
+				$('.citiesMPA').focus();
+				$('.citiesMPA').select2('open');
+			}
+		});
+	}
+	// this following func is using same source with Data-Canvassing
+	// append data to table-list-agens
+	function appendListAgentsMPA()
+	{
+		$.ajax({
+			url: "{{ route('datacanvassing.getAgentsDC') }}",
+			type: 'get',
+			data: {
+				cityId: $('.citiesMPA').val()
+			},
+			success: function(response) {
+				$('#table_search_mpa tbody').empty();
+				if (response.length <= 0) {
+					return 0;
+				}
+				$.each(response, function(index, val) {
+					listAgents = '<tr><td>'+ val.get_province.wp_name +'</td>';
+					listAgents += '<td>'+ val.get_city.wc_name +'</td>';
+					listAgents += '<td>'+ val.a_name +'</td>';
+					listAgents += '<td>'+ val.a_type +'</td>';
+					listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgentMPA(\''+ val.a_code +'\',\''+ val.a_name +'\')"><i class="fa fa-download"></i></button></td></tr>';
+				});
+				$('#table_search_mpa > tbody:last-child').append(listAgents);
+			}
+		});
+	}
+	// add filter-agent
+	function addFilterAgentMPA(agentCode, agentName)
+	{
+		$('#filter_agent_name_mpa').val(agentCode+ ' - ' +agentName);
+		$('#filter_agent_code_mpa').val(agentCode);
+		$('#modalSearchAgentMPA').modal('hide');
+	}
+	// show modal-detail MPA
+	function detailMPA(id)
+	{
+		loadingShow();
+		$.ajax({
+			url: baseUrl + '/marketing/marketingarea/manajemenpenjualanagen/get-detail/' + id,
+			type: 'get',
+			success: function(response) {
+				$('#nota_dtmpa').val(response.detail.s_nota);
+				let newDate = getFormattedDate(response.detail.s_date);
+				$('#date_dtmpa').val(newDate);
+				if (response.detail.get_user.employee !== null) {
+					$('#agent_dtmpa').val(response.detail.get_user.employee.e_name);
+				} else if (response.detail.get_user.agen !== null) {
+					$('#agent_dtmpa').val(response.detail.get_user.agen.a_name);
+				} else {
+					$('#agent_dtmpa').val('( Agen tidak ditemukan ! )');
+				}
+				$('#total_dtmpa').val(parseInt(response.detail.s_total));
+
+				// append sales-dt to table list-items
+				$('#table_detailmpa tbody').empty();
+				$.each(response.detail.get_sales_dt, function(index, val) {
+					let idx = '<td>'+ (index + 1) +'</td>';
+					let itemName = '<td>'+ val.get_item.i_name +'</td>';
+					let itemQty = '<td class="digits">'+ response.listQty[index] +'</td>';
+					let itemPrice = '<td class="rupiah">'+ parseInt(val.sd_value) +'</td>';
+					let itemSubTotal = '<td class="rupiah">'+ parseInt(val.sd_totalnet) +'</td>';
+					$('#table_detailmpa > tbody:last-child').append('<tr>'+ idx + itemName + itemQty + itemPrice + itemSubTotal +'</tr>');
+				});
+				// re-activate mask-money
+				$('.rupiah').inputmask("currency", {
+					radixPoint: ",",
+					groupSeparator: ".",
+					digits: 2,
+					autoGroup: true,
+					prefix: ' Rp ', //Space after $, this will not truncate the first character.
+					rightAlign: true,
+					autoUnmask: true,
+					nullable: false,
+					// unmaskAsNumber: true,
+				});
+				// re-activate mask-digits
+				$('.digits').inputmask("currency", {
+					radixPoint: ",",
+					groupSeparator: ".",
+					digits: 0,
+					autoGroup: true,
+					prefix: '', //Space after $, this will not truncate the first character.
+					rightAlign: true,
+					autoUnmask: true,
+					nullable: false,
+					// unmaskAsNumber: true,
+				});
+
+				// show detal modal
+				loadingHide();
+				$('#modalDetailMPA').modal('show');
+			},
+			error: function(e) {
+				messageWarning('Perhatian', 'Terjadi kesalahan, hubungi pengembang !');
+			}
+		});
+	}
+	// change date formate
+	function getFormattedDate(str) {
+		const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+		"Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+		var myDate = new Date(str);
+		var month = myDate.getMonth();
+		var day = myDate.getDate();
+		var year = myDate.getFullYear();
+		return day + " " + monthNames[month] + " " + year;
+	}
+</script>
+
+<!-- ========================================================================-->
+<!-- script for public function -->
+<script type="text/javascript">
+	$(document).ready(function() {
+		if ($('.current_user_type').val() !== 'E' ) {
+			$('.filter_agent').addClass('d-none');
+		} else {
+			$('.filter_agent').removeClass('d-none');
+		}
 	});
 </script>
 
@@ -965,12 +1197,6 @@ $(document).ready(function() {
 		const last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
 		$('#date_from_dc').datepicker('setDate', first_day);
 		$('#date_to_dc').datepicker('setDate', last_day);
-
-		if ($('.current_user_type').val() !== 'E' ) {
-			$('.filter_agent').addClass('d-none');
-		} else {
-			$('.filter_agent').removeClass('d-none');
-		}
 
 		$('#date_from_dc').on('change', function() {
 			TableListDC();
@@ -989,12 +1215,7 @@ $(document).ready(function() {
 		});
 		// retrieve data-table
 		TableListDC();
-		$('#filter_agent_name_dc').on('click', function() {
-			$(this).val('');
-		})
-		$('#filter_agent_name_dc').on('keyup', function() {
-			findAgentsByAu();
-		});
+		// filter agent based on area (province and city)
 		$('.provDC').on('change', function() {
 			getCitiesDC();
 		});
@@ -1002,6 +1223,14 @@ $(document).ready(function() {
 			$(".table-modal").removeClass('d-none');
 			appendListAgentsDC();
 		});
+		// filter agent field
+		$('#filter_agent_name_dc').on('click', function() {
+			$(this).val('');
+		});
+		$('#filter_agent_name_dc').on('keyup', function() {
+			findAgentsByAu();
+		});
+		// btn applyt filter agent
 		$('#btn_filter_dc').on('click', function() {
 			TableListDC();
 		});

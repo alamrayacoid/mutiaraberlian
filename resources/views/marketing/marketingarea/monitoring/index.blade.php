@@ -44,18 +44,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>Brad</td>
-								<td>07-09-2019</td>
-								<td>KUY001</td>
-								<td>Rp. 500.000,00</td>
-								<td>
-									<div class="btn-group btn-group-sm">
-										<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detailm"><i class="fa fa-folder"></i></button>
-									</div>
-								</td>
-							</tr>
+							
 						</tbody>
 					</table>
 				</div>

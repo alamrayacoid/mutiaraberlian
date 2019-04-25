@@ -695,7 +695,7 @@ class ManajemenAgenController extends Controller
         ->with('getCity')
         ->orderBy('a_code', 'desc')
         ->get();
-        
+
         return response()->json($agents);
     }
     // get detail-kpl
@@ -830,7 +830,7 @@ class ManajemenAgenController extends Controller
             $salesNota = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
             $sales = new d_sales();
             $sales->s_id = $salesId;
-            $sales->s_comp = Auth::user()->u_company;
+            $sales->s_comp = Auth::user()->u_company; // user
             $sales->s_member = $request->member;
             $sales->s_type = 'C';
             $sales->s_date = Carbon::now('Asia/Jakarta');

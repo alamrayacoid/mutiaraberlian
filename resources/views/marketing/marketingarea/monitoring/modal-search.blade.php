@@ -12,7 +12,7 @@
       <section>
       <div class="row mb-3">
         <div class="col-md-6 col-sm-12">
-          <select name="prov" class="form-control form-control-sm select2 provDC">
+          <select name="prov" class="form-control form-control-sm select2 provMPA">
             <option value="" selected="" disabled="">=== Pilih Provinsi ===</option>
             @foreach($provinsi as $prov)
             <option value="{{$prov->wp_id}}">{{$prov->wp_name}}</option>
@@ -20,7 +20,7 @@
           </select>
         </div>
         <div class="col-md-6 col-sm-12">
-          <select name="city" class="form-control form-control-sm select2 citiesDC">
+          <select name="city" class="form-control form-control-sm select2 citiesMPA">
             <option value="" selected disabled>=== Pilih Kota ===</option>
           </select>
         </div>

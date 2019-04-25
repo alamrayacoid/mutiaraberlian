@@ -416,6 +416,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/marketing/marketingarea/datacanvassing/delete/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@deleteDC')->name('datacanvassing.delete');
     // End Kelola Data Canvassing ================================================================================================
 
+    // Start Manajemen Data Penjualan Agen ================================================================================================
+    Route::get('/marketing/marketingarea/manajemenpenjualanagen/get-list', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getListMPA')->name('manajemenpenjualanagen.getListMPA');
+    Route::get('/marketing/marketingarea/manajemenpenjualanagen/get-detail/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getDetailMPA')->name('manajemenpenjualanagen.getDetailMPA');
+    // End Manajemen Data Penjualan Agen ================================================================================================
+
     Route::get('/marketing/marketingarea/datakonsinyasi/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_datakonsinyasi')->name('datakonsinyasi.create');
     Route::get('/marketing/marketingarea/datakonsinyasi/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datakonsinyasi')->name('datakonsinyasi.edit');
 

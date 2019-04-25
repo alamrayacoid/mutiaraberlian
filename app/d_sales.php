@@ -19,4 +19,8 @@ class d_sales extends Model
     {
         return $this->belongsTo('App\m_member', 's_member', 'm_code');
     }
+    public function getUser()
+    {
+        return $this->belongsTo('App\d_username', 's_comp', 'u_company');
+    }
 }

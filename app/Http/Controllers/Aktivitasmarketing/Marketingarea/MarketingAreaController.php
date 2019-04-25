@@ -17,6 +17,7 @@ use CodeGenerator;
 use Validator;
 use App\d_canvassing;
 use App\d_username;
+use App\d_sales;
 use App\m_agen;
 use App\m_wil_provinsi;
 
@@ -923,7 +924,8 @@ class MarketingAreaController extends Controller
         ->rawColumns(['action'])
         ->make(true);
     }
-    // get cities based on province-id
+    // this following function is also used by 'Manajemen Penjualan Agen'
+    // get list-cities based on province-id
     public function getCitiesDC(Request $request)
     {
         $cities = m_wil_provinsi::where('wp_id', $request->provId)
@@ -931,7 +933,8 @@ class MarketingAreaController extends Controller
         ->firstOrFail();
         return response()->json($cities);
     }
-    // get list-cities based on province-id
+    // this following function is also used by 'Manajemen Penjualan Agen'
+    // get list-agents based on citiy-id
     public function getAgentsDC(Request $request)
     {
         $agents = m_agen::where('a_area', $request->cityId)
@@ -943,6 +946,7 @@ class MarketingAreaController extends Controller
 
         return response()->json($agents);
     }
+    // this following function is also used by 'Manajemen Penjualan Agen'
     // find agents and retrieve it by autocomple.js
     public function findAgentsByAu(Request $request)
     {
@@ -1085,6 +1089,136 @@ class MarketingAreaController extends Controller
         }
     }
     // Kelola Data Canvassing End ==============================================================================
+
+    // Monitoring Penjualan Agen Start ==============================================================================
+    // display list of manajemen penjualan agen
+    public function getListMPA(Request $request)
+    {
+        $userType = Auth::user()->u_user;
+        $agentCode = $request->agent_code;
+        $from = Carbon::parse($request->date_from)->format('Y-m-d');
+        $to = Carbon::parse($request->date_to)->format('Y-m-d');
+
+        // filter sales-list based on existence of agents
+        // aim : show sales-list from selected agent and it's sub-agents
+        if ($agentCode !== null)
+        {
+            // get user based on agent-code
+            $user = d_username::where('u_code', $agentCode)->first();
+            // get sub-agent's code from selected-user/agent
+            $subAgents = m_agen::where('a_parent', $user->u_code)
+            ->get();
+            $listAgentCode = array();
+            foreach ($subAgents as $subAgent) {
+                array_push($listAgentCode, $subAgent->a_code);
+            }
+            // add selected-user's code
+            array_push($listAgentCode, $user->u_code);
+            // get user from created list of agent/sub-agent's code
+            $users = d_username::whereIn('u_code', $listAgentCode)->get();
+            $listUserCompany = array();
+            foreach ($users as $user) {
+                array_push($listUserCompany, $user->u_company);
+            }
+            // get query to show sales-list
+            $datas = d_sales::whereBetween('s_date', [$from, $to])
+            ->whereIn('s_comp', $listUserCompany)
+            ->with('getUser.agen')
+            ->orderBy('s_date', 'desc')
+            ->orderBy('s_nota', 'desc')
+            ->get();
+        }
+        else
+        {
+            if ($userType === 'E')
+            {
+                // get query to show sales-list
+                $datas = d_sales::whereBetween('s_date', [$from, $to])
+                ->with('getUser.employee')
+                ->with('getUser.agen')
+                ->orderBy('s_date', 'desc')
+                ->orderBy('s_nota', 'desc')
+                ->get();
+            }
+            else
+            {
+                // get sub-agent's code  from currently logged in user
+                $subAgents = m_agen::where('a_parent', Auth::user()->u_code)
+                ->get();
+                $listAgentCode = array();
+                foreach ($subAgents as $subAgent) {
+                    array_push($listAgentCode, $subAgent->a_code);
+                }
+                // add logged-in user's code
+                array_push($listAgentCode, Auth::user()->u_code);
+                // get user from created list of agent/sub-agent's code
+                $users = d_username::whereIn('u_code', $listAgentCode)->get();
+                $listUserCompany = array();
+                foreach ($users as $user) {
+                    array_push($listUserCompany, $user->u_company);
+                }
+
+                // get query to show sales-list
+                $datas = d_sales::whereBetween('s_date', [$from, $to])
+                ->whereIn('s_comp', $listUserCompany)
+                ->with('getUser.agen')
+                ->orderBy('s_date', 'desc')
+                ->orderBy('s_nota', 'desc')
+                ->get();
+            }
+        }
+        return Datatables::of($datas)
+        ->addIndexColumn()
+        ->addColumn('name', function($datas) {
+            if ($datas->getUser->employee !== null) {
+                return $datas->getUser->employee->e_name;
+            } elseif ($datas->getUser->agen !== null) {
+                return $datas->getUser->agen->a_name;
+            } else {
+                return '( Nama user tidak ditemukan )';
+            }
+            return ;
+        })
+        ->addColumn('date', function($datas) {
+            return Carbon::parse($datas->s_date)->format('d M Y');
+        })
+        ->addColumn('total', function($datas) {
+            return '<div><span class="pull-right">Rp '. number_format((float)$datas->s_total, 2, ',', '.') .'</span></div>';
+        })
+        ->addColumn('action', function($datas) {
+            return
+            '<div class="btn-group btn-group-sm">
+            <button class="btn btn-primary btn-detail-canv" type="button" title="Detail" onclick="detailMPA('. $datas->s_id .')"><i class="fa fa-folder"></i></button>
+            </div>';
+        })
+        ->rawColumns(['name', 'date', 'total', 'action'])
+        ->make(true);
+    }
+    public function getDetailMPA($id)
+    {
+        $detail = d_sales::where('s_id', $id)
+        ->with('getUser.employee')
+        ->with('getUser.agen')
+        ->with('getSalesDt.getItem')
+        ->firstOrFail();
+        // get list qty with smallest unit
+        $listQty = array();
+        foreach ($detail->getSalesDt as $salesDt) {
+            if ($salesDt->sd_unit == $salesDt->getItem->i_unit1) {
+                array_push($listQty, $salesDt->sd_qty);
+            } elseif ($salesDt->sd_unit == $salesDt->getItem->i_unit2) {
+                array_push($listQty, (int)$salesDt->sd_qty * (int)$salesDt->getItem->i_unitcompare2);
+            } elseif ($salesDt->sd_unit == $salesDt->getItem->i_unit3) {
+                array_push($listQty, (int)$salesDt->sd_qty * (int)$salesDt->getItem->i_unitcompare3);
+            }
+        }
+
+        return response()->json(array(
+            'detail' => $detail,
+            'listQty' => $listQty
+        ));
+    }
+    // Monitoring Penjualan Agen End ==============================================================================
 
     public function create_datakonsinyasi()
     {

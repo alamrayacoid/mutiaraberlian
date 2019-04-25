@@ -8,6 +8,7 @@ class m_employee extends Model
 {
     protected $table       = 'm_employee';
     protected $primaryKey  = 'e_id';
+    public $incrementing   = false;
 
     public function username()
     {
