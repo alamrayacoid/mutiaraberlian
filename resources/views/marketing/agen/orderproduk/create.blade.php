@@ -416,7 +416,7 @@
         }
 
         function visibleTableItemCabang() {
-            if ($("#c_prov").val() != "" && $("#c_kota").val() != "" && $("#c_cabang").val() != "" && $("#c_idapb").val() != "") {
+            if ($("#c_prov").val() != "" && $("#c_kota").val() != "" && $("#c_cabang").val() != "" && $("#c_idapb").val() != "" && $("#c_cabang").val() != "") {
                 $("#tbl_item_cabang").show('slow');
                 $(".btn-submit").attr("disabled", false);
                 $(".btn-submit").css({"cursor":"pointer"});
