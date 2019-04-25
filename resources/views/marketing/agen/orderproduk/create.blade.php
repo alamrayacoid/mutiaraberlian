@@ -106,6 +106,9 @@
             getPembeliCabang();
             changeCabang();
             changePembeliCabang();
+            changeSatuanCabang();
+            changeJumlahCabang();
+            changeHargaCabang();
 
             if ($('#select-order').val() == "1") {
                 $('#agen').removeClass('d-none');
@@ -579,7 +582,7 @@
                         url: '{{ url('/marketing/agen/orderproduk/cari-barang') }}',
                         data: {
                             idItem: item,
-                            comp: $("#a_compapj").val(),
+                            comp: $("#c_cabang").val(),
                             term: $(".c_barang").eq(idxBarang).val()
                         },
                         success: function( data ) {
@@ -604,7 +607,7 @@
             $(".c_idStock").eq(idxBarang).val(c_idStock);
             setArrayCodeCabang();
             $.ajax({
-                url: '{{ url('/marketing/agen/orderproduk/get-satuan/') }}'+'/'+idItem,
+                url: '{{ url('/marketing/agen/orderproduk/get-satuan/') }}'+'/'+c_idItem,
                 type: 'GET',
                 success: function( resp ) {
                     $(".c_satuan").eq(idxBarang).find('option').remove();
@@ -730,6 +733,152 @@
                 prefix: "Rp. "
             });
             updateTotalTampilCabang();
+        }
+
+        function changeSatuanCabang() {
+            $(".c_satuan").on("change", function (evt) {
+                var idx = $('.c_satuan').index(this);
+                var jumlah = $('.c_jumlah').eq(idx).val();
+                if (jumlah == "") {
+                    jumlah = null;
+                }
+                axios.get(baseUrl+'/marketing/agen/orderproduk/cek-stok/'+$(".c_idStock").eq(idx).val()+'/'+$(".c_itemid").eq(idx).val()+'/'+$(".c_satuan").eq(idx).val()+'/'+jumlah)
+                    .then(function (resp) {
+                        $(".c_jumlah").eq(idx).val(resp.data);
+
+                        var inpJumlah = document.getElementsByClassName( 'c_jumlah' ),
+                            jumlah  = [].map.call(inpJumlah, function( input ) {
+                                return parseInt(input.value);
+                            });
+
+                        var inpHarga = document.getElementsByClassName( 'c_harga' ),
+                            harga  = [].map.call(inpHarga, function( input ) {
+                                return input.value;
+                            });
+
+                        for (var i = 0; i < jumlah.length; i++) {
+                            var hasil = 0;
+                            var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                            var jml = jumlah[i];
+
+                            if (jml == "") {
+                                jml = 0;
+                            }
+
+                            hasil += parseInt(hrg) * parseInt(jml);
+
+                            if (isNaN(hasil)) {
+                                hasil = 0;
+                            }
+                            hasil = convertToRupiah(hasil);
+                            $(".c_subtotal").eq(i).val(hasil);
+
+                        }
+                        updateTotalTampilCabang();
+                    })
+                    .catch(function (error) {
+                        messageWarning("Error", error);
+                    })
+            })
+        }
+
+        function changeJumlahCabang() {
+            $(".c_jumlah").on('input', function (evt) {
+                var idx = $('.c_jumlah').index(this);
+                var jumlah = $('.c_jumlah').eq(idx).val();
+                if (jumlah == "") {
+                    jumlah = null;
+                }
+                axios.get(baseUrl+'/marketing/agen/orderproduk/cek-stok/'+$(".c_idStock").eq(idx).val()+'/'+$(".c_itemid").eq(idx).val()+'/'+$(".c_satuan").eq(idx).val()+'/'+jumlah)
+                    .then(function (resp) {
+                        $(".c_jumlah").eq(idx).val(resp.data);
+
+                        var tmp_jumlah = $('.c_jumlah').eq(idx).val();
+
+                        axios.get(baseUrl+'/marketing/agen/orderproduk/cek-harga/'+$("#c_kodeapb").val()+'/'+$(".c_itemid").eq(idx).val()+'/'+$(".c_satuan").eq(idx).val()+'/'+tmp_jumlah)
+                            .then(function (res) {
+                                var price = res.data;
+
+                                if (isNaN(price)) {
+                                    price = 0;
+                                }
+                                if (price == 0) {
+                                    $('.c_unknow').eq(idx).css('display', 'block');
+                                } else {
+                                    $('.c_unknow').eq(idx).css('display', 'none');
+                                }
+                                $('.c_harga').eq(idx).val(convertToRupiah(price));
+
+                                var inpJumlah = document.getElementsByClassName( 'c_jumlah' ),
+                                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                                        return parseInt(input.value);
+                                    });
+
+                                var inpHarga = document.getElementsByClassName( 'c_harga' ),
+                                    harga  = [].map.call(inpHarga, function( input ) {
+                                        return input.value;
+                                    });
+
+                                for (var i = 0; i < jumlah.length; i++) {
+                                    var hasil = 0;
+                                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                                    var jml = jumlah[i];
+
+                                    if (jml == "") {
+                                        jml = 0;
+                                    }
+
+                                    hasil += parseInt(hrg) * parseInt(jml);
+
+                                    if (isNaN(hasil)) {
+                                        hasil = 0;
+                                    }
+                                    hasil = convertToRupiah(hasil);
+                                    $(".c_subtotal").eq(i).val(hasil);
+
+                                }
+                                updateTotalTampilCabang();
+                            })
+
+
+                    })
+                    .catch(function (error) {
+                        messageWarning("Error", error);
+                    })
+            })
+        }
+
+        function changeHargaCabang() {
+            $(".c_harga").on('keyup', function (evt) {
+                var inpJumlah = document.getElementsByClassName( 'c_jumlah' ),
+                    jumlah  = [].map.call(inpJumlah, function( input ) {
+                        return parseInt(input.value);
+                    });
+
+                var inpHarga = document.getElementsByClassName( 'c_harga' ),
+                    harga  = [].map.call(inpHarga, function( input ) {
+                        return input.value;
+                    });
+
+                for (var i = 0; i < harga.length; i++) {
+                    var hasil = 0;
+                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                    var jml = jumlah[i];
+
+                    if (jml == "") {
+                        jml = 0;
+                    }
+
+                    hasil += parseInt(hrg) * parseInt(jml);
+
+                    if (isNaN(hasil)) {
+                        hasil = 0;
+                    }
+                    hasil = convertToRupiah(hasil);
+                    $(".c_subtotal").eq(i).val(hasil);
+                }
+                updateTotalTampilCabang();
+            })
         }
 
         //==============================================

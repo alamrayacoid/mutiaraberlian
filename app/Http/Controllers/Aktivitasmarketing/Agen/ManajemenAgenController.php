@@ -548,11 +548,17 @@ class ManajemenAgenController extends Controller
                 }
             })
             ->addColumn('action', function ($data) {
+//                return '<center><div class="btn-group btn-group-sm">
+//                            <button class="btn btn-info" title="Detail"
+//                                    type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
+//                            <button class="btn btn-warning" title="Edit"
+//                                    type="button" onclick="editDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-pencil"></i></button>
+//                            <button class="btn btn-danger" type="button"
+//                                    title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+//                        </div></center>';
                 return '<center><div class="btn-group btn-group-sm">
                             <button class="btn btn-info" title="Detail"
                                     type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
-                            <button class="btn btn-warning" title="Edit"
-                                    type="button" onclick="editDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-pencil"></i></button>
                             <button class="btn btn-danger" type="button"
                                     title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
                         </div></center>';
