@@ -1107,6 +1107,7 @@ $(document).ready(function() {
 			url: baseUrl + '/marketing/marketingarea/manajemenpenjualanagen/get-detail/' + id,
 			type: 'get',
 			success: function(response) {
+				console.log(response);
 				$('#nota_dtmpa').val(response.detail.s_nota);
 				let newDate = getFormattedDate(response.detail.s_date);
 				$('#date_dtmpa').val(newDate);
@@ -1125,9 +1126,10 @@ $(document).ready(function() {
 					let idx = '<td>'+ (index + 1) +'</td>';
 					let itemName = '<td>'+ val.get_item.i_name +'</td>';
 					let itemQty = '<td class="digits">'+ response.listQty[index] +'</td>';
+					let itemUnit = '<td>'+ val.get_item.get_unit1.u_name +'</td>';
 					let itemPrice = '<td class="rupiah">'+ parseInt(val.sd_value) +'</td>';
 					let itemSubTotal = '<td class="rupiah">'+ parseInt(val.sd_totalnet) +'</td>';
-					$('#table_detailmpa > tbody:last-child').append('<tr>'+ idx + itemName + itemQty + itemPrice + itemSubTotal +'</tr>');
+					$('#table_detailmpa > tbody:last-child').append('<tr>'+ idx + itemName + itemQty + itemUnit + itemPrice + itemSubTotal +'</tr>');
 				});
 				// re-activate mask-money
 				$('.rupiah').inputmask("currency", {

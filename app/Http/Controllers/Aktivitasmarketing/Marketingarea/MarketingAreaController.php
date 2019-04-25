@@ -1105,28 +1105,37 @@ class MarketingAreaController extends Controller
         {
             // get user based on agent-code
             $user = d_username::where('u_code', $agentCode)->first();
-            // get sub-agent's code from selected-user/agent
-            $subAgents = m_agen::where('a_parent', $user->u_code)
-            ->get();
-            $listAgentCode = array();
-            foreach ($subAgents as $subAgent) {
-                array_push($listAgentCode, $subAgent->a_code);
+            // return null if user is not found
+            if ($user === null)
+            {
+                $datas = d_sales::where('s_id', null)
+                ->get();
             }
-            // add selected-user's code
-            array_push($listAgentCode, $user->u_code);
-            // get user from created list of agent/sub-agent's code
-            $users = d_username::whereIn('u_code', $listAgentCode)->get();
-            $listUserCompany = array();
-            foreach ($users as $user) {
-                array_push($listUserCompany, $user->u_company);
+            else
+            {
+                // get sub-agent's code from selected-user/agent
+                $subAgents = m_agen::where('a_parent', $user->u_code)
+                ->get();
+                $listAgentCode = array();
+                foreach ($subAgents as $subAgent) {
+                    array_push($listAgentCode, $subAgent->a_code);
+                }
+                // add selected-user's code
+                array_push($listAgentCode, $user->u_code);
+                // get user from created list of agent/sub-agent's code
+                $users = d_username::whereIn('u_code', $listAgentCode)->get();
+                $listUserCompany = array();
+                foreach ($users as $user) {
+                    array_push($listUserCompany, $user->u_company);
+                }
+                // get query to show sales-list
+                $datas = d_sales::whereBetween('s_date', [$from, $to])
+                ->whereIn('s_comp', $listUserCompany)
+                ->with('getUser.agen')
+                ->orderBy('s_date', 'desc')
+                ->orderBy('s_nota', 'desc')
+                ->get();
             }
-            // get query to show sales-list
-            $datas = d_sales::whereBetween('s_date', [$from, $to])
-            ->whereIn('s_comp', $listUserCompany)
-            ->with('getUser.agen')
-            ->orderBy('s_date', 'desc')
-            ->orderBy('s_nota', 'desc')
-            ->get();
         }
         else
         {
@@ -1199,7 +1208,7 @@ class MarketingAreaController extends Controller
         $detail = d_sales::where('s_id', $id)
         ->with('getUser.employee')
         ->with('getUser.agen')
-        ->with('getSalesDt.getItem')
+        ->with('getSalesDt.getItem.getUnit1')
         ->firstOrFail();
         // get list qty with smallest unit
         $listQty = array();

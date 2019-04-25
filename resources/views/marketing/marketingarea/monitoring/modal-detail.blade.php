@@ -47,6 +47,7 @@
                                 <th class="text-center">No</th>
                                 <th class="text-center">Nama Barang</th>
                                 <th class="text-center">Kuantitas</th>
+                                <th class="text-center">Satuan</th>
                                 <th class="text-center">Harga @</th>
                                 <th class="text-center">Harga Total</th>
                             </tr>
