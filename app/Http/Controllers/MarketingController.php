@@ -120,6 +120,7 @@ class MarketingController extends Controller
                     $q->orWhere('i_name', 'like', '%'.$cari.'%');
                     $q->orWhere('i_code', 'like', '%'.$cari.'%');
                 })
+                ->groupBy('d_stock.s_id')
                 ->get();
         }else{
             $nama = DB::table('m_item')
@@ -139,6 +140,7 @@ class MarketingController extends Controller
                     $q->orWhere('i_name', 'like', '%'.$cari.'%');
                     $q->orWhere('i_code', 'like', '%'.$cari.'%');
                 })
+                ->groupBy('d_stock.s_id')
                 ->get();
         }
 
