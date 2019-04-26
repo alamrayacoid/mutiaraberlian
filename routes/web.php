@@ -364,6 +364,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/konsinyasipusat/detail-konsinyasi/{id}/{action}', 'MarketingController@detailKonsinyasi')->name('konsinyasipusat.detail');
     Route::get('/marketing/konsinyasipusat/get-provinsi', 'MarketingController@getProv')->name('konsinyasipusat.getProv');
     Route::get('/marketing/konsinyasipusat/get-kota/{idprov}', 'MarketingController@getKota')->name('konsinyasipusat.getKota');
+    Route::get('/marketing/konsinyasipusat/cari-konsigner-select2/{idprov}/{idkota}', 'MarketingController@carikonsignerselect2')->name('konsinyasipusat.carikonsignerselect2');
     Route::get('/marketing/konsinyasipusat/cari-konsigner/{idprov}/{idkota}', 'MarketingController@cariKonsigner')->name('konsinyasipusat.carikonsigner');
     Route::get('/marketing/konsinyasipusat/cari-barang', 'MarketingController@cariBarangKonsinyasi')->name('konsinyasipusat.caribarang');
     Route::get('/marketing/konsinyasipusat/get-satuan/{id}', 'MarketingController@getSatuan')->name('konsinyasipusat.getsatuan');

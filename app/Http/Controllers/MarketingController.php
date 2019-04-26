@@ -21,7 +21,7 @@ class MarketingController extends Controller
     {
     	return view('marketing/manajemenmarketing/index');
     }
-    
+
     public function year_promotion_create()
     {
         return view('marketing/manajemenmarketing/tahunan/create');
@@ -41,7 +41,7 @@ class MarketingController extends Controller
     {
         return view('marketing/manajemenmarketing/bulanan/edit');
     }
-    
+
     public function status_target()
     {
         return view('marketing/targetrealisasipenjualan/targetrealisasi/status');
@@ -67,6 +67,18 @@ class MarketingController extends Controller
     {
         $kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->get();
         return Response::json($kota);
+    }
+
+    public function carikonsignerselect2($prov = null, $kota = null)
+    {
+        $nama = DB::table('m_agen')
+            ->join('m_company', 'a_code', '=', 'c_user')
+            ->where('m_agen.a_provinsi', '=', $prov)
+            ->where('m_agen.a_kabupaten', '=', $kota)
+            ->where('m_company.c_type', '=', 'AGEN')
+            ->get();
+
+        return Response::json($nama);
     }
 
     public function cariKonsigner(Request $request, $prov = null, $kota = null)
