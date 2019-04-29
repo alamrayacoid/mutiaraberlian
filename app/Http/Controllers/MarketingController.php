@@ -14,6 +14,10 @@ use Mutasi;
 use Carbon\Carbon;
 use Mockery\Exception;
 use Response;
+use App\m_agen;
+use App\m_company;
+use App\m_wil_provinsi;
+use App\d_salescomp;
 
 class MarketingController extends Controller
 {
@@ -522,7 +526,8 @@ class MarketingController extends Controller
             ->join('d_salescompdt', function ($sd){
                 $sd->on('scd_sales', '=', 'sc_id');
             })
-            ->join('m_company', 'c_user', '=', 'sc_member')
+            // changed from c_user to c_id --> rowi
+            ->join('m_company', 'c_id', '=', 'sc_member')
             ->where('sc_type', '=', 'K')
             ->groupBy('d_salescomp.sc_nota')
             ->select('sc_id as id', 'sc_date as tanggal', 'sc_nota as nota', 'c_name as konsigner', DB::raw("CONCAT('Rp. ',FORMAT(sc_total, 0, 'de_DE')) as total"));
@@ -552,7 +557,10 @@ class MarketingController extends Controller
 
     public function konsinyasipusat()
     {
-    	return view('marketing/konsinyasipusat/index');
+        $provinsi = DB::table('m_wil_provinsi')
+        ->get();
+
+    	return view('marketing/konsinyasipusat/index', compact('provinsi'));
     }
 
     public function create_penempatanproduk()
@@ -780,5 +788,125 @@ class MarketingController extends Controller
                 'message'=> $e
             ]);
         }
+    }
+
+    // retrive data-table konsinyasi-penjualan
+    public function getListMP(Request $request)
+    {
+        $agentCode = $request->agent_code;
+        $from = Carbon::parse($request->date_from)->format('Y-m-d');
+        $to = Carbon::parse($request->date_to)->format('Y-m-d');
+
+        $datas = d_salescomp::whereBetween('sc_date', [$from, $to])
+        ->where('sc_type', 'K')
+        ->where('sc_paidoff', 'N')
+        ->where('sc_member', $agentCode)
+        ->with(['getMutation' => function($query) use ($agentCode) {
+            $query->where('sm_mutcat', 12)->get();
+        }])
+        ->with('getAgent')
+        ->with('getSalesCompDt.getItem')
+        ->orderBy('sc_date', 'desc')
+        ->get();
+
+        // get total-qty each salescomp
+        foreach ($datas as $data) {
+            $totalQty = 0;
+            foreach ($data->getMutation as $mutation) {
+                $totalQty += $mutation->sm_qty;
+            }
+            $data->totalQty = $totalQty;
+        }
+        // get sold-status each salescomp
+        foreach ($datas as $data) {
+            $totalSold = 0;
+            foreach ($data->getMutation as $mutation) {
+                $totalSold += ($mutation->sm_qty - $mutation->sm_residue);
+            }
+            $data->totalSold = $totalSold;
+            $data->totalSoldPerc = $totalSold / $data->totalQty * 100;
+        }
+
+        return Datatables::of($datas)
+        ->addIndexColumn()
+        ->addColumn('placement', function($datas) {
+            return $datas->getAgent->c_name;
+        })
+        ->addColumn('items', function($datas) {
+            return '<div><button class="btn btn-primary" onclick="showDetailSalescomp('. $datas->sc_id .')" type="button"><i class="fa fa-folder"></i></button></div>';
+        })
+        ->addColumn('total_qty', function($datas) {
+            return number_format($datas->totalQty, 0, ',', '.');
+        })
+        ->addColumn('total_price', function($datas) {
+            return '<span class="text-right">Rp '. number_format((int)$datas->sc_total, 2, ',', '.') .'</span>';
+        })
+        ->addColumn('sold_status', function($datas) {
+            return '<span class="pull-right"> '. number_format($datas->totalSoldPerc, 0, ',', '.') .' %</span>';
+        })
+        ->addColumn('action', function($datas) {
+            if (Auth::user()->u_id != $datas->c_user) {
+                return
+                '<div class="btn-group btn-group-sm">
+                (Owned by others)
+                </div>';
+            } else {
+                return
+                '<div class="btn-group btn-group-sm">
+                <button class="btn btn-warning btn-edit-canv" type="button" title="Edit" onclick="editDataCanvassing('. $datas->c_id .')"><i class="fa fa-pencil"></i></button>
+                <button class="btn btn-danger btn-disable-canv" type="button" title="Delete" onclick="deleteDataCanvassing('. $datas->c_id .')"><i class="fa fa-times-circle"></i></button>
+                </div>';
+            }
+        })
+        ->rawColumns(['placement', 'items', 'total_qty', 'total_price', 'sold_status', 'action'])
+        ->make(true);
+    }
+    public function getSalesCompDetail($id)
+    {
+        $detail = d_salescomp::where('sc_id', $id)
+        ->with('getSalesCompDt.getItem')
+        ->with('getSalesCompDt.getUnit')
+        ->first();
+        return response()->json($detail);
+    }
+    // get list-cities based on province-id
+    public function getCitiesMP(Request $request)
+    {
+        $cities = m_wil_provinsi::where('wp_id', $request->provId)
+        ->with('getCities')
+        ->firstOrFail();
+        return response()->json($cities);
+    }
+    // get list-agents based on citiy-id
+    public function getAgentsMP(Request $request)
+    {
+        $agents = m_agen::where('a_area', $request->cityId)
+        ->where('a_type', 'AGEN')
+        ->with('getProvince')
+        ->with('getCity')
+        ->with('getCompany')
+        ->orderBy('a_code', 'desc')
+        ->get();
+
+        return response()->json($agents);
+    }
+    // find agents and retrieve it by autocomple.js
+    public function findAgentsByAu(Request $request)
+    {
+        $term = $request->termToFind;
+
+        // startu query to find specific item
+        $agents = m_company::where('c_name', 'like', '%'.$term.'%')
+            ->orWhere('c_id', 'like', '%'.$term.'%')
+            ->get();
+
+        if (count($agents) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($agents as $agent) {
+                $results[] = ['id' => $agent->c_id, 'label' => $agent->c_id . ' - ' .strtoupper($agent->c_name)];
+            }
+        }
+        return response()->json($results);
     }
 }

@@ -190,40 +190,15 @@
                     $("#idKonsigner").val('');
                     $("#kodeKonsigner").val('');
                     $("#konsigner").val('');
-                    $('#konsigner').find('option').remove();
                     $("#konsigner").attr('autofocus', true);
                 }
             })
-
-            // get list of konsigner based on prov and city
-            function getKonsigner() {
-                loadingShow();
-                $.ajax({
-                    url: baseUrl+'/marketing/konsinyasipusat/cari-konsigner-select2/'+$("#provinsi").val()+'/'+$("#kota").val(),
-                    type: 'get',
-                    success: function( data ) {
-                        console.log(data);
-                        $('#konsigner').find('option').remove();
-                        $('#konsigner').append('<option value="" selected>Pilih Konsigner</option>')
-                        $.each(data, function(index, val) {
-                            console.log(val, val.a_id);
-                            $('#konsigner').append('<option value="'+ val.c_id +'" data-code="'+ val.a_code +'">'+ val.a_name +'</option>');
-                        })
-                        loadingHide();
-                    },
-                    error: function(e) {
-                        loadingHide();
-                        console.log('get konsigner error: ');
-                    }
-                });
-            }
 
             $('#konsigner').on('select2:select', function() {
                 console.log($(this).val(), $(this).find('option:selected').data('code'));
                 $( "#idKonsigner" ).val($(this).val());
                 $( "#kodeKonsigner" ).val($(this).find('option:selected').data('code'));
                 visibleTableItem();
-
             });
 
             // $("#konsigner").on("keyup", function (evt) {
@@ -385,6 +360,29 @@
                 }
             })
         });
+
+        // get list of konsigner based on prov and city
+        function getKonsigner() {
+            loadingShow();
+            $.ajax({
+                url: baseUrl+'/marketing/konsinyasipusat/cari-konsigner-select2/'+$("#provinsi").val()+'/'+$("#kota").val(),
+                type: 'get',
+                success: function( data ) {
+                    console.log(data);
+                    $('#konsigner').find('option').remove();
+                    $('#konsigner').append('<option value="" selected>Pilih Konsigner</option>')
+                    $.each(data, function(index, val) {
+                        console.log(val, val.a_id);
+                        $('#konsigner').append('<option value="'+ val.c_id +'" data-code="'+ val.a_code +'">'+ val.a_name +'</option>');
+                    })
+                    loadingHide();
+                },
+                error: function(e) {
+                    loadingHide();
+                    console.log('get konsigner error: ');
+                }
+            });
+        }
 
         function changeSatuan() {
             $(".satuan").on("change", function (evt) {

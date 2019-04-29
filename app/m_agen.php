@@ -25,4 +25,8 @@ class m_agen extends Model
     {
         return $this->belongsTo('App\m_wil_kota', 'a_kabupaten', 'wc_id');
     }
+    public function getCompany()
+    {
+        return $this->belongsTo('App\m_company', 'a_code', 'c_user');
+    }
 }

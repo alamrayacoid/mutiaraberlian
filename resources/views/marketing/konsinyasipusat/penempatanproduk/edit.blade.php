@@ -65,8 +65,12 @@
                                                 <input type="hidden" name="idKonsigner" id="idKonsigner" value="{{ $detail->c_id }}">
                                                 <input type="hidden" name="kodeKonsigner" id="kodeKonsigner" value="{{ $detail->c_user }}">
                                                 <input type="hidden" name="nota" id="nota" value="{{ $detail->sc_nota }}">
-                                                <input type="text" name="konsigner" id="konsigner" class="form-control form-control-sm"
-                                                       value="{{ strtoupper($detail->c_name) }}" oninput="handleInput(event)">
+                                                <!-- <input type="text" name="konsigner" id="konsigner" class="form-control form-control-sm"
+                                                value="{{ strtoupper($detail->c_name) }}" oninput="handleInput(event)"> -->
+                                                <input type="hidden" id="hid_konsigner" value="{{ $detail->sc_member }}">
+                                                <select class="form-control select2" name="konsigner" id="konsigner">
+                                                </select>
+
                                             </div>
                                         </div>
 
@@ -202,13 +206,16 @@
             visibleTableItem();
 
             $("#kota").on("change", function (evt) {
+                console.log('xx');
                 evt.preventDefault();
                 if ($("#kota").val() == "") {
                     $("#idKonsigner").val('');
                     $("#kodeKonsigner").val('');
                     $("#konsigner").val('');
+                    $('#konsigner').find('option').remove();
                     $("#konsigner").attr("disabled", true);
                 } else {
+                    getKonsigner();
                     $("#konsigner").attr("disabled", false);
                     $("#idKonsigner").val('');
                     $("#kodeKonsigner").val('');
@@ -217,41 +224,48 @@
                 }
             })
 
-            $("#konsigner").on("keyup", function (evt) {
-                evt.preventDefault();
-                if (evt.which == 8 || evt.which == 46)
-                {
-                    $("#idKonsigner").val('');
-                    $("#kodeKonsigner").val('');
-                    visibleTableItem();
-                } else if (evt.which <= 90 && evt.which >= 48)
-                {
-                    $("#idKonsigner").val('');
-                    $("#kodeKonsigner").val('');
-                    visibleTableItem();
-                }
-
-            })
-
-            $( "#konsigner" ).autocomplete({
-                source: function( request, response ) {
-                    $.ajax({
-                        url: baseUrl+'/marketing/konsinyasipusat/cari-konsigner/'+$("#provinsi").val()+'/'+$("#kota").val(),
-                        data: {
-                            term: $( "#konsigner" ).val()
-                        },
-                        success: function( data ) {
-                            response( data );
-                        }
-                    });
-                },
-                minLength: 1,
-                select: function(event, data) {
-                    $( "#idKonsigner" ).val(data.item.id);
-                    $( "#kodeKonsigner" ).val(data.item.kode);
-                    visibleTableItem();
-                }
+            $('#konsigner').on('select2:select', function() {
+                console.log($(this).val(), $(this).find('option:selected').data('code'));
+                $( "#idKonsigner" ).val($(this).val());
+                $( "#kodeKonsigner" ).val($(this).find('option:selected').data('code'));
+                visibleTableItem();
             });
+
+            // $("#konsigner").on("keyup", function (evt) {
+            //     evt.preventDefault();
+            //     if (evt.which == 8 || evt.which == 46)
+            //     {
+            //         $("#idKonsigner").val('');
+            //         $("#kodeKonsigner").val('');
+            //         visibleTableItem();
+            //     } else if (evt.which <= 90 && evt.which >= 48)
+            //     {
+            //         $("#idKonsigner").val('');
+            //         $("#kodeKonsigner").val('');
+            //         visibleTableItem();
+            //     }
+            //
+            // })
+            //
+            // $( "#konsigner" ).autocomplete({
+            //     source: function( request, response ) {
+            //         $.ajax({
+            //             url: baseUrl+'/marketing/konsinyasipusat/cari-konsigner/'+$("#provinsi").val()+'/'+$("#kota").val(),
+            //             data: {
+            //                 term: $( "#konsigner" ).val()
+            //             },
+            //             success: function( data ) {
+            //                 response( data );
+            //             }
+            //         });
+            //     },
+            //     minLength: 1,
+            //     select: function(event, data) {
+            //         $( "#idKonsigner" ).val(data.item.id);
+            //         $( "#kodeKonsigner" ).val(data.item.kode);
+            //         visibleTableItem();
+            //     }
+            // });
 
             $('.barang').on('click', function(e){
                 idxBarang = $('.barang').index(this);
@@ -389,6 +403,33 @@
             });
         });
 
+        // get list of konsigner based on prov and city
+        function getKonsigner() {
+            loadingShow();
+            $.ajax({
+                url: baseUrl+'/marketing/konsinyasipusat/cari-konsigner-select2/'+$("#provinsi").val()+'/'+$("#kota").val(),
+                type: 'get',
+                success: function( data ) {
+                    console.log(data);
+                    $('#konsigner').find('option').remove();
+                    $('#konsigner').append('<option value="" selected>Pilih Konsigner</option>')
+                    $.each(data, function(index, val) {
+                        console.log(val, val.c_id, $('#hid_konsigner').val());
+                        if(val.c_id == $('#hid_konsigner').val()) {
+                            $('#konsigner').append('<option selected value="'+ val.c_id +'" data-code="'+ val.a_code +'">'+ val.a_name +'</option>');
+                        } else {
+                            $('#konsigner').append('<option value="'+ val.c_id +'" data-code="'+ val.a_code +'">'+ val.a_name +'</option>');
+                        }
+                    })
+                    loadingHide();
+                },
+                error: function(e) {
+                    loadingHide();
+                    console.log('get konsigner error: ');
+                }
+            });
+        }
+
         function changeSatuan() {
             $(".satuan").on("change", function (evt) {
                 var idx = $('.satuan').index(this);
@@ -492,7 +533,7 @@
                 if (qtyOld == "") {
                     qtyOld = null;
                 }
-                
+
                 if ($('.jumlah').eq(idx).attr("data-label") == "old") {
                     axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok-old/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".oldSatuan").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+qtyOld+'/'+jumlah)
                         .then(function (resp) {
@@ -852,6 +893,7 @@
                             })
                             $("#kota").append(option);
                             loadingHide();
+                            getKonsigner();
                         })
                         .catch(function (error) {
                             loadingHide();
@@ -895,5 +937,6 @@
                 }
             })
         }
+
     </script>
 @endsection
