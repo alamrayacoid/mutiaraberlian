@@ -355,7 +355,8 @@ class MarketingController extends Controller
     {
         $data   = $request->all();
         $comp   = Auth::user()->u_company;
-        $member = $data['kodeKonsigner'];
+//        $member = $data['kodeKonsigner'];
+        $member = $data['idKonsigner'];
         $user   = Auth::user()->u_id;
         $type   = 'K';
         $date   = Carbon::now('Asia/Jakarta')->format('Y-m-d');
@@ -429,7 +430,7 @@ class MarketingController extends Controller
                     ->first();
 
                 $posisi = DB::table('m_company')
-                    ->where('c_user', '=', $member)
+                    ->where('c_id', '=', $member)
                     ->first();
 
                 Mutasi::mutasikeluar(13, $comp, $comp, $data['idItem'][$i], $qty_compare, $nota);
@@ -467,7 +468,7 @@ class MarketingController extends Controller
             $detail = DB::table('d_salescomp')
                 ->where('d_salescomp.sc_id', '=', $id)
                 ->join('m_company', function ($c){
-                    $c->on('m_company.c_user', '=', 'd_salescomp.sc_member');
+                    $c->on('m_company.c_id', '=', 'd_salescomp.sc_member');
                 })
                 ->join('m_agen', function ($a){
                     $a->on('m_agen.a_code', '=', 'm_company.c_user');
@@ -579,7 +580,8 @@ class MarketingController extends Controller
         if ($request->isMethod('post')) {
             $data   = $request->all();
             $comp   = Auth::user()->u_company;
-            $member = $data['kodeKonsigner'];
+//            $member = $data['kodeKonsigner'];
+            $member = $data['idKonsigner'];
             $user   = Auth::user()->u_id;
             $total  = $data['tot_hrg'];
             $update = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
@@ -660,7 +662,7 @@ class MarketingController extends Controller
                             ->first();
 
                         $posisi = DB::table('m_company')
-                            ->where('c_user', '=', $member)
+                            ->where('c_id', '=', $member)
                             ->first();
 
                         Mutasi::mutasikeluar(13, $comp, $comp, $data['idItem'][$i], $qty_compare, $nota);
@@ -694,7 +696,7 @@ class MarketingController extends Controller
             $detail = DB::table('d_salescomp')
                 ->where('d_salescomp.sc_id', '=', $id)
                 ->join('m_company', function ($c){
-                    $c->on('m_company.c_user', '=', 'd_salescomp.sc_member');
+                    $c->on('m_company.c_id', '=', 'd_salescomp.sc_member');
                 })
                 ->join('m_agen', function ($a){
                     $a->on('m_agen.a_code', '=', 'm_company.c_user');
