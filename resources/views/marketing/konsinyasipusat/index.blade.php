@@ -416,6 +416,11 @@
 				if (response.length <= 0) {
 					return 0;
 				}
+				$('#nota_dtmp').val(response.sc_nota);
+				$('#date_dtmp').val(response.dateFormated);
+				$('#placement_dtmp').val(response.get_agent.c_name);
+				$('#total_dtmp').val(parseInt(response.sc_total));
+
 				$.each(response.get_sales_comp_dt, function(index, val) {
 					let name = '<td>'+ val.get_item.i_code +' - '+ val.get_item.i_name +'</td>';
 					let qty = '<td>'+ val.scd_qty +'</td>';

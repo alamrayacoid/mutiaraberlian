@@ -803,7 +803,7 @@ class MarketingController extends Controller
         ->where('sc_type', 'K')
         ->where('sc_paidoff', 'N')
         ->where('sc_member', $agentCode)
-        ->with(['getMutation' => function($query) use ($agentCode) {
+        ->with(['getMutation' => function($query) {
             $query->where('sm_mutcat', 12)->get();
         }])
         ->with('getAgent')
@@ -866,9 +866,12 @@ class MarketingController extends Controller
     public function getSalesCompDetail($id)
     {
         $detail = d_salescomp::where('sc_id', $id)
+        ->with('getAgent')
         ->with('getSalesCompDt.getItem')
         ->with('getSalesCompDt.getUnit')
         ->first();
+        $detail->dateFormated = Carbon::parse($detail->sc_date)->format('d M Y');
+
         return response()->json($detail);
     }
     // get list-cities based on province-id

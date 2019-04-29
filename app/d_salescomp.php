@@ -15,7 +15,7 @@ class d_salescomp extends Model
     {
         return $this->hasMany('App\d_salescompdt', 'scd_sales', 'sc_id');
     }
-    // get-agent from username (agent = user who logged in)
+    // get-agent from username (agent = user who is logged in)
     public function getAgent()
     {
         return $this->belongsTo('App\m_company', 'sc_member', 'c_id');
