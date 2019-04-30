@@ -25,4 +25,9 @@ class d_salescomp extends Model
     {
         return $this->hasMany('App\d_stock_mutation', 'sm_nota', 'sc_nota');
     }
+    // get-stock-mutation based on no-nota as sm_reff
+    public function getMutationReff()
+    {
+        return $this->hasMany('App\d_stock_mutation', 'sm_reff', 'sc_nota');
+    }
 }

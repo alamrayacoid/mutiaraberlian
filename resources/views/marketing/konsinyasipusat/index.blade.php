@@ -303,6 +303,7 @@
 			$('.table-monitoringpenjualan').addClass('d-none');
 			return 0;
 		}
+
 		$('#table_monitoringpenjualan').dataTable().fnDestroy();
 		tb_listmp = $('#table_monitoringpenjualan').DataTable({
 			responsive: true,
@@ -324,7 +325,7 @@
 				{data: 'total_qty'},
 				{data: 'total_price'},
 				{data: 'sold_status'},
-				{data: 'action'}
+				{data: 'sold_amount'}
 			],
 			pageLength: 10,
 			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]

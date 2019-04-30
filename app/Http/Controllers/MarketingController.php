@@ -806,6 +806,7 @@ class MarketingController extends Controller
         ->with(['getMutation' => function($query) {
             $query->where('sm_mutcat', 12)->get();
         }])
+        ->with(['getMutationReff'])
         ->with('getAgent')
         ->with('getSalesCompDt.getItem')
         ->orderBy('sc_date', 'desc')
@@ -828,6 +829,14 @@ class MarketingController extends Controller
             $data->totalSold = $totalSold;
             $data->totalSoldPerc = $totalSold / $data->totalQty * 100;
         }
+        // get sold-amount each salescomp
+        foreach ($datas as $data) {
+            $soldAmount = 0;
+            foreach ($data->getMutationReff as $mutation) {
+                $soldAmount += ($mutation->sm_qty * $mutation->sm_sell);
+            }
+            $data->soldAmount = $soldAmount;
+        }
 
         return Datatables::of($datas)
         ->addIndexColumn()
@@ -841,26 +850,15 @@ class MarketingController extends Controller
             return number_format($datas->totalQty, 0, ',', '.');
         })
         ->addColumn('total_price', function($datas) {
-            return '<span class="text-right">Rp '. number_format((int)$datas->sc_total, 2, ',', '.') .'</span>';
+            return '<span class="pull-right">Rp '. number_format((int)$datas->sc_total, 2, ',', '.') .'</span>';
         })
         ->addColumn('sold_status', function($datas) {
             return '<span class="pull-right"> '. number_format($datas->totalSoldPerc, 0, ',', '.') .' %</span>';
         })
-        ->addColumn('action', function($datas) {
-            if (Auth::user()->u_id != $datas->c_user) {
-                return
-                '<div class="btn-group btn-group-sm">
-                (Owned by others)
-                </div>';
-            } else {
-                return
-                '<div class="btn-group btn-group-sm">
-                <button class="btn btn-warning btn-edit-canv" type="button" title="Edit" onclick="editDataCanvassing('. $datas->c_id .')"><i class="fa fa-pencil"></i></button>
-                <button class="btn btn-danger btn-disable-canv" type="button" title="Delete" onclick="deleteDataCanvassing('. $datas->c_id .')"><i class="fa fa-times-circle"></i></button>
-                </div>';
-            }
+        ->addColumn('sold_amount', function($datas) {
+            return '<span class="pull-right">Rp '. number_format((int)$datas->soldAmount, 2, ',', '.') .'</span>';
         })
-        ->rawColumns(['placement', 'items', 'total_qty', 'total_price', 'sold_status', 'action'])
+        ->rawColumns(['placement', 'items', 'total_qty', 'total_price', 'sold_status', 'sold_amount'])
         ->make(true);
     }
     public function getSalesCompDetail($id)
