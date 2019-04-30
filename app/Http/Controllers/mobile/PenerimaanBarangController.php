@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\mobile;
 
-use function GuzzleHttp\Promise\iter_for;
 use Illuminate\Http\Request;
 use DB;
+use Mutasi;
+use Carbon\Carbon;
+use Response;
 use App\Http\Controllers\Controller;
 
 class PenerimaanBarangController extends Controller
@@ -65,20 +67,17 @@ class PenerimaanBarangController extends Controller
             ->first();
 
         $qty = 0;
-        $satuan = null;
+        $satuan = $order->pod_unit;
 
         if ($data != null){
             // konversi terima ke unit order
             // ird_unit pasti unit1 di m_item
             if ($order->pod_unit == $data->i_unit1){
                 $qty = $data->terima / $data->i_unitcompare1;
-                $satuan = $data->i_unit1;
             } elseif ($order->pod_unit == $data->i_unit2){
                 $qty = $data->terima / $data->i_unitcompare2;
-                $satuan = $data->i_unit2;
             } elseif ($order->pod_unit == $data->i_unit3){
                 $qty = $data->terima / $data->i_unitcompare3;
-                $satuan = $data->i_unit3;
             }
         }
 
@@ -87,16 +86,19 @@ class PenerimaanBarangController extends Controller
 
     public function TerimaItem(Request $request)
     {
-        dd($request);
-        try{
-            $order   = $request->idOrder;
-            $item    = Crypt::decrypt($request->idItem);
-        }catch (\DecryptException $e){
-            return Response::json(['status' => 'Failed']);
-        }
+        $nota   = $request->nota;
+        $notaDo = $request->notado;
+        $item    = $request->item;
+        $username = $request->username;
+
+        $data = DB::table('d_productionorder')
+            ->select('po_id')
+            ->where('po_nota', '=', $nota)
+            ->get();
 
         DB::beginTransaction();
         try{
+            $order = $data[0]->po_id;
             $data_check = DB::table('d_productionorder')
                 ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
                     'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
@@ -112,6 +114,10 @@ class PenerimaanBarangController extends Controller
 
             $nota_receipt = DB::table('d_itemreceipt')
                 ->where('ir_notapo', '=', $data_check->nota);
+
+            $idUser = DB::table('d_username')
+                ->where('u_username', '=', $username)
+                ->first();
 
             if ($nota_receipt->count() > 0) {
                 $detail_receipt = (DB::table('d_itemreceiptdt')->where('ird_itemreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) ? (DB::table('d_itemreceiptdt')->where('ird_itemreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) + 1 : 1;
@@ -132,12 +138,12 @@ class PenerimaanBarangController extends Controller
                     'ird_item'          => $item,
                     'ird_qty'           => $qty_compare,
                     'ird_unit'          => $data_check->unit1,
-                    'ird_user'          => Auth::user()->u_id
+                    'ird_user'          => $idUser->u_id
                 ];
 
                 DB::table('d_itemreceiptdt')->insert($values);
 
-                Mutasi::mutasimasuk(1, Auth::user()->u_company, Auth::user()->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $request->nota);
+                Mutasi::mutasimasuk(1,$idUser->u_company,$idUser->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $notaDo);
             } else {
                 $id = (DB::table('d_itemreceipt')->max('ir_id')) ? (DB::table('d_itemreceipt')->max('ir_id'))+1 : 1;
 
@@ -164,20 +170,72 @@ class PenerimaanBarangController extends Controller
                     'ird_item'          => $item,
                     'ird_qty'           => $qty_compare,
                     'ird_unit'          => $data_check->unit1,
-                    'ird_user'          => Auth::user()->u_id
+                    'ird_user'          => $idUser->u_id
                 ];
 
                 DB::table('d_itemreceipt')->insert($receipt);
                 DB::table('d_itemreceiptdt')->insert($values);
-                Mutasi::mutasimasuk(1, Auth::user()->u_company, Auth::user()->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $request->nota);
+                Mutasi::mutasimasuk(1,$idUser->u_company,$idUser->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $notaDo);
             }
             $this->UpdateStatus($order, $item);
             DB::commit();
-            return Response::json(['status' => 'Success', 'message' => "Data berhasil disimpan"]);
+            return Response::json(['status' => 'Success']);
         }catch (\Exception $e){
             DB::rollback();
-            return Response::json(['status' => 'Failed', 'message' => $e]);
+            return Response::json(['status' => 'Failed']);
         }
+    }
+
+    public function UpdateStatus($id, $item)
+    {
+        $data = DB::table('d_productionorder')
+            ->join('d_productionorderdt', 'po_id', '=', 'pod_productionorder')
+            ->join('m_item', 'i_id', '=', 'pod_item')
+            ->where('po_id', '=', $id)
+            ->where('pod_item', '=', $item)
+            ->get();
+
+        $terima = DB::table('d_itemreceipt')
+            ->join('d_itemreceiptdt', 'ir_id', '=', 'ird_itemreceipt')
+            ->select(DB::raw('sum(ird_qty) as diterima'), 'ird_unit')
+            ->where('ir_notapo', '=', $data[0]->po_nota)
+            ->where('ird_item', '=', $item)
+            ->get();
+
+        //konversi ke satuan terkecil
+        $pesan = 0;
+        if ($data[0]->pod_unit == $data[0]->i_unit1){
+            $pesan = $data[0]->pod_qty * $data[0]->i_unitcompare1;
+        }
+        elseif ($data[0]->pod_unit == $data[0]->i_unit2){
+            $pesan = $data[0]->pod_qty * $data[0]->i_unitcompare2;
+        }
+        elseif ($data[0]->pod_unit == $data[0]->i_unit3){
+            $pesan = $data[0]->pod_qty * $data[0]->i_unitcompare3;
+        }
+
+        if ($pesan == $terima[0]->diterima){
+            DB::table('d_productionorderdt')
+                ->where('pod_item', '=', $item)
+                ->where('pod_productionorder', '=', $id)
+                ->update([
+                    'pod_received' => 'Y'
+                ]);
+
+            $data = DB::table('d_productionorderdt')
+                ->where('pod_productionorder', '=', $id)
+                ->where('pod_received', '=', 'N')
+                ->get();
+
+            if (count($data) == 0){
+                DB::table('d_productionorder')
+                    ->where('po_id', '=', $id)
+                    ->update([
+                        'po_status' => 'Y'
+                    ]);
+            }
+        }
+
     }
 
 }
