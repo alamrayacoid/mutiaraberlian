@@ -315,7 +315,7 @@ class MarketingController extends Controller
         $get_price = DB::table('m_priceclassdt')
             ->join('m_priceclass', 'pcd_classprice', 'pc_id')
             ->select('m_priceclassdt.*', 'm_priceclass.*')
-            ->where('pc_name', '=', $type->a_type)
+            ->where('pc_id', '=', $type->a_class)
             ->where('pcd_item', '=', $item)
             ->where('pcd_unit', '=', $unit)
             ->get();
@@ -340,7 +340,7 @@ class MarketingController extends Controller
                     }
                 } else {
                     $z = $this->inRange($qty, $get_price);
-                    if ($z != null) {
+                    if ($z !== null) {
                         $harga = $get_price[$z]->pcd_price;
                     }
                 }
