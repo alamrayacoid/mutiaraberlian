@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\mobile;
 
+use function GuzzleHttp\Promise\iter_for;
 use Illuminate\Http\Request;
 use DB;
 use App\Http\Controllers\Controller;
@@ -42,5 +43,41 @@ class PenerimaanBarangController extends Controller
         return json_encode([
             "BarangPenerimaan" => $data
         ]);
+    }
+
+    public function getDataNotaItem(Request $request){
+        $nota = $request->nota;
+        $item = $request->barang;
+
+        $order = DB::table('d_productionorder')
+            ->join('d_productionorderdt', 'pod_productionorder', '=', 'po_id')
+            ->where('po_nota', '=', $nota)
+            ->where('pod_item', '=', $item)
+            ->first();
+
+        $data = DB::table('d_itemreceipt')
+            ->join('d_itemreceiptdt', 'ir_id', '=', 'ird_itemreceipt')
+            ->join('m_item', 'i_id', '=', 'ird_item')
+            ->select(DB::raw('sum(ird_qty) as terima'), 'ird_unit', 'm_item.*')
+            ->where('ir_notapo', '=', $nota)
+            ->where('ird_item', '=', $item)
+            ->groupBy('ird_item')
+            ->first();
+
+        $qty = 0;
+
+        if ($data != null){
+            // konversi terima ke unit order
+            // ird_unit pasti unit1 di m_item
+            if ($order->pod_unit == $data->i_unit1){
+                $qty = $data->terima / $data->i_unitcompare1;
+            } elseif ($order->pod_unit == $data->i_unit2){
+                $qty = $data->terima / $data->i_unitcompare2;
+            } elseif ($order->pod_unit == $data->i_unit3){
+                $qty = $data->terima / $data->i_unitcompare3;
+            }
+        }
+
+        return json_encode(["qtyTerimaBarang" => $qty]);
     }
 }
