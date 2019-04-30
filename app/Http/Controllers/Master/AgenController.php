@@ -311,6 +311,7 @@ class AgenController extends Controller
                     'c_name'    => $request->name,
                     'c_address' => $request->address,
                     'c_tlp'     => $request->telp,
+                    // 'c_type'    => $request->type_hidden,
                     'c_type'    => 'AGEN',
                     'c_user'    => $codeAgen,
                     'c_insert'  => Carbon::now(),
@@ -391,7 +392,7 @@ class AgenController extends Controller
                 ->update([
                     'a_area'      => $request->area_city,
                     'a_name'      => $request->name,
-                    'a_sex'      => $request->jekel,
+                    'a_sex'       => $request->jekel,
                     'a_birthday'  => Carbon::parse($request->birthday),
                     'a_email'     => $request->email,
                     'a_telp'      => $request->telp,
@@ -407,6 +408,27 @@ class AgenController extends Controller
                     'a_img'       => $photo,
                     'a_update'    => Carbon::now()
                 ]);
+
+            // // get current agent by id
+            // $currentAgent = DB::table('m_agen')
+            //     ->where('a_id', $id)
+            //     ->select('a_code')
+            //     ->first();
+
+            // // update table m_company
+            // DB::table('m_company')
+            //     ->where('c_user', $currentAgent->a_code)
+            //     ->update([
+            //         'c_id'      => $codeCompany,
+            //         'c_name'    => $request->name,
+            //         'c_address' => $request->address,
+            //         'c_tlp'     => $request->telp,
+            //         'c_type'    => $request->type_hidden,
+            //         // 'c_type'    => 'AGEN',
+            //         // 'c_user'    => $codeAgen,
+            //         'c_insert'  => Carbon::now(),
+            //         'c_update'  => Carbon::now()
+            //     ]);
 
             DB::commit();
             return response()->json([
