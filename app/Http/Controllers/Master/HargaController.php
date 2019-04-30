@@ -154,11 +154,23 @@ class HargaController extends Controller
             })
             ->addColumn('action', function ($data) {
                 return '<center><div class="btn-group btn-group-sm">
-                                            <button class="btn btn-warning" title="Edit"
-                                                    type="button" onclick="editGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->pcd_item . '\', \'' . Currency::addRupiah($data->pcd_price) . '\', \'' . $data->pcd_unit . '\', \'' . $data->pcd_type . '\', \'' . $data->pcd_rangeqtystart . '\', \'' . $data->pcd_rangeqtyend . '\', \'' . $data->status . '\')"><i class="fa fa-pencil"></i></button>
-                                            <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolonganHarga(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->status . '\')"><i class="fa fa-trash"></i></button>
-                                        </div></center>';
+                <button class="btn btn-warning" title="Edit" type="button"
+                    onclick="editGolonganHarga(\'' .
+                        Crypt::encrypt($data->pcd_classprice) . '\', \'' .
+                        Crypt::encrypt($data->pcd_detailid) . '\', \'' .
+                        $data->pcd_item . '\', \'' .
+                        Currency::addRupiah($data->pcd_price) . '\', \'' .
+                        $data->pcd_unit . '\', \'' .
+                        $data->pcd_type . '\', \'' .
+                        $data->pcd_rangeqtystart . '\', \'' .
+                        $data->pcd_rangeqtyend . '\', \'' .
+                        $data->status . '\')"><i class="fa fa-pencil"></i></button>
+                <button class="btn btn-danger" type="button" title="Hapus"
+                    onclick="hapusGolonganHarga(\'' .
+                        Crypt::encrypt($data->pcd_classprice) . '\', \'' .
+                        Crypt::encrypt($data->pcd_detailid) . '\', \'' .
+                        $data->status . '\')"><i class="fa fa-trash"></i></button>
+                </div></center>';
 
             })
             ->addColumn('status', function ($data) {
@@ -233,11 +245,23 @@ class HargaController extends Controller
             })
             ->addColumn('action', function ($data) {
                 return '<center><div class="btn-group btn-group-sm">
-                                            <button class="btn btn-warning" title="Edit"
-                                                    type="button" onclick="editGolonganHargaHPA(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->pcd_item . '\', \'' . Currency::addRupiah($data->pcd_price) . '\', \'' . $data->pcd_unit . '\', \'' . $data->pcd_type . '\', \'' . $data->pcd_rangeqtystart . '\', \'' . $data->pcd_rangeqtyend . '\', \'' . $data->status . '\')"><i class="fa fa-pencil"></i></button>
-                                            <button class="btn btn-danger" type="button"
-                                                    title="Hapus" onclick="hapusGolonganHargaHPA(\'' . Crypt::encrypt($data->pcd_classprice) . '\', \'' . Crypt::encrypt($data->pcd_detailid) . '\', \'' . $data->status . '\')"><i class="fa fa-trash"></i></button>
-                                        </div></center>';
+                <button class="btn btn-warning" title="Edit" type="button"
+                    onclick="editGolonganHargaHPA(\'' .
+                        Crypt::encrypt($data->pcd_classprice) . '\', \'' .
+                        Crypt::encrypt($data->pcd_detailid) . '\', \'' .
+                        $data->pcd_item . '\', \'' .
+                        Currency::addRupiah($data->pcd_price) . '\', \'' .
+                        $data->pcd_unit . '\', \'' .
+                        $data->pcd_type . '\', \'' .
+                        $data->pcd_rangeqtystart . '\', \'' .
+                        $data->pcd_rangeqtyend . '\', \'' .
+                        $data->status . '\')"><i class="fa fa-pencil"></i></button>
+                <button class="btn btn-danger" type="button" title="Hapus"
+                    onclick="hapusGolonganHargaHPA(\'' .
+                    Crypt::encrypt($data->pcd_classprice) . '\', \'' .
+                    Crypt::encrypt($data->pcd_detailid) . '\', \'' .
+                    $data->status . '\')"><i class="fa fa-trash"></i></button>
+                </div></center>';
 
             })
             ->addColumn('status', function ($data) {
@@ -441,8 +465,8 @@ class HargaController extends Controller
         }
         DB::beginTransaction();
         try {
-            if ($request->jenisharga == "U") {
-
+            if ($request->jenisharga == "U")
+            {
                 $check = DB::table('d_priceclassauthdt')
                     ->where('pcad_classprice', '=', $idGol)
                     ->where('pcad_item', '=', $request->idBarang)
@@ -459,9 +483,12 @@ class HargaController extends Controller
                     ->where('pcd_payment', '=', $request->jenis_pembayaran)
                     ->get();
 
-                if (count($check) > 0 || count($check2) > 0) {
+                if (count($check) > 0 || count($check2) > 0)
+                {
                     return response()->json(['status' => "Unit Ada"]);
-                } else {
+                }
+                else
+                {
                     $checkGol1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->count();
                     $checkGol2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->count();
 
@@ -499,7 +526,9 @@ class HargaController extends Controller
                     DB::commit();
                     return response()->json(['status' => "Success"]);
                 }
-            } else {
+            }
+            else
+            {
                 $check = DB::table('d_priceclassauthdt')
                     ->where('pcad_classprice', '=', $idGol)
                     ->where('pcad_item', '=', $request->idBarang)
@@ -516,7 +545,7 @@ class HargaController extends Controller
                     ->where('pcd_payment', '=', $request->jenis_pembayaranrange)
                     ->get();
 
-                $sts = '';
+                $sts = 'Null';
                 foreach ($check as $key => $val) {
                     if (in_array($request->rangestart, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend))) {
                         $sts = 'Not Null';
@@ -539,11 +568,13 @@ class HargaController extends Controller
                     }
                 }
 
-                if ($sts = "Null") {
+                if ($sts == "Null")
+                {
                     $checkGol1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->count();
                     $checkGol2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->count();
 
-                    if ($checkGol1 > 0 && $checkGol2 > 0) {
+                    if ($checkGol1 > 0 && $checkGol2 > 0)
+                    {
                         $tmp_detail1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid');
                         $tmp_detail2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid');
 
@@ -552,11 +583,18 @@ class HargaController extends Controller
                         } else if ($tmp_detail2 > $tmp_detail1) {
                             $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1;
                         }
-
-                    } else if ($checkGol1 > 0 && $checkGol2 == 0) {
+                    }
+                    else if ($checkGol1 > 0 && $checkGol2 == 0)
+                    {
                         $detailid = (DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid')) + 1;
-                    } else if ($checkGol1 == 0 && $checkGol2 > 0) {
+                    }
+                    else if ($checkGol1 == 0 && $checkGol2 > 0)
+                    {
                         $detailid = (DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid')) + 1;
+                    }
+                    else
+                    {
+                        $detailid = 1;
                     }
 
                     $values = [

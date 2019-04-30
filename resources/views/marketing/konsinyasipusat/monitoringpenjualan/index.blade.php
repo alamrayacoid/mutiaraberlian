@@ -28,11 +28,11 @@
 						</div>
 					</div>
 					<div class="col-md-2 col-sm-6 filter_agent">
-						<button class="btn btn-primary btn-md" title="Cari Berdasarkan Filter" id="btn_filter_mp">Filter</button>
+						<button class="btn btn-primary btn-md" title="Terapkan filter" id="btn_filter_mp">Terapkan</button>
 					</div>
 				</div>
 				<div class="table-responsive table-monitoringpenjualan d-none">
-					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_monitoringpenjualan">
+					<table class="table table-hover table-striped display table-bordered" cellspacing="0" id="table_monitoringpenjualan">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>

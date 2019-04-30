@@ -297,10 +297,12 @@
 	var tb_listmp;
 	function TableListMP()
 	{
+		loadingShow();
 		if ($('#filter_agent_code_mp').val() !== "") {
 			$('.table-monitoringpenjualan').removeClass('d-none');
 		} else {
 			$('.table-monitoringpenjualan').addClass('d-none');
+			loadingHide();
 			return 0;
 		}
 
@@ -330,6 +332,7 @@
 			pageLength: 10,
 			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
 		});
+		loadingHide();
 	}
 	// autocomple to find-agents
 	function findAgentsByAuMP()
@@ -409,6 +412,7 @@
 	}
 	function showDetailSalescomp(id)
 	{
+		loadingShow();
 		$.ajax({
 			url: baseUrl + "/marketing/konsinyasipusat/monitoringpenjualan/get-sales-detail/" + id,
 			type: "get",
@@ -442,9 +446,11 @@
 					nullable: false,
 					// unmaskAsNumber: true,
 				});
+				loadingHide();
 				$('#modalDetailMP').modal('show');
 			},
 			error: function(e) {
+				loadingHide();
 				messageWarning('Perhatian', 'terjadi kesalahan saat pengambilan data detail penjualan !');
 			}
 		})

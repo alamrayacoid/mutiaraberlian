@@ -29,8 +29,8 @@
 	<div class="title-block text-primary">
 	    <h1 class="title"> Master Harga </h1>
 	    <p class="title-description">
-	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> 
-	    	/ <span>Master Data Utama</span> 
+	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
+	    	/ <span>Master Data Utama</span>
 	    	/ <span class="text-primary" style="font-weight: bold;">Master Harga</span>
 	     </p>
 	</div>
@@ -53,9 +53,9 @@
                     <li class="nav-item">
                         <a href="#hpa" class="nav-link" data-target="#hpa" aria-controls="hpa" data-toggle="tab" role="tab">Harga Penjualan Agen</a>
                     </li>
-                </ul>				
-		
-				<div class="tab-content">		
+                </ul>
+
+				<div class="tab-content">
 
 					@include('masterdatautama.harga.golongan.index')
 					@include('masterdatautama.harga.default.index')
@@ -395,7 +395,7 @@
                 } else if ($("#hargarange").val() == "" || $("#hargarange").val() == "Rp. 0") {
                     messageWarning("Peringatan", "Masukkan harga barang dengan benar!");
                 } else {
-                    loadingShow();
+                    // loadingShow();
                     var data = $('#formsetharga').serialize();
                     axios.post('{{route("dataharga.addgolonganharga")}}', data).then(function (response) {
                         if (response.data.status == "Success") {

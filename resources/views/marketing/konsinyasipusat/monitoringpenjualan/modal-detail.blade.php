@@ -41,7 +41,7 @@
                     </div>
                 </section>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_detailmp" width="100%">
+                    <table class="table table-striped table-hover display table-bordered" cellspacing="0" id="table_detailmp" width="100%">
                         <thead class="bg-primary">
                             <tr>
                                 <th>Kode/Nama Barang</th>
