@@ -15,5 +15,10 @@ class d_stock extends Model
     {
       return $this->belongsTo('App\m_item', 's_item', 'i_id');
     }
+    // get-relation with table d_stock_mutation
+    public function getMutation()
+    {
+        return $this->hasMany('App\d_stock_mutation', 'sm_stock', 's_id');
+    }
 
 }

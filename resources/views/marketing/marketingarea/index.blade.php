@@ -1107,7 +1107,6 @@ $(document).ready(function() {
 			url: baseUrl + '/marketing/marketingarea/manajemenpenjualanagen/get-detail/' + id,
 			type: 'get',
 			success: function(response) {
-				console.log(response);
 				$('#nota_dtmpa').val(response.detail.s_nota);
 				let newDate = getFormattedDate(response.detail.s_date);
 				$('#date_dtmpa').val(newDate);

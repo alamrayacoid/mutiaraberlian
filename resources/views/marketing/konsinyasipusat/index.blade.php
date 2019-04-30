@@ -3,7 +3,7 @@
 @section('content')
 
 @include('marketing.konsinyasipusat.penempatanproduk.modal')
-@include('marketing.konsinyasipusat.monitoringpenjualan.modal')
+@include('marketing.konsinyasipusat.monitoringpenjualan.modal-detail')
 @include('marketing.konsinyasipusat.monitoringpenjualan.modal-search')
 
 <article class="content animated fadeInLeft">
@@ -241,5 +241,213 @@
             }
         });
     }
+</script>
+
+<!-- ========================================================================-->
+<!-- script for Data-Monitoring-Penjualan-Agen -->
+<script type="text/javascript">
+	$(document).ready(function() {
+		const cur_date = new Date();
+		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+		const last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+		$('#date_from_mp').datepicker('setDate', first_day);
+		$('#date_to_mp').datepicker('setDate', last_day);
+
+		$('#date_from_mp').on('change', function() {
+			TableListMP();
+		});
+		$('#date_to_mp').on('change', function() {
+			TableListMP();
+		});
+		$('#btn_search_date_mp').on('click', function() {
+			TableListMP();
+		});
+		$('#btn_refresh_date_mp').on('click', function() {
+			$('#filter_agent_code_mp').val('');
+			$('#filter_agent_name_mp').val('');
+			$('#date_from_mp').datepicker('setDate', first_day);
+			$('#date_to_mp').datepicker('setDate', last_day);
+		});
+		// retrieve data-table
+		TableListMP();
+		// filter agent based on area (province and city)
+		$('.provMP').on('change', function() {
+			getCitiesMP();
+		});
+		$('.citiesMP').on('change', function(){
+			$(".table-modal").removeClass('d-none');
+			appendListAgentsMP();
+		});
+		// filter agent field
+		$('#filter_agent_name_mp').on('click', function() {
+			$(this).val('');
+			$('#filter_agent_code_mp').val('');
+		});
+		$('#filter_agent_name_mp').on('keyup', function() {
+			findAgentsByAuMP();
+		});
+		// btn applyt filter agent
+		$('#btn_filter_mp').on('click', function() {
+			console.log($('#filter_agent_code_mp').val());
+			TableListMP();
+		});
+	});
+
+	// data-table -> function to retrieve DataTable server side
+	var tb_listmp;
+	function TableListMP()
+	{
+		if ($('#filter_agent_code_mp').val() !== "") {
+			$('.table-monitoringpenjualan').removeClass('d-none');
+		} else {
+			$('.table-monitoringpenjualan').addClass('d-none');
+			return 0;
+		}
+
+		$('#table_monitoringpenjualan').dataTable().fnDestroy();
+		tb_listmp = $('#table_monitoringpenjualan').DataTable({
+			responsive: true,
+			serverSide: true,
+			ajax: {
+				url: "{{ route('monitoringpenjualan.getListMP') }}",
+				type: "get",
+				data: {
+					"_token": "{{ csrf_token() }}",
+					"date_from": $('#date_from_mp').val(),
+					"date_to": $('#date_to_mp').val(),
+					"agent_code": $('#filter_agent_code_mp').val()
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'placement'},
+				{data: 'items'},
+				{data: 'total_qty'},
+				{data: 'total_price'},
+				{data: 'sold_status'},
+				{data: 'sold_amount'}
+			],
+			pageLength: 10,
+			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
+	}
+	// autocomple to find-agents
+	function findAgentsByAuMP()
+	{
+		$('#filter_agent_name_mp').autocomplete({
+			source: function( request, response ) {
+				$.ajax({
+					url: baseUrl + '/marketing/konsinyasipusat/monitoringpenjualan/find-agents-au',
+					data: {
+						"termToFind": $("#filter_agent_name_mp").val()
+					},
+					dataType: 'json',
+					success: function( data ) {
+						response( data );
+					}
+				});
+			},
+			minLength: 1,
+			select: function(event, data) {
+				$('#filter_agent_code_mp').val(data.item.id);
+				console.log('agent-code: ' + $('#filter_agent_code_mp').val());
+			}
+		});
+	}
+	// get cities for search-agent
+	function getCitiesMP()
+	{
+		var provId = $('.provMP').val();
+		$.ajax({
+			url: "{{ route('monitoringpenjualan.getCitiesMP') }}",
+			type: "get",
+			data:{
+				provId: provId
+			},
+			success: function (response) {
+				$('.citiesMP').empty();
+				$(".citiesMP").append('<option value="" selected="" disabled="">=== Pilih Kota ===</option>');
+				$.each(response.get_cities, function( key, val ) {
+					$(".citiesMP").append('<option value="'+ val.wc_id +'">'+ val.wc_name +'</option>');
+				});
+				$('.citiesMP').focus();
+				$('.citiesMP').select2('open');
+			}
+		});
+	}
+	// append data to table-list-agens
+	function appendListAgentsMP()
+	{
+		$.ajax({
+			url: "{{ route('monitoringpenjualan.getAgentsMP') }}",
+			type: 'get',
+			data: {
+				cityId: $('.citiesMP').val()
+			},
+			success: function(response) {
+				$('#table_search_mp tbody').empty();
+				if (response.length <= 0) {
+					return 0;
+				}
+				$.each(response, function(index, val) {
+					listAgents = '<tr><td>'+ val.get_province.wp_name +'</td>';
+					listAgents += '<td>'+ val.get_city.wc_name +'</td>';
+					listAgents += '<td>'+ val.a_name +'</td>';
+					listAgents += '<td>'+ val.a_type +'</td>';
+					listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgentMP(\''+ val.get_company.c_id +'\',\''+ val.a_name +'\')"><i class="fa fa-download"></i></button></td></tr>';
+				});
+				$('#table_search_mp > tbody:last-child').append(listAgents);
+			}
+		});
+	}
+	// add filter-agent
+	function addFilterAgentMP(agentCode, agentName)
+	{
+		$('#filter_agent_name_mp').val(agentCode+ ' - ' +agentName);
+		$('#filter_agent_code_mp').val(agentCode);
+		$('#modalSearchAgentMP').modal('hide');
+	}
+	function showDetailSalescomp(id)
+	{
+		$.ajax({
+			url: baseUrl + "/marketing/konsinyasipusat/monitoringpenjualan/get-sales-detail/" + id,
+			type: "get",
+			success: function(response) {
+				$('#table_detailmp tbody').empty();
+				if (response.length <= 0) {
+					return 0;
+				}
+				$('#nota_dtmp').val(response.sc_nota);
+				$('#date_dtmp').val(response.dateFormated);
+				$('#placement_dtmp').val(response.get_agent.c_name);
+				$('#total_dtmp').val(parseInt(response.sc_total));
+
+				$.each(response.get_sales_comp_dt, function(index, val) {
+					let name = '<td>'+ val.get_item.i_code +' - '+ val.get_item.i_name +'</td>';
+					let qty = '<td>'+ val.scd_qty +'</td>';
+					let unit = '<td>'+ val.get_unit.u_name +'</td>';
+					let price = '<td class="rupiah">'+ parseInt(val.scd_value) +'</td>';
+					let total_price = '<td class="rupiah">'+ parseInt(val.scd_totalnet) +'</td>';
+					$('#table_detailmp > tbody:last-child').append('<tr>'+ name + qty + unit + price + total_price +'</tr>');
+				});
+				// re-activate mask-money
+				$('.rupiah').inputmask("currency", {
+					radixPoint: ",",
+					groupSeparator: ".",
+					digits: 2,
+					autoGroup: true,
+					prefix: ' Rp ', //Space after $, this will not truncate the first character.
+					rightAlign: true,
+					autoUnmask: true,
+					nullable: false,
+					// unmaskAsNumber: true,
+				});
+				$('#modalDetailMP').modal('show');
+			},
+			error: function(e) {
+				messageWarning('Perhatian', 'terjadi kesalahan saat pengambilan data detail penjualan !');
+			}
+		})
+	}
 </script>
 @endsection

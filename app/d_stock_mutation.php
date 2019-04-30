@@ -7,14 +7,28 @@ use Illuminate\Database\Eloquent\Builder;
 
 class d_stock_mutation extends Model
 {
-  protected $table = 'd_stock_mutation';
-  public $timestamps = false;
+    protected $table = 'd_stock_mutation';
+    public $timestamps = false;
 
-  protected function setKeysForSaveQuery(Builder $query)
-  {
-    $query
-      ->where('sm_stock', '=', $this->getAttribute('sm_stock'))
-      ->where('sm_detailid', '=', $this->getAttribute('sm_detailid'));
-    return $query;
-  }
+    protected function setKeysForSaveQuery(Builder $query)
+    {
+        $query
+        ->where('sm_stock', '=', $this->getAttribute('sm_stock'))
+        ->where('sm_detailid', '=', $this->getAttribute('sm_detailid'));
+        return $query;
+    }
+
+    // // get item stock based on position-item and item-id
+    // public function scopeItemStock($query, $position, $itemId)
+    // {
+    //     $query
+    //     ->where('s_position', $position)
+    //     ->where('s_item', $itemId);
+    //     return $query;
+    // }
+    // relation with table d_stock
+    public function getStock()
+    {
+        return $this->hasMany('App\d_stock', 's_id', 'sm_stock');
+    }
 }

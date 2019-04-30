@@ -14,6 +14,10 @@ use Mutasi;
 use Carbon\Carbon;
 use Mockery\Exception;
 use Response;
+use App\m_agen;
+use App\m_company;
+use App\m_wil_provinsi;
+use App\d_salescomp;
 
 class MarketingController extends Controller
 {
@@ -21,7 +25,7 @@ class MarketingController extends Controller
     {
     	return view('marketing/manajemenmarketing/index');
     }
-    
+
     public function year_promotion_create()
     {
         return view('marketing/manajemenmarketing/tahunan/create');
@@ -41,7 +45,7 @@ class MarketingController extends Controller
     {
         return view('marketing/manajemenmarketing/bulanan/edit');
     }
-    
+
     public function status_target()
     {
         return view('marketing/targetrealisasipenjualan/targetrealisasi/status');
@@ -67,6 +71,18 @@ class MarketingController extends Controller
     {
         $kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->get();
         return Response::json($kota);
+    }
+
+    public function carikonsignerselect2($prov = null, $kota = null)
+    {
+        $nama = DB::table('m_agen')
+            ->join('m_company', 'a_code', '=', 'c_user')
+            ->where('m_agen.a_provinsi', '=', $prov)
+            ->where('m_agen.a_kabupaten', '=', $kota)
+            ->where('m_company.c_type', '=', 'AGEN')
+            ->get();
+
+        return Response::json($nama);
     }
 
     public function cariKonsigner(Request $request, $prov = null, $kota = null)
@@ -120,6 +136,7 @@ class MarketingController extends Controller
                     $q->orWhere('i_name', 'like', '%'.$cari.'%');
                     $q->orWhere('i_code', 'like', '%'.$cari.'%');
                 })
+                ->groupBy('d_stock.s_id')
                 ->get();
         }else{
             $nama = DB::table('m_item')
@@ -139,6 +156,7 @@ class MarketingController extends Controller
                     $q->orWhere('i_name', 'like', '%'.$cari.'%');
                     $q->orWhere('i_code', 'like', '%'.$cari.'%');
                 })
+                ->groupBy('d_stock.s_id')
                 ->get();
         }
 
@@ -337,7 +355,8 @@ class MarketingController extends Controller
     {
         $data   = $request->all();
         $comp   = Auth::user()->u_company;
-        $member = $data['kodeKonsigner'];
+//        $member = $data['kodeKonsigner'];
+        $member = $data['idKonsigner'];
         $user   = Auth::user()->u_id;
         $type   = 'K';
         $date   = Carbon::now('Asia/Jakarta')->format('Y-m-d');
@@ -411,7 +430,7 @@ class MarketingController extends Controller
                     ->first();
 
                 $posisi = DB::table('m_company')
-                    ->where('c_user', '=', $member)
+                    ->where('c_id', '=', $member)
                     ->first();
 
                 Mutasi::mutasikeluar(13, $comp, $comp, $data['idItem'][$i], $qty_compare, $nota);
@@ -449,7 +468,7 @@ class MarketingController extends Controller
             $detail = DB::table('d_salescomp')
                 ->where('d_salescomp.sc_id', '=', $id)
                 ->join('m_company', function ($c){
-                    $c->on('m_company.c_user', '=', 'd_salescomp.sc_member');
+                    $c->on('m_company.c_id', '=', 'd_salescomp.sc_member');
                 })
                 ->join('m_agen', function ($a){
                     $a->on('m_agen.a_code', '=', 'm_company.c_user');
@@ -508,7 +527,8 @@ class MarketingController extends Controller
             ->join('d_salescompdt', function ($sd){
                 $sd->on('scd_sales', '=', 'sc_id');
             })
-            ->join('m_company', 'c_user', '=', 'sc_member')
+            // changed from c_user to c_id --> rowi
+            ->join('m_company', 'c_id', '=', 'sc_member')
             ->where('sc_type', '=', 'K')
             ->groupBy('d_salescomp.sc_nota')
             ->select('sc_id as id', 'sc_date as tanggal', 'sc_nota as nota', 'c_name as konsigner', DB::raw("CONCAT('Rp. ',FORMAT(sc_total, 0, 'de_DE')) as total"));
@@ -538,7 +558,10 @@ class MarketingController extends Controller
 
     public function konsinyasipusat()
     {
-    	return view('marketing/konsinyasipusat/index');
+        $provinsi = DB::table('m_wil_provinsi')
+        ->get();
+
+    	return view('marketing/konsinyasipusat/index', compact('provinsi'));
     }
 
     public function create_penempatanproduk()
@@ -557,7 +580,8 @@ class MarketingController extends Controller
         if ($request->isMethod('post')) {
             $data   = $request->all();
             $comp   = Auth::user()->u_company;
-            $member = $data['kodeKonsigner'];
+//            $member = $data['kodeKonsigner'];
+            $member = $data['idKonsigner'];
             $user   = Auth::user()->u_id;
             $total  = $data['tot_hrg'];
             $update = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
@@ -638,7 +662,7 @@ class MarketingController extends Controller
                             ->first();
 
                         $posisi = DB::table('m_company')
-                            ->where('c_user', '=', $member)
+                            ->where('c_id', '=', $member)
                             ->first();
 
                         Mutasi::mutasikeluar(13, $comp, $comp, $data['idItem'][$i], $qty_compare, $nota);
@@ -672,7 +696,7 @@ class MarketingController extends Controller
             $detail = DB::table('d_salescomp')
                 ->where('d_salescomp.sc_id', '=', $id)
                 ->join('m_company', function ($c){
-                    $c->on('m_company.c_user', '=', 'd_salescomp.sc_member');
+                    $c->on('m_company.c_id', '=', 'd_salescomp.sc_member');
                 })
                 ->join('m_agen', function ($a){
                     $a->on('m_agen.a_code', '=', 'm_company.c_user');
@@ -766,5 +790,126 @@ class MarketingController extends Controller
                 'message'=> $e
             ]);
         }
+    }
+
+    // retrive data-table konsinyasi-penjualan
+    public function getListMP(Request $request)
+    {
+        $agentCode = $request->agent_code;
+        $from = Carbon::parse($request->date_from)->format('Y-m-d');
+        $to = Carbon::parse($request->date_to)->format('Y-m-d');
+
+        $datas = d_salescomp::whereBetween('sc_date', [$from, $to])
+        ->where('sc_type', 'K')
+        ->where('sc_paidoff', 'N')
+        ->where('sc_member', $agentCode)
+        ->with(['getMutation' => function($query) {
+            $query->where('sm_mutcat', 12)->get();
+        }])
+        ->with(['getMutationReff'])
+        ->with('getAgent')
+        ->with('getSalesCompDt.getItem')
+        ->orderBy('sc_date', 'desc')
+        ->get();
+
+        // get total-qty each salescomp
+        foreach ($datas as $data) {
+            $totalQty = 0;
+            foreach ($data->getMutation as $mutation) {
+                $totalQty += $mutation->sm_qty;
+            }
+            $data->totalQty = $totalQty;
+        }
+        // get sold-status each salescomp
+        foreach ($datas as $data) {
+            $totalSold = 0;
+            foreach ($data->getMutation as $mutation) {
+                $totalSold += ($mutation->sm_qty - $mutation->sm_residue);
+            }
+            $data->totalSold = $totalSold;
+            $data->totalSoldPerc = $totalSold / $data->totalQty * 100;
+        }
+        // get sold-amount each salescomp
+        foreach ($datas as $data) {
+            $soldAmount = 0;
+            foreach ($data->getMutationReff as $mutation) {
+                $soldAmount += ($mutation->sm_qty * $mutation->sm_sell);
+            }
+            $data->soldAmount = $soldAmount;
+        }
+
+        return Datatables::of($datas)
+        ->addIndexColumn()
+        ->addColumn('placement', function($datas) {
+            return $datas->getAgent->c_name;
+        })
+        ->addColumn('items', function($datas) {
+            return '<div><button class="btn btn-primary" onclick="showDetailSalescomp('. $datas->sc_id .')" type="button"><i class="fa fa-folder"></i></button></div>';
+        })
+        ->addColumn('total_qty', function($datas) {
+            return number_format($datas->totalQty, 0, ',', '.');
+        })
+        ->addColumn('total_price', function($datas) {
+            return '<span class="pull-right">Rp '. number_format((int)$datas->sc_total, 2, ',', '.') .'</span>';
+        })
+        ->addColumn('sold_status', function($datas) {
+            return '<span class="pull-right"> '. number_format($datas->totalSoldPerc, 0, ',', '.') .' %</span>';
+        })
+        ->addColumn('sold_amount', function($datas) {
+            return '<span class="pull-right">Rp '. number_format((int)$datas->soldAmount, 2, ',', '.') .'</span>';
+        })
+        ->rawColumns(['placement', 'items', 'total_qty', 'total_price', 'sold_status', 'sold_amount'])
+        ->make(true);
+    }
+    public function getSalesCompDetail($id)
+    {
+        $detail = d_salescomp::where('sc_id', $id)
+        ->with('getAgent')
+        ->with('getSalesCompDt.getItem')
+        ->with('getSalesCompDt.getUnit')
+        ->first();
+        $detail->dateFormated = Carbon::parse($detail->sc_date)->format('d M Y');
+
+        return response()->json($detail);
+    }
+    // get list-cities based on province-id
+    public function getCitiesMP(Request $request)
+    {
+        $cities = m_wil_provinsi::where('wp_id', $request->provId)
+        ->with('getCities')
+        ->firstOrFail();
+        return response()->json($cities);
+    }
+    // get list-agents based on citiy-id
+    public function getAgentsMP(Request $request)
+    {
+        $agents = m_agen::where('a_area', $request->cityId)
+        ->where('a_type', 'AGEN')
+        ->with('getProvince')
+        ->with('getCity')
+        ->with('getCompany')
+        ->orderBy('a_code', 'desc')
+        ->get();
+
+        return response()->json($agents);
+    }
+    // find agents and retrieve it by autocomple.js
+    public function findAgentsByAu(Request $request)
+    {
+        $term = $request->termToFind;
+
+        // startu query to find specific item
+        $agents = m_company::where('c_name', 'like', '%'.$term.'%')
+            ->orWhere('c_id', 'like', '%'.$term.'%')
+            ->get();
+
+        if (count($agents) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($agents as $agent) {
+                $results[] = ['id' => $agent->c_id, 'label' => $agent->c_id . ' - ' .strtoupper($agent->c_name)];
+            }
+        }
+        return response()->json($results);
     }
 }

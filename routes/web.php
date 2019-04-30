@@ -364,6 +364,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/konsinyasipusat/detail-konsinyasi/{id}/{action}', 'MarketingController@detailKonsinyasi')->name('konsinyasipusat.detail');
     Route::get('/marketing/konsinyasipusat/get-provinsi', 'MarketingController@getProv')->name('konsinyasipusat.getProv');
     Route::get('/marketing/konsinyasipusat/get-kota/{idprov}', 'MarketingController@getKota')->name('konsinyasipusat.getKota');
+    Route::get('/marketing/konsinyasipusat/cari-konsigner-select2/{idprov}/{idkota}', 'MarketingController@carikonsignerselect2')->name('konsinyasipusat.carikonsignerselect2');
     Route::get('/marketing/konsinyasipusat/cari-konsigner/{idprov}/{idkota}', 'MarketingController@cariKonsigner')->name('konsinyasipusat.carikonsigner');
     Route::get('/marketing/konsinyasipusat/cari-barang', 'MarketingController@cariBarangKonsinyasi')->name('konsinyasipusat.caribarang');
     Route::get('/marketing/konsinyasipusat/get-satuan/{id}', 'MarketingController@getSatuan')->name('konsinyasipusat.getsatuan');
@@ -374,6 +375,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/marketing/konsinyasipusat/penempatanproduk/add', 'MarketingController@add_penempatanproduk')->name('penempatanproduk.add');
     Route::match(['get', 'post'],'/marketing/konsinyasipusat/penempatanproduk/edit/{id}', 'MarketingController@edit_penempatanproduk')->name('penempatanproduk.edit');
     Route::get('/marketing/konsinyasipusat/penempatanproduk/hapus', 'MarketingController@deletePenempatanproduk')->name('penempatanproduk.delete');
+    // --- Konsinyasi pusat: Monitoring penjualan
+    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-list', 'MarketingController@getListMP')->name('monitoringpenjualan.getListMP');
+    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-cities', 'MarketingController@getCitiesMP')->name('monitoringpenjualan.getCitiesMP');
+    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-agents', 'MarketingController@getAgentsMP')->name('monitoringpenjualan.getAgentsMP');
+    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/find-agents-au', 'MarketingController@findAgentsByAu')->name('monitoringpenjualan.findAgentsByAu');
+    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-sales-detail/{id}', 'MarketingController@getSalesCompDetail')->name('monitoringpenjualan.getSalesCompDetail');
+
     // Marketing Area
     Route::get('/marketing/marketingarea/index', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@index')->name('marketingarea.index');
     // Order Produk Ke Cabang

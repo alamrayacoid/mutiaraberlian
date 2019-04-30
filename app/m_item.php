@@ -24,4 +24,9 @@ class m_item extends Model
     {
         return $this->belongsTo('App\m_unit', 'i_unit3', 'u_id');
     }
+    // get-relation with table d_stock
+    // public function getStock()
+    // {
+    //     return $this->hasMany('App\d_stock', 's_item', 'i_id');
+    // }
 }
