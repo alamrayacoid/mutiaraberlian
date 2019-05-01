@@ -22,9 +22,9 @@
 					</div>
 					<div class="col-md-4 col-sm-6 filter_agent">
 						<div class="input-group">
-							<input type="text" class="form-control form-control-sm" placeholder="Cari Agen" id="filter_agent_name_mp" autocomplete="off">
+							<input type="text" class="form-control form-control-sm" placeholder="Cari konsigner" id="filter_agent_name_mp" autocomplete="off">
 							<input type="hidden" id="filter_agent_code_mp">
-							<button class="btn btn-secondary btn-md" title="Cari Agen" style="border-left:none;" data-toggle="modal" data-target="#modalSearchAgentMP"><i class="fa fa-search"></i></button>
+							<button class="btn btn-secondary btn-md" title="Cari konsigner" style="border-left:none;" data-toggle="modal" data-target="#modalSearchAgentMP"><i class="fa fa-search"></i></button>
 						</div>
 					</div>
 					<div class="col-md-2 col-sm-6 filter_agent">

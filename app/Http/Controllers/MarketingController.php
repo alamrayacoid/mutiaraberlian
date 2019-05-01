@@ -18,6 +18,8 @@ use App\m_agen;
 use App\m_company;
 use App\m_wil_provinsi;
 use App\d_salescomp;
+use App\d_salescomppayment;
+use Validator;
 
 class MarketingController extends Controller
 {
@@ -792,7 +794,7 @@ class MarketingController extends Controller
         }
     }
 
-    // retrive data-table konsinyasi-penjualan
+    // retrive data-table konsinyasi-monitoring-penjualan
     public function getListMP(Request $request)
     {
         $agentCode = $request->agent_code;
@@ -911,5 +913,106 @@ class MarketingController extends Controller
             }
         }
         return response()->json($results);
+    }
+    // =========================================================================
+    // Penerimaan Uang Pembayaran
+    // get list-nota based on agent-code in Penerimaan-Uang-Pembayaran
+    public function getListNotaPP(Request $request)
+    {
+        $agentCode = $request->agentCode;
+        $listNota = d_salescomp::where('sc_member', $agentCode)
+        ->where('sc_paidoff', 'N')
+        ->select('sc_id', 'sc_nota')
+        ->get();
+
+        return $listNota;
+    }
+    public function getPaymentPP(Request $request)
+    {
+        $salescompId = $request->salescompId;
+        $sales = d_salescomp::where('sc_id', $salescompId)
+        ->with('getSalesCompPayment')
+        ->first();
+        $sales->paidBill = 0;
+        $sales->restBill = $sales->sc_total;
+
+        // return if getSalesCompPayment is empty
+        if (sizeof($sales->getSalesCompPayment) < 1) {
+            return $sales;
+        }
+        // count paidBill and restBill when getSalesCompPayment not null
+        foreach ($sales->getSalesCompPayment as $payment)
+        {
+            $sales->paidBill += $payment->scp_pay;
+        }
+        $sales->restBill -= $sales->paidBill;
+        return $sales;
+    }
+    // validate form before input
+    public function validatePP(Request $request)
+    {
+        // start: validate data before execute
+        $validator = Validator::make($request->all(), [
+            'salescompId' => 'required',
+            'paymentType' => 'required',
+            'cashAccount' => 'required',
+            'paymentVal' => 'required'
+        ],
+        [
+            'salescompId.required' => 'Silahkan pilih \'Nota\' terlebih dahulu !',
+            'paymentType.required' => 'Silahkan pilih \'Jenis Penerimaan\' terlebih dahulu !',
+            'cashAccount.required' => 'Silahkan pilih \'Akun Kas\' terlebih dahulu !',
+            'paymentVal.required' => '\'Nominal Penerimaan\' tidak boleh kosong !'
+        ]);
+        if ($validator->fails()) {
+            return $validator->errors()->first();
+        } else {
+            return '1';
+        }
+    }
+    // store item
+    public function storePP(Request $request)
+    {
+        // validate request
+        $isValidRequest = $this->validatePP($request);
+        if ($isValidRequest != '1') {
+            $errors = $isValidRequest;
+            return response()->json([
+                'status' => 'invalid',
+                'message' => $errors
+            ]);
+        }
+
+        // need to test first !!
+        DB::beginTransaction();
+        try {
+            $detailId = d_salescomppayment::where('scp_salescomp', $request->salescompId)->max('scp_detailid') + 1;
+            $salescompPayment = new d_salescomppayment();
+            $salescompPayment->scp_salescomp = $request->salescompId;
+            $salescompPayment->scp_detailid = $detailId;
+            $salescompPayment->scp_date = Carbon::now();
+            $salescompPayment->scp_pay = $request->paymentVal;
+            $salescompPayment->save();
+
+            // update salescomp to 'lunas'
+            if ($request->restBill == $request->paymentVal) {
+                $salescomp = d_salescomp::where('sc_id', $request->salescompId)->first();
+                $salescomp->sc_paidoff = 'Y';
+                $salescomp->save();
+            }
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+
+
     }
 }

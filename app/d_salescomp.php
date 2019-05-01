@@ -15,6 +15,11 @@ class d_salescomp extends Model
     {
         return $this->hasMany('App\d_salescompdt', 'scd_sales', 'sc_id');
     }
+    // get salescomp-payment
+    public function getSalesCompPayment()
+    {
+        return $this->hasMany('App\d_salescomppayment', 'scp_salescomp', 'sc_id');
+    }
     // get-agent from username (agent = user who is logged in)
     public function getAgent()
     {

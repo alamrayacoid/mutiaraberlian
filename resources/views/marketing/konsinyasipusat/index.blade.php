@@ -5,6 +5,7 @@
 @include('marketing.konsinyasipusat.penempatanproduk.modal')
 @include('marketing.konsinyasipusat.monitoringpenjualan.modal-detail')
 @include('marketing.konsinyasipusat.monitoringpenjualan.modal-search')
+@include('marketing.konsinyasipusat.penerimaanuangpembayaran.modal-search')
 
 <article class="content animated fadeInLeft">
 
@@ -126,16 +127,16 @@
 	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
 		})
 
-		$(document).on('click', '.btn-submit', function(){
-			$.toast({
-				heading: 'Success',
-				text: 'Data Berhasil di Simpan',
-				bgColor: '#00b894',
-				textColor: 'white',
-				loaderBg: '#55efc4',
-				icon: 'success'
-			})
-		})
+		// $(document).on('click', '.btn-submit', function(){
+		// 	$.toast({
+		// 		heading: 'Success',
+		// 		text: 'Data Berhasil di Simpan',
+		// 		bgColor: '#00b894',
+		// 		textColor: 'white',
+		// 		loaderBg: '#55efc4',
+		// 		icon: 'success'
+		// 	})
+		// })
 
 		$("#search-list-agen").on("click", function() {
 			$(".table-modal").removeClass('d-none');
@@ -288,7 +289,7 @@
 		});
 		// btn applyt filter agent
 		$('#btn_filter_mp').on('click', function() {
-			console.log($('#filter_agent_code_mp').val());
+			// console.log($('#filter_agent_code_mp').val());
 			TableListMP();
 		});
 	});
@@ -353,7 +354,7 @@
 			minLength: 1,
 			select: function(event, data) {
 				$('#filter_agent_code_mp').val(data.item.id);
-				console.log('agent-code: ' + $('#filter_agent_code_mp').val());
+				// console.log('agent-code: ' + $('#filter_agent_code_mp').val());
 			}
 		});
 	}
@@ -410,6 +411,7 @@
 		$('#filter_agent_code_mp').val(agentCode);
 		$('#modalSearchAgentMP').modal('hide');
 	}
+	// show detail-penjualan
 	function showDetailSalescomp(id)
 	{
 		loadingShow();
@@ -456,4 +458,205 @@
 		})
 	}
 </script>
+
+<!-- ========================================================================-->
+<!-- script for Data-Penerimaan-Pembayaran -->
+<script type="text/javascript">
+	$(document).ready(function() {
+		// filter agent based on area (province and city)
+		$('.provPP').on('change', function() {
+			getCitiesPP();
+		});
+		$('.citiesPP').on('change', function(){
+			$(".table-modal").removeClass('d-none');
+			appendListAgentsPP();
+		});
+		// filter agent field
+		$('#filter_agent_name_pp').on('click', function() {
+			resetFormPP();
+			// console.log($('#listNotaPP').val());
+		});
+		$('#filter_agent_name_pp').on('keyup', function() {
+			findAgentsByAuPP();
+		});
+		// get sales-comp-payment based on nota/id
+		$('#listNotaPP').on('select2:select', function() {
+			getPaymentPP();
+		});
+		$('#paymentValPP').on('keyup', function() {
+			if (parseInt($(this).val()) > parseInt($('#restBillPP').val())) {
+				$(this).val(parseInt($('#restBillPP').val()));
+				messageWarning('Perhatian', '\'Nominal Pembayaran\' tidak boleh melebihi \'Sisa Tagihan\' !');
+			} else if (parseInt($(this).val()) <= 0) {
+				messageWarning('Perhatian', '\'Nominal Pembayaran\' tidak boleh 0 atau dibawah 0 !');
+			}
+		});
+		$('#btn_simpanPP').on('click', function() {
+			submitPayment();
+		});
+	});
+
+	// reset all field
+	function resetFormPP()
+	{
+		$('#formAddPP')[0].reset();
+		$('#listNotaPP').empty();
+		$('#paymentTypePP option:first').attr('selected', 'selected');
+		$('#paymentTypePP').select2();
+		$('#cashAccountPP option:first').attr('selected', 'selected');
+		$('#cashAccountPP').select2();
+	}
+	// autocomple to find-agents
+	function findAgentsByAuPP()
+	{
+		$('#filter_agent_name_pp').autocomplete({
+			source: function( request, response ) {
+				$.ajax({
+					url: baseUrl + '/marketing/konsinyasipusat/monitoringpenjualan/find-agents-au',
+					data: {
+						"termToFind": $("#filter_agent_name_pp").val()
+					},
+					dataType: 'json',
+					success: function( data ) {
+						response( data );
+					}
+				});
+			},
+			minLength: 1,
+			select: function(event, data) {
+				$('#filter_agent_code_pp').val(data.item.id);
+				// console.log('agent-code: ' + $('#filter_agent_code_pp').val());
+				getListNotaPP();
+			}
+		});
+	}
+	// get cities for search-agent
+	function getCitiesPP()
+	{
+		var provId = $('.provPP').val();
+		$.ajax({
+			url: "{{ route('monitoringpenjualan.getCitiesMP') }}",
+			type: "get",
+			data:{
+				provId: provId
+			},
+			success: function (response) {
+				$('.citiesPP').empty();
+				$(".citiesPP").append('<option value="" selected="" disabled="">=== Pilih Kota ===</option>');
+				$.each(response.get_cities, function( key, val ) {
+					$(".citiesPP").append('<option value="'+ val.wc_id +'">'+ val.wc_name +'</option>');
+				});
+				$('.citiesPP').focus();
+				$('.citiesPP').select2('open');
+			}
+		});
+	}
+	// append data to table-list-agens
+	function appendListAgentsPP()
+	{
+		$.ajax({
+			url: "{{ route('monitoringpenjualan.getAgentsMP') }}",
+			type: 'get',
+			data: {
+				cityId: $('.citiesPP').val()
+			},
+			success: function(response) {
+				$('#table_search_pp tbody').empty();
+				if (response.length <= 0) {
+					return 0;
+				}
+				$.each(response, function(index, val) {
+					listAgents = '<tr><td>'+ val.get_province.wp_name +'</td>';
+					listAgents += '<td>'+ val.get_city.wc_name +'</td>';
+					listAgents += '<td>'+ val.a_name +'</td>';
+					listAgents += '<td>'+ val.a_type +'</td>';
+					listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgentPP(\''+ val.get_company.c_id +'\',\''+ val.a_name +'\')"><i class="fa fa-download"></i></button></td></tr>';
+				});
+				$('#table_search_pp > tbody:last-child').append(listAgents);
+			}
+		});
+	}
+	// add filter-agent
+	function addFilterAgentPP(agentCode, agentName)
+	{
+		$('#filter_agent_name_pp').val(agentCode+ ' - ' +agentName);
+		$('#filter_agent_code_pp').val(agentCode);
+		$('#modalSearchAgentPP').modal('hide');
+		getListNotaPP();
+	}
+	// get list nota based on selected konsigner
+	function getListNotaPP()
+	{
+		$.ajax({
+			url: "{{ route('penerimaanpembayaran.getListNotaPP') }}",
+			data: {
+				agentCode: $('#filter_agent_code_pp').val()
+			},
+			type: 'get',
+			success: function (response) {
+				// console.log(response);
+				// append data to list-nota
+				$('#listNotaPP').empty();
+				$("#listNotaPP").append('<option value="" selected="" disabled="">Pilih Nota</option>');
+				$.each(response, function( key, val ) {
+					$("#listNotaPP").append('<option value="'+ val.sc_id +'">'+ val.sc_nota +'</option>');
+				});
+				$('#listNotaPP').focus();
+				$('#listNotaPP').select2('open');
+			},
+			error: function(e) {
+				messageWarning('Perhatian', 'Terjadi kesalahan saat mencari nota, hubungi pengembang !');
+			}
+		})
+	}
+	// get payment detail based on selected nota/id
+	function getPaymentPP()
+	{
+		$.ajax({
+			url: "{{ route('penerimaanpembayaran.getPaymentPP') }}",
+			data: {
+				salescompId: $('#listNotaPP').val()
+			},
+			type: 'get',
+			success: function (response) {
+				// console.log(response);
+				// set some field with payment status
+				$('#totalBillPP').val(parseInt(response.sc_total));
+				$('#paidBillPP').val(parseInt(response.paidBill));
+				$('#restBillPP').val(parseInt(response.restBill));
+			},
+			error: function(e) {
+				messageWarning('Perhatian', 'Terjadi kesalahan saat mencari detail pembayaran, hubungi pengembang !');
+			}
+		});
+	}
+	// store payment
+	function submitPayment()
+	{
+		$.ajax({
+			url: "{{ route('penerimaanpembayaran.storePP') }}",
+			data: {
+				salescompId: $('#listNotaPP').val(),
+				paymentType: $('#paymentTypePP').val(),
+				cashAccount: $('#cashAccountPP').val(),
+				info: $('#infoPP').val(),
+				paymentVal: $('#paymentValPP').val(),
+				restBill: $('#restBillPP').val()
+			},
+			type: 'post',
+			success: function (response) {
+				if (response.status == 'berhasil') {
+					messageSuccess('Selamat', 'Data berhasil ditambahkan !');
+					resetFormPP();
+				} else if (response.status == 'invalid') {
+					messageFailed('Perhatian', response.message);
+				}
+			},
+			error: function(e) {
+				messageWarning('Perhatian', 'Terjadi kesalahan saat mencari detail pembayaran, hubungi pengembang !');
+			}
+		});
+	}
+</script>
+
 @endsection

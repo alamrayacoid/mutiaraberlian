@@ -357,7 +357,6 @@ Route::group(['middleware' => 'auth'], function () {
     // Return Penjualan
     Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
     // End ---
-    // End ---
     // Konsinyasi Pusat
     Route::get('/marketing/konsinyasipusat/index', 'MarketingController@konsinyasipusat')->name('konsinyasipusat.index');
     Route::get('/marketing/konsinyasipusat/get-konsinyasi', 'MarketingController@getKonsinyasi')->name('konsinyasipusat.getData');
@@ -381,6 +380,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-agents', 'MarketingController@getAgentsMP')->name('monitoringpenjualan.getAgentsMP');
     Route::get('/marketing/konsinyasipusat/monitoringpenjualan/find-agents-au', 'MarketingController@findAgentsByAu')->name('monitoringpenjualan.findAgentsByAu');
     Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-sales-detail/{id}', 'MarketingController@getSalesCompDetail')->name('monitoringpenjualan.getSalesCompDetail');
+    // --- Konsinyasi pusat: Penerimaan Uang Pembayaran
+    Route::get('/marketing/konsinyasipusat/penerimaanpembayaran/get-nota', 'MarketingController@getListNotaPP')->name('penerimaanpembayaran.getListNotaPP');
+    Route::get('/marketing/konsinyasipusat/penerimaanpembayaran/get-payment', 'MarketingController@getPaymentPP')->name('penerimaanpembayaran.getPaymentPP');
+    Route::post('/marketing/konsinyasipusat/penerimaanpembayaran/store', 'MarketingController@storePP')->name('penerimaanpembayaran.storePP');
 
     // Marketing Area
     Route::get('/marketing/marketingarea/index', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@index')->name('marketingarea.index');

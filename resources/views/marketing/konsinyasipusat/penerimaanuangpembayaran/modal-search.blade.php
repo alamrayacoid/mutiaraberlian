@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div id="modalSearchAgentMP" class="modal fade animated fadeIn" role="dialog">
+<div id="modalSearchAgentPP" class="modal fade animated fadeIn" role="dialog">
     <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
@@ -12,7 +12,7 @@
                 <section>
                     <div class="row mb-3">
                         <div class="col-md-6 col-sm-12">
-                            <select name="prov" class="form-control form-control-sm select2 provMP">
+                            <select name="prov" class="form-control form-control-sm select2 provPP">
                                 <option value="" selected="" disabled="">=== Pilih Provinsi ===</option>
                                 @foreach($provinsi as $prov)
                                 <option value="{{ $prov->wp_id }}">{{ $prov->wp_name }}</option>
@@ -20,14 +20,14 @@
                             </select>
                         </div>
                         <div class="col-md-6 col-sm-12">
-                            <select name="city" class="form-control form-control-sm select2 citiesMP">
+                            <select name="city" class="form-control form-control-sm select2 citiesPP">
                                 <option value="" selected disabled>=== Pilih Kota ===</option>
                             </select>
                         </div>
                     </div>
                 </section>
                 <div class="table-responsive table-modal d-none">
-                    <table class="table table-striped table-hover display nowrap data-table" cellspacing="0" id="table_search_mp" width="100%">
+                    <table class="table table-striped table-hover display nowrap data-table" cellspacing="0" id="table_search_pp" width="100%">
                         <thead class="bg-primary">
                             <tr>
                                 <th>Provinsi</th>
