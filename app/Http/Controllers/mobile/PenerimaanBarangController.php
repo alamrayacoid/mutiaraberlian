@@ -49,7 +49,7 @@ class PenerimaanBarangController extends Controller
 
     public function getDataNotaItem(Request $request){
         $nota = $request->nota;
-        $item = $request->barang;
+        $item = $request->item;
 
         $order = DB::table('d_productionorder')
             ->join('d_productionorderdt', 'pod_productionorder', '=', 'po_id')
@@ -65,7 +65,7 @@ class PenerimaanBarangController extends Controller
             ->where('ird_item', '=', $item)
             ->groupBy('ird_item')
             ->first();
-dd($order);
+
         $qty = 0;
         $satuan = $order->pod_unit;
 
