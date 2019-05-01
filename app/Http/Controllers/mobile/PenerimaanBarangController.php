@@ -80,7 +80,7 @@ class PenerimaanBarangController extends Controller
                 $qty = $data->terima / $data->i_unitcompare3;
             }
         }
-
+dd($nota);
         return json_encode(["qtyTerimaBarang" => $qty, "satuanTerimaBarang" => $satuan]);
     }
 
