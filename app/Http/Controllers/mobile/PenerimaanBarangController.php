@@ -65,7 +65,7 @@ class PenerimaanBarangController extends Controller
             ->where('ird_item', '=', $item)
             ->groupBy('ird_item')
             ->first();
-
+dd($order);
         $qty = 0;
         $satuan = $order->pod_unit;
 
@@ -80,7 +80,7 @@ class PenerimaanBarangController extends Controller
                 $qty = $data->terima / $data->i_unitcompare3;
             }
         }
-dd($nota);
+
         return json_encode(["qtyTerimaBarang" => $qty, "satuanTerimaBarang" => $satuan]);
     }
 
