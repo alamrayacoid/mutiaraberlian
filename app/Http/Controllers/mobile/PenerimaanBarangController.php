@@ -40,6 +40,7 @@ class PenerimaanBarangController extends Controller
             ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
             ->join('m_unit', 'd_productionorderdt.pod_unit', '=', 'm_unit.u_id')
             ->select('d_productionorder.po_nota', 'm_item.i_name', 'm_item.i_id', 'm_unit.u_name', 'd_productionorderdt.pod_qty')
+            ->where('pod_received', '=', 'N')
             ->get();
 
         return json_encode([
@@ -49,7 +50,7 @@ class PenerimaanBarangController extends Controller
 
     public function getDataNotaItem(Request $request){
         $nota = $request->nota;
-        $item = $request->barang;
+        $item = $request->item;
 
         $order = DB::table('d_productionorder')
             ->join('d_productionorderdt', 'pod_productionorder', '=', 'po_id')
@@ -221,19 +222,6 @@ class PenerimaanBarangController extends Controller
                 ->update([
                     'pod_received' => 'Y'
                 ]);
-
-            $data = DB::table('d_productionorderdt')
-                ->where('pod_productionorder', '=', $id)
-                ->where('pod_received', '=', 'N')
-                ->get();
-
-            if (count($data) == 0){
-                DB::table('d_productionorder')
-                    ->where('po_id', '=', $id)
-                    ->update([
-                        'po_status' => 'Y'
-                    ]);
-            }
         }
 
     }

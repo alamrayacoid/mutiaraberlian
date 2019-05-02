@@ -20,4 +20,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('penerimaan-barang/get-data-penerimaan/nota', 'mobile\PenerimaanBarangController@getDataNota');
     Route::post('penerimaan-barang/get-data-penerimaan/nota-item', 'mobile\PenerimaanBarangController@getDataNotaItem');
     Route::post('penerimaan-barang/get-data-penerimaan/terima-item', 'mobile\PenerimaanBarangController@TerimaItem');
+
+    //pembayaran nota order produksi
+    Route::post('pembayaran-nota/get-data-supplier', 'mobile\PembayaranNotaController@getSupplier');
 });
