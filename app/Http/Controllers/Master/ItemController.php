@@ -7,6 +7,9 @@ use App\Http\Controllers\Controller;
 
 use App\Http\Controllers\pushotorisasiController as otorisasi;
 use DB;
+use Auth;
+use App\m_item;
+use App\m_item_auth;
 use Session;
 use Validator;
 use carbon\Carbon;
@@ -146,20 +149,23 @@ class ItemController extends Controller
         // start: execute insert data
         DB::beginTransaction();
         try {
-
-            $id = DB::table('m_item_auth')->max('ia_id') + 1;
+            // use id based on max-id in m_item and m_item_auth, to prevent duplicate id
+            if (DB::table('m_item')->max('i_id') > DB::table('m_item_auth')->max('ia_id')) {
+                $id = DB::table('m_item')->max('i_id') + 1;
+            } else {
+                $id = DB::table('m_item_auth')->max('ia_id') + 1;
+            }
 
             $file = $request->file('file');
             $file_name = null;
             if ($file != null) {
-
                 $file_name = 'produk' . $id . '.' . $file->getClientOriginalExtension();
 
-                if (!is_dir(storage_path('uploads/produk/original/'))) {
-                    mkdir(storage_path('uploads/produk/original/'), 0777, true);
+                if (!is_dir(storage_path('uploads/produk/item-auth/'))) {
+                    mkdir(storage_path('uploads/produk/item-auth/'), 0777, true);
                 }
 
-                $original_path = storage_path('uploads/produk/original/');
+                $original_path = storage_path('uploads/produk/item-auth/');
                 // return $original_path;
                 Image::make($file)
                     ->resize(261, null, function ($constraint) {
@@ -246,21 +252,19 @@ class ItemController extends Controller
         $gambar = DB::table('m_item')->where('i_id', '=', $id)->first();
         $file = $request->file('file');
         if ($file != null) {
-            // dd(base_path('assets\barang\\'.$gambar[0]->i_image));
-            if ($gambar->i_image != '') {
-                if (file_exists(storage_path('uploads/produk/original/') . $gambar->i_image)) {
-                    $storage2 = unlink(storage_path('uploads/produk/original/') . $gambar->i_image);
-                }
-
-            }
-
+            // // remove/delete current image
+            // if ($gambar->i_image != '') {
+            //     if (file_exists(storage_path('uploads/produk/original/') . $gambar->i_image)) {
+            //         $storage2 = unlink(storage_path('uploads/produk/original/') . $gambar->i_image);
+            //     }
+            // }
             $file_name = 'produk' . $id . '.' . $file->getClientOriginalExtension();
 
-            if (!is_dir(storage_path('uploads/produk/original/'))) {
-                mkdir(storage_path('uploads/produk/original/'), 0777, true);
+            if (!is_dir(storage_path('uploads/produk/item-auth/'))) {
+                mkdir(storage_path('uploads/produk/item-auth/'), 0777, true);
             }
 
-            $original_path = storage_path('uploads/produk/original/');
+            $original_path = storage_path('uploads/produk/item-auth/');
             // return $original_path;
             Image::make($file)
                 ->resize(261, null, function ($constraint) {
@@ -272,36 +276,38 @@ class ItemController extends Controller
         }
         DB::beginTransaction();
         try {
-        $cek = DB::table('m_item_auth')->where('ia_id', $id)->count();
-        if ($cek == 0) {
-              DB::table('m_item_auth')
-                  ->insert([
-                      'ia_id' => $id,
-                      'ia_type' => $request->dataproduk_type,
-                      'ia_code' => $request->dataproduk_code,
-                      'ia_codegroup' => null,
-                      'ia_name' => strtoupper($request->dataproduk_name),
-                      'ia_detail' => $request->dataproduk_ket,
-                      'ia_image' => $file_name,
-                      'ia_update_at' => Carbon::now(),
-                  ]);
-        } else {
-          // start: execute update data
+            // is there already existing un-autorized edit-item ?
+            $cek = DB::table('m_item_auth')->where('ia_id', $id)->count();
+            if ($cek == 0) {
+                DB::table('m_item_auth')
+                ->insert([
+                    'ia_id' => $id,
+                    'ia_type' => $request->dataproduk_type,
+                    'ia_code' => $request->dataproduk_code,
+                    'ia_codegroup' => null,
+                    'ia_name' => strtoupper($request->dataproduk_name),
+                    'ia_detail' => $request->dataproduk_ket,
+                    'ia_image' => $file_name,
+                    'ia_isactive' => "Y",
+                    'ia_update_at' => Carbon::now(),
+                ]);
+            } else {
+                // start: execute update data
+                DB::table('m_item_auth')
+                ->where('ia_id', $id)
+                ->update([
+                    'ia_type' => $request->dataproduk_type,
+                    'ia_code' => $request->dataproduk_code,
+                    'ia_codegroup' => null,
+                    'ia_name' => strtoupper($request->dataproduk_name),
+                    'ia_detail' => $request->dataproduk_ket,
+                    'ia_image' => $file_name,
+                    'ia_isactive' => "Y",
+                    'ia_update_at' => Carbon::now(),
+                ]);
+            }
 
-              DB::table('m_item_auth')
-                  ->where('ia_id', $id)
-                  ->update([
-                      'ia_type' => $request->dataproduk_type,
-                      'ia_code' => $request->dataproduk_code,
-                      'ia_codegroup' => null,
-                      'ia_name' => strtoupper($request->dataproduk_name),
-                      'ia_detail' => $request->dataproduk_ket,
-                      'ia_image' => $file_name,
-                      'ia_update_at' => Carbon::now(),
-                  ]);
-        }
-
-        otorisasi::otorisasiup('m_item_auth', 'Master Produk', '#');
+            otorisasi::otorisasiup('m_item_auth', 'Master Produk', '#');
 
             DB::commit();
             return response()->json([
@@ -327,14 +333,27 @@ class ItemController extends Controller
         // start: execute update data (delete)
         DB::beginTransaction();
         try {
-            DB::table('m_item_auth')
+            $isAlreadyExist = m_item_auth::where('ia_id', $id)->first();
+            if ($isAlreadyExist !== null) {
+                DB::table('m_item_auth')
                 ->where('ia_id', $id)
                 ->update([
                     'ia_isactive' => "N",
                     'ia_update_at' => Carbon::now(),
                 ]);
+            } else {
+                $itemCode = m_item::where('i_id', $id)->select('i_code')->first();
+                // dd($itemCode);
+                DB::table('m_item_auth')
+                ->insert([
+                    'ia_id' => $id,
+                    'ia_code' => $itemCode->i_code,
+                    'ia_isactive' => "N",
+                    'ia_update_at' => Carbon::now()
+                ]);
+            }
 
-                otorisasi::otorisasiup('m_item_auth', 'Master Produk', '#');
+            otorisasi::otorisasiup('m_item_auth', 'Master Produk', '#');
 
             DB::commit();
             return response()->json([

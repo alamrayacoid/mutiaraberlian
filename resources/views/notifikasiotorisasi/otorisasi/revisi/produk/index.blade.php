@@ -10,14 +10,12 @@
 			<section>
 					<hr>
 					<div class="table-responsive">
-						<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_dataproduk">
+						<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_revdataproduk">
 							<thead class="bg-primary">
 								<tr>
 									<th>No</th>
-									<th>Kegiatan</th>
-									<th>User</th>
-									<th>Max</th>
-									<th>Value</th>
+									<th>Produk</th>
+									<th>Tipe Otorisasi</th>
 									<th>Aksi</th>
 								</tr>
 							</thead>

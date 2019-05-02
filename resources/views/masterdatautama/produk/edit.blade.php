@@ -154,6 +154,7 @@
 
         // start: submit form to update data in db
         function SubmitForm(event) {
+            loadingShow();
             event.preventDefault();
             var file_data = $('#foto').prop('files')[0];
             var form_data = new FormData();
@@ -167,7 +168,9 @@
                 contentType: false,
                 processData: false,
                 success: function (response) {
-                    if (response.status == 'berhasil') {
+                    loadingHide();
+                    if (response.status == 'berhasil')
+                    {
                         $.toast({
                             heading: 'Success',
                             text: 'Data berhasil disimpan!, data akan membutuhkan otorisasi terlebih dahulu',
@@ -181,11 +184,14 @@
                                 window.location.href = "{{ route('dataproduk.index') }}";
                             }
                         });
-                    } else if (response.status == 'invalid') {
+                    }
+                    else if (response.status == 'invalid')
+                    {
                         messageWarning('Warning', response.message);
                     }
                 },
                 error: function (e) {
+                    loadingHide();
                     $.toast({
                         heading: 'Warning',
                         text: e.message,

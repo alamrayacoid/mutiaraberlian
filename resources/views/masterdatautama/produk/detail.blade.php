@@ -162,9 +162,20 @@
                               </div>
                             </div>
 
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <label>Gambar Produk</label>
+                            </div>
                             <div class="col-12" align="center">
                               <div class="form-group">
-                                <img src="{{asset('assets/img/add-image-icon.png')}}" height="120px" width="130px" id="img-preview" style="cursor: pointer;">
+                                  @if ($data['dataproduk']->i_image != null)
+                                  <img
+                                  src="{{ url('/storage/uploads/produk/original' ) . '/' . $data['dataproduk']->i_image}}"
+                                  height="120px" width="130px" id="img-preview"
+                                  style="cursor: pointer;">
+                                  @else
+                                  <img src="{{ asset('assets/img/add-image-icon.png') }}" height="120px"
+                                  width="130px" id="img-preview" style="cursor: pointer;">
+                                  @endif
                               </div>
                             </div>
 
@@ -195,78 +206,12 @@
     }
   });
 
-  $('#btn_simpan').on('click', function() {
-    SubmitForm(event);
-  })
-  // start: submit form to update data in db
-  function SubmitForm(event)
-  {
-    event.preventDefault();
-    form_data = $('#myForm').serialize();
-
-    $.ajax({
-      data : form_data,
-      type : "post",
-      url : $("#myForm").attr('action'),
-      dataType : 'json',
-      success : function (response){
-        if(response.status == 'berhasil'){
-          $.toast({
-            heading: 'Success',
-            text: 'Data berhasil disimpan !',
-            bgColor: '#00b894',
-            textColor: 'white',
-            loaderBg: '#55efc4',
-            icon: 'success',
-            stack: false,
-            hideAfter: 1500,
-            afterHidden: function() {
-              window.location.href = "{{ route('dataproduk.index') }}";
-            }
-          });
-        } else if (response.status == 'invalid') {
-          $.toast({
-            heading: 'Perhatian',
-            text: response.message,
-            bgColor: '#00b894',
-            textColor: 'white',
-            loaderBg: '#55efc4',
-            icon: 'warning',
-            stack: false,
-            hideAfter: 2000
-          });
-        }
-      },
-      error : function(e){
-        $.toast({
-          heading: 'Warning',
-          text: e.message,
-          bgColor: '#00b894',
-          textColor: 'white',
-          loaderBg: '#55efc4',
-          icon: 'warning',
-          stack: false
-        });
-      }
-    })
-
-  }
-  // end: submit form
 
   $(document).ready(function(){
     type = $('#type').val();
     $("#dataproduk_type option[value='"+ type +"']").prop('selected', 'selected');
 
-    // $(document).on('click', '.btn-submit', function(){
-		// 	$.toast({
-		// 		heading: 'Success',
-		// 		text: 'Data Berhasil di Edit',
-		// 		bgColor: '#00b894',
-		// 		textColor: 'white',
-		// 		loaderBg: '#55efc4',
-		// 		icon: 'success'
-		// 	})
-		// })
+    $('#detImgRP').attr('src', baseUrl +'/storage/uploads/produk/item-auth/'+ response.ia_image);
   });
 </script>
 @endsection

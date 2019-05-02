@@ -532,6 +532,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifikasiotorisasi/otorisasi/revisi/order-produksi-agree/{id}', 'OtorisasiController@agree')->name('orderpoduksi.agree');
     Route::get('/notifikasiotorisasi/otorisasi/revisi/order-produksi-rejected/{id}', 'OtorisasiController@rejected')->name('orderpoduksi.rejected');
 
+    // Revisi Data Produk
+    Route::get('/notifikasiotorisasi/otorisasi/revisi/get-list-dataproduk', 'OtorisasiController@getListRevDataProduk')->name('revproduk.getListRevDataProduk');
+    Route::get('/notifikasiotorisasi/otorisasi/revisi/get-detail-dataproduk/{id}', 'OtorisasiController@getDetailRevDataProduk')->name('revproduk.getDetailRevDataProduk');
+    Route::post('/notifikasiotorisasi/otorisasi/revisi/approve-dataproduk/{id}', 'OtorisasiController@approveRevisiProduk')->name('revproduk.approveRevisiProduk');
+    Route::post('/notifikasiotorisasi/otorisasi/revisi/reject-dataproduk/{id}', 'OtorisasiController@rejectRevisiProduk')->name('revproduk.rejectRevisiProduk');
+
     // End Sub Otorisasi
 
     Route::get('/notifikasiotorisasi/notifikasi/index', 'NotifikasiController@notifikasi')->name('notifikasi');

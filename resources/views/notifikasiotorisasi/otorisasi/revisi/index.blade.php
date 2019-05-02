@@ -2,6 +2,7 @@
 
 @section('content')
     @include('notifikasiotorisasi.otorisasi.revisi.orderproduksi.detail')
+    @include('notifikasiotorisasi.otorisasi.revisi.produk.modal-detail')
 <article class="content animated fadeInLeft">
 
 	<div class="title-block text-primary">
@@ -35,7 +36,7 @@
 		<div class="tab-content">
 
 			@include('notifikasiotorisasi.otorisasi.revisi.produk.index')
-			@include('notifikasiotorisasi.otorisasi.revisi.penjualan.index')			
+			@include('notifikasiotorisasi.otorisasi.revisi.penjualan.index')
 			@include('notifikasiotorisasi.otorisasi.revisi.orderproduksi.index')
 
 
@@ -257,4 +258,103 @@
     }
 </script>
 
+<!-- Otorisasi Revisi Data Produk -->
+<script type="text/javascript">
+    $(document).ready(function() {
+        TableRevProduk();
+    });
+    // data-table -> function to retrieve DataTable server side
+    var tb_listrevproduk;
+    function TableRevProduk()
+    {
+    	$('#table_revdataproduk').dataTable().fnDestroy();
+    	tb_listrevproduk = $('#table_revdataproduk').DataTable({
+    		responsive: true,
+    		serverSide: true,
+    		ajax: {
+    			url: "{{ route('revproduk.getListRevDataProduk') }}",
+    			type: "get"
+    		},
+    		columns: [
+    			{data: 'DT_RowIndex'},
+    			{data: 'produk'},
+    			{data: 'authorizationType'},
+    			{data: 'action'}
+    		],
+    		pageLength: 10,
+    		lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+    	});
+    }
+    // show modal detail revisi-produk
+    function showDetailRevisiP(id)
+    {
+        loadingShow();
+        $.ajax({
+            url: baseUrl + '/notifikasiotorisasi/otorisasi/revisi/get-detail-dataproduk/' + id,
+            type: 'get',
+            success: function (response) {
+                loadingHide();
+                console.log(response);
+                $('#detNameRP').val(response.ia_name);
+                $('#detTypeRP').val(response.get_item_type.it_name);
+                $('#detCodeRP').val(response.ia_code);
+                $('#detKetRP').val(response.ia_detail);
+                $('#detImgRP').attr('src', baseUrl +'/storage/uploads/produk/item-auth/'+ response.ia_image);
+                $('#modalDetailRevProduk').modal('show');
+            },
+            error: function (e) {
+                loadingHide();
+                messageWarning('Perhatian', 'Terjadi kesalahan saat menampilkan detail revisi, hubungi pengembang !');
+            }
+        });
+    }
+    // accept revisi-produk
+    function appRevisiP(id)
+    {
+        loadingShow();
+        $.ajax({
+            url: baseUrl + '/notifikasiotorisasi/otorisasi/revisi/approve-dataproduk/' + id,
+            type: 'post',
+            success: function (response) {
+                loadingHide();
+                console.log(response);
+                if (response.status === 'berhasil') {
+                    messageSuccess('Selamat', 'Penyetujuan perubahan item berhasil dijalankan !');
+                    tb_listrevproduk.ajax.reload();
+                } else if (response.status === 'gagal') {
+                    messageWarning('Perhatian', response.message);
+                }
+            },
+            error: function (e) {
+                loadingHide();
+                messageWarning('Perhatian', 'Terjadi kesalahan saat melakukan \'penyetujuan\' revisi, hubungi pengembang !');
+            }
+        });
+    }
+    // reject revisi-produk
+    function rejRevisiP(id)
+    {
+        loadingShow();
+        $.ajax({
+            url: baseUrl + '/notifikasiotorisasi/otorisasi/revisi/reject-dataproduk/' + id,
+            type: 'post',
+            success: function (response) {
+                loadingHide();
+                console.log(response);
+                if (response.status === 'berhasil') {
+                    messageSuccess('Selamat', 'Penolakan perubahan item berhasil dijalankan !');
+                    tb_listrevproduk.ajax.reload();
+                } else if (response.status === 'gagal') {
+                    messageWarning('Perhatian', response.message);
+                }
+            },
+            error: function (e) {
+                loadingHide();
+                messageWarning('Perhatian', 'Terjadi kesalahan saat melakukan \'penolakan\' revisi, hubungi pengembang !');
+            }
+        });
+    }
+
+
+</script>
 @endsection

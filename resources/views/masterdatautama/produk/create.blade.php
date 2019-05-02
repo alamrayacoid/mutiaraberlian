@@ -226,49 +226,54 @@
                         btnClass: 'btn-blue',
                         text:'Ya',
                         action : function(){
-                          event.preventDefault();
-                          var file_data = $('#foto').prop('files')[0];
-                          var form_data = new FormData();
-                          form_data.append('file', file_data);
-                          $.ajax({
-                              data: form_data,
-                              type: "post",
-                              url: $("#myForm").attr('action') + '?' + $('#myForm').serialize(),
-                              dataType: 'json',
-                              cache: false,
-                              contentType: false,
-                              processData: false,
-                              success: function (response) {
-                                  if (response.status == 'berhasil') {
-                                      $.toast({
-                                          heading: 'Success',
-                                          text: 'Data berhasil ditambahkan!, data akan membutuhkan otorisasi terlebih dahulu',
-                                          bgColor: '#00b894',
-                                          textColor: 'white',
-                                          loaderBg: '#55efc4',
-                                          icon: 'success',
-                                          stack: false,
-                                          hideAfter: 1500,
-                                          afterHidden: function () {
-                                              window.location.href = "{{ route('dataproduk.index') }}";
-                                          }
-                                      });
-                                  } else if (response.status == 'invalid') {
-                                      messageWarning('Warning', response.message);
-                                  }
-                              },
-                              error: function (e) {
-                                  $.toast({
-                                      heading: 'Warning',
-                                      text: e.message,
-                                      bgColor: '#00b894',
-                                      textColor: 'white',
-                                      loaderBg: '#55efc4',
-                                      icon: 'warning',
-                                      stack: false
-                                  });
-                              }
-                          });
+                            loadingShow();
+                            event.preventDefault();
+                            var file_data = $('#foto').prop('files')[0];
+                            var form_data = new FormData();
+                            form_data.append('file', file_data);
+                            $.ajax({
+                                data: form_data,
+                                type: "post",
+                                url: $("#myForm").attr('action') + '?' + $('#myForm').serialize(),
+                                dataType: 'json',
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                success: function (response) {
+                                    loadingHide();
+                                    if (response.status == 'berhasil') {
+                                        $.toast({
+                                            heading: 'Success',
+                                            text: 'Data berhasil ditambahkan!, data akan membutuhkan otorisasi terlebih dahulu',
+                                            bgColor: '#00b894',
+                                            textColor: 'white',
+                                            loaderBg: '#55efc4',
+                                            icon: 'success',
+                                            stack: false,
+                                            hideAfter: 1500,
+                                            afterHidden: function () {
+                                                window.location.href = "{{ route('dataproduk.index') }}";
+                                            }
+                                        });
+                                    } else if (response.status == 'invalid') {
+                                        messageWarning('Perhatian', response.message);
+                                    } else if (response.status == 'gagal') {
+                                        messageWarning('Perhatian', response.message);
+                                    }
+                                },
+                                error: function (e) {
+                                    loadingHide();
+                                    $.toast({
+                                        heading: 'Warning',
+                                        text: e.message,
+                                        bgColor: '#00b894',
+                                        textColor: 'white',
+                                        loaderBg: '#55efc4',
+                                        icon: 'warning',
+                                        stack: false
+                                    });
+                                }
+                            });
                         }
                     },
                     cancel:{
