@@ -299,7 +299,7 @@
                 $('#detTypeRP').val(response.get_item_type.it_name);
                 $('#detCodeRP').val(response.ia_code);
                 $('#detKetRP').val(response.ia_detail);
-                $('#detImgRP').attr('src', baseUrl +'/storage/uploads/produk/item-auth/'+ response.ia_image);
+                $('#detImgRP').attr('src', baseUrl +'/storage/uploads/produk/item-auth/'+ response.ia_id +'/'+ response.ia_image);
                 $('#modalDetailRevProduk').modal('show');
             },
             error: function (e) {

@@ -169,7 +169,7 @@
                               <div class="form-group">
                                   @if ($data['dataproduk']->i_image != null)
                                   <img
-                                  src="{{ url('/storage/uploads/produk/original' ) . '/' . $data['dataproduk']->i_image}}"
+                                  src="{{ url('/storage/uploads/produk/original') .'/'. $data['dataproduk']->i_id .'/'. $data['dataproduk']->i_image}}"
                                   height="120px" width="130px" id="img-preview"
                                   style="cursor: pointer;">
                                   @else

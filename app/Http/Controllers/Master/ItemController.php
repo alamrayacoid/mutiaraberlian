@@ -159,19 +159,20 @@ class ItemController extends Controller
             $file = $request->file('file');
             $file_name = null;
             if ($file != null) {
-                $file_name = 'produk' . $id . '.' . $file->getClientOriginalExtension();
-
-                if (!is_dir(storage_path('uploads/produk/item-auth/'))) {
-                    mkdir(storage_path('uploads/produk/item-auth/'), 0777, true);
+                // make-directory based on item-id
+                $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
+                if (!is_dir($authDirectory)) {
+                    mkdir($authDirectory, 0777, true);
                 }
+                // specify file-name
+                $file_name = time() . '.' . $file->getClientOriginalExtension();
 
-                $original_path = storage_path('uploads/produk/item-auth/');
-                // return $original_path;
+                // create image inside auth-directory
                 Image::make($file)
                     ->resize(261, null, function ($constraint) {
                         $constraint->aspectRatio();
                     })
-                    ->save($original_path . $file_name);
+                    ->save($authDirectory .'\\'. $file_name);
             }
 
             DB::table('m_item_auth')
@@ -204,7 +205,7 @@ class ItemController extends Controller
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -249,33 +250,36 @@ class ItemController extends Controller
             ]);
         }
 
-        $gambar = DB::table('m_item')->where('i_id', '=', $id)->first();
-        $file = $request->file('file');
-        if ($file != null) {
-            // // remove/delete current image
-            // if ($gambar->i_image != '') {
-            //     if (file_exists(storage_path('uploads/produk/original/') . $gambar->i_image)) {
-            //         $storage2 = unlink(storage_path('uploads/produk/original/') . $gambar->i_image);
-            //     }
-            // }
-            $file_name = 'produk' . $id . '.' . $file->getClientOriginalExtension();
+        DB::beginTransaction();
+        try {
+            $gambar = DB::table('m_item')->where('i_id', '=', $id)->first();
+            $file = $request->file('file');
+            if ($file != null) {
+                // make-directory based on item-id
+                $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
+                if (!is_dir($authDirectory)) {
+                    mkdir($authDirectory, 0777, true);
+                }
+                // remove/delete current image
+                if ($gambar->i_image != '') {
+                    if (file_exists($authDirectory .'\\'. $gambar->i_image)) {
+                        unlink($authDirectory .'\\'. $gambar->i_image);
+                    }
+                }
+                // specify file-name
+                $file_name = time() . '.' . $file->getClientOriginalExtension();
 
-            if (!is_dir(storage_path('uploads/produk/item-auth/'))) {
-                mkdir(storage_path('uploads/produk/item-auth/'), 0777, true);
-            }
-
-            $original_path = storage_path('uploads/produk/item-auth/');
-            // return $original_path;
-            Image::make($file)
+                // dd($authDirectory, $file_name);
+                // create image inside auth-directory
+                Image::make($file)
                 ->resize(261, null, function ($constraint) {
                     $constraint->aspectRatio();
                 })
-                ->save($original_path . $file_name);
-        } else {
-            $file_name = $gambar->i_image;
-        }
-        DB::beginTransaction();
-        try {
+                ->save($authDirectory .'\\'. $file_name);
+            } else {
+                $file_name = $gambar->i_image;
+            }
+
             // is there already existing un-autorized edit-item ?
             $cek = DB::table('m_item_auth')->where('ia_id', $id)->count();
             if ($cek == 0) {
@@ -317,7 +321,7 @@ class ItemController extends Controller
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -363,7 +367,7 @@ class ItemController extends Controller
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }
