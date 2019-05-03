@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="862e2311-32de-4421-b384-4e65295fd96e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/mobile/PembayaranNotaController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/mobile/PembayaranNotaController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
-    </list>
+    <list default="true" id="862e2311-32de-4421-b384-4e65295fd96e" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -21,7 +17,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/api.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="387">
+            <state relative-caret-position="373">
               <caret line="25" column="48" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="48" />
             </state>
           </provider>
@@ -272,7 +268,7 @@
       <workItem from="1556760715949" duration="9346000" />
       <workItem from="1556788367309" duration="594000" />
       <workItem from="1556790022662" duration="1209000" />
-      <workItem from="1556849671828" duration="2277000" />
+      <workItem from="1556849671828" duration="3270000" />
     </task>
     <task id="LOCAL-00001" summary="roliz">
       <created>1556765610336</created>
@@ -292,7 +288,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="19371000" />
+    <option name="totallyTimeSpent" value="20364000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="0" width="1368" height="740" extended-state="6" />
@@ -347,7 +343,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/api.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
+        <state relative-caret-position="373">
           <caret line="25" column="48" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="48" />
         </state>
       </provider>
