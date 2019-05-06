@@ -5,10 +5,15 @@
             margin-left: -100px;
             padding-left: -20px;
         }
+        table {
+            width: 100% !important;
+        }
         .toolbar {
             float:left;
         }
-
+        .toolbarhpa {
+            float:left;
+        }
         .btn-khusus {
             padding: 3px !important;
             border-radius: 5px !important;
@@ -159,9 +164,9 @@
                 {data: 'sp_name'},
                 {data: 'action'}
             ],
-            dom: 'l<"toolbar">frtip',
+            dom: 'l<"toolbarhpa">frtip',
             initComplete: function(){
-                $("div.toolbar").html('<button type="button" id="btngolonganHPA" class="btn btn-primary" title="Tambah Golongan"><i class="fa fa-plus"></i></button>');
+                $("div.toolbarhpa").html('<button type="button" id="btngolonganHPA" class="btn btn-primary" title="Tambah Golongan"><i class="fa fa-plus"></i></button>');
             }
         });
 

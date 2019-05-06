@@ -344,7 +344,7 @@
                         if(response.data.status == 'Success'){
                             loadingHide();
                             messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
-                            setInterval(function(){location.reload();}, 3500)
+                            setInterval(function(){location.reload(true);}, 3500)
                         }else{
                             loadingHide();
                             messageFailed("Gagal", "Data Order Produksi Gagal Disimpan");

@@ -424,18 +424,6 @@ class PenerimaanProduksiController extends Controller
                     'pod_received' => 'Y'
                 ]);
 
-            $data = DB::table('d_productionorderdt')
-                ->where('pod_productionorder', '=', $id)
-                ->where('pod_received', '=', 'N')
-                ->get();
-
-            if (count($data) == 0){
-                DB::table('d_productionorder')
-                    ->where('po_id', '=', $id)
-                    ->update([
-                        'po_status' => 'Y'
-                    ]);
-            }
         }
 
     }

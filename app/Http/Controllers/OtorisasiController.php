@@ -234,7 +234,7 @@ class OtorisasiController extends Controller
     public function getProduksi()
     {
         $data = DB::table('d_productionorderauth')
-                ->select('d_productionorderauth.poa_id', 'd_productionorderauth.poa_date', 'm_supplier.s_name', 'd_productionorderauth.poa_nota')
+                ->select('d_productionorderauth.poa_id', 'd_productionorderauth.poa_date', 'm_supplier.s_name', 'd_productionorderauth.poa_nota', 'm_supplier.s_company')
                 ->join('m_supplier', function ($q){
                     $q->on('d_productionorderauth.poa_supplier', '=', 'm_supplier.s_id');
                 })->get();
@@ -245,7 +245,7 @@ class OtorisasiController extends Controller
                 return date('d-m-Y', strtotime($data->poa_date));
             })
             ->addColumn('supplier', function($data){
-                return $data->s_name;
+                return $data->s_company;
             })
             ->addColumn('nota', function($data){
                 return $data->poa_nota;
