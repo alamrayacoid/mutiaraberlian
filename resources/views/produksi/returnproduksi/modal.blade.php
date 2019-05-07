@@ -30,14 +30,14 @@
                             <label>Harga @</label>
                         </div>
                         <div class="col-md-10 col-sm-12 mb-3">
-                            <input type="text" id="txt_harga" class="form-control-plaintext form-control-sm text-right"
+                            <input type="text" id="txt_harga" class="form-control-plaintext form-control-sm "
                                    readonly/>
                         </div>
                         <div class="col-md-2 col-sm-12 mt-2">
                             <label>Total</label>
                         </div>
                         <div class="col-md-10 col-sm-12 mb-3">
-                            <input type="text" id="txt_total" class="form-control-plaintext form-control-sm text-right"
+                            <input type="text" id="txt_total" class="form-control-plaintext form-control-sm "
                                    readonly/>
                         </div>
                         <div class="col-12">

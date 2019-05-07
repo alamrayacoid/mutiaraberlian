@@ -33,7 +33,17 @@
                     </div>
                     <div class="card-block">
                         <section>
-                        	
+                            <div class="row">
+                                <div class="col-3"></div>
+                                <div class="input-group input-daterange col-5">
+                                    <input type="text" name="dateStart" id="dateStart" class="form-control form-control-sm" placeholder="Date Start">
+                                    <label class="input-group-addon">-</label>
+                                    <input type="text" name="dateEnd" id="dateEnd" class="form-control form-control-sm" placeholder="Date End">
+                                </div>
+                                <div class="col-2">
+                                    <button class="btn btn-md btn-primary" onclick="updateTableReturn()"><i class="fa fa-search"></i></button>
+                                </div>
+                            </div>
                         	<div class="table-responsive">
 	                            <table class="table table-striped table-hover" cellspacing="0" id="table_return">
 	                                <thead class="bg-primary">
@@ -116,6 +126,30 @@
         })
 
 	});
+	
+	function updateTableReturn() {
+        if ( $.fn.DataTable.isDataTable('#table_return') ) {
+            $('#table_return').DataTable().destroy();
+            table = $('#table_return').DataTable({
+                responsive: true,
+                autoWidth: false,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('return.list') }}",
+                    data: {awal: $("#dateStart").val(), akhir: $("#dateEnd").val()},
+                    type: "get"
+                },
+                columns: [
+                    {data: 'tanggal'},
+                    {data: 'nota'},
+                    {data: 'metode'},
+                    {data: 'barang'},
+                    {data: 'qty'},
+                    {data: 'action'}
+                ],
+            });
+        }
+    }
 
 	function detailReturn(id, detail) {
 	    loadingShow();

@@ -105,7 +105,7 @@ class PembayaranController extends Controller
                 $pop->on('d_productionorder.po_id', '=', 'd_productionorderpayment.pop_productionorder');
             })
             ->groupby(['d_productionorder.po_nota', 'd_productionorderpayment.pop_productionorder'])
-            ->select('d_productionorder.po_id as id', 'd_productionorder.po_nota as nota', 'm_supplier.s_name as supplier',
+            ->select('d_productionorder.po_id as id', 'd_productionorder.po_nota as nota', 'm_supplier.s_company as supplier',
                 DB::raw('sum(d_productionorderpayment.pop_value) as value'), DB::raw('sum(d_productionorderpayment.pop_pay) as terbayar'))
             ->get();
 
@@ -230,6 +230,14 @@ class PembayaranController extends Controller
                 ->where('pop_productionorder', '=', $poid)
                 ->where('pop_termin', '=', $termin)
                 ->update($values);
+
+            if ($values["pop_status"] == "Y"){
+                DB::table('d_productionorder')
+                    ->where('po_id', '=', $poid)
+                    ->update([
+                        'po_status' => "LUNAS"
+                    ]);
+            }
 
             DB::commit();
             return Response::json(['status' => "Success", 'message' => "Data berhasil disimpan"]);

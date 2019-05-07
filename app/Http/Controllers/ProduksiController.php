@@ -518,13 +518,26 @@ class ProduksiController extends Controller
     	return view('produksi/returnproduksi/index');
     }
 
-    public function listReturn()
+    public function listReturn(Request $request)
     {
         $data = DB::table('d_returnproductionorder')
             ->join('m_item', 'rpo_item', '=', 'i_id')
             ->join('m_unit', 'i_unit1', '=', 'u_id')
             ->select('rpo_productionorder as id', 'rpo_detailid as detail', 'rpo_date as tanggal', 'rpo_nota as nota', 'rpo_action as metode', 'rpo_item as idItem', 'i_name as barang',
                 'rpo_qty as qty', 'u_name as satuan');
+
+        if ($request->awal != null){
+            $awal = Carbon::createFromFormat('d-m-Y', $request->awal)->format("Y-m-d");
+            $data->where('rpo_date', '>=', $awal);
+        }
+        if ($request->akhir != null){
+            $akhir = Carbon::createFromFormat('d-m-Y', $request->akhir)->format("Y-m-d");
+            $data->where('rpo_date', '<=', $akhir);
+        }
+        if ($request->awal == null && $request->akhir == null){
+            $date = Carbon::now()->format('Y-m-d');
+            $data->where('rpo_date', '=', $date);
+        }
 
         return DataTables::of($data)
             ->addColumn('tanggal', function($data){
@@ -674,16 +687,15 @@ class ProduksiController extends Controller
                 ->join('m_supplier', 's_id', '=', 'po_supplier')
                 ->select('po_id', 'po_nota as nota', 's_company as supplier', 'po_date as tanggal');
 
-            if ($request->dateStart != "" && $request->dateEnd != "") {
-                $data->whereBetween('po_date', [Carbon::parse($request->dateStart)->format('Y-m-d'), Carbon::parse($request->dateEnd)->format('Y-m-d')]);
-            } else if ($request->dateStart != "" && $request->dateEnd == "") {
-                $data->where('po_date', Carbon::parse($request->dateStart)->format('Y-m-d'));
-            } else if ($request->dateStart == "" && $request->dateEnd != "") {
-                $data->where('po_date', Carbon::parse($request->dateEnd)->format('Y-m-d'));
-            } else if ($request->supplier != "") {
-                $data->where('po_supplier', $request->supplier);
+            if ($request->dateStart != ""){
+                $data->whereDate('po_date', '>=', Carbon::parse($request->dateStart)->format('Y-m-d'));
             }
-
+            if ($request->dateEnd != ""){
+                $data->whereDate('po_date', '<=', Carbon::parse($request->dateEnd)->format('Y-m-d'));
+            }
+            if ($request->supplier != ""){
+                $data->where('po_supplier', '=', $request->supplier);
+            }
             return DataTables::of($data)
                 ->addColumn('supplier', function($data){
                     return $data->supplier;
@@ -947,12 +959,13 @@ class ProduksiController extends Controller
                         'message' => "Jumlah barang tidak tersedia"
                     ]);
                 } else if ($get_stockmutation->first()->sm_use < $get_stockmutation->first()->sm_qty) {
-                    $sm_qty     = $get_stockmutation->first()->sm_qty - $qty_compare;
-                    $sm_residue = $sm_qty  - $get_stockmutation->first()->sm_use;
-                    $val_stockmutation = [
-                        'sm_qty'     => $sm_qty,
-                        'sm_residue' => $sm_residue
-                    ];
+//                    $sm_qty     = $get_stockmutation->first()->sm_qty - $qty_compare;
+//                    $sm_residue = $sm_qty  - $get_stockmutation->first()->sm_use;
+//                    $val_stockmutation = [
+//                        'sm_qty'     => $sm_qty,
+//                        'sm_residue' => $sm_residue
+//                    ];
+                    Mutasi::MutasiKeluarWithReff(15, $comp, $comp, $idItem, $request->qty_return, $nota, $request->notaPO);
                 }
             } else {
                 return Response::json([
@@ -964,7 +977,7 @@ class ProduksiController extends Controller
             //            insert return
             DB::table('d_returnproductionorder')->insert($values);
             $get_stock->update($val_stock);
-            $get_stockmutation->update($val_stockmutation);
+//            $get_stockmutation->update($val_stockmutation);
             DB::commit();
 
             return Response::json([
