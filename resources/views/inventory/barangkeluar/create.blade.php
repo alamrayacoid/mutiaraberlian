@@ -51,7 +51,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="number" class="form-control form-control-sm" name="qty">
+                                <input type="text" class="form-control form-control-sm digits" name="qty">
                               </div>
                             </div>
 
@@ -153,12 +153,6 @@
     $('#unit').on('change', function() {
       console.log($(this).val());
     })
-
-    $('.input-hpp').maskMoney({
-      thousands: ".",
-      precision: 0,
-      decimal: ","
-    });
 
   });
 

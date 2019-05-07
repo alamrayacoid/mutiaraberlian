@@ -340,6 +340,7 @@ function editDetailPenjualan(idPenjualan)
 // show detail penjualan
 function showDetailPenjualan(idPenjualan)
 {
+	loadingShow();
 	$.ajax({
 		url: "{{ route('kelolapenjualan.getDetailPenjualan') }}",
 		type: 'get',
@@ -347,13 +348,20 @@ function showDetailPenjualan(idPenjualan)
 			'id': idPenjualan
 		},
 		success: function(response) {
+			loadingHide();
 			console.log(response);
 			$('#detail_kpl_nota').val(response.s_nota);
 			$('#detail_kpl_member_name').val(response.get_member.m_name);
 			$('#detail_kpl_total').val(parseInt(response.s_total));
 			$('#table_detail_kelola tbody').empty();
 			$.each(response.get_sales_dt, function(key, val) {
-				$('#table_detail_kelola > tbody:last-child').append('<tr><td>'+ val.get_item.i_name +'</td><td>'+ val.get_unit.u_name +'</td><td class="digits">'+ parseInt(val.sd_qty) +'</td><td class="rupiah">'+ parseInt(val.sd_value) +'</td><td class="rupiah">'+ parseInt(val.sd_totalnet) +'</td></tr>');
+				nama = '<td>'+ val.get_item.i_name +'</td>';
+				unit = '<td>'+ val.get_unit.u_name +'</td>';
+				qty = '<td class="digits">'+ parseInt(val.sd_qty) +'</td>';
+				price = '<td class="rupiah">'+ parseInt(val.sd_value) +'</td>';
+				totalPrice = '<td class="rupiah">'+ parseInt(val.sd_totalnet) +'</td>';
+				itemToAppend = nama + unit + qty + price + totalPrice;
+				$('#table_detail_kelola > tbody:last-child').append('<tr>'+ itemToAppend +'</tr>');
 			});
 		    $('.rupiah').inputmask("currency", {
 		        radixPoint: ",",
@@ -366,12 +374,12 @@ function showDetailPenjualan(idPenjualan)
 		        nullable: false,
 		        // unmaskAsNumber: true,
 		    });
-			$('.rupiah-x').inputmask("currency", {
+			$('.rupiah-left').inputmask("currency", {
 		        radixPoint: ",",
 		        groupSeparator: ".",
 		        digits: 2,
 		        autoGroup: true,
-		        prefix: ' Rp ', //Space after $, this will not truncate the first character.
+		        prefix: 'Rp ', //Space after $, this will not truncate the first character.
 		        rightAlign: false,
 		        autoUnmask: true,
 		        nullable: false,
@@ -391,6 +399,7 @@ function showDetailPenjualan(idPenjualan)
 	        $('#detailkpl').modal('show');
 		},
 		error: function(e) {
+			loadingHide();
 			console.error(e);
 		}
 

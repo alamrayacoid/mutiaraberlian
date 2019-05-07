@@ -117,51 +117,6 @@ class BarangKeluarController extends Controller
         return $outQty;
     }
 
-    // /**
-    //  * Update stock in 'd_stock'.
-    //  *
-    //  * @param string $positionId
-    //  * @param string $condition
-    //  * @param string $itemId
-    //  * @param int $outQty -> the number of 'jumlah barang keluar'
-    //  */
-    // public function updateMainStock(
-    //   $positionId, $condition, $itemId, $outQty, $unit
-    // )
-    // {
-    //   try {
-    //     DB::beginTransaction();
-    //       $stock = d_stock::where('s_comp', Auth::user()->employee->e_id)
-    //         ->where('s_position', $positionId)
-    //         ->where('s_condition', $condition)
-    //         ->where('s_item', $itemId)
-    //         ->firstOrFail();
-    //       // convert outQty to smallest unit
-    //       if ($unit != 1) {
-    //         $outQty = $this->convertOutQtyToSmallestUnit($itemId, $unit, $outQty);
-    //       }
-    //       if ($outQty > $stock->s_qty) {
-    //         return response()->json([
-    //           'status' => 'invalid',
-    //           'message' => 'Stock tidak cukup !'
-    //         ]);
-    //       }
-    //       $stock->s_qty = $stock->s_qty - $outQty;
-    //       $stock->save();
-    //     DB::commit();
-    //     return response()->json([
-    //       'status' => 'berhasil'
-    //     ]);
-    //   } catch (\Exception $e) {
-    //     DB::rollBack();
-    //     var_dump('update-main-stock error : ' . $e->getMessage());
-    //     return response()->json([
-    //       'status' => 'gagal',
-    //       'message' => $e->getMessage()
-    //     ]);
-    //   }
-    // }
-
     /**
     * Inser new 'item out' row.
     *
@@ -210,16 +165,19 @@ class BarangKeluarController extends Controller
         return Datatables::of($datas)
         ->addIndexColumn()
         ->addColumn('code', function($datas) {
-            return '<td>'. $datas->getItem['i_code'] .'</td>';
+            return $datas->getItem['i_code'];
         })
         ->addColumn('name', function($datas) {
-            return '<td>'. $datas->getItem['i_name'] .'</td>';
+            return $datas->getItem['i_name'];
+        })
+        ->addColumn('qty', function($datas) {
+            return '<span class="pull-right">'. number_format($datas->io_qty, 0, ',', '.') .'</span>';
         })
         ->addColumn('unit', function($datas) {
-            return '<td>'. $datas->getUnit['u_name'] .'</td>';
+            return $datas->getUnit['u_name'];
         })
         ->addColumn('mutcat', function($datas) {
-            return '<td>'. $datas->getMutcat['m_name'] .'</td>';
+            return $datas->getMutcat['m_name'];
         })
         ->addColumn('action', function($datas) {
             return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
@@ -227,7 +185,7 @@ class BarangKeluarController extends Controller
             </button>
             </div>';
         })
-        ->rawColumns(['code', 'name', 'unit', 'mutcat', 'action'])
+        ->rawColumns(['code', 'name', 'qty', 'unit', 'mutcat', 'action'])
         ->make(true);
     }
 

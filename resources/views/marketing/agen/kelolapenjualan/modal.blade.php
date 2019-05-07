@@ -24,7 +24,7 @@
             <div class="row">
                 <label for="detail_kpl_total" class="col-sm-2 col-form-label">Total :</label>
                 <div class="col-sm-4">
-                    <input type="text" readonly class="form-control-plaintext rupiah-x" style="font-weight: bold; text-align: left;" id="detail_kpl_total">
+                    <input type="text" readonly class="form-control-plaintext rupiah-left" style="font-weight: bold; text-align: left;" id="detail_kpl_total">
                 </div>
             </div>
             <br>

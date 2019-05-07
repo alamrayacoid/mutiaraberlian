@@ -1280,13 +1280,14 @@ $(document).ready(function() {
 	function submitAddCanvassing()
 	{
 	    myForm = $('#formAddCanvassing').serialize();
-
+		loadingShow();
 	    $.ajax({
 	        data : myForm,
 	        type : "post",
 	        url : baseUrl + '/marketing/marketingarea/datacanvassing/store',
 	        dataType : 'json',
 	        success : function (response){
+				loadingHide();
 	            if(response.status == 'berhasil')
 	            {
 	                messageSuccess('Berhasil', 'Data Canvassing berhasil ditambahkan !');
@@ -1308,6 +1309,7 @@ $(document).ready(function() {
 				});
 	        },
 	        error : function(e){
+				loadingHide();
 	            messageWarning('Gagal', 'Data gagal ditambahkan, hubungi pengembang !');
 	            // activate btn_simpan once again
 				$('#btn_simpan_addcanvassing').one('click', function() {
@@ -1319,11 +1321,13 @@ $(document).ready(function() {
 	// show modal edit
 	function editDataCanvassing(id)
 	{
+		loadingShow();
 		$.ajax({
 	        type : "get",
 	        url : baseUrl + '/marketing/marketingarea/datacanvassing/edit/' + id,
 	        dataType : 'json',
 	        success : function (response){
+				loadingHide();
 				$('#name_editdc').val(response.c_name);
 				$('#email_editdc').val(response.c_email);
 				$('#telp_editdc').val(response.c_tlp);
@@ -1333,6 +1337,7 @@ $(document).ready(function() {
 				$('#modalEditCanvassing').modal('show');
 	        },
 	        error : function(e){
+				loadingHide();
 	            messageWarning('Gagal', 'Gagal mendapatkan data, hubungi pengembang !');
 	        }
 		})
@@ -1341,13 +1346,14 @@ $(document).ready(function() {
 	function submitEditCanvassing(id)
 	{
 	    myForm = $('#formEditCanvassing').serialize();
-
+		loadingShow();
 	    $.ajax({
 	        data : myForm,
 	        type : "post",
 	        url : baseUrl + '/marketing/marketingarea/datacanvassing/update/' + id,
 	        dataType : 'json',
 	        success : function (response){
+				loadingHide();
 	            if(response.status == 'berhasil')
 	            {
 	                messageSuccess('Berhasil', 'Data Canvassing berhasil diperbarui !');
@@ -1363,6 +1369,7 @@ $(document).ready(function() {
 	            }
 	        },
 	        error : function(e){
+				loadingHide();
 	            messageWarning('Gagal', 'Data gagal diperbarui, hubungi pengembang !');
 	        }
 	    });
@@ -1383,10 +1390,12 @@ $(document).ready(function() {
 					btnClass: 'btn-blue',
 					text: 'Ya',
 					action: function () {
+						loadingShow();
 						return $.ajax({
 							type: "post",
 							url: baseUrl + '/marketing/marketingarea/datacanvassing/delete/' + id,
 							success: function (response) {
+								loadingHide();
 								if (response.status == 'berhasil') {
 									messageSuccess('Berhasil', 'Data berhasil hapus !');
 									tb_liscanvas.ajax.reload();
@@ -1395,6 +1404,7 @@ $(document).ready(function() {
 								}
 							},
 							error: function (e) {
+								loadingHide();
 								messageFailed('Peringatan', e.message);
 							}
 						});
@@ -1439,6 +1449,7 @@ $(document).ready(function() {
 	// get cities for search-agent
 	function getCitiesDC()
 	{
+		loadingShow();
 		var provId = $('.provDC').val();
 		$.ajax({
 			url: "{{ route('datacanvassing.getCitiesDC') }}",
@@ -1447,6 +1458,7 @@ $(document).ready(function() {
 				provId: provId
 			},
 			success: function (response) {
+				loadingHide();
 				$('.citiesDC').empty();
 				$(".citiesDC").append('<option value="" selected="" disabled="">=== Pilih Kota ===</option>');
 				$.each(response.get_cities, function( key, val ) {
@@ -1460,6 +1472,7 @@ $(document).ready(function() {
 	// append data to table-list-agens
 	function appendListAgentsDC()
 	{
+		loadingShow();
 		$.ajax({
 			url: "{{ route('datacanvassing.getAgentsDC') }}",
 			type: 'get',
@@ -1467,6 +1480,7 @@ $(document).ready(function() {
 				cityId: $('.citiesDC').val()
 			},
 			success: function(response) {
+				loadingHide();
 				$('#table_search_dc tbody').empty();
 				if (response.length <= 0) {
 					return 0;

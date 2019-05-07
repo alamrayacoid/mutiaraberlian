@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Aktivitasmarketing\Marketingarea;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
@@ -857,32 +858,44 @@ class MarketingAreaController extends Controller
         if ($agentCode !== null) {
             // get user based on agent-code
             $user = d_username::where('u_code', $agentCode)->first();
-            // get sub-agent's code  from selected-user/agent
-            $subAgents = m_agen::where('a_parent', $user->u_code)
-            ->get();
-            $listAgentCode = array();
-            foreach ($subAgents as $subAgent) {
-                array_push($listAgentCode, $subAgent->a_code);
+            // if $user is null, then return empty list
+            if ($user == null)
+            {
+                $datas = Collection::make();
             }
-            // add selected-user's code
-            array_push($listAgentCode, $user->u_code);
-            // get user from created list of agent/sub-agent's code
-            $users = d_username::whereIn('u_code', $listAgentCode)->get();
-            $listUserId = array();
-            foreach ($users as $user) {
-                array_push($listUserId, $user->u_id);
+            else
+            {
+                // get sub-agent's code  from selected-user/agent
+                $subAgents = m_agen::where('a_parent', $user->u_code)
+                ->get();
+                $listAgentCode = array();
+                foreach ($subAgents as $subAgent) {
+                    array_push($listAgentCode, $subAgent->a_code);
+                }
+                // add selected-user's code
+                array_push($listAgentCode, $user->u_code);
+                // get user from created list of agent/sub-agent's code
+                $users = d_username::whereIn('u_code', $listAgentCode)->get();
+                $listUserId = array();
+                foreach ($users as $user) {
+                    array_push($listUserId, $user->u_id);
+                }
+                $datas = d_canvassing::whereBetween('c_date', [$from, $to])
+                ->whereIn('c_user', $listUserId)
+                ->orderBy('c_name', 'asc')
+                ->get();
             }
-
-            $datas = d_canvassing::whereBetween('c_date', [$from, $to])
-            ->whereIn('c_user', $listUserId)
-            ->orderBy('c_name', 'asc')
-            ->get();
-        } else {
-            if ($userType === 'E') {
+        }
+        else
+        {
+            if ($userType === 'E')
+            {
                 $datas = d_canvassing::whereBetween('c_date', [$from, $to])
                 ->orderBy('c_name', 'asc')
                 ->get();
-            } else {
+            }
+            else
+            {
                 // get sub-agent's code  from currently logged in user
                 $subAgents = m_agen::where('a_parent', Auth::user()->u_code)
                 ->get();
@@ -1105,11 +1118,10 @@ class MarketingAreaController extends Controller
         {
             // get user based on agent-code
             $user = d_username::where('u_code', $agentCode)->first();
-            // return null if user is not found
-            if ($user === null)
+            // if $user is null, then return empty list
+            if ($user == null)
             {
-                $datas = d_sales::where('s_id', null)
-                ->get();
+                $datas = Collection::make();
             }
             else
             {
