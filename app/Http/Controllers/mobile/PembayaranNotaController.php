@@ -28,7 +28,7 @@ class PembayaranNotaController extends Controller
         $nota = $request->nota;
         $data = DB::table('d_productionorderpayment')
             ->join('d_productionorder', 'po_id', '=', 'pop_productionorder')
-            ->select('pop_termin', DB::raw('date_format(pop_datetop, "%d-%m-%Y") as pop_datetop'), 'pop_value', DB::raw('replace(format(round(pop_value - pop_pay),0), ",", ".") as pop_value'), DB::raw('replace(format(round(pop_value - pop_pay),0), ",", "") as pop_valueint'), DB::raw('round(pop_value) as tagihan'), DB::raw('replace(format(round(pop_value),0), ",", "") as tagihanrp'))
+            ->select('pop_termin', DB::raw('date_format(pop_datetop, "%d-%m-%Y") as pop_datetop'), 'pop_value', DB::raw('replace(format(round(pop_value - pop_pay),0), ",", ".") as pop_value'), DB::raw('replace(format(round(pop_value - pop_pay),0), ",", "") as pop_valueint'), DB::raw('round(pop_value) as tagihan'), DB::raw('replace(format(round(pop_value),0), ",", ".") as tagihanrp'))
             ->where('po_nota', '=', $nota)
             ->where('pop_status', '=', 'N')
             ->get();
