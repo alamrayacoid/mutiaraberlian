@@ -191,192 +191,41 @@ class BarangKeluarController extends Controller
       }
     }
 
-    // /**
-    //  * Return a row (selected 'stock mutation')
-    //  * where 'sm_stock'='$stockId' and 'sm_residue' > 0
-    //  *
-    //  * @param int $stockId
-    //  */
-    // public function getStockMutation($stockId)
-    // {
-    //   $stockMutation = d_stock_mutation::orderBy('sm_detailid', 'asc')
-    //     ->where('sm_stock', $stockId)
-    //     ->where('sm_residue', '>', 0)
-    //     ->firstOrFail();
-    //   return $stockMutation;
-    // }
-
-    // /**
-    //  * Update mutationResidue and mutationUse
-    //  *
-    //  */
-    // public function updateMutationResidue(
-    //   $stockMutation, $mutationUse, $mutationResidue, $stockId
-    // )
-    // {
-    //   try {
-    //     DB::beginTransaction();
-    //     $stockMutation->sm_use = $mutationUse;
-    //     $stockMutation->sm_residue = $mutationResidue;
-    //     $stockMutation->save();
-    //     DB::commit();
-    //     return true;
-    //   } catch (\Exception $e) {
-    //     DB::rollBack();
-    //     var_dump('update-mutation-residue error : ' . $e->getMessage());
-    //     return false;
-    //   }
-    // }
-
-    // /**
-    //  * Return a new 'detail id' for creating new mutation.
-    //  *
-    //  * @param int $stockId
-    //  * @return int $detailId
-    //  */
-    // public function getNewDetailId($stockId)
-    // {
-    //   $maxDetailId = d_stock_mutation::where('sm_stock', $stockId)
-    //     ->max('sm_detailid');
-    //   $detailId = $maxDetailId + 1;
-    //   return $detailId;
-    // }
-
-    // /**
-    // * Return current 'nota' for creating new mutation.
-    // *
-    // * @return varchar $nota
-    // */
-    // public function getCurrentNota()
-    // {
-    //   $nota = d_itemout::orderBy('io_id', 'desc')->select('io_nota')->first();
-    //   $nota = $nota->io_nota;
-    //   return $nota;
-    // }
-
-    // /**
-    //  * Insert a new 'stock mutation' row
-    //  *
-    //  * @param int $stockId -> stock id
-    //  * @param int $detailId -> new detail id
-    //  * @param int $mutcat -> mutation category (reff: 'd_mutcat' table)
-    //  * @param int $outQty -> amount of 'out items'
-    //  * @param int $HPP ->
-    //  * @param varchar $nota
-    //  * @param varchar $reff
-    //  * @return varchar $nota
-    //  */
-    // public function storeNewStockMutation(
-    //   $stockId, $detailId, $mutcat,
-    //   $outQty, $HPP, $nota, $reff
-    // )
-    // {
-    //   try {
-    //     DB::beginTransaction();
-    //       $newStockMutation = new d_stock_mutation;
-    //       $newStockMutation->sm_stock = $stockId;
-    //       $newStockMutation->sm_detailid = $detailId;
-    //       $newStockMutation->sm_date = Carbon::now();
-    //       $newStockMutation->sm_mutcat = $mutcat;
-    //       $newStockMutation->sm_qty = $outQty;
-    //       $newStockMutation->sm_use = 0;
-    //       $newStockMutation->sm_residue = 0;
-    //       $newStockMutation->sm_hpp = $HPP;
-    //       $newStockMutation->sm_sell = null;
-    //       $newStockMutation->sm_nota = $nota;
-    //       $newStockMutation->sm_reff = $reff;
-    //       $newStockMutation->sm_user = Auth::user()->employee->e_id;
-    //       $newStockMutation->save();
-    //     DB::commit();
-    //     return true;
-    //   } catch (\Exception $e) {
-    //     DB::rollBack();
-    //     var_dump('Store-new-mutation error : ' . $e->getMessage());
-    //     return false;
-    //   }
-    //
-    // }
-
-    // /**
-    //  * prepare and insert a new 'stock mutation'
-    //  *
-    //  * @param int $stockId -> id stock
-    //  * @param int $outQty -> the number of 'jumlah barang keluar'
-    //  * @param int $mutcat -> mutation category, reff: 'd_mutcat' table
-    //  */
-    // public function createNewStockMutation($stockId, $unit, $outQty, $mutcat)
-    // {
-    //   $outQty = $this->convertOutQtyToSmallestUnit($stockId, $unit, $outQty);
-    //   while ($outQty > 0) {
-    //     // start: step 1
-    //     // order 'stock mutation' by 'detail id' and
-    //     // get 'row' where 'id=$stockId' and 'sm_residue>0'
-    //     $stockMutation = $this->getStockMutation($stockId);
-    //     // calculate 'mutationResidue', 'mutationUse',
-    //     // 'outQtyResidue', and 'newOutQty'
-    //     if ($stockMutation->sm_residue >= $outQty) {
-    //       $mutationResidue = $stockMutation->sm_residue - $outQty;
-    //       $mutationUse = $stockMutation->sm_use + $outQty;
-    //       $outQtyResidue = 0;
-    //       $newOutQty = $outQty;
-    //     } else {
-    //       $outQtyResidue = $outQty - $stockMutation->sm_residue;
-    //       $newOutQty = $stockMutation->sm_residue;
-    //       $mutationResidue = 0;
-    //       $mutationUse = $stockMutation->sm_use + $stockMutation->sm_residue;
-    //     }
-    //     // update 'sm_residue' and 'sm_use' in 'd_stock_mutation'
-    //     $isMutationUpdated = $this->updateMutationResidue($stockMutation, $mutationUse, $mutationResidue, $stockId);
-    //     // get 'new detail id'
-    //     $newDetailId = $this->getNewDetailId($stockId);
-    //     // get 'new nota'
-    //     $newNota = $this->getCurrentNota();
-    //     // set 'new sm_hpp' value same with 'sm_hpp' from used 'row'
-    //     $newHPP = $stockMutation->sm_hpp;
-    //     // set 'new sm_reff' value same with 'sm_nota' from used 'row'
-    //     $newReff = $stockMutation->sm_nota;
-    //     // insert mutation
-    //     $isNewMutationStored = $this->storeNewStockMutation(
-    //       $stockId, $newDetailId, $mutcat, $newOutQty,
-    //       $newHPP, $newNota, $newReff
-    //     );
-    //     // end: step 1
-    //     $outQty = $outQtyResidue;
-    //   }
-    //   return true;
-    // }
-
     /**
      * Return DataTable list for view.
      *
      * @return Yajra/DataTables
      */
-    public function getList()
+    public function getList(Request $request)
     {
-      $datas = d_itemout::orderBy('io_id', 'asc')
+        $from = Carbon::parse($request->date_from)->format('Y-m-d');
+        $to = Carbon::parse($request->date_to)->format('Y-m-d');
+
+        $datas = d_itemout::whereBetween('io_date', [$from, $to])
+        ->orderBy('io_id', 'asc')
         ->with('getUnit')
         ->with('getMutcat')
         ->with('getItem')
         ->get();
-      return Datatables::of($datas)
+        return Datatables::of($datas)
         ->addIndexColumn()
         ->addColumn('code', function($datas) {
-          return '<td>'. $datas->getItem['i_code'] .'</td>';
+            return '<td>'. $datas->getItem['i_code'] .'</td>';
         })
         ->addColumn('name', function($datas) {
-          return '<td>'. $datas->getItem['i_name'] .'</td>';
+            return '<td>'. $datas->getItem['i_name'] .'</td>';
         })
         ->addColumn('unit', function($datas) {
-          return '<td>'. $datas->getUnit['u_name'] .'</td>';
+            return '<td>'. $datas->getUnit['u_name'] .'</td>';
         })
         ->addColumn('mutcat', function($datas) {
-          return '<td>'. $datas->getMutcat['m_name'] .'</td>';
+            return '<td>'. $datas->getMutcat['m_name'] .'</td>';
         })
         ->addColumn('action', function($datas) {
-          return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                      <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="Detail('. $datas->io_id .', \''. $datas->io_nota .'\')"><i class="fa fa-folder"></i>
-                      </button>
-                  </div>';
+            return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+            <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="Detail('. $datas->io_id .', \''. $datas->io_nota .'\')"><i class="fa fa-folder"></i>
+            </button>
+            </div>';
         })
         ->rawColumns(['code', 'name', 'unit', 'mutcat', 'action'])
         ->make(true);
@@ -475,40 +324,5 @@ class BarangKeluarController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
-
-      // // update 'main stock (d_stock)'
-      // $isMainStockUpdated = $this->updateMainStock(
-      //   $request->position, 'FINE',
-      //   $request->itemId, $request->qty,
-      //   $request->unit
-      // );
-      // if ($isMainStockUpdated->original['status'] != 'berhasil') {
-      //   return response()->json([
-      //     'status' => $isMainStockUpdated->original['status'],
-      //     'message' => $isMainStockUpdated->original['message']
-      //   ]);
-      // }
-      // // insert new 'item out (d_itemout)'
-      // $isItemOutStored = $this->storeNewItemOut($request);
-      // if ($isItemOutStored == false) {
-      //   return response()->json([
-      //     'status' => 'gagal',
-      //     'message' => 'Gagal, hubungi pengembang !'
-      //   ]);
-      // }
-      // // insert new 'stock mutation (d_stock_mutation)'
-      // $isNewStockMutationCreated = $this->createNewStockMutation(
-      //   $request->itemId, $request->unit, $request->qty, $request->mutcat
-      // );
-      // if ($isNewStockMutationCreated == true) {
-      //   return response()->json([
-      //     'status' => 'berhasil'
-      //   ]);
-      // } else {
-      //   return response()->json([
-      //     'status' => 'gagal',
-      //     'message' => 'Gagal, hubungi pengembang !'
-      //   ]);
-      // }
     }
 }

@@ -33,6 +33,20 @@
                     </div>
                     <div class="card-block">
                         <section>
+							<div class="row">
+								<div class="col-md-3"></div>
+								<div class="col-md-6 col-sm-12">
+									<div class="input-group input-group-sm input-daterange">
+										<input type="text" class="form-control" id="date_from">
+										<span class="input-group-addon">-</span>
+										<input type="text" class="form-control" id="date_to">
+										<div class="input-group-append">
+											<button class="btn btn-secondary" type="button" id="btn_search_date"><i class="fa fa-search"></i></button>
+											<button class="btn btn-primary" type="button" id="btn_refresh_date"><i class="fa fa-refresh"></i></button>
+										</div>
+									</div>
+								</div>
+							</div>
 
                         	<div class="table-responsive">
 	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_barangkeluar">
@@ -127,6 +141,30 @@
 
 @section('extra_script')
 <script type="text/javascript">
+	$(document).ready(function(){
+		const cur_date = new Date();
+		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+		const last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+		$('#date_from').datepicker('setDate', first_day);
+		$('#date_to').datepicker('setDate', last_day);
+
+		$('#date_from').on('change', function() {
+			TableBarangKeluar();
+		});
+		$('#date_to').on('change', function() {
+			TableBarangKeluar();
+		});
+		$('#btn_search_date').on('click', function() {
+			TableBarangKeluar();
+		});
+		$('#btn_refresh_date').on('click', function() {
+			$('#date_from').datepicker('setDate', first_day);
+			$('#date_to').datepicker('setDate', last_day);
+		});
+
+		TableBarangKeluar();
+	});
+
 	// set header token for ajax request
 	$.ajaxSetup({
 		headers: {
@@ -135,7 +173,8 @@
 	});
 
 	/* Fungsi formatRupiah */
-	function formatRupiah(angka){
+	function formatRupiah(angka)
+	{
 		var number_string = angka.replace(/[^.\d]/g, '').toString();
 		split = number_string.split(',');
 		sisa = split[0].length % 3;
@@ -161,7 +200,9 @@
 				url: "{{ route('barangkeluar.list') }}",
 				type: "get",
 				data: {
-					"_token": "{{ csrf_token() }}"
+					"_token": "{{ csrf_token() }}",
+					"date_from": $('#date_from').val(),
+					"date_to": $('#date_to').val()
 				}
 			},
 			columns: [
@@ -199,10 +240,5 @@
 			}
 		});
 	}
-
-	$(document).ready(function(){
-		TableBarangKeluar();
-
-	});
 </script>
 @endsection

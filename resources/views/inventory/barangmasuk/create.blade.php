@@ -67,7 +67,7 @@
                     </select>
                   </div>
                 </div>
-                
+
                 <div class="col-md-3 col-sm-6 col-xs-12">
                   <label>Lokasi Barang</label>
                 </div>
@@ -107,7 +107,8 @@
                 </div>
 
                 <div class="col-md-3 col-sm-6 col-xs-12">
-                  <label>HPP Satuan Terkecil</label>
+                  <label>HPP Satuan </label>
+                  <i class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Hpp satuan merupakan harga pokok barang per satuan (lihat form satuan) yang diinput"></i>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
                   <div class="form-group">
@@ -181,7 +182,7 @@
     loadingShow();
     submitForm(event);
   });
-    
+
   function submitForm(event){
     event.preventDefault();
     $.ajax({

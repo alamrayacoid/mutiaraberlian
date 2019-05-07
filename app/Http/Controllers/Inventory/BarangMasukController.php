@@ -20,18 +20,23 @@ class BarangMasukController extends Controller
         return view('inventory/barangmasuk/index');
     }
 
-    public function getData()
+    public function getData(Request $request)
     {
+        $from = Carbon::parse($request->date_from)->format('Y-m-d');
+        $to = Carbon::parse($request->date_to)->format('Y-m-d');
+
         $datas = DB::table('d_stock_mutation')
             ->join('d_stock', 'sm_stock', 's_id')
             ->join('m_company as pemilik', 'd_stock.s_comp', 'pemilik.c_id')
             ->join('m_company as posisi', 'd_stock.s_position', 'posisi.c_id')
             ->select('sm_stock','sm_detailid',DB::raw('date_format(sm_date, "%d/%m/%Y") as sm_date'), 'sm_qty', 'pemilik.c_name as pemilik', 'posisi.c_name as posisi', 's_condition')
+            ->whereBetween('sm_date', [$from, $to])
             ->where('s_status', '=', 'ON DESTINATION')
             ->where('sm_mutcat', '=', '1')
             ->orWhere('sm_mutcat', '=', '2')
             ->orWhere('sm_mutcat', '=', '3')
             ->get();
+
         return Datatables::of($datas)
         ->addIndexColumn()
         ->addColumn('kondisi', function($datas) {
@@ -53,11 +58,15 @@ class BarangMasukController extends Controller
 
     public function create()
     {
-        $company = DB::table('m_company')->select('c_id', 'c_name')->get();
+        $company = DB::table('m_company')
+            ->where('c_type', 'CABANG')
+            ->orWhere('c_type', 'PUSAT')
+            ->select('c_id', 'c_name')
+            ->get();
         $unit    = DB::table('m_item')
             ->join('m_unit as unit1', 'unit1.u_id', 'i_unit1')
             ->join('m_unit as unit2', 'unit2.u_id', 'i_unit2')
-            ->join('m_unit as unit3', 'unit3.u_id', 'i_unit3')            
+            ->join('m_unit as unit3', 'unit3.u_id', 'i_unit3')
             ->select('m_item.*','unit1.u_id as id1', 'unit1.u_name as name1', 'unit2.u_id as id2', 'unit2.u_name as name2', 'unit3.u_id as id3', 'unit3.u_name as name3')
             ->get();
         $mutcat  = DB::table('m_mutcat')->select('m_id', 'm_name')->where('m_name', 'like', 'Barang Masuk%')->get();
@@ -71,7 +80,7 @@ class BarangMasukController extends Controller
         $getUnit = DB::table('m_item')
             ->join('m_unit as unit1', 'unit1.u_id', 'i_unit1')
             ->join('m_unit as unit2', 'unit2.u_id', 'i_unit2')
-            ->join('m_unit as unit3', 'unit3.u_id', 'i_unit3')            
+            ->join('m_unit as unit3', 'unit3.u_id', 'i_unit3')
             ->select('m_item.*','unit1.u_id as id1', 'unit1.u_name as name1', 'unit2.u_id as id2', 'unit2.u_name as name2', 'unit3.u_id as id3', 'unit3.u_name as name3')
             ->where('i_id', '=', $idUnit)
             ->first();
@@ -138,7 +147,7 @@ class BarangMasukController extends Controller
             ->where('s_item', '=', $s_item)
             ->where('s_condition', '=', $s_condition)
             ->first();
-        
+
         $getId = 1;
         if ($countStock > 0) {
             $getIdMax = DB::table('d_stock')->max('s_id');
@@ -162,7 +171,7 @@ class BarangMasukController extends Controller
                 DB::table('d_stock')->where('s_id', $query1->s_id)->update([
                     's_qty' => $qtyAkhir
                 ]);
-              
+
                 DB::table('d_stock_mutation')->insert([
                     'sm_stock'    => $query1->s_id,
                     'sm_detailid' => ++$detail,
@@ -193,7 +202,7 @@ class BarangMasukController extends Controller
                     's_qty'        => $s_qty,
                     's_condition'  => $s_condition
                 ]);
-                
+
                 DB::table('d_stock_mutation')->insert([
                     'sm_stock'    => $getId,
                     'sm_detailid' => $dtId+1,

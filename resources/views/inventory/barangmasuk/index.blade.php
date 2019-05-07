@@ -25,6 +25,20 @@
                     </div>
                     <div class="card-block">
                         <section>
+							<div class="row">
+								<div class="col-md-3"></div>
+								<div class="col-md-6 col-sm-12">
+									<div class="input-group input-group-sm input-daterange">
+										<input type="text" class="form-control" id="date_from">
+										<span class="input-group-addon">-</span>
+										<input type="text" class="form-control" id="date_to">
+										<div class="input-group-append">
+											<button class="btn btn-secondary" type="button" id="btn_search_date"><i class="fa fa-search"></i></button>
+											<button class="btn btn-primary" type="button" id="btn_refresh_date"><i class="fa fa-refresh"></i></button>
+										</div>
+									</div>
+								</div>
+							</div>
                         	<div class="table-responsive">
 	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_barangmasuk">
 	                                <thead class="bg-primary">
@@ -124,7 +138,7 @@
                         <div class="form-group">
                             <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="notaB">
                         </div>
-                    </div>                        
+                    </div>
                 </div>
             </div>
         </div>
@@ -137,10 +151,31 @@
 <script type="text/javascript">
 var tb_barangmasuk;
 $(document).ready(function(){
+	const cur_date = new Date();
+	const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+	const last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+	$('#date_from').datepicker('setDate', first_day);
+	$('#date_to').datepicker('setDate', last_day);
+
+	$('#date_from').on('change', function() {
+		TableCabang();
+	});
+	$('#date_to').on('change', function() {
+		TableCabang();
+	});
+	$('#btn_search_date').on('click', function() {
+		TableCabang();
+	});
+	$('#btn_refresh_date').on('click', function() {
+		$('#date_from').datepicker('setDate', first_day);
+		$('#date_to').datepicker('setDate', last_day);
+	});
+
 	TableCabang();
 });
 
 function TableCabang() {
+	$('#table_barangmasuk').dataTable().fnDestroy();
     tb_barangmasuk = $('#table_barangmasuk').DataTable({
         responsive: true,
         serverSide: true,
@@ -148,7 +183,9 @@ function TableCabang() {
             url : "{{ route('barangmasuk.list') }}",
             type: "get",
             data: {
-                "_token": "{{ csrf_token() }}"
+                "_token": "{{ csrf_token() }}",
+				"date_from": $('#date_from').val(),
+				"date_to": $('#date_to').val()
             }
         },
         columns: [
