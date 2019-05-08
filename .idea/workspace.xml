@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="862e2311-32de-4421-b384-4e65295fd96e" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/mobile/PembayaranNotaController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/mobile/PembayaranNotaController.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
@@ -19,7 +20,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="507">
+            <state relative-caret-position="3920">
               <caret line="205" column="71" selection-start-line="205" selection-start-column="71" selection-end-line="205" selection-end-column="71" />
             </state>
           </provider>
@@ -28,8 +29,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/api.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="387">
-              <caret line="25" column="88" lean-forward="true" selection-start-line="25" selection-start-column="88" selection-end-line="25" selection-end-column="88" />
+            <state relative-caret-position="500">
+              <caret line="25" column="88" selection-start-line="25" selection-start-column="88" selection-end-line="25" selection-end-column="88" />
             </state>
           </provider>
         </entry>
@@ -37,8 +38,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/mobile/PembayaranNotaController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="130">
-              <caret line="30" column="312" selection-start-line="30" selection-start-column="312" selection-end-line="30" selection-end-column="312" />
+            <state relative-caret-position="390">
+              <caret line="63" column="25" lean-forward="true" selection-start-line="63" selection-start-column="25" selection-end-line="63" selection-end-column="25" />
               <folding>
                 <element signature="e#47#75#0#PHP" expanded="true" />
               </folding>
@@ -78,6 +79,7 @@
       <find>tambah-return</find>
       <find>createReturn()</find>
       <find>produksi/returnproduksi/index</find>
+      <find>begin</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -230,6 +232,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -272,7 +275,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -319,7 +321,8 @@
       <workItem from="1556864511337" duration="1905000" />
       <workItem from="1557110318368" duration="12364000" />
       <workItem from="1557195742031" duration="1466000" />
-      <workItem from="1557210308602" duration="1485000" />
+      <workItem from="1557210308602" duration="2410000" />
+      <workItem from="1557281659004" duration="2352000" />
     </task>
     <task id="LOCAL-00001" summary="roliz">
       <created>1556765610336</created>
@@ -360,13 +363,13 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="39275000" />
+    <option name="totallyTimeSpent" value="42552000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="0" width="1368" height="740" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19015151" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19318181" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -379,7 +382,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.32843137" />
+      <window_info anchor="bottom" id="Terminal" order="10" weight="0.32843137" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -530,22 +533,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="507">
+        <state relative-caret-position="3920">
           <caret line="205" column="71" selection-start-line="205" selection-start-column="71" selection-end-line="205" selection-end-column="71" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/api.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
-          <caret line="25" column="88" lean-forward="true" selection-start-line="25" selection-start-column="88" selection-end-line="25" selection-end-column="88" />
+        <state relative-caret-position="500">
+          <caret line="25" column="88" selection-start-line="25" selection-start-column="88" selection-end-line="25" selection-end-column="88" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/InventoryController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="229" column="31" lean-forward="true" selection-start-line="229" selection-start-column="31" selection-end-line="229" selection-end-column="31" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/mobile/PembayaranNotaController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="130">
-          <caret line="30" column="312" selection-start-line="30" selection-start-column="312" selection-end-line="30" selection-end-column="312" />
+        <state relative-caret-position="390">
+          <caret line="63" column="25" lean-forward="true" selection-start-line="63" selection-start-column="25" selection-end-line="63" selection-end-column="25" />
           <folding>
             <element signature="e#47#75#0#PHP" expanded="true" />
           </folding>

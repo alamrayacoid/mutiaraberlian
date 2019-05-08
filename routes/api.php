@@ -24,4 +24,5 @@ Route::middleware('auth:api')->group(function () {
     //pembayaran nota order produksi
     Route::post('pembayaran-nota/get-data-supplier', 'mobile\PembayaranNotaController@getSupplier');
     Route::post('pembayaran-nota/get-data-termin', 'mobile\PembayaranNotaController@getTermin');
+    Route::post('pembayaran-nota/update-data-termin', 'mobile\PembayaranNotaController@updatePembayaran');
 });
