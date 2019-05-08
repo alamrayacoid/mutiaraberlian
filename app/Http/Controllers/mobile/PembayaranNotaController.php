@@ -49,7 +49,7 @@ class PembayaranNotaController extends Controller
             $id = DB::table('d_productionorder')
                 ->join('d_productionorderpayment', 'pop_productionorder', '=', 'po_id')
                 ->where('po_nota', '=', $nota)
-                ->where('po_termin', '=', $termin)
+                ->where('pop_termin', '=', $termin)
                 ->first();
 
             if (($bayar + $id->pop_pay) < $id->pop_value){
