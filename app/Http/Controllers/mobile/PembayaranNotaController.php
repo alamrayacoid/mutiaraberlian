@@ -74,7 +74,10 @@ class PembayaranNotaController extends Controller
             return Response::json(['status' => 'Success']);
         } catch (\Exception $e){
             DB::rollBack();
-            return Response::json(['status' => 'Failed']);
+            return Response::json([
+                'status' => 'Failed',
+                'data' => $e
+            ]);
         }
     }
 }
