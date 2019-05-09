@@ -14,6 +14,7 @@ class ReturnProduksiController extends Controller
         $data = DB::table('m_supplier')
             ->join('d_productionorder', 'po_supplier', '=', 's_id')
             ->select('s_name', 's_company', 's_id')
+            ->groupBy('s_id')
             ->get();
 
         return json_encode(["SupplierProduksi" => $data]);
