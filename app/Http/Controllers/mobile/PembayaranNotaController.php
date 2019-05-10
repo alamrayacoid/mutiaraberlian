@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\mobile;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use DB;
 use App\Http\Controllers\Controller;
+use Response;
 
 class PembayaranNotaController extends Controller
 {
@@ -34,5 +36,48 @@ class PembayaranNotaController extends Controller
             ->get();
 
         return json_encode(["ListTerminNota" => $data]);
+    }
+
+    public function updatePembayaran(Request $request)
+    {
+        $nota = $request->nota;
+        $termin = $request->termin;
+        $bayar = $request->bayar;
+
+        DB::beginTransaction();
+        try {
+            $id = DB::table('d_productionorder')
+                ->join('d_productionorderpayment', 'pop_productionorder', '=', 'po_id')
+                ->where('po_nota', '=', $nota)
+                ->where('pop_termin', '=', $termin)
+                ->first();
+
+            if (($bayar + $id->pop_pay) < $id->pop_value){
+                DB::table('d_productionorderpayment')
+                    ->where('pop_productionorder', '=', $id->po_id)
+                    ->where('pop_termin', '=', $termin)
+                    ->update([
+                        "pop_pay" => ($bayar + $id->pop_pay),
+                        "pop_date" => Carbon::now('Asia/Jakarta')->format('Y-m-d')
+                    ]);
+            } else {
+                DB::table('d_productionorderpayment')
+                    ->where('pop_productionorder', '=', $id->po_id)
+                    ->where('pop_termin', '=', $termin)
+                    ->update([
+                        "pop_pay" => ($bayar + $id->pop_pay),
+                        "pop_date" => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                        "pop_status" => "Y"
+                    ]);
+            }
+            DB::commit();
+            return Response::json(['status' => 'Success']);
+        } catch (\Exception $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => 'Failed',
+                'data' => $e
+            ]);
+        }
     }
 }
