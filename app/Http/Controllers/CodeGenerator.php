@@ -35,7 +35,10 @@ class CodeGenerator extends Controller
 
     public static function codeWithSeparator($table, $field, $mulai = 0, $panjang = 0, $lebar = 0, $awalan, $separator)
     {
-//        CodeGenerator::codeWithSeparator('m_company', 'c_id', 8, 10, 3, 'MB', '-');
+        // mulai: index (start with '1') after awalan and separator (date-start) ex: PC-001/01/01/2019 so mulai = 8
+        // panjang: date-length (default with 10)
+        // lebar: max digits of incrementing number
+        // CodeGenerator::codeWithSeparator('m_company', 'c_id', 8, 10, 3, 'MB', '-');
         $code = DB::table($table)->where(DB::raw('substr(' . $field . ', ' . $mulai . ', ' . $panjang . ')'), '=', Carbon::now('Asia/Jakarta')->format('d/m/Y'));
 
         $countData = $code->count();

@@ -243,13 +243,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/inventory/barangkeluar/update', 'Inventory\BarangKeluarController@update')->name('barangkeluar.update');
 
     // Distribusi Barang
-    Route::get('/inventory/distribusibarang/index', 'Inventory\DistribusiController@distribusibarang_index')->name('distribusibarang.index');
-    Route::get('/inventory/distribusibarang/create', 'Inventory\DistribusiController@distribusibarang_create')->name('distribusibarang.create');
-    Route::get('/inventory/distribusibarang/edit/{id}', 'Inventory\DistribusiController@distribusibarang_edit')->name('distribusibarang.edit');
-    Route::get('/inventory/distribusibarang/getitem', 'Inventory\DistribusiController@getitem')->name('distribusibarang.getitem');
-    Route::get('/inventory/distribusibarang/getsatuan', 'Inventory\DistribusiController@getsatuan');
+    Route::get('/inventory/distribusibarang/index', 'Inventory\DistribusiController@index')->name('distribusibarang.index');
+    Route::get('/inventory/distribusibarang/create', 'Inventory\DistribusiController@create')->name('distribusibarang.create');
+    Route::get('/inventory/distribusibarang/get-item', 'Inventory\DistribusiController@getItem')->name('distribusibarang.getItem');
+    Route::get('/inventory/distribusibarang/get-list-unit', 'Inventory\DistribusiController@getListUnit')->name('distribusibarang.getListUnit');
+    Route::get('/inventory/distribusibarang/get-item-price', 'Inventory\DistribusiController@getItemPrice')->name('distribusibarang.getItemPrice');
+    Route::post('/inventory/distribusibarang/store', 'Inventory\DistribusiController@store')->name('distribusibarang.store');
+    Route::get('/inventory/distribusibarang/edit/{id}', 'Inventory\DistribusiController@edit')->name('distribusibarang.edit');
     Route::get('/inventory/distribusibarang/simpancabang', 'Inventory\DistribusiController@simpancabang');
     Route::get('/inventory/distribusibarang/table', 'Inventory\DistribusiController@table');
+    Route::get('/inventory/distribusibarang/table-history', 'Inventory\DistribusiController@tableHistory');
+    Route::get('/inventory/distribusibarang/detail-ht/{id}', 'Inventory\DistribusiController@showDetailHt')->name('distribusibarang.showDetailHt');
     Route::get('/inventory/distribusibarang/hapus', 'Inventory\DistribusiController@hapus');
     Route::get('/inventory/distribusibarang/updatecabang', 'Inventory\DistribusiController@updatecabang');
     Route::get('/inventory/distribusibarang/nota', 'Inventory\DistribusiController@printNota')->name('ditribusibarang.nota');

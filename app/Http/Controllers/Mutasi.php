@@ -584,11 +584,11 @@ class Mutasi extends Controller
         DB::beginTransaction();
         try {
 
-            $asd = DB::table('m_mutcat')->where('m_name', 'Distribusi Cabang Masuk')->first();
+            $asd = DB::table('m_mutcat')->where('m_name', 'Barang Masuk Distribusi Cabang')->first();
 
             $mutcatmasuk = $asd->m_id;
 
-            $asd = DB::table('m_mutcat')->where('m_name', 'Distribusi Cabang Keluar')->first();
+            $asd = DB::table('m_mutcat')->where('m_name', 'Barang Keluar Distribusi Cabang')->first();
 
             $mutcatkeluar = $asd->m_id;
 
@@ -626,6 +626,7 @@ class Mutasi extends Controller
                     's_qty' => $stock[0]->s_qty - $permintaan
                 ]);
 
+            // dd($stock, count($stock));
             for ($j = 0; $j < count($stock); $j++) {
 
                 //Terdapat sisa permintaan
@@ -849,9 +850,9 @@ class Mutasi extends Controller
 
                         $stock = DB::table('d_stock')
                             ->where('s_id', '=', $idStok)
-                            ->first();
+                            ->get();
 
-                        $stockAkhir = $stock->s_qty + $qty;
+                        $stockAkhir = $stock[0]->s_qty + $qty;
                         $update = array('s_qty' => $stockAkhir);
 
                         d_stock::where('s_id', '=', $idStok)->update($update);

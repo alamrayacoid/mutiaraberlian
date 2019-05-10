@@ -27,13 +27,13 @@
                     <div class="card-block">
                         <form action="" id="formOrder">
                             <section>
-                                
+
                                 <div class="row">
                                     <div class="col-md-2 col-sm-6 col-xs-12">
                                         <label>Area</label>
                                     </div>
                                     <div class="col-md-10 col-sm-6 col-xs-12">
-                                        
+
                                         <div class="row">
                                             <div class="form-group col-6">
                                                 <select name="po_prov" id="prov" class="form-control form-control-sm select2" onchange="getProvId()">
@@ -294,7 +294,7 @@
 
             $('.jumlah').on('click input', function (e) {
                 idxBarang = $('.jumlah').index(this);
-                setArrayCode();             
+                setArrayCode();
             });
 
             $('.satuan').on('change', function (e) {
@@ -329,7 +329,7 @@
             everyChange();
         });
     }
-    
+
     // Merubah Sub Total Berdasarkan Jumlah Item ----------------------
     function changeJumlah() {
         $('.jumlah').on('click input', function (evt) {
@@ -346,7 +346,7 @@
     }
 
     function everyChange()
-    {        
+    {
         var inpBarang = document.getElementsByClassName( 'barang' ),
             barang    = [].map.call(inpBarang, function( input ) {
                 return parseInt(input.value);
@@ -390,7 +390,7 @@
                 var inpSubtotal = document.getElementsByClassName( 'subtotal' ),
                     subtotal    = [].map.call(inpSubtotal, function( input ) {
                         return input.value;
-                    });                        
+                    });
 
                 var hasil = 0;
                 var hrg = $('.harga').eq(idxBarang).val().replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
@@ -480,10 +480,10 @@
                     $("#agen").append('<option value="" selected disabled>=== Pilih Agen ===</option>');
                     $.each(response.data, function( key, val ) {
                         $("#agen").append('<option value="'+val.c_id+'">'+val.c_name+'</option>');
-                    });                    
+                    });
                 }
                 $('#agen').focus();
-                $('#agen').select2('open');           
+                $('#agen').select2('open');
             }
         });
     }

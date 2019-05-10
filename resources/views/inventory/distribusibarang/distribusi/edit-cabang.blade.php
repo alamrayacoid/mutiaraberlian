@@ -9,7 +9,7 @@
             <p class="title-description">
                 <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
                 / <span>Aktivitas Inventory</span>
-                / <a href="{{route('mngagen.index')}}"><span>Pengelolaan Distribusi Barang</span></a>
+                / <a href="{{route('distribusibarang.index')}}"><span>Pengelolaan Distribusi Barang</span></a>
                 / <span class="text-primary" style="font-weight: bold;"> Edit Data Distribusi Barang</span>
             </p>
         </div>
@@ -145,7 +145,7 @@
   <script type="text/javascript">
   $(document).ready(function(){
       $(".namabarang").autocomplete({
-        source: '{{route('distribusibarang.getitem')}}',
+        source: "{{route('distribusibarang.getItem')}}",
         select: function(event, ui) {
           getdata(ui.item.id, iam);
         }
@@ -171,7 +171,7 @@
                   );
 
               $(".namabarang").autocomplete({
-                source: '{{route('distribusibarang.getitem')}}',
+                source: "{{route('distribusibarang.getItem')}}",
                 select: function(event, ui) {
                   var iam = $(this).data('counter');
                   getdata(ui.item.id, iam);

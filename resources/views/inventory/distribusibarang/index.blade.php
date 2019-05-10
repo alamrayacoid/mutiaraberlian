@@ -28,11 +28,15 @@
                     <li class="nav-item">
                         <a href="#distribusibarang" class="nav-link active" data-target="#distribusibarang" aria-controls="distribusibarang" data-toggle="tab" role="tab">Distribusi Barang</a>
                     </li>
+                    <li class="nav-item">
+                        <a href="#history" class="nav-link" data-target="#history" aria-controls="history" data-toggle="tab" role="tab">Riwayat Distribusi Barang</a>
+                    </li>
                 </ul>
 
                 <div class="tab-content">
 
                     @include('inventory.distribusibarang.distribusi.index')
+                    @include('inventory.distribusibarang.history.index')
 
                 </div>
 
@@ -46,17 +50,34 @@
 
 @endsection
 @section('extra_script')
+<!-- script for distribusibarang  -->
 <script type="text/javascript">
-var table;
-var history;
+    var table;
     $(document).ready(function() {
-      cur_date = new Date();
-      first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
-      last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
-      $('#rekrut_from').datepicker('setDate', first_day);
-      $('#rekrut_to').datepicker('setDate', last_day);
-      tabledistribusi();
+        cur_date = new Date();
+        first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+        last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+        $('#date_from').datepicker('setDate', first_day);
+        $('#date_to').datepicker('setDate', last_day);
+        tabledistribusi();
 
+        $('#date_from').on('change', function() {
+            tabledistribusi();
+        });
+        $('#date_to').on('change', function() {
+            tabledistribusi();
+        });
+        $('#btn_search_date').on('click', function() {
+            tabledistribusi();
+        });
+        $('#btn_refresh_date').on('click', function() {
+            $('#date_from').datepicker('setDate', first_day);
+            $('#date_to').datepicker('setDate', last_day);
+        });
+        // retrieve data-table
+        tabledistribusi();
+
+        $('.datepicker').datepicker();
         $(document).on('click', '.btn-enable-distribusi', function() {
             $.toast({
                 heading: 'Information',
@@ -67,12 +88,10 @@ var history;
                 icon: 'info'
             })
             $(this).parents('.btn-group').html('<button class="btn btn-primary btn-modal-detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>'+
-                                               '<button class="btn btn-warning btn-edit-distribusi" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
-                '<button class="btn btn-danger btn-disable-distribusi" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>')
+            '<button class="btn btn-warning btn-edit-distribusi" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
+            '<button class="btn btn-danger btn-disable-distribusi" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>')
 
         })
-
-        // END
 
         $(document).on('click', '.btn-simpan-modal', function() {
             $.toast({
@@ -86,7 +105,7 @@ var history;
         })
     });
 
-    function tabledistribusi(start, end)
+    function tabledistribusi()
   	{
   		$('#table_distribusi').dataTable().fnDestroy();
   		table = $('#table_distribusi').DataTable({
@@ -97,8 +116,8 @@ var history;
   				type: "get",
   				data: {
   					"_token": "{{ csrf_token() }}",
-            "date_from" : $('#rekrut_from').val(),
-  					"date_to" : $('#rekrut_to').val()
+                    "date_from" : $('#date_from').val(),
+  					"date_to" : $('#date_to').val()
   				}
   			},
   			columns: [
@@ -106,17 +125,12 @@ var history;
   				{data: 'tanggal'},
   				{data: 'tujuan'},
   				{data: 'sd_nota'},
-  				{data: 'type'},
   				{data: 'action', name: 'action'}
   			],
   			pageLength: 10,
   			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
   		});
   	}
-
-    $(document).ready(function() {
-        $('.datepicker').datepicker();
-    })
 
     function printNota(id)
 	{
@@ -179,9 +193,110 @@ var history;
       tabledistribusi();
     })
 
-     function edit(id){
-      window.location.href = baseUrl + '/inventory/distribusibarang/edit/'+id;
+    function edit(id)
+    {
+        window.location.href = baseUrl + '/inventory/distribusibarang/edit/'+id;
     }
+
+</script>
+
+<!-- script for history-distribusi -->
+<script type="text/javascript">
+    var table;
+    $(document).ready(function() {
+        $('#date_from_ht').datepicker('setDate', first_day);
+        $('#date_to_ht').datepicker('setDate', last_day);
+        tablehistory();
+
+        $('#date_from_ht').on('change', function() {
+            tablehistory();
+        });
+        $('#date_to_ht').on('change', function() {
+            tablehistory();
+        });
+        $('#btn_search_date_ht').on('click', function() {
+            tablehistory();
+        });
+        $('#btn_refresh_date_ht').on('click', function() {
+            $('#date_from_ht').datepicker('setDate', first_day);
+            $('#date_to_ht').datepicker('setDate', last_day);
+        });
+        // retrieve data-table
+        tablehistory();
+    });
+
+    // retrieve DataTable history
+    function tablehistory()
+    {
+        $('#table_history').dataTable().fnDestroy();
+        table = $('#table_history').DataTable({
+            responsive: true,
+            serverSide: true,
+            ajax: {
+                url: baseUrl + '/inventory/distribusibarang/table-history',
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "date_from" : $('#date_from_ht').val(),
+                    "date_to" : $('#date_to_ht').val()
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'tanggal'},
+                {data: 'tujuan'},
+                {data: 'sd_nota'},
+                {data: 'action', name: 'action'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    }
+
+    function showDetailHt(idx)
+    {
+        $.ajax({
+            url: baseUrl + "/inventory/distribusibarang/detail-ht/" + idx,
+            type: "get",
+            success: function(response) {
+                console.log(response);
+                $('#nota_ht').val(response.sd_nota);
+                $('#date_ht').val(response.dateFormated);
+                $('#origin_ht').val(response.get_origin.c_name);
+                $('#dest_ht').val(response.get_destination.c_name);
+                $('#table_detail_ht tbody').empty();
+                $.each(response.get_distribution_dt, function (index, val) {
+                    no = '<td>'+ (index + 1) +'</td>';
+                    kodeXnamaBrg = '<td>'+ val.get_item.i_code +' / '+ val.get_item.i_name +'</td>';
+                    qty = '<td class="digits">'+ val.sdd_qty +'</td>';
+                    unit = '<td>'+ val.get_unit.u_name +'</td>';
+                    appendItem = no + kodeXnamaBrg + qty + unit;
+                    $('#table_detail_ht > tbody:last-child').append('<tr>'+ appendItem +'</tr>');
+                });
+                //mask digits
+                $('.digits').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 0,
+                    autoGroup: true,
+                    prefix: '', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
+
+                $('#modalHistory').modal('show');
+
+            },
+            error: function(xhr, status, error) {
+				let err = JSON.parse(xhr.responseText);
+                messageWarning('Error', err.message);
+                // console.log(err.message);
+            }
+        });
+    }
+
 
 </script>
 @endsection

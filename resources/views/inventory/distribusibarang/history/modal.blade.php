@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div id="history-detail" class="modal fade animated fadeIn" role="dialog">
+<div id="modalHistory" class="modal fade animated fadeIn" role="dialog">
     <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
@@ -9,118 +9,49 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="agen">
+                <section>
                     <div class="row">
-                        <div class="col-md-2 col-sm-6 col-xs-12">
-                            <label>Area</label>
+                        <div class="col-md-2">
+                            <label for="">Nomor Nota : </label>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <input type="text" class="form-control-plaintext border-bottom" id="nota_ht" readonly="">
                         </div>
 
-                        <div class="col-md-10 col-sm-6 col-xs-12">
-                            <div class="row">
-                                <div class="form-group col-6">
-                                    <select name="#" id="#" class="form-control form-control-sm select2">
-                                        <option value="#">Pilih Provinsi</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-6">
-                                    <select name="#" id="#" class="form-control form-control-sm select2">
-                                        <option value="#">Pilih Kota</option>
-                                    </select>
-                                </div>
-                            </div>
+                        <div class="col-md-2">
+                            <label for="">Tanggal : </label>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <input type="text" class="form-control-plaintext border-bottom" id="date_ht" readonly="">
                         </div>
 
-                        <div class="col-md-2 col-sm-6 col-xs-12">
-                            <label>Agen</label>
+                        <div class="col-2">
+                            <label for="">Asal : </label>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <input type="text" class="form-control-plaintext border-bottom" id="origin_ht" readonly="">
                         </div>
 
-                        <div class="col-md-10 col-sm-6 col-xs-12">
-                            <div class="form-group">
-                                <select class="form-control form-control-sm">
-                                    <option value=""></option>
-                                </select>
-                            </div>
+                        <div class="col-md-2">
+                            <label for="">Tujuan : </label>
                         </div>
-
-                        <div class="col-md-2 col-sm-6 col-xs-12">
-                            <label>Jenis</label>
-                        </div>
-
-                        <div class="col-md-10 col-sm-6 col-xs-12">
-                            <div class="form-group">
-                                <select class="form-control form-control-sm selec2">
-                                    <option value="">Pilih Jenis</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-2 col-sm-6 col-xs-12">
-                            <label>Total</label>
-                        </div>
-
-                        <div class="col-md-10 col-sm-6 col-xs-12">
-                            <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="" readonly="">
-                            </div>
+                        <div class="col-md-4 mb-3">
+                            <input type="text" class="form-control-plaintext border-bottom" id="dest_ht" readonly="">
                         </div>
                     </div>
-                </div>
-                <div class="cabang">
-                    <div class="row">
-                        <div class="col-md-2 col-sm-6 col-xs-12">
-                            <label>Cabang</label>
-                        </div>
+                </section>
 
-                        <div class="col-md-10 col-sm-6 col-xs-12">
-                            <div class="form-group">
-                                <select name="" id="" class="form-control form-control-sm select2">
-                                    <option value="">Pilih Cabang</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-2 col-sm-6 col-xs-12">
-                            <label>Jenis</label>
-                        </div>
-
-                        <div class="col-md-10 col-sm-6 col-xs-12">
-                            <div class="form-group">
-                                <select class="form-control form-control-sm select2">
-                                    <option value="">Pilih Jenis</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-2 col-sm-6 col-xs-12">
-                            <label>Total</label>
-                        </div>
-
-                        <div class="col-md-10 col-sm-6 col-xs-12">
-                            <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="" readonly="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="table-responsive">
-                    <table class="table table-striped data-table table-hover" cellspacing="0">
+                    <table class="table table-striped data-table table-hover" cellspacing="0" id="table_detail_ht">
                         <thead class="bg-primary">
                             <tr>
-                                <th width="30%">Kode Barang/Nama Barang</th>
-                                <th width="10%">Satuan</th>
-                                <th width="10%">Jumlah</th>
-                                <th width="25%">Harga Satuan</th>
-                                <th width="25%">Sub Total</th>
+                                <th width="10%">No</th>
+                                <th width="50%">Kode Barang/Nama Barang</th>
+                                <th width="25%">Jumlah</th>
+                                <th width="15%">Satuan</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>

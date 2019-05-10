@@ -52,66 +52,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- <tr>
-                                <td>BRG001/Obat</td>
-                                <td>5</td>
-                                <td class="input-rupiah">Rp. 5.000,00</td>
-                                <td class="input-rupiah">Rp. 25.000,00</td>
-                            </tr>
-                            <tr>
-                                <td>BRG001/Obat</td>
-                                <td>5</td>
-                                <td class="input-rupiah">Rp. 5.000,00</td>
-                                <td class="input-rupiah">Rp. 25.000,00</td>
-                            </tr>
-                            <tr>
-                                <td>BRG001/Obat</td>
-                                <td>5</td>
-                                <td class="input-rupiah">Rp. 5.000,00</td>
-                                <td class="input-rupiah">Rp. 25.000,00</td>
-                            </tr>
-                            <tr>
-                                <td>BRG001/Obat</td>
-                                <td>5</td>
-                                <td class="input-rupiah">Rp. 5.000,00</td>
-                                <td class="input-rupiah">Rp. 25.000,00</td>
-                            </tr>
-                            <tr>
-                                <td>BRG001/Obat</td>
-                                <td>5</td>
-                                <td class="input-rupiah">Rp. 5.000,00</td>
-                                <td class="input-rupiah">Rp. 25.000,00</td>
-                            </tr>
-                            <tr>
-                                <td>BRG001/Obat</td>
-                                <td>5</td>
-                                <td class="input-rupiah">Rp. 5.000,00</td>
-                                <td class="input-rupiah">Rp. 25.000,00</td>
-                            </tr>
-                            <tr>
-                                <td>BRG001/Obat</td>
-                                <td>5</td>
-                                <td class="input-rupiah">Rp. 5.000,00</td>
-                                <td class="input-rupiah">Rp. 25.000,00</td>
-                            </tr>
-                            <tr>
-                                <td>BRG001/Obat</td>
-                                <td>5</td>
-                                <td class="input-rupiah">Rp. 5.000,00</td>
-                                <td class="input-rupiah">Rp. 25.000,00</td>
-                            </tr>
-                            <tr>
-                                <td>BRG001/Obat</td>
-                                <td>5</td>
-                                <td class="input-rupiah">Rp. 5.000,00</td>
-                                <td class="input-rupiah">Rp. 25.000,00</td>
-                            </tr>
-                            <tr>
-                                <td>BRG001/Obat</td>
-                                <td>5</td>
-                                <td class="input-rupiah">Rp. 5.000,00</td>
-                                <td class="input-rupiah">Rp. 25.000,00</td>
-                            </tr> -->
                         </tbody>
                     </table>
                 </div>

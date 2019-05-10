@@ -9,7 +9,7 @@
             <p class="title-description">
                 <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
                 / <span>Aktivitas Inventory</span>
-                / <a href="{{route('mngagen.index')}}"><span>Pengelolaan Distribusi Barang</span></a>
+                / <a href="{{route('distribusibarang.index')}}"><span>Pengelolaan Distribusi Barang</span></a>
                 / <span class="text-primary" style="font-weight: bold;"> Edit Data Distribusi Barang</span>
             </p>
         </div>

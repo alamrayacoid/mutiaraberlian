@@ -1,5 +1,13 @@
 @extends('main')
 
+@section('extra_style')
+    <style type="text/css">
+        .cls-readonly {
+            cursor: not-allowed;
+        }
+    </style>
+@endsection
+
 @section('content')
 
     <article class="content animated fadeInLeft">
@@ -9,7 +17,7 @@
             <p class="title-description">
                 <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
                 / <span>Aktivitas Inventory</span>
-                / <a href="{{route('mngagen.index')}}"><span>Pengelolaan Distribusi Barang</span></a>
+                / <a href="{{route('distribusibarang.index')}}"><span>Pengelolaan Distribusi Barang</span></a>
                 / <span class="text-primary" style="font-weight: bold;"> Tambah Data Distribusi Barang</span>
             </p>
         </div>
@@ -32,27 +40,58 @@
                         </div>
 
                         <div class="card-block">
-                            <section>
-
-                                <div class="row">
-
-                                    <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Tujuan</label>
-                                    </div>
-
-                                    <div class="col-md-10 col-sm-6 col-xs-12">
-                                        <div class="form-group">
-                                            <select name="" id="select-order" readonly class="form-control form-control-sm select2">
-                                                <option value="2" selected>Cabang</option>
-                                            </select>
+                            <form id="formDistribution">
+                                <section>
+                                    <div class="row">
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>Cabang</label>
+                                        </div>
+                                        <div class="col-md-10 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <select name="selectBranch" id="selectBranch" class="form-control form-control-sm select2">
+                                                    <option value="" disabled selected>Pilih Cabang</option>
+                                                    @foreach ($branch as $index => $val)
+                                                    <option value="{{ $val->c_id }}">{{ $val->c_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
-                                    @include('inventory.distribusibarang.distribusi.cabang')
-                                </div>
-                            </section>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" cellspacing="0" id="table_items">
+                                            <thead class="bg-primary">
+                                                <tr>
+                                                    <th width="50%">Kode Barang/Nama Barang</th>
+                                                    <th>Jumlah</th>
+                                                    <th width="15%">Satuan</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <input type="text" name="items[]" class="form-control form-control-sm items" style="text-transform:uppercase" autocomplete="off">
+                                                        <input type="hidden" name="itemsId[]" class="itemsId">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="qty[]" class="form-control form-control-sm qty digits">
+                                                    </td>
+                                                    <td>
+                                                        <select name="units[]" class="form-control form-control-sm select2 units"></select>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-success btnAddItem btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </section>
+                            </form>
                         </div>
                         <div class="card-footer text-right">
-                            <button class="btn btn-primary " onclick="simpan()" type="button">Simpan</button>
+                            <button class="btn btn-primary" type="button" id="btn_simpan">Simpan</button>
                             <a href="{{route('distribusibarang.index')}}" class="btn btn-secondary">Kembali</a>
                         </div>
                     </div>
@@ -68,194 +107,182 @@
 @endsection
 
 @section('extra_script')
-    <script type="text/javascript">
+<script type="text/javascript">
+    var idxItem = null;
+
     $(document).ready(function(){
-        $(".namabarang").autocomplete({
-          source: '{{route('distribusibarang.getitem')}}',
-          select: function(event, ui) {
-            var iam = $(this).data('counter');
-            getdata(ui.item.id, iam);
-          }
+        // event field items inside table
+        getFieldsReady();
+        // add more item in table_items
+        $('.btnAddItem').on('click', function() {
+            $('#table_items').append(
+            `<tr>
+                <td>
+                    <input type="text" name="items[]" class="form-control form-control-sm items" style="text-transform:uppercase" autocomplete="off">
+                    <input type="hidden" name="itemsId[]" class="itemsId">
+                </td>
+                <td>
+                    <input type="text" name="qty[]" class="form-control form-control-sm qty digits">
+                </td>
+                <td>
+                    <select name="units[]" class="form-control form-control-sm select2 units"></select>
+                </td>
+                <td>
+                    <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                </td>
+            </tr>`
+            );
+            // re-declare event for field items inside table
+            getFieldsReady();
+            // // re-declare select2 class
+            // $('.select2').select2({
+            //     theme: "bootstrap",
+            //     dropdownAutoWidth: true,
+            //     width: '100%'
+            // });
+            // // re-declare inputmask-digits
+            // $('.digits').inputmask("currency", {
+            //     radixPoint: ",",
+            //     groupSeparator: ".",
+            //     digits: 0,
+            //     autoGroup: true,
+            //     prefix: '', //Space after $, this will not truncate the first character.
+            //     rightAlign: true,
+            //     autoUnmask: true,
+            //     nullable: false,
+            //     // unmaskAsNumber: true,
+            // });
         });
-      });
+        // submit-form by btn-submit
+        $('#btn_simpan').on('click', function() {
+            submitForm();
+        });
+    });
 
-        $(document).ready(function(){
-            $('#type_cus').change(function(){
-                if($(this).val() === 'kontrak'){
-                    $('#label_type_cus').text('Jumlah Bulan');
-                    $('#jumlah_hari_bulan').val('');
-                    $('#pagu').val('');
-                    $('#armada').prop('selectedIndex', 0).trigger('change');
-                    $('.120mm').removeClass('d-none');
-                    $('.125mm').addClass('d-none');
-                    $('.122mm').removeClass('d-none');
-                } else if($(this).val() === 'harian'){
-                    $('#label_type_cus').text('Jumlah Hari');
-                    $('#armada').prop('selectedIndex', 0).trigger('change');
-                    $('#pagu').val('');
-                    $('#jumlah_hari_bulan').val('');
-                    $('.122mm').addClass('d-none');
-                    $('.120mm').removeClass('d-none');
-                    $('.125mm').removeClass('d-none');
-                } else {
-                    $('#jumlah_hari_bulan').val('');
-                    $('#armada').prop('selectedIndex', 0).trigger('change');
-                    $('#pagu').val('');
-                    $('.122mm').addClass('d-none');
-                    $('.120mm').addClass('d-none');
-                    $('.125mm').addClass('d-none');
-                }
-            });
+    function getFieldsReady()
+    {
+        // remove all event-handler and re-declare it
+        $('.items').off();
+        $('.qty').off();
+        $('.btnRemoveItem').off();
+        // set event for field-items
+        $('.items').on('click', function () {
+            idxItem = $('.items').index(this);
+            $('.items').eq(idxItem).val('');
+            $('.itemsId').eq(idxItem).val('');
+        });
+        $('.items').on('keyup', function () {
+            idxItem = $('.items').index(this);
+            findItemAu();
+        });
+        // set event for field-qty
+        $('.qty').on('keyup', function() {
+            idxItem = $('.qty').index(this);
+        });
+        // event to remove an item from table_items
+        $('.btnRemoveItem').on('click', function() {
+            $(this).parents('tr').remove();
+        });
+        // select2 class
+        $('.select2').select2({
+            theme: "bootstrap",
+            dropdownAutoWidth: true,
+            width: '100%'
+        });
+        // inputmask-digits
+        $('.digits').inputmask("currency", {
+            radixPoint: ",",
+            groupSeparator: ".",
+            digits: 0,
+            autoGroup: true,
+            prefix: '', //Space after $, this will not truncate the first character.
+            rightAlign: true,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
+        });
+    }
+    // get list item using AutoComplete
+    function findItemAu()
+    {
+        // get list of existed-items (id)
+        let existedItems = [];
+        $.each($('.itemsId'), function(index) {
+            existedItems.push($(this).val());
+        });
 
-
-            $(document).on('click', '.btn-hapus-agen', function(){
-                $(this).parents('tr').remove();
-            });
-
-            $('.btn-tambah-agen').on('click',function(){
-                $('#table_agen')
-                    .append(
-                        '<tr>'+
-                        '<td><input type="text" class="form-control form-control-sm"></td>'+
-                        '<td><select name="#" id="#" class="form-control form-control-sm select2"><option value=""></option></select></td>'+
-                        '<td><input type="number" class="form-control form-control-sm" value="0"></td>'+
-                        '<td><input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"></td>'+
-                        '<td><input type="text" class="form-control form-control-sm" readonly=""></td>'+
-                        '<td><button class="btn btn-danger btn-hapus-agen btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+
-                        '</tr>'
-                    );
-                    $('.select2').select2();
-            });
-
-            $(document).on('click', '.btn-hapus-cabang', function(){
-                $(this).parents('tr').remove();
-            });
-
-            $('.btn-tambah-cabang').on('click',function(){
-              var counter = 1;
-                $('#table_cabang')
-                    .append(
-                        '<tr>'+
-                        '<td><input type="text" name="namabarang[]" id="namabarang'+counter+'" data-counter="'+counter+'" class="form-control form-control-sm namabarang"> <input type="hidden" name="idbarang[]" id="idbarang'+counter+'"></td>'+
-                        '<td><select id="satuan'+counter+'" name="satuan[]" class="form-control form-control-sm select2"><option value="" disabled selected>Pilih Satuan</option></select></td>'+
-                        '<td><input type="number" name="qty[]" id="qty'+counter+'" onkeyup="filterqty('+counter+')" class="form-control form-control-sm" value="0"></td>'+
-                        '<td><button class="btn btn-danger btn-hapus-cabang btn-sm rounded-circle" type="button"><i class="fa fa-trash-o"></i></button></td>'+
-                        '</tr>'
-                    );
-
-                $(".namabarang").autocomplete({
-                  source: '{{route('distribusibarang.getitem')}}',
-                  select: function(event, ui) {
-                    var iam = $(this).data('counter');
-                    getdata(ui.item.id, iam);
-                  }
+        $(".items").eq(idxItem).autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "{{ route('distribusibarang.getItem') }}",
+                    data: {
+                        existedItems: existedItems,
+                        term: $(".items").eq(idxItem).val()
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
                 });
-
-                counter++;
-
-              $('.select2').select2();
-            });
-            $(document).on('click', '.btn-submit', function(){
-                $.toast({
-                    heading: 'Success',
-                    text: 'Data Berhasil di Simpan',
-                    bgColor: '#00b894',
-                    textColor: 'white',
-                    loaderBg: '#55efc4',
-                    icon: 'success'
-                })
-            })
-        });
-
-        function getdata(id, counter){
-          var html = '<option value="" disabled selected>Pilih Satuan</option>';
-          $.ajax({
-            type: 'get',
-            data: {id:id},
-            dataType: 'json',
-            url: baseUrl + '/inventory/distribusibarang/getsatuan',
-            success : function(response){
-              var myArray = $('.idbarang').get().map(function(el) { return el.value });
-              var tmp = 'no';
-              for (var i = 0; i < myArray.length; i++) {
-                if (myArray[i] == id) {
-                  tmp = 'yes'
-                }
-              }
-
-              if (tmp == 'no') {
-                var iam = counter;
-                $('#idbarang'+iam).val(id);
-                $('#stock'+iam).val(parseInt(response.stock));
-                for (var i = 0; i < response.length; i++) {
-                  html += '<option value="'+response.unit[i].u_id+'">'+response.unit[i].u_name+'</option>';
-                }
-                $('#satuan'+counter).html(html);
-              } else {
-                var iam = counter;
-                  messageFailed('Failed', 'Barang tidak boleh sama!');
-                  $('#namabarang'+iam).val("");
-              }
+            },
+            minLength: 1,
+            select: function (event, data) {
+                // setItem(data.item);
+                $('.items').eq(idxItem).val(data.item.name);
+                $('.itemsId').eq(idxItem).val(data.item.id);
+                getListUnit(data.item.id);
             }
-          });
-        }
-
-        function filterqty(index){
-          var qty = $('#qty'+index).val();
-          var stock = $('#stock'+index).val();
-           if (parseInt(qty) > parseInt(stock)) {
-            messageFailed('Notice!', 'Tidak boleh kurang dari stock!');
-            $('#qty'+index).val(parseInt(stock));
-          }
-        }
-
-        function simpan(){
-          var tmp = $('#select-order').val();
-
-          if (tmp == 2) {
-            if ($('#pilihcabang').val() != null) {
-              $.ajax({
-                type: 'get',
-                data: $('#datacabang').serialize(),
-                dataType: 'json',
-                url: baseUrl + '/inventory/distribusibarang/simpancabang',
-                success : function(response){
-                  if (response.status == 'berhasil') {
-                    loadingHide();
-                    messageSuccess('Berhasil', 'Distribusi Cabang disimpan!');
-                    setTimeout(function () {
-                      window.location.href = baseUrl + '/inventory/distribusibarang/index';
-                    }, 1000);
-                  } else {
-                    messageFailed('Gagal!', 'Distribusi Cabang gagal disimpan!');
-                  }
-                }
-              });
-            } else {
-              messageFailed('Alert!', 'Mohon pilih cabang yang dituju!');
-            }
-          } else if (tmp == 1) {
-
-          }
-        }
-    </script>
-    <script type="text/javascript">
-        $(document).ready(function(){
-                var ini, agen, cabang;
-                ini         = $('#select-order').val();
-                agen        = $('#agen');
-                cabang      = $('#cabang');
-
-                if (ini === '1') {
-                    agen.removeClass('d-none');
-                    cabang.addClass('d-none');
-                } else if(ini === '2'){
-                    agen.addClass('d-none');
-                    cabang.removeClass('d-none');
-                } else {
-                    agen.addClass('d-none');
-                    cabang.addClass('d-none');
-                }
         });
-    </script>
+    }
+    // get list unit based on id item
+    function getListUnit(itemId)
+    {
+        $.ajax({
+            url: "{{ route('distribusibarang.getListUnit') }}",
+            data: {
+                itemId: itemId
+            },
+            type: 'GET',
+            success: function (response) {
+                console.log(response);
+                $(".units").eq(idxItem).empty();
+                var option = '';
+                if (response.get_unit1 != null) {
+                    option += '<option value="' + response.get_unit1.u_id + '">' + response.get_unit1.u_name + '</option>';
+                }
+                if (response.get_unit2 != null && response.get_unit2.u_id != response.get_unit1.u_id) {
+                    option += '<option value="' + response.get_unit2.u_id + '">' + response.get_unit2.u_name + '</option>';
+                }
+                if (response.get_unit3 != null && response.get_unit3.u_id != response.get_unit1.u_id && response.get_unit3.u_id != response.get_unit2.u_id) {
+                    option += '<option value="' + response.get_unit3.u_id + '">' + response.get_unit3.u_name + '</option>';
+                }
+                $(".units").eq(idxItem).append(option);
+            }
+        });
+    }
+    // submit new-distribusibarang
+    function submitForm()
+    {
+        data = $('#formDistribution').serialize();
+        console.log(data);
+        $.ajax({
+            url: "{{ route('distribusibarang.store') }}",
+            data: data,
+            type: "post",
+            success: function(response) {
+                if (response.status === 'berhasil') {
+                    messageSuccess('Selamat', 'Distribusi berhasil disimpan !');
+                    window.location.reload();
+                } else if (response.status === 'invalid') {
+                    messageWarning('Perhatian', response.message);
+                } else if (response.status === 'gagal') {
+                    messageWarning('Gagal', response.message);
+                }
+                console.log('response: '+ response);
+            },
+            error: function(e) {
+                messageWarning('Perhatian', 'Terjadi kesalahan saat menyimpan distribusi, hubungi pengembang !');
+            }
+        });
+    }
+</script>
 @endsection

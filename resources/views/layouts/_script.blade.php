@@ -317,6 +317,19 @@
             // unmaskAsNumber: true,
         });
 
+        // mask money with left-align
+        $('.rupiah-left').inputmask("currency", {
+            radixPoint: ",",
+            groupSeparator: ".",
+            digits: 2,
+            autoGroup: true,
+            prefix: ' Rp ', //Space after $, this will not truncate the first character.
+            rightAlign: false,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
+        });
+
         //mask digits
         $('.digits').inputmask("currency", {
             radixPoint: ",",
