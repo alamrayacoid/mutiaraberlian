@@ -37,4 +37,19 @@ class ReturnProduksiController extends Controller
 
         return json_encode(["NotaProduksi" => $data]);
     }
+
+    public function getItemNota(Request $request)
+    {
+        $nota = $request->nota;
+        $data = DB::table('d_productionorder')
+            ->join('d_productionorderdt', 'po_id', '=', 'pod_productionorder')
+            ->join('m_item', 'pod_item', '=', 'i_id')
+            ->join('m_unit', 'pod_unit', '=', 'u_id')
+            ->select('i_name', 'u_name', 'pod_qty')
+            ->where('po_nota', '=', $nota)
+            ->where('pod_received', '=', 'Y')
+            ->get();
+
+        return json_encode(["ListBarangNotaProduksi" => $data]);
+    }
 }

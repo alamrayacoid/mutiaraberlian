@@ -29,4 +29,5 @@ Route::middleware('auth:api')->group(function () {
     //return produksi
     Route::post('return-produksi/get-data-supplier', 'mobile\ReturnProduksiController@getSupplier');
     Route::post('return-produksi/get-nota-produksi', 'mobile\ReturnProduksiController@getNotaProduksi');
+    Route::post('return-produksi/get-item-nota', 'mobile\ReturnProduksiController@getItemNota');
 });
