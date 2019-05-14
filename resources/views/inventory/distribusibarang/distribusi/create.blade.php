@@ -134,24 +134,6 @@
             );
             // re-declare event for field items inside table
             getFieldsReady();
-            // // re-declare select2 class
-            // $('.select2').select2({
-            //     theme: "bootstrap",
-            //     dropdownAutoWidth: true,
-            //     width: '100%'
-            // });
-            // // re-declare inputmask-digits
-            // $('.digits').inputmask("currency", {
-            //     radixPoint: ",",
-            //     groupSeparator: ".",
-            //     digits: 0,
-            //     autoGroup: true,
-            //     prefix: '', //Space after $, this will not truncate the first character.
-            //     rightAlign: true,
-            //     autoUnmask: true,
-            //     nullable: false,
-            //     // unmaskAsNumber: true,
-            // });
         });
         // submit-form by btn-submit
         $('#btn_simpan').on('click', function() {
@@ -226,38 +208,28 @@
             },
             minLength: 1,
             select: function (event, data) {
-                // setItem(data.item);
                 $('.items').eq(idxItem).val(data.item.name);
                 $('.itemsId').eq(idxItem).val(data.item.id);
-                getListUnit(data.item.id);
+                setListUnit(data.item);
             }
         });
     }
     // get list unit based on id item
-    function getListUnit(itemId)
+    function setListUnit(item)
     {
-        $.ajax({
-            url: "{{ route('distribusibarang.getListUnit') }}",
-            data: {
-                itemId: itemId
-            },
-            type: 'GET',
-            success: function (response) {
-                console.log(response);
-                $(".units").eq(idxItem).empty();
-                var option = '';
-                if (response.get_unit1 != null) {
-                    option += '<option value="' + response.get_unit1.u_id + '">' + response.get_unit1.u_name + '</option>';
-                }
-                if (response.get_unit2 != null && response.get_unit2.u_id != response.get_unit1.u_id) {
-                    option += '<option value="' + response.get_unit2.u_id + '">' + response.get_unit2.u_name + '</option>';
-                }
-                if (response.get_unit3 != null && response.get_unit3.u_id != response.get_unit1.u_id && response.get_unit3.u_id != response.get_unit2.u_id) {
-                    option += '<option value="' + response.get_unit3.u_id + '">' + response.get_unit3.u_name + '</option>';
-                }
-                $(".units").eq(idxItem).append(option);
-            }
-        });
+        console.log('unit : '+ item.unit1.u_name);
+        $(".units").eq(idxItem).empty();
+        var option = '';
+        if (item.unit1 != null) {
+            option += '<option value="' + item.unit1.u_id + '">' + item.unit1.u_name + '</option>';
+        }
+        if (item.unit2 != null && item.unit2.u_id != item.unit1.u_id) {
+            option += '<option value="' + item.unit2.u_id + '">' + item.unit2.u_name + '</option>';
+        }
+        if (item.unit3 != null && item.unit3.u_id != item.unit1.u_id && item.unit3.u_id != item.unit2.u_id) {
+            option += '<option value="' + item.unit3.u_id + '">' + item.unit3.u_name + '</option>';
+        }
+        $(".units").eq(idxItem).append(option);
     }
     // submit new-distribusibarang
     function submitForm()

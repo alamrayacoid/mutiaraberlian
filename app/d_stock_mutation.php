@@ -18,17 +18,9 @@ class d_stock_mutation extends Model
         return $query;
     }
 
-    // // get item stock based on position-item and item-id
-    // public function scopeItemStock($query, $position, $itemId)
-    // {
-    //     $query
-    //     ->where('s_position', $position)
-    //     ->where('s_item', $itemId);
-    //     return $query;
-    // }
     // relation with table d_stock
     public function getStock()
     {
-        return $this->hasMany('App\d_stock', 's_id', 'sm_stock');
+        return $this->belongsTo('App\d_stock', 'sm_stock', 's_id');
     }
 }

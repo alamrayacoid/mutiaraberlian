@@ -4,10 +4,10 @@
 
 <!-- modal distribusi barang -->
 @include('inventory.distribusibarang.distribusi.modal')
-<!-- end -->
 <!-- modal history -->
 @include('inventory.distribusibarang.history.modal')
-<!-- end -->
+<!-- modal penerimaan -->
+@include('inventory.distribusibarang.penerimaan.modal')
 
 <article class="content">
 
@@ -31,12 +31,16 @@
                     <li class="nav-item">
                         <a href="#history" class="nav-link" data-target="#history" aria-controls="history" data-toggle="tab" role="tab">Riwayat Distribusi Barang</a>
                     </li>
+                    <li class="nav-item">
+                        <a href="#penerimaan" class="nav-link" data-target="#penerimaan" aria-controls="penerimaan" data-toggle="tab" role="tab">Penerimaan Distribusi Barang</a>
+                    </li>
                 </ul>
 
                 <div class="tab-content">
 
                     @include('inventory.distribusibarang.distribusi.index')
                     @include('inventory.distribusibarang.history.index')
+                    @include('inventory.distribusibarang.penerimaan.index')
 
                 </div>
 
@@ -206,7 +210,6 @@
     $(document).ready(function() {
         $('#date_from_ht').datepicker('setDate', first_day);
         $('#date_to_ht').datepicker('setDate', last_day);
-        tablehistory();
 
         $('#date_from_ht').on('change', function() {
             tablehistory();
@@ -297,6 +300,125 @@
         });
     }
 
+</script>
 
+<!-- script for penerimaan-distribusi -->
+<script type="text/javascript">
+    var tableAcceptance;
+    $(document).ready(function() {
+        $('#date_from_ac').datepicker('setDate', first_day);
+        $('#date_to_ac').datepicker('setDate', last_day);
+
+        $('#date_from_ac').on('change', function() {
+            tableAcceptance();
+        });
+        $('#date_to_ac').on('change', function() {
+            tableAcceptance();
+        });
+        $('#btn_search_date_ac').on('click', function() {
+            tableAcceptance();
+        });
+        $('#btn_refresh_date_ac').on('click', function() {
+            $('#date_from_ac').datepicker('setDate', first_day);
+            $('#date_to_ac').datepicker('setDate', last_day);
+        });
+        // retrieve data-table
+        tableAcceptance();
+    });
+
+    // retrieve DataTable penerimaan
+    function tableAcceptance()
+    {
+        $('#table_acceptance').dataTable().fnDestroy();
+        tableAcceptance = $('#table_acceptance').DataTable({
+            responsive: true,
+            serverSide: true,
+            ajax: {
+                url: baseUrl + '/inventory/distribusibarang/table-acceptance',
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "date_from" : $('#date_from_ac').val(),
+                    "date_to" : $('#date_to_ac').val()
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'tanggal'},
+                {data: 'tujuan'},
+                {data: 'sd_nota'},
+                {data: 'action', name: 'action'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    }
+
+    function showDetailAc(idx)
+    {
+        loadingShow();
+        $.ajax({
+            url: baseUrl + "/inventory/distribusibarang/detail-ac/" + idx,
+            type: "get",
+            success: function(response) {
+                console.log(response);
+                $('#nota_ac').val(response.sd_nota);
+                $('#date_ac').val(response.dateFormated);
+                $('#origin_ac').val(response.get_origin.c_name);
+                $('#dest_ac').val(response.get_destination.c_name);
+                $('#table_detail_ac tbody').empty();
+                $.each(response.get_distribution_dt, function (index, val) {
+                    no = '<td>'+ (index + 1) +'</td>';
+                    kodeXnamaBrg = '<td>'+ val.get_item.i_code +' / '+ val.get_item.i_name +'</td>';
+                    qty = '<td class="digits">'+ val.sdd_qty +'</td>';
+                    unit = '<td>'+ val.get_unit.u_name +'</td>';
+                    appendItem = no + kodeXnamaBrg + qty + unit;
+                    $('#table_detail_ac > tbody:last-child').append('<tr>'+ appendItem +'</tr>');
+                });
+                //mask digits
+                $('.digits').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 0,
+                    autoGroup: true,
+                    prefix: '', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
+
+                $('#modalAcceptance').modal('show');
+                loadingHide();
+            },
+            error: function(xhr, status, error) {
+                let err = JSON.parse(xhr.responseText);
+                messageWarning('Error', err.message);
+                loadingHide();
+            }
+        });
+    }
+
+    function confirmAcceptance()
+    {
+        loadingShow();
+        $.ajax({
+            url: baseUrl + "/inventory/distribusibarang/set-acceptance/" + idx,
+            type: "post",
+            success: function (response) {
+                if (response.status == 'berhasil') {
+                    messageSuccess('Selamat', 'Konfirmasi penerimaan berhasil dilakukan !');
+                } else if (response.status == 'gagal') {
+                    messageWarning('Perhatian', response.message);
+                }
+                loadingHide();
+            },
+            error: function(xhr, status, error) {
+                let err = JSON.parse(xhr.responseText);
+                messageWarning('Error', err.message);
+                loadingHide();
+            }
+        });
+    }
 </script>
 @endsection
