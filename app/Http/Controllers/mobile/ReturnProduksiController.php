@@ -9,6 +9,7 @@ use DB;
 use CodeGenerator;
 use App\d_stock as Stock;
 use App\d_stock_mutation as StockMutation;
+use Response;
 
 class ReturnProduksiController extends Controller
 {
