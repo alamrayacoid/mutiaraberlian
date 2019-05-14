@@ -45,11 +45,30 @@ class ReturnProduksiController extends Controller
             ->join('d_productionorderdt', 'po_id', '=', 'pod_productionorder')
             ->join('m_item', 'pod_item', '=', 'i_id')
             ->join('m_unit', 'pod_unit', '=', 'u_id')
-            ->select('i_name', 'u_name', 'pod_qty')
+            ->select('i_name', 'u_name', 'pod_qty', 'i_id')
             ->where('po_nota', '=', $nota)
             ->where('pod_received', '=', 'Y')
             ->get();
 
         return json_encode(["ListBarangNotaProduksi" => $data]);
+    }
+
+    public function getDataItem(Request $request){
+        $item = $request->item;
+        $data = DB::table('m_item')
+            ->join('m_unit as u1', 'u1.u_id', '=', 'i_unit1')
+            ->join('m_unit as u2', 'u2.u_id', '=', 'i_unit2')
+            ->join('m_unit as u3', 'u3.u_id', '=', 'i_unit3')
+            ->select('u1.u_name as satuan1', 'u2.u_name as satuan2', 'u3.u_name as satuan3', 'i_unit1', 'i_unit2', 'i_unit3')
+            ->first();
+        
+        return json_encode(["SatuanBarangReturnProduksi" => $data]);
+    }
+
+    public function addReturn(Request $request){
+        $nota = $request->nota;
+        $item = $request->item;
+
+        
     }
 }
