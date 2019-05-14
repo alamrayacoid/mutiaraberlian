@@ -251,12 +251,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/distribusibarang/get-item-price', 'Inventory\DistribusiController@getItemPrice')->name('distribusibarang.getItemPrice');
     Route::post('/inventory/distribusibarang/store', 'Inventory\DistribusiController@store')->name('distribusibarang.store');
     Route::get('/inventory/distribusibarang/edit/{id}', 'Inventory\DistribusiController@edit')->name('distribusibarang.edit');
-    Route::get('/inventory/distribusibarang/simpancabang', 'Inventory\DistribusiController@simpancabang');
+    Route::post('/inventory/distribusibarang/update/{id}', 'Inventory\DistribusiController@update')->name('ditribusibarang.update');
     Route::get('/inventory/distribusibarang/table', 'Inventory\DistribusiController@table');
     Route::get('/inventory/distribusibarang/table-history', 'Inventory\DistribusiController@tableHistory');
     Route::get('/inventory/distribusibarang/detail-ht/{id}', 'Inventory\DistribusiController@showDetailHt')->name('distribusibarang.showDetailHt');
+    Route::get('/inventory/distribusibarang/table-acceptance', 'Inventory\DistribusiController@tableAcceptance');
+    Route::get('/inventory/distribusibarang/detail-ac/{id}', 'Inventory\DistribusiController@showDetailAc')->name('distribusibarang.showDetailAc');
+    Route::post('/inventory/distribusibarang/set-acceptance/{id}', 'Inventory\DistribusiController@setAcceptance')->name('distribusibarang.setAcceptance');
     Route::get('/inventory/distribusibarang/hapus', 'Inventory\DistribusiController@hapus');
-    Route::get('/inventory/distribusibarang/updatecabang', 'Inventory\DistribusiController@updatecabang');
     Route::get('/inventory/distribusibarang/nota', 'Inventory\DistribusiController@printNota')->name('ditribusibarang.nota');
     // Manajemen Stok
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');

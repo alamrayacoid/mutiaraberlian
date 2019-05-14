@@ -1,8 +1,8 @@
-<div class="tab-pane fade in show" id="history">
+<div class="tab-pane fade in show" id="penerimaan">
     <div class="card">
         <div class="card-header bordered p-2">
             <div class="header-block">
-                <h3 class="title">History Distribusi Barang</h3>
+                <h3 class="title">Penerimaan Distribusi Barang</h3>
             </div>
             <div class=""></div>
         </div>
@@ -13,19 +13,19 @@
 						<div class="col-md-3 col-sm-12"></div>
 						<div class="col-md-6 col-sm-12">
 							<div class="input-group input-group-sm input-daterange">
-								<input type="text" class="form-control" id="date_from_ht" autocomplete="off">
+								<input type="text" class="form-control" id="date_from_ac" autocomplete="off">
 								<span class="input-group-addon">-</span>
-								<input type="text" class="form-control" id="date_to_ht" autocomplete="off">
+								<input type="text" class="form-control" id="date_to_ac" autocomplete="off">
 								<div class="input-group-append">
-									<button class="btn btn-secondary" type="button" id="btn_search_date_ht"><i class="fa fa-search"></i></button>
-									<button class="btn btn-primary" type="button" id="btn_refresh_date_ht"><i class="fa fa-refresh"></i></button>
+									<button class="btn btn-secondary" type="button" id="btn_search_date_ac"><i class="fa fa-search"></i></button>
+									<button class="btn btn-primary" type="button" id="btn_refresh_date_ac"><i class="fa fa-refresh"></i></button>
 								</div>
 							</div>
 						</div>
 					</div>
 				</fieldset>
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_history">
+                    <table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_acceptance">
                         <thead class="bg-primary">
                             <tr>
                                 <th>No</th>
@@ -36,7 +36,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
+
                         </tbody>
                     </table>
                 </div>
