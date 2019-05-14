@@ -52,4 +52,23 @@ class ReturnProduksiController extends Controller
 
         return json_encode(["ListBarangNotaProduksi" => $data]);
     }
+
+    public function getDataItem(Request $request){
+        $item = $request->item;
+        $data = DB::table('m_item')
+            ->join('m_unit u1', 'u1.u_id', '=', 'i_unit1')
+            ->join('m_unit u2', 'u2.u_id', '=', 'i_unit2')
+            ->join('m_unit u3', 'u3.u_id', '=', 'i_unit3')
+            ->select('u1.u_name as satuan1', 'u2.u_name as satuan2', 'u3.u_name as satuan3', 'i_unit1', 'i_unit2', 'i_unit3')
+            ->first();
+        
+        return json_encode(["SatuanBarangReturnProduksi" => $data]);
+    }
+
+    public function addReturn(Request $request){
+        $nota = $request->nota;
+        $item = $request->item;
+
+        
+    }
 }
