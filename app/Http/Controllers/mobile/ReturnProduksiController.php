@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
 use CodeGenerator;
+use App\d_stock as Stock;
+use App\d_stock_mutation as StockMutation;
 
 class ReturnProduksiController extends Controller
 {
