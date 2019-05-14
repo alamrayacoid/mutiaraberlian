@@ -56,9 +56,9 @@ class ReturnProduksiController extends Controller
     public function getDataItem(Request $request){
         $item = $request->item;
         $data = DB::table('m_item')
-            ->join('m_unit u1', 'u1.u_id', '=', 'i_unit1')
-            ->join('m_unit u2', 'u2.u_id', '=', 'i_unit2')
-            ->join('m_unit u3', 'u3.u_id', '=', 'i_unit3')
+            ->join('m_unit as u1', 'u1.u_id', '=', 'i_unit1')
+            ->join('m_unit as u2', 'u2.u_id', '=', 'i_unit2')
+            ->join('m_unit as u3', 'u3.u_id', '=', 'i_unit3')
             ->select('u1.u_name as satuan1', 'u2.u_name as satuan2', 'u3.u_name as satuan3', 'i_unit1', 'i_unit2', 'i_unit3')
             ->first();
         
