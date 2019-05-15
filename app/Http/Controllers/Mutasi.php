@@ -847,7 +847,7 @@ class Mutasi extends Controller
 
     static function confirmDistribusiCabang($from, $to, $item, $nota)
     {
-        // dd($from, $to, $item, $qty, $nota, $reff);
+        // dd($from, $to, $item,$nota);
         DB::beginTransaction();
         try {
 
@@ -881,6 +881,7 @@ class Mutasi extends Controller
             if ($stockAccepted != null)
             {
                 $null = false;
+                $stockId = $stockAccepted->s_id;
                 // add qty from $stockBefore to stockAccepted
                 $stockAccepted->s_qty = $stockAccepted->s_qty + $qtyFromMutation;
                 $stockAccepted->save();
@@ -888,6 +889,10 @@ class Mutasi extends Controller
                 // update stock-before qty
                 $stockBefore->s_qty = $stockBefore->s_qty - $qtyFromMutation;
                 $stockBefore->save();
+
+                // set stock-mutation detailid
+                $smDetailId = d_stock_mutation::where('sm_stock', $stockId)
+                ->max('sm_detailid') + 1;
             }
             // if not-exist stock-Accepted
             else
@@ -911,12 +916,15 @@ class Mutasi extends Controller
                 // update stock-before qty
                 $stockBefore->s_qty = $stockBefore->s_qty - $qtyFromMutation;
                 $stockBefore->save();
+
+                // set stock-mutation detailid
+                $smDetailId = 1;
             }
 
             // insert new stock-mutation
             $mutasi = array(
                 'sm_stock' => $stockId,
-                'sm_detailid' => 1,
+                'sm_detailid' => $smDetailId,
                 'sm_date' => $dateNow,
                 'sm_mutcat' => $stockBefore->getMutation[0]->sm_mutcat,
                 'sm_qty' => $stockBefore->getMutation[0]->sm_qty,
@@ -932,9 +940,6 @@ class Mutasi extends Controller
 
             // delete stock-mutation before
             $stockBefore->getMutation[0]->delete();
-
-            DB::rollback();
-            dd($null);
 
             DB::commit();
             return true;

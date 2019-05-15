@@ -10,8 +10,6 @@ use DataTables;
 use Currency;
 use CodeGenerator;
 use Crypt;
-use App\m_item;
-use App\m_item_auth;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 class OtorisasiController extends Controller
@@ -28,8 +26,7 @@ class OtorisasiController extends Controller
     public function opname_otorisasi(){
         return view('notifikasiotorisasi.otorisasi.opname.index');
     }
-    public function getopname()
-    {
+    public function getopname(){
       $data = DB::table('d_opnameauth')->join('m_item', 'i_id', '=', 'oa_item')->get();
 
       return DataTables::of($data)
@@ -54,8 +51,7 @@ class OtorisasiController extends Controller
           ->make(true);
     }
 
-    public function approveopname($id)
-    {
+    public function approveopname($id){
       DB::beginTransaction();
       try {
 
@@ -89,8 +85,7 @@ class OtorisasiController extends Controller
         ]);
       }
     }
-    public function rejectedopname($id)
-    {
+    public function rejectedopname($id){
       DB::beginTransaction();
       try {
 
@@ -110,8 +105,7 @@ class OtorisasiController extends Controller
     public function adjustment(){
         return view('notifikasiotorisasi.otorisasi.adjustment.index');
     }
-    public function getadjusment()
-    {
+    public function getadjusment(){
       $data = DB::table('d_adjusmentauth')->join('m_item', 'i_id', '=', 'aa_item')->get();
 
       return DataTables::of($data)
@@ -143,8 +137,7 @@ class OtorisasiController extends Controller
           ->rawColumns(['nota','aksi'])
           ->make(true);
     }
-    public function agreeadjusment($id)
-    {
+    public function agreeadjusment($id){
       DB::beginTransaction();
       try {
         $id = Decrypt($id);
@@ -213,8 +206,7 @@ class OtorisasiController extends Controller
         ]);
       }
     }
-    public function rejectadjusment($id)
-    {
+    public function rejectadjusment($id){
       DB::beginTransaction();
       try {
 
@@ -234,8 +226,7 @@ class OtorisasiController extends Controller
       }
 
     }
-    public function revisi()
-    {
+    public function revisi(){
         return view('notifikasiotorisasi.otorisasi.revisi.index');
     }
 
@@ -260,10 +251,10 @@ class OtorisasiController extends Controller
                 return $data->poa_nota;
             })
             ->addColumn('aksi', function($data){
-                $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrderProduksi(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-folder"></i></button>';
+                $detail = '<button class="btn btn-primary btn-modal" style="margin-right: 10px;" type="button" title="Detail Data" onclick="detailOrderProduksi(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-folder"></i></button>';
                 $setujui = '<button class="btn btn-warning btn-edit" type="button" title="Setujui" onclick="agree(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-check"></i></button>';
                 $tolak = '<button class="btn btn-danger btn-disable" type="button" title="Tolak" onclick="rejected(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-remove"></i></button>';
-                return '<div class="text-center"><div class="btn-group btn-group-sm">'. $detail . $setujui . $tolak . '</div></div>';
+                return '<div class="text-center">'. $detail .'<div class="btn-group btn-group-sm">' . $setujui . $tolak . '</div></div>';
             })
             ->rawColumns(['date','supplier','nota','aksi'])
             ->make(true);
@@ -343,8 +334,7 @@ class OtorisasiController extends Controller
             ->make(true);
     }
 
-    public function agree($id = null)
-    {
+    public function agree($id = null) {
         try{
             $id = Crypt::decrypt($id);
         }catch (DecryptException $e){
@@ -379,8 +369,7 @@ class OtorisasiController extends Controller
         }
     }
 
-    public function rejected($id = null)
-    {
+    public function rejected($id = null) {
         try{
             $id = Crypt::decrypt($id);
         }catch (DecryptException $e){
@@ -450,11 +439,11 @@ class OtorisasiController extends Controller
                 }
             })
             ->addColumn('aksi', function ($data){
-               // return '<div class="text-center"><div class="btn-group btn-group-sm">
-				// 								<button class="btn btn-info" onclick="detail(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" type="button"><i class="fa fa-folder"></i></button>
-				// 								<button class="btn btn-success" type="button" onclick="approve(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
-				// 								<button class="btn btn-danger" type="button" onclick="reject(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
-				// 							</div></div>';
+//                return '<div class="text-center"><div class="btn-group btn-group-sm">
+//												<button class="btn btn-info" onclick="detail(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" type="button"><i class="fa fa-folder"></i></button>
+//												<button class="btn btn-success" type="button" onclick="approve(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
+//												<button class="btn btn-danger" type="button" onclick="reject(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
+//											</div></div>';
                 return '<div class="text-center"><div class="btn-group btn-group-sm">
 												<button class="btn btn-success" type="button" onclick="approve(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
 												<button class="btn btn-danger" type="button" onclick="reject(\''.Crypt::encrypt($data->pcad_classprice).'\',\'' .Crypt::encrypt($data->pcad_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
@@ -506,11 +495,11 @@ class OtorisasiController extends Controller
                 }
             })
             ->addColumn('aksi', function ($data){
-               // return '<div class="text-center"><div class="btn-group btn-group-sm">
-				// 								<button class="btn btn-info" onclick="detailHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" type="button"><i class="fa fa-folder"></i></button>
-				// 								<button class="btn btn-success" type="button" onclick="approveHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
-				// 								<button class="btn btn-danger" type="button" onclick="rejectHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
-				// 							</div></div>';
+//                return '<div class="text-center"><div class="btn-group btn-group-sm">
+//												<button class="btn btn-info" onclick="detailHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" type="button"><i class="fa fa-folder"></i></button>
+//												<button class="btn btn-success" type="button" onclick="approveHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
+//												<button class="btn btn-danger" type="button" onclick="rejectHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
+//											</div></div>';
                 return '<div class="text-center"><div class="btn-group btn-group-sm">
 												<button class="btn btn-success" type="button" onclick="approveHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Setuju"><i class="fa fa-check-circle"></i></button>
 												<button class="btn btn-danger" type="button" onclick="rejectHPA(\''.Crypt::encrypt($data->spa_salesprice).'\',\'' .Crypt::encrypt($data->spa_detailid). '\')" title="Tolak"><i class="fa fa-times-circle"></i></button>
@@ -649,183 +638,6 @@ class OtorisasiController extends Controller
             return response()->json([
                 'status' => 'gagal',
                 'message' => $e
-            ]);
-        }
-    }
-    // ======================== Otorisasi Revisi Data ========================
-    public function getListRevDataProduk(Request $request)
-    {
-        $datas = m_item_auth::with('getItem')
-        ->get();
-
-        return Datatables::of($datas)
-        ->addIndexColumn()
-        ->addColumn('produk', function ($datas) {
-            if ($datas->getItem != null) {
-                return $datas->getItem->i_name;
-            } else {
-                return $datas->ia_name;
-            }
-        })
-        ->addColumn('authorizationType', function ($datas) {
-            if ($datas->ia_isactive === 'N') {
-                return 'Non-aktifkan produk';
-            } elseif ($datas->getItem != null) {
-                return 'Edit produk';
-            } else {
-                return 'Tambah produk';
-            }
-        })
-        ->addColumn('action', function ($datas) {
-            return
-            '<div class="btn-group btn-group-sm">
-            <button class="btn btn-primary btn-detailRevisiP" type="button" title="Detail" onclick="showDetailRevisiP('. $datas->ia_id .')"><i class="fa fa-folder"></i></button>
-            <button class="btn btn-warning btn-appRevisiP" type="button" title="Setujui" onclick="appRevisiP('. $datas->ia_id .')"><i class="fa fa-check"></i></button>
-            <button class="btn btn-danger btn-rejRevisiP" type="button" title="Tolak" onclick="rejRevisiP('. $datas->ia_id .')"><i class="fa fa-ban"></i></button>
-            </div>';
-        })
-        ->rawColumns(['produk', 'authorizationType', 'action'])
-        ->make(true);
-    }
-    // retrieve detail revisi-data-produk
-    public function getDetailRevDataProduk($id)
-    {
-        $data = m_item_auth::where('ia_id', $id)
-        ->with('getItem')
-        ->with('getItemType')
-        ->first();
-
-        return $data;
-    }
-    // approve revisi-data-produk
-    public function approveRevisiProduk($id)
-    {
-        // $item-auth = (get m_item_auth where id = $id)
-        $item_auth = m_item_auth::where('ia_id', $id)->first();
-        // $item-main = (get m_item where id = $id)
-        $item_main = m_item::where('i_id', $id)->first();
-        // if $item-main != null
-
-        DB::beginTransaction();
-        try {
-            if ($item_main != null)
-            {
-                if ($item_auth->ia_isactive === 'N') {
-                    $item_main->i_isactive = 'N';
-                    $item_main->save();
-                } else {
-                    if ($item_auth->ia_image != '') {
-                        // get-directory based on item-id
-                        $mainDirectory = storage_path('uploads\produk\original\\') . $id;
-                        $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
-                        if (!is_dir($mainDirectory)) {
-                            mkdir($mainDirectory, 0777, true);
-                        }
-                        // is image exist in auth-directory ?
-                        if (file_exists($authDirectory .'\\'. $item_auth->ia_image)) {
-                            // delete image if exist in main-directory
-                            if (file_exists($mainDirectory . $item_main->i_image)) {
-                                unlink($mainDirectory .'\\'. $item_main->i_image);
-                            }
-                            // move image from item-auth to original
-                            $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
-                            $newPath = $mainDirectory .'\\'. $item_auth->ia_image;
-                            rename($oldPath, $newPath);
-                        }
-                    }
-
-                    // update $item-main based on $item-auth
-                    $item_main->i_code = $item_auth->ia_code;
-                    $item_main->i_type = $item_auth->ia_type;
-                    $item_main->i_codegroup = $item_auth->ia_codegroup;
-                    $item_main->i_name = $item_auth->ia_name;
-                    $item_main->i_detail = $item_auth->ia_detail;
-                    $item_main->i_image = $item_auth->ia_image;
-                    $item_main->save();
-                }
-            }
-            // if $item-main == null
-            else
-            {
-                if ($item_auth->ia_image != '') {
-                    // make-directory based on item-id
-                    $mainDirectory = storage_path('uploads\produk\original\\') . $id;
-                    $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
-                    if (!is_dir($mainDirectory)) {
-                        mkdir($mainDirectory, 0777, true);
-                    }
-
-                    if (file_exists($authDirectory .'\\'. $item_auth->ia_image)) {
-                        // move image from auth-directory to main-directory
-                        $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
-                        $newPath = $mainDirectory .'\\'. $item_auth->ia_image;
-                        rename($oldPath, $newPath);
-                    }
-                }
-
-                // insert $item-auth to $item-main
-                $item = new m_item();
-                $item->i_id = $item_auth->ia_id;
-                $item->i_code = $item_auth->ia_code;
-                $item->i_type = $item_auth->ia_type;
-                $item->i_codegroup = $item_auth->ia_codegroup;
-                $item->i_name = $item_auth->ia_name;
-                $item->i_unit1 = $item_auth->ia_unit1;
-                $item->i_unit2 = $item_auth->ia_unit2;
-                $item->i_unit3 = $item_auth->ia_unit3;
-                $item->i_unitcompare1 = $item_auth->ia_unitcompare1;
-                $item->i_unitcompare2 = $item_auth->ia_unitcompare2;
-                $item->i_unitcompare3 = $item_auth->ia_unitcompare3;
-                $item->i_detail = $item_auth->ia_detail;
-                $item->i_isactive = $item_auth->ia_isactive;
-                $item->i_image = $item_auth->ia_image;
-                $item->save();
-            }
-            // delete $item_auth after approval success
-            $item_auth->delete();
-
-            DB::commit();
-            return response()->json([
-                'status' => 'berhasil'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json([
-                'status' => 'gagal',
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
-    // reject revisi-data-produk
-    public function rejectRevisiProduk($id)
-    {
-        // $item-auth = (get m_item_auth where id = $id)
-        $item_auth = m_item_auth::where('ia_id', $id)->first();
-        // delete image in storage
-        if ($item_auth->ia_image != '') {
-            // get-directory based on item-id
-            $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
-
-            if (file_exists($authDirectory .'\\'. $item_auth->ia_image)) {
-                // delete image inside auth-directory
-                $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
-                unlink($oldPath);
-            }
-        }
-        // delete $item_auth after approval success
-        $item_auth->delete();
-
-        DB::beginTransaction();
-        try {
-            DB::commit();
-            return response()->json([
-                'status' => 'berhasil'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json([
-                'status' => 'gagal',
-                'message' => $e->getMessage()
             ]);
         }
     }

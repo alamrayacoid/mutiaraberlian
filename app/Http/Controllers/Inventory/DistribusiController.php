@@ -550,12 +550,19 @@ class DistribusiController extends Controller
             $stockdist->save();
 
             foreach ($stockdist->getDistributionDt as $key => $val) {
-                Mutasi::confirmDistribusiCabang(
+                $mutasi = Mutasi::confirmDistribusiCabang(
                     $stockdist->sd_from,
                     $stockdist->sd_destination,
                     $val->sdd_item,
                     $stockdist->sd_nota,
                 );
+                if ($mutasi !== true) {
+                    DB::rollback();
+                    return response()->json([
+                        'status' => 'gagal',
+                        'message' => $mutasi
+                    ]);
+                }
             }
             DB::commit();
             return response()->json([

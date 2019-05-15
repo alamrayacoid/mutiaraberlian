@@ -304,7 +304,7 @@
 
 <!-- script for penerimaan-distribusi -->
 <script type="text/javascript">
-    var tableAcceptance;
+    var tableAc;
     $(document).ready(function() {
         $('#date_from_ac').datepicker('setDate', first_day);
         $('#date_to_ac').datepicker('setDate', last_day);
@@ -334,7 +334,7 @@
     function tableAcceptance()
     {
         $('#table_acceptance').dataTable().fnDestroy();
-        tableAcceptance = $('#table_acceptance').DataTable({
+        tableAc = $('#table_acceptance').DataTable({
             responsive: true,
             serverSide: true,
             ajax: {
@@ -416,6 +416,8 @@
                 loadingHide();
                 if (response.status == 'berhasil') {
                     messageSuccess('Selamat', 'Konfirmasi penerimaan berhasil dilakukan !');
+                    $('#modalAcceptance').modal('hide');
+                    tableAc.ajax.reload();
                 } else if (response.status == 'gagal') {
                     messageWarning('Perhatian', response.message);
                 }

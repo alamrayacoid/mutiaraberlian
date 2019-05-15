@@ -136,7 +136,7 @@
             getFieldsReady();
         });
         // submit-form by btn-submit
-        $('#btn_simpan').on('click', function() {
+        $('#btn_simpan').one('click', function() {
             submitForm();
         });
     });
@@ -249,10 +249,18 @@
                 } else if (response.status === 'gagal') {
                     messageWarning('Gagal', response.message);
                 }
+                // submit-form by btn-submit
+                $('#btn_simpan').one('click', function() {
+                    submitForm();
+                });
                 console.log('response: '+ response);
             },
             error: function(e) {
                 messageWarning('Perhatian', 'Terjadi kesalahan saat menyimpan distribusi, hubungi pengembang !');
+                // submit-form by btn-submit
+                $('#btn_simpan').one('click', function() {
+                    submitForm();
+                });
             }
         });
     }
