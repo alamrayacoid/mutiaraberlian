@@ -201,6 +201,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/pembayaran/get-list-history', 'Produksi\PembayaranController@getListHistory')->name('pembayaran.getListHistory');
     Route::get('/produksi/pembayaran/show-detail-history/{id}', 'Produksi\PembayaranController@showDetailHistory')->name('pembayaran.showDetailHistory');
     Route::get('/produksi/pembayaran/get-list-nota', 'Produksi\PembayaranController@getListNota')->name('pembayaran.getListNota');
+    Route::get('/produksi/pembayaran/get-termin-date', 'Produksi\PembayaranController@getTerminByDate')->name('pembayaran.getTerminByDate');
     // Return Produksi
     Route::get('/produksi/returnproduksi/index', 'ProduksiController@return_produksi')->name('return.index');
     Route::get('/produksi/returnproduksi/list', 'ProduksiController@listReturn')->name('return.list');

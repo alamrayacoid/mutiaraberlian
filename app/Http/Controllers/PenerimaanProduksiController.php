@@ -34,9 +34,8 @@ class PenerimaanProduksiController extends Controller
             })
             ->join('d_productionorderdt', 'pod_productionorder', '=', 'po_id')
             ->where('pod_received', '=', 'N')
-            ->where('d_productionorder.po_status', '=', 'BELUM')
-            ->groupBy('po_id')
             ->select('po_id', 'po_nota', 's_company', 'po_date')
+            ->groupBy('po_id')
             ->get();
 
         return DataTables::of($data)

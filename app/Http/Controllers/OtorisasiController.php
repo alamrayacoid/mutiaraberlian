@@ -251,10 +251,10 @@ class OtorisasiController extends Controller
                 return $data->poa_nota;
             })
             ->addColumn('aksi', function($data){
-                $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrderProduksi(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-folder"></i></button>';
+                $detail = '<button class="btn btn-primary btn-modal" style="margin-right: 10px;" type="button" title="Detail Data" onclick="detailOrderProduksi(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-folder"></i></button>';
                 $setujui = '<button class="btn btn-warning btn-edit" type="button" title="Setujui" onclick="agree(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-check"></i></button>';
                 $tolak = '<button class="btn btn-danger btn-disable" type="button" title="Tolak" onclick="rejected(\''. Crypt::encrypt($data->poa_id) .'\')"><i class="fa fa-remove"></i></button>';
-                return '<div class="text-center"><div class="btn-group btn-group-sm">'. $detail . $setujui . $tolak . '</div></div>';
+                return '<div class="text-center">'. $detail .'<div class="btn-group btn-group-sm">' . $setujui . $tolak . '</div></div>';
             })
             ->rawColumns(['date','supplier','nota','aksi'])
             ->make(true);

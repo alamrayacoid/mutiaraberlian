@@ -15,17 +15,16 @@
                         <label for="">Pilih Order</label>
                     </div>
                     <div class="col-6">
-                        <select name="po_nota" id="po_nota"
-                        class="form-control form-control-sm select2">
-                        @foreach($data as $po)
-                        @if($po->terbayar != $po->value)
-                        <option value="{{ $po->id }}">{{ $po->nota }}
-                            - {{ $po->supplier }}</option>
-                            @endif
+                        <select name="po_nota" id="po_nota" class="form-control form-control-sm select2">
+                            @foreach($data as $po)
+                                @if($po->terbayar != $po->value)
+                                    <option value="{{ $po->id }}">{{ $po->nota }} - {{ $po->supplier }}</option>
+                                @endif
                             @endforeach
                         </select>
                     </div>
-                    <div class="">
+                    <div class="col-3 float-right">
+                        <button class="btn btn-primary btn-md btn-primary float-right" title="Pencarian Lanjutan" style=";" data-toggle="modal" data-target="#searchLanjutan"><i class="fa fa-search"> Lanjutan</i></button>
                     </div>
                 </div>
                 <hr style="border:0.5px solid grey">
