@@ -44,8 +44,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/mobile/ReturnProduksiController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="563">
-              <caret line="180" lean-forward="true" selection-start-line="180" selection-end-line="180" />
+            <state relative-caret-position="409">
+              <caret line="134" column="76" selection-start-line="134" selection-start-column="66" selection-end-line="134" selection-end-column="76" />
               <folding>
                 <element signature="e#47#65#0#PHP" expanded="true" />
               </folding>
@@ -355,7 +355,7 @@
       <workItem from="1557468443761" duration="715000" />
       <workItem from="1557824344658" duration="5240000" />
       <workItem from="1557843889371" duration="4777000" />
-      <workItem from="1557851835905" duration="2766000" />
+      <workItem from="1557851835905" duration="3831000" />
     </task>
     <task id="LOCAL-00001" summary="roliz">
       <created>1556765610336</created>
@@ -403,7 +403,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="64377000" />
+    <option name="totallyTimeSpent" value="65442000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="0" width="1368" height="740" extended-state="6" />
@@ -421,7 +421,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.32843137" />
+      <window_info anchor="bottom" id="Terminal" order="10" weight="0.32843137" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -649,8 +649,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/mobile/ReturnProduksiController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="563">
-          <caret line="180" lean-forward="true" selection-start-line="180" selection-end-line="180" />
+        <state relative-caret-position="409">
+          <caret line="134" column="76" selection-start-line="134" selection-start-column="66" selection-end-line="134" selection-end-column="76" />
           <folding>
             <element signature="e#47#65#0#PHP" expanded="true" />
           </folding>
