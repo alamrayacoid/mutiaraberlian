@@ -267,23 +267,23 @@
     var tb_listrevproduk;
     function TableRevProduk()
     {
-    	$('#table_revdataproduk').dataTable().fnDestroy();
-    	tb_listrevproduk = $('#table_revdataproduk').DataTable({
-    		responsive: true,
-    		serverSide: true,
-    		ajax: {
-    			url: "{{ route('revproduk.getListRevDataProduk') }}",
-    			type: "get"
-    		},
-    		columns: [
-    			{data: 'DT_RowIndex'},
-    			{data: 'produk'},
-    			{data: 'authorizationType'},
-    			{data: 'action'}
-    		],
-    		pageLength: 10,
-    		lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-    	});
+    	{{--$('#table_revdataproduk').dataTable().fnDestroy();--}}
+    	{{--tb_listrevproduk = $('#table_revdataproduk').DataTable({--}}
+    		{{--responsive: true,--}}
+    		{{--serverSide: true,--}}
+    		{{--ajax: {--}}
+    			{{--url: "{{ route('revproduk.getListRevDataProduk') }}",--}}
+    			{{--type: "get"--}}
+    		{{--},--}}
+    		{{--columns: [--}}
+    			{{--{data: 'DT_RowIndex'},--}}
+    			{{--{data: 'produk'},--}}
+    			{{--{data: 'authorizationType'},--}}
+    			{{--{data: 'action'}--}}
+    		{{--],--}}
+    		{{--pageLength: 10,--}}
+    		{{--lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]--}}
+    	{{--});--}}
     }
     // show modal detail revisi-produk
     function showDetailRevisiP(id)
