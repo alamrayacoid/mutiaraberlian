@@ -870,25 +870,18 @@ class Mutasi extends Controller
                 ->where('s_item', $item)
                 ->where('s_status', 'ON DESTINATION')
                 ->where('s_condition', 'FINE')
-                // ->with(['getMutation' => function ($query) use ($nota) {
-                //     $query->where('sm_nota', $nota);
-                // }])
                 ->first();
 
+            // get qty from stock-mutation
             $qtyFromMutation = $stockBefore->getMutation[0]->sm_qty;
 
             // if exist stock-Accepted
             if ($stockAccepted != null)
             {
-                $null = false;
                 $stockId = $stockAccepted->s_id;
                 // add qty from $stockBefore to stockAccepted
                 $stockAccepted->s_qty = $stockAccepted->s_qty + $qtyFromMutation;
                 $stockAccepted->save();
-
-                // update stock-before qty
-                $stockBefore->s_qty = $stockBefore->s_qty - $qtyFromMutation;
-                $stockBefore->save();
 
                 // set stock-mutation detailid
                 $smDetailId = d_stock_mutation::where('sm_stock', $stockId)
@@ -897,7 +890,6 @@ class Mutasi extends Controller
             // if not-exist stock-Accepted
             else
             {
-                $null = true;
                 // insert new stock-item
                 $stockId = d_stock::max('s_id') + 1;
                 $stock = array(
@@ -912,10 +904,6 @@ class Mutasi extends Controller
                     's_updated_at' => $dateNow
                 );
                 d_stock::insert($stock);
-
-                // update stock-before qty
-                $stockBefore->s_qty = $stockBefore->s_qty - $qtyFromMutation;
-                $stockBefore->save();
 
                 // set stock-mutation detailid
                 $smDetailId = 1;
@@ -940,6 +928,15 @@ class Mutasi extends Controller
 
             // delete stock-mutation before
             $stockBefore->getMutation[0]->delete();
+
+            // update stock-before qty
+            $stockBefore->s_qty = $stockBefore->s_qty - $qtyFromMutation;
+            $stockBefore->save();
+
+            // delete 'On Going' stock if qty is 0
+            if ($stockBefore->s_qty == 0) {
+                $stockBefore->delete();
+            }
 
             DB::commit();
             return true;

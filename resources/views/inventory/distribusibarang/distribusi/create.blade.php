@@ -217,7 +217,6 @@
     // get list unit based on id item
     function setListUnit(item)
     {
-        console.log('unit : '+ item.unit1.u_name);
         $(".units").eq(idxItem).empty();
         var option = '';
         if (item.unit1 != null) {
@@ -235,7 +234,6 @@
     function submitForm()
     {
         data = $('#formDistribution').serialize();
-        console.log(data);
         $.ajax({
             url: "{{ route('distribusibarang.store') }}",
             data: data,
@@ -249,7 +247,6 @@
                 } else if (response.status === 'gagal') {
                     messageWarning('Gagal', response.message);
                 }
-                console.log('response: '+ response);
             },
             error: function(e) {
                 messageWarning('Perhatian', 'Terjadi kesalahan saat menyimpan distribusi, hubungi pengembang !');
