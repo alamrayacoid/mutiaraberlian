@@ -11,6 +11,9 @@
             <div class="modal-body">
                 <section>
                     <div class="row">
+                        <!-- hidden id stockdist -->
+                        <input type="hidden" id="id_ac">
+
                         <div class="col-md-2">
                             <label for="">Nomor Nota : </label>
                         </div>
@@ -57,7 +60,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary">Konfirmasi Penerimaan</button>
+                <button type="button" class="btn btn-secondary" id="btn_confirmAc">Konfirmasi Penerimaan</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>

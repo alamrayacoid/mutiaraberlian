@@ -324,6 +324,10 @@
         });
         // retrieve data-table
         tableAcceptance();
+
+        $('#btn_confirmAc').on('click', function() {
+            confirmAcceptance();
+        })
     });
 
     // retrieve DataTable penerimaan
@@ -362,6 +366,7 @@
             type: "get",
             success: function(response) {
                 console.log(response);
+                $('#id_ac').val(response.sd_id);
                 $('#nota_ac').val(response.sd_nota);
                 $('#date_ac').val(response.dateFormated);
                 $('#origin_ac').val(response.get_origin.c_name);
@@ -402,21 +407,23 @@
     function confirmAcceptance()
     {
         loadingShow();
+        let stockdistId = $('#id_ac').val();
+
         $.ajax({
-            url: baseUrl + "/inventory/distribusibarang/set-acceptance/" + idx,
+            url: baseUrl + "/inventory/distribusibarang/set-acceptance/" + stockdistId,
             type: "post",
             success: function (response) {
+                loadingHide();
                 if (response.status == 'berhasil') {
                     messageSuccess('Selamat', 'Konfirmasi penerimaan berhasil dilakukan !');
                 } else if (response.status == 'gagal') {
                     messageWarning('Perhatian', response.message);
                 }
-                loadingHide();
             },
             error: function(xhr, status, error) {
+                loadingHide();
                 let err = JSON.parse(xhr.responseText);
                 messageWarning('Error', err.message);
-                loadingHide();
             }
         });
     }

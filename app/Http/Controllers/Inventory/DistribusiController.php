@@ -140,7 +140,7 @@ class DistribusiController extends Controller
                     );
                 }
             }
-
+            // insert new stockdist
             $id = d_stockdistribution::max('sd_id') + 1;
             $dist = new d_stockdistribution;
             $dist->sd_id = $id;
@@ -150,7 +150,7 @@ class DistribusiController extends Controller
             $dist->sd_nota = $nota;
             $dist->sd_user = Auth::user()->u_id;
             $dist->save();
-
+            // insert new stockdist-detail
             foreach ($request->itemsId as $i => $itemId) {
                 if ($request->qty[$i] != 0) {
                     $detailid = d_stockdistributiondt::where('sdd_stockdistribution', $id)->max('sdd_detailid') + 1;
@@ -539,8 +539,36 @@ class DistribusiController extends Controller
     // confirm acceptance
     public function setAcceptance(Request $request, $id)
     {
-        // update stockdist status to 'Y'
-        // update mutation
+        DB::beginTransaction();
+        try {
+            $stockdist = d_stockdistribution::where('sd_id', $id)
+            ->with('getDistributionDt')
+            ->first();
+
+            // update stockdist-status to 'Y'
+            $stockdist->sd_status = 'Y';
+            $stockdist->save();
+
+            foreach ($stockdist->getDistributionDt as $key => $val) {
+                Mutasi::confirmDistribusiCabang(
+                    $stockdist->sd_from,
+                    $stockdist->sd_destination,
+                    $val->sdd_item,
+                    $stockdist->sd_nota,
+                );
+            }
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     public function hapus(Request $request)
