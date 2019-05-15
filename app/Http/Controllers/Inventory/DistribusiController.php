@@ -554,7 +554,7 @@ class DistribusiController extends Controller
                     $stockdist->sd_from,
                     $stockdist->sd_destination,
                     $val->sdd_item,
-                    $stockdist->sd_nota,
+                    $stockdist->sd_nota
                 );
                 if ($mutasi !== true) {
                     DB::rollback();
