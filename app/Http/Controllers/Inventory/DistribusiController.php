@@ -568,6 +568,10 @@ class DistribusiController extends Controller
                     ]);
                 }
             }
+            DB::table('d_stock')
+                ->where('s_qty', '=', 0)
+                ->where('s_status', '=', 'ON GOING')
+                ->delete();
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'

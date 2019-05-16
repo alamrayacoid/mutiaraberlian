@@ -1193,4 +1193,124 @@ class Mutasi extends Controller
             ]);
         }
     }
+
+    static function mutasikeluartanpapemilik($mutcat, $position, $item, $qty, $nota)
+    {
+        DB::beginTransaction();
+        try {
+
+            $qty = (int)$qty;
+
+            $sekarang = Carbon::now('Asia/Jakarta');
+
+            $datamutcat = DB::table('m_mutcat')->where('m_status', '=', 'M')->get();
+
+            for ($i = 0; $i < count($datamutcat); $i++) {
+                $tmp[] = $datamutcat[$i]->m_id;
+            }
+
+            $stock = DB::table('d_stock')
+                ->join('d_stock_mutation', 'sm_stock', '=', 's_id')
+                ->select('d_stock.*', 'd_stock_mutation.*', DB::raw('(sm_qty - sm_use) as sm_sisa'))
+                ->where('s_position', '=', $position)
+                ->where('s_item', '=', $item)
+                ->where('s_status', '=', 'ON DESTINATION')
+                ->where('s_condition', '=', 'FINE')
+                ->whereIn('sm_mutcat', $tmp)
+                ->where(DB::raw('(sm_qty - sm_use)'), '>', 0)
+                ->get();
+
+            $permintaan = $qty;
+
+            DB::table('d_stock')
+                ->where('s_id', $stock[0]->s_id)
+                ->where('s_item', $stock[0]->s_item)
+                ->where('s_comp', $stock[0]->s_comp)
+                ->where('s_position', $stock[0]->s_position)
+                ->where('s_status', $stock[0]->s_status)
+                ->where('s_condition', $stock[0]->s_condition)
+                ->update([
+                    's_qty' => $stock[0]->s_qty - $permintaan
+                ]);
+
+            for ($j = 0; $j < count($stock); $j++) {
+                //Terdapat sisa permintaan
+
+                $detailid = (DB::table('d_stock_mutation')->max('sm_detailid')) ? DB::table('d_stock_mutation')->max('sm_detailid') + 1 : 1;
+
+                if ($permintaan > $stock[$j]->sm_sisa && $permintaan != 0)
+                {
+
+                    DB::table('d_stock_mutation')
+                        ->where('sm_stock', '=', $stock[$j]->sm_stock)
+                        ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
+                        ->update([
+                            'sm_use' => $stock[$j]->sm_qty,
+                            'sm_residue' => 0
+                        ]);
+
+                    $permintaan = $permintaan - $stock[$j]->sm_sisa;
+
+                    DB::table('d_stock_mutation')
+                        ->insert([
+                            'sm_stock' => $stock[$j]->sm_stock,
+                            'sm_detailid' => $detailid,
+                            'sm_date' => $sekarang,
+                            'sm_mutcat' => $mutcat,
+                            'sm_qty' => $stock[$j]->sm_sisa,
+                            'sm_use' => 0,
+                            'sm_residue' => 0,
+                            'sm_hpp' => $stock[$j]->sm_hpp,
+                            'sm_sell' => $stock[$j]->sm_sell,
+                            'sm_nota' => $nota,
+                            'sm_reff' => $stock[$j]->sm_nota,
+                            'sm_user' => Auth::user()->u_id,
+                        ]);
+
+                }
+                elseif ($permintaan <= $stock[$j]->sm_sisa && $permintaan != 0)
+                {
+                    //Langsung Eksekusi
+
+                    $detailid = (DB::table('d_stock_mutation')
+                        ->max('sm_detailid')) ? (DB::table('d_stock_mutation')->max('sm_detailid')) + 1 : 1;
+
+                    DB::table('d_stock_mutation')
+                        ->where('sm_stock', '=', $stock[$j]->sm_stock)
+                        ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
+                        ->update([
+                            'sm_use' => $permintaan + $stock[$j]->sm_use,
+                            'sm_residue' => $stock[$j]->sm_residue - $permintaan
+                        ]);
+
+                    DB::table('d_stock_mutation')
+                        ->insert([
+                            'sm_stock' => $stock[$j]->sm_stock,
+                            'sm_detailid' => $detailid,
+                            'sm_date' => $sekarang,
+                            'sm_mutcat' => $mutcat,
+                            'sm_qty' => $permintaan,
+                            'sm_use' => 0,
+                            'sm_residue' => 0,
+                            'sm_hpp' => $stock[$j]->sm_hpp,
+                            'sm_sell' => $stock[$j]->sm_sell,
+                            'sm_nota' => $nota,
+                            'sm_reff' => $stock[$j]->sm_nota,
+                            'sm_user' => Auth::user()->u_id,
+                        ]);
+
+                    $permintaan = 0;
+                    $j = count($stock) + 1;
+                }
+            }
+
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'error' => $e
+            ]);
+        }
+    }
 }

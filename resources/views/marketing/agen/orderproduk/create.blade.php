@@ -30,7 +30,7 @@
                                 <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
                             </div>
                         </div>
-                        <form id="formManagemenAgen" method="post">{{ csrf_field() }}
+                        <form id="formManagemenAgen">{{ csrf_field() }}
                             <div class="card-block">
                                 <section>
 
@@ -1412,8 +1412,9 @@
 
         function simpan() {
             loadingShow();
-            var data = $('#formManagemenAgen').serialize();
-            axios.post('{{ route('orderagenpusat.add') }}', data)
+            var data = $('#formManagemenAgen :input').serialize();
+
+            axios.get('{{ route('orderagenpusat.add') }}', data)
                 .then(function (response){
                     if(response.data.status == 'Success'){
                         loadingHide();

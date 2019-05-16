@@ -125,7 +125,6 @@ class MarketingController extends Controller
             $nama = DB::table('m_item')
                 ->join('d_stock', function ($s) use ($comp){
                     $s->on('i_id', '=', 's_item');
-                    $s->where('s_comp', '=', $comp);
                     $s->where('s_position', '=', $comp);
                     $s->where('s_status', '=', 'ON DESTINATION');
                     $s->where('s_condition', '=', 'FINE');
@@ -144,7 +143,6 @@ class MarketingController extends Controller
             $nama = DB::table('m_item')
                 ->join('d_stock', function ($s) use ($comp){
                     $s->on('i_id', '=', 's_item');
-                    $s->where('s_comp', '=', $comp);
                     $s->where('s_position', '=', $comp);
                     $s->where('s_status', '=', 'ON DESTINATION');
                     $s->where('s_condition', '=', 'FINE');
@@ -420,7 +418,6 @@ class MarketingController extends Controller
 
                 $stock = DB::table('d_stock')
                     ->where('s_id', '=', $data['idStock'][$i])
-                    ->where('s_comp', '=', $comp)
                     ->where('s_position', '=', $comp)
                     ->where('s_item', '=', $data['idItem'][$i])
                     ->where('s_status', '=', 'ON DESTINATION')
@@ -435,8 +432,8 @@ class MarketingController extends Controller
                     ->where('c_id', '=', $member)
                     ->first();
 
-                Mutasi::mutasikeluar(13, $comp, $comp, $data['idItem'][$i], $qty_compare, $nota);
-                Mutasi::mutasimasuk(12, $posisi->c_id, $posisi->c_id, $data['idItem'][$i], $qty_compare, 'ON DESTINATION', 'FINE', $stock_mutasi->sm_hpp, $stock_mutasi->sm_sell, $nota, $stock_mutasi->sm_nota);
+                Mutasi::mutasikeluartanpapemilik(13, $comp, $data['idItem'][$i], $qty_compare, $nota);
+                Mutasi::mutasimasuk(12, $stock->s_comp, $posisi->c_id, $data['idItem'][$i], $qty_compare, 'ON DESTINATION', 'FINE', $stock_mutasi->sm_hpp, $stock_mutasi->sm_sell, $nota, $stock_mutasi->sm_nota);
             }
 
             DB::table('d_salescomp')->insert($val_sales);
@@ -652,7 +649,6 @@ class MarketingController extends Controller
 
                         $stock = DB::table('d_stock')
                             ->where('s_id', '=', $data['idStock'][$i])
-                            ->where('s_comp', '=', $comp)
                             ->where('s_position', '=', $comp)
                             ->where('s_item', '=', $data['idItem'][$i])
                             ->where('s_status', '=', 'ON DESTINATION')
