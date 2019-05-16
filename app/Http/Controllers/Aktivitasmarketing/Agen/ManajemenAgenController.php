@@ -948,12 +948,19 @@ class ManajemenAgenController extends Controller
 
         DB::beginTransaction();
         try {
+
+//            if (Auth::user()->u_user === 'E') {
+//                $agent = d_username::where('u_code', $request->agent)->first();
+//            } else {
+//                $agent = Auth::user();
+//            }
+            $agent = d_username::where('u_code', $request->agent)->first();
             // start insert data
             $salesId = d_sales::max('s_id') + 1;
             $salesNota = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
             $sales = new d_sales();
             $sales->s_id = $salesId;
-            $sales->s_comp = Auth::user()->u_company; // user
+            $sales->s_comp = $agent->u_company; // user
             $sales->s_member = $request->member;
             $sales->s_type = 'C';
             $sales->s_date = Carbon::now('Asia/Jakarta');
@@ -963,11 +970,6 @@ class ManajemenAgenController extends Controller
             $sales->save();
 
             // get item-position based on agent-code
-            if (Auth::user()->u_user === 'E') {
-                $agent = d_username::where('u_code', $request->agent)->first();
-            } else {
-                $agent = Auth::user();
-            }
 
             for ($i=0; $i < sizeof($request->itemListId); $i++) {
                 // get itemStock based on position and item-id
