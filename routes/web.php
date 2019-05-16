@@ -459,6 +459,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::get('/marketing/agen/kelolapenjualanlangsung/get-item-stock', 'Aktivitasmarketing\Agen\ManajemenAgenController@getItemStock')->name('kelolapenjualan.getItemStock');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-price', 'Aktivitasmarketing\Agen\ManajemenAgenController@getPrice')->name('kelolapenjualan.getPrice');
     Route::post('/marketing/agen/kelolapenjualanlangsung/store', 'Aktivitasmarketing\Agen\ManajemenAgenController@storeKPL')->name('kelolapenjualan.storeKPL');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/store', 'Aktivitasmarketing\Agen\ManajemenAgenController@storeKPL')->name('kelolapenjualan.storeKPL');
     Route::get('/marketing/agen/kelolapenjualanlangsung/edit/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@editKPL')->name('kelolapenjualan.edit');
     Route::post('/marketing/agen/kelolapenjualanlangsung/update/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@updateKPL')->name('kelolapenjualan.update');
     // End Manajemen Agen ============================================================================================

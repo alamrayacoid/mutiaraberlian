@@ -697,7 +697,7 @@ class ManajemenAgenController extends Controller
         ->leftJoin('m_company as comp', 's_position', 'comp.c_id')
         ->leftJoin('m_company as agen', 's_comp', 'agen.c_id')
         ->leftJoin('m_item', 's_item', 'i_id')
-        ->where('s_comp', '=', $id)
+        ->where('s_position', '=', $id)
         ->select('agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_condition', 's_qty')
         ->get();
 
@@ -953,13 +953,17 @@ class ManajemenAgenController extends Controller
 //            } else {
 //                $agent = Auth::user();
 //            }
-            $agent = d_username::where('u_code', $request->agent)->first();
+            if (Auth::user()->u_user == "E"){
+                $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
+            } else {
+                $agent = Auth::user();
+            }
             // start insert data
             $salesId = d_sales::max('s_id') + 1;
             $salesNota = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
             $sales = new d_sales();
             $sales->s_id = $salesId;
-            $sales->s_comp = $agent->u_company; // user
+            $sales->s_comp = $agent->c_id; // user
             $sales->s_member = $request->member;
             $sales->s_type = 'C';
             $sales->s_date = Carbon::now('Asia/Jakarta');
@@ -972,7 +976,7 @@ class ManajemenAgenController extends Controller
 
             for ($i=0; $i < sizeof($request->itemListId); $i++) {
                 // get itemStock based on position and item-id
-                $stock = $this->getItemStock($agent->u_company, $request->itemListId[$i]);
+                $stock = $this->getItemStock($agent->c_id, $request->itemListId[$i]);
                 ($stock === null) ? $itemStock = 0 : $itemStock = $stock->s_qty;
 
                 // is stock sufficient ?

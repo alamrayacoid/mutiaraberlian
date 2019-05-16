@@ -361,7 +361,7 @@ function submitForm()
 
     $.ajax({
         data : myForm,
-        type : "post",
+        type : "get",
         url : baseUrl + '/marketing/agen/kelolapenjualanlangsung/store',
         dataType : 'json',
         success : function (response){
