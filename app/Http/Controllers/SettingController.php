@@ -115,7 +115,7 @@ class SettingController extends Controller
 
         $id = $request->id;
 
-        return view('pengaturan.pengaturanpengguna.akses', compact('nama', 'level', 'address', 'menu', 'akses', 'company', 'id'));
+        return view('pengaturan.pengaturanpengguna.akses', compact('nama', 'level', 'address', 'menu', 'akses', 'company', 'id', 'data'));
     }
 
     public function pengaturanpengguna_create()
