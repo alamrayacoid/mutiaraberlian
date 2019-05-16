@@ -935,7 +935,7 @@ class ManajemenAgenController extends Controller
     // store new KPL
     public function storeKPL(Request $request)
     {
-        return Auth::user()->u_company;
+        dd($request);
         // validate request
         $isValidRequest = $this->validate_req($request);
         if ($isValidRequest != '1') {
