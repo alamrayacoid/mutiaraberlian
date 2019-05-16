@@ -39,7 +39,7 @@ class PenjualanPusatController extends Controller
 
         return '<div class="btn-group btn-group-sm">
                 <button class="btn btn-primary btn-detail" type="button" onclick="getDetailTOP('.$data->po_id.')" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
-                <button class="btn btn-success btn-process" type="button" onclick="processTOP('.$data->po_id.')" title="Detail" data-toggle="modal" data-target="#modalProcessTOP"><i class="fa fa-arrow-right"></i></button>
+                <button class="btn btn-success btn-process" type="button" onclick="processTOP('.$data->po_id.')" title="Proses" data-toggle="modal" data-target="#modalProcessTOP"><i class="fa fa-arrow-right"></i></button>
                 </div>';
                 // <button class="btn btn-success btn-proses" type="button" title="Proses" onclick="window.location.href=\''. route('orderpenjualan.proses') .'?id='.encrypt($data->po_id).'\'"><i class="fa fa-arrow-right"></i></button>
       })
