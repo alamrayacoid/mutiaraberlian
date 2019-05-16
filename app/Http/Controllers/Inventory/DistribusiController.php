@@ -9,6 +9,7 @@ use Auth;
 use CodeGenerator;
 use Carbon\Carbon;
 use DB;
+use App\d_stock;
 use App\d_stockdistribution;
 use App\d_stockdistributiondt;
 use App\m_item;
@@ -61,7 +62,7 @@ class DistribusiController extends Controller
         {
             $existedItems = array();
         }
-        // dd($request->existedItems, $existedItems);
+
         $cari = $request->term;
         $data = m_item::where('i_isactive', 'Y')
             ->whereNotIn('i_id', $existedItems)
@@ -69,6 +70,12 @@ class DistribusiController extends Controller
                 $query
                     ->where('i_name', 'like', '%'. $cari .'%')
                     ->orWhere('i_code', 'like', '%'. $cari .'%');
+            })
+            ->whereHas('getStock', function ($query) {
+                $query
+                    ->where('s_position', Auth::user()->u_company)
+                    ->where('s_status', 'ON DESTINATION')
+                    ->where('s_condition', 'FINE');
             })
             ->with('getUnit1')
             ->with('getUnit2')
@@ -88,8 +95,23 @@ class DistribusiController extends Controller
                 ];
             }
         }
-
         return response()->json($results);
+    }
+    // get item stock
+    public function getStock($id)
+    {
+        $mainStock = d_stock::where('s_item', $id)
+            ->where('s_position', Auth::user()->u_company)
+            ->where('s_status', 'ON DESTINATION')
+            ->where('s_condition', 'FINE')
+            ->with('getItem')
+            ->first();
+
+        $stock['unit1'] = floor($mainStock->s_qty / $mainStock->getItem->i_unitcompare1);
+        $stock['unit2'] = floor($mainStock->s_qty / $mainStock->getItem->i_unitcompare2);
+        $stock['unit3'] = floor($mainStock->s_qty / $mainStock->getItem->i_unitcompare3);
+
+        return response()->json($stock);
     }
     // get list unit for selct-option
     public function getListUnit(Request $request)

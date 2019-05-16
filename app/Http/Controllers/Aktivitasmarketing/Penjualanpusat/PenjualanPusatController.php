@@ -13,6 +13,9 @@ use Response;
 use DataTables;
 use Carbon\Carbon;
 use CodeGenerator;
+use App\d_productorder;
+use App\d_productorderdt;
+use App\d_stock;
 
 class PenjualanPusatController extends Controller
 {
@@ -21,7 +24,9 @@ class PenjualanPusatController extends Controller
         return view('marketing/penjualanpusat/index');
     }
 
-    public function tableterima(){
+    // Terima Order Penjualan
+    public function getTableTOP()
+    {
       $data = DB::table('d_productorder')->leftjoin('m_company', 'c_id', '=', 'po_agen')->where('po_status', 'P')->get();
 
       return Datatables::of($data)
@@ -33,9 +38,10 @@ class PenjualanPusatController extends Controller
         $tmp = DB::table('d_productorderdt')->where('pod_productorder', $data->po_id)->sum('pod_totalprice');
 
         return '<div class="btn-group btn-group-sm">
-                <button class="btn btn-primary btn-detail" type="button" onclick="getdetail('.$data->po_id.')" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
-                <button class="btn btn-success btn-proses" type="button" title="Proses" onclick="window.location.href=\''. route('orderpenjualan.proses') .'?id='.encrypt($data->po_id).'\'"><i class="fa fa-arrow-right"></i></button>
+                <button class="btn btn-primary btn-detail" type="button" onclick="getDetailTOP('.$data->po_id.')" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
+                <button class="btn btn-success btn-process" type="button" onclick="processTOP('.$data->po_id.')" title="Detail" data-toggle="modal" data-target="#modalProcessTOP"><i class="fa fa-arrow-right"></i></button>
                 </div>';
+                // <button class="btn btn-success btn-proses" type="button" title="Proses" onclick="window.location.href=\''. route('orderpenjualan.proses') .'?id='.encrypt($data->po_id).'\'"><i class="fa fa-arrow-right"></i></button>
       })
       ->addColumn('total', function($data){
         $tmp = DB::table('d_productorderdt')->where('pod_productorder', $data->po_id)->sum('pod_totalprice');
@@ -44,6 +50,50 @@ class PenjualanPusatController extends Controller
       })
       ->rawColumns(['tanggal', 'action', 'total'])
       ->make(true);
+    }
+
+    public function getDetailTOP(Request $request)
+    {
+        $data = d_productorder::where('po_id', $request->id)
+        ->with('getAgent')
+        ->with(['getPODt' => function ($query) {
+            $query
+            ->with(['getItem' => function ($query) {
+                $query
+                ->with('getUnit1')
+                ->with('getUnit2')
+                ->with('getUnit3')
+                ->get();
+            }])
+            ->with('getUnit')
+            ->get();
+        }])
+        ->first();
+
+
+        // check again how to get stock, is it true ?
+        $stockItem = array();
+        foreach ($data->getPODt as $key => $val) {
+            $getStock = d_stock::where('s_item', $val->pod_item)
+            ->where('s_position', $data->po_comp)
+            ->where('s_status', 'ON DESTINATION')
+            ->where('s_condition', 'FINE')
+            ->first();
+
+            array_push($stockItem, $getStock->s_qty);
+        }
+
+        $data->stockItem = $stockItem;
+        // dd($data->stockItem);
+        $data->total = d_productorderdt::where('pod_productorder', $request->id)->sum('pod_totalprice');
+        $data->dateFormated = Carbon::parse($data->po_date)->format('d M Y');
+
+        return response()->json($data);
+    }
+
+    public function confirmProcessTOP(Request $request, $id)
+    {
+        dd($request->all());
     }
 
     public function orderpenjualan_proses(Request $request)
@@ -378,17 +428,4 @@ class PenjualanPusatController extends Controller
             ->make(true);
     }
 
-    public function getdetail(Request $request){
-      $data = DB::table('d_productorder')->leftjoin('m_company', 'c_id', '=', 'po_agen')->where('po_id', $request->id)->select('c_name', DB::raw('DATE_FORMAT(po_date, "%d-%m-%Y") as po_date'), 'po_nota')->first();
-
-      $total = DB::table('d_productorderdt')->where('pod_productorder', $request->id)->sum('pod_totalprice');
-
-      $dt = DB::table('d_productorderdt')->join('m_item', 'i_id', '=', 'pod_item')->join('m_unit', 'u_id', '=', 'pod_unit')->where('pod_productorder', $request->id)->get();
-
-      return response()->json([
-        'data' => $data,
-        'total' => $total,
-        'dt' => $dt
-      ]);
-    }
 }

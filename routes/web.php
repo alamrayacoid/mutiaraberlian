@@ -247,6 +247,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/distribusibarang/index', 'Inventory\DistribusiController@index')->name('distribusibarang.index');
     Route::get('/inventory/distribusibarang/create', 'Inventory\DistribusiController@create')->name('distribusibarang.create');
     Route::get('/inventory/distribusibarang/get-item', 'Inventory\DistribusiController@getItem')->name('distribusibarang.getItem');
+    Route::get('/inventory/distribusibarang/get-stock/{id}', 'Inventory\DistribusiController@getStock')->name('distribusibarang.getStock');
     Route::get('/inventory/distribusibarang/get-list-unit', 'Inventory\DistribusiController@getListUnit')->name('distribusibarang.getListUnit');
     Route::get('/inventory/distribusibarang/get-item-price', 'Inventory\DistribusiController@getItemPrice')->name('distribusibarang.getItemPrice');
     Route::post('/inventory/distribusibarang/store', 'Inventory\DistribusiController@store')->name('distribusibarang.store');
@@ -349,8 +350,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/manajemenmarketing/edit-month-promotion', 'MarketingController@month_promotion_edit')->name('monthpromotion.edit');
     // Penjualan Pusat
     Route::get('/marketing/penjualanpusat/index', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@index')->name('penjualanpusat.index');
-    Route::get('/marketing/penjualanpusat/tableterima', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@tableterima')->name('penjualanpusat.tableterima');
-    Route::get('/marketing/penjualanpusat/getdetail', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getdetail')->name('penjualanpusat.getdetail');
+    Route::get('/marketing/penjualanpusat/get-table-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTableTOP')->name('penjualanpusat.getTableTOP');
+    Route::get('/marketing/penjualanpusat/get-detail-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getDetailTOP')->name('penjualanpusat.getDetailTOP');
+    Route::post('/marketing/penjualanpusat/confirm-process-top/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@confirmProcessTOP')->name('penjualanpusat.confirmProcessTOP');
     Route::get('/marketing/penjualanpusat/orderpenjualan/proses', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@orderpenjualan_proses')->name('orderpenjualan.proses');
     // Target Realisasi
     Route::get('/marketing/penjualanpusat/targetrealisasi/targetList', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetList')->name('targetReal.list');

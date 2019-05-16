@@ -75,7 +75,10 @@
                                                         <input type="hidden" name="itemsId[]" class="itemsId">
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="qty[]" class="form-control form-control-sm qty digits">
+                                                        <input type="text" name="qty[]" class="form-control form-control-sm qty digits" autocomplete="off">
+                                                        <input type="hidden" class="qtyStock1">
+                                                        <input type="hidden" class="qtyStock2">
+                                                        <input type="hidden" class="qtyStock3">
                                                     </td>
                                                     <td>
                                                         <select name="units[]" class="form-control form-control-sm select2 units"></select>
@@ -122,7 +125,10 @@
                     <input type="hidden" name="itemsId[]" class="itemsId">
                 </td>
                 <td>
-                    <input type="text" name="qty[]" class="form-control form-control-sm qty digits">
+                    <input type="text" name="qty[]" class="form-control form-control-sm qty digits" autocomplete="off">
+                    <input type="hidden" class="qtyStock1">
+                    <input type="hidden" class="qtyStock2">
+                    <input type="hidden" class="qtyStock3">
                 </td>
                 <td>
                     <select name="units[]" class="form-control form-control-sm select2 units"></select>
@@ -146,6 +152,7 @@
         // remove all event-handler and re-declare it
         $('.items').off();
         $('.qty').off();
+        $('.units').off();
         $('.btnRemoveItem').off();
         // set event for field-items
         $('.items').on('click', function () {
@@ -158,9 +165,15 @@
             findItemAu();
         });
         // set event for field-qty
-        $('.qty').on('keyup', function() {
+        $('.qty').on('keyup', function () {
             idxItem = $('.qty').index(this);
+            validateQty();
         });
+        // set event for select-units
+        $('.units').on('change', function () {
+            idxItem = $('.units').index(this);
+            validateQty();
+        })
         // event to remove an item from table_items
         $('.btnRemoveItem').on('click', function() {
             $(this).parents('tr').remove();
@@ -211,6 +224,7 @@
                 $('.items').eq(idxItem).val(data.item.name);
                 $('.itemsId').eq(idxItem).val(data.item.id);
                 setListUnit(data.item);
+                setStockUnit(data.item.id);
             }
         });
     }
@@ -229,6 +243,46 @@
             option += '<option value="' + item.unit3.u_id + '">' + item.unit3.u_name + '</option>';
         }
         $(".units").eq(idxItem).append(option);
+    }
+    // get stock of an item
+    function setStockUnit(itemId)
+    {
+        $.ajax({
+            url: baseUrl + "/inventory/distribusibarang/get-stock/" + itemId,
+            type: "get",
+            success: function(response) {
+                $('.qtyStock1').eq(idxItem).val(response.unit1);
+                $('.qtyStock2').eq(idxItem).val(response.unit2);
+                $('.qtyStock3').eq(idxItem).val(response.unit3);
+            },
+            error: function(xhr, status, error) {
+                loadingHide();
+				let err = JSON.parse(xhr.responseText);
+                messageWarning('Error', err.message);
+            }
+        });
+    }
+    // validate qty and unit
+    function validateQty()
+    {
+        let stock = 0;
+        // get stock-value
+        if ($(".units").eq(idxItem).prop('selectedIndex') == 0) {
+            stock = $('.qtyStock1').eq(idxItem).val();
+        } else if ($(".units").eq(idxItem).prop('selectedIndex') == 1) {
+            stock = $('.qtyStock2').eq(idxItem).val();
+        } else if ($(".units").eq(idxItem).prop('selectedIndex') == 2) {
+            stock = $('.qtyStock3').eq(idxItem).val();
+        }
+
+        stock = parseFloat(stock);
+
+        if ($('.qty').eq(idxItem).val() > stock) {
+            $('.qty').eq(idxItem).val(stock);
+            messageWarning('Perhatian', 'Stock tersedia : ' + stock)
+        } else if ($('.qty').eq(idxItem).val() < 0 || $('.qty').eq(idxItem).val() == '' || isNaN($('.qty').eq(idxItem).val())) {
+            $('.qty').eq(idxItem).val(0);
+        }
     }
     // submit new-distribusibarang
     function submitForm()

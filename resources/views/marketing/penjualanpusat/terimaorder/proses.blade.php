@@ -104,7 +104,7 @@
 var counter = $('input[name=counter]').val();
   $(document).ready(function(){
     $(".namabarang").autocomplete({
-      source: '{{route('distribusibarang.getitem')}}',
+      source: "{{route('distribusibarang.getItem')}}",
       select: function(event, ui) {
         var iam = $(this).data('counter');
         getdata(ui.item.id, iam);
@@ -130,7 +130,7 @@ var counter = $('input[name=counter]').val();
         );
 
         $(".namabarang").autocomplete({
-          source: '{{route('distribusibarang.getitem')}}',
+          source: "{{route('distribusibarang.getItem')}}",
           select: function(event, ui) {
             var iam = $(this).data('counter');
             getdata(ui.item.id, iam);

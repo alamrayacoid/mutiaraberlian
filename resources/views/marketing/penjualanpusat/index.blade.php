@@ -4,6 +4,7 @@
 
     <!-- Modal Terima Order -->
     @include('marketing.penjualanpusat.terimaorder.modal')
+    @include('marketing.penjualanpusat.terimaorder.modal-process')
     @include('marketing.penjualanpusat.targetrealisasi.modal')
 
     <article class="content animated fadeInLeft">
@@ -118,279 +119,466 @@
     </div>
 @endsection
 @section('extra_script')
-    <script type="text/javascript">
-        var table_sup;
+<script type="text/javascript">
 
-        $(document).ready(function () {
-          		table_sup = $('#table_approval').DataTable({
-          			responsive: true,
-          			serverSide: true,
-          			ajax: {
-          				url: baseUrl + '/marketing/penjualanpusat/tableterima',
-          				type: "get",
-          				data: {
-          					"_token": "{{ csrf_token() }}"
-          				}
-          			},
-          			columns: [
-          				{data: 'DT_RowIndex'},
-          				{data: 'tanggal'},
-          				{data: 'c_name'},
-          				{data: 'po_nota'},
-          				{data: 'total'},
-          				{data: 'action', name: 'action'}
-          			],
-          			pageLength: 10,
-          			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 100]]
-          		});
+    $(document).ready(function () {
 
-            var table_bar = $('#table_tahunan').DataTable();
-            var table_pus = $('#table_bulanan').DataTable();
-            var table_par = $('#table_targetrealisasi').DataTable();
+        var table_bar = $('#table_tahunan').DataTable();
+        var table_pus = $('#table_bulanan').DataTable();
+        var table_par = $('#table_targetrealisasi').DataTable();
 
-            $("#cari_namabarang").autocomplete({
-                source: function (request, response) {
-                    var id = [''];
-                    $.ajax({
-                        url: "{{ url('marketing/penjualanpusat/targetrealisasi/cari-barang') }}",
-                        data: {
-                            term: $("#cari_namabarang").val(),
-                            idItem: id
-                        },
-                        success: function (data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 1,
-                select: function (event, data) {
-                    $('#cari_idbarang').val(data.item.id);
-                }
-            });
-
-            $(document).on('click', '.btn-rejected', function () {
-                var ini = $(this);
-                $.confirm({
-                    animation: 'RotateY',
-                    closeAnimation: 'scale',
-                    animationBounce: 1.5,
-                    icon: 'fa fa-exclamation-triangle',
-                    title: 'Peringatan!',
-                    content: 'Apa anda yakin?',
-                    theme: 'disable',
-                    buttons: {
-                        info: {
-                            btnClass: 'btn-blue',
-                            text: 'Ya',
-                            action: function () {
-                                $.toast({
-                                    heading: 'Information',
-                                    text: 'Promosi Ditolak.',
-                                    bgColor: '#0984e3',
-                                    textColor: 'white',
-                                    loaderBg: '#fdcb6e',
-                                    icon: 'info'
-                                })
-                                ini.parents('.btn-group').html('<button class="btn btn-danger btn-sm btn-cancel-reject">Batalkan Penelokan</button>');
-                            }
-                        },
-                        cancel: {
-                            text: 'Tidak',
-                            action: function () {
-                                // tutup confirm
-                            }
-                        }
+        $("#cari_namabarang").autocomplete({
+            source: function (request, response) {
+                var id = [''];
+                $.ajax({
+                    url: "{{ url('marketing/penjualanpusat/targetrealisasi/cari-barang') }}",
+                    data: {
+                        term: $("#cari_namabarang").val(),
+                        idItem: id
+                    },
+                    success: function (data) {
+                        response(data);
                     }
                 });
-            });
-
-            $("#datepicker").datepicker({
-                format: "mm/yyyy",
-                viewMode: "months",
-                minViewMode: "months"
-            });
-
-            $(document).on('click', '.btn-cancel-reject', function () {
-                $(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>' +
-                    '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
-            })
-
-            $(document).on('click', '.btn-approval', function () {
-                $.toast({
-                    heading: 'Information',
-                    text: 'Promosi Diterima.',
-                    bgColor: '#0984e3',
-                    textColor: 'white',
-                    loaderBg: '#fdcb6e',
-                    icon: 'info'
-                })
-                $(this).parents('.btn-group').html('<button class="btn btn-primary btn-sm btn-cancel-approve">Batalkan Penerimaan</button>')
-            })
-
-            $(document).on('click', '.btn-cancel-approve', function () {
-                $(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>' +
-                    '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
-            })
-            targetReal();
+            },
+            minLength: 1,
+            select: function (event, data) {
+                $('#cari_idbarang').val(data.item.id);
+            }
         });
 
-        function targetReal() {
-            tb_target = $('#table_target').DataTable({
-                responsive: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('targetReal.list') }}",
-                    type: "get",
-                    data: {
-                        "_token": "{{ csrf_token() }}"
+        $(document).on('click', '.btn-rejected', function () {
+            var ini = $(this);
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apa anda yakin?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            $.toast({
+                                heading: 'Information',
+                                text: 'Promosi Ditolak.',
+                                bgColor: '#0984e3',
+                                textColor: 'white',
+                                loaderBg: '#fdcb6e',
+                                icon: 'info'
+                            })
+                            ini.parents('.btn-group').html('<button class="btn btn-danger btn-sm btn-cancel-reject">Batalkan Penelokan</button>');
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
                     }
-                },
-                columns: [
-                    {data: 'st_periode'},
-                    {data: 'c_name'},
-                    {data: 'i_name'},
-                    {data: 'target'},
-                    {data: 'realisasi'},
-                    {data: 'status'},
-                    {data: 'action'}
-                ],
-                pageLength: 10,
-                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+                }
             });
-        }
+        });
 
-        function editTarget(st_id, dt_id) {
-            loadingShow();
-            $.ajax({
-                data: {id: '"' + st_id + '"', dt_id: '"' + dt_id + '"'},
+        $("#datepicker").datepicker({
+            format: "mm/yyyy",
+            viewMode: "months",
+            minViewMode: "months"
+        });
+
+        $(document).on('click', '.btn-cancel-reject', function () {
+            $(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>' +
+                '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
+        })
+
+        $(document).on('click', '.btn-approval', function () {
+            $.toast({
+                heading: 'Information',
+                text: 'Promosi Diterima.',
+                bgColor: '#0984e3',
+                textColor: 'white',
+                loaderBg: '#fdcb6e',
+                icon: 'info'
+            })
+            $(this).parents('.btn-group').html('<button class="btn btn-primary btn-sm btn-cancel-approve">Batalkan Penerimaan</button>')
+        })
+
+        $(document).on('click', '.btn-cancel-approve', function () {
+            $(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>' +
+                '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
+        })
+        targetReal();
+    });
+
+    function targetReal() {
+        tb_target = $('#table_target').DataTable({
+            responsive: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('targetReal.list') }}",
                 type: "get",
-                url: '{{ url("marketing/penjualanpusat/targetrealisasi/get-target") }}',
-                success: function (response) {
-                    $('.edit_dt').val(dt_id);
-                    $('.edit_id').val(st_id);
-                    $("#edit_satuanawal").select2('destroy');
-                    $("#edit_satuanbaru").select2('destroy');
-                    $('#edit_satuanawal').find('option').remove();
-                    $('#edit_satuanbaru').find('option').remove();
-                    var data = response.data;
-                    var satuan = response.satuan;
-                    $('#edit_namabarang').html(data.i_name);
-                    $('#edit_periode').html(data.periode);
-                    $('#edit_cabang').html(data.c_name);
-                    $('#edit_targetawal').val(data.std_qty);
-                    $("#edit_satuanawal").select2({
-                        data: satuan
-                    })
-                    $("#edit_satuanbaru").select2({
-                        data: satuan
-                    })
-                    $('#edit_satuanawal').val(data.std_unit);
-                    $('#edit_satuanawal').trigger('change');
-                    loadingHide();
-                    $('#edittarget').modal('show');
-                },
-                error: function (e) {
-                    $.toast({
-                        heading: 'Warning',
-                        text: e.message,
-                        bgColor: '#00b894',
-                        textColor: 'white',
-                        loaderBg: '#55efc4',
-                        icon: 'warning',
-                        stack: false
-                    });
+                data: {
+                    "_token": "{{ csrf_token() }}"
                 }
-            })
-        }
+            },
+            columns: [
+                {data: 'st_periode'},
+                {data: 'c_name'},
+                {data: 'i_name'},
+                {data: 'target'},
+                {data: 'realisasi'},
+                {data: 'status'},
+                {data: 'action'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    }
 
-        function updateTarget() {
-            var dt = $('.edit_dt').val();
-            var id = $('.edit_id').val();
-            $.ajax({
-                data: $('#form_updatetarget').serialize(),
-                type: "post",
-                url: '{{ url("marketing/penjualanpusat/targetrealisasi/updateTarget/") }}/' + id + '/' + dt,
-                success: function (response) {
-                    if (response.status == 'sukses') {
-                        messageSuccess('Berhasil', 'Data berhasil diperbarui');
-                        $('#edittarget').modal('hide');
-                        tb_target.ajax.reload();
-                    } else {
-                        messageSuccess('Gagal', 'Silahkan coba beberapa saat lagi');
-                    }
-                },
-                error: function (e) {
-                    $.toast({
-                        heading: 'Warning',
-                        text: e.message,
-                        bgColor: '#00b894',
-                        textColor: 'white',
-                        loaderBg: '#55efc4',
-                        icon: 'warning',
-                        stack: false
-                    });
+    function editTarget(st_id, dt_id) {
+        loadingShow();
+        $.ajax({
+            data: {id: '"' + st_id + '"', dt_id: '"' + dt_id + '"'},
+            type: "get",
+            url: '{{ url("marketing/penjualanpusat/targetrealisasi/get-target") }}',
+            success: function (response) {
+                $('.edit_dt').val(dt_id);
+                $('.edit_id').val(st_id);
+                $("#edit_satuanawal").select2('destroy');
+                $("#edit_satuanbaru").select2('destroy');
+                $('#edit_satuanawal').find('option').remove();
+                $('#edit_satuanbaru').find('option').remove();
+                var data = response.data;
+                var satuan = response.satuan;
+                $('#edit_namabarang').html(data.i_name);
+                $('#edit_periode').html(data.periode);
+                $('#edit_cabang').html(data.c_name);
+                $('#edit_targetawal').val(data.std_qty);
+                $("#edit_satuanawal").select2({
+                    data: satuan
+                })
+                $("#edit_satuanbaru").select2({
+                    data: satuan
+                })
+                $('#edit_satuanawal').val(data.std_unit);
+                $('#edit_satuanawal').trigger('change');
+                loadingHide();
+                $('#edittarget').modal('show');
+            },
+            error: function (e) {
+                $.toast({
+                    heading: 'Warning',
+                    text: e.message,
+                    bgColor: '#00b894',
+                    textColor: 'white',
+                    loaderBg: '#55efc4',
+                    icon: 'warning',
+                    stack: false
+                });
+            }
+        })
+    }
+
+    function updateTarget() {
+        var dt = $('.edit_dt').val();
+        var id = $('.edit_id').val();
+        $.ajax({
+            data: $('#form_updatetarget').serialize(),
+            type: "post",
+            url: '{{ url("marketing/penjualanpusat/targetrealisasi/updateTarget/") }}/' + id + '/' + dt,
+            success: function (response) {
+                if (response.status == 'sukses') {
+                    messageSuccess('Berhasil', 'Data berhasil diperbarui');
+                    $('#edittarget').modal('hide');
+                    tb_target.ajax.reload();
+                } else {
+                    messageSuccess('Gagal', 'Silahkan coba beberapa saat lagi');
                 }
-            })
-        }
+            },
+            error: function (e) {
+                $.toast({
+                    heading: 'Warning',
+                    text: e.message,
+                    bgColor: '#00b894',
+                    textColor: 'white',
+                    loaderBg: '#55efc4',
+                    icon: 'warning',
+                    stack: false
+                });
+            }
+        })
+    }
 
-        function cariTarget() {
-            var barang = $('#cari_idbarang').val();
-            var periode = $('.cari_periode').val();
-            tb_target.destroy();
-            tb_target = $('#table_target').DataTable({
-                responsive: true,
-                serverSide: true,
-                ajax: {
-                    url: '{{ url("marketing/penjualanpusat/targetrealisasi/get-periode") }}',
-                    type: "get",
-                    data: {
-                        "_token": "{{ csrf_token() }}",
-                        barang: barang,
-                        periode: periode
-                    }
-                },
-                columns: [
-                    {data: 'st_periode'},
-                    {data: 'c_name'},
-                    {data: 'i_name'},
-                    {data: 'target'},
-                    {data: 'realisasi'},
-                    {data: 'status'},
-                    {data: 'action'}
-                ],
-                pageLength: 10,
-                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-            });
-        }
+    function cariTarget() {
+        var barang = $('#cari_idbarang').val();
+        var periode = $('.cari_periode').val();
+        tb_target.destroy();
+        tb_target = $('#table_target').DataTable({
+            responsive: true,
+            serverSide: true,
+            ajax: {
+                url: '{{ url("marketing/penjualanpusat/targetrealisasi/get-periode") }}',
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    barang: barang,
+                    periode: periode
+                }
+            },
+            columns: [
+                {data: 'st_periode'},
+                {data: 'c_name'},
+                {data: 'i_name'},
+                {data: 'target'},
+                {data: 'realisasi'},
+                {data: 'status'},
+                {data: 'action'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    }
 
-        function setNull(id) {
-            $('#'+id).val('');
-        }
+    function setNull(id) {
+        $('#'+id).val('');
+    }
 
-        function getdetail(id){
-          var html = '';
-          $.ajax({
+</script>
+
+<!-- script for 'terima order' -->
+<script type="text/javascript">
+    var idxItem = null;
+    $(document).ready(function() {
+        tableTOP();
+
+        $('#modalProcessTOP').on('hidden.bs.modal', function() {
+            $('#formModalPr')[0].reset();
+        });
+        $('#btn_submitProcess').on('click', function() {
+            confirmProcessTOP();
+        });
+    });
+
+    var table_top;
+    function tableTOP()
+    {
+  		$('#table_terimaop').dataTable().fnDestroy();
+        table_top = $('#table_terimaop').DataTable({
+            responsive: true,
+            serverSide: true,
+            ajax: {
+                url: baseUrl + '/marketing/penjualanpusat/get-table-top',
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}"
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'tanggal'},
+                {data: 'c_name'},
+                {data: 'po_nota'},
+                {data: 'total'},
+                {data: 'action', name: 'action'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 100]]
+        });
+    }
+
+    function getDetailTOP(id)
+    {
+        loadingShow();
+        $.ajax({
             type: 'get',
             data: {id},
             dataType: 'JSON',
-            url: "{{route('penjualanpusat.getdetail')}}",
+            url: "{{ route('penjualanpusat.getDetailTOP') }}",
             success : function(response){
-              $('#dtanggal').val(response.data.po_date);
-              $('#dagen').val(response.data.c_name);
-              $('#dnota').val(response.data.po_nota);
-              $('#dtotal').val(response.total);
-              for (var i = 0; i < response.dt.length; i++) {
-                html += '<tr>'+
-                        '<td>'+ response.dt[i].i_code + ' - ' + response.dt[i].i_name +'</td>'+
-                        '<td>'+response.dt[i].u_name+'</td>'+
-                        '<td class="input-rupiah">'+convertToRupiah(parseInt(response.dt[i].pod_price))+'</td>'+
-                        '<td class="input-rupiah">'+convertToRupiah(parseInt(response.dt[i].pod_totalprice))+'</td>'+
-                        '</tr>';
-              }
+                loadingHide();
+                $('#dateModalDt').val(response.dateFormated);
+                $('#agentModalDt').val(response.get_agent.c_name);
+                $('#notaModalDt').val(response.po_nota);
+                $('#totalModalDt').val(parseFloat(response.total));
 
-              $('#showdetail').html(html);
+                $('#table_modalDt tbody').empty();
+                $.each(response.get_p_o_dt, function (key, val) {
+                    let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name +'</td>';
+                    let qty = '<td class="digits">'+ val.pod_qty +'</td>';
+                    let unit = '<td>'+ val.get_unit.u_name +'</td>';
+                    let price = '<td class="rupiah">'+ parseFloat(val.pod_price) +'</td>';
+                    let subTotal = '<td class="rupiah">'+ parseFloat(val.pod_totalprice) +'</td>';
+                    appendItem = '<tr>'+ item + qty + unit + price + subTotal +'</tr>';
+                    // append data to table-row
+                    $('#table_modalDt > tbody:last-child').append(appendItem);
+                });
+                //mask money
+                $('.rupiah').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 2,
+                    autoGroup: true,
+                    prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
+                //mask digits
+                $('.digits').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 0,
+                    autoGroup: true,
+                    prefix: '', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
+            },
+            error: function(xhr, status, error) {
+                loadingHide();
+				let err = JSON.parse(xhr.responseText);
+                messageWarning('Error', err.message);
             }
-          });
+        });
+    }
+
+    function processTOP(id)
+    {
+        loadingShow();
+        $.ajax({
+            url: "{{route('penjualanpusat.getDetailTOP')}}",
+            type: 'get',
+            data: {id},
+            dataType: 'JSON',
+            success : function(response){
+                console.log(response);
+                // console.log(response.stockItem[0]);
+                loadingHide();
+                $('#idModalPr').val(response.po_id);
+                $('#dateModalPr').val(response.dateFormated);
+                $('#agentModalPr').val(response.get_agent.c_name);
+                $('#notaModalPr').val(response.po_nota);
+                $('#totalModalPr').val(parseFloat(response.total));
+
+                $('#table_modalPr tbody').empty();
+                $.each(response.get_p_o_dt, function (key, val) {
+                    let itemId = '<input type="hidden" name="itemId[]" value="'+ val.pod_item +'">';
+                    let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name + itemId +'</td>';
+
+                    let qtyStock = '<input type="hidden" class="qtyStock" value="'+ response.stockItem[key] +'">';
+                    let qty = '<td><input type="text" name="qty[]" class="form-control form-control-sm digits qtyModalPr" value="'+ val.pod_qty +'">'+ qtyStock +'</td>';
+
+                    let unit1 = (val.get_item.get_unit1 != null) ? '<option value="'+ val.get_item.get_unit1.u_id +'" data-unitcmp="'+ parseInt(val.get_item.i_unitcompare1) +'">'+ val.get_item.get_unit1.u_name +'</option>' : '';
+                    let unit2 = (val.get_item.get_unit2 != null) ? '<option value="'+ val.get_item.get_unit2.u_id +'" data-unitcmp="'+ parseInt(val.get_item.i_unitcompare2) +'">'+ val.get_item.get_unit2.u_name +'</option>' : '';
+                    let unit3 = (val.get_item.get_unit3 != null) ? '<option value="'+ val.get_item.get_unit3.u_id +'" data-unitcmp="'+ parseInt(val.get_item.i_unitcompare3) +'">'+ val.get_item.get_unit3.u_name +'</option>' : '';
+                    selectUnit = '<select name="unit[]" class="form-control form-control-sm select2 unitModalPr"><option value="" disabled>Pilih Barang</option>'+ unit1 + unit2 + unit3 + '</select>';
+                    let unit = '<td>'+ selectUnit +'</td>';
+
+                    let price = '<td class="rupiah">'+ parseFloat(val.pod_price) +'</td>';
+                    let subTotal = '<td class="rupiah">'+ parseFloat(val.pod_totalprice) +'</td>';
+                    appendItem = '<tr>'+ item + qty + unit + price + subTotal +'</tr>';
+                    // append data to table-row
+                    $('#table_modalPr > tbody:last-child').append(appendItem);
+                    // set unitModalPr selected item
+                    $('.unitModalPr option[value='+ val.pod_unit +']').attr('selected', 'selected');
+                });
+                // show modal
+                $('#modalProcessTOP').modal('show');
+                getFieldsReady();
+            },
+            error: function(xhr, status, error) {
+                loadingHide();
+				let err = JSON.parse(xhr.responseText);
+                messageWarning('Error', err.message);
+            }
+        });
+    }
+
+    function getFieldsReady()
+    {
+        $('.qtyModalPr').off();
+        $('.unitModalPr').off();
+        // set event handler for qty
+        $('.qtyModalPr').on('keyup', function() {
+            idxItem = $('.qtyModalPr').index(this);
+            validateQty();
+        });
+        // set event handler for unit
+        $('.unitModalPr').on('change', function() {
+            idxItem = $('.unitModalPr').index(this);
+            validateQty();
+        });
+        //mask money
+        $('.rupiah').inputmask("currency", {
+            radixPoint: ",",
+            groupSeparator: ".",
+            digits: 2,
+            autoGroup: true,
+            prefix: ' Rp ', //Space after $, this will not truncate the first character.
+            rightAlign: true,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
+        });
+        //mask digits
+        $('.digits').inputmask("currency", {
+            radixPoint: ",",
+            groupSeparator: ".",
+            digits: 0,
+            autoGroup: true,
+            prefix: '', //Space after $, this will not truncate the first character.
+            rightAlign: true,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
+        });
+
+    }
+    // validate qty based on current stock
+    function validateQty()
+    {
+        let stock = 0;
+        // get stock-value
+        stock = parseFloat($('.qtyStock').eq(idxItem).val());
+        unitcmp = $('.unitModalPr').eq(idxItem).find('option:selected').data('unitcmp');
+        stock = Math.floor(stock / unitcmp);
+        // validate stock
+        if ($('.qtyModalPr').eq(idxItem).val() > stock) {
+            $('.qtyModalPr').eq(idxItem).val(stock);
+            messageWarning('Perhatian', 'Stock tersedia : ' + stock)
+        } else if ($('.qtyModalPr').eq(idxItem).val() < 0 || $('.qtyModalPr').eq(idxItem).val() == '' || isNaN($('.qtyModalPr').eq(idxItem).val())) {
+            $('.qtyModalPr').eq(idxItem).val(0);
         }
-    </script>
+    }
+
+    function confirmProcessTOP()
+    {
+        loadingShow();
+        id = $('#idModalPr').val();
+        data = $('#formModalPr').serialize();
+
+        $.ajax({
+            url: baseUrl + "/marketing/penjualanpusat/confirm-process-top/" + id,
+            type: "post",
+            data: data,
+            success: function(response) {
+                loadingHide();
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                loadingHide();
+				let err = JSON.parse(xhr.responseText);
+                messageWarning('Error', err.message);
+            }
+        })
+    }
+
+
+</script>
 @endsection
