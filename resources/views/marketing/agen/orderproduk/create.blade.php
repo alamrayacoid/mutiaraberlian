@@ -1414,7 +1414,7 @@
             loadingShow();
             var data = $('#formManagemenAgen :input').serialize();
 
-            axios.get('{{ route('orderagenpusat.add') }}', data)
+            axios.post('{{ route('orderagenpusat.add') }}', data)
                 .then(function (response){
                     if(response.data.status == 'Success'){
                         loadingHide();
