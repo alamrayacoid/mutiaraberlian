@@ -172,6 +172,7 @@ class SettingController extends Controller
             }
 
             $cek = DB::table('d_username')->where('u_username', $request->username)->count();
+
             $cek1 = DB::table('d_username')->where('u_code', $code)->count();
 
             if ($cek != 0) {
@@ -186,7 +187,14 @@ class SettingController extends Controller
                 ]);
             } else {
 
-                $company = $request->cabang;
+                if ($request->type == "agen"){
+                    $compa = DB::table('m_company')
+                        ->where('c_user', '=', 'A0000003')
+                        ->first();
+                    $company = $compa->c_id;
+                } else {
+                    $company = $request->cabang;
+                }
 
                 $id = DB::table('d_username')->max('u_id') + 1;
                 DB::table('d_username')
