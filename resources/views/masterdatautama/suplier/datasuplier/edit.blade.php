@@ -69,7 +69,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="npwp" value="{{ $data['supplier']->s_npwp }}">
+                                <input type="text" class="form-control form-control-sm npwp" name="npwp" value="{{ $data['supplier']->s_npwp }}">
                               </div>
                             </div>
 
@@ -78,7 +78,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="phone" value="{{ $data['supplier']->s_phone }}">
+                                <input type="text" class="form-control form-control-sm hp" name="phone" value="{{ $data['supplier']->s_phone }}">
                               </div>
                             </div>
 
@@ -87,7 +87,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="phone1" value="{{ $data['supplier']->s_phone1 }}">
+                                <input type="text" class="form-control form-control-sm hp" name="phone1" value="{{ $data['supplier']->s_phone1 }}">
                               </div>
                             </div>
 
@@ -96,7 +96,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="phone2" value="{{ $data['supplier']->s_phone2 }}">
+                                <input type="text" class="form-control form-control-sm hp" name="phone2" value="{{ $data['supplier']->s_phone2 }}">
                               </div>
                             </div>
 
@@ -105,7 +105,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6 col-xs-12">
                               <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" name="rekening" value="{{ $data['supplier']->s_rekening }}">
+                                <input type="text" class="form-control form-control-sm rek" name="rekening" value="{{ $data['supplier']->s_rekening }}">
                               </div>
                             </div>
 

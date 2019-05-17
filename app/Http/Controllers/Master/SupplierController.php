@@ -89,15 +89,15 @@ class SupplierController extends Controller
             ->addIndexColumn()
             ->addColumn('limit', function ($datas) {
                 return '<td>
-          <span class="float-left">Rp </span>
-          <span class="float-right">' . number_format($datas->s_limit, 2, ',', '.') . '</span>
-          </td>';
+                <span class="float-left">Rp </span>
+                <span class="float-right">' . number_format($datas->s_limit, 2, ',', '.') . '</span>
+                </td>';
             })
             ->addColumn('hutang', function ($datas) {
                 return '<td>
-          <span class="float-left">Rp </span>
-          <span class="float-right">' . number_format($datas->s_hutang, 2, ',', '.') . '</span>
-          </td>';
+                <span class="float-left">Rp </span>
+                <span class="float-right">' . number_format($datas->s_hutang, 2, ',', '.') . '</span>
+                </td>';
             })
             ->addColumn('phone', function ($datas) {
                 return '<td>' .
@@ -108,13 +108,13 @@ class SupplierController extends Controller
             ->addColumn('action', function ($datas) {
                 if ($datas->s_isactive == 'Y') {
                     return '<div class="btn-group btn-group-sm">
-            <button class="btn btn-warning hint--top hint--warning" onclick="EditSupplier(' . $datas->s_id . ')" rel="tooltip" data-placement="top" aria-label="Edit Data"><i class="fa fa-pencil"></i></button>
-            <button class="btn btn-danger hint--top hint--error" onclick="DisableSupplier(' . $datas->s_id . ')" rel="tooltip" data-placement="top" aria-label="Nonaktifkan Data"><i class="fa fa-times-circle"></i></button>
-            </div>';
+                    <button class="btn btn-warning hint--top hint--warning" onclick="EditSupplier(' . $datas->s_id . ')" rel="tooltip" data-placement="top" aria-label="Edit Data"><i class="fa fa-pencil"></i></button>
+                    <button class="btn btn-danger hint--top hint--error" onclick="DisableSupplier(' . $datas->s_id . ')" rel="tooltip" data-placement="top" aria-label="Nonaktifkan Data"><i class="fa fa-times-circle"></i></button>
+                    </div>';
                 } elseif ($datas->s_isactive == 'N') {
                     return '<div class="btn-group btn-group-sm">
-            <button class="btn btn-success btn-enable hint--top hint--error" onclick="EnableSupplier(' . $datas->s_id . ')" rel="tooltip" data-placement="top" aria-label="Aktifkan Data"><i class="fa fa-check-circle"></i></button>
-            </div>';
+                    <button class="btn btn-success btn-enable hint--top hint--error" onclick="EnableSupplier(' . $datas->s_id . ')" rel="tooltip" data-placement="top" aria-label="Aktifkan Data"><i class="fa fa-check-circle"></i></button>
+                    </div>';
                 }
             })
             ->rawColumns(['limit', 'hutang', 'phone', 'action'])
@@ -221,7 +221,7 @@ class SupplierController extends Controller
         $data['supplier']->s_limit = (int)$data['supplier']->s_limit;
         $data['supplier']->s_hutang = (int)$data['supplier']->s_hutang;
         // dd($data['supplier']);
-        return view('masterdatautama.suplier.edit', compact('data'));
+        return view('masterdatautama.suplier.datasuplier.edit', compact('data'));
     }
 
     /**

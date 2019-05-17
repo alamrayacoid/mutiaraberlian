@@ -367,6 +367,12 @@
             placeholder: ""
         });
 
+        // mask npwp
+        $('.npwp').inputmask("99.999.999.9-999.999", {
+            autoUnmask: true,
+            placeholder: ""
+        });
+
         // mask email
         $('.email').inputmask({alias: "email"});
     });
