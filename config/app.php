@@ -191,6 +191,7 @@ return [
 
     'aliases' => [
 
+        // 'AksesUser' => App\Http\Controllers\AksesUser::class,
         'App' => Illuminate\Support\Facades\App::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,

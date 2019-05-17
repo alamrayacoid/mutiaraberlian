@@ -92,6 +92,10 @@ class CabangController extends Controller
 
     public function create()
     {
+        // $cekAccess = AksesUser::checkAkses(6, 'read');
+        if (!AksesUser::checkAkses(6, 'read')) {
+            abort(401);
+        }
         $employe = DB::table('m_employee')->select('e_id', 'e_name')->get();
         $company = DB::table('m_company')->select('c_id', 'c_name')->get();
         return view('masterdatautama.cabang.create', compact('employe', 'company'));
@@ -99,6 +103,11 @@ class CabangController extends Controller
 
     public function store(Request $request)
     {
+        $cekAccess = AksesUser::checkAkses(6, 'read');
+        if ($cekAccess) {
+            abort(401);
+        }
+
         $messages = [
             'cabang_name.required' => 'Nama cabang masih kosong, silahkan isi terlebih dahulu !',
             'cabang_address.required' => 'Alamat cabang masih kosong, silahkan isi terlebih dahulu !',
@@ -147,6 +156,11 @@ class CabangController extends Controller
 
     public function edit($id = null, Request $request)
     {
+        $cekAccess = AksesUser::checkAkses(6, 'read');
+        if (!$cekAccess) {
+            abort(401);
+        }
+
         if (!$request->isMethod('post')) {
             try {
                 $id = Crypt::decrypt($id);
