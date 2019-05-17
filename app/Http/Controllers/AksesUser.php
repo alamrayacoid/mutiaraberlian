@@ -17,25 +17,25 @@ class AksesUser
         $m_id = Auth::user()->u_id;
         $cek = null;
         if ($aksi == 'read'){
-            $cek = DB::table('m_useraccess')
+            $cek = DB::table('d_useraccess')
                 ->where('ua_username', '=', $m_id)
                 ->where('ua_access', '=', $a_id)
                 ->where('ua_read', '=', 'Y')
                 ->get();
         } elseif ($aksi == 'create'){
-            $cek = DB::table('m_useraccess')
+            $cek = DB::table('d_useraccess')
                 ->where('ua_username', '=', $m_id)
                 ->where('ua_access', '=', $a_id)
                 ->where('ua_create', '=', 'Y')
                 ->get();
         } elseif ($aksi == 'update'){
-            $cek = DB::table('m_useraccess')
+            $cek = DB::table('d_useraccess')
                 ->where('ua_username', '=', $m_id)
                 ->where('ua_access', '=', $a_id)
                 ->where('ua_update', '=', 'Y')
                 ->get();
         } elseif ($aksi == 'delete'){
-            $cek = DB::table('m_useraccess')
+            $cek = DB::table('d_useraccess')
                 ->where('ua_username', '=', $m_id)
                 ->where('ua_access', '=', $a_id)
                 ->where('ua_delete', '=', 'Y')
