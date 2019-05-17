@@ -170,18 +170,23 @@
 			var data = $('#formagen').serialize();
 
 			if (agen.value == "" || agen.value == undefined) {
+                loadingHide();
 				messageFailed('Failed', 'agen kosong, mohon lengkapi data!');
 				return false;
 			} else if (level.value == "" || level.value == undefined) {
+                loadingHide();
 				messageFailed('Failed', 'level password kosong, mohon lengkapi data!');
 				return false;
 			} else if (username.value == "" || username.value == undefined) {
+                loadingHide();
 				messageFailed('Failed', 'username kosong, mohon lengkapi data!');
 				return false;
 			}	else if (password.value == "" || password.value == undefined) {
+                loadingHide();
 				messageFailed('Failed', 'password kosong, mohon lengkapi data!');
 				return false;
 			} else if (confirmpassword.value == "" || confirmpassword.value == undefined) {
+                loadingHide();
 				messageFailed('Failed', 'confirm password kosong, mohon lengkapi data!');
 				return false;
 			} else {

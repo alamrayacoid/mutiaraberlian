@@ -140,7 +140,6 @@ class ManajemenAgenController extends Controller
             $nama = DB::table('m_item')
                 ->join('d_stock', function ($s) use ($comp){
                     $s->on('i_id', '=', 's_item');
-                    $s->where('s_comp', '=', $comp);
                     $s->where('s_position', '=', $comp);
                     $s->where('s_status', '=', 'ON DESTINATION');
                     $s->where('s_condition', '=', 'FINE');
@@ -153,12 +152,12 @@ class ManajemenAgenController extends Controller
                     $q->orWhere('i_name', 'like', '%'.$cari.'%');
                     $q->orWhere('i_code', 'like', '%'.$cari.'%');
                 })
+                ->groupBy('i_id')
                 ->get();
         }else{
             $nama = DB::table('m_item')
                 ->join('d_stock', function ($s) use ($comp){
                     $s->on('i_id', '=', 's_item');
-                    $s->where('s_comp', '=', $comp);
                     $s->where('s_position', '=', $comp);
                     $s->where('s_status', '=', 'ON DESTINATION');
                     $s->where('s_condition', '=', 'FINE');
@@ -172,6 +171,7 @@ class ManajemenAgenController extends Controller
                     $q->orWhere('i_name', 'like', '%'.$cari.'%');
                     $q->orWhere('i_code', 'like', '%'.$cari.'%');
                 })
+                ->groupBy('i_id')
                 ->get();
         }
 
@@ -330,7 +330,7 @@ class ManajemenAgenController extends Controller
         $get_price = DB::table('m_priceclassdt')
             ->join('m_priceclass', 'pcd_classprice', 'pc_id')
             ->select('m_priceclassdt.*', 'm_priceclass.*')
-            ->where('pc_name', '=', $type->a_type)
+            ->where('pc_id', '=', $type->a_class)
             ->where('pcd_item', '=', $item)
             ->where('pcd_unit', '=', $unit)
             ->get();
@@ -355,7 +355,7 @@ class ManajemenAgenController extends Controller
                     }
                 } else {
                     $z = $this->inRange($qty, $get_price);
-                    if ($z != null) {
+                    if ($z !== null) {
                         $harga = $get_price[$z]->pcd_price;
                     }
                 }
@@ -368,6 +368,7 @@ class ManajemenAgenController extends Controller
 
     public function simpanOrderProduk(Request $request)
     {
+
         $data    = $request->all();
 
         if ($data['select_order'] == "1") {
@@ -389,7 +390,12 @@ class ManajemenAgenController extends Controller
                     'po_status' => $status
                 ];
 
-                $podetail = (DB::table('d_productorderdt')->where('pod_productorder', '=', $po_id)->max('pod_detailid')) ? (DB::table('d_productorderdt')->where('pod_productorder', '=', $po_id)->max('pod_detailid')) + 1 : 1;
+                $podetail = (DB::table('d_productorderdt')
+                    ->where('pod_productorder', '=', $po_id)
+                    ->max('pod_detailid')) ?
+                    (DB::table('d_productorderdt')
+                        ->where('pod_productorder', '=', $po_id)
+                        ->max('pod_detailid')) + 1 : 1;
                 $detailpo = $podetail;
                 $val_podt = [];
                 for ($i = 0; $i < count($data['idItem']); $i++) {
@@ -420,7 +426,10 @@ class ManajemenAgenController extends Controller
                 ]);
             }
         } else if ($data['select_order'] == "2") {
-            $po_id = (DB::table('d_productorder')->max('po_id')) ? DB::table('d_productorder')->max('po_id') + 1 : 1;
+            $po_id = (DB::table('d_productorder')
+                ->max('po_id')) ?
+                DB::table('d_productorder')
+                    ->max('po_id') + 1 : 1;
             $penjual = $data['c_cabang'];
             $pembeli = $data['c_compapb'];
             $date   = Carbon::now('Asia/Jakarta')->format('Y-m-d');
@@ -438,10 +447,15 @@ class ManajemenAgenController extends Controller
                     'po_status' => $status
                 ];
 
-                $podetail = (DB::table('d_productorderdt')->where('pod_productorder', '=', $po_id)->max('pod_detailid')) ? (DB::table('d_productorderdt')->where('pod_productorder', '=', $po_id)->max('pod_detailid')) + 1 : 1;
+                $podetail = (DB::table('d_productorderdt')
+                    ->where('pod_productorder', '=', $po_id)
+                    ->max('pod_detailid')) ?
+                    (DB::table('d_productorderdt')
+                        ->where('pod_productorder', '=', $po_id)
+                        ->max('pod_detailid')) + 1 : 1;
                 $detailpo = $podetail;
                 $val_podt = [];
-                for ($i = 0; $i < count($data['idItem']); $i++) {
+                for ($i = 0; $i < count($data['c_idItem']); $i++) {
                     $val_podt[] = [
                         'pod_productorder' => $po_id,
                         'pod_detailid' => $detailpo,
@@ -683,7 +697,7 @@ class ManajemenAgenController extends Controller
         ->leftJoin('m_company as comp', 's_position', 'comp.c_id')
         ->leftJoin('m_company as agen', 's_comp', 'agen.c_id')
         ->leftJoin('m_item', 's_item', 'i_id')
-        ->where('s_comp', '=', $id)
+        ->where('s_position', '=', $id)
         ->select('agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_condition', 's_qty')
         ->get();
 
@@ -933,12 +947,23 @@ class ManajemenAgenController extends Controller
 
         DB::beginTransaction();
         try {
+
+//            if (Auth::user()->u_user === 'E') {
+//                $agent = d_username::where('u_code', $request->agent)->first();
+//            } else {
+//                $agent = Auth::user();
+//            }
+            if (Auth::user()->u_user == "E"){
+                $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
+            } else {
+                $agent = Auth::user();
+            }
             // start insert data
             $salesId = d_sales::max('s_id') + 1;
             $salesNota = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
             $sales = new d_sales();
             $sales->s_id = $salesId;
-            $sales->s_comp = Auth::user()->u_company; // user
+            $sales->s_comp = $agent->c_id; // user
             $sales->s_member = $request->member;
             $sales->s_type = 'C';
             $sales->s_date = Carbon::now('Asia/Jakarta');
@@ -948,15 +973,10 @@ class ManajemenAgenController extends Controller
             $sales->save();
 
             // get item-position based on agent-code
-            if (Auth::user()->u_user === 'E') {
-                $agent = d_username::where('u_code', $request->agent)->first();
-            } else {
-                $agent = Auth::user();
-            }
 
             for ($i=0; $i < sizeof($request->itemListId); $i++) {
                 // get itemStock based on position and item-id
-                $stock = $this->getItemStock($agent->u_company, $request->itemListId[$i]);
+                $stock = $this->getItemStock($agent->c_id, $request->itemListId[$i]);
                 ($stock === null) ? $itemStock = 0 : $itemStock = $stock->s_qty;
 
                 // is stock sufficient ?

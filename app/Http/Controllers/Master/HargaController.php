@@ -636,7 +636,6 @@ class HargaController extends Controller
                     ->where('spa_item', '=', $request->idBarangHPA)
                     ->where('spa_unit', '=', $request->satuanBarangHPA)
                     ->where('spa_type', '=', $request->jenishargaHPA)
-                    ->where('spa_payment', '=', $request->jenis_pembayaranHPA)
                     ->get();
 
                 $check2 = DB::table('d_salespricedt')
@@ -644,7 +643,6 @@ class HargaController extends Controller
                     ->where('spd_item', '=', $request->idBarangHPA)
                     ->where('spd_unit', '=', $request->satuanBarangHPA)
                     ->where('spd_type', '=', $request->jenishargaHPA)
-                    ->where('spd_payment', '=', $request->jenis_pembayaranHPA)
                     ->get();
 
                 if (count($check) > 0 || count($check2) > 0) {
@@ -677,7 +675,6 @@ class HargaController extends Controller
                         'spa_item' => $request->idBarangHPA,
                         'spa_unit' => $request->satuanBarangHPA,
                         'spa_type' => $request->jenishargaHPA,
-                        'spa_payment' => $request->jenis_pembayaranHPA,
                         'spa_rangeqtystart' => 1,
                         'spa_rangeqtyend' => 1,
                         'spa_price' => Currency::removeRupiah($request->hargaHPA),
@@ -693,7 +690,6 @@ class HargaController extends Controller
                     ->where('spa_item', '=', $request->idBarangHPA)
                     ->where('spa_unit', '=', $request->satuanrangeHPA)
                     ->where('spa_type', '=', $request->jenishargaHPA)
-                    ->where('spa_payment', '=', $request->jenis_pembayaranrangeHPA)
                     ->get();
 
                 $check2 = DB::table('d_salespricedt')
@@ -701,7 +697,6 @@ class HargaController extends Controller
                     ->where('spd_item', '=', $request->idBarangHPA)
                     ->where('spd_unit', '=', $request->satuanBarangHPA)
                     ->where('spd_type', '=', $request->jenishargaHPA)
-                    ->where('spd_payment', '=', $request->jenis_pembayaranrangeHPA)
                     ->get();
 
                 $sts = '';
@@ -753,7 +748,6 @@ class HargaController extends Controller
                         'spa_item' => $request->idBarangHPA,
                         'spa_unit' => $request->satuanrangeHPA,
                         'spa_type' => $request->jenishargaHPA,
-                        'spa_payment' => $request->jenis_pembayaranrangeHPA,
                         'spa_rangeqtystart' => $request->rangestartHPA,
                         'spa_rangeqtyend' => ($request->rangeendHPA == "~") ? 0 : $request->rangeendHPA,
                         'spa_price' => Currency::removeRupiah($request->hargarangeHPA),
