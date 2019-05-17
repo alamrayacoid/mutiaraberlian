@@ -57,4 +57,9 @@ class d_username extends Authenticatable
     {
         return $this->hasOne(m_employee::class, 'e_id', 'u_code');
     }
+
+    public function getCompany()
+    {
+        return $this->belongsTo('App\m_company', 'u_company', 'c_id');
+    }
 }

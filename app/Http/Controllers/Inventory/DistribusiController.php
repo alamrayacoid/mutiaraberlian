@@ -519,12 +519,24 @@ class DistribusiController extends Controller
     {
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
-        $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
-            ->where('sd_status', 'P')// status == 'pending'
+        
+        // if logged in user is 'pusat'
+        if (Auth::user()->u_user == 'E' && Auth::user()->getCompany->c_type == 'PUSAT') {
+            $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
+            ->where('sd_status', 'P') // status == 'pending'
+            ->orderBy('sd_date', 'asc')
+            ->orderBy('sd_nota', 'asc')
+            ->get();
+        }
+        // if logged in user is 'cabang'
+        elseif (Auth::user()->u_user == 'E' && Auth::user()->getCompany->c_type == 'CABANG') {
+            $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
+            ->where('sd_status', 'P') // status == 'pending'
             ->where('sd_destination', '=', Auth::user()->u_company)
             ->orderBy('sd_date', 'asc')
             ->orderBy('sd_nota', 'asc')
             ->get();
+        }
 
         return Datatables::of($data)
             ->addIndexColumn()

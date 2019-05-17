@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Master;
 
+use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
@@ -92,8 +93,8 @@ class CabangController extends Controller
 
     public function create()
     {
-        // $cekAccess = AksesUser::checkAkses(6, 'read');
-        if (!AksesUser::checkAkses(6, 'read')) {
+        // check user-access of the current feature
+        if (!AksesUser::checkAkses(6, 'create')) {
             abort(401);
         }
         $employe = DB::table('m_employee')->select('e_id', 'e_name')->get();
@@ -103,8 +104,8 @@ class CabangController extends Controller
 
     public function store(Request $request)
     {
-        $cekAccess = AksesUser::checkAkses(6, 'read');
-        if ($cekAccess) {
+        // check user-access of the current feature
+        if (!AksesUser::checkAkses(6, 'create')) {
             abort(401);
         }
 
@@ -156,15 +157,17 @@ class CabangController extends Controller
 
     public function edit($id = null, Request $request)
     {
-        $cekAccess = AksesUser::checkAkses(6, 'read');
-        if (!$cekAccess) {
+        // check user-access of the current feature
+        if (!AksesUser::checkAkses(6, 'update')) {
             abort(401);
         }
 
-        if (!$request->isMethod('post')) {
+        if (!$request->isMethod('post'))
+        {
             try {
                 $id = Crypt::decrypt($id);
-            } catch (\Exception $e) {
+            }
+            catch (\Exception $e) {
                 return view('errors.404');
             }
             $data = DB::table('m_company')
@@ -174,10 +177,12 @@ class CabangController extends Controller
                 ->first();
             $employe = DB::table('m_employee')->select('m_employee.*')->get();
             return view('masterdatautama.cabang.edit', compact('data', 'employe'));
-        } else {
+        }
+        else {
             try {
                 $id = Crypt::decrypt($id);
-            } catch (\Exception $e) {
+            }
+            catch (\Exception $e) {
                 return view('errors.404');
             }
             $messages = [
@@ -214,7 +219,8 @@ class CabangController extends Controller
                 return response()->json([
                     'status' => 'sukses'
                 ]);
-            } catch (\Exception $e) {
+            }
+            catch (\Exception $e) {
                 DB::rollback();
                 return response()->json([
                     'status' => 'gagal',
@@ -226,9 +232,15 @@ class CabangController extends Controller
 
     public function nonActive($id)
     {
+        // check user-access of the current feature
+        if (!AksesUser::checkAkses(6, 'delete')) {
+            abort(401);
+        }
+
         try {
             $id = Crypt::decrypt($id);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             return response()->json([
                 'status' => 'gagal',
                 'message' => $e
@@ -246,7 +258,8 @@ class CabangController extends Controller
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -257,9 +270,15 @@ class CabangController extends Controller
 
     public function actived($id)
     {
+        // check user-access of the current feature
+        if (!AksesUser::checkAkses(6, 'delete')) {
+            abort(401);
+        }
+
         try {
             $id = Crypt::decrypt($id);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             return response()->json([
                 'status' => 'gagal',
                 'message' => $e
@@ -277,7 +296,8 @@ class CabangController extends Controller
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',

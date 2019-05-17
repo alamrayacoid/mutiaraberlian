@@ -54,7 +54,7 @@
                         </div>
                         <div class="col-md-9 col-sm-6 col-xs-12">
                           <div class="form-group">
-                            <input type="text" class="form-control form-control-sm" name="e_nip" value="{{$employee->e_nip}}">
+                            <input type="text" class="form-control form-control-sm nip" name="e_nip" value="{{$employee->e_nip}}">
                           </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
@@ -70,7 +70,7 @@
                         </div>
                         <div class="col-md-9 col-sm-6 col-xs-12">
                           <div class="form-group">
-                            <input type="text" class="form-control form-control-sm" name="e_nik" value="{{$employee->e_nik}}">
+                            <input type="text" class="form-control form-control-sm nik" name="e_nik" value="{{$employee->e_nik}}">
                           </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
@@ -91,7 +91,7 @@
                         </div>
                         <div class="col-md-9 col-sm-6 col-xs-12">
                           <div class="form-group">
-                            <input type="text" class="form-control form-control-sm" name="e_telp" value="{{$employee->e_telp}}">
+                            <input type="text" class="form-control form-control-sm hp" name="e_telp" value="{{$employee->e_telp}}">
                           </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
@@ -161,7 +161,7 @@
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_child" value="{{$employee->e_child}}">
+                        <input type="text" class="form-control form-control-sm digits" name="e_child" value="{{$employee->e_child}}">
                       </div>
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
@@ -199,7 +199,7 @@
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_email" value="{{$employee->e_email}}">
+                        <input type="text" class="form-control form-control-sm email" name="e_email" value="{{$employee->e_email}}">
                       </div>
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
@@ -249,7 +249,7 @@
                     </div>
                     <div class="col-md-9 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_rekening" value="{{$employee->e_rekening}}">
+                        <input type="text" class="form-control form-control-sm rek" name="e_rekening" value="{{$employee->e_rekening}}">
                       </div>
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
@@ -299,7 +299,7 @@
 
     $("#foto").change(function() {
       readURL(this, '#img-preview');
-    });  
+    });
     $('#img-preview').click(function(){
       $('#foto').click();
     });
@@ -336,7 +336,7 @@
       }
     });
   });
-  
+
   function SubmitForm(event)
   {
     event.preventDefault();

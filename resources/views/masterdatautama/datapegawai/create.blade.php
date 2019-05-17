@@ -49,7 +49,7 @@
                         </div>
                         <div class="col-md-9 col-sm-6 col-xs-12">
                           <div class="form-group">
-                            <input type="text" class="form-control form-control-sm" name="e_nip" required>
+                            <input type="text" class="form-control form-control-sm nip" name="e_nip" required>
                           </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
@@ -65,7 +65,7 @@
                         </div>
                         <div class="col-md-9 col-sm-6 col-xs-12">
                           <div class="form-group">
-                            <input type="text" class="form-control form-control-sm" name="e_nik" required>
+                            <input type="text" class="form-control form-control-sm nik" name="e_nik" required>
                           </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
@@ -94,7 +94,7 @@
                         </div>
                         <div class="col-md-9 col-sm-6 col-xs-12">
                           <div class="form-group">
-                            <input type="text" class="form-control form-control-sm" name="e_telp" required>
+                            <input type="text" class="form-control form-control-sm hp" name="e_telp" required>
                           </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
@@ -146,7 +146,7 @@
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_child">
+                        <input type="text" class="form-control form-control-sm digits" name="e_child">
                       </div>
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
@@ -184,7 +184,7 @@
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_email" required>
+                        <input type="text" class="form-control form-control-sm email" name="e_email" required>
                       </div>
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
@@ -234,7 +234,7 @@
                     </div>
                     <div class="col-md-9 col-sm-6 col-xs-12">
                       <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="e_rekening" required>
+                        <input type="text" class="form-control form-control-sm rek" name="e_rekening" required>
                       </div>
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
@@ -297,7 +297,7 @@
 
     $("#foto").change(function() {
       readURL(this, '#img-preview');
-    });  
+    });
     $('#img-preview').click(function(){
       $('#foto').click();
     });
@@ -307,7 +307,7 @@
     loadingShow();
     submitForm(event);
   });
-    
+
   function submitForm(event){
     event.preventDefault();
     // data_link = new FormData($('#formAdd')[0]);

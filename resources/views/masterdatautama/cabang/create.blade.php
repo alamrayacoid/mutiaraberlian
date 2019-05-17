@@ -48,7 +48,7 @@
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="number" class="form-control form-control-sm" id="cabang_telp" name="cabang_telp">
+                                            <input type="text" class="form-control form-control-sm hp" id="cabang_telp" name="cabang_telp" placeholder="0853 xxx">
                                         </div>
                                     </div>
                                     <div class="col-md-3 col-sm-6 col-xs-12">
@@ -56,7 +56,7 @@
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                          <input type="text" class="form-control" name="cabang_type" value="CABANG" readonly>                                        
+                                          <input type="text" class="form-control" name="cabang_type" value="CABANG" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-3 col-sm-6 col-xs-12">

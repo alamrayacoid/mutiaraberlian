@@ -343,9 +343,28 @@
             // unmaskAsNumber: true,
         });
 
-        // mask telp-number
-        $('.hp').inputmask("9999 9999 9999", {
+        // mask rekening
+        $('.rek').inputmask("999 999 999 999 999 999 999", {
             autoUnmask: true,
+            placeholder: ""
+        });
+
+        // mask telp-number
+        $('.hp').inputmask("9999 9999 9999 9", {
+            autoUnmask: true,
+            placeholder: ""
+        });
+
+        // mask nip
+        $('.nip').inputmask("99999999 999999 9 999", {
+            autoUnmask: true,
+            placeholder: ""
+        });
+
+        // mask nik
+        $('.nik').inputmask("999999 999999 9999", {
+            autoUnmask: true,
+            placeholder: ""
         });
 
         // mask email
