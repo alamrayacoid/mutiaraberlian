@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Master;
 
+use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -243,6 +244,9 @@ class AgenController extends Controller
      */
     public function create()
     {
+        if (!AksesUser::checkAkses(7, 'create')){
+            abort('401');
+        }
         $data['provinces'] = $this->getProvinces();
         $data['classes'] = $this->getClasses();
         $data['salesPrice'] = $this->getSalesPrice();
