@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="862e2311-32de-4421-b384-4e65295fd96e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SettingController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SettingController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/pengaturan/pengaturanpengguna/akses.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/pengaturan/pengaturanpengguna/akses.blade.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,7 +19,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="172">
+            <state relative-caret-position="9960">
               <caret line="507" column="92" selection-start-line="507" selection-start-column="92" selection-end-line="507" selection-end-column="92" />
             </state>
           </provider>
@@ -30,7 +28,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SettingController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="407">
+            <state relative-caret-position="2140">
               <caret line="117" column="134" selection-start-line="117" selection-start-column="134" selection-end-line="117" selection-end-column="134" />
             </state>
           </provider>
@@ -39,8 +37,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/resources/views/pengaturan/pengaturanpengguna/akses.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="251">
-              <caret line="51" column="72" selection-start-line="51" selection-start-column="72" selection-end-line="51" selection-end-column="72" />
+            <state relative-caret-position="374">
+              <caret line="63" column="58" lean-forward="true" selection-start-line="63" selection-start-column="58" selection-end-line="63" selection-end-column="58" />
             </state>
           </provider>
         </entry>
@@ -234,10 +232,10 @@
     </include_path>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="10" />
+    <option name="x" value="9" />
     <option name="y" value="20" />
-    <option name="width" value="1346" />
-    <option name="height" value="688" />
+    <option name="width" value="1338" />
+    <option name="height" value="685" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -346,7 +344,8 @@
       <workItem from="1557963487434" duration="6362000" />
       <workItem from="1557971322167" duration="6893000" />
       <workItem from="1557996910684" duration="821000" />
-      <workItem from="1557997805485" duration="282000" />
+      <workItem from="1557997805485" duration="370000" />
+      <workItem from="1558063270093" duration="275000" />
     </task>
     <task id="LOCAL-00001" summary="roliz">
       <created>1556765610336</created>
@@ -415,13 +414,13 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="87396000" />
+    <option name="totallyTimeSpent" value="87759000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="0" width="1368" height="740" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23257576" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23636363" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -717,22 +716,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
+        <state relative-caret-position="9960">
           <caret line="507" column="92" selection-start-line="507" selection-start-column="92" selection-end-line="507" selection-end-column="92" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SettingController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="407">
+        <state relative-caret-position="2140">
           <caret line="117" column="134" selection-start-line="117" selection-start-column="134" selection-end-line="117" selection-end-column="134" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/pengaturan/pengaturanpengguna/akses.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="51" column="72" selection-start-line="51" selection-start-column="72" selection-end-line="51" selection-end-column="72" />
+        <state relative-caret-position="374">
+          <caret line="63" column="58" lean-forward="true" selection-start-line="63" selection-start-column="58" selection-end-line="63" selection-end-column="58" />
         </state>
       </provider>
     </entry>
