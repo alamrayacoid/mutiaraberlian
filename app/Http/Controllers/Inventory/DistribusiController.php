@@ -45,21 +45,19 @@ class DistribusiController extends Controller
 
         return view('inventory/distribusibarang/distribusi/nota', compact('data', 'tujuan', 'cabang', 'dt'));
     }
+
     // get list items for AutoComplete
     public function getItem(Request $request)
     {
         // get list of existed-items (id)
-        if ($request->existedItems != null)
-        {
+        if ($request->existedItems != null) {
             $existedItems = array();
             for ($i = 0; $i < count($request->existedItems); $i++) {
                 if ($request->existedItems[$i] != null) {
                     array_push($existedItems, $request->existedItems[$i]);
                 }
             }
-        }
-        else
-        {
+        } else {
             $existedItems = array();
         }
 
@@ -68,8 +66,8 @@ class DistribusiController extends Controller
             ->whereNotIn('i_id', $existedItems)
             ->where(function ($query) use ($cari) {
                 $query
-                    ->where('i_name', 'like', '%'. $cari .'%')
-                    ->orWhere('i_code', 'like', '%'. $cari .'%');
+                    ->where('i_name', 'like', '%' . $cari . '%')
+                    ->orWhere('i_code', 'like', '%' . $cari . '%');
             })
             ->whereHas('getStock', function ($query) {
                 $query
@@ -97,6 +95,7 @@ class DistribusiController extends Controller
         }
         return response()->json($results);
     }
+<<<<<<< HEAD
     // get item stock
     public function getStock($id)
     {
@@ -113,16 +112,20 @@ class DistribusiController extends Controller
 
         return response()->json($stock);
     }
+=======
+
+>>>>>>> 58787e028fcc1b970a18fce092a4a84ab33c12c3
     // get list unit for selct-option
     public function getListUnit(Request $request)
     {
         $units = m_item::where('i_id', $request->itemId)
-        ->with('getUnit1')
-        ->with('getUnit2')
-        ->with('getUnit3')
-        ->first();
+            ->with('getUnit1')
+            ->with('getUnit2')
+            ->with('getUnit3')
+            ->first();
         return $units;
     }
+
     // store new-distribusibarang to db
     public function store(Request $request)
     {
@@ -144,11 +147,11 @@ class DistribusiController extends Controller
                     $item = m_item::where('i_id', $itemId)->first();
 
                     if ($item->i_unit1 == $request->units[$i]) {
-                        $convert  = (int)$request->qty[$i] * $item->i_unitcompare1;
+                        $convert = (int)$request->qty[$i] * $item->i_unitcompare1;
                     } elseif ($item->i_unit2 == $request->units[$i]) {
-                        $convert  = (int)$request->qty[$i] * $item->i_unitcompare2;
+                        $convert = (int)$request->qty[$i] * $item->i_unitcompare2;
                     } elseif ($item->i_unit3 == $request->units[$i]) {
-                        $convert  = (int)$request->qty[$i] * $item->i_unitcompare3;
+                        $convert = (int)$request->qty[$i] * $item->i_unitcompare3;
                     }
                     // waiit, check the name of $reff
                     $reff = 'DISTRIBUSI-MASUK';
@@ -201,6 +204,7 @@ class DistribusiController extends Controller
 
         dd($request->all());
     }
+
     // validate request
     public function validateDist(Request $request)
     {
@@ -210,35 +214,36 @@ class DistribusiController extends Controller
             'itemsId.*' => 'required',
             'qty.*' => 'required'
         ],
-        [
-            'selectBranch.required' => 'Silahkan pilih \'Cabang\' terlebih dahulu !',
-            'itemsId.*.required' => 'Masih terdapat baris item yang kosong !',
-            'qty.*.required' => 'Masih terdapat \'Jumlah Item\' yang kosong !'
-        ]);
+            [
+                'selectBranch.required' => 'Silahkan pilih \'Cabang\' terlebih dahulu !',
+                'itemsId.*.required' => 'Masih terdapat baris item yang kosong !',
+                'qty.*.required' => 'Masih terdapat \'Jumlah Item\' yang kosong !'
+            ]);
         if ($validator->fails()) {
             return $validator->errors()->first();
         } else {
             return '1';
         }
     }
+
     // edit selected item
     public function edit($id)
     {
         $data['stockdist'] = d_stockdistribution::where('sd_id', decrypt($id))
-        ->with('getOrigin')
-        ->with('getDestination')
-        ->with(['getDistributionDt' => function ($query) {
-            $query
-            ->with(['getItem' => function ($query) {
+            ->with('getOrigin')
+            ->with('getDestination')
+            ->with(['getDistributionDt' => function ($query) {
                 $query
-                ->with('getUnit1')
-                ->with('getUnit2')
-                ->with('getUnit3');
+                    ->with(['getItem' => function ($query) {
+                        $query
+                            ->with('getUnit1')
+                            ->with('getUnit2')
+                            ->with('getUnit3');
+                    }])
+                    ->with('getUnit');
             }])
-            ->with('getUnit');
-        }])
-        ->with('getMutation.getStock')
-        ->first();
+            ->with('getMutation.getStock')
+            ->first();
 
         // dd($data['stockdist']);
 
@@ -252,7 +257,7 @@ class DistribusiController extends Controller
         $data['qtyStock'] = array();
 
         $mutation = $data['stockdist']->getMutation;
-        for ($i=0; $i < count($mutation); $i++) {
+        for ($i = 0; $i < count($mutation); $i++) {
             if ($mutation[$i]->sm_mutcat == $mutcatkeluar->m_id) {
                 array_push($data['reff'], $mutation[$i]->sm_reff);
                 array_push($data['qtyStock'], $mutation[$i]->getStock->s_qty);
@@ -268,6 +273,7 @@ class DistribusiController extends Controller
         }
         return view('inventory/distribusibarang/distribusi/edit', compact('data'));
     }
+
     // update selected item
     public function update(Request $request, $id)
     {
@@ -288,15 +294,13 @@ class DistribusiController extends Controller
         try {
             // get stockdist
             $stockdist = d_stockdistribution::where('sd_id', $id)
-            ->with('getDistributionDt')
-            ->first();
+                ->with('getDistributionDt')
+                ->first();
 
             // start : loop each item
-            foreach ($request->itemsId as $key => $val)
-            {
+            foreach ($request->itemsId as $key => $val) {
                 // if : qty in stock-mutation still 'unused'
-                if ($request->status[$key] == "unused")
-                {
+                if ($request->status[$key] == "unused") {
                     // rollBack qty in stock-mutation and stock-item
                     $rollbackDist = Mutasi::rollbackDistribusi($stockdist->sd_nota, $val);
                     if ($rollbackDist != true) {
@@ -311,11 +315,11 @@ class DistribusiController extends Controller
                     $item = m_item::where('i_id', $val)->first();
                     // convert qty-item to smallest units
                     if ($item->i_unit1 == $request->units[$key]) {
-                        $convert  = (int)$request->qty[$key] * $item->i_unitcompare1;
+                        $convert = (int)$request->qty[$key] * $item->i_unitcompare1;
                     } elseif ($item->i_unit2 == $request->units[$key]) {
-                        $convert  = (int)$request->qty[$key] * $item->i_unitcompare2;
+                        $convert = (int)$request->qty[$key] * $item->i_unitcompare2;
                     } elseif ($item->i_unit3 == $request->units[$key]) {
-                        $convert  = (int)$request->qty[$key] * $item->i_unitcompare3;
+                        $convert = (int)$request->qty[$key] * $item->i_unitcompare3;
                     }
                     // waiit, check the name of $reff
                     $reff = 'DISTRIBUSI-MASUK';
@@ -328,10 +332,8 @@ class DistribusiController extends Controller
                         $reff // nota-reff
                     );
                     // --- end: new stock-mutation ---
-                }
-                // else : stock already 'used'
-                elseif ($request->status[$key] == "used")
-                {
+                } // else : stock already 'used'
+                elseif ($request->status[$key] == "used") {
                     // update qty (to new-qty) stock-mutation and stock-item
                     $newQty = (int)$request->qty[$key] - (int)$request->qtyUsed[$key];
                     $updateDist = Mutasi::updateDistribusi($stockdist->sd_nota, $val->sdd_item, $newQty);
@@ -351,8 +353,7 @@ class DistribusiController extends Controller
                 $val->delete();
             }
             // insert new stockdist-detail
-            foreach ($request->itemsId as $key => $val)
-            {
+            foreach ($request->itemsId as $key => $val) {
                 $detailid = d_stockdistributiondt::where('sdd_stockdistribution', $stockdist->sd_id)->max('sdd_detailid') + 1;
                 $distdt = new d_stockdistributiondt;
                 $distdt->sdd_stockdistribution = $stockdist->sd_id;
@@ -366,12 +367,12 @@ class DistribusiController extends Controller
 
             DB::commit();
             return response()->json([
-            'status' => 'berhasil'
+                'status' => 'berhasil'
             ]);
         } catch (Exception $e) {
             DB::rollback();
             return response()->json([
-            'status' => 'gagal'
+                'status' => 'gagal'
             ]);
         }
 
@@ -447,30 +448,31 @@ class DistribusiController extends Controller
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
         $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
-        ->orderBy('sd_date', 'desc')
-        ->orderBy('sd_nota', 'desc')
-        ->get();
+            ->orderBy('sd_date', 'desc')
+            ->orderBy('sd_nota', 'desc')
+            ->get();
 
         return Datatables::of($data)
-        ->addIndexColumn()
-        ->addColumn('tanggal', function($data) {
-            return '<td>'. Carbon::parse($data->sd_date)->format('d-m-Y') .'</td>';
-        })
-        ->addColumn('action', function($data) {
-            return '<div class="btn-group btn-group-sm">
-                <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota('.$data->sd_id.')"><i class="fa fa-print"></i></button>
-                <button class="btn btn-warning btn-edit-distribusi" onclick="edit(\''.encrypt($data->sd_id).'\')" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-                <button class="btn btn-danger btn-disable-distribusi" onclick="hapus('.$data->sd_id.')" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
+            ->addIndexColumn()
+            ->addColumn('tanggal', function ($data) {
+                return '<td>' . Carbon::parse($data->sd_date)->format('d-m-Y') . '</td>';
+            })
+            ->addColumn('action', function ($data) {
+                return '<div class="btn-group btn-group-sm">
+                <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(' . $data->sd_id . ')"><i class="fa fa-print"></i></button>
+                <button class="btn btn-warning btn-edit-distribusi" onclick="edit(\'' . encrypt($data->sd_id) . '\')" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
+                <button class="btn btn-danger btn-disable-distribusi" onclick="hapus(' . $data->sd_id . ')" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
             </div>';
-        })
-        ->addColumn('tujuan', function($data){
-            $tmp = DB::table('m_company')->where('c_id', $data->sd_destination)->first();
+            })
+            ->addColumn('tujuan', function ($data) {
+                $tmp = DB::table('m_company')->where('c_id', $data->sd_destination)->first();
 
-            return $tmp->c_name;
-        })
-        ->rawColumns(['tanggal', 'action', 'tujuan', 'type'])
-        ->make(true);
+                return $tmp->c_name;
+            })
+            ->rawColumns(['tanggal', 'action', 'tujuan', 'type'])
+            ->make(true);
     }
+
     // retrieve DataTable for history distribusibarang
     public function tableHistory(Request $request)
     {
@@ -482,90 +484,95 @@ class DistribusiController extends Controller
             ->get();
 
         return Datatables::of($data)
-        ->addIndexColumn()
-        ->addColumn('tanggal', function($data) {
-            return '<td>'. Carbon::parse($data->sd_date)->format('d-m-Y') .'</td>';
-        })
-        ->addColumn('tujuan', function($data){
-            $tmp = DB::table('m_company')->where('c_id', $data->sd_destination)->first();
-            return $tmp->c_name;
-        })
-        ->addColumn('action', function($data) {
-            return '<div class="btn-group btn-group-sm">
-                <button class="btn btn-primary" onclick="showDetailHt('. $data->sd_id .')"><i class="fa fa-folder"></i></button>
+            ->addIndexColumn()
+            ->addColumn('tanggal', function ($data) {
+                return '<td>' . Carbon::parse($data->sd_date)->format('d-m-Y') . '</td>';
+            })
+            ->addColumn('tujuan', function ($data) {
+                $tmp = DB::table('m_company')->where('c_id', $data->sd_destination)->first();
+                return $tmp->c_name;
+            })
+            ->addColumn('action', function ($data) {
+                return '<div class="btn-group btn-group-sm">
+                <button class="btn btn-primary" onclick="showDetailHt(' . $data->sd_id . ')"><i class="fa fa-folder"></i></button>
             </div>';
-        })
-        ->rawColumns(['tanggal', 'action', 'tujuan', 'type'])
-        ->make(true);
+            })
+            ->rawColumns(['tanggal', 'action', 'tujuan', 'type'])
+            ->make(true);
     }
+
     // retrieve detail for history distribusibarang
     public function showDetailHt($id)
     {
         $detail = d_stockdistribution::where('sd_id', $id)
-        ->with('getOrigin')
-        ->with('getDestination')
-        ->with(['getDistributionDt' => function ($query) {
-            $query
-                ->with('getItem')
-                ->with('getUnit');
-        }])
-        ->first();
+            ->with('getOrigin')
+            ->with('getDestination')
+            ->with(['getDistributionDt' => function ($query) {
+                $query
+                    ->with('getItem')
+                    ->with('getUnit');
+            }])
+            ->first();
         $detail->dateFormated = Carbon::parse($detail->sd_date)->format('d M Y');
 
         return response()->json($detail);
     }
+
     // retrieve DataTable for acceptance distribusibarang
     public function tableAcceptance(Request $request)
     {
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
         $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
-        ->where('sd_status', 'P') // status == 'pending'
-        ->orderBy('sd_date', 'asc')
-        ->orderBy('sd_nota', 'asc')
-        ->get();
+            ->where('sd_status', 'P')// status == 'pending'
+            ->where('sd_destination', '=', Auth::user()->u_company)
+            ->orderBy('sd_date', 'asc')
+            ->orderBy('sd_nota', 'asc')
+            ->get();
 
         return Datatables::of($data)
-        ->addIndexColumn()
-        ->addColumn('tanggal', function($data) {
-            return '<td>'. Carbon::parse($data->sd_date)->format('d-m-Y') .'</td>';
-        })
-        ->addColumn('tujuan', function($data){
-            $tmp = DB::table('m_company')->where('c_id', $data->sd_destination)->first();
-            return $tmp->c_name;
-        })
-        ->addColumn('action', function($data) {
-            return '<div class="btn-group btn-group-sm">
-            <button class="btn btn-primary" onclick="showDetailAc('. $data->sd_id .')"><i class="fa fa-folder"></i></button>
+            ->addIndexColumn()
+            ->addColumn('tanggal', function ($data) {
+                return '<td>' . Carbon::parse($data->sd_date)->format('d-m-Y') . '</td>';
+            })
+            ->addColumn('tujuan', function ($data) {
+                $tmp = DB::table('m_company')->where('c_id', $data->sd_destination)->first();
+                return $tmp->c_name;
+            })
+            ->addColumn('action', function ($data) {
+                return '<div class="btn-group btn-group-sm">
+            <button class="btn btn-primary" onclick="showDetailAc(' . $data->sd_id . ')"><i class="fa fa-folder"></i></button>
             </div>';
-        })
-        ->rawColumns(['tanggal', 'action', 'tujuan', 'type'])
-        ->make(true);
+            })
+            ->rawColumns(['tanggal', 'action', 'tujuan', 'type'])
+            ->make(true);
     }
+
     // retrieve detail for acceptance distribusibarang
     public function showDetailAc($id)
     {
         $detail = d_stockdistribution::where('sd_id', $id)
-        ->with('getOrigin')
-        ->with('getDestination')
-        ->with(['getDistributionDt' => function ($query) {
-            $query
-                ->with('getItem')
-                ->with('getUnit');
-        }])
-        ->first();
+            ->with('getOrigin')
+            ->with('getDestination')
+            ->with(['getDistributionDt' => function ($query) {
+                $query
+                    ->with('getItem')
+                    ->with('getUnit');
+            }])
+            ->first();
         $detail->dateFormated = Carbon::parse($detail->sd_date)->format('d M Y');
 
         return response()->json($detail);
     }
+
     // confirm acceptance
     public function setAcceptance(Request $request, $id)
     {
         DB::beginTransaction();
         try {
             $stockdist = d_stockdistribution::where('sd_id', $id)
-            ->with('getDistributionDt')
-            ->first();
+                ->with('getDistributionDt')
+                ->first();
 
             // update stockdist-status to 'Y'
             $stockdist->sd_status = 'Y';
@@ -586,12 +593,15 @@ class DistribusiController extends Controller
                     ]);
                 }
             }
+            DB::table('d_stock')
+                ->where('s_qty', '=', 0)
+                ->where('s_status', '=', 'ON GOING')
+                ->delete();
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -606,19 +616,19 @@ class DistribusiController extends Controller
         try {
 
             $parrent = DB::table('d_stockdistribution')
-            ->where('sd_id', $request->id)
-            ->first();
+                ->where('sd_id', $request->id)
+                ->first();
 
             $tmp = DB::table('d_stock_mutation')
-            ->where('sm_nota', $parrent->sd_nota)
-            ->get();
+                ->where('sm_nota', $parrent->sd_nota)
+                ->get();
 
-            $mutcatmasuk = DB::table('m_mutcat')->where('m_name','Distribusi Cabang Masuk')->first();
-            $mutcatkeluar = DB::table('m_mutcat')->where('m_name','Distribusi Cabang Keluar')->first();
+            $mutcatmasuk = DB::table('m_mutcat')->where('m_name', 'Distribusi Cabang Masuk')->first();
+            $mutcatkeluar = DB::table('m_mutcat')->where('m_name', 'Distribusi Cabang Keluar')->first();
 
             $reff = [];
             $status = 'no';
-            for ($i=0; $i < count($tmp); $i++) {
+            for ($i = 0; $i < count($tmp); $i++) {
                 if ($tmp[$i]->sm_mutcat == $mutcatkeluar->m_id) {
                     $reff[] = $tmp[$i]->sm_reff;
                 }
@@ -632,54 +642,54 @@ class DistribusiController extends Controller
 
             if ($status == 'no') {
                 DB::table('d_stockdistribution')
-                ->where('sd_id', $request->id)
-                ->delete();
+                    ->where('sd_id', $request->id)
+                    ->delete();
 
                 $dt = DB::table('d_stockdistributiondt')
-                ->where('sdd_stockdistribution', $request->id)
-                ->get();
+                    ->where('sdd_stockdistribution', $request->id)
+                    ->get();
 
                 DB::table('d_stockdistributiondt')
-                ->where('sdd_stockdistribution', $request->id)
-                ->delete();
+                    ->where('sdd_stockdistribution', $request->id)
+                    ->delete();
 
                 DB::table('d_stock_mutation')
-                ->where('sm_nota', $parrent->sd_nota)
-                ->delete();
+                    ->where('sm_nota', $parrent->sd_nota)
+                    ->delete();
 
-                for ($i=0; $i < count($dt); $i++) {
+                for ($i = 0; $i < count($dt); $i++) {
                     DB::table('d_stock')
-                    ->where('s_comp', $dt[$i]->sdd_comp)
-                    ->where('s_position', $parrent->sd_destination)
-                    ->where('s_item', $dt[$i]->sdd_item)
-                    ->where('s_status', 'ON DESTINATION')
-                    ->where('s_condition', 'FINE')
-                    ->update([
-                    's_qty' => DB::raw('s_qty - ' . $dt[$i]->sdd_qty)
-                    ]);
+                        ->where('s_comp', $dt[$i]->sdd_comp)
+                        ->where('s_position', $parrent->sd_destination)
+                        ->where('s_item', $dt[$i]->sdd_item)
+                        ->where('s_status', 'ON DESTINATION')
+                        ->where('s_condition', 'FINE')
+                        ->update([
+                            's_qty' => DB::raw('s_qty - ' . $dt[$i]->sdd_qty)
+                        ]);
 
                     DB::table('d_stock_mutation')
-                    ->where('sm_nota', $reff[$i])
-                    ->update([
-                    'sm_use' => DB::raw('sm_use - ' . $dt[$i]->sdd_qty),
-                    'sm_residue' => DB::raw('sm_residue + ' . $dt[$i]->sdd_qty)
-                    ]);
+                        ->where('sm_nota', $reff[$i])
+                        ->update([
+                            'sm_use' => DB::raw('sm_use - ' . $dt[$i]->sdd_qty),
+                            'sm_residue' => DB::raw('sm_residue + ' . $dt[$i]->sdd_qty)
+                        ]);
                 }
             } elseif ($status == 'yes') {
                 return response()->json([
-                'status' => 'failed',
-                'ex' => 'Stock yang ada digudang tujuan sudah digunakan'
+                    'status' => 'failed',
+                    'ex' => 'Stock yang ada digudang tujuan sudah digunakan'
                 ]);
             }
 
             DB::commit();
             return response()->json([
-            'status' => 'berhasil'
+                'status' => 'berhasil'
             ]);
         } catch (Exception $e) {
             DB::rollback();
             return response()->json([
-            'status' => 'gagal'
+                'status' => 'gagal'
             ]);
         }
     }

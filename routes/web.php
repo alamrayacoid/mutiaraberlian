@@ -461,6 +461,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::get('/marketing/agen/kelolapenjualanlangsung/get-item-stock', 'Aktivitasmarketing\Agen\ManajemenAgenController@getItemStock')->name('kelolapenjualan.getItemStock');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-price', 'Aktivitasmarketing\Agen\ManajemenAgenController@getPrice')->name('kelolapenjualan.getPrice');
     Route::post('/marketing/agen/kelolapenjualanlangsung/store', 'Aktivitasmarketing\Agen\ManajemenAgenController@storeKPL')->name('kelolapenjualan.storeKPL');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/store', 'Aktivitasmarketing\Agen\ManajemenAgenController@storeKPL')->name('kelolapenjualan.storeKPL');
     Route::get('/marketing/agen/kelolapenjualanlangsung/edit/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@editKPL')->name('kelolapenjualan.edit');
     Route::post('/marketing/agen/kelolapenjualanlangsung/update/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@updateKPL')->name('kelolapenjualan.update');
     // End Manajemen Agen ============================================================================================
@@ -477,6 +478,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/orderproduk/cek-stok/{stock}/{item}/{satuan}/{qty}', 'Aktivitasmarketing\Agen\ManajemenAgenController@checkStock')->name('orderagenpusat.checkstock');
     Route::get('/marketing/agen/orderproduk/cek-harga/{konsigner}/{item}/{unit}/{qty}', 'Aktivitasmarketing\Agen\ManajemenAgenController@checkHarga')->name('orderagenpusat.checkharga');
     Route::post('/marketing/agen/orderproduk/add', 'Aktivitasmarketing\Agen\ManajemenAgenController@simpanOrderProduk')->name('orderagenpusat.add');
+    Route::get('/marketing/agen/orderproduk/add', 'Aktivitasmarketing\Agen\ManajemenAgenController@simpanOrderProduk')->name('orderagenpusat.add');
     Route::get('/marketing/agen/orderproduk/delivery-order', 'Aktivitasmarketing\Agen\ManajemenAgenController@getOrder')->name('orderagenpusat.getDO');
     Route::get('/marketing/agen/orderproduk/hapus-delivery-order/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteDO')->name('orderagenpusat.deleteDO');
     Route::get('/marketing/agen/orderproduk/detail-delivery-order/{id}/{action}', 'Aktivitasmarketing\Agen\ManajemenAgenController@detailDO')->name('orderagenpusat.detailDO');
