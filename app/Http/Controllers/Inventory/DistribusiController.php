@@ -95,7 +95,6 @@ class DistribusiController extends Controller
         }
         return response()->json($results);
     }
-<<<<<<< HEAD
     // get item stock
     public function getStock($id)
     {
@@ -112,9 +111,6 @@ class DistribusiController extends Controller
 
         return response()->json($stock);
     }
-=======
-
->>>>>>> 58787e028fcc1b970a18fce092a4a84ab33c12c3
     // get list unit for selct-option
     public function getListUnit(Request $request)
     {
