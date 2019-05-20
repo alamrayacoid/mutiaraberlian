@@ -5,13 +5,7 @@
     <article class="content animated fadeInLeft">
 
         <div class="title-block text-primary">
-            <h1 class="title"> Tambah Data Agen </h1>
-            <p class="title-description">
-                <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
-                / <span>Master Data Utama</span>
-                / <a href="{{route('agen.index')}}"><span>Data Agen</span></a>
-                / <span class="text-primary" style="font-weight: bold;"> Tambah Data Agen</span>
-            </p>
+
         </div>
 
         <section class="section">

@@ -14,6 +14,9 @@
         .toolbarhpa {
             float:left;
         }
+        .toolbarap {
+            float:left;
+        }
         .btn-khusus {
             padding: 3px !important;
             border-radius: 5px !important;
@@ -47,7 +50,7 @@
 			<div class="col-12">
 				<ul class="nav nav-pills mb-3" id="Tabzs">
                     <li class="nav-item">
-                        <a href="#golongan" class="nav-link active" data-target="#golongan" aria-controls="golongan" data-toggle="tab" role="tab">Harga Cabang ke Agen</a>
+                        <a href="#golongan" class="nav-link active" data-target="#golongan" aria-controls="golongan" data-toggle="tab" role="tab">Harga Pembelian Agen</a>
                     </li>
                     {{--<li class="nav-item">--}}
                         {{--<a href="" class="nav-link" data-target="#default" aria-controls="default" data-toggle="tab" role="tab">Harga Default</a>--}}
@@ -55,11 +58,11 @@
                     {{--<li class="nav-item">--}}
                         {{--<a href="#needapprove" class="nav-link" data-target="#needapprove" aria-controls="needapprove" data-toggle="tab" role="tab">Belum Disetujui</a>--}}
                     {{--</li>--}}
+                    {{--<li class="nav-item">--}}
+                        {{--<a href="#haa" class="nav-link" data-target="#haa" aria-controls="haa" data-toggle="tab" role="tab">Harga Agen ke Agen</a>--}}
+                    {{--</li>--}}
                     <li class="nav-item">
-                        <a href="#haa" class="nav-link" data-target="#haa" aria-controls="haa" data-toggle="tab" role="tab">Harga Agen ke Agen</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#hpa" class="nav-link" data-target="#hpa" aria-controls="hpa" data-toggle="tab" role="tab">Harga ke Customer</a>
+                        <a href="#hpa" class="nav-link" data-target="#hpa" aria-controls="hpa" data-toggle="tab" role="tab">Harga Penjualan ke Customer</a>
                     </li>
                 </ul>
 
@@ -78,6 +81,9 @@
 					@include('masterdatautama.harga.golongan.editGolHrgRangeHPA')
                     @include('masterdatautama.harga.pending.index')
 
+                    @include('masterdatautama.harga.golongan.agenPriceTab')
+                    @include('masterdatautama.harga.golongan.addAgenPrice')
+
 		        </div>
 			</div>
 
@@ -90,7 +96,7 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-    var tbl_gln, tbl_item, tbl_itemHPA, tbl_napp, tbl_glnHPA;
+    var tbl_gln, tbl_item, tbl_itemHPA, tbl_napp, tbl_glnHPA, tbl_agenprice;
 	$(document).ready(function(){
 	    if ($("#idGol").val() == "") {
 	        $(".barang").attr('disabled', true);
@@ -173,6 +179,28 @@
             }
         });
 
+        tbl_agenprice = $('#table_agenpricename').DataTable({
+            "paging":   false,
+            "ordering": false,
+            "info":     false,
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('dataharga.getgolonganap') }}",
+                type: "get"
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'ap_name'},
+                {data: 'action'}
+            ],
+            dom: 'l<"toolbarap">frtip',
+            initComplete: function(){
+                $("div.toolbarap").html('<button type="button" id="btnagenprice" class="btn btn-primary" title="Tambah Golongan"><i class="fa fa-plus"></i></button>');
+            }
+        });
+
         tbl_item = $('#table_golonganharga').DataTable({
 			"paging":   false,
 			"ordering": false,
@@ -195,6 +223,11 @@
         $(document).on('click','#btngolonganHPA', function (evt) {
             evt.preventDefault();
             $('#addgolonganHPA').modal('show');
+        })
+
+        $(document).on('click','#btnagenprice', function (evt) {
+            evt.preventDefault();
+            $('#addagenprice').modal('show');
         })
 
 		$(document).on('click','.btn-edit-golonganharga',function(){
@@ -271,6 +304,7 @@
                     if (response.data.status == "Success") {
                         messageSuccess("Berhasil", "Data berhasil disimpan!");
                         $('#formgln').trigger("reset");
+                        $('#addgolongan').modal('hide');
                         reloadTable();
                     } else {
                         messageWarning("Gagal", "Data gagal disimpan");
@@ -289,7 +323,27 @@
                     if (response.data.status == "Success") {
                         messageSuccess("Berhasil", "Data berhasil disimpan!");
                         $('#formglnHPA').trigger("reset");
+                        $('#addgolonganHPA').modal('hide');
                         tbl_glnHPA.ajax.reload();
+                    } else {
+                        messageWarning("Gagal", "Data gagal disimpan");
+                    }
+                })
+            }
+        });
+
+        $(document).on('submit', '#formap', function (evt) {
+            evt.preventDefault();
+            if ($("#namaap").val() == "") {
+                messageWarning("Peringatan", "Kolom nama golongan tidak boleh kosong");
+            } else {
+                var data = $('#formap').serialize();
+                axios.post('{{route("dataharga.addgolonganpa")}}', data).then(function (response) {
+                    if (response.data.status == "Success") {
+                        messageSuccess("Berhasil", "Data berhasil disimpan!");
+                        $('#formap').trigger("reset");
+                        $('#addagenprice').modal('hide');
+                        tbl_agenprice.ajax.reload();
                     } else {
                         messageWarning("Gagal", "Data gagal disimpan");
                     }
@@ -322,6 +376,23 @@
                     loadingHide();
                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                     tbl_glnHPA.ajax.reload();
+                } else {
+                    loadingHide();
+                    messageWarning("Gagal", "Data gagal diperbarui!");
+                }
+            })
+        })
+
+        $(document).on('submit', '#formedtglnPA', function (evt) {
+            evt.preventDefault();
+            loadingShow();
+            var data = $('#formedtglnPA').serialize();
+            axios.post('{{route("dataharga.editgolonganpa")}}', data).then(function (response) {
+                if (response.data.status == "Success") {
+                    loadingHide();
+                    messageSuccess("Berhasil", "Data berhasil perbarui!");
+                    tbl_agenprice.ajax.reload();
+                    $('#editgolonganPA').modal('hide');
                 } else {
                     loadingHide();
                     messageWarning("Gagal", "Data gagal diperbarui!");
@@ -779,12 +850,22 @@
         $('#editgolonganHPA').modal('show');
     }
 
+    function editGolonganPA(id, name) {
+        $('#idGolonganPA').val(id);
+        $('#namaGolonganPA').val(name);
+        $('#editgolonganPA').modal('show');
+    }
+
 	function hapusGolongan(id) {
         deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan/"+id);
     }
 
     function hapusGolonganHPA(id) {
         deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan-hpa/"+id);
+    }
+
+    function hapusGolonganPA(id) {
+        deleteConfirm(baseUrl+"/masterdatautama/harga/delete-golongan-pa/"+id);
     }
 
     function editGolonganHarga(id, detail, item, harga, satuan, tipe, rangestart, rangeEnd, status) {

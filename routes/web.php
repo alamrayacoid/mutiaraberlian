@@ -80,12 +80,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/harga/index', 'Master\HargaController@dataharga')->name('dataharga.index');
     Route::get('/masterdatautama/harga/get-golongan', 'Master\HargaController@getGolongan')->name('dataharga.getgolongan');
     Route::get('/masterdatautama/harga/get-golongan-hpa', 'Master\HargaController@getGolonganHPA')->name('dataharga.getgolonganhpa');
+    Route::get('/masterdatautama/harga/get-golongan-ap', 'Master\HargaController@getAgenPrice')->name('dataharga.getgolonganap');
     Route::get('/masterdatautama/harga/delete-golongan/{id}', 'Master\HargaController@deleteGolongan')->name('dataharga.deletegolongan');
     Route::get('/masterdatautama/harga/delete-golongan-hpa/{id}', 'Master\HargaController@deleteGolonganHPA')->name('dataharga.deletegolonganhpa');
+    Route::get('/masterdatautama/harga/delete-golongan-pa/{id}', 'Master\HargaController@deleteGolonganPA')->name('dataharga.deletegolonganpa');
     Route::post('/masterdatautama/harga/add-golongan', 'Master\HargaController@addGolongan')->name('dataharga.addgolongan');
     Route::post('/masterdatautama/harga/add-golongan-hpa', 'Master\HargaController@addGolonganHPA')->name('dataharga.addgolonganhpa');
+    Route::post('/masterdatautama/harga/add-golongan-pa', 'Master\HargaController@addGolonganPA')->name('dataharga.addgolonganpa');
     Route::post('/masterdatautama/harga/edit-golongan', 'Master\HargaController@editGolongan')->name('dataharga.editgolongan');
     Route::post('/masterdatautama/harga/edit-golongan-hpa', 'Master\HargaController@editGolonganHPA')->name('dataharga.editgolonganhpa');
+    Route::post('/masterdatautama/harga/edit-golongan-pa', 'Master\HargaController@editGolonganPA')->name('dataharga.editgolonganpa');
     Route::get('/masterdatautama/harga/cari-barang', 'Master\HargaController@cariBarang')->name('dataharga.caribarang');
     Route::get('/masterdatautama/harga/get-satuan/{id}', 'Master\HargaController@getSatuan')->name('dataharga.getsatuan');
     Route::post('/masterdatautama/harga/add-golongan-harga', 'Master\HargaController@addGolonganHarga')->name('dataharga.addgolonganharga');
