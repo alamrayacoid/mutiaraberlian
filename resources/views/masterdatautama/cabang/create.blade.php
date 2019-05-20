@@ -28,29 +28,57 @@
                             <section>
                                 <div class="row">
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Nama Cabang</label>
+                                        <label>Nama Cabang <span style="color:red;">*</span></label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm" id="cabang_name" name="cabang_name" style="text-transform: uppercase;">
+                                            <input type="text" class="form-control form-control-sm" id="cabang_name" name="cabang_name" style="text-transform: uppercase;" title="required: branch name">
                                         </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>Alamat Cabang <span style="color:red;">*</span></label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <textarea type="text" class="form-control form-control-sm" id="cabang_address" name="cabang_address" title="required: address"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>Area (Provinsi) <span style="color:red;">*</span></label>
                                     </div>
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Alamat Cabang</label>
-                                    </div>
-                                    <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <textarea type="text" class="form-control form-control-sm" id="cabang_address" name="cabang_address"></textarea>
+                                            <select class="form-control select2" name="cabang_prov" id="cabang_prov">
+                                                <option value="" selected disabled>Pilih Provinsi</option>
+                                                @foreach($data['provinces'] as $prov)
+                                                <option value="{{ $prov->wp_id }}">{{ $prov->wp_name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>Area (Kota) <span style="color:red;">*</span></label>
                                     </div>
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>No Telp</label>
+                                        <div class="form-group">
+                                            <select class="form-control select2" name="cabang_city" id="cabang_city">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>No Telp <span style="color:red;">*</span></label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm hp" id="cabang_telp" name="cabang_telp" placeholder="0853 xxx">
+                                            <input type="text" class="form-control form-control-sm hp" id="cabang_telp" name="cabang_telp" placeholder="0853 xxx" title="required: no telp">
                                         </div>
                                     </div>
+
                                     <div class="col-md-3 col-sm-6 col-xs-12">
                                         <label>Tipe Company</label>
                                     </div>
@@ -65,7 +93,7 @@
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
                                             <select id="cabang_user" class="form-control form-control-sm select2" name="cabang_user">
-                                                <option value="" selected disabled>=== Pilih Pemilik Cabang ===</option>
+                                                <option value="" selected disabled>Pilih Pemilik Cabang</option>
                                                 @foreach($employe as $emp)
                                                 <option value="{{$emp->e_id}}">{{$emp->e_name}}</option>
                                                 @endforeach
@@ -95,31 +123,66 @@
         }
     });
 
-    $('#btn_simpan').on('click', function() {
-        $.ajax({
-            url: "{{route('cabang.store')}}",
-            type: "get",
-            data: $('#formAdd').serialize(),
-            dataType: "json",
-            beforeSend: function() {
-                loadingShow();
-            },
-            success: function(response) {
-                if (response.status == 'sukses') {
+    $(document).ready(function() {
+        $('#btn_simpan').on('click', function() {
+            $.ajax({
+                url: "{{route('cabang.store')}}",
+                type: "get",
+                data: $('#formAdd').serialize(),
+                dataType: "json",
+                beforeSend: function() {
+                    loadingShow();
+                },
+                success: function(response) {
+                    if (response.status == 'sukses') {
+                        loadingHide();
+                        messageSuccess('Berhasil', 'Data berhasil ditambahkan !');
+                        window.location.href = "{{route('cabang.index')}}";
+                    } else {
+                        loadingHide();
+                        messageFailed('Gagal', response.message);
+                    }
+                },
+                error: function(e) {
                     loadingHide();
-                    messageSuccess('Success', 'Data berhasil ditambahkan!');
-                    window.location.href = "{{route('cabang.index')}}";
-                } else {
-                    loadingHide();
-                    messageFailed('Gagal', response.message);
+                    messageWarning('Peringatan', e.message);
                 }
-            },
-            error: function(e) {
-                loadingHide();
-                messageWarning('Peringatan', e.message);
-            }
+            });
+        });
+
+        $('#cabang_prov').on('change', function() {
+            getCities();
+        });
+
+        $('#cabang_city').on('select2:select', function() {
+            $('#cabang_telp').focus();
         });
     });
+
+    function getCities()
+    {
+        $.ajax({
+            url: "{{ route('cabang.getCities') }}",
+            data: {
+                provId: $('#cabang_prov').val()
+            },
+            type: "get",
+            success: function (response) {
+                console.log(response);
+                $('#cabang_city').empty();
+                opt = '<option selected disabled>Pilih Kota</option>';
+                $.each(response, function(key, val) {
+                    opt += '<option value="'+ val.wc_id +'">'+ val.wc_name +'</option>';
+                })
+                $('#cabang_city').append(opt);
+                $('#cabang_city').focus();
+            },
+            error: function (err) {
+                console.log(err);
+                messageWarning('Error', err + ', Hubungi pengembang !')
+            }
+        })
+    }
 
 </script>
 @endsection

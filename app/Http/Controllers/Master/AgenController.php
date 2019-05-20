@@ -6,13 +6,14 @@ use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use carbon\Carbon;
+use CodeGenerator;
+use App\m_company;
 use DB;
 use File;
 use Image;
 use Session;
 use Validator;
-use carbon\Carbon;
-use CodeGenerator;
 use Yajra\DataTables\DataTables;
 
 class AgenController extends Controller
@@ -31,16 +32,15 @@ class AgenController extends Controller
             'area_city' => 'required',
             'name' => 'required',
             'email' => 'sometimes|nullable|email',
-            'telp' => 'required|numeric'
+            'telp' => 'required'
         ],
-            [
-                'area_prov.required' => 'Area Provinsi masih kosong !',
-                'area_city.required' => 'Area Kota masih kosong !',
-                'name.required' => 'Nama agen masih kosong !',
-                'email.email' => 'Format email tidak valid !',
-                'telp.required' => 'No Telp masih kosong !',
-                'telp.numeric' => 'No Telp hanya berupa angka, tidak boleh mengandung huruf !'
-            ]);
+        [
+            'area_prov.required' => 'Area Provinsi masih kosong !',
+            'area_city.required' => 'Area Kota masih kosong !',
+            'name.required' => 'Nama agen masih kosong !',
+            'email.email' => 'Format email tidak valid !',
+            'telp.required' => 'No Telp masih kosong !'
+        ]);
         if ($validator->fails()) {
             return $validator->errors()->first();
         } else {
@@ -250,6 +250,8 @@ class AgenController extends Controller
         $data['provinces'] = $this->getProvinces();
         $data['classes'] = $this->getClasses();
         $data['salesPrice'] = $this->getSalesPrice();
+        $data['mma'] = m_company::where('c_type', 'CABANG')->orWhere('c_type', 'PUSAT')->get();
+
         return view('masterdatautama.agen.create', compact('data'));
     }
 
@@ -289,6 +291,7 @@ class AgenController extends Controller
                     'a_code'      => $codeAgen,
                     'a_area'      => $request->area_city,
                     'a_name'      => $request->name,
+                    'a_mma'       => $request->mma,
                     'a_sex'       => $request->jekel,
                     'a_birthday'  => Carbon::parse($request->birthday),
                     'a_email'     => $request->email,
@@ -315,7 +318,6 @@ class AgenController extends Controller
                     'c_name'    => $request->name,
                     'c_address' => $request->address,
                     'c_tlp'     => $request->telp,
-                    // 'c_type'    => $request->type_hidden,
                     'c_type'    => 'AGEN',
                     'c_user'    => $codeAgen,
                     'c_insert'  => Carbon::now(),
@@ -346,6 +348,8 @@ class AgenController extends Controller
         $data['agen'] = DB::table('m_agen')
             ->where('a_id', $id)
             ->first();
+        $data['mma'] = m_company::where('c_type', 'CABANG')->orWhere('c_type', 'PUSAT')->get();
+
         $provinceId = $this->getProvinceByCity($data['agen']->a_area);
 
         $data['provinces'] = $this->getProvinces();
@@ -396,6 +400,7 @@ class AgenController extends Controller
                 ->update([
                     'a_area'      => $request->area_city,
                     'a_name'      => $request->name,
+                    'a_mma'       => $request->mma,
                     'a_sex'       => $request->jekel,
                     'a_birthday'  => Carbon::parse($request->birthday),
                     'a_email'     => $request->email,
@@ -412,27 +417,6 @@ class AgenController extends Controller
                     'a_img'       => $photo,
                     'a_update'    => Carbon::now()
                 ]);
-
-            // // get current agent by id
-            // $currentAgent = DB::table('m_agen')
-            //     ->where('a_id', $id)
-            //     ->select('a_code')
-            //     ->first();
-
-            // // update table m_company
-            // DB::table('m_company')
-            //     ->where('c_user', $currentAgent->a_code)
-            //     ->update([
-            //         'c_id'      => $codeCompany,
-            //         'c_name'    => $request->name,
-            //         'c_address' => $request->address,
-            //         'c_tlp'     => $request->telp,
-            //         'c_type'    => $request->type_hidden,
-            //         // 'c_type'    => 'AGEN',
-            //         // 'c_user'    => $codeAgen,
-            //         'c_insert'  => Carbon::now(),
-            //         'c_update'  => Carbon::now()
-            //     ]);
 
             DB::commit();
             return response()->json([

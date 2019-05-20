@@ -77,6 +77,24 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>MMA</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select id="mma" class="select2 form-control form-control-sm" name="mma">
+                                                <option value="" selected disabled>Pilih MMA</option>
+                                                @foreach($data['mma'] as $mma)
+                                                @if($mma == $data['agen']->a_mma)
+                                                <option value="{{ $mma->c_id }}" selected>{{ $mma->c_name }}</option>
+                                                @else
+                                                <option value="{{ $mma->c_id }}">{{ $mma->c_name }}</option>
+                                                @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
                                         <label>Nama Agen</label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
@@ -90,7 +108,7 @@
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <select name="jekel" id="jekel" class="form-control form-control-sm">
+                                            <select name="jekel" id="jekel" class="form-control form-control-sm select2">
                                                 <option value="L" @if($data['agen']->a_sex == "L") selected @endif>Laki - laki</option>
                                                 <option value="P" @if($data['agen']->a_sex == "P") selected @endif>Perempuan</option>
                                             </select>
@@ -125,13 +143,13 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Golongan Harga</label>
+                                        <label>Harga Pembelian</label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
                                             <input type="hidden" id="class_hidden" value="{{ $data['agen']->a_class }}">
                                             <select id="a_class" class="select2 form-control form-control-sm" name="a_class">
-                                                <option value="" selected="" disabled>Pilih Golongan Harga</option>
+                                                <option value="" selected="" disabled>Pilih Jenis Harga Pembelian</option>
                                                 @foreach($data['classes'] as $class)
                                                 <option value="{{ $class->pc_id }}">{{ $class->pc_name }}</option>
                                                 @endforeach
@@ -140,12 +158,12 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Harga Jual Agen</label>
+                                        <label>Harga Penjualan</label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
                                             <select id="a_salesprice" class="select2 form-control form-control-sm" name="a_salesprice">
-                                                <option value="" selected="" disabled>Pilih Harga Agen</option>
+                                                <option value="" selected="" disabled>Pilih Jenis Harga Penjualan</option>
                                                 @foreach($data['salesPrice'] as $class)
                                                     <option value="{{ $class->sp_id }}" @if($data['agen']->a_salesprice == $class->sp_id) selected @endif>{{ $class->sp_name }}</option>
                                                 @endforeach
@@ -241,7 +259,7 @@
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm" name="email" value="{{ $data['agen']->a_email }}" placeholder="user@email.com" tabindex="8">
+                                            <input type="text" class="form-control form-control-sm email" name="email" value="{{ $data['agen']->a_email }}" placeholder="user@email.com" tabindex="8">
                                         </div>
                                     </div>
 
@@ -250,7 +268,7 @@
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm" name="telp" value="{{ $data['agen']->a_telp }}" tabindex="8">
+                                            <input type="text" class="form-control form-control-sm hp" name="telp" value="{{ $data['agen']->a_telp }}" tabindex="8">
                                         </div>
                                     </div>
 

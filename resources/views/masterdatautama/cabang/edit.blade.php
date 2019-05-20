@@ -35,29 +35,66 @@
                                 ?>
                                 <div class="row">
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Nama Cabang</label>
+                                        <label>Nama Cabang <span style="color:red;">*</span></label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
                                             <input type="text" readonly class="form-control form-control-sm" name="cabang_name" value="{{ $data->c_name }}" style="text-transform: uppercase;">
                                         </div>
                                     </div>
+
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Alamat Cabang</label>
+                                        <label>Alamat Cabang <span style="color:red;">*</span></label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
                                             <textarea type="text" class="form-control form-control-sm" name="cabang_address">{{ $data->c_address }}</textarea>
                                         </div>
                                     </div>
+
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>No Telp</label>
+                                        <label>Area (Provinsi) <span style="color:red;">*</span></label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select class="form-control select2" name="cabang_prov" id="cabang_prov">
+                                                @foreach($provinces as $prov)
+                                                    @if($prov->wp_id == $selectedProvId->wc_provinsi)
+                                                    <option value="{{ $prov->wp_id }}" selected>{{ $prov->wp_name }}</option>
+                                                    @else
+                                                    <option value="{{ $prov->wp_id }}">{{ $prov->wp_name }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>Area (Kota) <span style="color:red;">*</span></label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select class="form-control select2" name="cabang_city" id="cabang_city">
+                                                @foreach($cities as $city)
+                                                @if($city->wc_id == $data->c_area)
+                                                <option value="{{ $city->wc_id }}" selected>{{ $city->wc_name }}</option>
+                                                @else
+                                                <option value="{{ $city->wc_id }}">{{ $city->wc_name }}</option>
+                                                @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>No Telp <span style="color:red;">*</span></label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="number" class="form-control form-control-sm" name="cabang_telp" value="{{ $data->c_tlp }}">
+                                            <input type="text" class="form-control form-control-sm hp" name="cabang_telp" value="{{ $data->c_tlp }}">
                                         </div>
                                     </div>
+
                                     <input type="hidden" name="cabang_type" value="{{$data->c_type}}">
                                     <div class="col-md-3 col-sm-6 col-xs-12">
                                         <label>Pemilik Cabang</label>
@@ -145,7 +182,7 @@
                     loadingHide();
                     messageSuccess('Success', 'Data berhasil diperbarui!');
                     window.location.href = "{{route('cabang.index')}}";
-                } else if (response.status == 'invalid') {
+                } else {
                     loadingHide();
                     messageWarning('Perhatian', response.message);
                 }

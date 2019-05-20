@@ -8,12 +8,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 
-use DB;
 use Auth;
-use Validator;
-use DataTables;
-use CodeGenerator;
+use App\m_wil_kota;
+use App\m_wil_provinsi;
 use Carbon\Carbon;
+use CodeGenerator;
+use DataTables;
+use DB;
+use Validator;
 
 class CabangController extends Controller
 {
@@ -99,7 +101,16 @@ class CabangController extends Controller
         }
         $employe = DB::table('m_employee')->select('e_id', 'e_name')->get();
         $company = DB::table('m_company')->select('c_id', 'c_name')->get();
-        return view('masterdatautama.cabang.create', compact('employe', 'company'));
+
+        $data['provinces'] = m_wil_provinsi::orderBy('wp_id')->get();
+
+        return view('masterdatautama.cabang.create', compact('employe', 'company', 'data'));
+    }
+
+    public function getCities(Request $request)
+    {
+        $cities = m_wil_kota::where('wc_provinsi', $request->provId)->get();
+        return response()->json($cities);
     }
 
     public function store(Request $request)
@@ -112,11 +123,13 @@ class CabangController extends Controller
         $messages = [
             'cabang_name.required' => 'Nama cabang masih kosong, silahkan isi terlebih dahulu !',
             'cabang_address.required' => 'Alamat cabang masih kosong, silahkan isi terlebih dahulu !',
+            'cabang_city.required' => 'Area (Kota) masih kosong, silahkan isi terlebih dahulu !',
             'cabang_telp.required' => 'Nomor telp masih kosong, silahkan isi terlebih dahulu !'
         ];
         $validator = Validator::make($request->all(), [
             'cabang_name' => 'required',
             'cabang_address' => 'required',
+            'cabang_city' => 'required',
             'cabang_telp' => 'required'
         ], $messages);
 
@@ -138,6 +151,7 @@ class CabangController extends Controller
                     'c_tlp' => $request->cabang_telp,
                     'c_type' => $request->cabang_type,
                     'c_user' => $request->cabang_user,
+                    'c_area' => $request->cabang_city,
                     'c_insert' => Carbon::now('Asia/Jakarta'),
                     'c_update' => Carbon::now('Asia/Jakarta')
                 ]);
@@ -148,8 +162,8 @@ class CabangController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'status' => 'Gagal',
-                'message' => $e
+                'status' => 'error',
+                'message' => $e->getMessage()
             ]);
         }
 
@@ -168,31 +182,40 @@ class CabangController extends Controller
                 $id = Crypt::decrypt($id);
             }
             catch (\Exception $e) {
-                return view('errors.404');
+                abort(404);
+                // return view('errors.404');
             }
             $data = DB::table('m_company')
                 ->leftJoin('m_employee', 'c_user', 'e_id')
                 ->select('m_company.*', 'e_id', 'e_name')
                 ->where('c_id', '=', $id)
                 ->first();
+
             $employe = DB::table('m_employee')->select('m_employee.*')->get();
-            return view('masterdatautama.cabang.edit', compact('data', 'employe'));
+            $provinces = m_wil_provinsi::orderBy('wp_id')->get();
+            $selectedProvId = m_wil_kota::where('wc_id', $data->c_area)->select('wc_provinsi')->first();
+            $cities = m_wil_kota::where('wc_provinsi', $selectedProvId->wc_provinsi)->get();
+
+            return view('masterdatautama.cabang.edit', compact('data', 'employe', 'provinces', 'selectedProvId', 'cities'));
         }
         else {
             try {
                 $id = Crypt::decrypt($id);
             }
             catch (\Exception $e) {
-                return view('errors.404');
+                abort(404);
+                // return view('errors.404');
             }
             $messages = [
                 'cabang_name.required' => 'Nama cabang masih kosong, silahkan isi terlebih dahulu !',
                 'cabang_address.required' => 'Alamat cabang masih kosong, silahkan isi terlebih dahulu !',
+                'cabang_city.required' => 'Area (Kota) masih kosong, silahkan isi terlebih dahulu !',
                 'cabang_telp.required' => 'Nomor telp masih kosong, silahkan isi terlebih dahulu !'
             ];
             $validator = Validator::make($request->all(), [
                 'cabang_name' => 'required',
                 'cabang_address' => 'required',
+                'cabang_city' => 'required',
                 'cabang_telp' => 'required'
             ], $messages);
 
@@ -213,6 +236,7 @@ class CabangController extends Controller
                         'c_tlp' => $request->cabang_telp,
                         'c_type' => $request->cabang_type,
                         'c_user' => $request->cabang_user,
+                        'c_area' => $request->cabang_city,
                         'c_update' => Carbon::now('Asia/Jakarta')
                     ]);
                 DB::commit();
@@ -224,7 +248,7 @@ class CabangController extends Controller
                 DB::rollback();
                 return response()->json([
                     'status' => 'gagal',
-                    'message' => $e
+                    'message' => $e->getMessage()
                 ]);
             }
         }
@@ -243,7 +267,7 @@ class CabangController extends Controller
         catch (\Exception $e) {
             return response()->json([
                 'status' => 'gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
         DB::beginTransaction();
@@ -263,7 +287,7 @@ class CabangController extends Controller
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -281,7 +305,7 @@ class CabangController extends Controller
         catch (\Exception $e) {
             return response()->json([
                 'status' => 'gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
         DB::beginTransaction();
@@ -301,7 +325,7 @@ class CabangController extends Controller
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }

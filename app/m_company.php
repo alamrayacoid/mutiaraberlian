@@ -12,4 +12,9 @@ class m_company extends Model
 
     const CREATED_AT = 'c_insert';
     const UPDATED_AT = 'c_update';
+
+    // public function getEmployee()
+    // {
+    //     // code...
+    // }
 }

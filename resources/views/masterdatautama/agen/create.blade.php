@@ -38,7 +38,7 @@
                                 <div class="row">
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Area (Provinsi)</label>
+                                        <label>Area (Provinsi) <span style="color:red;">*</span></label>
                                     </div>
                                     <div class="col-md-3 col-sm-6 col-xs-12">
                                         <div class="form-group">
@@ -52,7 +52,7 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Area (Kota)</label>
+                                        <label>Area (Kota) <span style="color:red;">*</span></label>
                                     </div>
                                     <div class="col-md-3 col-sm-6 col-xs-12">
                                         <div class="form-group">
@@ -63,7 +63,21 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Nama Agen</label>
+                                        <label>MMA</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select id="mma" class="select2 form-control form-control-sm" name="mma">
+                                                <option value="" selected disabled>Pilih MMA</option>
+                                                @foreach($data['mma'] as $mma)
+                                                <option value="{{ $mma->c_id }}">{{ $mma->c_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>Nama Agen <span style="color:red;">*</span></label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
@@ -76,7 +90,8 @@
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <select name="jekel" id="jekel" class="form-control form-control-sm">
+                                            <select name="jekel" id="jekel" class="form-control form-control-sm select2">
+                                                <option selected disabled>Pilih Jenis Kelamin</option>
                                                 <option value="L">Laki - laki</option>
                                                 <option value="P">Perempuan</option>
                                             </select>
@@ -90,7 +105,7 @@
                                         <div class="form-group">
                                             <input type="hidden" name="type_hidden" id="type_hidden">
                                             <select id="type" class="select2 form-control form-control-sm" name="type">
-                                                <option value="">Pilih Tipe Agen</option>
+                                                <option selected disabled>Pilih Tipe Agen</option>
                                                 <option value="AGEN">Agen</option>
                                                 <option value="SUB AGEN">Sub Agen</option>
                                             </select>
@@ -109,12 +124,12 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Golongan Harga</label>
+                                        <label>Harga Pembelian</label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
                                             <select id="a_class" class="select2 form-control form-control-sm" name="a_class">
-                                                <option value="" selected="" disabled>Pilih Golongan Harga</option>
+                                                <option value="" selected="" disabled>Pilih Jenis Harga Pembelian</option>
                                                 @foreach($data['classes'] as $class)
                                                 <option value="{{ $class->pc_id }}">{{ $class->pc_name }}</option>
                                                 @endforeach
@@ -123,12 +138,12 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Harga Jual Agen</label>
+                                        <label>Harga Penjualan</label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
                                             <select id="a_salesprice" class="select2 form-control form-control-sm" name="a_salesprice">
-                                                <option value="" selected="" disabled>Pilih Harga Agen</option>
+                                                <option value="" selected="" disabled>Pilih Jenis Harga Penjualan</option>
                                                 @foreach($data['salesPrice'] as $class)
                                                     <option value="{{ $class->sp_id }}">{{ $class->sp_name }}</option>
                                                 @endforeach
@@ -211,16 +226,16 @@
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm" name="email" placeholder="user@email.com">
+                                            <input type="text" class="form-control form-control-sm email" name="email" placeholder="user@email.com">
                                         </div>
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>No Telp</label>
+                                        <label>No Telp <span style="color:red;">*</span></label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm" name="telp">
+                                            <input type="text" class="form-control form-control-sm hp" name="telp">
                                         </div>
                                     </div>
 
