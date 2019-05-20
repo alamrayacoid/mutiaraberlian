@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Master;
 
+use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
@@ -298,6 +299,9 @@ class HargaController extends Controller
 
     public function addGolongan(Request $request)
     {
+        if (!AksesUser::checkAkses(4, 'create')){
+            return response()->json(['status' => "unauth"]);
+        }
         DB::beginTransaction();
         try {
             $values = [
@@ -317,6 +321,9 @@ class HargaController extends Controller
 
     public function addGolonganHPA(Request $request)
     {
+        if (!AksesUser::checkAkses(4, 'create')){
+            return response()->json(['status' => "unauth"]);
+        }
         DB::beginTransaction();
         try {
             $values = [
@@ -336,6 +343,9 @@ class HargaController extends Controller
 
     public function addGolonganPA(Request $request)
     {
+        if (!AksesUser::checkAkses(4, 'create')){
+            return response()->json(['status' => "unauth"]);
+        }
         DB::beginTransaction();
         try {
             $values = [
@@ -421,6 +431,9 @@ class HargaController extends Controller
 
     public function deleteGolongan($id)
     {
+        if (!AksesUser::checkAkses(4, 'delete')){
+            return response()->json(['status' => "unauth"]);
+        }
         try {
             $id = Crypt::decrypt($id);
         } catch (DecryptException $e) {
@@ -440,6 +453,9 @@ class HargaController extends Controller
 
     public function deleteGolonganHPA($id)
     {
+        if (!AksesUser::checkAkses(4, 'delete')){
+            return response()->json(['status' => "unauth"]);
+        }
         try {
             $id = Crypt::decrypt($id);
         } catch (DecryptException $e) {
@@ -459,6 +475,9 @@ class HargaController extends Controller
 
     public function deleteGolonganPA($id)
     {
+        if (!AksesUser::checkAkses(4, 'delete')){
+            return response()->json(['status' => "unauth"]);
+        }
         try {
             $id = Crypt::decrypt($id);
         } catch (DecryptException $e) {

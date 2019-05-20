@@ -50,7 +50,7 @@
 			<div class="col-12">
 				<ul class="nav nav-pills mb-3" id="Tabzs">
                     <li class="nav-item">
-                        <a href="#golongan" class="nav-link active" data-target="#golongan" aria-controls="golongan" data-toggle="tab" role="tab">Harga Cabang ke Agen</a>
+                        <a href="#golongan" class="nav-link active" data-target="#golongan" aria-controls="golongan" data-toggle="tab" role="tab">Harga Pembelian Agen</a>
                     </li>
                     {{--<li class="nav-item">--}}
                         {{--<a href="" class="nav-link" data-target="#default" aria-controls="default" data-toggle="tab" role="tab">Harga Default</a>--}}
@@ -58,11 +58,11 @@
                     {{--<li class="nav-item">--}}
                         {{--<a href="#needapprove" class="nav-link" data-target="#needapprove" aria-controls="needapprove" data-toggle="tab" role="tab">Belum Disetujui</a>--}}
                     {{--</li>--}}
+                    {{--<li class="nav-item">--}}
+                        {{--<a href="#haa" class="nav-link" data-target="#haa" aria-controls="haa" data-toggle="tab" role="tab">Harga Agen ke Agen</a>--}}
+                    {{--</li>--}}
                     <li class="nav-item">
-                        <a href="#haa" class="nav-link" data-target="#haa" aria-controls="haa" data-toggle="tab" role="tab">Harga Agen ke Agen</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#hpa" class="nav-link" data-target="#hpa" aria-controls="hpa" data-toggle="tab" role="tab">Harga ke Customer</a>
+                        <a href="#hpa" class="nav-link" data-target="#hpa" aria-controls="hpa" data-toggle="tab" role="tab">Harga Penjualan ke Customer</a>
                     </li>
                 </ul>
 
