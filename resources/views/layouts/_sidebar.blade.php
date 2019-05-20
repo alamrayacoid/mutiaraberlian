@@ -124,13 +124,7 @@
         <div class="sidebar-header">
             <div class="brand">
                 <img src="{{asset('assets/img/mutiaraberlian.svg')}}" height="45px" width="45px">
-                {{-- <div class="logo">
-                    <span class="l l1"></span>
-                    <span class="l l2"></span>
-                    <span class="l l3"></span>
-                    <span class="l l4"></span>
-                    <span class="l l5"></span>
-                </div>  --}}
+
                 <div class="text-brand">Mutiara Berlian</div>
             </div>
         </div>
