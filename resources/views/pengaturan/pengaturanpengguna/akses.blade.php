@@ -49,20 +49,20 @@
                                         <td>
                                             <strong>Last Login</strong>
                                         </td>
-                                        <td>{{Carbon\Carbon::parse($data->u_lastlogin)->format('d/m/Y G:i:s')}}</td>
+                                        <td>{{Carbon\Carbon::parse($user->u_lastlogin)->format('d/m/Y G:i:s')}}</td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <strong>Last Logout</strong>
                                         </td>
-                                        <td>{{Carbon\Carbon::parse($data->u_lastlogout)->format('d/m/Y G:i:s')}}</td>
+                                        <td>{{Carbon\Carbon::parse($user->u_lastlogout)->format('d/m/Y G:i:s')}}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div class="col-md-3">
                             <label for="">Username</label>
-                            <h2 class="no margins">{{$data->u_username}}</h2>
+                            <h2 class="no margins">{{$user->u_username}}</h2>
                         </div>
                     </div>
                     <div class="table-responsive mt-4">

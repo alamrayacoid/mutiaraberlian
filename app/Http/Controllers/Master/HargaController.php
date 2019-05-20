@@ -558,6 +558,9 @@ class HargaController extends Controller
 
     public function addGolonganHarga(Request $request)
     {
+        if (!AksesUser::checkAkses(4, 'create')){
+            return response()->json(['status' => "unauth"]);
+        }
         try {
             $idGol = Crypt::decrypt($request->idGol);
         } catch (DecryptException $e) {
@@ -708,6 +711,9 @@ class HargaController extends Controller
 
     public function addGolonganHargaHPA(Request $request)
     {
+        if (!AksesUser::checkAkses(4, 'create')){
+            return response()->json(['status' => "unauth"]);
+        }
         try {
             $idGol = Crypt::decrypt($request->idGolHPA);
         } catch (DecryptException $e) {

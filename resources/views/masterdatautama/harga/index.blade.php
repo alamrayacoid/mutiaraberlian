@@ -306,6 +306,9 @@
                         $('#formgln').trigger("reset");
                         $('#addgolongan').modal('hide');
                         reloadTable();
+                    } else if (response.data.status == 'unauth'){
+                        messageWarning("Perhatian", "Anda tidak memiliki akses");
+                        $('#addgolongan').modal('hide');
                     } else {
                         messageWarning("Gagal", "Data gagal disimpan");
                     }
@@ -325,6 +328,9 @@
                         $('#formglnHPA').trigger("reset");
                         $('#addgolonganHPA').modal('hide');
                         tbl_glnHPA.ajax.reload();
+                    } else if (response.data.status == 'unauth'){
+                        messageWarning("Perhatian", "Anda tidak memiliki akses");
+                        $('#addgolongan').modal('hide');
                     } else {
                         messageWarning("Gagal", "Data gagal disimpan");
                     }
@@ -344,6 +350,9 @@
                         $('#formap').trigger("reset");
                         $('#addagenprice').modal('hide');
                         tbl_agenprice.ajax.reload();
+                    } else if (response.data.status == 'unauth'){
+                        messageWarning("Perhatian", "Anda tidak memiliki akses");
+                        $('#addgolongan').modal('hide');
                     } else {
                         messageWarning("Gagal", "Data gagal disimpan");
                     }
@@ -459,6 +468,12 @@
                         } else if (response.data.status == "Unit Ada") {
                             loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
+                        } else if (response.data.status == 'unauth'){
+                            loadingHide();
+                            messageWarning("Peringatan", "Anda tidak memiliki akses");
+                        } else {
+                            loadingHide();
+                            messageWarning("Gagal", "Data gagal disimpan!");
                         }
                     });
                 }
@@ -552,6 +567,12 @@
                         } else if (response.data.status == "Unit Ada") {
                             loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
+                        } else if (response.data.status == 'unauth'){
+                            loadingHide();
+                            messageWarning("Peringatan", "Anda tidak memiliki akses");
+                        } else {
+                            loadingHide();
+                            messageWarning("Gagal", "Data gagal disimpan!");
                         }
                     });
                 }
