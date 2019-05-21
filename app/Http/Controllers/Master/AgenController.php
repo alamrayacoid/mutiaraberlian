@@ -245,7 +245,7 @@ class AgenController extends Controller
     public function create()
     {
         if (!AksesUser::checkAkses(7, 'create')){
-            abort('401');
+            abort(401);
         }
         $data['provinces'] = $this->getProvinces();
         $data['classes'] = $this->getClasses();
@@ -263,6 +263,10 @@ class AgenController extends Controller
      */
     public function store(Request $request)
     {
+        if (!AksesUser::checkAkses(7, 'create')){
+            abort(401);
+        }
+
         // validate request
         $isValidRequest = $this->validate_req($request);
         if ($isValidRequest != '1') {
@@ -345,6 +349,10 @@ class AgenController extends Controller
      */
     public function edit($id)
     {
+        if (!AksesUser::checkAkses(7, 'create')){
+            abort(401);
+        }
+
         $data['agen'] = DB::table('m_agen')
             ->where('a_id', $id)
             ->first();
@@ -373,6 +381,10 @@ class AgenController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!AksesUser::checkAkses(7, 'create')){
+            abort(401);
+        }
+
         // validate request
         $isValidRequest = $this->validate_req($request);
         if ($isValidRequest != '1') {
@@ -439,6 +451,10 @@ class AgenController extends Controller
      */
     public function disable($id)
     {
+        if (!AksesUser::checkAkses(7, 'create')){
+            abort(401);
+        }
+
         // start: execute delete data
         DB::beginTransaction();
         try {
@@ -469,6 +485,10 @@ class AgenController extends Controller
      */
     public function enable($id)
     {
+        if (!AksesUser::checkAkses(7, 'create')){
+            abort(401);
+        }
+
         // start: execute delete data
         DB::beginTransaction();
         try {

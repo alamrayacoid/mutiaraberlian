@@ -125,6 +125,10 @@ class DistribusiController extends Controller
     // store new-distribusibarang to db
     public function store(Request $request)
     {
+        if (!AksesUser::checkAkses(7, 'create')){
+            abort(401);
+        }
+
         // validate request
         $isValidRequest = $this->validateDist($request);
         if ($isValidRequest != '1') {
@@ -519,7 +523,7 @@ class DistribusiController extends Controller
     {
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
-        
+
         // if logged in user is 'pusat'
         if (Auth::user()->u_user == 'E' && Auth::user()->getCompany->c_type == 'PUSAT') {
             $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])

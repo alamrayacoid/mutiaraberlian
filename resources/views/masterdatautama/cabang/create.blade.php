@@ -87,19 +87,7 @@
                                           <input type="text" class="form-control" name="cabang_type" value="CABANG" readonly>
                                         </div>
                                     </div>
-                                    <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Pemilik Cabang</label>
-                                    </div>
-                                    <div class="col-md-9 col-sm-6 col-xs-12">
-                                        <div class="form-group">
-                                            <select id="cabang_user" class="form-control form-control-sm select2" name="cabang_user">
-                                                <option value="" selected disabled>Pilih Pemilik Cabang</option>
-                                                @foreach($employe as $emp)
-                                                <option value="{{$emp->e_id}}">{{$emp->e_name}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </section>
                         </div>

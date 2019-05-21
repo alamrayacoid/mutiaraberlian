@@ -1,16 +1,17 @@
 <?php
 
 namespace App\Http\Controllers;
+use Auth;
+use App\d_productionordercode;
+use Carbon\Carbon;
+use Crypt;
 use DB;
 use function foo\func;
-use Yajra\DataTables\DataTables;
-use Response;
-use Illuminate\Http\Request;
-use Auth;
-use Crypt;
-use Mutasi;
-use Carbon\Carbon;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Http\Request;
+use Mutasi;
+use Response;
+use Yajra\DataTables\DataTables;
 
 class PenerimaanProduksiController extends Controller
 {
@@ -36,6 +37,8 @@ class PenerimaanProduksiController extends Controller
             ->where('pod_received', '=', 'N')
             ->select('po_id', 'po_nota', 's_company', 'po_date')
             ->groupBy('po_id')
+            ->orderBy('po_date', 'desc')
+            ->orderBy('po_nota', 'desc')
             ->get();
 
         return DataTables::of($data)
@@ -221,13 +224,14 @@ class PenerimaanProduksiController extends Controller
                         $qty_compare = $data->ird_qty/$data_check->compare3;
                     }
                 }
+
                 if ($qty_compare < $data->pod_qty) {
                     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                         <button class="btn btn-danger hint--top-left hint--info" aria-label="Terima" onclick="receipt(\''.Crypt::encrypt($data->po_id).'\', \''.Crypt::encrypt($data->pod_item).'\')"><i class="fa fa-arrow-down"></i>
                         </button>
                     </div>';
                 } else {
-//                    return '<div class="text-center"><span class="status-approve" style="padding: 5px;">Diterima</span></div>';
+                   // return '<div class="text-center"><span class="status-approve" style="padding: 5px;">Diterima</span></div>';
                     return '<div class="status-termin-lunas"><p>Diterima</p></div>';
                 }
             })
@@ -283,7 +287,8 @@ class PenerimaanProduksiController extends Controller
 
         if($data->terima == NULL) {
             $qty_compare = 0;
-        } else {
+        }
+        else {
             $check = DB::table('m_item')
                 ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
                     'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
@@ -293,14 +298,20 @@ class PenerimaanProduksiController extends Controller
             $qty_compare = 0;
             if ($data->unit == $check->unit1) {
                 $qty_compare = $data->terima/$check->compare1;
-            } else if ($data->unit == $check->unit2) {
+            }
+            else if ($data->unit == $check->unit2) {
                 $qty_compare = $data->terima/$check->compare2;
-            } else if ($data->unit == $check->unit3) {
+            }
+            else if ($data->unit == $check->unit3) {
                 $qty_compare = $data->terima/$check->compare3;
             }
         }
 
-//        $sisa = (int)$data->jumlah - (int)$qty_compare;
+       // $sisa = (int)$data->jumlah - (int)$qty_compare;
+       // get list production-code from selected production-order
+       $listProdCode = d_productionordercode::where('poc_productionorder', $data->id)
+       ->where('poc_item', $data->item)
+       ->get();
 
         $data = array(
             'id'        => Crypt::encrypt($data->id),
@@ -313,7 +324,7 @@ class PenerimaanProduksiController extends Controller
             'terima'    => $qty_compare,
         );
 
-        return Response::json(['status' => 'Success', 'data' => $data, 'satuan' => $satuan]);
+        return Response::json(['status' => 'Success', 'data' => $data, 'satuan' => $satuan, 'prodCode' => $listProdCode]);
     }
 
     public function checkTerima(Request $request)
@@ -321,7 +332,8 @@ class PenerimaanProduksiController extends Controller
         try{
             $order   = Crypt::decrypt($request->idOrder);
             $item    = Crypt::decrypt($request->idItem);
-        }catch (\DecryptException $e){
+        }
+        catch (\DecryptException $e){
             return Response::json(['status' => 'Failed']);
         }
 
@@ -352,7 +364,8 @@ class PenerimaanProduksiController extends Controller
 
             if($data_check->terima == NULL) {
                 $qty_compare = 0;
-            } else {
+            }
+            else {
                 $check = DB::table('m_item')
                     ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
                         'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
@@ -362,9 +375,11 @@ class PenerimaanProduksiController extends Controller
                 $qty_compare = 0;
                 if ($data_check->pod_unit == $check->unit1) {
                     $qty_compare = $data_check->terima/$check->compare1;
-                } else if ($data_check->pod_unit == $check->unit2) {
+                }
+                else if ($data_check->pod_unit == $check->unit2) {
                     $qty_compare = $data_check->terima/$check->compare2;
-                } else if ($data_check->pod_unit == $check->unit3) {
+                }
+                else if ($data_check->pod_unit == $check->unit3) {
                     $qty_compare = $data_check->terima/$check->compare3;
                 }
             }
@@ -374,7 +389,8 @@ class PenerimaanProduksiController extends Controller
             if ($request->qty > $sisa) {
                 $result = "Over qty";
                 $message = "Kuantitas melebihi jumlah order/sisa yang sudah diterima, sisa yang belum diterima saat ini ". $sisa . " " . $data_check->satuan;
-            } else {
+            }
+            else {
                 $result = "Success";
                 $message = "Success";
             }
@@ -432,7 +448,8 @@ class PenerimaanProduksiController extends Controller
         try{
             $order   = Crypt::decrypt($request->idOrder);
             $item    = Crypt::decrypt($request->idItem);
-        }catch (\DecryptException $e){
+        }
+        catch (\DecryptException $e){
             return Response::json(['status' => 'Failed']);
         }
 
@@ -460,9 +477,11 @@ class PenerimaanProduksiController extends Controller
                 $qty_compare = 0;
                 if ($request->satuan == $data_check->unit1) {
                     $qty_compare = $request->qty;
-                } else if ($request->satuan == $data_check->unit2) {
+                }
+                else if ($request->satuan == $data_check->unit2) {
                     $qty_compare = $request->qty * $data_check->compare2;
-                } else if ($request->satuan == $data_check->unit3) {
+                }
+                else if ($request->satuan == $data_check->unit3) {
                     $qty_compare = $request->qty * $data_check->compare3;
                 }
 
@@ -479,7 +498,8 @@ class PenerimaanProduksiController extends Controller
                 DB::table('d_itemreceiptdt')->insert($values);
 
                 Mutasi::mutasimasuk(1, Auth::user()->u_company, Auth::user()->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $request->nota);
-            } else {
+            }
+            else {
                 $id = (DB::table('d_itemreceipt')->max('ir_id')) ? (DB::table('d_itemreceipt')->max('ir_id'))+1 : 1;
 
                 $receipt = [
@@ -512,12 +532,32 @@ class PenerimaanProduksiController extends Controller
                 DB::table('d_itemreceiptdt')->insert($values);
                 Mutasi::mutasimasuk(1, Auth::user()->u_company, Auth::user()->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $request->nota);
             }
+            $prodCodeId = DB::table('d_productionorder')
+            ->where('po_id', $order)
+            ->select('po_id')
+            ->first() ;
+            // insert production-code for each item
+            $valuesProdCode = array();
+            foreach ($request->prodCode as $key => $val) {
+                $detailProdCode = array(
+                    'poc_productionorder' => $prodCodeId->po_id,
+                    'poc_detailid' => $key + 1,
+                    'poc_item' => $item,
+                    'poc_productioncode' => $val,
+                    'poc_qty' => $request->qtyProdCode[$key],
+                    'poc_unit' => $request->satuan
+                );
+                array_push($valuesProdCode, $detailProdCode);
+            }
+            d_productionordercode::insert($valuesProdCode);
+
             $this->UpdateStatus($order, $item);
             DB::commit();
             return Response::json(['status' => 'Success', 'message' => "Data berhasil disimpan"]);
-        }catch (\Exception $e){
+        }
+        catch (\Exception $e){
             DB::rollback();
-            return Response::json(['status' => 'Failed', 'message' => $e]);
+            return Response::json(['status' => 'Failed', 'message' => $e->getMessage()]);
         }
     }
 

@@ -8,7 +8,7 @@
                 <h4 class="modal-title">Penerimaan Order Produksi</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <form id="formTerimaBarang">{{csrf_field()}}
+            <form id="formTerimaBarang" autocomplete="off">{{csrf_field()}}
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-sm-12">
@@ -31,6 +31,7 @@
                                 </tr>
                             </table>
                         </div>
+
                         <div class="col-sm-12">
                             <fieldset>
 
@@ -62,11 +63,31 @@
 
                             </fieldset>
                         </div>
+
+                        <div class="col-sm-12">
+                            <br>
+                            <table class="table table-bordered" id="table_listProductionCode">
+                                <thead>
+                                    <tr>
+                                        <td width="50%"><strong>Kode Produksi</strong></td>
+                                        <td><strong>Qty</strong></td>
+                                        <td width="10%"><strong>Aksi</strong></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]"></input></td>
+                                        <td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="0"></input></td>
+                                        <td><button class="btn btn-success btnAddProdCode btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="button" id="btn_simpanPenerimaan" class="btn btn-primary">
                         <span class="glyphicon glyphicon-floppy-disk"></span> Simpan
                     </button>
                 </div>

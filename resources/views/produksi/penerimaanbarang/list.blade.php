@@ -94,64 +94,33 @@
                                     {data: 'action'}
                                 ]
             });
-
-            $("#formTerimaBarang").on("submit", function (evt) {
+            // submit form penerimaanOrderProduksi
+            $("#btn_simpanPenerimaan").on('click', function (evt) {
                 evt.preventDefault();
-                var check = false;
-                if ($("#nota").val() == "") {
-                    $("#nota").focus();
-                    messageWarning("Peringatan", "Masukkan nota order!");
-                } else if ($("#satuan").val() == "") {
-                    $("#satuan").focus();
-                    messageWarning("Peringatan", "Pilih satuan barang!");
-                } else if ($("#qty").val() == "" || $("#qty").val() == "0" || $("#qty").val() == 0) {
-                    $("#qty").focus();
-                    messageWarning("Peringatan", "Masukkan qty yang diterima!");
-                } else {
-                    loadingShow();
-                    axios.post(baseUrl+'/produksi/penerimaanbarang/checkqty', $("#formTerimaBarang").serialize())
-                    .then(function (response) {
-                        if (response.data.status == "Success") {
-                            if (response.data.result == "Over qty") {
-                                loadingHide();
-                                messageWarning("Pesan", response.data.message);
-                            } else {
-                                check = true;
-                            }
-                        } else {
-                            loadingHide();
-                            messageFailed("Gagal", "Terjadi kesalahan sistem");
-                        }
-                    })
-                    .catch(function (error) {
-                        loadingHide();
-                        messageWarning("Error", error);
-                    })
-                    .then(function(){
-                        if (check == true) {
-                            axios.post('{{ route('penerimaan.terimaitem') }}', $("#formTerimaBarang").serialize())
-                                .then(function(resp){
-                                    if (resp.data.status == "Success") {
-                                        $("#penerimaanOrderProduksi").modal('hide');
-                                        tbl_receiptitem.ajax.reload();
-                                        loadingHide();
-                                        messageSuccess("Berhasil", resp.data.message);
-                                    } else {
-                                        loadingHide();
-                                        messageFailed("Gagal", resp.data.message);
-                                    }
-                                })
-                                .catch(function (error) {
-                                    loadingHide();
-                                    messageWarning("Error", error);
-                                });
-                        }
-                    });
-
-
-                }
+                submitFormPenerimaan();
             })
-
+            // add prodCode in modal
+            $('.btnAddProdCode').on('click', function() {
+                addRowProdCode();
+            });
+            // on modal peneriamaan close
+            $('#penerimaanOrderProduksi').on('hidden.bs.modal', function() {
+                console.log('modal closed !');
+                $('#table_listProductionCode tbody').empty();
+                $('#table_listProductionCode').append(
+                    `<tr>
+                        <td>
+                            <input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]"></input>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="0"></input>
+                        </td>
+                        <td>
+                            <button class="btn btn-success btnAddProdCode btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                        </td>
+                    </tr>`
+                );
+            });
         });
 
         function receipt(id, item) {
@@ -169,19 +138,6 @@
 
                         sisa += parseInt(response.data.data.jumlah) - parseInt(terima);
 
-                        //select
-                        // $("#satuan").find('option').remove();
-                        // var option = '';
-                        // option += '<option value="" selected>Pilih satuan</option>';
-                        // option += '<option value="'+response.data.satuan.id1+'">'+response.data.satuan.unit1+'</option>';
-                        // if (response.data.satuan.id2 != null && response.data.satuan.id2 != response.data.satuan.id1) {
-                        //     option += '<option value="'+response.data.satuan.id2+'">'+response.data.satuan.unit2+'</option>';
-                        // }
-                        // if (response.data.satuan.id3 != null && response.data.satuan.id3 != response.data.satuan.id1) {
-                        //     option += '<option value="'+response.data.satuan.id3+'">'+response.data.satuan.unit3+'</option>';
-                        // }
-                        // $("#satuan").append(option);
-
                         $("#idOrder").val(response.data.data.id);
                         $("#idItem").val(response.data.data.item);
                         $("#txtBarang").text(response.data.data.barang);
@@ -193,6 +149,19 @@
                         $("#satuan").val(response.data.data.unit);
                         $("#qty").val(0);
                         document.getElementById("nota").addEventListener("keypress", forceKeyPressUppercase, false);
+
+                        // append list of production-code
+                        listProdCode = '';
+                        $.each(response.data.prodCode, function (key, val) {
+                            prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" value="'+ val.poc_productioncode +'" readonly></input></td>';
+                            qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits" value="'+ val.poc_qty +'" readonly></input></td>';
+                            action = '<td><button class="btn btn-danger btn-sm rounded-circle" type="button" disabled><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
+                            listProdCode = '<tr>'+ prodCode + qtyProdCode + action +'</tr>';
+                            $('#table_listProductionCode').append(listProdCode);
+                        });
+                        // get some events ready to be used in modal
+                        getModalReady();
+
                         $("#penerimaanOrderProduksi").modal('show');
                     } else {
                         messageFailed("Gagal", "Terjadi kesalahan sistem")
@@ -222,5 +191,131 @@
             }
         }
 
+        function addRowProdCode()
+        {
+            $('#table_listProductionCode').append(
+                `<tr>
+                    <td>
+                        <input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]"></input>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="0"></input>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                    </td>
+                </tr>`
+            );
+            getModalReady();
+        }
+
+        function getModalReady()
+        {
+            $('.qtyProdCode').off();
+            $('.btnAddProdCode').off();
+            $('.btnRemoveProdCode').off();
+            $('.digits').off();
+            // event to add an prodCode to table_listProductionCode
+            $('.qtyProdCode').on('keypress', function(e) {
+                if (e.keyCode == 13) {
+                    addRowProdCode();
+                }
+            });
+            // event to add an prodCode to table_listProductionCode
+            $('.btnAddProdCode').on('click', function() {
+                addRowProdCode();
+            });
+            // event to remove an prodCode from table_listProductionCode
+            $('.btnRemoveProdCode').on('click', function() {
+                $(this).parents('tr').remove();
+            });
+            //mask digits
+            $('.digits').inputmask("currency", {
+                radixPoint: ",",
+                groupSeparator: ".",
+                digits: 0,
+                autoGroup: true,
+                prefix: '', //Space after $, this will not truncate the first character.
+                rightAlign: true,
+                autoUnmask: true,
+                nullable: false,
+                // unmaskAsNumber: true,
+            });
+        }
+
+        // calculate qty in production-code table
+        function getTotalQtyProdCode()
+        {
+            totalQty = 0;
+            $.each($('.qtyProdCode'), function (key) {
+                totalQty += parseInt($(this).val());
+            });
+            return totalQty;
+        }
+
+        function submitFormPenerimaan()
+        {
+            // get total qty in production-code
+            totalQtyProdCode = getTotalQtyProdCode();
+
+            var check = false;
+            if ($("#nota").val() == "") {
+                $("#nota").focus();
+                messageWarning("Peringatan", "Masukkan nota order!");
+            }
+            else if ($("#satuan").val() == "") {
+                $("#satuan").focus();
+                messageWarning("Peringatan", "Pilih satuan barang!");
+            }
+            else if ($("#qty").val() == "" || $("#qty").val() == "0" || $("#qty").val() == 0) {
+                $("#qty").focus();
+                messageWarning("Peringatan", "Masukkan qty yang diterima!");
+            }
+            else {
+                loadingShow();
+                axios.post(baseUrl+'/produksi/penerimaanbarang/checkqty', $("#formTerimaBarang").serialize())
+                .then(function (response) {
+                    if (response.data.status == "Success") {
+                        if (response.data.result == "Over qty") {
+                            loadingHide();
+                            messageWarning("Pesan", response.data.message);
+                        } else if (totalQtyProdCode > parseInt($("#txtSisa").text())) {
+
+                        } else {
+                            check = true;
+                        }
+                    } else {
+                        loadingHide();
+                        messageFailed("Gagal", "Terjadi kesalahan sistem");
+                    }
+                })
+                .catch(function (error) {
+                    loadingHide();
+                    messageWarning("Error", error);
+                })
+                .then(function(){
+                    if (check == true) {
+                        axios.post('{{ route('penerimaan.terimaitem') }}', $("#formTerimaBarang").serialize())
+                        .then(function(resp){
+                            if (resp.data.status == "Success") {
+                                $("#penerimaanOrderProduksi").modal('hide');
+                                tbl_receiptitem.ajax.reload();
+                                loadingHide();
+                                messageSuccess("Berhasil", resp.data.message);
+                            } else {
+                                loadingHide();
+                                messageFailed("Gagal", resp.data.message);
+                            }
+                        })
+                        .catch(function (error) {
+                            loadingHide();
+                            messageWarning("Error", error);
+                        });
+                    }
+                });
+
+
+            }
+        }
     </script>
 @endsection
