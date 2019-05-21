@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Master;
 
+use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -110,6 +111,9 @@ class ItemController extends Controller
      */
     public function index()
     {
+        if (!AksesUser::checkAkses(3, 'read')){
+            abort(401);
+        }
         return view('masterdatautama.produk.index');
     }
 
@@ -120,6 +124,9 @@ class ItemController extends Controller
      */
     public function create()
     {
+        if (!AksesUser::checkAkses(3, 'create')){
+            abort(401);
+        }
         $jenis = DB::table('m_itemtype')
             ->get();
 
@@ -138,6 +145,12 @@ class ItemController extends Controller
     public function store(Request $request)
     {
         // validate request
+        if (!AksesUser::checkAkses(3, 'create')){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => "anda tidak memiliki akses"
+            ]);
+        }
         $isValidRequest = $this->validate_req($request);
         if ($isValidRequest != '1') {
             $errors = $isValidRequest;
@@ -218,6 +231,9 @@ class ItemController extends Controller
      */
     public function edit($id)
     {
+        if (!AksesUser::checkAkses(3, 'update')){
+            abort(401);
+        }
         $data['dataproduk'] = DB::table('m_item')
             ->where('i_id', $id)
             ->first();
@@ -240,6 +256,12 @@ class ItemController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!AksesUser::checkAkses(3, 'update')){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'anda tidak memiliki akses'
+            ]);
+        }
         // validate request
         $isValidRequest = $this->validate_req($request);
         if ($isValidRequest != '1') {
@@ -334,6 +356,12 @@ class ItemController extends Controller
      */
     public function destroy($id)
     {
+        if (!AksesUser::checkAkses(3, 'delete')){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'anda tidak memiliki akses'
+            ]);
+        }
         // start: execute update data (delete)
         DB::beginTransaction();
         try {
@@ -374,6 +402,12 @@ class ItemController extends Controller
 
     public function active($id)
     {
+        if (!AksesUser::checkAkses(3, 'update')){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'anda tidak memiliki akses'
+            ]);
+        }
         // start: execute update data (delete)
         DB::beginTransaction();
         try {
@@ -401,6 +435,12 @@ class ItemController extends Controller
 
     public function simpanjenis(Request $request)
     {
+        if (!AksesUser::checkAkses(3, 'create')){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'anda tidak memiliki akses'
+            ]);
+        }
         $messages = [
             'jenis.required' => 'Jenis masih kosong, silahkan isi terlebih dahulu !',
         ];
@@ -452,6 +492,12 @@ class ItemController extends Controller
 
     public function hapusjenis(Request $request)
     {
+        if (!AksesUser::checkAkses(3, 'delete')){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'anda tidak memiliki akses'
+            ]);
+        }
         DB::beginTransaction();
         try {
 
@@ -479,6 +525,12 @@ class ItemController extends Controller
 
     public function updatejenis(Request $request)
     {
+        if (!AksesUser::checkAkses(3, 'update')){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'anda tidak memiliki akses'
+            ]);
+        }
         $messages = [
             'jenis.required' => 'Jenis masih kosong, silahkan isi terlebih dahulu !',
         ];
@@ -514,6 +566,9 @@ class ItemController extends Controller
 
     public function detail(Request $request)
     {
+        if (!AksesUser::checkAkses(3, 'read')){
+            abort(401);
+        }
         $data['dataproduk'] = DB::table('m_item')
             ->where('i_id', $request->id)
             ->first();

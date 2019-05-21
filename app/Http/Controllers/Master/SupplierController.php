@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Master;
 
+use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -128,6 +129,9 @@ class SupplierController extends Controller
      */
     public function index()
     {
+        if (!AksesUser::checkAkses(5, 'read')){
+            abort(401);
+        }
         $getSupp = DB::table('m_supplier')->select('s_id', 's_company')->get();
 
         return view('masterdatautama.suplier.index')->with(compact('getSupp'));
@@ -140,6 +144,9 @@ class SupplierController extends Controller
      */
     public function create()
     {
+        if (!AksesUser::checkAkses(5, 'create')){
+            abort(401);
+        }
         return view('masterdatautama.suplier.datasuplier.create');
     }
 
@@ -151,6 +158,12 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
+        if (!AksesUser::checkAkses(5, 'create')){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'anda tidak memiliki akses'
+            ]);
+        }
         // Remove masked value before validate it
         // also, merged $request with new data
         $request->merge(['top' => (int)$this->removeMask($request->top, '', ' Hari')]);
@@ -215,6 +228,9 @@ class SupplierController extends Controller
      */
     public function edit($id)
     {
+        if (!AksesUser::checkAkses(5, 'update')){
+            abort(401);
+        }
         $data['supplier'] = DB::table('m_supplier')
             ->where('s_id', $id)
             ->first();
@@ -233,6 +249,12 @@ class SupplierController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!AksesUser::checkAkses(5, 'update')){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'anda tidak memiliki akses'
+            ]);
+        }
         // Remove masked value before validate it
         // also, merged $request with new data
         $request->merge(['top' => (int)$this->removeMask($request->top, '', ' Hari')]);
@@ -295,6 +317,12 @@ class SupplierController extends Controller
      */
     public function enable($id)
     {
+        if (!AksesUser::checkAkses(5, 'update')){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'anda tidak memiliki akses'
+            ]);
+        }
         // start: execute delete data
         DB::beginTransaction();
         try {
@@ -325,6 +353,12 @@ class SupplierController extends Controller
      */
     public function disable($id)
     {
+        if (!AksesUser::checkAkses(5, 'update')){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'anda tidak memiliki akses'
+            ]);
+        }
         // start: execute delete data
         DB::beginTransaction();
         try {
