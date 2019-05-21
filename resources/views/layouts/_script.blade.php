@@ -141,7 +141,10 @@
                                 if (response.status == 'Success') {
                                     messageSuccess('Berhasil', 'Data berhasil hapus!');
                                     reloadTable();
-                                } else {
+                                } else if (response.status == 'unauth'){
+                                    messageWarning('Perhatian', 'Anda tidak memiliki akses');
+                                }
+                                else {
                                     messageWarning('Gagal', 'Gagal menghapus data!');
                                 }
                             },
