@@ -1,5 +1,16 @@
 @extends('main')
-
+@section('extra_style')
+    <style>
+        #table_barangmasuk th { font-size: 13px; }
+        #table_barangmasuk td { font-size: 13px; }
+        #table_barangmasuk td {
+            padding: 5px;
+        }
+        #table_barangmasuk th {
+            padding: 5px;
+        }
+    </style>
+@endsection
 @section('content')
 
 <article class="content">
@@ -20,14 +31,22 @@
                             <h3 class="title"> Pengelolaan Barang Masuk </h3>
                         </div>
                         <div class="header-block pull-right">
-                			<a class="btn btn-primary" href="{{ route('barangmasuk.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
+                			{{--<a class="btn btn-primary" href="{{ route('barangmasuk.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>--}}
                         </div>
                     </div>
                     <div class="card-block">
                         <section>
 							<div class="row">
-								<div class="col-md-3"></div>
-								<div class="col-md-6 col-sm-12">
+								<div class="col-3">
+                                    <input type="text" class="form-control form-control-sm" id="filter_pemilik" placeholder="Pemilik">
+                                </div>
+                                <div class="col-3">
+                                    <input type="text" class="form-control form-control-sm" id="filter_posisi" placeholder="Posisi">
+                                </div>
+                                <div class="col-2">
+                                    <input type="text" class="form-control form-control-sm" id="filter_produk" placeholder="Produk">
+                                </div>
+								<div class="col-4">
 									<div class="input-group input-group-sm input-daterange">
 										<input type="text" class="form-control" id="date_from">
 										<span class="input-group-addon">-</span>
@@ -44,12 +63,22 @@
 	                                <thead class="bg-primary">
 	                                    <tr>
 	                                		<th>Tanggal Masuk</th>
-	                                		<th>Jumlah Barang</th>
-	                                		<th>Pemilik Barang</th>
-											<th>Lokasi Masuk</th>
+                                            <th>Pemilik Barang</th>
+                                            <th>Lokasi Masuk</th>
+                                            <th>Nama</th>
+	                                		<th>Jumlah</th>
 											<th>Keterangan</th>
 	                                		<th>Aksi</th>
 	                                	</tr>
+                                        <tr>
+                                            <th>Tanggal Masuk</th>
+                                            <th>Pemilik Barang</th>
+                                            <th>Lokasi Masuk</th>
+                                            <th>Nama</th>
+                                            <th>Jumlah</th>
+                                            <th>Keterangan</th>
+                                            <th>Aksi</th>
+                                        </tr>
 	                                </thead>
 	                                <tbody>
 
@@ -190,14 +219,34 @@ function TableCabang() {
         },
         columns: [
             {data: 'sm_date', name: 'sm_date'},
-            {data: 'sm_qty', name: 'sm_qty'},
             {data: 'pemilik', name: 'pemilik'},
             {data: 'posisi', name: 'posisi'},
-            {data: 'kondisi', name: 'kondisi'},
+            {data: 'i_name', name: 'i_name'},
+            {data: 'sm_qty', name: 'sm_qty'},
+            {data: 'm_name', name: 'm_name'},
             {data: 'action', name: 'action'}
         ],
         pageLength: 10,
-        lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
+        initComplete: function () {
+            this.api().columns().every( function () {
+                var column = this;
+                var select = $('<select class="filter"><option value=""></option></select>')
+                    .appendTo( $(column.header()).empty() ).on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+
+                        column
+                            .search( val ? '^'+val+'$' : '', true, false )
+                            .draw();
+                    } );
+
+                column.data().unique().sort().each( function ( d, j ) {
+                    select.append( '<option value="'+d+'">'+d+'</option>' )
+                } );
+            } );
+        }
     });
 }
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Inventory;
+use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
@@ -17,6 +18,9 @@ class BarangMasukController extends Controller
 {
     public function index()
     {
+        if (!AksesUser::checkAkses(14, 'read')){
+            abort(401);
+        }
         return view('inventory/barangmasuk/index');
     }
 
@@ -29,12 +33,13 @@ class BarangMasukController extends Controller
             ->join('d_stock', 'sm_stock', 's_id')
             ->join('m_company as pemilik', 'd_stock.s_comp', 'pemilik.c_id')
             ->join('m_company as posisi', 'd_stock.s_position', 'posisi.c_id')
-            ->select('sm_stock','sm_detailid',DB::raw('date_format(sm_date, "%d/%m/%Y") as sm_date'), 'sm_qty', 'pemilik.c_name as pemilik', 'posisi.c_name as posisi', 's_condition')
+            ->join('m_mutcat', 'sm_mutcat', '=', 'm_id')
+            ->join('m_item', 'i_id', '=', 's_item')
+            ->join('m_unit', 'u_id', '=', 'i_unit1')
+            ->select('sm_stock','sm_detailid',DB::raw('date_format(sm_date, "%d/%m/%Y") as sm_date'), DB::raw('concat(sm_qty, " ", u_name) as sm_qty'), 'pemilik.c_name as pemilik', 'posisi.c_name as posisi', 's_condition', 'm_name', 'i_name')
             ->whereBetween('sm_date', [$from, $to])
             ->where('s_status', '=', 'ON DESTINATION')
-            ->where('sm_mutcat', '=', '1')
-            ->orWhere('sm_mutcat', '=', '2')
-            ->orWhere('sm_mutcat', '=', '3')
+            ->where('m_status', '=', 'M')
             ->get();
 
         return Datatables::of($datas)
