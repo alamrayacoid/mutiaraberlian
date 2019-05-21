@@ -123,7 +123,8 @@
             });
         });
 
-        function receipt(id, item) {
+        function receipt(id, item)
+        {
             var sisa = 0;
             var terima = 0;
             axios.get(baseUrl+'/produksi/penerimaanbarang/terimalistitem'+'/'+id+'/'+item)
@@ -152,6 +153,7 @@
 
                         // append list of production-code
                         listProdCode = '';
+                        $('#table_listProductionCode tbody').empty();
                         $.each(response.data.prodCode, function (key, val) {
                             prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" value="'+ val.poc_productioncode +'" readonly></input></td>';
                             qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits" value="'+ val.poc_qty +'" readonly></input></td>';
@@ -159,6 +161,12 @@
                             listProdCode = '<tr>'+ prodCode + qtyProdCode + action +'</tr>';
                             $('#table_listProductionCode').append(listProdCode);
                         });
+                        // append default-row to add more production-code
+                        prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]"></input></td>';
+                        qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="0"></input></td>';
+                        action = '<td><button class="btn btn-success btnAddProdCode btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button></td>';
+                        listProdCode = '<tr>'+ prodCode + qtyProdCode + action +'</tr>';
+                        $('#table_listProductionCode').append(listProdCode);
                         // get some events ready to be used in modal
                         getModalReady();
 
@@ -280,7 +288,8 @@
                             loadingHide();
                             messageWarning("Pesan", response.data.message);
                         } else if (totalQtyProdCode > parseInt($("#txtSisa").text())) {
-
+                            loadingHide();
+                            messageWarning("Pesan", "Jumlah qty pada \'Kode Produksi\' melebihi kebutuhan !");
                         } else {
                             check = true;
                         }
