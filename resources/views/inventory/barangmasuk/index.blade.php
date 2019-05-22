@@ -83,7 +83,7 @@
                                     </div>
                                     <div class="col-4 input-group">
                                         <select class="form-control form-control-sm" id="filter_mutcat" name="mutcat">
-                                            <option value="semua">== Pilih Keterangan ==</option>
+                                            <option value="semua">== Semua Keterangan ==</option>
                                             @foreach($mutcat as $keterangan)
                                                 <option value="{{ $keterangan->m_id }}">{{ $keterangan->m_name }}</option>
                                             @endforeach
@@ -241,7 +241,7 @@ function TableCabang() {
         serverSide: true,
         ajax: {
             url : "{{ route('barangmasuk.list') }}",
-            type: "get",
+            type: "post",
             data: {
                 "_token": "{{ csrf_token() }}",
 				"date_from": $('#date_from').val(),
