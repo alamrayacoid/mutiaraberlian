@@ -21,7 +21,35 @@ class BarangMasukController extends Controller
         if (!AksesUser::checkAkses(14, 'read')){
             abort(401);
         }
-        return view('inventory/barangmasuk/index');
+
+        $pemilik = DB::table('d_stock')
+            ->join('m_company as pemilik', 'd_stock.s_comp', 'pemilik.c_id')
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->groupBy('s_comp')
+            ->get();
+
+        $posisi = DB::table('d_stock')
+            ->join('m_company as posisi', 'd_stock.s_position', 'posisi.c_id')
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->groupBy('s_position')
+            ->get();
+
+        $produk = DB::table('d_stock')
+            ->join('m_item', 'i_id', '=', 's_item')
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->groupBy('s_item')
+            ->get();
+
+        $mutcat = DB::table('d_stock')
+            ->join('d_stock_mutation', 'sm_stock', '=', 's_id')
+            ->join('m_mutcat', 'm_id', '=', 'sm_mutcat')
+            ->select('m_name', 'm_id')
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('m_status', '=', 'M')
+            ->groupBy('m_id')
+            ->get();
+
+        return view('inventory/barangmasuk/index', compact('produk','posisi', 'pemilik', 'mutcat'));
     }
 
     public function getData(Request $request)

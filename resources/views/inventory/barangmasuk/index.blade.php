@@ -1,4 +1,7 @@
 @extends('main')
+@section('tittle')
+    Pengelolaan Barang Masuk
+@endsection
 @section('extra_style')
     <style>
         #table_barangmasuk th { font-size: 13px; }
@@ -8,6 +11,10 @@
         }
         #table_barangmasuk th {
             padding: 5px;
+        }
+        div.dt-buttons {
+            position: relative;
+            float: left;
         }
     </style>
 @endsection
@@ -37,26 +44,59 @@
                     <div class="card-block">
                         <section>
 							<div class="row">
-								<div class="col-3">
-                                    <input type="text" class="form-control form-control-sm" id="filter_pemilik" placeholder="Pemilik">
+                                <div class="row col-12">
+                                    <div class="col-4">
+                                        <div class="input-group input-group-sm input-daterange">
+                                            <input type="text" class="form-control" id="date_from">
+                                            <span class="input-group-addon">-</span>
+                                            <input type="text" class="form-control" id="date_to">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        {{--<input type="text" class="form-control form-control-sm" id="filter_pemilik" placeholder="Pemilik">--}}
+                                        <select class="select2 form-control form-control-sm" name="pemilik" id="filter_pemilik">
+                                            <option value="semua" selected>== Semua Pemilik ==</option>
+                                            @foreach($pemilik as $comp)
+                                                <option value="{{ $comp->c_id }}">{{ $comp->c_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        {{--<input type="text" class="form-control form-control-sm" id="filter_posisi" placeholder="Posisi">--}}
+                                        <select class="select2 form-control form-control-sm" name="posisi" id="filter_posisi">
+                                            <option value="semua" selected>== Semua Posisi ==</option>
+                                            @foreach($posisi as $position)
+                                                <option value="{{ $position->c_id }}">{{ $position->c_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="col-3">
-                                    <input type="text" class="form-control form-control-sm" id="filter_posisi" placeholder="Posisi">
+                                <div class="row col-12">
+                                    <div class="col-4">
+                                        {{--<input type="text" class="form-control form-control-sm" id="filter_produk" placeholder="Produk">--}}
+                                        <select class="select2 form-control form-control-sm" name="produk" id="filter_produk">
+                                            <option value="semua" selected>== Semua Produk ==</option>
+                                            @foreach($produk as $item)
+                                                <option value="{{ $item->i_id }}">{{ $item->i_code }} - {{ $item->i_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-4 input-group">
+                                        <select class="form-control form-control-sm">
+                                            <option>== Pilih Keterangan ==</option>
+                                            @foreach($mutcat as $keterangan)
+                                                <option value="{{ $keterangan->m_id }}">{{ $keterangan->m_name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-secondary btn-sm" type="button" id="btn_search_date"><i class="fa fa-search"></i></button>
+                                            <button class="btn btn-primary btn-sm" type="button" id="btn_refresh_date"><i class="fa fa-refresh"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <p>Kosongkan field jika ingin menampilkan semua hasil pencarian</p>
+                                    </div>
                                 </div>
-                                <div class="col-2">
-                                    <input type="text" class="form-control form-control-sm" id="filter_produk" placeholder="Produk">
-                                </div>
-								<div class="col-4">
-									<div class="input-group input-group-sm input-daterange">
-										<input type="text" class="form-control" id="date_from">
-										<span class="input-group-addon">-</span>
-										<input type="text" class="form-control" id="date_to">
-										<div class="input-group-append">
-											<button class="btn btn-secondary" type="button" id="btn_search_date"><i class="fa fa-search"></i></button>
-											<button class="btn btn-primary" type="button" id="btn_refresh_date"><i class="fa fa-refresh"></i></button>
-										</div>
-									</div>
-								</div>
 							</div>
                         	<div class="table-responsive">
 	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_barangmasuk">
@@ -70,15 +110,6 @@
 											<th>Keterangan</th>
 	                                		<th>Aksi</th>
 	                                	</tr>
-                                        <tr>
-                                            <th>Tanggal Masuk</th>
-                                            <th>Pemilik Barang</th>
-                                            <th>Lokasi Masuk</th>
-                                            <th>Nama</th>
-                                            <th>Jumlah</th>
-                                            <th>Keterangan</th>
-                                            <th>Aksi</th>
-                                        </tr>
 	                                </thead>
 	                                <tbody>
 
@@ -228,26 +259,33 @@ function TableCabang() {
         ],
         pageLength: 10,
         lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
+        dom: 'Bfrtip',
+        buttons: [
+            'excel', 'pdf', 'print'
+        ],
         initComplete: function () {
-            this.api().columns().every( function () {
-                var column = this;
-                var select = $('<select class="filter"><option value=""></option></select>')
-                    .appendTo( $(column.header()).empty() ).on( 'change', function () {
-                        var val = $.fn.dataTable.util.escapeRegex(
-                            $(this).val()
-                        );
-
-                        column
-                            .search( val ? '^'+val+'$' : '', true, false )
-                            .draw();
-                    } );
-
-                column.data().unique().sort().each( function ( d, j ) {
-                    select.append( '<option value="'+d+'">'+d+'</option>' )
-                } );
-            } );
+            // this.api().columns().every( function () {
+            //     var column = this;
+            //     console.log(column);
+            //     var select = $('<select><option value=""></option></select>')
+            //         .appendTo( $(column.header()).empty() )
+            //         .on( 'change', function () {
+            //             var val = $.fn.dataTable.util.escapeRegex(
+            //                 $(this).val()
+            //             );
+            //
+            //             column
+            //                 .search( val ? '^'+val+'$' : '', true, false )
+            //                 .draw();
+            //         } );
+            //
+            //     column.data().unique().sort().each( function ( d, j ) {
+            //         select.append( '<option value="'+d+'">'+d+'</option>' )
+            //     } );
+            // } );
         }
     });
+    $('.dt-button').addClass('btn-secondary btn btn-sm');
 }
 
 function detail(stock, detail)
