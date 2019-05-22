@@ -82,8 +82,8 @@
                                         </select>
                                     </div>
                                     <div class="col-4 input-group">
-                                        <select class="form-control form-control-sm">
-                                            <option>== Pilih Keterangan ==</option>
+                                        <select class="form-control form-control-sm" id="filter_mutcat" name="mutcat">
+                                            <option value="semua">== Pilih Keterangan ==</option>
                                             @foreach($mutcat as $keterangan)
                                                 <option value="{{ $keterangan->m_id }}">{{ $keterangan->m_name }}</option>
                                             @endforeach
@@ -245,7 +245,11 @@ function TableCabang() {
             data: {
                 "_token": "{{ csrf_token() }}",
 				"date_from": $('#date_from').val(),
-				"date_to": $('#date_to').val()
+				"date_to": $('#date_to').val(),
+                "pemilik" : $('#filter_pemilik').val(),
+                "posisi" : $('#filter_posisi').val(),
+                "produk" : $('#filter_produk').val(),
+                "mutcat" : $('#filter_mutcat').val()
             }
         },
         columns: [

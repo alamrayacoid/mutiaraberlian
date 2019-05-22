@@ -46,6 +46,7 @@ class BarangMasukController extends Controller
             ->select('m_name', 'm_id')
             ->where('s_status', '=', 'ON DESTINATION')
             ->where('m_status', '=', 'M')
+            ->whereMonth('sm_date', Carbon::now('Asia/Jakarta'))
             ->groupBy('m_id')
             ->get();
 
@@ -56,6 +57,10 @@ class BarangMasukController extends Controller
     {
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
+        $pemilik = $request->pemilik;
+        $posisi = $request->posisi;
+        $produk = $request->produk;
+        $mutcat = $request->mutcat;
 
         $datas = DB::table('d_stock_mutation')
             ->join('d_stock', 'sm_stock', 's_id')
@@ -65,10 +70,29 @@ class BarangMasukController extends Controller
             ->join('m_item', 'i_id', '=', 's_item')
             ->join('m_unit', 'u_id', '=', 'i_unit1')
             ->select('sm_stock','sm_detailid',DB::raw('date_format(sm_date, "%d/%m/%Y") as sm_date'), DB::raw('concat(sm_qty, " ", u_name) as sm_qty'), 'pemilik.c_name as pemilik', 'posisi.c_name as posisi', 's_condition', 'm_name', 'i_name')
-            ->whereBetween('sm_date', [$from, $to])
             ->where('s_status', '=', 'ON DESTINATION')
-            ->where('m_status', '=', 'M')
-            ->get();
+            ->where('m_status', '=', 'M');
+
+        if ($from != null || $from != ''){
+            $datas->where('sm_date', '>=', $from);
+        }
+        if ($to != null || $to != ''){
+            $datas->where('sm_date', '<=', $to);
+        }
+        if ($pemilik != 'semua'){
+            $datas->where('s_comp', '=', $pemilik);
+        }
+        if ($posisi != 'semua'){
+            $datas->where('s_position', '=', $posisi);
+        }
+        if ($produk != 'semua'){
+            $datas->where('s_item', '=', $produk);
+        }
+        if ($mutcat != 'semua'){
+            $datas->where('sm_mutcat', '=', $mutcat);
+        }
+
+        $datas->get();
 
         return Datatables::of($datas)
         ->addIndexColumn()
