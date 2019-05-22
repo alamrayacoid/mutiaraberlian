@@ -13,6 +13,14 @@
 <script src="{{asset('assets/js/app.js')}}"></script>
 {{-- <script type="text/javascript" src="{{asset('assets/jquery-ui/jquery-ui.js')}}"></script> --}}
 <script src="{{asset('assets/datatables/datatables.min.js')}}"></script>
+<script src="{{asset('assets/datatables/dataTables.fixedHeader.min.js')}}"></script>
+<script src="{{asset('assets/datatables/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('assets/datatables/dataTables.buttons.flash.min.js')}}"></script>
+<script src="{{asset('assets/jszip/jszip.min.js')}}"></script>
+<script src="{{asset('assets/pdfmake/pdfmake.min.js')}}"></script>
+<script src="{{asset('assets/pdfmake/vfs_fonts.js')}}"></script>
+<script src="{{asset('assets/datatables/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/datatables/buttons.print.min.js')}}"></script>
 <script src="{{asset('assets/select2/select2.js')}}"></script>
 <script src="{{asset('assets/js/jquery.maskMoney.min.js')}}"></script>
 <script src="{{asset('assets/jquery-confirm/jquery-confirm.js')}}"></script>
@@ -48,21 +56,6 @@
         $('#app').addClass(getstorage);
     }
 
-
-    // var getstoragehamb;
-    // $('#sidebar-collapse-btn').click(function(){
-    //   getstorage = localStorage.getItem('hamburger-collapse-storage');
-
-    //   // console.log(getstorage);
-
-    // (getstorage) ? (localStorage.removeItem('hamburger-collapse-storage')) : (localStorage.setItem('hamburger-collapse-storage', 'menuThree'));
-
-    // });
-    // //set sidebar ketika di refresh
-    // getstorage = localStorage.getItem('hamburger-collapse-storage');
-    // if (getstorage) {
-    //   $('#app').addClass(getstorage);
-    // }
 
 </script>
 <script type="text/javascript">
