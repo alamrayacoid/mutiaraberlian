@@ -271,7 +271,7 @@
                 serverSide: true,
                 ajax: {
                     url: "{{ route('barangkeluar.list') }}",
-                    type: "get",
+                    type: "post",
                     data: {
                         "_token": "{{ csrf_token() }}",
                         "date_from": $('#date_from').val(),

@@ -57,12 +57,19 @@
                                     </div>
                                     <div class="col-md-3 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <select class="form-control select2" name="cabang_prov" id="cabang_prov">
-                                                @foreach($provinces as $prov)
-                                                    @if($prov->wp_id == $selectedProvId->wc_provinsi)
-                                                    <option value="{{ $prov->wp_id }}" selected>{{ $prov->wp_name }}</option>
+                                            <select class="form-control select2" name="cabang_prov" id="cabang_prov" onchange="setKota()">
+                                                @foreach($provinces as $index => $prov)
+                                                    @if ($selectedProvId != null)
+                                                        @if($prov->wp_id == $selectedProvId->wc_provinsi)
+                                                            <option value="{{ $prov->wp_id }}" selected>{{ $prov->wp_name }}</option>
+                                                        @endif
                                                     @else
-                                                    <option value="{{ $prov->wp_id }}">{{ $prov->wp_name }}</option>
+                                                        @if ($index == 0)
+                                                            <option value="" selected disabled>== Pilih Provinsi ==</option>
+                                                            <option value="{{ $prov->wp_id }}">{{ $prov->wp_name }}</option>
+                                                        @else
+                                                            <option value="{{ $prov->wp_id }}">{{ $prov->wp_name }}</option>
+                                                        @endif
                                                     @endif
                                                 @endforeach
                                             </select>
@@ -144,6 +151,30 @@
             }
         });
     });
+
+    function setKota() {
+        $.ajax({
+            url: "{{ route('cabang.getCities') }}",
+            data: {
+                provId: $('#cabang_prov').val()
+            },
+            type: "get",
+            success: function (response) {
+                console.log(response);
+                $('#cabang_city').empty();
+                opt = '<option selected disabled>Pilih Kota</option>';
+                $.each(response, function(key, val) {
+                    opt += '<option value="'+ val.wc_id +'">'+ val.wc_name +'</option>';
+                })
+                $('#cabang_city').append(opt);
+                $('#cabang_city').focus();
+            },
+            error: function (err) {
+                console.log(err);
+                messageWarning('Error', err + ', Hubungi pengembang !')
+            }
+        })
+    }
 
     function SubmitForm(event) {
         event.preventDefault();

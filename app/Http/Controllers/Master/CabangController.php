@@ -194,7 +194,10 @@ class CabangController extends Controller
             $employe = DB::table('m_employee')->select('m_employee.*')->get();
             $provinces = m_wil_provinsi::orderBy('wp_id')->get();
             $selectedProvId = m_wil_kota::where('wc_id', $data->c_area)->select('wc_provinsi')->first();
-            $cities = m_wil_kota::where('wc_provinsi', $selectedProvId->wc_provinsi)->get();
+            $cities = [];
+            if ($selectedProvId != null){
+                $cities = m_wil_kota::where('wc_provinsi', $selectedProvId->wc_provinsi)->get();
+            }
 
             return view('masterdatautama.cabang.edit', compact('data', 'employe', 'provinces', 'selectedProvId', 'cities'));
         }
@@ -234,7 +237,7 @@ class CabangController extends Controller
                         'c_name' => strtoupper($request->cabang_name),
                         'c_address' => $request->cabang_address,
                         'c_tlp' => $request->cabang_telp,
-                        'c_type' => $request->cabang_type,
+                        'c_type' => 'CABANG',
                         'c_user' => $request->cabang_user,
                         'c_area' => $request->cabang_city,
                         'c_update' => Carbon::now('Asia/Jakarta')
