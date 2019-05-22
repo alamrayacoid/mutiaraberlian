@@ -216,8 +216,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/returnproduksi/get-nota', 'ProduksiController@getNotaProductionOrder')->name('return.getnota');
     Route::get('/produksi/returnproduksi/detail-nota/{id}', 'ProduksiController@detailNota')->name('return.detailnota');
     Route::get('/produksi/returnproduksi/cari-supplier', 'ProduksiController@searchSupplier')->name('return.carisupplier');
+    Route::get('/produksi/returnproduksi/cari-prodkode', 'ProduksiController@cariProdKode')->name('return.cariprodkode');
     Route::get('/produksi/returnproduksi/cari-nota', 'ProduksiController@cariNota')->name('return.carinota');
-    Route::get('/produksi/returnproduksi/cari-barang-po/{id}', 'ProduksiController@cariBarangPO')->name('return.caribarangpo');
+    Route::get('/produksi/returnproduksi/cari-barang-po', 'ProduksiController@cariBarangPO')->name('return.caribarangpo');
     Route::get('/produksi/returnproduksi/set-satuan/{id}', 'ProduksiController@setSatuan')->name('return.setunit');
     Route::get('/produksi/returnproduksi/hapus-return/{id}/{detail}/{qty}', 'ProduksiController@deleteReturn')->name('return.delete');
     Route::post('/produksi/returnproduksi/tambah-return', 'ProduksiController@addReturn')->name('return.add');

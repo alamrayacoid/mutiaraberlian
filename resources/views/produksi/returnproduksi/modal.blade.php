@@ -15,9 +15,11 @@
                             <label>Nama Barang</label>
                         </div>
                         <div class="col-md-10 col-sm-12 mb-3">
+                            <input type="hidden" name="searchMethod" id="searchMethod">
                             <input type="hidden" name="idPO" id="idPO">
                             <input type="hidden" name="idItem" id="idItem">
                             <input type="hidden" name="notaPO" id="notaPO">
+                            <input type="hidden" name="prodCode" id="prodCode">
                             <input type="text" id="txt_barang" class="form-control-plaintext form-control-sm" readonly/>
                         </div>
                         <div class="col-md-2 col-sm-12 mt-2">
@@ -30,15 +32,13 @@
                             <label>Harga @</label>
                         </div>
                         <div class="col-md-10 col-sm-12 mb-3">
-                            <input type="text" id="txt_harga" class="form-control-plaintext form-control-sm "
-                                   readonly/>
+                            <input type="text" id="txt_harga" class="form-control-plaintext form-control-sm rupiah-left" readonly/>
                         </div>
                         <div class="col-md-2 col-sm-12 mt-2">
                             <label>Total</label>
                         </div>
                         <div class="col-md-10 col-sm-12 mb-3">
-                            <input type="text" id="txt_total" class="form-control-plaintext form-control-sm "
-                                   readonly/>
+                            <input type="text" id="txt_total" class="form-control-plaintext form-control-sm rupiah-left" readonly/>
                         </div>
                         <div class="col-12">
                             <hr>
@@ -51,7 +51,7 @@
                                 <label>Qty <span class="text-danger">*</span></label>
                             </div>
                             <div>
-                                <input type="number" name="qty_return" id="qty_return" min="0" value="0" class="form-control form-control-sm"/>
+                                <input type="text" name="qty_return" id="qty_return" min="0" value="0" class="form-control form-control-sm digits"/>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12">

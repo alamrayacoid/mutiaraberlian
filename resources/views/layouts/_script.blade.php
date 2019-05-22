@@ -346,6 +346,19 @@
             // unmaskAsNumber: true,
         });
 
+        //mask digits
+        $('.digits-left').inputmask("currency", {
+            radixPoint: ",",
+            groupSeparator: ".",
+            digits: 0,
+            autoGroup: true,
+            prefix: '', //Space after $, this will not truncate the first character.
+            rightAlign: false,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
+        });
+
         // mask rekening
         $('.rek').inputmask("999 999 999 999 999 999 999", {
             autoUnmask: true,

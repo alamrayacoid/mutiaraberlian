@@ -44,17 +44,40 @@
                     </div>
                     <div class="card-block">
                         <section>
-
                             <div class="row">
                                 <div class="col-md-2 col-sm-6 col-12">
+                                    <label>Pilih pencarian</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <select class="form-control select2" name="" id="searchBy">
+                                        <option value="kodeproduksi" selected>Cari berdasarkan kode produksi</option>
+                                        <option value="nota">Cari berdasarkan nota</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <!-- <div class="col-md-2 col-sm-6 col-12">
                                     <label>No. Nota</label>
                                 </div>
                                 <div class="col-md-4 col-sm-6 col-12">
                                     <div class="input-group">
                                         <input type="hidden" name="q_idpo" id="q_idpo">
-                                        <input type="text" name="q_nota" id="q_nota" class="form-control form-control-sm" oninput="handleInput(event)">
+                                        <input type="text" name="q_nota" id="q_nota" class="form-control form-control-sm">
 
                                         <button class="btn btn-md btn-secondary" title="Pencarian No. Nota" id="btn_searchnota" style="border-left:none;"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </div> -->
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <label id="searchLabel">Kode Produksi</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-12">
+                                    <div class="input-group">
+                                        <input type="hidden" name="q_idpo" id="q_idpo">
+                                        <input type="hidden" name="q_nota" id="q_nota" class="form-control form-control-sm">
+                                        <input type="text" name="q_prodcode" id="q_prodcode" class="form-control form-control-sm">
+
+                                        <button class="btn btn-md btn-secondary d-none" title="Pencarian Kode Produksi" id="btn_searchsupplier" style="border-left:none;" disabled><i class="fa fa-search"></i></button>
                                     </div>
                                 </div>
                                 <div class="col-2">
@@ -62,6 +85,7 @@
                                 </div>
                                 <hr>
                             </div>
+                            <br>
                             <div class="table-responsive table-returnp d-none">
                                 <table class="table table-striped table-hover" cellspacing="0" id="table_rp">
                                     <thead class="bg-primary">
@@ -74,15 +98,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {{--<tr>--}}
-                                        {{--<td>Obat</td>--}}
-                                        {{--<td>1</td>--}}
-                                        {{--<td>Rp. 50,000.000</td>--}}
-                                        {{--<td>--}}
-                                            {{--<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#create"><i class="fa fa-arrow-right" aria-hidden="true"></i>--}}
-                                            {{--</button>--}}
-                                        {{--</td>--}}
-                                    {{--</tr>--}}
+
                                     </tbody>
                                 </table>
                             </div>
@@ -113,14 +129,42 @@
             tbl_gu = $('#tabel_gu').DataTable();
             tbl_pn = $('#tabel_pn').DataTable();
 
+            $('#searchBy').on('change', function() {
+                if ($(this).val() == 'nota')
+                {
+                    $('#q_nota').clone().attr('type', 'text').insertAfter('#q_nota').prev().remove();
+                    $('#q_prodcode').clone().attr('type', 'hidden').insertAfter('#q_prodcode').prev().remove();
+                    $('#btn_searchsupplier').attr('disabled', false);
+                    $('#btn_searchsupplier').removeClass('d-none');
+                    $('#searchLabel').text('No Nota');
+                    $('#q_nota').val('');
+                    $('#q_prodcode').val('');
+                }
+                else if ($(this).val() == 'kodeproduksi')
+                {
+                    $('#q_nota').clone().attr('type', 'hidden').insertAfter('#q_nota').prev().remove();
+                    $('#q_prodcode').clone().attr('type', 'text').insertAfter('#q_prodcode').prev().remove();
+                    $('#btn_searchsupplier').attr('disabled', true);
+                    $('#btn_searchsupplier').addClass('d-none');
+                    $('#searchLabel').text('Kode Produksi');
+                    $('#q_nota').val('');
+                    $('#q_prodcode').val('');
+                }
+                // re-initialize event (keyup or another)
+                initEvents();
+            });
+
             if ($("#q_idpo").val() == "") {
                 $("#go").attr("disabled", true);
             } else {
                 $("#go").attr("disabled", false);
             }
 
+            // init event keyup for autocomplete
+            initEvents();
+
             $("#go").on("click", function() {
-                pilih($("#q_idpo").val(), $("#q_nota").val());
+                searchItems();
             });
             $("#supplier").on("keyup", function () {
                 $("#idSupplier").val('');
@@ -142,34 +186,7 @@
                     $("#idSupplier").val(data.item.id);
                 }
             });
-            $("#q_nota").on("keyup", function () {
-                $("#q_idpo").val('');
-                $(".table-returnp").addClass('d-none');
-                if ($("#q_idpo").val() == "") {
-                    $("#go").attr("disabled", true);
-                } else {
-                    $("#go").attr("disabled", false);
-                }
-            });
-            $("#q_nota").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: '{{ route('return.carinota') }}',
-                        data: {
-                            term: $("#q_nota").val()
-                        },
-                        success: function (data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 1,
-                select: function (event, data) {
-                    $("#q_idpo").val(data.item.id);
-                    $("#notaPO").val(data.item.nota);
-                    pilih(data.item.id, data.item.nota);
-                }
-            });
+
             $("#btn_searchNotainTbl").on("click", function (evt) {
                 evt.preventDefault();
                 var dateStart = $("#dateStart").val(), dateEnd = $("#dateEnd").val(), supplier = $("#idSupplier").val();
@@ -206,31 +223,10 @@
                     });
                 }
             })
-            $("#btn_searchnota").on("click", function (evt) {
+            $("#btn_searchsupplier").on("click", function (evt) {
                 evt.preventDefault();
-                loadingShow();
-                if ($.fn.DataTable.isDataTable("#tbl_nota")) {
-                    $('#tbl_nota').DataTable().clear().destroy();
-                }
-                $('#tbl_nota').DataTable({
-                    responsive: true,
-                    serverSide: true,
-                    processing: true,
-                    ajax: {
-                        url: "{{ route('return.getnota') }}",
-                        type: "get"
-                    },
-                    columns: [
-                        {data: 'supplier'},
-                        {data: 'tanggal'},
-                        {data: 'nota'},
-                        {data: 'action'}
-                    ],
-                    drawCallback: function( settings ) {
-                        loadingHide();
-                        $("#search-modal").modal({backdrop: 'static', keyboard: false});
-                    }
-                });
+                console.log('abc');
+                appendModalSearchSupplier();
             })
 
             $("#formCreateReturn").on("submit", function (evt) {
@@ -289,30 +285,111 @@
                     ganti_barang.addClass('d-none');
                 }
             });
-        });
 
-        function createReturn() {
-            loadingShow();
-            axios.post('{{ route('return.add') }}', $("#formCreateReturn").serialize())
-                .then(function (resp) {
-                    loadingHide();
-                    if (resp.data.status == "Failed") {
-                        messageFailed("Gagal", resp.data.message);
-                    } else if (resp.data.status == "Success") {
-                        messageSuccess("Berhasil", resp.data.message);
-                        $("#qty_return").val(0);
-                        $("#note_return").val('');
-                        $("#createReturn").modal("hide");
-                        window.open(baseUrl+'/produksi/returnproduksi/nota-return/'+resp.data.id+'/'+resp.data.detail);
-                    }
-                })
-                .catch(function (error) {
-                    loadingHide();
-                    messageWarning("Error", error);
-                })
+            // reset modal-return when modal is hidden
+            $('#createReturn').on('hidden.bs.modal', function() {
+                $('#formCreateReturn')[0].reset();
+            });
+        });
+        // init autocomplete for search by nota or prod-code
+        function initEvents()
+        {
+            $("#q_prodcode").off();
+            $("#q_prodcode").on("keyup", function () {
+                $("#q_idpo").val('');
+                $(".table-returnp").addClass('d-none');
+                if ($("#q_idpo").val() == "") {
+                    $("#go").attr("disabled", true);
+                } else {
+                    $("#go").attr("disabled", false);
+                }
+            });
+            $("#q_prodcode").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "{{ route('return.cariprodkode') }}",
+                        data: {
+                            term: $("#q_prodcode").val()
+                        },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function (event, data) {
+                    $("#q_idpo").val(data.item.id);
+                    $('#q_nota').val(data.item.nota);
+                    $("#q_prodcode").val(data.item.prodCode);
+                    $("#notaPO").val(data.item.nota);
+                    $("#prodCode").val(data.item.prodCode);
+                    searchItems();
+                }
+            });
+
+            $("#q_nota").off();
+            $("#q_nota").on("keyup", function () {
+                $("#q_idpo").val('');
+                $(".table-returnp").addClass('d-none');
+                if ($("#q_idpo").val() == "") {
+                    $("#go").attr("disabled", true);
+                } else {
+                    $("#go").attr("disabled", false);
+                }
+            });
+            $("#q_nota").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "{{ route('return.carinota') }}",
+                        data: {
+                            term: $("#q_nota").val()
+                        },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function (event, data) {
+                    $("#q_idpo").val(data.item.id);
+                    $('#q_nota').val(data.item.nota);
+                    $("#q_prodcode").val(data.item.prodCode);
+                    $("#notaPO").val(data.item.nota);
+                    $("#prodCode").val(data.item.prodCode);
+                    searchItems();
+                }
+            });
         }
 
-        function detail(id) {
+        function appendModalSearchSupplier()
+        {
+            loadingShow();
+            if ($.fn.DataTable.isDataTable("#tbl_nota")) {
+                $('#tbl_nota').DataTable().clear().destroy();
+            }
+            $('#tbl_nota').DataTable({
+                responsive: true,
+                serverSide: true,
+                processing: true,
+                ajax: {
+                    url: "{{ route('return.getnota') }}",
+                    type: "get"
+                },
+                columns: [
+                    {data: 'supplier'},
+                    {data: 'tanggal'},
+                    {data: 'nota'},
+                    {data: 'action'}
+                ],
+                drawCallback: function( settings ) {
+                    loadingHide();
+                    $("#search-modal").modal({backdrop: 'static', keyboard: false});
+                }
+            });
+        }
+
+        function detail(id)
+        {
             loadingShow();
             if ($.fn.DataTable.isDataTable("#tbl_detailnota")) {
                 $('#tbl_detailnota').DataTable().clear().destroy();
@@ -336,8 +413,9 @@
             });
             $("#detail").modal("show");
         }
-
-        function pilih(id, nota) {
+        // apply search nota using modal-search by supplier
+        function pilih(id, nota)
+        {
             $("#q_nota").val(nota);
             $("#q_idpo").val(id);
             $("#notaPO").val(nota);
@@ -350,7 +428,13 @@
                 serverSide: true,
                 processing: true,
                 ajax: {
-                    url: "{{ url('/produksi/returnproduksi/cari-barang-po') }}"+"/"+id,
+                    url: "{{ url('/produksi/returnproduksi/cari-barang-po') }}",
+                    data: {
+                        id: $("#q_idpo").val(),
+                        prodCode: $('#q_prodcode').val(),
+                        nota: $('#q_nota').val(),
+                        searchBy: $('#searchBy').val()
+                    },
                     type: "get"
                 },
                 columns: [
@@ -373,14 +457,58 @@
             }
         }
 
-        function selectItem(poid, item, barang, qty, harga, total) {
+        // fill list items in dataTable after using search nota or searh prod-code
+        function searchItems()
+        {
             loadingShow();
+            if ($.fn.DataTable.isDataTable("#table_rp")) {
+                $('#table_rp').DataTable().clear().destroy();
+            }
+            $('#table_rp').DataTable({
+                responsive: true,
+                serverSide: true,
+                processing: true,
+                ajax: {
+                    url: "{{ url('/produksi/returnproduksi/cari-barang-po') }}",
+                    data: {
+                        id: $("#q_idpo").val(),
+                        prodCode: $('#q_prodcode').val(),
+                        nota: $('#q_nota').val(),
+                        searchBy: $('#searchBy').val()
+                    },
+                    type: "get"
+                },
+                columns: [
+                    {data: 'barang'},
+                    {data: 'qty'},
+                    {data: 'harga'},
+                    {data: 'total'},
+                    {data: 'action'}
+                ],
+                drawCallback: function( settings ) {
+                    loadingHide();
+                    $(".table-returnp").removeClass('d-none');
+                }
+            });
+            $("#search-modal").modal("hide");
+            if ($("#q_idpo").val() == "") {
+                $("#go").attr("disabled", true);
+            } else {
+                $("#go").attr("disabled", false);
+            }
+        }
+        // select an item and show the modal to create return
+        function selectItem (searchMethod, poid, item, barang, qty, harga, total)
+        {
+            console.log(poid, item, barang, qty, harga, total);
+            loadingShow();
+            $("#searchMethod").val(searchMethod);
             $("#idPO").val(poid);
             $("#idItem").val(item);
             $("#txt_barang").val(barang);
             $("#txt_qty").val(qty);
-            $("#txt_harga").val(harga);
-            $("#txt_total").val(total)
+            $("#txt_harga").val(parseFloat(harga));
+            $("#txt_total").val(parseFloat(total))
             axios.get(baseUrl+"/produksi/returnproduksi/set-satuan/"+item)
                 .then(function (resp) {
                     loadingHide();
@@ -401,6 +529,28 @@
                     messageWarning("Error", error);
                 })
 
+        }
+        // create return
+        function createReturn()
+        {
+            loadingShow();
+            axios.post('{{ route('return.add') }}', $("#formCreateReturn").serialize())
+            .then(function (resp) {
+                loadingHide();
+                if (resp.data.status == "Failed") {
+                    messageFailed("Gagal", resp.data.message);
+                } else if (resp.data.status == "Success") {
+                    messageSuccess("Berhasil", resp.data.message);
+                    $("#qty_return").val(0);
+                    $("#note_return").val('');
+                    $("#createReturn").modal("hide");
+                    window.open(baseUrl+'/produksi/returnproduksi/nota-return/'+resp.data.id+'/'+resp.data.detail);
+                }
+            })
+            .catch(function (error) {
+                loadingHide();
+                messageWarning("Error", error);
+            })
         }
     </script>
     <script>

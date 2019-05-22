@@ -18,4 +18,19 @@ class d_productionordercode extends Model
         return $query;
     }
 
+    public function getItem()
+    {
+        return $this->belongsTo('App\m_item', 'poc_item', 'i_id');
+    }
+
+    public function getUnit()
+    {
+        return $this->belongsTo('App\m_unit', 'poc_unit', 'u_id');
+    }
+
+    public function getProductionOrder()
+    {
+        return $this->belongsTo('App\d_productionorder', 'poc_productionorder', 'po_id');
+    }
+
 }

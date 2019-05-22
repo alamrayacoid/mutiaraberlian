@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\d_productionorder as ProductionOrder;
 use App\d_productionorderdt as ProductionOrderDT;
+use App\d_productionordercode;
 use App\m_supplier as Supplier;
 use App\d_stock as Stock;
 use App\d_stock_mutation as StockMutation;
@@ -140,10 +141,10 @@ class ProduksiController extends Controller
             })
             ->addColumn('status', function($data){
                 if($data->status == 'BELUM'){
-//                    return '<div class="status-termin-lunas"><p>BELUM LUNAS</p></div>';
+                   // return '<div class="status-termin-lunas"><p>BELUM LUNAS</p></div>';
                     return '<div class="text-center">BELUM LUNAS</div>';
                 }else{
-//                    return '<div class="status-termin-belum"><p>LUNAS</p></div>';
+                   // return '<div class="status-termin-belum"><p>LUNAS</p></div>';
                     return '<div class="text-center">LUNAS</div>';
                 }
             })
@@ -814,6 +815,32 @@ class ProduksiController extends Controller
             ->make(true);
     }
 
+    // set return for autocomplete searching using production-code
+    public function cariProdKode(Request $request)
+    {
+        $cari = $request->term;
+        $prodCode = d_productionordercode::where('poc_productioncode', 'like', '%'.$cari.'%')
+        ->with('getItem')
+        ->groupBy('poc_productioncode')
+        ->orderBy('poc_productioncode', 'desc')
+        ->get();
+
+        if (count($prodCode) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($prodCode as $query) {
+                $results[] = [
+                    'id' => Crypt::encrypt($query->poc_productionorder),
+                    'label' => $query->poc_productioncode,
+                    'nota' => $query->getProductionOrder->po_nota,
+                    'prodCode' => $query->poc_productioncode
+                ];
+            }
+        }
+        return Response::json($results);
+    }
+
+    // set return for autocomplete searching using no-nota of production-order
     public function cariNota(Request $request)
     {
         $cari = $request->term;
@@ -822,28 +849,40 @@ class ProduksiController extends Controller
             $q->orWhere('ir_notapo', 'like', '%'.$cari.'%');
         })
         ->join('m_supplier', 's_id', '=', 'po_supplier')
+        ->orderBy('po_date', 'desc')
+        ->orderBy('po_nota', 'desc')
         ->get();
-
         if (count($nama) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => Crypt::encrypt($query->po_id), 'label' => $query->po_nota . ' - ' . $query->s_company, 'nota' => $query->po_nota];
+                $results[] = [
+                    'id' => Crypt::encrypt($query->po_id),
+                    'label' => $query->po_nota . ' - ' . $query->s_company,
+                    'nota' => $query->po_nota,
+                    'prodCode' => '-'
+                ];
             }
         }
         return Response::json($results);
     }
 
-    public function cariBarangPO($id = null)
+    // find detailed selected items (after using autocomplete)
+    public function cariBarangPO(Request $request)
     {
-        $data = ProductionOrderDT::join('m_item', 'i_id', '=', 'pod_item')
+        $id = $request->id;
+        $prodCode = $request->prodCode;
+        $nota = $request->nota;
+        $searchBy = $request->searchBy;
+
+        // if user search using nota of production-order
+        if ($searchBy == 'nota') {
+            $data = ProductionOrderDT::join('m_item', 'i_id', '=', 'pod_item')
             ->join('m_unit', 'u_id', '=', 'pod_unit')
             ->where('pod_productionorder', '=', Crypt::decrypt($id))
-            ->select('pod_productionorder', 'pod_item', 'i_name', 'pod_qty', 'u_name',
-                DB::raw("CONCAT('Rp. ',FORMAT(pod_value, 0, 'de_DE')) as harga"),
-                DB::raw("CONCAT('Rp. ',FORMAT(pod_totalnet, 0, 'de_DE')) as total"));
+            ->select('pod_productionorder', 'pod_item', 'i_name', 'pod_qty', 'u_name', 'pod_value', 'pod_totalnet');
 
-        return DataTables::of($data)
+            return DataTables::of($data)
             ->addColumn('barang', function($data){
                 return $data->i_name;
             })
@@ -851,20 +890,74 @@ class ProduksiController extends Controller
                 return $data->pod_qty . ' - ' . $data->u_name;
             })
             ->addColumn('harga', function($data){
-                return $data->harga;
+                return number_format($data->pod_value, 2, '.', ',');
             })
             ->addColumn('total', function($data){
-                return $data->total;
+                return number_format($data->pod_totalnet, 2, '.', ',');
             })
             ->addColumn('action', function($data){
                 $qty = $data->pod_qty . ' - ' . $data->u_name;
-                $pilih = '<button class="btn btn-sm btn-primary" title="Pilih" onclick="selectItem(\''.Crypt::encrypt($data->pod_productionorder).'\', \''.Crypt::encrypt($data->pod_item).'\', \''.$data->i_name.'\', \''.$qty.'\', \''.$data->harga.'\', \''.$data->total.'\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
+                $pilih = '<button class="btn btn-sm btn-primary" title="Pilih" onclick="selectItem(\''.
+                    'nota'.'\', \''.
+                    Crypt::encrypt($data->pod_productionorder).'\', \''.
+                    Crypt::encrypt($data->pod_item).'\', \''.
+                    $data->i_name.'\', \''.
+                    $qty.'\', \''.
+                    $data->pod_value.'\', \''.
+                    $data->pod_totalnet.
+                    '\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
                 return '<div class="btn-group btn-group-sm">'. $pilih . '</div>';
             })
             ->rawColumns(['barang','qty', 'harga', 'total', 'action'])
             ->make(true);
+        }
+        // if user search using production-code
+        elseif ($searchBy == 'kodeproduksi') {
+            $prodCd = d_productionordercode::where('poc_productionorder', Crypt::decrypt($id))
+            ->where('poc_productioncode', $prodCode)
+            ->with('getItem')
+            ->with('getUnit')
+            ->groupBy('poc_productioncode')
+            ->selectRaw('*, SUM(poc_qty) as qty')
+            ->get();
+
+            $prodOrder = ProductionOrderDT::where('pod_productionorder', Crypt::decrypt($id))
+            ->where('pod_item', $prodCd[0]->poc_item)
+            ->first();
+
+            return DataTables::of($prodCd)
+            ->addColumn('barang', function($prodCd){
+                return $prodCd->getItem->i_name;
+            })
+            ->addColumn('qty', function($prodCd){
+                return $prodCd->qty . ' - ' . $prodCd->getUnit->u_name;
+            })
+            ->addColumn('harga', function($prodCd) use ($prodOrder){
+                return number_format($prodOrder->pod_value, 2, '.', ',');
+            })
+            ->addColumn('total', function($prodCd) use ($prodOrder){
+                $total = $prodCd->qty * $prodOrder->pod_value;
+                return number_format($total, 2, '.', ',');
+            })
+            ->addColumn('action', function($prodCd) use ($prodOrder){
+                $qty = $prodCd->qty . ' - ' . $prodCd->getUnit->u_name;
+                $pilih = '<button class="btn btn-sm btn-primary" title="Pilih" onclick="selectItem(\''.
+                    'kodeproduksi'.'\', \''.
+                    Crypt::encrypt($prodCd->poc_productionorder).'\', \''.
+                    Crypt::encrypt($prodCd->poc_item).'\', \''.
+                    $prodCd->getItem->i_name.'\', \''.
+                    $qty.'\', \''.
+                    $prodOrder->pod_value.'\', \''.
+                    $prodCd->qty * $prodOrder->pod_value.
+                    '\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
+                return '<div class="btn-group btn-group-sm">'. $pilih . '</div>';
+            })
+            ->rawColumns(['barang','qty', 'harga', 'total', 'action'])
+            ->make(true);
+        }
     }
 
+    // find item-unit
     public function setSatuan($id = null)
     {
         $data = DB::table('m_item')
@@ -888,37 +981,104 @@ class ProduksiController extends Controller
         try{
             $poid = Crypt::decrypt($request->idPO);
             $idItem = Crypt::decrypt($request->idItem);
-        }catch (DecryptException $e){
+        }
+        catch (DecryptException $e){
             return Response::json([
                 'status' => "Failed",
                 'message'=> $e
             ]);
         }
 
+        // dd($request->all());
+
         $detailid = (DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')) ? DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')+1 : 1;
-//        return-po/001/23/03/2019
+        // return-po/001/23/03/2019
         $nota = CodeGenerator::codeWithSeparator('d_returnproductionorder', 'rpo_nota', 15, 10, 3, 'RETURN-PO', '/');
 
         $data_check = DB::table('d_productionorder')
-            ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
-                'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-                'm_item.i_unit3 as unit3', 'd_productionorderdt.pod_unit as unit', 'd_productionorderdt.pod_value as value')
-            ->join('d_productionorderdt', function ($x) use ($idItem){
-                $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
-                $x->where('d_productionorderdt.pod_item', '=', $idItem);
-            })
-            ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
-            ->where('d_productionorder.po_id', '=', $poid)
-            ->first();
+        ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
+        'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+        'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+        'm_item.i_unit3 as unit3', 'd_productionorderdt.pod_unit as unit', 'd_productionorderdt.pod_value as value')
+        ->join('d_productionorderdt', function ($x) use ($idItem){
+            $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
+            $x->where('d_productionorderdt.pod_item', '=', $idItem);
+        })
+        ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
+        ->where('d_productionorder.po_id', '=', $poid)
+        ->first();
 
         $qty_compare = 0;
         if ($request->satuan_return == $data_check->unit1) {
-            $qty_compare = $request->qty_return;
+            $qty_compare = (int)$request->qty_return;
         } else if ($request->satuan_return == $data_check->unit2) {
             $qty_compare = $request->qty_return * $data_check->compare2;
         } else if ($request->satuan_return == $data_check->unit3) {
             $qty_compare = $request->qty_return * $data_check->compare3;
+        }
+
+        // if searchMethod is using 'kodeproduksi'
+        if ($request->searchMethod == 'kodeproduksi')
+        {
+            // get production-code by PO-id and production-code-number
+            $data = d_productionordercode::where('poc_productionorder', $poid)
+            ->where('poc_productioncode', $request->prodCode)
+            ->get();
+
+            // get qty-item from production-code
+            $qtydata_compare = 0;
+            $totalQty = 0;
+            foreach ($data as $key => $val) {
+                if ($val->poc_unit == $data_check->unit1) {
+                    $qtydata_compare = $val->poc_qty;
+                } else if ($val->poc_unit == $data_check->unit2) {
+                    $qtydata_compare = $val->poc_qty * $data_check->compare2;
+                } else if ($val->poc_unit == $data_check->unit3) {
+                    $qtydata_compare = $val->poc_qty * $data_check->compare3;
+                }
+                $totalQty += $qtydata_compare;
+            }
+
+            // return-failed if qty-return > qty-item
+            if ((int)$qty_compare > (int)$totalQty) {
+                DB::rollBack();
+                return Response::json([
+                    'status' => "Failed",
+                    'message'=> "Jumlah permintaan pengembalian melebihi jumlah yang tersedia !"
+                ]);
+            }
+
+        }
+        // if searchMethod is using 'nota'
+        elseif ($request->searchMethod == 'nota')
+        {
+            // get production-order-dt by PO-id and item-id
+            $data = ProductionOrderDT::where('pod_productionorder', $poid)
+            ->where('pod_item', $idItem)
+            ->get();
+
+            // get qty-item from production-order-dt
+            $qtydata_compare = 0;
+            $totalQty = 0;
+            foreach ($data as $key => $val) {
+                if ($val->pod_unit == $data_check->unit1) {
+                    $qtydata_compare = $val->pod_qty;
+                } else if ($val->pod_unit == $data_check->unit2) {
+                    $qtydata_compare = $val->pod_qty * $data_check->compare2;
+                } else if ($val->pod_unit == $data_check->unit3) {
+                    $qtydata_compare = $val->pod_qty * $data_check->compare3;
+                }
+                $totalQty += $qtydata_compare;
+            }
+
+            // return-failed if qty-return > qty-item
+            if ((int)$qty_compare > (int)$totalQty) {
+                DB::rollBack();
+                return Response::json([
+                    'status' => "Failed",
+                    'message'=> "Jumlah permintaan pengembalian melebihi jumlah yang tersedia !"
+                ]);
+            }
         }
 
         DB::beginTransaction();
@@ -934,67 +1094,72 @@ class ProduksiController extends Controller
                 'rpo_note'            => $request->note_return
             ];
 
-//            update stock
+            // update stock
             $comp = Auth::user()->u_company;
             $get_stock = Stock::where('s_comp', $comp)
-                ->where('s_position', $comp)
-                ->where('s_item', $idItem)
-                ->where('s_status', 'ON DESTINATION')
-                ->where('s_condition', 'FINE');
+            ->where('s_position', $comp)
+            ->where('s_item', $idItem)
+            ->where('s_status', 'ON DESTINATION')
+            ->where('s_condition', 'FINE');
 
             $get_stockmutation = StockMutation::where('sm_stock', $get_stock->first()->s_id)
-                ->where('sm_nota', $request->notaPO);
+            ->where('sm_nota', $request->notaPO);
 
-            if ($get_stock->count() > 0) {
+            if ($get_stock->count() > 0)
+            {
                 $val_stock = [
                     's_qty' => $get_stock->first()->s_qty - $qty_compare
                 ];
-            } else {
+            }
+            else
+            {
                 return Response::json([
                     'status' => "Failed",
                     'message' => "Stock tidak ditemukan"
                 ]);
             }
 
-            if ($get_stockmutation->count() > 0) {
-                if ($get_stockmutation->first()->sm_use == $get_stockmutation->first()->sm_qty || $get_stockmutation->first()->sm_residue == 0) {
+            if ($get_stockmutation->count() > 0)
+            {
+                if ($get_stockmutation->first()->sm_use == $get_stockmutation->first()->sm_qty || $get_stockmutation->first()->sm_residue == 0)
+                {
                     return Response::json([
                         'status' => "Failed",
                         'message' => "Jumlah barang tidak tersedia"
                     ]);
-                } else if ($get_stockmutation->first()->sm_use < $get_stockmutation->first()->sm_qty) {
-//                    $sm_qty     = $get_stockmutation->first()->sm_qty - $qty_compare;
-//                    $sm_residue = $sm_qty  - $get_stockmutation->first()->sm_use;
-//                    $val_stockmutation = [
-//                        'sm_qty'     => $sm_qty,
-//                        'sm_residue' => $sm_residue
-//                    ];
+                }
+                else if ($get_stockmutation->first()->sm_use < $get_stockmutation->first()->sm_qty)
+                {
                     Mutasi::MutasiKeluarWithReff(15, $comp, $comp, $idItem, $request->qty_return, $nota, $request->notaPO);
                 }
-            } else {
+            }
+            else
+            {
                 return Response::json([
-                    'status' => "Failed",
-                    'message' => "Stock mutasi tidak ditemukan"
+                'status' => "Failed",
+                'message' => "Stock mutasi tidak ditemukan"
                 ]);
             }
 
             //            insert return
             DB::table('d_returnproductionorder')->insert($values);
             $get_stock->update($val_stock);
-//            $get_stockmutation->update($val_stockmutation);
+            // $get_stockmutation->update($val_stockmutation);
             DB::commit();
 
             return Response::json([
-                'status' => "Success",
-                'message'=> "Data berhasil disimpan",
-                'id'     => Crypt::encrypt($poid),
-                'detail' => Crypt::encrypt($detailid)
+            'status' => "Success",
+            'message'=> "Data berhasil disimpan",
+            'id'     => Crypt::encrypt($poid),
+            'detail' => Crypt::encrypt($detailid)
             ]);
-        }catch (Exception $e){
+        }
+        catch (Exception $e)
+        {
             DB::rollBack();
             return Response::json([
-                'status' => "Failed",
-                'message'=> $e
+            'status' => "Failed",
+            'message'=> $e
             ]);
         }
     }
