@@ -12,6 +12,7 @@ use DB;
 use App\d_stock;
 use App\d_stockdistribution;
 use App\d_stockdistributiondt;
+use App\d_stockdistributioncode;
 use App\m_item;
 use App\m_mutcat;
 use App\m_unit;
@@ -125,9 +126,10 @@ class DistribusiController extends Controller
     // store new-distribusibarang to db
     public function store(Request $request)
     {
-        if (!AksesUser::checkAkses(7, 'create')){
-            abort(401);
-        }
+        // dd($request->all());
+        // if (!AksesUser::checkAkses(7, 'create')){
+        //     abort(401);
+        // }
 
         // validate request
         $isValidRequest = $this->validateDist($request);
@@ -175,6 +177,8 @@ class DistribusiController extends Controller
             $dist->sd_nota = $nota;
             $dist->sd_user = Auth::user()->u_id;
             $dist->save();
+
+            $startProdCodeIdx = 0;
             // insert new stockdist-detail
             foreach ($request->itemsId as $i => $itemId) {
                 if ($request->qty[$i] != 0) {
@@ -187,6 +191,26 @@ class DistribusiController extends Controller
                     $distdt->sdd_qty = $request->qty[$i];
                     $distdt->sdd_unit = $request->units[$i];
                     $distdt->save();
+
+                    // insert new d_stockdistributioncode
+                    if ($i == 0) {
+                        $startProdCodeIdx = 0;
+                    }
+                    $prodCodeLength = (int)$request->prodCodeLength[$i];
+                    $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                    for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
+                        $detailidcode = d_stockdistributioncode::where('sdc_stockdistribution', $id)
+                        ->where('sdc_stockdistributiondt', $detailid)
+                        ->max('sdc_detailid') + 1;
+                        $distcode = new d_stockdistributioncode;
+                        $distcode->sdc_stockdistribution = $id;
+                        $distcode->sdc_stockdistributiondt = $detailid;
+                        $distcode->sdc_detailid = $detailidcode;
+                        $distcode->sdc_code = $request->prodCode[$j];
+                        $distcode->sdc_qty = $request->qtyProdCode[$j];
+                        $distcode->save();
+                    }
+                    $startProdCodeIdx += $prodCodeLength;
                 }
             }
 

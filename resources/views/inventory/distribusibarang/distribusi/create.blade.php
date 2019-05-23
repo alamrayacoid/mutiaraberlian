@@ -9,6 +9,12 @@
 @endsection
 
 @section('content')
+    <form class="formCodeProd">
+        <!-- modal-code-production -->
+        @include('inventory.distribusibarang.distribusi.modal-code-prod')
+        @include('inventory.distribusibarang.distribusi.modal-code-prod-base')
+
+    </form>
 
     <article class="content animated fadeInLeft">
 
@@ -62,9 +68,10 @@
                                         <table class="table table-striped table-hover" cellspacing="0" id="table_items">
                                             <thead class="bg-primary">
                                                 <tr>
-                                                    <th width="50%">Kode Barang/Nama Barang</th>
+                                                    <th width="40%">Kode Barang/Nama Barang</th>
                                                     <th>Jumlah</th>
                                                     <th width="15%">Satuan</th>
+                                                    <th width="15%">Kode Produksi</th>
                                                     <th>Aksi</th>
                                                 </tr>
                                             </thead>
@@ -84,7 +91,11 @@
                                                         <select name="units[]" class="form-control form-control-sm select2 units"></select>
                                                     </td>
                                                     <td>
+                                                        <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
+                                                    </td>
+                                                    <td>
                                                         <button class="btn btn-success btnAddItem btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle d-none" type="button" disabled><i class="fa fa-trash" aria-hidden="true"></i></button>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -112,6 +123,7 @@
 @section('extra_script')
 <script type="text/javascript">
     var idxItem = null;
+    var idxProdCode = null;
 
     $(document).ready(function(){
         // event field items inside table
@@ -134,10 +146,15 @@
                     <select name="units[]" class="form-control form-control-sm select2 units"></select>
                 </td>
                 <td>
+                    <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
+                </td>
+                <td>
                     <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
                 </td>
             </tr>`
             );
+            // clone modal-code-production and insert new one
+            $('#modalCodeProdBase').clone().prop('id', 'modalCodeProd').addClass('modalCodeProd').insertAfter($('.modalCodeProd').last());
             // re-declare event for field items inside table
             getFieldsReady();
         });
@@ -147,13 +164,15 @@
         });
     });
 
+    // remove all event-handler and re-declare it
     function getFieldsReady()
     {
-        // remove all event-handler and re-declare it
         $('.items').off();
         $('.qty').off();
         $('.units').off();
         $('.btnRemoveItem').off();
+        $('.btnCodeProd').off();
+        $('.btnAddProdCode').off();
         // set event for field-items
         $('.items').on('click', function () {
             idxItem = $('.items').index(this);
@@ -176,6 +195,28 @@
         })
         // event to remove an item from table_items
         $('.btnRemoveItem').on('click', function() {
+            idxItem = $('.btnRemoveItem').index(this);
+            $('.modalCodeProd').eq(idxItem).remove();
+            $(this).parents('tr').remove();
+        });
+        // event to show modal to display list of code-production
+        $('.btnCodeProd').on('click', function() {
+            idxItem = $('.btnCodeProd').index(this);
+            $('.modalCodeProd').eq(idxItem).modal('show');
+        });
+        // event to add more row to insert production-code
+        $('.btnAddProdCode').on('click', function() {
+            prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]"></input></td>';
+            qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="0"></input></td>';
+            action = '<td><button class="btn btn-success btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
+            listProdCode = '<tr>'+ prodCode + qtyProdCode + action +'</tr>';
+            // idxItem is referenced from btnCodeProd above
+            $('.modalCodeProd:eq('+ idxItem +')').find('.table_listcodeprod').append(listProdCode);
+            getFieldsReady();
+        });
+        // event to remove an prod-code from table_listcodeprod
+        $('.btnRemoveProdCode').on('click', function() {
+            idxProdCode = $('.btnRemoveProdCode').index(this);
             $(this).parents('tr').remove();
         });
         // select2 class
@@ -287,12 +328,24 @@
     // submit new-distribusibarang
     function submitForm()
     {
+        loadingShow();
         data = $('#formDistribution').serialize();
+        $.each($('.table_listcodeprod'), function(key, val) {
+            // get length of production-code each items
+            let prodCodeLength = $('.table_listcodeprod:eq('+ key +') :input.qtyProdCode').length;
+            $('.modalCodeProd:eq('+ key +')').find('.prodcode-length').val(prodCodeLength);
+
+            inputs = $('.table_listcodeprod:eq('+ key +') :input').serialize();
+            data = data +'&'+ inputs;
+        });
+
         $.ajax({
             url: "{{ route('distribusibarang.store') }}",
             data: data,
+            dataType: 'json',
             type: "post",
             success: function(response) {
+                loadingHide();
                 if (response.status === 'berhasil') {
                     messageSuccess('Selamat', 'Distribusi berhasil disimpan !');
                     window.location.reload();
@@ -303,9 +356,12 @@
                 }
             },
             error: function(e) {
+                loadingHide();
                 messageWarning('Perhatian', 'Terjadi kesalahan saat menyimpan distribusi, hubungi pengembang !');
             }
         });
     }
+
+
 </script>
 @endsection
