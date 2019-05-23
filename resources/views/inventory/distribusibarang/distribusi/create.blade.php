@@ -173,6 +173,8 @@
         $('.btnRemoveItem').off();
         $('.btnCodeProd').off();
         $('.btnAddProdCode').off();
+        $('.btnRemoveProdCode').off();
+        $('.qtyProdCode').off();
         // set event for field-items
         $('.items').on('click', function () {
             idxItem = $('.items').index(this);
@@ -202,6 +204,9 @@
         // event to show modal to display list of code-production
         $('.btnCodeProd').on('click', function() {
             idxItem = $('.btnCodeProd').index(this);
+            // pass qty to modal
+            $('.modalCodeProd').eq(idxItem).find('.QtyH').val($('.qty').eq(idxItem).val());
+            calculateProdCodeQty();
             $('.modalCodeProd').eq(idxItem).modal('show');
         });
         // event to add more row to insert production-code
@@ -218,6 +223,11 @@
         $('.btnRemoveProdCode').on('click', function() {
             idxProdCode = $('.btnRemoveProdCode').index(this);
             $(this).parents('tr').remove();
+            calculateProdCodeQty();
+        });
+        // update total qty without production-code
+        $('.qtyProdCode').on('keyup', function() {
+            calculateProdCodeQty();
         });
         // select2 class
         $('.select2').select2({
@@ -361,7 +371,16 @@
             }
         });
     }
-
-
+    // check production code qty each item
+    function calculateProdCodeQty()
+    {
+        QtyH = parseInt($('.modalCodeProd').eq(idxItem).find('.QtyH').val());
+        qtyWithProdCode = 0;
+        $.each($('.table_listcodeprod').eq(idxItem).find('.qtyProdCode'), function (key, val) {
+            qtyWithProdCode += parseInt($(this).val());
+        });
+        restQty = QtyH - qtyWithProdCode;
+        $('.modalCodeProd').eq(idxItem).find('.restQty').val(restQty);
+    }
 </script>
 @endsection
