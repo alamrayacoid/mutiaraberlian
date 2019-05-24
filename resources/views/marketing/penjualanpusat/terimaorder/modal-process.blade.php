@@ -1,7 +1,6 @@
 <!-- Modal -->
 <div id="modalProcessTOP" class="modal fade animated fadeIn" role="dialog">
-    <div class="modal-dialog modal-lg">
-
+    <div class="modal-dialog modal-xl">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header bg-gradient-info">
@@ -26,6 +25,7 @@
                         </div>
                         <div class="col-md-4 col-sm-12 mb-3">
                             <input type="text" id="agentModalPr" class="form-control-plaintext border-bottom" readonly="">
+                            <input type="hidden" id="idAgentModalPr">
                         </div>
 
                         <div class="col-md-2 col-sm-12">
@@ -43,14 +43,16 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-striped data-table table-hover display" cellspacing="0" id="table_modalPr">
+                        <table class="table table-striped data-table table-hover display" cellspacing="0" id="table_modalPr" style="width: 100%">
                             <thead class="bg-primary">
                                 <tr>
-                                    <th width="30%">Barang</th>
-                                    <th width="15%%">Jumlah</th>
-                                    <th width="15%">Satuan</th>
-                                    <th width="20%">Harga Satuan</th>
-                                    <th width="20%">Total Harga</th>
+                                    <th width="25%">Barang</th>
+                                    <th width="13%">Stock</th>
+                                    <th width="12%">Jumlah</th>
+                                    <th width="10%">Satuan</th>
+                                    <th width="17%">Harga Satuan</th>
+                                    <th width="18%">Total Harga</th>
+                                    <th width="5%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>

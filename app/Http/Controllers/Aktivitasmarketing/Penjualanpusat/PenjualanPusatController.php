@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Aktivitasmarketing\Penjualanpusat;
 
+use App\Http\Controllers\AksesUser;
+use App\Http\Controllers\MarketingController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
@@ -21,70 +23,123 @@ class PenjualanPusatController extends Controller
 {
     public function index()
     {
+        if (!AksesUser::checkAkses(20, 'read')){
+            abort(401);
+        }
         return view('marketing/penjualanpusat/index');
     }
 
     // Terima Order Penjualan
     public function getTableTOP()
     {
-      $data = DB::table('d_productorder')->leftjoin('m_company', 'c_id', '=', 'po_agen')->where('po_status', 'P')->get();
+        $data = DB::table('d_productorder')->leftjoin('m_company', 'c_id', '=', 'po_agen')->where('po_status', 'P')->get();
 
-      return Datatables::of($data)
-      ->addIndexColumn()
-      ->addColumn('tanggal', function($data) {
-        return '<td>'. Carbon::parse($data->po_date)->format('d-m-Y') .'</td>';
-      })
-      ->addColumn('action', function($data) {
-        $tmp = DB::table('d_productorderdt')->where('pod_productorder', $data->po_id)->sum('pod_totalprice');
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('tanggal', function ($data) {
+                return '<td>' . Carbon::parse($data->po_date)->format('d-m-Y') . '</td>';
+            })
+            ->addColumn('action', function ($data) {
+                $tmp = DB::table('d_productorderdt')->where('pod_productorder', $data->po_id)->sum('pod_totalprice');
 
-        return '<div class="btn-group btn-group-sm">
-                <button class="btn btn-primary btn-detail" type="button" onclick="getDetailTOP('.$data->po_id.')" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
-                <button class="btn btn-success btn-process" type="button" onclick="processTOP('.$data->po_id.')" title="Proses" data-toggle="modal" data-target="#modalProcessTOP"><i class="fa fa-arrow-right"></i></button>
+                return '<div class="btn-group btn-group-sm">
+                <button class="btn btn-primary btn-detail" type="button" onclick="getDetailTOP(' . $data->po_id . ')" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
+                <button class="btn btn-success btn-process" type="button" onclick="processTOP(' . $data->po_id . ')" title="Proses" data-toggle="modal" data-target="#modalProcessTOP"><i class="fa fa-arrow-right"></i></button>
                 </div>';
                 // <button class="btn btn-success btn-proses" type="button" title="Proses" onclick="window.location.href=\''. route('orderpenjualan.proses') .'?id='.encrypt($data->po_id).'\'"><i class="fa fa-arrow-right"></i></button>
-      })
-      ->addColumn('total', function($data){
-        $tmp = DB::table('d_productorderdt')->where('pod_productorder', $data->po_id)->sum('pod_totalprice');
+            })
+            ->addColumn('total', function ($data) {
+                $tmp = DB::table('d_productorderdt')->where('pod_productorder', $data->po_id)->sum('pod_totalprice');
 
-        return "Rp " . number_format($tmp,2,',','.');;
-      })
-      ->rawColumns(['tanggal', 'action', 'total'])
-      ->make(true);
+                return "Rp " . number_format($tmp, 2, ',', '.');;
+            })
+            ->rawColumns(['tanggal', 'action', 'total'])
+            ->make(true);
     }
 
     public function getDetailTOP(Request $request)
     {
         $data = d_productorder::where('po_id', $request->id)
-        ->with('getAgent')
-        ->with(['getPODt' => function ($query) {
-            $query
-            ->with(['getItem' => function ($query) {
+            ->with('getAgent')
+            ->with(['getPODt' => function ($query) {
                 $query
-                ->with('getUnit1')
-                ->with('getUnit2')
-                ->with('getUnit3')
-                ->get();
+                    ->with(['getItem' => function ($query) {
+                        $query
+                            ->with('getUnit1')
+                            ->with('getUnit2')
+                            ->with('getUnit3')
+                            ->get();
+                    }])
+                    ->with('getUnit')
+                    ->get();
             }])
-            ->with('getUnit')
-            ->get();
-        }])
-        ->first();
-
-
-        // check again how to get stock, is it true ?
-        $stockItem = array();
-        foreach ($data->getPODt as $key => $val) {
-            $getStock = d_stock::where('s_item', $val->pod_item)
-            ->where('s_position', $data->po_comp)
-            ->where('s_status', 'ON DESTINATION')
-            ->where('s_condition', 'FINE')
             ->first();
 
-            array_push($stockItem, $getStock->s_qty);
+        // check again how to get stock, is it true ?
+//        $stockItem = array();
+//        foreach ($data->getPODt as $key => $val) {
+//            $getStock = d_stock::where('s_item', $val->pod_item)
+//                ->where('s_position', $data->po_comp)
+//                ->where('s_status', 'ON DESTINATION')
+//                ->where('s_condition', 'FINE')
+//                ->first();
+//
+//            array_push($stockItem, $getStock->s_qty);
+//        }
+
+        //$data->stockItem = $stockItem;
+        $data->total = d_productorderdt::where('pod_productorder', $request->id)->sum('pod_totalprice');
+        $data->dateFormated = Carbon::parse($data->po_date)->format('d M Y');
+
+        return response()->json($data);
+    }
+
+    public function getProsesTOP(Request $request)
+    {
+        $data = d_productorder::where('po_id', $request->id)
+            ->with('getAgent')
+            ->with(['getPODt' => function ($query) {
+                $query
+                    ->with(['getItem' => function ($query) {
+                        $query
+                            ->with('getUnit1')
+                            ->with('getUnit2')
+                            ->with('getUnit3')
+                            ->get();
+                    }])
+                    ->with('getUnit')
+                    ->get();
+            }])
+            ->first();
+
+         //check again how to get stock, is it true ?
+        $stockItem = array();
+        $satuanItem = array();
+
+        foreach ($data->getPODt as $key => $val) {
+            $getStock = d_stock::where('s_item', $val->pod_item)
+                ->where('s_position', $data->po_comp)
+                ->where('s_status', 'ON DESTINATION')
+                ->where('s_condition', 'FINE')
+                ->first();
+
+            $item = DB::table('m_item')
+                ->join('m_unit', 'i_unit1', '=', 'u_id')
+                ->where('i_id', '=', $val->pod_item)
+                ->first();
+
+            if ($getStock != null){
+                array_push($satuanItem, $getStock->s_qty . ' ' . $item->u_name);
+                array_push($stockItem, $getStock->s_qty);
+            }
+            else {
+                array_push($satuanItem, 0 . ' ' . $item->u_name);
+                array_push($stockItem, 0);
+            }
         }
 
         $data->stockItem = $stockItem;
-        // dd($data->stockItem);
+        $data->stockTable = $satuanItem;
         $data->total = d_productorderdt::where('pod_productorder', $request->id)->sum('pod_totalprice');
         $data->dateFormated = Carbon::parse($data->po_date)->format('d M Y');
 
@@ -99,9 +154,9 @@ class PenjualanPusatController extends Controller
     public function orderpenjualan_proses(Request $request)
     {
         try {
-          $tmp = decrypt($request->id);
+            $tmp = decrypt($request->id);
         } catch (DecryptException $e) {
-          return abort(404);
+            return abort(404);
         }
 
         $data = DB::table('d_productorder')->where('po_id', $tmp)->first();
@@ -111,10 +166,10 @@ class PenjualanPusatController extends Controller
         $unit1 = [];
         $unit2 = [];
         $unit3 = [];
-        for ($i=0; $i < count($dt); $i++) {
-          $unit1[] = DB::table('m_unit', 'u_id', '=', $dt[$i]->i_unit1)->first();
-          $unit2[] = DB::table('m_unit', 'u_id', '=', $dt[$i]->i_unit2)->first();
-          $unit3[] = DB::table('m_unit', 'u_id', '=', $dt[$i]->i_unit3)->first();
+        for ($i = 0; $i < count($dt); $i++) {
+            $unit1[] = DB::table('m_unit', 'u_id', '=', $dt[$i]->i_unit1)->first();
+            $unit2[] = DB::table('m_unit', 'u_id', '=', $dt[$i]->i_unit2)->first();
+            $unit3[] = DB::table('m_unit', 'u_id', '=', $dt[$i]->i_unit3)->first();
         }
 
         return view('marketing.penjualanpusat.terimaorder.proses', compact('data', 'dt', 'unit1', 'unit2', 'unit3'));
@@ -142,7 +197,7 @@ class PenjualanPusatController extends Controller
         array_push($satuan, array('id' => $data->i_unit3, 'text' => $data->satuan3));
 
         return Response::json(array(
-            'data'   => $data,
+            'data' => $data,
             'satuan' => $satuan
         ));
     }
@@ -168,7 +223,7 @@ class PenjualanPusatController extends Controller
                         </button>
                     </div>';
             })
-            ->addColumn('realisasi', function (){
+            ->addColumn('realisasi', function () {
                 return '0';
             })
             ->rawColumns(['status', 'action'])
@@ -280,10 +335,10 @@ class PenjualanPusatController extends Controller
 
                         DB::table('d_salestargetdt')->insert([
                             'std_salestarget' => $query1->st_id,
-                            'std_detailid'    => $stDetail,
-                            'std_item'        => $data['idItem'][$i],
-                            'std_qty'         => $data['t_qty'][$i],
-                            'std_unit'        => $data['t_unit'][$i]
+                            'std_detailid' => $stDetail,
+                            'std_item' => $data['idItem'][$i],
+                            'std_qty' => $data['t_qty'][$i],
+                            'std_unit' => $data['t_unit'][$i]
                         ]);
                         DB::commit();
                         return response()->json([
@@ -304,18 +359,18 @@ class PenjualanPusatController extends Controller
                 $getIdMax = DB::table('d_salestarget')->max('st_id');
                 $stId = $getIdMax + 1;
                 DB::table('d_salestarget')->insert([
-                    'st_id'      => $stId,
-                    'st_comp'    => $data['t_comp'][0],
+                    'st_id' => $stId,
+                    'st_comp' => $data['t_comp'][0],
                     'st_periode' => Carbon::createFromFormat('d/m/Y', '01/' . $data['t_periode'])->format('Y-m-d')
                 ]);
 
                 for ($i = 0; $i < count($data['idItem']); $i++) {
                     DB::table('d_salestargetdt')->insert([
                         'std_salestarget' => $stId,
-                        'std_detailid'    => ++$stDetail,
-                        'std_item'        => $data['idItem'][$i],
-                        'std_qty'         => $data['t_qty'][$i],
-                        'std_unit'        => $data['t_unit'][$i]
+                        'std_detailid' => ++$stDetail,
+                        'std_item' => $data['idItem'][$i],
+                        'std_qty' => $data['t_qty'][$i],
+                        'std_unit' => $data['t_unit'][$i]
                     ]);
                 }
 
@@ -399,12 +454,12 @@ class PenjualanPusatController extends Controller
             ->join('m_company', 'st_comp', 'c_id')
             ->select('d_salestargetdt.*', DB::raw('concat(std_qty, " ", u_name) as target'), 'st_id', 'c_name', DB::raw("concat(i_code, '-', i_name) as i_name"), 'st_periode', DB::raw('date_format(st_periode, "%m/%Y") as st_periode'));
 
-        if ($periode != null || $periode != ''){
+        if ($periode != null || $periode != '') {
             $periode = Carbon::createFromFormat('d/m/Y', '01/' . $periode);
             $data = $data->whereMonth('st_periode', '=', $periode->month)
                 ->whereYear('st_periode', '=', $periode->year);
         }
-        if ($idItem != null || $idItem != ''){
+        if ($idItem != null || $idItem != '') {
             $data = $data->where('std_item', '=', $idItem);
         }
 
@@ -421,11 +476,96 @@ class PenjualanPusatController extends Controller
                         </button>
                     </div>';
             })
-            ->addColumn('realisasi', function (){
+            ->addColumn('realisasi', function () {
                 return '0';
             })
             ->rawColumns(['status', 'action'])
             ->make(true);
     }
 
+    public function changeStatus(Request $request)
+    {
+        $id = $request->id;
+        $detailid = $request->detailid;
+        $status = $request->status;
+
+        DB::table('d_productorderdt')
+            ->where('pod_productorder', '=', $id)
+            ->where('pod_detailid', '=', $detailid)
+            ->update([
+                'pod_isapproved' => $status
+            ]);
+
+        return response()->json([
+            'status' => 'sukses'
+        ]);
+    }
+
+    public function getPrice(Request $request)
+    {
+        $agen = DB::table('m_company')
+            ->where('c_id', '=', $request->agen)
+            ->first();
+        $unit = $request->satuan;
+        $item = $request->item;
+        $qty = $request->kuantitas;
+
+        if ($agen->c_user == null || $agen->c_user == ''){
+            return response()->json([
+                'status' => 'gagal',
+                'pesan' => 'agen tidak ditemukan'
+            ]);
+        }
+
+        $type = DB::table('m_agen')
+            ->where('a_code', '=', $agen->c_user)
+            ->first();
+
+        $get_price = DB::table('m_priceclassdt')
+            ->join('m_priceclass', 'pcd_classprice', 'pc_id')
+            ->select('m_priceclassdt.*', 'm_priceclass.*')
+            ->where('pcd_payment', '=', 'C')
+            ->where('pc_id', '=', $type->a_class)
+            ->where('pcd_item', '=', $item)
+            ->where('pcd_unit', '=', $unit)
+            ->get();
+
+        if (count($get_price) == 0){
+            return response()->json([
+                'status' => 'gagal',
+                'pesan' => 'harga tidak ditemukan'
+            ]);
+        }
+
+        $harga = 0;
+        $z = false;
+        foreach ($get_price as $key => $price) {
+            if ($qty == 1) {
+                if ($this->existsInArray("U", $get_price) == true) {
+                    if ($get_price[$key]->pcd_type == "U") {
+                        $harga = $get_price[$key]->pcd_price;
+                    }
+                } else {
+                    if ($price->pcd_rangeqtystart == 1) {
+                        $harga = $get_price[$key]->pcd_price;
+                    }
+                }
+            } else if ($qty > 1) {
+                if ($price->pcd_rangeqtyend == 0){
+                    if ($qty >= $price->pcd_rangeqtystart) {
+                        $harga = $price->pcd_price;
+                    }
+                } else {
+                    $marketing = new MarketingController();
+                    $z = $marketing->inRange($qty, $get_price);
+                    if ($z !== null) {
+                        $harga = $get_price[$z]->pcd_price;
+                    }
+                }
+
+            }
+        }
+
+        return Response::json(number_format($harga, 0, '', ''));
+    }
 }

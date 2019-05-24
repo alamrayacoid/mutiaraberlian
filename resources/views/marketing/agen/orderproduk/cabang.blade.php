@@ -18,17 +18,6 @@
         </div>
 
         <div class="col-md-2 col-sm-6 col-xs-12">
-            <label>Cabang</label>
-        </div>
-
-        <div class="col-md-10 col-sm-6 col-xs-12">
-            <div class="form-group">
-                <select name="c_cabang" id="c_cabang" class="form-control form-control-sm select2" disabled>
-                </select>
-            </div>
-        </div>
-
-        <div class="col-md-2 col-sm-6 col-xs-12">
             <label>Agen Pembeli</label>
         </div>
 
@@ -38,6 +27,17 @@
                 <input type="hidden" name="c_kodeapb" id="c_kodeapb">
                 <input type="hidden" name="c_compapb" id="c_compapb">
                 <select name="c_apb" id="c_apb" class="form-control form-control-sm select2" disabled>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-2 col-sm-6 col-xs-12">
+            <label>Cabang</label>
+        </div>
+
+        <div class="col-md-10 col-sm-6 col-xs-12">
+            <div class="form-group">
+                <select name="c_cabang" id="c_cabang" class="form-control form-control-sm select2" disabled>
                 </select>
             </div>
         </div>

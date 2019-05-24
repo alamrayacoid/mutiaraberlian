@@ -1,5 +1,21 @@
 @extends('main')
+@section('extra_style')
+    <style>
+        @media (min-width: 992px) {
+            .modal-lg .modal-xl {
+                max-width: 1000px !important;
+            }
+        }
 
+        .tolak {
+            background-color: #d1d1d1;
+            color: #8a8a8a;
+        }
+        #table_modalPr tr.tolak:hover{
+            background-color: #eaeaea;
+        }
+    </style>
+@stop
 @section('content')
 
     <!-- Modal Terima Order -->
@@ -419,7 +435,7 @@
                 $('.rupiah').inputmask("currency", {
                     radixPoint: ",",
                     groupSeparator: ".",
-                    digits: 2,
+                    digits: 0,
                     autoGroup: true,
                     prefix: ' Rp ', //Space after $, this will not truncate the first character.
                     rightAlign: true,
@@ -452,38 +468,57 @@
     {
         loadingShow();
         $.ajax({
-            url: "{{route('penjualanpusat.getDetailTOP')}}",
+            url: "{{route('penjualanpusat.getProsesTOP')}}",
             type: 'get',
             data: {id},
             dataType: 'JSON',
             success : function(response){
-                console.log(response);
                 // console.log(response.stockItem[0]);
                 loadingHide();
                 $('#idModalPr').val(response.po_id);
                 $('#dateModalPr').val(response.dateFormated);
                 $('#agentModalPr').val(response.get_agent.c_name);
+                $('#idAgentModalPr').val(response.get_agent.c_id);
                 $('#notaModalPr').val(response.po_nota);
                 $('#totalModalPr').val(parseFloat(response.total));
 
                 $('#table_modalPr tbody').empty();
                 $.each(response.get_p_o_dt, function (key, val) {
-                    let itemId = '<input type="hidden" name="itemId[]" value="'+ val.pod_item +'">';
-                    let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name + itemId +'</td>';
 
+                    let itemIdP = '<input type="hidden" class="idItem" name="itemId[]" value="'+ val.pod_item +'">';
+                    let itemIdN = '<input type="hidden" value="'+ val.pod_item +'">';
+                    let permintaan = parseInt(val.pod_qty);
+                    let hargasatuan = val.pod_price;
+                    let hargasubtotal = val.pod_totalprice;
+                    if (parseInt(response.stockTable[key]) < permintaan){
+                        permintaan = parseInt(response.stockTable[key]);
+                        hargasubtotal = permintaan * parseInt(hargasatuan);
+                    }
                     let qtyStock = '<input type="hidden" class="qtyStock" value="'+ response.stockItem[key] +'">';
-                    let qty = '<td><input type="text" name="qty[]" class="form-control form-control-sm digits qtyModalPr" value="'+ val.pod_qty +'">'+ qtyStock +'</td>';
+                    let stok = '<td>' + response.stockTable[key] + '</td>';
+                    let qtyP = '<td><input type="text" name="qty[]" class="form-control form-control-sm digits qtyModalPr" value="'+ permintaan +'">'+ qtyStock +'</td>';
+                    let qtyN = '<td><input readonly type="text" class="form-control form-control-sm digits" value="'+ permintaan +'">'+ qtyStock +'</td>';
 
                     let unit1 = (val.get_item.get_unit1 != null) ? '<option value="'+ val.get_item.get_unit1.u_id +'" data-unitcmp="'+ parseInt(val.get_item.i_unitcompare1) +'">'+ val.get_item.get_unit1.u_name +'</option>' : '';
                     let unit2 = (val.get_item.get_unit2 != null) ? '<option value="'+ val.get_item.get_unit2.u_id +'" data-unitcmp="'+ parseInt(val.get_item.i_unitcompare2) +'">'+ val.get_item.get_unit2.u_name +'</option>' : '';
                     let unit3 = (val.get_item.get_unit3 != null) ? '<option value="'+ val.get_item.get_unit3.u_id +'" data-unitcmp="'+ parseInt(val.get_item.i_unitcompare3) +'">'+ val.get_item.get_unit3.u_name +'</option>' : '';
-                    selectUnit = '<select name="unit[]" class="form-control form-control-sm select2 unitModalPr"><option value="" disabled>Pilih Barang</option>'+ unit1 + unit2 + unit3 + '</select>';
-                    let unit = '<td>'+ selectUnit +'</td>';
-
-                    let price = '<td class="rupiah">'+ parseFloat(val.pod_price) +'</td>';
-                    let subTotal = '<td class="rupiah">'+ parseFloat(val.pod_totalprice) +'</td>';
-                    appendItem = '<tr>'+ item + qty + unit + price + subTotal +'</tr>';
+                    selectUnitP = '<select name="unit[]" class="form-control form-control-sm select2 unitModalPr"><option value="" disabled>Pilih Barang</option>'+ unit1 + unit2 + unit3 + '</select>';
+                    selectUnitN = '<select readonly class="form-control form-control-sm select2"><option value="" disabled>Pilih Barang</option></select>';
+                    let price = '<td><span class="unitprice-'+val.pod_item+'"> '+ convertToRupiah(val.pod_price.toString().replace(".00", "")) +'</span><input type="hidden" name="hargasatuan[]" class="hargasatuan" value="'+val.pod_price.toString().replace(".00", "")+'"></td>';
+                    let subTotal = '<td><span class="subtotalprice-'+val.pod_item+'"> '+ convertToRupiah(hargasubtotal.toString().replace(".00", "")) +'</span><input type="hidden" name="hargasubtotal[]" class="hargasubtotal" value=""></td>';
+                    let aksiP = '<td><button type="button" class="btn btn-sm btn-danger" onclick="changeStatus('+val.pod_productorder+', '+val.pod_detailid+', \'N\')"><i class="fa fa-close"></i></button></td>';
+                    let aksiN = '<td><button type="button" class="btn btn-sm btn-success" onclick="changeStatus('+val.pod_productorder+', '+val.pod_detailid+', \'P\')"><i class="fa fa-check"></i></button></td>';
+                    if (val.pod_isapproved == 'P'){
+                        let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name + itemIdP +'</td>';
+                        let unit = '<td>'+ selectUnitP +'</td>';
+                        appendItem = '<tr>'+ item + stok + qtyP + unit + price + subTotal + aksiP +'</tr>';
+                    } else if (val.pod_isapproved == 'N') {
+                        let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name + itemIdN +'</td>';
+                        let unit = '<td>'+ selectUnitN +'</td>';
+                        appendItem = '<tr class="tolak">'+ item + stok + qtyN + unit + price + subTotal + aksiN +'</tr>';
+                    }
                     // append data to table-row
+
                     $('#table_modalPr > tbody:last-child').append(appendItem);
                     // set unitModalPr selected item
                     $('.unitModalPr option[value='+ val.pod_unit +']').attr('selected', 'selected');
@@ -500,6 +535,24 @@
         });
     }
 
+    function changeStatus(id, detailid, status) {
+        loadingShow();
+        $.ajax({
+            url: '{{ route("penjualanpusat.gantistatus") }}',
+            type: "get",
+            data: {id: id, detailid: detailid, status: status},
+            success: function(response) {
+                loadingHide();
+                processTOP(id);
+            },
+            error: function(xhr, status, error) {
+                loadingHide();
+                let err = JSON.parse(xhr.responseText);
+                messageWarning('Error', err.message);
+            }
+        })
+    }
+
     function getFieldsReady()
     {
         $('.qtyModalPr').off();
@@ -508,17 +561,21 @@
         $('.qtyModalPr').on('keyup', function() {
             idxItem = $('.qtyModalPr').index(this);
             validateQty();
+            hitungTotal()
         });
         // set event handler for unit
         $('.unitModalPr').on('change', function() {
             idxItem = $('.unitModalPr').index(this);
             validateQty();
+            changePrice();
+            hitungTotal();
         });
         //mask money
         $('.rupiah').inputmask("currency", {
             radixPoint: ",",
             groupSeparator: ".",
             digits: 2,
+            precision: 0,
             autoGroup: true,
             prefix: ' Rp ', //Space after $, this will not truncate the first character.
             rightAlign: true,
@@ -555,6 +612,48 @@
         } else if ($('.qtyModalPr').eq(idxItem).val() < 0 || $('.qtyModalPr').eq(idxItem).val() == '' || isNaN($('.qtyModalPr').eq(idxItem).val())) {
             $('.qtyModalPr').eq(idxItem).val(0);
         }
+    }
+
+    function changePrice() {
+        var agen = $('#idAgentModalPr').val();
+        var satuan = $('.unitModalPr').eq(idxItem).val();
+        var item = $('.idItem').eq(idxItem).val();
+        var kuantitas = $('.qtyModalPr').eq(idxItem).val();
+        $.ajax({
+            url: "{{ route('penjualanpusat.gantisatuan') }}",
+            type: "get",
+            data: {item: item, satuan: satuan, agen: agen, kuantitas: kuantitas},
+            success: function(response) {
+                loadingHide();
+                if (response.status == 'gagal'){
+                    $('.hargasatuan').eq(idxItem).val(0);
+                    if (response.pesan == 'harga tidak ditemukan'){
+                        $('.unitprice-'+item).html("Tidak ditemukan");
+                        $('.subtotalprice-'+item).html("Tidak ditemukan");
+                    }
+                } else {
+                    $('.hargasatuan').eq(idxItem).val(response);
+                    $('.unitprice-'+item).html(convertToRupiah(response));
+                    var total = parseInt(response) * parseInt(kuantitas);
+                    $('.subtotalprice-'+item).html(convertToRupiah(total));
+                }
+                hitungTotal();
+            },
+            error: function(xhr, status, error) {
+                loadingHide();
+                let err = JSON.parse(xhr.responseText);
+                messageWarning('Error', err.message);
+            }
+        })
+    }
+
+    function hitungTotal() {
+        var hargasatuan = parseInt($('.hargasatuan').eq(idxItem).val());
+        var kuantitas = parseInt($('.qtyModalPr').eq(idxItem).val());
+        var item = $('.idItem').eq(idxItem).val();
+
+        var subTotal = hargasatuan * kuantitas;
+        $('.subtotalprice-'+item).html(convertToRupiah(subTotal));
     }
 
     function confirmProcessTOP()

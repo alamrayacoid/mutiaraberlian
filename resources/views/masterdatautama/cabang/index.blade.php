@@ -1,5 +1,11 @@
 @extends('main')
-
+@section('extra_style')
+    <style>
+        #table_cabang td {
+            padding: 5px;
+        }
+    </style>
+@endsection
 @section('content')
 <article class="content animated fadeInLeft">
     <div class="title-block text-primary">
@@ -31,7 +37,8 @@
                                     <thead class="bg-primary">
                                         <tr>
                                             <th>Nama Cabang</th>
-                                            <th>Alamat Cabang</th>
+                                            <th>Alamat</th>
+                                            <th>Area</th>
                                             <th>No Telp</th>
                                             <th>Status</th>
                                             <th class="text-center">Aksi</th>
@@ -81,6 +88,10 @@
                 {
                     data: 'alamat',
                     name: 'alamat'
+                },
+                {
+                    data: 'wc_name',
+                    name: 'wc_name'
                 },
                 {
                     data: 'telepon',

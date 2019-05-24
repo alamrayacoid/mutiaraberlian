@@ -80,6 +80,15 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>No Telp 2</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-sm hp2" id="cabang_telp2" name="cabang_telp2" placeholder="0853 xxx" title="required: no telp 2">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
                                         <label>Tipe Company</label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">

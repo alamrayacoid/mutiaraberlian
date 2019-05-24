@@ -1,5 +1,11 @@
 @extends('main')
-
+@section('extra_style')
+    <style>
+        #table_agen td {
+            padding: 5px;
+        }
+    </style>
+@stop
 @section('content')
 
 <article class="content animated fadeInLeft">

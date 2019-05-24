@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Aktivitasmarketing\Agen;
 
+use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
@@ -138,16 +139,6 @@ class ManajemenAgenController extends Controller
         $comp = $request->comp;
         if(count($is_item) == 0){
             $nama = DB::table('m_item')
-                ->join('d_stock', function ($s) use ($comp){
-                    $s->on('i_id', '=', 's_item');
-                    $s->where('s_position', '=', $comp);
-                    $s->where('s_status', '=', 'ON DESTINATION');
-                    $s->where('s_condition', '=', 'FINE');
-                })
-                ->join('d_stock_mutation', function ($sm){
-                    $sm->on('sm_stock', '=', 's_id');
-                    $sm->where('sm_residue', '!=', 0);
-                })
                 ->where(function ($q) use ($cari){
                     $q->orWhere('i_name', 'like', '%'.$cari.'%');
                     $q->orWhere('i_code', 'like', '%'.$cari.'%');
@@ -156,16 +147,6 @@ class ManajemenAgenController extends Controller
                 ->get();
         }else{
             $nama = DB::table('m_item')
-                ->join('d_stock', function ($s) use ($comp){
-                    $s->on('i_id', '=', 's_item');
-                    $s->where('s_position', '=', $comp);
-                    $s->where('s_status', '=', 'ON DESTINATION');
-                    $s->where('s_condition', '=', 'FINE');
-                })
-                ->join('d_stock_mutation', function ($sm){
-                    $sm->on('sm_stock', '=', 's_id');
-                    $sm->where('sm_residue', '!=', 0);
-                })
                 ->whereNotIn('i_id', $is_item)
                 ->where(function ($q) use ($cari){
                     $q->orWhere('i_name', 'like', '%'.$cari.'%');
@@ -179,7 +160,7 @@ class ManajemenAgenController extends Controller
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query, 'stock' => $query->s_id];
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query];
             }
         }
         return Response::json($results);
@@ -245,6 +226,7 @@ class ManajemenAgenController extends Controller
                 $qty_compare = $qty;
             }
         }
+        dd($qty_compare);
         return Response::json(floor($qty_compare));
     }
 
@@ -368,7 +350,12 @@ class ManajemenAgenController extends Controller
 
     public function simpanOrderProduk(Request $request)
     {
-
+        if (!AksesUser::checkAkses(23, 'create')){
+            return Response::json([
+                'status' => "Failed",
+                'message'=> 'Anda tidak memiliki akses'
+            ]);
+        }
         $data    = $request->all();
 
         if ($data['select_order'] == "1") {
@@ -487,10 +474,12 @@ class ManajemenAgenController extends Controller
     // end order produk ke agen
 
     // order produk ke cabang
-    public function getCabang()
+    public function getCabang(Request $request)
     {
         $data = DB::table('m_company')
+            ->join('m_agen', 'a_mma', '=', 'c_id')
             ->where('c_type', '!=', 'AGEN')
+            ->where('a_id', '=', $request->agen)
             ->get();
         return Response::json($data);
     }
@@ -500,8 +489,8 @@ class ManajemenAgenController extends Controller
         $agen = DB::table('m_agen')
             ->join('m_company', 'a_code', '=', 'c_user')
             ->select('a_id', 'a_code', 'a_name', 'c_id')
-            ->where('a_provinsi', '=', $prov)
-            ->where('a_kabupaten', '=', $kota)
+            ->where('a_area', '=', $kota)
+            ->where('a_isactive', '=', 'Y')
             ->get();
 
         return Response::json($agen);
@@ -515,6 +504,9 @@ class ManajemenAgenController extends Controller
 
     public function index()
     {
+        if (!AksesUser::checkAkses(23, 'read')){
+            abort(401);
+        }
         $provinsi = DB::table('m_wil_provinsi')
       		->select('m_wil_provinsi.*')
       		->get();
@@ -645,6 +637,12 @@ class ManajemenAgenController extends Controller
 
     public function deleteDO($id)
     {
+        if (!AksesUser::checkAkses(23, 'delete')){
+            return Response::json([
+                'status' => "Failed",
+                'message'=> 'Anda tidak memiliki akses'
+            ]);
+        }
         try{
             $id = Crypt::decrypt($id);
         }catch (DecryptException $e){
