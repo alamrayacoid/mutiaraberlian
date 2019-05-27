@@ -22,7 +22,7 @@
 			<div class="col-12">
 				<ul class="nav nav-pills mb-3" id="Tabzs">
 					<li class="nav-item">
-						<a href="#orderproduk" class="nav-link active" data-target="#orderproduk" aria-controls="orderproduk" data-toggle="tab" role="tab">Order Produk ke Cabang</a>
+						<a href="#orderproduk" class="nav-link active" data-target="#orderproduk" aria-controls="orderproduk" data-toggle="tab" role="tab">Order Produk ke Pusat</a>
 					</li>
 					<li class="nav-item">
 						<a href="#keloladataagen" class="nav-link" data-target="#keloladataagen" aria-controls="keloladataagen" data-toggle="tab" role="tab" onclick="kelolaDataAgen()">Kelola Data Order Agen </a>

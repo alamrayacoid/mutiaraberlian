@@ -91,15 +91,24 @@ class MarketingAreaController extends Controller
             ->make(true);
     }
 
-    public function createOrderProduk()
+    public function createOrderProduk(Request $req)
     {
+        try {
+            $u_id = Crypt::decrypt($req->user);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+        $user = DB::table('d_username')
+            ->leftJoin('m_company', 'u_company', 'c_id')
+            ->leftJoin('m_wil_kota', 'c_area', 'wc_id')
+            ->leftJoin('m_wil_provinsi', 'wc_provinsi', 'wp_id')
+            ->where('u_id', '=', $u_id)->first();
         $provinsi = DB::table('m_wil_provinsi')->select('m_wil_provinsi.*')->get();
         $city = DB::table('m_wil_kota')->select('m_wil_kota.*')->get();
         $company = DB::table('m_company')->select('m_company.*')
             ->where('c_type', '=', 'PUSAT')
-            ->orWhere('c_type', '=', 'CABANG')
             ->get();
-        return view('marketing/marketingarea/orderproduk/create', compact('provinsi', 'city', 'company'));
+        return view('marketing/marketingarea/orderproduk/create', compact('provinsi', 'city', 'company', 'user'));
     }
 
     public function getCity(Request $request)
@@ -127,10 +136,7 @@ class MarketingAreaController extends Controller
     {
         $id = $request->cityId;
         $agen = DB::table('m_company')
-            ->join('m_agen', 'c_user', 'a_code')
-            ->select('m_company.*', 'm_agen.*')
-            ->where('c_type', '=', 'AGEN')
-            ->where('a_area', '=', $id)
+            ->where('c_area', '=', $id)
             ->get();
         return Response::json(array(
             'success' => true,
