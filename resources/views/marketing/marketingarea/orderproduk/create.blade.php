@@ -71,7 +71,7 @@
                                     </div>
                                     @endif
                                     <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Pilih Cabang</label>
+                                        <label>Cabang</label>
                                     </div>
                                     @if($user->c_type != 'PUSAT')
                                     <div class="col-md-10 col-sm-6 col-xs-12">
@@ -92,7 +92,7 @@
                                     </div>
                                     @endif
                                     <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Oreder Ke</label>
+                                        <label>Order Ke</label>
                                     </div>
                                     <div class="col-md-10 col-sm-6 col-xs-12">
                                         <div class="form-group">
