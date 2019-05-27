@@ -526,6 +526,7 @@
                 // show modal
                 $('#modalProcessTOP').modal('show');
                 getFieldsReady();
+                setTotalTransaksi();
             },
             error: function(xhr, status, error) {
                 loadingHide();
@@ -551,6 +552,7 @@
                 messageWarning('Error', err.message);
             }
         })
+        setTotalTransaksi();
     }
 
     function getFieldsReady()
@@ -626,7 +628,7 @@
             success: function(response) {
                 loadingHide();
                 if (response.status == 'gagal'){
-                    $('.hargasatuan').eq(idxItem).val(0);
+                    $('.hargasatuan').eq(idxItem).val('novalue');
                     if (response.pesan == 'harga tidak ditemukan'){
                         $('.unitprice-'+item).html("Tidak ditemukan");
                         $('.subtotalprice-'+item).html("Tidak ditemukan");
@@ -635,6 +637,9 @@
                     $('.hargasatuan').eq(idxItem).val(response);
                     $('.unitprice-'+item).html(convertToRupiah(response));
                     var total = parseInt(response) * parseInt(kuantitas);
+                    if (isNaN(total)){
+                        total = 0;
+                    }
                     $('.subtotalprice-'+item).html(convertToRupiah(total));
                 }
                 hitungTotal();
@@ -653,7 +658,11 @@
         var item = $('.idItem').eq(idxItem).val();
 
         var subTotal = hargasatuan * kuantitas;
+        if (isNaN(subTotal)){
+            subTotal = 0;
+        }
         $('.subtotalprice-'+item).html(convertToRupiah(subTotal));
+        setTotalTransaksi();
     }
 
     function confirmProcessTOP()
@@ -661,7 +670,24 @@
         loadingShow();
         id = $('#idModalPr').val();
         data = $('#formModalPr').serialize();
-
+        var order = $('.qtyModalPr').serializeArray();
+        for (let i = 0; i < order.length; i++) {
+            if (order[i].value == 0){
+                loadingHide();
+                messageWarning('Peringatan', "Disable jumlah order = 0 !!");
+                i = order.length + 1;
+                return false;
+            }
+        }
+        let harga = $('.hargasatuan').serializeArray();
+        for (let i = 0; i < harga.length; i++) {
+            if (harga[i].value === "novalue"){
+                loadingHide();
+                messageWarning('Peringatan', "ada barang yang tidak memiliki harga");
+                i = harga.length + 1;
+                return false;
+            }
+        }
         $.ajax({
             url: baseUrl + "/marketing/penjualanpusat/confirm-process-top/" + id,
             type: "post",
@@ -676,6 +702,16 @@
                 messageWarning('Error', err.message);
             }
         })
+    }
+
+    function setTotalTransaksi(){
+        let allprice = $('.hargasubtotal').serializeArray();
+        var total = 0;
+        for (let i = 0; i < allprice.length; i++) {
+            total = total + parseInt(allprice[i].value);
+        }
+        $('#totalModalPr').html(convertToRupiah(total));
+        console.log(total);
     }
 
 

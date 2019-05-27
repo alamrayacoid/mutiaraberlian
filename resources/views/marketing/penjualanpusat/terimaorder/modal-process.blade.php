@@ -48,7 +48,7 @@
                                 <tr>
                                     <th width="25%">Barang</th>
                                     <th width="13%">Stock</th>
-                                    <th width="12%">Jumlah</th>
+                                    <th width="12%">Order</th>
                                     <th width="10%">Satuan</th>
                                     <th width="17%">Harga Satuan</th>
                                     <th width="18%">Total Harga</th>
