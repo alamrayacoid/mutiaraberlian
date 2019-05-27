@@ -136,6 +136,7 @@ class MarketingAreaController extends Controller
     {
         $id = $request->cityId;
         $agen = DB::table('m_company')
+            ->where('c_type', '!=', 'PUSAT')
             ->where('c_area', '=', $id)
             ->get();
         return Response::json(array(

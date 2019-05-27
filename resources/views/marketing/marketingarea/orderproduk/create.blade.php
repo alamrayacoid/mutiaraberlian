@@ -97,7 +97,7 @@
                                     <div class="col-md-10 col-sm-6 col-xs-12">
                                         <div class="form-group">
                                             <select name="po_comp" id="comp" class="form-control form-control-sm select2">
-                                                <option value="" selected="" disabled="">=== Pilih Cabang Tujuan ===</option>
+                                                <option value="" selected="" disabled="">=== Pilih Pusat ===</option>
                                                 <?php foreach($company as $comp){?>
                                                 <option value="<?php echo $comp->c_id;?>"><?php echo $comp->c_name;?></option>
                                                 <?php } ?>
