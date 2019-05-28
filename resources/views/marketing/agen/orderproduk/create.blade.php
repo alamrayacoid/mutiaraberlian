@@ -1055,9 +1055,68 @@
                 if (jumlah == "") {
                     jumlah = null;
                 }
-                axios.get(baseUrl+'/marketing/agen/orderproduk/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
-                    .then(function (resp) {
-                        $(".jumlah").eq(idx).val(resp.data);
+                updateTotalTampil();
+                // axios.get(baseUrl+'/marketing/agen/orderproduk/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
+                //     .then(function (resp) {
+                //         $(".jumlah").eq(idx).val(resp.data);
+                //
+                //         var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                //             jumlah  = [].map.call(inpJumlah, function( input ) {
+                //                 return parseInt(input.value);
+                //             });
+                //
+                //         var inpHarga = document.getElementsByClassName( 'harga' ),
+                //             harga  = [].map.call(inpHarga, function( input ) {
+                //                 return input.value;
+                //             });
+                //
+                //         for (var i = 0; i < jumlah.length; i++) {
+                //             var hasil = 0;
+                //             var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                //             var jml = jumlah[i];
+                //
+                //             if (jml == "") {
+                //                 jml = 0;
+                //             }
+                //
+                //             hasil += parseInt(hrg) * parseInt(jml);
+                //
+                //             if (isNaN(hasil)) {
+                //                 hasil = 0;
+                //             }
+                //             hasil = convertToRupiah(hasil);
+                //             $(".subtotal").eq(i).val(hasil);
+                //
+                //         }
+                //         updateTotalTampil();
+                //     })
+                //     .catch(function (error) {
+                //         messageWarning("Error", error);
+                //     })
+            })
+        }
+
+        function changeJumlahAgen() {
+            $(".jumlah").on('input', function (evt) {
+                var idx = $('.jumlah').index(this);
+                var jumlah = $('.jumlah').eq(idx).val();
+                if (jumlah == "") {
+                    jumlah = 0;
+                }
+
+                axios.get(baseUrl+'/marketing/agen/orderproduk/cek-harga/'+$("#a_kodeapj").val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
+                    .then(function (res) {
+                        var price = res.data;
+
+                        if (isNaN(price)) {
+                            price = 0;
+                        }
+                        if (price == 0) {
+                            $('.unknow').eq(idx).css('display', 'block');
+                        } else {
+                            $('.unknow').eq(idx).css('display', 'none');
+                        }
+                        $('.harga').eq(idx).val(convertToRupiah(price));
 
                         var inpJumlah = document.getElementsByClassName( 'jumlah' ),
                             jumlah  = [].map.call(inpJumlah, function( input ) {
@@ -1089,75 +1148,21 @@
                         }
                         updateTotalTampil();
                     })
-                    .catch(function (error) {
-                        messageWarning("Error", error);
-                    })
-            })
-        }
 
-        function changeJumlahAgen() {
-            $(".jumlah").on('input', function (evt) {
-                var idx = $('.jumlah').index(this);
-                var jumlah = $('.jumlah').eq(idx).val();
-                if (jumlah == "") {
-                    jumlah = null;
-                }
-                axios.get(baseUrl+'/marketing/agen/orderproduk/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
-                    .then(function (resp) {
-                        $(".jumlah").eq(idx).val(resp.data);
+                // axios.get(baseUrl+'/marketing/agen/orderproduk/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
+                //     .then(function (resp) {
+                //         $(".jumlah").eq(idx).val(resp.data);
+                //
+                //         var tmp_jumlah = $('.jumlah').eq(idx).val();
+                //
+                //
+                //
+                //
+                //     })
+                //     .catch(function (error) {
+                //         messageWarning("Error", error);
+                //     })
 
-                        var tmp_jumlah = $('.jumlah').eq(idx).val();
-
-                        axios.get(baseUrl+'/marketing/agen/orderproduk/cek-harga/'+$("#a_kodeapj").val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+tmp_jumlah)
-                            .then(function (res) {
-                                var price = res.data;
-
-                                if (isNaN(price)) {
-                                    price = 0;
-                                }
-                                if (price == 0) {
-                                    $('.unknow').eq(idx).css('display', 'block');
-                                } else {
-                                    $('.unknow').eq(idx).css('display', 'none');
-                                }
-                                $('.harga').eq(idx).val(convertToRupiah(price));
-
-                                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-                                    jumlah  = [].map.call(inpJumlah, function( input ) {
-                                        return parseInt(input.value);
-                                    });
-
-                                var inpHarga = document.getElementsByClassName( 'harga' ),
-                                    harga  = [].map.call(inpHarga, function( input ) {
-                                        return input.value;
-                                    });
-
-                                for (var i = 0; i < jumlah.length; i++) {
-                                    var hasil = 0;
-                                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                                    var jml = jumlah[i];
-
-                                    if (jml == "") {
-                                        jml = 0;
-                                    }
-
-                                    hasil += parseInt(hrg) * parseInt(jml);
-
-                                    if (isNaN(hasil)) {
-                                        hasil = 0;
-                                    }
-                                    hasil = convertToRupiah(hasil);
-                                    $(".subtotal").eq(i).val(hasil);
-
-                                }
-                                updateTotalTampil();
-                            })
-
-
-                    })
-                    .catch(function (error) {
-                        messageWarning("Error", error);
-                    })
             })
         }
 

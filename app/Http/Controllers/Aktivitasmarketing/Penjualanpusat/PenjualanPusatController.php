@@ -32,7 +32,11 @@ class PenjualanPusatController extends Controller
     // Terima Order Penjualan
     public function getTableTOP()
     {
-        $data = DB::table('d_productorder')->leftjoin('m_company', 'c_id', '=', 'po_agen')->where('po_status', 'P')->get();
+        $data = DB::table('d_productorder')
+            ->leftjoin('m_company', 'c_id', '=', 'po_agen')
+            ->where('po_status', 'P')
+            ->where('po_comp', '=', Auth::user()->u_company)
+            ->get();
 
         return Datatables::of($data)
             ->addIndexColumn()
