@@ -67,24 +67,7 @@
     <script type="text/javascript">
         var table_do;
         $(document).ready(function () {
-            // Code Dummy ----------------------------------------------
-            table_do = $('#table_orderprodukagenpusat').DataTable({
-                responsive: true,
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('orderagenpusat.getDO') }}",
-                    type: "get"
-                },
-                columns: [
-                    {data: 'tanggal'},
-                    {data: 'nota'},
-                    {data: 'penjual'},
-                    {data: 'pembeli'},
-                    {data: 'status'},
-                    {data: 'action'}
-                ]
-            });
+            getStatusDO();
             var table_pus = $('#table_kelolapenjualan').DataTable();
             var table_modal_detail = $('#detail-kelola').DataTable();
             //var table_pus = $('#table_inventoryagen').DataTable();
@@ -153,7 +136,6 @@
                 $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
                     '<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
             })
-            // End Code Dummy -----------------------------------------
 
             $("#search-list-agen").on("click", function () {
                 $(".table-modal").removeClass('d-none');
@@ -182,6 +164,83 @@
                 }
             });
         });
+        
+        function getStatusDO() {
+            var st = $('#statusDO').val();
+            $('#table_orderprodukagenpusat').DataTable().clear().destroy();
+            table_do = $('#table_orderprodukagenpusat').DataTable({
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('orderagenpusat.getDO') }}",
+                    type: "get",
+                    data: {status: st}
+                },
+                columns: [
+                    {data: 'tanggal'},
+                    {data: 'nota'},
+                    {data: 'penjual'},
+                    {data: 'pembeli'},
+                    {data: 'status'},
+                    {data: 'action'}
+                ]
+            });
+        }
+
+        function terimaDO(id) {
+            var surl = "{{url('/marketing/agen/orderproduk/terima-delivery-order')}}"+"/"+id;
+
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Pesan!',
+                content: 'Apakah anda yakin ingin menyetujui orderan ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return $.ajax({
+                                type: "post",
+                                url: surl,
+                                data: {
+                                    "_token": "{{ csrf_token() }}"
+                                },
+                                beforeSend: function () {
+                                    loadingShow();
+                                },
+                                success: function (response) {
+                                    //var table_agen = $('#table_dataAgen').DataTable();
+                                    if (response.status == 'sukses') {
+                                        loadingHide();
+                                        messageSuccess('Berhasil', 'Data berhasil disetujui!');
+                                        table_do.ajax.reload();
+                                    } else {
+                                        loadingHide();
+                                        messageFailed('Gagal', response.message);
+                                    }
+                                },
+                                error: function (e) {
+                                    loadingHide();
+                                    messageWarning('Peringatan', e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function (response) {
+                            loadingHide();
+                            messageWarning('Peringatan', 'Anda telah membatalkan!');
+                        }
+                    }
+                }
+            });
+        }
 
         function getProvId() {
             var id = document.getElementById("prov").value;
@@ -561,6 +620,5 @@
                     messageWarning("Error", error)
                 })
         }
-
     </script>
 @endsection

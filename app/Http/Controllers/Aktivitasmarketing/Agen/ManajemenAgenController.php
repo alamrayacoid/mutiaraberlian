@@ -525,20 +525,67 @@ class ManajemenAgenController extends Controller
     }
 
 //    order produk ke agen
-    public function getOrder()
+    public function getOrder(Request $req)
     {
-        $data = DB::table('d_productorder')
-            ->select('d_productorder.po_id as id',
-                'd_productorder.po_date as tanggal',
-                'd_productorder.po_nota as nota',
-                'seller.c_name as penjual',
-                'buyer.c_name as pembeli',
-                'd_productorder.po_status as status', 'd_productorder.po_send as send')
-            ->join('m_company as seller', function ($s){
-                $s->on('d_productorder.po_comp', '=', 'seller.c_id');
-            })->join('m_company as buyer', function ($b){
-                $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
-            });
+        $st = $req->status;
+
+        if ($st == null || $st == "") {
+            $data = DB::table('d_productorder')
+                ->select('d_productorder.po_id as id',
+                    'd_productorder.po_date as tanggal',
+                    'd_productorder.po_nota as nota',
+                    'seller.c_name as penjual',
+                    'buyer.c_name as pembeli',
+                    'd_productorder.po_status as status', 'd_productorder.po_send as send')
+                ->join('m_company as seller', function ($s){
+                    $s->on('d_productorder.po_comp', '=', 'seller.c_id');
+                })->join('m_company as buyer', function ($b){
+                    $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
+                });
+        } else {
+            if ($st == 'pending' || $st == 'ditolak' || $st == 'disetujui') {
+                if ($st == 'pending') {
+                    $status = 'P';
+                }
+                if ($st == 'ditolak') {
+                    $status = 'N';
+                }
+                if ($st == 'disetujui') {
+                    $status = 'Y';
+                }
+                $data = DB::table('d_productorder')
+                    ->select('d_productorder.po_id as id',
+                        'd_productorder.po_date as tanggal',
+                        'd_productorder.po_nota as nota',
+                        'seller.c_name as penjual',
+                        'buyer.c_name as pembeli',
+                        'd_productorder.po_status as status', 'd_productorder.po_send as send')
+                    ->join('m_company as seller', function ($s){
+                        $s->on('d_productorder.po_comp', '=', 'seller.c_id');
+                    })->join('m_company as buyer', function ($b){
+                        $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
+                    })->where('po_status', '=', $status)->where('po_send', '=', null);
+            } else {
+                if ($st == 'dikirim') {
+                    $status = 'P';
+                }
+                if ($st == 'diterima') {
+                    $status = 'Y';
+                }
+                $data = DB::table('d_productorder')
+                    ->select('d_productorder.po_id as id',
+                        'd_productorder.po_date as tanggal',
+                        'd_productorder.po_nota as nota',
+                        'seller.c_name as penjual',
+                        'buyer.c_name as pembeli',
+                        'd_productorder.po_status as status', 'd_productorder.po_send as send')
+                    ->join('m_company as seller', function ($s){
+                        $s->on('d_productorder.po_comp', '=', 'seller.c_id');
+                    })->join('m_company as buyer', function ($b){
+                        $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
+                    })->where('po_send', '=', $status);
+            }
+        }
 
         return DataTables::of($data)
             ->addColumn('tanggal', function($data){
@@ -698,6 +745,36 @@ class ManajemenAgenController extends Controller
             return Response::json([
                 'status' => "Failed",
                 'message'=> $e
+            ]);
+        }
+    }
+
+    public function terimaDO($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+        // dd($id);
+
+        DB::beginTransaction();
+        try{
+            DB::table('d_productorder')
+                ->where('po_id', '=', $id)
+                ->update([
+                    'po_send' => 'Y'
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e
             ]);
         }
     }
