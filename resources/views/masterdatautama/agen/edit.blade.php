@@ -84,7 +84,7 @@
                                             <select id="mma" class="select2 form-control form-control-sm" name="mma">
                                                 <option value="" selected disabled>Pilih MMA</option>
                                                 @foreach($data['mma'] as $mma)
-                                                @if($mma == $data['agen']->a_mma)
+                                                @if($mma->c_id == $data['agen']->a_mma)
                                                 <option value="{{ $mma->c_id }}" selected>{{ $mma->c_name }}</option>
                                                 @else
                                                 <option value="{{ $mma->c_id }}">{{ $mma->c_name }}</option>
@@ -476,6 +476,7 @@
                 if (response.status == 'berhasil') {
                     loadingHide();
                     messageSuccess('Berhasil', 'Data berhasil disimpan !');
+                    location.href = '{{ url("masterdatautama/agen/index") }}';
                 } else if (response.status == 'invalid') {
                     loadingHide();
                     messageFailed('Perhatian', response.message);

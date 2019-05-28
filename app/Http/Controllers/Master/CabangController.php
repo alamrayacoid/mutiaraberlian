@@ -27,11 +27,12 @@ class CabangController extends Controller
     public function getData()
     {
         $datas = DB::table('m_company')
+            ->leftJoin('m_wil_kota', 'wc_id', '=', 'c_area')
             ->where(function ($q){
                 $q->orWhere('c_type', '=', 'CABANG');
                 $q->orWhere('c_type', '=', 'PUSAT');
             })
-            ->orderBy('c_name', 'asc');
+            ->orderBy('c_type', 'desc');
         return Datatables::of($datas)
             ->addIndexColumn()
             ->addColumn('name', function ($datas) {
@@ -149,6 +150,7 @@ class CabangController extends Controller
                     'c_name' => strtoupper($request->cabang_name),
                     'c_address' => $request->cabang_address,
                     'c_tlp' => $request->cabang_telp,
+                    'c_hp' => $request->cabang_telp2,
                     'c_type' => $request->cabang_type,
                     'c_user' => $request->cabang_user,
                     'c_area' => $request->cabang_city,
@@ -237,6 +239,7 @@ class CabangController extends Controller
                         'c_name' => strtoupper($request->cabang_name),
                         'c_address' => $request->cabang_address,
                         'c_tlp' => $request->cabang_telp,
+                        'c_hp' => $request->cabang_telp2,
                         'c_type' => 'CABANG',
                         'c_user' => $request->cabang_user,
                         'c_area' => $request->cabang_city,

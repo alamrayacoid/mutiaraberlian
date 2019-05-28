@@ -1,21 +1,55 @@
 <div class="d-none animated fadeIn col-12" id="cabang">
-    <div class="row">
-        <div class="col-md-2 col-sm-6 col-xs-12">
-            <label>Area</label>
-        </div>
 
-        <div class="col-md-10 col-sm-6 col-xs-12">
-            <div class="row">
-                <div class="form-group col-6">
-                    <select name="c_prov" id="c_prov" class="form-control form-control-sm select2">
-                    </select>
+    <div class="row">
+        @if ($data == 'employee')
+            <div class="col-md-2 col-sm-6 col-xs-12">
+                <label>Area</label>
+            </div>
+
+            <div class="col-md-10 col-sm-6 col-xs-12">
+                <div class="row">
+                    <div class="form-group col-6">
+                        <select name="c_prov" id="c_prov" class="form-control form-control-sm select2">
+                        </select>
+                    </div>
+                    <div class="form-group col-6">
+                        <select name="c_kota" id="c_kota" class="form-control form-control-sm select2" disabled>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group col-6">
-                    <select name="c_kota" id="c_kota" class="form-control form-control-sm select2" disabled>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12">
+                <label>Agen Pembeli</label>
+            </div>
+
+            <div class="col-md-10 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <input type="hidden" name="c_idapb" id="c_idapb">
+                    <input type="hidden" name="c_kodeapb" id="c_kodeapb">
+                    <input type="hidden" name="c_compapb" id="c_compapb">
+                    <select name="c_apb" id="c_apb" class="form-control form-control-sm select2" disabled>
                     </select>
                 </div>
             </div>
-        </div>
+        @else
+            <div class="col-md-2 col-sm-6 col-xs-12">
+                <label>Agen Pembeli</label>
+            </div>
+
+            <div class="col-md-10 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <input type="hidden" name="c_idapb" id="c_idapb" value="{{ $data->a_id }}">
+                    <input type="hidden" name="c_kodeapb" id="c_kodeapb" value="{{ $data->a_code }}">
+                    <input type="hidden" name="c_compapb" id="c_compapb" value="{{ Auth::user()->u_company }}">
+                    <select name="c_apb" id="c_apb" class="form-control form-control-sm select2">
+                        <option selected value="" disabled>Pilih Agen</option>
+                        <option value="{{ $data->a_id }}" data-code="{{ $data->a_code }}"
+                                data-comp="{{ Auth::user()->u_company }}">{{ $data->a_name }}</option>
+                    </select>
+                </div>
+            </div>
+        @endif
+
 
         <div class="col-md-2 col-sm-6 col-xs-12">
             <label>Cabang</label>
@@ -24,20 +58,6 @@
         <div class="col-md-10 col-sm-6 col-xs-12">
             <div class="form-group">
                 <select name="c_cabang" id="c_cabang" class="form-control form-control-sm select2" disabled>
-                </select>
-            </div>
-        </div>
-
-        <div class="col-md-2 col-sm-6 col-xs-12">
-            <label>Agen Pembeli</label>
-        </div>
-
-        <div class="col-md-10 col-sm-6 col-xs-12">
-            <div class="form-group">
-                <input type="hidden" name="c_idapb" id="c_idapb">
-                <input type="hidden" name="c_kodeapb" id="c_kodeapb">
-                <input type="hidden" name="c_compapb" id="c_compapb">
-                <select name="c_apb" id="c_apb" class="form-control form-control-sm select2" disabled>
                 </select>
             </div>
         </div>

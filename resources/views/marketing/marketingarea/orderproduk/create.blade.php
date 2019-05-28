@@ -4,12 +4,12 @@
 
 <article class="content animated fadeInLeft">
     <div class="title-block text-primary">
-        <h1 class="title"> Tambah Data Order Produk ke Cabang</h1>
+        <h1 class="title"> Tambah Data Order Produk ke Pusat</h1>
         <p class="title-description">
             <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
             / <span>Marketing</span>
             / <a href="{{route('marketingarea.index')}}"><span>Manajemen Marketing Area </span></a>
-            / <span class="text-primary" style="font-weight: bold;"> Tambah Data Order Produk ke Cabang </span>
+            / <span class="text-primary" style="font-weight: bold;"> Tambah Data Order Produk ke Pusat </span>
         </p>
     </div>
     <section class="section">
@@ -18,7 +18,7 @@
                 <div class="card">
                     <div class="card-header bordered p-2">
                         <div class="header-block">
-                            <h3 class="title"> Tambah Data Order Produk ke Cabang </h3>
+                            <h3 class="title"> Tambah Data Order Produk ke Pusat </h3>
                         </div>
                         <div class="header-block pull-right">
                             <a href="{{route('marketingarea.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
@@ -32,6 +32,25 @@
                                     <div class="col-md-2 col-sm-6 col-xs-12">
                                         <label>Area</label>
                                     </div>
+                                    @if($user->c_type != 'PUSAT')
+                                    <div class="col-md-10 col-sm-6 col-xs-12">
+
+                                        <div class="row">
+                                            <div class="form-group col-6">
+                                                <select name="" id="prov" class="form-control form-control-sm select2" disabled>
+                                                    <option value="" selected="">{{$user->wp_name}}</option>
+                                                </select>
+                                                <input type="hidden" name="po_prov" value="{{$user->wp_id}}">
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <select name="po_city" id="city" class="form-control form-control-sm select2 city" disabled="">
+                                                    <option value="" selected="">{{$user->wc_name}}</option>
+                                                </select>
+                                                <input type="hidden" name="po_city" value="{{$user->wc_id}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @else
                                     <div class="col-md-10 col-sm-6 col-xs-12">
 
                                         <div class="row">
@@ -50,23 +69,35 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Agen Pembeli</label>
-                                    </div>
-                                    <div class="col-md-10 col-sm-6 col-xs-12">
-                                        <div class="form-group">
-                                            <select name="po_agen[]" id="agen" class="form-control form-control-sm select2 agen">
-                                                <option value="" selected disabled>=== Pilih Agen ===</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                    @endif
                                     <div class="col-md-2 col-sm-6 col-xs-12">
                                         <label>Cabang</label>
                                     </div>
+                                    @if($user->c_type != 'PUSAT')
                                     <div class="col-md-10 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <select name="po_comp[]" id="comp" class="form-control form-control-sm select2">
-                                                <option value="" selected="" disabled="">=== Pilih Cabang ===</option>
+                                            <select name="" id="agen" class="form-control form-control-sm select2 agen" disabled="">
+                                                <option value="" selected>{{$user->c_name}}</option>
+                                            </select>
+                                            <input type="hidden" name="po_agen" value="{{$user->c_id}}">
+                                        </div>
+                                    </div>
+                                    @else
+                                    <div class="col-md-10 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select name="po_agen" id="agen" class="form-control form-control-sm select2 agen">
+                                                <option value="" selected disabled>=== Pilih Cabang ===</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Order Ke</label>
+                                    </div>
+                                    <div class="col-md-10 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select name="po_comp" id="comp" class="form-control form-control-sm select2">
+                                                <option value="" selected="" disabled="">=== Pilih Pusat ===</option>
                                                 <?php foreach($company as $comp){?>
                                                 <option value="<?php echo $comp->c_id;?>"><?php echo $comp->c_name;?></option>
                                                 <?php } ?>
@@ -79,8 +110,8 @@
                                     <div class="col-md-10 col-sm-6 col-xs-12">
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-sm"
-                                            name="total_harga[]" id="total_harga" readonly>
-                                            <input type="hidden" name="tot_hrg[]" id="tot_hrg">
+                                            name="total_harga" id="total_harga" readonly>
+                                            <input type="hidden" name="tot_hrg" id="tot_hrg">
                                         </div>
                                     </div>
                                     <div class="table-responsive">

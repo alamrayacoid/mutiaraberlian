@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Aktivitasmarketing\Agen;
 
+use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
@@ -138,16 +139,6 @@ class ManajemenAgenController extends Controller
         $comp = $request->comp;
         if(count($is_item) == 0){
             $nama = DB::table('m_item')
-                ->join('d_stock', function ($s) use ($comp){
-                    $s->on('i_id', '=', 's_item');
-                    $s->where('s_position', '=', $comp);
-                    $s->where('s_status', '=', 'ON DESTINATION');
-                    $s->where('s_condition', '=', 'FINE');
-                })
-                ->join('d_stock_mutation', function ($sm){
-                    $sm->on('sm_stock', '=', 's_id');
-                    $sm->where('sm_residue', '!=', 0);
-                })
                 ->where(function ($q) use ($cari){
                     $q->orWhere('i_name', 'like', '%'.$cari.'%');
                     $q->orWhere('i_code', 'like', '%'.$cari.'%');
@@ -156,16 +147,6 @@ class ManajemenAgenController extends Controller
                 ->get();
         }else{
             $nama = DB::table('m_item')
-                ->join('d_stock', function ($s) use ($comp){
-                    $s->on('i_id', '=', 's_item');
-                    $s->where('s_position', '=', $comp);
-                    $s->where('s_status', '=', 'ON DESTINATION');
-                    $s->where('s_condition', '=', 'FINE');
-                })
-                ->join('d_stock_mutation', function ($sm){
-                    $sm->on('sm_stock', '=', 's_id');
-                    $sm->where('sm_residue', '!=', 0);
-                })
                 ->whereNotIn('i_id', $is_item)
                 ->where(function ($q) use ($cari){
                     $q->orWhere('i_name', 'like', '%'.$cari.'%');
@@ -179,7 +160,7 @@ class ManajemenAgenController extends Controller
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query, 'stock' => $query->s_id];
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query];
             }
         }
         return Response::json($results);
@@ -245,6 +226,7 @@ class ManajemenAgenController extends Controller
                 $qty_compare = $qty;
             }
         }
+        dd($qty_compare);
         return Response::json(floor($qty_compare));
     }
 
@@ -368,7 +350,12 @@ class ManajemenAgenController extends Controller
 
     public function simpanOrderProduk(Request $request)
     {
-
+        if (!AksesUser::checkAkses(23, 'create')){
+            return Response::json([
+                'status' => "Failed",
+                'message'=> 'Anda tidak memiliki akses'
+            ]);
+        }
         $data    = $request->all();
 
         if ($data['select_order'] == "1") {
@@ -487,10 +474,12 @@ class ManajemenAgenController extends Controller
     // end order produk ke agen
 
     // order produk ke cabang
-    public function getCabang()
+    public function getCabang(Request $request)
     {
         $data = DB::table('m_company')
+            ->join('m_agen', 'a_mma', '=', 'c_id')
             ->where('c_type', '!=', 'AGEN')
+            ->where('a_id', '=', $request->agen)
             ->get();
         return Response::json($data);
     }
@@ -500,8 +489,8 @@ class ManajemenAgenController extends Controller
         $agen = DB::table('m_agen')
             ->join('m_company', 'a_code', '=', 'c_user')
             ->select('a_id', 'a_code', 'a_name', 'c_id')
-            ->where('a_provinsi', '=', $prov)
-            ->where('a_kabupaten', '=', $kota)
+            ->where('a_area', '=', $kota)
+            ->where('a_isactive', '=', 'Y')
             ->get();
 
         return Response::json($agen);
@@ -510,11 +499,23 @@ class ManajemenAgenController extends Controller
 
     public function create_orderprodukagencabang()
     {
-        return view('marketing/agen/orderproduk/create');
+        if (!AksesUser::checkAkses(23, 'create')){
+            abort('401');
+        }
+        $data = 'employee';
+        if (Auth::user()->u_user == 'A'){
+            $data = DB::table('m_agen')
+                ->where('a_code', '=', Auth::user()->u_code)
+                ->first();
+        }
+        return view('marketing/agen/orderproduk/create', compact('data'));
     }
 
     public function index()
     {
+        if (!AksesUser::checkAkses(23, 'read')){
+            abort(401);
+        }
         $provinsi = DB::table('m_wil_provinsi')
       		->select('m_wil_provinsi.*')
       		->get();
@@ -524,20 +525,67 @@ class ManajemenAgenController extends Controller
     }
 
 //    order produk ke agen
-    public function getOrder()
+    public function getOrder(Request $req)
     {
-        $data = DB::table('d_productorder')
-            ->select('d_productorder.po_id as id',
-                'd_productorder.po_date as tanggal',
-                'd_productorder.po_nota as nota',
-                'seller.c_name as penjual',
-                'buyer.c_name as pembeli',
-                'd_productorder.po_status as status')
-            ->join('m_company as seller', function ($s){
-                $s->on('d_productorder.po_comp', '=', 'seller.c_id');
-            })->join('m_company as buyer', function ($b){
-                $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
-            });
+        $st = $req->status;
+
+        if ($st == null || $st == "") {
+            $data = DB::table('d_productorder')
+                ->select('d_productorder.po_id as id',
+                    'd_productorder.po_date as tanggal',
+                    'd_productorder.po_nota as nota',
+                    'seller.c_name as penjual',
+                    'buyer.c_name as pembeli',
+                    'd_productorder.po_status as status', 'd_productorder.po_send as send')
+                ->join('m_company as seller', function ($s){
+                    $s->on('d_productorder.po_comp', '=', 'seller.c_id');
+                })->join('m_company as buyer', function ($b){
+                    $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
+                });
+        } else {
+            if ($st == 'pending' || $st == 'ditolak' || $st == 'disetujui') {
+                if ($st == 'pending') {
+                    $status = 'P';
+                }
+                if ($st == 'ditolak') {
+                    $status = 'N';
+                }
+                if ($st == 'disetujui') {
+                    $status = 'Y';
+                }
+                $data = DB::table('d_productorder')
+                    ->select('d_productorder.po_id as id',
+                        'd_productorder.po_date as tanggal',
+                        'd_productorder.po_nota as nota',
+                        'seller.c_name as penjual',
+                        'buyer.c_name as pembeli',
+                        'd_productorder.po_status as status', 'd_productorder.po_send as send')
+                    ->join('m_company as seller', function ($s){
+                        $s->on('d_productorder.po_comp', '=', 'seller.c_id');
+                    })->join('m_company as buyer', function ($b){
+                        $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
+                    })->where('po_status', '=', $status)->where('po_send', '=', null);
+            } else {
+                if ($st == 'dikirim') {
+                    $status = 'P';
+                }
+                if ($st == 'diterima') {
+                    $status = 'Y';
+                }
+                $data = DB::table('d_productorder')
+                    ->select('d_productorder.po_id as id',
+                        'd_productorder.po_date as tanggal',
+                        'd_productorder.po_nota as nota',
+                        'seller.c_name as penjual',
+                        'buyer.c_name as pembeli',
+                        'd_productorder.po_status as status', 'd_productorder.po_send as send')
+                    ->join('m_company as seller', function ($s){
+                        $s->on('d_productorder.po_comp', '=', 'seller.c_id');
+                    })->join('m_company as buyer', function ($b){
+                        $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
+                    })->where('po_send', '=', $status);
+            }
+        }
 
         return DataTables::of($data)
             ->addColumn('tanggal', function($data){
@@ -553,29 +601,48 @@ class ManajemenAgenController extends Controller
                 return $data->pembeli;
             })
             ->addColumn('status', function($data){
-                if ($data->status == 'Y') {
-                    return '<span class="btn btn-sm btn-success btn-khusus">Disetujui</span>';
-                } else if ($data->status == 'N') {
-                    return '<span class="btn btn-sm btn-danger btn-khusus">Ditolak</span>';
-                } else {
-                    return '<span class="btn btn-sm btn-danger btn-khusus">Pending</span>';
+                if ($data->send != null) {
+                    if ($data->send == 'P') {
+                        return '<span class="btn btn-sm btn-primary btn-khusus">Dikirim</span>';
+                    }elseif ($data->send == 'Y'){
+                        return '<span class="btn btn-sm btn-success btn-khusus">Diterima</span>';
+                    }
+                } else if($data->send == null){
+                    if ($data->status == 'Y') {
+                        return '<span class="btn btn-sm btn-success btn-khusus">Disetujui</span>';
+                    } else if ($data->status == 'N') {
+                        return '<span class="btn btn-sm btn-danger btn-khusus">Ditolak</span>';
+                    } else {
+                        return '<span class="btn btn-sm btn-danger btn-khusus">Pending</span>';
+                    }
                 }
             })
             ->addColumn('action', function ($data) {
-//                return '<center><div class="btn-group btn-group-sm">
-//                            <button class="btn btn-info" title="Detail"
-//                                    type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
-//                            <button class="btn btn-warning" title="Edit"
-//                                    type="button" onclick="editDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-pencil"></i></button>
-//                            <button class="btn btn-danger" type="button"
-//                                    title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
-//                        </div></center>';
-                return '<center><div class="btn-group btn-group-sm">
-                            <button class="btn btn-info" title="Detail"
-                                    type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
-                            <button class="btn btn-danger" type="button"
-                                    title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
-                        </div></center>';
+                if ($data->send != null) {
+                    if ($data->send == 'P') {
+                        return '<center><div class="btn-group btn-group-sm">
+                                    <button class="btn btn-info" title="Detail"
+                                            type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
+                                    <button class="btn btn-danger" type="button"
+                                            title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+                                    <button class="btn btn-success" type="button" title="Terima" onclick="terimaDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-check"></i></button>
+                                </div></center>';
+                    }elseif ($data->send == 'Y') {
+                        return '<center><div class="btn-group btn-group-sm">
+                                    <button class="btn btn-info" title="Detail"
+                                            type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
+                                    <button class="btn btn-danger" type="button"
+                                            title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+                                </div></center>';
+                    }
+                } elseif ($data->send == null) {
+                    return '<center><div class="btn-group btn-group-sm">
+                                <button class="btn btn-info" title="Detail"
+                                        type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
+                                <button class="btn btn-danger" type="button"
+                                        title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+                            </div></center>';
+                }
 
             })
             ->rawColumns(['tanggal','nota','penjual','pembeli','status', 'action'])
@@ -645,6 +712,12 @@ class ManajemenAgenController extends Controller
 
     public function deleteDO($id)
     {
+        if (!AksesUser::checkAkses(23, 'delete')){
+            return Response::json([
+                'status' => "Failed",
+                'message'=> 'Anda tidak memiliki akses'
+            ]);
+        }
         try{
             $id = Crypt::decrypt($id);
         }catch (DecryptException $e){
@@ -672,6 +745,36 @@ class ManajemenAgenController extends Controller
             return Response::json([
                 'status' => "Failed",
                 'message'=> $e
+            ]);
+        }
+    }
+
+    public function terimaDO($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+        // dd($id);
+
+        DB::beginTransaction();
+        try{
+            DB::table('d_productorder')
+                ->where('po_id', '=', $id)
+                ->update([
+                    'po_send' => 'Y'
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e
             ]);
         }
     }

@@ -55,21 +55,37 @@ class MarketingAreaController extends Controller
             ->select('d_productorderdt.*', 'd_productorder.*', 'm_item.*', 'm_unit.*', 'comp.c_name as comp', 'agen.c_name as agen')
             ->where('pod_productorder', $id)
             ->get();
-        return view('marketing/marketingarea/orderproduk/nota', compact('order','nota'));
+        return view('marketing/marketingarea/orderproduk/nota', compact('order', 'nota'));
     }
 
     // Order Produk Ke Cabang ==============================================================================
     public function orderList()
     {
-        $order = DB::table('d_productorder')
-            ->join('d_productorderdt', 'po_id', 'pod_productorder')
-            ->join('m_company as comp', 'po_comp', 'comp.c_id')
-            ->join('m_company as agen', 'po_agen', 'agen.c_id')
-            ->join('m_item', 'pod_item', 'i_id')
-            ->join('m_unit', 'pod_unit', 'u_id')
-            ->select('d_productorder.*', DB::raw('date_format(po_date, "%m/%Y") as po_date'), 'i_name', 'u_name', 'comp.c_name as comp', 'agen.c_name as agen', DB::raw('SUM(pod_totalprice) as totalprice'))
-            ->groupBy('po_id')
-            ->get();
+        $order = [];
+        if (Auth::user()->getCompany->c_type == "PUSAT") {
+            $order = DB::table('d_productorder')
+                ->join('d_productorderdt', 'po_id', 'pod_productorder')
+                ->join('m_company as comp', 'po_comp', 'comp.c_id')
+                ->join('m_company as agen', 'po_agen', 'agen.c_id')
+                ->join('m_item', 'pod_item', 'i_id')
+                ->join('m_unit', 'pod_unit', 'u_id')
+                ->select('d_productorder.*', DB::raw('date_format(po_date, "%m/%Y") as po_date'), 'i_name', 'u_name', 'comp.c_name as comp', 'agen.c_name as agen', DB::raw('SUM(pod_totalprice) as totalprice'))
+                ->where('comp.c_type', '=', "PUSAT")
+                ->groupBy('po_id')
+                ->get();
+        } else {
+            $order = DB::table('d_productorder')
+                ->join('d_productorderdt', 'po_id', 'pod_productorder')
+                ->join('m_company as comp', 'po_comp', 'comp.c_id')
+                ->join('m_company as agen', 'po_agen', 'agen.c_id')
+                ->join('m_item', 'pod_item', 'i_id')
+                ->join('m_unit', 'pod_unit', 'u_id')
+                ->select('d_productorder.*', DB::raw('date_format(po_date, "%m/%Y") as po_date'), 'i_name', 'u_name', 'comp.c_name as comp', 'agen.c_name as agen', DB::raw('SUM(pod_totalprice) as totalprice'))
+                ->where('comp.c_type', '=', "PUSAT")
+                ->where('agen.c_id', '=', Auth::user()->u_company)
+                ->groupBy('po_id')
+                ->get();
+        }
         return Datatables::of($order)
             ->addIndexColumn()
             ->addColumn('totalprice', function ($order) {
@@ -87,19 +103,28 @@ class MarketingAreaController extends Controller
                             </button>
                         </div>';
             })
-            ->rawColumns(['totalprice','action'])
+            ->rawColumns(['totalprice', 'action'])
             ->make(true);
     }
 
-    public function createOrderProduk()
+    public function createOrderProduk(Request $req)
     {
+        try {
+            $u_id = Crypt::decrypt($req->user);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+        $user = DB::table('d_username')
+            ->leftJoin('m_company', 'u_company', 'c_id')
+            ->leftJoin('m_wil_kota', 'c_area', 'wc_id')
+            ->leftJoin('m_wil_provinsi', 'wc_provinsi', 'wp_id')
+            ->where('u_id', '=', $u_id)->first();
         $provinsi = DB::table('m_wil_provinsi')->select('m_wil_provinsi.*')->get();
         $city = DB::table('m_wil_kota')->select('m_wil_kota.*')->get();
         $company = DB::table('m_company')->select('m_company.*')
             ->where('c_type', '=', 'PUSAT')
-            ->orWhere('c_type', '=', 'CABANG')
             ->get();
-        return view('marketing/marketingarea/orderproduk/create', compact('provinsi', 'city', 'company'));
+        return view('marketing/marketingarea/orderproduk/create', compact('provinsi', 'city', 'company', 'user'));
     }
 
     public function getCity(Request $request)
@@ -110,7 +135,7 @@ class MarketingAreaController extends Controller
             ->get();
         return Response::json(array(
             'success' => true,
-            'data'    => $city
+            'data' => $city
         ));
     }
 
@@ -119,7 +144,7 @@ class MarketingAreaController extends Controller
         $company = DB::table('m_company')->select('c_id', 'c_name')->get();
         return Response::json(array(
             'success' => true,
-            'data'    => $company
+            'data' => $company
         ));
     }
 
@@ -127,14 +152,12 @@ class MarketingAreaController extends Controller
     {
         $id = $request->cityId;
         $agen = DB::table('m_company')
-            ->join('m_agen', 'c_user', 'a_code')
-            ->select('m_company.*', 'm_agen.*')
-            ->where('c_type', '=', 'AGEN')
-            ->where('a_area', '=', $id)
+            ->where('c_type', '!=', 'PUSAT')
+            ->where('c_area', '=', $id)
             ->get();
         return Response::json(array(
             'success' => true,
-            'data'    => $agen
+            'data' => $agen
         ));
     }
 
@@ -189,7 +212,7 @@ class MarketingAreaController extends Controller
     {
         $idItem = $request->item;
         $idUnit = $request->unit;
-        $qty    = $request->qty;
+        $qty = $request->qty;
 
         if ($qty != null || $qty != "") {
             if ($qty == 1) {
@@ -203,7 +226,7 @@ class MarketingAreaController extends Controller
                     ->where('pcd_rangeqtystart', '=', $qty)
                     ->where('pcd_rangeqtyend', '=', $qty)
                     ->first();
-            } else if($qty > 1) {
+            } else if ($qty > 1) {
                 $infinity = DB::table('m_priceclassdt')
                     ->join('m_priceclass', 'pcd_classprice', 'pc_id')
                     ->select('m_priceclassdt.*', 'm_priceclass.*')
@@ -216,7 +239,7 @@ class MarketingAreaController extends Controller
                 if ($infinity) {
                     return Response::json(array(
                         'success' => true,
-                        'data'    => number_format($infinity->pcd_price,0, ',', '')
+                        'data' => number_format($infinity->pcd_price, 0, ',', '')
                     ));
                 } else {
                     $price = DB::table('m_priceclassdt')
@@ -234,25 +257,25 @@ class MarketingAreaController extends Controller
             } else {
                 return Response::json(array(
                     'success' => true,
-                    'data'    => 0
+                    'data' => 0
                 ));
             }
         } else {
             return Response::json(array(
                 'success' => true,
-                'data'    => 0
+                'data' => 0
             ));
         }
 
-        if($price){
+        if ($price) {
             return Response::json(array(
                 'success' => true,
-                'data'    => number_format($price->pcd_price,0, ',', '')
+                'data' => number_format($price->pcd_price, 0, ',', '')
             ));
         } else {
             return Response::json(array(
                 'success' => true,
-                'data'    => 0
+                'data' => 0
             ));
         }
     }
@@ -260,12 +283,12 @@ class MarketingAreaController extends Controller
     public function orderProdukStore(Request $request)
     {
         $data = $request->all();
-        $now  = Carbon::now('Asia/Jakarta');
+        $now = Carbon::now('Asia/Jakarta');
         $time = date('Y-m-d', strtotime($now));
         DB::beginTransaction();
         try {
             $detailId = 0;
-            for ($i=0; $i < count($data['idItem']); $i++) {
+            for ($i = 0; $i < count($data['idItem']); $i++) {
 
                 $query1 = DB::table('d_productorder')
                     ->where('po_date', '=', $time)
@@ -276,10 +299,10 @@ class MarketingAreaController extends Controller
                 if ($query1) {
 
                     $query2 = DB::table('d_productorderdt')
-                            ->where('pod_productorder', '=', $query1->po_id)
-                            ->where('pod_item', '=', $data['idItem'][$i])
-                            ->where('pod_unit', '=', $data['po_unit'][$i])
-                            ->first();
+                        ->where('pod_productorder', '=', $query1->po_id)
+                        ->where('pod_item', '=', $data['idItem'][$i])
+                        ->where('pod_unit', '=', $data['po_unit'][$i])
+                        ->first();
 
                     if ($query2) {
 
@@ -291,23 +314,23 @@ class MarketingAreaController extends Controller
                             ->where('pod_item', '=', $data['idItem'][$i])
                             ->where('pod_unit', '=', $data['po_unit'][$i])
                             ->update([
-                            'pod_qty'          => $qtyAkhir,
-                            'pod_totalprice'   => $priceAkhir
-                        ]);
+                                'pod_qty' => $qtyAkhir,
+                                'pod_totalprice' => $priceAkhir
+                            ]);
                     } else {
 
                         $detailId = DB::table('d_productorderdt')
-                                  ->where('pod_productorder', '=', $query1->po_id)
-                                  ->max('pod_detailid');
+                            ->where('pod_productorder', '=', $query1->po_id)
+                            ->max('pod_detailid');
 
                         DB::table('d_productorderdt')->insert([
                             'pod_productorder' => $query1->po_id,
-                            'pod_detailid'     => $detailId+1,
-                            'pod_item'         => $data['idItem'][$i],
-                            'pod_unit'         => $data['po_unit'][$i],
-                            'pod_qty'          => $data['po_qty'][$i],
-                            'pod_price'        => $data['po_hrg'][$i],
-                            'pod_totalprice'   => $data['sbtotal'][$i]
+                            'pod_detailid' => $detailId + 1,
+                            'pod_item' => $data['idItem'][$i],
+                            'pod_unit' => $data['po_unit'][$i],
+                            'pod_qty' => $data['po_qty'][$i],
+                            'pod_price' => $data['po_hrg'][$i],
+                            'pod_totalprice' => $data['sbtotal'][$i]
                         ]);
                     }
                 } else {
@@ -316,22 +339,22 @@ class MarketingAreaController extends Controller
                     $poId = $getIdMax + 1;
 
                     DB::table('d_productorder')->insert([
-                        'po_id'     => $poId,
-                        'po_comp'   => $data['po_comp'][0],
-                        'po_agen'   => $data['po_agen'][0],
-                        'po_date'   => $time,
-                        'po_nota'   => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-'),
+                        'po_id' => $poId,
+                        'po_comp' => $data['po_comp'][0],
+                        'po_agen' => $data['po_agen'][0],
+                        'po_date' => $time,
+                        'po_nota' => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-'),
                         'po_status' => "P"
                     ]);
 
                     DB::table('d_productorderdt')->insert([
                         'pod_productorder' => $poId,
-                        'pod_detailid'     => ++$detailId,
-                        'pod_item'         => $data['idItem'][$i],
-                        'pod_unit'         => $data['po_unit'][$i],
-                        'pod_qty'          => $data['po_qty'][$i],
-                        'pod_price'        => $data['po_hrg'][$i],
-                        'pod_totalprice'   => $data['sbtotal'][$i]
+                        'pod_detailid' => ++$detailId,
+                        'pod_item' => $data['idItem'][$i],
+                        'pod_unit' => $data['po_unit'][$i],
+                        'pod_qty' => $data['po_qty'][$i],
+                        'pod_price' => $data['po_hrg'][$i],
+                        'pod_totalprice' => $data['sbtotal'][$i]
                     ]);
                 }
             }
@@ -343,7 +366,7 @@ class MarketingAreaController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'status'  => 'Gagal',
+                'status' => 'Gagal',
                 'message' => $e
             ]);
         }
@@ -392,15 +415,15 @@ class MarketingAreaController extends Controller
                 ->delete();
 
             $detailId = 0;
-            for ($i=0; $i < count($data['idItem']) ; $i++) {
+            for ($i = 0; $i < count($data['idItem']); $i++) {
                 DB::table('d_productorderdt')->insert([
                     'pod_productorder' => $id,
-                    'pod_detailid'     => ++$detailId,
-                    'pod_item'         => $data['idItem'][$i],
-                    'pod_unit'         => $data['po_unit'][$i],
-                    'pod_qty'          => $data['po_qty'][$i],
-                    'pod_price'        => $data['po_hrg'][$i],
-                    'pod_totalprice'   => $data['sbtotal'][$i]
+                    'pod_detailid' => ++$detailId,
+                    'pod_item' => $data['idItem'][$i],
+                    'pod_unit' => $data['po_unit'][$i],
+                    'pod_qty' => $data['po_qty'][$i],
+                    'pod_price' => $data['po_hrg'][$i],
+                    'pod_totalprice' => $data['sbtotal'][$i]
                 ]);
             }
 
@@ -483,10 +506,10 @@ class MarketingAreaController extends Controller
 
         foreach ($detail as $key => $dt) {
             $order[] = [
-                'barang'     => $dt->i_name,
-                'unit'       => $dt->u_name,
-                'qty'        => $dt->pod_qty,
-                'price'      => Currency::addRupiah($dt->pod_price),
+                'barang' => $dt->i_name,
+                'unit' => $dt->u_name,
+                'qty' => $dt->pod_qty,
+                'price' => Currency::addRupiah($dt->pod_price),
                 'totalprice' => Currency::addRupiah($dt->pod_totalprice)
             ];
         }
@@ -494,8 +517,8 @@ class MarketingAreaController extends Controller
 
         return Response::json(array(
             'success' => true,
-            'data1'   => $order,
-            'data2'   => $produk
+            'data1' => $order,
+            'data2' => $produk
         ));
     }
     // Order Produk Ke Cabang End ==========================================================================
@@ -547,7 +570,7 @@ class MarketingAreaController extends Controller
                 }
 
             })
-            ->rawColumns(['totalprice','action_agen'])
+            ->rawColumns(['totalprice', 'action_agen'])
             ->make(true);
     }
 
@@ -566,7 +589,7 @@ class MarketingAreaController extends Controller
             ->addIndexColumn()
             ->addColumn('action_agen', function ($agen) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                            <button class="btn btn-primary hint--top-left hint--primary"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''.$agen->c_id.'\',\''.$agen->a_name.'\',\''.$agen->c_user.'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
+                            <button class="btn btn-primary hint--top-left hint--primary"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\'' . $agen->c_id . '\',\'' . $agen->a_name . '\',\'' . $agen->c_user . '\')"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
                         </div>';
 
             })
@@ -606,49 +629,34 @@ class MarketingAreaController extends Controller
 
     public function filterDataAgen(Request $request)
     {
-        $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
-        $end_date   = Carbon::parse($request->end_date)->format('Y-m-d');
-        $status     = $request->state;
-        $id         = $request->agen;
+        $status = $request->state;
+        $id = $request->agen;
 
-        if ($start_date != null && $end_date != null && $id != null) {
-            $data_agen = DB::table('d_productorder')
-                ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
-                ->join('m_company', 'po_agen', '=', 'c_id')
-                ->select('d_productorder.*', 'd_productorderdt.*', DB::raw('date_format(po_date, "%d/%m/%Y") as date'), DB::raw('SUM(pod_totalprice) as total_price'), 'm_company.*')
-                ->whereBetween('po_date', [$start_date, $end_date])
-                ->where('po_status', '=', $status)
-                ->where('po_agen', '=', $id)
-                ->groupBy('po_id')
-                ->get();
-        } else if ($start_date != null && $end_date != null && $id == null) {
-            $data_agen = DB::table('d_productorder')
-                ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
-                ->join('m_company', 'po_agen', '=', 'c_id')
-                ->select('d_productorder.*', 'd_productorderdt.*', DB::raw('date_format(po_date, "%d/%m/%Y") as date'), DB::raw('SUM(pod_totalprice) as total_price'), 'm_company.*')
-                ->whereBetween('po_date', [$start_date, $end_date])
-                ->where('po_status', '=', $status)
-                ->groupBy('po_id')
-                ->get();
-        } else if ($start_date == null && $end_date == null && $id != null) {
-            $data_agen = DB::table('d_productorder')
-                ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
-                ->join('m_company', 'po_agen', '=', 'c_id')
-                ->select('d_productorder.*', 'd_productorderdt.*', DB::raw('date_format(po_date, "%d/%m/%Y") as date'), DB::raw('SUM(pod_totalprice) as total_price'), 'm_company.*')
-                ->where('po_status', '=', $status)
-                ->where('po_agen', '=', $id)
-                ->groupBy('po_id')
-                ->get();
-            dd($data_agen);
-        } else {
-            $data_agen = DB::table('d_productorder')
-                ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
-                ->join('m_company', 'po_agen', '=', 'c_id')
-                ->select('d_productorder.*', 'd_productorderdt.*', DB::raw('date_format(po_date, "%d/%m/%Y") as date'), DB::raw('SUM(pod_totalprice) as total_price'), 'm_company.*')
-                ->where('po_status', '=', $status)
-                ->groupBy('po_id')
-                ->get();
+        $data_agen = DB::table('d_productorder')
+            ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
+            ->join('m_company as agen', 'po_agen', '=', 'agen.c_id')
+            ->join('m_company as cabang', 'po_comp', '=', 'cabang.c_id')
+            ->select('d_productorder.*', 'd_productorderdt.*',
+                DB::raw('date_format(po_date, "%d/%m/%Y") as date'),
+                DB::raw('SUM(pod_totalprice) as total_price'), 'agen.c_id as c_id', 'agen.c_name as c_name','cabang.c_name as cabang','cabang.c_id as id_cabang')
+            ->where('po_status', '=', $status);
+        //filter start_date, end_date, id_agen
+        if ($request->start_date != null){
+            $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
+            $data_agen->where('po_date', '>=', $start_date);
         }
+        if ($request->end_date != null){
+            $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
+            $data_agen->where('po_date', '<=', $end_date);
+        }
+        if ($id != null){
+            $data_agen->where('po_agen', '=', $id);
+        }
+        if (Auth::user()->getCompany->c_type != "PUSAT"){
+            $data_agen->where('po_comp', '=', Auth::user()->u_company);
+        }
+
+        $data_agen = $data_agen->groupBy('po_id')->get();
 
         return DataTables::of($data_agen)
             ->addIndexColumn()
@@ -686,7 +694,7 @@ class MarketingAreaController extends Controller
                 }
 
             })
-            ->rawColumns(['total_price','action_agen'])
+            ->rawColumns(['total_price', 'action_agen'])
             ->make(true);
     }
 
@@ -830,10 +838,10 @@ class MarketingAreaController extends Controller
 
         foreach ($detail as $key => $dt) {
             $order[] = [
-                'barang'     => $dt->i_name,
-                'unit'       => $dt->u_name,
-                'qty'        => $dt->pod_qty,
-                'price'      => Currency::addRupiah($dt->pod_price),
+                'barang' => $dt->i_name,
+                'unit' => $dt->u_name,
+                'qty' => $dt->pod_qty,
+                'price' => Currency::addRupiah($dt->pod_price),
                 'totalprice' => Currency::addRupiah($dt->pod_totalprice)
             ];
         }
@@ -841,8 +849,8 @@ class MarketingAreaController extends Controller
 
         return Response::json(array(
             'success' => true,
-            'agen1'   => $order,
-            'agen2'   => $produk
+            'agen1' => $order,
+            'agen2' => $produk
         ));
     }
     // Kelola Data Order Agen End ==========================================================================
@@ -859,15 +867,12 @@ class MarketingAreaController extends Controller
             // get user based on agent-code
             $user = d_username::where('u_code', $agentCode)->first();
             // if $user is null, then return empty list
-            if ($user == null)
-            {
+            if ($user == null) {
                 $datas = Collection::make();
-            }
-            else
-            {
+            } else {
                 // get sub-agent's code  from selected-user/agent
                 $subAgents = m_agen::where('a_parent', $user->u_code)
-                ->get();
+                    ->get();
                 $listAgentCode = array();
                 foreach ($subAgents as $subAgent) {
                     array_push($listAgentCode, $subAgent->a_code);
@@ -881,24 +886,19 @@ class MarketingAreaController extends Controller
                     array_push($listUserId, $user->u_id);
                 }
                 $datas = d_canvassing::whereBetween('c_date', [$from, $to])
-                ->whereIn('c_user', $listUserId)
-                ->orderBy('c_name', 'asc')
-                ->get();
+                    ->whereIn('c_user', $listUserId)
+                    ->orderBy('c_name', 'asc')
+                    ->get();
             }
-        }
-        else
-        {
-            if ($userType === 'E')
-            {
+        } else {
+            if ($userType === 'E') {
                 $datas = d_canvassing::whereBetween('c_date', [$from, $to])
-                ->orderBy('c_name', 'asc')
-                ->get();
-            }
-            else
-            {
+                    ->orderBy('c_name', 'asc')
+                    ->get();
+            } else {
                 // get sub-agent's code  from currently logged in user
                 $subAgents = m_agen::where('a_parent', Auth::user()->u_code)
-                ->get();
+                    ->get();
                 $listAgentCode = array();
                 foreach ($subAgents as $subAgent) {
                     array_push($listAgentCode, $subAgent->a_code);
@@ -913,37 +913,37 @@ class MarketingAreaController extends Controller
                 }
 
                 $datas = d_canvassing::whereBetween('c_date', [$from, $to])
-                ->whereIn('c_user', $listUserId)
-                ->orderBy('c_name', 'asc')
-                ->get();
+                    ->whereIn('c_user', $listUserId)
+                    ->orderBy('c_name', 'asc')
+                    ->get();
             }
         }
         return Datatables::of($datas)
-        ->addIndexColumn()
-        ->addColumn('action', function($datas) {
-            if (Auth::user()->u_id != $datas->c_user) {
-                return
-                '<div class="btn-group btn-group-sm">
+            ->addIndexColumn()
+            ->addColumn('action', function ($datas) {
+                if (Auth::user()->u_id != $datas->c_user) {
+                    return
+                        '<div class="btn-group btn-group-sm">
                 (Owned by others)
                 </div>';
-            } else {
-                return
-                '<div class="btn-group btn-group-sm">
-                <button class="btn btn-warning btn-edit-canv" type="button" title="Edit" onclick="editDataCanvassing('. $datas->c_id .')"><i class="fa fa-pencil"></i></button>
-                <button class="btn btn-danger btn-disable-canv" type="button" title="Delete" onclick="deleteDataCanvassing('. $datas->c_id .')"><i class="fa fa-times-circle"></i></button>
+                } else {
+                    return
+                        '<div class="btn-group btn-group-sm">
+                <button class="btn btn-warning btn-edit-canv" type="button" title="Edit" onclick="editDataCanvassing(' . $datas->c_id . ')"><i class="fa fa-pencil"></i></button>
+                <button class="btn btn-danger btn-disable-canv" type="button" title="Delete" onclick="deleteDataCanvassing(' . $datas->c_id . ')"><i class="fa fa-times-circle"></i></button>
                 </div>';
-            }
-        })
-        ->rawColumns(['action'])
-        ->make(true);
+                }
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
     // this following function is also used by 'Manajemen Penjualan Agen'
     // get list-cities based on province-id
     public function getCitiesDC(Request $request)
     {
         $cities = m_wil_provinsi::where('wp_id', $request->provId)
-        ->with('getCities')
-        ->firstOrFail();
+            ->with('getCities')
+            ->firstOrFail();
         return response()->json($cities);
     }
     // this following function is also used by 'Manajemen Penjualan Agen'
@@ -951,11 +951,11 @@ class MarketingAreaController extends Controller
     public function getAgentsDC(Request $request)
     {
         $agents = m_agen::where('a_area', $request->cityId)
-        ->where('a_type', 'AGEN')
-        ->with('getProvince')
-        ->with('getCity')
-        ->orderBy('a_code', 'desc')
-        ->get();
+            ->where('a_type', 'AGEN')
+            ->with('getProvince')
+            ->with('getCity')
+            ->orderBy('a_code', 'desc')
+            ->get();
 
         return response()->json($agents);
     }
@@ -966,18 +966,19 @@ class MarketingAreaController extends Controller
         $term = $request->termToFind;
 
         // startu query to find specific item
-        $agents = m_agen::where('a_name', 'like', '%'.$term.'%')
+        $agents = m_agen::where('a_name', 'like', '%' . $term . '%')
             ->get();
 
         if (count($agents) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($agents as $agent) {
-                $results[] = ['id' => $agent->a_id, 'label' => $agent->a_code . ' - ' .strtoupper($agent->a_name), 'agent_code' => $agent->a_code];
+                $results[] = ['id' => $agent->a_id, 'label' => $agent->a_code . ' - ' . strtoupper($agent->a_name), 'agent_code' => $agent->a_code];
             }
         }
         return response()->json($results);
     }
+
     // validate request
     public function validateDC(Request $request)
     {
@@ -986,16 +987,17 @@ class MarketingAreaController extends Controller
             'name' => 'required',
             'telp' => 'required'
         ],
-        [
-            'name.required' => 'Nama masih kosong !',
-            'telp.required' => 'No telp masih kosong !'
-        ]);
+            [
+                'name.required' => 'Nama masih kosong !',
+                'telp.required' => 'No telp masih kosong !'
+            ]);
         if ($validator->fails()) {
             return $validator->errors()->first();
         } else {
             return '1';
         }
     }
+
     // store item to db
     public function storeDC(Request $request)
     {
@@ -1036,12 +1038,14 @@ class MarketingAreaController extends Controller
             ]);
         }
     }
+
     // display edit page
     public function editDC($id)
     {
         $data = d_canvassing::where('c_id', $id)->firstOrFail();
         return response()->json($data);
     }
+
     // update specific item in db
     public function updateDC(Request $request, $id)
     {
@@ -1080,6 +1084,7 @@ class MarketingAreaController extends Controller
             ]);
         }
     }
+
     // delete specific item from db
     public function deleteDC($id)
     {
@@ -1114,20 +1119,16 @@ class MarketingAreaController extends Controller
 
         // filter sales-list based on existence of agents
         // aim : show sales-list from selected agent and it's sub-agents
-        if ($agentCode !== null)
-        {
+        if ($agentCode !== null) {
             // get user based on agent-code
             $user = d_username::where('u_code', $agentCode)->first();
             // if $user is null, then return empty list
-            if ($user == null)
-            {
+            if ($user == null) {
                 $datas = Collection::make();
-            }
-            else
-            {
+            } else {
                 // get sub-agent's code from selected-user/agent
                 $subAgents = m_agen::where('a_parent', $user->u_code)
-                ->get();
+                    ->get();
                 $listAgentCode = array();
                 foreach ($subAgents as $subAgent) {
                     array_push($listAgentCode, $subAgent->a_code);
@@ -1142,30 +1143,25 @@ class MarketingAreaController extends Controller
                 }
                 // get query to show sales-list
                 $datas = d_sales::whereBetween('s_date', [$from, $to])
-                ->whereIn('s_comp', $listUserCompany)
-                ->with('getUser.agen')
-                ->orderBy('s_date', 'desc')
-                ->orderBy('s_nota', 'desc')
-                ->get();
+                    ->whereIn('s_comp', $listUserCompany)
+                    ->with('getUser.agen')
+                    ->orderBy('s_date', 'desc')
+                    ->orderBy('s_nota', 'desc')
+                    ->get();
             }
-        }
-        else
-        {
-            if ($userType === 'E')
-            {
+        } else {
+            if ($userType === 'E') {
                 // get query to show sales-list
                 $datas = d_sales::whereBetween('s_date', [$from, $to])
-                ->with('getUser.employee')
-                ->with('getUser.agen')
-                ->orderBy('s_date', 'desc')
-                ->orderBy('s_nota', 'desc')
-                ->get();
-            }
-            else
-            {
+                    ->with('getUser.employee')
+                    ->with('getUser.agen')
+                    ->orderBy('s_date', 'desc')
+                    ->orderBy('s_nota', 'desc')
+                    ->get();
+            } else {
                 // get sub-agent's code  from currently logged in user
                 $subAgents = m_agen::where('a_parent', Auth::user()->u_code)
-                ->get();
+                    ->get();
                 $listAgentCode = array();
                 foreach ($subAgents as $subAgent) {
                     array_push($listAgentCode, $subAgent->a_code);
@@ -1181,47 +1177,48 @@ class MarketingAreaController extends Controller
 
                 // get query to show sales-list
                 $datas = d_sales::whereBetween('s_date', [$from, $to])
-                ->whereIn('s_comp', $listUserCompany)
-                ->with('getUser.agen')
-                ->orderBy('s_date', 'desc')
-                ->orderBy('s_nota', 'desc')
-                ->get();
+                    ->whereIn('s_comp', $listUserCompany)
+                    ->with('getUser.agen')
+                    ->orderBy('s_date', 'desc')
+                    ->orderBy('s_nota', 'desc')
+                    ->get();
             }
         }
         return Datatables::of($datas)
-        ->addIndexColumn()
-        ->addColumn('name', function($datas) {
-            if ($datas->getUser->employee !== null) {
-                return $datas->getUser->employee->e_name;
-            } elseif ($datas->getUser->agen !== null) {
-                return $datas->getUser->agen->a_name;
-            } else {
-                return '( Nama user tidak ditemukan )';
-            }
-            return ;
-        })
-        ->addColumn('date', function($datas) {
-            return Carbon::parse($datas->s_date)->format('d M Y');
-        })
-        ->addColumn('total', function($datas) {
-            return '<div><span class="pull-right">Rp '. number_format((float)$datas->s_total, 2, ',', '.') .'</span></div>';
-        })
-        ->addColumn('action', function($datas) {
-            return
-            '<div class="btn-group btn-group-sm">
-            <button class="btn btn-primary btn-detail-canv" type="button" title="Detail" onclick="detailMPA('. $datas->s_id .')"><i class="fa fa-folder"></i></button>
+            ->addIndexColumn()
+            ->addColumn('name', function ($datas) {
+                if ($datas->getUser->employee !== null) {
+                    return $datas->getUser->employee->e_name;
+                } elseif ($datas->getUser->agen !== null) {
+                    return $datas->getUser->agen->a_name;
+                } else {
+                    return '( Nama user tidak ditemukan )';
+                }
+                return;
+            })
+            ->addColumn('date', function ($datas) {
+                return Carbon::parse($datas->s_date)->format('d M Y');
+            })
+            ->addColumn('total', function ($datas) {
+                return '<div><span class="pull-right">Rp ' . number_format((float)$datas->s_total, 2, ',', '.') . '</span></div>';
+            })
+            ->addColumn('action', function ($datas) {
+                return
+                    '<div class="btn-group btn-group-sm">
+            <button class="btn btn-primary btn-detail-canv" type="button" title="Detail" onclick="detailMPA(' . $datas->s_id . ')"><i class="fa fa-folder"></i></button>
             </div>';
-        })
-        ->rawColumns(['name', 'date', 'total', 'action'])
-        ->make(true);
+            })
+            ->rawColumns(['name', 'date', 'total', 'action'])
+            ->make(true);
     }
+
     public function getDetailMPA($id)
     {
         $detail = d_sales::where('s_id', $id)
-        ->with('getUser.employee')
-        ->with('getUser.agen')
-        ->with('getSalesDt.getItem.getUnit1')
-        ->firstOrFail();
+            ->with('getUser.employee')
+            ->with('getUser.agen')
+            ->with('getSalesDt.getItem.getUnit1')
+            ->firstOrFail();
         // get list qty with smallest unit
         $listQty = array();
         foreach ($detail->getSalesDt as $salesDt) {
@@ -1239,6 +1236,7 @@ class MarketingAreaController extends Controller
             'listQty' => $listQty
         ));
     }
+
     // Monitoring Penjualan Agen End ==============================================================================
 
     public function create_datakonsinyasi()

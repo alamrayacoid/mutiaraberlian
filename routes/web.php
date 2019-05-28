@@ -360,8 +360,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/index', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@index')->name('penjualanpusat.index');
     Route::get('/marketing/penjualanpusat/get-table-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTableTOP')->name('penjualanpusat.getTableTOP');
     Route::get('/marketing/penjualanpusat/get-detail-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getDetailTOP')->name('penjualanpusat.getDetailTOP');
+    Route::get('/marketing/penjualanpusat/get-proses-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getProsesTOP')->name('penjualanpusat.getProsesTOP');
     Route::post('/marketing/penjualanpusat/confirm-process-top/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@confirmProcessTOP')->name('penjualanpusat.confirmProcessTOP');
     Route::get('/marketing/penjualanpusat/orderpenjualan/proses', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@orderpenjualan_proses')->name('orderpenjualan.proses');
+    Route::get('/marketing/penjualanpusat/ganti-status', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@changeStatus')->name('penjualanpusat.gantistatus');
+    Route::get('/marketing/penjualanpusat/get-harga-satuan', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getPrice')->name('penjualanpusat.gantisatuan');
     // Target Realisasi
     Route::get('/marketing/penjualanpusat/targetrealisasi/targetList', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetList')->name('targetReal.list');
     Route::get('/marketing/penjualanpusat/targetrealisasi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@createTargetReal')->name('targetReal.create');
@@ -490,6 +493,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/orderproduk/delivery-order', 'Aktivitasmarketing\Agen\ManajemenAgenController@getOrder')->name('orderagenpusat.getDO');
     Route::get('/marketing/agen/orderproduk/hapus-delivery-order/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteDO')->name('orderagenpusat.deleteDO');
     Route::get('/marketing/agen/orderproduk/detail-delivery-order/{id}/{action}', 'Aktivitasmarketing\Agen\ManajemenAgenController@detailDO')->name('orderagenpusat.detailDO');
+    Route::post('/marketing/agen/orderproduk/terima-delivery-order/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@terimaDO')->name('orderagenpusat.terimaDO');
     Route::get('/marketing/agen/orderproduk/get-cabang', 'Aktivitasmarketing\Agen\ManajemenAgenController@getCabang')->name('orderagenpusat.getcabang');
     Route::get('/marketing/agen/orderproduk/get-pembeli-cabang/{prov}/{kota}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getPembeliCabang')->name('orderagenpusat.getpembelicabang');
     Route::get('/marketing/agen/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_orderprodukagenpusat')->name('orderagenpusat.edit');
@@ -515,6 +519,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/pengaturan/otoritas/perubahanhargajual/index', 'SettingController@perubahanhargajual_index')->name('perubahanhargajual.index');
     Route::get('/pengaturan/pengaturanpengguna/index', 'SettingController@pengaturanpengguna_index')->name('pengaturanpengguna.index');
     Route::POST('/pengaturan/pengaturanpengguna/datatable', 'SettingController@datatable')->name('pengaturanpengguna.datatable');
+    Route::get('/pengaturan/pengaturanpengguna/datatable', 'SettingController@datatable')->name('pengaturanpengguna.datatable');
     Route::get('/pengaturan/pengaturanpengguna/akses', 'SettingController@pengaturanpengguna_akses')->name('pengaturanpengguna.akses');
     Route::get('/pengaturan/pengaturanpengguna/create', 'SettingController@pengaturanpengguna_create')->name('pengaturanpengguna.create');
     Route::get('/pengaturan/pengaturanpengguna/simpan', 'SettingController@pengaturanpengguna_simpan')->name('pengaturanpengguna.simpan');

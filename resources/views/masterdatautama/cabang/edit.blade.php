@@ -102,6 +102,15 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>No Telp 2</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-sm hp2" name="cabang_telp2" value="{{ $data->c_hp }}">
+                                        </div>
+                                    </div>
+
                                 </div>
                             </section>
                         </div>
