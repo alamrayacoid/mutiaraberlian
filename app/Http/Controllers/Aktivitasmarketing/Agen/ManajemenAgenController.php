@@ -533,7 +533,7 @@ class ManajemenAgenController extends Controller
                 'd_productorder.po_nota as nota',
                 'seller.c_name as penjual',
                 'buyer.c_name as pembeli',
-                'd_productorder.po_status as status')
+                'd_productorder.po_status as status', 'd_productorder.po_send as send')
             ->join('m_company as seller', function ($s){
                 $s->on('d_productorder.po_comp', '=', 'seller.c_id');
             })->join('m_company as buyer', function ($b){
@@ -554,29 +554,48 @@ class ManajemenAgenController extends Controller
                 return $data->pembeli;
             })
             ->addColumn('status', function($data){
-                if ($data->status == 'Y') {
-                    return '<span class="btn btn-sm btn-success btn-khusus">Disetujui</span>';
-                } else if ($data->status == 'N') {
-                    return '<span class="btn btn-sm btn-danger btn-khusus">Ditolak</span>';
-                } else {
-                    return '<span class="btn btn-sm btn-danger btn-khusus">Pending</span>';
+                if ($data->send != null) {
+                    if ($data->send == 'P') {
+                        return '<span class="btn btn-sm btn-primary btn-khusus">Dikirim</span>';
+                    }elseif ($data->send == 'Y'){
+                        return '<span class="btn btn-sm btn-success btn-khusus">Diterima</span>';
+                    }
+                } else if($data->send == null){
+                    if ($data->status == 'Y') {
+                        return '<span class="btn btn-sm btn-success btn-khusus">Disetujui</span>';
+                    } else if ($data->status == 'N') {
+                        return '<span class="btn btn-sm btn-danger btn-khusus">Ditolak</span>';
+                    } else {
+                        return '<span class="btn btn-sm btn-danger btn-khusus">Pending</span>';
+                    }
                 }
             })
             ->addColumn('action', function ($data) {
-//                return '<center><div class="btn-group btn-group-sm">
-//                            <button class="btn btn-info" title="Detail"
-//                                    type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
-//                            <button class="btn btn-warning" title="Edit"
-//                                    type="button" onclick="editDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-pencil"></i></button>
-//                            <button class="btn btn-danger" type="button"
-//                                    title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
-//                        </div></center>';
-                return '<center><div class="btn-group btn-group-sm">
-                            <button class="btn btn-info" title="Detail"
-                                    type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
-                            <button class="btn btn-danger" type="button"
-                                    title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
-                        </div></center>';
+                if ($data->send != null) {
+                    if ($data->send == 'P') {
+                        return '<center><div class="btn-group btn-group-sm">
+                                    <button class="btn btn-info" title="Detail"
+                                            type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
+                                    <button class="btn btn-danger" type="button"
+                                            title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+                                    <button class="btn btn-success" type="button" title="Terima" onclick="terimaDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-check"></i></button>
+                                </div></center>';
+                    }elseif ($data->send == 'Y') {
+                        return '<center><div class="btn-group btn-group-sm">
+                                    <button class="btn btn-info" title="Detail"
+                                            type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
+                                    <button class="btn btn-danger" type="button"
+                                            title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+                                </div></center>';
+                    }
+                } elseif ($data->send == null) {
+                    return '<center><div class="btn-group btn-group-sm">
+                                <button class="btn btn-info" title="Detail"
+                                        type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
+                                <button class="btn btn-danger" type="button"
+                                        title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+                            </div></center>';
+                }
 
             })
             ->rawColumns(['tanggal','nota','penjual','pembeli','status', 'action'])
