@@ -77,7 +77,7 @@
 				serverSide: true,
 				ajax: {
 						url: baseUrl + "/pengaturan/pengaturanpengguna/datatable",
-						type: "POST",
+						type: "get",
 						data: {
 								"_token": "{{ csrf_token() }}"
 						}

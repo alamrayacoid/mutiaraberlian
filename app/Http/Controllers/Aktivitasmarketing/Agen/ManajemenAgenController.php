@@ -499,7 +499,16 @@ class ManajemenAgenController extends Controller
 
     public function create_orderprodukagencabang()
     {
-        return view('marketing/agen/orderproduk/create');
+        if (!AksesUser::checkAkses(23, 'create')){
+            abort('401');
+        }
+        $data = 'employee';
+        if (Auth::user()->u_user == 'A'){
+            $data = DB::table('m_agen')
+                ->where('a_code', '=', Auth::user()->u_code)
+                ->first();
+        }
+        return view('marketing/agen/orderproduk/create', compact('data'));
     }
 
     public function index()

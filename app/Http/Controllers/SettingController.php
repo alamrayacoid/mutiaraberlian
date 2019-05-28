@@ -193,7 +193,7 @@ class SettingController extends Controller
 
                 if ($request->type == "agen"){
                     $compa = DB::table('m_company')
-                        ->where('c_user', '=', 'A0000003')
+                        ->where('c_user', '=', $code)
                         ->first();
                     $company = $compa->c_id;
                 } else {

@@ -369,6 +369,7 @@ class AgenController extends Controller
         $data['address_districts'] = $this->getDistricts($data['agen']->a_kabupaten);
         $data['address_villages'] = $this->getVillages($data['agen']->a_kecamatan);
         $data['has_subagent'] = $this->hasSubAgent($data['agen']->a_code);
+
         return view('masterdatautama.agen.edit', compact('data'));
     }
 
