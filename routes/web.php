@@ -231,7 +231,7 @@ Route::group(['middleware' => 'auth'], function () {
     // !===================================================== INVENTORY =====================================================!
     // Barang Masuk
     Route::get('/inventory/barangmasuk/index', 'Inventory\BarangMasukController@index')->name('barangmasuk.index');
-    Route::post('/inventory/barangmasuk/list', 'Inventory\BarangMasukController@getData')->name('barangmasuk.list');
+    Route::get('/inventory/barangmasuk/list', 'Inventory\BarangMasukController@getData')->name('barangmasuk.list');
     Route::get('/inventory/barangmasuk/create', 'Inventory\BarangMasukController@create')->name('barangmasuk.create');
     Route::get('/inventory/barangmasuk/store', 'Inventory\BarangMasukController@store')->name('barangmasuk.store');
     Route::get('/inventory/barangmasuk/edit', 'Inventory\BarangMasukController@edit')->name('barangmasuk.edit');
@@ -241,7 +241,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Barang Keluar
     Route::get('/inventory/barangkeluar/index', 'Inventory\BarangKeluarController@index')->name('barangkeluar.index');
-    Route::post('/inventory/barangkeluar/list', 'Inventory\BarangKeluarController@getList')->name('barangkeluar.list');
+    Route::get('/inventory/barangkeluar/list', 'Inventory\BarangKeluarController@getList')->name('barangkeluar.list');
     Route::get('/inventory/barangkeluar/detail/{nota}', 'Inventory\BarangKeluarController@getDetail')->name('barangkeluar.detail');
     Route::get('/inventory/barangkeluar/getItems', 'Inventory\BarangKeluarController@getItems')->name('barangkeluar.getItems');
     Route::get('/inventory/barangkeluar/create', 'Inventory\BarangKeluarController@create')->name('barangkeluar.create');
@@ -257,6 +257,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/distribusibarang/get-list-unit', 'Inventory\DistribusiController@getListUnit')->name('distribusibarang.getListUnit');
     Route::get('/inventory/distribusibarang/get-item-price', 'Inventory\DistribusiController@getItemPrice')->name('distribusibarang.getItemPrice');
     Route::post('/inventory/distribusibarang/store', 'Inventory\DistribusiController@store')->name('distribusibarang.store');
+    Route::get('/inventory/distribusibarang/get-areas', 'Inventory\DistribusiController@getAreas')->name('distribusibarang.getAreas');
+    Route::get('/inventory/distribusibarang/get-branch', 'Inventory\DistribusiController@getBranch')->name('distribusibarang.getBranch');
     Route::get('/inventory/distribusibarang/edit/{id}', 'Inventory\DistribusiController@edit')->name('distribusibarang.edit');
     Route::post('/inventory/distribusibarang/update/{id}', 'Inventory\DistribusiController@update')->name('ditribusibarang.update');
     Route::get('/inventory/distribusibarang/table', 'Inventory\DistribusiController@table');

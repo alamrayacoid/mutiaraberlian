@@ -13,9 +13,12 @@ use App\d_stock;
 use App\d_stockdistribution;
 use App\d_stockdistributiondt;
 use App\d_stockdistributioncode;
+use App\d_stock_mutation;
+use App\m_company;
 use App\m_item;
 use App\m_mutcat;
 use App\m_unit;
+use App\m_wil_provinsi;
 use Mutasi;
 use Validator;
 use Yajra\DataTables\DataTables;
@@ -29,9 +32,24 @@ class DistribusiController extends Controller
 
     public function create()
     {
-        $branch = DB::table('m_company')->where('c_type', 'CABANG')->get();
-
-        return view('inventory/distribusibarang/distribusi/create', compact('branch'));
+        $provinces = DB::table('m_wil_provinsi')->get();
+        return view('inventory/distribusibarang/distribusi/create', compact('provinces'));
+    }
+    // get list-cities based on province-id
+    public function getAreas(Request $request)
+    {
+        $cities = m_wil_provinsi::where('wp_id', $request->provId)
+        ->with('getCities')
+        ->firstOrFail();
+        return response()->json($cities);
+    }
+    // get list-branches based on area-id
+    public function getBranch(Request $request)
+    {
+        $branches = m_company::where('c_type', 'CABANG')
+        ->where('c_area', $request->areaId)
+        ->get();
+        return response()->json($branches);
     }
 
     public function printNota(Request $request)
@@ -122,11 +140,9 @@ class DistribusiController extends Controller
             ->first();
         return $units;
     }
-
     // store new-distribusibarang to db
     public function store(Request $request)
     {
-        // dd($request->all());
         // if (!AksesUser::checkAkses(7, 'create')){
         //     abort(401);
         // }
@@ -144,29 +160,6 @@ class DistribusiController extends Controller
         try {
             $nota = CodeGenerator::codeWithSeparator('d_stockdistribution', 'sd_nota', 16, 10, 3, 'DISTRIBUSI', '-');
 
-            foreach ($request->itemsId as $i => $itemId) {
-                if ((int)$request->qty[$i] != 0) {
-                    $item = m_item::where('i_id', $itemId)->first();
-
-                    if ($item->i_unit1 == $request->units[$i]) {
-                        $convert = (int)$request->qty[$i] * $item->i_unitcompare1;
-                    } elseif ($item->i_unit2 == $request->units[$i]) {
-                        $convert = (int)$request->qty[$i] * $item->i_unitcompare2;
-                    } elseif ($item->i_unit3 == $request->units[$i]) {
-                        $convert = (int)$request->qty[$i] * $item->i_unitcompare3;
-                    }
-                    // waiit, check the name of $reff
-                    $reff = 'DISTRIBUSI-MASUK';
-                    Mutasi::distribusicabangkeluar(
-                        Auth::user()->u_company,
-                        $request->selectBranch,
-                        $itemId,
-                        $convert,
-                        $nota,
-                        $reff
-                    );
-                }
-            }
             // insert new stockdist
             $id = d_stockdistribution::max('sd_id') + 1;
             $dist = new d_stockdistribution;
@@ -210,6 +203,34 @@ class DistribusiController extends Controller
                         $distcode->sdc_qty = $request->qtyProdCode[$j];
                         $distcode->save();
                     }
+                    // insert stock-mutation
+                    $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
+                    $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
+                    $listUnitPC = [];
+                    $item = m_item::where('i_id', $itemId)->first();
+                    if ($item->i_unit1 == $request->units[$i]) {
+                        $convert = (int)$request->qty[$i] * $item->i_unitcompare1;
+                    }
+                    elseif ($item->i_unit2 == $request->units[$i]) {
+                        $convert = (int)$request->qty[$i] * $item->i_unitcompare2;
+                    }
+                    elseif ($item->i_unit3 == $request->units[$i]) {
+                        $convert = (int)$request->qty[$i] * $item->i_unitcompare3;
+                    }
+                    // waiit, check the name of $reff
+                    $reff = 'DISTRIBUSI-MASUK';
+                    Mutasi::distribusicabangkeluar(
+                        Auth::user()->u_company,
+                        $request->selectBranch,
+                        $itemId,
+                        $convert,
+                        $nota,
+                        $reff,
+                        $listPC,
+                        $listQtyPC,
+                        $listUnitPC
+                    );
+
                     $startProdCodeIdx += $prodCodeLength;
                 }
             }
@@ -225,10 +246,7 @@ class DistribusiController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
-
-        dd($request->all());
     }
-
     // validate request
     public function validateDist(Request $request)
     {
@@ -253,6 +271,11 @@ class DistribusiController extends Controller
     // edit selected item
     public function edit($id)
     {
+        // if (!AksesUser::checkAkses(7, 'edit')){
+        //     abort(401);
+        // }
+
+        // get stockdistribution by id
         $data['stockdist'] = d_stockdistribution::where('sd_id', decrypt($id))
             ->with('getOrigin')
             ->with('getDestination')
@@ -264,43 +287,69 @@ class DistribusiController extends Controller
                             ->with('getUnit2')
                             ->with('getUnit3');
                     }])
-                    ->with('getUnit');
+                    ->with('getUnit')
+                    ->with('getCodeProd');
             }])
-            ->with('getMutation.getStock')
             ->first();
+        // set variabel to store nota number
+        $nota = $data['stockdist']->sd_nota;
+        // get data item-stock
+        foreach ($data['stockdist']->getDistributionDt as $key => $val)
+        {
+            $item = $val->sdd_item;
+
+            // get item-stock in pusat/werehouse
+            $mainStock = d_stock::where('s_position', $val->sdd_comp)
+                ->where('s_item', $item)
+                ->where('s_status', 'ON DESTINATION')
+                ->where('s_condition', 'FINE')
+                ->with('getItem')
+                ->first();
+
+            // calculate item-stock based on unit-compare each item
+            $stock['unit1'] = floor($mainStock->s_qty / $mainStock->getItem->i_unitcompare1);
+            $stock['unit2'] = floor($mainStock->s_qty / $mainStock->getItem->i_unitcompare2);
+            $stock['unit3'] = floor($mainStock->s_qty / $mainStock->getItem->i_unitcompare3);
+            $val->stockUnit1 = $stock['unit1'];
+            $val->stockUnit2 = $stock['unit2'];
+            $val->stockUnit3 = $stock['unit3'];
+
+            // get item-stock in destination
+            $st_mutation = d_stock_mutation::where('sm_nota', '=', $nota)
+                ->whereHas('getStock', function ($query) use ($item) {
+                    $query->where('s_item', $item);
+                })
+                ->get();
+
+            foreach ($st_mutation as $keysm => $valsm) {
+                if ($valsm->sm_use > 0) {
+                    $val->qtyUsed += $valsm->sm_use;
+                }
+                else {
+                    $val->qtyUsed += 0;
+                }
+            }
+            // set status of the distributed item (used or unused)
+            if ($val->qtyUsed > 0) {
+                $val->status = 'used';
+            }
+            else {
+                $val->status = 'unused';
+            }
+        }
 
         // dd($data['stockdist']);
 
-        // get mutcat kode from table m_mutcat by name
-        $mutcatmasuk = m_mutcat::where('m_name', 'Barang Masuk Distribusi Cabang')->first();
-        $mutcatkeluar = m_mutcat::where('m_name', 'Barang Keluar Distribusi Cabang')->first();
-
-        $data['reff'] = array();
-        $data['status'] = array();
-        $data['qtyUsed'] = array();
-        $data['qtyStock'] = array();
-
-        $mutation = $data['stockdist']->getMutation;
-        for ($i = 0; $i < count($mutation); $i++) {
-            if ($mutation[$i]->sm_mutcat == $mutcatkeluar->m_id) {
-                array_push($data['reff'], $mutation[$i]->sm_reff);
-                array_push($data['qtyStock'], $mutation[$i]->getStock->s_qty);
-            }
-            if ($mutation[$i]->sm_mutcat == $mutcatmasuk->m_id) {
-                if ($mutation[$i]->sm_use > 0) {
-                    array_push($data['status'], 'used');
-                } else {
-                    array_push($data['status'], 'unused');
-                }
-                array_push($data['qtyUsed'], $mutation[$i]->sm_use);
-            }
-        }
         return view('inventory/distribusibarang/distribusi/edit', compact('data'));
     }
-
     // update selected item
     public function update(Request $request, $id)
     {
+        dd($request->all());
+        // if (!AksesUser::checkAkses(7, 'edit')){
+        //     abort(401);
+        // }
+
         // validate request
         $isValidRequest = $this->validateDist($request);
         if ($isValidRequest != '1') {
@@ -311,9 +360,6 @@ class DistribusiController extends Controller
             ]);
         }
 
-        // proses masih belum fix, perlu perbaikan
-        dd($request->all());
-
         DB::beginTransaction();
         try {
             // get stockdist
@@ -321,8 +367,20 @@ class DistribusiController extends Controller
                 ->with('getDistributionDt')
                 ->first();
 
+            $startProdCodeIdx = 0;
             // start : loop each item
             foreach ($request->itemsId as $key => $val) {
+                // get item-detail
+                $item = m_item::where('i_id', $val)->first();
+                // convert qty-item to smallest units
+                if ($item->i_unit1 == $request->units[$key]) {
+                    $convert = (int)$request->qty[$key] * $item->i_unitcompare1;
+                } elseif ($item->i_unit2 == $request->units[$key]) {
+                    $convert = (int)$request->qty[$key] * $item->i_unitcompare2;
+                } elseif ($item->i_unit3 == $request->units[$key]) {
+                    $convert = (int)$request->qty[$key] * $item->i_unitcompare3;
+                }
+
                 // if : qty in stock-mutation still 'unused'
                 if ($request->status[$key] == "unused") {
                     // rollBack qty in stock-mutation and stock-item
@@ -335,16 +393,10 @@ class DistribusiController extends Controller
                         ]);
                     }
                     // --- start: create new stock-mutation for distribution ---
-                    // get item-detail
-                    $item = m_item::where('i_id', $val)->first();
-                    // convert qty-item to smallest units
-                    if ($item->i_unit1 == $request->units[$key]) {
-                        $convert = (int)$request->qty[$key] * $item->i_unitcompare1;
-                    } elseif ($item->i_unit2 == $request->units[$key]) {
-                        $convert = (int)$request->qty[$key] * $item->i_unitcompare2;
-                    } elseif ($item->i_unit3 == $request->units[$key]) {
-                        $convert = (int)$request->qty[$key] * $item->i_unitcompare3;
-                    }
+                    $prodCodeLength = (int)$request->prodCodeLength[$key];
+                    $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
+                    $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
+                    $listUnitPC = [];
                     // waiit, check the name of $reff
                     $reff = 'DISTRIBUSI-MASUK';
                     Mutasi::distribusicabangkeluar(
@@ -353,19 +405,28 @@ class DistribusiController extends Controller
                         $val, // item-id
                         $convert, // qty of smallest-unit
                         $stockdist->sd_nota, // nota
-                        $reff // nota-reff
+                        $reff, // nota-reff
+                        $listPC,
+                        $listQtyPC,
+                        $listUnitPC
                     );
-                    // --- end: new stock-mutation ---
+                    // update starting-index of production-code-list
+                    $startProdCodeIdx += $prodCodeLength;
+                    // --- end: create new stock-mutation for distribution ---
                 } // else : stock already 'used'
                 elseif ($request->status[$key] == "used") {
-                    // update qty (to new-qty) stock-mutation and stock-item
-                    $newQty = (int)$request->qty[$key] - (int)$request->qtyUsed[$key];
-                    $updateDist = Mutasi::updateDistribusi($stockdist->sd_nota, $val->sdd_item, $newQty);
-                    if ($rollbackDist != true) {
+                    // update qty in stock-mutation and in stock-item
+                    $qty = $convert;
+                    $updateDist = Mutasi::updateDistribusi(
+                        $stockdist->sd_nota,
+                        $val, // item-id
+                        $qty
+                    );
+                    if ($updateDist != true) {
                         DB::rollback();
                         return response()->json([
                             'status' => 'gagal',
-                            'message' => $rollbackDist->getMessage()
+                            'message' => $updateDist->getMessage()
                         ]);
                     }
                 }
@@ -396,7 +457,8 @@ class DistribusiController extends Controller
         } catch (Exception $e) {
             DB::rollback();
             return response()->json([
-                'status' => 'gagal'
+                'status' => 'gagal',
+                'message' => $e->getMessage()
             ]);
         }
 
@@ -467,6 +529,7 @@ class DistribusiController extends Controller
     // }
     // end: unused (maybe) -> deleted soon ===========================
     // retrive DataTable for distribusibarang
+
     public function table(Request $request)
     {
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
@@ -629,6 +692,7 @@ class DistribusiController extends Controller
                     ]);
                 }
             }
+
             DB::table('d_stock')
                 ->where('s_qty', '=', 0)
                 ->where('s_status', '=', 'ON GOING')
@@ -637,7 +701,8 @@ class DistribusiController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',

@@ -17,6 +17,14 @@ class d_stock_mutation extends Model
         ->where('sm_detailid', '=', $this->getAttribute('sm_detailid'));
         return $query;
     }
+    // ????
+    // public function getMutaionDt($query)
+    // {
+    //     return $query->join('d_stockmutationdt', function ($join) {
+    //         $join->on('d_stockmutationdt.smd_stock', 'd_stock_mutation.sm_stock');
+    //         $join->on('d_stockmutationdt.smd_stockmutation', 'd_stock_mutation.sm_detailid');
+    //     });
+    // }
 
     // relation with table d_stock
     public function getStock()

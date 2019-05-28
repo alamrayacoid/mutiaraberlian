@@ -50,15 +50,37 @@
                                 <section>
                                     <div class="row">
                                         <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>Provinsi</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <select name="selectProvince" id="selectProvince" class="form-control form-control-sm select2">
+                                                    <option value="" disabled selected>Pilih Provinsi</option>
+                                                    @foreach ($provinces as $index => $val)
+                                                    <option value="{{ $val->wp_id }}">{{ $val->wp_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>Area</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <select name="selectArea" id="selectArea" class="form-control form-control-sm select2">
+                                                    <option value="" disabled selected>Pilih Area</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
                                             <label>Cabang</label>
                                         </div>
                                         <div class="col-md-10 col-sm-6 col-xs-12">
                                             <div class="form-group">
                                                 <select name="selectBranch" id="selectBranch" class="form-control form-control-sm select2">
                                                     <option value="" disabled selected>Pilih Cabang</option>
-                                                    @foreach ($branch as $index => $val)
-                                                    <option value="{{ $val->c_id }}">{{ $val->c_name }}</option>
-                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -128,6 +150,14 @@
     $(document).ready(function(){
         // event field items inside table
         getFieldsReady();
+        // find areas by provinces
+        $('#selectProvince').on('change', function() {
+            getAreas();
+        });
+        // find branch by areas
+        $('#selectArea').on('change', function() {
+            getBranch();
+        })
         // add more item in table_items
         $('.btnAddItem').on('click', function() {
             $('#table_items').append(
@@ -227,6 +257,7 @@
         });
         // update total qty without production-code
         $('.qtyProdCode').on('keyup', function() {
+            idxProdCode = $('.qtyProdCode').index(this);
             calculateProdCodeQty();
         });
         // select2 class
@@ -246,6 +277,49 @@
             autoUnmask: true,
             nullable: false,
             // unmaskAsNumber: true,
+        });
+    }
+
+    // get areas for search-branch
+    function getAreas()
+    {
+        var id = $('#selectProvince').val();
+        $.ajax({
+            url: "{{ route('distribusibarang.getAreas') }}",
+            type: "get",
+            data: {
+                provId: id
+            },
+            success: function (response) {
+                $('#selectArea').empty();
+                $("#selectArea").append('<option value="" selected="" disabled="">Pilih Area</option>');
+                $.each(response.get_cities, function (key, val) {
+                    $("#selectArea").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
+                });
+                $('#selectArea').focus();
+                $('#selectArea').select2('open');
+            }
+        });
+    }
+    // get branch
+    function getBranch()
+    {
+        var id = $('#selectArea').val();
+        $.ajax({
+            url: "{{ route('distribusibarang.getBranch') }}",
+            type: "get",
+            data: {
+                areaId: id
+            },
+            success: function (response) {
+                $('#selectBranch').empty();
+                $("#selectBranch").append('<option value="" selected="" disabled="">Pilih Cabang</option>');
+                $.each(response, function (key, val) {
+                    $("#selectBranch").append('<option value="' + val.c_id + '">' + val.c_name + '</option>');
+                });
+                $('#selectBranch').focus();
+                $('#selectBranch').select2('open');
+            }
         });
     }
     // get list item using AutoComplete
@@ -317,6 +391,7 @@
     function validateQty()
     {
         let stock = 0;
+        let qty = parseInt($('.qty').eq(idxItem).val());
         // get stock-value
         if ($(".units").eq(idxItem).prop('selectedIndex') == 0) {
             stock = $('.qtyStock1').eq(idxItem).val();
@@ -328,10 +403,11 @@
 
         stock = parseFloat(stock);
 
-        if ($('.qty').eq(idxItem).val() > stock) {
-            $('.qty').eq(idxItem).val(stock);
+        if (qty > stock) {
             messageWarning('Perhatian', 'Stock tersedia : ' + stock)
-        } else if ($('.qty').eq(idxItem).val() < 0 || $('.qty').eq(idxItem).val() == '' || isNaN($('.qty').eq(idxItem).val())) {
+            $('.qty').eq(idxItem).val(stock);
+        }
+        else if ($('.qty').eq(idxItem).val() < 0 || $('.qty').eq(idxItem).val() == '' || isNaN($('.qty').eq(idxItem).val())) {
             $('.qty').eq(idxItem).val(0);
         }
     }
@@ -375,12 +451,26 @@
     function calculateProdCodeQty()
     {
         QtyH = parseInt($('.modalCodeProd').eq(idxItem).find('.QtyH').val());
+        qtyWithProdCode = getQtyWithProdCode();
+        restQty = QtyH - qtyWithProdCode;
+
+        if (restQty < 0) {
+            $(':focus').val(0);
+            qtyWithProdCode = getQtyWithProdCode();
+            restQty = QtyH - qtyWithProdCode;
+            $('.modalCodeProd').eq(idxItem).find('.restQty').val(restQty);
+            messageWarning('Perhatian', 'Jumlah item untuk penetapan kode produksi tidak boleh melebihi jumlah item yang ada !');
+        } else {
+            $('.modalCodeProd').eq(idxItem).find('.restQty').val(restQty);
+        }
+    }
+    function getQtyWithProdCode()
+    {
         qtyWithProdCode = 0;
-        $.each($('.table_listcodeprod').eq(idxItem).find('.qtyProdCode'), function (key, val) {
+        $.each($('.modalCodeProd:eq('+idxItem+') .table_listcodeprod').find('.qtyProdCode'), function (key, val) {
             qtyWithProdCode += parseInt($(this).val());
         });
-        restQty = QtyH - qtyWithProdCode;
-        $('.modalCodeProd').eq(idxItem).find('.restQty').val(restQty);
+        return qtyWithProdCode;
     }
 </script>
 @endsection

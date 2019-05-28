@@ -22,12 +22,12 @@ class d_stockdistribution extends Model
     {
         return $this->hasMany('App\d_stockdistributiondt', 'sdd_stockdistribution', 'sd_id');
     }
-    public function getMutation()
+    public function getMutationByNota()
     {
         return $this->hasMany('App\d_stock_mutation', 'sm_nota', 'sd_nota');
     }
 
-    // // function to delete cascade with distribution-detail
+    // // function to delete cascade with distribution-detail ??
     // public static function boot() {
     //     parent::boot();
     //
