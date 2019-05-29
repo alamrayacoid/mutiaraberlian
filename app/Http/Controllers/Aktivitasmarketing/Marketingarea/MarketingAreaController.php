@@ -282,6 +282,7 @@ class MarketingAreaController extends Controller
 
     public function orderProdukStore(Request $request)
     {
+        // dd($request);
         $data = $request->all();
         $now = Carbon::now('Asia/Jakarta');
         $time = date('Y-m-d', strtotime($now));
@@ -292,8 +293,8 @@ class MarketingAreaController extends Controller
 
                 $query1 = DB::table('d_productorder')
                     ->where('po_date', '=', $time)
-                    ->where('po_comp', '=', $data['po_comp'][0])
-                    ->where('po_agen', '=', $data['po_agen'][0])
+                    ->where('po_comp', '=', $data['po_comp'])
+                    ->where('po_agen', '=', $data['po_agen'])
                     ->first();
 
                 if ($query1) {
@@ -325,12 +326,12 @@ class MarketingAreaController extends Controller
 
                         DB::table('d_productorderdt')->insert([
                             'pod_productorder' => $query1->po_id,
-                            'pod_detailid' => $detailId + 1,
-                            'pod_item' => $data['idItem'][$i],
-                            'pod_unit' => $data['po_unit'][$i],
-                            'pod_qty' => $data['po_qty'][$i],
-                            'pod_price' => $data['po_hrg'][$i],
-                            'pod_totalprice' => $data['sbtotal'][$i]
+                            'pod_detailid'     => $detailId + 1,
+                            'pod_item'         => $data['idItem'][$i],
+                            'pod_unit'         => $data['po_unit'][$i],
+                            'pod_qty'          => $data['po_qty'][$i],
+                            'pod_price'        => $data['po_hrg'][$i],
+                            'pod_totalprice'   => $data['sbtotal'][$i]
                         ]);
                     }
                 } else {
@@ -339,22 +340,22 @@ class MarketingAreaController extends Controller
                     $poId = $getIdMax + 1;
 
                     DB::table('d_productorder')->insert([
-                        'po_id' => $poId,
-                        'po_comp' => $data['po_comp'][0],
-                        'po_agen' => $data['po_agen'][0],
-                        'po_date' => $time,
-                        'po_nota' => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-'),
+                        'po_id'     => $poId,
+                        'po_comp'   => $data['po_comp'],
+                        'po_agen'   => $data['po_agen'],
+                        'po_date'   => $time,
+                        'po_nota'   => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-'),
                         'po_status' => "P"
                     ]);
 
                     DB::table('d_productorderdt')->insert([
                         'pod_productorder' => $poId,
-                        'pod_detailid' => ++$detailId,
-                        'pod_item' => $data['idItem'][$i],
-                        'pod_unit' => $data['po_unit'][$i],
-                        'pod_qty' => $data['po_qty'][$i],
-                        'pod_price' => $data['po_hrg'][$i],
-                        'pod_totalprice' => $data['sbtotal'][$i]
+                        'pod_detailid'     => ++$detailId,
+                        'pod_item'         => $data['idItem'][$i],
+                        'pod_unit'         => $data['po_unit'][$i],
+                        'pod_qty'          => $data['po_qty'][$i],
+                        'pod_price'        => $data['po_hrg'][$i],
+                        'pod_totalprice'   => $data['sbtotal'][$i]
                     ]);
                 }
             }
