@@ -98,9 +98,9 @@
                                         <div class="form-group">
                                             <select name="po_comp" id="comp" class="form-control form-control-sm select2">
                                                 <option value="" selected="" disabled="">=== Pilih Pusat ===</option>
-                                                <?php foreach($company as $comp){?>
-                                                <option value="<?php echo $comp->c_id;?>"><?php echo $comp->c_name;?></option>
-                                                <?php } ?>
+                                                @foreach($company as $comp)
+                                                    <option value="{{$comp->c_id}}">{{$comp->c_name}}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
