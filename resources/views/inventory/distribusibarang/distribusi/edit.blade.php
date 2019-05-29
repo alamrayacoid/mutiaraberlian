@@ -317,7 +317,8 @@
             action = '<td><button class="btn btn-success btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
             listProdCode = '<tr>'+ prodCode + qtyProdCode + action +'</tr>';
             // idxItem is referenced from btnCodeProd above
-            $('.modalCodeProd:eq('+ idxItem +')').find('.table_listcodeprod').append(listProdCode);
+            $(listProdCode).insertBefore($('.modalCodeProd:eq('+ idxItem +')').find('.table_listcodeprod .rowBtnAdd'));
+            // $('.modalCodeProd:eq('+ idxItem +')').find('.table_listcodeprod').append(listProdCode);
             getFieldsReady();
         });
         // event to remove an prod-code from table_listcodeprod
@@ -361,8 +362,7 @@
             else {
                 $('#modalCodeProdBase').clone().prop('id', 'modalCodeProd').addClass('modalCodeProd').insertAfter($('.modalCodeProd').last());
             }
-            console.log('key DT: '+ key);
-            console.log(val);
+            $('.modalCodeProd:eq('+ key +')').find('.table_listcodeprod > tbody > tr').remove();
             if (val.get_prod_code.length > 0) {
                 $.each(val.get_prod_code, function (idx, val) {
                     console.log(idx +': '+ val);
@@ -373,6 +373,8 @@
                     $('.modalCodeProd:eq('+ key +')').find('.table_listcodeprod').append(listProdCode);
                 });
             }
+            rowBtnAdd = '<tr class="rowBtnAdd"><td colspan="3" class="text-center"><button class="btn btn-success btnAddProdCode btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button></td></tr>';
+            $('.modalCodeProd:eq('+ key +')').find('.table_listcodeprod').append(rowBtnAdd);
         });
     }
     // get list item using AutoComplete

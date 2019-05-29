@@ -246,7 +246,8 @@
             action = '<td><button class="btn btn-success btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
             listProdCode = '<tr>'+ prodCode + qtyProdCode + action +'</tr>';
             // idxItem is referenced from btnCodeProd above
-            $('.modalCodeProd:eq('+ idxItem +')').find('.table_listcodeprod').append(listProdCode);
+            $(listProdCode).insertBefore($('.modalCodeProd:eq('+ idxItem +')').find('.table_listcodeprod .rowBtnAdd'));
+            // $('.modalCodeProd:eq('+ idxItem +')').find('.table_listcodeprod').append(listProdCode);
             getFieldsReady();
         });
         // event to remove an prod-code from table_listcodeprod
