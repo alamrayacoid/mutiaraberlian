@@ -29,7 +29,7 @@ class d_stockdistributiondt extends Model
     {
         return $this->belongsTo('App\m_unit', 'sdd_unit', 'u_id');
     }
-    public function getCodeProd()
+    public function getProdCode()
     {
         return $this->hasMany('App\d_stockdistributioncode', ['sdc_stockdistribution', 'sdc_stockdistributiondt'], ['sdd_stockdistribution', 'sdd_detailid']);
     }

@@ -85,47 +85,54 @@
                                                 </td>
                                                 <td>
                                                     <select name="units[]" class="form-control form-control-sm select2 units">
-                                                        <option value="{{ $value->getItem->getUnit1->u_id}}"
-                                                            @if($value->sdd_unit == $value->getItem->getUnit1->u_id)
-                                                            selected
-                                                            @endif
-                                                            >{{ $value->getItem->getUnit1->u_name }}
+                                                        @if(isset($value->getItem->getUnit1))
+                                                        <option value="{{ $value->getItem->getUnit1->u_id}}" @if($value->sdd_unit == $value->getItem->getUnit1->u_id) selected @endif>
+                                                            {{ $value->getItem->getUnit1->u_name }}
                                                         </option>
-                                                        <option value="{{ $value->getItem->getUnit2->u_id}}"
-                                                            @if($value->sdd_unit == $value->getItem->getUnit2->u_id)
-                                                            selected
-                                                            @endif
-                                                            >{{ $value->getItem->getUnit2->u_name }}
+                                                        @endif
+                                                        @if(isset($value->getItem->getUnit2))
+                                                        <option value="{{ $value->getItem->getUnit2->u_id}}" @if($value->sdd_unit == $value->getItem->getUnit2->u_id) selected @endif>
+                                                            {{ $value->getItem->getUnit2->u_name }}
                                                         </option>
-                                                        <option value="{{ $value->getItem->getUnit3->u_id}}"
-                                                            @if($value->sdd_unit == $value->getItem->getUnit3->u_id)
-                                                            selected
-                                                            @endif
-                                                            >{{ $value->getItem->getUnit3->u_name }}
+                                                        @endif
+                                                        @if(isset($value->getItem->getUnit3))
+                                                        <option value="{{ $value->getItem->getUnit3->u_id}}" @if($value->sdd_unit == $value->getItem->getUnit3->u_id) selected @endif>
+                                                            {{ $value->getItem->getUnit3->u_name }}
                                                         </option>
+                                                        @endif
                                                     </select>
                                                 </td>
                                                 <td>
                                                     <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
                                                 </td>
                                                 @if ($value->status == 'used')
-                                                    <td class="badge badge-warning">Stock sudah digunakan ({{ $value->qtyUsed }})</td>
-                                                    <input type="hidden" name="status[]" class="status" value="{{ $value->status }}">
+                                                    <td>
+                                                        <h5><span class="badge badge-warning">Stock sudah digunakan ({{ $value->qtyUsed }})</span></h5>
+                                                        <input type="hidden" name="status[]" class="status" value="{{ $value->status }}">
+                                                    </td>
                                                 @else
-                                                    <td class="badge badge-primary">Stock belum digunakan</td>
-                                                    <input type="hidden" name="status[]" class="status" value="{{ $value->status }}">
+                                                    <td>
+                                                        <h5><span class="badge badge-primary">Stock belum digunakan</span></h5>
+                                                        <input type="hidden" name="status[]" class="status" value="{{ $value->status }}">
+                                                    </td>
                                                 @endif
                                                 <td>
                                                     @if ($key == 0)
                                                         <button class="btn btn-success btnAddItem btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                                                        @if ($value->status != 'used')
+                                                        @if ($value->status == 'used')
+                                                            <button class="btn btn-primary btnAppointItem btn-sm rounded-circle d-none" type="button"><i class="fa fa-power-off" aria-hidden="true"></i></button>
+                                                            <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button" disabled><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                                        @else
+                                                            <button class="btn btn-primary btnAppointItem btn-sm rounded-circle d-none" type="button"><i class="fa fa-power-off" aria-hidden="true"></i></button>
                                                             <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
                                                         @endif
                                                     @else
-                                                        @if ($value->status != 'used')
-                                                            <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
-                                                        @else
+                                                        @if ($value->status == 'used')
+                                                            <button class="btn btn-primary btnAppointItem btn-sm rounded-circle d-none" type="button"><i class="fa fa-power-off" aria-hidden="true"></i></button>
                                                             <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button" disabled><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                                        @else
+                                                            <button class="btn btn-primary btnAppointItem btn-sm rounded-circle d-none" type="button"><i class="fa fa-power-off" aria-hidden="true"></i></button>
+                                                            <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
                                                         @endif
                                                     @endif
                                                 </td>
@@ -157,14 +164,32 @@
 @section('extra_script')
 <script type="text/javascript">
     var editedItemId = 0;
+    var distDt = 0;
+
     $(document).ready(function(){
+        // retrive data directly from controller
         editedItemId = <?php echo $data['stockdist']->sd_id; ?>;
+        distDt = {!! $data['stockdist'] !!};
+        distDt = distDt.get_distribution_dt;
+        // destroy DataTable
+        if ( $.fn.DataTable.isDataTable('#table_items') ) {
+          $('#table_items').DataTable().destroy();
+        }
+        // re-initialize DataTable
+        $('#table_items').DataTable( {
+            "paging":   false,
+            "ordering": false,
+            "searching": false,
+            "info":     false
+        });
+
         // set modal production-code
         setModalCodeProdReady();
         // event field items inside table
         getFieldsReady();
         // add more item in table_items
         $('.btnAddItem').on('click', function() {
+            console.log('clicked !');
             $('#table_items').append(
             `<tr class="rowStatus">
                 <td>
@@ -187,11 +212,12 @@
                 <td>
                     <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
                 </td>
-                <td class="badge badge-primary">
-                    Stock belum digunakan
+                <td>
+                    <h5><span class="badge badge-primary">Stock belum digunakan</span></h5>
                     <input type="hidden" name="status[]" class="status" value="unused">
                 </td>
                 <td>
+                    <button class="btn btn-primary btnAppointItem btn-sm rounded-circle d-none" type="button"><i class="fa fa-power-off" aria-hidden="true"></i></button>
                     <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
                 </td>
             </tr>`
@@ -242,22 +268,39 @@
         // event to remove an item from table_items
         $('.btnRemoveItem').on('click', function() {
             idxItem = $('.btnRemoveItem').index(this);
-            // $(this).parents('tr').remove();
-            // set row status to disabled
-            if (idxItem != 0) {
-                $('.rowStatus').eq(idxItem).find(':input:not(.itemsId, .isDeleted, .btnRemoveItem)').attr('disabled', true);
+            console.log('rmv: '+ idxItem);
+            if (idxItem < distDt.length) {
+                // set row status to disabled
+                if (idxItem == 0) {
+                    $('.rowStatus').eq(idxItem).find(':input:not(.itemsId, .isDeleted, .btnAddItem, .btnAppointItem, .btnRemoveItem)').attr('disabled', true);
+                } else {
+                    $('.rowStatus').eq(idxItem).find(':input:not(.itemsId, .isDeleted, .btnAppointItem, .btnRemoveItem)').attr('disabled', true);
+                }
                 $('.rowStatus').eq(idxItem).find('.isDeleted').val('true');
-                $('.rowStatus').eq(idxItem).find('.btnRemoveItem').addClass('btnAppointItem').removeClass('btnRemoveItem');
+                $('.rowStatus').eq(idxItem).find('.btnRemoveItem').addClass('d-none');
+                $('.rowStatus').eq(idxItem).find('.btnAppointItem').removeClass('d-none');
                 $('.modalCodeProd').eq(idxItem).find(':input').attr('disabled', true);
+                getFieldsReady();
             }
-            getFieldsReady();
+            else {
+                $(this).parents('tr').remove();
+                $('.modalCodeProd').eq(idxItem).remove();
+            }
         });
         $('.btnAppointItem').on('click', function() {
-            idxItem = $('.btnRemoveItem').index(this);
-            $('.rowStatus').eq(idxItem).find(':input:not(.itemsId, .isDeleted, .btnRemoveItem)').attr('disabled', false);
+            idxItem = $('.btnAppointItem').index(this);
+            // set row status to enabled
+            // item-id from database cannot be changed
+            if (idxItem < distDt.length) {
+                $('.rowStatus').eq(idxItem).find(':input:not(.itemsName, .itemsId, .isDeleted, .btnAppointItem, .btnRemoveItem)').attr('disabled', false);
+            } else {
+                $('.rowStatus').eq(idxItem).find(':input:not(.itemsId, .isDeleted, .btnAppointItem, .btnRemoveItem)').attr('disabled', false);
+            }
             $('.rowStatus').eq(idxItem).find('.isDeleted').val('false');
-            $('.rowStatus').eq(idxItem).find('.btnAppointItem').addClass('btnRemoveItem').removeClass('btnAppointItem');
+            $('.rowStatus').eq(idxItem).find('.btnRemoveItem').removeClass('d-none');
+            $('.rowStatus').eq(idxItem).find('.btnAppointItem').addClass('d-none');
             $('.modalCodeProd').eq(idxItem).find(':input').attr('disabled', false);
+            getFieldsReady();
         });
         // event to show modal to display list of code-production
         $('.btnCodeProd').on('click', function() {
@@ -310,11 +353,6 @@
     // set modalCodeProd to be ready
     function setModalCodeProdReady()
     {
-        // retrive data directly from controller
-        distDt = {!! $data['stockdist'] !!};
-        distDt = distDt.get_distribution_dt;
-        console.log(distDt);
-
         $.each(distDt, function (key, val) {
             // clone modal-code-production and insert new one
             if (key == 0) {
@@ -324,8 +362,9 @@
                 $('#modalCodeProdBase').clone().prop('id', 'modalCodeProd').addClass('modalCodeProd').insertAfter($('.modalCodeProd').last());
             }
             console.log('key DT: '+ key);
-            if (val.get_code_prod.length > 0) {
-                $.each(val.get_code_prod, function (idx, val) {
+            console.log(val);
+            if (val.get_prod_code.length > 0) {
+                $.each(val.get_prod_code, function (idx, val) {
                     console.log(idx +': '+ val);
                     prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]" value="'+ val.sdc_code +'"></input></td>';
                     qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="'+ val.sdc_qty +'"></input></td>';
