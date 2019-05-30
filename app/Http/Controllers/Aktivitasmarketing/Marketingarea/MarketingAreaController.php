@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Aktivitasmarketing\Marketingarea;
 
+use function foo\func;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use App\Http\Controllers\Controller;
@@ -696,6 +697,69 @@ class MarketingAreaController extends Controller
 
             })
             ->rawColumns(['total_price', 'action_agen'])
+            ->make(true);
+    }
+
+    public function getDetailOrder(Request $request)
+    {
+        $po_id = Crypt::decrypt($request->id);
+        $data = DB::table('d_productorder')
+            ->join('d_productorderdt', 'pod_productorder', '=', 'po_id')
+            ->join('m_item', 'i_id', '=', 'pod_item')
+            ->join('m_unit', 'u_id', '=', 'i_unit1')
+            ->select('i_name', DB::raw('concat(pod_qty, " ", u_name) as kuantitas'), DB::raw('floor(pod_price) as pod_price'),
+                DB::raw('floor(pod_totalprice) as pod_totalprice'), 'po_id', 'pod_item', 'u_name', 'pod_qty', 'pod_unit',
+                'i_unit1', 'i_unit2', 'i_unit3', 'i_unitcompare2', 'i_unitcompare3')
+            ->where('po_id', '=', $po_id)
+            ->get();
+
+        for ($i = 0; $i < count($data); $i++){
+            if ($data[$i]->pod_unit == $data[$i]->i_unit2){
+                $data[$i]->pod_qty = $data[$i]->pod_qty * $data[$i]->i_unitcompare2;
+            }elseif ($data[$i]->pod_unit == $data[$i]->i_unit3){
+                $data[$i]->pod_qty = $data[$i]->pod_qty * $data[$i]->i_unitcompare3;
+            }
+        }
+
+        return DataTables::of($data)
+            ->editColumn('pod_price', function ($data){
+                return "Rp." . number_format($data->pod_price, "0", ",", ".");
+            })
+            ->editColumn('pod_totalprice', function ($data){
+                return "Rp." . number_format($data->pod_totalprice, "0", ",", ".");
+            })
+            ->addColumn('kode', function ($data){
+                return "<div class='text-center' style='width: 100%'><button type='button' onclick='addCodeProd(".$data->po_id.", ".$data->pod_item.",\"".$data->i_name."\")' class='btn btn-info btn-xs'><i class='fa fa-plus'></i> Kode Produksi</button></div>";
+            })
+            ->addColumn('input', function ($data){
+                return "<div class='text-center'><input type='number' style='text-align: right; width: 100%;' class='input-qty-proses' name='qty_proses[]' value='".$data->pod_qty."'></div>";
+            })
+            ->rawColumns(['kode', 'input'])
+            ->make(true);
+
+    }
+
+    public function getCodeOrder(Request $request)
+    {
+        $po_id = $request->id;
+        $item = $request->item;
+
+        $data = DB::table('d_productorder')
+            ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
+            ->join('d_productordercode', function ($q){
+                $q->on('poc_productorder', '=', 'po_id');
+                $q->on('poc_item', '=', 'pod_item');
+            })
+            ->select('poc_code', 'poc_qty', 'po_id', 'pod_item')
+            ->where('po_id', '=', $po_id)
+            ->where('pod_item', '=', $item)
+            ->get();
+
+        return DataTables::of($data)
+            ->addColumn('aksi', function ($data){
+                return "<div class='text-center' style='width: 100%'><button type='button' onclick='removeCodeOrder(".$data->po_id.", ".$data->pod_item.", \"".$data->poc_code."\")' class='btn btn-info btn-xs'><i class='fa fa-plus'></i> Kode Produksi</button></div>";
+            })
+            ->rawColumns(['aksi'])
             ->make(true);
     }
 

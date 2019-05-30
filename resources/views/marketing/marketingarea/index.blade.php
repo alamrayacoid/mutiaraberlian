@@ -1,5 +1,32 @@
 @extends('main')
-
+@section('extra_style')
+    <style>
+        @media (min-width: 992px) {
+            .modal-xl {
+                max-width: 1200px !important;
+            }
+        }
+        #table_prosesorder td {
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+        .btn-xs {
+            padding: 0.20rem 0.4rem;
+            font-size: 0.675rem;
+            line-height: 1.3;
+            border-radius: 0.2rem;
+        }
+        #table_prosesorder td.input-padding {
+            padding: 1px !important;
+        }
+        .input-qty-proses{
+            padding-right: 2px !important;
+        }
+        #table_prosesorder th.input-padding {
+            width: 10% !important;
+        }
+    </style>
+@stop
 @section('content')
 
     @include('marketing.marketingarea.keloladataorder.modal')
@@ -165,6 +192,103 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div id="prosesorder" class="modal fade animated fadeIn" role="dialog">
+        <div class="modal-dialog modal-xl">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-info">
+                    <h4 class="modal-title">Detail Order</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <section>
+                        <div class="row">
+                            <div class="col-2">
+                                <label for="">Nomor Nota</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control form-control-sm" id="nota_dtmpa" readonly="">
+                            </div>
+
+                            <div class="col-2">
+                                <label for="">Tanggal</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control form-control-sm" id="date_dtmpa" readonly="">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="">Agen</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control form-control-sm" id="agent_dtmpa" readonly="">
+                            </div>
+
+                            <div class="col-2">
+                                <label for="">Total Pembelian</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control form-control-sm rupiah" id="total_dtmpa" readonly="">
+                            </div>
+                        </div>
+                    </section>
+                    <div class="row" style="margin-top: 10px">
+                        <div class="table-responsive col-8">
+                            <table class="table table-striped table-hover display table-bordered" cellspacing="0" id="table_prosesorder" width="100%">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th>Nama Barang</th>
+                                    <th>Kuantitas</th>
+                                    <th>Satuan</th>
+                                    <th>Harga @</th>
+                                    <th>Harga Total</th>
+                                    <th class="text-center">Kode</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-4" style="padding-right: 0px;">
+                            <div class="row col-12" style="padding-right: 0px;">
+                                <div class="col-8" style="padding-left: 0px !important;">
+                                    <input type="text" style="width: 100%;" class="inputkodeproduksi form-control form-control-sm" id="inputkodeproduksi" readonly>
+                                </div>
+                                <div class="input-group col-4" style="width: 100%; padding-right: 0px;">
+                                    <input type="number" class="inputqtyproduksi form-control form-control-sm" id="inputqtyproduksi" readonly>
+                                    <span class="input-group-append">
+                                        <button type="button" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i></button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row col-12">
+                                <p>Masukkan kode produksi untuk barang <span class="text-item">-</span> kemudian tekan Enter untuk memasukkan ke tabel distribusi</p>
+                            </div>
+                            <table class="table table-striped table-hover display table-bordered" cellspacing="0" id="table_prosesordercode" width="100%">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th>Kode Produksi</th>
+                                    <th>Kuantitas</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-sm" onclick="prosesorder()" style="color:white;">Setuju dan Kirim Barang</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
         </div>
     </div>
 @endsection
@@ -786,10 +910,37 @@
                 }
             });
         }
-
+        var tb_listprosesorder;
+        var tb_listcodeprosesorder;
         function approveAgen(id) {
-            var approve_agen = "{{url('/marketing/marketingarea/keloladataorder/approve-agen')}}" + "/" + id;
-            $.confirm({
+            $('#prosesorder').modal('show');
+            $('#table_prosesorder').dataTable().fnDestroy();
+            tb_listprosesorder = $('#table_prosesorder').DataTable({
+                responsive: true,
+                serverSide: true,
+                paging: false,
+                searching: false,
+                ajax: {
+                    url: "{{ route('keloladataorder.getdetailorder') }}",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": id
+                    }
+                },
+                columns: [
+                    {data: 'i_name'},
+                    {data: 'input', "className": "input-padding"},
+                    {data: 'u_name'},
+                    {data: 'pod_price'},
+                    {data: 'pod_totalprice'},
+                    {data: 'kode'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+            //var approve_agen = "{{url('/marketing/marketingarea/keloladataorder/approve-agen')}}" + "/" + id;
+            /*$.confirm({
                 animation: 'RotateY',
                 closeAnimation: 'scale',
                 animationBounce: 1.5,
@@ -836,7 +987,41 @@
                         }
                     }
                 }
+            });*/
+        }
+
+        function addCodeProd(id, item, nama){
+            $('.text-item').html(nama);
+            $('#inputkodeproduksi').removeAttr('readonly');
+            $('#inputqtyproduksi').removeAttr('readonly');
+            $('#table_prosesordercode').dataTable().fnDestroy();
+            tb_listcodeprosesorder = $('#table_prosesordercode').DataTable({
+                responsive: true,
+                serverSide: true,
+                paging: false,
+                searching: false,
+                ordering: false,
+                ajax: {
+                    url: "{{ route('keloladataorder.getdetailcodeorder') }}",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": id,
+                        "item": item
+                    }
+                },
+                columns: [
+                    {data: 'poc_code'},
+                    {data: 'poc_qty'},
+                    {data: 'aksi'},
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
             });
+        }
+
+        function addCodetoTable(){
+
         }
 
         function rejectApproveAgen(id) {
