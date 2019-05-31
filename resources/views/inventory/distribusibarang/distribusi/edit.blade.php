@@ -86,19 +86,13 @@
                                                 <td>
                                                     <select name="units[]" class="form-control form-control-sm select2 units">
                                                         @if(isset($value->getItem->getUnit1))
-                                                        <option value="{{ $value->getItem->getUnit1->u_id}}" @if($value->sdd_unit == $value->getItem->getUnit1->u_id) selected @endif>
-                                                            {{ $value->getItem->getUnit1->u_name }}
-                                                        </option>
+                                                        <option value="{{ $value->getItem->getUnit1->u_id }}" data-unitcmp="{{ $value->getItem->i_unitcompare1 }}" @if($value->sdd_unit == $value->getItem->getUnit1->u_id) selected @endif>{{ $value->getItem->getUnit1->u_name }}</option>
                                                         @endif
                                                         @if(isset($value->getItem->getUnit2))
-                                                        <option value="{{ $value->getItem->getUnit2->u_id}}" @if($value->sdd_unit == $value->getItem->getUnit2->u_id) selected @endif>
-                                                            {{ $value->getItem->getUnit2->u_name }}
-                                                        </option>
+                                                        <option value="{{ $value->getItem->getUnit2->u_id }}" data-unitcmp="{{ $value->getItem->i_unitcompare2 }}" @if($value->sdd_unit == $value->getItem->getUnit2->u_id) selected @endif>{{ $value->getItem->getUnit2->u_name }}</option>
                                                         @endif
                                                         @if(isset($value->getItem->getUnit3))
-                                                        <option value="{{ $value->getItem->getUnit3->u_id}}" @if($value->sdd_unit == $value->getItem->getUnit3->u_id) selected @endif>
-                                                            {{ $value->getItem->getUnit3->u_name }}
-                                                        </option>
+                                                        <option value="{{ $value->getItem->getUnit3->u_id }}" data-unitcmp="{{ $value->getItem->i_unitcompare3 }}" @if($value->sdd_unit == $value->getItem->getUnit3->u_id) selected @endif>{{ $value->getItem->getUnit3->u_name }}</option>
                                                         @endif
                                                     </select>
                                                 </td>
@@ -305,8 +299,15 @@
         // event to show modal to display list of code-production
         $('.btnCodeProd').on('click', function() {
             idxItem = $('.btnCodeProd').index(this);
-            // pass qty to modal
-            $('.modalCodeProd').eq(idxItem).find('.QtyH').val($('.qty').eq(idxItem).val());
+            // get unit-cmp from selected unit
+            let unitCmp = parseInt($('.units').eq(idxItem).find('option:selected').data('unitcmp'));
+            let qty = parseInt($('.qty').eq(idxItem).val());
+            let qtyUnit = qty * unitCmp;
+            // pass qtyUnit to modal
+            $('.modalCodeProd').eq(idxItem).find('.QtyH').val(qtyUnit);
+            $('.modalCodeProd').eq(idxItem).find('.usedUnit').val($('.units').eq(idxItem).find('option:first-child').text());
+            console.log('usedUnit: '+ $('.units').eq(idxItem).find('option:first-child').text());
+            console.log($('.modalCodeProd').eq(idxItem).find('.usedUnit'));
             calculateProdCodeQty();
             $('.modalCodeProd').eq(idxItem).modal('show');
         });
@@ -513,8 +514,6 @@
     {
         let QtyH = parseInt($('.modalCodeProd').eq(idxItem).find('.QtyH').val());
         let qtyWithProdCode = getQtyWithProdCode();
-        console.log('qty: '+ QtyH);
-        console.log('qtyWithProdcode: '+ qtyWithProdCode);
         let restQty = QtyH - qtyWithProdCode;
 
         if (restQty < 0) {
@@ -529,7 +528,6 @@
     }
     function getQtyWithProdCode()
     {
-        console.log('--');
         let qtyWithProdCode = 0;
         $.each($('.modalCodeProd:eq('+idxItem+') .table_listcodeprod').find('.qtyProdCode'), function (key, val) {
             console.log($(this).val());

@@ -45,7 +45,7 @@
                 </section>
 
                 <div class="table-responsive">
-                    <table class="table table-striped data-table table-hover" cellspacing="0" id="table_detail_ac">
+                    <table class="table table-striped table-hover" cellspacing="0" id="table_detail_ac">
                         <thead class="bg-primary">
                             <tr>
                                 <th width="10%">No</th>

@@ -108,7 +108,10 @@ class DistribusiController extends Controller
                     'label' => $query->i_code . ' - ' . $query->i_name,
                     'unit1' => $query->getUnit1,
                     'unit2' => $query->getUnit2,
-                    'unit3' => $query->getUnit3
+                    'unit3' => $query->getUnit3,
+                    'unitcmp1' => $query->i_unitcompare1,
+                    'unitcmp2' => $query->i_unitcompare2,
+                    'unitcmp3' => $query->i_unitcompare3
                 ];
             }
         }
@@ -168,9 +171,21 @@ class DistribusiController extends Controller
                 'message' => $errors
             ]);
         }
+
         DB::beginTransaction();
         try {
             $nota = CodeGenerator::codeWithSeparator('d_stockdistribution', 'sd_nota', 16, 10, 3, 'DISTRIBUSI', '-');
+
+            // validate production-code is exist in stock-item
+            $validateProdCode = Mutasi::validateProductionCode(
+                Auth::user()->u_company, // from
+                $request->itemsId, // item-id
+                $request->prodCode, // production-code
+                $request->prodCodeLength // production-code length each item
+            );
+            if ($validateProdCode !== 'validated') {
+                return $validateProdCode;
+            }
 
             // insert new stockdist
             $id = d_stockdistribution::max('sd_id') + 1;
@@ -215,14 +230,11 @@ class DistribusiController extends Controller
                         $distcode->sdc_stockdistribution = $id;
                         $distcode->sdc_stockdistributiondt = $detailid;
                         $distcode->sdc_detailid = $detailidcode;
-                        $distcode->sdc_code = $request->prodCode[$j];
+                        $distcode->sdc_code = strtoupper($request->prodCode[$j]);
                         $distcode->sdc_qty = $request->qtyProdCode[$j];
                         $distcode->save();
                     }
-                    // insert stock-mutation
-                    $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
-                    $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
-                    $listUnitPC = [];
+                    // get qty of smallest unit
                     $item = m_item::where('i_id', $itemId)->first();
                     if ($item->i_unit1 == $request->units[$i]) {
                         $convert = (int)$request->qty[$i] * $item->i_unitcompare1;
@@ -233,6 +245,11 @@ class DistribusiController extends Controller
                     elseif ($item->i_unit3 == $request->units[$i]) {
                         $convert = (int)$request->qty[$i] * $item->i_unitcompare3;
                     }
+                    // declaare list of production-code
+                    $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
+                    $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
+                    $listUnitPC = [];
+                    // insert stock-mutation
                     // waiit, check the name of $reff
                     $reff = 'DISTRIBUSI-MASUK';
                     $mutDist = Mutasi::distribusicabangkeluar(
@@ -246,13 +263,14 @@ class DistribusiController extends Controller
                         $listQtyPC,
                         $listUnitPC
                     );
-                    if (!is_bool($mutDist)) {
+                    if ($mutDist !== 'success') {
                         return $mutDist;
                     }
+                    
                     $startProdCodeIdx += $prodCodeLength;
                 }
             }
-
+            // dd($validateProdCode);
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -391,6 +409,17 @@ class DistribusiController extends Controller
 
         DB::beginTransaction();
         try {
+            // validate production-code is exist in stock-item
+            $validateProdCode = Mutasi::validateProductionCode(
+                Auth::user()->u_company, // from
+                $request->itemsId, // item-id
+                $request->prodCode, // production-code
+                $request->prodCodeLength // production-code length each item
+            );
+            if (!is_bool($validateProdCode)) {
+                return $validateProdCode;
+            }
+
             // get stockdist
             $stockdist = d_stockdistribution::where('sd_id', $id)
                 ->with('getDistributionDt.getProdCode')
@@ -399,9 +428,9 @@ class DistribusiController extends Controller
             $startProdCodeIdx = 0;
             // count skipped index based on 'isDeleted' row
             $skippedIndex = 0;
-            // start : loop each item
+            // start : loop each item (rollback distribution)
             foreach ($request->itemsId as $key => $val) {
-                // if the item is being deleted
+                // if the item is being deleted -> rollback-distribution
                 if ($request->isDeleted[$key] == 'true') {
                     // rollBack qty in stock-mutation and stock-item
                     $rollbackDist = Mutasi::rollbackDistribusi(
@@ -415,6 +444,7 @@ class DistribusiController extends Controller
                     $skippedIndex += 1;
                     continue;
                 }
+
                 // set '$key' minus by $skippedIndex
                 $key -= $skippedIndex;
                 // get item-detail
@@ -690,7 +720,7 @@ class DistribusiController extends Controller
         return response()->json($detail);
     }
 
-    // confirm acceptance
+    // confirm distribution
     public function setAcceptance(Request $request, $id)
     {
         DB::beginTransaction();
@@ -699,25 +729,22 @@ class DistribusiController extends Controller
                 ->with('getDistributionDt')
                 ->first();
 
-            // update stockdist-status to 'Y'
-            $stockdist->sd_status = 'Y';
-            $stockdist->save();
-
+            // confirm each item
             foreach ($stockdist->getDistributionDt as $key => $val) {
-                $mutasi = Mutasi::confirmDistribusiCabang(
+                $mutConfirm = Mutasi::confirmDistribusiCabang(
                     $stockdist->sd_from,
                     $stockdist->sd_destination,
                     $val->sdd_item,
                     $stockdist->sd_nota
                 );
-                if ($mutasi !== true) {
-                    DB::rollback();
-                    return response()->json([
-                        'status' => 'gagal',
-                        'message' => $mutasi
-                    ]);
+                if (!is_bool($mutConfirm)) {
+                    return $mutConfirm;
                 }
             }
+
+            // update stockdist-status to 'Y'
+            $stockdist->sd_status = 'Y';
+            $stockdist->save();
 
             DB::table('d_stock')
                 ->where('s_qty', '=', 0)

@@ -14,7 +14,13 @@
                     </div>
                     <div class="col-md-3 col-sm-6">
                         <input type="hidden" class="QtyH" value="">
-                        <input type="text" class="form-control form-control-plaintext border-bottom digits restQty" name="" value="10.000">
+                        <input type="text" class="form-control form-control-plaintext border-bottom digits restQty" name="" value="10.000" readonly style="background-color: transparent;">
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <label for="">Satuan yang digunakan : </label>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <input type="text" class="form-control form-control-plaintext border-bottom usedUnit" name="" value="" readonly style="background-color: transparent;">
                     </div>
                 </div>
                 <br>

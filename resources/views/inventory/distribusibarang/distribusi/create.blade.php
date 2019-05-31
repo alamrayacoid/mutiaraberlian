@@ -234,8 +234,13 @@
         // event to show modal to display list of code-production
         $('.btnCodeProd').on('click', function() {
             idxItem = $('.btnCodeProd').index(this);
-            // pass qty to modal
-            $('.modalCodeProd').eq(idxItem).find('.QtyH').val($('.qty').eq(idxItem).val());
+            // get unit-cmp from selected unit
+            let unitCmp = parseInt($('.units').eq(idxItem).find('option:selected').data('unitcmp'));
+            let qty = parseInt($('.qty').eq(idxItem).val());
+            let qtyUnit = qty * unitCmp;
+            // pass qtyUnit to modal
+            $('.modalCodeProd').eq(idxItem).find('.QtyH').val(qtyUnit);
+            $('.modalCodeProd').eq(idxItem).find('.usedUnit').val($('.units').eq(idxItem).find('option:first-child').text());
             calculateProdCodeQty();
             $('.modalCodeProd').eq(idxItem).modal('show');
         });
@@ -347,31 +352,32 @@
             },
             minLength: 1,
             select: function (event, data) {
+                console.log(data);
                 $('.items').eq(idxItem).val(data.item.name);
                 $('.itemsId').eq(idxItem).val(data.item.id);
                 setListUnit(data.item);
-                setStockUnit(data.item.id);
+                setStockEachUnit(data.item.id);
             }
         });
     }
-    // get list unit based on id item
+    // set list unit based on id item
     function setListUnit(item)
     {
         $(".units").eq(idxItem).empty();
         var option = '';
         if (item.unit1 != null) {
-            option += '<option value="' + item.unit1.u_id + '">' + item.unit1.u_name + '</option>';
+            option += '<option value="' + item.unit1.u_id + '" data-unitcmp="'+ item.unitcmp1 +'">' + item.unit1.u_name + '</option>';
         }
         if (item.unit2 != null && item.unit2.u_id != item.unit1.u_id) {
-            option += '<option value="' + item.unit2.u_id + '">' + item.unit2.u_name + '</option>';
+            option += '<option value="' + item.unit2.u_id + '" data-unitcmp="'+ item.unitcmp2 +'">' + item.unit2.u_name + '</option>';
         }
         if (item.unit3 != null && item.unit3.u_id != item.unit1.u_id && item.unit3.u_id != item.unit2.u_id) {
-            option += '<option value="' + item.unit3.u_id + '">' + item.unit3.u_name + '</option>';
+            option += '<option value="' + item.unit3.u_id + '" data-unitcmp="'+ item.unitcmp3 +'">' + item.unit3.u_name + '</option>';
         }
         $(".units").eq(idxItem).append(option);
     }
-    // get stock of an item
-    function setStockUnit(itemId)
+    // set stock each unit of an item
+    function setStockEachUnit(itemId)
     {
         $.ajax({
             url: baseUrl + "/inventory/distribusibarang/get-stock/" + itemId,
@@ -451,9 +457,9 @@
     // check production code qty each item
     function calculateProdCodeQty()
     {
-        QtyH = parseInt($('.modalCodeProd').eq(idxItem).find('.QtyH').val());
-        qtyWithProdCode = getQtyWithProdCode();
-        restQty = QtyH - qtyWithProdCode;
+        let QtyH = parseInt($('.modalCodeProd').eq(idxItem).find('.QtyH').val());
+        let qtyWithProdCode = getQtyWithProdCode();
+        let restQty = QtyH - qtyWithProdCode;
 
         if (restQty < 0) {
             $(':focus').val(0);
