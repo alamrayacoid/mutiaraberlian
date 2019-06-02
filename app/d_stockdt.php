@@ -14,7 +14,8 @@ class d_stockdt extends Model
     {
         $query
         ->where('sd_stock', '=', $this->getAttribute('sd_stock'))
-        ->where('sd_detailid', '=', $this->getAttribute('sd_detailid'));
+        ->where('sd_detailid', '=', $this->getAttribute('sd_detailid'))
+        ->where('sd_code', '=', $this->getAttribute('sd_code'));
         return $query;
     }
 }

@@ -266,7 +266,7 @@ class DistribusiController extends Controller
                     if ($mutDist !== 'success') {
                         return $mutDist;
                     }
-                    
+
                     $startProdCodeIdx += $prodCodeLength;
                 }
             }
@@ -409,17 +409,6 @@ class DistribusiController extends Controller
 
         DB::beginTransaction();
         try {
-            // validate production-code is exist in stock-item
-            $validateProdCode = Mutasi::validateProductionCode(
-                Auth::user()->u_company, // from
-                $request->itemsId, // item-id
-                $request->prodCode, // production-code
-                $request->prodCodeLength // production-code length each item
-            );
-            if (!is_bool($validateProdCode)) {
-                return $validateProdCode;
-            }
-
             // get stockdist
             $stockdist = d_stockdistribution::where('sd_id', $id)
                 ->with('getDistributionDt.getProdCode')
@@ -428,21 +417,35 @@ class DistribusiController extends Controller
             $startProdCodeIdx = 0;
             // count skipped index based on 'isDeleted' row
             $skippedIndex = 0;
-            // start : loop each item (rollback distribution)
+            // set list-items-id, used for validate production-code
+            $listItemsId = [];
+            // start : loop each item (rollback stock-mutation distribution)
             foreach ($request->itemsId as $key => $val) {
                 // if the item is being deleted -> rollback-distribution
                 if ($request->isDeleted[$key] == 'true') {
                     // rollBack qty in stock-mutation and stock-item
-                    $rollbackDist = Mutasi::rollbackDistribusi(
-                        $stockdist->sd_nota,
-                        $val
+                    $rollbackDist = Mutasi::rollbackStockMutDist(
+                        $stockdist->sd_nota, // dist-nota
+                        $val // itemId
                     );
-                    if (!is_bool($rollbackDist)) {
+                    if ($rollbackDist !== 'success') {
                         DB::rollback();
                         return $rollbackDist;
                     }
                     $skippedIndex += 1;
                     continue;
+                }
+                // fill $listItemsId with non-deleted items-id
+                array_push($listItemsId, $val);
+                // validate production-code is exist in stock-item
+                $validateProdCode = Mutasi::validateProductionCode(
+                    Auth::user()->u_company, // from
+                    $listItemsId, // item-id
+                    $request->prodCode, // production-code
+                    $request->prodCodeLength // production-code length each item
+                );
+                if ($validateProdCode !== 'validated') {
+                    return $validateProdCode;
                 }
 
                 // set '$key' minus by $skippedIndex
@@ -464,15 +467,16 @@ class DistribusiController extends Controller
                 $listUnitPC = [];
 
                 // if : qty in stock-mutation still 'unused'
-                if ($request->status[$key] == "unused") {
+                if ($request->status[$key] == "unused")
+                {
                     // rollBack qty in stock-mutation and stock-item
-                    $rollbackDist = Mutasi::rollbackDistribusi($stockdist->sd_nota, $val);
-                    if ($rollbackDist != true) {
+                    $rollbackDist = Mutasi::rollbackStockMutDist(
+                        $stockdist->sd_nota, // dist-nota
+                        $val // itemId
+                    );
+                    if ($rollbackDist !== 'success') {
                         DB::rollback();
-                        return response()->json([
-                            'status' => 'gagal',
-                            'message' => $rollbackDist->getMessage()
-                        ]);
+                        return $rollbackDist;
                     }
                     // waiit, check the name of $reff
                     $reff = 'DISTRIBUSI-MASUK';
@@ -487,10 +491,11 @@ class DistribusiController extends Controller
                         $listQtyPC, // list of production-code-qty
                         $listUnitPC // list of production-code-unit
                     );
-                    if (!is_bool($mutDist)) {
+                    if ($mutDist !== 'success') {
                         return $mutDist;
                     }
-                } // else : stock already 'used'
+                }
+                // else : stock already 'used'
                 elseif ($request->status[$key] == "used") {
                     // update qty in stock-mutation and in stock-item
                     $qty = $convert;

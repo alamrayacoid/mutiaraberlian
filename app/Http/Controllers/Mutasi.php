@@ -884,6 +884,7 @@ class Mutasi extends Controller
                 }
                 $startProdCodeIdx += $lengthPC;
             }
+            // dd($listItemsId);
             DB::commit();
             return 'validated';
         }
@@ -1172,13 +1173,18 @@ class Mutasi extends Controller
             ]);
         }
     }
-    // insert or update stock-detail-child also update stock-detail-parent
+    // insert or update stock-item-detail child also update stock-item-detail parent
     public static function insertStockDetail($stockParentId, $stockChildId, $listPC, $listQtyPC)
     {
         DB::beginTransaction();
         try {
             foreach ($listPC as $key => $prodCode) {
-                $qtyProdCode = $listQtyPC[$key];
+                $prodCode = strtoupper($prodCode);
+                $qtyProdCode = (int)$listQtyPC[$key];
+                // skip inserting when val is null or qty-pc is 0
+                if ($prodCode == '' || $prodCode == null || $qtyProdCode == 0) {
+                    continue;
+                }
                 // update stock-detail-parent
                 $stockDtParent = d_stockdt::where('sd_stock', $stockParentId)
                 ->where('sd_code', $prodCode)
@@ -1197,7 +1203,7 @@ class Mutasi extends Controller
                 $stockDtChild = d_stockdt::where('sd_stock', $stockChildId)
                 ->where('sd_code', $prodCode)
                 ->first();
-                print_r(is_null($stockDtChild));
+                // dd($stockChildId, $prodCode, $stockDtChild);
                 if (is_null($stockDtChild)) {
                     // set stock-dt detailid
                     $detailidSD = 1;
@@ -1227,48 +1233,42 @@ class Mutasi extends Controller
             ]);
         }
     }
-    // rollback/delete stock-detail child and update stock-detail-parent
-    public function rollbackStockDetail($smDetailStock, $smDetailPC, $smDetailQty, $mutcat)
+    // rollback/delete stock-item-detail child and update stock-item-detail parent
+    public static function rollbackStockDetail($stockDtId, $prodCode, $prodCodeQty, $mutcat)
     {
-        if ($mutcat == 18) {
-            // get stock-item-detail based-on $smItemsDetail
-            $stockItemDt = d_stockdt::where('sd_stock', $smDetailStock)
-            ->where('sd_code', $smDetailPC)
-            ->first();
-            // update stock-item-detail
-            $stockItemDt->sd_qty -= $smDetailQty;
-            $stockItemDt->save();
+        DB::beginTransaction();
+        try {
+            // update stock-child
+            if ($mutcat == 18) {
+                // get stock-item-detail based-on $smItemsDetail
+                $stockItemDt = d_stockdt::where('sd_stock', $stockDtId)
+                ->where('sd_code', $prodCode)
+                ->first();
+                // update stock-item-detail
+                $stockItemDt->sd_qty -= $prodCodeQty;
+                $stockItemDt->save();
+            }
+            // update stock-parent
+            elseif ($mutcat == 19) {
+                // get stock-item-detail based-on $smItemsDetail
+                $stockItemDtParent = d_stockdt::where('sd_stock', $stockDtId)
+                ->where('sd_code', $smDetailPC)
+                ->first();
+                // update stock-item-detail
+                $stockItemDtParent->sd_qty += $smDetailQty;
+                $stockItemDtParent->save();
+            }
 
-            // // loop each production-code and update stock-item-child production-code
-            // foreach ($smItemsDetail as $idx => $smDetail) {
-            //     // get stock-item-detail based-on $smItemsDetail
-            //     $stockItemDt = d_stockdt::where('sd_stock', $smDetail->smd_stock)
-            //     ->where('sd_code', $smDetail->smd_productioncode)
-            //     ->first();
-            //     // update stock-item-detail
-            //     $stockItemDt->sd_qty -= $smDetail->smd_qty;
-            //     $stockItemDt->save();
-            // }
+            DB::commit();
+            return 'success';
         }
-
-        // get stock-item-detail based-on $smItemsDetail
-        $stockItemDtParent = d_stockdt::where('sd_stock', $smDetailStock)
-        ->where('sd_code', $smDetailPC)
-        ->first();
-        // update stock-item-detail
-        $stockItemDtParent->sd_qty += $smDetailQty;
-        $stockItemDtParent->save();
-
-        // // loop each production-code and update stock-item-parent production-code
-        // foreach ($smItemsDetail as $idx => $smDetail) {
-        //     // get stock-item-detail based-on $smItemsDetail
-        //     $stockItemDtParent = d_stockdt::where('sd_stock', $smDetail->smd_stock)
-        //     ->where('sd_code', $smDetail->smd_productioncode)
-        //     ->first();
-        //     // update stock-item-detail
-        //     $stockItemDtParent->sd_qty += $smDetail->smd_qty;
-        //     $stockItemDtParent->save();
-        // }
+        catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     static function confirmDistribusiCabang($from, $to, $item, $nota)
@@ -1402,28 +1402,28 @@ class Mutasi extends Controller
             ]);
         }
     }
-    // delete or rollback distribution and stock-mutation
-    static function rollbackDistribusi($nota, $item)
+    // rollback stock-item and stock-mutation
+    static function rollbackStockMutDist($nota, $item)
     {
         DB::beginTransaction();
         try {
             // get stock-mutation with selected-item
-            $smItems = d_stock_mutation::where('sm_nota', '=', $nota)
+            $stockMutations = d_stock_mutation::where('sm_nota', '=', $nota)
             ->whereHas('getStock', function ($query) use ($item) {
                 $query->where('s_item', $item);
             })
             ->get();
 
-            foreach ($smItems as $key => $smItem)
+            foreach ($stockMutations as $key => $sm)
             {
+                // rollback stock-item and stock-mutation
                 // if : mutcat is 'distribution in' (18) / stock-child
-                // rollback stock-item
-                if ($smItem->sm_mutcat == 18)
+                if ($sm->sm_mutcat == 18)
                 {
                     // get stock-item based on sm_stock
-                    $stockItem = d_stock::where('s_id', $smItem->sm_stock)
+                    $stockItem = d_stock::where('s_id', $sm->sm_stock)
                     ->first();
-                    $returnQty = $stockItem->s_qty - $smItem->sm_qty;
+                    $returnQty = $stockItem->s_qty - $sm->sm_qty;
                     // if new-qty is 0, delete stock-item
                     if ($returnQty <= 0)
                     {
@@ -1437,47 +1437,78 @@ class Mutasi extends Controller
                     }
                 }
                 // else if : mutcat is 'distribution out' (19) / stock-parent
-                else if ($smItem->sm_mutcat == 19)
+                else if ($sm->sm_mutcat == 19)
                 {
                     // get stock-mutation parent
-                    $smParents = d_stock_mutation::where('sm_nota', $smItem->sm_reff)
-                    ->where('sm_stock', $smItem->sm_stock)
+                    $smParents = d_stock_mutation::where('sm_nota', $sm->sm_reff)
+                    ->where('sm_stock', $sm->sm_stock)
                     ->first();
                     // update residue and use in stock-mutation parent
-                    $smParents->sm_use -= $smItem->sm_qty;
-                    $smParents->sm_residue += $smItem->sm_qty;
+                    $smParents->sm_use -= $sm->sm_qty;
+                    $smParents->sm_residue += $sm->sm_qty;
                     $smParents->save();
-                    // get stock-item
-                    $stockItem = d_stock::where('s_id', $smParents->sm_stock)
+                    // get stock-item-parent
+                    $stockItemParent = d_stock::where('s_id', $smParents->sm_stock)
                     ->first();
                     // update qty in stock-item
-                    $stockItem->s_qty += $smItem->sm_qty;
-                    $stockItem->save();
+                    $stockItemParent->s_qty += $sm->sm_qty;
+                    $stockItemParent->save();
                 }
-                // get stock-mutation-detail
-                $smItemsDetail = d_stockmutationdt::where('smd_stock', $smItem->sm_stock)
-                ->where('smd_stockmutation', $smItem->sm_detailid)
-                ->get();
-                // rollback stock-item-detail and delete current stock-mutation detail
-                foreach ($smItemsDetail as $key => $smDetail) {
-                    // rollback stock-item-detail
-                    // $this->rollbackStockDetail(
-                    //     $smDetail->smd_stock,
-                    //     $smDetail->smd_productioncode,
-                    //     $smDetail->smd_qty,
-                    //     $smItem->sm_mutcat
-                    // );
-                    $smDetail->delete();
+
+                // rollBack stock-mutation-detail
+                $rollbackStockMutDist = self::rollbackStockMutDistDetail(
+                    $sm->sm_stock,
+                    $sm->sm_detailid,
+                    $sm->sm_mutcat
+                );
+                if ($rollbackStockMutDist !== 'success') {
+                    throw new \Exception("Mut->rollback: ". $rollbackStockMutDist->getData()->message);
                 }
-                // delete current stock-mutation with selected-item
-                $smItem->delete();
+
+                $sm->delete();
             }
 
             DB::commit();
-            return true;
+            return 'success';
         }
         catch (Exception $e) {
             DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    // rollback stock-mutation-detail
+    public static function rollbackStockMutDistDetail($smStock, $smStockDetailId, $mutcat)
+    {
+        DB::beginTransaction();
+        try {
+            // get stock-mutation-detail
+            $smItemsDetail = d_stockmutationdt::where('smd_stock', $smStock)
+            ->where('smd_stockmutation', $smStockDetailId)
+            ->get();
+
+            // rollback stock-item-detail and delete current stock-mutation detail
+            foreach ($smItemsDetail as $key => $smDetail) {
+                // rollback stock-item-detail
+                $rollbackStockDetail = self::rollbackStockDetail(
+                    $smDetail->smd_stock,
+                    $smDetail->smd_productioncode,
+                    $smDetail->smd_qty,
+                    $mutcat
+                );
+                if ($rollbackStockDetail !== 'success') {
+                    throw new \Exception($rollbackStockDetail->getData()->message);
+                }
+                $smDetail->delete();
+            }
+
+            DB::commit();
+            return 'success';
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'status' => 'gagal',
                 'message' => $e->getMessage()
