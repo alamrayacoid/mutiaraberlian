@@ -591,6 +591,52 @@ class DistribusiController extends Controller
 
     }
 
+    // what if the items has been used by others ??
+    // still get to delete it ??
+    public function hapus(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            // get stockdist
+            $stockdist = d_stockdistribution::where('sd_id', $request->id)
+            ->with('getDistributionDt.getProdCode')
+            ->first();
+
+            foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
+                // rollBack qty in stock-mutation and stock-item
+                $rollbackDist = Mutasi::rollbackStockMutDist(
+                    $stockdist->sd_nota, // distribution nota
+                    $stockdistDt->sdd_item // item-id
+                );
+                if ($rollbackDist !== 'success') {
+                    DB::rollback();
+                    return $rollbackDist;
+                }
+                // delete production-code of selected stockdistribution
+                foreach ($stockdistDt->getProdCode as $idx => $prodCode) {
+                    $prodCode->delete();
+                }
+            }
+            // delete selected stockdistribution-detail
+            foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
+                $stockdistDt->delete();
+            }
+            // delete selected stockdistribution
+            $stockdist->delete();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
     public function table(Request $request)
     {
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
@@ -742,7 +788,7 @@ class DistribusiController extends Controller
                     $val->sdd_item,
                     $stockdist->sd_nota
                 );
-                if (!is_bool($mutConfirm)) {
+                if ($mutConfirm !== 'success') {
                     return $mutConfirm;
                 }
             }
@@ -751,128 +797,12 @@ class DistribusiController extends Controller
             $stockdist->sd_status = 'Y';
             $stockdist->save();
 
-            DB::table('d_stock')
-                ->where('s_qty', '=', 0)
-                ->where('s_status', '=', 'ON GOING')
-                ->delete();
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
             ]);
         }
         catch (\Exception $e) {
-            DB::rollback();
-            return response()->json([
-                'status' => 'gagal',
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
-
-    public function hapus(Request $request)
-    {
-        DB::beginTransaction();
-        try {
-            // get stockdist
-            $stockdist = d_stockdistribution::where('sd_id', $request->id)
-            ->with('getDistributionDt.getProdCode')
-            ->first();
-
-            foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
-                // rollBack qty in stock-mutation and stock-item
-                $rollbackDist = Mutasi::rollbackDistribusi(
-                    $stockdist->sd_nota, // distribution nota
-                    $stockdistDt->sdd_item // item-id
-                );
-                if (!is_bool($rollbackDist)) {
-                    DB::rollback();
-                    return $rollbackDist;
-                }
-                // delete production-code of selected stockdistribution
-                foreach ($stockdistDt->getProdCode as $idx => $prodCode) {
-                    $prodCode->delete();
-                }
-            }
-            // delete selected stockdistribution-detail
-            foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
-                $stockdistDt->delete();
-            }
-            // delete selected stockdistribution
-            $stockdist->delete();
-
-            //
-            // $parrent = DB::table('d_stockdistribution')
-            //     ->where('sd_id', $request->id)
-            //     ->first();
-            //
-            // $tmp = DB::table('d_stock_mutation')
-            //     ->where('sm_nota', $parrent->sd_nota)
-            //     ->get();
-            //
-            // $mutcatmasuk = DB::table('m_mutcat')->where('m_name', 'Distribusi Cabang Masuk')->first();
-            // $mutcatkeluar = DB::table('m_mutcat')->where('m_name', 'Distribusi Cabang Keluar')->first();
-            //
-            // $reff = [];
-            // $status = 'no';
-            // for ($i = 0; $i < count($tmp); $i++) {
-            //     if ($tmp[$i]->sm_mutcat == $mutcatkeluar->m_id) {
-            //         $reff[] = $tmp[$i]->sm_reff;
-            //     }
-            //     if ($tmp[$i]->sm_mutcat == $mutcatmasuk->m_id) {
-            //         if ($tmp[$i]->sm_use > 0) {
-            //             $status = 'yes';
-            //         }
-            //     }
-            //
-            // }
-            //
-            // if ($status == 'no') {
-            //     DB::table('d_stockdistribution')
-            //         ->where('sd_id', $request->id)
-            //         ->delete();
-            //
-            //     $dt = DB::table('d_stockdistributiondt')
-            //         ->where('sdd_stockdistribution', $request->id)
-            //         ->get();
-            //
-            //     DB::table('d_stockdistributiondt')
-            //         ->where('sdd_stockdistribution', $request->id)
-            //         ->delete();
-            //
-            //     DB::table('d_stock_mutation')
-            //         ->where('sm_nota', $parrent->sd_nota)
-            //         ->delete();
-            //
-            //     for ($i = 0; $i < count($dt); $i++) {
-            //         DB::table('d_stock')
-            //             ->where('s_comp', $dt[$i]->sdd_comp)
-            //             ->where('s_position', $parrent->sd_destination)
-            //             ->where('s_item', $dt[$i]->sdd_item)
-            //             ->where('s_status', 'ON DESTINATION')
-            //             ->where('s_condition', 'FINE')
-            //             ->update([
-            //                 's_qty' => DB::raw('s_qty - ' . $dt[$i]->sdd_qty)
-            //             ]);
-            //
-            //         DB::table('d_stock_mutation')
-            //             ->where('sm_nota', $reff[$i])
-            //             ->update([
-            //                 'sm_use' => DB::raw('sm_use - ' . $dt[$i]->sdd_qty),
-            //                 'sm_residue' => DB::raw('sm_residue + ' . $dt[$i]->sdd_qty)
-            //             ]);
-            //     }
-            // } elseif ($status == 'yes') {
-            //     return response()->json([
-            //         'status' => 'failed',
-            //         'ex' => 'Stock yang ada digudang tujuan sudah digunakan'
-            //     ]);
-            // }
-
-            DB::commit();
-            return response()->json([
-                'status' => 'berhasil'
-            ]);
-        } catch (Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',

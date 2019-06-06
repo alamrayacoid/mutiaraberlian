@@ -884,7 +884,7 @@ class Mutasi extends Controller
                 }
                 $startProdCodeIdx += $lengthPC;
             }
-            // dd($listItemsId);
+
             DB::commit();
             return 'validated';
         }
@@ -1102,6 +1102,7 @@ class Mutasi extends Controller
                     'sm_user' => Auth::user()->u_id,
                 );
                 d_stock_mutation::insert($mutasi);
+
                 // insert new stock-mutation-detail production-code
                 $insertSMProdCode = self::insertStockMutationDt($stockId, $smDetailId, $listPC, $listQtyPC);
                 if ($insertSMProdCode !== 'success') {
@@ -1134,6 +1135,7 @@ class Mutasi extends Controller
             ]);
         }
     }
+    // insert
     public static function insertStockMutationDt($stockId, $smDetailId, $listPC, $listQtyPC)
     {
         DB::beginTransaction();
@@ -1197,17 +1199,17 @@ class Mutasi extends Controller
                     $stockDtParent->sd_qty -= $qtyProdCode;
                     $stockDtParent->save();
                 }
-                // duplicate constraint ??????
-                // alternative : create another function and call it
                 // get stock-detail
                 $stockDtChild = d_stockdt::where('sd_stock', $stockChildId)
                 ->where('sd_code', $prodCode)
                 ->first();
-                // dd($stockChildId, $prodCode, $stockDtChild);
+
+                // set stock-dt detailid
+                $detailidSD = d_stockdt::where('sd_stock', $stockChildId)
+                ->max('sd_detailid') + 1;
+
+                // insert new stock-detail
                 if (is_null($stockDtChild)) {
-                    // set stock-dt detailid
-                    $detailidSD = 1;
-                    // insert new stock-detail
                     $stockDt = new d_stockdt;
                     $stockDt->sd_stock = $stockChildId;
                     $stockDt->sd_detailid = $detailidSD;
@@ -1215,8 +1217,8 @@ class Mutasi extends Controller
                     $stockDt->sd_qty = $qtyProdCode;
                     $stockDt->save();
                 }
+                // update stock-detail-child
                 else {
-                    // update stock-detail-child
                     $stockDtChild->sd_qty += $qtyProdCode;
                     $stockDtChild->update();
                 }
@@ -1224,175 +1226,6 @@ class Mutasi extends Controller
 
             DB::commit();
             return 'success';
-        }
-        catch (\Exception $e) {
-            DB::rollback();
-            return response()->json([
-                'status' => 'gagal',
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
-    // rollback/delete stock-item-detail child and update stock-item-detail parent
-    public static function rollbackStockDetail($stockDtId, $prodCode, $prodCodeQty, $mutcat)
-    {
-        DB::beginTransaction();
-        try {
-            // update stock-child
-            if ($mutcat == 18) {
-                // get stock-item-detail based-on $smItemsDetail
-                $stockItemDt = d_stockdt::where('sd_stock', $stockDtId)
-                ->where('sd_code', $prodCode)
-                ->first();
-                // update stock-item-detail
-                $stockItemDt->sd_qty -= $prodCodeQty;
-                $stockItemDt->save();
-            }
-            // update stock-parent
-            elseif ($mutcat == 19) {
-                // get stock-item-detail based-on $smItemsDetail
-                $stockItemDtParent = d_stockdt::where('sd_stock', $stockDtId)
-                ->where('sd_code', $smDetailPC)
-                ->first();
-                // update stock-item-detail
-                $stockItemDtParent->sd_qty += $smDetailQty;
-                $stockItemDtParent->save();
-            }
-
-            DB::commit();
-            return 'success';
-        }
-        catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'status' => 'gagal',
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
-
-    static function confirmDistribusiCabang($from, $to, $item, $nota)
-    {
-        DB::beginTransaction();
-        try {
-            // date now
-            $dateNow = Carbon::now();
-            // get stock-selected-item with 'On Going' status
-            $stockBefore = d_stock::where('s_comp', $from)
-                ->where('s_position', $to)
-                ->where('s_item', $item)
-                ->where('s_status', 'ON GOING')
-                ->where('s_condition', 'FINE')
-                ->with(['getMutation' => function ($query) use ($nota) {
-                    $query
-                        ->where('sm_nota', $nota);
-                }])
-                ->first();
-
-            // get stock-mutation-dt by $stockBefore
-            $stockMutationDt = d_stockmutationdt::where('smd_stock', $stockBefore->getMutation[0]->sm_stock)
-                ->where('smd_stockmutation', $stockBefore->getMutation[0]->sm_detailid)
-                ->get();
-
-            // get stock-selected-item with 'On Destination' status (stockAccepted)
-            $stockAccepted = d_stock::where('s_comp', $from)
-                ->where('s_position', $to)
-                ->where('s_item', $item)
-                ->where('s_status', 'ON DESTINATION')
-                ->where('s_condition', 'FINE')
-                ->first();
-
-            // get qty from stock-mutation
-            $qtyFromMutation = $stockBefore->getMutation[0]->sm_qty;
-
-            // if exist stock-Accepted
-            if ($stockAccepted != null)
-            {
-                $stockId = $stockAccepted->s_id;
-                // add qty from $stockBefore to stockAccepted
-                $stockAccepted->s_qty = $stockAccepted->s_qty + $qtyFromMutation;
-                $stockAccepted->save();
-
-                // set stock-mutation detailid
-                $smDetailId = d_stock_mutation::where('sm_stock', $stockId)
-                ->max('sm_detailid') + 1;
-            }
-            // if not-exist stock-Accepted
-            else
-            {
-                // insert new stock-item
-                $stockId = d_stock::max('s_id') + 1;
-                $stock = array(
-                    's_id' => $stockId,
-                    's_comp' => $stockBefore->s_comp,
-                    's_position' => $stockBefore->s_position,
-                    's_item' => $item,
-                    's_qty' => $qtyFromMutation,
-                    's_status' => 'ON DESTINATION',
-                    's_condition' => 'FINE',
-                    's_created_at' => $dateNow,
-                    's_updated_at' => $dateNow
-                );
-                d_stock::insert($stock);
-
-                // set stock-mutation detailid
-                $smDetailId = 1;
-            }
-
-            // duplicate current stockmutation and insert new one with different id
-            $mutasi = array(
-                'sm_stock' => $stockId,
-                'sm_detailid' => $smDetailId,
-                'sm_date' => $dateNow,
-                'sm_mutcat' => $stockBefore->getMutation[0]->sm_mutcat,
-                'sm_qty' => $stockBefore->getMutation[0]->sm_qty,
-                'sm_use' => $stockBefore->getMutation[0]->sm_use,
-                'sm_residue' => $stockBefore->getMutation[0]->sm_residue,
-                'sm_hpp' => $stockBefore->getMutation[0]->sm_hpp,
-                'sm_sell' => $stockBefore->getMutation[0]->sm_sell,
-                'sm_nota' => $stockBefore->getMutation[0]->sm_nota,
-                'sm_reff' => $stockBefore->getMutation[0]->sm_reff,
-                'sm_user' => Auth::user()->u_id,
-            );
-            d_stock_mutation::insert($mutasi);
-
-            // duplicate stock-mutation-dt with different smd_stock also smd_stockmutation
-            foreach ($stockMutationDt as $key => $val) {
-                $detailidPC = DB::table('d_stockmutationdt')
-                ->where('smd_stock', $stockId)
-                ->where('smd_stockmutation', $smDetailId)
-                ->max('smd_detailid') + 1;
-
-                $mutationDt = array(
-                    'smd_stock' => $stockId,
-                    'smd_stockmutation' => $smDetailId,
-                    'smd_detailid' => $detailidPC,
-                    'smd_productioncode' => $val->smd_productioncode,
-                    'smd_qty' => $val->smd_qty,
-                    // 'smd_unit' => $val->smd_unit
-                );
-                d_stockmutationdt::insert($mutationDt);
-            }
-
-            // delete stock-mutation before
-            $stockBefore->getMutation[0]->delete();
-
-            // delete stock-mutation-dt before
-            foreach ($stockMutationDt as $key => $val) {
-                $val->delete();
-            }
-
-            // update stock-before qty
-            $stockBefore->s_qty = $stockBefore->s_qty - $qtyFromMutation;
-            $stockBefore->save();
-
-            // delete 'On Going' stock if qty is 0
-            if ($stockBefore->s_qty == 0) {
-                $stockBefore->delete();
-            }
-
-            DB::commit();
-            return true;
         }
         catch (\Exception $e) {
             DB::rollback();
@@ -1413,6 +1246,14 @@ class Mutasi extends Controller
                 $query->where('s_item', $item);
             })
             ->get();
+
+            // get stock-mutation parent
+            foreach ($stockMutations as $key => $sm) {
+                if ($sm->sm_mutcat == 19) {
+                    $smStockParent = $sm->sm_stock;
+                    $smReff = $sm->sm_reff;
+                }
+            }
 
             foreach ($stockMutations as $key => $sm)
             {
@@ -1435,6 +1276,17 @@ class Mutasi extends Controller
                         $stockItem->s_qty = $returnQty;
                         $stockItem->save();
                     }
+
+                    // rollBack stock-mutation-detail
+                    $rollbackStockMutDist = self::rollbackStockMutDistDetail(
+                        $smStockParent,
+                        $smReff,
+                        $sm->sm_stock,
+                        $sm->sm_detailid
+                    );
+                    if ($rollbackStockMutDist !== 'success') {
+                        throw new \Exception("Mut->rollback: ". $rollbackStockMutDist->getData()->message);
+                    }
                 }
                 // else if : mutcat is 'distribution out' (19) / stock-parent
                 else if ($sm->sm_mutcat == 19)
@@ -1455,16 +1307,6 @@ class Mutasi extends Controller
                     $stockItemParent->save();
                 }
 
-                // rollBack stock-mutation-detail
-                $rollbackStockMutDist = self::rollbackStockMutDistDetail(
-                    $sm->sm_stock,
-                    $sm->sm_detailid,
-                    $sm->sm_mutcat
-                );
-                if ($rollbackStockMutDist !== 'success') {
-                    throw new \Exception("Mut->rollback: ". $rollbackStockMutDist->getData()->message);
-                }
-
                 $sm->delete();
             }
 
@@ -1480,7 +1322,7 @@ class Mutasi extends Controller
         }
     }
     // rollback stock-mutation-detail
-    public static function rollbackStockMutDistDetail($smStock, $smStockDetailId, $mutcat)
+    public static function rollbackStockMutDistDetail($smStockParent, $smReff, $smStock, $smStockDetailId)
     {
         DB::beginTransaction();
         try {
@@ -1493,14 +1335,16 @@ class Mutasi extends Controller
             foreach ($smItemsDetail as $key => $smDetail) {
                 // rollback stock-item-detail
                 $rollbackStockDetail = self::rollbackStockDetail(
+                    $smStockParent,
+                    $smReff,
                     $smDetail->smd_stock,
                     $smDetail->smd_productioncode,
-                    $smDetail->smd_qty,
-                    $mutcat
+                    $smDetail->smd_qty
                 );
                 if ($rollbackStockDetail !== 'success') {
                     throw new \Exception($rollbackStockDetail->getData()->message);
                 }
+                // delete current stock-mutation-detail
                 $smDetail->delete();
             }
 
@@ -1515,7 +1359,50 @@ class Mutasi extends Controller
             ]);
         }
     }
+    // rollback/delete stock-item-detail child and update stock-item-detail parent
+    public static function rollbackStockDetail($smStockParent, $smReff, $stockDtId, $prodCode, $prodCodeQty)
+    {
+        DB::beginTransaction();
+        try {
+            // get stock-mutation-parent
+            $smParent = d_stock_mutation::where('sm_nota', $smReff)
+            ->where('sm_stock', $smStockParent)
+            ->first();
 
+            // update stock-child
+            $stockItemDt = d_stockdt::where('sd_stock', $stockDtId)
+            ->where('sd_code', $prodCode)
+            ->first();
+            // update stock-item-detail
+            $stockItemDt->sd_qty -= $prodCodeQty;
+            $stockItemDt->save();
+
+            // delete stock-detail child if has zero qty
+            if ($stockItemDt->sd_qty <= 0) {
+                $stockItemDt->delete();
+            }
+
+            // update stock-parent
+            $stockItemDtParent = d_stockdt::where('sd_stock', $smParent->sm_stock)
+            ->where('sd_code', $prodCode)
+            ->first();
+            // update stock-item-detail parent
+            $stockItemDtParent->sd_qty += $prodCodeQty;
+            $stockItemDtParent->save();
+
+            DB::commit();
+            return 'success';
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    // update
     static function updateDistribusi($nota, $item, $qty, $listPC, $listQtyPC, $listUnitPC)
     {
         DB::beginTransaction();
@@ -1541,6 +1428,51 @@ class Mutasi extends Controller
                     // update qty in stock-item
                     $stockItem->s_qty += $diffQty;
                     $stockItem->save();
+
+                    //-------------------------------//-------------------------------//------------
+                    // get stock-mutation parent
+                    foreach ($smItems as $key => $sm) {
+                        if ($sm->sm_mutcat == 19) {
+                            $smStockParent = $sm->sm_stock;
+                            $smReff = $sm->sm_reff;
+                        }
+                    }
+                    // rollBack stock-mutation-detail and stock-detail (inside rollback-mut func)
+                    $rollbackStockMutDist = self::rollbackStockMutDistDetail(
+                        $smStockParent,
+                        $smReff,
+                        $val->sm_stock,
+                        $val->sm_detailid
+                    );
+                    if ($rollbackStockMutDist !== 'success') {
+                        throw new \Exception("Mut->rollback: ". $rollbackStockMutDist->getData()->message);
+                    }
+
+                    // insert new stock-mutation-detail production-code
+                    $insertSMProdCode = self::insertStockMutationDt(
+                        $val->sm_stock,
+                        $val->sm_detailid,
+                        $listPC,
+                        $listQtyPC
+                    );
+                    if ($insertSMProdCode !== 'success') {
+                        throw new Exception("Mut->insert SMDT: ". $insertSMProdCode->getData()->message);
+                    }
+
+                    // insert new stock-detail production-code
+                    $stockParentId = $smStockParent;
+                    $stockChildId = $val->sm_stock;
+                    $insertStockDt = self::insertStockDetail(
+                        $stockParentId,
+                        $stockChildId,
+                        $listPC,
+                        $listQtyPC
+                    );
+                    if ($insertStockDt !== 'success') {
+                        throw new Exception($insertStockDt->getData()->message);
+                    }
+                    //-------------------------------//-------------------------------//------------
+
                 }
                 else if ($val->sm_mutcat == 19)
                 {
@@ -1561,56 +1493,6 @@ class Mutasi extends Controller
                     $stockItem->save();
                 }
 
-                // rollback stock-item-detail and delete current stock-mutation detail
-                $smItemsDetail = d_stockmutationdt::where('smd_stock', $val->sm_stock)
-                ->where('smd_stockmutation', $val->sm_detailid)
-                ->get();
-                foreach ($smItemsDetail as $key => $smDetail) {
-                    // // rollback stock-item-detail
-                    // $this->rollbackStockDetail(
-                    //     $smDetail->smd_stock,
-                    //     $smDetail->smd_productioncode,
-                    //     $smDetail->smd_qty,
-                    //     $smItem->sm_mutcat
-                    // );
-                    $smDetail->delete();
-                }
-
-                if ($val->sm_mutcat == 18)
-                {
-                    // insert new mutation-detail (filled with production-code of the products)
-                    foreach ($listPC as $key => $PC) {
-                        $PC = strtoupper($PC);
-                        // skip inserting when val is null or qty-pc is 0
-                        if ($PC == '' || $PC == null || $listQtyPC[$key] == 0) {
-                            continue;
-                        }
-                        $detailidPC = d_stockmutationdt::where('smd_stock', $val->sm_stock)
-                        ->where('smd_stockmutation', $val->sm_detailid)
-                        ->max('smd_detailid') + 1;
-                        // insert new stock-mutation-detail
-                        $mutationDt = array(
-                            'smd_stock' => $val->sm_stock,
-                            'smd_stockmutation' => $val->sm_detailid,
-                            'smd_detailid' => $detailidPC,
-                            'smd_productioncode' => $PC,
-                            'smd_qty' => $listQtyPC[$key],
-                            // 'smd_unit' => $listUnitPC[$key]
-                        );
-                        d_stockmutationdt::insert($mutationDt);
-
-                        // dd('oke', $smParents);
-
-                        // // insert new stock-detail
-                        // $smParents = d_stock_mutation::where('sm_nota', $val->sm_reff)
-                        // ->where('sm_stock', $val->sm_stock)
-                        // ->first();
-                        // if ($val->sm_mutcat == 18) {
-                        //     // $this->insertStockDetail($smParents->sm_stock)
-                        //     // public function insertStockDetail($stockParentId, $stockChildId, $prodCode, $qtyProdCode)
-                        // }
-                    }
-                }
                 // update current stock-mutation
                 $val->sm_qty = (int)$qty;
                 $val->save();
@@ -1627,6 +1509,166 @@ class Mutasi extends Controller
             ]);
         }
 
+    }
+
+    static function confirmDistribusiCabang($from, $to, $item, $nota)
+    {
+        DB::beginTransaction();
+        try {
+            // date now
+            $dateNow = Carbon::now();
+            // get stock-selected-item with 'On Going' status
+            $stockBefore = d_stock::where('s_comp', $from)
+            ->where('s_position', $to)
+            ->where('s_item', $item)
+            ->where('s_status', 'ON GOING')
+            ->where('s_condition', 'FINE')
+            ->with(['getMutation' => function ($query) use ($nota) {
+                $query->where('sm_nota', $nota);
+            }])
+            ->first();
+
+            // get stock-mutation parent
+            $smParent = d_stock_mutation::where('sm_nota', $nota)
+            ->whereHas('getStock', function ($query) use ($item) {
+                $query->where('s_item', $item);
+            })
+            ->get();
+            // get stock-mutation parent id and reff
+            foreach ($smParent as $key => $sm) {
+                if ($sm->sm_mutcat == 19) {
+                    $smStockParent = $sm->sm_stock;
+                    $smReff = $sm->sm_reff;
+                }
+            }
+
+            // get stock-mutation-dt by $stockBefore
+            $stockMutationDt = d_stockmutationdt::where('smd_stock', $stockBefore->getMutation[0]->sm_stock)
+            ->where('smd_stockmutation', $stockBefore->getMutation[0]->sm_detailid)
+            ->get();
+
+            // get stock-selected-item with 'On Destination' status (stockAccepted)
+            $stockAccepted = d_stock::where('s_comp', $from)
+            ->where('s_position', $to)
+            ->where('s_item', $item)
+            ->where('s_status', 'ON DESTINATION')
+            ->where('s_condition', 'FINE')
+            ->first();
+
+            // get qty from stock-mutation
+            $qtyFromMutation = $stockBefore->getMutation[0]->sm_qty;
+
+            // if exist stock-Accepted, update qty
+            if ($stockAccepted != null)
+            {
+                $stockId = $stockAccepted->s_id;
+                // add qty from $stockBefore to stockAccepted
+                $stockAccepted->s_qty = $stockAccepted->s_qty + $qtyFromMutation;
+                $stockAccepted->save();
+
+                // set stock-mutation detailid
+                $smDetailId = d_stock_mutation::where('sm_stock', $stockId)
+                ->max('sm_detailid') + 1;
+            }
+            // if not-exist stock-Accepted, insert new stock
+            else
+            {
+                // insert new stock-item
+                $stockId = d_stock::max('s_id') + 1;
+                $stock = array(
+                's_id' => $stockId,
+                's_comp' => $stockBefore->s_comp,
+                's_position' => $stockBefore->s_position,
+                's_item' => $item,
+                's_qty' => $qtyFromMutation,
+                's_status' => 'ON DESTINATION',
+                's_condition' => 'FINE',
+                's_created_at' => $dateNow,
+                's_updated_at' => $dateNow
+                );
+                d_stock::insert($stock);
+
+                // set stock-mutation detailid
+                $smDetailId = 1;
+            }
+
+            // rollBack stock-mutation, stock-mutation-detail and stock-detail (inside rollback-mut func)
+            $rollbackStockMutDist = self::rollbackStockMutDist(
+                $nota,
+                $item
+            );
+            if ($rollbackStockMutDist !== 'success') {
+                throw new \Exception("Acc->rollback: ". $rollbackStockMutDist->getData()->message);
+            }
+
+            // duplicate current stockmutation and insert new one with different id
+            $mutasi = array(
+                'sm_stock' => $stockId,
+                'sm_detailid' => $smDetailId,
+                'sm_date' => $dateNow,
+                'sm_mutcat' => $stockBefore->getMutation[0]->sm_mutcat,
+                'sm_qty' => $stockBefore->getMutation[0]->sm_qty,
+                'sm_use' => $stockBefore->getMutation[0]->sm_use,
+                'sm_residue' => $stockBefore->getMutation[0]->sm_residue,
+                'sm_hpp' => $stockBefore->getMutation[0]->sm_hpp,
+                'sm_sell' => $stockBefore->getMutation[0]->sm_sell,
+                'sm_nota' => $stockBefore->getMutation[0]->sm_nota,
+                'sm_reff' => $stockBefore->getMutation[0]->sm_reff,
+                'sm_user' => Auth::user()->u_id,
+            );
+            d_stock_mutation::insert($mutasi);
+
+            $listPC = array();
+            $listQtyPC = array();
+            $listUnitPC = array();
+            // get list production-code and list each qty
+            foreach ($stockMutationDt as $key => $val) {
+                array_push($listPC, $val->smd_productioncode);
+                array_push($listQtyPC, $val->smd_qty);
+                array_push($listUnitPC, $val->smd_unit);
+            }
+
+            // insert new stock-mutation-detail
+            $insertSMProdCode = self::insertStockMutationDt(
+                $stockId,
+                $smDetailId,
+                $listPC,
+                $listQtyPC
+            );
+            if ($insertSMProdCode !== 'success') {
+                throw new \Exception("Acc->Insert mutation DT: ". $insertSMProdCode->getData()->message);
+            }
+
+            $stockParentId = $smStockParent;
+            $stockChildId = $stockId;
+            $insertStockDt = self::insertStockDetail(
+                $stockParentId,
+                $stockChildId,
+                $listPC,
+                $listQtyPC
+            );
+            if ($insertStockDt !== 'success') {
+                throw new \Exception("Acc->Insert stock DT: ". $insertStockDt->getData()->message);
+            }
+
+            // update stock-before qty
+            $stockBefore->s_qty = $stockBefore->s_qty - $qtyFromMutation;
+            $stockBefore->save();
+            // delete 'On Going' stock if qty is 0
+            if ($stockBefore->s_qty == 0) {
+                $stockBefore->delete();
+            }
+
+            DB::commit();
+            return 'success';
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
 }
