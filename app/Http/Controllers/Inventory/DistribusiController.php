@@ -158,9 +158,9 @@ class DistribusiController extends Controller
     // store new-distribusibarang to db
     public function store(Request $request)
     {
-        // if (!AksesUser::checkAkses(7, 'create')){
-        //     abort(401);
-        // }
+        if (!AksesUser::checkAkses(7, 'create')){
+            abort(401);
+        }
 
         // validate request
         $isValidRequest = $this->validateDist($request);
@@ -307,9 +307,9 @@ class DistribusiController extends Controller
     // edit selected item
     public function edit($id)
     {
-        // if (!AksesUser::checkAkses(7, 'edit')){
-        //     abort(401);
-        // }
+        if (!AksesUser::checkAkses(7, 'edit')){
+            abort(401);
+        }
 
         // get stockdistribution by id
         $data['stockdist'] = d_stockdistribution::where('sd_id', decrypt($id))
@@ -393,9 +393,9 @@ class DistribusiController extends Controller
     public function update(Request $request, $id)
     {
         // dd($request->all());
-        // if (!AksesUser::checkAkses(7, 'edit')){
-        //     abort(401);
-        // }
+        if (!AksesUser::checkAkses(7, 'edit')){
+            abort(401);
+        }
 
         // validate request
         $isValidRequest = $this->validateDist($request);
