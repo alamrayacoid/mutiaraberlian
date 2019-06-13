@@ -723,18 +723,18 @@ class MarketingAreaController extends Controller
 
         return DataTables::of($data)
             ->editColumn('pod_price', function ($data){
-                return "Rp." . number_format($data->pod_price, "0", ",", ".");
+                return "<span class='modaldtharga-".$data->pod_item."'>Rp." . number_format($data->pod_price, "0", ",", ".") . "</span><input type='hidden' value='".$data->pod_price."' class='input-modaldtharga".$data->pod_item."'>";
             })
             ->editColumn('pod_totalprice', function ($data){
-                return "Rp." . number_format($data->pod_totalprice, "0", ",", ".");
+                return "<span class='modaldtsubharga-".$data->pod_item."'>Rp." . number_format($data->pod_totalprice, "0", ",", ".") . "</span>";
             })
             ->addColumn('kode', function ($data){
                 return "<div class='text-center' style='width: 100%'><button type='button' onclick='addCodeProd(".$data->po_id.", ".$data->pod_item.",\"".$data->i_name."\")' class='btn btn-info btn-xs'><i class='fa fa-plus'></i> Kode Produksi</button></div>";
             })
             ->addColumn('input', function ($data){
-                return "<div class='text-center'><input type='number' style='text-align: right; width: 100%;' class='input-qty-proses' name='qty_proses[]' value='".$data->pod_qty."'></div>";
+                return "<div class='text-center'><input type='number' onkeyup='getHargaGolongan(".$data->pod_item.")' onchange='getHargaGolongan(".$data->pod_item.")' style='text-align: right; width: 100%;' class='input-qty-proses qty-modaldt-".$data->pod_item."' name='qty_proses[]' value='".$data->pod_qty."'></div>";
             })
-            ->rawColumns(['kode', 'input'])
+            ->rawColumns(['kode', 'input', 'pod_price', 'pod_totalprice'])
             ->make(true);
 
     }
