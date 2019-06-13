@@ -897,7 +897,6 @@ class Mutasi extends Controller
         }
 
     }
-
     // ...PC = production-code
     static function distribusicabangkeluar($from, $to, $item, $qty, $nota, $reff, $listPC, $listQtyPC, $listUnitPC)
     {
@@ -1246,7 +1245,6 @@ class Mutasi extends Controller
                 $query->where('s_item', $item);
             })
             ->get();
-
             // get stock-mutation parent
             foreach ($stockMutations as $key => $sm) {
                 if ($sm->sm_mutcat == 19) {
@@ -1401,8 +1399,7 @@ class Mutasi extends Controller
             ]);
         }
     }
-
-    // update
+    // update distrtibution
     static function updateDistribusi($nota, $item, $qty, $listPC, $listQtyPC, $listUnitPC)
     {
         DB::beginTransaction();
@@ -1510,7 +1507,7 @@ class Mutasi extends Controller
         }
 
     }
-
+    // receive distribution items
     static function confirmDistribusiCabang($from, $to, $item, $nota)
     {
         DB::beginTransaction();

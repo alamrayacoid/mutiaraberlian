@@ -13,7 +13,7 @@
                         <label for="">Item tanpa kode produksi : </label>
                     </div>
                     <div class="col-md-3 col-sm-6">
-                        <input type="hidden" class="QtyH" value="">
+                        <input type="hidden" class="QtyH" value="0">
                         <input type="text" class="form-control form-control-plaintext border-bottom digits restQty" name="" value="10.000" readonly style="background-color: transparent;">
                     </div>
                     <div class="col-md-3 col-sm-6">

@@ -183,7 +183,6 @@
         getFieldsReady();
         // add more item in table_items
         $('.btnAddItem').on('click', function() {
-            console.log('clicked !');
             $('#table_items').append(
             `<tr class="rowStatus">
                 <td>
@@ -300,14 +299,14 @@
         $('.btnCodeProd').on('click', function() {
             idxItem = $('.btnCodeProd').index(this);
             // get unit-cmp from selected unit
-            let unitCmp = parseInt($('.units').eq(idxItem).find('option:selected').data('unitcmp'));
-            let qty = parseInt($('.qty').eq(idxItem).val());
+            let unitCmp = parseInt($('.units').eq(idxItem).find('option:selected').data('unitcmp')) || 0;
+            let qty = parseInt($('.qty').eq(idxItem).val()) || 0;
             let qtyUnit = qty * unitCmp;
             // pass qtyUnit to modal
             $('.modalCodeProd').eq(idxItem).find('.QtyH').val(qtyUnit);
             $('.modalCodeProd').eq(idxItem).find('.usedUnit').val($('.units').eq(idxItem).find('option:first-child').text());
-            console.log('usedUnit: '+ $('.units').eq(idxItem).find('option:first-child').text());
-            console.log($('.modalCodeProd').eq(idxItem).find('.usedUnit'));
+            // console.log('usedUnit: '+ $('.units').eq(idxItem).find('option:first-child').text());
+            // console.log($('.modalCodeProd').eq(idxItem).find('.usedUnit'));
             calculateProdCodeQty();
             $('.modalCodeProd').eq(idxItem).modal('show');
         });
@@ -366,7 +365,7 @@
             $('.modalCodeProd:eq('+ key +')').find('.table_listcodeprod > tbody > tr').remove();
             if (val.get_prod_code.length > 0) {
                 $.each(val.get_prod_code, function (idx, val) {
-                    console.log(idx +': '+ val);
+                    // console.log(idx +': '+ val);
                     prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]" value="'+ val.sdc_code +'"></input></td>';
                     qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="'+ val.sdc_qty +'"></input></td>';
                     action = '<td><button class="btn btn-success btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
@@ -415,13 +414,13 @@
         $(".units").eq(idxItem).empty();
         var option = '';
         if (item.unit1 != null) {
-            option += '<option value="' + item.unit1.u_id + '">' + item.unit1.u_name + '</option>';
+            option += '<option value="' + item.unit1.u_id + '" data-unitcmp="'+ item.unitcmp1 +'">' + item.unit1.u_name + '</option>';
         }
         if (item.unit2 != null && item.unit2.u_id != item.unit1.u_id) {
-            option += '<option value="' + item.unit2.u_id + '">' + item.unit2.u_name + '</option>';
+            option += '<option value="' + item.unit2.u_id + '" data-unitcmp="'+ item.unitcmp2 +'">' + item.unit2.u_name + '</option>';
         }
         if (item.unit3 != null && item.unit3.u_id != item.unit1.u_id && item.unit3.u_id != item.unit2.u_id) {
-            option += '<option value="' + item.unit3.u_id + '">' + item.unit3.u_name + '</option>';
+            option += '<option value="' + item.unit3.u_id + '" data-unitcmp="'+ item.unitcmp3 +'">' + item.unit3.u_name + '</option>';
         }
         $(".units").eq(idxItem).append(option);
     }
@@ -435,7 +434,7 @@
                 $('.qtyStock1').eq(idxItem).val(response.unit1);
                 $('.qtyStock2').eq(idxItem).val(response.unit2);
                 $('.qtyStock3').eq(idxItem).val(response.unit3);
-                console.log($('.qtyStock1').eq(idxItem).val());
+                // console.log($('.qtyStock1').eq(idxItem).val());
             },
             error: function(xhr, status, error) {
                 loadingHide();
@@ -458,7 +457,6 @@
         } else if ($(".units").eq(idxItem).prop('selectedIndex') == 2) {
             qtyStock = $('.qtyStock3').eq(idxItem).val();
         }
-        console.log(qtyStock);
         qtyStock = parseFloat(qtyStock);
 
         if (qty > qtyStock)
@@ -501,7 +499,6 @@
                 } else if (response.status === 'gagal') {
                     messageWarning('Gagal', response.message);
                 }
-                console.log('response: '+ response);
             },
             error: function(e) {
                 loadingHide();
@@ -512,9 +509,13 @@
     // check production code qty each item
     function calculateProdCodeQty()
     {
-        let QtyH = parseInt($('.modalCodeProd').eq(idxItem).find('.QtyH').val());
+        // return qtyH to 0 if the default val is NaN
+        let QtyH = parseInt($('.modalCodeProd').eq(idxItem).find('.QtyH').val()) || 0;
         let qtyWithProdCode = getQtyWithProdCode();
         let restQty = QtyH - qtyWithProdCode;
+        console.log('QtyH: '+ QtyH);
+        console.log('qtyWithProdCode: '+ qtyWithProdCode);
+        console.log('restQty: '+ restQty);
 
         if (restQty < 0) {
             $(':focus').val(0);
@@ -530,7 +531,6 @@
     {
         let qtyWithProdCode = 0;
         $.each($('.modalCodeProd:eq('+idxItem+') .table_listcodeprod').find('.qtyProdCode'), function (key, val) {
-            console.log($(this).val());
             qtyWithProdCode += parseInt($(this).val());
         });
         return qtyWithProdCode;

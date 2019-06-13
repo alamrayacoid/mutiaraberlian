@@ -352,7 +352,6 @@
             },
             minLength: 1,
             select: function (event, data) {
-                console.log(data);
                 $('.items').eq(idxItem).val(data.item.name);
                 $('.itemsId').eq(idxItem).val(data.item.id);
                 setListUnit(data.item);

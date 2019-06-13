@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inventory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use AksesUser;
 use Auth;
 use CodeGenerator;
 use Carbon\Carbon;
@@ -158,9 +159,9 @@ class DistribusiController extends Controller
     // store new-distribusibarang to db
     public function store(Request $request)
     {
-        if (!AksesUser::checkAkses(7, 'create')){
-            abort(401);
-        }
+        // if (!AksesUser::checkAkses(7, 'create')){
+        //     abort(401);
+        // }
 
         // validate request
         $isValidRequest = $this->validateDist($request);
@@ -307,9 +308,9 @@ class DistribusiController extends Controller
     // edit selected item
     public function edit($id)
     {
-        if (!AksesUser::checkAkses(7, 'edit')){
-            abort(401);
-        }
+        // if (!AksesUser::checkAkses(7, 'update')){
+        //     abort(401);
+        // }
 
         // get stockdistribution by id
         $data['stockdist'] = d_stockdistribution::where('sd_id', decrypt($id))
@@ -393,9 +394,9 @@ class DistribusiController extends Controller
     public function update(Request $request, $id)
     {
         // dd($request->all());
-        if (!AksesUser::checkAkses(7, 'edit')){
-            abort(401);
-        }
+        // if (!AksesUser::checkAkses(7, 'update')){
+        //     abort(401);
+        // }
 
         // validate request
         $isValidRequest = $this->validateDist($request);
@@ -568,7 +569,7 @@ class DistribusiController extends Controller
                     $distcode->sdc_stockdistribution = $id;
                     $distcode->sdc_stockdistributiondt = $detailid;
                     $distcode->sdc_detailid = $detailidcode;
-                    $distcode->sdc_code = $request->prodCode[$j];
+                    $distcode->sdc_code = strtoupper($request->prodCode[$j]);
                     $distcode->sdc_qty = $request->qtyProdCode[$j];
                     $distcode->save();
                 }
@@ -595,6 +596,10 @@ class DistribusiController extends Controller
     // still get to delete it ??
     public function hapus(Request $request)
     {
+        // if (!AksesUser::checkAkses(7, 'delete')){
+        //     abort(401);
+        // }
+
         DB::beginTransaction();
         try {
             // get stockdist
@@ -637,11 +642,56 @@ class DistribusiController extends Controller
         }
     }
 
+    // confirm distribution
+    public function setAcceptance(Request $request, $id)
+    {
+        // if (!AksesUser::checkAkses(7, 'update')){
+        //     abort(401);
+        // }
+
+        DB::beginTransaction();
+        try {
+            $stockdist = d_stockdistribution::where('sd_id', $id)
+            ->with('getDistributionDt')
+            ->first();
+
+            // confirm each item
+            foreach ($stockdist->getDistributionDt as $key => $val) {
+                $mutConfirm = Mutasi::confirmDistribusiCabang(
+                    $stockdist->sd_from,
+                    $stockdist->sd_destination,
+                    $val->sdd_item,
+                    $stockdist->sd_nota
+                );
+                if ($mutConfirm !== 'success') {
+                    return $mutConfirm;
+                }
+            }
+
+            // update stockdist-status to 'Y'
+            $stockdist->sd_status = 'Y';
+            $stockdist->save();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
     public function table(Request $request)
     {
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
         $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
+            ->where('sd_status', '!=', 'Y')
             ->orderBy('sd_date', 'desc')
             ->orderBy('sd_nota', 'desc')
             ->get();
@@ -770,46 +820,5 @@ class DistribusiController extends Controller
 
         return response()->json($detail);
     }
-
-    // confirm distribution
-    public function setAcceptance(Request $request, $id)
-    {
-        DB::beginTransaction();
-        try {
-            $stockdist = d_stockdistribution::where('sd_id', $id)
-                ->with('getDistributionDt')
-                ->first();
-
-            // confirm each item
-            foreach ($stockdist->getDistributionDt as $key => $val) {
-                $mutConfirm = Mutasi::confirmDistribusiCabang(
-                    $stockdist->sd_from,
-                    $stockdist->sd_destination,
-                    $val->sdd_item,
-                    $stockdist->sd_nota
-                );
-                if ($mutConfirm !== 'success') {
-                    return $mutConfirm;
-                }
-            }
-
-            // update stockdist-status to 'Y'
-            $stockdist->sd_status = 'Y';
-            $stockdist->save();
-
-            DB::commit();
-            return response()->json([
-                'status' => 'berhasil'
-            ]);
-        }
-        catch (\Exception $e) {
-            DB::rollback();
-            return response()->json([
-                'status' => 'gagal',
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
-
 
 }
