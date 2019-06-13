@@ -739,6 +739,20 @@ class MarketingAreaController extends Controller
 
     }
 
+    public function getDetailOrderAgen(Request $request)
+    {
+        $po_id = Crypt::decrypt($request->id);
+        $data = DB::table('d_productorder')
+            ->join('m_company', 'c_id', '=', 'po_agen')
+            ->select(DB::raw('date_format(po_date, "%d-%m-%Y") as po_date'), 'c_name', 'po_nota')
+            ->where('po_id', '=', $po_id)
+            ->first();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
     public function getCodeOrder(Request $request)
     {
         $po_id = $request->id;

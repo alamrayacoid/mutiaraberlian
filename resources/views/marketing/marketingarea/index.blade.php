@@ -1,4 +1,7 @@
 @extends('main')
+@section('tittle')
+    Manajemen Marketing Area
+@endsection
 @section('extra_style')
     <style>
         @media (min-width: 992px) {
@@ -211,14 +214,14 @@
                                 <label for="">Nomor Nota</label>
                             </div>
                             <div class="col-4">
-                                <input type="text" class="form-control form-control-sm" id="nota_dtmpa" readonly="">
+                                <input type="text" class="form-control form-control-sm" id="nota_modaldt" readonly="">
                             </div>
 
                             <div class="col-2">
                                 <label for="">Tanggal</label>
                             </div>
                             <div class="col-4">
-                                <input type="text" class="form-control form-control-sm" id="date_dtmpa" readonly="">
+                                <input type="text" class="form-control form-control-sm" id="tanggal_modaldt" readonly="">
                             </div>
                         </div>
                         <div class="row" style="margin-top: 5px;">
@@ -226,14 +229,14 @@
                                 <label for="">Agen</label>
                             </div>
                             <div class="col-4">
-                                <input type="text" class="form-control form-control-sm" id="agent_dtmpa" readonly="">
+                                <input type="text" class="form-control form-control-sm" id="agen_modaldt" readonly="">
                             </div>
 
                             <div class="col-2">
                                 <label for="">Total Pembelian</label>
                             </div>
                             <div class="col-4">
-                                <input type="text" class="form-control form-control-sm rupiah" id="total_dtmpa" readonly="">
+                                <input type="text" class="form-control form-control-sm rupiah" id="total_modaldt" readonly="">
                             </div>
                         </div>
                     </section>
@@ -910,10 +913,26 @@
                 }
             });
         }
+
         var tb_listprosesorder;
         var tb_listcodeprosesorder;
+
         function approveAgen(id) {
             $('#prosesorder').modal('show');
+            axios.get('{{ route("keloladataorder.getdetailorderagen") }}', {
+                params:{
+                    id: id
+                }
+            }).then(function (response) {
+                let agen = response.data.data.c_name;
+                let nota = response.data.data.po_nota;
+                let tanggal = response.data.data.po_date;
+                $('#nota_modaldt').val(nota);
+                $('#agen_modaldt').val(agen);
+                $('#tanggal_modaldt').val(tanggal);
+            }).catch(function (error) {
+
+            });
             $('#table_prosesorder').dataTable().fnDestroy();
             tb_listprosesorder = $('#table_prosesorder').DataTable({
                 responsive: true,
@@ -939,55 +958,6 @@
                 pageLength: 10,
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
             });
-            //var approve_agen = "{{url('/marketing/marketingarea/keloladataorder/approve-agen')}}" + "/" + id;
-            /*$.confirm({
-                animation: 'RotateY',
-                closeAnimation: 'scale',
-                animationBounce: 1.5,
-                icon: 'fa fa-exclamation-triangle',
-                title: 'Pesan!',
-                content: 'Apakah anda yakin ingin approve agen ini?',
-                theme: 'disable',
-                buttons: {
-                    info: {
-                        btnClass: 'btn-blue',
-                        text: 'Ya',
-                        action: function () {
-                            return $.ajax({
-                                type: "post",
-                                url: approve_agen,
-                                data: {
-                                    "_token": "{{ csrf_token() }}"
-                                },
-                                beforeSend: function () {
-                                    loadingShow();
-                                },
-                                success: function (response) {
-                                    if (response.status == 'sukses') {
-                                        loadingHide();
-                                        messageSuccess('Berhasil', 'Agen berhasil diapprove!');
-                                        table_agen.ajax.reload();
-                                    } else {
-                                        loadingHide();
-                                        messageFailed('Gagal', response.message);
-                                    }
-                                },
-                                error: function (e) {
-                                    loadingHide();
-                                    messageWarning('Peringatan', e.message);
-                                }
-                            });
-                        }
-                    },
-                    cancel: {
-                        text: 'Tidak',
-                        action: function (response) {
-                            loadingHide();
-                            messageWarning('Peringatan', 'Anda telah membatalkan!');
-                        }
-                    }
-                }
-            });*/
         }
 
         function addCodeProd(id, item, nama){
@@ -1260,22 +1230,24 @@
         // get cities for search-agent
         function getCitiesMPA() {
             var provId = $('.provMPA').val();
-            $.ajax({
-                url: "{{ route('datacanvassing.getCitiesDC') }}",
-                type: "get",
-                data: {
-                    provId: provId
-                },
-                success: function (response) {
-                    $('.citiesMPA').empty();
-                    $(".citiesMPA").append('<option value="" selected="" disabled="">=== Pilih Kota ===</option>');
-                    $.each(response.get_cities, function (key, val) {
-                        $(".citiesMPA").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
-                    });
-                    $('.citiesMPA').focus();
-                    $('.citiesMPA').select2('open');
-                }
-            });
+            setTimeout(function(){
+                $.ajax({
+                    url: "{{ route('datacanvassing.getCitiesDC') }}",
+                    type: "get",
+                    data: {
+                        provId: provId
+                    },
+                    success: function (response) {
+                        $('.citiesMPA').empty();
+                        $(".citiesMPA").append('<option value="" selected="" disabled="">=== Pilih Kota ===</option>');
+                        $.each(response.get_cities, function (key, val) {
+                            $(".citiesMPA").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
+                        });
+                        $('.citiesMPA').focus();
+                        $('.citiesMPA').select2('open');
+                    }
+                });
+            }, 1000);
         }
 
         // this following func is using same source with Data-Canvassing
