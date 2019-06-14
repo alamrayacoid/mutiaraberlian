@@ -267,7 +267,7 @@
       <path value="$PROJECT_DIR$/vendor/zendframework/zend-diactoros" />
     </include_path>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="9" />
     <option name="y" value="20" />
     <option name="width" value="1338" />
@@ -461,7 +461,7 @@
       <workItem from="1560397101273" duration="12612000" />
       <workItem from="1560431692902" duration="1042000" />
       <workItem from="1560434890524" duration="3311000" />
-      <workItem from="1560468511811" duration="6716000" />
+      <workItem from="1560468511811" duration="7315000" />
     </task>
     <task id="LOCAL-00001" summary="roliz">
       <created>1556765610336</created>
@@ -607,10 +607,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="194936000" />
+    <option name="totallyTimeSpent" value="195535000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18078668" />
