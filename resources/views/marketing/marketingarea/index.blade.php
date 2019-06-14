@@ -230,6 +230,7 @@
                             </div>
                             <div class="col-4">
                                 <input type="text" class="form-control form-control-sm" id="agen_modaldt" readonly="">
+                                <input type="hidden" class="form-control form-control-sm" id="idagen_modaldt">
                             </div>
 
                             <div class="col-2">
@@ -260,10 +261,11 @@
                         <div class="col-4" style="padding-right: 0px;">
                             <div class="row col-12" style="padding-right: 0px;">
                                 <div class="col-8" style="padding-left: 0px !important;">
-                                    <input type="text" style="width: 100%;" class="inputkodeproduksi form-control form-control-sm" id="inputkodeproduksi" readonly>
+                                    <input type="text" onkeypress="pressCode(event)" style="width: 100%; text-transform: uppercase" class="inputkodeproduksi form-control form-control-sm" id="inputkodeproduksi" readonly>
+                                    <input type="hidden" id="iditem_modaldt">
                                 </div>
                                 <div class="input-group col-4" style="width: 100%; padding-right: 0px;">
-                                    <input type="number" class="inputqtyproduksi form-control form-control-sm" id="inputqtyproduksi" readonly>
+                                    <input type="number" onkeypress="pressCode(event)" class="inputqtyproduksi form-control form-control-sm" id="inputqtyproduksi" readonly>
                                     <span class="input-group-append">
                                         <button type="button" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i></button>
                                     </span>
@@ -930,6 +932,8 @@
                 $('#nota_modaldt').val(nota);
                 $('#agen_modaldt').val(agen);
                 $('#tanggal_modaldt').val(tanggal);
+                $('#idagen_modaldt').val(response.data.data.po_agen);
+                $('#total_modaldt').val(convertToRupiah(response.data.data.pod_totalprice));
             }).catch(function (error) {
 
             });
@@ -960,9 +964,51 @@
             });
         }
 
+        function pressCode(e) {
+            if (e.keyCode == 13){
+                addCodetoTable();
+            }
+        }
+
+        function getHargaGolongan(item) {
+            let agen = $('#idagen_modaldt').val();
+            let qty = $('.qty-modaldt-'+item).val();
+            axios.get('{{ route("orderProduk.getPrice") }}', {
+                params:{
+                    'agen': agen,
+                    'qty': qty,
+                    'item': item
+                }
+            }).then(function (response) {
+                let harga = parseInt(response.data);
+                $('.input-modaldtharga'+item).val(harga);
+                $('.modaldtharga-'+item).html(convertToRupiah(harga));
+                updateSubtotal(item);
+            }).catch(function (error) {
+
+            })
+        }
+
+        function updateSubtotal(item){
+            let qty = $('.qty-modaldt-'+item).val();
+            let harga = $('.input-modaldtharga'+item).val();
+            if (isNaN(qty)){
+                qty = 0;
+            }
+            let total = parseInt(qty) * parseInt(harga);
+            $('.modaldtsubharga-'+item).html(convertToRupiah(total));
+            $('.input-modaldtsubharga'+item).val(total);
+            let totalprice = 0;
+            $('input[name^="subtotalmodaldt"]').each(function() {
+                totalprice = totalprice + parseInt($(this).val());
+            });
+            $('#total_modaldt').val(convertToRupiah(totalprice));
+        }
+
         function addCodeProd(id, item, nama){
             $('.text-item').html(nama);
             $('#inputkodeproduksi').removeAttr('readonly');
+            $('#iditem_modaldt').val(item);
             $('#inputqtyproduksi').removeAttr('readonly');
             $('#table_prosesordercode').dataTable().fnDestroy();
             tb_listcodeprosesorder = $('#table_prosesordercode').DataTable({
@@ -991,7 +1037,27 @@
         }
 
         function addCodetoTable(){
+            let qty = $('#inputqtyproduksi').val();
+            let kode = $('#inputkodeproduksi').val();
+            let nota = $('#nota_modaldt').val();
+            let item = $('#iditem_modaldt').val();
 
+            if (isNaN(qty) || qty == '' || qty == null){
+                qty = 1;
+            }
+
+            axios.get('{{ route("keloladataorder.setKode") }}', {
+                params:{
+                    "qty": qty,
+                    "kode": kode,
+                    "nota": nota,
+                    "item": item
+                }
+            }).then(function (response) {
+                console.log(response);
+            }).catch(function (error) {
+
+            })
         }
 
         function rejectApproveAgen(id) {

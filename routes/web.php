@@ -418,7 +418,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/orderproduk/get-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getAgen')->name('orderProduk.getAgen');
     Route::get('/marketing/marketingarea/orderproduk/cari-barang', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@cariBarang')->name('orderProduk.cariBarang');
     Route::get('/marketing/marketingarea/orderproduk/get-satuan/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getSatuan')->name('orderProduk.getSatuan');
-    Route::get('/marketing/marketingarea/orderproduk/get-price', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getPrice')->name('orderProduk.getPrice');
+    Route::get('/marketing/marketingarea/orderproduk/get-price', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@cekHarga')->name('orderProduk.getPrice');
     Route::get('/marketing/marketingarea/orderproduk/delete-order/{id}/{dt}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@deleteOrder')->name('orderProduk.delete');
     Route::get('/marketing/marketingarea/orderproduk/nota/{id}/{dt}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@printNota')->name('orderProduk.nota');
     Route::get('/marketing/marketingarea/orderproduk/detail/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@detailOrder')->name('orderProduk.detail');
@@ -433,6 +433,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/keloladataorder/get-detail-order-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getDetailOrderAgen')->name('keloladataorder.getdetailorderagen');
     Route::get('/marketing/marketingarea/keloladataorder/get-detail-code-order', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getCodeOrder')->name('keloladataorder.getdetailcodeorder');
     Route::get('/marketing/marketingarea/keloladataorder/detail-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@detailAgen')->name('keloladataorder.detailAgen');
+    Route::get('/marketing/marketingarea/keloladataorder/get-harga', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getPrice')->name('keloladataorder.getPrice');
+    Route::get('/marketing/marketingarea/keloladataorder/set-kode', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@setKode')->name('keloladataorder.setKode');
     Route::post('/marketing/marketingarea/keloladataorder/reject-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@rejectAgen')->name('keloladataorder.rejectAgen');
     Route::post('/marketing/marketingarea/keloladataorder/activate-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@activateAgen')->name('keloladataorder.activateAgen');
     Route::post('/marketing/marketingarea/keloladataorder/approve-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@approveAgen')->name('keloladataorder.approveAgen');

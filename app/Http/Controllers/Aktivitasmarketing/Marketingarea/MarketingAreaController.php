@@ -224,6 +224,7 @@ class MarketingAreaController extends Controller
                     ->where('pcd_item', '=', $idItem)
                     ->where('pcd_unit', '=', $idUnit)
                     ->where('pcd_type', '=', "U")
+                    ->where('pcd_payment', '=', 'C')
                     ->where('pcd_rangeqtystart', '=', $qty)
                     ->where('pcd_rangeqtyend', '=', $qty)
                     ->first();
@@ -235,6 +236,7 @@ class MarketingAreaController extends Controller
                     ->where('pcd_item', '=', $idItem)
                     ->where('pcd_unit', '=', $idUnit)
                     ->where('pcd_type', '=', "R")
+                    ->where('pcd_payment', '=', 'C')
                     ->where('pcd_rangeqtystart', '<=', $qty)
                     ->where('pcd_rangeqtyend', '=', 0)->first();
                 if ($infinity) {
@@ -250,6 +252,7 @@ class MarketingAreaController extends Controller
                         ->where('pcd_item', '=', $idItem)
                         ->where('pcd_unit', '=', $idUnit)
                         ->where('pcd_type', '=', "R")
+                        ->where('pcd_payment', '=', 'C')
                         ->where('pcd_rangeqtystart', '<=', $qty)
                         ->where('pcd_rangeqtyend', '>=', $qty)
                         ->first();
@@ -365,7 +368,7 @@ class MarketingAreaController extends Controller
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'Gagal',
@@ -378,7 +381,7 @@ class MarketingAreaController extends Controller
     {
         try {
             $id = Crypt::decrypt($id);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return view('errors.404');
         }
 
@@ -723,10 +726,10 @@ class MarketingAreaController extends Controller
 
         return DataTables::of($data)
             ->editColumn('pod_price', function ($data){
-                return "<span class='modaldtharga-".$data->pod_item."'>Rp." . number_format($data->pod_price, "0", ",", ".") . "</span><input type='hidden' value='".$data->pod_price."' class='input-modaldtharga".$data->pod_item."'>";
+                return "<span class='modaldtharga-".$data->pod_item."'>Rp. " . number_format($data->pod_price, "0", ",", ".") . "</span><input type='hidden' value='".$data->pod_price."' class='input-modaldtharga".$data->pod_item."'>";
             })
             ->editColumn('pod_totalprice', function ($data){
-                return "<span class='modaldtsubharga-".$data->pod_item."'>Rp." . number_format($data->pod_totalprice, "0", ",", ".") . "</span>";
+                return "<span class='modaldtsubharga-".$data->pod_item."'>Rp. " . number_format($data->pod_totalprice, "0", ",", ".") . "</span><input type='hidden' value='".$data->pod_totalprice."' name='subtotalmodaldt[]' class='subtotalmodaldt input-modaldtsubharga".$data->pod_item."'>";
             })
             ->addColumn('kode', function ($data){
                 return "<div class='text-center' style='width: 100%'><button type='button' onclick='addCodeProd(".$data->po_id.", ".$data->pod_item.",\"".$data->i_name."\")' class='btn btn-info btn-xs'><i class='fa fa-plus'></i> Kode Produksi</button></div>";
@@ -743,9 +746,11 @@ class MarketingAreaController extends Controller
     {
         $po_id = Crypt::decrypt($request->id);
         $data = DB::table('d_productorder')
+            ->join('d_productorderdt', 'pod_productorder', '=', 'po_id')
             ->join('m_company', 'c_id', '=', 'po_agen')
-            ->select(DB::raw('date_format(po_date, "%d-%m-%Y") as po_date'), 'c_name', 'po_nota')
+            ->select(DB::raw('date_format(po_date, "%d-%m-%Y") as po_date'), 'c_name', 'po_nota', 'po_agen', DB::raw('floor(sum(pod_totalprice)) as pod_totalprice'))
             ->where('po_id', '=', $po_id)
+            ->groupBy('po_id')
             ->first();
 
         return response()->json([
@@ -931,6 +936,114 @@ class MarketingAreaController extends Controller
             'agen1' => $order,
             'agen2' => $produk
         ));
+    }
+
+    function existsInArray($entry, $array)
+    {
+        $x = false;
+        foreach ($array as $compare) {
+            if ($compare->pcd_type == $entry) {
+                $x = true;
+            }
+        }
+        return $x;
+    }
+
+    function inRange($value, $array)
+    {
+//        in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
+        $idx = null;
+        foreach ($array as $key =>  $val) {
+            $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
+            if ($x == true) {
+                $idx = $key;
+                break;
+            }
+        }
+        return $idx;
+    }
+
+    public function cekHarga(Request $request)
+    {
+        $agen = $request->agen;
+        $item = $request->item;
+        $barang = DB::table('m_item')
+            ->where('i_id', '=', $item)
+            ->first();
+        $unit = $barang->i_unit1;
+        $qty = $request->qty;
+
+        $type = DB::table('m_company')
+            ->join('m_agen', 'c_user', '=', 'a_code')
+            ->where('c_id', '=', $agen)
+            ->first();
+
+        $get_price = DB::table('m_priceclassdt')
+            ->join('m_priceclass', 'pcd_classprice', 'pc_id')
+            ->select('m_priceclassdt.*', 'm_priceclass.*')
+            ->where('pc_id', '=', $type->a_class)
+            ->where('pcd_payment', '=', 'C')
+            ->where('pcd_item', '=', $item)
+            ->where('pcd_unit', '=', $unit)
+            ->get();
+
+        $harga = 0;
+        $z = false;
+        foreach ($get_price as $key => $price) {
+            if ($qty == 1) {
+                if ($this->existsInArray("U", $get_price) == true) {
+                    if ($get_price[$key]->pcd_type == "U") {
+                        $harga = $get_price[$key]->pcd_price;
+                    }
+                } else {
+                    if ($price->pcd_rangeqtystart == 1) {
+                        $harga = $get_price[$key]->pcd_price;
+                    }
+                }
+            } else if ($qty > 1) {
+                if ($price->pcd_rangeqtyend == 0){
+                    if ($qty >= $price->pcd_rangeqtystart) {
+                        $harga = $price->pcd_price;
+                    }
+                } else {
+                    $z = $this->inRange($qty, $get_price);
+                    if ($z !== null) {
+                        $harga = $get_price[$z]->pcd_price;
+                    }
+                }
+
+            }
+        }
+
+        return Response::json(number_format($harga, 0, '', ''));
+    }
+
+    public function setKode(Request $request)
+    {
+        $nota = $request->nota;
+        $qty = $request->qty;
+        $kode = strtoupper($request->kode);
+        $item = $request->item;
+
+        $po_id = DB::table('d_productorder')
+            ->where('po_nota', '=', $nota)
+            ->first();
+
+        DB::beginTransaction();
+        try {
+            $cek = DB::table('d_productordercode')
+                ->where('poc_productorder', '=', $po_id)
+                ->where('poc_item', '=', $item)
+                ->where('poc_code', '=', $kode)
+                ->get();
+
+            if (count($cek) > 0){
+                //update qty
+
+            }
+        } catch (\Exception $e){
+
+        }
     }
     // Kelola Data Order Agen End ==========================================================================
 
