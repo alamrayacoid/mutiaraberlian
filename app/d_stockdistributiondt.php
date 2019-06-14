@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 class d_stockdistributiondt extends Model
 {
     // use third-party library to create relationship multi-column
+    // used in getProdCode
     use \Awobaz\Compoships\Compoships;
 
     protected $table = 'd_stockdistributiondt';

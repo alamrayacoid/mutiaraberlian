@@ -379,32 +379,32 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
     // End ---
     // Konsinyasi Pusat
-    Route::get('/marketing/konsinyasipusat/index', 'MarketingController@konsinyasipusat')->name('konsinyasipusat.index');
-    Route::get('/marketing/konsinyasipusat/get-konsinyasi', 'MarketingController@getKonsinyasi')->name('konsinyasipusat.getData');
-    Route::get('/marketing/konsinyasipusat/detail-konsinyasi/{id}/{action}', 'MarketingController@detailKonsinyasi')->name('konsinyasipusat.detail');
-    Route::get('/marketing/konsinyasipusat/get-provinsi', 'MarketingController@getProv')->name('konsinyasipusat.getProv');
-    Route::get('/marketing/konsinyasipusat/get-kota/{idprov}', 'MarketingController@getKota')->name('konsinyasipusat.getKota');
-    Route::get('/marketing/konsinyasipusat/cari-konsigner-select2/{idprov}/{idkota}', 'MarketingController@carikonsignerselect2')->name('konsinyasipusat.carikonsignerselect2');
-    Route::get('/marketing/konsinyasipusat/cari-konsigner/{idprov}/{idkota}', 'MarketingController@cariKonsigner')->name('konsinyasipusat.carikonsigner');
-    Route::get('/marketing/konsinyasipusat/cari-barang', 'MarketingController@cariBarangKonsinyasi')->name('konsinyasipusat.caribarang');
-    Route::get('/marketing/konsinyasipusat/get-satuan/{id}', 'MarketingController@getSatuan')->name('konsinyasipusat.getsatuan');
-    Route::get('/marketing/konsinyasipusat/cek-stok/{stock}/{item}/{satuan}/{qty}', 'MarketingController@checkStock')->name('konsinyasipusat.checkstock');
-    Route::get('/marketing/konsinyasipusat/cek-stok-old/{stock}/{item}/{oldSatuan}/{satuan}/{qtyOld}/{qty}', 'MarketingController@checkStockOld')->name('konsinyasipusat.checkstockold');
-    Route::get('/marketing/konsinyasipusat/cek-harga/{konsigner}/{item}/{unit}/{qty}', 'MarketingController@checkHarga')->name('konsinyasipusat.checkharga');
-    Route::get('/marketing/konsinyasipusat/penempatanproduk/create', 'MarketingController@create_penempatanproduk')->name('penempatanproduk.create');
-    Route::post('/marketing/konsinyasipusat/penempatanproduk/add', 'MarketingController@add_penempatanproduk')->name('penempatanproduk.add');
-    Route::match(['get', 'post'],'/marketing/konsinyasipusat/penempatanproduk/edit/{id}', 'MarketingController@edit_penempatanproduk')->name('penempatanproduk.edit');
-    Route::get('/marketing/konsinyasipusat/penempatanproduk/hapus', 'MarketingController@deletePenempatanproduk')->name('penempatanproduk.delete');
+    Route::get('/marketing/konsinyasipusat/index', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@konsinyasipusat')->name('konsinyasipusat.index');
+    Route::get('/marketing/konsinyasipusat/get-konsinyasi', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@getKonsinyasi')->name('konsinyasipusat.getData');
+    Route::get('/marketing/konsinyasipusat/detail-konsinyasi/{id}/{action}', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@detailKonsinyasi')->name('konsinyasipusat.detail');
+    Route::get('/marketing/konsinyasipusat/get-provinsi', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@getProv')->name('konsinyasipusat.getProv');
+    Route::get('/marketing/konsinyasipusat/get-kota/{idprov}', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@getKota')->name('konsinyasipusat.getKota');
+    Route::get('/marketing/konsinyasipusat/cari-konsigner-select2/{idprov}/{idkota}', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@carikonsignerselect2')->name('konsinyasipusat.carikonsignerselect2');
+    Route::get('/marketing/konsinyasipusat/cari-konsigner/{idprov}/{idkota}', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@cariKonsigner')->name('konsinyasipusat.carikonsigner');
+    Route::get('/marketing/konsinyasipusat/cari-barang', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@cariBarangKonsinyasi')->name('konsinyasipusat.caribarang');
+    Route::get('/marketing/konsinyasipusat/get-satuan/{id}', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@getSatuan')->name('konsinyasipusat.getsatuan');
+    Route::get('/marketing/konsinyasipusat/cek-stok/{stock}/{item}/{satuan}/{qty}', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@checkStock')->name('konsinyasipusat.checkstock');
+    Route::get('/marketing/konsinyasipusat/cek-stok-old/{stock}/{item}/{oldSatuan}/{satuan}/{qtyOld}/{qty}', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@checkStockOld')->name('konsinyasipusat.checkstockold');
+    Route::get('/marketing/konsinyasipusat/cek-harga/{konsigner}/{item}/{unit}/{qty}', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@checkHarga')->name('konsinyasipusat.checkharga');
+    Route::get('/marketing/konsinyasipusat/penempatanproduk/create', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@create_penempatanproduk')->name('penempatanproduk.create');
+    Route::post('/marketing/konsinyasipusat/penempatanproduk/add', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@add_penempatanproduk')->name('penempatanproduk.add');
+    Route::match(['get', 'post'],'/marketing/konsinyasipusat/penempatanproduk/edit/{id}', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@edit_penempatanproduk')->name('penempatanproduk.edit');
+    Route::get('/marketing/konsinyasipusat/penempatanproduk/hapus', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@deletePenempatanproduk')->name('penempatanproduk.delete');
     // --- Konsinyasi pusat: Monitoring penjualan
-    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-list', 'MarketingController@getListMP')->name('monitoringpenjualan.getListMP');
-    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-cities', 'MarketingController@getCitiesMP')->name('monitoringpenjualan.getCitiesMP');
-    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-agents', 'MarketingController@getAgentsMP')->name('monitoringpenjualan.getAgentsMP');
-    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/find-agents-au', 'MarketingController@findAgentsByAu')->name('monitoringpenjualan.findAgentsByAu');
-    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-sales-detail/{id}', 'MarketingController@getSalesCompDetail')->name('monitoringpenjualan.getSalesCompDetail');
+    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-list', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@getListMP')->name('monitoringpenjualan.getListMP');
+    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-cities', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@getCitiesMP')->name('monitoringpenjualan.getCitiesMP');
+    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-agents', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@getAgentsMP')->name('monitoringpenjualan.getAgentsMP');
+    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/find-agents-au', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@findAgentsByAu')->name('monitoringpenjualan.findAgentsByAu');
+    Route::get('/marketing/konsinyasipusat/monitoringpenjualan/get-sales-detail/{id}', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@getSalesCompDetail')->name('monitoringpenjualan.getSalesCompDetail');
     // --- Konsinyasi pusat: Penerimaan Uang Pembayaran
-    Route::get('/marketing/konsinyasipusat/penerimaanpembayaran/get-nota', 'MarketingController@getListNotaPP')->name('penerimaanpembayaran.getListNotaPP');
-    Route::get('/marketing/konsinyasipusat/penerimaanpembayaran/get-payment', 'MarketingController@getPaymentPP')->name('penerimaanpembayaran.getPaymentPP');
-    Route::post('/marketing/konsinyasipusat/penerimaanpembayaran/store', 'MarketingController@storePP')->name('penerimaanpembayaran.storePP');
+    Route::get('/marketing/konsinyasipusat/penerimaanpembayaran/get-nota', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@getListNotaPP')->name('penerimaanpembayaran.getListNotaPP');
+    Route::get('/marketing/konsinyasipusat/penerimaanpembayaran/get-payment', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@getPaymentPP')->name('penerimaanpembayaran.getPaymentPP');
+    Route::post('/marketing/konsinyasipusat/penerimaanpembayaran/store', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@storePP')->name('penerimaanpembayaran.storePP');
 
     // Marketing Area
     Route::get('/marketing/marketingarea/index', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@index')->name('marketingarea.index');

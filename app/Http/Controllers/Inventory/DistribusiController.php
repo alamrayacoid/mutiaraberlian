@@ -180,9 +180,9 @@ class DistribusiController extends Controller
             // validate production-code is exist in stock-item
             $validateProdCode = Mutasi::validateProductionCode(
                 Auth::user()->u_company, // from
-                $request->itemsId, // item-id
-                $request->prodCode, // production-code
-                $request->prodCodeLength // production-code length each item
+                $request->itemsId, // list item-id
+                $request->prodCode, // list production-code
+                $request->prodCodeLength // list production-code length each item
             );
             if ($validateProdCode !== 'validated') {
                 return $validateProdCode;
@@ -606,6 +606,7 @@ class DistribusiController extends Controller
             $stockdist = d_stockdistribution::where('sd_id', $request->id)
             ->with('getDistributionDt.getProdCode')
             ->first();
+            dd($stockdist);
 
             foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
                 // rollBack qty in stock-mutation and stock-item

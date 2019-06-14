@@ -513,9 +513,9 @@
         let QtyH = parseInt($('.modalCodeProd').eq(idxItem).find('.QtyH').val()) || 0;
         let qtyWithProdCode = getQtyWithProdCode();
         let restQty = QtyH - qtyWithProdCode;
-        console.log('QtyH: '+ QtyH);
-        console.log('qtyWithProdCode: '+ qtyWithProdCode);
-        console.log('restQty: '+ restQty);
+        // console.log('QtyH: '+ QtyH);
+        // console.log('qtyWithProdCode: '+ qtyWithProdCode);
+        // console.log('restQty: '+ restQty);
 
         if (restQty < 0) {
             $(':focus').val(0);

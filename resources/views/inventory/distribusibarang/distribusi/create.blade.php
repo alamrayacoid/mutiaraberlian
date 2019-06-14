@@ -235,8 +235,8 @@
         $('.btnCodeProd').on('click', function() {
             idxItem = $('.btnCodeProd').index(this);
             // get unit-cmp from selected unit
-            let unitCmp = parseInt($('.units').eq(idxItem).find('option:selected').data('unitcmp'));
-            let qty = parseInt($('.qty').eq(idxItem).val());
+            let unitCmp = parseInt($('.units').eq(idxItem).find('option:selected').data('unitcmp')) || 0;
+            let qty = parseInt($('.qty').eq(idxItem).val()) || 0;
             let qtyUnit = qty * unitCmp;
             // pass qtyUnit to modal
             $('.modalCodeProd').eq(idxItem).find('.QtyH').val(qtyUnit);
