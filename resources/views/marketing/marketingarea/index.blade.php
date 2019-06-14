@@ -13,6 +13,10 @@
             padding-top: 2px;
             padding-bottom: 2px;
         }
+        #table_prosesordercode td {
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
         .btn-xs {
             padding: 0.20rem 0.4rem;
             font-size: 0.675rem;
@@ -1054,9 +1058,35 @@
                     "item": item
                 }
             }).then(function (response) {
-                console.log(response);
+                if (response.data.status == 'success'){
+                    messageSuccess("Berhasil", "Kode berhasil ditambahkan");
+                    $('#inputkodeproduksi').val("");
+                    $('#inputqtyproduksi').val("");
+                    tb_listcodeprosesorder.ajax.reload();
+                } else if (response.data.status == 'gagal'){
+                    messageWarning("Gagal", "Kode tidak tersimpan");
+                }
             }).catch(function (error) {
-
+                alert('error');
+            })
+        }
+        
+        function removeCodeOrder(id, item, kode) {
+            axios.get('{{ route("keloladataorder.removeKode") }}', {
+                params:{
+                    "id": id,
+                    "item": item,
+                    "kode": kode
+                }
+            }).then(function (response) {
+                if (response.data.status == 'success'){
+                    messageSuccess("Berhasil", "Kode berhasil dihapus");
+                    tb_listcodeprosesorder.ajax.reload();
+                } else {
+                    messageWarning("Gagal", "Kode gagal dihapus");
+                }
+            }).catch(function (error) {
+                
             })
         }
 

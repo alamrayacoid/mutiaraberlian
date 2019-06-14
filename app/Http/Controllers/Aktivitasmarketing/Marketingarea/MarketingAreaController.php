@@ -776,7 +776,7 @@ class MarketingAreaController extends Controller
 
         return DataTables::of($data)
             ->addColumn('aksi', function ($data){
-                return "<div class='text-center' style='width: 100%'><button type='button' onclick='removeCodeOrder(".$data->po_id.", ".$data->pod_item.", \"".$data->poc_code."\")' class='btn btn-info btn-xs'><i class='fa fa-plus'></i> Kode Produksi</button></div>";
+                return "<div class='text-center' style='width: 100%'><button type='button' onclick='removeCodeOrder(".$data->po_id.", ".$data->pod_item.", \"".$data->poc_code."\")' class='btn btn-danger btn-xs'><i class='fa fa-close'></i></button></div>";
             })
             ->rawColumns(['aksi'])
             ->make(true);
@@ -1025,10 +1025,10 @@ class MarketingAreaController extends Controller
         $kode = strtoupper($request->kode);
         $item = $request->item;
 
-        $po_id = DB::table('d_productorder')
+        $productorder = DB::table('d_productorder')
             ->where('po_nota', '=', $nota)
             ->first();
-
+        $po_id = $productorder->po_id;
         DB::beginTransaction();
         try {
             $cek = DB::table('d_productordercode')
@@ -1039,11 +1039,64 @@ class MarketingAreaController extends Controller
 
             if (count($cek) > 0){
                 //update qty
+                $qtyawal = $cek[0]->poc_qty;
+                $qtyakhir = $qtyawal + $qty;
+                DB::table('d_productordercode')
+                    ->where('poc_productorder', '=', $po_id)
+                    ->where('poc_item', '=', $item)
+                    ->where('poc_code', '=', $kode)
+                    ->update([
+                        "poc_qty" => $qtyakhir
+                    ]);
+                DB::commit();
+                return Response::json([
+                    "status" => "success"
+                ]);
+            } else {
+                //create baru
+                $detail = DB::table('d_productordercode')
+                    ->where('poc_productorder', '=', $po_id)
+                    ->where('poc_item', '=', $item)
+                    ->max('poc_detailid');
 
+                ++$detail;
+                DB::table('d_productordercode')
+                    ->insert([
+                        "poc_productorder" => $po_id,
+                        "poc_item" => $item,
+                        "poc_detailid" => $detail,
+                        "poc_code" => $kode,
+                        "poc_qty" => $qty
+                    ]);
+                DB::commit();
+                return Response::json([
+                    "status" => "success"
+                ]);
             }
         } catch (\Exception $e){
-
+            DB::rollBack();
+            return Response::json([
+                "status" => "gagal",
+                "message" => $e
+            ]);
         }
+    }
+
+    public function removeKode(Request $request)
+    {
+        $po_id = $request->id;
+        $item = $request->item;
+        $kode = $request->kode;
+
+        DB::table('d_productordercode')
+            ->where('poc_productorder', '=', $po_id)
+            ->where('poc_item', '=', $item)
+            ->where('poc_code', '=', $kode)
+            ->delete();
+
+        return Response::json([
+            "status" => "success"
+        ]);
     }
     // Kelola Data Order Agen End ==========================================================================
 
