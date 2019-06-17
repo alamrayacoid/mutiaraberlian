@@ -28,6 +28,34 @@ class MarketingController extends Controller
     	return view('marketing/manajemenmarketing/index');
     }
 
+    public function tanggal($tanggal, $format){
+        //format dd-mm-yyyy; mm-yyyy;
+        $bulan = array (
+            1 =>   'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        );
+        $pecahkan = explode('-', $tanggal);
+
+        // variabel pecahkan 0 = tanggal
+        // variabel pecahkan 1 = bulan
+        // variabel pecahkan 2 = tahun
+        if ($format == 'dd-mm-yyyy'){
+            return $pecahkan[0] . ' ' . $bulan[ (int)$pecahkan[1] ] . ' ' . $pecahkan[2];
+        } elseif ($format == 'mm-yyyy'){
+            return $bulan[ (int)$pecahkan[1] ] . ' ' . $pecahkan[2];
+        }
+    }
+
     public function year_promotion_create()
     {
         return view('marketing/manajemenmarketing/tahunan/create');
@@ -61,6 +89,96 @@ class MarketingController extends Controller
     public function returnpenjualanagen_create()
     {
         return view('marketing/penjualanpusat/returnpenjualan/create');
+    }
+
+    public function getPromosiBulanan()
+    {
+        $data = DB::table('d_promotion')
+            ->where('p_type', '=', 'B')
+            ->where(function ($q){
+                $q->orWhere('p_isapproved', '=', 'P');
+                $q->orWhere('p_isapproved', '=', 'Y');
+            })
+            ->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->editColumn('p_budget', function ($data){
+                if ($data->p_budget == null){
+                    return 'Biaya belum diajukan';
+                } else {
+                    return "Rp. " . number_format($data->p_budget, "0", ",", ".");
+                }
+            })
+            ->editColumn('p_additionalinput', function ($data){
+                $bulan = $this->tanggal("01-" . $data->p_additionalinput, "mm-yyyy");
+                return $bulan;
+            })
+            ->editColumn('p_isapproved', function ($data){
+                if ($data->p_isapproved == 'P'){
+                    return '<div class="status-pending"><p>Pending</p></div>';
+                } elseif ($data->p_isapproved == 'Y'){
+                    return '<div class="status-approve"><p>Approved</p></div>';
+                }
+            })
+            ->addColumn('action', function ($data){
+                if ($data->p_isapproved == 'P'){
+                    return '<center><div class="btn-group btn-group-sm">
+                            <button class="btn btn-info btn-xs detail hint--top hint--info" onclick="DetailPromosi('.$data->p_id.')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
+                            <button class="btn btn-warning hint--top hint--warning" onclick="EditPromosi('.$data->p_id.')" rel="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-danger hint--top hint--error" onclick="HapusPromosi('.$data->p_id.')" rel="tooltip" data-placement="top" data-original-title="Hapus" aria-label="Hapus"><i class="fa fa-close"></i></button>
+                            </div></center>';
+                } elseif ($data->p_isapproved == 'Y'){
+                    return '<center><div class="btn-group btn-group-sm">
+                            <button class="btn btn-info btn-xs detail hint--top hint--info" onclick="DetailPromosi('.$data->p_id.')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
+                            <button class="btn btn-success btn-xs done hint--top hint--info" onclick="DonePromosi('.$data->p_id.')" rel="tooltip" data-placement="top" aria-label="Done"><i class="fa fa-check"></i></button>
+                            </div></center>';
+                }
+            })
+            ->rawColumns(['p_isapproved', 'action', 'p_budget'])
+            ->make(true);
+    }
+
+    public function month_promotion_save(Request $request)
+    {
+        $judul = $request->judul;
+        $bulan = $request->bulan;
+        $output = $request->output;
+        $outcome = $request->outcome;
+        $impact = $request->impact;
+        $note = $request->note;
+        $budget = $request->budget;
+
+        DB::beginTransaction();
+        try {
+            $code = CodeGenerator::codeWithSeparator('d_promotion', 'p_reff', 8, 10, 3, 'PR', '-');
+            $id = DB::table('d_promotion')
+                ->max('p_id');
+            ++$id;
+            DB::table('d_promotion')
+                ->insert([
+                    'p_id' => $id,
+                    'p_name' => $judul,
+                    'p_reff' => $code,
+                    'p_type' => 'B',
+                    'p_budget' => $budget,
+                    'p_additionalinput' => $bulan,
+                    'p_outputplan' => $output,
+                    'p_outcomeplan' => $outcome,
+                    'p_impactplan' => $impact,
+                    'p_note' => $note
+                ]);
+            DB::commit();
+            return Response::json([
+                'status' => 'success'
+            ]);
+        } catch (DecryptException $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     public function getProv()

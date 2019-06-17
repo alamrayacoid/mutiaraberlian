@@ -175,6 +175,11 @@
 
     }
 
+    function convertToAngka(rupiah)
+    {
+        return parseInt(rupiah.replace(/,.*|[^0-9]/g, ''), 10);
+    }
+
     function handleInput(e) {
         var ss = e.target.selectionStart;
         var se = e.target.selectionEnd;
