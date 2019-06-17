@@ -28,7 +28,7 @@ class SatuanController extends Controller
                 return '<div class="text-center">
                   <div class="btn-group btn-group-sm">
                     <button type="button" class="btn btn-warning hint--top hint--warning" onclick="editSatuan(\'' . $datas->u_id . '\',\'' . $datas->u_name . '\')" rel="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
-                    <button type="button" class="btn btn-danger hint--top hint--error" onclick="deleteSatuan(' . $datas->u_id . ')" rel="tooltip" data-placement="top" data-original-title="Hapus" aria-label="Hapus data"><i class="fa fa-trash-o"></i></button>
+                    <button type="button" class="btn btn-danger hint--top hint--error" onclick="deleteSatuan(' . $datas->u_id . ')" rel="tooltip" data-placement="top" data-original-title="Hapus" aria-label="Hapus data"><i class="fa fa-close"></i></button>
                   </div>
                   </div>';
             })
