@@ -313,6 +313,7 @@ class ManajemenAgenController extends Controller
             ->join('m_priceclass', 'pcd_classprice', 'pc_id')
             ->select('m_priceclassdt.*', 'm_priceclass.*')
             ->where('pc_id', '=', $type->a_class)
+            ->where('pcd_payment', '=', 'C')
             ->where('pcd_item', '=', $item)
             ->where('pcd_unit', '=', $unit)
             ->get();

@@ -2,8 +2,6 @@
 
 @section('content')
 
-@include('marketing.manajemenmarketing.modal')
-
 <article class="content animated fadeInLeft">
 
 	<div class="title-block text-primary">
@@ -20,20 +18,23 @@
 			<div class="col-12">
 
                 <ul class="nav nav-pills mb-3" id="Tabzs">
-                    <li class="nav-item">
-                        <a href="#approval" class="nav-link active" data-target="#approval" aria-controls="approval" data-toggle="tab" role="tab">Approval Promosi</a>
-                    </li>
+{{--                    <li class="nav-item">--}}
+{{--                        <a href="#approval" class="nav-link active" data-target="#approval" aria-controls="approval" data-toggle="tab" role="tab">Approval Promosi</a>--}}
+{{--                    </li>--}}
                     <li class="nav-item">
                         <a href="#promosi_tahunan" class="nav-link" data-target="#promosi_tahunan" aria-controls="promosi_tahunan" data-toggle="tab" role="tab">Promosi Tahunan</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#promosi_bulanan" class="nav-link" data-target="#promosi_bulanan" aria-controls="promosi_bulanan" data-toggle="tab" role="tab">Promosi Bulanan</a>
+                        <a href="#promosi_bulanan" class="nav-link active" data-target="#promosi_bulanan" aria-controls="promosi_bulanan" data-toggle="tab" role="tab">Promosi Bulanan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#history_promosi" class="nav-link" data-target="#history_promosi" aria-controls="history_promosi" data-toggle="tab" role="tab">History Promosi</a>
                     </li>
                 </ul>
 
                 <div class="tab-content">
 
-                	@include('marketing.manajemenmarketing.approval')
+                    {{--@include('marketing.manajemenmarketing.approval')--}}
                 	@include('marketing.manajemenmarketing.tahunan.index')
 					@include('marketing.manajemenmarketing.bulanan.index')
 
@@ -47,14 +48,35 @@
 
 </article>
 
+@include('marketing.manajemenmarketing.modal')
+
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-
+    var table_bulan;
 	$(document).ready(function(){
-		var table_sup = $('#table_approval').DataTable();
-		var table_bar= $('#table_tahunan').DataTable();
-		var table_pus= $('#table_bulanan').DataTable();
+		var table_tahun= $('#table_tahunan').DataTable();
+        setTimeout(function(){
+            table_bulan = $('#table_bulanan').DataTable({
+                responsive: true,
+                autoWidth: false,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('monthpromotion.data') }}",
+                    type: "get"
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'p_reff'},
+                    {data: 'p_name'},
+                    {data: 'p_additionalinput'},
+                    {data: 'p_budget'},
+                    {data: 'p_isapproved'},
+                    {data: 'action'}
+                ],
+            });
+        }, 500);
 
 		$(document).on('click', '.btn-rejected', function(){
 			var ini = $(this);

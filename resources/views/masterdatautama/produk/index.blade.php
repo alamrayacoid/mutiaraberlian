@@ -240,22 +240,12 @@
                 // processing: true,
                 serverSide: true,
                 ajax: {
-                    url: '{{route("adjustment.list")}}',
-                    type: "post",
+                    url: '{{route("jenisitem.getdata")}}',
+                    type: "get",
                     data: {
                         "_token": "{{ csrf_token() }}"
                     }
                 },
-                columnDefs: [
-                    {
-                        targets: [1],
-                        className: "jenis"
-                    },
-                    {
-                        targets: [0],
-                        className: "id"
-                    },
-                ],
                 columns: [
                     {data: 'DT_RowIndex'},
                     {data: 'it_name', name: 'it_name'},

@@ -69,6 +69,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/produk/hapusjenis', 'Master\ItemController@hapusjenis');
     Route::post('/masterdatautama/produk/updatejenis', 'Master\ItemController@updatejenis');
     Route::get('/masterdatautama/produk/detail', 'Master\ItemController@detail');
+    Route::get('/masterdatautama/produk/get-data', 'Master\ItemController@tablejenis')->name('jenisitem.getdata');
 
     Route::get('/masterdatautama/produk/jenis/create', 'MasterController@create_datajenisproduk')->name('datajenisproduk.create');
     Route::get('/masterdatautama/produk/jenis/edit', 'MasterController@edit_datajenisproduk')->name('datajenisproduk.edit');
@@ -356,6 +357,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/manajemenmarketing/edit-year-promotion', 'MarketingController@year_promotion_edit')->name('yearpromotion.edit');
     Route::get('/marketing/manajemenmarketing/create-month-promotion', 'MarketingController@month_promotion_create')->name('monthpromotion.create');
     Route::get('/marketing/manajemenmarketing/edit-month-promotion', 'MarketingController@month_promotion_edit')->name('monthpromotion.edit');
+    Route::post('/marketing/manajemenmarketing/save-month-promotion', 'MarketingController@month_promotion_save')->name('monthpromotion.save');
+    Route::get('/marketing/manajemenmarketing/data-month-promotion', 'MarketingController@getPromosiBulanan')->name('monthpromotion.data');
     // Penjualan Pusat
     Route::get('/marketing/penjualanpusat/index', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@index')->name('penjualanpusat.index');
     Route::get('/marketing/penjualanpusat/get-table-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTableTOP')->name('penjualanpusat.getTableTOP');
@@ -418,7 +421,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/orderproduk/get-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getAgen')->name('orderProduk.getAgen');
     Route::get('/marketing/marketingarea/orderproduk/cari-barang', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@cariBarang')->name('orderProduk.cariBarang');
     Route::get('/marketing/marketingarea/orderproduk/get-satuan/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getSatuan')->name('orderProduk.getSatuan');
-    Route::get('/marketing/marketingarea/orderproduk/get-price', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getPrice')->name('orderProduk.getPrice');
+    Route::get('/marketing/marketingarea/orderproduk/get-price', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@cekHarga')->name('orderProduk.getPrice');
     Route::get('/marketing/marketingarea/orderproduk/delete-order/{id}/{dt}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@deleteOrder')->name('orderProduk.delete');
     Route::get('/marketing/marketingarea/orderproduk/nota/{id}/{dt}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@printNota')->name('orderProduk.nota');
     Route::get('/marketing/marketingarea/orderproduk/detail/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@detailOrder')->name('orderProduk.detail');
@@ -430,8 +433,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/keloladataorder/cari-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@cariDataAgen')->name('keloladataorder.cariDataAgen');
     Route::get('/marketing/marketingarea/keloladataorder/filter-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@filterDataAgen')->name('keloladataorder.filterDataAgen');
     Route::get('/marketing/marketingarea/keloladataorder/get-detail-order', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getDetailOrder')->name('keloladataorder.getdetailorder');
+    Route::get('/marketing/marketingarea/keloladataorder/get-detail-order-agen', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getDetailOrderAgen')->name('keloladataorder.getdetailorderagen');
     Route::get('/marketing/marketingarea/keloladataorder/get-detail-code-order', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getCodeOrder')->name('keloladataorder.getdetailcodeorder');
     Route::get('/marketing/marketingarea/keloladataorder/detail-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@detailAgen')->name('keloladataorder.detailAgen');
+    Route::get('/marketing/marketingarea/keloladataorder/get-harga', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getPrice')->name('keloladataorder.getPrice');
+    Route::get('/marketing/marketingarea/keloladataorder/set-kode', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@setKode')->name('keloladataorder.setKode');
+    Route::get('/marketing/marketingarea/keloladataorder/hapus-kode', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@removeKode')->name('keloladataorder.removeKode');
     Route::post('/marketing/marketingarea/keloladataorder/reject-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@rejectAgen')->name('keloladataorder.rejectAgen');
     Route::post('/marketing/marketingarea/keloladataorder/activate-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@activateAgen')->name('keloladataorder.activateAgen');
     Route::post('/marketing/marketingarea/keloladataorder/approve-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@approveAgen')->name('keloladataorder.approveAgen');
