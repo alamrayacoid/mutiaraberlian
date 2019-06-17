@@ -735,7 +735,7 @@ class Mutasi extends Controller
                         $sm->sm_detailid
                     );
                     if ($rollbackStockMutDist !== 'success') {
-                        throw new \Exception("Mut->rollback: ". $rollbackStockMutDist->getData()->message);
+                        throw new \Exception("Mut->rollback kons-in: ". $rollbackStockMutDist->getData()->message);
                     }
                 }
                 // rollback for konsinyasi-out

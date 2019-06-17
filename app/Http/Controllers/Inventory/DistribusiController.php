@@ -434,6 +434,7 @@ class DistribusiController extends Controller
                         return $rollbackDist;
                     }
                     $skippedIndex += 1;
+                    // continue to next counter loop
                     continue;
                 }
                 // fill $listItemsId with non-deleted items-id
@@ -606,7 +607,6 @@ class DistribusiController extends Controller
             $stockdist = d_stockdistribution::where('sd_id', $request->id)
             ->with('getDistributionDt.getProdCode')
             ->first();
-            dd($stockdist);
 
             foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
                 // rollBack qty in stock-mutation and stock-item

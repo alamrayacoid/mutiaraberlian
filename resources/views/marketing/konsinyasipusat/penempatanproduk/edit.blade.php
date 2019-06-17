@@ -3,7 +3,6 @@
 @section('content')
     <form class="formCodeProd">
         <!-- modal-code-production -->
-        @include('marketing.konsinyasipusat.penempatanproduk.modal-code-prod')
         @include('marketing.konsinyasipusat.penempatanproduk.modal-code-prod-base')
 
     </form>
@@ -115,16 +114,16 @@
                                                                 <input type="hidden" name="idItem[]" class="itemid" value="{{ $data->scd_item }}">
                                                                 <input type="hidden" name="kode[]" class="kode" value="{{ $data->getItem->i_code }}">
                                                                 <input type="hidden" name="idStock[]" class="idStock" value="{{ $data->stockId }}">
-                                                                <input type="text" name="barang[]" class="form-control form-control-sm barang" value="{{ strtoupper($data->getItem->i_code) }} - {{ strtoupper($data->getItem->i_name) }}" autocomplete="off">
+                                                                <input type="text" name="barang[]" class="form-control form-control-sm barang" value="{{ strtoupper($data->getItem->i_code) }} - {{ strtoupper($data->getItem->i_name) }}" autocomplete="off" @if($data->status == 'used') readonly @endif>
                                                             </td>
                                                             <td>
                                                                 <select name="satuan[]" data-label="old" class="form-control form-control-sm select2 satuan">
-                                                                        <option value="{{ $data->getItem->i_unit1 }}" @if($data->getUnit->u_id == $data->getItem->i_unit1) selected @endif>{{ $data->getItem->getUnit1->u_name }}</option>
+                                                                        <option value="{{ $data->getItem->i_unit1 }}" data-unitcmp="{{ $data->getItem->i_unitcompare1 }}" @if($data->getUnit->u_id == $data->getItem->i_unit1) selected @endif>{{ $data->getItem->getUnit1->u_name }}</option>
                                                                     @if ($data->getItem->i_unit2 != null && $data->getItem->i_unit2 != $data->getItem->i_unit1)
-                                                                        <option value="{{ $data->getItem->i_unit2 }}" @if($data->getUnit->u_id == $data->getItem->i_unit2) selected @endif>{{ $data->getItem->getUnit2->u_name }}</option>
+                                                                        <option value="{{ $data->getItem->i_unit2 }}" data-unitcmp="{{ $data->getItem->i_unitcompare2 }}" @if($data->getUnit->u_id == $data->getItem->i_unit2) selected @endif>{{ $data->getItem->getUnit2->u_name }}</option>
                                                                     @endif
                                                                     @if ($data->getItem->i_unit3 != null && $data->getItem->i_unit3 != $data->getItem->i_unit2 && $data->getItem->i_unit3 != $data->getItem->i_unit1)
-                                                                        <option value="{{ $data->getItem->i_unit3 }}" @if($data->getUnit->u_id == $data->getItem->i_unit3) selected @endif>{{ $data->getItem->getUnit3->u_name }}</option>
+                                                                        <option value="{{ $data->getItem->i_unit3 }}" data-unitcmp="{{ $data->getItem->i_unitcompare3 }}" @if($data->getUnit->u_id == $data->getItem->i_unit3) selected @endif>{{ $data->getItem->getUnit3->u_name }}</option>
                                                                     @endif
                                                                 </select>
                                                                 <input type="hidden" name="oldSatuan" class="oldSatuan" value="{{ $data->getUnit->u_id }}">
@@ -132,12 +131,13 @@
                                                             <td>
                                                                 <input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" data-label="old" value="{{ $data->scd_qty }}">
                                                                 <input type="hidden" name="qtyOld" class="qtyOld" value="{{ $data->scd_qty }}">
+                                                                <input type="hidden" name="status[]" class="status" value="{{ $data->status }}">
                                                             </td>
                                                             <td>
                                                                 <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
                                                             </td>
                                                             <td>
-                                                                <input type="text" name="harga[]" class="form-control form-control-sm input-rupiah harga" value="{{ Currency::addRupiah($data->scd_value) }}" readonly>
+                                                                <input type="text" name="harga[]" class="form-control form-control-sm harga" value="{{ Currency::addRupiah($data->scd_value) }}" readonly>
                                                                 <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p>
                                                             </td>
                                                             <td>
@@ -146,8 +146,11 @@
                                                             <td>
                                                                 @if ($key == 0)
                                                                     <button type="button" class="btn btn-sm btn-success rounded-circle btn-tambahp"><i class="fa fa-plus"></i></button>
+                                                                    <button class="btn btn-danger rounded-circle btn-hapus btn-sm d-none" type="button"  @if($data->status == 'used') disabled @endif>
+                                                                        <i class="fa fa-remove" aria-hidden="true"></i>
+                                                                    </button>
                                                                 @else
-                                                                    <button class="btn btn-danger rounded-circle btn-hapus btn-sm" type="button">
+                                                                    <button class="btn btn-danger rounded-circle btn-hapus btn-sm" type="button"  @if($data->status == 'used') disabled @endif>
                                                                         <i class="fa fa-remove" aria-hidden="true"></i>
                                                                     </button>
                                                                 @endif
@@ -268,7 +271,6 @@
             //         visibleTableItem();
             //     }
             // });
-
             // $('.barang').on('click', function(e){
             //     idxBarang = $('.barang').index(this);
             //     setArrayCode();
@@ -320,13 +322,6 @@
             //     }
             //
             // });
-
-
-            $(document).on('click', '.btn-hapus', function () {
-                $(this).parents('tr').remove();
-                updateTotalTampil();
-                setArrayCode();
-            });
 
             // re-init events for some class or id
             getEventsReady();
@@ -545,7 +540,7 @@
 
                 if ($('.jumlah').eq(idx).attr("data-label") == "old") {
                     // checkStockOld
-                    checkStockOld(idx, jumlah);
+                    checkStockOld(idx, qtyOld, jumlah);
                 }
                 else {
                     // checkStock
@@ -599,7 +594,7 @@
             })
         }
         // check item stock
-        function checkStockOld(idx, jumlah)
+        function checkStockOld(idx, qtyOld, jumlah)
         {
             axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok-old/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".oldSatuan").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+qtyOld+'/'+jumlah)
             .then(function (resp) {
@@ -734,7 +729,7 @@
                 '<select name="satuan[]" class="form-control form-control-sm select2 satuan" data-label="new">'+
                 '</select>'+
                 '</td>'+
-                '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" data-label="new" value="0" readonly></td>'+
+                '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" data-label="new" value="0" readonly><input type="hidden" name="status[]" class="status" value="unused"></td>'+
                 '<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button></td>' +
                 '<td><input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="Rp. 0" readonly><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>'+
                 '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
@@ -850,6 +845,13 @@
             });
             changeSatuan();
 
+            $(document).on('click', '.btn-hapus', function () {
+                idxBarang = $('.btn-hapus').index(this);
+                $(this).parents('tr').remove();
+                $('.modalCodeProd').eq(idxBarang).remove();
+                updateTotalTampil();
+                setArrayCode();
+            });
             // event to show modal to display list of code-production
             $('.btnCodeProd').on('click', function() {
                 idxBarang = $('.btnCodeProd').index(this);
@@ -862,7 +864,7 @@
                 console.log('qtyUnit: '+ qtyUnit);
                 // pass qtyUnit to modal
                 $('.modalCodeProd').eq(idxBarang).find('.QtyH').val(qtyUnit);
-                $('.modalCodeProd').eq(idxBarang).find('.usedUnit').val($('.units').eq(idxBarang).find('option:first-child').text());
+                $('.modalCodeProd').eq(idxBarang).find('.usedUnit').val($('.satuan').eq(idxBarang).find('option:first-child').text());
                 calculateProdCodeQty();
                 $('.modalCodeProd').eq(idxBarang).modal('show');
             });
@@ -910,6 +912,15 @@
         function simpan() {
             loadingShow();
             var data = $('#formKonsinyasi').serialize();
+            $.each($('.table_listcodeprod'), function(key, val) {
+                // get length of production-code each items
+                let prodCodeLength = $('.table_listcodeprod:eq('+ key +') :input.qtyProdCode').length;
+                $('.modalCodeProd:eq('+ key +')').find('.prodcode-length').val(prodCodeLength);
+
+                inputs = $('.table_listcodeprod:eq('+ key +') :input').serialize();
+                data = data +'&'+ inputs;
+            });
+
             axios.post(baseUrl+'/marketing/konsinyasipusat/penempatanproduk/edit/'+$("#idSales").val(), data)
                 .then(function (response){
                     if(response.data.status == 'Success'){
@@ -962,12 +973,12 @@
                 success: function( resp ) {
                     $(".satuan").eq(idxBarang).find('option').remove();
                     var option = '';
-                    option += '<option value="'+resp.id1+'" data-unitcmp="'+ resp.i_unitcompare1 +'">'+resp.unit1+'</option>';
-                    if (resp.id2 != null && resp.id2 != resp.id1) {
-                        option += '<option value="'+resp.id2+'" data-unitcmp="'+ resp.i_unitcompare2 +'">'+resp.unit2+'</option>';
+                    option += '<option value="'+resp.i_unit1+'" data-unitcmp="'+ resp.i_unitcompare1 +'">'+resp.get_unit1.u_name+'</option>';
+                    if (resp.i_unit2 != null && resp.i_unit2 != resp.i_unit1) {
+                        option += '<option value="'+resp.i_unit2+'" data-unitcmp="'+ resp.i_unitcompare2 +'">'+resp.get_unit2.u_name+'</option>';
                     }
-                    if (resp.id3 != null && resp.id3 != resp.id2 && resp.id3 != resp.id1) {
-                        option += '<option value="'+resp.id3+'" data-unitcmp="'+ resp.i_unitcompare3 +'">'+resp.unit3+'</option>';
+                    if (resp.i_unit3 != null && resp.i_unit3 != resp.i_unit2 && resp.i_unit3 != resp.i_unit1) {
+                        option += '<option value="'+resp.i_unit3+'" data-unitcmp="'+ resp.i_unitcompare3 +'">'+resp.get_unit3.u_name+'</option>';
                     }
                     $(".satuan").eq(idxBarang).append(option);
                     if ($(".itemid").eq(idxBarang).val() == "") {

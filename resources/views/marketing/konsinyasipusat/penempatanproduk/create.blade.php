@@ -618,7 +618,7 @@
                 console.log('qtyUnit: '+ qtyUnit);
                 // pass qtyUnit to modal
                 $('.modalCodeProd').eq(idxBarang).find('.QtyH').val(qtyUnit);
-                $('.modalCodeProd').eq(idxBarang).find('.usedUnit').val($('.units').eq(idxBarang).find('option:first-child').text());
+                $('.modalCodeProd').eq(idxBarang).find('.usedUnit').val($('.satuan').eq(idxBarang).find('option:first-child').text());
                 calculateProdCodeQty();
                 $('.modalCodeProd').eq(idxBarang).modal('show');
             });
@@ -677,14 +677,13 @@
 
             axios.post('{{ route('penempatanproduk.add') }}', data)
                 .then(function (response){
-                    console.log(response.data);
                     loadingHide();
                     if (response.data.status == 'Success') {
                         messageSuccess("Berhasil", response.data.message);
                         setInterval(function(){location.reload();}, 3500)
                     }
                     else if (response.data.status === 'invalid') {
-                        messageWarning('Perhatian', response.message);
+                        messageWarning('Perhatian', response.data.message);
                     }
                     else {
                         messageFailed("Gagal", response.data.message);
@@ -732,12 +731,12 @@
                     console.log('getSatuan: '+ resp);
                     $(".satuan").eq(idxBarang).find('option').remove();
                     var option = '';
-                    option += '<option value="'+resp.id1+'" data-unitcmp="'+ resp.i_unitcompare1 +'">'+resp.unit1+'</option>';
-                    if (resp.id2 != null && resp.id2 != resp.id1) {
-                        option += '<option value="'+resp.id2+'" data-unitcmp="'+ resp.i_unitcompare2 +'">'+resp.unit2+'</option>';
+                    option += '<option value="'+resp.i_unit1+'" data-unitcmp="'+ resp.i_unitcompare1 +'">'+resp.get_unit1.u_name+'</option>';
+                    if (resp.i_unit2 != null && resp.i_unit2 != resp.i_unit1) {
+                        option += '<option value="'+resp.i_unit2+'" data-unitcmp="'+ resp.i_unitcompare2 +'">'+resp.get_unit2.u_name+'</option>';
                     }
-                    if (resp.id3 != null && resp.id3 != resp.id2 && resp.id3 != resp.id1) {
-                        option += '<option value="'+resp.id3+'" data-unitcmp="'+ resp.i_unitcompare3 +'">'+resp.unit3+'</option>';
+                    if (resp.i_unit3 != null && resp.i_unit3 != resp.i_unit2 && resp.i_unit3 != resp.i_unit1) {
+                        option += '<option value="'+resp.i_unit3+'" data-unitcmp="'+ resp.i_unitcompare3 +'">'+resp.get_unit3.u_name+'</option>';
                     }
                     $(".satuan").eq(idxBarang).append(option);
                     if ($(".itemid").eq(idxBarang).val() == "") {
