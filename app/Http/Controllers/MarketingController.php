@@ -25,6 +25,9 @@ class MarketingController extends Controller
 {
     public function marketing()
     {
+        if (!AksesUser::checkAkses(19, 'read')){
+            abort(401);
+        }
     	return view('marketing/manajemenmarketing/index');
     }
 
@@ -68,12 +71,48 @@ class MarketingController extends Controller
 
     public function month_promotion_create()
     {
+        if (!AksesUser::checkAkses(19, 'create')){
+            abort(401);
+        }
         return view('marketing/manajemenmarketing/bulanan/create');
     }
 
-    public function month_promotion_edit()
+    public function month_promotion_edit(Request $request)
     {
-        return view('marketing/manajemenmarketing/bulanan/edit');
+        if (!AksesUser::checkAkses(19, 'update')){
+            abort(401);
+        }
+        $p_id = Crypt::decrypt($request->id);
+        $data = DB::table('d_promotion')
+            ->where('p_id', '=', $p_id)
+            ->first();
+        return view('marketing/manajemenmarketing/bulanan/edit', compact('data'));
+    }
+
+    public function month_promotion_delete(Request $request)
+    {
+        if (!AksesUser::checkAkses(19, 'delete')){
+            return Response::json([
+                "status" => "unauth"
+            ]);
+        }
+        $p_id = Crypt::decrypt($request->id);
+        DB::beginTransaction();
+        try {
+            DB::table('d_promotion')
+                ->where('p_id', '=', $p_id)
+                ->delete();
+            DB::commit();
+            return Response::json([
+                'status' => 'success'
+            ]);
+        } catch (DecryptException $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     public function status_target()
@@ -124,14 +163,14 @@ class MarketingController extends Controller
             ->addColumn('action', function ($data){
                 if ($data->p_isapproved == 'P'){
                     return '<center><div class="btn-group btn-group-sm">
-                            <button class="btn btn-info btn-xs detail hint--top hint--info" onclick="DetailPromosi('.$data->p_id.')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
-                            <button class="btn btn-warning hint--top hint--warning" onclick="EditPromosi('.$data->p_id.')" rel="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
-                            <button class="btn btn-danger hint--top hint--error" onclick="HapusPromosi('.$data->p_id.')" rel="tooltip" data-placement="top" data-original-title="Hapus" aria-label="Hapus"><i class="fa fa-close"></i></button>
+                            <button class="btn btn-info btn-xs detail hint--top hint--info" onclick="DetailPromosi(\''.Crypt::encrypt($data->p_id).'\')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
+                            <button class="btn btn-warning hint--top hint--warning" onclick="EditPromosi(\''.Crypt::encrypt($data->p_id).'\')" rel="tooltip" data-placement="top" aria-label="Edit data"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-danger hint--top hint--error" onclick="HapusPromosi(\''.Crypt::encrypt($data->p_id).'\')" rel="tooltip" data-placement="top" data-original-title="Hapus" aria-label="Hapus"><i class="fa fa-close"></i></button>
                             </div></center>';
                 } elseif ($data->p_isapproved == 'Y'){
                     return '<center><div class="btn-group btn-group-sm">
-                            <button class="btn btn-info btn-xs detail hint--top hint--info" onclick="DetailPromosi('.$data->p_id.')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
-                            <button class="btn btn-success btn-xs done hint--top hint--info" onclick="DonePromosi('.$data->p_id.')" rel="tooltip" data-placement="top" aria-label="Done"><i class="fa fa-check"></i></button>
+                            <button class="btn btn-info btn-xs detail hint--top hint--info" onclick="DetailPromosi(\''.Crypt::encrypt($data->p_id).'\')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
+                            <button class="btn btn-success btn-xs done hint--top hint--info" onclick="DonePromosi(\''.Crypt::encrypt($data->p_id).'\')" rel="tooltip" data-placement="top" aria-label="Selesai"><i class="fa fa-check"></i></button>
                             </div></center>';
                 }
             })
@@ -179,6 +218,57 @@ class MarketingController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    public function month_promotion_update(Request $request)
+    {
+        $judul = $request->judul;
+        $bulan = $request->bulan;
+        $output = $request->output;
+        $outcome = $request->outcome;
+        $impact = $request->impact;
+        $note = $request->note;
+        $budget = $request->budget;
+        $reff = $request->reff;
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_promotion')
+                ->where('p_reff', '=', $reff)
+                ->update([
+                    'p_name' => $judul,
+                    'p_type' => 'B',
+                    'p_budget' => $budget,
+                    'p_additionalinput' => $bulan,
+                    'p_outputplan' => $output,
+                    'p_outcomeplan' => $outcome,
+                    'p_impactplan' => $impact,
+                    'p_note' => $note
+                ]);
+            DB::commit();
+            return Response::json([
+                'status' => 'success'
+            ]);
+        } catch (DecryptException $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function detailPromotion(Request $request)
+    {
+        $id = Crypt::decrypt($request->id);
+
+        $data = DB::table('d_promotion')
+            ->where('p_id', '=', $id)
+            ->first();
+
+        return Response::json([
+            'data' => $data
+        ]);
     }
 
     public function getProv()

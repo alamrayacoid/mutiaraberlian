@@ -138,5 +138,100 @@
 
 
 	});
+	
+	function DetailPromosi(id) {
+	    loadingShow();
+	    axios.get('{{ route("monthpromotion.detailpromosi") }}', {
+	        params:{
+	            "id": id
+            }
+        }).then(function (response) {
+            loadingHide();
+            let data = response.data.data;
+            $('#detail_judulpromosi').val(data.p_name);
+            $('#detail_kodepromosi').val(data.p_reff);
+            let jenis = '';
+            if (data.p_type == 'B'){
+                jenis = 'Bulanan';
+                $('.tahun').hide();
+                $('.bulan').show();
+                $('#detail_bulanpromosi').val(data.p_additionalinput);
+            } else if (data.p_type == 'T'){
+                jenis = 'Tahunan';
+                $('.tahun').show();
+                $('.bulan').hide();
+                $('#detail_tahunpromosi').val(data.p_additionalinput);
+            }
+            $('#detail_jenispromosi').val(jenis);
+            $('#detail_biayausulanpromosi').val(parseInt(data.p_budget));
+            $('#detail_biayasetujuipromosi').val(parseInt(data.p_budgetrealization));
+            let status = '';
+            if (data.p_isapproved == 'P'){
+                status = 'Diajukan';
+            } else if (data.p_isapproved == 'Y'){
+                status = 'Disetujui';
+            }
+            $('#detail_statuspromosi').val(status);
+            $('#detail_outputpromosi').val(data.p_outputplan);
+            $('#detail_outcomepromosi').val(data.p_outcomeplan);
+            $('#detail_impactpromosi').val(data.p_impactplan);
+            $('#detail_catatanpromosi').val(data.p_note);
+            $('#detailpromosi').modal('show');
+        }).catch(function (error) {
+            loadingHide();
+        });
+
+    }
+
+    function EditPromosi(id) {
+        location.href = "{{ route('monthpromotion.edit') }}" + "?id=" + id;
+    }
+    
+    function HapusPromosi(id) {
+        return $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "get",
+                            url: "{{ route('monthpromotion.delete') }}",
+                            data: {
+                                "id": id
+                            },
+                            success: function (response) {
+                                if (response.status == 'success') {
+                                    messageSuccess('Berhasil', 'Data berhasil hapus!');
+                                    table_bulan.ajax.reload();
+                                } else if (response.status == 'unauth'){
+                                    messageWarning('Perhatian', 'Anda tidak memiliki akses');
+                                }
+                                else {
+                                    messageWarning('Gagal', 'Gagal menghapus data!');
+                                }
+                            },
+                            error: function (e) {
+                                messageFailed('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
 </script>
 @endsection
