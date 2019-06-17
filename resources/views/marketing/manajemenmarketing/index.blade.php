@@ -2,8 +2,6 @@
 
 @section('content')
 
-@include('marketing.manajemenmarketing.modal')
-
 <article class="content animated fadeInLeft">
 
 	<div class="title-block text-primary">
@@ -49,6 +47,8 @@
 	</section>
 
 </article>
+
+@include('marketing.manajemenmarketing.modal')
 
 @endsection
 @section('extra_script')
