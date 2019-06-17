@@ -11,6 +11,8 @@ use Auth;
 use App\d_salescomp;
 use App\d_salescompcode;
 use App\d_salescomppayment;
+use App\d_stock;
+use App\d_stock_mutation;
 use App\m_agen;
 use App\m_company;
 use App\m_wil_provinsi;
@@ -465,16 +467,16 @@ class KonsinyasiPusatController extends Controller
 
         try{
             $val_sales = [
-            'sc_id'      => $idSales,
-            'sc_comp'    => $comp,
-            'sc_member'  => $member,
-            'sc_type'    => $type,
-            'sc_date'    => $date,
-            'sc_nota'    => $nota,
-            'sc_total'   => $total,
-            'sc_user'    => $user,
-            'sc_insert'  => $insert,
-            'sc_update'  => $update
+                'sc_id'      => $idSales,
+                'sc_comp'    => $comp,
+                'sc_member'  => $member,
+                'sc_type'    => $type,
+                'sc_date'    => $date,
+                'sc_nota'    => $nota,
+                'sc_total'   => $total,
+                'sc_user'    => $user,
+                'sc_insert'  => $insert,
+                'sc_update'  => $update
             ];
 
             $sddetail = (DB::table('d_salescompdt')->where('scd_sales', '=', $idSales)->max('scd_detailid')) ? (DB::table('d_salescompdt')->where('scd_sales', '=', $idSales)->max('sd_detailid')) + 1 : 1;
@@ -604,10 +606,12 @@ class KonsinyasiPusatController extends Controller
     {
         try{
             $id = Crypt::decrypt($id);
-        }catch (DecryptException $e){
+        }
+        catch (DecryptException $e){
             return abort(404);
         }
 
+        // post method -> update
         if ($request->isMethod('post')) {
             $data   = $request->all();
             $comp   = Auth::user()->u_company;
@@ -622,7 +626,6 @@ class KonsinyasiPusatController extends Controller
             try{
                 //Rollback mutasi
                 $rollback_mutasi = Mutasi::rollback($request->nota); //return true/false(error)
-                //end rollback mutasi
 
                 //Reinsert
                 if ($rollback_mutasi == true){
@@ -632,11 +635,11 @@ class KonsinyasiPusatController extends Controller
                     ->delete();
 
                     $val_sales = [
-                    'sc_comp'    => $comp,
-                    'sc_member'  => $member,
-                    'sc_total'   => $total,
-                    'sc_user'    => $user,
-                    'sc_update'  => $update
+                        'sc_comp'    => $comp,
+                        'sc_member'  => $member,
+                        'sc_total'   => $total,
+                        'sc_user'    => $user,
+                        'sc_update'  => $update
                     ];
 
                     //Update d_sales
@@ -649,16 +652,16 @@ class KonsinyasiPusatController extends Controller
                     $val_salesdt = [];
                     for ($i = 0; $i < count($data['idItem']); $i++) {
                         $val_salesdt[] = [
-                        'scd_sales' => $id,
-                        'scd_detailid' => $detailsd,
-                        'scd_comp' => $comp,
-                        'scd_item' => $data['idItem'][$i],
-                        'scd_qty' => $data['jumlah'][$i],
-                        'scd_unit' => $data['satuan'][$i],
-                        'scd_value' => Currency::removeRupiah($data['harga'][$i]),
-                        'scd_discpersen' => 0,
-                        'scd_discvalue' => 0,
-                        'scd_totalnet' => Currency::removeRupiah($data['subtotal'][$i])
+                            'scd_sales' => $id,
+                            'scd_detailid' => $detailsd,
+                            'scd_comp' => $comp,
+                            'scd_item' => $data['idItem'][$i],
+                            'scd_qty' => $data['jumlah'][$i],
+                            'scd_unit' => $data['satuan'][$i],
+                            'scd_value' => Currency::removeRupiah($data['harga'][$i]),
+                            'scd_discpersen' => 0,
+                            'scd_discvalue' => 0,
+                            'scd_totalnet' => Currency::removeRupiah($data['subtotal'][$i])
                         ];
                         $detailsd++;
 
@@ -703,18 +706,17 @@ class KonsinyasiPusatController extends Controller
 
                     DB::commit();
                     return Response::json([
-                    'status' => "Success",
-                    'message'=> "Data berhasil diperbarui"
-                    ]);
-                } else {
-                    DB::rollBack();
-                    return Response::json([
-                    'status' => "Failed",
-                    'message'=> $rollback_mutasi
+                        'status' => "Success",
+                        'message'=> "Data berhasil diperbarui"
                     ]);
                 }
-                //End reinsert
-
+                else {
+                    DB::rollBack();
+                    return Response::json([
+                        'status' => "Failed",
+                        'message'=> $rollback_mutasi
+                    ]);
+                }
             }
             catch (\Exception $e){
                 DB::rollBack();
@@ -723,7 +725,9 @@ class KonsinyasiPusatController extends Controller
                     'message'=> $e
                 ]);
             }
-        } else {
+        }
+        // another method -> edit
+        else {
             $detail = DB::table('d_salescomp')
             ->where('d_salescomp.sc_id', '=', $id)
             ->join('m_company', function ($c){
@@ -740,39 +744,117 @@ class KonsinyasiPusatController extends Controller
             })
             ->first();
 
-            $data_item = DB::table('d_salescomp')
-            ->where('d_salescomp.sc_id', '=', $id)
-            ->join('d_salescompdt', function ($sd){
-                $sd->on('d_salescompdt.scd_sales', '=', 'd_salescomp.sc_id');
-            })
-            ->join('m_item', function ($i){
-                $i->on('m_item.i_id', '=', 'd_salescompdt.scd_item');
-            })
-            ->join('m_unit as a', function ($x){
-                $x->on('m_item.i_unit1', '=', 'a.u_id');
-            })
-            ->leftjoin('m_unit as b', function ($y){
-                $y->on('m_item.i_unit2', '=', 'b.u_id');
-            })
-            ->leftjoin('m_unit as c', function ($z){
-                $z->on('m_item.i_unit3', '=', 'c.u_id');
-            })
-            ->join('d_stock_mutation', function ($sm){
-                $sm->on('d_stock_mutation.sm_nota', '=', 'd_salescomp.sc_nota');
-                $sm->where('d_stock_mutation.sm_mutcat', '=', 13);
-            })
-            ->join('d_stock', function ($s){
-                $s->on('d_stock.s_id', '=', 'd_stock_mutation.sm_stock');
-                $s->on('d_stock.s_item', '=', 'd_salescompdt.scd_item');
-            })
-            ->select('d_salescompdt.scd_item as itemId', 'd_salescompdt.scd_unit as unit', 'd_salescompdt.scd_qty as qty',
-            'd_salescompdt.scd_value as harga', 'd_salescompdt.scd_totalnet as totalnet', 'm_item.i_code as itemCode', 'm_item.i_name as item',
-            'd_stock_mutation.sm_stock as stock',
-            'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2',
-            'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
-            ->get();
+            // $data_item = DB::table('d_salescomp')
+            // ->where('d_salescomp.sc_id', '=', $id)
+            // ->join('d_salescompdt', function ($sd){
+            //     $sd->on('d_salescompdt.scd_sales', '=', 'd_salescomp.sc_id');
+            // })
+            // ->leftjoin('m_item', function ($i){
+            //     $i->on('m_item.i_id', '=', 'd_salescompdt.scd_item');
+            // })
+            // ->leftjoin('m_unit as a', function ($x){
+            //     $x->on('m_item.i_unit1', '=', 'a.u_id');
+            // })
+            // ->leftjoin('m_unit as b', function ($y){
+            //     $y->on('m_item.i_unit2', '=', 'b.u_id');
+            // })
+            // ->leftjoin('m_unit as c', function ($z){
+            //     $z->on('m_item.i_unit3', '=', 'c.u_id');
+            // })
+            // ->join('d_stock_mutation', function ($sm){
+            //     $sm->on('d_stock_mutation.sm_nota', '=', 'd_salescomp.sc_nota');
+            //     $sm->where('d_stock_mutation.sm_mutcat', '=', 13);
+            // })
+            // ->leftjoin('d_stock', function ($s){
+            //     $s->on('d_stock.s_id', '=', 'd_stock_mutation.sm_stock');
+            //     $s->on('d_stock.s_item', '=', 'd_salescompdt.scd_item');
+            // })
+            // ->select('d_salescompdt.scd_item as itemId', 'd_salescompdt.scd_unit as unit', 'd_salescompdt.scd_qty as qty',
+            // 'd_salescompdt.scd_value as harga', 'd_salescompdt.scd_totalnet as totalnet', 'm_item.i_code as itemCode', 'm_item.i_name as item',
+            // 'd_stock_mutation.sm_stock as stock',
+            // 'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2',
+            // 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
+            // ->get();
+
+            // dd($data_item);
+
+            $data_item = d_salescomp::where('sc_id', $id)
+            ->with(['getSalesCompDt' => function ($query) {
+                $query
+                ->with(['getItem' => function ($query) {
+                    $query
+                    ->with('getUnit1')
+                    ->with('getUnit2')
+                    ->with('getUnit3');
+                }])
+                ->with('getUnit')
+                ->with('getProdCode');
+            }])
+            ->first();
+            // set nota
+            $nota = $data_item->sc_nota;
+            // get stock item
+            foreach ($data_item->getSalesCompDt as $key => $val)
+            {
+                $item = $val->scd_item;
+                // get item stock
+                $mainStock = d_stock::where('s_position', $val->scd_comp)
+                ->where('s_item', $item)
+                ->where('s_status', 'ON DESTINATION')
+                ->where('s_condition', 'FINE')
+                ->with('getItem')
+                ->first();
+
+                // add stock id to data
+                $val->stockId = $mainStock->s_id;
+
+                // calculate item-stock based on unit-compare each item
+                if ($mainStock->getItem->i_unitcompare1 != null) {
+                    $stock['unit1'] = floor($mainStock->s_qty / $mainStock->getItem->i_unitcompare1);
+                } else {
+                    $stock['unit1'] = 0;
+                }
+                if ($mainStock->getItem->i_unitcompare2 != null) {
+                    $stock['unit2'] = floor($mainStock->s_qty / $mainStock->getItem->i_unitcompare2);
+                } else {
+                    $stock['unit2'] = 0;
+                }
+                if ($mainStock->getItem->i_unitcompare3) {
+                    $stock['unit3'] = floor($mainStock->s_qty / $mainStock->getItem->i_unitcompare3);
+                } else {
+                    $stock['unit3'] = 0;
+                }
+                // add stockunit to data
+                $val->stockUnit1 = $stock['unit1'];
+                $val->stockUnit2 = $stock['unit2'];
+                $val->stockUnit3 = $stock['unit3'];
+
+                // get item-stock in destination
+                $st_mutation = d_stock_mutation::where('sm_nota', '=', $nota)
+                    ->whereHas('getStock', function ($query) use ($item) {
+                        $query->where('s_item', $item);
+                    })
+                    ->get();
+
+                foreach ($st_mutation as $keysm => $valsm) {
+                    if ($valsm->sm_use > 0) {
+                        $val->qtyUsed += $valsm->sm_use;
+                    }
+                    else {
+                        $val->qtyUsed += 0;
+                    }
+                }
+                // set status of the distributed item (used or unused)
+                if ($val->qtyUsed > 0) {
+                    $val->status = 'used';
+                }
+                else {
+                    $val->status = 'unused';
+                }
+            }
 
             $ids = Crypt::encrypt($id);
+            // dd($data_item);
 
             return view('marketing/konsinyasipusat/penempatanproduk/edit')->with(compact('detail', 'data_item', 'ids'));
         }
@@ -793,6 +875,7 @@ class KonsinyasiPusatController extends Controller
                 'message'=> $e->getMessage()
             ]);
         }
+
         DB::beginTransaction();
         try{
             $konsinyasi = d_salescomp::where('sc_id', $id)
@@ -824,32 +907,6 @@ class KonsinyasiPusatController extends Controller
                 'status' => "Success",
                 'message'=> 'Data berhasil dihapus'
             ]);
-
-            // // $rollback_mutasi = Mutasi::rollback($request->nota, 12); //return true/false(error)
-            //
-            // if (is_bool($rollback_mutasi)){
-            //     // // delete salescomp-detail
-            //     // DB::table('d_salescompdt')
-            //     // ->where('scd_sales', '=', $id)
-            //     // ->delete();
-            //     // // delete salescomp
-            //     // DB::table('d_salescomp')
-            //     // ->where('sc_id', '=', $id)
-            //     // ->delete();
-            //
-            //     DB::commit();
-            //     return Response::json([
-            //         'status' => "Success",
-            //         'message'=> 'Data berhasil dihapus'
-            //     ]);
-            // }
-            // else {
-            //     DB::rollBack();
-            //     return Response::json([
-            //         'status' => "Failed",
-            //         'message'=> $rollback_mutasi
-            //     ]);
-            // }
         }
         catch (\Exception $e){
             DB::rollBack();
