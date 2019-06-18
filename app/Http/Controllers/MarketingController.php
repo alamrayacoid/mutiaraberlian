@@ -421,6 +421,46 @@ class MarketingController extends Controller
         ]);
     }
 
+    public function donePromotion(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $tanggal = Carbon::createFromFormat("d-m-Y", $request->tanggal)->format('Y-m-d');
+            $outputreal = $request->outputreal;
+            $outputpersen = $request->outputpersen;
+            $outcomereal = $request->outcomereal;
+            $outcomepersen = $request->outcomepersen;
+            $impactreal = $request->impactreal;
+            $impactpersen = $request->impactpersen;
+            $catatan = $request->catatan;
+            $kode = $request->kode;
+
+            DB::table('d_promotion')
+                ->where('p_reff', '=', $kode)
+                ->update([
+                    'p_date' => $tanggal,
+                    'p_outputachieved' => $outputreal,
+                    'p_outputpersentation' => $outputpersen,
+                    'p_outcomeachieved' => $outcomereal,
+                    'p_outcomepersentation' => $outcomepersen,
+                    'p_impactachieved' => $impactreal,
+                    'p_impactpersentation' => $impactpersen,
+                    'p_note' => $catatan,
+                    'p_isapproved' => 'D'
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'success'
+            ]);
+        } catch (DecryptException $e){
+            DB::rollBack();
+            return response()->json([
+                'status' => 'gagal'
+            ]);
+        }
+    }
+
     public function getProv()
     {
         $prov = DB::table('m_wil_provinsi')->get();

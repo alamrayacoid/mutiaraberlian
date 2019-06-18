@@ -365,6 +365,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/marketing/manajemenmarketing/update-month-promotion', 'MarketingController@month_promotion_update')->name('monthpromotion.update');
     Route::get('/marketing/manajemenmarketing/data-month-promotion', 'MarketingController@getPromosiBulanan')->name('monthpromotion.data');
     Route::get('/marketing/manajemenmarketing/detail-promotion', 'MarketingController@detailPromotion')->name('monthpromotion.detailpromosi');
+    Route::post('/marketing/manajemenmarketing/done-promotion', 'MarketingController@donePromotion')->name('donepromotion.done');
     // Penjualan Pusat
     Route::get('/marketing/penjualanpusat/index', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@index')->name('penjualanpusat.index');
     Route::get('/marketing/penjualanpusat/get-table-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTableTOP')->name('penjualanpusat.getTableTOP');

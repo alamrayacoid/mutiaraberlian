@@ -34,7 +34,7 @@
 
                 <div class="tab-content">
 
-                    {{--@include('marketing.manajemenmarketing.approval')--}}
+                    @include('marketing.manajemenmarketing.history.index')
                 	@include('marketing.manajemenmarketing.tahunan.index')
 					@include('marketing.manajemenmarketing.bulanan.index')
 
@@ -49,6 +49,7 @@
 </article>
 
 @include('marketing.manajemenmarketing.modal')
+@include('marketing.manajemenmarketing.modal_done')
 
 @endsection
 @section('extra_script')
@@ -202,7 +203,6 @@
         }).catch(function (error) {
             loadingHide();
         });
-
     }
 
     function EditPromosi(id) {
@@ -259,6 +259,120 @@
                 }
             }
         });
+    }
+    
+    function DonePromosi(id) {
+        loadingShow();
+        axios.get('{{ route("monthpromotion.detailpromosi") }}', {
+            params:{
+                "id": id
+            }
+        }).then(function (response) {
+            loadingHide();
+            let data = response.data.data;
+            $('#done_judulpromosi').val(data.p_name);
+            $('#done_kodepromosi').val(data.p_reff);
+            $('#done_outputpromosi').val(data.p_outputplan);
+            $('#done_outcomepromosi').val(data.p_outcomeplan);
+            $('#done_impactpromosi').val(data.p_impactplan);
+            $('#done_catatanpromosi').val(data.p_note);
+            $('#modal_done').modal('show');
+        }).catch(function (error) {
+            loadingHide();
+        });
+    }
+
+    $("#done_tanggalpromosi").datepicker({
+        format: "dd-mm-yyyy",
+        todayHighlight: true,
+        autoclose: true
+    });
+
+	function done() {
+	    let kode = $('#done_kodepromosi').val();
+	    let tanggal = $('#done_tanggalpromosi').val();
+        let outputreal = $('#done_outputreal').val();
+        let outputpersen = $('#done_outputpersentase').val();
+        let outcomereal = $('#done_outcomerealisasi').val();
+        let outcomepersen = $('#done_outcomerealisasi').val();
+        let impactreal = $('#done_impactrealisasi').val();
+        let impactpersen = $('#done_impactpersentase').val();
+        let catatan = $('#done_catatanpromosi').val();
+
+        valid = 1;
+        if (tanggal == ''){
+            valid = 0;
+            messageWarning("Perhatian", "Tanggal tidak boleh kosong");
+            $('#done_tanggalpromosi').focus();
+            return false;
+        }
+        if (outputreal == ''){
+            valid = 0;
+            messageWarning("Perhatian", "Output Realisasi tidak boleh kosong");
+            $('#done_outputreal').focus();
+            return false;
+        }
+        if (outputpersen == ''){
+            valid = 0;
+            messageWarning("Perhatian", "Persentase Output tidak boleh kosong");
+            $('#done_outputpersentase').focus();
+            return false;
+        }
+        if (outcomereal == ''){
+            valid = 0;
+            messageWarning("Perhatian", "Outcome Realisasi tidak boleh kosong");
+            $('#done_outcomerealisasi').focus();
+            return false;
+        }
+        if (outcomepersen == ''){
+            valid = 0;
+            messageWarning("Perhatian", "Persentase Outcome tidak boleh kosong");
+            $('#done_outcomepersentase').focus();
+            return false;
+        }
+        if (impactreal == ''){
+            valid = 0;
+            messageWarning("Perhatian", "Impact Realisasi tidak boleh kosong");
+            $('#done_impactrealisasi').focus();
+            return false;
+        }
+        if (impactpersen == ''){
+            valid = 0;
+            messageWarning("Perhatian", "Persentase Impact tidak boleh kosong");
+            $('#done_outcomerealisasi').focus();
+            return false;
+        }
+
+        if (valid == 1){
+            axios.post('{{ route("donepromotion.done") }}', {
+                "kode": kode,
+                "tanggal": tanggal,
+                "outputreal": outputreal,
+                "outputpersen": outputpersen,
+                "outcomereal": outcomereal,
+                "outcomepersen": outcomepersen,
+                "impactreal": impactreal,
+                "impactpersen": impactpersen,
+                "catatan": catatan,
+                "_token": "{{ csrf_token() }}"
+            }).then(function (response) {
+                if (response.data.status == 'success'){
+                    loadingHide();
+                    messageSuccess("Sukses", "Data berhasil disimpan");
+                    $('#modal_done').modal('hide');
+                    table_tahun.ajax.reload();
+                    table_bulan.ajax.reload();
+                } else if (response.data.status == 'gagal'){
+                    loadingHide();
+                    messageFailed("Gagal", response.data.message);
+                }
+            }).catch(function (error) {
+                loadingHide();
+                alert('Error');
+                console.log(error);
+            })
+        }
+
     }
 </script>
 @endsection
