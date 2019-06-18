@@ -54,8 +54,30 @@
 @section('extra_script')
 <script type="text/javascript">
     var table_bulan;
+    var table_tahun;
 	$(document).ready(function(){
-		var table_tahun= $('#table_tahunan').DataTable();
+        setTimeout(function(){
+            table_tahun = $('#table_tahunan').DataTable({
+                responsive: true,
+                autoWidth: false,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('yearpromotion.data') }}",
+                    type: "get"
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'p_reff'},
+                    {data: 'p_name'},
+                    {data: 'p_additionalinput'},
+                    {data: 'p_budget'},
+                    {data: 'p_isapproved'},
+                    {data: 'action'}
+                ],
+            });
+        }, 500);
+
         setTimeout(function(){
             table_bulan = $('#table_bulanan').DataTable({
                 responsive: true,
@@ -76,7 +98,7 @@
                     {data: 'action'}
                 ],
             });
-        }, 500);
+        }, 1000);
 
 		$(document).on('click', '.btn-rejected', function(){
 			var ini = $(this);
@@ -186,6 +208,10 @@
     function EditPromosi(id) {
         location.href = "{{ route('monthpromotion.edit') }}" + "?id=" + id;
     }
+
+    function EditPromosiTahunan(id) {
+        location.href = "{{ route('yearpromotion.edit') }}" + "?id=" + id;
+    }
     
     function HapusPromosi(id) {
         return $.confirm({
@@ -211,6 +237,7 @@
                                 if (response.status == 'success') {
                                     messageSuccess('Berhasil', 'Data berhasil hapus!');
                                     table_bulan.ajax.reload();
+                                    table_tahun.ajax.reload();
                                 } else if (response.status == 'unauth'){
                                     messageWarning('Perhatian', 'Anda tidak memiliki akses');
                                 }

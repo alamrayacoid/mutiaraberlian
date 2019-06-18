@@ -35,7 +35,7 @@
                             <section>
 
 
-                                <div class="row">
+                                <div class="row" id="form-tambah">
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
                                         <label>Judul Promosi</label>
@@ -43,7 +43,7 @@
 
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm" name="">
+                                            <input type="text" class="form-control form-control-sm" id="judul_promosi" name="judul">
                                         </div>
                                     </div>
 
@@ -54,38 +54,38 @@
 
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm" id="datepicker"
-                                                   name="">
+                                            <input type="text" class="form-control form-control-sm" id="tahun_promosi"
+                                                   name="tahun">
                                         </div>
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Output</label>
+                                        <label>Output Target</label>
                                     </div>
 
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <textarea class="form-control"></textarea>
+                                            <textarea class="form-control output" name="output"></textarea>
                                         </div>
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Outcome</label>
+                                        <label>Outcome Target</label>
                                     </div>
 
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <textarea class="form-control"></textarea>
+                                            <textarea class="form-control outcome" name="outcome"></textarea>
                                         </div>
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Impact</label>
+                                        <label>Impact Target</label>
                                     </div>
 
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <textarea class="form-control"></textarea>
+                                            <textarea class="form-control impact" name="impact"></textarea>
                                         </div>
                                     </div>
 
@@ -95,8 +95,18 @@
 
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm input-rupiah"
-                                                   name="">
+                                            <input type="text" class="form-control form-control-sm input-rupiah budget"
+                                                   name="budget" value="0">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>Catatan</label>
+                                    </div>
+
+                                    <div class="col-md-9 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <textarea class="form-control catatan" name="note"></textarea>
                                         </div>
                                     </div>
 
@@ -124,21 +134,84 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $(document).on('click', '.btn-submit', function () {
-                $.toast({
-                    heading: 'Success',
-                    text: 'Data Berhasil di Simpan',
-                    bgColor: '#00b894',
-                    textColor: 'white',
-                    loaderBg: '#55efc4',
-                    icon: 'success'
-                })
+                let judul = $('#judul_promosi').val();
+                let tahun = $('#tahun_promosi').val();
+                let output = $('.output').val();
+                let outcome = $('.outcome').val();
+                let impact = $('.impact').val();
+                let catatan = $('.catatan').val();
+                let budget = $('.budget').val();
+                let valid = 1;
+                if (judul == ''){
+                    valid = 0;
+                    messageWarning("Perhatian", "Judul promosi tidak boleh kosong");
+                    $('#judul_promosi').focus();
+                    return false;
+                }
+                if (tahun == ''){
+                    valid = 0;
+                    messageWarning("Perhatian", "Bulan tidak boleh kosong");
+                    $('#tahun_promosi').focus();
+                    return false;
+                }
+                if (output == ''){
+                    valid = 0;
+                    messageWarning("Perhatian", "Output target tidak boleh kosong");
+                    $('.output').focus();
+                    return false;
+                }
+                if (outcome == ''){
+                    valid = 0;
+                    messageWarning("Perhatian", "Outcome target tidak boleh kosong");
+                    $('.outcome').focus();
+                    return false;
+                }
+                if (impact == ''){
+                    valid = 0;
+                    messageWarning("Perhatian", "Impact target tidak boleh kosong");
+                    $('.impact').focus();
+                    return false;
+                }
+                if (valid == 1){
+                    loadingShow();
+                    budget = parseInt(convertToAngka(budget));
+                    if (budget == '' || budget == null){
+                        budget = 0;
+                    }
+                    axios.post('{{ route("yearpromotion.save") }}', {
+                        "judul": judul,
+                        "tahun": tahun,
+                        "output": output,
+                        "outcome": outcome,
+                        "impact": impact,
+                        "note": catatan,
+                        "budget": budget,
+                        "_token": "{{ csrf_token() }}"
+                    }).then(function (response) {
+                        if (response.data.status == 'success'){
+                            loadingHide();
+                            messageSuccess("Sukses", "Data berhasil disimpan");
+                            window.location.href = "{{ route('mngmarketing.index') }}";
+                        } else if (response.data.status == 'gagal'){
+                            loadingHide();
+                            messageFailed("Gagal", response.data.message);
+                        }
+                    }).catch(function (error) {
+                        loadingHide();
+                        alert('Error');
+                        console.log(error);
+                    })
+                }
             })
 
-            $("#datepicker").datepicker({
+            $("#tahun_promosi").datepicker({
                 format: "yyyy",
                 viewMode: "years",
-                minViewMode: "years"
+                minViewMode: "years",
+                autoclose: true
             });
+
         });
     </script>
 @endsection
+

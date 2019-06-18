@@ -105,7 +105,7 @@
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-sm input-rupiah budget"
-                                                   name="budget" value="Rp. {{ intval($data->p_budget) }}">
+                                                   name="budget" value="Rp. {{ number_format(intval($data->p_budget), '0', ',', '.') }}">
                                         </div>
                                     </div>
 

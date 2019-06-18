@@ -864,4 +864,10 @@ class OtorisasiController extends Controller
             ]);
         }
     }
+
+    //============ Approval promosi ================
+    public function promotion()
+    {
+        return view('notifikasiotorisasi.otorisasi.promotion.index');
+    }
 }

@@ -354,7 +354,10 @@ Route::group(['middleware' => 'auth'], function () {
     // Manajemen Marketing
     Route::get('/marketing/manajemenmarketing/index', 'MarketingController@marketing')->name('mngmarketing.index');
     Route::get('/marketing/manajemenmarketing/create-year-promotion', 'MarketingController@year_promotion_create')->name('yearpromotion.create');
+    Route::get('/marketing/manajemenmarketing/data-year-promotion', 'MarketingController@getPromosiTahunan')->name('yearpromotion.data');
     Route::get('/marketing/manajemenmarketing/edit-year-promotion', 'MarketingController@year_promotion_edit')->name('yearpromotion.edit');
+    Route::post('/marketing/manajemenmarketing/save-year-promotion', 'MarketingController@year_promotion_save')->name('yearpromotion.save');
+    Route::post('/marketing/manajemenmarketing/update-year-promotion', 'MarketingController@year_promotion_update')->name('yearpromotion.update');
     Route::get('/marketing/manajemenmarketing/create-month-promotion', 'MarketingController@month_promotion_create')->name('monthpromotion.create');
     Route::get('/marketing/manajemenmarketing/edit-month-promotion', 'MarketingController@month_promotion_edit')->name('monthpromotion.edit');
     Route::get('/marketing/manajemenmarketing/delete-month-promotion', 'MarketingController@month_promotion_delete')->name('monthpromotion.delete');
@@ -561,7 +564,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/agreeadjusment/{id}', 'OtorisasiController@agreeadjusment')->name('agreeadjusment');
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/rejectadjusment/{id}', 'OtorisasiController@rejectadjusment')->name('rejectadjusment');
     Route::get('/notifikasiotorisasi/otorisasi/revisi/index', 'OtorisasiController@revisi')->name('revisi');
-
+    Route::get('/notifikasiotorisasi/otorisasi/promotion/index', 'OtorisasiController@promotion')->name('promotion');
     //Oerder Produksi
     Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi', 'OtorisasiController@getProduksi')->name('getproduksi');
     Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi-detail-item', 'OtorisasiController@getProduksiDetailItem')->name('getproduksidetailitem');
