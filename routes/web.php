@@ -564,7 +564,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/agreeadjusment/{id}', 'OtorisasiController@agreeadjusment')->name('agreeadjusment');
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/rejectadjusment/{id}', 'OtorisasiController@rejectadjusment')->name('rejectadjusment');
     Route::get('/notifikasiotorisasi/otorisasi/revisi/index', 'OtorisasiController@revisi')->name('revisi');
-    Route::get('/notifikasiotorisasi/otorisasi/promotion/index', 'OtorisasiController@promotion')->name('promotion');
     //Oerder Produksi
     Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi', 'OtorisasiController@getProduksi')->name('getproduksi');
     Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi-detail-item', 'OtorisasiController@getProduksiDetailItem')->name('getproduksidetailitem');
@@ -581,6 +580,12 @@ Route::group(['middleware' => 'auth'], function () {
     // End Sub Otorisasi
 
     Route::get('/notifikasiotorisasi/notifikasi/index', 'NotifikasiController@notifikasi')->name('notifikasi');
+
+    //Aproval Promosi
+    Route::get('/notifikasiotorisasi/otorisasi/promotion/index', 'OtorisasiController@promotion')->name('promotion');
+    Route::get('/notifikasiotorisasi/otorisasi/promotion/data-promotion', 'OtorisasiController@getDataPromotion')->name('promotion.data');
+    Route::post('/notifikasiotorisasi/otorisasi/promotion/approve-promotion', 'OtorisasiController@approvePromotion')->name('promotion.approve');
+    Route::post('/notifikasiotorisasi/otorisasi/promotion/reject-promotion', 'OtorisasiController@rejectPromotion')->name('promotion.reject');
     // !================================================ END OTORISASI NOTIFIKASI ============================================!
 
     // Profile

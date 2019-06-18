@@ -186,7 +186,7 @@
             }
             $('#detail_jenispromosi').val(jenis);
             $('#detail_biayausulanpromosi').val(parseInt(data.p_budget));
-            $('#detail_biayasetujuipromosi').val(parseInt(data.p_budgetrealization));
+            $('#detail_biayasetujipromosi').val(parseInt(data.p_budgetrealization));
             let status = '';
             if (data.p_isapproved == 'P'){
                 status = 'Diajukan';
