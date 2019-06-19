@@ -145,7 +145,7 @@
             </div>
         </div>
     </div>
-    {{-- Modal Kelola Data Agen --}}
+    {{-- Modal Detail Kelola Data Agen --}}
     <div class="modal fade" id="modalOrderAgen" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -201,7 +201,7 @@
             </div>
         </div>
     </div>
-    <!-- Modal -->
+    {{-- Modal Approval Kelola Data Agen --}}
     <div id="prosesorder" class="modal fade animated fadeIn" role="dialog">
         <div class="modal-dialog modal-xl">
 
@@ -218,6 +218,7 @@
                                 <label for="">Nomor Nota</label>
                             </div>
                             <div class="col-4">
+                                <input type="hidden" id="idProductOrder" value="">
                                 <input type="text" class="form-control form-control-sm" id="nota_modaldt" readonly="">
                             </div>
 
@@ -271,7 +272,7 @@
                                 <div class="input-group col-4" style="width: 100%; padding-right: 0px;">
                                     <input type="number" onkeypress="pressCode(event)" class="inputqtyproduksi form-control form-control-sm" id="inputqtyproduksi" readonly>
                                     <span class="input-group-append">
-                                        <button type="button" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i></button>
+                                        <button type="button" class="btn btn-sm btn-primary" id="btn-addprodcode"><i class="fa fa-plus"></i></button>
                                     </span>
                                 </div>
                             </div>
@@ -293,7 +294,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success btn-sm" onclick="prosesorder()" style="color:white;">Setuju dan Kirim Barang</button>
+                    <button type="button" class="btn btn-success btn-sm" onclick="approveAndSendItems()" id="btnApproveAndSend" style="color:white;">Setuju dan Kirim Barang</button>
                     <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -302,6 +303,8 @@
     </div>
 @endsection
 @section('extra_script')
+    <!-- ========================================================================-->
+    <!-- script for Kelola-Data-Order etc -->
     <script type="text/javascript">
         var table_agen, table_search, table_bar, table_rab, table_bro;
 
@@ -483,6 +486,10 @@
             $(".agen").on("keyup", function () {
                 $(".agenId").val('');
                 $(".codeAgen").val('');
+            });
+
+            $('#btn-addprodcode').on('click', function () {
+                addCodetoTable();
             });
         });
         // End Document Ready -------------------------------------------
@@ -933,6 +940,7 @@
                 let agen = response.data.data.c_name;
                 let nota = response.data.data.po_nota;
                 let tanggal = response.data.data.po_date;
+                $('#idProductOrder').val(id);
                 $('#nota_modaldt').val(nota);
                 $('#agen_modaldt').val(agen);
                 $('#tanggal_modaldt').val(tanggal);
@@ -941,6 +949,7 @@
             }).catch(function (error) {
 
             });
+
             $('#table_prosesorder').dataTable().fnDestroy();
             tb_listprosesorder = $('#table_prosesorder').DataTable({
                 responsive: true,
@@ -957,7 +966,7 @@
                 },
                 columns: [
                     {data: 'i_name'},
-                    {data: 'input', "className": "input-padding"},
+                    {data: 'input', "className": "input-padding", },
                     {data: 'u_name'},
                     {data: 'pod_price'},
                     {data: 'pod_totalprice'},
@@ -974,19 +983,32 @@
             }
         }
 
+        // get price items and get stock
         function getHargaGolongan(item) {
             let agen = $('#idagen_modaldt').val();
             let qty = $('.qty-modaldt-'+item).val();
+            let id = $('#idProductOrder').val();
             axios.get('{{ route("orderProduk.getPrice") }}', {
                 params:{
                     'agen': agen,
                     'qty': qty,
-                    'item': item
+                    'item': item,
+                    'id': id
                 }
             }).then(function (response) {
-                let harga = parseInt(response.data);
+                let harga = parseInt(response.data.price);
+                let stock = parseInt(response.data.stock);
                 $('.input-modaldtharga'+item).val(harga);
                 $('.modaldtharga-'+item).html(convertToRupiah(harga));
+                // set stock restriction
+                if (parseInt(qty) > stock) {
+                    messageWarning('Perhatian', 'Permintaan tidak boleh melebihi batas stok, stok tersedia : '+ stock);
+                    $('.qty-modaldt-'+item).val(stock);
+                }
+                else if (parseInt(qty) < 0) {
+                    messageWarning('Perhatian', 'Permintaan tidak boleh kurang dari 0');
+                    $('.qty-modaldt-'+item).val(0);
+                }
                 updateSubtotal(item);
             }).catch(function (error) {
 
@@ -1042,12 +1064,16 @@
 
         function addCodetoTable(){
             let qty = $('#inputqtyproduksi').val();
-            let kode = $('#inputkodeproduksi').val();
+            let kode = $.trim($('#inputkodeproduksi').val());
             let nota = $('#nota_modaldt').val();
             let item = $('#iditem_modaldt').val();
 
             if (isNaN(qty) || qty == '' || qty == null){
                 qty = 1;
+            }
+            if (kode == '' || kode == null) {
+                messageWarning('Perhatian', 'Silahkan masukkan kode produksi terlebih dahulu !');
+                return 0;
             }
 
             axios.get('{{ route("keloladataorder.setKode") }}', {
@@ -1064,13 +1090,13 @@
                     $('#inputqtyproduksi').val("");
                     tb_listcodeprosesorder.ajax.reload();
                 } else if (response.data.status == 'gagal'){
-                    messageWarning("Gagal", "Kode tidak tersimpan");
+                    messageWarning("Gagal", response.data.message);
                 }
             }).catch(function (error) {
                 alert('error');
             })
         }
-        
+
         function removeCodeOrder(id, item, kode) {
             axios.get('{{ route("keloladataorder.removeKode") }}', {
                 params:{
@@ -1086,7 +1112,7 @@
                     messageWarning("Gagal", "Kode gagal dihapus");
                 }
             }).catch(function (error) {
-                
+
             })
         }
 
@@ -1098,7 +1124,7 @@
                 animationBounce: 1.5,
                 icon: 'fa fa-exclamation-triangle',
                 title: 'Pesan!',
-                content: 'Apakah anda yakin ingin approve agen ini?',
+                content: 'Apakah anda yakin ingin membatalkan approve agen ini ?',
                 theme: 'disable',
                 buttons: {
                     info: {
@@ -1135,7 +1161,85 @@
                         text: 'Tidak',
                         action: function (response) {
                             loadingHide();
-                            messageWarning('Peringatan', 'Anda telah membatalkan!');
+                            // messageWarning('Peringatan', 'Anda telah membatalkan!');
+                        }
+                    }
+                }
+            });
+        }
+
+        function approveAndSendItems() {
+            let listQty = $('.input-qty-proses').serialize();
+            let listItemsId = $('.itemsId').serialize();
+            let listUnits = $('.units').serialize();
+            idProductOrder = $('#idProductOrder').val();
+            let dataX = listQty +'&'+ listItemsId +'&'+ listUnits;
+            loadingShow();
+
+            $.ajax({
+                url: baseUrl + '/marketing/marketingarea/keloladataorder/approve-agen/'+ idProductOrder,
+                data: dataX,
+                type: 'post',
+                success: function(resp) {
+                    loadingHide();
+                    if (resp.status == 'sukses') {
+                        // close modal
+                        $('#prosesorder').modal('hide');
+                        messageSuccess('Berhasil', 'Data Order berhasil di \'Approve\'');
+                        table_agen.ajax.reload();
+                    }
+                },
+                error: function(e) {
+                    loadingHide();
+                    messageWarning('Gagal', e.message);
+                }
+            })
+        }
+
+        function receiveItemOrder(id) {
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Pesan!',
+                content: 'Apakah anda yakin ingin mengkonfirmasi penerimaan order ?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return $.ajax({
+                                type: "post",
+                                url: baseUrl +'/marketing/marketingarea/keloladataorder/receive-item-order/'+ id,
+                                data: {
+                                    "_token": "{{ csrf_token() }}"
+                                },
+                                beforeSend: function () {
+                                    loadingShow();
+                                },
+                                success: function (response) {
+                                    if (response.status == 'sukses') {
+                                        loadingHide();
+                                        messageSuccess('Berhasil', 'Konfirmasi penerimaan order berhasil dilakukan !');
+                                        table_agen.ajax.reload();
+                                    } else {
+                                        loadingHide();
+                                        messageFailed('Gagal', response.message);
+                                    }
+                                },
+                                error: function (e) {
+                                    loadingHide();
+                                    messageWarning('Peringatan', e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function (response) {
+                            loadingHide();
                         }
                     }
                 }

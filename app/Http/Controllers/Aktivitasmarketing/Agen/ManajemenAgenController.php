@@ -37,6 +37,7 @@ class ManajemenAgenController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
 // oerder produk ke agen
     public function getPembeli($kode)
     {
@@ -91,7 +92,7 @@ class ManajemenAgenController extends Controller
             ->join('m_company', 'a_code', '=', 'c_user')
             ->where('m_agen.a_provinsi', '=', $prov)
             ->where('m_agen.a_kabupaten', '=', $kota)
-//            ->where('m_company.c_type', '=', 'AGEN')
+           // ->where('m_company.c_type', '=', 'AGEN')
             ->where(function ($q) use ($cari){
                 $q->orWhere('a_name', 'like', '%'.$cari.'%');
             })
@@ -115,13 +116,17 @@ class ManajemenAgenController extends Controller
 
     public function getProv()
     {
-        $prov = DB::table('m_wil_provinsi')->get();
+        // khusus tuban
+        $prov = DB::table('m_wil_provinsi')->where('wp_id', 35)->get();
+        // $prov = DB::table('m_wil_provinsi')->get();
         return Response::json($prov);
     }
 
     public function getKota($idprov = null)
     {
-        $kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->get();
+        // khusus tuban
+        $kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->where('wc_id', 3523)->get();
+        // $kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->get();
         return Response::json($kota);
     }
 
@@ -135,7 +140,7 @@ class ManajemenAgenController extends Controller
         }
 
         $cari = $request->term;
-//        $comp = Auth::user()->u_company;
+       // $comp = Auth::user()->u_company;
         $comp = $request->comp;
         if(count($is_item) == 0){
             $nama = DB::table('m_item')
@@ -290,7 +295,7 @@ class ManajemenAgenController extends Controller
 
     function inRange($value, $array)
     {
-//        in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
+       // in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
         $idx = null;
         foreach ($array as $key =>  $val) {
             $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
@@ -780,6 +785,8 @@ class ManajemenAgenController extends Controller
         }
     }
 // End order produk ke agen
+
+
     // Start: Kelola Data Inventory Agen ----------------
     public function getAgen($city)
     {
@@ -1052,11 +1059,11 @@ class ManajemenAgenController extends Controller
         DB::beginTransaction();
         try {
 
-//            if (Auth::user()->u_user === 'E') {
-//                $agent = d_username::where('u_code', $request->agent)->first();
-//            } else {
-//                $agent = Auth::user();
-//            }
+           // if (Auth::user()->u_user === 'E') {
+           //     $agent = d_username::where('u_code', $request->agent)->first();
+           // } else {
+           //     $agent = Auth::user();
+           // }
             if (Auth::user()->u_user == "E"){
                 $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
             } else {

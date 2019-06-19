@@ -9,19 +9,23 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 
-use DB;
 use Auth;
-use Currency;
-use Response;
-use DataTables;
-use Carbon\Carbon;
-use CodeGenerator;
-use Validator;
 use App\d_canvassing;
-use App\d_username;
+use App\d_productorder;
+use App\d_productordercode;
 use App\d_sales;
+use App\d_stock;
+use App\d_username;
 use App\m_agen;
 use App\m_wil_provinsi;
+use Carbon\Carbon;
+use CodeGenerator;
+use Currency;
+use DataTables;
+use DB;
+use Mutasi;
+use Response;
+use Validator;
 
 class MarketingAreaController extends Controller
 {
@@ -554,7 +558,8 @@ class MarketingAreaController extends Controller
                                 <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i>
                                 </button>
                             </div>';
-                } else if ($data_agen->po_status == "N") {
+                }
+                else if ($data_agen->po_status == "N") {
                     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                                 <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
                                 </button>
@@ -563,7 +568,8 @@ class MarketingAreaController extends Controller
                                 <button class="btn btn-success hint--top-left hint--success" aria-label="Aktifkan" onclick="activateAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-check-circle-o"></i>
                                 </button>
                             </div>';
-                } else {
+                }
+                else {
                     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                                 <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
                                 </button>
@@ -631,7 +637,7 @@ class MarketingAreaController extends Controller
         }
         return Response::json($results);
     }
-
+    // list data order-agent
     public function filterDataAgen(Request $request)
     {
         $status = $request->state;
@@ -670,14 +676,20 @@ class MarketingAreaController extends Controller
             })
             ->addColumn('action_agen', function ($data_agen) {
                 if ($data_agen->po_status == "Y") {
-                    return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
-                                </button>
-                                <button class="btn btn-danger hint--top-left hint--error" aria-label="Reject Approve" onclick="rejectApproveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i>
-                                </button>
-                                <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i>
-                                </button>
-                            </div>';
+                    $btns = '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                                <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i></button>';
+                    if ($data_agen->po_send == "P") {
+                        $btns = $btns .'<button class="btn btn-danger hint--top-left hint--error" aria-label="Reject Approve" onclick="rejectApproveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i></button>
+                                        <button class="btn btn-warning hint--top-left hint--info" aria-label="Receive" onclick="receiveItemOrder(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-get-pocket"></i></button>
+                                        <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i></button>
+                                    </div>';
+                    } else {
+                        $btns = $btns .'<button class="btn btn-disabled hint--top-left hint--error" aria-label="Reject Approve" onclick="rejectApproveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-times"></i></button>
+                                        <button class="btn btn-disabled hint--top-left hint--info" aria-label="Receive" onclick="receiveItemOrder(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-get-pocket"></i></button>
+                                        <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i></button>
+                                    </div>';
+                    }
+                    return $btns;
                 } else if ($data_agen->po_status == "N") {
                     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                                 <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
@@ -735,7 +747,11 @@ class MarketingAreaController extends Controller
                 return "<div class='text-center' style='width: 100%'><button type='button' onclick='addCodeProd(".$data->po_id.", ".$data->pod_item.",\"".$data->i_name."\")' class='btn btn-info btn-xs'><i class='fa fa-plus'></i> Kode Produksi</button></div>";
             })
             ->addColumn('input', function ($data){
-                return "<div class='text-center'><input type='number' onkeyup='getHargaGolongan(".$data->pod_item.")' onchange='getHargaGolongan(".$data->pod_item.")' style='text-align: right; width: 100%;' class='input-qty-proses qty-modaldt-".$data->pod_item."' name='qty_proses[]' value='".$data->pod_qty."'></div>";
+                return "<div class='text-center'>
+                <input type='number' onkeyup='getHargaGolongan(".$data->pod_item.")' onchange='getHargaGolongan(".$data->pod_item.")' style='text-align: right; width: 100%;' class='input-qty-proses qty-modaldt-".$data->pod_item."' name='qty_proses[]' value='".$data->pod_qty."'>
+                <input type='hidden' name='itemsId[]' class='itemsId' value='". $data->pod_item ."'>
+                <input type='hidden' name='units[]' class='units' value='". $data->i_unit1 ."'>
+                </div>";
             })
             ->rawColumns(['kode', 'input', 'pod_price', 'pod_totalprice'])
             ->make(true);
@@ -775,10 +791,13 @@ class MarketingAreaController extends Controller
             ->get();
 
         return DataTables::of($data)
+            ->editColumn('poc_qty', function ($data) {
+                return '<div class="qty-prod-code">'. $data->poc_qty .'</div>';
+            })
             ->addColumn('aksi', function ($data){
                 return "<div class='text-center' style='width: 100%'><button type='button' onclick='removeCodeOrder(".$data->po_id.", ".$data->pod_item.", \"".$data->poc_code."\")' class='btn btn-danger btn-xs'><i class='fa fa-close'></i></button></div>";
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['aksi', 'poc_qty'])
             ->make(true);
     }
 
@@ -839,8 +858,8 @@ class MarketingAreaController extends Controller
             ]);
         }
     }
-
-    public function approveAgen($id)
+    // approve order agent and create mutation
+    public function approveAgen(Request $request, $id)
     {
         try {
             $id = Crypt::decrypt($id);
@@ -850,6 +869,54 @@ class MarketingAreaController extends Controller
 
         DB::beginTransaction();
         try {
+            // get product-order
+            $productOrder = d_productorder::where('po_id', $id)
+            ->with('getPODt')
+            ->first();
+
+            // mutation
+            foreach ($productOrder->getPODt as $key => $PO) {
+                // update qty
+                $idxQty = array_search($PO->pod_item, $request->itemsId);
+                $PO->pod_qty = $request->qty_proses[$idxQty];
+                $PO->pod_unit = $request->units[$idxQty];
+                $PO->save();
+
+                // get list production-code
+                $prodCode = d_productordercode::where('poc_productorder', $productOrder->po_id)
+                ->where('poc_item', $PO->pod_item)
+                ->select('poc_code', 'poc_qty')
+                ->get();
+                $listPC = array();
+                $listQtyPC = array();
+                $listUnitPC = array();
+                foreach ($prodCode as $key => $val) {
+                    array_push($listPC, $val->poc_code);
+                    array_push($listQtyPC, $val->poc_qty);
+                }
+
+                // insert stock mutation using distribusicabangkeluar
+                // actually its public function, not specific
+                // waiit, check the name of $reff
+                $reff = 'PEMBELIAN-MASUK';
+                $mutDist = Mutasi::distribusicabangkeluar(
+                    $productOrder->po_comp, // from
+                    $productOrder->po_agen, // to
+                    $PO->pod_item, // item-id
+                    $request->qty_proses[$idxQty], // qty of smallest-unit
+                    $productOrder->po_nota, // nota
+                    $reff, // nota-reff
+                    $listPC, // list of production-code
+                    $listQtyPC, // list of production-code-qty
+                    $listUnitPC, // list of production-code-unit
+                    5
+                );
+                if ($mutDist !== 'success') {
+                    return $mutDist;
+                }
+            }
+
+            // update qty and status in d_productorder
             DB::table('d_productorder')
                 ->where('po_id', $id)
                 ->update([
@@ -864,11 +931,11 @@ class MarketingAreaController extends Controller
             DB::rollback();
             return response()->json([
                 'status' => 'Gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }
-
+    // reject approved order and roll-it-back
     public function rejectApproveAgen($id)
     {
         try {
@@ -879,6 +946,24 @@ class MarketingAreaController extends Controller
 
         DB::beginTransaction();
         try {
+            // get product-order
+            $productOrder = d_productorder::where('po_id', $id)
+            ->with('getPODt')
+            ->first();
+
+            foreach ($productOrder->getPODt as $key => $po) {
+                // rollBack qty in stock-mutation and stock-item
+                $rollbackPO = Mutasi::rollbackStockMutDist(
+                    $productOrder->po_nota, // productorder nota
+                    $po->pod_item, // item-id
+                    5
+                );
+                if ($rollbackPO !== 'success') {
+                    DB::rollback();
+                    return $rollbackPO;
+                }
+            }
+
             DB::table('d_productorder')
                 ->where('po_id', $id)
                 ->update([
@@ -889,15 +974,64 @@ class MarketingAreaController extends Controller
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'Gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }
+    // receive order and make it disabeld for editing
+    public function receiveItemOrder($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
 
+        DB::beginTransaction();
+        try {
+            // get product-order
+            $productOrder = d_productorder::where('po_id', $id)
+            ->with('getPODt')
+            ->first();
+
+            // update stock using mutation distrtibution
+            // acutually its public function, just add mutcat as condition to deal it
+            foreach ($productOrder->getPODt as $key => $po) {
+                $mutConfirm = Mutasi::confirmDistribusiCabang(
+                    $productOrder->po_comp, // from
+                    $productOrder->po_agen,// destination
+                    $po->pod_item, // itemId
+                    $productOrder->po_nota, // nota
+                    5 // mutcat
+                );
+                if ($mutConfirm !== 'success') {
+                    return $mutConfirm;
+                }
+            }
+
+            // update product-order
+            $productOrder->po_send = 'Y';
+            $productOrder->save();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+
+    }
     public function detailAgen($id)
     {
         try {
@@ -951,7 +1085,7 @@ class MarketingAreaController extends Controller
 
     function inRange($value, $array)
     {
-//        in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
+       // in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
         $idx = null;
         foreach ($array as $key =>  $val) {
             $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
@@ -967,6 +1101,19 @@ class MarketingAreaController extends Controller
     {
         $agen = $request->agen;
         $item = $request->item;
+
+        // start: get stock
+        try {
+            $id = Crypt::decrypt($request->id);
+        } catch (\Exception $e) {
+            return Response::json([
+                "status" => "gagal",
+                "message" => 'gagal mendapatkan stock item !'
+            ]);
+        }
+        $stock = $this->getStock($id, $item);
+        // end: get stock
+
         $barang = DB::table('m_item')
             ->where('i_id', '=', $item)
             ->first();
@@ -1015,7 +1162,26 @@ class MarketingAreaController extends Controller
             }
         }
 
-        return Response::json(number_format($harga, 0, '', ''));
+        return Response::json([
+            "price" => number_format($harga, 0, '', ''),
+            "stock" => $stock
+        ]);
+
+        // return Response::json(number_format($harga, 0, '', ''));
+    }
+
+    public function getStock($id, $item)
+    {
+        // get productorder
+        $productOrder = d_productorder::where('po_id', $id)->first();
+        // get stock
+        $stock = d_stock::where('s_position', $productOrder->po_comp)
+        ->where('s_item', $item)
+        ->where('s_status', 'ON DESTINATION')
+        ->where('s_condition', 'FINE')
+        ->first();
+
+        return $stock->s_qty;
     }
 
     public function setKode(Request $request)
@@ -1024,6 +1190,25 @@ class MarketingAreaController extends Controller
         $qty = $request->qty;
         $kode = strtoupper($request->kode);
         $item = $request->item;
+
+        // set variable to validate production
+        $listItemsId = array();
+        $listProdCode = array();
+        $listProdCodeLength = array();
+        array_push($listItemsId, $item);
+        array_push($listProdCode, $kode);
+        array_push($listProdCodeLength, 1);
+
+        // validate production-code is exist in stock-item
+        $validateProdCode = Mutasi::validateProductionCode(
+            Auth::user()->u_company, // from
+            $listItemsId, // list item-id
+            $listProdCode, // list production-code
+            $listProdCodeLength // list production-code length each item
+        );
+        if ($validateProdCode !== 'validated') {
+            return $validateProdCode;
+        }
 
         $productorder = DB::table('d_productorder')
             ->where('po_nota', '=', $nota)
@@ -1052,7 +1237,8 @@ class MarketingAreaController extends Controller
                 return Response::json([
                     "status" => "success"
                 ]);
-            } else {
+            }
+            else {
                 //create baru
                 $detail = DB::table('d_productordercode')
                     ->where('poc_productorder', '=', $po_id)
@@ -1074,10 +1260,10 @@ class MarketingAreaController extends Controller
                 ]);
             }
         } catch (\Exception $e){
-            DB::rollBack();
+            DB::rollback();
             return Response::json([
                 "status" => "gagal",
-                "message" => $e
+                "message" => $e->getMessage()
             ]);
         }
     }

@@ -443,6 +443,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/marketing/marketingarea/keloladataorder/activate-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@activateAgen')->name('keloladataorder.activateAgen');
     Route::post('/marketing/marketingarea/keloladataorder/approve-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@approveAgen')->name('keloladataorder.approveAgen');
     Route::post('/marketing/marketingarea/keloladataorder/reject-approve-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@rejectApproveAgen')->name('keloladataorder.rejectApproveAgen');
+    Route::post('/marketing/marketingarea/keloladataorder/receive-item-order/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@receiveItemOrder')->name('keloladataorder.receiveItemOrder');
     // End Order Agen ================================================================================================
 
     // Start Kelola Data Canvassing ================================================================================================
