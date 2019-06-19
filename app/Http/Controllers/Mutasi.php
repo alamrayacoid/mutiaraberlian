@@ -1346,6 +1346,7 @@ class Mutasi extends Controller
                 $query->where('s_item', $item);
             })
             ->get();
+
             // get stock-mutation parent
             foreach ($stockMutations as $key => $sm) {
                 // parent for penjualan-agent out
@@ -1799,12 +1800,12 @@ class Mutasi extends Controller
                 // set stock-mutation detailid
                 $smDetailId = 1;
             }
-            //
+
             // rollBack stock-mutation, stock-mutation-detail and stock-detail (inside rollback-mut func)
             $rollbackStockMutIn = self::rollbackStockMutationIn(
                 $nota, // nota
                 $item, // item id
-                5 // mutcat, check 'rollbackStockMutDist' function first
+                $mutcat // mutcat, check 'rollbackStockMutDist' function first
             );
             if ($rollbackStockMutIn !== 'success') {
                 throw new \Exception("Acc->rollback: ". $rollbackStockMutIn->getData()->message);

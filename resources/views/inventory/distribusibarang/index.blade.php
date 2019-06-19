@@ -56,7 +56,7 @@
 @section('extra_script')
 <!-- script for distribusibarang  -->
 <script type="text/javascript">
-    var table;
+    var table_dist;
     $(document).ready(function() {
         cur_date = new Date();
         first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
@@ -112,7 +112,7 @@
     function tabledistribusi()
   	{
   		$('#table_distribusi').dataTable().fnDestroy();
-  		table = $('#table_distribusi').DataTable({
+  		table_dist = $('#table_distribusi').DataTable({
   			responsive: true,
   			serverSide: true,
   			ajax: {
@@ -170,7 +170,7 @@
                               loaderBg: '#fdcb6e',
                               icon: 'info'
                           })
-                          table.ajax.reload();
+                          table_dist.ajax.reload();
                         } else if (response.status == 'failed') {
                           messageFailed('Failed', response.ex);
                         } else {
@@ -206,7 +206,7 @@
 
 <!-- script for history-distribusi -->
 <script type="text/javascript">
-    var table;
+    var table_hist;
     $(document).ready(function() {
         $('#date_from_ht').datepicker('setDate', first_day);
         $('#date_to_ht').datepicker('setDate', last_day);
@@ -232,7 +232,7 @@
     function tablehistory()
     {
         $('#table_history').dataTable().fnDestroy();
-        table = $('#table_history').DataTable({
+        table_hist = $('#table_history').DataTable({
             responsive: true,
             serverSide: true,
             ajax: {
@@ -304,7 +304,7 @@
 
 <!-- script for penerimaan-distribusi -->
 <script type="text/javascript">
-    var tableAc;
+    var table_accept;
     $(document).ready(function() {
         $('#date_from_ac').datepicker('setDate', first_day);
         $('#date_to_ac').datepicker('setDate', last_day);
@@ -334,7 +334,7 @@
     function tableAcceptance()
     {
         $('#table_acceptance').dataTable().fnDestroy();
-        tableAc = $('#table_acceptance').DataTable({
+        table_accept = $('#table_acceptance').DataTable({
             responsive: true,
             serverSide: true,
             ajax: {
@@ -417,7 +417,8 @@
                 if (response.status == 'berhasil') {
                     messageSuccess('Selamat', 'Konfirmasi penerimaan berhasil dilakukan !');
                     $('#modalAcceptance').modal('hide');
-                    tableAc.ajax.reload();
+                    table_accept.ajax.reload();
+                    table_dist.ajax.reload();
                 } else if (response.status == 'gagal') {
                     messageWarning('Perhatian', response.message);
                 }
