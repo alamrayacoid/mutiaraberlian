@@ -864,4 +864,87 @@ class OtorisasiController extends Controller
             ]);
         }
     }
+
+    //============ Approval promosi ================
+    public function promotion()
+    {
+        return view('notifikasiotorisasi.otorisasi.promotion.index');
+    }
+
+    public function getDataPromotion()
+    {
+        $data = DB::table('d_promotion')
+            ->where('p_isapproved', '=', 'P')
+            ->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function ($data){
+                return '<center><div class="btn-group btn-group-sm">
+                            <button class="btn btn-info btn-xs detail hint--top hint--info" onclick="DetailPromosi(\''.Crypt::encrypt($data->p_id).'\')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
+                            <button class="btn btn-success btn-xs done hint--top hint--info" onclick="ApprovePromosi(\''.Crypt::encrypt($data->p_id).'\', \''. intval($data->p_budget) .'\')" rel="tooltip" data-placement="top" aria-label="Setujui"><i class="fa fa-check"></i></button>
+                            <button class="btn btn-danger hint--top hint--error" onclick="TolakPromosi(\''.Crypt::encrypt($data->p_id).'\')" rel="tooltip" data-placement="top" data-original-title="Hapus" aria-label="Tolak"><i class="fa fa-close"></i></button>
+                            </div></center>';
+            })
+            ->addColumn('jenis', function ($data){
+                if ($data->p_type == 'T'){
+                    return 'Tahunan';
+                } elseif ($data->p_type == 'B'){
+                    return 'Bulanan';
+                }
+            })
+            ->editColumn('p_budget', function ($data){
+                return "Rp. " . number_format(intval($data->p_budget), '0', ',', '.');
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+
+    public function approvePromotion(Request $request)
+    {
+        $id = Crypt::decrypt($request->id);
+        $realisasi = $request->realisasi;
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_promotion')
+                ->where('p_id', '=', $id)
+                ->update([
+                    'p_budgetrealization' => $realisasi,
+                    'p_isapproved' => 'Y'
+                ]);
+            DB::commit();
+            return response()->json([
+                'status' => 'success'
+            ]);
+        } catch (DecryptException $e){
+            DB::rollBack();
+            return response()->json([
+                'status' => 'gagal'
+            ]);
+        }
+    }
+
+    public function rejectPromotion(Request $request)
+    {
+        $id = Crypt::decrypt($request->id);
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_promotion')
+                ->where('p_id', '=', $id)
+                ->update([
+                    'p_isapproved' => 'N'
+                ]);
+            DB::commit();
+            return response()->json([
+                'status' => 'success'
+            ]);
+        } catch (DecryptException $e){
+            DB::rollBack();
+            return response()->json([
+                'status' => 'gagal'
+            ]);
+        }
+    }
 }

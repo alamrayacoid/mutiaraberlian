@@ -354,11 +354,18 @@ Route::group(['middleware' => 'auth'], function () {
     // Manajemen Marketing
     Route::get('/marketing/manajemenmarketing/index', 'MarketingController@marketing')->name('mngmarketing.index');
     Route::get('/marketing/manajemenmarketing/create-year-promotion', 'MarketingController@year_promotion_create')->name('yearpromotion.create');
+    Route::get('/marketing/manajemenmarketing/data-year-promotion', 'MarketingController@getPromosiTahunan')->name('yearpromotion.data');
     Route::get('/marketing/manajemenmarketing/edit-year-promotion', 'MarketingController@year_promotion_edit')->name('yearpromotion.edit');
+    Route::post('/marketing/manajemenmarketing/save-year-promotion', 'MarketingController@year_promotion_save')->name('yearpromotion.save');
+    Route::post('/marketing/manajemenmarketing/update-year-promotion', 'MarketingController@year_promotion_update')->name('yearpromotion.update');
     Route::get('/marketing/manajemenmarketing/create-month-promotion', 'MarketingController@month_promotion_create')->name('monthpromotion.create');
     Route::get('/marketing/manajemenmarketing/edit-month-promotion', 'MarketingController@month_promotion_edit')->name('monthpromotion.edit');
+    Route::get('/marketing/manajemenmarketing/delete-month-promotion', 'MarketingController@month_promotion_delete')->name('monthpromotion.delete');
     Route::post('/marketing/manajemenmarketing/save-month-promotion', 'MarketingController@month_promotion_save')->name('monthpromotion.save');
+    Route::post('/marketing/manajemenmarketing/update-month-promotion', 'MarketingController@month_promotion_update')->name('monthpromotion.update');
     Route::get('/marketing/manajemenmarketing/data-month-promotion', 'MarketingController@getPromosiBulanan')->name('monthpromotion.data');
+    Route::get('/marketing/manajemenmarketing/detail-promotion', 'MarketingController@detailPromotion')->name('monthpromotion.detailpromosi');
+    Route::post('/marketing/manajemenmarketing/done-promotion', 'MarketingController@donePromotion')->name('donepromotion.done');
     // Penjualan Pusat
     Route::get('/marketing/penjualanpusat/index', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@index')->name('penjualanpusat.index');
     Route::get('/marketing/penjualanpusat/get-table-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTableTOP')->name('penjualanpusat.getTableTOP');
@@ -559,7 +566,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/agreeadjusment/{id}', 'OtorisasiController@agreeadjusment')->name('agreeadjusment');
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/rejectadjusment/{id}', 'OtorisasiController@rejectadjusment')->name('rejectadjusment');
     Route::get('/notifikasiotorisasi/otorisasi/revisi/index', 'OtorisasiController@revisi')->name('revisi');
-
     //Oerder Produksi
     Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi', 'OtorisasiController@getProduksi')->name('getproduksi');
     Route::get('/notifikasiotorisasi/otorisasi/revisi/get-order-produksi-detail-item', 'OtorisasiController@getProduksiDetailItem')->name('getproduksidetailitem');
@@ -576,6 +582,12 @@ Route::group(['middleware' => 'auth'], function () {
     // End Sub Otorisasi
 
     Route::get('/notifikasiotorisasi/notifikasi/index', 'NotifikasiController@notifikasi')->name('notifikasi');
+
+    //Aproval Promosi
+    Route::get('/notifikasiotorisasi/otorisasi/promotion/index', 'OtorisasiController@promotion')->name('promotion');
+    Route::get('/notifikasiotorisasi/otorisasi/promotion/data-promotion', 'OtorisasiController@getDataPromotion')->name('promotion.data');
+    Route::post('/notifikasiotorisasi/otorisasi/promotion/approve-promotion', 'OtorisasiController@approvePromotion')->name('promotion.approve');
+    Route::post('/notifikasiotorisasi/otorisasi/promotion/reject-promotion', 'OtorisasiController@rejectPromotion')->name('promotion.reject');
     // !================================================ END OTORISASI NOTIFIKASI ============================================!
 
     // Profile

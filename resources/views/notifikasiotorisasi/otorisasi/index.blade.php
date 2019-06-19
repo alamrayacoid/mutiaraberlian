@@ -79,6 +79,15 @@
 					</div>
 				</a>
 			</div>
+
+            <div class="col-md-4 col-sm-6 col-12">
+                <a href="{{route('promotion')}}">
+                    <div class="card text-center p-4 card-custom text-info">
+                        <img src="{{asset('assets/img/promotion.png')}}" height="128px" width="128px">
+                        <h6>Otorisasi Promosi</h6>
+                    </div>
+                </a>
+            </div>
 		</div>
 
 	</section>
