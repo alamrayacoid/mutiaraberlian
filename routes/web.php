@@ -597,6 +597,9 @@ Route::group(['middleware' => 'auth'], function () {
     //Get ototitasi
     Route::get('/getoto', 'getotorisasiController@get');
     Route::get('/gettmpoto', 'getotorisasiController@gettmpoto');
+
+    Route::get('/getnotif', 'getnotifikasiController@get');
+    Route::get('/gettmpnotif', 'getnotifikasiController@gettmpnotif');
     // Route::get('/testoto', 'pushotorisasiController@otorisasiup');
 
     //Otorisasi Stock Opname

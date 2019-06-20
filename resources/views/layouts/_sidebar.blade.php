@@ -29,40 +29,13 @@
             <a href="" data-toggle="dropdown">
                 <i class="fa fa-bell-o" title="Notifikasi"></i>
                 <sup>
-                    <span class="counter">8</span>
+                    <span class="counter" id="counternotif">0</span>
                 </sup>
             </a>
                 <div class="dropdown-menu notifications-dropdown-menu">
-                    <ul class="notifications-container">
-                        <li>
-                            <a href="" class="notification-item">
-                                <div class="body-col">
-                                    <p>
-                                        <span class="accent">Zack Alien</span> pushed new commit:
-                                        <span class="accent">Fix page load performance issue</span>. </p>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="notification-item">
-                                <div class="body-col">
-                                    <p>
-                                        <span class="accent">Amaya Hatsumi</span> started new task:
-                                        <span class="accent">Dashboard UI design.</span>. </p>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="notification-item">
-                                <div class="body-col">
-                                    <p>
-                                        <span class="accent">Andy Nouman</span> deployed new version of
-                                        <span class="accent">NodeJS REST Api V3</span>
-                                    </p>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
+                  <ul class="notifications-container" id="shownotifikasi">
+
+                  </ul>
                     <footer>
                         <ul>
                             <li>
@@ -77,7 +50,7 @@
 
                 <i><img src="{{ asset('assets/img/author-sign.png') }}" alt="" title="Otorisasi"></i>
                 <sup>
-                    <span class="counter" id="counter">0</span>
+                    <span class="counter" id="counteroto">0</span>
                 </sup>
                 </a>
                 <div class="dropdown-menu notifications-dropdown-menu">
