@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Pusher;
 use DB;
+use Carbon\Carbon;
 
 class pushotorisasiController extends Controller
 {
-    static function otorisasiup($table, $menu, $url)
+    static function otorisasiup($name, $qty, $link)
     {
-        $data = array('table' => $table, 'menu' => $menu, 'url' => $url );
+        $data = array('name' => $name, 'qty' => $qty, 'link' => $link);
 
         $options = array(
             'cluster' => env('PUSHER_APP_CLUSTER'),
@@ -22,6 +23,7 @@ class pushotorisasiController extends Controller
             env('PUSHER_APP_ID'),
             $options
         );
+        // dd($data);
         $pusher->trigger('my-channel', 'my-event', $data);
     }
 }

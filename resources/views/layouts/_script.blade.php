@@ -536,7 +536,7 @@
 
     var channel = pusher.subscribe('my-channel');
     channel.bind('my-event', function(data) {
-      otorisasi(data.table, data.menu, data.url);
+      otorisasi(data.name, data.qty, data.link);
     });
 
     $.ajax({
@@ -545,16 +545,22 @@
       url: baseUrl + '/gettmpoto',
       success : function(response){
         if (response.length != 0) {
-          otorisasi(response[0].table, response[0].menu, response[0].url);
+          // console.log(response[0]);
+          for (var i = 0; i < response.length; i++) {
+            if (parseInt(response[i].n_qty) != 0) {
+              otorisasi(response[i].n_name, 0, response[i].n_link);
+            }
+          }
         }
       }
     });
 
-    function otorisasi(table, menu, url){
+    function otorisasi(name, qty, link){
+      // alert(link);
       var html = "";
       $.ajax({
         type: 'get',
-        data: {table, menu, url},
+        data: {name, qty, link},
         dataType: 'json',
         url: baseUrl + '/getoto',
         success : function(response){
@@ -574,8 +580,8 @@
                        +'<a href="'+response.data[i].link+'" class="notification-item">'
                        +'<div class="body-col">'
                        +'<p>'
-                       +      '<span class="accent"> '+response.data[i].menu+' </span> '+response.data[i].isi+''
-                       +      '<span class="accent"> '+response.data[i].count+' </span> . </p>'
+                       +      '<span class="accent"> '+response.data[i].name+' </span> '+response.data[i].isi+''
+                       +      '<span class="accent"> '+response.data[i].count + ', ' + response.data[i].date+' </span> . </p>'
                        +'</div>'
                        +'</a>'
                        '</li>';
