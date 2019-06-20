@@ -1,6 +1,12 @@
 @extends('main')
 
 @section('content')
+<form class="formCodeProd">
+    <!-- modal-code-production -->
+    @include('marketing.agen.kelolapenjualan.modal-code-prod')
+    @include('marketing.agen.kelolapenjualan.modal-code-prod-base')
+</form>
+
 
 <article class="content animated fadeInLeft">
 
@@ -42,7 +48,7 @@
                                         <div class="form-group">
                                             <input type="hidden" value="{{ $data['user'] }}" id="user">
                                             <select name="agent" id="agent" class="form-control form-control-sm select2">
-                                                <option value="" selected disabled>Pilih Agent</option>
+                                                <option value="" selected disabled>Pilih Agen</option>
                                                 @foreach($data['agents'] as $agent)
                                                 <option value="{{ $agent->a_code }}">{{ $agent->a_name }}</option>
                                                 @endforeach
@@ -81,6 +87,7 @@
                                                         <th>Kode/Nama Barang</th>
                                                         <th width="10%">Satuan</th>
                                                         <th>Jumlah</th>
+                                                        <th>Kode Produksi</th>
                                                         <th>Harga Satuan</th>
                                                         <th>Sub Total</th>
                                                         <th>Aksi</th>
@@ -98,6 +105,7 @@
                                                             <input type="hidden" class="item-unitcmp" name="itemUnitCmp[]">
                                                         </td>
                                                         <td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem(0)"></td>
+                                                        <td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button></td>
                                                         <td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>
                                                         <td><input name="itemSubTotal[]" type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>
                                                         <td><button type="button" class="btn btn-sm btn-success btn-tambahp rounded-circle"><i class="fa fa-plus"></i></button></td>
@@ -160,6 +168,7 @@ $(document).ready(function()
             '<td><input type="text" class="form-control form-control-sm find-item" name="termToFind"><input name="itemListId[]" type="hidden" class="item-id"><input type="hidden" class="item-owner" name="itemOwner[]"></td>'+
             '<td><select name="itemUnit[]" class="form-control form-control-sm select2 satuan" onchange="setUnitCmp('+ (rowLength - 1) +')"></select><input type="hidden" class="item-unitcmp" name="itemUnitCmp[]"></td>'+
             '<td><input name="itemQty[]" type="text" min="0" value="0" class="form-control form-control-sm digits item-qty" onchange="sumSubTotalItem('+ (rowLength - 1) +')"></td>'+
+            '<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button></td>' +
             '<td><input name="itemPrice[]" type="text" class="form-control form-control-sm rupiah item-price" readonly></td>'+
             '<td><input name="itemSubTotal[]" type="text" class="form-control form-control-sm rupiah item-sub-total" readonly></td>'+
             '<td align="center"><button class="btn btn-danger btn-hapus btn-sm" type="button"><i class="fa fa-trash-o"></i></button></td>'+

@@ -1058,12 +1058,6 @@ class ManajemenAgenController extends Controller
 
         DB::beginTransaction();
         try {
-
-           // if (Auth::user()->u_user === 'E') {
-           //     $agent = d_username::where('u_code', $request->agent)->first();
-           // } else {
-           //     $agent = Auth::user();
-           // }
             if (Auth::user()->u_user == "E"){
                 $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
             } else {
@@ -1084,7 +1078,6 @@ class ManajemenAgenController extends Controller
             $sales->save();
 
             // get item-position based on agent-code
-
             for ($i=0; $i < sizeof($request->itemListId); $i++) {
                 // get itemStock based on position and item-id
                 $stock = $this->getItemStock($agent->c_id, $request->itemListId[$i]);

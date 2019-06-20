@@ -12,8 +12,12 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Auth;
 use App\d_canvassing;
 use App\d_productorder;
+use App\d_productorderdt;
 use App\d_productordercode;
 use App\d_sales;
+use App\d_salescomp;
+use App\d_salescompdt;
+use App\d_salescompcode;
 use App\d_stock;
 use App\d_username;
 use App\m_agen;
@@ -923,11 +927,70 @@ class MarketingAreaController extends Controller
                     'po_status' => "Y"
                 ]);
 
+            // get total-price based on d_productorderdt
+            $totalPrice = (int)d_productorderdt::where('pod_productorder', $productOrder->po_id)
+            ->sum('pod_totalprice');
+
+            // clone data from d_productorder to d_salescomp
+            $salescompId= (DB::table('d_salescomp')->max('sc_id')) ? DB::table('d_salescomp')->max('sc_id') + 1 : 1;
+            $val_sales = [
+                'sc_id'      => $salescompId,
+                'sc_comp'    => $productOrder->po_comp,
+                'sc_member'  => $productOrder->po_agen,
+                'sc_type'    => 'C',
+                'sc_date'    => $productOrder->po_date,
+                'sc_nota'    => $productOrder->po_nota,
+                'sc_total'   => $totalPrice,
+                'sc_user'    => Auth::user()->u_id,
+                'sc_insert'  => Carbon::now(),
+                'sc_update'  => Carbon::now()
+            ];
+            DB::table('d_salescomp')->insert($val_sales);
+            // clone data from  d_productorderdt to d_salescompdt
+            $salescompdtid = (DB::table('d_salescompdt')->where('scd_sales', '=', $salescompId)->max('scd_detailid')) ? (DB::table('d_salescompdt')->where('scd_sales', '=', $salescompId)->max('sd_detailid')) + 1 : 1;
+            $val_salesdt = array();
+            foreach ($productOrder->getPODt as $key => $po) {
+                $val_salesdt[] = [
+                    'scd_sales' => $salescompId,
+                    'scd_detailid' => $salescompdtid,
+                    'scd_comp' => $productOrder->po_comp,
+                    'scd_item' => $po->pod_item,
+                    'scd_qty' => $po->pod_qty,
+                    'scd_unit' => $po->pod_unit,
+                    'scd_value' => $po->pod_price,
+                    'scd_discpersen' => 0,
+                    'scd_discvalue' => 0,
+                    'scd_totalnet' => $po->pod_totalprice
+                ];
+
+                // clone data from productordercode to salescompcode
+                $prodCode = d_productordercode::where('poc_productorder', $productOrder->po_id)
+                ->where('poc_item', $po->pod_item)
+                ->get();
+                $salescompcodeid = (d_salescompcode::where('ssc_salescomp', $salescompId)->where('ssc_item', $po->pod_item)->max('ssc_detailid')) ? d_salescompcode::where('ssc_salescomp', $salescompId)->where('ssc_item', $po->pod_item)->max('ssc_detailid') + 1 : 1;
+                $val_salescode = array();
+                foreach ($prodCode as $key => $poc) {
+                    $val_salescode[] = [
+                        'ssc_salescomp' => $salescompId,
+                        'ssc_item' => $po->pod_item,
+                        'ssc_detailid' => $salescompcodeid,
+                        'ssc_code' => $poc->poc_code,
+                        'ssc_qty' => $poc->poc_qty
+                    ];
+                    $salescompcodeid++;
+                }
+                DB::table('d_salescompcode')->insert($val_salescode);
+
+                $salescompdtid++;
+            }
+            DB::table('d_salescompdt')->insert($val_salesdt);
+
             DB::commit();
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'Gagal',
@@ -963,12 +1026,27 @@ class MarketingAreaController extends Controller
                     return $rollbackPO;
                 }
             }
-
+            // update status of productorder
             DB::table('d_productorder')
                 ->where('po_id', $id)
                 ->update([
                     'po_status' => "P"
                 ]);
+
+            // get salescomp by nota
+            $salescomp = d_salescomp::where('sc_nota', $productOrder->po_nota)
+            ->with('getSalesCompDt')
+            ->first();
+            // delete linked production code
+            foreach ($salescomp->getSalesCompDt as $key => $salescompdt) {
+                DB::table('d_salescompcode')->where('ssc_salescomp', $salescomp->sc_id)
+                ->where('ssc_item', $salescompdt->scd_item)
+                ->delete();
+                // delete linked salescompdt
+                $salescompdt->delete();
+            }
+            // delete linked salescomp
+            $salescomp->delete();
 
             DB::commit();
             return response()->json([
