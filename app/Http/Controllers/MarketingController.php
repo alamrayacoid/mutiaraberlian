@@ -461,6 +461,43 @@ class MarketingController extends Controller
         }
     }
 
+    public function getHistoryPromotion()
+    {
+        $data = DB::table('d_promotion')
+            ->where('p_isapproved', '=', 'D')
+            ->get();
+
+        return DataTables::of($data)
+            ->editColumn('p_budgetrealization', function ($data){
+                if ($data->p_budget == null){
+                    return 'Biaya belum diajukan';
+                } else {
+                    return "Rp. " . number_format($data->p_budgetrealization, "0", ",", ".");
+                }
+            })
+            ->editColumn('p_type', function ($data){
+                if ($data->p_type == 'B'){
+                    return 'Bulanan';
+                } elseif ($data->p_type == 'T'){
+                    return 'Tahunan';
+                }
+            })
+            ->editColumn('p_isapproved', function ($data){
+                if ($data->p_isapproved == 'P'){
+                    return '<div class="status-pending"><p>Pending</p></div>';
+                } elseif ($data->p_isapproved == 'Y'){
+                    return '<div class="status-approve"><p>Approved</p></div>';
+                }
+            })
+            ->addColumn('action', function ($data){
+                return '<center><div class="btn-group btn-group-sm">
+                            <button class="btn btn-info btn-xs detail hint--top hint--info" onclick="DetailPromosi(\''.Crypt::encrypt($data->p_id).'\')" rel="tooltip" data-placement="top" aria-label="Detail data"><i class="fa fa-folder"></i></button>
+                            </div></center>';
+            })
+            ->rawColumns(['p_isapproved', 'action', 'p_budget'])
+            ->make(true);
+    }
+
     public function getProv()
     {
         $prov = DB::table('m_wil_provinsi')->get();

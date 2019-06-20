@@ -56,6 +56,7 @@
 <script type="text/javascript">
     var table_bulan;
     var table_tahun;
+    var table_history;
 	$(document).ready(function(){
         setTimeout(function(){
             table_tahun = $('#table_tahunan').DataTable({
@@ -100,6 +101,28 @@
                 ],
             });
         }, 1000);
+
+        setTimeout(function(){
+            table_history = $('#table_history').DataTable({
+                responsive: true,
+                autoWidth: false,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('historypromotion.data') }}",
+                    type: "get"
+                },
+                columns: [
+                    {data: 'p_reff'},
+                    {data: 'p_name'},
+                    {data: 'p_type'},
+                    {data: 'p_additionalinput'},
+                    {data: 'p_date'},
+                    {data: 'p_budgetrealization'},
+                    {data: 'action'}
+                ],
+            });
+        }, 1500);
 
 		$(document).on('click', '.btn-rejected', function(){
 			var ini = $(this);
@@ -193,6 +216,10 @@
                 status = 'Diajukan';
             } else if (data.p_isapproved == 'Y'){
                 status = 'Disetujui';
+            } else if (data.p_isapproved == 'N'){
+                status = 'Ditolak';
+            } else if (data.p_isapproved == 'D'){
+                status = 'Selesai';
             }
             $('#detail_statuspromosi').val(status);
             $('#detail_outputpromosi').val(data.p_outputplan);

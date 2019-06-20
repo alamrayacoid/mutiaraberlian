@@ -17,9 +17,10 @@
                         <tr>
                             <th>Kode</th>
                             <th>Judul Promosi</th>
+                            <th>Jenis</th>
+                            <th>Rencana</th>
                             <th>Tanggal</th>
                             <th>Biaya Promosi</th>
-                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                         </thead>
