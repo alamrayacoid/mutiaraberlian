@@ -152,7 +152,13 @@ class PenjualanPusatController extends Controller
 
     public function confirmProcessTOP(Request $request, $id)
     {
-        dd($request->all());
+        $id_po = $request->idPO;
+        $qty = $request->qty;
+        $item = $request->itemId;
+        $unit = $request->unit;
+        $harga = $request->hargasatuan;
+
+
     }
 
     public function orderpenjualan_proses(Request $request)

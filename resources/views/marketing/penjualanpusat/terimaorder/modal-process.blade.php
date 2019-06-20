@@ -43,7 +43,7 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-striped data-table table-hover display" cellspacing="0" id="table_modalPr" style="width: 100%">
+                        <table class="table table-striped table-hover display" cellspacing="0" id="table_modalPr" style="width: 100%">
                             <thead class="bg-primary">
                                 <tr>
                                     <th width="25%">Barang</th>

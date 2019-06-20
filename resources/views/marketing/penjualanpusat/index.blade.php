@@ -504,18 +504,20 @@
                     let unit3 = (val.get_item.get_unit3 != null) ? '<option value="'+ val.get_item.get_unit3.u_id +'" data-unitcmp="'+ parseInt(val.get_item.i_unitcompare3) +'">'+ val.get_item.get_unit3.u_name +'</option>' : '';
                     selectUnitP = '<select name="unit[]" class="form-control form-control-sm select2 unitModalPr"><option value="" disabled>Pilih Barang</option>'+ unit1 + unit2 + unit3 + '</select>';
                     selectUnitN = '<select readonly class="form-control form-control-sm select2"><option value="" disabled>Pilih Barang</option></select>';
-                    let price = '<td><span class="unitprice-'+val.pod_item+'"> '+ convertToRupiah(val.pod_price.toString().replace(".00", "")) +'</span><input type="hidden" name="hargasatuan[]" class="hargasatuan" value="'+val.pod_price.toString().replace(".00", "")+'"></td>';
-                    let subTotal = '<td><span class="subtotalprice-'+val.pod_item+'"> '+ convertToRupiah(hargasubtotal.toString().replace(".00", "")) +'</span><input type="hidden" name="hargasubtotal[]" class="hargasubtotal" value=""></td>';
+                    let priceP = '<td><span class="unitprice-'+val.pod_item+'"> '+ convertToRupiah(val.pod_price.toString().replace(".00", "")) +'</span><input type="hidden" name="hargasatuan[]" class="hargasatuan" value="'+val.pod_price.toString().replace(".00", "")+'"></td>';
+                    let priceN = '<td><span class="unitprice-'+val.pod_item+'"> '+ convertToRupiah(val.pod_price.toString().replace(".00", "")) +'</span></td>';
+                    let subTotalP = '<td><span class="subtotalprice-'+val.pod_item+'"> '+ convertToRupiah(hargasubtotal.toString().replace(".00", "")) +'</span><input type="hidden" name="hargasubtotal[]" class="hargasubtotal hargasubtotal-'+val.pod_item+'" value="'+hargasubtotal.toString().replace(".00", "")+'"></td>';
+                    let subTotalN = '<td><span class="subtotalprice-'+val.pod_item+'"> '+ convertToRupiah(hargasubtotal.toString().replace(".00", "")) +'</span>';
                     let aksiP = '<td><button type="button" class="btn btn-sm btn-danger" onclick="changeStatus('+val.pod_productorder+', '+val.pod_detailid+', \'N\')"><i class="fa fa-close"></i></button></td>';
                     let aksiN = '<td><button type="button" class="btn btn-sm btn-success" onclick="changeStatus('+val.pod_productorder+', '+val.pod_detailid+', \'P\')"><i class="fa fa-check"></i></button></td>';
                     if (val.pod_isapproved == 'P'){
                         let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name + itemIdP +'</td>';
                         let unit = '<td>'+ selectUnitP +'</td>';
-                        appendItem = '<tr>'+ item + stok + qtyP + unit + price + subTotal + aksiP +'</tr>';
+                        appendItem = '<tr>'+ item + stok + qtyP + unit + priceP + subTotalP + aksiP +'</tr>';
                     } else if (val.pod_isapproved == 'N') {
                         let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name + itemIdN +'</td>';
                         let unit = '<td>'+ selectUnitN +'</td>';
-                        appendItem = '<tr class="tolak">'+ item + stok + qtyN + unit + price + subTotal + aksiN +'</tr>';
+                        appendItem = '<tr class="tolak">'+ item + stok + qtyN + unit + priceN + subTotalN + aksiN +'</tr>';
                     }
                     // append data to table-row
 
@@ -632,6 +634,7 @@
                     if (response.pesan == 'harga tidak ditemukan'){
                         $('.unitprice-'+item).html("Tidak ditemukan");
                         $('.subtotalprice-'+item).html("Tidak ditemukan");
+                        $('.hargasubtotal-'+item).val(0);
                     }
                 } else {
                     $('.hargasatuan').eq(idxItem).val(response);
@@ -641,6 +644,7 @@
                         total = 0;
                     }
                     $('.subtotalprice-'+item).html(convertToRupiah(total));
+                    $('.hargasubtotal-'+item).val(total);
                 }
                 hitungTotal();
             },
@@ -662,6 +666,7 @@
             subTotal = 0;
         }
         $('.subtotalprice-'+item).html(convertToRupiah(subTotal));
+        $('.hargasubtotal-'+item).val(subTotal);
         setTotalTransaksi();
     }
 
@@ -707,10 +712,11 @@
     function setTotalTransaksi(){
         let allprice = $('.hargasubtotal').serializeArray();
         var total = 0;
+
         for (let i = 0; i < allprice.length; i++) {
             total = total + parseInt(allprice[i].value);
         }
-        $('#totalModalPr').html(convertToRupiah(total));
+        $('#totalModalPr').val(convertToRupiah(total));
         console.log(total);
     }
 
