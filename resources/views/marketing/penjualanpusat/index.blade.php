@@ -20,6 +20,7 @@
 
     <!-- Modal Terima Order -->
     @include('marketing.penjualanpusat.terimaorder.modal')
+    @include('marketing.penjualanpusat.distribusi.modaldistribusi')
     @include('marketing.penjualanpusat.terimaorder.modal-process')
     @include('marketing.penjualanpusat.targetrealisasi.modal')
 
@@ -45,7 +46,7 @@
                                data-toggle="tab" role="tab">Terima Order Penjualan</a>
                         </li>
                         <li class="nav-item" id="tab2">
-                            <a href="" class="nav-link" data-target="#promosi_tahunan" aria-controls="promosi_tahunan"
+                            <a href="" class="nav-link" data-target="#distribusipenjualan" aria-controls="distribusipenjualan"
                                data-toggle="tab" role="tab">Distribusi Penjualan</a>
                         </li>
                         <li class="nav-item" id="tab3">
@@ -61,6 +62,7 @@
                     <div class="tab-content">
 
                         @include('marketing.penjualanpusat.terimaorder.index')
+                        @include('marketing.penjualanpusat.distribusi.index')
                         @include('marketing.penjualanpusat.returnpenjualan.index')
                         @include('marketing.penjualanpusat.targetrealisasi.index')
 
@@ -136,13 +138,8 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-
+    var table_distribusi;
     $(document).ready(function () {
-
-        var table_bar = $('#table_tahunan').DataTable();
-        var table_pus = $('#table_bulanan').DataTable();
-        var table_par = $('#table_targetrealisasi').DataTable();
-
         $("#cari_namabarang").autocomplete({
             source: function (request, response) {
                 var id = [''];
@@ -227,31 +224,34 @@
                 '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
         })
         targetReal();
+        tableDistribusi();
     });
 
     function targetReal() {
-        tb_target = $('#table_target').DataTable({
-            responsive: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('targetReal.list') }}",
-                type: "get",
-                data: {
-                    "_token": "{{ csrf_token() }}"
-                }
-            },
-            columns: [
-                {data: 'st_periode'},
-                {data: 'c_name'},
-                {data: 'i_name'},
-                {data: 'target'},
-                {data: 'realisasi'},
-                {data: 'status'},
-                {data: 'action'}
-            ],
-            pageLength: 10,
-            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-        });
+        setTimeout(function () {
+            tb_target = $('#table_target').DataTable({
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('targetReal.list') }}",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                columns: [
+                    {data: 'st_periode'},
+                    {data: 'c_name'},
+                    {data: 'i_name'},
+                    {data: 'target'},
+                    {data: 'realisasi'},
+                    {data: 'status'},
+                    {data: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }, 750);
     }
 
     function editTarget(st_id, dt_id) {
@@ -381,28 +381,30 @@
     var table_top;
     function tableTOP()
     {
-  		$('#table_terimaop').dataTable().fnDestroy();
-        table_top = $('#table_terimaop').DataTable({
-            responsive: true,
-            serverSide: true,
-            ajax: {
-                url: baseUrl + '/marketing/penjualanpusat/get-table-top',
-                type: "get",
-                data: {
-                    "_token": "{{ csrf_token() }}"
-                }
-            },
-            columns: [
-                {data: 'DT_RowIndex'},
-                {data: 'tanggal'},
-                {data: 'c_name'},
-                {data: 'po_nota'},
-                {data: 'total'},
-                {data: 'action', name: 'action'}
-            ],
-            pageLength: 10,
-            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 100]]
-        });
+  		setTimeout(function () {
+            $('#table_terimaop').dataTable().fnDestroy();
+            table_top = $('#table_terimaop').DataTable({
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: baseUrl + '/marketing/penjualanpusat/get-table-top',
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'tanggal'},
+                    {data: 'c_name'},
+                    {data: 'po_nota'},
+                    {data: 'total'},
+                    {data: 'action', name: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 100]]
+            });
+        }, 500);
     }
 
     function getDetailTOP(id)
@@ -504,18 +506,20 @@
                     let unit3 = (val.get_item.get_unit3 != null) ? '<option value="'+ val.get_item.get_unit3.u_id +'" data-unitcmp="'+ parseInt(val.get_item.i_unitcompare3) +'">'+ val.get_item.get_unit3.u_name +'</option>' : '';
                     selectUnitP = '<select name="unit[]" class="form-control form-control-sm select2 unitModalPr"><option value="" disabled>Pilih Barang</option>'+ unit1 + unit2 + unit3 + '</select>';
                     selectUnitN = '<select readonly class="form-control form-control-sm select2"><option value="" disabled>Pilih Barang</option></select>';
-                    let price = '<td><span class="unitprice-'+val.pod_item+'"> '+ convertToRupiah(val.pod_price.toString().replace(".00", "")) +'</span><input type="hidden" name="hargasatuan[]" class="hargasatuan" value="'+val.pod_price.toString().replace(".00", "")+'"></td>';
-                    let subTotal = '<td><span class="subtotalprice-'+val.pod_item+'"> '+ convertToRupiah(hargasubtotal.toString().replace(".00", "")) +'</span><input type="hidden" name="hargasubtotal[]" class="hargasubtotal" value=""></td>';
+                    let priceP = '<td><span class="unitprice-'+val.pod_item+'"> '+ convertToRupiah(val.pod_price.toString().replace(".00", "")) +'</span><input type="hidden" name="hargasatuan[]" class="hargasatuan" value="'+val.pod_price.toString().replace(".00", "")+'"></td>';
+                    let priceN = '<td><span class="unitprice-'+val.pod_item+'"> '+ convertToRupiah(val.pod_price.toString().replace(".00", "")) +'</span></td>';
+                    let subTotalP = '<td><span class="subtotalprice-'+val.pod_item+'"> '+ convertToRupiah(hargasubtotal.toString().replace(".00", "")) +'</span><input type="hidden" name="hargasubtotal[]" class="hargasubtotal hargasubtotal-'+val.pod_item+'" value="'+hargasubtotal.toString().replace(".00", "")+'"></td>';
+                    let subTotalN = '<td><span class="subtotalprice-'+val.pod_item+'"> '+ convertToRupiah(hargasubtotal.toString().replace(".00", "")) +'</span>';
                     let aksiP = '<td><button type="button" class="btn btn-sm btn-danger" onclick="changeStatus('+val.pod_productorder+', '+val.pod_detailid+', \'N\')"><i class="fa fa-close"></i></button></td>';
                     let aksiN = '<td><button type="button" class="btn btn-sm btn-success" onclick="changeStatus('+val.pod_productorder+', '+val.pod_detailid+', \'P\')"><i class="fa fa-check"></i></button></td>';
                     if (val.pod_isapproved == 'P'){
                         let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name + itemIdP +'</td>';
                         let unit = '<td>'+ selectUnitP +'</td>';
-                        appendItem = '<tr>'+ item + stok + qtyP + unit + price + subTotal + aksiP +'</tr>';
+                        appendItem = '<tr>'+ item + stok + qtyP + unit + priceP + subTotalP + aksiP +'</tr>';
                     } else if (val.pod_isapproved == 'N') {
                         let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name + itemIdN +'</td>';
                         let unit = '<td>'+ selectUnitN +'</td>';
-                        appendItem = '<tr class="tolak">'+ item + stok + qtyN + unit + price + subTotal + aksiN +'</tr>';
+                        appendItem = '<tr class="tolak">'+ item + stok + qtyN + unit + priceN + subTotalN + aksiN +'</tr>';
                     }
                     // append data to table-row
 
@@ -563,7 +567,8 @@
         $('.qtyModalPr').on('keyup', function() {
             idxItem = $('.qtyModalPr').index(this);
             validateQty();
-            hitungTotal()
+            hitungTotal();
+            changePrice();
         });
         // set event handler for unit
         $('.unitModalPr').on('change', function() {
@@ -632,6 +637,7 @@
                     if (response.pesan == 'harga tidak ditemukan'){
                         $('.unitprice-'+item).html("Tidak ditemukan");
                         $('.subtotalprice-'+item).html("Tidak ditemukan");
+                        $('.hargasubtotal-'+item).val(0);
                     }
                 } else {
                     $('.hargasatuan').eq(idxItem).val(response);
@@ -641,6 +647,7 @@
                         total = 0;
                     }
                     $('.subtotalprice-'+item).html(convertToRupiah(total));
+                    $('.hargasubtotal-'+item).val(total);
                 }
                 hitungTotal();
             },
@@ -662,6 +669,7 @@
             subTotal = 0;
         }
         $('.subtotalprice-'+item).html(convertToRupiah(subTotal));
+        $('.hargasubtotal-'+item).val(subTotal);
         setTotalTransaksi();
     }
 
@@ -694,7 +702,14 @@
             data: data,
             success: function(response) {
                 loadingHide();
-                console.log(response);
+                if (response.status == 'success'){
+                    messageSuccess("Berhasil", "Data berhasil disimpan");
+                    table_top.ajax.reload();
+                    $('#modalProcessTOP').modal('hide');
+                } else if (response.status == 'gagal'){
+                    messageFailed("Gagal", "data gagal disimpan");
+                    console.log(response.message);
+                }
             },
             error: function(xhr, status, error) {
                 loadingHide();
@@ -707,11 +722,49 @@
     function setTotalTransaksi(){
         let allprice = $('.hargasubtotal').serializeArray();
         var total = 0;
+
         for (let i = 0; i < allprice.length; i++) {
             total = total + parseInt(allprice[i].value);
         }
-        $('#totalModalPr').html(convertToRupiah(total));
+        $('#totalModalPr').val(convertToRupiah(total));
         console.log(total);
+    }
+
+    // Distribusi penjualan
+
+    function tableDistribusi() {
+        let status = $('#status_distribusi').val();
+        setTimeout(function () {
+            $('#table_distribusi').dataTable().fnDestroy();
+            table_distribusi = $('#table_distribusi').DataTable({
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                "bAutoWidth": false,
+                ajax: {
+                    url: baseUrl + '/marketing/penjualanpusat/get-table-distribusi',
+                    type: "get",
+                    data: {
+                        "status": status,
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'tanggal'},
+                    {data: 'c_name'},
+                    {data: 'po_nota'},
+                    {data: 'total'},
+                    {data: 'action', name: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 100]]
+            });
+        }, 250);
+    }
+
+    function distribusiPenjualan(id) {
+
     }
 
 

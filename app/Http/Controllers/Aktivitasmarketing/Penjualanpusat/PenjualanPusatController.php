@@ -44,8 +44,6 @@ class PenjualanPusatController extends Controller
                 return '<td>' . Carbon::parse($data->po_date)->format('d-m-Y') . '</td>';
             })
             ->addColumn('action', function ($data) {
-                $tmp = DB::table('d_productorderdt')->where('pod_productorder', $data->po_id)->sum('pod_totalprice');
-
                 return '<div class="btn-group btn-group-sm">
                 <button class="btn btn-primary btn-detail" type="button" onclick="getDetailTOP(' . $data->po_id . ')" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
                 <button class="btn btn-success btn-process" type="button" onclick="processTOP(' . $data->po_id . ')" title="Proses" data-toggle="modal" data-target="#modalProcessTOP"><i class="fa fa-arrow-right"></i></button>
@@ -152,7 +150,54 @@ class PenjualanPusatController extends Controller
 
     public function confirmProcessTOP(Request $request, $id)
     {
-        dd($request->all());
+        $id_po = $request->idPO;
+        $qty = $request->qty;
+        $item = $request->itemId;
+        $unit = $request->unit;
+        $harga = $request->hargasatuan;
+
+        DB::beginTransaction();
+        try {
+
+            DB::table('d_productorder')
+                ->where('po_id', '=', $id_po)
+                ->update([
+                    'po_status' => 'Y'
+                ]);
+
+            for($i = 0; $i < count($item); $i++){
+                DB::table('d_productorderdt')
+                    ->where('pod_productorder', '=', $id_po)
+                    ->where('pod_item', '=', $item[$i])
+                    ->update([
+                        'pod_unit' => $unit[$i],
+                        'pod_price' => $harga[$i],
+                        'pod_qty' => $qty[$i],
+                        'pod_totalprice' => $qty[$i] * $harga[$i],
+                        'pod_isapproved' => 'Y'
+                    ]);
+            }
+
+            DB::table('d_productorderdt')
+                ->whereNotIn('pod_item', $item)
+                ->update([
+                    'pod_isapproved' => 'N',
+                    'pod_qty' => 0,
+                    'pod_price' => 0,
+                    'pod_totalprice' => 0,
+                ]);
+
+            DB::commit();
+            return Response::json([
+                'status' => 'success'
+            ]);
+        } catch (DecryptException $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     public function orderpenjualan_proses(Request $request)
@@ -505,6 +550,17 @@ class PenjualanPusatController extends Controller
         ]);
     }
 
+    function existsInArray($entry, $array)
+    {
+        $x = false;
+        foreach ($array as $compare) {
+            if ($compare->pcd_type == $entry) {
+                $x = true;
+            }
+        }
+        return $x;
+    }
+
     public function getPrice(Request $request)
     {
         $agen = DB::table('m_company')
@@ -571,5 +627,44 @@ class PenjualanPusatController extends Controller
         }
 
         return Response::json(number_format($harga, 0, '', ''));
+    }
+
+    public function getTableDistribusi(Request $request)
+    {
+        $status = $request->status;
+        $data = DB::table('d_productorder')
+            ->leftjoin('m_company', 'c_id', '=', 'po_agen')
+            ->where('po_status', 'Y')
+            ->where('po_comp', '=', Auth::user()->u_company);
+
+        if ($status == 'P'){
+            $data->where('po_send', '=', 'P');
+        } elseif ($status == 'Y'){
+            $data->where('po_send', '=', 'Y');
+        } else {
+            $data->whereNull('po_send');
+        }
+        $data = $data->get();
+
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('tanggal', function ($data) {
+                return '<td>' . Carbon::parse($data->po_date)->format('d-m-Y') . '</td>';
+            })
+            ->addColumn('action', function ($data) {
+
+                return '<div class="btn-group btn-group-sm">
+                <button class="btn btn-primary btn-detail" type="button" onclick="getDetailTOP(' . $data->po_id . ')" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
+                <button class="btn btn-warning btn-process" type="button" onclick="distribusiPenjualan(' . $data->po_id . ')" title="Kirim" data-toggle="modal" data-target="#modal_distribusi"><i class="fa fa-send"></i></button>
+                </div>';
+                // <button class="btn btn-success btn-proses" type="button" title="Proses" onclick="window.location.href=\''. route('orderpenjualan.proses') .'?id='.encrypt($data->po_id).'\'"><i class="fa fa-arrow-right"></i></button>
+            })
+            ->addColumn('total', function ($data) {
+                $tmp = DB::table('d_productorderdt')->where('pod_productorder', $data->po_id)->sum('pod_totalprice');
+
+                return "Rp " . number_format($tmp, 2, ',', '.');;
+            })
+            ->rawColumns(['tanggal', 'action', 'total'])
+            ->make(true);
     }
 }

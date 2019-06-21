@@ -166,6 +166,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/member/update/{id}', 'Master\MemberController@updateMember')->name('member.update');
     Route::post('/masterdatautama/member/nonactivate/{id}', 'Master\MemberController@nonActivateMember')->name('member.nonActivate');
     Route::post('/masterdatautama/member/activate/{id}', 'Master\MemberController@activateMember')->name('member.activate');
+
+    //Master ekspedisi
+    Route::get('/masterdatautama/ekspedisi', 'Master\EkspedisiController@index')->name('ekspedisi.index');
+    Route::get('/masterdatautama/ekspedisi/get-data-ekspedisi', 'Master\EkspedisiController@getData')->name('ekspedisi.data');
+    Route::get('/masterdatautama/ekspedisi/get-data-product-ekspedisi', 'Master\EkspedisiController@getDataProduct')->name('ekspedisi.dataProduct');
+    Route::post('/masterdatautama/ekspedisi/save-data-ekspedisi', 'Master\EkspedisiController@save')->name('ekspedisi.save');
+    Route::post('/masterdatautama/ekspedisi/save-data-produk', 'Master\EkspedisiController@saveProduk')->name('ekspedisi.saveProduk');
+    Route::post('/masterdatautama/ekspedisi/disable-ekspedisi', 'Master\EkspedisiController@disableEkspedisi')->name('ekspedisi.disableEkspedisi');
+    Route::post('/masterdatautama/ekspedisi/disable-produk', 'Master\EkspedisiController@disableProduk')->name('ekspedisi.disableProduk');
+    Route::post('/masterdatautama/ekspedisi/enable-ekspedisi', 'Master\EkspedisiController@enableEkspedisi')->name('ekspedisi.enableEkspedisi');
+    Route::post('/masterdatautama/ekspedisi/enable-produk', 'Master\EkspedisiController@enableProduk')->name('ekspedisi.enableProduk');
     // !===================================================== End Master Data Utama =====================================================!
 
     // !===================================================== PRODUKSI =====================================================!
@@ -376,6 +387,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/orderpenjualan/proses', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@orderpenjualan_proses')->name('orderpenjualan.proses');
     Route::get('/marketing/penjualanpusat/ganti-status', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@changeStatus')->name('penjualanpusat.gantistatus');
     Route::get('/marketing/penjualanpusat/get-harga-satuan', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getPrice')->name('penjualanpusat.gantisatuan');
+    Route::get('/marketing/penjualanpusat/get-table-distribusi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTableDistribusi')->name('penjualanpusat.getTableDistribusi');
     // Target Realisasi
     Route::get('/marketing/penjualanpusat/targetrealisasi/targetList', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetList')->name('targetReal.list');
     Route::get('/marketing/penjualanpusat/targetrealisasi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@createTargetReal')->name('targetReal.create');
@@ -597,6 +609,10 @@ Route::group(['middleware' => 'auth'], function () {
     //Get ototitasi
     Route::get('/getoto', 'getotorisasiController@get');
     Route::get('/gettmpoto', 'getotorisasiController@gettmpoto');
+
+    Route::get('/getnotif', 'getnotifikasiController@get');
+    Route::get('/gettmpnotif', 'getnotifikasiController@gettmpnotif');
+    // Route::get('/testoto', 'pushotorisasiController@otorisasiup');
 
     //Otorisasi Stock Opname
     Route::get('/notifikasiotorisasi/otorisasi/opname/getdataopname', 'OtorisasiController@getopname');
