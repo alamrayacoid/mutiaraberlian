@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div id="detail" class="modal fade animated fadeIn" role="dialog">
+<div id="modal_distribusi" class="modal fade animated fadeIn" role="dialog">
     <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
@@ -38,7 +38,7 @@
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped data-table table-hover display nowrap" cellspacing="0"
-                           id="table_modalDt">
+                           id="table_senddistribution">
                         <thead class="bg-primary">
                         <tr>
                             <th width="30%">Barang</th>

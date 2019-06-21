@@ -26,16 +26,43 @@
     <div class="header-block header-block-nav">
         <ul class="nav-profile">
             <li class="notifications new">
-            <a href="" data-toggle="dropdown">
-                <i class="fa fa-bell-o" title="Notifikasi"></i>
-                <sup>
-                    <span class="counter" id="counternotif">0</span>
-                </sup>
-            </a>
+                <a href="" data-toggle="dropdown">
+                    <i class="fa fa-bell-o" title="Notifikasi"></i>
+                    <sup>
+                        <span class="counter">8</span>
+                    </sup>
+                </a>
                 <div class="dropdown-menu notifications-dropdown-menu">
-                  <ul class="notifications-container" id="shownotifikasi">
-
-                  </ul>
+                    <ul class="notifications-container">
+                        <li>
+                            <a href="" class="notification-item">
+                                <div class="body-col">
+                                    <p>
+                                        <span class="accent">Zack Alien</span> pushed new commit:
+                                        <span class="accent">Fix page load performance issue</span>. </p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" class="notification-item">
+                                <div class="body-col">
+                                    <p>
+                                        <span class="accent">Amaya Hatsumi</span> started new task:
+                                        <span class="accent">Dashboard UI design.</span>. </p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" class="notification-item">
+                                <div class="body-col">
+                                    <p>
+                                        <span class="accent">Andy Nouman</span> deployed new version of
+                                        <span class="accent">NodeJS REST Api V3</span>
+                                    </p>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
                     <footer>
                         <ul>
                             <li>
@@ -48,10 +75,10 @@
             <li class="notifications new">
                 <a href="" data-toggle="dropdown">
 
-                <i><img src="{{ asset('assets/img/author-sign.png') }}" alt="" title="Otorisasi"></i>
-                <sup>
-                    <span class="counter" id="counteroto">0</span>
-                </sup>
+                    <i><img src="{{ asset('assets/img/author-sign.png') }}" alt="" title="Otorisasi"></i>
+                    <sup>
+                        <span class="counter" id="counter">0</span>
+                    </sup>
                 </a>
                 <div class="dropdown-menu notifications-dropdown-menu">
                     <ul class="notifications-container" id="showotorisasi">
@@ -67,8 +94,9 @@
                 </div>
             </li>
             <li class="profile dropdown">
-                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    <div class="img" style="background-image: url('https://i.mydramalist.com/O5OvYc.jpg')"> </div>
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                   aria-expanded="false">
+                    <div class="img" style="background-image: url('https://i.mydramalist.com/O5OvYc.jpg')"></div>
                     <span class="name"> {{ \App\d_username::getName() }} </span>
                 </a>
                 <div class="dropdown-menu profile-dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -78,7 +106,7 @@
                         <i class="fa fa-gear icon"></i> Settings </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ route('logout') }}"
-                                            onclick="event.preventDefault();
+                       onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                         <i class="fa fa-power-off icon"></i> Logout </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -90,7 +118,7 @@
     </div>
 </header>
 
-    <?php $sidebar = App\Http\Controllers\AksesUser::aksesSidebar() ?>
+<?php $sidebar = App\Http\Controllers\AksesUser::aksesSidebar() ?>
 
 <aside class="sidebar">
     <div class="sidebar-container">
@@ -126,330 +154,338 @@
                 </li>
                 <!-- MASTER DATA UTAMA -->
                 @if ($sidebar[0]->ua_read == 'Y' || $sidebar[1]->ua_read == 'Y' || $sidebar[2]->ua_read == 'Y' || $sidebar[3]->ua_read == 'Y' || $sidebar[4]->ua_read == 'Y' || $sidebar[5]->ua_read == 'Y'|| $sidebar[6]->ua_read == 'Y')
-                <li class="{{Request::is('masterdatautama/*') ? 'active open' : ''}}">
-                    <a href="#">
-                        <i class="fa fa-th-large"></i> <span class="menu-title">Master Data Utama</span>
-                        <i class="fa arrow"></i>
-                    </a>
-                    <ul class="sidebar-nav">
-                      @if ($sidebar[1]->ua_read == 'Y')
-                        <li class="{{Request::is('masterdatautama/datapegawai/*') ? 'active' : ''}}">
-                            <a href="{{route('pegawai.index')}}"> Master Pegawai</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[2]->ua_read == 'Y')
-                        <li class="{{Request::is('masterdatautama/produk/*') ? 'active' : ''}}">
-                            <a href="{{route('dataproduk.index')}}"> Master Produk</a>
-                        </li>
-                      @endif
+                    <li class="{{Request::is('masterdatautama/*') ? 'active open' : ''}}">
+                        <a href="#">
+                            <i class="fa fa-th-large"></i> <span class="menu-title">Master Data Utama</span>
+                            <i class="fa arrow"></i>
+                        </a>
+                        <ul class="sidebar-nav">
+                            @if ($sidebar[1]->ua_read == 'Y')
+                                <li class="{{Request::is('masterdatautama/datapegawai/*') ? 'active' : ''}}">
+                                    <a href="{{route('pegawai.index')}}"> Master Pegawai</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[2]->ua_read == 'Y')
+                                <li class="{{Request::is('masterdatautama/produk/*') ? 'active' : ''}}">
+                                    <a href="{{route('dataproduk.index')}}"> Master Produk</a>
+                                </li>
+                            @endif
                         <!-- <li class="{{Request::is('masterdatautama/variasisatuanproduk/*') ? 'active' : ''}}">
                             <a href="{{route('variasisatuan.index')}}"> Variasi Satuan Produk</a>
                         </li> -->
-                      @if ($sidebar[3]->ua_read == 'Y')
-                        <li class="{{Request::is('masterdatautama/harga/*') ? 'active' : ''}}">
-                            <a href="{{route('dataharga.index')}}"> Master Harga</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[4]->ua_read == 'Y')
-                        <li class="{{Request::is('masterdatautama/suplier/*') ? 'active' : ''}}">
-                            <a href="{{route('suplier.index')}}">Master Suplier</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[5]->ua_read == 'Y')
-                        <li class="{{Request::is('masterdatautama/cabang/*') ? 'active' : ''}}">
-                            <a href="{{ route('cabang.index') }}">Master Cabang</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[1]->ua_read == 'Y')
-                        <li class="{{Request::is('masterdatautama/agen/*') ? 'active' : ''}}">
-                            <a href="{{ route('agen.index')}}">Master Agen</a>
-                        </li>
-                        <li class="{{Request::is('masterdatautama/member/*') ? 'active' : ''}}">
-                            <a href="{{ route('member.index')}}">Master Member</a>
-                        </li>
-                      @endif
-                       {{--  <li class="{{Request::is('masterdatautama/datasatuan/*') ? 'active' : ''}}">
-                            <a href="{{route('datasatuan.index')}}">Master Satuan</a>
-                        </li> --}}
-                    </ul>
-                </li>
+                            @if ($sidebar[3]->ua_read == 'Y')
+                                <li class="{{Request::is('masterdatautama/harga/*') ? 'active' : ''}}">
+                                    <a href="{{route('dataharga.index')}}"> Master Harga</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[4]->ua_read == 'Y')
+                                <li class="{{Request::is('masterdatautama/suplier/*') ? 'active' : ''}}">
+                                    <a href="{{route('suplier.index')}}">Master Suplier</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[5]->ua_read == 'Y')
+                                <li class="{{Request::is('masterdatautama/cabang/*') ? 'active' : ''}}">
+                                    <a href="{{ route('cabang.index') }}">Master Cabang</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[1]->ua_read == 'Y')
+                                <li class="{{Request::is('masterdatautama/agen/*') ? 'active' : ''}}">
+                                    <a href="{{ route('agen.index')}}">Master Agen</a>
+                                </li>
+                                <li class="{{Request::is('masterdatautama/member/*') ? 'active' : ''}}">
+                                    <a href="{{ route('member.index')}}">Master Member</a>
+                                </li>
+                            @endif
+                            <li class="{{Request::is('masterdatautama/ekspedisi/*') ? 'active' : ''}}">
+                                <a href="{{route('ekspedisi.index')}}"> Master Ekspedisi</a>
+                            </li>
+                            {{--  <li class="{{Request::is('masterdatautama/datasatuan/*') ? 'active' : ''}}">
+                                 <a href="{{route('datasatuan.index')}}">Master Satuan</a>
+                             </li> --}}
+                        </ul>
+                    </li>
                 @endif
-                <!-- END MASTER DATA UTAMA -->
+            <!-- END MASTER DATA UTAMA -->
                 <!-- AKTIVITAS PRODUKSI -->
                 @if ($sidebar[7]->ua_read == 'Y' || $sidebar[8]->ua_read == 'Y' || $sidebar[9]->ua_read == 'Y' || $sidebar[10]->ua_read == 'Y' || $sidebar[11]->ua_read == 'Y')
-                <li class="{{Request::is('produksi/*') ? 'active open' : ''}}">
-                    <a href="#">
-                        <i class="fa fa-product-hunt"></i> <span class="menu-title">Aktivitas Produksi</span>
-                        <i class="fa arrow"></i>
-                    </a>
-                    <ul class="sidebar-nav">
-                      @if ($sidebar[8]->ua_read == 'Y')
-                        <li class="{{Request::is('produksi/orderproduksi/*') ? 'active' : ''}}">
-                            <a href="{{route('order.index')}}">Order Produksi</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[9]->ua_read == 'Y')
-                        <li class="{{Request::is('produksi/penerimaanbarang/*') ? 'active' : ''}}">
-                            <a href="{{route('penerimaan.index')}}">Penerimaan Barang</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[10]->ua_read == 'Y')
-                        <li class="{{Request::is('produksi/pembayaran/*') ? 'active' : ''}}">
-                            <a href="{{route('pembayaran.index')}}">Pembayaran</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[11]->ua_read == 'Y')
-                        <li class="{{Request::is('produksi/returnproduksi/*') ? 'active' : ''}}">
-                            <a href="{{ route('return.index') }}">Return Produksi</a>
-                        </li>
-                      @endif
-                    </ul>
-                </li>
-              @endif
-                <!-- END AKTIVITAS PRODUKSI -->
+                    <li class="{{Request::is('produksi/*') ? 'active open' : ''}}">
+                        <a href="#">
+                            <i class="fa fa-product-hunt"></i> <span class="menu-title">Aktivitas Produksi</span>
+                            <i class="fa arrow"></i>
+                        </a>
+                        <ul class="sidebar-nav">
+                            @if ($sidebar[8]->ua_read == 'Y')
+                                <li class="{{Request::is('produksi/orderproduksi/*') ? 'active' : ''}}">
+                                    <a href="{{route('order.index')}}">Order Produksi</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[9]->ua_read == 'Y')
+                                <li class="{{Request::is('produksi/penerimaanbarang/*') ? 'active' : ''}}">
+                                    <a href="{{route('penerimaan.index')}}">Penerimaan Barang</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[10]->ua_read == 'Y')
+                                <li class="{{Request::is('produksi/pembayaran/*') ? 'active' : ''}}">
+                                    <a href="{{route('pembayaran.index')}}">Pembayaran</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[11]->ua_read == 'Y')
+                                <li class="{{Request::is('produksi/returnproduksi/*') ? 'active' : ''}}">
+                                    <a href="{{ route('return.index') }}">Return Produksi</a>
+                                </li>
+                            @endif
+                        </ul>
+                    </li>
+                @endif
+            <!-- END AKTIVITAS PRODUKSI -->
                 <!-- AKTIVITAS INVENTORY -->
                 @if ($sidebar[12]->ua_read == 'Y' || $sidebar[13]->ua_read == 'Y' || $sidebar[14]->ua_read == 'Y' || $sidebar[15]->ua_read == 'Y' || $sidebar[16]->ua_read == 'Y')
-                <li class="{{Request::is('inventory/*') ? 'active open' : ''}}">
-                    <a href="">
-                        <i class="fa fa-desktop"></i><span class="menu-title"> Aktivitas Inventory</span>
-                        <i class="fa arrow"></i>
-                    </a>
-                    <ul class="sidebar-nav">
-                      @if ($sidebar[13]->ua_read == 'Y')
-                        <li class="{{Request::is('inventory/barangmasuk/*') ? 'aktif open' : ''}}">
-                            <a href="{{route('barangmasuk.index')}}"> Pengelolaan Barang Masuk</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[14]->ua_read == 'Y')
-                        <li class="{{Request::is('inventory/barangkeluar/*') ? 'aktif open' : ''}}">
-                            <a href="{{route('barangkeluar.index')}}"> Pengelolaan Barang Keluar</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[15]->ua_read == 'Y')
-                        <li class="{{Request::is('inventory/distribusibarang/*') ? 'aktif open' : ''}}">
-                            <a href="{{route('distribusibarang.index')}}"> Pengelolaan Distribusi Barang</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[16]->ua_read == 'Y')
-                        <li class="{{Request::is('inventory/manajemenstok/*') ? 'aktif open' : ''}}">
-                            <a href="{{route('manajemenstok.index')}}"> Pengelolaan Manajemen Stok</a>
-                        </li>
-                      @endif
-                    </ul>
-                </li>
-              @endif
-                <!-- END AKTIVITAS INVENTORY -->
+                    <li class="{{Request::is('inventory/*') ? 'active open' : ''}}">
+                        <a href="">
+                            <i class="fa fa-desktop"></i><span class="menu-title"> Aktivitas Inventory</span>
+                            <i class="fa arrow"></i>
+                        </a>
+                        <ul class="sidebar-nav">
+                            @if ($sidebar[13]->ua_read == 'Y')
+                                <li class="{{Request::is('inventory/barangmasuk/*') ? 'aktif open' : ''}}">
+                                    <a href="{{route('barangmasuk.index')}}"> Pengelolaan Barang Masuk</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[14]->ua_read == 'Y')
+                                <li class="{{Request::is('inventory/barangkeluar/*') ? 'aktif open' : ''}}">
+                                    <a href="{{route('barangkeluar.index')}}"> Pengelolaan Barang Keluar</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[15]->ua_read == 'Y')
+                                <li class="{{Request::is('inventory/distribusibarang/*') ? 'aktif open' : ''}}">
+                                    <a href="{{route('distribusibarang.index')}}"> Pengelolaan Distribusi Barang</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[16]->ua_read == 'Y')
+                                <li class="{{Request::is('inventory/manajemenstok/*') ? 'aktif open' : ''}}">
+                                    <a href="{{route('manajemenstok.index')}}"> Pengelolaan Manajemen Stok</a>
+                                </li>
+                            @endif
+                        </ul>
+                    </li>
+                @endif
+            <!-- END AKTIVITAS INVENTORY -->
                 <!-- AKTIVITAS MARKETING -->
                 @if ($sidebar[17]->ua_read == 'Y' || $sidebar[18]->ua_read == 'Y' || $sidebar[19]->ua_read == 'Y' || $sidebar[20]->ua_read == 'Y' || $sidebar[21]->ua_read == 'Y' || $sidebar[22]->ua_read == 'Y')
-                <li class="{{Request::is('marketing/*') ? 'active open' : ''}}">
-                    <a href="#">
-                        <i class="fa fa-shopping-cart"></i><span class="menu-title"> Aktivitas Marketing</span>
-                        <i class="fa arrow"></i>
-                    </a>
-                    <ul class="sidebar-nav">
-                      @if ($sidebar[18]->ua_read == 'Y')
-                        <li class="{{Request::is('marketing/manajemenmarketing/*') ? 'active' : ''}}">
-                            <a href="{{route('mngmarketing.index')}}">Manajemen Marketing</a>
-                        </li>
-                      @endif
-                        {{-- <li class="{{Request::is('marketing/targetrealisasipenjualan/*') ? 'active' : ''}}">
-                            <a href="{{route('targetrealisasi.index')}}">Target dan Realisasi Penjualan</a>
-                        </li> --}}
-                      @if ($sidebar[19]->ua_read == 'Y')
-                        <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
-                            <a href="{{route('penjualanpusat.index')}}">Manajemen Penjualan Pusat</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[20]->ua_read == 'Y')
-                        <li class="{{Request::is('marketing/konsinyasipusat/*') ? 'active' : ''}}">
-                            <a href="{{route('konsinyasipusat.index')}}">Manajemen Konsinyasi Pusat</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[21]->ua_read == 'Y')
-                        <li class="{{Request::is('marketing/marketingarea/*') ? 'active' : ''}}">
-                            <a href="{{ route('marketingarea.index') }}">Manajemen Marketing Area</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[22]->ua_read == 'Y')
-                        <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                            <a href="{{ route('manajemenagen.index') }}">Manajemen Agen</a>
-                        </li>
-                      @endif
-                    </ul>
-                </li>
-              @endif
-                <!-- END AKTIVITAS MARKETING -->
+                    <li class="{{Request::is('marketing/*') ? 'active open' : ''}}">
+                        <a href="#">
+                            <i class="fa fa-shopping-cart"></i><span class="menu-title"> Aktivitas Marketing</span>
+                            <i class="fa arrow"></i>
+                        </a>
+                        <ul class="sidebar-nav">
+                            @if ($sidebar[18]->ua_read == 'Y')
+                                <li class="{{Request::is('marketing/manajemenmarketing/*') ? 'active' : ''}}">
+                                    <a href="{{route('mngmarketing.index')}}">Manajemen Marketing</a>
+                                </li>
+                            @endif
+                            {{-- <li class="{{Request::is('marketing/targetrealisasipenjualan/*') ? 'active' : ''}}">
+                                <a href="{{route('targetrealisasi.index')}}">Target dan Realisasi Penjualan</a>
+                            </li> --}}
+                            @if ($sidebar[19]->ua_read == 'Y')
+                                <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
+                                    <a href="{{route('penjualanpusat.index')}}">Manajemen Penjualan Pusat</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[20]->ua_read == 'Y')
+                                <li class="{{Request::is('marketing/konsinyasipusat/*') ? 'active' : ''}}">
+                                    <a href="{{route('konsinyasipusat.index')}}">Manajemen Konsinyasi Pusat</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[21]->ua_read == 'Y')
+                                <li class="{{Request::is('marketing/marketingarea/*') ? 'active' : ''}}">
+                                    <a href="{{ route('marketingarea.index') }}">Manajemen Marketing Area</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[22]->ua_read == 'Y')
+                                <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
+                                    <a href="{{ route('manajemenagen.index') }}">Manajemen Agen</a>
+                                </li>
+                            @endif
+                        </ul>
+                    </li>
+                @endif
+            <!-- END AKTIVITAS MARKETING -->
                 <!-- AKTIVITAS SDM -->
                 @if ($sidebar[23]->ua_read == 'Y' || $sidebar[24]->ua_read == 'Y' || $sidebar[25]->ua_read == 'Y' || $sidebar[26]->ua_read == 'Y' || $sidebar[27]->ua_read == 'Y')
-                <li class="{{Request::is('sdm/*') ? 'active open' : ''}}">
-                    <a href="">
-                        <i class="fa fa-group"></i><span class="menu-title"> Aktivitas SDM</span>
-                        <i class="fa arrow"></i>
-                    </a>
-                    <ul class="sidebar-nav">
-                      @if ($sidebar[24]->ua_read == 'Y')
-                        <li class="{{Request::is('sdm/prosesrekruitmen/*') ? 'active' : ''}}">
-                            <a href="{{route('rekruitmen.index')}}">Proses Rekruitmen</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[25]->ua_read == 'Y')
-                        <li class="{{Request::is('sdm/kinerjasdm/*') ? 'active' : ''}}">
-                            <a href="{{route('kinerjasdm.index')}}">Kelola Kinerja SDM</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[26]->ua_read == 'Y')
-                        <li class="{{Request::is('sdm/absensisdm/*') ? 'active' : ''}}">
-                            <a href="{{route('absensisdm.index')}}">Kelola Abesensi SDM</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[27]->ua_read == 'Y')
-                        <li class="{{Request::is('sdm/penggajian/*') ? 'active' : ''}}">
-                            <a href="{{ route('penggajian.index') }}">Kelola Penggajian</a>
-                        </li>
-                      @endif
-                    </ul>
-                </li>
-              @endif
-                <!-- END AKTIVITAS SDM -->
+                    <li class="{{Request::is('sdm/*') ? 'active open' : ''}}">
+                        <a href="">
+                            <i class="fa fa-group"></i><span class="menu-title"> Aktivitas SDM</span>
+                            <i class="fa arrow"></i>
+                        </a>
+                        <ul class="sidebar-nav">
+                            @if ($sidebar[24]->ua_read == 'Y')
+                                <li class="{{Request::is('sdm/prosesrekruitmen/*') ? 'active' : ''}}">
+                                    <a href="{{route('rekruitmen.index')}}">Proses Rekruitmen</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[25]->ua_read == 'Y')
+                                <li class="{{Request::is('sdm/kinerjasdm/*') ? 'active' : ''}}">
+                                    <a href="{{route('kinerjasdm.index')}}">Kelola Kinerja SDM</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[26]->ua_read == 'Y')
+                                <li class="{{Request::is('sdm/absensisdm/*') ? 'active' : ''}}">
+                                    <a href="{{route('absensisdm.index')}}">Kelola Abesensi SDM</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[27]->ua_read == 'Y')
+                                <li class="{{Request::is('sdm/penggajian/*') ? 'active' : ''}}">
+                                    <a href="{{ route('penggajian.index') }}">Kelola Penggajian</a>
+                                </li>
+                            @endif
+                        </ul>
+                    </li>
+                @endif
+            <!-- END AKTIVITAS SDM -->
                 @if ($sidebar[28]->ua_read == 'Y' || $sidebar[29]->ua_read == 'Y' || $sidebar[30]->ua_read == 'Y')
-                <li class="">
-                    <a href="">
-                        <i class="fa fa-money"></i><span class="menu-title"> Budgeting</span>
-                        <i class="fa arrow"></i>
-                    </a>
-                    <ul class="sidebar-nav">
-                      @if ($sidebar[29]->ua_read == 'Y')
-                        <li>
-                            <a href="#">Manajemen Perencanaan</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[30]->ua_read == 'Y')
-                        <li>
-                            <a href="#">Manajemen Penganggaran</a>
-                        </li>
-                      @endif
-                    </ul>
-                </li>
-              @endif
+                    <li class="">
+                        <a href="">
+                            <i class="fa fa-money"></i><span class="menu-title"> Budgeting</span>
+                            <i class="fa arrow"></i>
+                        </a>
+                        <ul class="sidebar-nav">
+                            @if ($sidebar[29]->ua_read == 'Y')
+                                <li>
+                                    <a href="#">Manajemen Perencanaan</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[30]->ua_read == 'Y')
+                                <li>
+                                    <a href="#">Manajemen Penganggaran</a>
+                                </li>
+                            @endif
+                        </ul>
+                    </li>
+                @endif
 
-              @if ($sidebar[31]->ua_read == 'Y' || $sidebar[32]->ua_read == 'Y' || $sidebar[33]->ua_read == 'Y' || $sidebar[34]->ua_read == 'Y' || $sidebar[35]->ua_read == 'Y' || $sidebar[36]->ua_read == 'Y')
-                <li class="{{Request::is('keuangan/*') ? 'active open' : ''}}">
-                    <a href="#">
-                        <i class="fa fa-usd"></i><span class="menu-title"> Keuangan</span>
-                        <i class="fa arrow"></i>
-                    </a>
-                    <ul class="sidebar-nav">
-                      @if ($sidebar[32]->ua_read == 'Y')
-                        <li>
-                            <a href="#">Dashboard</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[33]->ua_read == 'Y')
-                        <li class="{{Request::is('keuangan/inputtransaksi/*') ? 'active' : ''}}">
-                            <a href="{{route('inputtransaksi.index')}}">Manajemen Input Transaksi</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[34]->ua_read == 'Y')
-                        <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
-                            <a href="{{route('penjualanpusat.index')}}">Manajemen Hutang Piutang</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[35]->ua_read == 'Y')
-                        <li class="{{Request::is('marketing/kosinyasipusat/*') ? 'active' : ''}}">
-                            <a href="{{route('penjualanpusat.index')}}">Manajemen Pajak</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[36]->ua_read == 'Y')
-                        <li class="{{Request::is('keuangan/laporankeuangan/*') ? 'active' : ''}}">
-                            <a href="{{ route('laporankeuangan.index') }}">Laporan Keuangan</a>
-                        </li>
-                      @endif
-                          @if ($sidebar[37]->ua_read == 'Y' || $sidebar[38]->ua_read == 'Y' || $sidebar[39]->ua_read == 'Y' || $sidebar[40]->ua_read == 'Y' || $sidebar[41]->ua_read == 'Y' || $sidebar[42]->ua_read == 'Y' || $sidebar[43]->ua_read == 'Y')
-                        <li>
-                            <a href="#">
-                                <i class="fa fa-bar-chart-o"></i>
-                                Analisa
-                                <i class="fa arrow"></i>
-                            </a>
-                            <ul class="sidebar-nav">
-                              @if ($sidebar[37]->ua_read == 'Y')
-                                <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('manajemenagen.index') }}">Analisa Progress Terhadap Perencanaan</a>
+                @if ($sidebar[31]->ua_read == 'Y' || $sidebar[32]->ua_read == 'Y' || $sidebar[33]->ua_read == 'Y' || $sidebar[34]->ua_read == 'Y' || $sidebar[35]->ua_read == 'Y' || $sidebar[36]->ua_read == 'Y')
+                    <li class="{{Request::is('keuangan/*') ? 'active open' : ''}}">
+                        <a href="#">
+                            <i class="fa fa-usd"></i><span class="menu-title"> Keuangan</span>
+                            <i class="fa arrow"></i>
+                        </a>
+                        <ul class="sidebar-nav">
+                            @if ($sidebar[32]->ua_read == 'Y')
+                                <li>
+                                    <a href="#">Dashboard</a>
                                 </li>
-                              @endif
-                              @if ($sidebar[38]->ua_read == 'Y')
-                                <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('manajemenagen.index') }}">Analisa Net Profit Terhadap OCF</a>
+                            @endif
+                            @if ($sidebar[33]->ua_read == 'Y')
+                                <li class="{{Request::is('keuangan/inputtransaksi/*') ? 'active' : ''}}">
+                                    <a href="{{route('inputtransaksi.index')}}">Manajemen Input Transaksi</a>
                                 </li>
-                              @endif
-                              @if ($sidebar[39]->ua_read == 'Y')
-                                <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('manajemenagen.index') }}">Analisa Pertumbuhan Aset Terhadap ETA</a>
+                            @endif
+                            @if ($sidebar[34]->ua_read == 'Y')
+                                <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
+                                    <a href="{{route('penjualanpusat.index')}}">Manajemen Hutang Piutang</a>
                                 </li>
-                              @endif
-                              @if ($sidebar[40]->ua_read == 'Y')
-                                <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('manajemenagen.index') }}">Analisa Cashflow</a>
+                            @endif
+                            @if ($sidebar[35]->ua_read == 'Y')
+                                <li class="{{Request::is('marketing/kosinyasipusat/*') ? 'active' : ''}}">
+                                    <a href="{{route('penjualanpusat.index')}}">Manajemen Pajak</a>
                                 </li>
-                              @endif
-                              @if ($sidebar[41]->ua_read == 'Y')
-                                <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('manajemenagen.index') }}">Analisa Common Size</a>
+                            @endif
+                            @if ($sidebar[36]->ua_read == 'Y')
+                                <li class="{{Request::is('keuangan/laporankeuangan/*') ? 'active' : ''}}">
+                                    <a href="{{ route('laporankeuangan.index') }}">Laporan Keuangan</a>
                                 </li>
-                              @endif
-                              @if ($sidebar[42]->ua_read == 'Y')
-                                <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('manajemenagen.index') }}">Analisa Ratio Liquiditas</a>
+                            @endif
+                            @if ($sidebar[37]->ua_read == 'Y' || $sidebar[38]->ua_read == 'Y' || $sidebar[39]->ua_read == 'Y' || $sidebar[40]->ua_read == 'Y' || $sidebar[41]->ua_read == 'Y' || $sidebar[42]->ua_read == 'Y' || $sidebar[43]->ua_read == 'Y')
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-bar-chart-o"></i>
+                                        Analisa
+                                        <i class="fa arrow"></i>
+                                    </a>
+                                    <ul class="sidebar-nav">
+                                        @if ($sidebar[37]->ua_read == 'Y')
+                                            <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
+                                                <a href="{{ route('manajemenagen.index') }}">Analisa Progress Terhadap
+                                                    Perencanaan</a>
+                                            </li>
+                                        @endif
+                                        @if ($sidebar[38]->ua_read == 'Y')
+                                            <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
+                                                <a href="{{ route('manajemenagen.index') }}">Analisa Net Profit Terhadap
+                                                    OCF</a>
+                                            </li>
+                                        @endif
+                                        @if ($sidebar[39]->ua_read == 'Y')
+                                            <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
+                                                <a href="{{ route('manajemenagen.index') }}">Analisa Pertumbuhan Aset
+                                                    Terhadap ETA</a>
+                                            </li>
+                                        @endif
+                                        @if ($sidebar[40]->ua_read == 'Y')
+                                            <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
+                                                <a href="{{ route('manajemenagen.index') }}">Analisa Cashflow</a>
+                                            </li>
+                                        @endif
+                                        @if ($sidebar[41]->ua_read == 'Y')
+                                            <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
+                                                <a href="{{ route('manajemenagen.index') }}">Analisa Common Size</a>
+                                            </li>
+                                        @endif
+                                        @if ($sidebar[42]->ua_read == 'Y')
+                                            <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
+                                                <a href="{{ route('manajemenagen.index') }}">Analisa Ratio
+                                                    Liquiditas</a>
+                                            </li>
+                                        @endif
+                                        @if ($sidebar[43]->ua_read == 'Y')
+                                            <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
+                                                <a href="{{ route('manajemenagen.index') }}">Analisa Return on
+                                                    Equity</a>
+                                            </li>
+                                        @endif
+                                    </ul>
                                 </li>
-                              @endif
-                              @if ($sidebar[43]->ua_read == 'Y')
-                                <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                    <a href="{{ route('manajemenagen.index') }}">Analisa Return on Equity</a>
-                                </li>
-                              @endif
-                            </ul>
-                        </li>
-                        @endif
-                    </ul>
-                </li>
-              @endif
-                <!-- Notifikasi & Authorization -->
+                            @endif
+                        </ul>
+                    </li>
+                @endif
+            <!-- Notifikasi & Authorization -->
                 @if ($sidebar[44]->ua_read == 'Y' || $sidebar[45]->ua_read == 'Y' || $sidebar[46]->ua_read == 'Y')
-                <li class="{{ Request::is('notifikasiotorisasi/*') ? 'active open' : ''}}">
-                    <a href="">
-                        <i class="fa fa-bell"></i><span class="menu-title"> Notifikasi & Otorisasi</span>
-                        <i class="fa arrow"></i>
-                    </a>
-                    <ul class="sidebar-nav">
-                      @if ($sidebar[46]->ua_read == 'Y')
-                        <li class="{{Request::is('notifikasiotorisasi/notifikasi/*') ? 'open' : ''}}">
-                            <a href="{{route('notifikasi')}}">Notifikasi</a>
-                        </li>
-                      @endif
-                      @if ($sidebar[45]->ua_read == 'Y')
-                        <li class="{{Request::is('notifikasiotorisasi/otorisasi/*') ? 'open' : ''}}">
-                            <a href="{{route('otorisasi')}}">Otorisasi</a>
-                        </li>
-                      @endif
-                    </ul>
-                </li>
-              @endif
-                <!-- END Notifikasi & Authorization -->
+                    <li class="{{ Request::is('notifikasiotorisasi/*') ? 'active open' : ''}}">
+                        <a href="">
+                            <i class="fa fa-bell"></i><span class="menu-title"> Notifikasi & Otorisasi</span>
+                            <i class="fa arrow"></i>
+                        </a>
+                        <ul class="sidebar-nav">
+                            @if ($sidebar[46]->ua_read == 'Y')
+                                <li class="{{Request::is('notifikasiotorisasi/notifikasi/*') ? 'open' : ''}}">
+                                    <a href="{{route('notifikasi')}}">Notifikasi</a>
+                                </li>
+                            @endif
+                            @if ($sidebar[45]->ua_read == 'Y')
+                                <li class="{{Request::is('notifikasiotorisasi/otorisasi/*') ? 'open' : ''}}">
+                                    <a href="{{route('otorisasi')}}">Otorisasi</a>
+                                </li>
+                            @endif
+                        </ul>
+                    </li>
+                @endif
+            <!-- END Notifikasi & Authorization -->
                 <!-- AKTIVITAS Setting -->
                 @if ($sidebar[47]->ua_read == 'Y')
-                <li class="{{Request::is('pengaturan/*') ? 'active open' : ''}}">
-                    <a href="">
-                        <i class="fa fa-cog"></i><span class="menu-title"> Pengaturan</span>
-                        <i class="fa arrow"></i>
-                    </a>
-                    <ul class="sidebar-nav">
-                        <li class="{{Request::is('pengaturan/pengaturanpengguna/*') ? 'active' : ''}}">
-                            <a href="{{ route('pengaturanpengguna.index') }}">Pengaturan Pengguna</a>
-                        </li>
-                    </ul>
-                </li>
-              @endif
-                <!-- END AKTIVITAS Setting -->
+                    <li class="{{Request::is('pengaturan/*') ? 'active open' : ''}}">
+                        <a href="">
+                            <i class="fa fa-cog"></i><span class="menu-title"> Pengaturan</span>
+                            <i class="fa arrow"></i>
+                        </a>
+                        <ul class="sidebar-nav">
+                            <li class="{{Request::is('pengaturan/pengaturanpengguna/*') ? 'active' : ''}}">
+                                <a href="{{ route('pengaturanpengguna.index') }}">Pengaturan Pengguna</a>
+                            </li>
+                        </ul>
+                    </li>
+            @endif
+            <!-- END AKTIVITAS Setting -->
             </ul>
         </nav>
     </div>
@@ -460,7 +496,7 @@
                     <li class="customize">
                         <div class="customize-item">
                             <div class="row customize-header">
-                                <div class="col-4"> </div>
+                                <div class="col-4"></div>
                                 <div class="col-4">
                                     <label class="title">fixed</label>
                                 </div>

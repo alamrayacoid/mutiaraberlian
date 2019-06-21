@@ -20,6 +20,7 @@
 
     <!-- Modal Terima Order -->
     @include('marketing.penjualanpusat.terimaorder.modal')
+    @include('marketing.penjualanpusat.distribusi.modaldistribusi')
     @include('marketing.penjualanpusat.terimaorder.modal-process')
     @include('marketing.penjualanpusat.targetrealisasi.modal')
 
@@ -45,7 +46,7 @@
                                data-toggle="tab" role="tab">Terima Order Penjualan</a>
                         </li>
                         <li class="nav-item" id="tab2">
-                            <a href="" class="nav-link" data-target="#promosi_tahunan" aria-controls="promosi_tahunan"
+                            <a href="" class="nav-link" data-target="#distribusipenjualan" aria-controls="distribusipenjualan"
                                data-toggle="tab" role="tab">Distribusi Penjualan</a>
                         </li>
                         <li class="nav-item" id="tab3">
@@ -61,6 +62,7 @@
                     <div class="tab-content">
 
                         @include('marketing.penjualanpusat.terimaorder.index')
+                        @include('marketing.penjualanpusat.distribusi.index')
                         @include('marketing.penjualanpusat.returnpenjualan.index')
                         @include('marketing.penjualanpusat.targetrealisasi.index')
 
@@ -136,13 +138,8 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-
+    var table_distribusi;
     $(document).ready(function () {
-
-        var table_bar = $('#table_tahunan').DataTable();
-        var table_pus = $('#table_bulanan').DataTable();
-        var table_par = $('#table_targetrealisasi').DataTable();
-
         $("#cari_namabarang").autocomplete({
             source: function (request, response) {
                 var id = [''];
@@ -227,31 +224,34 @@
                 '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
         })
         targetReal();
+        tableDistribusi();
     });
 
     function targetReal() {
-        tb_target = $('#table_target').DataTable({
-            responsive: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('targetReal.list') }}",
-                type: "get",
-                data: {
-                    "_token": "{{ csrf_token() }}"
-                }
-            },
-            columns: [
-                {data: 'st_periode'},
-                {data: 'c_name'},
-                {data: 'i_name'},
-                {data: 'target'},
-                {data: 'realisasi'},
-                {data: 'status'},
-                {data: 'action'}
-            ],
-            pageLength: 10,
-            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-        });
+        setTimeout(function () {
+            tb_target = $('#table_target').DataTable({
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('targetReal.list') }}",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                columns: [
+                    {data: 'st_periode'},
+                    {data: 'c_name'},
+                    {data: 'i_name'},
+                    {data: 'target'},
+                    {data: 'realisasi'},
+                    {data: 'status'},
+                    {data: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }, 750);
     }
 
     function editTarget(st_id, dt_id) {
@@ -381,28 +381,30 @@
     var table_top;
     function tableTOP()
     {
-  		$('#table_terimaop').dataTable().fnDestroy();
-        table_top = $('#table_terimaop').DataTable({
-            responsive: true,
-            serverSide: true,
-            ajax: {
-                url: baseUrl + '/marketing/penjualanpusat/get-table-top',
-                type: "get",
-                data: {
-                    "_token": "{{ csrf_token() }}"
-                }
-            },
-            columns: [
-                {data: 'DT_RowIndex'},
-                {data: 'tanggal'},
-                {data: 'c_name'},
-                {data: 'po_nota'},
-                {data: 'total'},
-                {data: 'action', name: 'action'}
-            ],
-            pageLength: 10,
-            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 100]]
-        });
+  		setTimeout(function () {
+            $('#table_terimaop').dataTable().fnDestroy();
+            table_top = $('#table_terimaop').DataTable({
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: baseUrl + '/marketing/penjualanpusat/get-table-top',
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'tanggal'},
+                    {data: 'c_name'},
+                    {data: 'po_nota'},
+                    {data: 'total'},
+                    {data: 'action', name: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 100]]
+            });
+        }, 500);
     }
 
     function getDetailTOP(id)
@@ -565,7 +567,8 @@
         $('.qtyModalPr').on('keyup', function() {
             idxItem = $('.qtyModalPr').index(this);
             validateQty();
-            hitungTotal()
+            hitungTotal();
+            changePrice();
         });
         // set event handler for unit
         $('.unitModalPr').on('change', function() {
@@ -699,7 +702,14 @@
             data: data,
             success: function(response) {
                 loadingHide();
-                console.log(response);
+                if (response.status == 'success'){
+                    messageSuccess("Berhasil", "Data berhasil disimpan");
+                    table_top.ajax.reload();
+                    $('#modalProcessTOP').modal('hide');
+                } else if (response.status == 'gagal'){
+                    messageFailed("Gagal", "data gagal disimpan");
+                    console.log(response.message);
+                }
             },
             error: function(xhr, status, error) {
                 loadingHide();
@@ -718,6 +728,43 @@
         }
         $('#totalModalPr').val(convertToRupiah(total));
         console.log(total);
+    }
+
+    // Distribusi penjualan
+
+    function tableDistribusi() {
+        let status = $('#status_distribusi').val();
+        setTimeout(function () {
+            $('#table_distribusi').dataTable().fnDestroy();
+            table_distribusi = $('#table_distribusi').DataTable({
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                "bAutoWidth": false,
+                ajax: {
+                    url: baseUrl + '/marketing/penjualanpusat/get-table-distribusi',
+                    type: "get",
+                    data: {
+                        "status": status,
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'tanggal'},
+                    {data: 'c_name'},
+                    {data: 'po_nota'},
+                    {data: 'total'},
+                    {data: 'action', name: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 100]]
+            });
+        }, 250);
+    }
+
+    function distribusiPenjualan(id) {
+
     }
 
 

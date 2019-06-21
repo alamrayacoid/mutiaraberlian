@@ -117,16 +117,16 @@ class ManajemenAgenController extends Controller
     public function getProv()
     {
         // khusus tuban
-        $prov = DB::table('m_wil_provinsi')->where('wp_id', 35)->get();
-        // $prov = DB::table('m_wil_provinsi')->get();
+        //$prov = DB::table('m_wil_provinsi')->where('wp_id', 35)->get();
+        $prov = DB::table('m_wil_provinsi')->get();
         return Response::json($prov);
     }
 
     public function getKota($idprov = null)
     {
         // khusus tuban
-        $kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->where('wc_id', 3523)->get();
-        // $kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->get();
+        //$kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->where('wc_id', 3523)->get();
+        $kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->get();
         return Response::json($kota);
     }
 
