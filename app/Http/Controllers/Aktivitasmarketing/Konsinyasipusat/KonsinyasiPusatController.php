@@ -219,7 +219,8 @@ class KonsinyasiPusatController extends Controller
             })
             ->groupBy('d_stock.s_id')
             ->get();
-        }else{
+        }
+        else{
             $nama = DB::table('m_item')
             ->join('d_stock', function ($s) use ($comp){
                 $s->on('i_id', '=', 's_item');
@@ -530,7 +531,7 @@ class KonsinyasiPusatController extends Controller
                     DB::table('d_salescompcode')->insert($val_salescode);
                 }
 
-                //mutasi
+                // mutasi
                 $data_check = DB::table('m_item')
                 ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
                 'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',

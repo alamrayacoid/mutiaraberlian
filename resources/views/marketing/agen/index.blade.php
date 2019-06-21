@@ -164,7 +164,7 @@
                 }
             });
         });
-        
+
         function getStatusDO() {
             var st = $('#statusDO').val();
             $('#table_orderprodukagenpusat').DataTable().clear().destroy();
@@ -478,6 +478,33 @@
 
         // delete penjualan
         function deleteDetailPenjualan(idPenjualan) {
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Konfirmasi!',
+                content: 'Apakah anda yakin akan menghapus data penjualan ini ?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            deleteKPL(idPenjualan);
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+        }
+
+        function deleteKPL(idPenjualan) {
             $.ajax({
                 url: "{{ route('kelolapenjualan.deleteDetailPenjualan') }}",
                 type: 'post',
