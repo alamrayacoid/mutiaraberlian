@@ -682,16 +682,16 @@ class MarketingAreaController extends Controller
                 if ($data_agen->po_status == "Y") {
                     $btns = '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                                 <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i></button>';
-                    if ($data_agen->po_send == "P") {
-                        $btns = $btns .'<button class="btn btn-danger hint--top-left hint--error" aria-label="Reject Approve" onclick="rejectApproveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i></button>
-                                        <button class="btn btn-warning hint--top-left hint--info" aria-label="Receive" onclick="receiveItemOrder(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-get-pocket"></i></button>
-                                        <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i></button>
-                                    </div>';
-                    } else {
+                    if ($data_agen->po_send == "Y") {
                         $btns = $btns .'<button class="btn btn-disabled hint--top-left hint--error" aria-label="Reject Approve" onclick="rejectApproveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-times"></i></button>
-                                        <button class="btn btn-disabled hint--top-left hint--info" aria-label="Receive" onclick="receiveItemOrder(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-get-pocket"></i></button>
-                                        <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i></button>
-                                    </div>';
+                            <button class="btn btn-disabled hint--top-left hint--info" aria-label="Receive" onclick="receiveItemOrder(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-get-pocket"></i></button>
+                            <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i></button>
+                            </div>';
+                    } else {
+                        $btns = $btns .'<button class="btn btn-danger hint--top-left hint--error" aria-label="Reject Approve" onclick="rejectApproveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i></button>
+                            <button class="btn btn-warning hint--top-left hint--info" aria-label="Receive" onclick="receiveItemOrder(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-get-pocket"></i></button>
+                            <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i></button>
+                            </div>';
                     }
                     return $btns;
                 } else if ($data_agen->po_status == "N") {
@@ -748,7 +748,7 @@ class MarketingAreaController extends Controller
                 return "<span class='modaldtsubharga-".$data->pod_item."'>Rp. " . number_format($data->pod_totalprice, "0", ",", ".") . "</span><input type='hidden' value='".$data->pod_totalprice."' name='subtotalmodaldt[]' class='subtotalmodaldt input-modaldtsubharga".$data->pod_item."'>";
             })
             ->addColumn('kode', function ($data){
-                return "<div class='text-center' style='width: 100%'><button type='button' onclick='addCodeProd(".$data->po_id.", ".$data->pod_item.",\"".$data->i_name."\")' class='btn btn-info btn-xs'><i class='fa fa-plus'></i> Kode Produksi</button></div>";
+                return "<div class='text-center' style='width: 100%'><button type='button' onclick='addCodeProd(".$data->po_id.", ".$data->pod_item.",\"".$data->i_name."\")' class='btn btn-info btn-xs btnAddProdCode'><i class='fa fa-plus'></i> Kode Produksi</button></div>";
             })
             ->addColumn('input', function ($data){
                 return "<div class='text-center'>

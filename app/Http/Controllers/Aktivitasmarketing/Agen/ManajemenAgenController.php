@@ -1075,7 +1075,6 @@ class ManajemenAgenController extends Controller
         $itemId = $request->itemId;
         $unitId = $request->unitId;
 
-        // dd($request->all());
 
         $get_price = DB::table('d_salespricedt')
         ->join('d_salesprice', 'spd_salesprice', 'sp_id')

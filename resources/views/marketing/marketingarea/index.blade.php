@@ -312,6 +312,7 @@
         var namaAgen = null;
         var kode = null;
         var icode = [];
+        var idxProdCode = null;
         $(document).ready(function () {
             orderProdukList();
             table_search = $('#table_search_agen').DataTable();
@@ -1032,6 +1033,8 @@
         }
 
         function addCodeProd(id, item, nama){
+            idxProdCode = $('.btnAddProdCode').index(this);
+            console.log(idxProdCode);
             $('.text-item').html(nama);
             $('#inputkodeproduksi').removeAttr('readonly');
             $('#iditem_modaldt').val(item);
@@ -1187,6 +1190,9 @@
                         $('#prosesorder').modal('hide');
                         messageSuccess('Berhasil', 'Data Order berhasil di \'Approve\'');
                         table_agen.ajax.reload();
+                    }
+                    else {
+                        messageWarning('Gagal', resp.message);
                     }
                 },
                 error: function(e) {
