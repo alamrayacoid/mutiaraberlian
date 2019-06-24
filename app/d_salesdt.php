@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class d_salesdt extends Model
 {
+    // use third-party library to create relationship multi-column
+    use \Awobaz\Compoships\Compoships;
+
     protected $table = 'd_salesdt';
     public $timestamps = false;
 
@@ -21,6 +24,11 @@ class d_salesdt extends Model
     public function getSales()
     {
         return $this->belongsTo('App\d_sales', 'sd_sales', 's_id');
+    }
+    // get production-code
+    public function getProdCode()
+    {
+        return $this->hasMany('App\d_salescode', ['sc_sales', 'sc_item', 'sc_detailid'], ['sd_sales', 'sd_item', 'sd_detailid']);
     }
     public function getItemOwner()
     {

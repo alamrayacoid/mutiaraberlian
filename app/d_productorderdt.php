@@ -26,5 +26,9 @@ class d_productorderdt extends Model
     {
         return $this->belongsTo('App\m_unit', 'pod_unit', 'u_id');
     }
+    public function getProdCode()
+    {
+        return $this->hasMany('App\d_productordercode', ['poc_productorder', 'poc_item'], ['pod_productorder', 'pod_item']);
+    }
 
 }

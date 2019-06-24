@@ -11,7 +11,7 @@
 				<div class="form-group row">
 					<label for="inputPassword" class="col-sm-3 col-form-label">Nama Jenis</label>
 					<div class="col-sm-9">
-						<input type="text" class="form-control form-control-sm" name="jenis" id="jenis">
+						<input type="text" class="form-control form-control-sm" name="jenis" id="jenis" style="text-transform: uppercase">
 					</div>
 				</div>
 			</div>

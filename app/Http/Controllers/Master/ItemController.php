@@ -460,7 +460,7 @@ class ItemController extends Controller
                 DB::table('m_itemtype')
                     ->insert([
                         'it_id' => $id,
-                        'it_name' => $request->jenis
+                        'it_name' => strtoupper($request->jenis)
                     ]);
 
                 DB::commit();
@@ -479,11 +479,13 @@ class ItemController extends Controller
     public function tablejenis()
     {
         $datas = DB::table('m_itemtype')->orderBy('it_name', 'asc')->get();
+
         return Datatables::of($datas)
             ->addIndexColumn()
             ->addColumn('action', function ($datas) {
                 return '<center><div class="btn-group btn-group-sm">
-                      <button class="btn btn-warning" onclick="editjenis(' . $datas->it_id . ', this)" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
+                      <button class="btn btn-warning btn-sm" onclick="editjenis(' . $datas->it_id . ', this)" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
+                      <button class="btn btn-danger btn-sm" onclick="deletejenis(' . $datas->it_id . ', this)" rel="tooltip" data-placement="top"><i class="fa fa-close"></i></button>
                       </div></center>';
             })
             ->rawColumns(['action'])
@@ -548,7 +550,7 @@ class ItemController extends Controller
 
                 DB::table('m_itemtype')->where('it_id', $request->id)
                     ->update([
-                        'it_name' => $request->jenis
+                        'it_name' => strtoupper($request->jenis)
                     ]);
 
                 DB::commit();

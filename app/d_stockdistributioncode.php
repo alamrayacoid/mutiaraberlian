@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class d_stockdistributioncode extends Model
 {
+    // use third-party library to create relationship multi-column
+    use \Awobaz\Compoships\Compoships;
+
     protected $table = 'd_stockdistributioncode';
     public $timestamps = false;
 

@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Builder;
 
 class d_salescompdt extends Model
 {
+    // use third-party library to create relationship multi-column
+    // used in getProdCode
+    use \Awobaz\Compoships\Compoships;
+    
     protected $table = 'd_salescompdt';
     public $timestamps = false;
 
@@ -22,6 +26,12 @@ class d_salescompdt extends Model
     {
         return $this->belongsTo('App\d_salescomp', 'scd_sales', 'sc_id');
     }
+    // get production-code
+    public function getProdCode()
+    {
+        return $this->hasMany('App\d_salescompcode', ['ssc_salescomp', 'ssc_item'], ['scd_sales', 'scd_item']);
+    }
+    // get item detail
     public function getItem()
     {
         return $this->belongsTo('App\m_item', 'scd_item', 'i_id');
@@ -36,16 +46,4 @@ class d_salescompdt extends Model
     {
         return $this->belongsTo('App\d_stock', 'scd_item', 's_item');
     }
-
-    // // get item stock based on position-item and item-id
-    // public function scopeItemStock($query, $position)
-    // {
-    //     $x = array();
-    //     foreach ($query->get() as $q) {
-    //         $stock = d_stock::where('s_position', $position)
-    //         ->where('s_item', $q->scd_item);
-    //         $query->x = $stock;
-    //     }
-    //     return $query;
-    // }
 }

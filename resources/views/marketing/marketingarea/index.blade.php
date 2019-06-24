@@ -1,5 +1,39 @@
 @extends('main')
-
+@section('tittle')
+    Manajemen Marketing Area
+@endsection
+@section('extra_style')
+    <style>
+        @media (min-width: 992px) {
+            .modal-xl {
+                max-width: 1200px !important;
+            }
+        }
+        #table_prosesorder td {
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+        #table_prosesordercode td {
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+        .btn-xs {
+            padding: 0.20rem 0.4rem;
+            font-size: 0.675rem;
+            line-height: 1.3;
+            border-radius: 0.2rem;
+        }
+        #table_prosesorder td.input-padding {
+            padding: 1px !important;
+        }
+        .input-qty-proses{
+            padding-right: 2px !important;
+        }
+        #table_prosesorder th.input-padding {
+            width: 10% !important;
+        }
+    </style>
+@stop
 @section('content')
 
     @include('marketing.marketingarea.keloladataorder.modal')
@@ -111,7 +145,7 @@
             </div>
         </div>
     </div>
-    {{-- Modal Kelola Data Agen --}}
+    {{-- Modal Detail Kelola Data Agen --}}
     <div class="modal fade" id="modalOrderAgen" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -167,8 +201,110 @@
             </div>
         </div>
     </div>
+    {{-- Modal Approval Kelola Data Agen --}}
+    <div id="prosesorder" class="modal fade animated fadeIn" role="dialog">
+        <div class="modal-dialog modal-xl">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-info">
+                    <h4 class="modal-title">Detail Order</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <section>
+                        <div class="row">
+                            <div class="col-2">
+                                <label for="">Nomor Nota</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="hidden" id="idProductOrder" value="">
+                                <input type="text" class="form-control form-control-sm" id="nota_modaldt" readonly="">
+                            </div>
+
+                            <div class="col-2">
+                                <label for="">Tanggal</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control form-control-sm" id="tanggal_modaldt" readonly="">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="">Agen</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control form-control-sm" id="agen_modaldt" readonly="">
+                                <input type="hidden" class="form-control form-control-sm" id="idagen_modaldt">
+                            </div>
+
+                            <div class="col-2">
+                                <label for="">Total Pembelian</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control form-control-sm rupiah" id="total_modaldt" readonly="">
+                            </div>
+                        </div>
+                    </section>
+                    <div class="row" style="margin-top: 10px">
+                        <div class="table-responsive col-8">
+                            <table class="table table-striped table-hover display table-bordered" cellspacing="0" id="table_prosesorder" width="100%">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th>Nama Barang</th>
+                                    <th>Kuantitas</th>
+                                    <th>Satuan</th>
+                                    <th>Harga @</th>
+                                    <th>Harga Total</th>
+                                    <th class="text-center">Kode</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-4" style="padding-right: 0px;">
+                            <div class="row col-12" style="padding-right: 0px;">
+                                <div class="col-8" style="padding-left: 0px !important;">
+                                    <input type="text" onkeypress="pressCode(event)" style="width: 100%; text-transform: uppercase" class="inputkodeproduksi form-control form-control-sm" id="inputkodeproduksi" readonly>
+                                    <input type="hidden" id="iditem_modaldt">
+                                </div>
+                                <div class="input-group col-4" style="width: 100%; padding-right: 0px;">
+                                    <input type="number" onkeypress="pressCode(event)" class="inputqtyproduksi form-control form-control-sm" id="inputqtyproduksi" readonly>
+                                    <span class="input-group-append">
+                                        <button type="button" class="btn btn-sm btn-primary" id="btn-addprodcode"><i class="fa fa-plus"></i></button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row col-12">
+                                <p>Masukkan kode produksi untuk barang <span class="text-item">-</span> kemudian tekan Enter untuk memasukkan ke tabel distribusi</p>
+                            </div>
+                            <table class="table table-striped table-hover display table-bordered" cellspacing="0" id="table_prosesordercode" width="100%">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th>Kode Produksi</th>
+                                    <th>Kuantitas</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-sm" onclick="approveAndSendItems()" id="btnApproveAndSend" style="color:white;">Setuju dan Kirim Barang</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 @endsection
 @section('extra_script')
+    <!-- ========================================================================-->
+    <!-- script for Kelola-Data-Order etc -->
     <script type="text/javascript">
         var table_agen, table_search, table_bar, table_rab, table_bro;
 
@@ -350,6 +486,10 @@
             $(".agen").on("keyup", function () {
                 $(".agenId").val('');
                 $(".codeAgen").val('');
+            });
+
+            $('#btn-addprodcode').on('click', function () {
+                addCodetoTable();
             });
         });
         // End Document Ready -------------------------------------------
@@ -787,56 +927,193 @@
             });
         }
 
+        var tb_listprosesorder;
+        var tb_listcodeprosesorder;
+
         function approveAgen(id) {
-            var approve_agen = "{{url('/marketing/marketingarea/keloladataorder/approve-agen')}}" + "/" + id;
-            $.confirm({
-                animation: 'RotateY',
-                closeAnimation: 'scale',
-                animationBounce: 1.5,
-                icon: 'fa fa-exclamation-triangle',
-                title: 'Pesan!',
-                content: 'Apakah anda yakin ingin approve agen ini?',
-                theme: 'disable',
-                buttons: {
-                    info: {
-                        btnClass: 'btn-blue',
-                        text: 'Ya',
-                        action: function () {
-                            return $.ajax({
-                                type: "post",
-                                url: approve_agen,
-                                data: {
-                                    "_token": "{{ csrf_token() }}"
-                                },
-                                beforeSend: function () {
-                                    loadingShow();
-                                },
-                                success: function (response) {
-                                    if (response.status == 'sukses') {
-                                        loadingHide();
-                                        messageSuccess('Berhasil', 'Agen berhasil diapprove!');
-                                        table_agen.ajax.reload();
-                                    } else {
-                                        loadingHide();
-                                        messageFailed('Gagal', response.message);
-                                    }
-                                },
-                                error: function (e) {
-                                    loadingHide();
-                                    messageWarning('Peringatan', e.message);
-                                }
-                            });
-                        }
-                    },
-                    cancel: {
-                        text: 'Tidak',
-                        action: function (response) {
-                            loadingHide();
-                            messageWarning('Peringatan', 'Anda telah membatalkan!');
-                        }
-                    }
+            $('#prosesorder').modal('show');
+            axios.get('{{ route("keloladataorder.getdetailorderagen") }}', {
+                params:{
+                    id: id
                 }
+            }).then(function (response) {
+                let agen = response.data.data.c_name;
+                let nota = response.data.data.po_nota;
+                let tanggal = response.data.data.po_date;
+                $('#idProductOrder').val(id);
+                $('#nota_modaldt').val(nota);
+                $('#agen_modaldt').val(agen);
+                $('#tanggal_modaldt').val(tanggal);
+                $('#idagen_modaldt').val(response.data.data.po_agen);
+                $('#total_modaldt').val(convertToRupiah(response.data.data.pod_totalprice));
+            }).catch(function (error) {
+
             });
+
+            $('#table_prosesorder').dataTable().fnDestroy();
+            tb_listprosesorder = $('#table_prosesorder').DataTable({
+                responsive: true,
+                serverSide: true,
+                paging: false,
+                searching: false,
+                ajax: {
+                    url: "{{ route('keloladataorder.getdetailorder') }}",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": id
+                    }
+                },
+                columns: [
+                    {data: 'i_name'},
+                    {data: 'input', "className": "input-padding", },
+                    {data: 'u_name'},
+                    {data: 'pod_price'},
+                    {data: 'pod_totalprice'},
+                    {data: 'kode'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
+
+        function pressCode(e) {
+            if (e.keyCode == 13){
+                addCodetoTable();
+            }
+        }
+
+        // get price items and get stock
+        function getHargaGolongan(item) {
+            let agen = $('#idagen_modaldt').val();
+            let qty = $('.qty-modaldt-'+item).val();
+            let id = $('#idProductOrder').val();
+            axios.get('{{ route("orderProduk.getPrice") }}', {
+                params:{
+                    'agen': agen,
+                    'qty': qty,
+                    'item': item,
+                    'id': id
+                }
+            }).then(function (response) {
+                let harga = parseInt(response.data.price);
+                let stock = parseInt(response.data.stock);
+                $('.input-modaldtharga'+item).val(harga);
+                $('.modaldtharga-'+item).html(convertToRupiah(harga));
+                // set stock restriction
+                if (parseInt(qty) > stock) {
+                    messageWarning('Perhatian', 'Permintaan tidak boleh melebihi batas stok, stok tersedia : '+ stock);
+                    $('.qty-modaldt-'+item).val(stock);
+                }
+                else if (parseInt(qty) < 0) {
+                    messageWarning('Perhatian', 'Permintaan tidak boleh kurang dari 0');
+                    $('.qty-modaldt-'+item).val(0);
+                }
+                updateSubtotal(item);
+            }).catch(function (error) {
+
+            })
+        }
+
+        function updateSubtotal(item){
+            let qty = $('.qty-modaldt-'+item).val();
+            let harga = $('.input-modaldtharga'+item).val();
+            if (isNaN(qty)){
+                qty = 0;
+            }
+            let total = parseInt(qty) * parseInt(harga);
+            $('.modaldtsubharga-'+item).html(convertToRupiah(total));
+            $('.input-modaldtsubharga'+item).val(total);
+            let totalprice = 0;
+            $('input[name^="subtotalmodaldt"]').each(function() {
+                totalprice = totalprice + parseInt($(this).val());
+            });
+            $('#total_modaldt').val(convertToRupiah(totalprice));
+        }
+
+        function addCodeProd(id, item, nama){
+            $('.text-item').html(nama);
+            $('#inputkodeproduksi').removeAttr('readonly');
+            $('#iditem_modaldt').val(item);
+            $('#inputqtyproduksi').removeAttr('readonly');
+            $('#table_prosesordercode').dataTable().fnDestroy();
+            tb_listcodeprosesorder = $('#table_prosesordercode').DataTable({
+                responsive: true,
+                serverSide: true,
+                paging: false,
+                searching: false,
+                ordering: false,
+                ajax: {
+                    url: "{{ route('keloladataorder.getdetailcodeorder') }}",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": id,
+                        "item": item
+                    }
+                },
+                columns: [
+                    {data: 'poc_code'},
+                    {data: 'poc_qty'},
+                    {data: 'aksi'},
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
+
+        function addCodetoTable(){
+            let qty = $('#inputqtyproduksi').val();
+            let kode = $.trim($('#inputkodeproduksi').val());
+            let nota = $('#nota_modaldt').val();
+            let item = $('#iditem_modaldt').val();
+
+            if (isNaN(qty) || qty == '' || qty == null){
+                qty = 1;
+            }
+            if (kode == '' || kode == null) {
+                messageWarning('Perhatian', 'Silahkan masukkan kode produksi terlebih dahulu !');
+                return 0;
+            }
+
+            axios.get('{{ route("keloladataorder.setKode") }}', {
+                params:{
+                    "qty": qty,
+                    "kode": kode,
+                    "nota": nota,
+                    "item": item
+                }
+            }).then(function (response) {
+                if (response.data.status == 'success'){
+                    messageSuccess("Berhasil", "Kode berhasil ditambahkan");
+                    $('#inputkodeproduksi').val("");
+                    $('#inputqtyproduksi').val("");
+                    tb_listcodeprosesorder.ajax.reload();
+                } else if (response.data.status == 'gagal'){
+                    messageWarning("Gagal", response.data.message);
+                }
+            }).catch(function (error) {
+                alert('error');
+            })
+        }
+
+        function removeCodeOrder(id, item, kode) {
+            axios.get('{{ route("keloladataorder.removeKode") }}', {
+                params:{
+                    "id": id,
+                    "item": item,
+                    "kode": kode
+                }
+            }).then(function (response) {
+                if (response.data.status == 'success'){
+                    messageSuccess("Berhasil", "Kode berhasil dihapus");
+                    tb_listcodeprosesorder.ajax.reload();
+                } else {
+                    messageWarning("Gagal", "Kode gagal dihapus");
+                }
+            }).catch(function (error) {
+
+            })
         }
 
         function rejectApproveAgen(id) {
@@ -847,7 +1124,7 @@
                 animationBounce: 1.5,
                 icon: 'fa fa-exclamation-triangle',
                 title: 'Pesan!',
-                content: 'Apakah anda yakin ingin approve agen ini?',
+                content: 'Apakah anda yakin ingin membatalkan approve agen ini ?',
                 theme: 'disable',
                 buttons: {
                     info: {
@@ -884,7 +1161,85 @@
                         text: 'Tidak',
                         action: function (response) {
                             loadingHide();
-                            messageWarning('Peringatan', 'Anda telah membatalkan!');
+                            // messageWarning('Peringatan', 'Anda telah membatalkan!');
+                        }
+                    }
+                }
+            });
+        }
+
+        function approveAndSendItems() {
+            let listQty = $('.input-qty-proses').serialize();
+            let listItemsId = $('.itemsId').serialize();
+            let listUnits = $('.units').serialize();
+            idProductOrder = $('#idProductOrder').val();
+            let dataX = listQty +'&'+ listItemsId +'&'+ listUnits;
+            loadingShow();
+
+            $.ajax({
+                url: baseUrl + '/marketing/marketingarea/keloladataorder/approve-agen/'+ idProductOrder,
+                data: dataX,
+                type: 'post',
+                success: function(resp) {
+                    loadingHide();
+                    if (resp.status == 'sukses') {
+                        // close modal
+                        $('#prosesorder').modal('hide');
+                        messageSuccess('Berhasil', 'Data Order berhasil di \'Approve\'');
+                        table_agen.ajax.reload();
+                    }
+                },
+                error: function(e) {
+                    loadingHide();
+                    messageWarning('Gagal', e.message);
+                }
+            })
+        }
+
+        function receiveItemOrder(id) {
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Pesan!',
+                content: 'Apakah anda yakin ingin mengkonfirmasi penerimaan order ?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return $.ajax({
+                                type: "post",
+                                url: baseUrl +'/marketing/marketingarea/keloladataorder/receive-item-order/'+ id,
+                                data: {
+                                    "_token": "{{ csrf_token() }}"
+                                },
+                                beforeSend: function () {
+                                    loadingShow();
+                                },
+                                success: function (response) {
+                                    if (response.status == 'sukses') {
+                                        loadingHide();
+                                        messageSuccess('Berhasil', 'Konfirmasi penerimaan order berhasil dilakukan !');
+                                        table_agen.ajax.reload();
+                                    } else {
+                                        loadingHide();
+                                        messageFailed('Gagal', response.message);
+                                    }
+                                },
+                                error: function (e) {
+                                    loadingHide();
+                                    messageWarning('Peringatan', e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function (response) {
+                            loadingHide();
                         }
                     }
                 }
@@ -1075,22 +1430,24 @@
         // get cities for search-agent
         function getCitiesMPA() {
             var provId = $('.provMPA').val();
-            $.ajax({
-                url: "{{ route('datacanvassing.getCitiesDC') }}",
-                type: "get",
-                data: {
-                    provId: provId
-                },
-                success: function (response) {
-                    $('.citiesMPA').empty();
-                    $(".citiesMPA").append('<option value="" selected="" disabled="">=== Pilih Kota ===</option>');
-                    $.each(response.get_cities, function (key, val) {
-                        $(".citiesMPA").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
-                    });
-                    $('.citiesMPA').focus();
-                    $('.citiesMPA').select2('open');
-                }
-            });
+            setTimeout(function(){
+                $.ajax({
+                    url: "{{ route('datacanvassing.getCitiesDC') }}",
+                    type: "get",
+                    data: {
+                        provId: provId
+                    },
+                    success: function (response) {
+                        $('.citiesMPA').empty();
+                        $(".citiesMPA").append('<option value="" selected="" disabled="">=== Pilih Kota ===</option>');
+                        $.each(response.get_cities, function (key, val) {
+                            $(".citiesMPA").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
+                        });
+                        $('.citiesMPA').focus();
+                        $('.citiesMPA').select2('open');
+                    }
+                });
+            }, 1000);
         }
 
         // this following func is using same source with Data-Canvassing
