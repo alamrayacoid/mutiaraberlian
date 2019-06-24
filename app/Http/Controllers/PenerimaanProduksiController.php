@@ -146,7 +146,7 @@ class PenerimaanProduksiController extends Controller
             return abort(404);
         }
         $order = Crypt::encrypt($id);
-        return view('produksi.penerimaanbarang.list')->with(compact('order'));
+        return view('produksi.penerimaanbarang.penerimaan.proses-terima')->with(compact('order'));
     }
 
     public function listTerimaBarang($order = null)
@@ -169,13 +169,13 @@ class PenerimaanProduksiController extends Controller
             })
             ->groupBy('d_productionorderdt.pod_item')
             ->select('d_productionorder.po_id', 'd_productionorder.po_nota', 'd_productionorderdt.pod_item',
-                'd_productionorderdt.pod_unit', 'm_item.i_name', 'm_unit.u_name', 'd_productionorderdt.pod_qty',
+                'd_productionorderdt.pod_unit', 'm_item.i_name', 'm_item.i_code', 'm_unit.u_name', 'd_productionorderdt.pod_qty',
                 DB::raw('sum(d_itemreceiptdt.ird_qty) as ird_qty'))
             ->get();
 
         return DataTables::of($data)
             ->addColumn('barang', function($data){
-                return $data->i_name;
+                return ''.$data->i_code.' - '.$data->i_name.'';
             })
             ->addColumn('satuan', function($data){
                 return $data->u_name;
@@ -227,7 +227,8 @@ class PenerimaanProduksiController extends Controller
 
                 if ($qty_compare < $data->pod_qty) {
                     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                        <button class="btn btn-danger hint--top-left hint--info" aria-label="Terima" onclick="receipt(\''.Crypt::encrypt($data->po_id).'\', \''.Crypt::encrypt($data->pod_item).'\')"><i class="fa fa-arrow-down"></i>
+                        <button class="btn btn-danger text-dark hint--top-left hint--error" aria-label="Terima Barang" onclick="receipt(\''.Crypt::encrypt($data->po_id).'\', \''.Crypt::encrypt($data->pod_item).'\')">
+                            <i class="fa fa-arrow-down"></i>&nbsp Terima Barang
                         </button>
                     </div>';
                 } else {
@@ -533,22 +534,24 @@ class PenerimaanProduksiController extends Controller
             ->select('po_id')
             ->first() ;
             // insert production-code for each item
-            $valuesProdCode = array();
-            foreach ($request->prodCode as $key => $val) {
-                $detailId = d_productionordercode::where('poc_productionorder', $prodCodeId->po_id)
-                ->max('poc_detailid') + ($key + 1);
+            if ($request->prodCode == null) {
+                $valuesProdCode = array();
+                foreach ($request->prodCode as $key => $val) {
+                    $detailId = d_productionordercode::where('poc_productionorder', $prodCodeId->po_id)
+                    ->max('poc_detailid') + ($key + 1);
 
-                $detailProdCode = array(
-                    'poc_productionorder' => $prodCodeId->po_id,
-                    'poc_detailid' => $detailId,
-                    'poc_item' => $item,
-                    'poc_productioncode' => $val,
-                    'poc_qty' => $request->qtyProdCode[$key],
-                    'poc_unit' => $request->satuan
-                );
-                array_push($valuesProdCode, $detailProdCode);
+                    $detailProdCode = array(
+                        'poc_productionorder' => $prodCodeId->po_id,
+                        'poc_detailid' => $detailId,
+                        'poc_item' => $item,
+                        'poc_productioncode' => $val,
+                        'poc_qty' => $request->qtyProdCode[$key],
+                        'poc_unit' => $request->satuan
+                    );
+                    array_push($valuesProdCode, $detailProdCode);
+                }
+                d_productionordercode::insert($valuesProdCode);
             }
-            d_productionordercode::insert($valuesProdCode);
 
             // repair mutasimasuk, also insert production code to param
             // check stock-mutation again

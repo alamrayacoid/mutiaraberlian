@@ -628,26 +628,26 @@ class ManajemenAgenController extends Controller
                 if ($data->send != null) {
                     if ($data->send == 'P') {
                         return '<center><div class="btn-group btn-group-sm">
-                                    <button class="btn btn-info" title="Detail"
+                                    <button class="btn btn-info hint--top-left hint--info" aria-label="Detail"
                                             type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
-                                    <button class="btn btn-danger" type="button"
-                                            title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
-                                    <button class="btn btn-success" type="button" title="Terima" onclick="terimaDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-check"></i></button>
+                                    <button class="btn btn-danger hint--top-left hint--error" type="button"
+                                            aria-label="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+                                    <button class="btn btn-success" type="button" aria-label="Terima" onclick="terimaDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-check"></i></button>
                                 </div></center>';
                     }elseif ($data->send == 'Y') {
                         return '<center><div class="btn-group btn-group-sm">
-                                    <button class="btn btn-info" title="Detail"
+                                    <button class="btn btn-info hint--top-left hint--info" aria-label="Detail"
                                             type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
-                                    <button class="btn btn-danger" type="button"
-                                            title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+                                    <button class="btn btn-danger hint--top-left hint--error" type="button"
+                                            aria-label="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
                                 </div></center>';
                     }
                 } elseif ($data->send == null) {
                     return '<center><div class="btn-group btn-group-sm">
-                                <button class="btn btn-info" title="Detail"
+                                <button class="btn btn-info hint--top-left hint--info" aria-label="Detail"
                                         type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
-                                <button class="btn btn-danger" type="button"
-                                        title="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+                                <button class="btn btn-danger hint--top-left hint--error" type="button"
+                                        aria-label="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
                             </div></center>';
                 }
 
