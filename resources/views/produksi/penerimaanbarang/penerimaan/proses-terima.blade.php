@@ -39,11 +39,11 @@
                                         <table class="table table-striped table-hover" cellspacing="0" id="tbl_receiptitem">
                                             <thead class="bg-primary">
                                             <tr>
-                                                <th width="30%">Nama Barang</th>
+                                                <th>Nama Barang</th>
                                                 <th width="20%">Satuan</th>
                                                 <th width="10%">Jumlah</th>
                                                 <th width="10%">QTY Terima</th>
-                                                <th width="30%" class="text-center">Aksi</th>
+                                                <th width="15%" class="text-center">Aksi</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -146,6 +146,8 @@
                         $("#txtJumlah").text(response.data.data.jumlah);
                         $("#txtTerima").text(terima);
                         $("#txtSisa").text(sisa);
+                        $('#qtyName').text(response.data.satuan.unit1);
+                        $('#prodUnit').val(response.data.satuan.id1);
                         $("#nota").val('');
                         $("#satuan").val(response.data.data.unit);
                         $("#qty").val(0);

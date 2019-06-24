@@ -70,14 +70,21 @@
                                 <thead>
                                     <tr>
                                         <td width="50%"><strong>Kode Produksi</strong></td>
-                                        <td><strong>Qty</strong></td>
+                                        <td>
+                                            <strong>Qty (<span id="qtyName"></span>)</strong>
+                                            <input type="hidden" name="prodUnit" id="prodUnit">
+                                        </td>
                                         <td width="10%"><strong>Aksi</strong></td>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]"></input></td>
-                                        <td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="0"></input></td>
+                                        <td>
+                                            <input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]"></input>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="0"></input>
+                                        </td>
                                         <td><button class="btn btn-success btnAddProdCode btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button></td>
                                     </tr>
                                 </tbody>
