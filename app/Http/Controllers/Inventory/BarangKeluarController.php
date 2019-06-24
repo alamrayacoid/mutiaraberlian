@@ -313,6 +313,7 @@ class BarangKeluarController extends Controller
         return view('inventory/barangkeluar/create', compact('data'));
     }
 
+    // -------------------- start: function below is unused --------------------
     /**
      * Store a newly created resource in storage.
      *
@@ -321,51 +322,52 @@ class BarangKeluarController extends Controller
      */
     public function store(Request $request)
     {
-        // validate request
-        $isValidRequest = $this->validate_req($request);
-        if ($isValidRequest != '1') {
-            $errors = $isValidRequest;
-            return response()->json([
-                'status' => 'invalid',
-                'message' => $errors
-            ]);
-        }
-
-        DB::beginTransaction();
-        try {
-            // insert new 'item out (d_itemout)'
-            $storeItemOut = $this->storeNewItemOut($request);
-            if ($storeItemOut === false) {
-                return response()->json([
-                    'status' => 'gagal',
-                    'message' => 'Gagal, Barang keluar gagal ditambahkan !'
-                ]);
-            }
-            $itemQtyUnitBase = $this->convertOutQtyToSmallestUnit(
-                $request->itemId,
-                $request->unit,
-                $request->qty
-            );
-            // insert new mutasi-keluar
-            $mutasi = Mutasi::mutasikeluar(
-                $request->mutcat, // mutcat
-                $request->owner, // item-owner
-                $request->position, // item-position
-                $request->itemId, // item-id
-                $itemQtyUnitBase, // item-qty in smallest unit
-                $storeItemOut->io_nota // nota
-            );
-
-            DB::commit();
-            return response()->json([
-                'status' => 'berhasil'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json([
-                'status' => 'gagal',
-                'message' => $e->getMessage()
-            ]);
-        }
+        // // validate request
+        // $isValidRequest = $this->validate_req($request);
+        // if ($isValidRequest != '1') {
+        //     $errors = $isValidRequest;
+        //     return response()->json([
+        //         'status' => 'invalid',
+        //         'message' => $errors
+        //     ]);
+        // }
+        //
+        // DB::beginTransaction();
+        // try {
+        //     // insert new 'item out (d_itemout)'
+        //     $storeItemOut = $this->storeNewItemOut($request);
+        //     if ($storeItemOut === false) {
+        //         return response()->json([
+        //             'status' => 'gagal',
+        //             'message' => 'Gagal, Barang keluar gagal ditambahkan !'
+        //         ]);
+        //     }
+        //     $itemQtyUnitBase = $this->convertOutQtyToSmallestUnit(
+        //         $request->itemId,
+        //         $request->unit,
+        //         $request->qty
+        //     );
+        //     // insert new mutasi-keluar
+        //     $mutasi = Mutasi::mutasikeluar(
+        //         $request->mutcat, // mutcat
+        //         $request->owner, // item-owner
+        //         $request->position, // item-position
+        //         $request->itemId, // item-id
+        //         $itemQtyUnitBase, // item-qty in smallest unit
+        //         $storeItemOut->io_nota // nota
+        //     );
+        //
+        //     DB::commit();
+        //     return response()->json([
+        //         'status' => 'berhasil'
+        //     ]);
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return response()->json([
+        //         'status' => 'gagal',
+        //         'message' => $e->getMessage()
+        //     ]);
+        // }
     }
+    // -------------------- end: function is unused --------------------
 }

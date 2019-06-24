@@ -44,8 +44,6 @@ class Mutasi extends Controller
             $sell = (int)$sell;
             $hpp = (int)$hpp;
             $qty = (int)$qty;
-            // $prodCode = (array)$prodCode;
-            // $qtyProdCode = (array)$qtyProdCode;
 
             $sekarang = Carbon::now('Asia/Jakarta');
 
@@ -168,54 +166,6 @@ class Mutasi extends Controller
         }
     }
 
-    static function codeMutasiMasuk($comp, $position, $item, $status, $condition, $unit, $prodCode, $qtyProdCode)
-    {
-        $cekIdStok = DB::table('d_stock')
-            ->select('s_id')
-            ->where('s_comp', '=', $comp)
-            ->where('s_position', '=', $position)
-            ->where('s_item', '=', $item)
-            ->where('s_status', '=', $status)
-            ->where('s_condition', '=', $condition)
-            ->get();
-
-        if (count($cekIdStok) < 1) {
-            $idStok = DB::table('d_stock')->max('s_id');
-            $idStok = $idStok + 1;
-
-            for ($i=0; $i < count($prodCode); $i++) {
-
-                if ($prodCode == null) {
-                    $idStokDt = DB::table('d_stockdt')->where('sd_stock', '=', $idStok)->max('sd_detailid');
-
-                    DB::table('d_stockdt')->insert([
-                        'sd_stock'    => $idStok,
-                        'sd_detailid' => $idStokDt + 1,
-                        'sd_code'     => $prodCode[$i],
-                        'sd_qty'      => $qtyProdCode[$i]
-                    ]);
-                }
-            }
-        }else{
-            $idStok = $cekIdStok[0]->s_id;
-
-            for ($i=0; $i < count($prodCode); $i++) {
-
-                if ($prodCode == null) {
-                    $idStokDt = DB::table('d_stockdt')->where('sd_stock', '=', $idStok)->max('sd_detailid');
-
-                    DB::table('d_stockdt')->insert([
-                        'sd_stock'    => $idStok,
-                        'sd_detailid' => $idStokDt + 1,
-                        'sd_code'     => $prodCode[$i],
-                        'sd_qty'      => $qtyProdCode[$i]
-                    ]);
-                }
-            }
-        }
-    }
-
-    static function mutasikeluar($mutcat, $comp, $position, $item, $qty, $nota)
     static function mutasikeluar(
         $mutcat, // mutcat
         $comp, // item owner
