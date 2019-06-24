@@ -185,10 +185,10 @@
                             .then(function (response) {
                                 if (response.data.status == "Success") {
                                     loadingHide();
-                                    messageSuccess("Berhasil", "Data berhasil disetujui");
+                                    messageSuccess("Berhasil", "Order produksi berhasil disetujui !");
                                 } else {
                                     loadingHide();
-                                    messageWarning("Gagal", "Data gagal disetujui");
+                                    messageWarning("Gagal", response.data.message);
                                 }
                             })
                             .catch(function (error) {
@@ -231,10 +231,10 @@
                             .then(function (response) {
                                 if (response.data.status == "Success") {
                                     loadingHide();
-                                    messageSuccess("Berhasil", "Data berhasil disetujui");
+                                    messageSuccess("Berhasil", "Order produksi berhasil ditolak !");
                                 } else {
                                     loadingHide();
-                                    messageWarning("Gagal", "Data gagal disetujui");
+                                    messageWarning("Gagal", response.data.message);
                                 }
                             })
                             .catch(function (error) {

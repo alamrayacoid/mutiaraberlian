@@ -115,15 +115,40 @@ class ProduksiController extends Controller
         $getData = DB::table('d_productionorder')
             ->join('m_supplier', 's_id', '=', 'po_supplier')
             ->join('d_productionorderpayment', 'pop_productionorder', '=', 'po_id')
-            ->join('d_productionorderdt', function ($q){
-                $q->on('pod_productionorder', '=', 'po_id');
-                $q->on('pod_productionorder', '=', 'pop_productionorder');
-            })
-            ->where('pod_received', '=', 'N')
+            // ->join('d_productionorderdt', function ($q){
+            //     $q->on('pod_productionorder', '=', 'po_id');
+            //     $q->on('pod_productionorder', '=', 'pop_productionorder');
+            // })
+            // ->where('pod_received', '=', 'N')
             ->groupBy('po_id')
-            ->select('po_id', 'po_nota as nota', 's_company as supplier', 'po_totalnet as nilai_order', 'po_status as status', DB::raw('sum(pop_pay) as terbayar'));
+            ->select(
+                'po_id',
+                'po_nota as nota',
+                's_company as supplier',
+                'po_totalnet as nilai_order',
+                'po_status as status',
+                DB::raw('sum(pop_pay) as terbayar')
+            )
+            ->orderBy('po_date', 'desc')
+            ->orderBy('po_nota', 'desc');
 
+        // get list production-order that is the item has been received
+        $prodOrderReceived = ProductionOrder::whereHas('getPODt', function ($q) {
+            $q->where('pod_received', 'Y');
+        })
+        ->select('po_id')
+        ->get()
+        ->toArray();
+        $listReceivedProdOrdId = array();
+        foreach ($prodOrderReceived as $key => $value) {
+            array_push($listReceivedProdOrdId, $value['po_id']);
+        }
+
+        // // filter getData to just display un-received production-order
+        // $getData = $getData->whereNotIn('po_id', $listReceivedProdOrdId);
+        //
         $data = $getData->get();
+        // $data = $getData;
 
         return DataTables::of($data)
             ->addIndexColumn()
@@ -148,10 +173,16 @@ class ProduksiController extends Controller
                     return '<div class="text-center">LUNAS</div>';
                 }
             })
-            ->addColumn('aksi', function($data){
+            ->addColumn('aksi', function($data) use ($listReceivedProdOrdId) {
                 $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrder(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-folder"></i></button>';
-                $edit = '<button class="btn btn-warning btn-edit" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-pencil"></i></button>';
-                $hapus = '<button class="btn btn-danger btn-disable" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-trash"></i></button>';
+                if (in_array($data->po_id, $listReceivedProdOrdId)) {
+                    $edit = '<button class="btn btn-warning btn-edit" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')" disabled><i class="fa fa-pencil"></i></button>';
+                    $hapus = '<button class="btn btn-danger btn-disable" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')" disabled><i class="fa fa-trash"></i></button>';
+                }
+                else {
+                    $edit = '<button class="btn btn-warning btn-edit" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-pencil"></i></button>';
+                    $hapus = '<button class="btn btn-danger btn-disable" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-trash"></i></button>';
+                }
                 $nota = '<button class="btn btn-info btn-nota" title="Nota" type="button" onclick="printNota(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-print"></i></button>';
                 return '<div class="btn-group btn-group-sm">'. $detail . $nota . $edit . $hapus . '</div>';
             })
@@ -989,8 +1020,6 @@ class ProduksiController extends Controller
             ]);
         }
 
-        // dd($request->all());
-
         $detailid = (DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')) ? DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')+1 : 1;
         // return-po/001/23/03/2019
         $nota = CodeGenerator::codeWithSeparator('d_returnproductionorder', 'rpo_nota', 15, 10, 3, 'RETURN-PO', '/');
@@ -1094,72 +1123,98 @@ class ProduksiController extends Controller
                 'rpo_note'            => $request->note_return
             ];
 
-            // update stock
             $comp = Auth::user()->u_company;
-            $get_stock = Stock::where('s_comp', $comp)
-            ->where('s_position', $comp)
-            ->where('s_item', $idItem)
-            ->where('s_status', 'ON DESTINATION')
-            ->where('s_condition', 'FINE');
+            // // update stock
+            // $get_stock = Stock::where('s_comp', $comp)
+            // ->where('s_position', $comp)
+            // ->where('s_item', $idItem)
+            // ->where('s_status', 'ON DESTINATION')
+            // ->where('s_condition', 'FINE');
 
-            $get_stockmutation = StockMutation::where('sm_stock', $get_stock->first()->s_id)
-            ->where('sm_nota', $request->notaPO);
+            $mutasi = Mutasi::mutasikeluar(
+                15, // mutcat
+                $comp, // item owner
+                $comp, // destination
+                $idItem, // item id
+                $request->qty_return, // qty
+                $nota, // nota
+                null, // sellprice
+                null, // list of productioncode
+                null, // list qty of productioncode
+                $request->notaPO // reff
+            );
+            if (!is_bool($mutasi)) {
+                return $mutasi;
+            }
+            // dd('x');
+            //
+            // $get_stockmutation = StockMutation::where('sm_stock', $get_stock->first()->s_id)
+            // ->where('sm_nota', $request->notaPO);
+            //
+            // if ($get_stock->count() > 0)
+            // {
+            //     $val_stock = [
+            //         's_qty' => $get_stock->first()->s_qty - $qty_compare
+            //     ];
+            // }
+            // else
+            // {
+            //     return Response::json([
+            //         'status' => "Failed",
+            //         'message' => "Stock tidak ditemukan"
+            //     ]);
+            // }
+            //
+            // if ($get_stockmutation->count() > 0)
+            // {
+            //     if ($get_stockmutation->first()->sm_use == $get_stockmutation->first()->sm_qty || $get_stockmutation->first()->sm_residue == 0)
+            //     {
+            //         return Response::json([
+            //             'status' => "Failed",
+            //             'message' => "Jumlah barang tidak tersedia"
+            //         ]);
+            //     }
+            //     else if ($get_stockmutation->first()->sm_use < $get_stockmutation->first()->sm_qty)
+            //     {
+            //         Mutasi::mutasikeluar(
+            //             15,
+            //             $comp,
+            //             $comp,
+            //             $idItem,
+            //             $request->qty_return,
+            //             $nota,
+            //             $request->notaPO,
+            //
+            //         );
+            //     }
+            // }
+            // else
+            // {
+            //     return Response::json([
+            //         'status' => "Failed",
+            //         'message' => "Stock mutasi tidak ditemukan"
+            //     ]);
+            // }
+            // $get_stock->update($val_stock);
 
-            if ($get_stock->count() > 0)
-            {
-                $val_stock = [
-                    's_qty' => $get_stock->first()->s_qty - $qty_compare
-                ];
-            }
-            else
-            {
-                return Response::json([
-                    'status' => "Failed",
-                    'message' => "Stock tidak ditemukan"
-                ]);
-            }
-
-            if ($get_stockmutation->count() > 0)
-            {
-                if ($get_stockmutation->first()->sm_use == $get_stockmutation->first()->sm_qty || $get_stockmutation->first()->sm_residue == 0)
-                {
-                    return Response::json([
-                        'status' => "Failed",
-                        'message' => "Jumlah barang tidak tersedia"
-                    ]);
-                }
-                else if ($get_stockmutation->first()->sm_use < $get_stockmutation->first()->sm_qty)
-                {
-                    Mutasi::MutasiKeluarWithReff(15, $comp, $comp, $idItem, $request->qty_return, $nota, $request->notaPO);
-                }
-            }
-            else
-            {
-                return Response::json([
-                'status' => "Failed",
-                'message' => "Stock mutasi tidak ditemukan"
-                ]);
-            }
-
-            //            insert return
+            // insert return
             DB::table('d_returnproductionorder')->insert($values);
-            $get_stock->update($val_stock);
             // $get_stockmutation->update($val_stockmutation);
             DB::commit();
 
             return Response::json([
-            'status' => "Success",
-            'message'=> "Data berhasil disimpan",
-            'id'     => Crypt::encrypt($poid),
-            'detail' => Crypt::encrypt($detailid)
+                'status' => "Success",
+                'message'=> "Data berhasil disimpan",
+                'id'     => Crypt::encrypt($poid),
+                'detail' => Crypt::encrypt($detailid)
             ]);
         }
         catch (Exception $e)
         {
             DB::rollBack();
             return Response::json([
-            'status' => "Failed",
-            'message'=> $e
+                'status' => "Failed",
+                'message'=> $e->getMessage()
             ]);
         }
     }

@@ -494,10 +494,7 @@ class PenerimaanProduksiController extends Controller
                     'ird_unit'          => $data_check->unit1,
                     'ird_user'          => Auth::user()->u_id
                 ];
-
                 DB::table('d_itemreceiptdt')->insert($values);
-
-                Mutasi::mutasimasuk(1, Auth::user()->u_company, Auth::user()->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $request->nota);
             }
             else {
                 $id = (DB::table('d_itemreceipt')->max('ir_id')) ? (DB::table('d_itemreceipt')->max('ir_id'))+1 : 1;
@@ -527,11 +524,10 @@ class PenerimaanProduksiController extends Controller
                     'ird_unit'          => $data_check->unit1,
                     'ird_user'          => Auth::user()->u_id
                 ];
-
                 DB::table('d_itemreceipt')->insert($receipt);
                 DB::table('d_itemreceiptdt')->insert($values);
-                Mutasi::mutasimasuk(1, Auth::user()->u_company, Auth::user()->u_company, $item, $qty_compare, 'ON DESTINATION', 'FINE', $data_check->value, $data_check->value, $data_check->nota, $request->nota);
             }
+
             $prodCodeId = DB::table('d_productionorder')
             ->where('po_id', $order)
             ->select('po_id')
@@ -554,9 +550,33 @@ class PenerimaanProduksiController extends Controller
             }
             d_productionordercode::insert($valuesProdCode);
 
+            // repair mutasimasuk, also insert production code to param
+            // check stock-mutation again
+            $mutasi = Mutasi::mutasimasuk(
+                1, // mutcat
+                Auth::user()->u_company, // from
+                Auth::user()->u_company, // destination
+                $item, // item id
+                $qty_compare, // qty smallest unit
+                'ON DESTINATION', // status item
+                'FINE', // condition item
+                $data_check->value, // hpp
+                $data_check->value, // sell
+                $data_check->nota, // nota
+                $request->nota, // nota refference
+                $request->prodCode, // list of productioncode
+                $request->qtyProdCode // list of qty-productioncode
+            );
+            if (!is_bool($mutasi)) {
+                return $mutasi;
+            }
+
             $this->UpdateStatus($order, $item);
             DB::commit();
-            return Response::json(['status' => 'Success', 'message' => "Data berhasil disimpan"]);
+            return Response::json([
+                'status' => 'Success',
+                'message' => "Data berhasil disimpan"
+            ]);
         }
         catch (\Exception $e){
             DB::rollback();

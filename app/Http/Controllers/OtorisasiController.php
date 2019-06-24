@@ -386,9 +386,13 @@ class OtorisasiController extends Controller
 
             DB::commit();
             return response()->json(['status'=>'Success']);
-        }catch (\Exception $e){
+        }
+        catch (\Exception $e){
             DB::commit();
-            return response()->json(['status'=>'Failed']);
+            return response()->json([
+                'status' => 'Failed',
+                'message' => $e->getMessage()
+            ]);
         }
     }
     public function rejected($id = null)
@@ -416,9 +420,13 @@ class OtorisasiController extends Controller
 
             DB::commit();
             return response()->json(['status'=>'Success']);
-        }catch (\Exception $e){
+        }
+        catch (\Exception $e){
             DB::commit();
-            return response()->json(['status'=>'Failed']);
+            return response()->json([
+                'status'=>'Failed',
+                'message' => $e->getMessage()
+            ]);
         }
     }
 

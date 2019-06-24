@@ -104,10 +104,10 @@
                             </div>
                         </section>
                     </div>
-                    <div class="card-footer text-right">
+                    <!-- <div class="card-footer text-right">
                         <button class="btn btn-primary" type="button">Simpan</button>
                         <a href="{{route('return.index')}}" class="btn btn-secondary">Kembali</a>
-                    </div>
+                    </div> -->
                 </div>
 
             </div>
