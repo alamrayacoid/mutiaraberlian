@@ -779,7 +779,7 @@
             type: 'get',
             data: {id},
             dataType: 'JSON',
-            url: "{{ route('penjualanpusat.getDetailTOP') }}",
+            url: "{{ route('penjualanpusat.getDetailSend') }}",
             success : function(response){
                 loadingHide();
                 $('#dateModalSend').val(response.dateFormated);
@@ -823,6 +823,15 @@
                     nullable: false,
                     // unmaskAsNumber: true,
                 });
+
+                //ekspedisi
+                $('#ekspedisi').empty();
+                $("#ekspedisi").append('<option value="" selected="" disabled="">=== Pilih Ekspedisi ===</option>');
+                $.each(response.ekspedisi, function (key, val) {
+                    $("#ekspedisi").append('<option value="' + val.e_id + '">' + val.e_name + '</option>');
+                });
+                $('#ekspedisi').focus();
+                $('#ekspedisi').select2('open');
             },
             error: function(xhr, status, error) {
                 loadingHide();
@@ -831,6 +840,25 @@
             }
         });
     }
+
+    $('#ekspedisi').on('change', function () {
+        let id = $('#ekspedisi').val();
+        axios.get('{{ route("penjualanpusat.getProdukEkspedisi") }}', {
+            params:{
+                "id": id
+            }
+        }).then(function (response) {
+            $('#jenis_ekspedisi').empty();
+            $("#jenis_ekspedisi").append('<option value="" selected="" disabled="">=== Pilih Jenis ===</option>');
+            $.each(response.data, function (key, val) {
+                $("#jenis_ekspedisi").append('<option value="' + val.ed_detailid + '">' + val.ed_product + '</option>');
+            });
+            $('#jenis_ekspedisi').focus();
+            $('#jenis_ekspedisi').select2('open');
+        }).catch(function (error) {
+            alert('error');
+        })
+    });
 
     function addCodeProd(id, item, nama){
         idxProdCode = $('.btnAddProdCode').index(this);
@@ -874,7 +902,7 @@
     function addCodetoTable(){
         let qty = $('#inputqtyproduksi').val();
         let kode = $.trim($('#inputkodeproduksi').val());
-        let nota = $('#nota_modaldt').val();
+        let nota = $('#notaModalSend').val();
         let item = $('#iditem_modaldt').val();
 
         if (isNaN(qty) || qty == '' || qty == null){
@@ -922,6 +950,40 @@
             }
         }).catch(function (error) {
 
+        })
+    }
+
+    function kirim() {
+        let nota = $('#notaModalSend').val();
+        let ekspedisi = $('#ekspedisi').val();
+        let produk = $('#jenis_ekspedisi').val();
+        let nama = $('#nama_kurir').val();
+        let tlp = $('#tlp_kurir').val();
+        let resi = $('#resi_kurir').val();
+        let harga = $('#biaya_kurir').val();
+        
+        loadingShow();
+        axios.post('{{ route("penjualanpusat.sendOrder") }}', {
+            'nota': nota,
+            "ekspedisi": ekspedisi,
+            "produk": produk,
+            "nama": nama,
+            "tlp": tlp,
+            "resi": resi,
+            "harga": harga
+        }).then(function (response) {
+            if (response.data.status == 'success'){
+                loadingHide();
+                messageSuccess("Berhasil", "Data berhasil disimpan");
+                $('#modal_distribusi').modal('hide');
+                table_distribusi.ajax.reload();
+            } else if (response.data.status == 'gagal'){
+                loadingHide();
+                messageFailed("Gagal", response.data.message);
+            }
+        }).catch(function (error) {
+            loadingHide();
+            alert('error');
         })
     }
 </script>
