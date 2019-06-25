@@ -9,7 +9,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="row">
+                <div class="row form-group">
                     <label for="detail_kpl_nota" class="col-2 col-form-label">Area Provinsi :</label>
                     <div class="col-4">
                         <select class="select2" id="area_provinsi">
@@ -23,19 +23,32 @@
                         </select>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row form-group">
                     <label for="detail_kpl_nota" class="col-2 col-form-label">Nama Agen :</label>
-                    <div class="col-4">
+                    <div class="col-10">
                         <select class="select2" id="nama_agen">
                             <option>== Pilih Agen ==</option>
                         </select>
                     </div>
                 </div>
-                <label for="detail_kpl_nota" class="col-2 col-form-label">Website :</label>
-                <div class="col-4">
-                    <input type="text" class="form-control-sm" id="website">
+                <div class="row form-group">
+                    <label for="detail_kpl_nota" class="col-2 col-form-label">Website :</label>
+                    <div class="col-8">
+                        <input type="text" class="form-control-sm form-control" id="website">
+                    </div>
                 </div>
-                <br>
+                <div class="row form-group">
+                    <label for="detail_kpl_nota" class="col-2 col-form-label">Website :</label>
+                    <div class="col-8">
+                        <input type="text" class="form-control-sm form-control" id="website">
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="detail_kpl_nota" class="col-2 col-form-label">Produk :</label>
+                    <div class="col-8">
+                        <input type="text" class="form-control-sm form-control" id="produk">
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
