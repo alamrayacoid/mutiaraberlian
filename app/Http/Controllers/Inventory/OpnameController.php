@@ -50,9 +50,11 @@ class OpnameController extends Controller
     */
     public function getItem(Request $request)
     {
+      // dd($request);
       $stock = d_stock::where('s_item', $request->itemId)
         ->where('s_comp', $request->owner)
         ->where('s_position', $request->position)
+        ->where('s_condition', $request->condition)
         ->with('getItem')
         ->with('getItem.getUnit1')
         ->with('getItem.getUnit2')
@@ -202,6 +204,29 @@ class OpnameController extends Controller
         return view('inventory/manajemenstok/opname/opnamestock/create', compact('data'));
     }
 
+    public function list_codeProduksi(Request $req)
+    {
+      $stock = DB::table('d_stock')->where('s_item', '=', $req->item)
+        ->where('s_comp', '=', $req->owner)
+        ->where('s_position', '=', $req->position)
+        ->where('s_condition', '=', $req->condition)
+        ->where('s_status', '=', 'ON DESTINATION')
+        ->get();
+
+      if (count($stock) > 0) {
+        $stockId = $stock[0]->s_id;
+      } else {
+        $stockId = 0;
+      }
+      
+      $codes = DB::table('d_stockdt')
+        ->where('sd_stock', '=', $stockId)
+        ->get();
+
+      return Datatables::of($codes)
+      ->make(true);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -210,6 +235,7 @@ class OpnameController extends Controller
      */
     public function store(Request $request)
     {
+      // dd($request);
       // validate request
       $isValidRequest = $this->validate_req($request);
       if ($isValidRequest != '1') {
@@ -221,22 +247,33 @@ class OpnameController extends Controller
       }
       // insert data to db
       try {
-        $nota = $this->getNewNota();
-        $newId = d_opnameauth::max('oa_id') + 1;
         DB::beginTransaction();
-          $opname = new d_opnameauth;
-          $opname->oa_id = $newId;
-          $opname->oa_date = Carbon::now();
-          $opname->oa_nota = $nota;
-          $opname->oa_comp = $request->owner;
-          $opname->oa_position = $request->position;
-          $opname->oa_item = $request->itemId;
-          $opname->oa_qtyreal = $request->qty_real;
-          $opname->oa_unitreal = $request->unit_real;
-          $opname->oa_qtysystem = $request->qty_sys_hidden;
+          $nota = $this->getNewNota();
+          $newId = d_opnameauth::max('oa_id') + 1;
+
+          $opname                = new d_opnameauth;
+          $opname->oa_id         = $newId;
+          $opname->oa_date       = Carbon::now();
+          $opname->oa_nota       = $nota;
+          $opname->oa_comp       = $request->owner;
+          $opname->oa_position   = $request->position;
+          $opname->oa_item       = $request->itemId;
+          $opname->oa_qtyreal    = $request->qty_real;
+          $opname->oa_unitreal   = $request->unit_real;
+          $opname->oa_qtysystem  = $request->qty_sys_hidden;
           $opname->oa_unitsystem = 1;
-          $opname->oa_insert = Carbon::now();
+          $opname->oa_insert     = Carbon::now();
           $opname->save();
+
+          for ($i=0; $i < count($request->code_r); $i++) {
+            $dt_Id = DB::table('d_opnameauthdt')->where('oad_opname', '=', $newId)->max('oad_detailid') + 1;
+            DB::table('d_opnameauthdt')->insert([
+              'oad_opname'   => $newId,
+              'oad_detailid' => $dt_Id,
+              'oad_code'     => $request->code_r[$i],
+              'oad_qty'      => $request->qty_r[$i]
+            ]);
+          }
 
           otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
 
