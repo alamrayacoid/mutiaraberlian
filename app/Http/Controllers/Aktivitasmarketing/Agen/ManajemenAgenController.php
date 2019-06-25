@@ -949,7 +949,11 @@ class ManajemenAgenController extends Controller
             // delete sales-detail
             foreach ($sales->getSalesDt as $key => $val) {
                 // rollback mutasi-sales
-                $mutasi = Mutasi::rollback($sales->s_nota, 14, $val->sd_item);
+                $mutasi = Mutasi::rollback(
+                    $sales->s_nota,
+                    $val->sd_item,
+                    14 // mutcat
+                );
                 if (!is_bool($mutasi)) {
                     DB::rollBack();
                     return $mutasi;
@@ -1009,6 +1013,13 @@ class ManajemenAgenController extends Controller
         } else {
             $comp = m_company::where('c_user', Auth::user()->u_code)->first();
         }
+
+        // return if $comp is-null
+        if (is_null($comp)) {
+            $results[] = ['id' => null, 'label' => 'Agen tidak memiliki item apapun'];
+            return Response::json($results);
+        }
+
         $comp = $comp->c_id;
         $cari = $request->term;
 
@@ -1186,6 +1197,7 @@ class ManajemenAgenController extends Controller
                 $request->prodCodeLength // list production-code length each item
             );
             if ($validateProdCode !== 'validated') {
+                DB::rollback();
                 return $validateProdCode;
             }
 
@@ -1270,14 +1282,17 @@ class ManajemenAgenController extends Controller
                 ->first();
 
                 $qty_compare = 0;
+                $sellPrice = 0;
                 if ($data['satuan'][$i] == $data_check->unit1) {
                     $qty_compare = $data['jumlah'][$i];
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]);
                 } else if ($data['satuan'][$i] == $data_check->unit2) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare2;
                 } else if ($data['satuan'][$i] == $data_check->unit3) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare3;
                 }
-
                 // declaare list of production-code
                 $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                 $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
@@ -1291,9 +1306,10 @@ class ManajemenAgenController extends Controller
                     $data['idItem'][$i], // item-id
                     $qty_compare, // item-qty in smallest unit
                     $salesNota, // nota
-                    Currency::removeRupiah($data['harga'][$i]), // item-price
+                    $sellPrice, // item-price
                     $listPC, // list production-code
-                    $listQtyPC // list qty roduction code
+                    $listQtyPC, // list qty roduction code
+                    null // reff
                 );
                 if (!is_bool($mutasi)) {
                     DB::rollback();
@@ -1348,6 +1364,7 @@ class ManajemenAgenController extends Controller
         }])
         ->with('getMember.getAgent')
         ->first();
+
         // set nota
         $nota = $data['kpl']->s_nota;
         // get stock item
@@ -1427,10 +1444,11 @@ class ManajemenAgenController extends Controller
                 $request->prodCodeLength // list production-code length each item
             );
             if ($validateProdCode !== 'validated') {
+                DB::rollback();
                 return $validateProdCode;
             }
 
-            // start update data
+            // update sales
             $sales = d_sales::where('s_id', $id)
             ->with('getSalesDt.getProdCode')
             ->first();
@@ -1441,9 +1459,13 @@ class ManajemenAgenController extends Controller
             // delete sales-detail
             foreach ($sales->getSalesDt as $key => $val) {
                 // rollback mutasi-sales which is updated
-                $mutasi = Mutasi::rollback($sales->s_nota, 14, $val->sd_item);
+                $mutasi = Mutasi::rollback(
+                    $sales->s_nota,
+                    $val->sd_item,
+                    14 // mutcat
+                );
                 if (!is_bool($mutasi)) {
-                    DB::rollBack();
+                    DB::rollback();
                     return $mutasi;
                 }
                 // delete production-code of selected stockdistribution
@@ -1497,9 +1519,14 @@ class ManajemenAgenController extends Controller
                     }
                     $detailidcode = (d_salescode::where('sc_sales', $sales->s_id)
                     ->where('sc_item', $data['idItem'][$i])
-                    ->max('sc_detailid')) ? d_salescode::where('sc_sales', $sales->s_id)
+                    ->max('sc_detailid'))
+                    ?
+                    d_salescode::where('sc_sales', $sales->s_id)
                     ->where('sc_item', $data['idItem'][$i])
-                    ->max('sc_detailid') + 1 : 1;
+                    ->max('sc_detailid') + 1
+                    :
+                    1;
+                    $val_salescode = array();
                     $val_salescode = [
                         'sc_sales' => $sales->s_id,
                         'sc_item' => $data['idItem'][$i],
@@ -1518,12 +1545,16 @@ class ManajemenAgenController extends Controller
                 ->first();
 
                 $qty_compare = 0;
+                $sellPrice = 0;
                 if ($data['satuan'][$i] == $data_check->unit1) {
                     $qty_compare = $data['jumlah'][$i];
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]);
                 } else if ($data['satuan'][$i] == $data_check->unit2) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare2;
                 } else if ($data['satuan'][$i] == $data_check->unit3) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare3;
                 }
 
                 // declaare list of production-code
@@ -1551,7 +1582,6 @@ class ManajemenAgenController extends Controller
                 $startProdCodeIdx += $prodCodeLength;
                 $salesDtId++;
             }
-            // dd('x');
 
             DB::commit();
             return response()->json([

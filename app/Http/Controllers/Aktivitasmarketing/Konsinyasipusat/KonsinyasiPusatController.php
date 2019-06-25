@@ -540,12 +540,16 @@ class KonsinyasiPusatController extends Controller
                 ->first();
 
                 $qty_compare = 0;
+                $sellPrice = 0;
                 if ($data['satuan'][$i] == $data_check->unit1) {
                     $qty_compare = $data['jumlah'][$i];
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]);
                 } else if ($data['satuan'][$i] == $data_check->unit2) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare2;
                 } else if ($data['satuan'][$i] == $data_check->unit3) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare3;
                 }
 
                 $stock = DB::table('d_stock')
@@ -579,7 +583,7 @@ class KonsinyasiPusatController extends Controller
                     'ON DESTINATION', // status
                     'FINE', // condition
                     $stock_mutasi->sm_hpp, // hpp
-                    $stock_mutasi->sm_sell, // sell value
+                    $sellPrice, // sell value
                     $nota, // nota
                     $stock_mutasi->sm_nota, // nota refference
                     $listPC, // list production-code
@@ -694,8 +698,8 @@ class KonsinyasiPusatController extends Controller
                     // rollBack mutation
                     $rollbackKons = Mutasi::rollback(
                         $konsinyasi->sc_nota, // nota
-                        12, // mutcat
-                        $konsDt->scd_item // itemId
+                        $konsDt->scd_item, // itemId
+                        12 // mutcat
                     );
                     if (!is_bool($rollbackKons)) {
                         DB::rollBack();
@@ -813,13 +817,18 @@ class KonsinyasiPusatController extends Controller
                     ->first();
                     // get qty with smallest unit
                     $qty_compare = 0;
+                    $sellPrice = 0;
                     if ($data['satuan'][$key] == $data_check->unit1) {
                         $qty_compare = $data['jumlah'][$key];
+                        $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]);
                     } else if ($data['satuan'][$key] == $data_check->unit2) {
                         $qty_compare = $data['jumlah'][$key] * $data_check->compare2;
+                        $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]) / $data_check->compare2;
                     } else if ($data['satuan'][$key] == $data_check->unit3) {
                         $qty_compare = $data['jumlah'][$key] * $data_check->compare3;
+                        $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]) / $data_check->compare3;
                     }
+
                     // get item stock
                     $stock = DB::table('d_stock')
                     ->where('s_id', '=', $data['idStock'][$key])
@@ -852,7 +861,7 @@ class KonsinyasiPusatController extends Controller
                         'ON DESTINATION', // status
                         'FINE', // condition
                         $stock_mutasi->sm_hpp, // hpp
-                        $stock_mutasi->sm_sell, // sell value
+                        $sellPrice, // sell value
                         $nota, // nota
                         $stock_mutasi->sm_nota, // nota refference
                         $listPC, // list production-code
@@ -902,40 +911,6 @@ class KonsinyasiPusatController extends Controller
                 $k->on('m_wil_kota.wc_id', '=', 'm_agen.a_kabupaten');
             })
             ->first();
-
-            // $data_item = DB::table('d_salescomp')
-            // ->where('d_salescomp.sc_id', '=', $id)
-            // ->join('d_salescompdt', function ($sd){
-            //     $sd->on('d_salescompdt.scd_sales', '=', 'd_salescomp.sc_id');
-            // })
-            // ->leftjoin('m_item', function ($i){
-            //     $i->on('m_item.i_id', '=', 'd_salescompdt.scd_item');
-            // })
-            // ->leftjoin('m_unit as a', function ($x){
-            //     $x->on('m_item.i_unit1', '=', 'a.u_id');
-            // })
-            // ->leftjoin('m_unit as b', function ($y){
-            //     $y->on('m_item.i_unit2', '=', 'b.u_id');
-            // })
-            // ->leftjoin('m_unit as c', function ($z){
-            //     $z->on('m_item.i_unit3', '=', 'c.u_id');
-            // })
-            // ->join('d_stock_mutation', function ($sm){
-            //     $sm->on('d_stock_mutation.sm_nota', '=', 'd_salescomp.sc_nota');
-            //     $sm->where('d_stock_mutation.sm_mutcat', '=', 13);
-            // })
-            // ->leftjoin('d_stock', function ($s){
-            //     $s->on('d_stock.s_id', '=', 'd_stock_mutation.sm_stock');
-            //     $s->on('d_stock.s_item', '=', 'd_salescompdt.scd_item');
-            // })
-            // ->select('d_salescompdt.scd_item as itemId', 'd_salescompdt.scd_unit as unit', 'd_salescompdt.scd_qty as qty',
-            // 'd_salescompdt.scd_value as harga', 'd_salescompdt.scd_totalnet as totalnet', 'm_item.i_code as itemCode', 'm_item.i_name as item',
-            // 'd_stock_mutation.sm_stock as stock',
-            // 'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2',
-            // 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
-            // ->get();
-
-            // dd($data_item);
 
             $data_item = d_salescomp::where('sc_id', $id)
             ->with(['getSalesCompDt' => function ($query) {
@@ -1041,10 +1016,10 @@ class KonsinyasiPusatController extends Controller
             ->first();
 
             foreach ($konsinyasi->getSalesCompDt as $key => $konsDt) {
-                $rollbackKons = Mutasi::rollBack(
+                $rollbackKons = Mutasi::rollback(
                     $konsinyasi->sc_nota, // nota
-                    12, // mutcat
-                    $konsDt->scd_item // itemId
+                    $konsDt->scd_item, // itemId
+                    12 // mutcat
                 );
                 if (!is_bool($rollbackKons)) {
                     DB::rollBack();
