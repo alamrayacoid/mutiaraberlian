@@ -241,7 +241,7 @@ function TableCabang() {
         serverSide: true,
         ajax: {
             url : "{{ route('barangmasuk.list') }}",
-            type: "post",
+            type: "get",
             data: {
                 "_token": "{{ csrf_token() }}",
 				"date_from": $('#date_from').val(),

@@ -17,7 +17,10 @@ use Carbon\Carbon;
 use CodeGenerator;
 use App\d_productorder;
 use App\d_productorderdt;
+use App\d_productordercode;
 use App\d_stock;
+use Mutasi;
+
 
 class PenjualanPusatController extends Controller
 {
@@ -96,6 +99,35 @@ class PenjualanPusatController extends Controller
         return response()->json($data);
     }
 
+    public function getDetailSend(Request $request)
+    {
+        $data = d_productorder::where('po_id', $request->id)
+            ->with('getAgent')
+            ->with(['getPODt' => function ($query) {
+                $query
+                    ->with(['getItem' => function ($query) {
+                        $query
+                            ->with('getUnit1')
+                            ->with('getUnit2')
+                            ->with('getUnit3')
+                            ->get();
+                    }])
+                    ->with('getUnit')
+                    ->get();
+            }])
+            ->first();
+
+        $ekspedisi = DB::table('m_expedition')
+            ->where('e_isactive', '=', 'Y')
+            ->get();
+
+        //$data->stockItem = $stockItem;
+        $data->total = d_productorderdt::where('pod_productorder', $request->id)->sum('pod_totalprice');
+        $data->dateFormated = Carbon::parse($data->po_date)->format('d M Y');
+        $data->ekspedisi = $ekspedisi;
+        return response()->json($data);
+    }
+
     public function getProsesTOP(Request $request)
     {
         $data = d_productorder::where('po_id', $request->id)
@@ -114,7 +146,7 @@ class PenjualanPusatController extends Controller
             }])
             ->first();
 
-         //check again how to get stock, is it true ?
+        //check again how to get stock, is it true ?
         $stockItem = array();
         $satuanItem = array();
 
@@ -666,5 +698,139 @@ class PenjualanPusatController extends Controller
             })
             ->rawColumns(['tanggal', 'action', 'total'])
             ->make(true);
+    }
+
+    public function getProdukEkspedisi(Request $request)
+    {
+        $id = $request->id;
+
+        $data = DB::table('m_expeditiondt')
+            ->where('ed_expedition', '=', $id)
+            ->where('ed_isactive', '=', 'Y')
+            ->get();
+
+        return Response::json($data);
+    }
+
+    public function getProductionCode(Request $request)
+    {
+
+    }
+
+    public function sendOrder(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $nota = $request->nota;
+            $ekspedisi = $request->ekspedisi;
+            $produk = $request->produk;
+            $nama = $request->nama;
+            $tlp = $request->tlp;
+            $resi = $request->resi;
+            $harga = $request->harga;
+
+            DB::table('d_productorder')
+                ->where('po_nota', '=', $nota)
+                ->update([
+                    'po_send' => 'P'
+                ]);
+
+            $pd_id = DB::table('d_productdelivery')
+                ->max('pd_id');
+
+            ++$pd_id;
+
+            DB::table('d_productdelivery')
+                ->insert([
+                    'pd_id' => $pd_id,
+                    'pd_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                    'pd_nota' => $nota,
+                    'pd_expedition' => $ekspedisi,
+                    'pd_product' => $produk,
+                    'pd_resi' => $resi,
+                    'pd_couriername' => $nama,
+                    'pd_couriertelp' => $tlp,
+                    'pd_price' => $harga
+                ]);
+
+
+            $productOrder = d_productorder::where('po_nota', '=', $nota)
+                ->with('getPODt')
+                ->first();
+
+            $dataItem = DB::table('d_productorder')
+                ->join('d_productorderdt', 'pod_productorder', '=', 'po_id')
+                ->where('po_nota', '=', $nota)
+                ->get();
+
+            $idItems = [];
+
+            for($i = 0; $i < count($dataItem);$i++){
+                array_push($idItems, $dataItem[$i]->pod_item);
+            }
+
+            // mutation
+            foreach ($productOrder->getPODt as $key => $PO) {
+                // get list production-code
+                $prodCode = d_productordercode::where('poc_productorder', $productOrder->po_id)
+                    ->where('poc_item', $PO->pod_item)
+                    ->select('poc_code', 'poc_qty')
+                    ->get();
+
+                $listPC = array();
+                $listQtyPC = array();
+                $listUnitPC = array();
+                foreach ($prodCode as $key => $val) {
+                    array_push($listPC, $val->poc_code);
+                    array_push($listQtyPC, $val->poc_qty);
+                }
+
+                //convert unit to smallest
+                $barang = DB::table('m_item')
+                    ->where('i_id', '=', $PO->pod_item)
+                    ->first();
+
+                $kuantitas = 0;
+
+                if ($PO->pod_unit == $barang->i_unit1){
+                    $kuantitas = $PO->pod_qty;
+                }elseif ($PO->pod_unit == $barang->i_unit2){
+                    $kuantitas = ($PO->pod_qty * $barang->i_unitcompare2);
+                }elseif ($PO->pod_unit == $barang->i_unit3){
+                    $kuantitas = ($PO->pod_qty * $barang->i_unitcompare3);
+                }
+
+                // insert stock mutation using distribusicabangkeluar
+                // actually its public function, not specific
+                // waiit, check the name of $reff
+                $reff = $nota;
+                $mutDist = Mutasi::distribusicabangkeluar(
+                    $productOrder->po_comp, // from
+                    $productOrder->po_agen, // to
+                    $PO->pod_item, // item-id
+                    $kuantitas, // qty of smallest-unit
+                    $productOrder->po_nota, // nota
+                    $reff, // nota-reff
+                    $listPC, // list of production-code
+                    $listQtyPC, // list of production-code-qty
+                    $listUnitPC, // list of production-code-unit
+                    null
+                );
+                if ($mutDist !== 'success') {
+                    return $mutDist;
+                }
+            }
+
+            DB::commit();
+            return Response::json([
+                'status' => 'success'
+            ]);
+        } catch (DecryptException $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 }

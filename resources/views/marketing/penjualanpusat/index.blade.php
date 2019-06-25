@@ -6,13 +6,23 @@
                 max-width: 1000px !important;
             }
         }
-
         .tolak {
             background-color: #d1d1d1;
             color: #8a8a8a;
         }
         #table_modalPr tr.tolak:hover{
             background-color: #eaeaea;
+        }
+        @media (min-width: 992px) {
+            .modal-xl {
+                max-width: 1200px !important;
+            }
+        }
+        .btn-xs {
+            padding: 0.20rem 0.4rem;
+            font-size: 0.675rem;
+            line-height: 1.3;
+            border-radius: 0.2rem;
         }
     </style>
 @stop
@@ -764,9 +774,155 @@
     }
 
     function distribusiPenjualan(id) {
+        loadingShow();
+        $.ajax({
+            type: 'get',
+            data: {id},
+            dataType: 'JSON',
+            url: "{{ route('penjualanpusat.getDetailTOP') }}",
+            success : function(response){
+                loadingHide();
+                $('#dateModalSend').val(response.dateFormated);
+                $('#agentModalSend').val(response.get_agent.c_name);
+                $('#notaModalSend').val(response.po_nota);
+                $('#totalModalSend').val(parseFloat(response.total));
 
+                $('#table_senddistribution tbody').empty();
+                $.each(response.get_p_o_dt, function (key, val) {
+                    let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name +'</td>';
+                    let qty = '<td class="digits">'+ val.pod_qty +'</td>';
+                    let unit = '<td>'+ val.get_unit.u_name +'</td>';
+                    let price = '<td class="rupiah">'+ parseFloat(val.pod_price) +'</td>';
+                    let subTotal = '<td class="rupiah">'+ parseFloat(val.pod_totalprice) +'</td>';
+                    let aksi = '<td class="text-center"><button type="button" onclick="addCodeProd('+response.po_id+', '+val.pod_item+', \''+val.get_item.i_name+'\')" class="btn btn-info btn-xs btnAddProdCode"><i class="fa fa-plus"></i> Kode Produksi</button></td>';
+                    appendItem = '<tr>'+ item + qty + unit + price + subTotal + aksi +'</tr>';
+                    // append data to table-row
+                    $('#table_senddistribution > tbody:last-child').append(appendItem);
+                });
+                //mask money
+                $('.rupiah').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 0,
+                    autoGroup: true,
+                    prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
+                //mask digits
+                $('.digits').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 0,
+                    autoGroup: true,
+                    prefix: '', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
+            },
+            error: function(xhr, status, error) {
+                loadingHide();
+                let err = JSON.parse(xhr.responseText);
+                messageWarning('Error', err.message);
+            }
+        });
     }
 
+    function addCodeProd(id, item, nama){
+        idxProdCode = $('.btnAddProdCode').index(this);
+        console.log(idxProdCode);
+        $('.text-item').html(nama);
+        $('#inputkodeproduksi').removeAttr('readonly');
+        $('#iditem_modaldt').val(item);
+        $('#inputqtyproduksi').removeAttr('readonly');
+        $('#table_prosesordercode').dataTable().fnDestroy();
+        tb_listcodeprosesorder = $('#table_prosesordercode').DataTable({
+            responsive: true,
+            serverSide: true,
+            paging: false,
+            searching: false,
+            ordering: false,
+            ajax: {
+                url: "{{ route('keloladataorder.getdetailcodeorder') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "id": id,
+                    "item": item
+                }
+            },
+            columns: [
+                {data: 'poc_code'},
+                {data: 'poc_qty'},
+                {data: 'aksi'},
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    }
 
+    function pressCode(e) {
+        if (e.keyCode == 13){
+            addCodetoTable();
+        }
+    }
+
+    function addCodetoTable(){
+        let qty = $('#inputqtyproduksi').val();
+        let kode = $.trim($('#inputkodeproduksi').val());
+        let nota = $('#nota_modaldt').val();
+        let item = $('#iditem_modaldt').val();
+
+        if (isNaN(qty) || qty == '' || qty == null){
+            qty = 1;
+        }
+        if (kode == '' || kode == null) {
+            messageWarning('Perhatian', 'Silahkan masukkan kode produksi terlebih dahulu !');
+            return 0;
+        }
+
+        axios.get('{{ route("keloladataorder.setKode") }}', {
+            params:{
+                "qty": qty,
+                "kode": kode,
+                "nota": nota,
+                "item": item
+            }
+        }).then(function (response) {
+            if (response.data.status == 'success'){
+                messageSuccess("Berhasil", "Kode berhasil ditambahkan");
+                $('#inputkodeproduksi').val("");
+                $('#inputqtyproduksi').val("");
+                tb_listcodeprosesorder.ajax.reload();
+            } else if (response.data.status == 'gagal'){
+                messageWarning("Gagal", response.data.message);
+            }
+        }).catch(function (error) {
+            alert('error');
+        })
+    }
+
+    function removeCodeOrder(id, item, kode) {
+        axios.get('{{ route("keloladataorder.removeKode") }}', {
+            params:{
+                "id": id,
+                "item": item,
+                "kode": kode
+            }
+        }).then(function (response) {
+            if (response.data.status == 'success'){
+                messageSuccess("Berhasil", "Kode berhasil dihapus");
+                tb_listcodeprosesorder.ajax.reload();
+            } else {
+                messageWarning("Gagal", "Kode gagal dihapus");
+            }
+        }).catch(function (error) {
+
+        })
+    }
 </script>
 @endsection

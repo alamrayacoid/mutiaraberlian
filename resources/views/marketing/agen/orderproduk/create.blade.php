@@ -563,7 +563,8 @@
                 if (jumlah == "") {
                     jumlah = null;
                 }
-
+                // trigger jumlah to get new price
+                $('.c_jumlah').trigger('input');
             })
         }
 
@@ -1062,7 +1063,8 @@
                 if (jumlah == "") {
                     jumlah = null;
                 }
-                updateTotalTampil();
+                // trigger jumlah to get new price
+                $(".jumlah").trigger('input');
                 // axios.get(baseUrl+'/marketing/agen/orderproduk/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
                 //     .then(function (resp) {
                 //         $(".jumlah").eq(idx).val(resp.data);
