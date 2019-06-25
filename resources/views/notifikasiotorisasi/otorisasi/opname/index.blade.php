@@ -90,7 +90,7 @@
 <script type="text/javascript">
 var table1, table2;
 	$(document).ready(function(){
-
+		$('#table_otorisasi').DataTable().fnDestroy();
 		table1 = $('#table_otorisasi').DataTable({
 				responsive: true,
 				// language: dataTableLanguage,

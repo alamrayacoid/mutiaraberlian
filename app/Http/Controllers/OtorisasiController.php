@@ -11,7 +11,7 @@ use DB;
 use DataTables;
 use Currency;
 use CodeGenerator;
-use Crypt;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 class OtorisasiController extends Controller
@@ -62,28 +62,47 @@ class OtorisasiController extends Controller
     }
     public function approveopname($id)
     {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
         DB::beginTransaction();
         try
         {
+            $auth = DB::table('d_opnameauth')->where('oa_id', '=', $id)->first();
 
-            $auth = DB::table('d_opnameauth')->where('oa_id', Crypt::decrypt($id))->first();
+            $authdt = DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->get();
 
-            DB::table('d_opnameauth')->where('oa_id', Crypt::decrypt($id))->delete();
-
+            // dd($auth, $authdt);
             $id = DB::table('d_opname')->max('o_id')+1;
             DB::table('d_opname')->insert([
-            'o_id' => $id,
-            'o_comp' => $auth->oa_comp,
-            'o_position' => $auth->oa_position,
-            'o_date' => $auth->oa_date,
-            'o_nota' => $auth->oa_nota,
-            'o_item' => $auth->oa_item,
-            'o_qtyreal' => $auth->oa_qtyreal,
-            'o_qtysystem' => $auth->oa_qtysystem,
-            'o_unitreal' => $auth->oa_unitreal,
-            'o_unitsystem' => $auth->oa_unitsystem,
-            'o_insert' => Carbon::now('Asia/Jakarta')
+                'o_id'         => $id,
+                'o_comp'       => $auth->oa_comp,
+                'o_position'   => $auth->oa_position,
+                'o_date'       => $auth->oa_date,
+                'o_nota'       => $auth->oa_nota,
+                'o_item'       => $auth->oa_item,
+                'o_qtyreal'    => $auth->oa_qtyreal,
+                'o_qtysystem'  => $auth->oa_qtysystem,
+                'o_unitreal'   => $auth->oa_unitreal,
+                'o_unitsystem' => $auth->oa_unitsystem,
+                'o_insert'     => Carbon::now('Asia/Jakarta')
             ]);
+
+            for ($i=0; $i < count($authdt); $i++) {
+                DB::table('d_opnamedt')->insert([
+                    'od_opname'   => $id,
+                    'od_code'     => $authdt[$i]->oad_code,
+                    'od_detailid' => $authdt[$i]->oad_detailid,
+                    'od_qty'      => $authdt[$i]->oad_qty
+                ]);
+            }
+
+            DB::table('d_opnameauth')->where('oa_id', '=', $id)->delete();
+
+            DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->delete();
 
             DB::commit();
             return response()->json([
