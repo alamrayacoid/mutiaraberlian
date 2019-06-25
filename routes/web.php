@@ -293,6 +293,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/opnamestock/getQty', 'Inventory\OpnameController@getQty')->name('opname.getQty');
     Route::get('/inventory/manajemenstok/opnamestock/show/{id}', 'Inventory\OpnameController@show')->name('opname.show');
     Route::get('/inventory/manajemenstok/opnamestock/create', 'Inventory\OpnameController@create')->name('opname.create');
+    Route::get('/inventory/manajemenstok/opnamestock/list-code-produksi', 'Inventory\OpnameController@list_codeProduksi')->name('codeProduksi.list');
     Route::post('/inventory/manajemenstok/opnamestock/store', 'Inventory\OpnameController@store')->name('opname.store');
     Route::get('/inventory/manajemenstok/opnamestock/edit/{id}', 'Inventory\OpnameController@edit')->name('opname.edit');
     Route::post('/inventory/manajemenstok/opnamestock/update/{id}', 'Inventory\OpnameController@update')->name('opname.update');
@@ -382,12 +383,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/index', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@index')->name('penjualanpusat.index');
     Route::get('/marketing/penjualanpusat/get-table-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTableTOP')->name('penjualanpusat.getTableTOP');
     Route::get('/marketing/penjualanpusat/get-detail-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getDetailTOP')->name('penjualanpusat.getDetailTOP');
+    Route::get('/marketing/penjualanpusat/get-detail-send', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getDetailSend')->name('penjualanpusat.getDetailSend');
     Route::get('/marketing/penjualanpusat/get-proses-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getProsesTOP')->name('penjualanpusat.getProsesTOP');
     Route::post('/marketing/penjualanpusat/confirm-process-top/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@confirmProcessTOP')->name('penjualanpusat.confirmProcessTOP');
     Route::get('/marketing/penjualanpusat/orderpenjualan/proses', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@orderpenjualan_proses')->name('orderpenjualan.proses');
     Route::get('/marketing/penjualanpusat/ganti-status', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@changeStatus')->name('penjualanpusat.gantistatus');
     Route::get('/marketing/penjualanpusat/get-harga-satuan', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getPrice')->name('penjualanpusat.gantisatuan');
     Route::get('/marketing/penjualanpusat/get-table-distribusi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTableDistribusi')->name('penjualanpusat.getTableDistribusi');
+    Route::get('/marketing/penjualanpusat/get-produk-ekspedisi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getProdukEkspedisi')->name('penjualanpusat.getProdukEkspedisi');
+    Route::post('/marketing/penjualanpusat/send-order-penjualan', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@sendOrder')->name('penjualanpusat.sendOrder');
     // Target Realisasi
     Route::get('/marketing/penjualanpusat/targetrealisasi/targetList', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetList')->name('targetReal.list');
     Route::get('/marketing/penjualanpusat/targetrealisasi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@createTargetReal')->name('targetReal.create');
