@@ -976,6 +976,7 @@
                 loadingHide();
                 messageSuccess("Berhasil", "Data berhasil disimpan");
                 $('#modal_distribusi').modal('hide');
+                table_distribusi.ajax.reload();
             } else if (response.data.status == 'gagal'){
                 loadingHide();
                 messageFailed("Gagal", response.data.message);
