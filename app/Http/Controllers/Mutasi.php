@@ -917,7 +917,8 @@ class Mutasi extends Controller
     // ...PC = production-code
     static function distribusicabangkeluar(
         $from, $to, $item, $qty, $nota, $reff,
-        $listPC, $listQtyPC, $listUnitPC, $mutation = null
+        $listPC, $listQtyPC, $listUnitPC,
+        $sellPrice = null, $mutation = null
         )
     {
         DB::beginTransaction();
@@ -1004,24 +1005,7 @@ class Mutasi extends Controller
 
                     // update qty of request (how much qty used by selected stock-mutation)
                     $permintaan = $permintaan - $stock[$j]->sm_sisa;
-
-                    // insert new stock-mutation (distribution-out)
-                    // using sm_sisa as sm_qty
-                    DB::table('d_stock_mutation')
-                    ->insert([
-                        'sm_stock' => $stock[$j]->sm_stock,
-                        'sm_detailid' => $detailid,
-                        'sm_date' => $dateNow,
-                        'sm_mutcat' => $mutcatOut,
-                        'sm_qty' => $stock[$j]->sm_sisa,
-                        'sm_use' => 0,
-                        'sm_residue' => 0,
-                        'sm_hpp' => $stock[$j]->sm_hpp,
-                        'sm_sell' => $stock[$j]->sm_sell,
-                        'sm_nota' => $nota,
-                        'sm_reff' => $stock[$j]->sm_nota,
-                        'sm_user' => Auth::user()->u_id,
-                    ]);
+                    $smQty = $stock[$j]->sm_sisa;
 
                     $continueLoopStock = true;
                 }
@@ -1039,24 +1023,41 @@ class Mutasi extends Controller
                             'sm_residue' => $stock[$j]->sm_residue - $permintaan
                         ]);
 
-                    // insert new stock-mutation (distribution-out)
-                    DB::table('d_stock_mutation')
-                    ->insert([
-                        'sm_stock' => $stock[$j]->sm_stock,
-                        'sm_detailid' => $detailid,
-                        'sm_date' => $dateNow,
-                        'sm_mutcat' => $mutcatOut,
-                        'sm_qty' => $permintaan,
-                        'sm_use' => 0,
-                        'sm_residue' => 0,
-                        'sm_hpp' => $stock[$j]->sm_hpp,
-                        'sm_sell' => $stock[$j]->sm_sell,
-                        'sm_nota' => $nota,
-                        'sm_reff' => $stock[$j]->sm_nota,
-                        'sm_user' => Auth::user()->u_id,
-                    ]);
+                    $smQty = $permintaan;
+
                     $continueLoopStock = false;
                 }
+
+                $val_stockmut = null;
+                $val_stockmut = [
+                    'sm_stock' => $stock[$j]->sm_stock,
+                    'sm_detailid' => $detailid,
+                    'sm_date' => $dateNow,
+                    'sm_mutcat' => $mutcatOut,
+                    'sm_qty' => $smQty,
+                    'sm_use' => 0,
+                    'sm_residue' => 0,
+                    'sm_hpp' => $stock[$j]->sm_hpp,
+                ];
+                if (!is_null($sellPrice)) {
+                    $val_stockmut += [
+                        'sm_sell' => $sellPrice,
+                    ];
+                }
+                else {
+                    $val_stockmut += [
+                        'sm_sell' => $stock[$j]->sm_sell,
+                    ];
+                }
+                $val_stockmut += [
+                    'sm_nota' => $nota,
+                    'sm_reff' => $stock[$j]->sm_nota,
+                    'sm_user' => Auth::user()->u_id
+                ];
+
+                // insert new stock-mutation (distribution-out)
+                // using sm_sisa as sm_qty
+                DB::table('d_stock_mutation')->insert($val_stockmut);
 
                 // insert new stock-mutation-detail production-code for mutcat-out
                 $insertSMProdCode = self::insertStockMutationDt($stock[$j]->sm_stock, $detailid, $listPC, $listQtyPC);
@@ -1070,7 +1071,7 @@ class Mutasi extends Controller
                 $position = $to;
                 $status = 'ON GOING';
                 $condition = 'FINE';
-                $sell = (int)$stock[$j]->sm_sell;
+                (!is_null($sellPrice)) ? $sell = $sellPrice : $sell = $stock[$j]->sm_sell;
                 $hpp = (int)$stock[$j]->sm_hpp;
                 $requestQty = (int)$permintaan;
                 // get stock-item with 'On Going' status
@@ -1683,7 +1684,7 @@ class Mutasi extends Controller
                     // get stock-item
                     $stockItem = d_stock::where('s_id', $val->sm_stock)
                     ->first();
-                    
+
                     // for mutation-in and out
                     $rollStatus = 'RollMutInOut';
                     // rollBack stock-mutation-detail and stock-detail (inside rollback-mut func)
