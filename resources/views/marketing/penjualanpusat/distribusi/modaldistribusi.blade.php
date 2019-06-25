@@ -5,7 +5,7 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header bg-gradient-info">
-                <h4 class="modal-title">Detail Item</h4>
+                <h4 class="modal-title">Kirim Order</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -34,6 +34,46 @@
                     <div class="col-md-10 col-sm-12 mb-3">
                         <input type="text" id="totalModalSend" class="form-control form-control-sm rupiah-left"
                                readonly="">
+                    </div>
+                    <div class="col-md-2 col-sm-12">
+                        <label for="">Jasa Ekspedisi</label>
+                    </div>
+                    <div class="col-md-10 col-sm-12 mb-3">
+                        <select class="select2" id="ekspedisi">
+                            <option></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-sm-12">
+                        <label for="">Jenis Ekspedisi</label>
+                    </div>
+                    <div class="col-md-10 col-sm-12 mb-3">
+                        <select class="select2" id="jenis_ekspedisi">
+                            <option></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-sm-12">
+                        <label for="">Nama Kurir</label>
+                    </div>
+                    <div class="col-md-10 col-sm-12 mb-3">
+                        <input type="text" id="nama_kurir" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-2 col-sm-12">
+                        <label for="">Nomor Telepon</label>
+                    </div>
+                    <div class="col-md-10 col-sm-12 mb-3">
+                        <input type="text" id="tlp_kurir" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-2 col-sm-12">
+                        <label for="">Nomor Resi</label>
+                    </div>
+                    <div class="col-md-10 col-sm-12 mb-3">
+                        <input type="text" id="resi_kurir" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-2 col-sm-12">
+                        <label for="">Biaya</label>
+                    </div>
+                    <div class="col-md-10 col-sm-12 mb-3">
+                        <input type="text" id="biaya_kurir" class="form-control form-control-sm rupiah">
                     </div>
                 </div>
                 <div class="row">
@@ -88,6 +128,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="kirim()">Simpan dan Kirim</button>
             </div>
         </div>
 

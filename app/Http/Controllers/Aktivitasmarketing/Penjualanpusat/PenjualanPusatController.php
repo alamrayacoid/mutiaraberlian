@@ -712,11 +712,6 @@ class PenjualanPusatController extends Controller
         return Response::json($data);
     }
 
-    public function getProductionCode(Request $request)
-    {
-
-    }
-
     public function sendOrder(Request $request)
     {
         DB::beginTransaction();
@@ -791,19 +786,24 @@ class PenjualanPusatController extends Controller
                     ->first();
 
                 $kuantitas = 0;
+                $sellprice = 0;
 
                 if ($PO->pod_unit == $barang->i_unit1){
                     $kuantitas = $PO->pod_qty;
+                    $sellprice = $PO->pod_price;
                 }elseif ($PO->pod_unit == $barang->i_unit2){
                     $kuantitas = ($PO->pod_qty * $barang->i_unitcompare2);
+                    $sellprice = $PO->pod_price / $barang->i_unitcompare2;
                 }elseif ($PO->pod_unit == $barang->i_unit3){
                     $kuantitas = ($PO->pod_qty * $barang->i_unitcompare3);
+                    $sellprice = $PO->pod_price / $barang->i_unitcompare3;
                 }
 
                 // insert stock mutation using distribusicabangkeluar
                 // actually its public function, not specific
                 // waiit, check the name of $reff
                 $reff = $nota;
+                //sm_sell $sellprice
                 $mutDist = Mutasi::distribusicabangkeluar(
                     $productOrder->po_comp, // from
                     $productOrder->po_agen, // to
@@ -816,10 +816,55 @@ class PenjualanPusatController extends Controller
                     $listUnitPC, // list of production-code-unit
                     null
                 );
+
                 if ($mutDist !== 'success') {
                     return $mutDist;
                 }
             }
+
+            //d_salescomp
+            $s_id = DB::table('d_salescomp')
+                ->max('sc_id');
+            ++$s_id;
+
+            $data = DB::table('d_productorder')
+                ->join('d_productorderdt', 'pod_productorder', '=', 'po_id')
+                ->join('m_item', 'i_id', '=', 'pod_item')
+                ->where('po_nota', '=', $nota)
+                ->get();
+
+            $notasales = CodeGenerator::codeWithSeparator('d_salescomp', 'sc_nota', '8', '3', '3', 'SC', '-');
+
+            $total = 0;
+
+            for ($i = 0; $i < count($data); $i++){
+                DB::table('d_salescompdt')
+                    ->insert([
+                        'scd_sales' => $s_id,
+                        'scd_detailid' => $i +1,
+                        'scd_comp' => $data[0]->po_comp,
+                        'scd_item' => $data[$i]->pod_item,
+                        'scd_qty' => $data[$i]->pod_qty,
+                        'scd_unit' => $data[$i]->pod_unit,
+                        'scd_value' => $data[$i]->pod_price,
+                        'scd_totalnet' => $data[$i]->pod_qty * $data[$i]->pod_price
+                    ]);
+            }
+
+            DB::table('d_salescomp')
+                ->insert([
+                    'sc_id' => $s_id,
+                    'sc_comp' => $data[0]->po_comp,
+                    'sc_member' => $data[0]->po_agen,
+                    'sc_type' => 'C',
+                    'sc_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                    'sc_nota' => $notasales,
+                    'sc_total' => $total,
+                    'sc_paidoff' => 'Y',
+                    'sc_user' => Auth::user()->u_id,
+                    'sc_insert' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                    'sc_update' => Carbon::now('Asia/Jakarta')->format('Y-m-d')
+                ]);
 
             DB::commit();
             return Response::json([
