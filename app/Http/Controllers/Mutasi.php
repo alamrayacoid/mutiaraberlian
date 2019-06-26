@@ -63,13 +63,13 @@ class Mutasi extends Controller
                 $idStok = $idStok + 1;
 
                 $stock = array(
-                    's_id' => $idStok,
-                    's_comp' => $comp,
-                    's_position' => $position,
-                    's_item' => $item,
-                    's_qty' => $qty,
-                    's_status' => $status,
-                    's_condition' => $condition,
+                    's_id'         => $idStok,
+                    's_comp'       => $comp,
+                    's_position'   => $position,
+                    's_item'       => $item,
+                    's_qty'        => $qty,
+                    's_status'     => $status,
+                    's_condition'  => $condition,
                     's_created_at' => $sekarang,
                     's_updated_at' => $sekarang
                 );
@@ -97,18 +97,18 @@ class Mutasi extends Controller
 
             // insert mutation-in
             $mutasi = array(
-                'sm_stock' => $idStok,
+                'sm_stock'    => $idStok,
                 'sm_detailid' => $detailid,
-                'sm_date' => $sekarang,
-                'sm_mutcat' => $mutcat,
-                'sm_qty' => $qty,
-                'sm_use' => 0,
-                'sm_residue' => $qty,
-                'sm_hpp' => $hpp,
-                'sm_sell' => $sell,
-                'sm_nota' => $nota,
-                'sm_reff' => $reff,
-                'sm_user' => Auth::user()->u_id,
+                'sm_date'     => $sekarang,
+                'sm_mutcat'   => $mutcat,
+                'sm_qty'      => $qty,
+                'sm_use'      => 0,
+                'sm_residue'  => $qty,
+                'sm_hpp'      => $hpp,
+                'sm_sell'     => $sell,
+                'sm_nota'     => $nota,
+                'sm_reff'     => $reff,
+                'sm_user'     => Auth::user()->u_id,
             );
             d_stock_mutation::insert($mutasi);
 
@@ -132,7 +132,7 @@ class Mutasi extends Controller
             else {
                 // insert new stock-detail production-code
                 $stockParentId = null;
-                $stockChildId = $idStok;
+                $stockChildId  = $idStok;
                 $insertStockDt = self::insertStockDetail($stockParentId, $stockChildId, $listPC, $listQtyPC);
                 if ($insertStockDt !== 'success') {
                     throw new Exception($insertStockDt->getData()->message);
@@ -171,9 +171,9 @@ class Mutasi extends Controller
         try {
 
             ($sellprice === null) ? $sellprice = null : $sellprice = $sellprice;
-            ($listPC === null) ? $listPC = null : $listPC = $listPC;
+            ($listPC    === null) ? $listPC = null : $listPC = $listPC;
             ($listQtyPC === null) ? $listQtyPC = null : $listQtyPC = $listQtyPC;
-            ($reff == null) ? $reff = null : $reff = $reff;
+            ($reff      == null) ? $reff = null : $reff = $reff;
 
             $qty = (int)$qty;
 
@@ -254,7 +254,7 @@ class Mutasi extends Controller
                         ->where('sm_stock', '=', $stock[$j]->sm_stock)
                         ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
                         ->update([
-                            'sm_use' => $permintaan + $stock[$j]->sm_use,
+                            'sm_use'     => $permintaan + $stock[$j]->sm_use,
                             'sm_residue' => $stock[$j]->sm_residue - $permintaan
                         ]);
                     // qty that will store to sm_qty in new stock-mutation
@@ -266,25 +266,25 @@ class Mutasi extends Controller
                 // insert new stock-mutation out
                 DB::table('d_stock_mutation')
                 ->insert([
-                    'sm_stock' => $stock[$j]->sm_stock,
+                    'sm_stock'    => $stock[$j]->sm_stock,
                     'sm_detailid' => $detailid,
-                    'sm_date' => $sekarang,
-                    'sm_mutcat' => $mutcat,
-                    'sm_qty' => $smQty,
-                    'sm_use' => 0,
-                    'sm_residue' => 0,
-                    'sm_hpp' => $stock[$j]->sm_hpp,
-                    'sm_sell' => $sellprice,
-                    'sm_nota' => $nota,
-                    'sm_reff' => $stock[$j]->sm_nota,
-                    'sm_user' => Auth::user()->u_id,
+                    'sm_date'     => $sekarang,
+                    'sm_mutcat'   => $mutcat,
+                    'sm_qty'      => $smQty,
+                    'sm_use'      => 0,
+                    'sm_residue'  => 0,
+                    'sm_hpp'      => $stock[$j]->sm_hpp,
+                    'sm_sell'     => $sellprice,
+                    'sm_nota'     => $nota,
+                    'sm_reff'     => $stock[$j]->sm_nota,
+                    'sm_user'     => Auth::user()->u_id,
                 ]);
 
                 // currently, it's special case for 'penjualan-langsung / mutcat 14'
                 if ($mutcat == 14) {
                     // insert new stock-detail production-code
                     $stockParentId = $stock[$j]->sm_stock;
-                    $stockChildId = null;
+                    $stockChildId  = null;
                     $insertStockDt = self::insertStockDetail($stockParentId, $stockChildId, $listPC, $listQtyPC);
                     if ($insertStockDt !== 'success') {
                         throw new Exception($insertStockDt->getData()->message);
@@ -374,7 +374,7 @@ class Mutasi extends Controller
                     ->where('sm_stock', '=', $stock[$j]->sm_stock)
                     ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
                     ->update([
-                        'sm_use' => $stock[$j]->sm_qty,
+                        'sm_use'     => $stock[$j]->sm_qty,
                         'sm_residue' => 0
                     ]);
 
@@ -382,24 +382,23 @@ class Mutasi extends Controller
 
                     DB::table('d_stock_mutation')
                     ->insert([
-                        'sm_stock' => $stock[$j]->sm_stock,
+                        'sm_stock'    => $stock[$j]->sm_stock,
                         'sm_detailid' => $detailid,
-                        'sm_date' => $sekarang,
-                        'sm_mutcat' => $mutcat,
-                        'sm_qty' => $stock[$j]->sm_sisa,
-                        'sm_use' => 0,
-                        'sm_residue' => 0,
-                        'sm_hpp' => $stock[$j]->sm_hpp,
-                        'sm_sell' => $stock[$j]->sm_sell,
-                        'sm_nota' => $nota,
-                        'sm_reff' => $stock[$j]->sm_nota,
-                        'sm_user' => Auth::user()->u_id,
+                        'sm_date'     => $sekarang,
+                        'sm_mutcat'   => $mutcat,
+                        'sm_qty'      => $stock[$j]->sm_sisa,
+                        'sm_use'      => 0,
+                        'sm_residue'  => 0,
+                        'sm_hpp'      => $stock[$j]->sm_hpp,
+                        'sm_sell'     => $stock[$j]->sm_sell,
+                        'sm_nota'     => $nota,
+                        'sm_reff'     => $stock[$j]->sm_nota,
+                        'sm_user'     => Auth::user()->u_id
                     ]);
 
                 }
                 elseif ($permintaan <= $stock[$j]->sm_sisa && $permintaan != 0) {
                     //Langsung Eksekusi
-
                     $detailid = (DB::table('d_stock_mutation')
                     ->where('sm_stock', $stock[$j]->sm_stock)->max('sm_detailid')) ? (DB::table('d_stock_mutation')->where('sm_stock', $stock[$j]->sm_stock)->max('sm_detailid')) + 1 : 1;
 
@@ -407,24 +406,24 @@ class Mutasi extends Controller
                     ->where('sm_stock', '=', $stock[$j]->sm_stock)
                     ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
                     ->update([
-                        'sm_use' => $permintaan + $stock[$j]->sm_use,
+                        'sm_use'     => $permintaan + $stock[$j]->sm_use,
                         'sm_residue' => $stock[$j]->sm_residue - $permintaan
                     ]);
 
                     DB::table('d_stock_mutation')
                     ->insert([
-                        'sm_stock' => $stock[$j]->sm_stock,
+                        'sm_stock'    => $stock[$j]->sm_stock,
                         'sm_detailid' => $detailid,
-                        'sm_date' => $sekarang,
-                        'sm_mutcat' => $mutcat,
-                        'sm_qty' => $permintaan,
-                        'sm_use' => 0,
-                        'sm_residue' => 0,
-                        'sm_hpp' => $stock[$j]->sm_hpp,
-                        'sm_sell' => $stock[$j]->sm_sell,
-                        'sm_nota' => $nota,
-                        'sm_reff' => $stock[$j]->sm_nota,
-                        'sm_user' => Auth::user()->u_id,
+                        'sm_date'     => $sekarang,
+                        'sm_mutcat'   => $mutcat,
+                        'sm_qty'      => $permintaan,
+                        'sm_use'      => 0,
+                        'sm_residue'  => 0,
+                        'sm_hpp'      => $stock[$j]->sm_hpp,
+                        'sm_sell'     => $stock[$j]->sm_sell,
+                        'sm_nota'     => $nota,
+                        'sm_reff'     => $stock[$j]->sm_nota,
+                        'sm_user'     => Auth::user()->u_id
                     ]);
 
                     $permintaan = 0;
@@ -458,8 +457,8 @@ class Mutasi extends Controller
         try {
             // prevention, set null if param-value is null
             ($stockChildId === null) ? $stockChildId = null : $stockChildId = $stockChildId;
-            ($listPC === null) ? $listPC = null : $listPC = $listPC;
-            ($listQtyPC === null) ? $listQtyPC = null : $listQtyPC = $listQtyPC;
+            ($listPC       === null) ? $listPC = null : $listPC = $listPC;
+            ($listQtyPC    === null) ? $listQtyPC = null : $listQtyPC = $listQtyPC;
 
             $qty = (int)$qty;
 
@@ -519,7 +518,7 @@ class Mutasi extends Controller
                     ->where('sm_stock', '=', $stock[$j]->sm_stock)
                     ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
                     ->update([
-                        'sm_use' => $stock[$j]->sm_qty,
+                        'sm_use'     => $stock[$j]->sm_qty,
                         'sm_residue' => 0
                     ]);
 
@@ -551,18 +550,18 @@ class Mutasi extends Controller
                 // using sm_sisa as sm_qty
                 DB::table('d_stock_mutation')
                 ->insert([
-                    'sm_stock' => $stock[$j]->sm_stock,
+                    'sm_stock'    => $stock[$j]->sm_stock,
                     'sm_detailid' => $detailid,
-                    'sm_date' => $sekarang,
-                    'sm_mutcat' => $mutcat,
-                    'sm_qty' => $smQty,
-                    'sm_use' => 0,
-                    'sm_residue' => 0,
-                    'sm_hpp' => $stock[$j]->sm_hpp,
-                    'sm_sell' => $sellPrice,
-                    'sm_nota' => $nota,
-                    'sm_reff' => $stock[$j]->sm_nota,
-                    'sm_user' => Auth::user()->u_id,
+                    'sm_date'     => $sekarang,
+                    'sm_mutcat'   => $mutcat,
+                    'sm_qty'      => $smQty,
+                    'sm_use'      => 0,
+                    'sm_residue'  => 0,
+                    'sm_hpp'      => $stock[$j]->sm_hpp,
+                    'sm_sell'     => $sellPrice,
+                    'sm_nota'     => $nota,
+                    'sm_reff'     => $stock[$j]->sm_nota,
+                    'sm_user'     => Auth::user()->u_id
                 ]);
 
                 // currently, it's special case for konsinyasi-out
@@ -663,7 +662,7 @@ class Mutasi extends Controller
                         ->where('sm_stock', '=', $select_sm->sm_stock)
                         ->where('sm_nota', '=', $select_sm->sm_nota)
                         ->update([
-                            'sm_use' => $use,
+                            'sm_use'     => $use,
                             'sm_residue' => $sisa
                         ]);
 
@@ -760,18 +759,18 @@ class Mutasi extends Controller
 
                         DB::table('d_stock_mutation')
                             ->insert([
-                                'sm_stock' => $mutasi[$i]->sm_stock,
+                                'sm_stock'    => $mutasi[$i]->sm_stock,
                                 'sm_detailid' => $detailid,
-                                'sm_date' => $sekarang,
-                                'sm_mutcat' => $mutcat,
-                                'sm_qty' => $sisa,
-                                'sm_use' => 0,
-                                'sm_residue' => 0,
-                                'sm_hpp' => $mutasi[$i]->sm_hpp,
-                                'sm_sell' => $mutasi[$i]->sm_sell,
-                                'sm_nota' => $nota,
-                                'sm_reff' => $mutasi[$i]->sm_nota,
-                                'sm_user' => Auth::user()->u_id,
+                                'sm_date'     => $sekarang,
+                                'sm_mutcat'   => $mutcat,
+                                'sm_qty'      => $sisa,
+                                'sm_use'      => 0,
+                                'sm_residue'  => 0,
+                                'sm_hpp'      => $mutasi[$i]->sm_hpp,
+                                'sm_sell'     => $mutasi[$i]->sm_sell,
+                                'sm_nota'     => $nota,
+                                'sm_reff'     => $mutasi[$i]->sm_nota,
+                                'sm_user'     => Auth::user()->u_id
                             ]);
 
                         DB::table('d_stock')
@@ -788,7 +787,7 @@ class Mutasi extends Controller
                             ->where('sm_stock', '=', $mutasi[$i]->sm_stock)
                             ->where('sm_detailid', '=', $mutasi[$i]->sm_detailid)
                             ->update([
-                                'sm_use' => $mutasi[$i]->sm_qty,
+                                'sm_use'     => $mutasi[$i]->sm_qty,
                                 'sm_residue' => $mutasi[$i]->sm_residue - $sisa
                             ]);
 
@@ -800,18 +799,18 @@ class Mutasi extends Controller
 
                         DB::table('d_stock_mutation')
                             ->insert([
-                                'sm_stock' => $mutasi[$i]->sm_stock,
+                                'sm_stock'    => $mutasi[$i]->sm_stock,
                                 'sm_detailid' => $detailid,
-                                'sm_date' => $sekarang,
-                                'sm_mutcat' => $mutcat,
-                                'sm_qty' => $mutasi[$i]->sm_qty,
-                                'sm_use' => 0,
-                                'sm_residue' => 0,
-                                'sm_hpp' => $mutasi[$i]->sm_hpp,
-                                'sm_sell' => $mutasi[$i]->sm_sell,
-                                'sm_nota' => $nota,
-                                'sm_reff' => $mutasi[$i]->sm_nota,
-                                'sm_user' => Auth::user()->u_id,
+                                'sm_date'     => $sekarang,
+                                'sm_mutcat'   => $mutcat,
+                                'sm_qty'      => $mutasi[$i]->sm_qty,
+                                'sm_use'      => 0,
+                                'sm_residue'  => 0,
+                                'sm_hpp'      => $mutasi[$i]->sm_hpp,
+                                'sm_sell'     => $mutasi[$i]->sm_sell,
+                                'sm_nota'     => $nota,
+                                'sm_reff'     => $mutasi[$i]->sm_nota,
+                                'sm_user'     => Auth::user()->u_id
                             ]);
 
                         DB::table('d_stock')
@@ -834,18 +833,18 @@ class Mutasi extends Controller
 
                 DB::table('d_stock_mutation')
                     ->insert([
-                        'sm_stock' => $mutasi[0]->sm_stock,
+                        'sm_stock'    => $mutasi[0]->sm_stock,
                         'sm_detailid' => $detailid,
-                        'sm_date' => $sekarang,
-                        'sm_mutcat' => $mutcat,
-                        'sm_qty' => $sisa,
-                        'sm_use' => 0,
-                        'sm_residue' => 0,
-                        'sm_hpp' => $mutasi[$counter]->sm_hpp,
-                        'sm_sell' => $mutasi[$counter]->sm_sell,
-                        'sm_nota' => $nota,
-                        'sm_reff' => $mutasi[$counter]->sm_nota,
-                        'sm_user' => Auth::user()->u_id,
+                        'sm_date'     => $sekarang,
+                        'sm_mutcat'   => $mutcat,
+                        'sm_qty'      => $sisa,
+                        'sm_use'      => 0,
+                        'sm_residue'  => 0,
+                        'sm_hpp'      => $mutasi[$counter]->sm_hpp,
+                        'sm_sell'     => $mutasi[$counter]->sm_sell,
+                        'sm_nota'     => $nota,
+                        'sm_reff'     => $mutasi[$counter]->sm_nota,
+                        'sm_user'     => Auth::user()->u_id
                     ]);
 
                 DB::table('d_stock')
@@ -908,7 +907,7 @@ class Mutasi extends Controller
         catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'status' => 'gagal',
+                'status'  => 'gagal',
                 'message' => $e->getMessage()
             ]);
         }
@@ -925,16 +924,16 @@ class Mutasi extends Controller
         try {
             // get mutcat for 'penjualan/pembelian'
             if ($mutation == 5) {
-                $mutcatIn = m_mutcat::where('m_name', 'Barang Masuk Pembelian')->first();
-                $mutcatIn = $mutcatIn->m_id;
+                $mutcatIn  = m_mutcat::where('m_name', 'Barang Masuk Pembelian')->first();
+                $mutcatIn  = $mutcatIn->m_id;
                 $mutcatOut = m_mutcat::where('m_name', 'Barang Keluar Penjualan Ke Agen')->first();
                 $mutcatOut = $mutcatOut->m_id;
             }
             // get mutcat for 'distribusi'
             else {
                 // get mutcat for 'distribusi'
-                $mutcatIn = m_mutcat::where('m_name', 'Barang Masuk Distribusi Cabang')->first();
-                $mutcatIn = $mutcatIn->m_id;
+                $mutcatIn  = m_mutcat::where('m_name', 'Barang Masuk Distribusi Cabang')->first();
+                $mutcatIn  = $mutcatIn->m_id;
                 $mutcatOut = m_mutcat::where('m_name', 'Barang Keluar Distribusi Cabang')->first();
                 $mutcatOut = $mutcatOut->m_id;
             }
@@ -999,7 +998,7 @@ class Mutasi extends Controller
                         ->where('sm_stock', '=', $stock[$j]->sm_stock)
                         ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
                         ->update([
-                            'sm_use' => $stock[$j]->sm_qty,
+                            'sm_use'     => $stock[$j]->sm_qty,
                             'sm_residue' => 0
                         ]);
 
@@ -1019,7 +1018,7 @@ class Mutasi extends Controller
                         ->where('sm_stock', '=', $stock[$j]->sm_stock)
                         ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
                         ->update([
-                            'sm_use' => $stock[$j]->sm_use + $permintaan,
+                            'sm_use'     => $stock[$j]->sm_use + $permintaan,
                             'sm_residue' => $stock[$j]->sm_residue - $permintaan
                         ]);
 
@@ -1030,14 +1029,14 @@ class Mutasi extends Controller
 
                 $val_stockmut = null;
                 $val_stockmut = [
-                    'sm_stock' => $stock[$j]->sm_stock,
+                    'sm_stock'    => $stock[$j]->sm_stock,
                     'sm_detailid' => $detailid,
-                    'sm_date' => $dateNow,
-                    'sm_mutcat' => $mutcatOut,
-                    'sm_qty' => $smQty,
-                    'sm_use' => 0,
-                    'sm_residue' => 0,
-                    'sm_hpp' => $stock[$j]->sm_hpp,
+                    'sm_date'     => $dateNow,
+                    'sm_mutcat'   => $mutcatOut,
+                    'sm_qty'      => $smQty,
+                    'sm_use'      => 0,
+                    'sm_residue'  => 0,
+                    'sm_hpp'      => $stock[$j]->sm_hpp,
                 ];
                 if (!is_null($sellPrice)) {
                     $val_stockmut += [
@@ -1066,10 +1065,10 @@ class Mutasi extends Controller
                 }
 
                 // set variable for new stock
-                $mutcat = $mutcatIn;
-                $comp = $from;
-                $position = $to;
-                $status = 'ON GOING';
+                $mutcat    = $mutcatIn;
+                $comp      = $from;
+                $position  = $to;
+                $status    = 'ON GOING';
                 $condition = 'FINE';
                 (!is_null($sellPrice)) ? $sell = $sellPrice : $sell = $stock[$j]->sm_sell;
                 $hpp = (int)$stock[$j]->sm_hpp;
@@ -1091,13 +1090,13 @@ class Mutasi extends Controller
                     // insert new stock-item
                     $stockId = d_stock::max('s_id') + 1;
                     $stock = array(
-                        's_id' => $stockId,
-                        's_comp' => $comp,
-                        's_position' => $position,
-                        's_item' => $item,
-                        's_qty' => $requestQty,
-                        's_status' => $status,
-                        's_condition' => $condition,
+                        's_id'         => $stockId,
+                        's_comp'       => $comp,
+                        's_position'   => $position,
+                        's_item'       => $item,
+                        's_qty'        => $requestQty,
+                        's_status'     => $status,
+                        's_condition'  => $condition,
                         's_created_at' => $dateNow,
                         's_updated_at' => $dateNow
                     );
@@ -1124,18 +1123,18 @@ class Mutasi extends Controller
 
                 // insert new mutation with mutcat = distribution-in
                 $mutasi = array(
-                    'sm_stock' => $stockId,
+                    'sm_stock'    => $stockId,
                     'sm_detailid' => $smDetailId,
-                    'sm_date' => $dateNow,
-                    'sm_mutcat' => $mutcat,
-                    'sm_qty' => $requestQty,
-                    'sm_use' => 0,
-                    'sm_residue' => $requestQty,
-                    'sm_hpp' => $hpp,
-                    'sm_sell' => $sell,
-                    'sm_nota' => $nota,
-                    'sm_reff' => $reff,
-                    'sm_user' => Auth::user()->u_id,
+                    'sm_date'     => $dateNow,
+                    'sm_mutcat'   => $mutcat,
+                    'sm_qty'      => $requestQty,
+                    'sm_use'      => 0,
+                    'sm_residue'  => $requestQty,
+                    'sm_hpp'      => $hpp,
+                    'sm_sell'     => $sell,
+                    'sm_nota'     => $nota,
+                    'sm_reff'     => $reff,
+                    'sm_user'     => Auth::user()->u_id
                 );
                 d_stock_mutation::insert($mutasi);
 
@@ -1195,11 +1194,11 @@ class Mutasi extends Controller
                 ->max('smd_detailid') + 1;
                 // insert new stock-mutation-dt
                 $mutationDt = array(
-                    'smd_stock' => $stockId,
-                    'smd_stockmutation' => $smDetailId,
-                    'smd_detailid' => $detailidPC,
+                    'smd_stock'          => $stockId,
+                    'smd_stockmutation'  => $smDetailId,
+                    'smd_detailid'       => $detailidPC,
                     'smd_productioncode' => $val,
-                    'smd_qty' => $listQtyPC[$key],
+                    'smd_qty'            => $listQtyPC[$key]
                     // 'smd_unit' => $listUnitPC[$key]
                 );
                 d_stockmutationdt::insert($mutationDt);
@@ -1210,7 +1209,7 @@ class Mutasi extends Controller
         catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'status' => 'gagal',
+                'status'  => 'gagal',
                 'message' => $e->getMessage()
             ]);
         }
@@ -1281,7 +1280,7 @@ class Mutasi extends Controller
         catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'status' => 'gagal',
+                'status'  => 'gagal',
                 'message' => $e->getMessage()
             ]);
         }
@@ -1306,14 +1305,14 @@ class Mutasi extends Controller
                 if ($mutcat == 5) {
                     if ($sm->sm_mutcat == 5) {
                         $smStockParent = $sm->sm_stock;
-                        $smReff = $sm->sm_reff;
+                        $smReff        = $sm->sm_reff;
                     }
                     continue;
                 }
                 // parent for distribution-out
                 if ($sm->sm_mutcat == 19) {
                     $smStockParent = $sm->sm_stock;
-                    $smReff = $sm->sm_reff;
+                    $smReff        = $sm->sm_reff;
                 }
             }
 
@@ -1363,7 +1362,7 @@ class Mutasi extends Controller
         catch (Exception $e) {
             DB::rollback();
             return response()->json([
-                'status' => 'gagal',
+                'status'  => 'gagal',
                 'message' => $e->getMessage()
             ]);
         }
@@ -1427,13 +1426,13 @@ class Mutasi extends Controller
                 {
                     // set stock parent as it self
                     $smStockParent = $sm->sm_stock;
-                    $smReff = $sm->sm_reff;
+                    $smReff        = $sm->sm_reff;
                     // get stock-mutation parent
                     $smParents = d_stock_mutation::where('sm_nota', $sm->sm_reff)
                     ->where('sm_stock', $sm->sm_stock)
                     ->first();
                     // update residue and use in stock-mutation parent
-                    $smParents->sm_use -= $sm->sm_qty;
+                    $smParents->sm_use     -= $sm->sm_qty;
                     $smParents->sm_residue += $sm->sm_qty;
                     $smParents->save();
                     // get stock-item-parent
@@ -1467,7 +1466,7 @@ class Mutasi extends Controller
         catch (Exception $e) {
             DB::rollback();
             return response()->json([
-                'status' => 'gagal',
+                'status'  => 'gagal',
                 'message' => $e->getMessage()
             ]);
         }
@@ -1525,7 +1524,7 @@ class Mutasi extends Controller
         catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'status' => 'gagal',
+                'status'  => 'gagal',
                 'message' => $e->getMessage()
             ]);
         }
@@ -1571,10 +1570,10 @@ class Mutasi extends Controller
             if (is_null($stockItemDtParent)) {
                 (d_stockdt::where('sd_stock', $smParent->sm_stock)->max('sd_detailid')) ? $detailId = d_stockdt::where('sd_stock', $smParent->sm_stock)->max('sd_detailid') + 1 : $detailId = 1;
                 $newStockDt = new d_stockdt;
-                $newStockDt->sd_stock = $smParent->sm_stock;
+                $newStockDt->sd_stock    = $smParent->sm_stock;
                 $newStockDt->sd_detailid = $detailId;
-                $newStockDt->sd_code = $prodCode;
-                $newStockDt->sd_qty = $prodCodeQty;
+                $newStockDt->sd_code     = $prodCode;
+                $newStockDt->sd_qty      = $prodCodeQty;
                 $newStockDt->save();
             }
             else {
@@ -1589,7 +1588,7 @@ class Mutasi extends Controller
         catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'status' => 'gagal',
+                'status'  => 'gagal',
                 'message' => $e->getMessage()
             ]);
         }
@@ -1626,7 +1625,7 @@ class Mutasi extends Controller
                     foreach ($smItems as $key => $sm) {
                         if ($sm->sm_mutcat == 19) {
                             $smStockParent = $sm->sm_stock;
-                            $smReff = $sm->sm_reff;
+                            $smReff        = $sm->sm_reff;
                         }
                     }
 
@@ -1677,7 +1676,7 @@ class Mutasi extends Controller
                     ->where('sm_stock', $val->sm_stock)
                     ->first();
                     // update residue and use in stock-mutation parent
-                    $smParents->sm_use = $smParents->sm_use + $diffQty;
+                    $smParents->sm_use     = $smParents->sm_use + $diffQty;
                     $smParents->sm_residue = $smParents->sm_qty - $smParents->sm_use;
                     $smParents->save();
 
@@ -1753,13 +1752,13 @@ class Mutasi extends Controller
                 if ($mutcat == 5) {
                     if ($sm->sm_mutcat == 5) {
                         $smStockParent = $sm->sm_stock;
-                        $smReff = $sm->sm_reff;
+                        $smReff        = $sm->sm_reff;
                     }
                     continue;
                 }
                 if ($sm->sm_mutcat == 19) {
                     $smStockParent = $sm->sm_stock;
-                    $smReff = $sm->sm_reff;
+                    $smReff        = $sm->sm_reff;
                 }
             }
             // get stock-mutation-dt by $stockBefore
@@ -1796,13 +1795,13 @@ class Mutasi extends Controller
                 // insert new stock-item
                 $stockId = d_stock::max('s_id') + 1;
                 $stock = array(
-                    's_id' => $stockId,
-                    's_comp' => $stockBefore->s_comp,
-                    's_position' => $stockBefore->s_position,
-                    's_item' => $item,
-                    's_qty' => $qtyFromMutation,
-                    's_status' => 'ON DESTINATION',
-                    's_condition' => 'FINE',
+                    's_id'         => $stockId,
+                    's_comp'       => $stockBefore->s_comp,
+                    's_position'   => $stockBefore->s_position,
+                    's_item'       => $item,
+                    's_qty'        => $qtyFromMutation,
+                    's_status'     => 'ON DESTINATION',
+                    's_condition'  => 'FINE',
                     's_created_at' => $dateNow,
                     's_updated_at' => $dateNow
                 );
@@ -1824,23 +1823,23 @@ class Mutasi extends Controller
 
             // duplicate current stockmutation and insert new one with different id
             $mutasi = array(
-                'sm_stock' => $stockId,
+                'sm_stock'    => $stockId,
                 'sm_detailid' => $smDetailId,
-                'sm_date' => $dateNow,
-                'sm_mutcat' => $stockBefore->getMutation[0]->sm_mutcat,
-                'sm_qty' => $stockBefore->getMutation[0]->sm_qty,
-                'sm_use' => $stockBefore->getMutation[0]->sm_use,
-                'sm_residue' => $stockBefore->getMutation[0]->sm_residue,
-                'sm_hpp' => $stockBefore->getMutation[0]->sm_hpp,
-                'sm_sell' => $stockBefore->getMutation[0]->sm_sell,
-                'sm_nota' => $stockBefore->getMutation[0]->sm_nota,
-                'sm_reff' => $stockBefore->getMutation[0]->sm_reff,
-                'sm_user' => Auth::user()->u_id,
+                'sm_date'     => $dateNow,
+                'sm_mutcat'   => $stockBefore->getMutation[0]->sm_mutcat,
+                'sm_qty'      => $stockBefore->getMutation[0]->sm_qty,
+                'sm_use'      => $stockBefore->getMutation[0]->sm_use,
+                'sm_residue'  => $stockBefore->getMutation[0]->sm_residue,
+                'sm_hpp'      => $stockBefore->getMutation[0]->sm_hpp,
+                'sm_sell'     => $stockBefore->getMutation[0]->sm_sell,
+                'sm_nota'     => $stockBefore->getMutation[0]->sm_nota,
+                'sm_reff'     => $stockBefore->getMutation[0]->sm_reff,
+                'sm_user'     => Auth::user()->u_id
             );
             d_stock_mutation::insert($mutasi);
 
-            $listPC = array();
-            $listQtyPC = array();
+            $listPC     = array();
+            $listQtyPC  = array();
             $listUnitPC = array();
             // get list production-code and list each qty
             foreach ($stockMutationDt as $key => $val) {
@@ -1860,7 +1859,7 @@ class Mutasi extends Controller
                 throw new \Exception("Acc->Insert mutation DT: ". $insertSMProdCode->getData()->message);
             }
             $stockParentId = $smStockParent;
-            $stockChildId = $stockId;
+            $stockChildId  = $stockId;
             $insertStockDt = self::insertStockDetail(
                 $stockParentId,
                 $stockChildId,
@@ -1885,11 +1884,9 @@ class Mutasi extends Controller
         catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'status' => 'gagal',
+                'status'  => 'gagal',
                 'message' => $e->getMessage()
             ]);
         }
     }
-
-
 }

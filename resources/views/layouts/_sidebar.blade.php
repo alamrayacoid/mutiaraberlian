@@ -179,7 +179,7 @@
                                 </li>
                             @endif
                             @if ($sidebar[4]->ua_read == 'Y')
-                                <li class="{{Request::is('masterdatautama/suplier/*') ? 'active' : ''}}">
+                                <li class="{{Request::is('masterdatautama/suplier/*') || Request::is('masterdatautama/suplier') ? 'active' : ''}}">
                                     <a href="{{route('suplier.index')}}">Master Suplier</a>
                                 </li>
                             @endif
@@ -196,7 +196,7 @@
                                     <a href="{{ route('member.index')}}">Master Member</a>
                                 </li>
                             @endif
-                            <li class="{{Request::is('masterdatautama/ekspedisi/*') ? 'active' : ''}}">
+                            <li class="{{Request::is('masterdatautama/ekspedisi/*') || Request::is('masterdatautama/ekspedisi') ? 'active' : ''}}">
                                 <a href="{{route('ekspedisi.index')}}"> Master Ekspedisi</a>
                             </li>
                             {{--  <li class="{{Request::is('masterdatautama/datasatuan/*') ? 'active' : ''}}">

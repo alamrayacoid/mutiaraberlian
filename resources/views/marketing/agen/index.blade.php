@@ -667,5 +667,21 @@
                     messageWarning("Error", error)
                 })
         }
+        
+        function getCity() {
+            $.ajax({
+                type: 'get',
+                url: baseUrl + '/masterdatautama/agen/cities/' + $('#area_provinsi').val(),
+                success: function(data) {
+                    $('#area_kota').empty();
+                    $("#area_kota").append('<option disabled selected>== Pilih Kota ==</option>');
+                    $.each(data, function(key, val) {
+                        $("#area_kota").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
+                    });
+                    $('#area_kota').focus();
+                    $('#area_kota').select2('open');
+                }
+            });
+        }
     </script>
 @endsection

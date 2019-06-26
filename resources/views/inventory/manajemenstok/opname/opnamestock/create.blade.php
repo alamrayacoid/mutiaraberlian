@@ -126,7 +126,7 @@
                           <span class="text-danger errorQtyR d-none">Qty masih kosong!</span>
                         </div>
                         <div class="col">
-                          <button type="button" class="btn btn-primary tambah-code"><i class="fa fa-plus"></i> Tambah</button>
+                          <button type="button" class="btn btn-primary tambah-code" disabled=""><i class="fa fa-plus"></i> Tambah</button>
                         </div>
                       </div>
                     </div>
@@ -308,10 +308,19 @@
     this.value = this.value.toUpperCase();
     if (this.value == '' || this.value == null) {
       $('#qtyReal').attr("disabled", "");
+      $('.tambah-code').attr("disabled", "");
       $('#qtyReal').val('');
     } else {
       $('#qtyReal').removeAttr('disabled');
+      $('.tambah-code').removeAttr('disabled');
       $('#qtyReal').val(1);
+    }
+  });
+
+  $('#codeReal').keypress(function(e){
+    if(e.which == 13) {
+      e.preventDefault();
+      $('.tambah-code').trigger('click');
     }
   });
 
