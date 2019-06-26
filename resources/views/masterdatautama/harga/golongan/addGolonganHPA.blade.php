@@ -7,7 +7,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="post" id="formglnHPA">{{csrf_field()}}
+            <form method="get" id="formglnHPA">{{csrf_field()}}
                 <div class="modal-body">
                     <div class="form-group row">
                         <div>
