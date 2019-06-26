@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/masterdatautama/ekspedisi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/masterdatautama/ekspedisi/index.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
@@ -22,26 +20,29 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="155">
-              <caret line="97" column="6" selection-start-line="97" selection-start-column="6" selection-end-line="97" selection-end-column="6" />
+            <state relative-caret-position="171">
+              <caret line="170" column="73" lean-forward="true" selection-start-line="170" selection-start-column="73" selection-end-line="170" selection-end-column="73" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/EkspedisiController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="856" column="9" lean-forward="true" selection-start-line="853" selection-end-line="856" selection-end-column="9" />
+            <state relative-caret-position="229">
+              <caret line="15" column="50" selection-start-line="15" selection-start-column="50" selection-end-line="15" selection-end-column="50" />
+              <folding>
+                <element signature="e#47#100#0#PHP" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/ekspedisi/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="98" column="38" selection-start-line="98" selection-start-column="27" selection-end-line="98" selection-end-column="38" />
+            <state relative-caret-position="260">
+              <caret line="67" column="61" selection-start-line="67" selection-start-column="61" selection-end-line="67" selection-end-column="61" />
             </state>
           </provider>
         </entry>
@@ -104,7 +105,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>distribusiPenjualan(</find>
       <find>ekspedisi</find>
       <find>append</find>
       <find>city</find>
@@ -130,10 +130,11 @@
       <find>dataharga.addgolonganhargahpa</find>
       <find>addgolonganhargahpa</find>
       <find>masterdatautama/harga/add-golongan-harga-hpa</find>
-      <find>hapusGolonganHargaHPA</find>
       <find>table_golonganhargaHPA</find>
       <find>tbl_item</find>
       <find>tbl_itemHPA</find>
+      <find>hapusGolonganHargaHPA</find>
+      <find>masterdatautama/ekspedisi</find>
     </findStrings>
     <replaceStrings>
       <replace>done_</replace>
@@ -169,7 +170,6 @@
         <option value="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/distribusi/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/ekspedisi/modal.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Master/EkspedisiController.php" />
-        <option value="$PROJECT_DIR$/resources/views/masterdatautama/ekspedisi/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/distribusi/modaldistribusi.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Penjualanpusat/PenjualanPusatController.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/index.blade.php" />
@@ -181,9 +181,10 @@
         <option value="$PROJECT_DIR$/resources/views/marketing/agen/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/layouts/_sidebar.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/addGolonganHPA.blade.php" />
-        <option value="$PROJECT_DIR$/routes/web.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" />
+        <option value="$PROJECT_DIR$/routes/web.php" />
+        <option value="$PROJECT_DIR$/resources/views/masterdatautama/ekspedisi/index.blade.php" />
       </list>
     </option>
   </component>
@@ -416,7 +417,7 @@
       <workItem from="1561413611624" duration="2024000" />
       <workItem from="1561424199153" duration="19668000" />
       <workItem from="1561511756229" duration="8129000" />
-      <workItem from="1561528811619" duration="3435000" />
+      <workItem from="1561528811619" duration="3942000" />
     </task>
     <task id="LOCAL-00001" summary="perbaikan jenis produk">
       <created>1560755279119</created>
@@ -506,7 +507,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="115376000" />
+    <option name="totallyTimeSpent" value="115883000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -668,26 +669,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="12" column="47" selection-start-line="12" selection-start-column="47" selection-end-line="12" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/ekspedisi/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="68" column="175" selection-start-line="68" selection-start-column="175" selection-end-line="68" selection-end-column="175" />
-          <folding>
-            <element signature="e#3584#3617#0#HTML" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/EkspedisiController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="135" column="26" selection-start-line="135" selection-start-column="21" selection-end-line="135" selection-end-column="26" />
-          <folding>
-            <element signature="e#47#100#0#PHP" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -890,10 +871,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/web.php">
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="97" column="6" selection-start-line="97" selection-start-column="6" selection-end-line="97" selection-end-column="6" />
+        <state relative-caret-position="115">
+          <caret line="1134" column="47" selection-start-line="1134" selection-start-column="47" selection-end-line="1134" selection-end-column="47" />
         </state>
       </provider>
     </entry>
@@ -904,10 +885,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php">
+    <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="171">
-          <caret line="98" column="38" selection-start-line="98" selection-start-column="27" selection-end-line="98" selection-end-column="38" />
+          <caret line="170" column="73" lean-forward="true" selection-start-line="170" selection-start-column="73" selection-end-line="170" selection-end-column="73" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/EkspedisiController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="15" column="50" selection-start-line="15" selection-start-column="50" selection-end-line="15" selection-end-column="50" />
+          <folding>
+            <element signature="e#47#100#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/ekspedisi/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="67" column="61" selection-start-line="67" selection-start-column="61" selection-end-line="67" selection-end-column="61" />
         </state>
       </provider>
     </entry>

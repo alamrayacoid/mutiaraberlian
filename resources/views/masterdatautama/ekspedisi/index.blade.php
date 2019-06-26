@@ -62,13 +62,13 @@
                                                 <label for="">Tambah Ekspedisi: <span class="" id="nama_ekspedisi"></span></label>
                                                 <input type="hidden" id="id_ekspedisi" value="">
                                             </div>
-                                            <div class="col-2">
-                                                <label>Nama Produk</label>
+                                            <div class="col-3">
+                                                <label>Nama Layanan</label>
                                             </div>
-                                            <div class="col-7">
+                                            <div class="col-6">
                                                 <input type="text" class="form-control form-control-sm" id="form_namaproduk" value="" readonly>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-2">
                                                 <button type="button" class="btn btn-primary" id="btn-saveproduk" onclick="simpanProduk()" disabled>Tambahkan</button>
                                             </div>
                                             <div class="col-12 table-responsive" style="margin-top: 10px;">
