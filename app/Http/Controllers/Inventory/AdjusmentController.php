@@ -9,7 +9,7 @@ use Yajra\DataTables\DataTables;
 use DB;
 
 use Carbon\Carbon;
-
+use otorisasi;
 use Mutasi;
 
 class AdjusmentController extends Controller
@@ -131,7 +131,7 @@ class AdjusmentController extends Controller
 
             // Mutasi::insertStockMutationDt('')
 
-            // otorisasi::otorisasiup('d_adjusmentauth', 'Adjusment Stock', '#');
+            otorisasi::otorisasiup('d_adjusmentauth', 'Adjusment Stock', '#');
 
             DB::commit();
             return response()->json([
