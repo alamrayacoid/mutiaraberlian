@@ -720,7 +720,7 @@ class HargaController extends Controller
             return response()->json(['status' => "Failed"]);
         }
         DB::beginTransaction();
-        try {
+        //try {
             if ($request->jenishargaHPA == "U") {
 
                 $check = DB::table('d_salespriceauth')
@@ -846,14 +846,14 @@ class HargaController extends Controller
                         'spa_user' => Auth::user()->u_id
                     ];
                     DB::table('d_salespriceauth')->insert($values);
-                    DB::commit();
+                   // DB::commit();
                     return response()->json(['status' => "Success"]);
                 }
             }
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json(['status' => "Failed", 'message' => $e]);
-        }
+//        } catch (\Exception $e) {
+//            DB::rollback();
+//            return response()->json(['status' => "Failed", 'message' => $e]);
+//        }
     }
 
     public function deleteGolonganHarga($id, $detail, $status)
