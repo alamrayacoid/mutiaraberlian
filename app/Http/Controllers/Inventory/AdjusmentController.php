@@ -118,7 +118,7 @@ class AdjusmentController extends Controller
                 ->join('d_opname', 'od_opname', 'o_id')
                 ->where('d_opname.o_nota', '=', $request->data['o_nota'])
                 ->get();
-                
+
             for ($i=0; $i < count($opname); $i++) {
                 $adjDt = DB::table('d_adjustmentcode')->where('ac_adjustment', '=', $adjId)->max('ac_detailid') + 1;
                 DB::table('d_adjustmentcode')->insert([
@@ -128,6 +128,8 @@ class AdjusmentController extends Controller
                     'ac_qty'        => $opname[$i]->od_qty
                 ]);
             }
+
+            // Mutasi::insertStockMutationDt('')
 
             // otorisasi::otorisasiup('d_adjusmentauth', 'Adjusment Stock', '#');
 
