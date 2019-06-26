@@ -275,7 +275,7 @@ class OpnameController extends Controller
             ]);
           }
 
-          otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
+          // otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
 
         DB::commit();
         return response()->json([
@@ -354,7 +354,7 @@ class OpnameController extends Controller
           $opname->oa_insert = Carbon::now();
           $opname->save();
 
-          otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
+          // otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
 
         DB::commit();
         return response()->json([
@@ -385,7 +385,7 @@ class OpnameController extends Controller
           ->where('oa_id', $id)
           ->delete();
 
-          otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
+          // otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
 
         DB::commit();
         return response()->json([

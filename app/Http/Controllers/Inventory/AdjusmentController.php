@@ -24,20 +24,20 @@ class AdjusmentController extends Controller
         $data = DB::table('d_adjusmentauth')->join('m_item', 'i_id', '=', 'aa_item')->get();
 
         return Datatables::of($data)
-            ->addIndexColumn()
-            ->addColumn('tanggal', function ($data) {
-                return '<td>' . Carbon::parse($data->aa_date)->format('d/m/Y') . '</td>';
-            })
-            ->addColumn('status', function ($data) {
-                return '<td><button class="btn btn-primary status-pending" style="pointer-events: none">Pending</button></td>';
-            })
-            ->addColumn('action', function ($data) {
-                return '<div class="btn-group btn-group-sm">
-              <button class="btn btn-primary" type="button" onclick="cetak(' . $data->aa_id . ')" title="Print"><i class="fa fa-print"></i></button>
-              </div>';
-            })
-            ->rawColumns(['tanggal', 'status', 'action'])
-            ->make(true);
+        ->addIndexColumn()
+        ->addColumn('tanggal', function ($data) {
+            return '<td>' . Carbon::parse($data->aa_date)->format('d/m/Y') . '</td>';
+        })
+        ->addColumn('status', function ($data) {
+            return '<td><button class="btn btn-primary status-pending" style="pointer-events: none">Pending</button></td>';
+        })
+        ->addColumn('action', function ($data) {
+            return '<div class="btn-group btn-group-sm">
+          <button class="btn btn-primary" type="button" onclick="cetak(' . $data->aa_id . ')" title="Print"><i class="fa fa-print"></i></button>
+          </div>';
+        })
+        ->rawColumns(['tanggal', 'status', 'action'])
+        ->make(true);
     }
 
     public function create()
@@ -98,23 +98,38 @@ class AdjusmentController extends Controller
     {
         DB::beginTransaction();
         try {
-
+            $adjId = DB::table('d_adjusmentauth')->max('aa_id') + 1;
             DB::table('d_adjusmentauth')
                 ->insert([
-                    'aa_id' => $request->data['o_id'],
-                    'aa_comp' => $request->data['o_comp'],
-                    'aa_position' => $request->data['o_position'],
-                    'aa_date' => $request->data['o_date'],
-                    'aa_nota' => $request->data['o_nota'],
-                    'aa_item' => $request->data['o_item'],
-                    'aa_qtyreal' => $request->qtyreal,
-                    'aa_unitreal' => $request->satuanreal,
-                    'aa_qtysystem' => $request->data['o_qtysystem'],
+                    'aa_id'         => $adjId,
+                    'aa_comp'       => $request->data['o_comp'],
+                    'aa_position'   => $request->data['o_position'],
+                    'aa_date'       => $request->data['o_date'],
+                    'aa_nota'       => $request->data['o_nota'],
+                    'aa_item'       => $request->data['o_item'],
+                    'aa_qtyreal'    => $request->qtyreal,
+                    'aa_unitreal'   => $request->satuanreal,
+                    'aa_qtysystem'  => $request->data['o_qtysystem'],
                     'aa_unitsystem' => $request->data['o_unitsystem'],
-                    'aa_insert' => $request->data['o_insert']
+                    'aa_insert'     => $request->data['o_insert']
                 ]);
 
-            otorisasi::otorisasiup('d_adjusmentauth', 'Adjusment Stock', '#');
+            $opname = DB::table('d_opnamedt')
+                ->join('d_opname', 'od_opname', 'o_id')
+                ->where('d_opname.o_nota', '=', $request->data['o_nota'])
+                ->get();
+                
+            for ($i=0; $i < count($opname); $i++) {
+                $adjDt = DB::table('d_adjustmentcode')->where('ac_adjustment', '=', $adjId)->max('ac_detailid') + 1;
+                DB::table('d_adjustmentcode')->insert([
+                    'ac_adjustment' => $adjId,
+                    'ac_detailid'   => $adjDt,
+                    'ac_code'       => $opname[$i]->od_code,
+                    'ac_qty'        => $opname[$i]->od_qty
+                ]);
+            }
+
+            // otorisasi::otorisasiup('d_adjusmentauth', 'Adjusment Stock', '#');
 
             DB::commit();
             return response()->json([

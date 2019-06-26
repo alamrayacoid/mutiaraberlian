@@ -3,119 +3,102 @@
 @section('content')
 
 <article class="content animated fadeInLeft">
-
   <div class="title-block text-primary">
-      <h1 class="title"> Tambah Adjustment Stock </h1>
-      <p class="title-description">
-        <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
-         / <span>Inventory</span>
-         / <a href="{{route('adjustment.index')}}"><span>Pengelolaan Manajemen Stock</span></a>
-         / <span class="text-primary" style="font-weight: bold;"> Tambah Adjustment Stock </span>
-       </p>
+    <h1 class="title"> Tambah Adjustment Stock </h1>
+    <p class="title-description">
+      <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
+      / <span>Inventory</span>
+      / <a href="{{route('adjustment.index')}}"><span>Pengelolaan Manajemen Stock</span></a>
+      / <span class="text-primary" style="font-weight: bold;"> Tambah Adjustment Stock </span>
+    </p>
   </div>
-
   <section class="section">
-
     <div class="row">
-
       <div class="col-12">
-
         <div class="card">
-
-                    <div class="card-header bordered p-2">
-                      <div class="header-block">
-                        <h3 class="title"> Tambah Adjustment Stock </h3>
-                      </div>
-                      <div class="header-block pull-right">
-                        <a href="{{route('adjustment.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
-                      </div>
-                    </div>
-
-                    <div class="card-block">
-                        <section>
-
-                            <div class="row">
-
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Nota Opname</label>
-                                </div>
-
-                                <div class="col-md-10 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <select class="form-control select2" name="nota" id="nota" onchange="getopname()">
-                                      <option value="" disabled selected> - Pilih Nota Opname - </option>
-                                      @foreach ($nota as $key => $value)
-                                        <option value="{{$value->o_nota}}">{{$value->o_nota}}</option>
-                                      @endforeach
-                                    </select>
-                                </div>
-                                </div>
-                            <div class="col-12"><hr></div>
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Nama Barang</label>
-                                    </div>
-
-                                    <div class="col-md-10 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control form-control-sm" name="nama" id="item" readonly="">
-                                        <input type="hidden" name="iditem" id="iditem">
-                                    </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="title-block">
-                                    <h3 class="title"> Stock System </h3>
-                                </div>
-                                <form role="form">
-                                    <div class="form-group">
-                                        <label class="control-label" for="formGroupExampleInput">Satuan</label>
-                                        <select type="text" disabled class="form-control form-control-sm select2" id="satuansystem">
-                                            <option value="" disabled selected> - Pilih Satuan - </option>
-
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="formGroupExampleInput2">Qty</label>
-                                        <input type="number" readonly class="form-control form-control-sm" id="qtysystem">
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="title-block">
-                                    <h3 class="title"> Stock Real </h3>
-                                </div>
-                                <form role="form">
-                                    <div class="form-group">
-                                      <label class="control-label" for="formGroupExampleInput">Satuan</label>
-                                      <select type="text" class="form-control form-control-sm select2" id="satuanreal">
-                                          <option value="" disabled selected> - Pilih Satuan - </option>
-
-                                      </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="formGroupExampleInput2">Qty</label>
-                                        <input type="number" class="form-control form-control-sm" id="qtyreal">
-                                    </div>
-                                </form>
-                            </div>
-                            </div>
-                        </section>
-                    </div>
-                    <div class="card-footer text-right">
-                      <button class="btn btn-primary btn-submit" id="btnsimpan" style="display:none" type="button">Simpan</button>
-                      <a href="{{route('adjustment.index')}}" class="btn btn-secondary">Kembali</a>
-                    </div>
+          <div class="card-header bordered p-2">
+            <div class="header-block">
+              <h3 class="title"> Tambah Adjustment Stock </h3>
+            </div>
+            <div class="header-block pull-right">
+              <a href="{{route('adjustment.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
+            </div>
+          </div>
+          <div class="card-block">
+            <section>
+              <div class="row">
+                <div class="col-md-2 col-sm-6 col-xs-12">
+                  <label>Nota Opname</label>
                 </div>
-
+                <div class="col-md-10 col-sm-6 col-xs-12">
+                  <div class="form-group">
+                    <select class="form-control select2" name="nota" id="nota" onchange="getopname()">
+                      <option value="" disabled selected> - Pilih Nota Opname - </option>
+                      @foreach ($nota as $key => $value)
+                      <option value="{{$value->o_nota}}">{{$value->o_nota}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+                <div class="col-12"><hr></div>
+                <div class="col-12">
+                  <div class="row">
+                    <div class="col-md-2 col-sm-6 col-xs-12">
+                      <label>Nama Barang</label>
+                    </div>
+                    <div class="col-md-10 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <input type="text" class="form-control form-control-sm" name="nama" id="item" readonly="">
+                        <input type="hidden" name="iditem" id="iditem">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="title-block">
+                    <h3 class="title"> Stock System </h3>
+                  </div>
+                  <form role="form">
+                    <div class="form-group">
+                      <label class="control-label" for="formGroupExampleInput">Satuan</label>
+                      <select type="text" disabled class="form-control form-control-sm select2" id="satuansystem">
+                        <option value="" disabled selected> - Pilih Satuan - </option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label" for="formGroupExampleInput2">Qty</label>
+                      <input type="number" readonly class="form-control form-control-sm" id="qtysystem">
+                    </div>
+                  </form>
+                </div>
+                <div class="col-md-6">
+                  <div class="title-block">
+                    <h3 class="title"> Stock Real </h3>
+                  </div>
+                  <form role="form">
+                    <div class="form-group">
+                      <label class="control-label" for="formGroupExampleInput">Satuan</label>
+                      <select type="text" class="form-control form-control-sm select2" id="satuanreal">
+                        <option value="" disabled selected> - Pilih Satuan - </option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label" for="formGroupExampleInput2">Qty</label>
+                      <input type="number" class="form-control form-control-sm" id="qtyreal">
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </section>
+          </div>
+          <div class="card-footer text-right">
+            <button class="btn btn-primary btn-submit" id="btnsimpan" style="display:none" type="button">Simpan</button>
+            <a href="{{route('adjustment.index')}}" class="btn btn-secondary">Kembali</a>
+          </div>
+        </div>
       </div>
-
     </div>
-
   </section>
-
 </article>
 
 @endsection
