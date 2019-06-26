@@ -62,11 +62,11 @@ class OpnameController extends Controller
         ->first();
       if ($stock != null) {
         $results = [
-          'unit1_id' => $stock->getItem['getUnit1']['u_id'],
+          'unit1_id'   => $stock->getItem['getUnit1']['u_id'],
           'unit1_name' => $stock->getItem['getUnit1']['u_name'],
-          'unit2_id' => $stock->getItem['getUnit2']['u_id'],
+          'unit2_id'   => $stock->getItem['getUnit2']['u_id'],
           'unit2_name' => $stock->getItem['getUnit2']['u_name'],
-          'unit3_id' => $stock->getItem['getUnit3']['u_id'],
+          'unit3_id'   => $stock->getItem['getUnit3']['u_id'],
           'unit3_name' => $stock->getItem['getUnit3']['u_name']
         ];
       } else {
