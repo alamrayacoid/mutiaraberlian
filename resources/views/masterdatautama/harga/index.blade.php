@@ -322,11 +322,7 @@
                 messageWarning("Peringatan", "Kolom nama golongan tidak boleh kosong");
             } else {
                 var data = $('#formglnHPA').serialize();
-                axios.get('{{route("dataharga.addgolonganhpa")}}', {
-                    params:{
-                        data
-                    }
-                }).then(function (response) {
+                axios.post('{{route("dataharga.addgolonganhpa")}}', data).then(function (response) {
                     if (response.data.status == "Success") {
                         messageSuccess("Berhasil", "Data berhasil disimpan!");
                         $('#formglnHPA').trigger("reset");
@@ -543,7 +539,11 @@
                 } else {
                     loadingShow();
                     var data = $('#formsethargaHPA').serialize();
-                    axios.post('{{route("dataharga.addgolonganhargahpa")}}', data).then(function (response) {
+                    axios.get('{{route("dataharga.addgolonganhargahpa")}}', {
+                        params:{
+                            data
+                        }
+                    }).then(function (response) {
                         if (response.data.status == "Success") {
                             loadingHide();
                             messageSuccess("Berhasil", "Data berhasil disimpan!");
@@ -594,7 +594,11 @@
                 } else {
                     loadingShow();
                     var data = $('#formsethargaHPA').serialize();
-                    axios.post('{{route("dataharga.addgolonganhargahpa")}}', data).then(function (response) {
+                    axios.get('{{route("dataharga.addgolonganhargahpa")}}', {
+                        params:{
+                            data
+                        }
+                    }).then(function (response) {
                         if (response.data.status == "Success") {
                             loadingHide();
                             messageSuccess("Berhasil", "Data berhasil disimpan!");
