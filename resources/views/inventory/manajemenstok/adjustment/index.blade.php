@@ -145,7 +145,7 @@
 				{data: 'date'},
 				{data: 'a_nota'},
 				{data: 'name'},
-				{data: 'status'},
+				{data: 'status', className: 'text-center'},
 			],
 			pageLength: 10,
 			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
