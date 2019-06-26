@@ -539,11 +539,7 @@
                 } else {
                     loadingShow();
                     var data = $('#formsethargaHPA').serialize();
-                    axios.get('{{route("dataharga.addgolonganhargahpa")}}', {
-                        params:{
-                            data
-                        }
-                    }).then(function (response) {
+                    axios.post('{{route("dataharga.addgolonganhargahpa")}}', data).then(function (response) {
                         if (response.data.status == "Success") {
                             loadingHide();
                             messageSuccess("Berhasil", "Data berhasil disimpan!");
@@ -594,11 +590,7 @@
                 } else {
                     loadingShow();
                     var data = $('#formsethargaHPA').serialize();
-                    axios.get('{{route("dataharga.addgolonganhargahpa")}}', {
-                        params:{
-                            data
-                        }
-                    }).then(function (response) {
+                    axios.post('{{route("dataharga.addgolonganhargahpa")}}', data).then(function (response) {
                         if (response.data.status == "Success") {
                             loadingHide();
                             messageSuccess("Berhasil", "Data berhasil disimpan!");
@@ -1140,7 +1132,7 @@
                             success: function (response) {
                                 if (response.status == 'Success') {
                                     messageSuccess('Berhasil', 'Data berhasil hapus!');
-                                    tbl_item.ajax.reload();
+                                    tbl_itemHPA.ajax.reload();
                                 } else {
                                     messageWarning('Gagal', 'Gagal menghapus data!');
                                 }
