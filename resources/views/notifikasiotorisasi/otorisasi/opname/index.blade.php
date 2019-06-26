@@ -159,42 +159,42 @@ var table1, table2;
             }
         });
     }
-
-		function rejected(id) {
-					$.confirm({
-							animation: 'RotateY',
-							closeAnimation: 'scale',
-							animationBounce: 1.5,
-							icon: 'fa fa-exclamation-triangle',
-							title: 'Peringatan!',
-							content: 'Apakah anda yakin akan menolak data ini?',
-							theme: 'disable',
-							buttons: {
-									info: {
-											btnClass: 'btn-blue',
-											text: 'Ya',
-											action: function () {
-													loadingShow();
-													axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/opname/rejectedopname'+'/'+id).then(function(response) {
-															if(response.status == 'berhasil'){
-																	loadingHide();
-																	messageSuccess("Berhasil", "Data Stock Opname Berhasil Ditolak");
-																	table1.ajax.reload();
-															}else{
-																	loadingHide();
-																	messageFailed("Gagal", "Data Stock Opname Berhasil Ditolak");
-															}
-													})
-											}
-									},
-									cancel: {
-											text: 'Tidak',
-											action: function () {
-													// tutup confirm
-											}
-									}
+	
+	function rejected(id) {
+		$.confirm({
+			animation: 'RotateY',
+			closeAnimation: 'scale',
+			animationBounce: 1.5,
+			icon: 'fa fa-exclamation-triangle',
+			title: 'Peringatan!',
+			content: 'Apakah anda yakin akan menolak data ini?',
+			theme: 'disable',
+			buttons: {
+				info: {
+					btnClass: 'btn-blue',
+					text: 'Ya',
+					action: function () {
+						loadingShow();
+						axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/opname/rejectedopname'+'/'+id).then(function(response) {
+							if(response.status == 'berhasil'){
+								loadingHide();
+								messageSuccess("Berhasil", "Data Stock Opname Berhasil Ditolak");
+								table1.ajax.reload();
+							}else{
+								loadingHide();
+								messageFailed("Gagal", "Data Stock Opname Berhasil Ditolak");
 							}
-					});
+						})
+					}
+				},
+				cancel: {
+					text: 'Tidak',
+					action: function () {
+						// tutup confirm
+					}
+				}
 			}
+		});
+	}
 </script>
 @endsection
