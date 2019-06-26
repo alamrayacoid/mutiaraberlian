@@ -322,7 +322,7 @@
                 messageWarning("Peringatan", "Kolom nama golongan tidak boleh kosong");
             } else {
                 var data = $('#formglnHPA').serialize();
-                axios.get('{{route("dataharga.addgolonganhpa")}}', {
+                axios. ('{{route("dataharga.addgolonganhpa")}}', {
                     params:{
                         data
                     }
