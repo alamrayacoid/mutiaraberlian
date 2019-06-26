@@ -667,5 +667,9 @@
                     messageWarning("Error", error)
                 })
         }
+        
+        function getCity() {
+
+        }
     </script>
 @endsection

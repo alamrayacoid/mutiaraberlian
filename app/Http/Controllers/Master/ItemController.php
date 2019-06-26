@@ -484,7 +484,6 @@ class ItemController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($datas) {
                 return '<center><div class="btn-group btn-group-sm">
-                      <button class="btn btn-warning btn-sm" onclick="editjenis(' . $datas->it_id . ', this)" rel="tooltip" data-placement="top"><i class="fa fa-pencil"></i></button>
                       <button class="btn btn-danger btn-sm" onclick="deletejenis(' . $datas->it_id . ', this)" rel="tooltip" data-placement="top"><i class="fa fa-close"></i></button>
                       </div></center>';
             })
