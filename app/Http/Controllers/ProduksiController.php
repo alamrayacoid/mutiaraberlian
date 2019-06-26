@@ -1016,7 +1016,7 @@ class ProduksiController extends Controller
         catch (DecryptException $e){
             return Response::json([
                 'status' => "Failed",
-                'message'=> $e
+                'message'=> $e->getMessage()
             ]);
         }
 
@@ -1130,7 +1130,6 @@ class ProduksiController extends Controller
             // ->where('s_item', $idItem)
             // ->where('s_status', 'ON DESTINATION')
             // ->where('s_condition', 'FINE');
-
             $mutasi = Mutasi::mutasikeluar(
                 15, // mutcat
                 $comp, // item owner
@@ -1146,56 +1145,6 @@ class ProduksiController extends Controller
             if (!is_bool($mutasi)) {
                 return $mutasi;
             }
-            // dd('x');
-            //
-            // $get_stockmutation = StockMutation::where('sm_stock', $get_stock->first()->s_id)
-            // ->where('sm_nota', $request->notaPO);
-            //
-            // if ($get_stock->count() > 0)
-            // {
-            //     $val_stock = [
-            //         's_qty' => $get_stock->first()->s_qty - $qty_compare
-            //     ];
-            // }
-            // else
-            // {
-            //     return Response::json([
-            //         'status' => "Failed",
-            //         'message' => "Stock tidak ditemukan"
-            //     ]);
-            // }
-            //
-            // if ($get_stockmutation->count() > 0)
-            // {
-            //     if ($get_stockmutation->first()->sm_use == $get_stockmutation->first()->sm_qty || $get_stockmutation->first()->sm_residue == 0)
-            //     {
-            //         return Response::json([
-            //             'status' => "Failed",
-            //             'message' => "Jumlah barang tidak tersedia"
-            //         ]);
-            //     }
-            //     else if ($get_stockmutation->first()->sm_use < $get_stockmutation->first()->sm_qty)
-            //     {
-            //         Mutasi::mutasikeluar(
-            //             15,
-            //             $comp,
-            //             $comp,
-            //             $idItem,
-            //             $request->qty_return,
-            //             $nota,
-            //             $request->notaPO,
-            //
-            //         );
-            //     }
-            // }
-            // else
-            // {
-            //     return Response::json([
-            //         'status' => "Failed",
-            //         'message' => "Stock mutasi tidak ditemukan"
-            //     ]);
-            // }
-            // $get_stock->update($val_stock);
 
             // insert return
             DB::table('d_returnproductionorder')->insert($values);

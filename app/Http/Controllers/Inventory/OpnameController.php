@@ -160,7 +160,7 @@ class OpnameController extends Controller
     {
       $datas = d_opnameauth::orderBy('oa_id', 'asc')
       ->with('getItem')
-      ->get();      
+      ->get();
 
       return Datatables::of($datas)
       ->addIndexColumn()
@@ -218,7 +218,7 @@ class OpnameController extends Controller
       } else {
         $stockId = 0;
       }
-      
+
       $codes = DB::table('d_stockdt')
         ->where('sd_stock', '=', $stockId)
         ->get();
@@ -235,7 +235,6 @@ class OpnameController extends Controller
      */
     public function store(Request $request)
     {
-      // dd($request);
       // validate request
       $isValidRequest = $this->validate_req($request);
       if ($isValidRequest != '1') {
