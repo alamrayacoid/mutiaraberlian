@@ -880,11 +880,12 @@ class MarketingAreaController extends Controller
 
             // mutation
             foreach ($productOrder->getPODt as $key => $PO) {
-                // update qty
                 $idxQty = array_search($PO->pod_item, $request->itemsId);
                 $PO->pod_qty = $request->qty_proses[$idxQty];
                 $PO->pod_unit = $request->units[$idxQty];
                 $PO->save();
+                // get sellprice
+                $sellPrice = $PO->pod_price;
 
                 // get list production-code
                 $prodCode = d_productordercode::where('poc_productorder', $productOrder->po_id)
@@ -901,19 +902,18 @@ class MarketingAreaController extends Controller
 
                 // insert stock mutation using distribusicabangkeluar
                 // actually its public function, not specific
-                // waiit, check the name of $reff
-                $reff = 'PEMBELIAN-MASUK';
                 $mutDist = Mutasi::distribusicabangkeluar(
                     $productOrder->po_comp, // from
                     $productOrder->po_agen, // to
                     $PO->pod_item, // item-id
                     $request->qty_proses[$idxQty], // qty of smallest-unit
                     $productOrder->po_nota, // nota
-                    $reff, // nota-reff
+                    $productOrder->po_nota, // nota-reff
                     $listPC, // list of production-code
                     $listQtyPC, // list of production-code-qty
                     $listUnitPC, // list of production-code-unit
-                    5
+                    $sellPrice, // sellprice
+                    5 // mutcat
                 );
                 if ($mutDist !== 'success') {
                     return $mutDist;

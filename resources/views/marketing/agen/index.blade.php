@@ -15,6 +15,7 @@
     @include('marketing.agen.orderproduk.detailDO')
     @include('marketing.agen.kelolapenjualan.modal-search')
     @include('marketing.agen.kelolapenjualan.modal')
+    @include('marketing.agen.penjualanviaweb.modal_create')
     <article class="content animated fadeInLeft">
         <div class="title-block text-primary">
             <h1 class="title"> Manajemen Agen </h1>
@@ -38,8 +39,8 @@
                                 Langsung </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#monitoringpenjualanagen" class="nav-link" data-target="#monitoringpenjualanagen"
-                               aria-controls="monitoringpenjualanagen" data-toggle="tab" role="tab">Kelola Penjualan Via
+                            <a href="#penjualanviaweb" class="nav-link" data-target="#penjualanviaweb"
+                               aria-controls="penjualanviaweb" data-toggle="tab" role="tab">Kelola Penjualan Via
                                 Website</a>
                         </li>
                         <li class="nav-item">
@@ -55,6 +56,7 @@
                     <div class="tab-content">
                         @include('marketing.agen.orderproduk.index')
                         @include('marketing.agen.inventoryagen.index')
+                        @include('marketing.agen.penjualanviaweb.index')
                         @include('marketing.agen.kelolapenjualan.index')
                     </div>
                 </div>
@@ -68,7 +70,9 @@
         var table_do;
         $(document).ready(function () {
             getStatusDO();
-            var table_pus = $('#table_kelolapenjualan').DataTable();
+            var table_pus = $('#table_kelolapenjualan').DataTable({
+                bAutoWidth: true
+            });
             var table_modal_detail = $('#detail-kelola').DataTable();
             //var table_pus = $('#table_inventoryagen').DataTable();
 
@@ -335,6 +339,8 @@
             last_day = new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
             $('#date_from_kpl').datepicker('setDate', first_day);
             $('#date_to_kpl').datepicker('setDate', last_day);
+            $('#date_from_kpw').datepicker('setDate', first_day);
+            $('#date_to_kpw').datepicker('setDate', last_day);
 
             if ($('.current_user_type').val() !== 'E') {
                 $('.filter_agent').addClass('d-none');
@@ -348,8 +354,17 @@
             $('#date_to_kpl').on('change', function () {
                 TableListKPL();
             });
+            $('#date_from_kpw').on('change', function () {
+                TableListKPL();
+            });
+            $('#date_to_kpw').on('change', function () {
+                TableListKPL();
+            });
             $('#btn_search_date_kpl').on('click', function () {
                 TableListKPL();
+            });
+            $('#btn_search_date_kpw').on('click', function () {
+                TableListKPW();
             });
             $('#btn_refresh_date_kpl').on('click', function () {
                 $('#filter_agent_code_kpl').val('');
@@ -370,6 +385,9 @@
             $('#btn_filter_kpl').on('click', function () {
                 TableListKPL();
             });
+            $('#btn_filter_kpl').on('click', function () {
+                TableListKPW();
+            });
         });
 
         // data-table -> function to retrieve DataTable server side
@@ -379,6 +397,8 @@
             $('#table_kelolapenjualan').dataTable().fnDestroy();
             tb_listkpl = $('#table_kelolapenjualan').DataTable({
                 responsive: true,
+                processing: true,
+                bAutoWidth: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('kelolapenjualan.getListKPL') }}",
@@ -646,6 +666,22 @@
                     loadingHide();
                     messageWarning("Error", error)
                 })
+        }
+        
+        function getCity() {
+            $.ajax({
+                type: 'get',
+                url: baseUrl + '/masterdatautama/agen/cities/' + $('#area_provinsi').val(),
+                success: function(data) {
+                    $('#area_kota').empty();
+                    $("#area_kota").append('<option disabled selected>== Pilih Kota ==</option>');
+                    $.each(data, function(key, val) {
+                        $("#area_kota").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
+                    });
+                    $('#area_kota').focus();
+                    $('#area_kota').select2('open');
+                }
+            });
         }
     </script>
 @endsection

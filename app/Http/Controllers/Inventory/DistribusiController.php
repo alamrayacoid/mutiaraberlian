@@ -252,14 +252,14 @@ class DistribusiController extends Controller
                     $listUnitPC = [];
                     // insert stock-mutation
                     // waiit, check the name of $reff
-                    $reff = 'DISTRIBUSI-MASUK';
+                    // $reff = 'DISTRIBUSI-MASUK';
                     $mutDist = Mutasi::distribusicabangkeluar(
                         Auth::user()->u_company,
                         $request->selectBranch,
-                        $itemId,
-                        $convert,
-                        $nota,
-                        $reff,
+                        $itemId, // item id
+                        $convert, // qty with smallest unit
+                        $nota, // nota
+                        $nota, // nota reff
                         $listPC,
                         $listQtyPC,
                         $listUnitPC
@@ -267,7 +267,6 @@ class DistribusiController extends Controller
                     if ($mutDist !== 'success') {
                         return $mutDist;
                     }
-
                     $startProdCodeIdx += $prodCodeLength;
                 }
             }
@@ -481,14 +480,14 @@ class DistribusiController extends Controller
                         return $rollbackDist;
                     }
                     // waiit, check the name of $reff
-                    $reff = 'DISTRIBUSI-MASUK';
+                    // $reff = 'DISTRIBUSI-MASUK';
                     $mutDist = Mutasi::distribusicabangkeluar(
                         Auth::user()->u_company, // from
                         $request->sd_destination, // to
                         $val, // item-id
                         $convert, // qty of smallest-unit
                         $stockdist->sd_nota, // nota
-                        $reff, // nota-reff
+                        $stockdist->sd_nota, // nota-reff
                         $listPC, // list of production-code
                         $listQtyPC, // list of production-code-qty
                         $listUnitPC // list of production-code-unit
