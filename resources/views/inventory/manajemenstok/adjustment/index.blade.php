@@ -171,12 +171,12 @@
 						}
 				},
 				columns: [
-						{data: 'DT_RowIndex'},
+						{data: 'DT_RowIndex', className: 'text-center'},
 						{data: 'tanggal', name: 'tanggal'},
 						{data: 'aa_nota', name: 'aa_nota'},
 						{data: 'i_name', name: 'i_name'},
-						{data: 'status', name: 'status'},
-						{data: 'action', name: 'action'}
+						{data: 'status', name: 'status', className: 'text-center'},
+						{data: 'action', name: 'action', className: 'text-center'}
 				],
 				pageLength: 10,
 				lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]

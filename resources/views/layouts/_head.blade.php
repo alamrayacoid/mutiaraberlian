@@ -68,6 +68,7 @@
             .checkbox-warning:checked + span:before {
                 color: #fe974b;
                 content: "\f058"; }
+            table.dataTable thead > tr > th {text-align: center;}
         </style>
         <link rel="stylesheet" type="text/css" href="{{asset('assets/css/alamraya-style.css')}}">
         <link rel="stylesheet" type="text/css" href="{{asset('assets/css/custom-style.css')}}">

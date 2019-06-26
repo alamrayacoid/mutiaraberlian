@@ -51,9 +51,9 @@ class AdjusmentController extends Controller
     {
         $data = DB::table('d_opname')->join('m_item', 'i_id', '=', 'o_item')->where('o_id', $request->id)->first();
 
-        $unitsistem = DB::table('m_unit')->where('u_id', '=', $data->aa_unitsystem)->first();
+        $unitsistem = DB::table('m_unit')->where('u_id', '=', $data->o_unitsystem)->first();
 
-        $unitreal = DB::table('m_unit')->where('u_id', '=', $data->aa_unitreal)->first();
+        $unitreal = DB::table('m_unit')->where('u_id', '=', $data->o_unitreal)->first();
 
         return view('inventory/manajemenstok/adjustment/nota/index', compact('data', 'unitsistem', 'unitreal'));
     }
