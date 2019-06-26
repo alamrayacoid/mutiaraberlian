@@ -21,7 +21,7 @@
                     </div>
                     <label for="detail_kpl_nota" class="col-2 col-form-label">Area Kota :</label>
                     <div class="col-4">
-                        <select class="select2" id="area_provinsi">
+                        <select class="select2" id="area_kota">
                             <option>== Pilih Kota ==</option>
                         </select>
                     </div>

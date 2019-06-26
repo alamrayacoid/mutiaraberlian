@@ -852,7 +852,7 @@ class HargaController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['status' => "Failed"]);
+            return response()->json(['status' => "Failed", 'message' => $e]);
         }
     }
 
