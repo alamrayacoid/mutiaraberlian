@@ -85,12 +85,12 @@ class AdjusmentController extends Controller
         $unitreal = DB::table('m_unit')->where('u_id', $data->o_unitreal)->first();
 
         return response()->json([
-            'item' => $item,
-            'data' => $data,
+            'item'       => $item,
+            'data'       => $data,
             'unitsystem' => $unitsystem,
-            'unitreal' => $unitreal,
-            'stock' => $stock,
-            'unit' => $unit
+            'unitreal'   => $unitreal,
+            'stock'      => $stock,
+            'unit'       => $unit
         ]);
     }
 
