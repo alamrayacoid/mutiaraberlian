@@ -10,7 +10,7 @@
             </div>
             <div class="modal-body">
                 <div class="row form-group">
-                    <label for="detail_kpl_nota" class="col-2 col-form-label">Area Provinsi :</label>
+                    <label class="col-2 col-form-label">Area Provinsi :</label>
                     <div class="col-4">
                         <select class="select2" id="area_provinsi" onchange="getCity()">
                             <option selected disabled>== Pilih Provinsi ==</option>
@@ -19,15 +19,15 @@
                             @endforeach
                         </select>
                     </div>
-                    <label for="detail_kpl_nota" class="col-2 col-form-label">Area Kota :</label>
+                    <label for="area_kota" class="col-2 col-form-label">Area Kota :</label>
                     <div class="col-4">
-                        <select class="select2" id="area_kota">
+                        <select class="select2" id="area_kota" onchange="getAgen()">
                             <option>== Pilih Kota ==</option>
                         </select>
                     </div>
                 </div>
                 <div class="row form-group">
-                    <label for="detail_kpl_nota" class="col-2 col-form-label">Nama Agen :</label>
+                    <label for="nama_agen" class="col-2 col-form-label">Nama Agen :</label>
                     <div class="col-10">
                         <select class="select2" id="nama_agen">
                             <option>== Pilih Agen ==</option>
@@ -35,23 +35,24 @@
                     </div>
                 </div>
                 <div class="row form-group">
-                    <label for="detail_kpl_nota" class="col-2 col-form-label">Website :</label>
+                    <label for="website" class="col-2 col-form-label">Website :</label>
                     <div class="col-10">
                         <input type="text" class="form-control-sm form-control" id="website">
                     </div>
                 </div>
                 <div class="row form-group">
-                    <label for="detail_kpl_nota" class="col-2 col-form-label">Produk :</label>
+                    <label for="produk" class="col-2 col-form-label">Produk :</label>
                     <div class="col-10">
-                        <input type="text" class="form-control-sm form-control" id="produk">
+                        <input type="text" class="form-control-sm form-control" id="produk" style="text-transform: uppercase">
+                        <input type="hidden" class="form-control-sm form-control" id="id_produk">
                     </div>
                 </div>
                 <div class="row form-group">
-                    <label for="detail_kpl_nota" class="col-2 col-form-label">Kuantitas :</label>
+                    <label for="kuantitas" class="col-2 col-form-label">Kuantitas :</label>
                     <div class="col-4">
                         <input type="number" class="form-control-sm form-control" id="kuantitas">
                     </div>
-                    <label for="detail_kpl_nota" class="col-2 col-form-label">Satuan :</label>
+                    <label for="satuan" class="col-2 col-form-label">Satuan :</label>
                     <div class="col-4">
                         <select class="select2" id="satuan">
                             <option>== Pilih Satuan ==</option>
@@ -59,13 +60,19 @@
                     </div>
                 </div>
                 <div class="row form-group">
-                    <label for="detail_kpl_nota" class="col-2 col-form-label">Harga@ :</label>
+                    <label for="harga" class="col-2 col-form-label">Harga@ :</label>
                     <div class="col-4">
                         <input type="text" class="form-control-sm form-control rupiah" id="harga">
                     </div>
-                    <label for="detail_kpl_nota" class="col-2 col-form-label">Total :</label>
+                    <label for="total" class="col-2 col-form-label">Total :</label>
                     <div class="col-4">
                         <input type="text" class="form-control-sm form-control rupiah" id="total">
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="note" class="col-2 col-form-label">Catatan :</label>
+                    <div class="col-10">
+                        <textarea class="form-control form-control-sm" id="note"></textarea>
                     </div>
                 </div>
             </div>
