@@ -1625,4 +1625,36 @@ class ManajemenAgenController extends Controller
         }
         return Response::json($hasilItem);
     }
+
+    public function cekProductionCode(Request $request)
+    {
+        $posisi = $request->posisi;
+        $item = $request->item;
+        $kode = $request->kode;
+
+        $cek = DB::table('d_stock')
+            ->join('d_stockdt', 's_id', '=', 'sd_stock')
+            ->where('s_position', '=', $posisi)
+            ->where('s_item', '=', $item)
+            ->where('sd_code', '=', $kode)
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('s_condition', '=', 'FINE')
+            ->get();
+
+        if (count($cek) > 0){
+            return Response::json([
+                'status' => 'sukses'
+            ]);
+        } else {
+            return Response::json([
+                'status' => 'gagal'
+            ]);
+        }
+    }
+
+    public function saveKPW(Request $request)
+    {
+        dd($request);
+    }
+
 }
