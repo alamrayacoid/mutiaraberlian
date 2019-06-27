@@ -84,7 +84,7 @@
                           <option value="" selected disabled>Pilih Satuan</option>
                         </select>
                       </div>
-                      <div class="form-group" style="margin-bottom: 2rem !important;">
+                      <div class="form-group" style="margin-bottom: 1.6rem !important;">
                         <label class="control-label" for="qty_sys">Qty</label>
                         <input type="hidden" id="qty_sys_hidden" name="qty_sys_hidden">
                         <input type="text" class="form-control form-control-sm" id="qty_sys" name="qty_sys" readonly>
@@ -109,21 +109,23 @@
                       <select type="text" class="form-control form-control-sm select2" id="unit_real" name="unit_real">
                         <option value="" selected disabled>Pilih Satuan</option>
                       </select>
+                      <span class="text-danger errorSatuanR d-none">Harap pilih satuan!</span>
                     </div>
                     <div class="form-group" style="margin-bottom: 2rem !important;">
                       <label class="control-label" for="qty_real">Qty</label>
                       <input type="number" class="form-control form-control-sm" id="qty_real" name="qty_real">
+                      <span class="text-danger errorQtyR1 d-none">Harap masukkan qty!</span>
                     </div>
                     
-                    <div class="form-group" style="margin-bottom: 0.8rem !important;">
+                    <div class="form-group" style="margin-bottom: 1.1rem !important;">
                       <div class="row">
                         <div class="col-6">
                           <input type="text" id="codeReal" class="form-control" placeholder="Tuliskan Kode">
                           <span class="text-danger errorCodeR d-none">Kode masih kosong!</span>
                         </div>
                         <div class="col">
-                          <input type="number" id="qtyReal" class="form-control" min="1" placeholder="Qty" disabled="">
-                          <span class="text-danger errorQtyR d-none">Qty masih kosong!</span>
+                          <input type="number" id="qtyReal" class="form-control text-right" min="1" placeholder="Qty" disabled="">
+                          <span class="text-danger errorQtyR2 d-none">Qty masih kosong!</span>
                         </div>
                         <div class="col">
                           <button type="button" class="btn btn-primary tambah-code" disabled=""><i class="fa fa-plus"></i> Tambah</button>
@@ -133,7 +135,7 @@
 
                     <table class="table" id="tb_addCodeReal">
                       <thead>
-                        <th class="text-center">Kode Produksi</th>
+                        <th class="text-center" style="width: 60%;">Kode Produksi</th>
                         <th class="text-center">Qty</th>
                         <th class="text-center">Action</th>
                       </thead>
@@ -167,7 +169,23 @@
   });
 
   $(document).ready(function(){
-    $('#tb_code_produksi').dataTable();
+    var code, qty, idX, tb_code_produksi, tb_addCodeReal, 
+    codeExist = false,
+    idxCode = null;
+    
+    $('#tb_code_produksi').dataTable({
+      "searching": false,
+      "lengthChange": false,
+      "paging": false,
+      "info": false
+    });
+
+    // tb_addCodeReal = $('#tb_addCodeReal').dataTable({
+    //   "searching": false,
+    //   "lengthChange": false,
+    //   "paging": false,
+    //   "info": false
+    // });
 
     $('#name').autocomplete({
       source: baseUrl+'/inventory/manajemenstok/opnamestock/getItemAutocomplete',
@@ -250,11 +268,13 @@
 
   function updateUnitSys()
   {
+    loadingShow();
     $.ajax({
       type: 'get',
       data: $('#myForm').serialize(),
       url: baseUrl + '/inventory/manajemenstok/opnamestock/getItem',
       success: function(data) {
+        loadingHide();
         $('#unit_sys').find('option').not(':first').remove();
         $('#unit_real').find('option').not(':first').remove();
         $('#qty_sys').val('');
@@ -272,6 +292,8 @@
             $('#unit_sys').append('<option value="'+ data.unit3_id +'" data-qty="">'+ data.unit3_name +'</option>');
             $('#unit_real').append('<option value="'+ data.unit3_id +'" data-qty="">'+ data.unit3_name +'</option>');
           }
+
+          $('#unit_sys').select2('open');
         } else {
           messageWarning('Perhatian', 'Data tidak ditemukan !');
         }
@@ -280,15 +302,19 @@
   }
 
   function getCodeProduksi() {
-    var item = $('#itemId').val();
-    var owner = $('#owner').val();
-    var position = $('#position').val();
+    var item      = $('#itemId').val();
+    var owner     = $('#owner').val();
+    var position  = $('#position').val();
     var condition = $('#condition').val();
 
     $('#tb_code_produksi').dataTable().fnDestroy();
     tb_code_produksi = $('#tb_code_produksi').DataTable({
         responsive: true,
         serverSide: true,
+        searching: false,
+        lengthChange: false,
+        paging: false,
+        info: false,
         ajax: {
           url: '{{url('/inventory/manajemenstok/opnamestock/list-code-produksi')}}',
           type: 'get',
@@ -332,30 +358,48 @@
   });
 
   $('.tambah-code').on('click', function(){
-    var code = $('#codeReal').val();
-    var qty = $('#qtyReal').val();
-    var idX = null;
-    if (code == 0 || code == '') {
-      $('.errorCodeR').removeClass('d-none');
-      $('.errorCodeR').css('display', 'block');
-    } else if (qty == 0 || qty == '') {
-      $('.errorQtyR').removeClass('d-none');
-      $('.errorQtyR').css('display', 'block');
+    var unit_real = $('#unit_real').val();
+    var qty_real  = $('#qty_real').val();
+    if (unit_real == '' || unit_real == null) {
+      $('.errorSatuanR').removeClass('d-none');
+      $('.errorSatuanR').css('display', 'block');
+    } else if (qty_real == '') {
+      $('.errorSatuanR').css('display', 'none');
+      $('.errorQtyR1').removeClass('d-none');
+      $('.errorQtyR1').css('display', 'block');
     } else {
-      $('.errorCodeR').css('display', 'none');
-      $('.errorQtyR').css('display', 'none');
-
-      sendCode(code, qty);
+      $('.errorQtyR1').css('display', 'none');
+      checkInputCodeReal();
     }
   });
 
+  function checkInputCodeReal() {
+    code = $('#codeReal').val();
+    qty = $('#qtyReal').val();
+    idX = null;
+    if (code == '') {
+      $('.errorCodeR').removeClass('d-none');
+      $('.errorCodeR').css('display', 'block');
+    } else if (qty == 0 || qty == '') {
+      $('.errorCodeR').css('display', 'none');
+      $('.errorQtyR2').removeClass('d-none');
+      $('.errorQtyR2').css('display', 'block');
+    } else {
+      $('.errorCodeR').css('display', 'none');
+      $('.errorQtyR2').css('display', 'none');
+      loadingShow();
+      sendCode(code, qty);
+    }
+  }
+
   function sendCode(code, qty) {
-    let codeExist = false;
-    let idxQty = null;
+    loadingHide();
+    codeExist = false;
+    idxCode = null;
 
     $.each($('.code_r'), function (index, val) {
       if (code == $('.code_r').eq(index).val()) {
-        idxQty =  index;
+        idxCode   =  index;
         codeExist = true
         return false;
        } else {
@@ -364,16 +408,19 @@
     });
 
     if (codeExist == true) {
-      var qty_r = $('.qty_r').eq(idxQty).val();
+      var qty_r = $('.qty_r').eq(idxCode).val();
       qty_r = parseInt(qty_r) + parseInt(qty);
-      $('.qty_r').eq(idxQty).val(qty_r);  
+      $('.qty_r').eq(idxCode).val(qty_r);  
+      $('.qty_s').eq(idxCode).val(qty_r);  
     } else {
       $('#tb_addCodeReal tbody').append(`<tr>
                                           <td style="padding: 8px;">
-                                            <input type="text" name="code_r[]" class="form-control code_r bg-light" readonly value="`+code+`">
+                                            <input type="text" disabled="" class="form-control bg-light code_s" value="`+code+`">
+                                            <input type="hidden" name="code_r[]" class="form-control code_r" readonly value="`+code+`" >
                                           </td>
                                           <td style="padding: 8px;">
-                                            <input type="text" name="qty_r[]" class="form-control qty_r bg-light" readonly value="`+qty+`">
+                                            <input type="text" disabled="" class="form-control bg-light qty_s text-right" value="`+qty+`">
+                                            <input type="hidden" name="qty_r[]" class="form-control qty_r" readonly value="`+qty+`">
                                           </td>
                                           <td class="text-center">
                                             <button class="btn rounded-circle btn-danger btn-sm delete-list" onclick><i class="fa fa-trash"></i></button>
