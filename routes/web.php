@@ -505,7 +505,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/index', 'Aktivitasmarketing\Agen\ManajemenAgenController@index')->name('manajemenagen.index');
     Route::get('/marketing/agen/get-agen/{city}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getAgen')->name('manajemenagen.getAgen');
     Route::post('/marketing/agen/filter-data/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@filterData')->name('manajemenagen.filterData');
-
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpl', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPL')->name('kelolapenjualan.getListKPL');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-cities', 'Aktivitasmarketing\Agen\ManajemenAgenController@getCitiesKPL')->name('kelolapenjualan.getCitiesKPL');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-agents-kpl', 'Aktivitasmarketing\Agen\ManajemenAgenController@getAgentsKPL')->name('kelolapenjualan.getAgentsKPL');
@@ -520,6 +519,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-unit/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getUnit')->name('kelolapenjualan.getUnit');
     Route::get('/marketing/agen/kelolapenjualanlangsung/edit/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@editKPL')->name('kelolapenjualan.edit');
     Route::post('/marketing/agen/kelolapenjualanlangsung/update/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@updateKPL')->name('kelolapenjualan.update');
+
+    Route::get('/marketing/agen/kelolapenjualanviawebsite/cari-produk', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariProduk')->name('kelolapenjualanviawebsite.cariProduk');
     // End Manajemen Agen ============================================================================================
 
     Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Agen\ManajemenAgenController@create_orderprodukagencabang')->name('orderagenpusat.create');

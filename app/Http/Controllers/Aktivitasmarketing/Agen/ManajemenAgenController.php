@@ -1597,4 +1597,32 @@ class ManajemenAgenController extends Controller
     }
     // End: Kelola Penjualan Langsung -----------------
 
+    public function cariProduk(Request $request)
+    {
+        $cari = $request->term;
+        $item = DB::table('m_item')
+            ->select('i_id', 'i_name', 'i_code')
+            ->whereRaw("i_name like '%" . $cari . "%'")
+            ->orWhereRaw("i_code like '%" . $cari . "%'")
+            ->get();
+
+        if (count($item) == 0) {
+            $hasilItem[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($item as $query) {
+                if($query->i_code == null){
+                    $hasilItem[] = [
+                        'id' => $query->i_id,
+                        'label' => $query->i_name
+                    ];
+                }else{
+                    $hasilItem[] = [
+                        'id' => $query->i_id,
+                        'label' => $query->i_code.' - '.$query->i_name
+                    ];
+                }
+            }
+        }
+        return Response::json($hasilItem);
+    }
 }
