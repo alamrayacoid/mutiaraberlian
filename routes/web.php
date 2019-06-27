@@ -490,13 +490,16 @@ Route::group(['middleware' => 'auth'], function () {
     // Start: MMA kelola data konsinyasi ================================================================================================
     Route::get('/marketing/marketingarea/datakonsinyasi/get-list', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getListDK')->name('datakonsinyasi.getListDK');
     Route::get('/marketing/marketingarea/datakonsinyasi/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_datakonsinyasi')->name('datakonsinyasi.create');
+    Route::get('/marketing/marketingarea/datakonsinyasi/get-branch', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getBranchDK')->name('datakonsinyasi.getBranchDK');
     Route::get('/marketing/marketingarea/datakonsinyasi/get-agents', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getAgentsDK')->name('datakonsinyasi.getAgentsDK');
     Route::get('/marketing/marketingarea/datakonsinyasi/get-items', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getItemsDK')->name('datakonsinyasi.getItemsDK');
     Route::get('/marketing/marketingarea/datakonsinyasi/get-satuan/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getSatuanDK')->name('datakonsinyasi.getSatuanDK');
     Route::get('/marketing/marketingarea/datakonsinyasi/check-items-stock', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@checkItemStockDK')->name('datakonsinyasi.checkItemStockDK');
+    Route::get('/marketing/marketingarea/datakonsinyasi/check-items-stock-old', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@checkItemStockDKOld')->name('datakonsinyasi.checkItemStockDKOld');
     Route::get('/marketing/marketingarea/datakonsinyasi/check-harga', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@checkHargaDK')->name('datakonsinyasi.checkHargaDK');
     Route::post('/marketing/marketingarea/datakonsinyasi/store', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@storeDK')->name('datakonsinyasi.storeDK');
     Route::get('/marketing/marketingarea/datakonsinyasi/edit/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datakonsinyasi')->name('datakonsinyasi.edit');
+    Route::post('/marketing/marketingarea/datakonsinyasi/update/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@updateDK')->name('datakonsinyasi.updateDK');
     Route::post('/marketing/marketingarea/datakonsinyasi/delete', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@deleteDK')->name('datakonsinyasi.deleteDK');
 
     // End: MMA kelola data konsinyasi ================================================================================================

@@ -41,47 +41,48 @@
                         <div class="card-block">
                             <section>
                                 <div class="row">
+
                                     <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Nama</label>
+                                        <label>Area</label>
                                     </div>
-                                    <div class="col-md-10 col-sm-6 col-xs-12">
+                                    <div class="col-md-5 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm agent" name="agentName">
-                                            <input type="hidden" class="agentCode" name="agentCode" value="">
+                                            <select name="provinsi" id="provinsi" class="form-control form-control-sm select2" disabled>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select name="kota" id="kota" class="form-control form-control-sm select2" disabled>
+                                            </select>
                                         </div>
                                     </div>
 
                                     <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Email</label>
+                                        <label>Cabang</label>
                                     </div>
-                                    <div class="col-md-4 col-sm-6 col-xs-12">
+                                    <div class="col-md-10 col-sm-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm email" name="email">
+                                            <input type="hidden" name="branchCode" id="branchCode">
+                                            <select class="form-control select2" name="branch" id="branch">
+                                            </select>
                                         </div>
                                     </div>
 
                                     <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>No Telp</label>
+                                        <label>Agen</label>
                                     </div>
-                                    <div class="col-md-4 col-sm-6 col-xs-12">
+                                    <div class="col-md-10 col-sm-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm hp" name="telp">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Alamat</label>
-                                    </div>
-                                    <div class="col-md-10 col-sm-6 col-xs-12">
-                                        <div class="form-group">
-                                            <textarea name="address" id="" class="form-control form-control-sm"></textarea>
+                                            <input type="hidden" name="agentCode" id="agentCode">
+                                            <select class="form-control select2" name="agent" id="agent">
+                                            </select>
                                         </div>
                                     </div>
 
                                     <div class="col-md-2 col-sm-6 col-xs-12">
                                         <label>Total</label>
                                     </div>
-
                                     <div class="col-md-10 col-sm-12">
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-sm" name="total_harga" id="total_harga" value="Rp. 0" readonly>
@@ -179,9 +180,45 @@
     var checkitem = null;
 
     $(document).ready(function() {
+        getProv();
+        getKota();
         changeJumlah();
         changeHarga();
         visibleTableItem();
+
+        $("#kota").on("change", function (evt) {
+            evt.preventDefault();
+            if ($("#kota").val() == "") {
+                $("#branchCode").val('');
+                $("#branch").val('');
+                $('#branch').find('option').remove();
+                $("#branch").attr("disabled", true);
+            }
+            else {
+                getBranch();
+                $("#branch").attr("disabled", false);
+                $("#branchCode").val('');
+                $("#branch").val('');
+                $("#branch").attr('autofocus', true);
+            }
+        })
+        // on select branch
+        $('#branch').on('select2:select', function() {
+            // console.log($(this).val(), $(this).find('option:selected').data('code'));
+            $( "#branchCode" ).val($(this).find('option:selected').val());
+            if ($(this).val() != '') {
+                getAgent();
+            }
+            else {
+                $('#agentCode').val('');
+            }
+            visibleTableItem();
+        });
+        // on selectagent
+        $('#agent').on('select2:select', function() {
+            $('#agentCode').val($(this).find('option:selected').val());
+        });
+
 
         $(document).on('click', '.btn-hapus', function () {
             // get index of clicked element and delete a production-code-modal
@@ -273,25 +310,6 @@
         $('.btnAddProdCode').off();
         $('.btnRemoveProdCode').off();
         $('.qtyProdCode').off();
-        // agent autocomplete
-        $(".agent").autocomplete({
-            source: function( request, response ) {
-                $.ajax({
-                    url: "{{ route('datakonsinyasi.getAgentsDK') }}",
-                    data: {
-                        term: $(".agent").val()
-                    },
-                    success: function( data ) {
-                        response( data );
-                    }
-                });
-            },
-            minLength: 1,
-            select: function(event, data) {
-                $('.agentCode').val(data.item.id);
-                visibleTableItem();
-            }
-        });
 
         $('.barang').on('click', function(e){
             idxBarang = $('.barang').index(this);
@@ -399,6 +417,129 @@
             // unmaskAsNumber: true,
         });
     }
+    // get list of branc based on prov and city
+    function getBranch() {
+        loadingShow();
+        $.ajax({
+            url: "{{ route('datakonsinyasi.getBranchDK') }}",
+            data: {
+                prov: $("#provinsi").val(),
+                city: $("#kota").val()
+            },
+            type: 'get',
+            success: function( data ) {
+                // console.log(data);
+                $('#branch').find('option').remove();
+                $('#branch').append('<option value="" selected>Pilih Cabang</option>')
+                $.each(data, function(index, val) {
+                    // console.log(val, val.a_id);
+                    $('#branch').append('<option value="'+ val.c_id +'">'+ val.c_name +'</option>');
+                })
+                loadingHide();
+            },
+            error: function(e) {
+                loadingHide();
+                // console.log('get konsigner error: ');
+            }
+        });
+    }
+    // get list of agent based on branch
+    function getAgent() {
+        loadingShow();
+        $.ajax({
+            url: "{{ route('datakonsinyasi.getAgentsDK') }}",
+            data: {
+                branch: $("#branchCode").val()
+            },
+            type: 'get',
+            success: function( data ) {
+                // console.log(data);
+                $('#agent').find('option').remove();
+                $('#agent').append('<option value="" selected>Pilih Agen</option>')
+                $.each(data, function(index, val) {
+                    console.log(val);
+                    $('#agent').append('<option value="'+ val.get_company.c_id +'">'+ val.a_name +'</option>');
+                })
+                loadingHide();
+            },
+            error: function(e) {
+                loadingHide();
+                // console.log('get konsigner error: ');
+            }
+        });
+    }
+
+    // get items
+    function setArrayCode() {
+        var inputs = document.getElementsByClassName('kode'),
+        code  = [].map.call(inputs, function( input ) {
+            return input.value.toString();
+        });
+
+        for (var i=0; i < code.length; i++) {
+            if (code[i] != "") {
+                icode.push(code[i]);
+            }
+        }
+
+        var inpItemid = document.getElementsByClassName( 'itemid' ),
+        item  = [].map.call(inpItemid, function( input ) {
+            return input.value;
+        });
+
+        $(".barang").eq(idxBarang).autocomplete({
+            source: function( request, response ) {
+                $.ajax({
+                    url: "{{ route('datakonsinyasi.getItemsDK') }}",
+                    data: {
+                        idItem: item,
+                        branch: $('#branchCode').val(),
+                        term: $(".barang").eq(idxBarang).val()
+                    },
+                    success: function( data ) {
+                        response( data );
+                    }
+                });
+            },
+            minLength: 1,
+            select: function(event, data) {
+                setItem(data.item);
+            }
+        });
+    }
+    function setItem(info) {
+        idStock = info.stock
+        idItem = info.data.i_id;
+        namaItem = info.data.i_name;
+        kode = info.data.i_code;
+        $(".kode").eq(idxBarang).val(kode);
+        $(".itemid").eq(idxBarang).val(idItem);
+        $(".idStock").eq(idxBarang).val(idStock);
+        setArrayCode();
+        $.ajax({
+            url: baseUrl+ '/marketing/marketingarea/datakonsinyasi/get-satuan/' +idItem,
+            type: 'GET',
+            success: function( resp ) {
+                console.log('getSatuan: '+ resp);
+                $(".satuan").eq(idxBarang).find('option').remove();
+                var option = '';
+                option += '<option value="'+resp.i_unit1+'" data-unitcmp="'+ resp.i_unitcompare1 +'">'+resp.get_unit1.u_name+'</option>';
+                if (resp.i_unit2 != null && resp.i_unit2 != resp.i_unit1) {
+                    option += '<option value="'+resp.i_unit2+'" data-unitcmp="'+ resp.i_unitcompare2 +'">'+resp.get_unit2.u_name+'</option>';
+                }
+                if (resp.i_unit3 != null && resp.i_unit3 != resp.i_unit2 && resp.i_unit3 != resp.i_unit1) {
+                    option += '<option value="'+resp.i_unit3+'" data-unitcmp="'+ resp.i_unitcompare3 +'">'+resp.get_unit3.u_name+'</option>';
+                }
+                $(".satuan").eq(idxBarang).append(option);
+                if ($(".itemid").eq(idxBarang).val() == "") {
+                    $(".jumlah").eq(idxBarang).attr("readonly", true);
+                    $(".satuan").eq(idxBarang).find('option').remove();
+                }else{
+                    $(".jumlah").eq(idxBarang).attr("readonly", false);
+                }
+            }
+        });
+    }
 
     function changeSatuan() {
         // set-off first to prevent duplicate request from the previous item
@@ -495,7 +636,7 @@
                 $.ajax({
                     url: "{{ route('datakonsinyasi.checkHargaDK') }}",
                     data: {
-                        agentCode: $(".agentCode").val(),
+                        agentCode: $("#agentCode").val(),
                         itemId: $(".itemid").eq(idx).val(),
                         unit: $(".satuan").eq(idx).val(),
                         qty: tmp_jumlah
@@ -552,20 +693,6 @@
                 messageWarning('Error', e.message);
             }
         })
-        // axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
-        // .then(function (resp) {
-        //     $(".jumlah").eq(idx).val(resp.data);
-        //
-        //     var tmp_jumlah = $('.jumlah').eq(idx).val();
-        //
-        //     axios.get(baseUrl+'/marketing/konsinyasipusat/cek-harga/'+$("#kodeKonsigner").val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+tmp_jumlah)
-        //     .then(function (res) {
-        //
-        //     });
-        // })
-        // .catch(function (error) {
-        //     messageWarning("Error", error);
-        // });
     }
 
     function changeHarga() {
@@ -674,16 +801,6 @@
             }
         });
 
-        //
-        // axios.post('{{ route('penempatanproduk.add') }}', data)
-        //     .then(function (response){
-        //
-        //
-        //     })
-        //     .catch(function (error) {
-        //         loadingHide();
-        //         messageWarning("Error", error);
-        //     })
     }
 
     function updateTotalTampil() {
@@ -704,79 +821,8 @@
         $("#total_harga").val(convertToRupiah(total));
     }
 
-    function setItem(info) {
-        idStock = info.stock
-        idItem = info.data.i_id;
-        namaItem = info.data.i_name;
-        kode = info.data.i_code;
-        $(".kode").eq(idxBarang).val(kode);
-        $(".itemid").eq(idxBarang).val(idItem);
-        $(".idStock").eq(idxBarang).val(idStock);
-        setArrayCode();
-        $.ajax({
-            url: baseUrl+ '/marketing/marketingarea/datakonsinyasi/get-satuan/' +idItem,
-            type: 'GET',
-            success: function( resp ) {
-                console.log('getSatuan: '+ resp);
-                $(".satuan").eq(idxBarang).find('option').remove();
-                var option = '';
-                option += '<option value="'+resp.i_unit1+'" data-unitcmp="'+ resp.i_unitcompare1 +'">'+resp.get_unit1.u_name+'</option>';
-                if (resp.i_unit2 != null && resp.i_unit2 != resp.i_unit1) {
-                    option += '<option value="'+resp.i_unit2+'" data-unitcmp="'+ resp.i_unitcompare2 +'">'+resp.get_unit2.u_name+'</option>';
-                }
-                if (resp.i_unit3 != null && resp.i_unit3 != resp.i_unit2 && resp.i_unit3 != resp.i_unit1) {
-                    option += '<option value="'+resp.i_unit3+'" data-unitcmp="'+ resp.i_unitcompare3 +'">'+resp.get_unit3.u_name+'</option>';
-                }
-                $(".satuan").eq(idxBarang).append(option);
-                if ($(".itemid").eq(idxBarang).val() == "") {
-                    $(".jumlah").eq(idxBarang).attr("readonly", true);
-                    $(".satuan").eq(idxBarang).find('option').remove();
-                }else{
-                    $(".jumlah").eq(idxBarang).attr("readonly", false);
-                }
-            }
-        });
-    }
-    // get items
-    function setArrayCode() {
-        var inputs = document.getElementsByClassName('kode'),
-            code  = [].map.call(inputs, function( input ) {
-                return input.value.toString();
-            });
-
-        for (var i=0; i < code.length; i++) {
-            if (code[i] != "") {
-                icode.push(code[i]);
-            }
-        }
-
-        var inpItemid = document.getElementsByClassName( 'itemid' ),
-            item  = [].map.call(inpItemid, function( input ) {
-                return input.value;
-            });
-
-        $(".barang").eq(idxBarang).autocomplete({
-            source: function( request, response ) {
-                $.ajax({
-                    url: "{{ route('datakonsinyasi.getItemsDK') }}",
-                    data: {
-                        idItem: item,
-                        term: $(".barang").eq(idxBarang).val()
-                    },
-                    success: function( data ) {
-                        response( data );
-                    }
-                });
-            },
-            minLength: 1,
-            select: function(event, data) {
-                setItem(data.item);
-            }
-        });
-    }
-
     function visibleTableItem() {
-        if ($(".agentCode").val() != "") {
+        if ($("#provinsi").val() != "" && $("#kota").val() != "" && $("#branchCode").val() != "") {
             $("#tbl_item").show('slow');
             $(".btn-submit").attr("disabled", false);
             $(".btn-submit").css({"cursor":"pointer"});

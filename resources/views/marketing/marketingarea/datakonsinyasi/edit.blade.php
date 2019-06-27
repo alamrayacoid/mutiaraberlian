@@ -1,6 +1,11 @@
 @extends('main')
 
 @section('content')
+    <form class="formCodeProd">
+        <!-- modal-code-production -->
+        @include('marketing.konsinyasipusat.penempatanproduk.modal-code-prod-base')
+
+    </form>
 
 <article class="content animated fadeInLeft">
 
@@ -30,142 +35,142 @@
                         <a href="{{route('marketingarea.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
                       </div>
                     </div>
-
-                    <div class="card-block">
-                        <section>
-                            <div class="row">
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Nama</label>
-                                </div>
-                                <div class="col-md-10 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <input type="hidden" name="idKonsigner" id="idKonsigner" value="{{ $detail->c_id }}">
-                                        <input type="hidden" name="kodeKonsigner" id="kodeKonsigner" value="{{ $detail->c_user }}">
-                                        <input type="hidden" name="nota" id="nota" value="{{ $detail->sc_nota }}">
-                                        <!-- <input type="text" name="konsigner" id="konsigner" class="form-control form-control-sm"
-                                        value="{{ strtoupper($detail->c_name) }}" oninput="handleInput(event)"> -->
-                                        <input type="hidden" id="hid_konsigner" value="{{ $detail->sc_member }}">
-                                        <input type="text" class="form-control form-control-sm agent" name="agentName">
+                    <form id="formKonsinyasi" method="post">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="idSales" id="idSales" value="{{ $ids }}">
+                        <div class="card-block">
+                            <section>
+                                <div class="row">
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Area</label>
                                     </div>
-                                </div>
-
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Email</label>
-                                </div>
-                                <div class="col-md-4 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control form-control-sm email" name="email">
+                                    <div class="col-md-5 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select name="provinsi" id="provinsi" class="form-control form-control-sm select2">
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>No Telp</label>
-                                </div>
-                                <div class="col-md-4 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control form-control-sm hp" name="telp">
+                                    <div class="col-md-5 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select name="kota" id="kota" class="form-control form-control-sm select2">
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Alamat</label>
-                                </div>
-                                <div class="col-md-10 col-sm-6 col-xs-12">
-                                    <div class="form-group">
-                                        <textarea name="address" id="" class="form-control form-control-sm"></textarea>
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Cabang</label>
                                     </div>
-                                </div>
-
-                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                    <label>Total</label>
-                                </div>
-
-                                <div class="col-md-10 col-sm-12">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control form-control-sm"
-                                        name="total_harga"
-                                        id="total_harga" value="{{ Currency::addRupiah($detail->sc_total) }}" readonly>
-                                        <input type="hidden" name="tot_hrg" id="tot_hrg">
+                                    <div class="col-md-10 col-sm-12">
+                                        <div class="form-group">
+                                            <input type="hidden" name="branchCode" id="branchCode" value="{{ $data_item->sc_comp }}">
+                                            <select class="form-control select2" name="branch" id="branch">
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="container" id="tbl_item" style="display: none;">
-                                    <div class="table-responsive mt-3">
-                                        <table class="table table-hover table-striped" id="table_rencana"
-                                            cellspacing="0">
-                                            <thead class="bg-primary">
-                                                <tr>
-                                                    <th>Kode/Nama Barang</th>
-                                                    <th width="10%">Satuan</th>
-                                                    <th>Jumlah</th>
-                                                    <th>Kode Produksi</th>
-                                                    <th>Harga</th>
-                                                    <th>Sub Total</th>
-                                                    <th>Aksi</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($data_item->getSalesCompDt as $key => $data)
-                                                <tr>
-                                                    <td>
-                                                        <input type="hidden" name="idItem[]" class="itemid" value="{{ $data->scd_item }}">
-                                                        <input type="hidden" name="kode[]" class="kode" value="{{ $data->getItem->i_code }}">
-                                                        <input type="hidden" name="idStock[]" class="idStock" value="{{ $data->stockId }}">
-                                                        <input type="text" name="barang[]" class="form-control form-control-sm barang" value="{{ strtoupper($data->getItem->i_code) }} - {{ strtoupper($data->getItem->i_name) }}" autocomplete="off" @if($data->status == 'used') readonly @endif>
-                                                    </td>
-                                                    <td>
-                                                        <select name="satuan[]" data-label="old" class="form-control form-control-sm select2 satuan">
-                                                            <option value="{{ $data->getItem->i_unit1 }}" data-unitcmp="{{ $data->getItem->i_unitcompare1 }}" @if($data->getUnit->u_id == $data->getItem->i_unit1) selected @endif>{{ $data->getItem->getUnit1->u_name }}</option>
-                                                            @if ($data->getItem->i_unit2 != null && $data->getItem->i_unit2 != $data->getItem->i_unit1)
-                                                            <option value="{{ $data->getItem->i_unit2 }}" data-unitcmp="{{ $data->getItem->i_unitcompare2 }}" @if($data->getUnit->u_id == $data->getItem->i_unit2) selected @endif>{{ $data->getItem->getUnit2->u_name }}</option>
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Agen</label>
+                                    </div>
+                                    <div class="col-md-10 col-sm-12">
+                                        <div class="form-group">
+                                            <input type="hidden" name="agentCode" id="agentCode" value="{{ $data_item->sc_member }}">
+                                            <input type="hidden" name="nota" id="nota" value="{{ $data_item->sc_nota }}">
+                                            <select class="form-control select2" name="agent" id="agent">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Total</label>
+                                    </div>
+                                    <div class="col-md-10 col-sm-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-sm"
+                                                name="total_harga"
+                                                id="total_harga" value="{{ Currency::addRupiah($data_item->sc_total) }}" readonly>
+                                            <input type="hidden" name="tot_hrg" id="tot_hrg">
+                                        </div>
+                                    </div>
+
+                                    <div class="container" id="tbl_item" style="display: none;">
+                                        <div class="table-responsive mt-3">
+                                            <table class="table table-hover table-striped" id="table_rencana"
+                                                cellspacing="0">
+                                                <thead class="bg-primary">
+                                                    <tr>
+                                                        <th>Kode/Nama Barang</th>
+                                                        <th width="10%">Satuan</th>
+                                                        <th>Jumlah</th>
+                                                        <th>Kode Produksi</th>
+                                                        <th>Harga</th>
+                                                        <th>Sub Total</th>
+                                                        <th>Aksi</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($data_item->getSalesCompDt as $key => $data)
+                                                    <tr>
+                                                        <td>
+                                                            <input type="hidden" name="idItem[]" class="itemid" value="{{ $data->scd_item }}">
+                                                            <input type="hidden" name="kode[]" class="kode" value="{{ $data->getItem->i_code }}">
+                                                            <input type="hidden" name="idStock[]" class="idStock" value="{{ $data->stockId }}">
+                                                            <input type="text" name="barang[]" class="form-control form-control-sm barang" value="{{ strtoupper($data->getItem->i_code) }} - {{ strtoupper($data->getItem->i_name) }}" autocomplete="off" @if($data->status == 'used') readonly @endif>
+                                                        </td>
+                                                        <td>
+                                                            <select name="satuan[]" data-label="old" class="form-control form-control-sm select2 satuan">
+                                                                <option value="{{ $data->getItem->i_unit1 }}" data-unitcmp="{{ $data->getItem->i_unitcompare1 }}" @if($data->getUnit->u_id == $data->getItem->i_unit1) selected @endif>{{ $data->getItem->getUnit1->u_name }}</option>
+                                                                @if ($data->getItem->i_unit2 != null && $data->getItem->i_unit2 != $data->getItem->i_unit1)
+                                                                <option value="{{ $data->getItem->i_unit2 }}" data-unitcmp="{{ $data->getItem->i_unitcompare2 }}" @if($data->getUnit->u_id == $data->getItem->i_unit2) selected @endif>{{ $data->getItem->getUnit2->u_name }}</option>
+                                                                @endif
+                                                                @if ($data->getItem->i_unit3 != null && $data->getItem->i_unit3 != $data->getItem->i_unit2 && $data->getItem->i_unit3 != $data->getItem->i_unit1)
+                                                                <option value="{{ $data->getItem->i_unit3 }}" data-unitcmp="{{ $data->getItem->i_unitcompare3 }}" @if($data->getUnit->u_id == $data->getItem->i_unit3) selected @endif>{{ $data->getItem->getUnit3->u_name }}</option>
+                                                                @endif
+                                                            </select>
+                                                            <input type="hidden" name="oldSatuan" class="oldSatuan" value="{{ $data->getUnit->u_id }}">
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" data-label="old" value="{{ $data->scd_qty }}">
+                                                            <input type="hidden" name="qtyOld" class="qtyOld" value="{{ $data->scd_qty }}">
+                                                            <input type="hidden" name="status[]" class="status" value="{{ $data->status }}">
+                                                        </td>
+                                                        <td>
+                                                            <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="harga[]" class="form-control form-control-sm harga" value="{{ Currency::addRupiah($data->scd_value) }}" readonly>
+                                                            <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="{{ Currency::addRupiah($data->scd_totalnet) }}" readonly>
+                                                        </td>
+                                                        <td>
+                                                            @if ($key == 0)
+                                                            <button type="button" class="btn btn-sm btn-success rounded-circle btn-tambahp"><i class="fa fa-plus"></i></button>
+                                                            <button class="btn btn-danger rounded-circle btn-hapus btn-sm d-none" type="button"  @if($data->status == 'used') disabled @endif>
+                                                                <i class="fa fa-remove" aria-hidden="true"></i>
+                                                            </button>
+                                                            @else
+                                                            <button class="btn btn-danger rounded-circle btn-hapus btn-sm" type="button"  @if($data->status == 'used') disabled @endif>
+                                                                <i class="fa fa-remove" aria-hidden="true"></i>
+                                                            </button>
                                                             @endif
-                                                            @if ($data->getItem->i_unit3 != null && $data->getItem->i_unit3 != $data->getItem->i_unit2 && $data->getItem->i_unit3 != $data->getItem->i_unit1)
-                                                            <option value="{{ $data->getItem->i_unit3 }}" data-unitcmp="{{ $data->getItem->i_unitcompare3 }}" @if($data->getUnit->u_id == $data->getItem->i_unit3) selected @endif>{{ $data->getItem->getUnit3->u_name }}</option>
-                                                            @endif
-                                                        </select>
-                                                        <input type="hidden" name="oldSatuan" class="oldSatuan" value="{{ $data->getUnit->u_id }}">
-                                                    </td>
-                                                    <td>
-                                                        <input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" data-label="old" value="{{ $data->scd_qty }}">
-                                                        <input type="hidden" name="qtyOld" class="qtyOld" value="{{ $data->scd_qty }}">
-                                                        <input type="hidden" name="status[]" class="status" value="{{ $data->status }}">
-                                                    </td>
-                                                    <td>
-                                                        <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="harga[]" class="form-control form-control-sm harga" value="{{ Currency::addRupiah($data->scd_value) }}" readonly>
-                                                        <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="{{ Currency::addRupiah($data->scd_totalnet) }}" readonly>
-                                                    </td>
-                                                    <td>
-                                                        @if ($key == 0)
-                                                        <button type="button" class="btn btn-sm btn-success rounded-circle btn-tambahp"><i class="fa fa-plus"></i></button>
-                                                        <button class="btn btn-danger rounded-circle btn-hapus btn-sm d-none" type="button"  @if($data->status == 'used') disabled @endif>
-                                                            <i class="fa fa-remove" aria-hidden="true"></i>
-                                                        </button>
-                                                        @else
-                                                        <button class="btn btn-danger rounded-circle btn-hapus btn-sm" type="button"  @if($data->status == 'used') disabled @endif>
-                                                            <i class="fa fa-remove" aria-hidden="true"></i>
-                                                        </button>
-                                                        @endif
 
-                                                    </td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </section>
-                    </div>
-                    <div class="card-footer text-right">
-                      <button class="btn btn-primary btn-submit" type="button">Simpan</button>
-                      <a href="{{route('marketingarea.index')}}" class="btn btn-secondary">Kembali</a>
-                    </div>
+                            </section>
+                        </div>
+                        <div class="card-footer text-right">
+                            <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+                            <a href="{{route('marketingarea.index')}}" class="btn btn-secondary">Kembali</a>
+                        </div>
+
+                    </form>
                 </div>
 
       </div>
@@ -187,6 +192,8 @@
     var idxBarang = null;
     var icode = [];
     var checkitem = null;
+    var selectProv = '{{ $data_item->getComp->getCity->wc_provinsi }}';
+    var selectKota = '{{ $data_item->getComp->getCity->wc_id }}';
     var salescompdt = 0;
 
     $(document).ready(function () {
@@ -196,10 +203,46 @@
         // set modal production-code
         setModalCodeProdReady();
 
+        getProv();
+        getKota();
         changeSatuan();
         changeJumlah();
         changeHarga();
         visibleTableItem();
+
+        $("#kota").on("change", function (evt) {
+            evt.preventDefault();
+            if ($("#kota").val() == "") {
+                $("#branchCode").val('');
+                $("#branch").val('');
+                $('#branch').find('option').remove();
+                $("#branch").attr("disabled", true);
+            }
+            else {
+                getBranch();
+                $("#branch").attr("disabled", false);
+                $("#branchCode").val('');
+                $("#branch").val('');
+                $("#branch").attr('autofocus', true);
+            }
+        })
+        // on select branch
+        $('#branch').on('select2:select', function() {
+            // console.log($(this).val(), $(this).find('option:selected').data('code'));
+            $( "#branchCode" ).val($(this).find('option:selected').val());
+            if ($(this).val() != '') {
+                getAgent();
+            }
+            else {
+                $('#agentCode').val('');
+            }
+            visibleTableItem();
+        });
+        // on selectagent
+        $('#agent').on('select2:select', function() {
+            $('#agentCode').val($(this).find('option:selected').val());
+            visibleTableItem();
+        });
 
         getEventsReady();
 
@@ -303,7 +346,7 @@
             },
             minLength: 1,
             select: function(event, data) {
-                $('.agentCode').val(data.item.id);
+                $('#agentCode').val(data.item.id);
                 visibleTableItem();
             }
         });
@@ -371,9 +414,6 @@
             let unitCmp = parseInt($('.satuan').eq(idxBarang).find('option:selected').data('unitcmp')) || 0;
             let qty = parseInt($('.jumlah').eq(idxBarang).val()) || 0;
             let qtyUnit = qty * unitCmp;
-            console.log('unitCmp: '+ unitCmp);
-            console.log('qty: '+ qty);
-            console.log('qtyUnit: '+ qtyUnit);
             // pass qtyUnit to modal
             $('.modalCodeProd').eq(idxBarang).find('.QtyH').val(qtyUnit);
             $('.modalCodeProd').eq(idxBarang).find('.usedUnit').val($('.satuan').eq(idxBarang).find('option:first-child').text());
@@ -420,6 +460,66 @@
             // unmaskAsNumber: true,
         });
     }
+    // get list of branc based on prov and city
+    function getBranch() {
+        loadingShow();
+        $.ajax({
+            url: "{{ route('datakonsinyasi.getBranchDK') }}",
+            data: {
+                prov: $("#provinsi").val(),
+                city: $("#kota").val()
+            },
+            type: 'get',
+            success: function( data ) {
+                console.log(data);
+                $('#branch').find('option').remove();
+                $('#branch').append('<option value="" selected>Pilih Cabang</option>')
+                $.each(data, function(index, val) {
+                    if(val.c_id == $('#branchCode').val()) {
+                        $('#branch').append('<option value="'+ val.c_id +'" selected>'+ val.c_name +'</option>');
+                    }
+                    else {
+                        $('#branch').append('<option value="'+ val.c_id +'">'+ val.c_name +'</option>');
+                    }
+                });
+                getAgent();
+                loadingHide();
+            },
+            error: function(e) {
+                loadingHide();
+                // console.log('get konsigner error: ');
+            }
+        });
+    }
+    // get list of agent based on branch
+    function getAgent() {
+        loadingShow();
+        $.ajax({
+            url: "{{ route('datakonsinyasi.getAgentsDK') }}",
+            data: {
+                branch: $("#branchCode").val()
+            },
+            type: 'get',
+            success: function( data ) {
+                // console.log(data);
+                $('#agent').find('option').remove();
+                $('#agent').append('<option value="" selected>Pilih Agen</option>')
+                $.each(data, function(index, val) {
+                    if (val.get_company.c_id == $('#agentCode').val()) {
+                        $('#agent').append('<option value="'+ val.get_company.c_id +'" selected>'+ val.a_name +'</option>');
+                    }
+                    else {
+                        $('#agent').append('<option value="'+ val.get_company.c_id +'">'+ val.a_name +'</option>');
+                    }
+                })
+                loadingHide();
+            },
+            error: function(e) {
+                loadingHide();
+                // console.log('get konsigner error: ');
+            }
+        });
+    }
 
     function changeSatuan() {
         $(".satuan").on("change", function (evt) {
@@ -434,86 +534,121 @@
             }
 
             if ($('.jumlah').eq(idx).attr("data-label") == "old") {
-                axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok-old/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".oldSatuan").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+qtyOld+'/'+jumlah)
-                .then(function (resp) {
-                    $(".jumlah").eq(idx).val(resp.data);
-                    // trigger on-input 'jumlah'
-                    $(".jumlah").eq(idx).trigger('input');
+                $.ajax({
+                    url: "{{ route('datakonsinyasi.checkItemStockDKOld') }}",
+                    data: {
+                        idStock:  $(".idStock").eq(idx).val(),
+                        itemId: $(".itemid").eq(idx).val(),
+                        unitOld:  $(".oldSatuan").eq(idx).val(),
+                        unit: $(".satuan").eq(idx).val(),
+                        qtyOld: qtyOld,
+                        qty: jumlah
+                    },
+                    type: 'get',
+                    success: function (resp) {
+                        $(".jumlah").eq(idx).val(resp);
+                        // trigger on-input 'jumlah'
+                        $(".jumlah").eq(idx).trigger('input');
 
-                    var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-                    jumlah  = [].map.call(inpJumlah, function( input ) {
-                        return parseInt(input.value);
-                    });
+                        var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                        jumlah  = [].map.call(inpJumlah, function( input ) {
+                            return parseInt(input.value);
+                        });
 
-                    var inpHarga = document.getElementsByClassName( 'harga' ),
-                    harga  = [].map.call(inpHarga, function( input ) {
-                        return input.value;
-                    });
+                        var inpHarga = document.getElementsByClassName( 'harga' ),
+                        harga  = [].map.call(inpHarga, function( input ) {
+                            return input.value;
+                        });
 
-                    for (var i = 0; i < jumlah.length; i++) {
-                        var hasil = 0;
-                        var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                        var jml = jumlah[i];
+                        for (var i = 0; i < jumlah.length; i++) {
+                            var hasil = 0;
+                            var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                            var jml = jumlah[i];
 
-                        if (jml == "") {
-                            jml = 0;
+                            if (jml == "") {
+                                jml = 0;
+                            }
+
+                            hasil += parseInt(hrg) * parseInt(jml);
+
+                            if (isNaN(hasil)) {
+                                hasil = 0;
+                            }
+                            hasil = convertToRupiah(hasil);
+                            $(".subtotal").eq(i).val(hasil);
+
                         }
-
-                        hasil += parseInt(hrg) * parseInt(jml);
-
-                        if (isNaN(hasil)) {
-                            hasil = 0;
-                        }
-                        hasil = convertToRupiah(hasil);
-                        $(".subtotal").eq(i).val(hasil);
-
+                        updateTotalTampil();
+                    },
+                    error: function (e) {
+                        messageWarning("Error", e);
                     }
-                    updateTotalTampil();
-                })
-                .catch(function (error) {
-                    messageWarning("Error", error);
-                })
+                });
+
+                // axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok-old/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".oldSatuan").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+qtyOld+'/'+jumlah)
+                // .then(function (resp) {
+                //
+                // })
+                // .catch(function (error) {
+                // })
             }
             else {
-                axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
-                .then(function (resp) {
-                    $(".jumlah").eq(idx).val(resp.data);
-                    // trigger on-input 'jumlah'
-                    $(".jumlah").eq(idx).trigger('input');
+                $.ajax({
+                    url: "{{ route('datakonsinyasi.checkItemStockDK') }}",
+                    data: {
+                        idStock: $(".idStock").eq(idx).val(),
+                        itemId: $(".itemid").eq(idx).val(),
+                        unit: $(".satuan").eq(idx).val(),
+                        qty: jumlah
+                    },
+                    type: 'get',
+                    success: function (resp) {
+                        $(".jumlah").eq(idx).val(resp.data);
+                        // trigger on-input 'jumlah'
+                        $(".jumlah").eq(idx).trigger('input');
 
-                    var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-                    jumlah  = [].map.call(inpJumlah, function( input ) {
-                        return parseInt(input.value);
-                    });
+                        var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                        jumlah  = [].map.call(inpJumlah, function( input ) {
+                            return parseInt(input.value);
+                        });
 
-                    var inpHarga = document.getElementsByClassName( 'harga' ),
-                    harga  = [].map.call(inpHarga, function( input ) {
-                        return input.value;
-                    });
+                        var inpHarga = document.getElementsByClassName( 'harga' ),
+                        harga  = [].map.call(inpHarga, function( input ) {
+                            return input.value;
+                        });
 
-                    for (var i = 0; i < jumlah.length; i++) {
-                        var hasil = 0;
-                        var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                        var jml = jumlah[i];
+                        for (var i = 0; i < jumlah.length; i++) {
+                            var hasil = 0;
+                            var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                            var jml = jumlah[i];
 
-                        if (jml == "") {
-                            jml = 0;
+                            if (jml == "") {
+                                jml = 0;
+                            }
+
+                            hasil += parseInt(hrg) * parseInt(jml);
+
+                            if (isNaN(hasil)) {
+                                hasil = 0;
+                            }
+                            hasil = convertToRupiah(hasil);
+                            $(".subtotal").eq(i).val(hasil);
+
                         }
-
-                        hasil += parseInt(hrg) * parseInt(jml);
-
-                        if (isNaN(hasil)) {
-                            hasil = 0;
-                        }
-                        hasil = convertToRupiah(hasil);
-                        $(".subtotal").eq(i).val(hasil);
-
+                        updateTotalTampil();
+                    },
+                    error: function (e) {
+                        messageWarning("Error", e);
                     }
-                    updateTotalTampil();
-                })
-                .catch(function (error) {
-                    messageWarning("Error", error);
-                })
+                });
+                //
+                // axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
+                // .then(function (resp) {
+                //
+                // })
+                // .catch(function (error) {
+                //
+                // })
             }
         })
     }
@@ -538,145 +673,295 @@
                 // checkStock
                 checkStock(idx, jumlah);
             }
-
         })
     }
 
     // check item stock
     function checkStock(idx, jumlah)
     {
-        axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
-        .then(function (resp) {
-            $(".jumlah").eq(idx).val(resp.data);
+        $.ajax({
+            url: "{{ route('datakonsinyasi.checkItemStockDK') }}",
+            data: {
+                idStock: $(".idStock").eq(idx).val(),
+                itemId: $(".itemid").eq(idx).val(),
+                unit: $(".satuan").eq(idx).val(),
+                qty: jumlah
+            },
+            type: 'get',
+            success: function (resp) {
+                $(".jumlah").eq(idx).val(resp);
 
-            getPrice(idx, jumlah);
+                getPrice(idx, jumlah);
 
-            var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-            jumlah  = [].map.call(inpJumlah, function( input ) {
-                return parseInt(input.value);
-            });
+                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                jumlah  = [].map.call(inpJumlah, function( input ) {
+                    return parseInt(input.value);
+                });
 
-            var inpHarga = document.getElementsByClassName( 'harga' ),
-            harga  = [].map.call(inpHarga, function( input ) {
-                return input.value;
-            });
+                var inpHarga = document.getElementsByClassName( 'harga' ),
+                harga  = [].map.call(inpHarga, function( input ) {
+                    return input.value;
+                });
 
-            for (var i = 0; i < jumlah.length; i++) {
-                var hasil = 0;
-                var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                var jml = jumlah[i];
+                for (var i = 0; i < jumlah.length; i++) {
+                    var hasil = 0;
+                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                    var jml = jumlah[i];
 
-                if (jml == "") {
-                    jml = 0;
+                    if (jml == "") {
+                        jml = 0;
+                    }
+
+                    hasil += parseInt(hrg) * parseInt(jml);
+
+                    if (isNaN(hasil)) {
+                        hasil = 0;
+                    }
+                    hasil = convertToRupiah(hasil);
+                    $(".subtotal").eq(i).val(hasil);
+
                 }
-
-                hasil += parseInt(hrg) * parseInt(jml);
-
-                if (isNaN(hasil)) {
-                    hasil = 0;
-                }
-                hasil = convertToRupiah(hasil);
-                $(".subtotal").eq(i).val(hasil);
-
+                updateTotalTampil();
+            },
+            error: function (e) {
+                messageWarning("Error", e);
             }
-            updateTotalTampil();
-        })
-        .catch(function (error) {
-            messageWarning("Error", error);
-        })
+        });
+        // axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+jumlah)
+        // .then(function (resp) {
+        //     $(".jumlah").eq(idx).val(resp.data);
+        //
+        //     getPrice(idx, jumlah);
+        //
+        //     var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+        //     jumlah  = [].map.call(inpJumlah, function( input ) {
+        //         return parseInt(input.value);
+        //     });
+        //
+        //     var inpHarga = document.getElementsByClassName( 'harga' ),
+        //     harga  = [].map.call(inpHarga, function( input ) {
+        //         return input.value;
+        //     });
+        //
+        //     for (var i = 0; i < jumlah.length; i++) {
+        //         var hasil = 0;
+        //         var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+        //         var jml = jumlah[i];
+        //
+        //         if (jml == "") {
+        //             jml = 0;
+        //         }
+        //
+        //         hasil += parseInt(hrg) * parseInt(jml);
+        //
+        //         if (isNaN(hasil)) {
+        //             hasil = 0;
+        //         }
+        //         hasil = convertToRupiah(hasil);
+        //         $(".subtotal").eq(i).val(hasil);
+        //
+        //     }
+        //     updateTotalTampil();
+        // })
+        // .catch(function (error) {
+        //     messageWarning("Error", error);
+        // })
     }
     // check item stock
     function checkStockOld(idx, qtyOld, jumlah)
     {
-        axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok-old/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".oldSatuan").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+qtyOld+'/'+jumlah)
-        .then(function (resp) {
-            $(".jumlah").eq(idx).val(resp.data);
+        $.ajax({
+            url: "{{ route('datakonsinyasi.checkItemStockDKOld') }}",
+            data: {
+                idStock:  $(".idStock").eq(idx).val(),
+                itemId: $(".itemid").eq(idx).val(),
+                unitOld:  $(".oldSatuan").eq(idx).val(),
+                unit: $(".satuan").eq(idx).val(),
+                qtyOld: qtyOld,
+                qty: jumlah
+            },
+            type: 'get',
+            success: function (resp) {
+                $(".jumlah").eq(idx).val(resp);
+                getPrice(idx, jumlah);
 
-            getPrice(idx, jumlah);
+                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                jumlah  = [].map.call(inpJumlah, function( input ) {
+                    return parseInt(input.value);
+                });
 
-            var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-            jumlah  = [].map.call(inpJumlah, function( input ) {
-                return parseInt(input.value);
-            });
+                var inpHarga = document.getElementsByClassName( 'harga' ),
+                harga  = [].map.call(inpHarga, function( input ) {
+                    return input.value;
+                });
 
-            var inpHarga = document.getElementsByClassName( 'harga' ),
-            harga  = [].map.call(inpHarga, function( input ) {
-                return input.value;
-            });
+                for (var i = 0; i < jumlah.length; i++) {
+                    var hasil = 0;
+                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                    var jml = jumlah[i];
 
-            for (var i = 0; i < jumlah.length; i++) {
-                var hasil = 0;
-                var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                var jml = jumlah[i];
+                    if (jml == "") {
+                        jml = 0;
+                    }
 
-                if (jml == "") {
-                    jml = 0;
+                    hasil += parseInt(hrg) * parseInt(jml);
+
+                    if (isNaN(hasil)) {
+                        hasil = 0;
+                    }
+                    hasil = convertToRupiah(hasil);
+                    $(".subtotal").eq(i).val(hasil);
+
                 }
-
-                hasil += parseInt(hrg) * parseInt(jml);
-
-                if (isNaN(hasil)) {
-                    hasil = 0;
-                }
-                hasil = convertToRupiah(hasil);
-                $(".subtotal").eq(i).val(hasil);
-
+                updateTotalTampil();
+            },
+            error: function (e) {
+                messageWarning("Error", e);
             }
-            updateTotalTampil();
-        })
-        .catch(function (error) {
-            messageWarning("Error", error);
-        })
+        });
+        // axios.get(baseUrl+'/marketing/konsinyasipusat/cek-stok-old/'+$(".idStock").eq(idx).val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".oldSatuan").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+qtyOld+'/'+jumlah)
+        // .then(function (resp) {
+        //     $(".jumlah").eq(idx).val(resp.data);
+        //
+        //     getPrice(idx, jumlah);
+        //
+        //     var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+        //     jumlah  = [].map.call(inpJumlah, function( input ) {
+        //         return parseInt(input.value);
+        //     });
+        //
+        //     var inpHarga = document.getElementsByClassName( 'harga' ),
+        //     harga  = [].map.call(inpHarga, function( input ) {
+        //         return input.value;
+        //     });
+        //
+        //     for (var i = 0; i < jumlah.length; i++) {
+        //         var hasil = 0;
+        //         var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+        //         var jml = jumlah[i];
+        //
+        //         if (jml == "") {
+        //             jml = 0;
+        //         }
+        //
+        //         hasil += parseInt(hrg) * parseInt(jml);
+        //
+        //         if (isNaN(hasil)) {
+        //             hasil = 0;
+        //         }
+        //         hasil = convertToRupiah(hasil);
+        //         $(".subtotal").eq(i).val(hasil);
+        //
+        //     }
+        //     updateTotalTampil();
+        // })
+        // .catch(function (error) {
+        //     messageWarning("Error", error);
+        // })
     }
     // get item price
     function getPrice(idx, qty)
     {
         var tmp_jumlah = $('.jumlah').eq(idx).val();
+        $.ajax({
+            url: "{{ route('datakonsinyasi.checkHargaDK') }}",
+            data: {
+                agentCode: $("#agentCode").val(),
+                itemId: $(".itemid").eq(idx).val(),
+                unit: $(".satuan").eq(idx).val(),
+                qty: tmp_jumlah
+            },
+            type: 'get',
+            success: function (response) {
+                var price = response;
 
-        axios.get(baseUrl+'/marketing/konsinyasipusat/cek-harga/'+$("#kodeKonsigner").val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+tmp_jumlah)
-        .then(function (res) {
-            var price = res.data;
-
-            if (isNaN(price)) {
-                price = 0;
-            }
-            if (price == 0) {
-                $('.unknow').eq(idx).css('display', 'block');
-            } else {
-                $('.unknow').eq(idx).css('display', 'none');
-            }
-            $('.harga').eq(idx).val(convertToRupiah(price));
-
-            var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-            jumlah  = [].map.call(inpJumlah, function( input ) {
-                return parseInt(input.value);
-            });
-
-            var inpHarga = document.getElementsByClassName( 'harga' ),
-            harga  = [].map.call(inpHarga, function( input ) {
-                return input.value;
-            });
-
-            for (var i = 0; i < jumlah.length; i++) {
-                var hasil = 0;
-                var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                var jml = jumlah[i];
-
-                if (jml == "") {
-                    jml = 0;
+                if (isNaN(price)) {
+                    price = 0;
                 }
-
-                hasil += parseInt(hrg) * parseInt(jml);
-
-                if (isNaN(hasil)) {
-                    hasil = 0;
+                if (price == 0) {
+                    $('.unknow').eq(idx).css('display', 'block');
+                } else {
+                    $('.unknow').eq(idx).css('display', 'none');
                 }
-                hasil = convertToRupiah(hasil);
-                $(".subtotal").eq(i).val(hasil);
+                $('.harga').eq(idx).val(convertToRupiah(price));
 
+                var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                jumlah  = [].map.call(inpJumlah, function( input ) {
+                    return parseInt(input.value);
+                });
+
+                var inpHarga = document.getElementsByClassName( 'harga' ),
+                harga  = [].map.call(inpHarga, function( input ) {
+                    return input.value;
+                });
+
+                for (var i = 0; i < jumlah.length; i++) {
+                    var hasil = 0;
+                    var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                    var jml = jumlah[i];
+
+                    if (jml == "") {
+                        jml = 0;
+                    }
+
+                    hasil += parseInt(hrg) * parseInt(jml);
+
+                    if (isNaN(hasil)) {
+                        hasil = 0;
+                    }
+                    hasil = convertToRupiah(hasil);
+                    $(".subtotal").eq(i).val(hasil);
+                }
+                updateTotalTampil();
+            },
+            error: function (err) {
+                messageWarning('Error', err.message);
             }
-            updateTotalTampil();
         });
+        // axios.get(baseUrl+'/marketing/konsinyasipusat/cek-harga/'+$("#kodeKonsigner").val()+'/'+$(".itemid").eq(idx).val()+'/'+$(".satuan").eq(idx).val()+'/'+tmp_jumlah)
+        // .then(function (res) {
+        //     var price = res.data;
+        //
+        //     if (isNaN(price)) {
+        //         price = 0;
+        //     }
+        //     if (price == 0) {
+        //         $('.unknow').eq(idx).css('display', 'block');
+        //     } else {
+        //         $('.unknow').eq(idx).css('display', 'none');
+        //     }
+        //     $('.harga').eq(idx).val(convertToRupiah(price));
+        //
+        //     var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+        //     jumlah  = [].map.call(inpJumlah, function( input ) {
+        //         return parseInt(input.value);
+        //     });
+        //
+        //     var inpHarga = document.getElementsByClassName( 'harga' ),
+        //     harga  = [].map.call(inpHarga, function( input ) {
+        //         return input.value;
+        //     });
+        //
+        //     for (var i = 0; i < jumlah.length; i++) {
+        //         var hasil = 0;
+        //         var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+        //         var jml = jumlah[i];
+        //
+        //         if (jml == "") {
+        //             jml = 0;
+        //         }
+        //
+        //         hasil += parseInt(hrg) * parseInt(jml);
+        //
+        //         if (isNaN(hasil)) {
+        //             hasil = 0;
+        //         }
+        //         hasil = convertToRupiah(hasil);
+        //         $(".subtotal").eq(i).val(hasil);
+        //
+        //     }
+        //     updateTotalTampil();
+        // });
     }
 
     function changeHarga() {
@@ -764,7 +1049,6 @@
             $('.modalCodeProd:eq('+ key +')').find('.table_listcodeprod > tbody > tr').remove();
             if (val.get_prod_code.length > 0) {
                 $.each(val.get_prod_code, function (idx, val) {
-                    // console.log(idx +': '+ val);
                     prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]" value="'+ val.ssc_code +'"></input></td>';
                     qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="'+ val.ssc_qty +'"></input></td>';
                     action = '<td><button class="btn btn-success btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
@@ -789,22 +1073,28 @@
             data = data +'&'+ inputs;
         });
 
-        axios.post(baseUrl+'/marketing/konsinyasipusat/penempatanproduk/edit/'+$("#idSales").val(), data)
-        .then(function (response){
-            if(response.data.status == 'Success'){
+        $.ajax({
+            url: baseUrl +"/marketing/marketingarea/datakonsinyasi/update/"+ $("#idSales").val(),
+            data: data,
+            type: 'post',
+            success: function (response) {
                 loadingHide();
-                messageSuccess("Berhasil", response.data.message);
-                setInterval(function(){location.reload();}, 3500)
-            }else{
+                if (response.status == 'Success') {
+                    messageSuccess("Berhasil", response.message);
+                    setInterval(function(){location.reload();}, 3500)
+                }
+                else if (response.status === 'invalid') {
+                    messageWarning('Perhatian', response.message);
+                }
+                else {
+                    messageFailed("Gagal", response.message);
+                }
+            },
+            error: function (err) {
                 loadingHide();
-                messageFailed("Gagal", response.data.message);
+                messageWarning('Error', err.message);
             }
-
-        })
-        .catch(function (error) {
-            loadingHide();
-            messageWarning("Error", error);
-        })
+        });
     }
     // update totalPrice
     function updateTotalTampil() {
@@ -899,7 +1189,7 @@
     }
     // set visible table
     function visibleTableItem() {
-        if ($(".agentCode").val() != "") {
+        if ($("#agentCode").val() != "") {
             $("#tbl_item").show('slow');
             $(".btn-submit").attr("disabled", false);
             $(".btn-submit").css({"cursor":"pointer"});
@@ -909,6 +1199,81 @@
             $(".btn-submit").attr("disabled", true);
             $(".btn-submit").css({"cursor":"not-allowed"});
         }
+    }
+
+    function getProv() {
+        loadingShow();
+        $("#provinsi").find('option').remove();
+        $("#provinsi").attr("disabled", true);
+        axios.get('{{ route('konsinyasipusat.getProv') }}')
+        .then(function (resp) {
+            $("#provinsi").attr("disabled", false);
+            var option = '<option value="">Pilih Provinsi</option>';
+            var prov = resp.data;
+            prov.forEach(function (data) {
+                if (selectProv == data.wp_id) {
+                    option += '<option value="'+data.wp_id+'" selected>'+data.wp_name+'</option>';
+                }else{
+                    option += '<option value="'+data.wp_id+'">'+data.wp_name+'</option>';
+                }
+            })
+            $("#provinsi").append(option);
+            axios.get(baseUrl+'/marketing/konsinyasipusat/get-kota/'+$("#provinsi").val())
+            .then(function (resp) {
+                $("#kota").attr("disabled", false);
+                var option = '<option value="">Pilih Kota</option>';
+                var kota = resp.data;
+                kota.forEach(function (data) {
+                    if (selectKota == data.wc_id) {
+                        option += '<option value="'+data.wc_id+'" selected>'+data.wc_name+'</option>';
+                    }else{
+                        option += '<option value="'+data.wc_id+'">'+data.wc_name+'</option>';
+                    }
+                })
+                $("#kota").append(option);
+                loadingHide();
+                getBranch();
+            })
+            .catch(function (error) {
+                loadingHide();
+                messageWarning("Error", error)
+            })
+            loadingHide();
+        })
+        .catch(function (error) {
+            loadingHide();
+            messageWarning("Error", error)
+        })
+    }
+    function getKota() {
+        $("#provinsi").on("change", function (evt) {
+            evt.preventDefault();
+            $("#idKonsigner").val('');
+            $("#kodeKonsigner").val('');
+            $("#konsigner").val('');
+            $("#kota").find('option').remove();
+            $("#kota").attr("disabled", true);
+            $("#konsigner").attr("disabled", true);
+            if ($("#provinsi").val() != "") {
+                loadingShow();
+                axios.get(baseUrl+'/marketing/konsinyasipusat/get-kota/'+$("#provinsi").val())
+                .then(function (resp) {
+                    $("#kota").attr("disabled", false);
+                    var option = '<option value="">Pilih Kota</option>';
+                    var kota = resp.data;
+                    kota.forEach(function (data) {
+                        option += '<option value="'+data.wc_id+'">'+data.wc_name+'</option>';
+                    })
+                    $("#kota").append(option);
+                    loadingHide();
+                    $("#kota").focus();
+                })
+                .catch(function (error) {
+                    loadingHide();
+                    messageWarning("Error", error)
+                })
+            }
+        })
     }
 
     // check production code qty each item
