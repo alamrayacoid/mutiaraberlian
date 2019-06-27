@@ -166,6 +166,9 @@ var data = [];
                   setTimeout(function () {
                     window.location.href = '{{route('adjustment.index')}}';
                   }, 1000);
+                } else if (response.status == 'warning') {
+                  loadingHide();
+                  messageWarning('Peringatan!', 'Opname Expired!');
                 } else {
                   messageFailed('Gagal!', 'Opname gagal!');
                 }
