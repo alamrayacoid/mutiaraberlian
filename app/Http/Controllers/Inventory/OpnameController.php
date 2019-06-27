@@ -62,11 +62,11 @@ class OpnameController extends Controller
         ->first();
       if ($stock != null) {
         $results = [
-          'unit1_id' => $stock->getItem['getUnit1']['u_id'],
+          'unit1_id'   => $stock->getItem['getUnit1']['u_id'],
           'unit1_name' => $stock->getItem['getUnit1']['u_name'],
-          'unit2_id' => $stock->getItem['getUnit2']['u_id'],
+          'unit2_id'   => $stock->getItem['getUnit2']['u_id'],
           'unit2_name' => $stock->getItem['getUnit2']['u_name'],
-          'unit3_id' => $stock->getItem['getUnit3']['u_id'],
+          'unit3_id'   => $stock->getItem['getUnit3']['u_id'],
           'unit3_name' => $stock->getItem['getUnit3']['u_name']
         ];
       } else {
@@ -274,7 +274,7 @@ class OpnameController extends Controller
             ]);
           }
 
-          // otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
+          otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
 
         DB::commit();
         return response()->json([
@@ -353,7 +353,7 @@ class OpnameController extends Controller
           $opname->oa_insert = Carbon::now();
           $opname->save();
 
-          // otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
+          otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
 
         DB::commit();
         return response()->json([
@@ -384,7 +384,7 @@ class OpnameController extends Controller
           ->where('oa_id', $id)
           ->delete();
 
-          // otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
+          otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
 
         DB::commit();
         return response()->json([

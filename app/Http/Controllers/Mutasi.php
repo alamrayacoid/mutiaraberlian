@@ -1254,10 +1254,10 @@ class Mutasi extends Controller
     }
     // insert new record in stock-mutation-dt
     public static function insertStockMutationDt(
-        $stockId,
-        $smDetailId,
-        $listPC,
-        $listQtyPC
+        $stockId, //id Stock Mutation
+        $smDetailId, // detail id Stock Mutation
+        $listPC, // List Production Code
+        $listQtyPC // List Qty Production Code
         )
     {
         DB::beginTransaction();
@@ -1462,8 +1462,7 @@ class Mutasi extends Controller
             $stockMutations = d_stock_mutation::where('sm_nota', '=', $nota)
             ->whereHas('getStock', function ($query) use ($item) {
                 $query->where('s_item', $item);
-            })
-            ->get();
+            })->get();
 
             foreach ($stockMutations as $key => $sm)
             {

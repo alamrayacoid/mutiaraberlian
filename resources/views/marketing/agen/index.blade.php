@@ -9,6 +9,17 @@
             font-size: 14px;
             font-weight: bold;
         }
+
+        .modal {
+            z-index: 9999 !important;
+        }
+
+        .ui-autocomplete-input {
+            z-index: 10000 !important;
+        }
+        .ui-autocomplete {
+            z-index: 10001 !important;
+        }
     </style>
 @endsection
 @section('content')
@@ -683,5 +694,47 @@
                 }
             });
         }
+
+        function getAgen() {
+            $.ajax({
+                url: baseUrl+'/marketing/konsinyasipusat/cari-konsigner-select2/'+$("#area_provinsi").val()+'/'+$("#area_kota").val(),
+                type: 'get',
+                success: function( data ) {
+                    // console.log(data);
+                    $('#nama_agen').find('option').remove();
+                    $('#nama_agen').append('<option value="" selected disabled> == Pilih Agen ==</option>')
+                    $.each(data, function(index, val) {
+                        // console.log(val, val.a_id);
+                        $('#nama_agen').append('<option value="'+ val.c_id +'" data-code="'+ val.a_code +'">'+ val.a_name +'</option>');
+                    });
+                    $('#nama_agen').focus();
+                    $('#nama_agen').select2('open');
+                },
+                error: function(e) {
+                    // console.log('get konsigner error: ');
+                }
+            });
+
+        }
+
+        $( "#produk" ).autocomplete({
+            source: function( request, response ) {
+                $.ajax({
+                    url: '{{ route('kelolapenjualanviawebsite.cariProduk') }}',
+                    data: {
+                        term: $("#produk").val()
+                    },
+                    success: function( data ) {
+                        response( data );
+                    }
+                });
+            },
+            minLength: 1,
+            select: function(event, data) {
+                $('#id_produk').val(data.item.id);
+            }
+        });
+
+
     </script>
 @endsection
