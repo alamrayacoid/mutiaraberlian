@@ -32,7 +32,7 @@
                       <div class="row">
                         <div class="col-12" align="center">
                           <div class="form-group">
-                            <img src="{{asset('assets/img/add-image-icon2.png')}}" id="img-preview" style="cursor: pointer; max-height: 254px;max-width: 100%;" class="img-thumbnail">
+                            <img src="{{asset('assets/img/default.jpg')}}" id="img-preview" style="cursor: pointer; max-height: 254px;max-width: 100%;" class="img-thumbnail">
                           </div>
                         </div>
                         <div class="col-12">
@@ -81,14 +81,6 @@
                             </select>
                           </div>
                         </div>
-                        {{-- <div class="col-md-3 col-sm-6 col-xs-12">
-                          <label>Hari Kerja</label>
-                        </div>
-                        <div class="col-md-9 col-sm-6 col-xs-12">
-                          <div class="form-group">
-                            <input type="text" class="form-control form-control-sm" name="e_workingdays">
-                          </div>
-                        </div> --}}
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <label>Nomor HP <span class="text-danger">*</span></label>
                         </div>
@@ -110,7 +102,7 @@
                         </div>
                         <div class="col-md-4 col-sm-6 col-xs-12">
                           <div class="form-group">
-                            <select class="form-control form-control-sm select2" name="e_gender" required>
+                            <select class="form-control form-control-sm select2" name="e_gender" id="e_gender" required>
                               <option value="" disabled selected>== Pilih Jenis ==</option>
                               <option value="L">Laki-laki</option>
                               <option value="P">Perempuan</option>
@@ -118,41 +110,43 @@
                           </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
-                          <label>Nama Pasangan</label>
+                          <label>Status <span class="text-danger">*</span></label>
                         </div>
                         <div class="col-md-9 col-sm-6 col-xs-12">
                           <div class="form-group">
-                            <input type="text" class="form-control form-control-sm" name="e_matename">
+                            <select class="form-control form-control-sm select2" name="e_maritalstatus" id="e_maritalstatus" required>
+                              <option value="" disabled selected>== Pilih Status ==</option>
+                              <option value="N">Belum Menikah</option>
+                              <option value="Y">Sudah Menikah</option>
+                            </select>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Status <span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <select class="form-control form-control-sm select2" name="e_maritalstatus" required>
-                          <option value="" disabled selected>== Pilih Status ==</option>
-                          <option value="N">Belum Menikah</option>
-                          <option value="Y">Sudah Menikah</option>
-                        </select>
+                    {{-- <div class="menikah col-12"> --}}
+                      <div class="col-md-2 col-sm-6 col-xs-12 menikah">
+                        <label>Nama Pasangan</label>
                       </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <label>Jumlah Anak</label>
-                    </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-sm digits" name="e_child">
+                      <div class="col-md-4 col-sm-6 col-xs-12 menikah">
+                        <div class="form-group">
+                          <input type="text" class="form-control form-control-sm menikahForm" name="e_matename">
+                        </div>
                       </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="col-md-2 col-sm-6 col-xs-12 menikah">
+                        <label>Jumlah Anak</label>
+                      </div>
+                      <div class="col-md-4 col-sm-6 col-xs-12 menikah">
+                        <div class="form-group">
+                          <input type="text" class="form-control form-control-sm digits menikahForm" name="e_child">
+                        </div>
+                      </div>
+                    {{-- </div> --}}
+                    <div class="col-md-2 col-sm-6 col-xs-12">
                       <label>Tanggal Lahir <span class="text-danger">*</span></label>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <div class="input-group">
                           <span class="input-group-addon"><i class="fa fa-calendar mt-2"></i></span>
@@ -160,10 +154,10 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-2 col-sm-6 col-xs-12">
                       <label>Tanggal Masuk</label>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <div class="input-group">
                           <span class="input-group-addon"><i class="fa fa-calendar mt-2"></i></span>
@@ -171,26 +165,26 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-2 col-sm-6 col-xs-12">
                       <label>Pendidikan <span class="text-danger">*</span></label>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <input type="text" class="form-control form-control-sm" name="e_education" required>
                       </div>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-2 col-sm-6 col-xs-12">
                       <label>E-mail <span class="text-danger">*</span></label>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <input type="text" class="form-control form-control-sm email" name="e_email" required>
                       </div>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-2 col-sm-6 col-xs-12">
                       <label>Jabatan <span class="text-danger">*</span></label>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <select name="e_position" id="" class="form-control form-control-sm select2">
                           <option value="" disabled selected="">== Pilih Jabatan ==</option>
@@ -200,10 +194,10 @@
                         </select>
                       </div>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-2 col-sm-6 col-xs-12">
                       <label>Divisi <span class="text-danger">*</span></label>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <select name="e_department" id="" class="form-control form-control-sm select2">
                           <option value="" disabled selected="">== Pilih Divisi ==</option>
@@ -213,34 +207,34 @@
                         </select>
                       </div>
                     </div>
-                    <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="col-md-2 col-sm-12 col-xs-12">
                       <label>Alamat <span class="text-danger">*</span></label>
                     </div>
-                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <textarea type="text" class="form-control form-control-sm mb-3" name="e_address" required></textarea>
                       </div>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-2 col-sm-6 col-xs-12">
                       <label>Bank <span class="text-danger">*</span></label>
                     </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <input type="text" class="form-control form-control-sm" name="e_bank" required>
                       </div>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-2 col-sm-6 col-xs-12">
                       <label>No. Rekening <span class="text-danger">*</span></label>
                     </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <input type="text" class="form-control form-control-sm rek" name="e_rekening" required>
                       </div>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-md-2 col-sm-6 col-xs-12">
                       <label>Atas Nama <span class="text-danger">*</span></label>
                     </div>
-                    <div class="col-md-9 col-sm-6 col-xs-12">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <input type="text" class="form-control form-control-sm" name="e_an" required>
                       </div>
@@ -302,6 +296,28 @@
       $('#foto').click();
     });
   });
+
+  $('#e_gender').on('change', function(){
+    var gender = $('#e_gender').val();
+    if (gender == 'L') {
+      $('#img-preview').attr("src", "{{asset('assets/img/default.jpg')}}");
+    } else if (gender == 'P') {
+      $('#img-preview').attr("src", "{{asset('assets/img/default2.jpg')}}");
+    }
+  });
+
+  $('#e_maritalstatus').on('change', function(){
+    var status = $('#e_maritalstatus').val();
+    if (status == 'N') {
+      console.log(status);
+      $('.menikah').css("display", "none");
+      $('.menikahForm').attr("disabled", "");
+    }else if (status == 'Y') {
+      console.log(status);
+      $('.menikah').css('display', '');
+      $('.menikahForm').removeAttr('disabled');
+    }
+  })
 
   $('#btn-submit').on('click', function(){
     loadingShow();

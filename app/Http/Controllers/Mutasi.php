@@ -759,9 +759,9 @@ class Mutasi extends Controller
             $mutcatmasuk = DB::table('m_mutcat')->where('m_name', 'Barang Masuk Dari Opname')->first();
             $mutcatkeluar = DB::table('m_mutcat')->where('m_name', 'Barang Keluar Dari Opname')->first();
 
-            $qtyreal = (int)$qtyreal;
+            $qtyreal   = (int)$qtyreal;
             $qtysistem = (int)$qtysistem;
-            $sisa = (int)$sisa;
+            $sisa      = (int)$sisa;
 
             $sekarang = Carbon::now('Asia/Jakarta');
 
@@ -994,7 +994,6 @@ class Mutasi extends Controller
                 'message' => $e->getMessage()
             ]);
         }
-
     }
     // ...PC = production-code
     static function distribusicabangkeluar(

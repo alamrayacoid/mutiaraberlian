@@ -96,6 +96,7 @@ class AdjusmentController extends Controller
 
     public function simpan(Request $request)
     {
+        // dd($request);
         DB::beginTransaction();
         try {
             $adjId = DB::table('d_adjusmentauth')->max('aa_id') + 1;
