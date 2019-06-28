@@ -249,7 +249,8 @@ class OtorisasiController extends Controller
             ]);
 
             $codeAuth = DB::table('d_adjustmentcodeauth')->where('aca_adjustment', '=', $data->aa_id)->get();
-
+            $listPC = [];
+            $listQtyPC = [];
             for ($i=0; $i < count($codeAuth); $i++) {
                 $adjDt = DB::table('d_adjustmentcode')->where('ac_adjustment', '=', $data->aa_id)->max('ac_detailid') + 1;
                 DB::table('d_adjustmentcode')->insert([
@@ -258,13 +259,17 @@ class OtorisasiController extends Controller
                     'ac_code'       => $codeAuth[$i]->aca_code,
                     'ac_qty'        => $codeAuth[$i]->aca_qty
                 ]);
+
+                array_push($listPC, $codeAuth[$i]->aca_code);
+                array_push($listQtyPC, $codeAuth[$i]->aca_qty);
             }
+
 
             DB::table('d_adjusmentauth')->where('aa_id', $id)->delete();
             DB::table('d_adjustmentcodeauth')->where('aca_adjustment', $id)->delete();
 
             // Create to mutation ------------>>
-            Mutasi::opname($date, (int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff);
+            Mutasi::opname((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
 
             DB::commit();
             return response()->json([
