@@ -94,39 +94,45 @@ class AdjusmentController extends Controller
         ]);
     }
 
+    public function list_codeProduksi(Request $req)
+    {
+      $opname = DB::table('d_opname')->where('o_nota', '=', $req->nota)->first();
+
+      $codes = DB::table('d_opnamedt')
+        ->where('od_opname', '=', $opname->o_id)
+        ->get();
+
+      return Datatables::of($codes)
+      ->make(true);
+    }
+
     public function simpan(Request $request)
     {
         // dd($request);
         DB::beginTransaction();
         try {
-            $adjId = DB::table('d_adjusmentauth')->max('aa_id') + 1;
-            DB::table('d_adjusmentauth')
-                ->insert([
-                    'aa_id'         => $adjId,
-                    'aa_comp'       => $request->data['o_comp'],
-                    'aa_position'   => $request->data['o_position'],
-                    'aa_date'       => $request->data['o_date'],
-                    'aa_nota'       => $request->data['o_nota'],
-                    'aa_item'       => $request->data['o_item'],
-                    'aa_qtyreal'    => $request->qtyreal,
-                    'aa_unitreal'   => $request->satuanreal,
-                    'aa_qtysystem'  => $request->data['o_qtysystem'],
-                    'aa_unitsystem' => $request->data['o_unitsystem'],
-                    'aa_insert'     => $request->data['o_insert']
-                ]);
+            // $adjId = DB::table('d_adjusmentauth')->max('aa_id') + 1;
+            DB::table('d_adjusmentauth')->insert([
+                'aa_id'         => $request->data['o_id'],
+                'aa_comp'       => $request->data['o_comp'],
+                'aa_position'   => $request->data['o_position'],
+                'aa_date'       => $request->data['o_date'],
+                'aa_nota'       => $request->data['o_nota'],
+                'aa_item'       => $request->data['o_item'],
+                'aa_qtyreal'    => $request->qtyreal,
+                'aa_unitreal'   => $request->satuanreal,
+                'aa_qtysystem'  => $request->data['o_qtysystem'],
+                'aa_unitsystem' => $request->data['o_unitsystem'],
+                'aa_insert'     => $request->data['o_insert']
+            ]);
 
-            $opname = DB::table('d_opnamedt')
-                ->join('d_opname', 'od_opname', 'o_id')
-                ->where('d_opname.o_nota', '=', $request->data['o_nota'])
-                ->get();
-
-            for ($i=0; $i < count($opname); $i++) {
-                $adjDt = DB::table('d_adjustmentcode')->where('ac_adjustment', '=', $adjId)->max('ac_detailid') + 1;
-                DB::table('d_adjustmentcode')->insert([
-                    'ac_adjustment' => $adjId,
-                    'ac_detailid'   => $adjDt,
-                    'ac_code'       => $opname[$i]->od_code,
-                    'ac_qty'        => $opname[$i]->od_qty
+            for ($i=0; $i < count($request->code_real); $i++) {
+                $adjDt = DB::table('d_adjustmentcodeauth')->where('aca_adjustment', '=', $adjId)->max('aca_detailid') + 1;
+                DB::table('d_adjustmentcodeauth')->insert([
+                    'aca_adjustment' => $request->data['o_id'],
+                    'aca_detailid'   => $adjDt,
+                    'aca_code'       => $request->code_real[$i],
+                    'aca_qty'        => $request->qty_code[$i]
                 ]);
             }
 

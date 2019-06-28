@@ -307,6 +307,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/adjustmentstock/create', 'Inventory\AdjusmentController@create')->name('adjustment.create');
     Route::get('/inventory/manajemenstok/adjustmentstock/print', 'Inventory\AdjusmentController@nota')->name('adjustment.nota');
     Route::get('/inventory/manajemenstok/adjustmentstock/getopname', 'Inventory\AdjusmentController@getopname')->name('adjustment.getopname');
+    Route::get('/inventory/manajemenstok/adjustmentstock/list-code-produksi', 'Inventory\AdjusmentController@list_codeProduksi')->name('codeProduksiAdjustment.list');
     Route::get('/inventory/manajemenstok/adjustmentstock/simpan', 'Inventory\AdjusmentController@simpan')->name('adjustment.simpan');
     // Pengelolaan Data Max/Min, Safety stok
     Route::get('/inventory/manajemenstok/pengelolaanmms/index', 'InventoryController@pengelolaanmms_index')->name('pengelolaanmms.index');
@@ -598,6 +599,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/index', 'OtorisasiController@adjustment')->name('adjustment');
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/getadjusment', 'OtorisasiController@getadjusment')->name('getadjusment');
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/getList', 'Inventory\HistoryAdjusmentController@getList');
+    Route::get('/notifikasiotorisasi/otorisasi/adjustment/show-detail-approve/{id}', 'OtorisasiController@detailApprove')->name('detailApprove.show');
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/agreeadjusment/{id}', 'OtorisasiController@agreeadjusment')->name('agreeadjusment');
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/rejectadjusment/{id}', 'OtorisasiController@rejectadjusment')->name('rejectadjusment');
     Route::get('/notifikasiotorisasi/otorisasi/revisi/index', 'OtorisasiController@revisi')->name('revisi');
