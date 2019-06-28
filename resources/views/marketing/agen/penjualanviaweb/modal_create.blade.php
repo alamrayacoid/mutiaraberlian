@@ -41,6 +41,12 @@
                     </div>
                 </div>
                 <div class="row form-group">
+                    <label for="website" class="col-2 col-form-label">Kode Transaksi :</label>
+                    <div class="col-10">
+                        <input type="text" class="form-control-sm form-control" id="transaksi" style="text-transform: uppercase">
+                    </div>
+                </div>
+                <div class="row form-group">
                     <label for="produk" class="col-2 col-form-label">Produk :</label>
                     <div class="col-10">
                         <input type="text" class="form-control-sm form-control" id="produk" style="text-transform: uppercase">

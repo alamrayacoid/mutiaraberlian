@@ -756,8 +756,6 @@
                 $('#satuan').empty();
                 $("#satuan").append('<option value="" selected disabled>== Pilih Satuan ==</option>');
                 $("#satuan").append('<option data-nama="'+response.data.get_unit1.u_name+'" value="' + response.data.get_unit1.u_id + '">' + response.data.get_unit1.u_name + '</option>');
-                $("#satuan").append('<option data-nama="'+response.data.get_unit2.u_name+'" value="' + response.data.get_unit2.u_id + '">' + response.data.get_unit2.u_name + '</option>');
-                $("#satuan").append('<option data-nama="'+response.data.get_unit3.u_name+'" value="' + response.data.get_unit3.u_id + '">' + response.data.get_unit3.u_name + '</option>');
             }).catch(function (error) {
                 alert("error");
             })
@@ -790,14 +788,14 @@
         
         function saveSalesWeb() {
             let kuantitas = $('#kuantitas').val();
-            let qty = $("input[name='qty_code[]']")
+            let qty = $("input[name='qtycode[]']")
                 .map(function(){return $(this).val();}).get();
             let totalqty = 0;
             for (let i = 0; i < qty.length; i++) {
-                totalqty = totalqty + qty[i];
+                totalqty = totalqty + parseInt(qty[i]);
             }
 
-            if (parseInt(kuantitas) != parseInt(qty)){
+            if (parseInt(kuantitas) != parseInt(totalqty)){
                 return $.confirm({
                     animation: 'RotateY',
                     closeAnimation: 'scale',
@@ -823,6 +821,8 @@
                         }
                     }
                 });
+            } else {
+                lanjutkan();
             }
         }
 
@@ -832,6 +832,7 @@
             let kota = $('#area_kota').val();
             let agen = $('#nama_agen').val();
             let website = $('#website').val();
+            let transaksi = $('#transaksi').val();
             let produk = $('#id_produk').val();
             let kuantitas = $('#kuantitas').val();
             let satuan = $('#satuan').val();
@@ -870,6 +871,12 @@
                 $('#website').focus();
                 return false;
             }
+            if (transaksi == '' || transaksi == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#transaksi').focus();
+                return false;
+            }
             if (produk == '' || produk == null){
                 valid = 0;
                 messageWarning("Perhatian", "Form harus lengkap");
@@ -900,6 +907,7 @@
                 axios.post('{{ route("kelolapenjualanviawebsite.saveKPW") }}', {
                     "agen": agen,
                     "website": website,
+                    "transaksi": transaksi.toUpperCase(),
                     "item": produk,
                     "qty": kuantitas,
                     "unit": satuan,
@@ -909,11 +917,10 @@
                     "qtycode": kodeqty,
                     "_token": '{{ csrf_token() }}'
                 }).then(function (response) {
+                    loadingHide();
                     if (response.data.status == 'success'){
-                        loadingHide();
                         messageSuccess("Berhasil", "Data berhasil disimpan");
                     } else if (response.data.status == 'gagal'){
-                        loadingHide();
                         messageFailed("Gagal", response.data.message);
                     }
                 }).catch(function (error) {
@@ -968,7 +975,7 @@
                     if (!values.includes(code)){
                         ++counter;
                         table_kpw.row.add([
-                            "<input type='text' class='code form-control form-control-sm codeprod' name='code[]' value='"+code+"' readonly>",
+                            "<input type='text' class='code form-control form-control-sm codeprod' name='code[]' value='"+code.toUpperCase()+"' readonly>",
                             "<input type='number' class='qtycode form-control form-control-sm' name='qtycode[]' value='"+qty+"'>",
                             "<button class='btn btn-danger btn-sm btn-delete-"+counter+"'><i class='fa fa-close'></i></button>"
                         ]).draw(false);
