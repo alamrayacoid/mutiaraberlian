@@ -46,13 +46,13 @@
                                     </div>
                                     <div class="col-md-5 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <select name="provinsi" id="provinsi" class="form-control form-control-sm select2">
+                                            <select name="provinsi" id="provinsi" class="form-control form-control-sm select2" disabled>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-md-5 col-sm-6 col-xs-12">
                                         <div class="form-group">
-                                            <select name="kota" id="kota" class="form-control form-control-sm select2">
+                                            <select name="kota" id="kota" class="form-control form-control-sm select2" disabled>
                                             </select>
                                         </div>
                                     </div>
@@ -63,7 +63,7 @@
                                     <div class="col-md-10 col-sm-12">
                                         <div class="form-group">
                                             <input type="hidden" name="branchCode" id="branchCode" value="{{ $data_item->sc_comp }}">
-                                            <select class="form-control select2" name="branch" id="branch">
+                                            <select class="form-control select2" name="branch" id="branch" disabled>
                                             </select>
                                         </div>
                                     </div>
@@ -75,7 +75,7 @@
                                         <div class="form-group">
                                             <input type="hidden" name="agentCode" id="agentCode" value="{{ $data_item->sc_member }}">
                                             <input type="hidden" name="nota" id="nota" value="{{ $data_item->sc_nota }}">
-                                            <select class="form-control select2" name="agent" id="agent">
+                                            <select class="form-control select2" name="agent" id="agent" disabled>
                                             </select>
                                         </div>
                                     </div>
@@ -216,11 +216,11 @@
                 $("#branchCode").val('');
                 $("#branch").val('');
                 $('#branch').find('option').remove();
-                $("#branch").attr("disabled", true);
+                // $("#branch").attr("disabled", true);
             }
             else {
                 getBranch();
-                $("#branch").attr("disabled", false);
+                // $("#branch").attr("disabled", false);
                 $("#branchCode").val('');
                 $("#branch").val('');
                 $("#branch").attr('autofocus', true);
@@ -1204,10 +1204,10 @@
     function getProv() {
         loadingShow();
         $("#provinsi").find('option').remove();
-        $("#provinsi").attr("disabled", true);
+        // $("#provinsi").attr("disabled", true);
         axios.get('{{ route('konsinyasipusat.getProv') }}')
         .then(function (resp) {
-            $("#provinsi").attr("disabled", false);
+            // $("#provinsi").attr("disabled", false);
             var option = '<option value="">Pilih Provinsi</option>';
             var prov = resp.data;
             prov.forEach(function (data) {
@@ -1220,7 +1220,7 @@
             $("#provinsi").append(option);
             axios.get(baseUrl+'/marketing/konsinyasipusat/get-kota/'+$("#provinsi").val())
             .then(function (resp) {
-                $("#kota").attr("disabled", false);
+                // $("#kota").attr("disabled", false);
                 var option = '<option value="">Pilih Kota</option>';
                 var kota = resp.data;
                 kota.forEach(function (data) {
@@ -1248,17 +1248,13 @@
     function getKota() {
         $("#provinsi").on("change", function (evt) {
             evt.preventDefault();
-            $("#idKonsigner").val('');
-            $("#kodeKonsigner").val('');
-            $("#konsigner").val('');
             $("#kota").find('option').remove();
-            $("#kota").attr("disabled", true);
-            $("#konsigner").attr("disabled", true);
+            // $("#kota").attr("disabled", true);
             if ($("#provinsi").val() != "") {
                 loadingShow();
                 axios.get(baseUrl+'/marketing/konsinyasipusat/get-kota/'+$("#provinsi").val())
                 .then(function (resp) {
-                    $("#kota").attr("disabled", false);
+                    // $("#kota").attr("disabled", false);
                     var option = '<option value="">Pilih Kota</option>';
                     var kota = resp.data;
                     kota.forEach(function (data) {

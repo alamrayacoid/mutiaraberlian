@@ -144,6 +144,7 @@ class MarketingAreaController extends Controller
         $provId = $request->provId;
         $city = DB::table('m_wil_kota')->select('wc_id', 'wc_name')
             ->where('wc_provinsi', '=', $provId)
+            ->orderBy('wc_name', 'asc')
             ->get();
         return Response::json(array(
             'success' => true,
@@ -1753,24 +1754,31 @@ class MarketingAreaController extends Controller
 
     // Start: konsinyasi =======================================================
     // index -> read data and display to table
-    public function getListDK()
+    public function getListDK(Request $request)
     {
-        // // if pusat is logged in
-        // if (condition) {
-        //
-        // }
-        // // if branch is logged in
-        // else {
-        //
-        // }
-        $datas = d_salescomp::where('sc_type', '=', 'K')
-        ->where('sc_comp', Auth::user()->u_company)
-        ->where('sc_comp', '!=', 'MB0000001')
+        $branchCode = $request->branchCode;
+
+        $datas = d_salescomp::where('sc_type', '=', 'K');
+        // get comoany 'pusat'
+        $pusat = m_company::where('c_type', 'PUSAT')->first();
+        // if pusat is logged in
+        if (Auth::user()->u_company == $pusat->c_id) {
+            // add filter which branch wil be shown
+            $datas = $datas->where('sc_comp', $branchCode);
+        }
+        // if branch is logged in
+        else {
+            // show konsinyasi that is made by him
+            $datas = $datas->where('sc_comp', Auth::user()->u_company)
+            ->where('sc_comp', '!=', 'MB0000001');
+        }
+        $datas = $datas
+        ->where('sc_paidoff', 'N')
         ->with('getSalesCompDt')
         ->with('getAgent')
         ->orderBy('sc_date', 'desc')
         ->get();
-        // dd($datas);
+
         return Datatables::of($datas)
             ->addIndexColumn()
             ->addColumn('date', function ($datas) {

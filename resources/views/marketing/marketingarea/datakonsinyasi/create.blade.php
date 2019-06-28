@@ -64,7 +64,7 @@
                                     <div class="col-md-10 col-sm-12">
                                         <div class="form-group">
                                             <input type="hidden" name="branchCode" id="branchCode">
-                                            <select class="form-control select2" name="branch" id="branch">
+                                            <select class="form-control select2" name="branch" id="branch" disabled>
                                             </select>
                                         </div>
                                     </div>
@@ -75,7 +75,7 @@
                                     <div class="col-md-10 col-sm-12">
                                         <div class="form-group">
                                             <input type="hidden" name="agentCode" id="agentCode">
-                                            <select class="form-control select2" name="agent" id="agent">
+                                            <select class="form-control select2" name="agent" id="agent" disabled>
                                             </select>
                                         </div>
                                     </div>
@@ -195,11 +195,27 @@
                 $("#branch").attr("disabled", true);
             }
             else {
-                getBranch();
                 $("#branch").attr("disabled", false);
                 $("#branchCode").val('');
                 $("#branch").val('');
                 $("#branch").attr('autofocus', true);
+                getBranch();
+            }
+        })
+        $("#branch").on("change", function (evt) {
+            evt.preventDefault();
+            if ($("#branch").val() == "") {
+                $("#agentCode").val('');
+                $("#agent").val('');
+                $('#agent').find('option').remove();
+                $("#agent").attr("disabled", true);
+            }
+            else {
+                $("#agent").attr("disabled", false);
+                $("#agentCode").val('');
+                $("#agent").val('');
+                $("#agent").attr('autofocus', true);
+                getAgent();
             }
         })
         // on select branch
@@ -218,7 +234,6 @@
         $('#agent').on('select2:select', function() {
             $('#agentCode').val($(this).find('option:selected').val());
         });
-
 
         $(document).on('click', '.btn-hapus', function () {
             // get index of clicked element and delete a production-code-modal
@@ -417,56 +432,118 @@
             // unmaskAsNumber: true,
         });
     }
+
+    function getProv() {
+        loadingShow();
+        $("#provinsi").find('option').remove();
+        $("#provinsi").attr("disabled", true);
+        axios.get('{{ route('konsinyasipusat.getProv') }}')
+        .then(function (resp) {
+            $("#provinsi").attr("disabled", false);
+            var option = '<option value="">Pilih Provinsi</option>';
+            var prov = resp.data;
+            prov.forEach(function (data) {
+                option += '<option value="'+data.wp_id+'">'+data.wp_name+'</option>';
+            })
+            $("#provinsi").append(option);
+            loadingHide();
+        })
+        .catch(function (error) {
+            loadingHide();
+            messageWarning("Error", error)
+        })
+    }
+
+    function getKota() {
+        $("#provinsi").on("change", function (evt) {
+            evt.preventDefault();
+            // $("#idKonsigner").val('');
+            // $("#kodeKonsigner").val('');
+            // $("#konsigner").val('');
+            $("#kota").find('option').remove();
+            $("#kota").attr("disabled", true);
+            // $("#konsigner").attr("disabled", true);
+            if ($("#provinsi").val() != "") {
+                loadingShow();
+                axios.get(baseUrl+'/marketing/konsinyasipusat/get-kota/'+$("#provinsi").val())
+                .then(function (resp) {
+                    $("#kota").attr("disabled", false);
+                    var option = '<option value="">Pilih Kota</option>';
+                    var kota = resp.data;
+                    kota.forEach(function (data) {
+                        option += '<option value="'+data.wc_id+'">'+data.wc_name+'</option>';
+                    })
+                    $("#kota").append(option);
+                    loadingHide();
+                    $("#kota").focus();
+                    $('#kota').select2('open');
+                })
+                .catch(function (error) {
+                    loadingHide();
+                    messageWarning("Error", error)
+                })
+            }
+        })
+    }
+
     // get list of branc based on prov and city
     function getBranch() {
-        loadingShow();
-        $.ajax({
-            url: "{{ route('datakonsinyasi.getBranchDK') }}",
-            data: {
-                prov: $("#provinsi").val(),
-                city: $("#kota").val()
-            },
-            type: 'get',
-            success: function( data ) {
-                // console.log(data);
-                $('#branch').find('option').remove();
-                $('#branch').append('<option value="" selected>Pilih Cabang</option>')
-                $.each(data, function(index, val) {
-                    // console.log(val, val.a_id);
-                    $('#branch').append('<option value="'+ val.c_id +'">'+ val.c_name +'</option>');
-                })
-                loadingHide();
-            },
-            error: function(e) {
-                loadingHide();
-                // console.log('get konsigner error: ');
-            }
-        });
+        if ($("#kota").val() != '') {
+            loadingShow();
+            $.ajax({
+                url: "{{ route('datakonsinyasi.getBranchDK') }}",
+                data: {
+                    prov: $("#provinsi").val(),
+                    city: $("#kota").val()
+                },
+                type: 'get',
+                success: function( data ) {
+                    // console.log(data);
+                    $('#branch').find('option').remove();
+                    $('#branch').append('<option value="" selected>Pilih Cabang</option>')
+                    $.each(data, function(index, val) {
+                        // console.log(val, val.a_id);
+                        $('#branch').append('<option value="'+ val.c_id +'">'+ val.c_name +'</option>');
+                    });
+                    loadingHide();
+                    $('#branch').focus();
+                    $('#branch').select2('open');
+                },
+                error: function(e) {
+                    loadingHide();
+                    // console.log('get konsigner error: ');
+                }
+            });
+        }
     }
     // get list of agent based on branch
     function getAgent() {
-        loadingShow();
-        $.ajax({
-            url: "{{ route('datakonsinyasi.getAgentsDK') }}",
-            data: {
-                branch: $("#branchCode").val()
-            },
-            type: 'get',
-            success: function( data ) {
-                // console.log(data);
-                $('#agent').find('option').remove();
-                $('#agent').append('<option value="" selected>Pilih Agen</option>')
-                $.each(data, function(index, val) {
-                    console.log(val);
-                    $('#agent').append('<option value="'+ val.get_company.c_id +'">'+ val.a_name +'</option>');
-                })
-                loadingHide();
-            },
-            error: function(e) {
-                loadingHide();
-                // console.log('get konsigner error: ');
-            }
-        });
+        if ($('#branch').val() != '') {
+            loadingShow();
+            $.ajax({
+                url: "{{ route('datakonsinyasi.getAgentsDK') }}",
+                data: {
+                    branch: $("#branchCode").val()
+                },
+                type: 'get',
+                success: function( data ) {
+                    // console.log(data);
+                    $('#agent').find('option').remove();
+                    $('#agent').append('<option value="" selected>Pilih Agen</option>')
+                    $.each(data, function(index, val) {
+                        console.log(val);
+                        $('#agent').append('<option value="'+ val.get_company.c_id +'">'+ val.a_name +'</option>');
+                    })
+                    loadingHide();
+                    $('#agent').focus();
+                    $('#agent').select2('open');
+                },
+                error: function(e) {
+                    loadingHide();
+                    // console.log('get konsigner error: ');
+                }
+            });
+        }
     }
 
     // get items
@@ -832,58 +909,6 @@
             $(".btn-submit").attr("disabled", true);
             $(".btn-submit").css({"cursor":"not-allowed"});
         }
-    }
-
-    function getProv() {
-        loadingShow();
-        $("#provinsi").find('option').remove();
-        $("#provinsi").attr("disabled", true);
-        axios.get('{{ route('konsinyasipusat.getProv') }}')
-            .then(function (resp) {
-                $("#provinsi").attr("disabled", false);
-                var option = '<option value="">Pilih Provinsi</option>';
-                var prov = resp.data;
-                prov.forEach(function (data) {
-                    option += '<option value="'+data.wp_id+'">'+data.wp_name+'</option>';
-                })
-                $("#provinsi").append(option);
-                loadingHide();
-            })
-            .catch(function (error) {
-                loadingHide();
-                messageWarning("Error", error)
-            })
-    }
-
-    function getKota() {
-        $("#provinsi").on("change", function (evt) {
-            evt.preventDefault();
-            $("#idKonsigner").val('');
-            $("#kodeKonsigner").val('');
-            $("#konsigner").val('');
-            $("#kota").find('option').remove();
-            $("#kota").attr("disabled", true);
-            $("#konsigner").attr("disabled", true);
-            if ($("#provinsi").val() != "") {
-                loadingShow();
-                axios.get(baseUrl+'/marketing/konsinyasipusat/get-kota/'+$("#provinsi").val())
-                    .then(function (resp) {
-                        $("#kota").attr("disabled", false);
-                        var option = '<option value="">Pilih Kota</option>';
-                        var kota = resp.data;
-                        kota.forEach(function (data) {
-                            option += '<option value="'+data.wc_id+'">'+data.wc_name+'</option>';
-                        })
-                        $("#kota").append(option);
-                        loadingHide();
-                        $("#kota").focus();
-                    })
-                    .catch(function (error) {
-                        loadingHide();
-                        messageWarning("Error", error)
-                    })
-            }
-        })
     }
 
     // check production code qty each item

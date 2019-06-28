@@ -86,6 +86,64 @@
                                         </div>
                                     </div>
 
+                                    <div class="row">
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>Jasa Ekspedisi</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <select name="expedition" id="expedition" class="form-control form-control-sm select2">
+                                                    <option value="" disabled selected>Pilih Ekspedisi</option>
+                                                    @foreach($expeditions as $idx => $expd)
+                                                        <option value="{{ $expd->e_id }}">{{ $expd->e_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>Jenis Ekspedisi</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <select name="expeditionType" id="expeditionType" class="form-control form-control-sm select2">
+                                                    <option value="" disabled selected>Pilih Jenis Ekspedisi</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>Nama Kurir</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-sm" id="courierName" name="courierName" value="">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>No Telp. Kurir</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-sm hp" id="courierTelp" name="courierTelp" value="">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>No. Resi</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-sm text-uppercase" id="resi" name="resi" value="">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>Biaya Pengiriman</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-sm rupiah" id="shippingCost" name="shippingCost" value="">
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="table-responsive">
                                         <table class="table table-striped table-hover" cellspacing="0" id="table_items">
                                             <thead class="bg-primary">
@@ -157,7 +215,15 @@
         // find branch by areas
         $('#selectArea').on('change', function() {
             getBranch();
+        });
+        // find jenis ekspedisi
+        $('#expedition').on('change', function() {
+            getExpeditionType();
+        });
+        $('#expeditionType').on('select2:select', function() {
+            $('#courierName').focus();
         })
+
         // add more item in table_items
         $('.btnAddItem').on('click', function() {
             $('#table_items').append(
@@ -325,6 +391,26 @@
                 });
                 $('#selectBranch').focus();
                 $('#selectBranch').select2('open');
+            }
+        });
+    }
+    // get expedition type
+    function getExpeditionType() {
+        var id = $('#expedition').val();
+        $.ajax({
+            url: "{{ route('distribusibarang.getExpeditionType') }}",
+            type: "get",
+            data: {
+                id: id
+            },
+            success: function (response) {
+                $('#expeditionType').empty();
+                $("#expeditionType").append('<option value="" selected="" disabled="">Pilih Jenis Ekspedisi</option>');
+                $.each(response, function (key, val) {
+                    $("#expeditionType").append('<option value="' + val.ed_detailid + '">' + val.ed_product + '</option>');
+                });
+                $('#expeditionType').focus();
+                $('#expeditionType').select2('open');
             }
         });
     }
