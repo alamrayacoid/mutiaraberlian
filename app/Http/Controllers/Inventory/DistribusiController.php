@@ -10,12 +10,15 @@ use Auth;
 use CodeGenerator;
 use Carbon\Carbon;
 use DB;
+use App\d_productdelivery;
 use App\d_stock;
 use App\d_stockdistribution;
 use App\d_stockdistributiondt;
 use App\d_stockdistributioncode;
 use App\d_stock_mutation;
 use App\m_company;
+use App\m_expedition;
+use App\m_expeditiondt;
 use App\m_item;
 use App\m_mutcat;
 use App\m_unit;
@@ -33,15 +36,19 @@ class DistribusiController extends Controller
 
     public function create()
     {
-        $provinces = DB::table('m_wil_provinsi')->get();
-        return view('inventory/distribusibarang/distribusi/create', compact('provinces'));
+        $provinces = DB::table('m_wil_provinsi')->orderBy('wp_name', 'asc')->get();
+        $expeditions = m_expedition::get();
+        // dd($expeditions);
+        return view('inventory/distribusibarang/distribusi/create', compact('provinces', 'expeditions'));
     }
     // get list-cities based on province-id
     public function getAreas(Request $request)
     {
         $cities = m_wil_provinsi::where('wp_id', $request->provId)
-        ->with('getCities')
-        ->firstOrFail();
+        ->with(['getCities' => function ($q) {
+            $q->orderBy('wc_name');
+        }])
+        ->first();
         return response()->json($cities);
     }
     // get list-branches based on area-id
@@ -49,8 +56,18 @@ class DistribusiController extends Controller
     {
         $branches = m_company::where('c_type', 'CABANG')
         ->where('c_area', $request->areaId)
+        ->orderBy('c_name')
         ->get();
         return response()->json($branches);
+    }
+    // get list-expeditionType based on expedition
+    public function getExpeditionType(Request $request)
+    {
+        $expdtId = $request->id;
+        $expeditionType = m_expeditiondt::where('ed_expedition', $expdtId)
+        ->orderBy('ed_product', 'asc')
+        ->get();
+        return response()->json($expeditionType);
     }
 
     public function printNota(Request $request)
@@ -187,6 +204,19 @@ class DistribusiController extends Controller
             if ($validateProdCode !== 'validated') {
                 return $validateProdCode;
             }
+
+            // insert new product-delivery
+            $id = d_productdelivery::max('pd_id') + 1;
+            $prodDeliv = new d_productdelivery;
+            $prodDeliv->pd_id = $id;
+            $prodDeliv->pd_date = Carbon::now();
+            $prodDeliv->pd_nota = $nota;
+            $prodDeliv->pd_expedition = $request->expedition;
+            $prodDeliv->pd_resi = $request->resi;
+            $prodDeliv->pd_couriername = $request->courierName;
+            $prodDeliv->pd_couriertelp = $request->courierTelp;
+            $prodDeliv->pd_price = $request->shippingCost;
+            $prodDeliv->save();
 
             // insert new stockdist
             $id = d_stockdistribution::max('sd_id') + 1;

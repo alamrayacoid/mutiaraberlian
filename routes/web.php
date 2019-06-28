@@ -271,6 +271,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/inventory/distribusibarang/store', 'Inventory\DistribusiController@store')->name('distribusibarang.store');
     Route::get('/inventory/distribusibarang/get-areas', 'Inventory\DistribusiController@getAreas')->name('distribusibarang.getAreas');
     Route::get('/inventory/distribusibarang/get-branch', 'Inventory\DistribusiController@getBranch')->name('distribusibarang.getBranch');
+    Route::get('/inventory/distribusibarang/get-expedition-type', 'Inventory\DistribusiController@getExpeditionType')->name('distribusibarang.getExpeditionType');
     Route::get('/inventory/distribusibarang/edit/{id}', 'Inventory\DistribusiController@edit')->name('distribusibarang.edit');
     Route::post('/inventory/distribusibarang/update/{id}', 'Inventory\DistribusiController@update')->name('ditribusibarang.update');
     Route::get('/inventory/distribusibarang/table', 'Inventory\DistribusiController@table');

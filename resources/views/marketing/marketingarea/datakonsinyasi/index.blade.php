@@ -10,22 +10,49 @@
 		</div>
 		<div class="card-block">
 			<section>
-				<!-- <div class="row mb-3">
-					<div class="col-md-3"></div>
+				<div class="row filterBranch">
+					<div class="col-md-2 col-sm-6 col-xs-12">
+						<label>Area</label>
+					</div>
+					<div class="col-md-5 col-sm-6 col-xs-12">
+						<div class="form-group">
+							<select name="provinsi" id="provinsi" class="form-control form-control-sm select2 provIdxDK">
+							</select>
+						</div>
+					</div>
+					<div class="col-md-5 col-sm-6 col-xs-12">
+						<div class="form-group">
+							<select name="kota" id="kota" class="form-control form-control-sm select2 cityIdxDK" disabled>
+							</select>
+						</div>
+					</div>
 
+					<div class="col-md-2 col-sm-6 col-xs-12">
+						<label>Cabang</label>
+					</div>
+					<div class="col-md-10 col-sm-12">
+						<div class="form-group">
+							<input type="hidden" class="userType" value="{{ Auth::user()->getCompany->c_type }}">
+							<input type="hidden" name="branchCode" id="branchCode">
+							<select class="form-control select2" name="branch" id="branch" disabled>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<!-- <div class="row mb-3 d-none">
+					<div class="col-md-3"></div>
 					<div class="col-md-6 col-sm-12">
 						<div class="input-group input-group-sm input-daterange">
-							<input type="text" class="form-control" id="date_from_dk" autocomplete="off">
+							<input type="text" class="form-control" id="date_from_dk">
 							<span class="input-group-addon">-</span>
-							<input type="text" class="form-control" id="date_to_dk" autocomplete="off">
+							<input type="text" class="form-control" id="date_to_dk">
 							<div class="input-group-append">
-								//comment-><button class="btn btn-secondary" type="button" id="btn_search_date_dk"><i class="fa fa-search"></i></button>
+								<button class="btn btn-secondary" type="button" id="btn_search_date_dk"><i class="fa fa-search"></i></button>
 								<button class="btn btn-primary" type="button" id="btn_refresh_date_dk"><i class="fa fa-refresh"></i></button>
 							</div>
 						</div>
 					</div>
-
-					<div class="col-md-3"></div>
 				</div> -->
 				<div class="table-responsive">
 					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_konsinyasi">
@@ -39,19 +66,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<!-- <tr>
-								<td>1</td>
-								<td>Brad</td>
-								<td>Brad@Pit.com</td>
-								<td>0123456812</td>
-								<td>HollyWood</td>
-								<td>
-									<div class="btn-group btn-group-sm">
-										<button class="btn btn-warning btn-edit-kons" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-										<button class="btn btn-danger btn-disable-kons" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-									</div>
-								</td>
-							</tr> -->
+
 						</tbody>
 					</table>
 				</div>

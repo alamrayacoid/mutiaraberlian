@@ -144,13 +144,16 @@ class KonsinyasiPusatController extends Controller
 
     public function getProv()
     {
-        $prov = DB::table('m_wil_provinsi')->get();
+        $prov = DB::table('m_wil_provinsi')->orderBy('wp_name', 'asc')->get();
         return Response::json($prov);
     }
 
     public function getKota($idprov = null)
     {
-        $kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->get();
+        $kota = DB::table('m_wil_kota')
+        ->where('wc_provinsi', $idprov)
+        ->orderBy('wc_name')
+        ->get();
         return Response::json($kota);
     }
 

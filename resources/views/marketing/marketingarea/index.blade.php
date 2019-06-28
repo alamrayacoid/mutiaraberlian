@@ -307,9 +307,45 @@
     <!-- script for Data-Konsinyasi etc -->
     <script type="text/javascript">
         $(document).ready(function () {
-            TableListDK();
-        });
+            getProv();
+            getKota();
+            // check user is PUSAT or not
+            let userType = $('.userType').val();
+            if (userType === 'PUSAT') {
+                console.log('\'pusat\' logged in !');
+                $('.filterBranch').removeClass('d-none');
+            }
+            else {
+                console.log('\'non-pusat\' logged in !');
+                $('.filterBranch').addClass('d-none');
+                $('#branchCode').val("{{ Auth::user()->getCompany->c_id }}");
+                console.log($('#branchCode').val());
+            }
 
+            $(".cityIdxDK").on("change", function (evt) {
+                evt.preventDefault();
+                if ($(".cityIdxDK").val() == "") {
+                    $("#branchCode").val('');
+                    $("#branch").val('');
+                    $('#branch').find('option').remove();
+                    $("#branch").attr("disabled", true);
+                }
+                else {
+                    getBranch();
+                    $("#branch").attr("disabled", false);
+                    $("#branchCode").val('');
+                    $("#branch").val('');
+                    $("#branch").attr('autofocus', true);
+                }
+            })
+            // on select branch
+            $('#branch').on('select2:select', function() {
+                $( "#branchCode" ).val($(this).find('option:selected').val());
+                TableListDK();
+            });
+
+        });
+        // retrieve list
         function TableListDK() {
             // let start = $('#date_from_dk').val();
             // let end = $('#date_to_dk').val();
@@ -320,7 +356,10 @@
                 serverSide: true,
                 ajax: {
                     url: "{{ route('datakonsinyasi.getListDK') }}",
-                    type: "get"
+                    type: "get",
+                    data: {
+                        branchCode: $('#branchCode').val()
+                    }
                 },
                 columns: [
                     {data: 'date'},
@@ -333,6 +372,89 @@
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
             });
         }
+
+        function getProv() {
+            loadingShow();
+            $(".provIdxDK").find('option').remove();
+            $(".provIdxDK").attr("disabled", true);
+            axios.get('{{ route('konsinyasipusat.getProv') }}')
+            .then(function (resp) {
+                $(".provIdxDK").attr("disabled", false);
+                var option = '<option value="">Pilih Provinsi</option>';
+                var prov = resp.data;
+                prov.forEach(function (data) {
+                    option += '<option value="'+data.wp_id+'">'+data.wp_name+'</option>';
+                })
+                $(".provIdxDK").append(option);
+                loadingHide();
+            })
+            .catch(function (error) {
+                loadingHide();
+                messageWarning("Error", error)
+            })
+        }
+        function getKota() {
+            $(".provIdxDK").on("change", function (evt) {
+                evt.preventDefault();
+                $("#branchCode").val('');
+                $("#branch").val('');
+                $('#branch').find('option').remove();
+                $("#branch").attr("disabled", true);
+                $(".cityIdxDK").find('option').remove();
+                $(".cityIdxDK").attr("disabled", true);
+                if ($(".provIdxDK").val() != "") {
+                    loadingShow();
+                    axios.get(baseUrl+'/marketing/konsinyasipusat/get-kota/'+$(".provIdxDK").val())
+                    .then(function (resp) {
+                        $(".cityIdxDK").attr("disabled", false);
+                        var option = '<option value="">Pilih Kota</option>';
+                        var kota = resp.data;
+                        kota.forEach(function (data) {
+                            option += '<option value="'+data.wc_id+'">'+data.wc_name+'</option>';
+                        })
+                        $(".cityIdxDK").append(option);
+                        loadingHide();
+                        $(".cityIdxDK").focus();
+                        $(".cityIdxDK").select2('open');
+                    })
+                    .catch(function (error) {
+                        loadingHide();
+                        messageWarning("Error", error)
+                    })
+                }
+            })
+        }
+        // get list of branc based on prov and city
+        function getBranch() {
+            if ($(".cityIdxDK").val() != '') {
+                loadingShow();
+                $.ajax({
+                    url: "{{ route('datakonsinyasi.getBranchDK') }}",
+                    data: {
+                        prov: $("#provinsi").val(),
+                        city: $("#kota").val()
+                    },
+                    type: 'get',
+                    success: function( data ) {
+                        // console.log(data);
+                        $('#branch').find('option').remove();
+                        $('#branch').append('<option value="" selected>Pilih Cabang</option>')
+                        $.each(data, function(index, val) {
+                            // console.log(val, val.a_id);
+                            $('#branch').append('<option value="'+ val.c_id +'">'+ val.c_name +'</option>');
+                        });
+                        loadingHide();
+                        $('#branch').focus();
+                        $('#branch').select2('open');
+                    },
+                    error: function(e) {
+                        loadingHide();
+                        // console.log('get konsigner error: ');
+                    }
+                });
+            }
+        }
+
         // re-direct to edit page
         function editDK(id) {
             window.location = baseUrl +'/marketing/marketingarea/datakonsinyasi/edit/'+ id;
