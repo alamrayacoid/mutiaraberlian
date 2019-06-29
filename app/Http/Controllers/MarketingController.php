@@ -19,6 +19,7 @@ use App\m_wil_provinsi;
 use App\d_salescomp;
 use App\d_salescomppayment;
 use Validator;
+use Mutasi;
 
 class MarketingController extends Controller
 {
@@ -271,6 +272,146 @@ class MarketingController extends Controller
     public function returnpenjualanagen_create()
     {
         return view('marketing/penjualanpusat/returnpenjualan/create');
+    }
+
+    public function hapus(Request $request){
+        $data = DB::table('d_return')
+                    ->where('r_id', $request->id)
+                    ->first();
+
+                    DB::table('d_return')
+                    ->where('r_id', $request->id)
+                    ->delete();
+
+        mutasi::rollbackStockMutDist($data->r_nota, $data->r_item, 3);
+
+        return response()->json(['status' => 'berhasil']);
+    }
+
+    public function returnpenjualanagen(){
+        
+
+        $data = DB::table("d_return")
+                    ->get();
+
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('tanggal', function ($data) {
+                return '<td>' . Carbon::parse($data->r_date)->format('d-m-Y') . '</td>';
+            })
+            ->addColumn('action', function ($data) {
+                return '<div class="btn-group btn-group-sm">
+                <button class="btn btn-primary btn-detail" type="button" onclick="detail(' . $data->r_id . ')" title="Detail"><i class="fa fa-folder"></i></button>
+                <button class="btn btn-warning btn-process" type="button" onclick="edit(' . $data->r_id . ')" title="Edit"><i class="fa fa-pencil"></i></button>
+                <button class="btn btn-danger btn-process" type="button" onclick="hapus(' . $data->r_id . ')" title="Hapus"><i class="fa fa-trash"></i></button>
+                </div>';
+                // <button class="btn btn-success btn-proses" type="button" title="Proses" onclick="window.location.href=\''. route('orderpenjualan.proses') .'?id='.encrypt($data->po_id).'\'"><i class="fa fa-arrow-right"></i></button>
+            })
+            ->addColumn('type', function($data){
+                if ($data->r_type == 'GB') {
+                    return '<span class="badge badge-primary">Ganti Barang</span>';
+                } elseif ($data->r_type == 'GU') {
+                    return '<span class="badge badge-success">Ganti Uang</span>';
+                } else {
+                    return '<span class="badge badge-info">Potong Nota</span>';
+                }
+            })
+            ->addColumn('agen', function($data){
+                $member = DB::table('m_company')
+                            ->where('c_id', $data->r_member)
+                            ->first();
+
+                return $member->c_name;
+            })
+            ->rawColumns(['tanggal', 'action', 'type'])
+            ->make(true);
+
+        return response()->json($data);
+    }
+    
+    public function returnpenjualanagen_getnota(Request $request){
+        $nota = DB::table('d_salescompcode')
+                    ->join('d_salescomp', 'sc_id', '=', 'ssc_salescomp')
+                    ->where('ssc_code', $request->kodeproduksi)
+                    ->get();
+
+        return response()->json($nota);
+    }
+
+    public function returnpenjualanagen_getdata(Request $request){
+        $data = DB::table('d_salescomp')                
+                    ->where('sc_nota', $request->notapenjualan)
+                    ->first();
+
+        $comp = DB::table('m_company')
+                    ->where('c_id', $data->sc_comp)
+                    ->first();
+
+        $agen = DB::table('m_company')
+                    ->where('c_id', $data->sc_member)
+                    ->first();                
+
+        $item = DB::table('d_salescompdt')
+                    ->join('m_item', 'i_id', '=', 'scd_item')
+                    ->where('scd_sales', $data->sc_id)
+                    ->where('scd_item', $request->itemid)
+                    ->first();
+        
+        $data->sc_date = Carbon::parse($data->sc_date)->format('d-m-Y');
+        
+        $data->sc_total = number_format($data->sc_total,2,",",".");
+
+        return response()->json([
+            'data' => $data,
+            'comp' => $comp,
+            'agen' => $agen,
+            'item' => $item
+        ]);
+    }
+
+    public function returnpenjualanagen_simpan(Request $request){
+        DB::beginTransaction();
+        try {
+            
+            $nota = CodeGenerator::codeWithSeparator('d_return', 'r_nota', 8, 10, 3, 'RT', '-');
+            $id = DB::table('d_return')
+                    ->max('r_id')+1;
+
+            DB::table('d_return')
+                ->insert([
+                    'r_id' => $id,
+                    'r_nota' => $nota,
+                    'r_reff' => $request->notapenjualan,
+                    'r_date' => Carbon::now('Asia/Jakarta'),
+                    'r_member' => $request->member,
+                    'r_item' => $request->itemid,
+                    'r_qty' => str_replace('.','', $request->qty),
+                    'r_code' => $request->kodeproduksi,
+                    'r_type' => $request->type
+                ]);
+            
+            if ($request->type == 'GB') {
+                $mutcat = 16;
+            } elseif ($request->type == 'GU') {
+                $mutcat = 15;
+            } else {
+                $mutcat = 17;
+            }
+            
+            mutasi::mutasimasukreturn(3, 'MB0000001', 'MB0000001', $request->itemid, str_replace('.','', $request->qty), 'BROKEN', 'ON DESTINATION', $nota, $request->notapenjualan);
+            mutasi::mutasikeluarreturn($mutcat, $request->member, $request->itemid, str_replace('.','', $request->qty), $nota);
+                    
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        } catch (Throwable $th) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'error' => $th
+            ]);
+        }
     }
 
     public function getPromosiBulanan()

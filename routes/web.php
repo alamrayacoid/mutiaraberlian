@@ -405,6 +405,12 @@ Route::group(['middleware' => 'auth'], function () {
     // End ---
     // Return Penjualan
     Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getnota', 'MarketingController@returnpenjualanagen_getnota');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getdata', 'MarketingController@returnpenjualanagen_getdata');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/simpan', 'MarketingController@returnpenjualanagen_simpan');
+    Route::post('/marketing/penjualanpusat/returnpenjualan/simpan', 'MarketingController@returnpenjualanagen_simpan');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/returnpenjualanagen', 'MarketingController@returnpenjualanagen');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/hapus', 'MarketingController@hapus');
     // End ---
     // Konsinyasi Pusat
     Route::get('/marketing/konsinyasipusat/index', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@konsinyasipusat')->name('konsinyasipusat.index');
