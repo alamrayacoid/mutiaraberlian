@@ -95,7 +95,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/masterdatautama/harga/get-satuan/{id}', 'Master\HargaController@getSatuan')->name('dataharga.getsatuan');
     Route::post('/masterdatautama/harga/add-golongan-harga', 'Master\HargaController@addGolonganHarga')->name('dataharga.addgolonganharga');
     Route::post('/masterdatautama/harga/add-golongan-harga-hpa', 'Master\HargaController@addGolonganHargaHPA')->name('dataharga.addgolonganhargahpa');
-    Route::get('/masterdatautama/harga/add-golongan-harga-hpa', 'Master\HargaController@addGolonganHargaHPA')->name('dataharga.addgolonganhargahpa');
     Route::get('/masterdatautama/harga/get-data-need-approve', 'Master\HargaController@getDataNeddApprove')->name('dataharga.getdataneedapprove');
     Route::get('/masterdatautama/harga/get-golongan-harga/{id}', 'Master\HargaController@getGolonganHarga')->name('dataharga.getgolonganharga');
     Route::get('/masterdatautama/harga/get-golongan-harga-hpa/{id}', 'Master\HargaController@getGolonganHargaHPA')->name('dataharga.getgolonganhargahpa');
@@ -272,6 +271,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/inventory/distribusibarang/store', 'Inventory\DistribusiController@store')->name('distribusibarang.store');
     Route::get('/inventory/distribusibarang/get-areas', 'Inventory\DistribusiController@getAreas')->name('distribusibarang.getAreas');
     Route::get('/inventory/distribusibarang/get-branch', 'Inventory\DistribusiController@getBranch')->name('distribusibarang.getBranch');
+    Route::get('/inventory/distribusibarang/get-expedition-type', 'Inventory\DistribusiController@getExpeditionType')->name('distribusibarang.getExpeditionType');
     Route::get('/inventory/distribusibarang/edit/{id}', 'Inventory\DistribusiController@edit')->name('distribusibarang.edit');
     Route::post('/inventory/distribusibarang/update/{id}', 'Inventory\DistribusiController@update')->name('ditribusibarang.update');
     Route::get('/inventory/distribusibarang/table', 'Inventory\DistribusiController@table');
@@ -308,6 +308,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/adjustmentstock/create', 'Inventory\AdjusmentController@create')->name('adjustment.create');
     Route::get('/inventory/manajemenstok/adjustmentstock/print', 'Inventory\AdjusmentController@nota')->name('adjustment.nota');
     Route::get('/inventory/manajemenstok/adjustmentstock/getopname', 'Inventory\AdjusmentController@getopname')->name('adjustment.getopname');
+    Route::get('/inventory/manajemenstok/adjustmentstock/list-code-produksi', 'Inventory\AdjusmentController@list_codeProduksi')->name('codeProduksiAdjustment.list');
     Route::get('/inventory/manajemenstok/adjustmentstock/simpan', 'Inventory\AdjusmentController@simpan')->name('adjustment.simpan');
     // Pengelolaan Data Max/Min, Safety stok
     Route::get('/inventory/manajemenstok/pengelolaanmms/index', 'InventoryController@pengelolaanmms_index')->name('pengelolaanmms.index');
@@ -494,14 +495,27 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/manajemenpenjualanagen/get-detail/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getDetailMPA')->name('manajemenpenjualanagen.getDetailMPA');
     // End Manajemen Data Penjualan Agen ================================================================================================
 
+    // Start: MMA kelola data konsinyasi ================================================================================================
+    Route::get('/marketing/marketingarea/datakonsinyasi/get-list', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getListDK')->name('datakonsinyasi.getListDK');
     Route::get('/marketing/marketingarea/datakonsinyasi/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@create_datakonsinyasi')->name('datakonsinyasi.create');
-    Route::get('/marketing/marketingarea/datakonsinyasi/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datakonsinyasi')->name('datakonsinyasi.edit');
+    Route::get('/marketing/marketingarea/datakonsinyasi/get-branch', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getBranchDK')->name('datakonsinyasi.getBranchDK');
+    Route::get('/marketing/marketingarea/datakonsinyasi/get-agents', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getAgentsDK')->name('datakonsinyasi.getAgentsDK');
+    Route::get('/marketing/marketingarea/datakonsinyasi/get-items', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getItemsDK')->name('datakonsinyasi.getItemsDK');
+    Route::get('/marketing/marketingarea/datakonsinyasi/get-satuan/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getSatuanDK')->name('datakonsinyasi.getSatuanDK');
+    Route::get('/marketing/marketingarea/datakonsinyasi/check-items-stock', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@checkItemStockDK')->name('datakonsinyasi.checkItemStockDK');
+    Route::get('/marketing/marketingarea/datakonsinyasi/check-items-stock-old', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@checkItemStockDKOld')->name('datakonsinyasi.checkItemStockDKOld');
+    Route::get('/marketing/marketingarea/datakonsinyasi/check-harga', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@checkHargaDK')->name('datakonsinyasi.checkHargaDK');
+    Route::post('/marketing/marketingarea/datakonsinyasi/store', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@storeDK')->name('datakonsinyasi.storeDK');
+    Route::get('/marketing/marketingarea/datakonsinyasi/edit/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datakonsinyasi')->name('datakonsinyasi.edit');
+    Route::post('/marketing/marketingarea/datakonsinyasi/update/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@updateDK')->name('datakonsinyasi.updateDK');
+    Route::post('/marketing/marketingarea/datakonsinyasi/delete', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@deleteDK')->name('datakonsinyasi.deleteDK');
+
+    // End: MMA kelola data konsinyasi ================================================================================================
 
     // Manajemen Agen ===============================================================================================
     Route::get('/marketing/agen/index', 'Aktivitasmarketing\Agen\ManajemenAgenController@index')->name('manajemenagen.index');
     Route::get('/marketing/agen/get-agen/{city}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getAgen')->name('manajemenagen.getAgen');
     Route::post('/marketing/agen/filter-data/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@filterData')->name('manajemenagen.filterData');
-
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpl', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPL')->name('kelolapenjualan.getListKPL');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-cities', 'Aktivitasmarketing\Agen\ManajemenAgenController@getCitiesKPL')->name('kelolapenjualan.getCitiesKPL');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-agents-kpl', 'Aktivitasmarketing\Agen\ManajemenAgenController@getAgentsKPL')->name('kelolapenjualan.getAgentsKPL');
@@ -516,7 +530,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-unit/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getUnit')->name('kelolapenjualan.getUnit');
     Route::get('/marketing/agen/kelolapenjualanlangsung/edit/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@editKPL')->name('kelolapenjualan.edit');
     Route::post('/marketing/agen/kelolapenjualanlangsung/update/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@updateKPL')->name('kelolapenjualan.update');
-    // End Manajemen Agen ============================================================================================
+
+    Route::get('/marketing/agen/kelolapenjualanviawebsite/cari-produk', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariProduk')->name('kelolapenjualanviawebsite.cariProduk');
+    Route::get('/marketing/agen/kelolapenjualanviawebsite/get-unit', 'Aktivitasmarketing\Agen\ManajemenAgenController@getUnit')->name('kelolapenjualanviawebsite.getUnit');
+    Route::post('/marketing/agen/kelolapenjualanviawebsite/save-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@saveKPW')->name('kelolapenjualanviawebsite.saveKPW');
+    Route::get('/marketing/agen/kelolapenjualanviawebsite/cek-code', 'Aktivitasmarketing\Agen\ManajemenAgenController@cekProductionCode')->name('kelolapenjualanviawebsite.cekProductionCode');
+    // End Manajemen Agen ======================================================================================================================================================================================
 
     Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Agen\ManajemenAgenController@create_orderprodukagencabang')->name('orderagenpusat.create');
     Route::get('/marketing/agen/orderproduk/get-provinsi', 'Aktivitasmarketing\Agen\ManajemenAgenController@getProv')->name('orderagenpusat.getprovinsi');
@@ -587,6 +606,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/index', 'OtorisasiController@adjustment')->name('adjustment');
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/getadjusment', 'OtorisasiController@getadjusment')->name('getadjusment');
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/getList', 'Inventory\HistoryAdjusmentController@getList');
+    Route::get('/notifikasiotorisasi/otorisasi/adjustment/show-detail-approve/{id}', 'OtorisasiController@detailApprove')->name('detailApprove.show');
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/agreeadjusment/{id}', 'OtorisasiController@agreeadjusment')->name('agreeadjusment');
     Route::get('/notifikasiotorisasi/otorisasi/adjustment/rejectadjusment/{id}', 'OtorisasiController@rejectadjusment')->name('rejectadjusment');
     Route::get('/notifikasiotorisasi/otorisasi/revisi/index', 'OtorisasiController@revisi')->name('revisi');

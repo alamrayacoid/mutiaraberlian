@@ -322,11 +322,7 @@
                 messageWarning("Peringatan", "Kolom nama golongan tidak boleh kosong");
             } else {
                 var data = $('#formglnHPA').serialize();
-                axios.get('{{route("dataharga.addgolonganhpa")}}', {
-                    params:{
-                        data
-                    }
-                }).then(function (response) {
+                axios.post('{{route("dataharga.addgolonganhpa")}}', data).then(function (response) {
                     if (response.data.status == "Success") {
                         messageSuccess("Berhasil", "Data berhasil disimpan!");
                         $('#formglnHPA').trigger("reset");
@@ -1136,7 +1132,7 @@
                             success: function (response) {
                                 if (response.status == 'Success') {
                                     messageSuccess('Berhasil', 'Data berhasil hapus!');
-                                    tbl_item.ajax.reload();
+                                    tbl_itemHPA.ajax.reload();
                                 } else {
                                     messageWarning('Gagal', 'Gagal menghapus data!');
                                 }

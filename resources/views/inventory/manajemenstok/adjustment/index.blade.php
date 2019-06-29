@@ -6,42 +6,30 @@
 @include('marketing.penjualanpusat.terimaorder.modal')
 
 <article class="content animated fadeInLeft">
-
 	<div class="title-block text-primary">
-	    <h1 class="title"> Manajemen Penjualan Stok  </h1>
-	    <p class="title-description">
-	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Inventory</span> / <span class="text-primary" style="font-weight: bold;">Pengelolaan Manajemen Stok</span>
-	     </p>
+		<h1 class="title"> Manajemen Penjualan Stok  </h1>
+		<p class="title-description">
+			<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Inventory</span> / <span class="text-primary" style="font-weight: bold;">Pengelolaan Manajemen Stok</span>
+		</p>
 	</div>
-
 	<section class="section">
-
 		<div class="row">
-
 			<div class="col-12">
-
-                <ul class="nav nav-pills mb-3">
-                    <li class="nav-item">
-                        <a href="" class="nav-link active" data-target="#adjustmentstock" aria-controls="adjustmentstock" data-toggle="tab" role="tab">Adjustment Stock</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="" class="nav-link" data-target="#historyadjustment" aria-controls="historyadjustment" data-toggle="tab" role="tab">History Adjustment Stock</a>
+				<ul class="nav nav-pills mb-3">
+					<li class="nav-item">
+						<a href="" class="nav-link active" data-target="#adjustmentstock" aria-controls="adjustmentstock" data-toggle="tab" role="tab">Adjustment Stock</a>
 					</li>
-                </ul>
-
-                <div class="tab-content">
-
+					<li class="nav-item">
+						<a href="" class="nav-link" data-target="#historyadjustment" aria-controls="historyadjustment" data-toggle="tab" role="tab">History Adjustment Stock</a>
+					</li>
+				</ul>
+				<div class="tab-content">
 					@include('inventory.manajemenstok.adjustment.adjustmentstock.index')
 					@include('inventory.manajemenstok.adjustment.historyadjustment.index')
-
-	            </div>
-
+				</div>
 			</div>
-
 		</div>
-
 	</section>
-
 </article>
 
 @endsection
@@ -145,7 +133,7 @@
 				{data: 'date'},
 				{data: 'a_nota'},
 				{data: 'name'},
-				{data: 'status'},
+				{data: 'status', className: 'text-center'},
 			],
 			pageLength: 10,
 			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
@@ -171,12 +159,12 @@
 						}
 				},
 				columns: [
-						{data: 'DT_RowIndex'},
+						{data: 'DT_RowIndex', className: 'text-center'},
 						{data: 'tanggal', name: 'tanggal'},
 						{data: 'aa_nota', name: 'aa_nota'},
 						{data: 'i_name', name: 'i_name'},
-						{data: 'status', name: 'status'},
-						{data: 'action', name: 'action'}
+						{data: 'status', name: 'status', className: 'text-center'},
+						{data: 'action', name: 'action', className: 'text-center'}
 				],
 				pageLength: 10,
 				lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]

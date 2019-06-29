@@ -304,6 +304,211 @@
 @endsection
 @section('extra_script')
     <!-- ========================================================================-->
+    <!-- script for Data-Konsinyasi etc -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            getProv();
+            getKota();
+            // check user is PUSAT or not
+            let userType = $('.userType').val();
+            if (userType === 'PUSAT') {
+                console.log('\'pusat\' logged in !');
+                $('.filterBranch').removeClass('d-none');
+            }
+            else {
+                console.log('\'non-pusat\' logged in !');
+                $('.filterBranch').addClass('d-none');
+                $('#branchCode').val("{{ Auth::user()->getCompany->c_id }}");
+                console.log($('#branchCode').val());
+            }
+
+            $(".cityIdxDK").on("change", function (evt) {
+                evt.preventDefault();
+                if ($(".cityIdxDK").val() == "") {
+                    $("#branchCode").val('');
+                    $("#branch").val('');
+                    $('#branch').find('option').remove();
+                    $("#branch").attr("disabled", true);
+                }
+                else {
+                    getBranch();
+                    $("#branch").attr("disabled", false);
+                    $("#branchCode").val('');
+                    $("#branch").val('');
+                    $("#branch").attr('autofocus', true);
+                }
+            })
+            // on select branch
+            $('#branch').on('select2:select', function() {
+                $( "#branchCode" ).val($(this).find('option:selected').val());
+                TableListDK();
+            });
+
+        });
+        // retrieve list
+        function TableListDK() {
+            // let start = $('#date_from_dk').val();
+            // let end = $('#date_to_dk').val();
+
+            $('#table_konsinyasi').DataTable().clear().destroy();
+            table_konsinyasi = $('#table_konsinyasi').DataTable({
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('datakonsinyasi.getListDK') }}",
+                    type: "get",
+                    data: {
+                        branchCode: $('#branchCode').val()
+                    }
+                },
+                columns: [
+                    {data: 'date'},
+                    {data: 'sc_nota'},
+                    {data: 'agent'},
+                    {data: 'total'},
+                    {data: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
+
+        function getProv() {
+            loadingShow();
+            $(".provIdxDK").find('option').remove();
+            $(".provIdxDK").attr("disabled", true);
+            axios.get('{{ route('konsinyasipusat.getProv') }}')
+            .then(function (resp) {
+                $(".provIdxDK").attr("disabled", false);
+                var option = '<option value="">Pilih Provinsi</option>';
+                var prov = resp.data;
+                prov.forEach(function (data) {
+                    option += '<option value="'+data.wp_id+'">'+data.wp_name+'</option>';
+                })
+                $(".provIdxDK").append(option);
+                loadingHide();
+            })
+            .catch(function (error) {
+                loadingHide();
+                messageWarning("Error", error)
+            })
+        }
+        function getKota() {
+            $(".provIdxDK").on("change", function (evt) {
+                evt.preventDefault();
+                $("#branchCode").val('');
+                $("#branch").val('');
+                $('#branch').find('option').remove();
+                $("#branch").attr("disabled", true);
+                $(".cityIdxDK").find('option').remove();
+                $(".cityIdxDK").attr("disabled", true);
+                if ($(".provIdxDK").val() != "") {
+                    loadingShow();
+                    axios.get(baseUrl+'/marketing/konsinyasipusat/get-kota/'+$(".provIdxDK").val())
+                    .then(function (resp) {
+                        $(".cityIdxDK").attr("disabled", false);
+                        var option = '<option value="">Pilih Kota</option>';
+                        var kota = resp.data;
+                        kota.forEach(function (data) {
+                            option += '<option value="'+data.wc_id+'">'+data.wc_name+'</option>';
+                        })
+                        $(".cityIdxDK").append(option);
+                        loadingHide();
+                        $(".cityIdxDK").focus();
+                        $(".cityIdxDK").select2('open');
+                    })
+                    .catch(function (error) {
+                        loadingHide();
+                        messageWarning("Error", error)
+                    })
+                }
+            })
+        }
+        // get list of branc based on prov and city
+        function getBranch() {
+            if ($(".cityIdxDK").val() != '') {
+                loadingShow();
+                $.ajax({
+                    url: "{{ route('datakonsinyasi.getBranchDK') }}",
+                    data: {
+                        prov: $("#provinsi").val(),
+                        city: $("#kota").val()
+                    },
+                    type: 'get',
+                    success: function( data ) {
+                        // console.log(data);
+                        $('#branch').find('option').remove();
+                        $('#branch').append('<option value="" selected>Pilih Cabang</option>')
+                        $.each(data, function(index, val) {
+                            // console.log(val, val.a_id);
+                            $('#branch').append('<option value="'+ val.c_id +'">'+ val.c_name +'</option>');
+                        });
+                        loadingHide();
+                        $('#branch').focus();
+                        $('#branch').select2('open');
+                    },
+                    error: function(e) {
+                        loadingHide();
+                        // console.log('get konsigner error: ');
+                    }
+                });
+            }
+        }
+
+        // re-direct to edit page
+        function editDK(id) {
+            window.location = baseUrl +'/marketing/marketingarea/datakonsinyasi/edit/'+ id;
+        }
+        // delete record
+        function deleteDK(id) {
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apakah anda yakin ingin menghapus data ini ?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            loadingShow();
+                            axios.post("{{ route('datakonsinyasi.deleteDK') }}", {
+                                id: id
+                            })
+                            .then(function (response) {
+                                if(response.data.status == 'Success'){
+                                    loadingHide();
+                                    messageSuccess("Berhasil", response.data.message);
+                                    table_konsinyasi.ajax.reload();
+                                }
+                                else {
+                                    loadingHide();
+                                    messageFailed("Gagal", response.data.message);
+                                }
+                            })
+                            .catch(function (error) {
+                                loadingHide();
+                                messageWarning("Error", error);
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+        }
+
+    </script>
+    <!-- ========================================================================-->
+
+    <!-- ========================================================================-->
     <!-- script for Kelola-Data-Order etc -->
     <script type="text/javascript">
         var table_agen, table_search, table_bar, table_rab, table_bro;
@@ -319,68 +524,8 @@
             table_bar = $('#table_monitoringpenjualanagen').DataTable();
             table_rab = $('#table_canvassing').DataTable();
             table_bro = $('#table_konsinyasi').DataTable();
-            // Code Dummy --------------------------------------------------
-            $(document).on('click', '.btn-edit-kons', function () {
-                window.location.href = '{{ route('datakonsinyasi.edit') }}';
-            });
 
-            $(document).on('click', '.btn-disable', function () {
-                var ini = $(this);
-                $.confirm({
-                    animation: 'RotateY',
-                    closeAnimation: 'scale',
-                    animationBounce: 1.5,
-                    icon: 'fa fa-exclamation-triangle',
-                    title: 'Peringatan!',
-                    content: 'Apa anda yakin mau menonaktifkan data ini?',
-                    theme: 'disable',
-                    buttons: {
-                        info: {
-                            btnClass: 'btn-blue',
-                            text: 'Ya',
-                            action: function () {
-                                $.toast({
-                                    heading: 'Information',
-                                    text: 'Data Berhasil di Nonaktifkan.',
-                                    bgColor: '#0984e3',
-                                    textColor: 'white',
-                                    loaderBg: '#fdcb6e',
-                                    icon: 'info'
-                                })
-                                ini.parents('.btn-group').html('<button class="btn btn-success btn-enable" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-                            }
-                        },
-                        cancel: {
-                            text: 'Tidak',
-                            action: function () {
-                                // tutup confirm
-                            }
-                        }
-                    }
-                });
-            });
-
-            $(document).on('click', '.btn-enable', function () {
-                $.toast({
-                    heading: 'Information',
-                    text: 'Data Berhasil di Aktifkan.',
-                    bgColor: '#0984e3',
-                    textColor: 'white',
-                    loaderBg: '#fdcb6e',
-                    icon: 'info'
-                })
-                $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
-                    '<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-            })
-
-            $(document).ready(function () {
-                $('#detail-monitoring').DataTable({
-                    "iDisplayLength": 5
-                });
-            });
-
-            // canvassing
-            // $(document).on('click', '.btn-disable-canv', function() {
+            // $(document).on('click', '.btn-disable', function () {
             //     var ini = $(this);
             //     $.confirm({
             //         animation: 'RotateY',
@@ -394,7 +539,7 @@
             //             info: {
             //                 btnClass: 'btn-blue',
             //                 text: 'Ya',
-            //                 action: function() {
+            //                 action: function () {
             //                     $.toast({
             //                         heading: 'Information',
             //                         text: 'Data Berhasil di Nonaktifkan.',
@@ -403,12 +548,12 @@
             //                         loaderBg: '#fdcb6e',
             //                         icon: 'info'
             //                     })
-            //                     ini.parents('.btn-group').html('<button class="btn btn-success btn-enable-canv" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
+            //                     ini.parents('.btn-group').html('<button class="btn btn-success btn-enable" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
             //                 }
             //             },
             //             cancel: {
             //                 text: 'Tidak',
-            //                 action: function() {
+            //                 action: function () {
             //                     // tutup confirm
             //                 }
             //             }
@@ -416,7 +561,7 @@
             //     });
             // });
             //
-            // $(document).on('click', '.btn-enable-canv', function() {
+            // $(document).on('click', '.btn-enable', function () {
             //     $.toast({
             //         heading: 'Information',
             //         text: 'Data Berhasil di Aktifkan.',
@@ -425,9 +570,15 @@
             //         loaderBg: '#fdcb6e',
             //         icon: 'info'
             //     })
-            //     $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit-canv" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
-            //         '<button class="btn btn-danger btn-disable-canv" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
+            //     $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
+            //         '<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
             // })
+            //
+            // $(document).ready(function () {
+            //     $('#detail-monitoring').DataTable({
+            //         "iDisplayLength": 5
+            //     });
+            // });
 
             // Konsinyasi
             $(document).on('click', '.btn-disable-kons', function () {

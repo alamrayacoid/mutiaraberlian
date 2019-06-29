@@ -990,7 +990,7 @@
            dataType: 'json',
            url: baseUrl + '/marketing/penjualanpusat/returnpenjualan/hapus',
            success : function(response){
-               
+               if
            } 
         });
     }

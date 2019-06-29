@@ -37,7 +37,6 @@ class KonsinyasiPusatController extends Controller
         ->join('d_salescompdt', function ($sd){
             $sd->on('scd_sales', '=', 'sc_id');
         })
-        // changed from c_user to c_id --> rowi
         ->join('m_company', 'c_id', '=', 'sc_member')
         ->where('sc_type', '=', 'K')
         ->groupBy('d_salescomp.sc_nota')
@@ -145,13 +144,16 @@ class KonsinyasiPusatController extends Controller
 
     public function getProv()
     {
-        $prov = DB::table('m_wil_provinsi')->get();
+        $prov = DB::table('m_wil_provinsi')->orderBy('wp_name', 'asc')->get();
         return Response::json($prov);
     }
 
     public function getKota($idprov = null)
     {
-        $kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->get();
+        $kota = DB::table('m_wil_kota')
+        ->where('wc_provinsi', $idprov)
+        ->orderBy('wc_name')
+        ->get();
         return Response::json($kota);
     }
 
@@ -451,6 +453,7 @@ class KonsinyasiPusatController extends Controller
     {
         $data   = $request->all();
         $comp   = Auth::user()->u_company;
+        $compItem = $data['idStock']; // pemilik item
         // $member = $data['kodeKonsigner'];
         $member = $data['idKonsigner'];
         $user   = Auth::user()->u_id;
@@ -463,6 +466,13 @@ class KonsinyasiPusatController extends Controller
         $idSales= (DB::table('d_salescomp')->max('sc_id')) ? DB::table('d_salescomp')->max('sc_id') + 1 : 1;
 
         DB::beginTransaction();
+
+        // get item owner
+        foreach ($compItem as $key => $val) {
+            $owner = d_stock::where('s_id', $val)->first();
+            $compItem[$key] = $owner->s_comp;
+        }
+
         // validate production-code is exist in stock-item
         $validateProdCode = Mutasi::validateProductionCode(
             Auth::user()->u_company, // from
@@ -474,10 +484,10 @@ class KonsinyasiPusatController extends Controller
             return $validateProdCode;
         }
 
-        try{
+        try {
             $val_sales = [
                 'sc_id'      => $idSales,
-                'sc_comp'    => $comp,
+                'sc_comp'    => $comp, // pelaku konsinyasi
                 'sc_member'  => $member,
                 'sc_type'    => $type,
                 'sc_date'    => $date,
@@ -496,7 +506,7 @@ class KonsinyasiPusatController extends Controller
                 $val_salesdt[] = [
                     'scd_sales' => $idSales,
                     'scd_detailid' => $detailsd,
-                    'scd_comp' => $comp,
+                    'scd_comp' => $compItem[$i], // pemilik item
                     'scd_item' => $data['idItem'][$i],
                     'scd_qty' => $data['jumlah'][$i],
                     'scd_unit' => $data['satuan'][$i],
@@ -554,10 +564,6 @@ class KonsinyasiPusatController extends Controller
 
                 $stock = DB::table('d_stock')
                 ->where('s_id', '=', $data['idStock'][$i])
-                ->where('s_position', '=', $comp)
-                ->where('s_item', '=', $data['idItem'][$i])
-                ->where('s_status', '=', 'ON DESTINATION')
-                ->where('s_condition', '=', 'FINE')
                 ->first();
 
                 $stock_mutasi = DB::table('d_stock_mutation')
@@ -573,10 +579,11 @@ class KonsinyasiPusatController extends Controller
                 $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                 $listUnitPC = [];
 
+                $statusKons = 'pusat';
                 // set mutation (mutation-out is called inside mutation-in)
                 $mutKons = Mutasi::mutasimasuk(
                     12, // mutcat
-                    $stock->s_comp, // comp / item-owner
+                    $compItem[$i], // comp / item-owner
                     $posisi->c_id, // position / destination
                     $data['idItem'][$i], // item-id
                     $qty_compare, // qty item with smallest unit
@@ -587,7 +594,8 @@ class KonsinyasiPusatController extends Controller
                     $nota, // nota
                     $stock_mutasi->sm_nota, // nota refference
                     $listPC, // list production-code
-                    $listQtyPC // list qty roduction code
+                    $listQtyPC, // list qty roduction code
+                    $statusKons // konsinyasi dari pusat ke cabang
                 );
                 if (!is_bool($mutKons)) {
                     return $mutKons;
@@ -596,6 +604,7 @@ class KonsinyasiPusatController extends Controller
                 $startProdCodeIdx += $prodCodeLength;
                 $detailsd++;
             }
+            // dd($data, $compItem);
             // insert into db
             DB::table('d_salescomp')->insert($val_sales);
             DB::table('d_salescompdt')->insert($val_salesdt);
@@ -628,6 +637,7 @@ class KonsinyasiPusatController extends Controller
         if ($request->isMethod('post')) {
             $data   = $request->all();
             $comp   = Auth::user()->u_company;
+            $compItem = $data['idStock']; // pemilik item
             // $member = $data['kodeKonsigner'];
             $member = $data['idKonsigner'];
             $user   = Auth::user()->u_id;
@@ -637,6 +647,12 @@ class KonsinyasiPusatController extends Controller
 
             DB::beginTransaction();
             try{
+                // get item owner
+                foreach ($compItem as $key => $val) {
+                    $owner = d_stock::where('s_id', $val)->first();
+                    $compItem[$key] = $owner->s_comp;
+                }
+
                 // validate production-code is exist in stock-item
                 $validateProdCode = Mutasi::validateProductionCode(
                     Auth::user()->u_company, // from
@@ -777,7 +793,7 @@ class KonsinyasiPusatController extends Controller
                     $val_salesdt[] = [
                         'scd_sales' => $id,
                         'scd_detailid' => $detailsd,
-                        'scd_comp' => $comp,
+                        'scd_comp' => $compItem[$key],
                         'scd_item' => $data['idItem'][$key],
                         'scd_qty' => $data['jumlah'][$key],
                         'scd_unit' => $data['satuan'][$key],
@@ -832,10 +848,6 @@ class KonsinyasiPusatController extends Controller
                     // get item stock
                     $stock = DB::table('d_stock')
                     ->where('s_id', '=', $data['idStock'][$key])
-                    ->where('s_position', '=', $comp)
-                    ->where('s_item', '=', $data['idItem'][$key])
-                    ->where('s_status', '=', 'ON DESTINATION')
-                    ->where('s_condition', '=', 'FINE')
                     ->first();
 
                     $stock_mutasi = DB::table('d_stock_mutation')
@@ -851,10 +863,11 @@ class KonsinyasiPusatController extends Controller
                     $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                     $listUnitPC = [];
 
+                    $statusKons = 'pusat';
                     // set mutation (mutation-out is called inside mutation-in)
                     $mutKons = Mutasi::mutasimasuk(
                         12, // mutcat
-                        $stock->s_comp, // comp / item-owner
+                        $compItem[$key], // comp / item-owner
                         $posisi->c_id, // position / destination
                         $data['idItem'][$key], // item-id
                         $qty_compare, // qty item with smallest unit
@@ -865,7 +878,8 @@ class KonsinyasiPusatController extends Controller
                         $nota, // nota
                         $stock_mutasi->sm_nota, // nota refference
                         $listPC, // list production-code
-                        $listQtyPC // list qty roduction code
+                        $listQtyPC, // list qty roduction code
+                        $statusKons // konsinyasi dari pusat ke cabang
                     );
                     if (!is_bool($mutKons)) {
                         return $mutKons;
@@ -932,7 +946,8 @@ class KonsinyasiPusatController extends Controller
             {
                 $item = $val->scd_item;
                 // get item stock
-                $mainStock = d_stock::where('s_position', $val->scd_comp)
+                $mainStock = d_stock::where('s_comp', $val->scd_comp)
+                ->where('s_position', $data_item->sc_comp)
                 ->where('s_item', $item)
                 ->where('s_status', 'ON DESTINATION')
                 ->where('s_condition', 'FINE')
@@ -1049,8 +1064,6 @@ class KonsinyasiPusatController extends Controller
             ]);
         }
     }
-
-
 
     // =========================================================================
     // Monitoring Penjualan

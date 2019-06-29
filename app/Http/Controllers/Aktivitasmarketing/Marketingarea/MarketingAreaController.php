@@ -19,8 +19,11 @@ use App\d_salescomp;
 use App\d_salescompdt;
 use App\d_salescompcode;
 use App\d_stock;
+use App\d_stock_mutation;
 use App\d_username;
 use App\m_agen;
+use App\m_company;
+use App\m_item;
 use App\m_wil_provinsi;
 use Carbon\Carbon;
 use CodeGenerator;
@@ -141,6 +144,7 @@ class MarketingAreaController extends Controller
         $provId = $request->provId;
         $city = DB::table('m_wil_kota')->select('wc_id', 'wc_name')
             ->where('wc_provinsi', '=', $provId)
+            ->orderBy('wc_name', 'asc')
             ->get();
         return Response::json(array(
             'success' => true,
@@ -214,6 +218,7 @@ class MarketingAreaController extends Controller
                 $z->on('m_item.i_unit3', '=', 'c.u_id');
             })
             ->first();
+
         return Response::json($data);
     }
 
@@ -1745,19 +1750,900 @@ class MarketingAreaController extends Controller
             'listQty' => $listQty
         ));
     }
+    // Monitoring Penjualan Agen End ===========================================
 
-    // Monitoring Penjualan Agen End ==============================================================================
+    // Start: konsinyasi =======================================================
+    // index -> read data and display to table
+    public function getListDK(Request $request)
+    {
+        $branchCode = $request->branchCode;
 
+        $datas = d_salescomp::where('sc_type', '=', 'K');
+        // get comoany 'pusat'
+        $pusat = m_company::where('c_type', 'PUSAT')->first();
+        // if pusat is logged in
+        if (Auth::user()->u_company == $pusat->c_id) {
+            // add filter which branch wil be shown
+            $datas = $datas->where('sc_comp', $branchCode);
+        }
+        // if branch is logged in
+        else {
+            // show konsinyasi that is made by him
+            $datas = $datas->where('sc_comp', Auth::user()->u_company)
+            ->where('sc_comp', '!=', 'MB0000001');
+        }
+        $datas = $datas
+        ->where('sc_paidoff', 'N')
+        ->with('getSalesCompDt')
+        ->with('getAgent')
+        ->orderBy('sc_date', 'desc')
+        ->get();
+
+        return Datatables::of($datas)
+            ->addIndexColumn()
+            ->addColumn('date', function ($datas) {
+                return Carbon::parse($datas->sc_date)->format('d M Y');
+            })
+            ->addColumn('agent', function ($datas) {
+                return $datas->getAgent->c_name;
+            })
+            ->addColumn('total', function ($datas) {
+                return '<div class="text-right">Rp '. number_format($datas->sc_total, 0, 0, '.') .'</div>';
+            })
+            ->addColumn('action', function ($datas) {
+                return '<div class="btn-group btn-group-sm">
+                    <button class="btn btn-warning btn-edit-kons" type="button" title="Edit" onclick="editDK('. $datas->sc_id .')"><i class="fa fa-pencil"></i></button>
+                    <button class="btn btn-danger btn-delete-kons" type="button" title="Delete" onclick="deleteDK('. $datas->sc_id .')"><i class="fa fa-trash"></i></button>
+                </div>';
+            })
+            ->rawColumns(['date', 'action', 'agent', 'total'])
+            ->make(true);
+    }
+    // create
     public function create_datakonsinyasi()
     {
         return view('marketing/marketingarea/datakonsinyasi/create');
     }
-
-    public function edit_datakonsinyasi()
+    // get branch
+    public function getBranchDK(Request $request)
     {
-        return view('marketing/marketingarea/datakonsinyasi/edit');
+        $prov = $request->prov;
+        $kota = $request->city;
+
+        $nama = m_company::where('c_area', $kota)
+        ->where('c_type', 'CABANG')
+        ->get();
+
+        return Response::json($nama);
+    }
+    // get agents
+    public function getAgentsDK(Request $request)
+    {
+        $branch = $request->branch;
+
+        $nama = m_agen::where('a_mma', $branch)
+        ->with('getCompany')
+        ->get();
+
+        return Response::json($nama);
+    }
+    // get items
+    public function getItemsDK(Request $request)
+    {
+        // set list items that is already exist
+        $is_item = array();
+        for($i = 0; $i < count($request->idItem); $i++){
+            if($request->idItem[$i] != null){
+                array_push($is_item, $request->idItem[$i]);
+            }
+        }
+
+        $cari = $request->term;
+        $comp = $request->branch;
+        // dd($comp);
+        // start: query to get items
+        $nama = DB::table('m_item')
+                ->join('d_stock', function ($s) use ($comp){
+                    $s->on('i_id', '=', 's_item');
+                    $s->where('s_position', '=', $comp);
+                    $s->where('s_status', '=', 'ON DESTINATION');
+                    $s->where('s_condition', '=', 'FINE');
+                })
+                ->join('d_stock_mutation', function ($sm){
+                    $sm->on('sm_stock', '=', 's_id');
+                    $sm->where('sm_residue', '!=', 0);
+                });
+        if(count($is_item) != 0){
+            $nama = $nama->whereNotIn('i_id', $is_item);
+        }
+        $nama = $nama->where(function ($q) use ($cari){
+                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
+                    $q->orWhere('i_code', 'like', '%'.$cari.'%');
+                })
+                ->groupBy('d_stock.s_id')
+                ->get();
+
+        // end: query to get items
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = [
+                    'id' => $query->i_id,
+                    'label' => $query->i_code . ' - ' .strtoupper($query->i_name),
+                    'data' => $query,
+                    'stock' => $query->s_id
+                ];
+            }
+        }
+        return Response::json($results);
+    }
+    // get item-listUnits
+    public function getSatuanDK($id)
+    {
+        $data = m_item::where('i_id', $id)
+            ->with('getUnit1')
+            ->with('getUnit2')
+            ->with('getUnit3')
+            ->first();
+        return Response::json($data);
+    }
+    // check item stock by unit
+    public function checkItemStockDK(Request $request)
+    {
+        $stock = $request->idStock;
+        $item = $request->itemId;
+        $satuan = $request->unit;
+        $qty = $request->qty;
+
+        $data_check = DB::table('m_item')
+        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+        'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+        'm_item.i_unit3 as unit3')
+        ->where('i_id', '=', $item)
+        ->first();
+
+        $data = DB::table('d_stock')
+        ->join('d_stock_mutation', function($sm){
+            $sm->on('sm_stock', '=', 's_id');
+        })
+        ->where('s_id', '=', $stock)
+        // ->where('s_item', '=', $item)
+        // ->where('s_status', '=', 'ON DESTINATION')
+        // ->where('s_condition', '=', 'FINE')
+        ->select('sm_residue as sisa')
+        ->first();
+
+        $qty_compare = 0;
+        if ($satuan == $data_check->unit1) {
+            if ((int)$qty > (int)$data->sisa) {
+                $qty_compare = $data->sisa;
+            } else {
+                $qty_compare = $qty;
+            }
+        } else if ($satuan == $data_check->unit2) {
+            $compare = (int)$qty * (int)$data_check->compare2;
+            if ((int)$compare > (int)$data->sisa) {
+                $qty_compare = (int)$data->sisa/(int)$data_check->compare2;
+            } else {
+                $qty_compare = $qty;
+            }
+        } else if ($satuan == $data_check->unit3) {
+            $compare = (int)$qty * (int)$data_check->compare3;
+            if ((int)$compare > (int)$data->sisa) {
+                $qty_compare = (int)$data->sisa/(int)$data_check->compare3;
+            } else {
+                $qty_compare = $qty;
+            }
+        }
+
+        // dd(floor($qty_compare));
+        return Response::json(floor($qty_compare));
+    }
+    // check item stock by unit
+    public function checkItemStockDKOld(Request $request)
+    {
+        $stock = $request->idStock;
+        $item = $request->itemId;
+        $oldSatuan = $request->unitOld;
+        $satuan = $request->unit;
+        $qtyOld = $request->qtyOld;
+        $qty = $request->qty;
+
+        $data_check = DB::table('m_item')
+        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+        'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+        'm_item.i_unit3 as unit3')
+        ->where('i_id', '=', $item)
+        ->first();
+
+        $data = DB::table('d_stock')
+        ->join('d_stock_mutation', function($sm){
+            $sm->on('sm_stock', '=', 's_id');
+        })
+        ->where('s_id', '=', $stock)
+        // ->where('s_item', '=', $item)
+        // ->where('s_status', '=', 'ON DESTINATION')
+        // ->where('s_condition', '=', 'FINE')
+        ->select('sm_residue as sisa')
+        ->first();
+
+        $qty_compare_old = 0;
+        if ($oldSatuan == $data_check->unit1) {
+            if ((int)$qty > (int)$data->sisa) {
+                $qty_compare_old = $data->sisa + $qtyOld;
+            } else {
+                $qty_compare_old = $qty;
+            }
+        } else if ($oldSatuan == $data_check->unit2) {
+            $compare = (int)$qty * (int)$data_check->compare2;
+            if ((int)$compare > (int)($data->sisa + $qtyOld)) {
+                $qty_compare_old = (int)($data->sisa+$qtyOld)/(int)$data_check->compare2;
+            } else {
+                $qty_compare_old = $qty;
+            }
+        } else if ($oldSatuan == $data_check->unit3) {
+            $compare = (int)$qty * (int)$data_check->compare3;
+            if ((int)$compare > (int)($data->sisa+$qtyOld)) {
+                $qty_compare_old = (int)($data->sisa+$qtyOld)/(int)$data_check->compare3;
+            } else {
+                $qty_compare_old = $qty;
+            }
+        }
+        // dd(floor($qty_compare_old));
+        return Response::json(floor($qty_compare_old));
+    }
+    // get item price
+    public function checkHargaDK(Request $request)
+    {
+        $agent = $request->agentCode;
+        $item = $request->itemId;
+        $unit = $request->unit;
+        $qty = $request->qty;
+
+        $type = m_agen::whereHas('getCompany', function ($q) use ($agent) {
+            $q->where('c_id', '=', $agent);
+        })
+        ->first();
+        // dd($request->all(), $type);
+
+        $get_price = DB::table('m_priceclassdt')
+        ->join('m_priceclass', 'pcd_classprice', 'pc_id')
+        ->select('m_priceclassdt.*', 'm_priceclass.*')
+        ->where('pc_id', '=', $type->a_class)
+        ->where('pcd_payment', '=', 'K')
+        ->where('pcd_item', '=', $item)
+        ->where('pcd_unit', '=', $unit)
+        ->get();
+
+        $harga = 0;
+        $z = false;
+
+        foreach ($get_price as $key => $price) {
+            if ($qty == 1) {
+                if ($this->existsInArray("U", $get_price) == true) {
+                    if ($get_price[$key]->pcd_type == "U") {
+                        $harga = $get_price[$key]->pcd_price;
+                    }
+                } else {
+                    if ($price->pcd_rangeqtystart == 1) {
+                        $harga = $get_price[$key]->pcd_price;
+                    }
+                }
+            }
+            else if ($qty > 1) {
+                if ($price->pcd_rangeqtyend == 0){
+                    if ($qty >= $price->pcd_rangeqtystart) {
+                        $harga = $price->pcd_price;
+                    }
+                } else {
+                    $z = $this->inRange($qty, $get_price);
+                    if ($z !== null) {
+                        $harga = $get_price[$z]->pcd_price;
+                    }
+                }
+            }
+        }
+
+        // dd($get_price, $type, $qty, $harga);
+        return Response::json(number_format($harga, 0, '', ''));
+    }
+    // store
+    public function storeDK(Request $request)
+    {
+        $data   = $request->all();
+        $comp   = $data['branchCode']; // pelaku konsinyasi
+        $member = $data['agentCode']; // penerima item
+        $compItem = $data['idStock']; // pemilik item
+        $user   = Auth::user()->u_id;
+        $type   = 'K';
+        $date   = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+        $total  = $data['tot_hrg'];
+        $insert = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
+        $update = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
+        $nota   = CodeGenerator::codeWithSeparator('d_salescomp', 'sc_nota', 8, 10, 3, 'SK', '-');
+        $idSales= (DB::table('d_salescomp')->max('sc_id')) ? DB::table('d_salescomp')->max('sc_id') + 1 : 1;
+
+        DB::beginTransaction();
+        try {
+            // get item owner
+            foreach ($compItem as $key => $val) {
+                $owner = d_stock::where('s_id', $val)->first();
+                $compItem[$key] = $owner->s_comp;
+            }
+
+            // validate production-code is exist in stock-item
+            $validateProdCode = Mutasi::validateProductionCode(
+                Auth::user()->u_company, // from / position
+                $request->idItem, // list item-id
+                $request->prodCode, // list production-code
+                $request->prodCodeLength // list production-code length each item
+            );
+            if ($validateProdCode !== 'validated') {
+                return $validateProdCode;
+            }
+            $val_sales = [
+                'sc_id'      => $idSales,
+                'sc_comp'    => $comp,
+                'sc_member'  => $member,
+                'sc_type'    => $type,
+                'sc_date'    => $date,
+                'sc_nota'    => $nota,
+                'sc_total'   => $total,
+                'sc_user'    => $user,
+                'sc_insert'  => $insert,
+                'sc_update'  => $update
+            ];
+
+            $sddetail = (DB::table('d_salescompdt')->where('scd_sales', '=', $idSales)->max('scd_detailid')) ? (DB::table('d_salescompdt')->where('scd_sales', '=', $idSales)->max('sd_detailid')) + 1 : 1;
+            $detailsd = $sddetail;
+            $val_salesdt = [];
+            for ($i = 0; $i < count($data['idItem']); $i++) {
+                // values for insert to salescomp-dt
+                $val_salesdt[] = [
+                    'scd_sales' => $idSales,
+                    'scd_detailid' => $detailsd,
+                    'scd_comp' => $compItem[$i], // pemilik item
+                    'scd_item' => $data['idItem'][$i],
+                    'scd_qty' => $data['jumlah'][$i],
+                    'scd_unit' => $data['satuan'][$i],
+                    'scd_value' => Currency::removeRupiah($data['harga'][$i]),
+                    'scd_discpersen' => 0,
+                    'scd_discvalue' => 0,
+                    'scd_totalnet' => Currency::removeRupiah($data['subtotal'][$i])
+                ];
+
+                // values for insert to salescomp-code
+                if ($i == 0) {
+                    $startProdCodeIdx = 0;
+                }
+                $prodCodeLength = (int)$request->prodCodeLength[$i];
+                $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
+                    // skip inserting when val is null or qty-pc is 0
+                    if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
+                        continue;
+                    }
+                    $detailidcode = d_salescompcode::where('ssc_salescomp', $idSales)
+                    ->where('ssc_item', $data['idItem'][$i])
+                    ->max('ssc_detailid') + 1;
+
+                    $val_salescode = [
+                        'ssc_salescomp' => $idSales,
+                        'ssc_item' => $data['idItem'][$i],
+                        'ssc_detailid' => $detailidcode,
+                        'ssc_code' => strtoupper($request->prodCode[$j]),
+                        'ssc_qty' => $request->qtyProdCode[$j]
+                    ];
+                    DB::table('d_salescompcode')->insert($val_salescode);
+                }
+
+                // mutasi
+                $data_check = DB::table('m_item')
+                ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                'm_item.i_unit3 as unit3')
+                ->where('i_id', '=', $data['idItem'][$i])
+                ->first();
+
+                $qty_compare = 0;
+                $sellPrice = 0;
+                if ($data['satuan'][$i] == $data_check->unit1) {
+                    $qty_compare = $data['jumlah'][$i];
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]);
+                } else if ($data['satuan'][$i] == $data_check->unit2) {
+                    $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare2;
+                } else if ($data['satuan'][$i] == $data_check->unit3) {
+                    $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare3;
+                }
+
+                $stock = DB::table('d_stock')
+                ->where('s_id', '=', $data['idStock'][$i])
+                ->first();
+
+                $stock_mutasi = DB::table('d_stock_mutation')
+                ->where('sm_stock', '=', $stock->s_id)
+                ->first();
+
+                $posisi = DB::table('m_company')
+                ->where('c_id', '=', $member)
+                ->first();
+
+                // declaare list of production-code
+                $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
+                $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
+                $listUnitPC = [];
+
+                $statusKons = 'cabang';
+                // set mutation (mutation-out is called inside mutation-in)
+                $mutKons = Mutasi::mutasimasuk(
+                    12, // mutcat
+                    $compItem[$i], // comp / item position from
+                    $member, // position / destination
+                    $data['idItem'][$i], // item-id
+                    $qty_compare, // qty item with smallest unit
+                    'ON DESTINATION', // status
+                    'FINE', // condition
+                    $stock_mutasi->sm_hpp, // hpp
+                    $sellPrice, // sell value
+                    $nota, // nota
+                    $stock_mutasi->sm_nota, // nota refference
+                    $listPC, // list production-code
+                    $listQtyPC, // list qty roduction code
+                    $statusKons, // status konsinyasi ('pusat' / 'branch')
+                    $stock->s_comp // item owner
+                );
+                if (!is_bool($mutKons)) {
+                    return $mutKons;
+                }
+                // dd('stored');
+                $startProdCodeIdx += $prodCodeLength;
+                $detailsd++;
+            }
+            // insert into db
+            DB::table('d_salescomp')->insert($val_sales);
+            DB::table('d_salescompdt')->insert($val_salesdt);
+
+            DB::commit();
+            return Response::json([
+                'status' => "Success",
+                'message'=> "Data berhasil disimpan"
+            ]);
+        }
+        catch (\Exception $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e->getMessage()
+            ]);
+        }
+    }
+    // edit
+    public function edit_datakonsinyasi($id)
+    {
+        // $detail = d_salescomp::where('sc_id', $id)
+        // ->with(['getComp' => function ($q) {
+        //     $q->with('getCity');
+        // }])
+        // ->with(['getAgent' => function ($q) {
+        // }])
+        // ->first();
+
+        $data_item = d_salescomp::where('sc_id', $id)
+        ->with(['getSalesCompDt' => function ($query) {
+            $query
+            ->with(['getItem' => function ($query) {
+                $query
+                ->with('getUnit1')
+                ->with('getUnit2')
+                ->with('getUnit3');
+            }])
+            ->with('getUnit')
+            ->with('getProdCode');
+        }])
+        ->with(['getComp' => function ($q) {
+            $q->with('getCity');
+        }])
+        ->with('getAgent')
+        ->first();
+        // set nota
+        $nota = $data_item->sc_nota;
+        // get stock item
+        foreach ($data_item->getSalesCompDt as $key => $val)
+        {
+            $item = $val->scd_item;
+            // get item stock
+            $mainStock = d_stock::where('s_comp', $val->scd_comp)
+            ->where('s_position', $data_item->sc_comp)
+            ->where('s_item', $item)
+            ->where('s_status', 'ON DESTINATION')
+            ->where('s_condition', 'FINE')
+            ->with('getItem')
+            ->first();
+            // dd($mainStock);
+            // add stock id to data
+            $val->stockId = $mainStock->s_id;
+
+            // calculate item-stock based on unit-compare each item
+            if ($mainStock->getItem->i_unitcompare1 != null) {
+                $stock['unit1'] = floor($mainStock->s_qty / $mainStock->getItem->i_unitcompare1);
+            } else {
+                $stock['unit1'] = 0;
+            }
+            if ($mainStock->getItem->i_unitcompare2 != null) {
+                $stock['unit2'] = floor($mainStock->s_qty / $mainStock->getItem->i_unitcompare2);
+            } else {
+                $stock['unit2'] = 0;
+            }
+            if ($mainStock->getItem->i_unitcompare3) {
+                $stock['unit3'] = floor($mainStock->s_qty / $mainStock->getItem->i_unitcompare3);
+            } else {
+                $stock['unit3'] = 0;
+            }
+            // add stockunit to data
+            $val->stockUnit1 = $stock['unit1'];
+            $val->stockUnit2 = $stock['unit2'];
+            $val->stockUnit3 = $stock['unit3'];
+
+            // get item-stock in destination
+            $st_mutation = d_stock_mutation::where('sm_nota', '=', $nota)
+                ->whereHas('getStock', function ($query) use ($item) {
+                    $query->where('s_item', $item);
+                })
+                ->get();
+
+            foreach ($st_mutation as $keysm => $valsm) {
+                if ($valsm->sm_use > 0) {
+                    $val->qtyUsed += $valsm->sm_use;
+                }
+                else {
+                    $val->qtyUsed += 0;
+                }
+            }
+            // set status of the distributed item (used or unused)
+            if ($val->qtyUsed > 0) {
+                $val->status = 'used';
+            }
+            else {
+                $val->status = 'unused';
+            }
+        }
+
+        // $ids = Crypt::encrypt($id);
+        $ids = $id;
+
+        return view('marketing/marketingarea/datakonsinyasi/edit', compact('data_item', 'ids'));
+    }
+    // update
+    public function updateDK(Request $request, $id)
+    {
+        // dd($request->all());
+        $data   = $request->all();
+        $comp   = $data['branchCode']; // pelaku konsinyasi
+        $member = $data['agentCode']; // penerima item
+        $compItem = $data['idStock']; // pemilik item
+        $user   = Auth::user()->u_id;
+        $total  = $data['tot_hrg'];
+        $update = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
+        $nota   = $data['nota'];
+
+        DB::beginTransaction();
+        try{
+            // get item owner
+            foreach ($compItem as $key => $val) {
+                $owner = d_stock::where('s_id', $val)->first();
+                    $compItem[$key] = $owner->s_comp;
+            }
+
+            // validate production-code is exist in stock-item
+            $validateProdCode = Mutasi::validateProductionCode(
+                Auth::user()->u_company, // from
+                $request->idItem, // list item-id
+                $request->prodCode, // list production-code
+                $request->prodCodeLength // list production-code length each item
+            );
+            if ($validateProdCode !== 'validated') {
+                return $validateProdCode;
+            }
+            // get konsinyasi by id
+            $konsinyasi = d_salescomp::where('sc_id', $id)
+            ->with('getSalesCompDt.getProdCode')
+            ->first();
+            // rollBack konsinyasi-detail
+            foreach ($konsinyasi->getSalesCompDt as $key => $konsDt) {
+                // set index item by array_search
+                if (in_array($konsDt->scd_item, $data['idItem'])) {
+                    $localIdx = array_search($konsDt->scd_item, $data['idItem']);
+                }
+                else {
+                    $localIdx = 0;
+                }
+                // check used item is-modified
+                if (in_array($konsDt->scd_item, $data['idItem']) && $data['status'][$localIdx] == 'used') {
+                    // get salescompdt from db
+                    $recordFromDb = [
+                        'scd_item' => $konsDt->scd_item,
+                        'scd_qty' => $konsDt->scd_qty,
+                        'scd_unit' => $konsDt->scd_unit,
+                        'scd_value' => (int)$konsDt->scd_value,
+                        'scd_totalnet' => (int)$konsDt->scd_totalnet
+                    ];
+                    // set salescompdt from input/request
+                    $newRecord = [
+                        'scd_item' => (int)$data['idItem'][$localIdx],
+                        'scd_qty' => (int)$data['jumlah'][$localIdx],
+                        'scd_unit' => (int)$data['satuan'][$localIdx],
+                        'scd_value' => (int)Currency::removeRupiah($data['harga'][$localIdx]),
+                        'scd_totalnet' => (int)Currency::removeRupiah($data['subtotal'][$localIdx])
+                    ];
+                    // compare the result, return failed if different
+                    if (sizeof(array_diff($recordFromDb, $newRecord)) != 0) {
+                        DB::rollBack();
+                        return Response::json([
+                            'status' => "Failed",
+                            'message'=> $data['barang'][$localIdx]. " sudah digunakan, tidak dapat dilakukan modifikasi data !"
+                        ]);
+                    }
+                    else {
+                        // delete production-code of selected stockdistribution
+                        foreach ($konsDt->getProdCode as $idx => $prodCode) {
+                            $prodCode->delete();
+                        }
+                        // skip item (not rollBack)
+                        continue;
+                    }
+                }
+                // rollBack mutation
+                $rollbackKons = Mutasi::rollback(
+                    $konsinyasi->sc_nota, // nota
+                    $konsDt->scd_item, // itemId
+                    12 // mutcat
+                );
+                if (!is_bool($rollbackKons)) {
+                    DB::rollBack();
+                    return $rollbackKons;
+                }
+                // delete production-code of selected stockdistribution
+                foreach ($konsDt->getProdCode as $idx => $prodCode) {
+                    $prodCode->delete();
+                }
+                // delete konsinyasi-detail
+                $konsDt->delete();
+            }
+
+            // update salescomp
+            $val_sales = [
+                'sc_comp'    => $comp,
+                'sc_member'  => $member,
+                'sc_total'   => $total,
+                'sc_user'    => $user,
+                'sc_update'  => $update
+            ];
+            // Update konsinyasi
+            $updateSalesComp = DB::table('d_salescomp')
+            ->where('sc_id', '=', $id)
+            ->update($val_sales);
+
+            // re-insert konsinyasi-detail
+            $sddetail = (DB::table('d_salescompdt')->where('scd_sales', '=', $id)->max('scd_detailid')) ? (DB::table('d_salescompdt')->where('scd_sales', '=', $id)->max('scd_detailid')) + 1 : 1;
+            $detailsd = $sddetail;
+            $val_salesdt = [];
+            // values for insert to salescomp-code
+            $startProdCodeIdx = 0;
+
+            foreach ($data['idItem'] as $key => $itemId) {
+                if ($data['status'][$key] === 'used') {
+                    // get konsinyasi-detail
+                    $salescompdt = d_salescompdt::where('scd_sales', $id)
+                    ->where('scd_item', $itemId)
+                    ->first();
+
+                    // update salescompdt
+                    $salescompdt->scd_qty = $data['jumlah'][$key];
+                    $salescompdt->scd_unit = $data['satuan'][$key];
+                    $salescompdt->scd_value = Currency::removeRupiah($data['harga'][$key]);
+                    $salescompdt->scd_totalnet = Currency::removeRupiah($data['subtotal'][$key]);
+                    $salescompdt->save();
+
+                    // insert new production-code
+                    $prodCodeLength = (int)$request->prodCodeLength[$key];
+                    $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                    for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
+                        // skip inserting when val is null or qty-pc is 0
+                        if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
+                            continue;
+                        }
+                        $detailidcode = d_salescompcode::where('ssc_salescomp', $id)
+                        ->where('ssc_item', $data['idItem'][$key])
+                        ->max('ssc_detailid') + 1;
+
+                        $val_salescode = [
+                            'ssc_salescomp' => $id,
+                            'ssc_item' => $data['idItem'][$key],
+                            'ssc_detailid' => $detailidcode,
+                            'ssc_code' => strtoupper($request->prodCode[$j]),
+                            'ssc_qty' => $request->qtyProdCode[$j]
+                        ];
+                        DB::table('d_salescompcode')->insert($val_salescode);
+                    }
+                    // increments production-code index
+                    $startProdCodeIdx += $prodCodeLength;
+                    continue;
+                }
+
+                // set new value for re-insert konsinyasi-detail /salescompdt
+                $val_salesdt[] = [
+                    'scd_sales' => $id,
+                    'scd_detailid' => $detailsd,
+                    'scd_comp' => $compItem[$key],
+                    'scd_item' => $data['idItem'][$key],
+                    'scd_qty' => $data['jumlah'][$key],
+                    'scd_unit' => $data['satuan'][$key],
+                    'scd_value' => Currency::removeRupiah($data['harga'][$key]),
+                    'scd_discpersen' => 0,
+                    'scd_discvalue' => 0,
+                    'scd_totalnet' => Currency::removeRupiah($data['subtotal'][$key])
+                ];
+
+                $prodCodeLength = (int)$request->prodCodeLength[$key];
+                $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
+                    // skip inserting when val is null or qty-pc is 0
+                    if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
+                        continue;
+                    }
+                    $detailidcode = d_salescompcode::where('ssc_salescomp', $id)
+                    ->where('ssc_item', $data['idItem'][$key])
+                    ->max('ssc_detailid') + 1;
+
+                    $val_salescode = [
+                        'ssc_salescomp' => $id,
+                        'ssc_item' => $data['idItem'][$key],
+                        'ssc_detailid' => $detailidcode,
+                        'ssc_code' => strtoupper($request->prodCode[$j]),
+                        'ssc_qty' => $request->qtyProdCode[$j]
+                    ];
+                    DB::table('d_salescompcode')->insert($val_salescode);
+                }
+
+                // mutasi
+                $data_check = DB::table('m_item')
+                ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                'm_item.i_unit3 as unit3')
+                ->where('i_id', '=', $data['idItem'][$key])
+                ->first();
+                // get qty with smallest unit
+                $qty_compare = 0;
+                $sellPrice = 0;
+                if ($data['satuan'][$key] == $data_check->unit1) {
+                    $qty_compare = $data['jumlah'][$key];
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]);
+                } else if ($data['satuan'][$key] == $data_check->unit2) {
+                    $qty_compare = $data['jumlah'][$key] * $data_check->compare2;
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]) / $data_check->compare2;
+                } else if ($data['satuan'][$key] == $data_check->unit3) {
+                    $qty_compare = $data['jumlah'][$key] * $data_check->compare3;
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]) / $data_check->compare3;
+                }
+
+                // get item stock
+                $stock = DB::table('d_stock')
+                ->where('s_id', '=', $data['idStock'][$key])
+                ->first();
+
+                $stock_mutasi = DB::table('d_stock_mutation')
+                ->where('sm_stock', '=', $stock->s_id)
+                ->first();
+
+                $posisi = DB::table('m_company')
+                ->where('c_id', '=', $member)
+                ->first();
+
+                // declaare list of production-code
+                $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
+                $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
+                $listUnitPC = [];
+
+                $statusKons = 'cabang';
+                // set mutation (mutation-out is called inside mutation-in)
+                $mutKons = Mutasi::mutasimasuk(
+                    12, // mutcat
+                    $compItem[$key], // comp / item position from
+                    $member, // position / destination
+                    $data['idItem'][$key], // item-id
+                    $qty_compare, // qty item with smallest unit
+                    'ON DESTINATION', // status
+                    'FINE', // condition
+                    $stock_mutasi->sm_hpp, // hpp
+                    $sellPrice, // sell value
+                    $nota, // nota
+                    $stock_mutasi->sm_nota, // nota refference
+                    $listPC, // list production-code
+                    $listQtyPC, // list qty roduction code
+                    $statusKons, // status konsinyasi ('pusat' / 'branch')
+                    $stock->s_comp // item owner
+                );
+                if (!is_bool($mutKons)) {
+                    return $mutKons;
+                }
+
+                // increments production-code index
+                $startProdCodeIdx += $prodCodeLength;
+                // increments detailid
+                $detailsd++;
+            }
+
+            // re-insert data in konsinyasi-detail
+            DB::table('d_salescompdt')->insert($val_salesdt);
+
+            DB::commit();
+            return Response::json([
+                'status' => "Success",
+                'message'=> "Data berhasil diperbarui"
+            ]);
+        }
+        catch (\Exception $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e->getMessage()
+            ]);
+        }
+    }
+    // delete
+    public function deleteDK(Request $request)
+    {
+        // if (!AksesUser::checkAkses(21, 'delete')){
+        //     abort(401);
+        // }
+
+        $id = $request->id;
+
+        DB::beginTransaction();
+        try{
+            $konsinyasi = d_salescomp::where('sc_id', $id)
+            ->with('getSalesCompDt.getProdCode')
+            ->first();
+
+            foreach ($konsinyasi->getSalesCompDt as $key => $konsDt) {
+                $rollbackKons = Mutasi::rollback(
+                    $konsinyasi->sc_nota, // nota
+                    $konsDt->scd_item, // itemId
+                    12 // mutcat
+                );
+                if (!is_bool($rollbackKons)) {
+                    DB::rollBack();
+                    return $rollbackKons;
+                }
+                // delete production-code of selected stockdistribution
+                foreach ($konsDt->getProdCode as $idx => $prodCode) {
+                    $prodCode->delete();
+                }
+                // delete konsinyasi-detail
+                $konsDt->delete();
+            }
+            // delete konsinyasi
+            $konsinyasi->delete();
+
+            DB::commit();
+            return Response::json([
+                'status' => "Success",
+                'message'=> 'Data berhasil dihapus'
+            ]);
+        }
+        catch (\Exception $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => "Failed",
+                'message'=> $e->getMessage()
+            ]);
+        }
     }
 
+    // Start: orderprodukagent =================================================
     public function create_orderprodukagenpusat()
     {
         return view('marketing/agen/orderproduk/create');
@@ -1767,4 +2653,5 @@ class MarketingAreaController extends Controller
     {
         return view('marketing/agen/orderproduk/edit');
     }
+
 }

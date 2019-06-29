@@ -282,7 +282,7 @@ class MarketingController extends Controller
                     DB::table('d_return')
                     ->where('r_id', $request->id)
                     ->delete();
-
+        
         mutasi::rollbackStockMutDist($data->r_nota, $data->r_item, 3);
 
         return response()->json(['status' => 'berhasil']);

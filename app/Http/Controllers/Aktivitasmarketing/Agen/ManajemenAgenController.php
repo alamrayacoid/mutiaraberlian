@@ -55,8 +55,8 @@ class ManajemenAgenController extends Controller
         $nama = DB::table('m_agen')
             ->join('m_company', 'a_code', '=', 'c_user')
             ->where('a_parent', '=', $kode)
-            ->where(function ($q) use ($cari){
-                $q->orWhere('a_name', 'like', '%'.$cari.'%');
+            ->where(function ($q) use ($cari) {
+                $q->orWhere('a_name', 'like', '%' . $cari . '%');
             })
             ->get();
 
@@ -93,9 +93,9 @@ class ManajemenAgenController extends Controller
             ->join('m_company', 'a_code', '=', 'c_user')
             ->where('m_agen.a_provinsi', '=', $prov)
             ->where('m_agen.a_kabupaten', '=', $kota)
-           // ->where('m_company.c_type', '=', 'AGEN')
-            ->where(function ($q) use ($cari){
-                $q->orWhere('a_name', 'like', '%'.$cari.'%');
+            // ->where('m_company.c_type', '=', 'AGEN')
+            ->where(function ($q) use ($cari) {
+                $q->orWhere('a_name', 'like', '%' . $cari . '%');
             })
             ->get();
 
@@ -134,29 +134,29 @@ class ManajemenAgenController extends Controller
     public function cariBarang(Request $request)
     {
         $is_item = array();
-        for($i = 0; $i < count($request->idItem); $i++){
-            if($request->idItem[$i] != null){
+        for ($i = 0; $i < count($request->idItem); $i++) {
+            if ($request->idItem[$i] != null) {
                 array_push($is_item, $request->idItem[$i]);
             }
         }
 
         $cari = $request->term;
-       // $comp = Auth::user()->u_company;
+        // $comp = Auth::user()->u_company;
         $comp = $request->comp;
-        if(count($is_item) == 0){
+        if (count($is_item) == 0) {
             $nama = DB::table('m_item')
-                ->where(function ($q) use ($cari){
-                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
-                    $q->orWhere('i_code', 'like', '%'.$cari.'%');
+                ->where(function ($q) use ($cari) {
+                    $q->orWhere('i_name', 'like', '%' . $cari . '%');
+                    $q->orWhere('i_code', 'like', '%' . $cari . '%');
                 })
                 ->groupBy('i_id')
                 ->get();
-        }else{
+        } else {
             $nama = DB::table('m_item')
                 ->whereNotIn('i_id', $is_item)
-                ->where(function ($q) use ($cari){
-                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
-                    $q->orWhere('i_code', 'like', '%'.$cari.'%');
+                ->where(function ($q) use ($cari) {
+                    $q->orWhere('i_name', 'like', '%' . $cari . '%');
+                    $q->orWhere('i_code', 'like', '%' . $cari . '%');
                 })
                 ->groupBy('i_id')
                 ->get();
@@ -166,7 +166,7 @@ class ManajemenAgenController extends Controller
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query];
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' . strtoupper($query->i_name), 'data' => $query];
             }
         }
         return Response::json($results);
@@ -175,15 +175,15 @@ class ManajemenAgenController extends Controller
     public function getSatuan($id)
     {
         $data = DB::table('m_item')
-            ->select('m_item.*', 'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
+            ->select('m_item.*', 'a.u_id as id1', 'a.u_name as unit1', 'b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
             ->where('m_item.i_id', '=', $id)
-            ->join('m_unit as a', function ($x){
+            ->join('m_unit as a', function ($x) {
                 $x->on('m_item.i_unit1', '=', 'a.u_id');
             })
-            ->leftjoin('m_unit as b', function ($y){
+            ->leftjoin('m_unit as b', function ($y) {
                 $y->on('m_item.i_unit2', '=', 'b.u_id');
             })
-            ->leftjoin('m_unit as c', function ($z){
+            ->leftjoin('m_unit as c', function ($z) {
                 $z->on('m_item.i_unit3', '=', 'c.u_id');
             })
             ->first();
@@ -200,7 +200,7 @@ class ManajemenAgenController extends Controller
             ->first();
 
         $data = DB::table('d_stock')
-            ->join('d_stock_mutation', function($sm){
+            ->join('d_stock_mutation', function ($sm) {
                 $sm->on('sm_stock', '=', 's_id');
             })
             ->where('s_id', '=', $stock)
@@ -220,14 +220,14 @@ class ManajemenAgenController extends Controller
         } else if ($satuan == $data_check->unit2) {
             $compare = (int)$qty * (int)$data_check->compare2;
             if ((int)$compare > (int)$data->sisa) {
-                $qty_compare = (int)$data->sisa/(int)$data_check->compare2;
+                $qty_compare = (int)$data->sisa / (int)$data_check->compare2;
             } else {
                 $qty_compare = $qty;
             }
         } else if ($satuan == $data_check->unit3) {
             $compare = (int)$qty * (int)$data_check->compare3;
             if ((int)$compare > (int)$data->sisa) {
-                $qty_compare = (int)$data->sisa/(int)$data_check->compare3;
+                $qty_compare = (int)$data->sisa / (int)$data_check->compare3;
             } else {
                 $qty_compare = $qty;
             }
@@ -246,7 +246,7 @@ class ManajemenAgenController extends Controller
             ->first();
 
         $data = DB::table('d_stock')
-            ->join('d_stock_mutation', function($sm){
+            ->join('d_stock_mutation', function ($sm) {
                 $sm->on('sm_stock', '=', 's_id');
             })
             ->where('s_id', '=', $stock)
@@ -266,14 +266,14 @@ class ManajemenAgenController extends Controller
         } else if ($oldSatuan == $data_check->unit2) {
             $compare = (int)$qty * (int)$data_check->compare2;
             if ((int)$compare > (int)($data->sisa + $qtyOld)) {
-                $qty_compare_old = (int)($data->sisa+$qtyOld)/(int)$data_check->compare2;
+                $qty_compare_old = (int)($data->sisa + $qtyOld) / (int)$data_check->compare2;
             } else {
                 $qty_compare_old = $qty;
             }
         } else if ($oldSatuan == $data_check->unit3) {
             $compare = (int)$qty * (int)$data_check->compare3;
-            if ((int)$compare > (int)($data->sisa+$qtyOld)) {
-                $qty_compare_old = (int)($data->sisa+$qtyOld)/(int)$data_check->compare3;
+            if ((int)$compare > (int)($data->sisa + $qtyOld)) {
+                $qty_compare_old = (int)($data->sisa + $qtyOld) / (int)$data_check->compare3;
             } else {
                 $qty_compare_old = $qty;
             }
@@ -296,9 +296,9 @@ class ManajemenAgenController extends Controller
 
     function inRange($value, $array)
     {
-       // in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
+        // in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
         $idx = null;
-        foreach ($array as $key =>  $val) {
+        foreach ($array as $key => $val) {
             $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
             if ($x == true) {
                 $idx = $key;
@@ -338,7 +338,7 @@ class ManajemenAgenController extends Controller
                     }
                 }
             } else if ($qty > 1) {
-                if ($price->pcd_rangeqtyend == 0){
+                if ($price->pcd_rangeqtyend == 0) {
                     if ($qty >= $price->pcd_rangeqtystart) {
                         $harga = $price->pcd_price;
                     }
@@ -357,30 +357,30 @@ class ManajemenAgenController extends Controller
 
     public function simpanOrderProduk(Request $request)
     {
-        if (!AksesUser::checkAkses(23, 'create')){
+        if (!AksesUser::checkAkses(23, 'create')) {
             return Response::json([
                 'status' => "Failed",
-                'message'=> 'Anda tidak memiliki akses'
+                'message' => 'Anda tidak memiliki akses'
             ]);
         }
-        $data    = $request->all();
+        $data = $request->all();
 
         if ($data['select_order'] == "1") {
             $po_id = (DB::table('d_productorder')->max('po_id')) ? DB::table('d_productorder')->max('po_id') + 1 : 1;
             $penjual = $data['a_compapj'];
             $pembeli = $data['a_compapb'];
-            $date   = Carbon::now('Asia/Jakarta')->format('Y-m-d');
-            $nota   = CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-');
+            $date = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+            $nota = CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-');
             $status = "P";
 
             DB::beginTransaction();
-            try{
+            try {
                 $val_po = [
-                    'po_id'     => $po_id,
-                    'po_comp'   => $penjual,
-                    'po_agen'   => $pembeli,
-                    'po_date'   => $date,
-                    'po_nota'   => $nota,
+                    'po_id' => $po_id,
+                    'po_comp' => $penjual,
+                    'po_agen' => $pembeli,
+                    'po_date' => $date,
+                    'po_nota' => $nota,
                     'po_status' => $status
                 ];
 
@@ -410,13 +410,13 @@ class ManajemenAgenController extends Controller
                 DB::commit();
                 return Response::json([
                     'status' => "Success",
-                    'message'=> "Data berhasil disimpan"
+                    'message' => "Data berhasil disimpan"
                 ]);
-            }catch (Exception $e){
+            } catch (Exception $e) {
                 DB::rollBack();
                 return Response::json([
                     'status' => "Failed",
-                    'message'=> $e
+                    'message' => $e
                 ]);
             }
         } else if ($data['select_order'] == "2") {
@@ -426,18 +426,18 @@ class ManajemenAgenController extends Controller
                     ->max('po_id') + 1 : 1;
             $penjual = $data['c_cabang'];
             $pembeli = $data['c_compapb'];
-            $date   = Carbon::now('Asia/Jakarta')->format('Y-m-d');
-            $nota   = CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-');
+            $date = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+            $nota = CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-');
             $status = "P";
 
             DB::beginTransaction();
-            try{
+            try {
                 $val_po = [
-                    'po_id'     => $po_id,
-                    'po_comp'   => $penjual,
-                    'po_agen'   => $pembeli,
-                    'po_date'   => $date,
-                    'po_nota'   => $nota,
+                    'po_id' => $po_id,
+                    'po_comp' => $penjual,
+                    'po_agen' => $pembeli,
+                    'po_date' => $date,
+                    'po_nota' => $nota,
                     'po_status' => $status
                 ];
 
@@ -467,13 +467,13 @@ class ManajemenAgenController extends Controller
                 DB::commit();
                 return Response::json([
                     'status' => "Success",
-                    'message'=> "Data berhasil disimpan"
+                    'message' => "Data berhasil disimpan"
                 ]);
-            }catch (Exception $e){
+            } catch (Exception $e) {
                 DB::rollBack();
                 return Response::json([
                     'status' => "Failed",
-                    'message'=> $e
+                    'message' => $e
                 ]);
             }
         }
@@ -502,15 +502,16 @@ class ManajemenAgenController extends Controller
 
         return Response::json($agen);
     }
+
     // end order produk ke cabang
 
     public function create_orderprodukagencabang()
     {
-        if (!AksesUser::checkAkses(23, 'create')){
+        if (!AksesUser::checkAkses(23, 'create')) {
             abort('401');
         }
         $data = 'employee';
-        if (Auth::user()->u_user == 'A'){
+        if (Auth::user()->u_user == 'A') {
             $data = DB::table('m_agen')
                 ->where('a_code', '=', Auth::user()->u_code)
                 ->first();
@@ -520,12 +521,12 @@ class ManajemenAgenController extends Controller
 
     public function index()
     {
-        if (!AksesUser::checkAkses(23, 'read')){
+        if (!AksesUser::checkAkses(23, 'read')) {
             abort(401);
         }
         $provinsi = DB::table('m_wil_provinsi')
-      		->select('m_wil_provinsi.*')
-      		->get();
+            ->select('m_wil_provinsi.*')
+            ->get();
         // get current user
         $user = Auth::user();
         return view('marketing/agen/index', compact('provinsi', 'user'));
@@ -544,9 +545,9 @@ class ManajemenAgenController extends Controller
                     'seller.c_name as penjual',
                     'buyer.c_name as pembeli',
                     'd_productorder.po_status as status', 'd_productorder.po_send as send')
-                ->join('m_company as seller', function ($s){
+                ->join('m_company as seller', function ($s) {
                     $s->on('d_productorder.po_comp', '=', 'seller.c_id');
-                })->join('m_company as buyer', function ($b){
+                })->join('m_company as buyer', function ($b) {
                     $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
                 });
         } else {
@@ -567,9 +568,9 @@ class ManajemenAgenController extends Controller
                         'seller.c_name as penjual',
                         'buyer.c_name as pembeli',
                         'd_productorder.po_status as status', 'd_productorder.po_send as send')
-                    ->join('m_company as seller', function ($s){
+                    ->join('m_company as seller', function ($s) {
                         $s->on('d_productorder.po_comp', '=', 'seller.c_id');
-                    })->join('m_company as buyer', function ($b){
+                    })->join('m_company as buyer', function ($b) {
                         $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
                     })->where('po_status', '=', $status)->where('po_send', '=', null);
             } else {
@@ -586,35 +587,35 @@ class ManajemenAgenController extends Controller
                         'seller.c_name as penjual',
                         'buyer.c_name as pembeli',
                         'd_productorder.po_status as status', 'd_productorder.po_send as send')
-                    ->join('m_company as seller', function ($s){
+                    ->join('m_company as seller', function ($s) {
                         $s->on('d_productorder.po_comp', '=', 'seller.c_id');
-                    })->join('m_company as buyer', function ($b){
+                    })->join('m_company as buyer', function ($b) {
                         $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
                     })->where('po_send', '=', $status);
             }
         }
 
         return DataTables::of($data)
-            ->addColumn('tanggal', function($data){
+            ->addColumn('tanggal', function ($data) {
                 return $data->tanggal;
             })
-            ->addColumn('nota', function($data){
+            ->addColumn('nota', function ($data) {
                 return $data->nota;
             })
-            ->addColumn('penjual', function($data){
+            ->addColumn('penjual', function ($data) {
                 return $data->penjual;
             })
-            ->addColumn('pembeli', function($data){
+            ->addColumn('pembeli', function ($data) {
                 return $data->pembeli;
             })
-            ->addColumn('status', function($data){
+            ->addColumn('status', function ($data) {
                 if ($data->send != null) {
                     if ($data->send == 'P') {
                         return '<span class="btn btn-sm btn-primary btn-khusus">Dikirim</span>';
-                    }elseif ($data->send == 'Y'){
+                    } elseif ($data->send == 'Y') {
                         return '<span class="btn btn-sm btn-success btn-khusus">Diterima</span>';
                     }
-                } else if($data->send == null){
+                } else if ($data->send == null) {
                     if ($data->status == 'Y') {
                         return '<span class="btn btn-sm btn-success btn-khusus">Disetujui</span>';
                     } else if ($data->status == 'N') {
@@ -634,7 +635,7 @@ class ManajemenAgenController extends Controller
                                             aria-label="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
                                     <button class="btn btn-success" type="button" aria-label="Terima" onclick="terimaDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-check"></i></button>
                                 </div></center>';
-                    }elseif ($data->send == 'Y') {
+                    } elseif ($data->send == 'Y') {
                         return '<center><div class="btn-group btn-group-sm">
                                     <button class="btn btn-info hint--top-left hint--info" aria-label="Detail"
                                             type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
@@ -652,19 +653,19 @@ class ManajemenAgenController extends Controller
                 }
 
             })
-            ->rawColumns(['tanggal','nota','penjual','pembeli','status', 'action'])
+            ->rawColumns(['tanggal', 'nota', 'penjual', 'pembeli', 'status', 'action'])
             ->make(true);
     }
 
     public function detailDO($id, $action)
     {
         if ($action == "detail") {
-            try{
+            try {
                 $id = Crypt::decrypt($id);
-            }catch (DecryptException $e){
+            } catch (DecryptException $e) {
                 return Response::json([
                     'status' => "Failed",
-                    'message'=> $e
+                    'message' => $e
                 ]);
             }
 
@@ -674,9 +675,9 @@ class ManajemenAgenController extends Controller
                     'seller.c_name as penjual',
                     'buyer.c_name as pembeli',
                     'd_productorder.po_status as status')
-                ->join('m_company as seller', function ($s){
+                ->join('m_company as seller', function ($s) {
                     $s->on('d_productorder.po_comp', '=', 'seller.c_id');
-                })->join('m_company as buyer', function ($b){
+                })->join('m_company as buyer', function ($b) {
                     $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
                 })
                 ->where('d_productorder.po_id', '=', $id)
@@ -691,27 +692,27 @@ class ManajemenAgenController extends Controller
                     'm_unit.u_name as satuan',
                     DB::raw("CONCAT('Rp. ',FORMAT(d_productorderdt.pod_price, 0, 'de_DE')) as harga"),
                     DB::raw("CONCAT('Rp. ',FORMAT(d_productorderdt.pod_totalprice, 0, 'de_DE')) as total_harga"))
-                ->join('m_item', function ($s){
+                ->join('m_item', function ($s) {
                     $s->on('d_productorderdt.pod_item', '=', 'm_item.i_id');
-                })->join('m_unit', function ($b){
+                })->join('m_unit', function ($b) {
                     $b->on('d_productorderdt.pod_unit', '=', 'm_unit.u_id');
                 })
                 ->where('d_productorderdt.pod_productorder', '=', Crypt::decrypt($id));
 
             return DataTables::of($data)
-                ->addColumn('barang', function($data){
+                ->addColumn('barang', function ($data) {
                     return $data->kode . ' - ' . $data->barang;
                 })
-                ->addColumn('jumlah', function($data){
+                ->addColumn('jumlah', function ($data) {
                     return $data->qty . ' - ' . $data->satuan;
                 })
-                ->addColumn('harga', function($data){
+                ->addColumn('harga', function ($data) {
                     return $data->harga;
                 })
-                ->addColumn('total_harga', function($data){
+                ->addColumn('total_harga', function ($data) {
                     return $data->total_harga;
                 })
-                ->rawColumns(['barang','jumlah','harga','total_harga'])
+                ->rawColumns(['barang', 'jumlah', 'harga', 'total_harga'])
                 ->make(true);
         }
 
@@ -719,23 +720,23 @@ class ManajemenAgenController extends Controller
 
     public function deleteDO($id)
     {
-        if (!AksesUser::checkAkses(23, 'delete')){
+        if (!AksesUser::checkAkses(23, 'delete')) {
             return Response::json([
                 'status' => "Failed",
-                'message'=> 'Anda tidak memiliki akses'
+                'message' => 'Anda tidak memiliki akses'
             ]);
         }
-        try{
+        try {
             $id = Crypt::decrypt($id);
-        }catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return Response::json([
                 'status' => "Failed",
-                'message'=> $e
+                'message' => $e
             ]);
         }
 
         DB::beginTransaction();
-        try{
+        try {
             DB::table('d_productorderdt')
                 ->where('pod_productorder', '=', $id)
                 ->delete();
@@ -745,13 +746,13 @@ class ManajemenAgenController extends Controller
             DB::commit();
             return Response::json([
                 'status' => "Success",
-                'message'=> "Data berhasil dihapus"
+                'message' => "Data berhasil dihapus"
             ]);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
             return Response::json([
                 'status' => "Failed",
-                'message'=> $e
+                'message' => $e
             ]);
         }
     }
@@ -765,7 +766,7 @@ class ManajemenAgenController extends Controller
         }
 
         DB::beginTransaction();
-        try{
+        try {
             DB::table('d_productorder')
                 ->where('po_id', '=', $id)
                 ->update([
@@ -791,10 +792,10 @@ class ManajemenAgenController extends Controller
     public function getAgen($city)
     {
         $agen = DB::table('m_agen')
-        ->join('m_company', 'a_code', 'c_user')
-        ->select('a_code', 'a_name', 'c_id')
-        ->where('a_kabupaten', '=', $city)
-        ->get();
+            ->join('m_company', 'a_code', 'c_user')
+            ->select('a_code', 'a_name', 'c_id')
+            ->where('a_kabupaten', '=', $city)
+            ->get();
 
         return response()->json([
             'success' => true,
@@ -805,38 +806,38 @@ class ManajemenAgenController extends Controller
     public function filterData($id)
     {
         $data = DB::table('d_stock')
-        ->leftJoin('m_company as comp', 's_position', 'comp.c_id')
-        ->leftJoin('m_company as agen', 's_comp', 'agen.c_id')
-        ->leftJoin('m_item', 's_item', 'i_id')
-        ->where('s_position', '=', $id)
-        ->select('agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_condition', 's_qty')
-        ->get();
+            ->leftJoin('m_company as comp', 's_position', 'comp.c_id')
+            ->leftJoin('m_company as agen', 's_comp', 'agen.c_id')
+            ->leftJoin('m_item', 's_item', 'i_id')
+            ->where('s_position', '=', $id)
+            ->select('agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_condition', 's_qty')
+            ->get();
 
         return Datatables::of($data)
-        ->addIndexColumn()
-        ->addColumn('kondisi', function ($data) {
-            if ($data->s_condition == "FINE") {
-                return "Normal";
-            } else {
-                return "Rusak";
-            }
-        })
-        ->addColumn('qty', function ($data) {
-            return "<div class='text-center'>$data->s_qty</div>";
-        })
-        ->rawColumns(['kondisi', 'qty'])
-        ->make(true);
+            ->addIndexColumn()
+            ->addColumn('kondisi', function ($data) {
+                if ($data->s_condition == "FINE") {
+                    return "Normal";
+                } else {
+                    return "Rusak";
+                }
+            })
+            ->addColumn('qty', function ($data) {
+                return "<div class='text-center'>$data->s_qty</div>";
+            })
+            ->rawColumns(['kondisi', 'qty'])
+            ->make(true);
     }
     // End: Kelola Data Inventory Agen ----------------
 
 
     // Start: Kelola Penjualan Langsung -----------------
     /**
-    * Validate request before execute command.
-    *
-    * @param  \Illuminate\Http\Request $request
-    * @return 'error message' or '1'
-    */
+     * Validate request before execute command.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return 'error message' or '1'
+     */
     public function validate_req(Request $request)
     {
         // start: validate data before execute
@@ -844,21 +845,22 @@ class ManajemenAgenController extends Controller
             'member' => 'required',
             'itemListId.*' => 'required'
         ],
-        [
-            'member.required' => 'Pilih member terlebih dahulu !',
-            'itemListId.*.required' => 'List item ada yang kosong !'
-        ]);
+            [
+                'member.required' => 'Pilih member terlebih dahulu !',
+                'itemListId.*.required' => 'List item ada yang kosong !'
+            ]);
         if ($validator->fails()) {
             return $validator->errors()->first();
         } else {
             return '1';
         }
     }
+
     /**
-    * Return DataTable list for view.
-    *
-    * @return Yajra/DataTables
-    */
+     * Return DataTable list for view.
+     *
+     * @return Yajra/DataTables
+     */
     public function getListKPL(Request $request)
     {
         $userType = Auth::user()->u_user;
@@ -868,74 +870,78 @@ class ManajemenAgenController extends Controller
 
         if ($agentCode !== null) {
             $company = m_company::where('c_user', $agentCode)
-            ->first();
+                ->first();
             $datas = d_sales::whereBetween('s_date', [$from, $to])
-            ->where('s_comp', $company->c_id);
+                ->where('s_comp', $company->c_id);
         } else {
             if ($userType === 'E') {
                 $datas = d_sales::whereBetween('s_date', [$from, $to]);
             } else {
                 $datas = d_sales::whereBetween('s_date', [$from, $to])
-                ->where('s_comp', Auth::user()->u_company);
+                    ->where('s_comp', Auth::user()->u_company);
             }
         }
         $datas = $datas->with('getMember')
-        ->orderBy('s_date', 'desc')
-        ->orderBy('s_nota', 'desc')
-        ->get();
+            ->orderBy('s_date', 'desc')
+            ->orderBy('s_nota', 'desc')
+            ->get();
 
         return Datatables::of($datas)
-        ->addIndexColumn()
-        ->addColumn('date', function($datas) {
-            return Carbon::parse($datas->s_date)->format('d M Y');
-        })
-        ->addColumn('member', function($datas) {
-            return $datas->getMember['m_name'];
-        })
-        ->addColumn('total', function($datas) {
-            return '<div class="text-right">Rp '. number_format($datas->s_total, '2', ',', '.') .'</div>';
-        })
-        ->addColumn('action', function($datas) {
-            return
-            '<div class="btn-group btn-group-sm">
-            <button class="btn btn-primary btn-detailKPL" type="button" title="Detail" onclick="showDetailPenjualan('. $datas->s_id .')"><i class="fa fa-folder"></i></button>
-            <button class="btn btn-warning btn-editKPL" type="button" title="Edit" onclick="editDetailPenjualan('. $datas->s_id .')"><i class="fa fa-pencil"></i></button>
-            <button class="btn btn-danger btn-delete" type="button" title="Delete" onclick="deleteDetailPenjualan('. $datas->s_id .')"><i class="fa fa-trash"></i></button>
+            ->addIndexColumn()
+            ->addColumn('date', function ($datas) {
+                return Carbon::parse($datas->s_date)->format('d M Y');
+            })
+            ->addColumn('member', function ($datas) {
+                return $datas->getMember['m_name'];
+            })
+            ->addColumn('total', function ($datas) {
+                return '<div class="text-right">Rp ' . number_format($datas->s_total, '2', ',', '.') . '</div>';
+            })
+            ->addColumn('action', function ($datas) {
+                return
+                    '<div class="btn-group btn-group-sm">
+            <button class="btn btn-primary btn-detailKPL" type="button" title="Detail" onclick="showDetailPenjualan(' . $datas->s_id . ')"><i class="fa fa-folder"></i></button>
+            <button class="btn btn-warning btn-editKPL" type="button" title="Edit" onclick="editDetailPenjualan(' . $datas->s_id . ')"><i class="fa fa-pencil"></i></button>
+            <button class="btn btn-danger btn-delete" type="button" title="Delete" onclick="deleteDetailPenjualan(' . $datas->s_id . ')"><i class="fa fa-trash"></i></button>
             </div>';
-        })
-        ->rawColumns(['date', 'member', 'total', 'action'])
-        ->make(true);
+            })
+            ->rawColumns(['date', 'member', 'total', 'action'])
+            ->make(true);
     }
+
     // get list-cities based on province-id
     public function getCitiesKPL(Request $request)
     {
         $cities = m_wil_provinsi::where('wp_id', $request->provId)
-        ->with('getCities')
-        ->firstOrFail();
+            ->with('getCities')
+            ->firstOrFail();
         return response()->json($cities);
     }
+
     // get list-cities based on province-id
     public function getAgentsKPL(Request $request)
     {
         $agents = m_agen::where('a_area', $request->cityId)
-        ->where('a_type', 'AGEN')
-        ->with('getProvince')
-        ->with('getCity')
-        ->orderBy('a_code', 'desc')
-        ->get();
+            ->where('a_type', 'AGEN')
+            ->with('getProvince')
+            ->with('getCity')
+            ->orderBy('a_code', 'desc')
+            ->get();
 
         return response()->json($agents);
     }
+
     // get detail-kpl
     public function getDetailPenjualan(Request $request)
     {
         $detail = d_sales::where('s_id', $request->id)
-        ->with('getSalesDt.getItem')
-        ->with('getSalesDt.getUnit')
-        ->with('getMember')
-        ->first();
+            ->with('getSalesDt.getItem')
+            ->with('getSalesDt.getUnit')
+            ->with('getMember')
+            ->first();
         return response()->json($detail);
     }
+
     // delete detail-kpl
     public function deleteDetailPenjualan(Request $request)
     {
@@ -943,8 +949,8 @@ class ManajemenAgenController extends Controller
         DB::beginTransaction();
         try {
             $sales = d_sales::where('s_id', $id)
-            ->with('getSalesDt.getProdCode')
-            ->first();
+                ->with('getSalesDt.getProdCode')
+                ->first();
 
             // delete sales-detail
             foreach ($sales->getSalesDt as $key => $val) {
@@ -979,6 +985,7 @@ class ManajemenAgenController extends Controller
             ]);
         }
     }
+
     // show page to create new KPL
     public function createKPL()
     {
@@ -989,12 +996,13 @@ class ManajemenAgenController extends Controller
             ->get();
         return view('marketing/agen/kelolapenjualan/create', compact('data'));
     }
+
     // get member for KPL if the user is Employee, not Agent
     public function getMemberKPL(Request $request)
     {
         $members = m_member::where('m_id', 1)
-        ->orWhere('m_agen', $request->agentCode)
-        ->get();
+            ->orWhere('m_agen', $request->agentCode)
+            ->get();
         return response()->json($members);
     }
 
@@ -1002,8 +1010,8 @@ class ManajemenAgenController extends Controller
     public function findItem(Request $request)
     {
         $is_item = array();
-        for($i = 0; $i < count($request->idItem); $i++){
-            if($request->idItem[$i] != null){
+        for ($i = 0; $i < count($request->idItem); $i++) {
+            if ($request->idItem[$i] != null) {
                 array_push($is_item, $request->idItem[$i]);
             }
         }
@@ -1023,64 +1031,64 @@ class ManajemenAgenController extends Controller
         $comp = $comp->c_id;
         $cari = $request->term;
 
-        if(count($is_item) == 0) {
+        if (count($is_item) == 0) {
             $nama = DB::table('m_item')
-            ->join('d_stock', function ($s) use ($comp){
-                $s->on('i_id', '=', 's_item');
-                $s->where('s_position', '=', $comp);
-                $s->where('s_status', '=', 'ON DESTINATION');
-                $s->where('s_condition', '=', 'FINE');
-            })
-            ->join('d_stock_mutation', function ($sm){
-                $sm->on('sm_stock', '=', 's_id');
-                $sm->where('sm_residue', '!=', 0);
-            })
-            ->where(function ($q) use ($cari){
-                $q->orWhere('i_name', 'like', '%'.$cari.'%');
-                $q->orWhere('i_code', 'like', '%'.$cari.'%');
-            })
-            ->groupBy('d_stock.s_id')
-            ->get();
-        }
-        else {
+                ->join('d_stock', function ($s) use ($comp) {
+                    $s->on('i_id', '=', 's_item');
+                    $s->where('s_position', '=', $comp);
+                    $s->where('s_status', '=', 'ON DESTINATION');
+                    $s->where('s_condition', '=', 'FINE');
+                })
+                ->join('d_stock_mutation', function ($sm) {
+                    $sm->on('sm_stock', '=', 's_id');
+                    $sm->where('sm_residue', '!=', 0);
+                })
+                ->where(function ($q) use ($cari) {
+                    $q->orWhere('i_name', 'like', '%' . $cari . '%');
+                    $q->orWhere('i_code', 'like', '%' . $cari . '%');
+                })
+                ->groupBy('d_stock.s_id')
+                ->get();
+        } else {
             $nama = DB::table('m_item')
-            ->join('d_stock', function ($s) use ($comp){
-                $s->on('i_id', '=', 's_item');
-                $s->where('s_position', '=', $comp);
-                $s->where('s_status', '=', 'ON DESTINATION');
-                $s->where('s_condition', '=', 'FINE');
-            })
-            ->join('d_stock_mutation', function ($sm){
-                $sm->on('sm_stock', '=', 's_id');
-                $sm->where('sm_residue', '!=', 0);
-            })
-            ->whereNotIn('i_id', $is_item)
-            ->where(function ($q) use ($cari){
-                $q->orWhere('i_name', 'like', '%'.$cari.'%');
-                $q->orWhere('i_code', 'like', '%'.$cari.'%');
-            })
-            ->groupBy('d_stock.s_id')
-            ->get();
+                ->join('d_stock', function ($s) use ($comp) {
+                    $s->on('i_id', '=', 's_item');
+                    $s->where('s_position', '=', $comp);
+                    $s->where('s_status', '=', 'ON DESTINATION');
+                    $s->where('s_condition', '=', 'FINE');
+                })
+                ->join('d_stock_mutation', function ($sm) {
+                    $sm->on('sm_stock', '=', 's_id');
+                    $sm->where('sm_residue', '!=', 0);
+                })
+                ->whereNotIn('i_id', $is_item)
+                ->where(function ($q) use ($cari) {
+                    $q->orWhere('i_name', 'like', '%' . $cari . '%');
+                    $q->orWhere('i_code', 'like', '%' . $cari . '%');
+                })
+                ->groupBy('d_stock.s_id')
+                ->get();
         }
 
         if (count($nama) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query, 'stock' => $query->s_id];
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' . strtoupper($query->i_name), 'data' => $query, 'stock' => $query->s_id];
             }
         }
         return Response::json($results);
     }
+
     // get price
     public function getPrice(Request $request)
     {
         if (Auth::user()->u_user === 'E') {
             $agent = m_agen::where('a_code', $request->agentCode)
-            ->first();
+                ->first();
         } else {
             $agent = m_agen::where('a_code', Auth::user()->u_code)
-            ->first();
+                ->first();
         }
         $qty = $request->qty;
         $itemId = $request->itemId;
@@ -1088,13 +1096,13 @@ class ManajemenAgenController extends Controller
 
 
         $get_price = DB::table('d_salespricedt')
-        ->join('d_salesprice', 'spd_salesprice', 'sp_id')
-        ->select('d_salespricedt.*', 'd_salesprice.*')
-        ->where('sp_id', '=', $agent->a_class)
-        ->where('spd_payment', '=', 'C')
-        ->where('spd_item', '=', $itemId)
-        ->where('spd_unit', '=', $unitId)
-        ->get();
+            ->join('d_salesprice', 'spd_salesprice', 'sp_id')
+            ->select('d_salespricedt.*', 'd_salesprice.*')
+            ->where('sp_id', '=', $agent->a_class)
+            ->where('spd_payment', '=', 'C')
+            ->where('spd_item', '=', $itemId)
+            ->where('spd_unit', '=', $unitId)
+            ->get();
         $harga = 0;
         $z = false;
 
@@ -1109,9 +1117,8 @@ class ManajemenAgenController extends Controller
                         $harga = $get_price[$key]->spd_price;
                     }
                 }
-            }
-            else if ($qty > 1) {
-                if ($price->spd_rangeqtyend == 0){
+            } else if ($qty > 1) {
+                if ($price->spd_rangeqtyend == 0) {
                     if ($qty >= $price->spd_rangeqtystart) {
                         $harga = $price->spd_price;
                     }
@@ -1142,7 +1149,7 @@ class ManajemenAgenController extends Controller
     function inRangeKPL($value, $array)
     {
         $idx = null;
-        foreach ($array as $key =>  $val) {
+        foreach ($array as $key => $val) {
             $x = in_array($value, range($val->spd_rangeqtystart, $val->spd_rangeqtyend));
             if ($x == true) {
                 $idx = $key;
@@ -1156,10 +1163,10 @@ class ManajemenAgenController extends Controller
     public function getUnit($id)
     {
         $data = m_item::where('i_id', $id)
-        ->with('getUnit1')
-        ->with('getUnit2')
-        ->with('getUnit3')
-        ->first();
+            ->with('getUnit1')
+            ->with('getUnit2')
+            ->with('getUnit3')
+            ->first();
 
         return Response::json($data);
     }
@@ -1182,10 +1189,9 @@ class ManajemenAgenController extends Controller
         try {
             $data = $request->all();
             // get comp using agent-code
-            if (Auth::user()->u_user == "E"){
+            if (Auth::user()->u_user == "E") {
                 $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
-            }
-            else {
+            } else {
                 $agent = Auth::user();
             }
 
@@ -1217,7 +1223,7 @@ class ManajemenAgenController extends Controller
 
             // get item-position based on agent-code
             $salesDtId = d_salesdt::where('sd_sales', $salesId)->max('sd_detailid') + 1;
-            for ($i=0; $i < sizeof($data['idItem']); $i++) {
+            for ($i = 0; $i < sizeof($data['idItem']); $i++) {
                 // get itemStock based on position and item-id
                 $stock = $this->getItemStock($agent->c_id, $data['idItem'][$i]);
                 ($stock === null) ? $itemStock = 0 : $itemStock = $stock->s_qty;
@@ -1229,7 +1235,7 @@ class ManajemenAgenController extends Controller
                     $item = m_item::where('i_id', $data['idItem'][$i])->first();
                     return response()->json([
                         'status' => 'invalid',
-                        'message' => 'Stock item '. $item->i_name .' tidak mencukupi. Stock tersedia: '. $itemStock
+                        'message' => 'Stock item ' . $item->i_name . ' tidak mencukupi. Stock tersedia: ' . $itemStock
                     ]);
                 }
 
@@ -1259,10 +1265,10 @@ class ManajemenAgenController extends Controller
                         continue;
                     }
                     $detailidcode = (d_salescode::where('sc_sales', $salesId)
-                    ->where('sc_item', $data['idItem'][$i])
-                    ->max('sc_detailid')) ? d_salescode::where('sc_sales', $salesId)
-                    ->where('sc_item', $data['idItem'][$i])
-                    ->max('sc_detailid') + 1 : 1;
+                        ->where('sc_item', $data['idItem'][$i])
+                        ->max('sc_detailid')) ? d_salescode::where('sc_sales', $salesId)
+                            ->where('sc_item', $data['idItem'][$i])
+                            ->max('sc_detailid') + 1 : 1;
                     $val_salescode = [
                         'sc_sales' => $salesId,
                         'sc_item' => $data['idItem'][$i],
@@ -1275,11 +1281,11 @@ class ManajemenAgenController extends Controller
 
                 // get qty in smallest unit
                 $data_check = DB::table('m_item')
-                ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-                'm_item.i_unit3 as unit3')
-                ->where('i_id', '=', $data['idItem'][$i])
-                ->first();
+                    ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                        'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                        'm_item.i_unit3 as unit3')
+                    ->where('i_id', '=', $data['idItem'][$i])
+                    ->first();
 
                 $qty_compare = 0;
                 $sellPrice = 0;
@@ -1324,8 +1330,7 @@ class ManajemenAgenController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -1333,17 +1338,19 @@ class ManajemenAgenController extends Controller
             ]);
         }
     }
+
     // getITemStock
     public function getItemStock($position, $itemId)
     {
         $stock = d_stock::where('s_item', $itemId)
-        ->where('s_position', $position)
-        ->where('s_status', 'ON DESTINATION')
-        ->where('s_condition', 'FINE')
-        ->first();
+            ->where('s_position', $position)
+            ->where('s_status', 'ON DESTINATION')
+            ->where('s_condition', 'FINE')
+            ->first();
 
         return $stock;
     }
+
     // edit selected kpl
     public function editKPL($id)
     {
@@ -1351,33 +1358,32 @@ class ManajemenAgenController extends Controller
         $data['agents'] = m_agen::get();
 
         $data['kpl'] = d_sales::where('s_id', $id)
-        ->with(['getSalesDt' => function($query) {
-            $query
-                ->with(['getItem' => function ($query) {
-                    $query
-                        ->with('getUnit1')
-                        ->with('getUnit2')
-                        ->with('getUnit3');
-                }])
-                ->with('getUnit')
-                ->with('getProdCode');
-        }])
-        ->with('getMember.getAgent')
-        ->first();
+            ->with(['getSalesDt' => function ($query) {
+                $query
+                    ->with(['getItem' => function ($query) {
+                        $query
+                            ->with('getUnit1')
+                            ->with('getUnit2')
+                            ->with('getUnit3');
+                    }])
+                    ->with('getUnit')
+                    ->with('getProdCode');
+            }])
+            ->with('getMember.getAgent')
+            ->first();
 
         // set nota
         $nota = $data['kpl']->s_nota;
         // get stock item
-        foreach ($data['kpl']->getSalesDt as $key => $val)
-        {
+        foreach ($data['kpl']->getSalesDt as $key => $val) {
             $item = $val->sd_item;
             // get item stock
             $mainStock = d_stock::where('s_position', $val->sd_comp)
-            ->where('s_item', $item)
-            ->where('s_status', 'ON DESTINATION')
-            ->where('s_condition', 'FINE')
-            ->with('getItem')
-            ->first();
+                ->where('s_item', $item)
+                ->where('s_status', 'ON DESTINATION')
+                ->where('s_condition', 'FINE')
+                ->with('getItem')
+                ->first();
 
             // add stock id to data
             $val->stockId = $mainStock->s_id;
@@ -1413,6 +1419,7 @@ class ManajemenAgenController extends Controller
 
         return view('marketing/agen/kelolapenjualan/edit', compact('data'));
     }
+
     // update selected kpl
     public function updateKPL(Request $request, $id)
     {
@@ -1429,10 +1436,9 @@ class ManajemenAgenController extends Controller
         try {
             $data = $request->all();
             // get comp using agent-code
-            if (Auth::user()->u_user == "E"){
+            if (Auth::user()->u_user == "E") {
                 $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
-            }
-            else {
+            } else {
                 $agent = Auth::user();
             }
 
@@ -1450,8 +1456,8 @@ class ManajemenAgenController extends Controller
 
             // update sales
             $sales = d_sales::where('s_id', $id)
-            ->with('getSalesDt.getProdCode')
-            ->first();
+                ->with('getSalesDt.getProdCode')
+                ->first();
             $sales->s_total = Currency::removeRupiah($data['total']);
             $sales->s_user = Auth::user()->u_id;
             $sales->save();
@@ -1476,7 +1482,7 @@ class ManajemenAgenController extends Controller
             }
 
             $salesDtId = d_salesdt::where('sd_sales', $sales->s_id)->max('sd_detailid') + 1;
-            for ($i=0; $i < sizeof($data['idItem']); $i++) {
+            for ($i = 0; $i < sizeof($data['idItem']); $i++) {
                 // get itemStock based on position and item-id
                 $stock = $this->getItemStock($agent->c_id, $data['idItem'][$i]);
                 ($stock === null) ? $itemStock = 0 : $itemStock = $stock->s_qty;
@@ -1488,7 +1494,7 @@ class ManajemenAgenController extends Controller
                     $item = m_item::where('i_id', $data['idItem'][$i])->first();
                     return response()->json([
                         'status' => 'invalid',
-                        'message' => 'Stock item '. $item->i_name .' tidak mencukupi. Stock tersedia: '. $itemStock
+                        'message' => 'Stock item ' . $item->i_name . ' tidak mencukupi. Stock tersedia: ' . $itemStock
                     ]);
                 }
 
@@ -1518,14 +1524,14 @@ class ManajemenAgenController extends Controller
                         continue;
                     }
                     $detailidcode = (d_salescode::where('sc_sales', $sales->s_id)
-                    ->where('sc_item', $data['idItem'][$i])
-                    ->max('sc_detailid'))
-                    ?
-                    d_salescode::where('sc_sales', $sales->s_id)
-                    ->where('sc_item', $data['idItem'][$i])
-                    ->max('sc_detailid') + 1
-                    :
-                    1;
+                        ->where('sc_item', $data['idItem'][$i])
+                        ->max('sc_detailid'))
+                        ?
+                        d_salescode::where('sc_sales', $sales->s_id)
+                            ->where('sc_item', $data['idItem'][$i])
+                            ->max('sc_detailid') + 1
+                        :
+                        1;
                     $val_salescode = array();
                     $val_salescode = [
                         'sc_sales' => $sales->s_id,
@@ -1538,11 +1544,11 @@ class ManajemenAgenController extends Controller
                 }
                 // get qty in smallest unit
                 $data_check = DB::table('m_item')
-                ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-                'm_item.i_unit3 as unit3')
-                ->where('i_id', '=', $data['idItem'][$i])
-                ->first();
+                    ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                        'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                        'm_item.i_unit3 as unit3')
+                    ->where('i_id', '=', $data['idItem'][$i])
+                    ->first();
 
                 $qty_compare = 0;
                 $sellPrice = 0;
@@ -1595,6 +1601,297 @@ class ManajemenAgenController extends Controller
             ]);
         }
     }
+
     // End: Kelola Penjualan Langsung -----------------
+
+    public function cariProduk(Request $request)
+    {
+        $cari = $request->term;
+        $item = DB::table('m_item')
+            ->select('i_id', 'i_name', 'i_code')
+            ->whereRaw("i_name like '%" . $cari . "%'")
+            ->orWhereRaw("i_code like '%" . $cari . "%'")
+            ->get();
+
+        if (count($item) == 0) {
+            $hasilItem[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($item as $query) {
+                if ($query->i_code == null) {
+                    $hasilItem[] = [
+                        'id' => $query->i_id,
+                        'label' => $query->i_name
+                    ];
+                } else {
+                    $hasilItem[] = [
+                        'id' => $query->i_id,
+                        'label' => $query->i_code . ' - ' . $query->i_name
+                    ];
+                }
+            }
+        }
+        return Response::json($hasilItem);
+    }
+
+    public function cekProductionCode(Request $request)
+    {
+        $posisi = $request->posisi;
+        $item = $request->item;
+        $kode = $request->kode;
+
+        $cek = DB::table('d_stock')
+            ->join('d_stockdt', 's_id', '=', 'sd_stock')
+            ->where('s_position', '=', $posisi)
+            ->where('s_item', '=', $item)
+            ->where('sd_code', '=', $kode)
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('s_condition', '=', 'FINE')
+            ->get();
+
+        if (count($cek) > 0) {
+            return Response::json([
+                'status' => 'sukses'
+            ]);
+        } else {
+            return Response::json([
+                'status' => 'gagal'
+            ]);
+        }
+    }
+
+    public function saveKPW(Request $request)
+    {
+        $agen = $request->agen;
+        $website = $request->website;
+        $transaksi = $request->transaksi;
+        $item = $request->item;
+        $qty = $request->qty;
+        $unit = $request->unit;
+        $price = $request->price;
+        $note = $request->note;
+        $code = $request->code;
+        $qtycode = $request->qtycode;
+        $mutcat = 4;
+        $sekarang = Carbon::now('Asia/Jakarta');
+
+        DB::beginTransaction();
+        try {
+            //d_sales
+            $id_sales = DB::table('d_sales')
+                ->max('s_id');
+
+            ++$id_sales;
+
+            $nota = CodeGenerator::codeWithSeparator('d_sales', 's_id', 8, 10, 3, 'PC', '-');
+            $total = intval($qty) * intval($price);
+            DB::table('d_sales')
+                ->insert([
+                    's_id' => $id_sales,
+                    's_comp' => $agen,
+                    's_member' => 'CUS0000000001',
+                    's_type' => 'C',
+                    's_date' => $sekarang->format('Y-m-d'),
+                    's_nota' => $nota,
+                    's_total' => $total,
+                    's_user' => Auth::user()->u_id,
+                ]);
+
+            $datamutcat = DB::table('m_mutcat')->where('m_status', '=', 'M')->get();
+
+            for ($i = 0; $i < count($datamutcat); $i++) {
+                $tmp[] = $datamutcat[$i]->m_id;
+            }
+            // dd($comp, $position, $item);
+            $stock = DB::table('d_stock')
+                ->join('d_stock_mutation', 'sm_stock', '=', 's_id')
+                ->select('d_stock.*', 'd_stock_mutation.*', DB::raw('(sm_qty - sm_use) as sm_sisa'))
+                ->where('s_position', '=', $agen)
+                ->where('s_item', '=', $item)
+                ->where('s_status', '=', 'ON DESTINATION')
+                ->where('s_condition', '=', 'FINE')
+                ->whereIn('sm_mutcat', $tmp)
+                ->where('sm_residue', '>', 0);
+
+            $stock = $stock->get();
+            $permintaan = $qty;
+
+            // set callback if stock-item-parent is empty
+            if (sizeof($stock) < 1) {
+                $itemx = m_item::where('i_id', $item)->select('i_name')->first();
+                throw new Exception("Stock " . $itemx->i_name . " kosong !");
+            }
+
+            DB::table('d_stock')
+                ->where('s_id', $stock[0]->s_id)
+                ->update([
+                    's_qty' => $stock[0]->s_qty - $permintaan
+                ]);
+
+            $sales_qty = 0;
+            $cek_idstock = 0;
+            $insert_salesdt = [];
+            $id_salesdt = 0;
+            // set mutation record
+            for ($j = 0; $j < count($stock); $j++) {
+                $continueLoopStock = false;
+                $cek_idstock = $stock[$j]->s_id;
+                $detailid = (DB::table('d_stock_mutation')
+                    ->where('sm_stock', $stock[$j]->sm_stock)
+                    ->max('sm_detailid')) ?
+                    DB::table('d_stock_mutation')
+                        ->where('sm_stock', $stock[$j]->sm_stock)
+                        ->max('sm_detailid') + 1 : 1;
+
+                // insert new stock mutation
+                // use all qty from current stock-mutation
+                if ($permintaan > $stock[$j]->sm_sisa && $permintaan != 0) {
+                    DB::table('d_stock_mutation')
+                        ->where('sm_stock', '=', $stock[$j]->sm_stock)
+                        ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
+                        ->update([
+                            'sm_use' => $stock[$j]->sm_qty,
+                            'sm_residue' => 0
+                        ]);
+
+                    // update qty of request after using all qty in stock-mutation parent
+                    $permintaan = $permintaan - $stock[$j]->sm_sisa;
+                    // qty that will store to sm_qty in new stock-mutation
+                    $smQty = $stock[$j]->sm_sisa;
+
+                    if ($cek_idstock != $stock[$j]->s_id){
+                        ++$id_salesdt;
+                        $temp = [
+                            'sd_sales' => $id_sales,
+                            'sd_detailid' => $id_salesdt,
+                            'sd_comp' => $stock[$j-1]->s_comp,
+                            'sd_item' => $stock[$j-1]->s_item,
+                            'sd_qty' => $sales_qty,
+                            'sd_unit' => $unit,
+                            'sd_value' => $price,
+                            'sd_discpersen' => 0,
+                            'sd_discvalue' => 0,
+                            'sd_totalnet' => $price * $sales_qty
+                        ];
+                        array_push($insert_salesdt, $temp);
+                        $sales_qty = 0;
+                    } else {
+                        $sales_qty = $sales_qty + $stock[$j]->sm_sisa;
+                    }
+
+                    $continueLoopStock = true;
+                } // use part of qty from current stock-mutation
+                elseif ($permintaan <= $stock[$j]->sm_sisa && $permintaan != 0) {
+                    $detailid = (DB::table('d_stock_mutation')
+                        ->where('sm_stock', $stock[$j]->sm_stock)
+                        ->max('sm_detailid')) ?
+                        (DB::table('d_stock_mutation')
+                            ->where('sm_stock', $stock[$j]->sm_stock)
+                            ->max('sm_detailid')) + 1 : 1;
+
+                    DB::table('d_stock_mutation')
+                        ->where('sm_stock', '=', $stock[$j]->sm_stock)
+                        ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
+                        ->update([
+                            'sm_use' => $permintaan + $stock[$j]->sm_use,
+                            'sm_residue' => $stock[$j]->sm_residue - $permintaan
+                        ]);
+                    // qty that will store to sm_qty in new stock-mutation
+                    $smQty = $permintaan;
+
+                    ++$id_salesdt;
+                    $temp = [
+                        'sd_sales' => $id_sales,
+                        'sd_detailid' => $id_salesdt,
+                        'sd_comp' => $stock[$j]->s_comp,
+                        'sd_item' => $stock[$j]->s_item,
+                        'sd_qty' => $permintaan,
+                        'sd_unit' => $unit,
+                        'sd_value' => $price,
+                        'sd_discpersen' => 0,
+                        'sd_discvalue' => 0,
+                        'sd_totalnet' => $price * $sales_qty
+                    ];
+                    array_push($insert_salesdt, $temp);
+
+                    $continueLoopStock = false;
+                }
+
+                // insert new stock-mutation out
+                DB::table('d_stock_mutation')
+                    ->insert([
+                        'sm_stock' => $stock[$j]->sm_stock,
+                        'sm_detailid' => $detailid,
+                        'sm_date' => $sekarang,
+                        'sm_mutcat' => 4,
+                        'sm_qty' => $smQty,
+                        'sm_use' => 0,
+                        'sm_residue' => 0,
+                        'sm_hpp' => $stock[$j]->sm_hpp,
+                        'sm_sell' => $price,
+                        'sm_nota' => $nota,
+                        'sm_reff' => $stock[$j]->sm_nota,
+                        'sm_user' => Auth::user()->u_id,
+                    ]);
+
+                // currently, it's special case for 'penjualan-langsung / mutcat 14'
+                if ($mutcat == 4) {
+                    // insert new stock-detail production-code
+                    $stockParentId = $stock[$j]->sm_stock;
+                    $stockChildId = null;
+                    $insertStockDt = Mutasi::insertStockDetail($stockParentId, $stockChildId, $code, $qtycode);
+                    if ($insertStockDt !== 'success') {
+                        throw new Exception($insertStockDt->getData()->message);
+                    }
+
+                    // insert new stock-mutation-detail production-code
+                    $insertSMProdCode = Mutasi::insertStockMutationDt($stockParentId, $detailid, $code, $qtycode);
+                    if ($insertSMProdCode !== 'success') {
+                        throw new Exception($insertSMProdCode->getData()->message);
+                    }
+                }
+
+                if ($continueLoopStock == false) {
+                    $permintaan = 0;
+                    break;
+                }
+            }
+
+            //salesdt
+            DB::table('d_salesdt')
+                ->insert($insert_salesdt);
+
+            //salesweb
+            $sw_id = DB::table('d_salesweb')
+                ->max('sw_id');
+            ++$sw_id;
+            DB::table('d_salesweb')
+                ->insert([
+                    'sw_id' => $sw_id,
+                    'sw_reff' => $nota,
+                    'sw_transactioncode' => $transaksi,
+                    'sw_agen' => $agen,
+                    'sw_website' => $website,
+                    'sw_date' => $sekarang,
+                    'sw_item' => $item,
+                    'sw_qty' => $qty,
+                    'sw_unit' => $unit,
+                    'sw_price' => $price,
+                    'sw_totalprice' => intval($qty) * intval($price),
+                    'sw_note' => $note,
+                    'sw_insert' => $sekarang
+                ]);
+
+            DB::commit();
+            return Response::json([
+                'status' => 'success'
+            ]);
+        } catch (DecryptException $e) {
+            DB::rollBack();
+            return Response::json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 
 }

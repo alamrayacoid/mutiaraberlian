@@ -719,8 +719,9 @@ class HargaController extends Controller
         } catch (DecryptException $e) {
             return response()->json(['status' => "Failed"]);
         }
+
         DB::beginTransaction();
-//        try {
+        try {
             if ($request->jenishargaHPA == "U") {
 
                 $check = DB::table('d_salespriceauth')
@@ -817,7 +818,7 @@ class HargaController extends Controller
                 if ($sts = "Null") {
                     $checkGol1 = DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->count();
                     $checkGol2 = DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->count();
-
+                    $detailid = 1;
                     if ($checkGol1 > 0 && $checkGol2 > 0) {
                         $tmp_detail1 = DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->max('spd_detailid');
                         $tmp_detail2 = DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->max('spa_detailid');
@@ -846,14 +847,14 @@ class HargaController extends Controller
                         'spa_user' => Auth::user()->u_id
                     ];
                     DB::table('d_salespriceauth')->insert($values);
-                   // DB::commit();
+                    DB::commit();
                     return response()->json(['status' => "Success"]);
                 }
             }
-//        } catch (\Exception $e) {
-//            DB::rollback();
-//            return response()->json(['status' => "Failed", 'message' => $e]);
-//        }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['status' => "Failed", 'message' => $e]);
+        }
     }
 
     public function deleteGolonganHarga($id, $detail, $status)
