@@ -921,34 +921,27 @@ class Mutasi extends Controller
             }
             // if qty in system is equal with qty in real
             else {
-                foreach ($listPC as $key => $val) {
-                    $val = strtoupper($val);
-                    $listQtyPC[$key] = (int)$listQtyPC[$key];
-                    // skip inserting when val is null or qty-pc is 0
-                    if ($val == '' || $val == null || $listQtyPC[$key] == 0) {
-                        continue;
-                    }
+                // get qty prod-code in stock-dt 
+                $stockDT = DB::table('d_stockdt')
+                    ->join('d_stock', 'sd_stock', 's_id')
+                    ->where('s_comp', '=', $comp)
+                    ->where('s_position', '=', $position)
+                    ->where('s_item', '=', $item)
+                    ->where('s_status', '=', 'ON DESTINATION')
+                    ->where('s_condition', '=', 'FINE')->get();
 
-                    $getdetailid = DB::table('d_stock_mutation')
-                        ->where('sm_stock', '=', $mutasi[0]->sm_stock)
-                        ->max('sm_detailid');
+                DB::table('d_stockdt')->where('sd_stock', '=', $stockDT[0]->s_id)->delete();
+                
+                $detailid = DB::table('d_stockdt')->where('sd_stock', '=', $stockDT[0]->s_id)->max('sd_detailid');
 
-                    $detailid = $getdetailid + 1;
-                    // get stock-mutation-dt
-                    $detailidPC = DB::table('d_stockmutationdt')
-                    ->where('smd_stock', $mutasi[0]->sm_stock)
-                    ->where('smd_stockmutation', $detailid)
-                    ->max('smd_detailid') + 1;
-                    // insert new stock-mutation-dt
-                    $mutationDt = array(
-                        'smd_stock'          => $mutasi[0]->sm_stock,
-                        'smd_stockmutation'  => $detailid,
-                        'smd_detailid'       => $detailidPC,
-                        'smd_productioncode' => $val,
-                        'smd_qty'            => $listQtyPC[$key]
-                        // 'smd_unit' => $listUnitPC[$key]
-                    );
-                    d_stockmutationdt::insert($mutationDt);
+                for ($i=0; $i < count($listPC) ; $i++) {
+                    $detailid = $detailid+1;
+                    DB::table('d_stockdt')->where('sd_stock', '=', $stockDT[0]->s_id)->insert([
+                        'sd_stock'    => $stockDT[0]->s_id,
+                        'sd_detailid' => $detailid,
+                        'sd_code'     => $listPC[$i],
+                        'sd_qty'      => $listQtyPC[$i]
+                    ]);
                 }
             }
 

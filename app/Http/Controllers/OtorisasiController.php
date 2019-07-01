@@ -106,14 +106,14 @@ class OtorisasiController extends Controller
 
             DB::commit();
             return response()->json([
-            'status' => 'berhasil'
+                'status' => 'berhasil'
             ]);
         }
         catch (Exception $e)
         {
             DB::rollback();
             return response()->json([
-            'status' => 'gagal'
+                'status' => 'gagal'
             ]);
         }
     }
