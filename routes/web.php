@@ -647,7 +647,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::get('/testoto', 'pushotorisasiController@otorisasiup');
 
     //Otorisasi Stock Opname
-    Route::get('/notifikasiotorisasi/otorisasi/opname/getdataopname', 'OtorisasiController@getopname');
+    Route::GET('/notifikasiotorisasi/otorisasi/opname/getdataopname', 'OtorisasiController@getopname');
     Route::get('/notifikasiotorisasi/otorisasi/opname/approveopname/{id}', 'OtorisasiController@approveopname');
     Route::get('/notifikasiotorisasi/otorisasi/opname/rejectedopname/{id}', 'OtorisasiController@rejectedopname');
 

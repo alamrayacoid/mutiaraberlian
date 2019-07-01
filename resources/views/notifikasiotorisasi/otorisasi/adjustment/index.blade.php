@@ -218,7 +218,7 @@ var table1, table2;
 														table1.ajax.reload();
 												}else{
 														loadingHide();
-														messageFailed("Gagal", "Data Stock Opname Berhasil Disetujui");
+														messageFailed("Gagal", "Ada Kesalahan!");
 												}
 										})
 								}
@@ -249,16 +249,21 @@ var table1, table2;
 								text: 'Ya',
 								action: function () {
 										loadingShow();
-										axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/adjustment/agreeadjusment'+'/'+id).then(function(response) {
-												if(response.status == 'berhasil'){
+										$.ajax({
+											url: "{{url('notifikasiotorisasi/otorisasi/adjustment/agreeadjusment')}}"+"/"+id,
+											type: "get",
+											success:function(resp){
+												if(resp.status == 'berhasil'){
 														loadingHide();
-														messageSuccess("Berhasil", "Data Stock Opname Berhasil Disetujui");
+														messageSuccess("Berhasil", "Data Adjustment Berhasil Disetujui");
+														$('#modalDetailApp').modal('hide');
 														table1.ajax.reload();
 												}else{
 														loadingHide();
-														messageFailed("Gagal", "Data Stock Opname Berhasil Disetujui");
+														messageFailed("Gagal", "Ada Kesalahan!");
 												}
-										})
+											}
+										});
 								}
 						},
 						cancel: {
