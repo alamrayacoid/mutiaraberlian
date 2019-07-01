@@ -31,7 +31,7 @@
                     </div>
                 </section>
                 <div class="table-responsive table-modal d-none">
-                    <table class="table table-striped table-hover display" cellspacing="0" id="table_search_agen_kpw"
+                    <table class="table table-striped table-hover display" cellspacing="0" id="table_search_agen_kpl"
                            width="100%">
                         <thead class="bg-primary">
                         <tr>
@@ -85,7 +85,7 @@
                     </div>
                 </section>
                 <div class="table-responsive table-modal d-none">
-                    <table class="table table-striped table-hover display" cellspacing="0" id="table_search_agen_kpl"
+                    <table class="table table-striped table-hover display" cellspacing="0" id="table_search_agen_kpw"
                            width="100%">
                         <thead class="bg-primary">
                         <tr>

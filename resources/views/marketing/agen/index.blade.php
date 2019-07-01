@@ -396,9 +396,6 @@
             $('#btn_search_date_kpl').on('click', function () {
                 TableListKPL();
             });
-            $('#btn_search_date_kpw').on('click', function () {
-                TableListKPW();
-            });
             $('#btn_refresh_date_kpl').on('click', function () {
                 $('#filter_agent_code_kpl').val('');
                 $('#date_from_kpl').datepicker('setDate', first_day);
@@ -422,6 +419,21 @@
                 TableListKPL();
             });
         //===========================
+            $('#date_from_kpw').on('change', function () {
+                TableListKPW();
+            });
+            $('#date_to_kpw').on('change', function () {
+                TableListKPW();
+            });
+            $('#btn_search_date_kpw').on('click', function () {
+                TableListKPW();
+            });
+            $('#btn_refresh_date_kpl').on('click', function () {
+                $('#filter_agent_code_kpl').val('');
+                $('#date_from_kpw').datepicker('setDate', first_day);
+                $('#date_to_kpw').datepicker('setDate', last_day);
+            });
+            TableListKPW();
             $('#filter_agent_name_kpw').on('click', function () {
                 $('#searchAgenKpw').modal('show');
             });
@@ -697,12 +709,10 @@
                 url: "{{ route('kelolapenjualan.getAgentsKPL') }}",
                 type: 'get',
                 data: {
-                    cityId: $('#citiesKPL').val()
+                    cityId: $('#citiesKPW').val()
                 },
                 success: function (response) {
                     // console.log('zxc');
-                    console.log(response);
-                    console.log(response.length);
                     $('#table_search_agen_kpw tbody').empty();
                     if (response.length <= 0) {
                         return 0;
@@ -712,7 +722,7 @@
                         listAgents += '<td>' + val.get_city.wc_name + '</td>';
                         listAgents += '<td>' + val.a_name + '</td>';
                         listAgents += '<td>' + val.a_type + '</td>';
-                        listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgent(\'' + val.a_code + '\',\'' + val.a_name + '\')"><i class="fa fa-download"></i></button></td></tr>';
+                        listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgentKpw(\'' + val.a_code + '\',\'' + val.a_name + '\')"><i class="fa fa-download"></i></button></td></tr>';
                     });
                     $('#table_search_agen_kpw > tbody:last-child').append(listAgents);
                     // console.log($('#table_search_agen_kpl'));
@@ -725,6 +735,12 @@
             $('#filter_agent_name_kpl').val(agentName);
             $('#filter_agent_code_kpl').val(agentCode);
             $('#searchAgen').modal('hide');
+        }
+
+        function addFilterAgentKpw(agentCode, agentName) {
+            $('#filter_agent_name_kpw').val(agentName);
+            $('#filter_agent_code_kpw').val(agentCode);
+            $('#searchAgenKpw').modal('hide');
         }
 
         function reloadTable() {

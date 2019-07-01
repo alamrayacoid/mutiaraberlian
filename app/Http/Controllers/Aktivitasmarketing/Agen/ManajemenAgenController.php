@@ -526,6 +526,7 @@ class ManajemenAgenController extends Controller
         }
         $provinsi = DB::table('m_wil_provinsi')
             ->select('m_wil_provinsi.*')
+            ->orderBy('wp_name')
             ->get();
         // get current user
         $user = Auth::user();
@@ -912,9 +913,10 @@ class ManajemenAgenController extends Controller
     // get list-cities based on province-id
     public function getCitiesKPL(Request $request)
     {
-        $cities = m_wil_provinsi::where('wp_id', $request->provId)
-            ->with('getCities')
-            ->firstOrFail();
+        $cities = m_wil_provinsi::with(['getCities' => function ($q) {
+            $q->orderBy('wc_name');
+        }])->where('wp_id', '=', $request->provId)->firstOrFail();
+
         return response()->json($cities);
     }
 
@@ -1893,6 +1895,54 @@ class ManajemenAgenController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    public function getListKPW(Request $request)
+    {
+        $userType = Auth::user()->u_user;
+        $agentCode = $request->agent_code;
+        $from = Carbon::parse($request->date_from)->format('Y-m-d');
+        $to = Carbon::parse($request->date_to)->format('Y-m-d');
+
+        if ($agentCode !== null) {
+            $company = m_company::where('c_user', $agentCode)
+                ->first();
+            $datas = d_sales::whereBetween('s_date', [$from, $to])
+                ->where('s_comp', $company->c_id);
+        } else {
+            if ($userType === 'E') {
+                $datas = d_sales::whereBetween('s_date', [$from, $to]);
+            } else {
+                $datas = d_sales::whereBetween('s_date', [$from, $to])
+                    ->where('s_comp', Auth::user()->u_company);
+            }
+        }
+        $datas = $datas->with('getMember')
+            ->orderBy('s_date', 'desc')
+            ->orderBy('s_nota', 'desc')
+            ->get();
+
+        return Datatables::of($datas)
+            ->addIndexColumn()
+            ->addColumn('date', function ($datas) {
+                return Carbon::parse($datas->s_date)->format('d M Y');
+            })
+            ->addColumn('member', function ($datas) {
+                return $datas->getMember['m_name'];
+            })
+            ->addColumn('total', function ($datas) {
+                return '<div class="text-right">Rp ' . number_format($datas->s_total, '2', ',', '.') . '</div>';
+            })
+            ->addColumn('action', function ($datas) {
+                return
+                    '<div class="btn-group btn-group-sm">
+            <button class="btn btn-primary btn-detailKPL" type="button" title="Detail" onclick="showDetailPenjualan(' . $datas->s_id . ')"><i class="fa fa-folder"></i></button>
+            <button class="btn btn-warning btn-editKPL" type="button" title="Edit" onclick="editDetailPenjualan(' . $datas->s_id . ')"><i class="fa fa-pencil"></i></button>
+            <button class="btn btn-danger btn-delete" type="button" title="Delete" onclick="deleteDetailPenjualan(' . $datas->s_id . ')"><i class="fa fa-trash"></i></button>
+            </div>';
+            })
+            ->rawColumns(['date', 'member', 'total', 'action'])
+            ->make(true);
     }
 
 }

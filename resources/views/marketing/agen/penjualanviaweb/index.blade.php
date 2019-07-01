@@ -11,14 +11,6 @@
         <div class="card-block">
             <section>
                 <div class="row mb-3">
-                    <div class="row form-group">
-                        <label for="nama_agen" class="col-2 col-form-label">Nama Agen :</label>
-                        <div class="col-10">
-                            <select class="select2" id="nama_agen" onchange="getCustomer()">
-                                <option>== Pilih Agen ==</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="col-md-6 col-sm-12">
                         <div class="input-group input-group-sm input-daterange">
                             <input type="text" class="form-control" id="date_from_kpw">
