@@ -11,6 +11,14 @@
         <div class="card-block">
             <section>
                 <div class="row mb-3">
+                    <div class="row form-group">
+                        <label for="nama_agen" class="col-2 col-form-label">Nama Agen :</label>
+                        <div class="col-10">
+                            <select class="select2" id="nama_agen" onchange="getCustomer()">
+                                <option>== Pilih Agen ==</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="col-md-6 col-sm-12">
                         <div class="input-group input-group-sm input-daterange">
                             <input type="text" class="form-control" id="date_from_kpw">
@@ -26,7 +34,7 @@
                         <div class="input-group">
                             <input type="text" class="form-control form-control-sm" placeholder="Cari Agen" id="filter_agent_name_kpw" autocomplete="off">
                             <input type="hidden" id="filter_agent_code_kpw">
-                            <button class="btn btn-secondary btn-md" title="Cari Agen" style="border-left:none;" data-toggle="modal" data-target="#searchAgen"><i class="fa fa-search"></i></button>
+                            <button class="btn btn-secondary btn-md" title="Cari Agen" style="border-left:none;" data-toggle="modal" data-target="#searchAgenKpw"><i class="fa fa-search"></i></button>
                         </div>
                     </div>
                     <div class="col-md-2 col-sm-6 filter_agent">

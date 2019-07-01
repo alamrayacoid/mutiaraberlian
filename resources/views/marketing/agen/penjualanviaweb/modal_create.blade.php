@@ -29,8 +29,16 @@
                 <div class="row form-group">
                     <label for="nama_agen" class="col-2 col-form-label">Nama Agen :</label>
                     <div class="col-10">
-                        <select class="select2" id="nama_agen">
+                        <select class="select2" id="nama_agen" onchange="getCustomer()">
                             <option>== Pilih Agen ==</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="nama_customer" class="col-2 col-form-label">Nama Customer :</label>
+                    <div class="col-10">
+                        <select class="select2" id="nama_customer">
+                            <option>== Pilih Customer ==</option>
                         </select>
                     </div>
                 </div>

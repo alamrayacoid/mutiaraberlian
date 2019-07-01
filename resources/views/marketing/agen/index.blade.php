@@ -86,6 +86,7 @@
     <script type="text/javascript">
         var table_do;
         var table_kpw;
+        var table_historykpw;
         $(document).ready(function () {
             getStatusDO();
             var table_pus = $('#table_kelolapenjualan').DataTable({
@@ -98,6 +99,13 @@
                 searching: false,
                 paging: false
             });
+            setTimeout(function () {
+                table_historykpw = $('#table_penjualanviaweb').DataTable({
+                    bAutoWidth: true,
+                    responsive: true,
+
+                });
+            }, 1000)
             var table_modal_detail = $('#detail-kelola').DataTable();
             //var table_pus = $('#table_inventoryagen').DataTable();
 
@@ -411,6 +419,20 @@
                 TableListKPL();
             });
             $('#btn_filter_kpl').on('click', function () {
+                TableListKPL();
+            });
+        //===========================
+            $('#filter_agent_name_kpw').on('click', function () {
+                $('#searchAgenKpw').modal('show');
+            });
+            $('#provKPW').on('change', function () {
+                getCitiesKPW();
+            });
+            $('#citiesKPW').on('change', function () {
+                $(".table-modal").removeClass('d-none');
+                appendListAgentsKPW();
+            });
+            $('#btn_filter_kpw').on('click', function () {
                 TableListKPW();
             });
         });
@@ -421,6 +443,36 @@
         function TableListKPL() {
             $('#table_kelolapenjualan').dataTable().fnDestroy();
             tb_listkpl = $('#table_kelolapenjualan').DataTable({
+                responsive: true,
+                processing: true,
+                bAutoWidth: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('kelolapenjualan.getListKPL') }}",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "date_from": $('#date_from_kpl').val(),
+                        "date_to": $('#date_to_kpl').val(),
+                        "agent_code": $('#filter_agent_code_kpl').val()
+                    }
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'date'},
+                    {data: 's_nota'},
+                    {data: 'member', width: "40%"},
+                    {data: 'total'},
+                    {data: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
+
+        function TableListKPW() {
+            $('#table_penjualanviaweb').dataTable().fnDestroy();
+            table_historykpw = $('#table_penjualanviaweb').DataTable({
                 responsive: true,
                 processing: true,
                 bAutoWidth: true,
@@ -591,6 +643,26 @@
             });
         }
 
+        function getCitiesKPW() {
+            var id = $('#provKPW').val();
+            $.ajax({
+                url: "{{route('kelolapenjualan.getCitiesKPL')}}",
+                type: "get",
+                data: {
+                    provId: id
+                },
+                success: function (response) {
+                    $('#citiesKPW').empty();
+                    $("#citiesKPW").append('<option value="" selected="" disabled="">=== Pilih Kota ===</option>');
+                    $.each(response.get_cities, function (key, val) {
+                        $("#citiesKPW").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
+                    });
+                    $('#citiesKPW').focus();
+                    $('#citiesKPW').select2('open');
+                }
+            });
+        }
+
         // append data to table-list-agens
         function appendListAgentsKPL() {
             $.ajax({
@@ -615,6 +687,34 @@
                         listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgent(\'' + val.a_code + '\',\'' + val.a_name + '\')"><i class="fa fa-download"></i></button></td></tr>';
                     });
                     $('#table_search_agen_kpl > tbody:last-child').append(listAgents);
+                    // console.log($('#table_search_agen_kpl'));
+                }
+            });
+        }
+
+        function appendListAgentsKPW() {
+            $.ajax({
+                url: "{{ route('kelolapenjualan.getAgentsKPL') }}",
+                type: 'get',
+                data: {
+                    cityId: $('#citiesKPL').val()
+                },
+                success: function (response) {
+                    // console.log('zxc');
+                    console.log(response);
+                    console.log(response.length);
+                    $('#table_search_agen_kpw tbody').empty();
+                    if (response.length <= 0) {
+                        return 0;
+                    }
+                    $.each(response, function (index, val) {
+                        listAgents = '<tr><td>' + val.get_province.wp_name + '</td>';
+                        listAgents += '<td>' + val.get_city.wc_name + '</td>';
+                        listAgents += '<td>' + val.a_name + '</td>';
+                        listAgents += '<td>' + val.a_type + '</td>';
+                        listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgent(\'' + val.a_code + '\',\'' + val.a_name + '\')"><i class="fa fa-download"></i></button></td></tr>';
+                    });
+                    $('#table_search_agen_kpw > tbody:last-child').append(listAgents);
                     // console.log($('#table_search_agen_kpl'));
                 }
             });
@@ -831,6 +931,7 @@
             let provinsi = $('#area_provinsi').val();
             let kota = $('#area_kota').val();
             let agen = $('#nama_agen').val();
+            let customer = $('#nama_customer').val();
             let website = $('#website').val();
             let transaksi = $('#transaksi').val();
             let produk = $('#id_produk').val();
@@ -863,6 +964,13 @@
                 messageWarning("Perhatian", "Form harus lengkap");
                 $('#nama_agen').focus();
                 $('#nama_agen').select2('open');
+                return false;
+            }
+            if (customer == '' || customer == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#nama_customer').focus();
+                $('#nama_customer').select2('open');
                 return false;
             }
             if (website == '' || website == null){
@@ -907,6 +1015,7 @@
                 axios.post('{{ route("kelolapenjualanviawebsite.saveKPW") }}', {
                     "agen": agen,
                     "website": website,
+                    "customer": customer,
                     "transaksi": transaksi.toUpperCase(),
                     "item": produk,
                     "qty": kuantitas,
@@ -920,6 +1029,7 @@
                     loadingHide();
                     if (response.data.status == 'success'){
                         messageSuccess("Berhasil", "Data berhasil disimpan");
+                        $('#createKPW').modal('hide');
                     } else if (response.data.status == 'gagal'){
                         messageFailed("Gagal", response.data.message);
                     }
@@ -998,8 +1108,27 @@
                     }
                 }
             }).catch(function (error) {
-
+                loadingHide();
+                alert('error');
             });
+        }
+
+        function getCustomer() {
+            loadingShow();
+            let agen = $('#nama_agen').val();
+            axios.get('{{ route("kelolapenjualan.getMemberKPL") }}', {
+                'agentCode': agen
+            }).then(function (response) {
+                loadingHide();
+                $.each(response.data, function (key, val) {
+                    $("#nama_customer").append('<option value="' + val.m_code + '">' + val.m_name + '</option>');
+                });
+                $('#nama_customer').focus();
+                $('#nama_customer').select2('open');
+            }).catch(function (error) {
+                loadingHide();
+                alert('error');
+            })
         }
     </script>
 @endsection

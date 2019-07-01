@@ -1662,6 +1662,7 @@ class ManajemenAgenController extends Controller
     public function saveKPW(Request $request)
     {
         $agen = $request->agen;
+        $customer = $request->customer;
         $website = $request->website;
         $transaksi = $request->transaksi;
         $item = $request->item;
@@ -1688,7 +1689,7 @@ class ManajemenAgenController extends Controller
                 ->insert([
                     's_id' => $id_sales,
                     's_comp' => $agen,
-                    's_member' => 'CUS0000000001',
+                    's_member' => $customer,
                     's_type' => 'C',
                     's_date' => $sekarang->format('Y-m-d'),
                     's_nota' => $nota,
