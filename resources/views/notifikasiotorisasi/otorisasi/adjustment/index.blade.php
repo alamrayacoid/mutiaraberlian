@@ -291,16 +291,21 @@ var table1, table2;
 								text: 'Ya',
 								action: function () {
 										loadingShow();
-										axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/adjustment/rejectadjusment'+'/'+id).then(function(response) {
-												if(response.status == 'berhasil'){
+										$.ajax({
+											url: "{{url('notifikasiotorisasi/otorisasi/adjustment/rejectadjusment')}}"+"/"+id,
+											type: "get",
+											success:function(resp){
+												if(resp.status == 'berhasil'){
 														loadingHide();
 														messageSuccess("Berhasil", "Data Stock Adjustment Berhasil Ditolak");
+														$('#modalDetailApp').modal('hide');
 														table1.ajax.reload();
 												}else{
 														loadingHide();
-														messageFailed("Gagal", "Ada kesalhan!");
+														messageFailed("Gagal", "Ada Kesalahan!");
 												}
-										})
+											}
+										});
 								}
 						},
 						cancel: {
@@ -333,9 +338,10 @@ var table1, table2;
 											url: "{{url('notifikasiotorisasi/otorisasi/adjustment/rejectadjusment')}}"+"/"+id,
 											type: "get",
 											success:function(resp){
-												if(response.status == 'berhasil'){
+												if(resp.status == 'berhasil'){
 														loadingHide();
 														messageSuccess("Berhasil", "Data Stock Adjustment Berhasil Ditolak");
+														$('#modalDetailApp').modal('hide');
 														table1.ajax.reload();
 												}else{
 														loadingHide();

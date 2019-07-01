@@ -755,6 +755,7 @@ class Mutasi extends Controller
         $listQtyPC // list qty each production-code
         )
     {
+        // dd($mutcat,$comp,$position,$item,$qtysistem,$qtyreal,$sisa,$nota,$reff,$listPC,$listQtyPC);
         DB::beginTransaction();
         try {
 
@@ -920,7 +921,35 @@ class Mutasi extends Controller
             }
             // if qty in system is equal with qty in real
             else {
-                //======== tidak perlu ada penanganan khusus
+                foreach ($listPC as $key => $val) {
+                    $val = strtoupper($val);
+                    $listQtyPC[$key] = (int)$listQtyPC[$key];
+                    // skip inserting when val is null or qty-pc is 0
+                    if ($val == '' || $val == null || $listQtyPC[$key] == 0) {
+                        continue;
+                    }
+
+                    $getdetailid = DB::table('d_stock_mutation')
+                        ->where('sm_stock', '=', $mutasi[0]->sm_stock)
+                        ->max('sm_detailid');
+
+                    $detailid = $getdetailid + 1;
+                    // get stock-mutation-dt
+                    $detailidPC = DB::table('d_stockmutationdt')
+                    ->where('smd_stock', $mutasi[0]->sm_stock)
+                    ->where('smd_stockmutation', $detailid)
+                    ->max('smd_detailid') + 1;
+                    // insert new stock-mutation-dt
+                    $mutationDt = array(
+                        'smd_stock'          => $mutasi[0]->sm_stock,
+                        'smd_stockmutation'  => $detailid,
+                        'smd_detailid'       => $detailidPC,
+                        'smd_productioncode' => $val,
+                        'smd_qty'            => $listQtyPC[$key]
+                        // 'smd_unit' => $listUnitPC[$key]
+                    );
+                    d_stockmutationdt::insert($mutationDt);
+                }
             }
 
             DB::commit();
@@ -1243,6 +1272,7 @@ class Mutasi extends Controller
         $listQtyPC // List Qty Production Code
         )
     {
+        dd($stockId, $smDetailId, $listPC, $listQtyPC);
         DB::beginTransaction();
         try {
             // insert new mutation-detail (filled with production-code of the products)
