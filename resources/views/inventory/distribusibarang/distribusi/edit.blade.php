@@ -56,6 +56,69 @@
                                     </div>
                                 </div>
 
+                                <div class="row">
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Jasa Ekspedisi</label>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <select name="expedition" id="expedition" class="form-control form-control-sm select2">
+                                                <option value="" disabled>Pilih Ekspedisi</option>
+                                                @foreach($data['expeditions'] as $idx => $expd)
+                                                    @if($expd->e_id == $data['stockdist']->getProductDelivery->pd_expedition)
+                                                        <option value="{{ $expd->e_id }}" selected>{{ $expd->e_name }}</option>
+                                                    @else
+                                                        <option value="{{ $expd->e_id }}">{{ $expd->e_name }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Jenis Ekspedisi</label>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <input type="hidden" id="pd_product" value="{{ $data['stockdist']->getProductDelivery->pd_product }}">
+                                            <select name="expeditionType" id="expeditionType" class="form-control form-control-sm select2">
+                                                <option value="" disabled selected>Pilih Jenis Ekspedisi</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Nama Kurir</label>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-sm" id="courierName" name="courierName" value="{{ $data['stockdist']->getProductDelivery->pd_couriername }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>No Telp. Kurir</label>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-sm hp" id="courierTelp" name="courierTelp" value="{{ $data['stockdist']->getProductDelivery->pd_couriertelp }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>No. Resi</label>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-sm text-uppercase" id="resi" name="resi" value="{{ $data['stockdist']->getProductDelivery->pd_resi }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Biaya Pengiriman</label>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-sm rupiah" id="shippingCost" name="shippingCost" value="{{ $data['stockdist']->getProductDelivery->pd_price }}">
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="table-responsive">
                                     <table class="table table-striped table-hover data-table" cellspacing="0" id="table_items">
                                         <thead class="bg-primary">
@@ -160,7 +223,7 @@
     var editedItemId = 0;
     var distDt = 0;
 
-    $(document).ready(function(){
+    $(document).ready(function() {
         // retrive data directly from controller
         editedItemId = <?php echo $data['stockdist']->sd_id; ?>;
         distDt = {!! $data['stockdist'] !!};
@@ -177,6 +240,12 @@
             "info":     false
         });
 
+        // find jenis ekspedisi
+        $('#expedition').on('change', function() {
+            getExpeditionType(true);
+        });
+        // get expeditionType
+        getExpeditionType(false);
         // set modal production-code
         setModalCodeProdReady();
         // event field items inside table
@@ -349,6 +418,33 @@
             autoUnmask: true,
             nullable: false,
             // unmaskAsNumber: true,
+        });
+    }
+    // get expedition type
+    function getExpeditionType(openStatus) {
+        var id = $('#expedition').val();
+        $.ajax({
+            url: "{{ route('distribusibarang.getExpeditionType') }}",
+            type: "get",
+            data: {
+                id: id
+            },
+            success: function (response) {
+                $('#expeditionType').empty();
+                $("#expeditionType").append('<option value="" selected="" disabled="">Pilih Jenis Ekspedisi</option>');
+                $.each(response, function (key, val) {
+                    if (val.ed_detailid == $('#pd_product').val()) {
+                        $("#expeditionType").append('<option value="' + val.ed_detailid + '" selected>' + val.ed_product + '</option>');
+                    }
+                    else {
+                        $("#expeditionType").append('<option value="' + val.ed_detailid + '">' + val.ed_product + '</option>');
+                    }
+                });
+                if (openStatus == true) {
+                    $('#expeditionType').focus();
+                    $('#expeditionType').select2('open');
+                }
+            }
         });
     }
     // set modalCodeProd to be ready

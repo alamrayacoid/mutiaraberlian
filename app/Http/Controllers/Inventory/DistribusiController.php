@@ -205,19 +205,6 @@ class DistribusiController extends Controller
                 return $validateProdCode;
             }
 
-            // insert new product-delivery
-            $id = d_productdelivery::max('pd_id') + 1;
-            $prodDeliv = new d_productdelivery;
-            $prodDeliv->pd_id = $id;
-            $prodDeliv->pd_date = Carbon::now();
-            $prodDeliv->pd_nota = $nota;
-            $prodDeliv->pd_expedition = $request->expedition;
-            $prodDeliv->pd_resi = $request->resi;
-            $prodDeliv->pd_couriername = $request->courierName;
-            $prodDeliv->pd_couriertelp = $request->courierTelp;
-            $prodDeliv->pd_price = $request->shippingCost;
-            $prodDeliv->save();
-
             // insert new stockdist
             $id = d_stockdistribution::max('sd_id') + 1;
             $dist = new d_stockdistribution;
@@ -228,6 +215,20 @@ class DistribusiController extends Controller
             $dist->sd_nota = $nota;
             $dist->sd_user = Auth::user()->u_id;
             $dist->save();
+
+            // insert new product-delivery
+            $id = d_productdelivery::max('pd_id') + 1;
+            $prodDeliv = new d_productdelivery;
+            $prodDeliv->pd_id = $id;
+            $prodDeliv->pd_date = Carbon::now();
+            $prodDeliv->pd_nota = $nota;
+            $prodDeliv->pd_expedition = $request->expedition;
+            $prodDeliv->pd_product = $request->expeditionType;
+            $prodDeliv->pd_resi = $request->resi;
+            $prodDeliv->pd_couriername = $request->courierName;
+            $prodDeliv->pd_couriertelp = $request->courierTelp;
+            $prodDeliv->pd_price = $request->shippingCost;
+            $prodDeliv->save();
 
             $startProdCodeIdx = 0;
             // insert new stockdist-detail
@@ -356,9 +357,13 @@ class DistribusiController extends Controller
                     ->with('getUnit')
                     ->with('getProdCode');
             }])
+            ->with('getProductDelivery')
             ->first();
         // set variabel to store nota number
         $nota = $data['stockdist']->sd_nota;
+        // change number format to int before send it to view
+        $data['stockdist']->getProductDelivery->pd_price = (int)$data['stockdist']->getProductDelivery->pd_price;
+        // dd($data);
         // get data item-stock
         foreach ($data['stockdist']->getDistributionDt as $key => $val)
         {
@@ -415,7 +420,7 @@ class DistribusiController extends Controller
             }
         }
 
-        // dd($data['stockdist']);
+        $data['expeditions'] = m_expedition::get();
 
         return view('inventory/distribusibarang/distribusi/edit', compact('data'));
     }
@@ -443,6 +448,23 @@ class DistribusiController extends Controller
             $stockdist = d_stockdistribution::where('sd_id', $id)
                 ->with('getDistributionDt.getProdCode')
                 ->first();
+
+            // update stockdist
+            $stockdist->sd_from = Auth::user()->u_company;
+            $stockdist->sd_date = Carbon::now();
+            $stockdist->sd_user = Auth::user()->u_id;
+            $stockdist->save();
+
+            // update product-delivery
+            $prodDeliv = d_productdelivery::where('pd_nota', $stockdist->sd_nota)->first();
+            $prodDeliv->pd_date = Carbon::now();
+            $prodDeliv->pd_expedition = $request->expedition;
+            $prodDeliv->pd_product = $request->expeditionType;
+            $prodDeliv->pd_resi = $request->resi;
+            $prodDeliv->pd_couriername = $request->courierName;
+            $prodDeliv->pd_couriertelp = $request->courierTelp;
+            $prodDeliv->pd_price = $request->shippingCost;
+            $prodDeliv->save();
 
             $startProdCodeIdx = 0;
             // count skipped index based on 'isDeleted' row
@@ -635,6 +657,7 @@ class DistribusiController extends Controller
             // get stockdist
             $stockdist = d_stockdistribution::where('sd_id', $request->id)
             ->with('getDistributionDt.getProdCode')
+            ->with('getProductDelivery')
             ->first();
 
             foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
@@ -656,6 +679,8 @@ class DistribusiController extends Controller
             foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
                 $stockdistDt->delete();
             }
+            // delete selected productDelivery
+            $stockdist->getProductDelivery->delete();
             // delete selected stockdistribution
             $stockdist->delete();
 

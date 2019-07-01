@@ -26,6 +26,10 @@ class d_stockdistribution extends Model
     {
         return $this->hasMany('App\d_stock_mutation', 'sm_nota', 'sd_nota');
     }
+    public function getProductDelivery()
+    {
+        return $this->hasOne('App\d_productdelivery', 'pd_nota', 'sd_nota');
+    }
 
     // // function to delete cascade with distribution-detail ??
     // public static function boot() {
