@@ -20,10 +20,15 @@ class d_salescomp extends Model
     {
         return $this->hasMany('App\d_salescomppayment', 'scp_salescomp', 'sc_id');
     }
-    // get-agent from username (agent = user who is logged in)
+    // get sc_member
     public function getAgent()
     {
         return $this->belongsTo('App\m_company', 'sc_member', 'c_id');
+    }
+    // get sc_comp
+    public function getComp()
+    {
+        return $this->belongsTo('App\m_company', 'sc_comp', 'c_id');
     }
     // get-stock-mutation based on no-nota
     public function getMutation()

@@ -156,7 +156,8 @@
 
             if ($("#q_idpo").val() == "") {
                 $("#go").attr("disabled", true);
-            } else {
+            }
+            else {
                 $("#go").attr("disabled", false);
             }
 
@@ -537,14 +538,19 @@
             axios.post('{{ route('return.add') }}', $("#formCreateReturn").serialize())
             .then(function (resp) {
                 loadingHide();
+                console.log(resp);
                 if (resp.data.status == "Failed") {
-                    messageFailed("Gagal", resp.data.message);
-                } else if (resp.data.status == "Success") {
+                    messageWarning("Gagal", resp.data.message);
+                }
+                else if (resp.data.status == "Success") {
                     messageSuccess("Berhasil", resp.data.message);
                     $("#qty_return").val(0);
                     $("#note_return").val('');
                     $("#createReturn").modal("hide");
                     window.open(baseUrl+'/produksi/returnproduksi/nota-return/'+resp.data.id+'/'+resp.data.detail);
+                }
+                else {
+                    messageFailed("Perhatian", resp.data.error);
                 }
             })
             .catch(function (error) {

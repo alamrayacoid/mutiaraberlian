@@ -9,12 +9,30 @@
             font-size: 14px;
             font-weight: bold;
         }
+
+        .modal {
+            z-index: 9999 !important;
+        }
+
+        .ui-autocomplete-input {
+            z-index: 10000 !important;
+        }
+        .ui-autocomplete {
+            z-index: 10001 !important;
+        }
+        .select2-dropdown{
+            z-index: 10001 !important;
+        }
+        #cover-spin{
+            z-index: 10002 !important;
+        }
     </style>
 @endsection
 @section('content')
     @include('marketing.agen.orderproduk.detailDO')
     @include('marketing.agen.kelolapenjualan.modal-search')
     @include('marketing.agen.kelolapenjualan.modal')
+    @include('marketing.agen.penjualanviaweb.modal_create')
     <article class="content animated fadeInLeft">
         <div class="title-block text-primary">
             <h1 class="title"> Manajemen Agen </h1>
@@ -38,8 +56,8 @@
                                 Langsung </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#monitoringpenjualanagen" class="nav-link" data-target="#monitoringpenjualanagen"
-                               aria-controls="monitoringpenjualanagen" data-toggle="tab" role="tab">Kelola Penjualan Via
+                            <a href="#penjualanviaweb" class="nav-link" data-target="#penjualanviaweb"
+                               aria-controls="penjualanviaweb" data-toggle="tab" role="tab">Kelola Penjualan Via
                                 Website</a>
                         </li>
                         <li class="nav-item">
@@ -55,6 +73,7 @@
                     <div class="tab-content">
                         @include('marketing.agen.orderproduk.index')
                         @include('marketing.agen.inventoryagen.index')
+                        @include('marketing.agen.penjualanviaweb.index')
                         @include('marketing.agen.kelolapenjualan.index')
                     </div>
                 </div>
@@ -66,9 +85,27 @@
 @section('extra_script')
     <script type="text/javascript">
         var table_do;
+        var table_kpw;
+        var table_historykpw;
         $(document).ready(function () {
             getStatusDO();
-            var table_pus = $('#table_kelolapenjualan').DataTable();
+            var table_pus = $('#table_kelolapenjualan').DataTable({
+                bAutoWidth: true
+            });
+            table_kpw = $('#table_KPW').DataTable({
+                bAutoWidth: true,
+                responsive: true,
+                info: false,
+                searching: false,
+                paging: false
+            });
+            setTimeout(function () {
+                table_historykpw = $('#table_penjualanviaweb').DataTable({
+                    bAutoWidth: true,
+                    responsive: true,
+
+                });
+            }, 1000)
             var table_modal_detail = $('#detail-kelola').DataTable();
             //var table_pus = $('#table_inventoryagen').DataTable();
 
@@ -335,6 +372,8 @@
             last_day = new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
             $('#date_from_kpl').datepicker('setDate', first_day);
             $('#date_to_kpl').datepicker('setDate', last_day);
+            $('#date_from_kpw').datepicker('setDate', first_day);
+            $('#date_to_kpw').datepicker('setDate', last_day);
 
             if ($('.current_user_type').val() !== 'E') {
                 $('.filter_agent').addClass('d-none');
@@ -346,6 +385,12 @@
                 TableListKPL();
             });
             $('#date_to_kpl').on('change', function () {
+                TableListKPL();
+            });
+            $('#date_from_kpw').on('change', function () {
+                TableListKPL();
+            });
+            $('#date_to_kpw').on('change', function () {
                 TableListKPL();
             });
             $('#btn_search_date_kpl').on('click', function () {
@@ -370,6 +415,38 @@
             $('#btn_filter_kpl').on('click', function () {
                 TableListKPL();
             });
+            $('#btn_filter_kpl').on('click', function () {
+                TableListKPL();
+            });
+        //===========================
+            $('#date_from_kpw').on('change', function () {
+                TableListKPW();
+            });
+            $('#date_to_kpw').on('change', function () {
+                TableListKPW();
+            });
+            $('#btn_search_date_kpw').on('click', function () {
+                TableListKPW();
+            });
+            $('#btn_refresh_date_kpl').on('click', function () {
+                $('#filter_agent_code_kpl').val('');
+                $('#date_from_kpw').datepicker('setDate', first_day);
+                $('#date_to_kpw').datepicker('setDate', last_day);
+            });
+            TableListKPW();
+            $('#filter_agent_name_kpw').on('click', function () {
+                $('#searchAgenKpw').modal('show');
+            });
+            $('#provKPW').on('change', function () {
+                getCitiesKPW();
+            });
+            $('#citiesKPW').on('change', function () {
+                $(".table-modal").removeClass('d-none');
+                appendListAgentsKPW();
+            });
+            $('#btn_filter_kpw').on('click', function () {
+                TableListKPW();
+            });
         });
 
         // data-table -> function to retrieve DataTable server side
@@ -379,6 +456,38 @@
             $('#table_kelolapenjualan').dataTable().fnDestroy();
             tb_listkpl = $('#table_kelolapenjualan').DataTable({
                 responsive: true,
+                processing: true,
+                bAutoWidth: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('kelolapenjualan.getListKPL') }}",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "date_from": $('#date_from_kpl').val(),
+                        "date_to": $('#date_to_kpl').val(),
+                        "agent_code": $('#filter_agent_code_kpl').val()
+                    }
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'date'},
+                    {data: 's_nota'},
+                    {data: 'member', width: "40%"},
+                    {data: 'total'},
+                    {data: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
+
+        function TableListKPW() {
+            $('#table_penjualanviaweb').dataTable().fnDestroy();
+            table_historykpw = $('#table_penjualanviaweb').DataTable({
+                responsive: true,
+                processing: true,
+                bAutoWidth: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('kelolapenjualan.getListKPL') }}",
@@ -546,6 +655,26 @@
             });
         }
 
+        function getCitiesKPW() {
+            var id = $('#provKPW').val();
+            $.ajax({
+                url: "{{route('kelolapenjualan.getCitiesKPL')}}",
+                type: "get",
+                data: {
+                    provId: id
+                },
+                success: function (response) {
+                    $('#citiesKPW').empty();
+                    $("#citiesKPW").append('<option value="" selected="" disabled="">=== Pilih Kota ===</option>');
+                    $.each(response.get_cities, function (key, val) {
+                        $("#citiesKPW").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
+                    });
+                    $('#citiesKPW').focus();
+                    $('#citiesKPW').select2('open');
+                }
+            });
+        }
+
         // append data to table-list-agens
         function appendListAgentsKPL() {
             $.ajax({
@@ -575,11 +704,43 @@
             });
         }
 
+        function appendListAgentsKPW() {
+            $.ajax({
+                url: "{{ route('kelolapenjualan.getAgentsKPL') }}",
+                type: 'get',
+                data: {
+                    cityId: $('#citiesKPW').val()
+                },
+                success: function (response) {
+                    // console.log('zxc');
+                    $('#table_search_agen_kpw tbody').empty();
+                    if (response.length <= 0) {
+                        return 0;
+                    }
+                    $.each(response, function (index, val) {
+                        listAgents = '<tr><td>' + val.get_province.wp_name + '</td>';
+                        listAgents += '<td>' + val.get_city.wc_name + '</td>';
+                        listAgents += '<td>' + val.a_name + '</td>';
+                        listAgents += '<td>' + val.a_type + '</td>';
+                        listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgentKpw(\'' + val.a_code + '\',\'' + val.a_name + '\')"><i class="fa fa-download"></i></button></td></tr>';
+                    });
+                    $('#table_search_agen_kpw > tbody:last-child').append(listAgents);
+                    // console.log($('#table_search_agen_kpl'));
+                }
+            });
+        }
+
         // add filter-agent
         function addFilterAgent(agentCode, agentName) {
             $('#filter_agent_name_kpl').val(agentName);
             $('#filter_agent_code_kpl').val(agentCode);
             $('#searchAgen').modal('hide');
+        }
+
+        function addFilterAgentKpw(agentCode, agentName) {
+            $('#filter_agent_name_kpw').val(agentName);
+            $('#filter_agent_code_kpw').val(agentCode);
+            $('#searchAgenKpw').modal('hide');
         }
 
         function reloadTable() {
@@ -646,6 +807,344 @@
                     loadingHide();
                     messageWarning("Error", error)
                 })
+        }
+        
+        function getCity() {
+            $.ajax({
+                type: 'get',
+                url: baseUrl + '/masterdatautama/agen/cities/' + $('#area_provinsi').val(),
+                success: function(data) {
+                    $('#area_kota').empty();
+                    $("#area_kota").append('<option disabled selected>== Pilih Kota ==</option>');
+                    $.each(data, function(key, val) {
+                        $("#area_kota").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
+                    });
+                    $('#area_kota').focus();
+                    $('#area_kota').select2('open');
+                }
+            });
+        }
+
+        function getAgen() {
+            $.ajax({
+                url: baseUrl+'/marketing/konsinyasipusat/cari-konsigner-select2/'+$("#area_provinsi").val()+'/'+$("#area_kota").val(),
+                type: 'get',
+                success: function( data ) {
+                    // console.log(data);
+                    $('#nama_agen').find('option').remove();
+                    $('#nama_agen').append('<option value="" selected disabled> == Pilih Agen ==</option>')
+                    $.each(data, function(index, val) {
+                        // console.log(val, val.a_id);
+                        $('#nama_agen').append('<option value="'+ val.c_id +'" data-code="'+ val.a_code +'">'+ val.a_name +'</option>');
+                    });
+                    $('#nama_agen').focus();
+                    $('#nama_agen').select2('open');
+                },
+                error: function(e) {
+                    // console.log('get konsigner error: ');
+                }
+            });
+
+        }
+
+        $( "#produk" ).autocomplete({
+            source: function( request, response ) {
+                $.ajax({
+                    url: '{{ route('kelolapenjualanviawebsite.cariProduk') }}',
+                    data: {
+                        term: $("#produk").val()
+                    },
+                    success: function( data ) {
+                        response( data );
+                    }
+                });
+            },
+            minLength: 1,
+            select: function(event, data) {
+                $('#id_produk').val(data.item.id);
+                getUnit();
+            }
+        });
+
+        function getUnit() {
+            let item = $('#id_produk').val();
+            axios.get(baseUrl + '/marketing/agen/kelolapenjualanlangsung/get-unit/' + item,).then(function (response) {
+                $('#satuan').empty();
+                $("#satuan").append('<option value="" selected disabled>== Pilih Satuan ==</option>');
+                $("#satuan").append('<option data-nama="'+response.data.get_unit1.u_name+'" value="' + response.data.get_unit1.u_id + '">' + response.data.get_unit1.u_name + '</option>');
+            }).catch(function (error) {
+                alert("error");
+            })
+        }
+
+        $('.input-harga').inputmask("currency", {
+            radixPoint: ",",
+            groupSeparator: ".",
+            digits: 0,
+            autoGroup: true,
+            prefix: ' Rp. ', //Space after $, this will not truncate the first character.
+            rightAlign: true,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
+        });
+
+        function setTotal() {
+            let qty = $('#kuantitas').val();
+            let harga = $('#harga').val();
+
+            let total = parseInt(qty) * parseInt(harga);
+            $('#total').val(total);
+        }
+
+        $('#satuan').change(function(){
+            var selected = $(this).find('option:selected').data('nama');
+            $('#label-satuan').html(selected);
+        });
+        
+        function saveSalesWeb() {
+            let kuantitas = $('#kuantitas').val();
+            let qty = $("input[name='qtycode[]']")
+                .map(function(){return $(this).val();}).get();
+            let totalqty = 0;
+            for (let i = 0; i < qty.length; i++) {
+                totalqty = totalqty + parseInt(qty[i]);
+            }
+
+            if (parseInt(kuantitas) != parseInt(totalqty)){
+                return $.confirm({
+                    animation: 'RotateY',
+                    closeAnimation: 'scale',
+                    animationBounce: 2.5,
+                    icon: 'fa fa-exclamation-triangle',
+                    title: 'Peringatan!',
+                    content: 'Kuantitas barang tidak sama dengan jumlah kode!!',
+                    theme: 'disable',
+                    buttons: {
+                        info: {
+                            btnClass: 'btn-blue',
+                            text: 'Lanjutkan',
+                            action: function () {
+                               return lanjutkan();
+                            }
+                        },
+                        cancel: {
+                            text: 'Batal',
+                            action: function () {
+                                // tutup confirm
+                                valid = 0;
+                            }
+                        }
+                    }
+                });
+            } else {
+                lanjutkan();
+            }
+        }
+
+        function lanjutkan() {
+            valid = 1;
+            let provinsi = $('#area_provinsi').val();
+            let kota = $('#area_kota').val();
+            let agen = $('#nama_agen').val();
+            let customer = $('#nama_customer').val();
+            let website = $('#website').val();
+            let transaksi = $('#transaksi').val();
+            let produk = $('#id_produk').val();
+            let kuantitas = $('#kuantitas').val();
+            let satuan = $('#satuan').val();
+            let harga = $('#harga').val();
+            let note = $('#note').val();
+            let kode = $("input[name='code[]']")
+                .map(function(){return $(this).val();}).get();
+
+            let kodeqty = $("input[name='qtycode[]']")
+                .map(function(){return $(this).val();}).get();
+
+            if (provinsi == '' || provinsi == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#area_provinsi').focus();
+                $('#area_provinsi').select2('open');
+                return false;
+            }
+            if (kota == '' || kota == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#area_kota').focus();
+                $('#area_kota').select2('open');
+                return false;
+            }
+            if (agen == '' || agen == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#nama_agen').focus();
+                $('#nama_agen').select2('open');
+                return false;
+            }
+            if (customer == '' || customer == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#nama_customer').focus();
+                $('#nama_customer').select2('open');
+                return false;
+            }
+            if (website == '' || website == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#website').focus();
+                return false;
+            }
+            if (transaksi == '' || transaksi == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#transaksi').focus();
+                return false;
+            }
+            if (produk == '' || produk == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#produk').focus();
+                return false;
+            }
+            if (kuantitas == '' || kuantitas == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#kuantitas').focus();
+                return false;
+            }
+            if (satuan == '' || satuan == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#satuan').focus();
+                $('#satuan').select2('open');
+                return false;
+            }
+            if (harga == '' || harga == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#harga').focus();
+                return false;
+            }
+            if (valid == 1){
+                loadingShow();
+                axios.post('{{ route("kelolapenjualanviawebsite.saveKPW") }}', {
+                    "agen": agen,
+                    "website": website,
+                    "customer": customer,
+                    "transaksi": transaksi.toUpperCase(),
+                    "item": produk,
+                    "qty": kuantitas,
+                    "unit": satuan,
+                    "price": harga,
+                    "note": note,
+                    "code": kode,
+                    "qtycode": kodeqty,
+                    "_token": '{{ csrf_token() }}'
+                }).then(function (response) {
+                    loadingHide();
+                    if (response.data.status == 'success'){
+                        messageSuccess("Berhasil", "Data berhasil disimpan");
+                        $('#createKPW').modal('hide');
+                    } else if (response.data.status == 'gagal'){
+                        messageFailed("Gagal", response.data.message);
+                    }
+                }).catch(function (error) {
+                    loadingHide();
+                    alert("error");
+                })
+            }
+        }
+
+        function cekCode(e){
+            if (e.keyCode == 13){
+                addCode();
+            }
+        }
+
+        $('#createKPW').on('shown.bs.modal', function () {
+            table_kpw.clear().destroy();
+            table_kpw = $('#table_KPW').DataTable({
+                bAutoWidth: true,
+                responsive: true,
+                info: false,
+                searching: false,
+                paging: false
+            });
+            table_kpw.columns.adjust();
+        });
+
+        var counter = 0;
+        function addCode() {
+            loadingShow();
+            //cek stockdt
+            let agen = $('#nama_agen').val();
+            let code = $('#code').val();
+            let item = $('#id_produk').val();
+            axios.get('{{ route("kelolapenjualanviawebsite.cekProductionCode") }}', {
+                params:{
+                    "posisi": agen,
+                    "kode": code,
+                    "item": item
+                }
+            }).then(function (response) {
+                loadingHide();
+                if (response.data.status == 'gagal'){
+                    messageFailed('Peringatan', 'Kode tidak ditemukan');
+                } else if (response.data.status == 'sukses'){
+                    let qty = $('#code_qty').val();
+                    if (qty == '' || qty == 0 || qty == null){
+                        qty = 1;
+                    }
+                    let values = $("input[name='code[]']")
+                        .map(function(){return $(this).val();}).get();
+                    if (!values.includes(code)){
+                        ++counter;
+                        table_kpw.row.add([
+                            "<input type='text' class='code form-control form-control-sm codeprod' name='code[]' value='"+code.toUpperCase()+"' readonly>",
+                            "<input type='number' class='qtycode form-control form-control-sm' name='qtycode[]' value='"+qty+"'>",
+                            "<button class='btn btn-danger btn-sm btn-delete-"+counter+"'><i class='fa fa-close'></i></button>"
+                        ]).draw(false);
+                        $('#table_KPW tbody').on( 'click', '.btn-delete-'+counter, function () {
+                            table_kpw
+                                .row( $(this).parents('tr') )
+                                .remove()
+                                .draw();
+                        } );
+                        $('#code').val('');
+                        $('#code_qty').val('');
+                        $('#code').focus();
+                    } else {
+                        messageWarning("Perhatian", "Kode sudah ada");
+                        let idx = values.indexOf(code);
+                        let qtylama = $('.qtycode').eq(idx).val();
+                        let total = parseInt(qty) + parseInt(qtylama);
+                        $('.qtycode').eq(idx).val(total);
+                        $('.qtycode').eq(idx).focus();
+                    }
+                }
+            }).catch(function (error) {
+                loadingHide();
+                alert('error');
+            });
+        }
+
+        function getCustomer() {
+            loadingShow();
+            let agen = $('#nama_agen').val();
+            axios.get('{{ route("kelolapenjualan.getMemberKPL") }}', {
+                'agentCode': agen
+            }).then(function (response) {
+                loadingHide();
+                $.each(response.data, function (key, val) {
+                    $("#nama_customer").append('<option value="' + val.m_code + '">' + val.m_name + '</option>');
+                });
+                $('#nama_customer').focus();
+                $('#nama_customer').select2('open');
+            }).catch(function (error) {
+                loadingHide();
+                alert('error');
+            })
         }
     </script>
 @endsection

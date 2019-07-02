@@ -719,6 +719,7 @@ class HargaController extends Controller
         } catch (DecryptException $e) {
             return response()->json(['status' => "Failed"]);
         }
+
         DB::beginTransaction();
         try {
             if ($request->jenishargaHPA == "U") {
@@ -742,7 +743,7 @@ class HargaController extends Controller
                 } else {
                     $checkGol1 = DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->count();
                     $checkGol2 = DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->count();
-
+                    $detailid = 1;
                     if ($checkGol1 > 0 && $checkGol2 > 0) {
                         $tmp_detail1 = DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->max('spd_detailid');
                         $tmp_detail2 = DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->max('spa_detailid');
@@ -817,7 +818,7 @@ class HargaController extends Controller
                 if ($sts = "Null") {
                     $checkGol1 = DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->count();
                     $checkGol2 = DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->count();
-
+                    $detailid = 1;
                     if ($checkGol1 > 0 && $checkGol2 > 0) {
                         $tmp_detail1 = DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->max('spd_detailid');
                         $tmp_detail2 = DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->max('spa_detailid');
@@ -852,7 +853,7 @@ class HargaController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['status' => "Failed"]);
+            return response()->json(['status' => "Failed", 'message' => $e]);
         }
     }
 

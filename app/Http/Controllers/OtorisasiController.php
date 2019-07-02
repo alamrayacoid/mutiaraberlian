@@ -11,7 +11,7 @@ use DB;
 use DataTables;
 use Currency;
 use CodeGenerator;
-use Crypt;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 class OtorisasiController extends Controller
@@ -62,39 +62,58 @@ class OtorisasiController extends Controller
     }
     public function approveopname($id)
     {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
         DB::beginTransaction();
         try
         {
+            $auth = DB::table('d_opnameauth')->where('oa_id', '=', $id)->first();
 
-            $auth = DB::table('d_opnameauth')->where('oa_id', Crypt::decrypt($id))->first();
+            $authdt = DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->get();
 
-            DB::table('d_opnameauth')->where('oa_id', Crypt::decrypt($id))->delete();
-
+            // dd($auth, $authdt);
             $id = DB::table('d_opname')->max('o_id')+1;
             DB::table('d_opname')->insert([
-            'o_id' => $id,
-            'o_comp' => $auth->oa_comp,
-            'o_position' => $auth->oa_position,
-            'o_date' => $auth->oa_date,
-            'o_nota' => $auth->oa_nota,
-            'o_item' => $auth->oa_item,
-            'o_qtyreal' => $auth->oa_qtyreal,
-            'o_qtysystem' => $auth->oa_qtysystem,
-            'o_unitreal' => $auth->oa_unitreal,
-            'o_unitsystem' => $auth->oa_unitsystem,
-            'o_insert' => Carbon::now('Asia/Jakarta')
+                'o_id'         => $id,
+                'o_comp'       => $auth->oa_comp,
+                'o_position'   => $auth->oa_position,
+                'o_date'       => $auth->oa_date,
+                'o_nota'       => $auth->oa_nota,
+                'o_item'       => $auth->oa_item,
+                'o_qtyreal'    => $auth->oa_qtyreal,
+                'o_qtysystem'  => $auth->oa_qtysystem,
+                'o_unitreal'   => $auth->oa_unitreal,
+                'o_unitsystem' => $auth->oa_unitsystem,
+                'o_insert'     => Carbon::now('Asia/Jakarta')
             ]);
+
+            for ($i=0; $i < count($authdt); $i++) {
+                DB::table('d_opnamedt')->insert([
+                    'od_opname'   => $id,
+                    'od_code'     => $authdt[$i]->oad_code,
+                    'od_detailid' => $authdt[$i]->oad_detailid,
+                    'od_qty'      => $authdt[$i]->oad_qty
+                ]);
+            }
+
+            DB::table('d_opnameauth')->where('oa_id', '=', $id)->delete();
+
+            DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->delete();
 
             DB::commit();
             return response()->json([
-            'status' => 'berhasil'
+                'status' => 'berhasil'
             ]);
         }
         catch (Exception $e)
         {
             DB::rollback();
             return response()->json([
-            'status' => 'gagal'
+                'status' => 'gagal'
             ]);
         }
     }
@@ -151,19 +170,35 @@ class OtorisasiController extends Controller
             return $tmp->u_name;
         })
         ->addColumn('aksi', function($data){
-            $setujui = '<button class="btn btn-warning btn-primary" type="button" title="Setujui" onclick="approve(\''. Crypt::encrypt($data->aa_id) .'\')"><i class="fa fa-check"></i></button>';
+            // $setujui = '<button class="btn btn-warning btn-primary" type="button" title="Setujui" onclick="approve(\''. Crypt::encrypt($data->aa_id) .'\')"><i class="fa fa-check"></i></button>';
+            $setujui = '<button class="btn btn-warning btn-primary" type="button" title="Setujui" onclick="showDetailApp(\''. Crypt::encrypt($data->aa_id) .'\')"><i class="fa fa-check"></i></button>';
             $tolak = '<button class="btn btn-danger btn-disable" type="button" title="Tolak" onclick="rejected(\''. Crypt::encrypt($data->aa_id) .'\')"><i class="fa fa-remove"></i></button>';
             return '<center><div class="btn-group btn-group-sm">' . $setujui . $tolak . '</div></center>';
         })
         ->rawColumns(['nota','aksi'])
         ->make(true);
     }
+
+    public function detailApprove($id)
+    {
+        $temp = DB::table('d_adjusmentauth')
+            ->join('m_item', 'i_id', 'aa_item')
+            ->where('aa_id', '=', Crypt::decrypt($id))->first();
+        $datas = DB::table('d_adjustmentcodeauth')->where('aca_adjustment', '=', $temp->aa_id)->get();
+
+        return response()->json([
+            "auth"    => $temp,
+            "id_auth" => Crypt::encrypt($temp->aa_id),
+            "code"    => $datas
+        ]);
+
+    }
     public function agreeadjusment($id)
     {
         DB::beginTransaction();
         try {
-            $id = Decrypt($id);
-
+            $id = Crypt::decrypt($id);
+            
             $data = DB::table('d_adjusmentauth')->where('aa_id', $id)->first();
 
             $date = Carbon::now('Asia/Jakarta');
@@ -181,50 +216,70 @@ class OtorisasiController extends Controller
             $sisa = (int)$data->aa_qtysystem - (int)$tmp;
 
             if ($sisa < 0) {
-                $tmp = DB::table('m_mutcat')->where('m_name', 'Barang Masuk Dari Opname')->first();
+                $tmp    = DB::table('m_mutcat')->where('m_name', 'Barang Masuk Dari Opname')->first();
                 $mutcat = $tmp->m_id;
             } else {
-                $tmp = DB::table('m_mutcat')->where('m_name', 'Barang Keluar Dari Opname')->first();
+                $tmp    = DB::table('m_mutcat')->where('m_name', 'Barang Keluar Dari Opname')->first();
                 $mutcat = $tmp->m_id;
             }
 
-            $comp = $data->aa_comp;
-            $position = $data->aa_position;
-
+            $comp      = $data->aa_comp;
+            $position  = $data->aa_position;
+            
             $qtysistem = $data->aa_qtysystem;
-
-            $qtyreal = $data->aa_qtyreal;
-
-            $nota = $data->aa_nota;
-
-            $reff = $data->aa_nota;
-
-            Mutasi::opname($date, (int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff);
-
-            DB::table('d_adjusmentauth')->where('aa_id', $id)->delete();
+            
+            $qtyreal   = $data->aa_qtyreal;
+            
+            $nota      = $data->aa_nota;
+            
+            $reff      = $data->aa_nota;
 
             DB::table('d_adjusment')->insert([
-            'a_id' => $data->aa_id,
-            'a_comp' => $data->aa_comp,
-            'a_position' => $data->aa_position,
-            'a_date' => $data->aa_date,
-            'a_nota' => $data->aa_nota,
-            'a_item' => $data->aa_item,
-            'a_qtyreal' => $data->aa_qtyreal,
-            'a_unitreal' => $data->aa_unitreal,
-            'a_qtysystem' => $data->aa_qtysystem,
-            'a_unitsystem' => $data->aa_unitsystem,
-            'a_insert' => $data->aa_insert
+                'a_id'         => $data->aa_id,
+                'a_comp'       => $data->aa_comp,
+                'a_position'   => $data->aa_position,
+                'a_date'       => $data->aa_date,
+                'a_nota'       => $data->aa_nota,
+                'a_item'       => $data->aa_item,
+                'a_qtyreal'    => $data->aa_qtyreal,
+                'a_unitreal'   => $data->aa_unitreal,
+                'a_qtysystem'  => $data->aa_qtysystem,
+                'a_unitsystem' => $data->aa_unitsystem,
+                'a_insert'     => $data->aa_insert
             ]);
+
+            $codeAuth = DB::table('d_adjustmentcodeauth')->where('aca_adjustment', '=', $data->aa_id)->get();
+            $listPC = [];
+            $listQtyPC = [];
+            for ($i=0; $i < count($codeAuth); $i++) {
+                $adjDt = DB::table('d_adjustmentcode')->where('ac_adjustment', '=', $data->aa_id)->max('ac_detailid') + 1;
+                DB::table('d_adjustmentcode')->insert([
+                    'ac_adjustment' => $data->aa_id,
+                    'ac_detailid'   => $adjDt,
+                    'ac_code'       => $codeAuth[$i]->aca_code,
+                    'ac_qty'        => $codeAuth[$i]->aca_qty
+                ]);
+
+                array_push($listPC, $codeAuth[$i]->aca_code);
+                array_push($listQtyPC, $codeAuth[$i]->aca_qty);
+            }
+
+
+            DB::table('d_adjusmentauth')->where('aa_id', $id)->delete();
+            DB::table('d_adjustmentcodeauth')->where('aca_adjustment', $id)->delete();
+
+            // Create to mutation ------------>>
+            // dd((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
+            Mutasi::opname((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
 
             DB::commit();
             return response()->json([
-            'status' => 'berhasil'
+                'status' => 'berhasil'
             ]);
         } catch (Exception $e) {
             DB::rollback();
             return response()->json([
-            'status' => 'gagal'
+                'status' => 'gagal'
             ]);
         }
     }
@@ -232,19 +287,19 @@ class OtorisasiController extends Controller
     {
         DB::beginTransaction();
         try {
-
             $id = Decrypt($id);
 
             DB::table('d_adjusmentauth')->where('aa_id', $id)->delete();
+            DB::table('d_adjustmentcode')->where('ac_adjustment', '=', $id)->delete();
 
             DB::commit();
             return response()->json([
-            'status' => 'berhasil'
+                'status' => 'berhasil'
             ]);
         } catch (Exception $e) {
             DB::rollback();
             return response()->json([
-            'status' => 'gagal'
+                'status' => 'gagal'
             ]);
         }
 

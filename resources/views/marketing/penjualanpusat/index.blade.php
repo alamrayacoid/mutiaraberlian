@@ -263,6 +263,36 @@
             });
         }, 750);
     }
+ 
+    returnagen();
+
+    function returnagen() {
+        setTimeout(function () {
+            tb_return = $('#table_return').DataTable({
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: baseUrl + "/marketing/penjualanpusat/returnpenjualan/returnpenjualanagen",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'tanggal'},
+                    {data: 'r_nota'},
+                    {data: 'r_reff'},
+                    {data: 'r_code'},
+                    {data: 'type'},
+                    {data: 'agen'},
+                    {data: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }, 750);
+    }
 
     function editTarget(st_id, dt_id) {
         loadingShow();
@@ -951,6 +981,18 @@
         }).catch(function (error) {
 
         })
+    }
+
+    function hapus(id){
+        $.ajax({
+           type: 'get',
+           data: {id},
+           dataType: 'json',
+           url: baseUrl + '/marketing/penjualanpusat/returnpenjualan/hapus',
+           success : function(response){
+               if
+           } 
+        });
     }
 
     function kirim() {

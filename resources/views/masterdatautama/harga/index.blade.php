@@ -1132,7 +1132,7 @@
                             success: function (response) {
                                 if (response.status == 'Success') {
                                     messageSuccess('Berhasil', 'Data berhasil hapus!');
-                                    tbl_item.ajax.reload();
+                                    tbl_itemHPA.ajax.reload();
                                 } else {
                                     messageWarning('Gagal', 'Gagal menghapus data!');
                                 }

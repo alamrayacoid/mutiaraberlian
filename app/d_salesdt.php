@@ -28,7 +28,7 @@ class d_salesdt extends Model
     // get production-code
     public function getProdCode()
     {
-        return $this->hasMany('App\d_salescode', ['sc_sales', 'sc_item', 'sc_detailid'], ['sd_sales', 'sd_item', 'sd_detailid']);
+        return $this->hasMany('App\d_salescode', ['sc_sales', 'sc_item'], ['sd_sales', 'sd_item']);
     }
     public function getItemOwner()
     {

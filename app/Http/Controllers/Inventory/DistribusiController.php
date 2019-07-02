@@ -10,12 +10,15 @@ use Auth;
 use CodeGenerator;
 use Carbon\Carbon;
 use DB;
+use App\d_productdelivery;
 use App\d_stock;
 use App\d_stockdistribution;
 use App\d_stockdistributiondt;
 use App\d_stockdistributioncode;
 use App\d_stock_mutation;
 use App\m_company;
+use App\m_expedition;
+use App\m_expeditiondt;
 use App\m_item;
 use App\m_mutcat;
 use App\m_unit;
@@ -33,15 +36,19 @@ class DistribusiController extends Controller
 
     public function create()
     {
-        $provinces = DB::table('m_wil_provinsi')->get();
-        return view('inventory/distribusibarang/distribusi/create', compact('provinces'));
+        $provinces = DB::table('m_wil_provinsi')->orderBy('wp_name', 'asc')->get();
+        $expeditions = m_expedition::get();
+        // dd($expeditions);
+        return view('inventory/distribusibarang/distribusi/create', compact('provinces', 'expeditions'));
     }
     // get list-cities based on province-id
     public function getAreas(Request $request)
     {
         $cities = m_wil_provinsi::where('wp_id', $request->provId)
-        ->with('getCities')
-        ->firstOrFail();
+        ->with(['getCities' => function ($q) {
+            $q->orderBy('wc_name');
+        }])
+        ->first();
         return response()->json($cities);
     }
     // get list-branches based on area-id
@@ -49,8 +56,18 @@ class DistribusiController extends Controller
     {
         $branches = m_company::where('c_type', 'CABANG')
         ->where('c_area', $request->areaId)
+        ->orderBy('c_name')
         ->get();
         return response()->json($branches);
+    }
+    // get list-expeditionType based on expedition
+    public function getExpeditionType(Request $request)
+    {
+        $expdtId = $request->id;
+        $expeditionType = m_expeditiondt::where('ed_expedition', $expdtId)
+        ->orderBy('ed_product', 'asc')
+        ->get();
+        return response()->json($expeditionType);
     }
 
     public function printNota(Request $request)
@@ -199,6 +216,20 @@ class DistribusiController extends Controller
             $dist->sd_user = Auth::user()->u_id;
             $dist->save();
 
+            // insert new product-delivery
+            $id = d_productdelivery::max('pd_id') + 1;
+            $prodDeliv = new d_productdelivery;
+            $prodDeliv->pd_id = $id;
+            $prodDeliv->pd_date = Carbon::now();
+            $prodDeliv->pd_nota = $nota;
+            $prodDeliv->pd_expedition = $request->expedition;
+            $prodDeliv->pd_product = $request->expeditionType;
+            $prodDeliv->pd_resi = $request->resi;
+            $prodDeliv->pd_couriername = $request->courierName;
+            $prodDeliv->pd_couriertelp = $request->courierTelp;
+            $prodDeliv->pd_price = $request->shippingCost;
+            $prodDeliv->save();
+
             $startProdCodeIdx = 0;
             // insert new stockdist-detail
             foreach ($request->itemsId as $i => $itemId) {
@@ -252,14 +283,14 @@ class DistribusiController extends Controller
                     $listUnitPC = [];
                     // insert stock-mutation
                     // waiit, check the name of $reff
-                    $reff = 'DISTRIBUSI-MASUK';
+                    // $reff = 'DISTRIBUSI-MASUK';
                     $mutDist = Mutasi::distribusicabangkeluar(
                         Auth::user()->u_company,
                         $request->selectBranch,
-                        $itemId,
-                        $convert,
-                        $nota,
-                        $reff,
+                        $itemId, // item id
+                        $convert, // qty with smallest unit
+                        $nota, // nota
+                        $nota, // nota reff
                         $listPC,
                         $listQtyPC,
                         $listUnitPC
@@ -267,7 +298,6 @@ class DistribusiController extends Controller
                     if ($mutDist !== 'success') {
                         return $mutDist;
                     }
-
                     $startProdCodeIdx += $prodCodeLength;
                 }
             }
@@ -327,9 +357,13 @@ class DistribusiController extends Controller
                     ->with('getUnit')
                     ->with('getProdCode');
             }])
+            ->with('getProductDelivery')
             ->first();
         // set variabel to store nota number
         $nota = $data['stockdist']->sd_nota;
+        // change number format to int before send it to view
+        $data['stockdist']->getProductDelivery->pd_price = (int)$data['stockdist']->getProductDelivery->pd_price;
+        // dd($data);
         // get data item-stock
         foreach ($data['stockdist']->getDistributionDt as $key => $val)
         {
@@ -386,7 +420,7 @@ class DistribusiController extends Controller
             }
         }
 
-        // dd($data['stockdist']);
+        $data['expeditions'] = m_expedition::get();
 
         return view('inventory/distribusibarang/distribusi/edit', compact('data'));
     }
@@ -414,6 +448,23 @@ class DistribusiController extends Controller
             $stockdist = d_stockdistribution::where('sd_id', $id)
                 ->with('getDistributionDt.getProdCode')
                 ->first();
+
+            // update stockdist
+            $stockdist->sd_from = Auth::user()->u_company;
+            $stockdist->sd_date = Carbon::now();
+            $stockdist->sd_user = Auth::user()->u_id;
+            $stockdist->save();
+
+            // update product-delivery
+            $prodDeliv = d_productdelivery::where('pd_nota', $stockdist->sd_nota)->first();
+            $prodDeliv->pd_date = Carbon::now();
+            $prodDeliv->pd_expedition = $request->expedition;
+            $prodDeliv->pd_product = $request->expeditionType;
+            $prodDeliv->pd_resi = $request->resi;
+            $prodDeliv->pd_couriername = $request->courierName;
+            $prodDeliv->pd_couriertelp = $request->courierTelp;
+            $prodDeliv->pd_price = $request->shippingCost;
+            $prodDeliv->save();
 
             $startProdCodeIdx = 0;
             // count skipped index based on 'isDeleted' row
@@ -481,14 +532,14 @@ class DistribusiController extends Controller
                         return $rollbackDist;
                     }
                     // waiit, check the name of $reff
-                    $reff = 'DISTRIBUSI-MASUK';
+                    // $reff = 'DISTRIBUSI-MASUK';
                     $mutDist = Mutasi::distribusicabangkeluar(
                         Auth::user()->u_company, // from
                         $request->sd_destination, // to
                         $val, // item-id
                         $convert, // qty of smallest-unit
                         $stockdist->sd_nota, // nota
-                        $reff, // nota-reff
+                        $stockdist->sd_nota, // nota-reff
                         $listPC, // list of production-code
                         $listQtyPC, // list of production-code-qty
                         $listUnitPC // list of production-code-unit
@@ -606,6 +657,7 @@ class DistribusiController extends Controller
             // get stockdist
             $stockdist = d_stockdistribution::where('sd_id', $request->id)
             ->with('getDistributionDt.getProdCode')
+            ->with('getProductDelivery')
             ->first();
 
             foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
@@ -627,6 +679,8 @@ class DistribusiController extends Controller
             foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
                 $stockdistDt->delete();
             }
+            // delete selected productDelivery
+            $stockdist->getProductDelivery->delete();
             // delete selected stockdistribution
             $stockdist->delete();
 

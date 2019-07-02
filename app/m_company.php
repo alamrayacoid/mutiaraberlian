@@ -13,8 +13,12 @@ class m_company extends Model
     const CREATED_AT = 'c_insert';
     const UPDATED_AT = 'c_update';
 
-    // public function getEmployee()
-    // {
-    //     // code...
-    // }
+    public function getCity()
+    {
+        return $this->belongsTo('App\m_wil_kota', 'c_area', 'wc_id');
+    }
+    public function getAgent()
+    {
+        return $this->belongsTo('App\m_agen', 'c_user', 'a_code');
+    }
 }

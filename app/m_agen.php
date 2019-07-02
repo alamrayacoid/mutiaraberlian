@@ -11,7 +11,7 @@ class m_agen extends Model
 
     public function username()
     {
-        return $this->belongsTo('App/d_username', 'u_code', 'a_code');
+        return $this->belongsTo('App\d_username', 'u_code', 'a_code');
     }
     public function getArea()
     {

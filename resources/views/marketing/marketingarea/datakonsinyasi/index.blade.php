@@ -5,37 +5,68 @@
 				<h3 class="title">Kelola Data Konsinyasi </h3>
 			</div>
 	        <div class="header-block pull-right">
-                <a class="btn btn-primary" href="{{ route('datakonsinyasi.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>	                    	
+                <a class="btn btn-primary" href="{{ route('datakonsinyasi.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
 	        </div>
 		</div>
 		<div class="card-block">
 			<section>
+				<div class="row filterBranch">
+					<div class="col-md-2 col-sm-6 col-xs-12">
+						<label>Area</label>
+					</div>
+					<div class="col-md-5 col-sm-6 col-xs-12">
+						<div class="form-group">
+							<select name="provinsi" id="provinsi" class="form-control form-control-sm select2 provIdxDK">
+							</select>
+						</div>
+					</div>
+					<div class="col-md-5 col-sm-6 col-xs-12">
+						<div class="form-group">
+							<select name="kota" id="kota" class="form-control form-control-sm select2 cityIdxDK" disabled>
+							</select>
+						</div>
+					</div>
+
+					<div class="col-md-2 col-sm-6 col-xs-12">
+						<label>Cabang</label>
+					</div>
+					<div class="col-md-10 col-sm-12">
+						<div class="form-group">
+							<input type="hidden" class="userType" value="{{ Auth::user()->getCompany->c_type }}">
+							<input type="hidden" name="branchCode" id="branchCode">
+							<select class="form-control select2" name="branch" id="branch" disabled>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<!-- <div class="row mb-3 d-none">
+					<div class="col-md-3"></div>
+					<div class="col-md-6 col-sm-12">
+						<div class="input-group input-group-sm input-daterange">
+							<input type="text" class="form-control" id="date_from_dk">
+							<span class="input-group-addon">-</span>
+							<input type="text" class="form-control" id="date_to_dk">
+							<div class="input-group-append">
+								<button class="btn btn-secondary" type="button" id="btn_search_date_dk"><i class="fa fa-search"></i></button>
+								<button class="btn btn-primary" type="button" id="btn_refresh_date_dk"><i class="fa fa-refresh"></i></button>
+							</div>
+						</div>
+					</div>
+				</div> -->
 				<div class="table-responsive">
 					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_konsinyasi">
 						<thead class="bg-primary">
 							<tr>
-								<th width="1%">No</th>
-								<th>Nama</th>
-								<th>Email</th>
-								<th>No Telp</th>
-								<th>Alamat</th>
-								<th>Aksi</th>
+								<th class="text-center">Tanggal</th>
+								<th class="text-center">Nota</th>
+								<th class="text-center">Agen</th>
+								<th class="text-center">Total</th>
+								<th class="text-center">Aksi</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>Brad</td>
-								<td>Brad@Pit.com</td>
-								<td>0123456812</td>
-								<td>HollyWood</td>
-								<td>
-									<div class="btn-group btn-group-sm">
-										<button class="btn btn-warning btn-edit-kons" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-										<button class="btn btn-danger btn-disable-kons" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-									</div>
-								</td>
-							</tr>
+
 						</tbody>
 					</table>
 				</div>

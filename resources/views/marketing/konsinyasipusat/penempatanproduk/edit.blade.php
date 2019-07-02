@@ -211,7 +211,6 @@
             visibleTableItem();
 
             $("#kota").on("change", function (evt) {
-                console.log('xx');
                 evt.preventDefault();
                 if ($("#kota").val() == "") {
                     $("#idKonsigner").val('');
@@ -235,93 +234,6 @@
                 $( "#kodeKonsigner" ).val($(this).find('option:selected').data('code'));
                 visibleTableItem();
             });
-
-            // $("#konsigner").on("keyup", function (evt) {
-            //     evt.preventDefault();
-            //     if (evt.which == 8 || evt.which == 46)
-            //     {
-            //         $("#idKonsigner").val('');
-            //         $("#kodeKonsigner").val('');
-            //         visibleTableItem();
-            //     } else if (evt.which <= 90 && evt.which >= 48)
-            //     {
-            //         $("#idKonsigner").val('');
-            //         $("#kodeKonsigner").val('');
-            //         visibleTableItem();
-            //     }
-            //
-            // })
-            //
-            // $( "#konsigner" ).autocomplete({
-            //     source: function( request, response ) {
-            //         $.ajax({
-            //             url: baseUrl+'/marketing/konsinyasipusat/cari-konsigner/'+$("#provinsi").val()+'/'+$("#kota").val(),
-            //             data: {
-            //                 term: $( "#konsigner" ).val()
-            //             },
-            //             success: function( data ) {
-            //                 response( data );
-            //             }
-            //         });
-            //     },
-            //     minLength: 1,
-            //     select: function(event, data) {
-            //         $( "#idKonsigner" ).val(data.item.id);
-            //         $( "#kodeKonsigner" ).val(data.item.kode);
-            //         visibleTableItem();
-            //     }
-            // });
-            // $('.barang').on('click', function(e){
-            //     idxBarang = $('.barang').index(this);
-            //     setArrayCode();
-            // });
-            //
-            // $(".barang").eq(idxBarang).on("keyup", function (evt) {
-            //     if (evt.which == 8 || evt.which == 46)
-            //     {
-            //         $(".itemid").eq(idxBarang).val('');
-            //         $(".kode").eq(idxBarang).val('');
-            //         $(".idStock").eq(idxBarang).val('');
-            //         setArrayCode();
-            //         if ($(".itemid").eq(idxBarang).val() == "") {
-            //             $(".jumlah").eq(idxBarang).val(0);
-            //             $(".harga").eq(idxBarang).val("Rp. 0");
-            //             $(".subtotal").eq(idxBarang).val("Rp. 0");
-            //             $(".jumlah").eq(idxBarang).attr("readonly", true);
-            //             $(".harga").eq(idxBarang).attr("readonly", true);
-            //             $(".satuan").eq(idxBarang).find('option').remove();
-            //             updateTotalTampil();
-            //         }else{
-            //             $(".jumlah").eq(idxBarang).val(0);
-            //             $(".harga").eq(idxBarang).val("Rp. 0");
-            //             $(".subtotal").eq(idxBarang).val("Rp. 0");
-            //             $(".jumlah").eq(idxBarang).attr("readonly", false);
-            //             $(".harga").eq(idxBarang).attr("readonly", false);
-            //             updateTotalTampil();
-            //         }
-            //     } else if (evt.which <= 90 && evt.which >= 48)
-            //     {
-            //         $(".itemid").eq(idxBarang).val('');
-            //         $(".kode").eq(idxBarang).val('');
-            //         $(".idStock").eq(idxBarang).val('');
-            //         setArrayCode();
-            //         if ($(".itemid").eq(idxBarang).val() == "") {
-            //             $(".jumlah").eq(idxBarang).val(0);
-            //             $(".harga").eq(idxBarang).val("Rp. 0");
-            //             $(".jumlah").eq(idxBarang).attr("readonly", true);
-            //             $(".harga").eq(idxBarang).attr("readonly", true);
-            //             $(".satuan").eq(idxBarang).find('option').remove();
-            //             updateTotalTampil();
-            //         }else{
-            //             $(".jumlah").eq(idxBarang).val(0);
-            //             $(".harga").eq(idxBarang).val("Rp. 0");
-            //             $(".jumlah").eq(idxBarang).attr("readonly", false);
-            //             $(".harga").eq(idxBarang).attr("readonly", false);
-            //             updateTotalTampil();
-            //         }
-            //     }
-            //
-            // });
 
             // re-init events for some class or id
             getEventsReady();

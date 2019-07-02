@@ -17,7 +17,7 @@
             </select>
         </div>
     </div>
-    <div>
+    {{--<div>
         <label for="">Jenis Pembayaran</label>
     </div>
     <div>
@@ -26,7 +26,7 @@
             <option value="A">Agen</option>
             <option value="SA">Sub Agen</option>
         </select>
-    </div>
+    </div>--}}
     <div>
         <label for="" class="mt-3">Harga</label>
     </div>
