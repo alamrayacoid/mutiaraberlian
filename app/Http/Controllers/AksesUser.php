@@ -55,8 +55,9 @@ class AksesUser
         $cek = DB::table('d_useraccess')
                   ->join('m_access', 'a_id', '=', 'ua_access')
                   ->select('ua_username', 'ua_read', 'a_name', 'a_order')
-                  ->where('ua_username', $m_id)
+                  ->where('ua_username', '=', $m_id)
                   ->get();
+
         return $cek;
     }
 }
