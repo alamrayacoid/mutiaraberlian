@@ -170,9 +170,7 @@
                                     <a href="{{route('dataproduk.index')}}"> Master Produk</a>
                                 </li>
                             @endif
-                        <!-- <li class="{{Request::is('masterdatautama/variasisatuanproduk/*') ? 'active' : ''}}">
-                            <a href="{{route('variasisatuan.index')}}"> Variasi Satuan Produk</a>
-                        </li> -->
+
                             @if ($sidebar[3]->ua_read == 'Y')
                                 <li class="{{Request::is('masterdatautama/harga/*') ? 'active' : ''}}">
                                     <a href="{{route('dataharga.index')}}"> Master Harga</a>
@@ -188,10 +186,12 @@
                                     <a href="{{ route('cabang.index') }}">Master Cabang</a>
                                 </li>
                             @endif
-                            @if ($sidebar[1]->ua_read == 'Y')
+                            @if ($sidebar[6]->ua_read == 'Y')
                                 <li class="{{Request::is('masterdatautama/agen/*') ? 'active' : ''}}">
                                     <a href="{{ route('agen.index')}}">Master Agen</a>
                                 </li>
+                            @endif
+                            @if ($sidebar[49]->ua_read == 'Y')
                                 <li class="{{Request::is('masterdatautama/member/*') ? 'active' : ''}}">
                                     <a href="{{ route('member.index')}}">Master Member</a>
                                 </li>

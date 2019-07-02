@@ -1685,7 +1685,7 @@ class ManajemenAgenController extends Controller
 
             ++$id_sales;
 
-            $nota = CodeGenerator::codeWithSeparator('d_sales', 's_id', 8, 10, 3, 'PC', '-');
+            $nota = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
             $total = intval($qty) * intval($price);
             DB::table('d_sales')
                 ->insert([
@@ -1819,6 +1819,22 @@ class ManajemenAgenController extends Controller
                     $continueLoopStock = false;
                 }
 
+                //insert d_salescode
+                $salescode = [];
+                for ($i = 0; $i < count($code); $i++){
+                    $temp = [
+                        'sc_sales' => $id_sales,
+                        'sc_item' => $item,
+                        'sc_detailid' => $i + 1,
+                        'sc_code' => $code[$i],
+                        'sc_qty' => $qtycode[$i]
+                    ];
+                    array_push($salescode, $temp);
+                }
+
+                DB::table('d_salescode')
+                    ->insert($salescode);
+
                 // insert new stock-mutation out
                 DB::table('d_stock_mutation')
                     ->insert([
@@ -1907,42 +1923,226 @@ class ManajemenAgenController extends Controller
         if ($agentCode !== null) {
             $company = m_company::where('c_user', $agentCode)
                 ->first();
-            $datas = d_sales::whereBetween('s_date', [$from, $to])
-                ->where('s_comp', $company->c_id);
+            $datas = DB::table('d_salesweb')
+                ->whereBetween('sw_date', [$from, $to])
+                ->where('sw_agen', '=', $company->c_id);
         } else {
             if ($userType === 'E') {
-                $datas = d_sales::whereBetween('s_date', [$from, $to]);
+                $datas = DB::table('d_salesweb')
+                    ->whereBetween('sw_date', [$from, $to]);
             } else {
-                $datas = d_sales::whereBetween('s_date', [$from, $to])
-                    ->where('s_comp', Auth::user()->u_company);
+                $datas = DB::table('d_salesweb')
+                    ->whereBetween('sw_date', [$from, $to])
+                    ->where('sw_agen', Auth::user()->u_company);
             }
         }
-        $datas = $datas->with('getMember')
-            ->orderBy('s_date', 'desc')
-            ->orderBy('s_nota', 'desc')
+
+        $datas = $datas->join('m_company', 'sw_agen', '=', 'c_id')
+            ->select('c_id', 'c_name', 'd_salesweb.*')
             ->get();
+
 
         return Datatables::of($datas)
             ->addIndexColumn()
             ->addColumn('date', function ($datas) {
-                return Carbon::parse($datas->s_date)->format('d M Y');
-            })
-            ->addColumn('member', function ($datas) {
-                return $datas->getMember['m_name'];
+                return Carbon::parse($datas->sw_date)->format('d M Y');
             })
             ->addColumn('total', function ($datas) {
-                return '<div class="text-right">Rp ' . number_format($datas->s_total, '2', ',', '.') . '</div>';
+                return '<div class="text-right">Rp ' . number_format($datas->sw_totalprice, '0', ',', '.') . '</div>';
             })
             ->addColumn('action', function ($datas) {
                 return
                     '<div class="btn-group btn-group-sm">
-            <button class="btn btn-primary btn-detailKPL" type="button" title="Detail" onclick="showDetailPenjualan(' . $datas->s_id . ')"><i class="fa fa-folder"></i></button>
-            <button class="btn btn-warning btn-editKPL" type="button" title="Edit" onclick="editDetailPenjualan(' . $datas->s_id . ')"><i class="fa fa-pencil"></i></button>
-            <button class="btn btn-danger btn-delete" type="button" title="Delete" onclick="deleteDetailPenjualan(' . $datas->s_id . ')"><i class="fa fa-trash"></i></button>
+            <button class="btn btn-primary btn-detailKPW" type="button" title="Detail" onclick="detailKPW(' . $datas->sw_id . ')"><i class="fa fa-folder"></i></button>
+            <button class="btn btn-warning btn-editKPW" type="button" title="Edit" onclick="editKPW(' . $datas->sw_id . ')"><i class="fa fa-pencil"></i></button>
+            <button class="btn btn-danger btn-deleteKPW" type="button" title="Delete" onclick="deleteKPW(' . $datas->sw_id . ')"><i class="fa fa-trash"></i></button>
             </div>';
             })
-            ->rawColumns(['date', 'member', 'total', 'action'])
+            ->rawColumns(['date', 'total', 'action'])
             ->make(true);
+    }
+
+    public function getDetailKPW(Request $request)
+    {
+        $sw_id = $request->sw_id;
+        $data = DB::table('d_salesweb')
+            ->join('m_company', 'c_id', '=', 'sw_agen')
+            ->join('d_sales', 's_nota', '=', 'sw_reff')
+            ->join('m_member', 'm_code', '=', 's_member')
+            ->join('m_item', 'i_id', '=', 'sw_item')
+            ->join('m_unit', 'u_id', '=', 'sw_unit')
+            ->select('c_name', 'm_name', 'd_salesweb.*', 'i_name', 'u_name', 's_id')
+            ->where('sw_id', '=', $sw_id)
+            ->first();
+
+        $kode = DB::table('d_salescode')
+            ->where('sc_sales', '=', $data->s_id)
+            ->get();
+
+        return Response::json([
+            'data' => $data,
+            'kode' => $kode
+        ]);
+    }
+
+    public function deleteKPW(Request $request)
+    {
+        $id = $request->id;
+
+        DB::beginTransaction();
+        try {
+            //info sales
+            $info = DB::table('d_salesweb')
+                ->join('d_sales', 's_nota', '=', 'sw_reff')
+                ->join('d_salesdt', 'sd_sales', '=', 's_id')
+                ->get();
+            //info kode sales
+            $kode = DB::table('d_salescode')
+                ->where('sc_sales', '=', $info[0]->s_id)
+                ->get();
+            //info stock
+            $stock = DB::table('d_stock_mutation')
+                ->join('d_stock', 's_id', '=', 'sm_stock')
+                ->join('d_stockmutationdt', function ($q){
+                    $q->on('smd_stock', '=', 's_id');
+                    $q->on('smd_stockmutation', '=', 'sm_detailid');
+                })
+                ->where('sm_nota', '=', $info[0]->s_nota)
+                ->get();
+
+            for ($i = 0; $i < count($kode); $i++){
+                //kembalikan kode ke pemilik
+                $cek = DB::table('d_stockdt')
+                    ->join('d_stock', 's_id', '=', 'sd_stock')
+                    ->where('sd_code', '=', $kode[$i]->sc_code)
+                    ->where('sd_stock', '=', $stock[0]->s_id)
+                    ->first();
+
+                if ($cek != null){
+                    //update qty
+                    DB::table('d_stockdt')
+                        ->where('sd_stock', '=', $cek->sd_stock)
+                        ->where('sd_detailid', '=', $cek->sd_detailid)
+                        ->update([
+                            'sd_qty' => $cek->sd_qty + $kode[$i]->sc_qty
+                        ]);
+
+                    DB::table('d_stock')
+                        ->where('s_id', '=', $cek->sd_stock)
+                        ->update([
+                            's_qty' => $cek->s_qty + $kode[$i]->sc_qty
+                        ]);
+
+                    //kembalikan ke stockmutasi
+                    //data penjualan
+                    $data = DB::table('d_stock_mutation')
+                        ->where('sm_nota', '=', $info[0]->s_nota)
+                        ->get();
+
+                    for ($j = 0; $j < count($data); $j++){
+                        //data pembelian
+                        $pembelian = DB::table('d_stock_mutation')
+                            ->where('sm_stock', '=', $data[$j]->sm_stock)
+                            ->where('sm_nota', '=', $data[$j]->sm_reff)
+                            ->first();
+
+                        DB::table('d_stock_mutation')
+                            ->where('sm_stock', '=', $data[$j]->sm_stock)
+                            ->where('sm_nota', '=', $data[$j]->sm_reff)
+                            ->update([
+                                'sm_use' => $pembelian->sm_use - $kode[$i]->sc_qty,
+                                'sm_residue' => $pembelian->sm_residue + $kode[$i]->sc_qty,
+                            ]);
+                    }
+                } else {
+                    //create
+                    $cek = DB::table('d_stock')
+                        ->where('s_id', '=', $stock[0]->s_id)
+                        ->first();
+
+                    $detailid = DB::table('d_stockdt')
+                        ->where('sc_stock', '=', $stock[0]->s_id)
+                        ->max('sd_detailid');
+                    ++$detailid;
+                    DB::table('d_salesdt')
+                        ->insert([
+                            'sd_stock' => $stock[0]->s_id,
+                            'sd_detailid' => $detailid,
+                            'sd_code' => $kode[$i]->sc_code,
+                            'sd_qty' => $kode[$i]->sc_qty
+                        ]);
+                    DB::table('d_stock')
+                        ->where('s_id', '=', $stock[0]->s_id)
+                        ->update([
+                            's_qty' => $cek->s_qty + $kode[$i]->sc_qty
+                        ]);
+
+                    //kembalikan ke stockmutasi
+                    //data penjualan
+                    $data = DB::table('d_stock_mutation')
+                        ->where('sm_nota', '=', $info[0]->s_nota)
+                        ->get();
+                    for ($j = 0; $j < count($data); $j++){
+                        //data pembelian
+                        $pembelian = DB::table('d_stock_mutation')
+                            ->where('sm_stock', '=', $data[$j]->sm_stock)
+                            ->where('sm_nota', '=', $data[$j]->sm_reff)
+                            ->first();
+
+                        DB::table('d_stock_mutation')
+                            ->where('sm_stock', '=', $data[$j]->sm_stock)
+                            ->where('sm_nota', '=', $data[$j]->sm_reff)
+                            ->update([
+                                'sm_use' => $pembelian->sm_use - $kode[$i]->sc_qty,
+                                'sm_residue' => $pembelian->sm_residue + $kode[$i]->sc_qty,
+                            ]);
+                    }
+                }
+            }
+
+            //delete d_salesweb
+            DB::table('d_salesweb')
+                ->where('sw_id', '=', $id)
+                ->delete();
+
+            //delete mutasi
+            DB::table('d_stockmutationdt')
+                ->join('d_stock_mutation', function ($q){
+                    $q->on('sm_stock', '=', 'smd_stock');
+                    $q->on('sm_detailid', '=', 'smd_stockmutation');
+                })
+                ->where('sm_nota', '=', $info[0]->s_nota)
+                ->delete();
+
+            DB::table('d_stock_mutation')
+                ->where('sm_nota', '=', $info[0]->s_nota)
+                ->delete();
+
+            //delete d_sales
+            DB::table('d_sales')
+                ->where('s_nota', '=', $info[0]->s_nota)
+                ->delete();
+
+            //delete d_salesdt
+            DB::table('d_salesdt')
+                ->where('sd_sales', '=', $info[0]->s_id)
+                ->delete();
+
+            DB::table('d_salescode')
+                ->where('sc_sales', '=', $info[0]->s_id)
+                ->delete();
+
+            DB::commit();
+            return Response::json([
+                'status' => 'sukses'
+            ]);
+        } catch (DecryptException $e) {
+            DB::rollBack();
+            return Response::json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
 }

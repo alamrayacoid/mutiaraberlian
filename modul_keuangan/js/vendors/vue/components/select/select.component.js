@@ -69,6 +69,6 @@ Vue.component('vue-select', {
     },
 
     template: `
-      	<select class="form-control form-control-sm" :name="name" :id="id" :title="title" :disabled="disabled"></select>
+      	<select class="form-control form-control-sm" :name="name" :id="id" :title="title" :disabled="disabled" :style="styles"></select>
     `,
 });

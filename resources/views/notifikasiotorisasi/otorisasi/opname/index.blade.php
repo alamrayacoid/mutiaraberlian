@@ -117,49 +117,112 @@
 				lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
 		});
 
-		table2 = $('#table_detail').DataTable();
-
-		$('#table_otorisasi tbody').on('click', '.btn-detail' ,function(){
-			$('#detail').modal('show');
-		})
+		// table2 = $('#table_detail').DataTable();
 	});
 
+	function showDetailApp(id) {
+		loadingShow();
+		$.ajax({
+			url: "{{url('/notifikasiotorisasi/otorisasi/opname/show-detail-approve')}}"+"/"+id,
+			type: "get",
+			dataType: "json",
+			success:function(resp){
+				$('#idAdjAuth').val(resp.id_auth);
+				$('#itemS').val(''+resp.auth.i_code+' - '+resp.auth.i_name+'');
+				$('#item').val(resp.auth.oa_item);
+				$('#item').val(resp.auth.i_id);
+				$('#qtyS').val(resp.auth.oa_qtysystem);
+				$('#qtyR').val(resp.auth.oa_qtyreal);
+				
+				$('#table_detail tbody').empty();
+				$.each(resp.code, function(key, val){
+					$('#table_detail tbody').append(`<tr>
+																						<td>`+val.oad_code+`</td>
+																						<td>`+val.oad_qty+`</td>
+																					</tr>`);
+				});
+
+				loadingHide();
+			}
+		})
+		$('#detail').modal('show');
+	}
+
 	function approve(id) {
-        $.confirm({
-            animation: 'RotateY',
-            closeAnimation: 'scale',
-            animationBounce: 1.5,
-            icon: 'fa fa-exclamation-triangle',
-            title: 'Peringatan!',
-            content: 'Apakah anda yakin akan menyetujui data ini?',
-            theme: 'sukses',
-            buttons: {
-                info: {
-                    btnClass: 'btn-blue',
-                    text: 'Ya',
-                    action: function () {
-												loadingShow();
-                        axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/opname/approveopname'+'/'+id).then(function(response) {
-                            if(response.data.status == 'berhasil'){
-                                loadingHide();
-                                messageSuccess("Berhasil", "Data Stock Opname Berhasil Disetujui");
-                                table1.ajax.reload();
-                            }else{
-                                loadingHide();
-                                messageFailed("Gagal", "Data Stock Opname Gagal Disetujui");
-                            }
-                        })
-                    }
-                },
-                cancel: {
-                    text: 'Tidak',
-                    action: function () {
-                        // tutup confirm
-                    }
+      $.confirm({
+          animation: 'RotateY',
+          closeAnimation: 'scale',
+          animationBounce: 1.5,
+          icon: 'fa fa-exclamation-triangle',
+          title: 'Peringatan!',
+          content: 'Apakah anda yakin akan menyetujui data ini?',
+          theme: 'sukses',
+          buttons: {
+              info: {
+                  btnClass: 'btn-blue',
+                  text: 'Ya',
+                  action: function () {
+											loadingShow();
+                      axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/opname/approveopname'+'/'+id).then(function(response) {
+                          if(response.data.status == 'berhasil'){
+                              loadingHide();
+                              messageSuccess("Berhasil", "Data Stock Opname Berhasil Disetujui");
+                              table1.ajax.reload();
+                          }else{
+                              loadingHide();
+                              messageFailed("Gagal", "Data Stock Opname Gagal Disetujui");
+                          }
+                      })
+                  }
+              },
+              cancel: {
+                  text: 'Tidak',
+                  action: function () {
+                      // tutup confirm
+                  }
+              }
+          }
+      });
+  }
+
+	$('.btn-approve').on('click', function() {
+		var id = $('#idAdjAuth').val();
+    $.confirm({
+        animation: 'RotateY',
+        closeAnimation: 'scale',
+        animationBounce: 1.5,
+        icon: 'fa fa-exclamation-triangle',
+        title: 'Peringatan!',
+        content: 'Apakah anda yakin akan menyetujui data ini?',
+        theme: 'sukses',
+        buttons: {
+            info: {
+                btnClass: 'btn-blue',
+                text: 'Ya',
+                action: function () {
+										loadingShow();
+                    axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/opname/approveopname'+'/'+id).then(function(response) {
+                        if(response.data.status == 'berhasil'){
+                            loadingHide();
+                            messageSuccess("Berhasil", "Data Stock Opname Berhasil Disetujui");
+                            table1.ajax.reload();
+														$('#detail').modal('hide');
+                        }else{
+                            loadingHide();
+                            messageFailed("Gagal", "Data Stock Opname Gagal Disetujui");
+                        }
+                    })
+                }
+            },
+            cancel: {
+                text: 'Tidak',
+                action: function () {
+                    // tutup confirm
                 }
             }
-        });
-    }
+        }
+    });
+  });
 	
 	function rejected(id) {
 		$.confirm({
@@ -176,16 +239,20 @@
 					text: 'Ya',
 					action: function () {
 						loadingShow();
-						axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/opname/rejectedopname'+'/'+id).then(function(response) {
-							if(response.status == 'berhasil'){
-								loadingHide();
-								messageSuccess("Berhasil", "Data Stock Opname Berhasil Ditolak");
-								table1.ajax.reload();
-							}else{
-								loadingHide();
-								messageFailed("Gagal", "Data Stock Opname Berhasil Ditolak");
+						$.ajax({
+							url: "{{url('/notifikasiotorisasi/otorisasi/opname/rejectedopname')}}"+"/"+id,
+							type: "get",
+							success:function(response){
+								if(response.status == 'berhasil'){
+									loadingHide();
+									messageSuccess("Berhasil", "Data Stock Opname Berhasil Ditolak");
+									table1.ajax.reload();
+								}else{
+									loadingHide();
+									messageFailed("Gagal", "Data Stock Opname Berhasil Ditolak");
+								}
 							}
-						})
+						});
 					}
 				},
 				cancel: {
@@ -197,5 +264,48 @@
 			}
 		});
 	}
+
+	$('.btn-reject').on('click', function() {
+		var id = $('#idAdjAuth').val();
+		$.confirm({
+			animation: 'RotateY',
+			closeAnimation: 'scale',
+			animationBounce: 1.5,
+			icon: 'fa fa-exclamation-triangle',
+			title: 'Peringatan!',
+			content: 'Apakah anda yakin akan menolak data ini?',
+			theme: 'disable',
+			buttons: {
+				info: {
+					btnClass: 'btn-blue',
+					text: 'Ya',
+					action: function () {
+						loadingShow();
+						$.ajax({
+							url: "{{url('/notifikasiotorisasi/otorisasi/opname/rejectedopname')}}"+"/"+id,
+							type: "get",
+							success:function(response){
+								if(response.status == 'berhasil'){
+									loadingHide();
+									messageSuccess("Berhasil", "Data Stock Opname Berhasil Ditolak");
+									table1.ajax.reload();
+									$('#detail').modal('hide');
+								}else{
+									loadingHide();
+									messageFailed("Gagal", "Data Stock Opname Berhasil Ditolak");
+								}
+							}
+						});
+					}
+				},
+				cancel: {
+					text: 'Tidak',
+					action: function () {
+						// tutup confirm
+					}
+				}
+			}
+		});
+  });
 </script>
 @endsection

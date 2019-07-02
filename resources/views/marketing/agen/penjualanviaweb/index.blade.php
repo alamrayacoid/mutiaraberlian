@@ -17,8 +17,8 @@
                             <span class="input-group-addon">-</span>
                             <input type="text" class="form-control" id="date_to_kpw">
                             <div class="input-group-append">
-                                <button class="btn btn-secondary" type="button" id="btn_search_date_kpl"><i class="fa fa-search"></i></button>
-                                <button class="btn btn-primary" type="button" id="btn_refresh_date_kpl"><i class="fa fa-refresh"></i></button>
+                                <button class="btn btn-secondary" type="button" id="btn_search_date_kpw"><i class="fa fa-search"></i></button>
+                                <button class="btn btn-primary" type="button" id="btn_refresh_date_kpw"><i class="fa fa-refresh"></i></button>
                             </div>
                         </div>
                     </div>
@@ -34,13 +34,16 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped display" cellspacing="0" id="table_penjualanviaweb">
+                    <table class="table table-hover table-striped display" cellspacing="0" id="table_penjualanviaweb" style="width: 100%">
                         <thead class="bg-primary">
                         <tr>
-                            <th width="10%">No</th>
-                            <th width="15%">Tanggal</th>
-                            <th width="20%">Website</th>
-                            <th width="20%">Total Penjualan</th>
+                            <th width="5%">No</th>
+                            <th width="10%">Agen</th>
+                            <th width="12%">Tanggal</th>
+                            <th width="15%">Nota</th>
+                            <th width="14%">Kode Transaksi</th>
+                            <th width="19%">Website</th>
+                            <th width="15%">Total Penjualan</th>
                             <th width="10%">Aksi</th>
                         </tr>
                         </thead>

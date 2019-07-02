@@ -299,6 +299,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/opnamestock/show/{id}', 'Inventory\OpnameController@show')->name('opname.show');
     Route::get('/inventory/manajemenstok/opnamestock/create', 'Inventory\OpnameController@create')->name('opname.create');
     Route::get('/inventory/manajemenstok/opnamestock/list-code-produksi', 'Inventory\OpnameController@list_codeProduksi')->name('codeProduksi.list');
+    Route::get('/inventory/manajemenstok/opnamestock/list-code-opname', 'Inventory\OpnameController@list_codeOpname')->name('codeOpname.list');
     Route::post('/inventory/manajemenstok/opnamestock/store', 'Inventory\OpnameController@store')->name('opname.store');
     Route::get('/inventory/manajemenstok/opnamestock/edit/{id}', 'Inventory\OpnameController@edit')->name('opname.edit');
     Route::post('/inventory/manajemenstok/opnamestock/update/{id}', 'Inventory\OpnameController@update')->name('opname.update');
@@ -543,6 +544,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/marketing/agen/kelolapenjualanviawebsite/save-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@saveKPW')->name('kelolapenjualanviawebsite.saveKPW');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/cek-code', 'Aktivitasmarketing\Agen\ManajemenAgenController@cekProductionCode')->name('kelolapenjualanviawebsite.cekProductionCode');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPW')->name('kelolapenjualan.getListKPW');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/get-detail-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailKPW')->name('kelolapenjualan.getDetailKPW');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/delete-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteKPW')->name('kelolapenjualan.deleteKPW');
     // End Manajemen Agen ======================================================================================================================================================================================
 
     Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Agen\ManajemenAgenController@create_orderprodukagencabang')->name('orderagenpusat.create');
@@ -656,6 +659,7 @@ Route::group(['middleware' => 'auth'], function () {
     //Otorisasi Stock Opname
     Route::GET('/notifikasiotorisasi/otorisasi/opname/getdataopname', 'OtorisasiController@getopname');
     Route::get('/notifikasiotorisasi/otorisasi/opname/approveopname/{id}', 'OtorisasiController@approveopname');
+    Route::get('/notifikasiotorisasi/otorisasi/opname/show-detail-approve/{id}', 'OtorisasiController@detailApproveOpname')->name('detailApproveOpname.show');
     Route::get('/notifikasiotorisasi/otorisasi/opname/rejectedopname/{id}', 'OtorisasiController@rejectedopname');
 
 
@@ -737,6 +741,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('keuangan/pengaturan/hierarki-akun/save/level_2', [
                 'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_level_2'
             ])->name('keuangan.hierarki_akun.save.level_2');
+
+
+        // Mutasi antar Kas
+            Route::get('keuangan/manajemen-input-transaksi/mutasi_kas/create', [
+                'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@create'
+            ])->name('keuangan.transaksi.create');
 
     // Selesai Dirga
 

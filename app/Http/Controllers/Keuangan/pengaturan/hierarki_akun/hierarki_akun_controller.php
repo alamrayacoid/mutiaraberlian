@@ -12,7 +12,7 @@ use Session;
 class hierarki_akun_controller extends Controller
 {
 	public function __construct(){
-		// $this->middleware('Pusat');
+		$this->middleware('Pusat');
 	}
 
     protected function index(){
@@ -165,7 +165,7 @@ class hierarki_akun_controller extends Controller
     	}else if($state == 'subclass'){
             $data = DB::table('dk_hierarki_subclass')->select('hs_id', 'hs_nama', 'hs_id as id', 'hs_nama as text', 'hs_level_1', 'hs_status')->get();
         }else if($state == 'level_2'){
-            $data = DB::table('dk_hierarki_dua')->select('hd_id', 'hd_nama', 'hd_id as id', 'hd_nama as text', 'hd_level_1', 'hd_status', 'hd_subclass')->get();
+            $data = DB::table('dk_hierarki_dua')->select('hd_id', 'hd_nama', 'hd_id as id', 'hd_nama as text', 'hd_level_1', 'hd_status', 'hd_subclass', DB::raw('SUBSTRING(hd_nomor, 3) as hd_nomor'))->get();
         }
 
     	return $data;
