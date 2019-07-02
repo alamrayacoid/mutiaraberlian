@@ -755,6 +755,7 @@ class Mutasi extends Controller
         $listQtyPC // list qty each production-code
         )
     {
+        // dd($mutcat,$comp,$position,$item,$qtysistem,$qtyreal,$sisa,$nota,$reff,$listPC,$listQtyPC);
         DB::beginTransaction();
         try {
 
@@ -920,7 +921,28 @@ class Mutasi extends Controller
             }
             // if qty in system is equal with qty in real
             else {
-                //======== tidak perlu ada penanganan khusus
+                // get qty prod-code in stock-dt 
+                $stockDT = DB::table('d_stockdt')
+                    ->join('d_stock', 'sd_stock', 's_id')
+                    ->where('s_comp', '=', $comp)
+                    ->where('s_position', '=', $position)
+                    ->where('s_item', '=', $item)
+                    ->where('s_status', '=', 'ON DESTINATION')
+                    ->where('s_condition', '=', 'FINE')->get();
+
+                DB::table('d_stockdt')->where('sd_stock', '=', $stockDT[0]->s_id)->delete();
+                
+                $detailid = DB::table('d_stockdt')->where('sd_stock', '=', $stockDT[0]->s_id)->max('sd_detailid');
+
+                for ($i=0; $i < count($listPC) ; $i++) {
+                    $detailid = $detailid+1;
+                    DB::table('d_stockdt')->where('sd_stock', '=', $stockDT[0]->s_id)->insert([
+                        'sd_stock'    => $stockDT[0]->s_id,
+                        'sd_detailid' => $detailid,
+                        'sd_code'     => $listPC[$i],
+                        'sd_qty'      => $listQtyPC[$i]
+                    ]);
+                }
             }
 
             DB::commit();
@@ -1243,6 +1265,7 @@ class Mutasi extends Controller
         $listQtyPC // List Qty Production Code
         )
     {
+        dd($stockId, $smDetailId, $listPC, $listQtyPC);
         DB::beginTransaction();
         try {
             // insert new mutation-detail (filled with production-code of the products)

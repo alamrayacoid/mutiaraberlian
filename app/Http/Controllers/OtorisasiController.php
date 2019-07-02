@@ -106,14 +106,14 @@ class OtorisasiController extends Controller
 
             DB::commit();
             return response()->json([
-            'status' => 'berhasil'
+                'status' => 'berhasil'
             ]);
         }
         catch (Exception $e)
         {
             DB::rollback();
             return response()->json([
-            'status' => 'gagal'
+                'status' => 'gagal'
             ]);
         }
     }
@@ -269,6 +269,7 @@ class OtorisasiController extends Controller
             DB::table('d_adjustmentcodeauth')->where('aca_adjustment', $id)->delete();
 
             // Create to mutation ------------>>
+            // dd((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
             Mutasi::opname((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
 
             DB::commit();

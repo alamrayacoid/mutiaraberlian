@@ -127,7 +127,7 @@ class AdjusmentController extends Controller
             ]);
 
             for ($i=0; $i < count($request->code_real); $i++) {
-                $adjDt = DB::table('d_adjustmentcodeauth')->where('aca_adjustment', '=', $adjId)->max('aca_detailid') + 1;
+                $adjDt = DB::table('d_adjustmentcodeauth')->where('aca_adjustment', '=', $request->data['o_id'])->max('aca_detailid') + 1;
                 DB::table('d_adjustmentcodeauth')->insert([
                     'aca_adjustment' => $request->data['o_id'],
                     'aca_detailid'   => $adjDt,

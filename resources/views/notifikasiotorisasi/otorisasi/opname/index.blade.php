@@ -88,29 +88,30 @@
 
 @section('extra_script')
 <script type="text/javascript">
-var table1, table2;
+	var table1, table2;
 	$(document).ready(function(){
-		$('#table_otorisasi').DataTable().fnDestroy();
+		// console.log('OpnameAuth')
+		$('#table_otorisasi').dataTable().fnDestroy();
 		table1 = $('#table_otorisasi').DataTable({
 				responsive: true,
 				// language: dataTableLanguage,
 				// processing: true,
 				serverSide: true,
 				ajax: {
-						url: "{{ url('notifikasiotorisasi/otorisasi/opname/getdataopname') }}",
-						type: "get",
+						url: "{{url('notifikasiotorisasi/otorisasi/opname/getdataopname')}}",
+						type: "GET",
 						data: {
-								"_token": "{{ csrf_token() }}"
+								"_token": "csrf_token()"
 						}
 				},
 				columns: [
-						{data: 'DT_RowIndex'},
+						{data: 'DT_RowIndex', className: 'text-center'},
 						{data: 'item', name: 'item'},
 						{data: 'nota', name: 'nota'},
-						{data: 'oa_qtyreal', name: 'oa_qtyreal'},
-						{data: 'oa_qtysystem', name: 'oa_qtysystem'},
-						{data: 'selisih', name: 'selisih'},
-						{data: 'aksi', name: 'aksi'}
+						{data: 'oa_qtyreal', name: 'oa_qtyreal', className: 'text-right'},
+						{data: 'oa_qtysystem', name: 'oa_qtysystem', className: 'text-right'},
+						{data: 'selisih', name: 'selisih', className: 'text-right'},
+						{data: 'aksi', name: 'aksi', className: 'text-center'}
 				],
 				pageLength: 10,
 				lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]

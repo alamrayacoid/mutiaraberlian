@@ -30,6 +30,10 @@ Route::group(['middleware' => 'guest'], function () {
     ]);
 });
 
+Route::get('errors/404', function(){
+    return view('errors.404');
+})->name('errors.404');
+
 Route::get('/loading', 'RecruitmentController@loading')->name('loading.index');
 Route::get('/recruitment', 'RecruitmentController@index')->name('recruitment.index');
 Route::post('/recruitment/store', 'RecruitmentController@store')->name('recruitment.store');
@@ -538,7 +542,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/kelolapenjualanviawebsite/get-unit', 'Aktivitasmarketing\Agen\ManajemenAgenController@getUnit')->name('kelolapenjualanviawebsite.getUnit');
     Route::post('/marketing/agen/kelolapenjualanviawebsite/save-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@saveKPW')->name('kelolapenjualanviawebsite.saveKPW');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/cek-code', 'Aktivitasmarketing\Agen\ManajemenAgenController@cekProductionCode')->name('kelolapenjualanviawebsite.cekProductionCode');
-    Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpl', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPL')->name('kelolapenjualan.getListKPL');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPW')->name('kelolapenjualan.getListKPW');
     // End Manajemen Agen ======================================================================================================================================================================================
 
     Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Agen\ManajemenAgenController@create_orderprodukagencabang')->name('orderagenpusat.create');
@@ -650,11 +654,94 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::get('/testoto', 'pushotorisasiController@otorisasiup');
 
     //Otorisasi Stock Opname
-    Route::get('/notifikasiotorisasi/otorisasi/opname/getdataopname', 'OtorisasiController@getopname');
+    Route::GET('/notifikasiotorisasi/otorisasi/opname/getdataopname', 'OtorisasiController@getopname');
     Route::get('/notifikasiotorisasi/otorisasi/opname/approveopname/{id}', 'OtorisasiController@approveopname');
     Route::get('/notifikasiotorisasi/otorisasi/opname/rejectedopname/{id}', 'OtorisasiController@rejectedopname');
 
+
+    // Tambahan dirga
+
+        // master akun
+            Route::get('keuangan/masterdatautama/akun-keuangan', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@index'
+            ])->name('keuangan.akun.index');
+
+            Route::get('keuangan/masterdatautama/akun-keuangan/grap', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@grap'
+            ])->name('keuangan.akun.grap');
+
+            Route::get('keuangan/masterdatautama/akun-keuangan/create', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@create'
+            ])->name('keuangan.akun.create');
+
+            Route::get('keuangan/masterdatautama/akun-keuangan/resource', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@resource'
+            ])->name('keuangan.akun.resource');
+
+            Route::post('keuangan/masterdatautama/akun-keuangan/save', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@save'
+            ])->name('keuangan.akun.save');
+
+            Route::post('keuangan/masterdatautama/akun-keuangan/save/akun-utama', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@saveAkunUtama'
+            ])->name('keuangan.akun.save.utama');
+
+            Route::post('keuangan/masterdatautama/akun-keuangan/update', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@update'
+            ])->name('keuangan.akun.update');
+
+
+        // master akun utama
+            Route::get('keuangan/masterdatautama/akun-utama', [
+                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@index'
+            ])->name('keuangan.akun-utama.index');
+
+            Route::get('keuangan/masterdatautama/akun-utama/grap', [
+                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@grap'
+            ])->name('keuangan.akun_utama.grap');
+
+            Route::get('keuangan/masterdatautama/akun-utama/create', [
+                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@create'
+            ])->name('keuangan.akun_utama.create');
+
+            Route::get('keuangan/masterdatautama/akun-utama/resource', [
+                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@resource'
+            ])->name('keuangan.akun_utama.resource');
+
+            Route::post('keuangan/masterdatautama/akun-utama/save', [
+                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@save'
+            ])->name('keuangan.akun_utama.save');
+
+            Route::post('keuangan/masterdatautama/akun-utama/update', [
+                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@update'
+            ])->name('keuangan.akun_utama.update');
+
+
+        // Setting hierarki
+            Route::get('keuangan/pengaturan/hierarki-akun', [
+                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@index'
+            ])->name('keuangan.hierarki_akun.index');
+
+            Route::get('keuangan/pengaturan/hierarki-akun/resource', [
+                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@resource'
+            ])->name('keuangan.hierarki_akun.resource');
+
+            Route::post('keuangan/pengaturan/hierarki-akun/save/level_1', [
+                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_level_1'
+            ])->name('keuangan.hierarki_akun.save.level_1');
+
+            Route::post('keuangan/pengaturan/hierarki-akun/save/subclass', [
+                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_subclass'
+            ])->name('keuangan.hierarki_akun.save.subclass');
+
+            Route::post('keuangan/pengaturan/hierarki-akun/save/level_2', [
+                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_level_2'
+            ])->name('keuangan.hierarki_akun.save.level_2');
+
+    // Selesai Dirga
+
 });
+
 // End Route Group
 
 /*

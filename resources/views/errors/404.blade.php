@@ -26,7 +26,7 @@
                         <h2 class="error-sub-title"> Maaf, Halaman tidak bisa kami temukan </h2>
                     </div>
                     <div class="error-container">
-                        <a class="btn btn-primary" href="{{ URL::previous() }}">
+                        <a class="btn btn-primary" href="{{ Route('home') }}">
                             <i class="fa fa-angle-left"></i> Kembali ke Dashboard</a>
                     </div>
                 </div>
