@@ -30,6 +30,10 @@ Route::group(['middleware' => 'guest'], function () {
     ]);
 });
 
+Route::get('errors/404', function(){
+    return view('errors.404');
+})->name('errors.404');
+
 Route::get('/loading', 'RecruitmentController@loading')->name('loading.index');
 Route::get('/recruitment', 'RecruitmentController@index')->name('recruitment.index');
 Route::post('/recruitment/store', 'RecruitmentController@store')->name('recruitment.store');
@@ -406,13 +410,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/targetrealisasi/updateTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@updateTarget')->name('targetReal.update');
     // End ---
     // Return Penjualan
-    Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/getnota', 'MarketingController@returnpenjualanagen_getnota');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/getdata', 'MarketingController@returnpenjualanagen_getdata');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/simpan', 'MarketingController@returnpenjualanagen_simpan');
-    Route::post('/marketing/penjualanpusat/returnpenjualan/simpan', 'MarketingController@returnpenjualanagen_simpan');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/returnpenjualanagen', 'MarketingController@returnpenjualanagen');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/hapus', 'MarketingController@hapus');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/index', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@index')->name('returnpenjualanagen.index');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@create')->name('returnpenjualanagen.create');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getcity', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getCity')->name('returnpenjualanagen.getCity');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getagent', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getAgent')->name('returnpenjualanagen.getAgent');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getprodcode', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getProdCode')->name('returnpenjualanagen.getProdCode');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getnota', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getNota')->name('returnpenjualanagen.getNota');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getdata', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getData')->name('returnpenjualanagen.getData');
+    // Route::get('/marketing/penjualanpusat/returnpenjualan/simpan', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@returnpenjualanagen_simpan');
+    Route::post('/marketing/penjualanpusat/returnpenjualan/simpan', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@store')->name('returnpenjualanagen.store');
+    Route::post('/marketing/penjualanpusat/returnpenjualan/hapus/{id}', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@delete')->name('returnpenjualanagen.delete');
     // End ---
     // Konsinyasi Pusat
     Route::get('/marketing/konsinyasipusat/index', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@konsinyasipusat')->name('konsinyasipusat.index');
@@ -653,7 +660,90 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifikasiotorisasi/otorisasi/opname/show-detail-approve/{id}', 'OtorisasiController@detailApproveOpname')->name('detailApproveOpname.show');
     Route::get('/notifikasiotorisasi/otorisasi/opname/rejectedopname/{id}', 'OtorisasiController@rejectedopname');
 
+
+    // Tambahan dirga
+
+        // master akun
+            Route::get('keuangan/masterdatautama/akun-keuangan', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@index'
+            ])->name('keuangan.akun.index');
+
+            Route::get('keuangan/masterdatautama/akun-keuangan/grap', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@grap'
+            ])->name('keuangan.akun.grap');
+
+            Route::get('keuangan/masterdatautama/akun-keuangan/create', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@create'
+            ])->name('keuangan.akun.create');
+
+            Route::get('keuangan/masterdatautama/akun-keuangan/resource', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@resource'
+            ])->name('keuangan.akun.resource');
+
+            Route::post('keuangan/masterdatautama/akun-keuangan/save', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@save'
+            ])->name('keuangan.akun.save');
+
+            Route::post('keuangan/masterdatautama/akun-keuangan/save/akun-utama', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@saveAkunUtama'
+            ])->name('keuangan.akun.save.utama');
+
+            Route::post('keuangan/masterdatautama/akun-keuangan/update', [
+                'uses'  => 'Keuangan\master\akun\akun_controller@update'
+            ])->name('keuangan.akun.update');
+
+
+        // master akun utama
+            Route::get('keuangan/masterdatautama/akun-utama', [
+                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@index'
+            ])->name('keuangan.akun-utama.index');
+
+            Route::get('keuangan/masterdatautama/akun-utama/grap', [
+                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@grap'
+            ])->name('keuangan.akun_utama.grap');
+
+            Route::get('keuangan/masterdatautama/akun-utama/create', [
+                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@create'
+            ])->name('keuangan.akun_utama.create');
+
+            Route::get('keuangan/masterdatautama/akun-utama/resource', [
+                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@resource'
+            ])->name('keuangan.akun_utama.resource');
+
+            Route::post('keuangan/masterdatautama/akun-utama/save', [
+                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@save'
+            ])->name('keuangan.akun_utama.save');
+
+            Route::post('keuangan/masterdatautama/akun-utama/update', [
+                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@update'
+            ])->name('keuangan.akun_utama.update');
+
+
+        // Setting hierarki
+            Route::get('keuangan/pengaturan/hierarki-akun', [
+                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@index'
+            ])->name('keuangan.hierarki_akun.index');
+
+            Route::get('keuangan/pengaturan/hierarki-akun/resource', [
+                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@resource'
+            ])->name('keuangan.hierarki_akun.resource');
+
+            Route::post('keuangan/pengaturan/hierarki-akun/save/level_1', [
+                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_level_1'
+            ])->name('keuangan.hierarki_akun.save.level_1');
+
+            Route::post('keuangan/pengaturan/hierarki-akun/save/subclass', [
+                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_subclass'
+            ])->name('keuangan.hierarki_akun.save.subclass');
+
+            Route::post('keuangan/pengaturan/hierarki-akun/save/level_2', [
+                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_level_2'
+            ])->name('keuangan.hierarki_akun.save.level_2');
+
+    // Selesai Dirga
+
 });
+
 // End Route Group
 
 /*

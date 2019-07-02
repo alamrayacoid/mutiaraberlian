@@ -292,11 +292,13 @@
         //     }
         // });
 
-        $('.select2').select2({
-            theme: "bootstrap",
-            dropdownAutoWidth: true,
-            width: '100%'
-        });
+        @if(!Request::is('keuangan/*'))
+            $('.select2').select2({
+                theme: "bootstrap",
+                dropdownAutoWidth: true,
+                width: '100%'
+            });
+        @endif
 
         $('.input-rupiah').maskMoney({
             thousands: ".",

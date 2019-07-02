@@ -10,7 +10,7 @@
         </div>
         <div class="card-block">
             <section>
-                
+
                 <div class="table-responsive">
                     <table class="table table-striped table-hover" cellspacing="0" id="table_return">
                         <thead class="bg-primary">
@@ -21,12 +21,12 @@
                                 <th>Nota Penjualan</th>
                                 <th>Kode Produksi</th>
                                 <th>Jenis Return</th>
-                                <th>Agen</th>                                                                                        
+                                <th>Agen</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            
+
                         </tbody>
                     </table>
                 </div>
