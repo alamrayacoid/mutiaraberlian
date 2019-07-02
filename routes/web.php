@@ -295,6 +295,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/opnamestock/show/{id}', 'Inventory\OpnameController@show')->name('opname.show');
     Route::get('/inventory/manajemenstok/opnamestock/create', 'Inventory\OpnameController@create')->name('opname.create');
     Route::get('/inventory/manajemenstok/opnamestock/list-code-produksi', 'Inventory\OpnameController@list_codeProduksi')->name('codeProduksi.list');
+    Route::get('/inventory/manajemenstok/opnamestock/list-code-opname', 'Inventory\OpnameController@list_codeOpname')->name('codeOpname.list');
     Route::post('/inventory/manajemenstok/opnamestock/store', 'Inventory\OpnameController@store')->name('opname.store');
     Route::get('/inventory/manajemenstok/opnamestock/edit/{id}', 'Inventory\OpnameController@edit')->name('opname.edit');
     Route::post('/inventory/manajemenstok/opnamestock/update/{id}', 'Inventory\OpnameController@update')->name('opname.update');
@@ -649,6 +650,7 @@ Route::group(['middleware' => 'auth'], function () {
     //Otorisasi Stock Opname
     Route::GET('/notifikasiotorisasi/otorisasi/opname/getdataopname', 'OtorisasiController@getopname');
     Route::get('/notifikasiotorisasi/otorisasi/opname/approveopname/{id}', 'OtorisasiController@approveopname');
+    Route::get('/notifikasiotorisasi/otorisasi/opname/show-detail-approve/{id}', 'OtorisasiController@detailApproveOpname')->name('detailApproveOpname.show');
     Route::get('/notifikasiotorisasi/otorisasi/opname/rejectedopname/{id}', 'OtorisasiController@rejectedopname');
 
 });

@@ -424,6 +424,7 @@
                                           </td>
                                           <td class="text-center">
                                             <button class="btn rounded-circle btn-danger btn-sm delete-list" onclick><i class="fa fa-trash"></i></button>
+                                          </td>
                                         <tr>`);
     }
   }

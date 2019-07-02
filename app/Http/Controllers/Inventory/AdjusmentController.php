@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use Yajra\DataTables\DataTables;
 
 use DB;
-
+use CodeGenerator;
 use Carbon\Carbon;
 use otorisasi;
 use Mutasi;
@@ -111,13 +111,13 @@ class AdjusmentController extends Controller
         // dd($request);
         DB::beginTransaction();
         try {
-            // $adjId = DB::table('d_adjusmentauth')->max('aa_id') + 1;
+            $adjId = DB::table('d_adjusmentauth')->max('aa_id') + 1;
             DB::table('d_adjusmentauth')->insert([
-                'aa_id'         => $request->data['o_id'],
+                'aa_id'         => $adjId,
                 'aa_comp'       => $request->data['o_comp'],
                 'aa_position'   => $request->data['o_position'],
                 'aa_date'       => $request->data['o_date'],
-                'aa_nota'       => $request->data['o_nota'],
+                'aa_nota'       => CodeGenerator::codeWithSeparator('d_adjusmentauth', 'aa_nota', 16, 10, 3, 'ADJUSTMENT', '-'),
                 'aa_item'       => $request->data['o_item'],
                 'aa_qtyreal'    => $request->qtyreal,
                 'aa_unitreal'   => $request->satuanreal,
@@ -127,9 +127,9 @@ class AdjusmentController extends Controller
             ]);
 
             for ($i=0; $i < count($request->code_real); $i++) {
-                $adjDt = DB::table('d_adjustmentcodeauth')->where('aca_adjustment', '=', $request->data['o_id'])->max('aca_detailid') + 1;
+                $adjDt = DB::table('d_adjustmentcodeauth')->where('aca_adjustment', '=', $adjId)->max('aca_detailid') + 1;
                 DB::table('d_adjustmentcodeauth')->insert([
-                    'aca_adjustment' => $request->data['o_id'],
+                    'aca_adjustment' => $adjId,
                     'aca_detailid'   => $adjDt,
                     'aca_code'       => $request->code_real[$i],
                     'aca_qty'        => $request->qty_code[$i]
