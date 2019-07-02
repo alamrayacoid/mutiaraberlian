@@ -34,41 +34,41 @@ class KonsinyasiPusatController extends Controller
     public function getKonsinyasi()
     {
         $data = DB::table('d_salescomp')
-        ->join('d_salescompdt', function ($sd){
-            $sd->on('scd_sales', '=', 'sc_id');
-        })
-        ->join('m_company', 'c_id', '=', 'sc_member')
-        ->where('sc_type', '=', 'K')
-        ->groupBy('d_salescomp.sc_nota')
-        ->select('sc_id as id', 'sc_date as tanggal', 'sc_nota as nota', 'c_name as konsigner', DB::raw("CONCAT('Rp. ',FORMAT(sc_total, 0, 'de_DE')) as total"));
+            ->join('d_salescompdt', function ($sd) {
+                $sd->on('scd_sales', '=', 'sc_id');
+            })
+            ->join('m_company', 'c_id', '=', 'sc_member')
+            ->where('sc_type', '=', 'K')
+            ->groupBy('d_salescomp.sc_nota')
+            ->select('sc_id as id', 'sc_date as tanggal', 'sc_nota as nota', 'c_name as konsigner', DB::raw("CONCAT('Rp. ',FORMAT(sc_total, 0, 'de_DE')) as total"));
 
         return DataTables::of($data)
-        ->addColumn('tanggal', function($data){
-            return date('d-m-Y', strtotime($data->tanggal));
-        })
-        ->addColumn('nota', function($data){
-            return $data->nota;
-        })
-        ->addColumn('konsigner', function($data){
-            return $data->konsigner;
-        })
-        ->addColumn('total', function($data){
-            return $data->total;
-        })
-        ->addColumn('action', function($data){
-            $detail = '<button class="btn btn-primary" type="button" title="Detail" onclick="detailKonsinyasi(\''.Crypt::encrypt($data->id).'\')"><i class="fa fa-folder"></i></button>';
-            $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editKonsinyasi(\''.Crypt::encrypt($data->id).'\')"><i class="fa fa-pencil"></i></button>';
-            $delete = '<button class="btn btn-danger" type="button" title="Hapus" onclick="hapusKonsinyasi(\''.Crypt::encrypt($data->id).'\', \''.$data->nota.'\')"><i class="fa fa-trash"></i></button>';
-            return '<div class="btn-group btn-group-sm">'. $detail . $edit . $delete . '</div>';
-        })
-        ->rawColumns(['tanggal','nota', 'konsigner', 'total','action'])
-        ->make(true);
+            ->addColumn('tanggal', function ($data) {
+                return date('d-m-Y', strtotime($data->tanggal));
+            })
+            ->addColumn('nota', function ($data) {
+                return $data->nota;
+            })
+            ->addColumn('konsigner', function ($data) {
+                return $data->konsigner;
+            })
+            ->addColumn('total', function ($data) {
+                return $data->total;
+            })
+            ->addColumn('action', function ($data) {
+                $detail = '<button class="btn btn-primary" type="button" title="Detail" onclick="detailKonsinyasi(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>';
+                $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editKonsinyasi(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-pencil"></i></button>';
+                $delete = '<button class="btn btn-danger" type="button" title="Hapus" onclick="hapusKonsinyasi(\'' . Crypt::encrypt($data->id) . '\', \'' . $data->nota . '\')"><i class="fa fa-trash"></i></button>';
+                return '<div class="btn-group btn-group-sm">' . $detail . $edit . $delete . '</div>';
+            })
+            ->rawColumns(['tanggal', 'nota', 'konsigner', 'total', 'action'])
+            ->make(true);
     }
 
     public function konsinyasipusat()
     {
         $provinsi = DB::table('m_wil_provinsi')
-        ->get();
+            ->get();
 
         return view('marketing/konsinyasipusat/index', compact('provinsi'));
     }
@@ -77,68 +77,67 @@ class KonsinyasiPusatController extends Controller
     {
         try {
             $id = Crypt::decrypt($id);
-        }
-        catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return Response::json([
                 'status' => "Failed",
-                'message'=> $e
+                'message' => $e
             ]);
         }
 
         if ($action == "detail") {
             $detail = DB::table('d_salescomp')
-            ->where('d_salescomp.sc_id', '=', $id)
-            ->join('m_company', function ($c){
-                $c->on('m_company.c_id', '=', 'd_salescomp.sc_member');
-            })
-            ->join('m_agen', function ($a){
-                $a->on('m_agen.a_code', '=', 'm_company.c_user');
-            })
-            ->join('m_wil_provinsi', function ($p){
-                $p->on('m_wil_provinsi.wp_id', '=', 'm_agen.a_provinsi');
-            })
-            ->join('m_wil_kota', function ($k){
-                $k->on('m_wil_kota.wc_id', '=', 'm_agen.a_kabupaten');
-            })
-            ->select(DB::raw('DATE_FORMAT(sc_date, "%d-%m-%Y") AS tanggal'),
-            DB::raw("CONCAT(m_wil_provinsi.wp_name, ' - ', m_wil_kota.wc_name) as area"),
-            'd_salescomp.sc_nota as nota', 'm_company.c_name as konsigner', 'd_salescomp.sc_type as tipe',
-            DB::raw("CONCAT('Rp. ',FORMAT(d_salescomp.sc_total, 0, 'de_DE')) as total"))
-            ->first();
+                ->where('d_salescomp.sc_id', '=', $id)
+                ->join('m_company', function ($c) {
+                    $c->on('m_company.c_id', '=', 'd_salescomp.sc_member');
+                })
+                ->join('m_agen', function ($a) {
+                    $a->on('m_agen.a_code', '=', 'm_company.c_user');
+                })
+                ->join('m_wil_provinsi', function ($p) {
+                    $p->on('m_wil_provinsi.wp_id', '=', 'm_agen.a_provinsi');
+                })
+                ->join('m_wil_kota', function ($k) {
+                    $k->on('m_wil_kota.wc_id', '=', 'm_agen.a_kabupaten');
+                })
+                ->select(DB::raw('DATE_FORMAT(sc_date, "%d-%m-%Y") AS tanggal'),
+                    DB::raw("CONCAT(m_wil_provinsi.wp_name, ' - ', m_wil_kota.wc_name) as area"),
+                    'd_salescomp.sc_nota as nota', 'm_company.c_name as konsigner', 'd_salescomp.sc_type as tipe',
+                    DB::raw("CONCAT('Rp. ',FORMAT(d_salescomp.sc_total, 0, 'de_DE')) as total"))
+                ->first();
 
             return Response::json($detail);
         } else {
             $data = DB::table('d_salescomp')
-            ->where('sc_id', '=', $id)
-            ->join('d_salescompdt', function ($sd){
-                $sd->on('scd_sales', '=', 'sc_id');
-            })
-            ->join('m_item', function ($i){
-                $i->on('i_id', '=', 'scd_item');
-            })
-            ->join('m_unit', function ($u){
-                $u->on('u_id', '=', 'scd_unit');
-            })
-            ->select('i_name as barang',
-            DB::raw("CONCAT(scd_qty, ' - ', u_name) as jumlah"),
-            DB::raw("CONCAT('Rp. ',FORMAT(scd_value, 0, 'de_DE')) as harga"),
-            DB::raw("CONCAT('Rp. ',FORMAT(scd_totalnet, 0, 'de_DE')) as total_harga"));
+                ->where('sc_id', '=', $id)
+                ->join('d_salescompdt', function ($sd) {
+                    $sd->on('scd_sales', '=', 'sc_id');
+                })
+                ->join('m_item', function ($i) {
+                    $i->on('i_id', '=', 'scd_item');
+                })
+                ->join('m_unit', function ($u) {
+                    $u->on('u_id', '=', 'scd_unit');
+                })
+                ->select('i_name as barang',
+                    DB::raw("CONCAT(scd_qty, ' - ', u_name) as jumlah"),
+                    DB::raw("CONCAT('Rp. ',FORMAT(scd_value, 0, 'de_DE')) as harga"),
+                    DB::raw("CONCAT('Rp. ',FORMAT(scd_totalnet, 0, 'de_DE')) as total_harga"));
 
             return DataTables::of($data)
-            ->addColumn('barang', function($data){
-                return $data->barang;
-            })
-            ->addColumn('jumlah', function($data){
-                return $data->jumlah;
-            })
-            ->addColumn('harga', function($data){
-                return $data->harga;
-            })
-            ->addColumn('total_harga', function($data){
-                return $data->total_harga;
-            })
-            ->rawColumns(['barang','jumlah', 'harga', 'total_harga'])
-            ->make(true);
+                ->addColumn('barang', function ($data) {
+                    return $data->barang;
+                })
+                ->addColumn('jumlah', function ($data) {
+                    return $data->jumlah;
+                })
+                ->addColumn('harga', function ($data) {
+                    return $data->harga;
+                })
+                ->addColumn('total_harga', function ($data) {
+                    return $data->total_harga;
+                })
+                ->rawColumns(['barang', 'jumlah', 'harga', 'total_harga'])
+                ->make(true);
         }
     }
 
@@ -151,20 +150,20 @@ class KonsinyasiPusatController extends Controller
     public function getKota($idprov = null)
     {
         $kota = DB::table('m_wil_kota')
-        ->where('wc_provinsi', $idprov)
-        ->orderBy('wc_name')
-        ->get();
+            ->where('wc_provinsi', $idprov)
+            ->orderBy('wc_name')
+            ->get();
         return Response::json($kota);
     }
 
     public function carikonsignerselect2($prov = null, $kota = null)
     {
         $nama = DB::table('m_agen')
-        ->join('m_company', 'a_code', '=', 'c_user')
-        ->where('m_agen.a_provinsi', '=', $prov)
-        ->where('m_agen.a_kabupaten', '=', $kota)
-        ->where('m_company.c_type', '=', 'AGEN')
-        ->get();
+            ->join('m_company', 'a_code', '=', 'c_user')
+            ->where('m_agen.a_area', '=', $kota)
+            ->where('a_isactive', '=', 'Y')
+            ->where('m_company.c_type', '=', 'AGEN')
+            ->get();
 
         return Response::json($nama);
     }
@@ -173,14 +172,14 @@ class KonsinyasiPusatController extends Controller
     {
         $cari = $request->term;
         $nama = DB::table('m_agen')
-        ->join('m_company', 'a_code', '=', 'c_user')
-        ->where('m_agen.a_provinsi', '=', $prov)
-        ->where('m_agen.a_kabupaten', '=', $kota)
-        ->where('m_company.c_type', '=', 'AGEN')
-        ->where(function ($q) use ($cari){
-            $q->orWhere('a_name', 'like', '%'.$cari.'%');
-        })
-        ->get();
+            ->join('m_company', 'a_code', '=', 'c_user')
+            ->where('m_agen.a_provinsi', '=', $prov)
+            ->where('m_agen.a_kabupaten', '=', $kota)
+            ->where('m_company.c_type', '=', 'AGEN')
+            ->where(function ($q) use ($cari) {
+                $q->orWhere('a_name', 'like', '%' . $cari . '%');
+            })
+            ->get();
 
         if (count($nama) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
@@ -195,59 +194,58 @@ class KonsinyasiPusatController extends Controller
     public function cariBarangKonsinyasi(Request $request)
     {
         $is_item = array();
-        for($i = 0; $i < count($request->idItem); $i++){
-            if($request->idItem[$i] != null){
+        for ($i = 0; $i < count($request->idItem); $i++) {
+            if ($request->idItem[$i] != null) {
                 array_push($is_item, $request->idItem[$i]);
             }
         }
 
         $cari = $request->term;
         $comp = Auth::user()->u_company;
-        if(count($is_item) == 0){
+        if (count($is_item) == 0) {
             $nama = DB::table('m_item')
-            ->join('d_stock', function ($s) use ($comp){
-                $s->on('i_id', '=', 's_item');
-                $s->where('s_position', '=', $comp);
-                $s->where('s_status', '=', 'ON DESTINATION');
-                $s->where('s_condition', '=', 'FINE');
-            })
-            ->join('d_stock_mutation', function ($sm){
-                $sm->on('sm_stock', '=', 's_id');
-                $sm->where('sm_residue', '!=', 0);
-            })
-            ->where(function ($q) use ($cari){
-                $q->orWhere('i_name', 'like', '%'.$cari.'%');
-                $q->orWhere('i_code', 'like', '%'.$cari.'%');
-            })
-            ->groupBy('d_stock.s_id')
-            ->get();
-        }
-        else{
+                ->join('d_stock', function ($s) use ($comp) {
+                    $s->on('i_id', '=', 's_item');
+                    $s->where('s_position', '=', $comp);
+                    $s->where('s_status', '=', 'ON DESTINATION');
+                    $s->where('s_condition', '=', 'FINE');
+                })
+                ->join('d_stock_mutation', function ($sm) {
+                    $sm->on('sm_stock', '=', 's_id');
+                    $sm->where('sm_residue', '!=', 0);
+                })
+                ->where(function ($q) use ($cari) {
+                    $q->orWhere('i_name', 'like', '%' . $cari . '%');
+                    $q->orWhere('i_code', 'like', '%' . $cari . '%');
+                })
+                ->groupBy('d_stock.s_id')
+                ->get();
+        } else {
             $nama = DB::table('m_item')
-            ->join('d_stock', function ($s) use ($comp){
-                $s->on('i_id', '=', 's_item');
-                $s->where('s_position', '=', $comp);
-                $s->where('s_status', '=', 'ON DESTINATION');
-                $s->where('s_condition', '=', 'FINE');
-            })
-            ->join('d_stock_mutation', function ($sm){
-                $sm->on('sm_stock', '=', 's_id');
-                $sm->where('sm_residue', '!=', 0);
-            })
-            ->whereNotIn('i_id', $is_item)
-            ->where(function ($q) use ($cari){
-                $q->orWhere('i_name', 'like', '%'.$cari.'%');
-                $q->orWhere('i_code', 'like', '%'.$cari.'%');
-            })
-            ->groupBy('d_stock.s_id')
-            ->get();
+                ->join('d_stock', function ($s) use ($comp) {
+                    $s->on('i_id', '=', 's_item');
+                    $s->where('s_position', '=', $comp);
+                    $s->where('s_status', '=', 'ON DESTINATION');
+                    $s->where('s_condition', '=', 'FINE');
+                })
+                ->join('d_stock_mutation', function ($sm) {
+                    $sm->on('sm_stock', '=', 's_id');
+                    $sm->where('sm_residue', '!=', 0);
+                })
+                ->whereNotIn('i_id', $is_item)
+                ->where(function ($q) use ($cari) {
+                    $q->orWhere('i_name', 'like', '%' . $cari . '%');
+                    $q->orWhere('i_code', 'like', '%' . $cari . '%');
+                })
+                ->groupBy('d_stock.s_id')
+                ->get();
         }
 
         if (count($nama) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query, 'stock' => $query->s_id];
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' . strtoupper($query->i_name), 'data' => $query, 'stock' => $query->s_id];
             }
         }
         return Response::json($results);
@@ -256,10 +254,10 @@ class KonsinyasiPusatController extends Controller
     public function getSatuan($id)
     {
         $data = m_item::where('i_id', $id)
-        ->with('getUnit1')
-        ->with('getUnit2')
-        ->with('getUnit3')
-        ->first();
+            ->with('getUnit1')
+            ->with('getUnit2')
+            ->with('getUnit3')
+            ->first();
 
         // $data = DB::table('m_item')
         // ->select('m_item.*', 'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
@@ -281,22 +279,22 @@ class KonsinyasiPusatController extends Controller
     public function checkStock($stock = null, $item = null, $satuan = null, $qty = null)
     {
         $data_check = DB::table('m_item')
-        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-        'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-        'm_item.i_unit3 as unit3')
-        ->where('i_id', '=', $item)
-        ->first();
+            ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                'm_item.i_unit3 as unit3')
+            ->where('i_id', '=', $item)
+            ->first();
 
         $data = DB::table('d_stock')
-        ->join('d_stock_mutation', function($sm){
-            $sm->on('sm_stock', '=', 's_id');
-        })
-        ->where('s_id', '=', $stock)
-        ->where('s_item', '=', $item)
-        ->where('s_status', '=', 'ON DESTINATION')
-        ->where('s_condition', '=', 'FINE')
-        ->select('sm_residue as sisa')
-        ->first();
+            ->join('d_stock_mutation', function ($sm) {
+                $sm->on('sm_stock', '=', 's_id');
+            })
+            ->where('s_id', '=', $stock)
+            ->where('s_item', '=', $item)
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('s_condition', '=', 'FINE')
+            ->select('sm_residue as sisa')
+            ->first();
 
         $qty_compare = 0;
         if ($satuan == $data_check->unit1) {
@@ -308,14 +306,14 @@ class KonsinyasiPusatController extends Controller
         } else if ($satuan == $data_check->unit2) {
             $compare = (int)$qty * (int)$data_check->compare2;
             if ((int)$compare > (int)$data->sisa) {
-                $qty_compare = (int)$data->sisa/(int)$data_check->compare2;
+                $qty_compare = (int)$data->sisa / (int)$data_check->compare2;
             } else {
                 $qty_compare = $qty;
             }
         } else if ($satuan == $data_check->unit3) {
             $compare = (int)$qty * (int)$data_check->compare3;
             if ((int)$compare > (int)$data->sisa) {
-                $qty_compare = (int)$data->sisa/(int)$data_check->compare3;
+                $qty_compare = (int)$data->sisa / (int)$data_check->compare3;
             } else {
                 $qty_compare = $qty;
             }
@@ -326,22 +324,22 @@ class KonsinyasiPusatController extends Controller
     public function checkStockOld($stock = null, $item = null, $oldSatuan = null, $satuan = null, $qtyOld = null, $qty = null)
     {
         $data_check = DB::table('m_item')
-        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-        'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-        'm_item.i_unit3 as unit3')
-        ->where('i_id', '=', $item)
-        ->first();
+            ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                'm_item.i_unit3 as unit3')
+            ->where('i_id', '=', $item)
+            ->first();
 
         $data = DB::table('d_stock')
-        ->join('d_stock_mutation', function($sm){
-            $sm->on('sm_stock', '=', 's_id');
-        })
-        ->where('s_id', '=', $stock)
-        ->where('s_item', '=', $item)
-        ->where('s_status', '=', 'ON DESTINATION')
-        ->where('s_condition', '=', 'FINE')
-        ->select('sm_residue as sisa')
-        ->first();
+            ->join('d_stock_mutation', function ($sm) {
+                $sm->on('sm_stock', '=', 's_id');
+            })
+            ->where('s_id', '=', $stock)
+            ->where('s_item', '=', $item)
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('s_condition', '=', 'FINE')
+            ->select('sm_residue as sisa')
+            ->first();
 
         $qty_compare_old = 0;
         if ($oldSatuan == $data_check->unit1) {
@@ -353,14 +351,14 @@ class KonsinyasiPusatController extends Controller
         } else if ($oldSatuan == $data_check->unit2) {
             $compare = (int)$qty * (int)$data_check->compare2;
             if ((int)$compare > (int)($data->sisa + $qtyOld)) {
-                $qty_compare_old = (int)($data->sisa+$qtyOld)/(int)$data_check->compare2;
+                $qty_compare_old = (int)($data->sisa + $qtyOld) / (int)$data_check->compare2;
             } else {
                 $qty_compare_old = $qty;
             }
         } else if ($oldSatuan == $data_check->unit3) {
             $compare = (int)$qty * (int)$data_check->compare3;
-            if ((int)$compare > (int)($data->sisa+$qtyOld)) {
-                $qty_compare_old = (int)($data->sisa+$qtyOld)/(int)$data_check->compare3;
+            if ((int)$compare > (int)($data->sisa + $qtyOld)) {
+                $qty_compare_old = (int)($data->sisa + $qtyOld) / (int)$data_check->compare3;
             } else {
                 $qty_compare_old = $qty;
             }
@@ -374,17 +372,17 @@ class KonsinyasiPusatController extends Controller
     {
 
         $type = DB::table('m_agen')
-        ->where('a_code', '=', $konsigner)
-        ->first();
+            ->where('a_code', '=', $konsigner)
+            ->first();
 
         $get_price = DB::table('m_priceclassdt')
-        ->join('m_priceclass', 'pcd_classprice', 'pc_id')
-        ->select('m_priceclassdt.*', 'm_priceclass.*')
-        ->where('pc_id', '=', $type->a_class)
-        ->where('pcd_payment', '=', 'K')
-        ->where('pcd_item', '=', $item)
-        ->where('pcd_unit', '=', $unit)
-        ->get();
+            ->join('m_priceclass', 'pcd_classprice', 'pc_id')
+            ->select('m_priceclassdt.*', 'm_priceclass.*')
+            ->where('pc_id', '=', $type->a_class)
+            ->where('pcd_payment', '=', 'K')
+            ->where('pcd_item', '=', $item)
+            ->where('pcd_unit', '=', $unit)
+            ->get();
 
         $harga = 0;
         $z = false;
@@ -400,9 +398,8 @@ class KonsinyasiPusatController extends Controller
                         $harga = $get_price[$key]->pcd_price;
                     }
                 }
-            }
-            else if ($qty > 1) {
-                if ($price->pcd_rangeqtyend == 0){
+            } else if ($qty > 1) {
+                if ($price->pcd_rangeqtyend == 0) {
                     if ($qty >= $price->pcd_rangeqtystart) {
                         $harga = $price->pcd_price;
                     }
@@ -434,7 +431,7 @@ class KonsinyasiPusatController extends Controller
     {
         // in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
         $idx = null;
-        foreach ($array as $key =>  $val) {
+        foreach ($array as $key => $val) {
             $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
             if ($x == true) {
                 $idx = $key;
@@ -451,19 +448,19 @@ class KonsinyasiPusatController extends Controller
 
     public function add_penempatanproduk(Request $request)
     {
-        $data   = $request->all();
-        $comp   = Auth::user()->u_company;
+        $data = $request->all();
+        $comp = Auth::user()->u_company;
         $compItem = $data['idStock']; // pemilik item
         // $member = $data['kodeKonsigner'];
         $member = $data['idKonsigner'];
-        $user   = Auth::user()->u_id;
-        $type   = 'K';
-        $date   = Carbon::now('Asia/Jakarta')->format('Y-m-d');
-        $total  = $data['tot_hrg'];
+        $user = Auth::user()->u_id;
+        $type = 'K';
+        $date = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+        $total = $data['tot_hrg'];
         $insert = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
         $update = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
-        $nota   = CodeGenerator::codeWithSeparator('d_salescomp', 'sc_nota', 8, 10, 3, 'SK', '-');
-        $idSales= (DB::table('d_salescomp')->max('sc_id')) ? DB::table('d_salescomp')->max('sc_id') + 1 : 1;
+        $nota = CodeGenerator::codeWithSeparator('d_salescomp', 'sc_nota', 8, 10, 3, 'SK', '-');
+        $idSales = (DB::table('d_salescomp')->max('sc_id')) ? DB::table('d_salescomp')->max('sc_id') + 1 : 1;
 
         DB::beginTransaction();
 
@@ -486,16 +483,16 @@ class KonsinyasiPusatController extends Controller
 
         try {
             $val_sales = [
-                'sc_id'      => $idSales,
-                'sc_comp'    => $comp, // pelaku konsinyasi
-                'sc_member'  => $member,
-                'sc_type'    => $type,
-                'sc_date'    => $date,
-                'sc_nota'    => $nota,
-                'sc_total'   => $total,
-                'sc_user'    => $user,
-                'sc_insert'  => $insert,
-                'sc_update'  => $update
+                'sc_id' => $idSales,
+                'sc_comp' => $comp, // pelaku konsinyasi
+                'sc_member' => $member,
+                'sc_type' => $type,
+                'sc_date' => $date,
+                'sc_nota' => $nota,
+                'sc_total' => $total,
+                'sc_user' => $user,
+                'sc_insert' => $insert,
+                'sc_update' => $update
             ];
 
             $sddetail = (DB::table('d_salescompdt')->where('scd_sales', '=', $idSales)->max('scd_detailid')) ? (DB::table('d_salescompdt')->where('scd_sales', '=', $idSales)->max('sd_detailid')) + 1 : 1;
@@ -528,8 +525,8 @@ class KonsinyasiPusatController extends Controller
                         continue;
                     }
                     $detailidcode = d_salescompcode::where('ssc_salescomp', $idSales)
-                    ->where('ssc_item', $data['idItem'][$i])
-                    ->max('ssc_detailid') + 1;
+                            ->where('ssc_item', $data['idItem'][$i])
+                            ->max('ssc_detailid') + 1;
 
                     $val_salescode = [
                         'ssc_salescomp' => $idSales,
@@ -543,11 +540,11 @@ class KonsinyasiPusatController extends Controller
 
                 // mutasi
                 $data_check = DB::table('m_item')
-                ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-                'm_item.i_unit3 as unit3')
-                ->where('i_id', '=', $data['idItem'][$i])
-                ->first();
+                    ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                        'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                        'm_item.i_unit3 as unit3')
+                    ->where('i_id', '=', $data['idItem'][$i])
+                    ->first();
 
                 $qty_compare = 0;
                 $sellPrice = 0;
@@ -563,16 +560,16 @@ class KonsinyasiPusatController extends Controller
                 }
 
                 $stock = DB::table('d_stock')
-                ->where('s_id', '=', $data['idStock'][$i])
-                ->first();
+                    ->where('s_id', '=', $data['idStock'][$i])
+                    ->first();
 
                 $stock_mutasi = DB::table('d_stock_mutation')
-                ->where('sm_stock', '=', $stock->s_id)
-                ->first();
+                    ->where('sm_stock', '=', $stock->s_id)
+                    ->first();
 
                 $posisi = DB::table('m_company')
-                ->where('c_id', '=', $member)
-                ->first();
+                    ->where('c_id', '=', $member)
+                    ->first();
 
                 // declaare list of production-code
                 $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
@@ -612,41 +609,39 @@ class KonsinyasiPusatController extends Controller
             DB::commit();
             return Response::json([
                 'status' => "Success",
-                'message'=> "Data berhasil disimpan"
+                'message' => "Data berhasil disimpan"
             ]);
-        }
-        catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             return Response::json([
                 'status' => "Failed",
-                'message'=> $e->getMessage()
+                'message' => $e->getMessage()
             ]);
         }
     }
 
     public function edit_penempatanproduk(Request $request, $id = null)
     {
-        try{
+        try {
             $id = Crypt::decrypt($id);
-        }
-        catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return abort(404);
         }
 
         // post method -> update
         if ($request->isMethod('post')) {
-            $data   = $request->all();
-            $comp   = Auth::user()->u_company;
+            $data = $request->all();
+            $comp = Auth::user()->u_company;
             $compItem = $data['idStock']; // pemilik item
             // $member = $data['kodeKonsigner'];
             $member = $data['idKonsigner'];
-            $user   = Auth::user()->u_id;
-            $total  = $data['tot_hrg'];
+            $user = Auth::user()->u_id;
+            $total = $data['tot_hrg'];
             $update = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
-            $nota   = $data['nota'];
+            $nota = $data['nota'];
 
             DB::beginTransaction();
-            try{
+            try {
                 // get item owner
                 foreach ($compItem as $key => $val) {
                     $owner = d_stock::where('s_id', $val)->first();
@@ -665,15 +660,14 @@ class KonsinyasiPusatController extends Controller
                 }
                 // get konsinyasi by id
                 $konsinyasi = d_salescomp::where('sc_id', $id)
-                ->with('getSalesCompDt.getProdCode')
-                ->first();
+                    ->with('getSalesCompDt.getProdCode')
+                    ->first();
                 // rollBack konsinyasi-detail
                 foreach ($konsinyasi->getSalesCompDt as $key => $konsDt) {
                     // set index item by array_search
                     if (in_array($konsDt->scd_item, $data['idItem'])) {
                         $localIdx = array_search($konsDt->scd_item, $data['idItem']);
-                    }
-                    else {
+                    } else {
                         $localIdx = 0;
                     }
                     // check used item is-modified
@@ -699,10 +693,9 @@ class KonsinyasiPusatController extends Controller
                             DB::rollBack();
                             return Response::json([
                                 'status' => "Failed",
-                                'message'=> $data['barang'][$localIdx]. " sudah digunakan, tidak dapat dilakukan modifikasi data !"
+                                'message' => $data['barang'][$localIdx] . " sudah digunakan, tidak dapat dilakukan modifikasi data !"
                             ]);
-                        }
-                        else {
+                        } else {
                             // delete production-code of selected stockdistribution
                             foreach ($konsDt->getProdCode as $idx => $prodCode) {
                                 $prodCode->delete();
@@ -731,16 +724,16 @@ class KonsinyasiPusatController extends Controller
 
                 // update salescomp
                 $val_sales = [
-                    'sc_comp'    => $comp,
-                    'sc_member'  => $member,
-                    'sc_total'   => $total,
-                    'sc_user'    => $user,
-                    'sc_update'  => $update
+                    'sc_comp' => $comp,
+                    'sc_member' => $member,
+                    'sc_total' => $total,
+                    'sc_user' => $user,
+                    'sc_update' => $update
                 ];
                 // Update konsinyasi
                 $updateSalesComp = DB::table('d_salescomp')
-                ->where('sc_id', '=', $id)
-                ->update($val_sales);
+                    ->where('sc_id', '=', $id)
+                    ->update($val_sales);
 
                 // re-insert konsinyasi-detail
                 $sddetail = (DB::table('d_salescompdt')->where('scd_sales', '=', $id)->max('scd_detailid')) ? (DB::table('d_salescompdt')->where('scd_sales', '=', $id)->max('scd_detailid')) + 1 : 1;
@@ -753,8 +746,8 @@ class KonsinyasiPusatController extends Controller
                     if ($data['status'][$key] === 'used') {
                         // get konsinyasi-detail
                         $salescompdt = d_salescompdt::where('scd_sales', $id)
-                        ->where('scd_item', $itemId)
-                        ->first();
+                            ->where('scd_item', $itemId)
+                            ->first();
 
                         // update salescompdt
                         $salescompdt->scd_qty = $data['jumlah'][$key];
@@ -772,8 +765,8 @@ class KonsinyasiPusatController extends Controller
                                 continue;
                             }
                             $detailidcode = d_salescompcode::where('ssc_salescomp', $id)
-                            ->where('ssc_item', $data['idItem'][$key])
-                            ->max('ssc_detailid') + 1;
+                                    ->where('ssc_item', $data['idItem'][$key])
+                                    ->max('ssc_detailid') + 1;
 
                             $val_salescode = [
                                 'ssc_salescomp' => $id,
@@ -811,8 +804,8 @@ class KonsinyasiPusatController extends Controller
                             continue;
                         }
                         $detailidcode = d_salescompcode::where('ssc_salescomp', $id)
-                        ->where('ssc_item', $data['idItem'][$key])
-                        ->max('ssc_detailid') + 1;
+                                ->where('ssc_item', $data['idItem'][$key])
+                                ->max('ssc_detailid') + 1;
 
                         $val_salescode = [
                             'ssc_salescomp' => $id,
@@ -826,11 +819,11 @@ class KonsinyasiPusatController extends Controller
 
                     // mutasi
                     $data_check = DB::table('m_item')
-                    ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-                    'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-                    'm_item.i_unit3 as unit3')
-                    ->where('i_id', '=', $data['idItem'][$key])
-                    ->first();
+                        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                            'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                            'm_item.i_unit3 as unit3')
+                        ->where('i_id', '=', $data['idItem'][$key])
+                        ->first();
                     // get qty with smallest unit
                     $qty_compare = 0;
                     $sellPrice = 0;
@@ -847,16 +840,16 @@ class KonsinyasiPusatController extends Controller
 
                     // get item stock
                     $stock = DB::table('d_stock')
-                    ->where('s_id', '=', $data['idStock'][$key])
-                    ->first();
+                        ->where('s_id', '=', $data['idStock'][$key])
+                        ->first();
 
                     $stock_mutasi = DB::table('d_stock_mutation')
-                    ->where('sm_stock', '=', $stock->s_id)
-                    ->first();
+                        ->where('sm_stock', '=', $stock->s_id)
+                        ->first();
 
                     $posisi = DB::table('m_company')
-                    ->where('c_id', '=', $member)
-                    ->first();
+                        ->where('c_id', '=', $member)
+                        ->first();
 
                     // declaare list of production-code
                     $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
@@ -897,62 +890,59 @@ class KonsinyasiPusatController extends Controller
                 DB::commit();
                 return Response::json([
                     'status' => "Success",
-                    'message'=> "Data berhasil diperbarui"
+                    'message' => "Data berhasil diperbarui"
                 ]);
-            }
-            catch (\Exception $e){
+            } catch (\Exception $e) {
                 DB::rollBack();
                 return Response::json([
                     'status' => "Failed",
-                    'message'=> $e->getMessage()
+                    'message' => $e->getMessage()
                 ]);
             }
-        }
-        // another method -> edit
+        } // another method -> edit
         else {
             $detail = DB::table('d_salescomp')
-            ->where('d_salescomp.sc_id', '=', $id)
-            ->join('m_company', function ($c){
-                $c->on('m_company.c_id', '=', 'd_salescomp.sc_member');
-            })
-            ->join('m_agen', function ($a){
-                $a->on('m_agen.a_code', '=', 'm_company.c_user');
-            })
-            ->join('m_wil_provinsi', function ($p){
-                $p->on('m_wil_provinsi.wp_id', '=', 'm_agen.a_provinsi');
-            })
-            ->join('m_wil_kota', function ($k){
-                $k->on('m_wil_kota.wc_id', '=', 'm_agen.a_kabupaten');
-            })
-            ->first();
+                ->where('d_salescomp.sc_id', '=', $id)
+                ->join('m_company', function ($c) {
+                    $c->on('m_company.c_id', '=', 'd_salescomp.sc_member');
+                })
+                ->join('m_agen', function ($a) {
+                    $a->on('m_agen.a_code', '=', 'm_company.c_user');
+                })
+                ->join('m_wil_provinsi', function ($p) {
+                    $p->on('m_wil_provinsi.wp_id', '=', 'm_agen.a_provinsi');
+                })
+                ->join('m_wil_kota', function ($k) {
+                    $k->on('m_wil_kota.wc_id', '=', 'm_agen.a_kabupaten');
+                })
+                ->first();
 
             $data_item = d_salescomp::where('sc_id', $id)
-            ->with(['getSalesCompDt' => function ($query) {
-                $query
-                ->with(['getItem' => function ($query) {
+                ->with(['getSalesCompDt' => function ($query) {
                     $query
-                    ->with('getUnit1')
-                    ->with('getUnit2')
-                    ->with('getUnit3');
+                        ->with(['getItem' => function ($query) {
+                            $query
+                                ->with('getUnit1')
+                                ->with('getUnit2')
+                                ->with('getUnit3');
+                        }])
+                        ->with('getUnit')
+                        ->with('getProdCode');
                 }])
-                ->with('getUnit')
-                ->with('getProdCode');
-            }])
-            ->first();
+                ->first();
             // set nota
             $nota = $data_item->sc_nota;
             // get stock item
-            foreach ($data_item->getSalesCompDt as $key => $val)
-            {
+            foreach ($data_item->getSalesCompDt as $key => $val) {
                 $item = $val->scd_item;
                 // get item stock
                 $mainStock = d_stock::where('s_comp', $val->scd_comp)
-                ->where('s_position', $data_item->sc_comp)
-                ->where('s_item', $item)
-                ->where('s_status', 'ON DESTINATION')
-                ->where('s_condition', 'FINE')
-                ->with('getItem')
-                ->first();
+                    ->where('s_position', $data_item->sc_comp)
+                    ->where('s_item', $item)
+                    ->where('s_status', 'ON DESTINATION')
+                    ->where('s_condition', 'FINE')
+                    ->with('getItem')
+                    ->first();
 
                 // add stock id to data
                 $val->stockId = $mainStock->s_id;
@@ -988,16 +978,14 @@ class KonsinyasiPusatController extends Controller
                 foreach ($st_mutation as $keysm => $valsm) {
                     if ($valsm->sm_use > 0) {
                         $val->qtyUsed += $valsm->sm_use;
-                    }
-                    else {
+                    } else {
                         $val->qtyUsed += 0;
                     }
                 }
                 // set status of the distributed item (used or unused)
                 if ($val->qtyUsed > 0) {
                     $val->status = 'used';
-                }
-                else {
+                } else {
                     $val->status = 'unused';
                 }
             }
@@ -1016,19 +1004,18 @@ class KonsinyasiPusatController extends Controller
 
         try {
             $id = Crypt::decrypt($request->id);
-        }
-        catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return Response::json([
                 'status' => "Failed",
-                'message'=> $e->getMessage()
+                'message' => $e->getMessage()
             ]);
         }
 
         DB::beginTransaction();
-        try{
+        try {
             $konsinyasi = d_salescomp::where('sc_id', $id)
-            ->with('getSalesCompDt.getProdCode')
-            ->first();
+                ->with('getSalesCompDt.getProdCode')
+                ->first();
 
             foreach ($konsinyasi->getSalesCompDt as $key => $konsDt) {
                 $rollbackKons = Mutasi::rollback(
@@ -1053,14 +1040,13 @@ class KonsinyasiPusatController extends Controller
             DB::commit();
             return Response::json([
                 'status' => "Success",
-                'message'=> 'Data berhasil dihapus'
+                'message' => 'Data berhasil dihapus'
             ]);
-        }
-        catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             return Response::json([
                 'status' => "Failed",
-                'message'=> $e->getMessage()
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -1075,17 +1061,17 @@ class KonsinyasiPusatController extends Controller
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
 
         $datas = d_salescomp::whereBetween('sc_date', [$from, $to])
-        ->where('sc_type', 'K')
-        ->where('sc_paidoff', 'N')
-        ->where('sc_member', $agentCode)
-        ->with(['getMutation' => function($query) {
-            $query->where('sm_mutcat', 12)->get();
-        }])
-        ->with(['getMutationReff'])
-        ->with('getAgent')
-        ->with('getSalesCompDt.getItem')
-        ->orderBy('sc_date', 'desc')
-        ->get();
+            ->where('sc_type', 'K')
+            ->where('sc_paidoff', 'N')
+            ->where('sc_member', $agentCode)
+            ->with(['getMutation' => function ($query) {
+                $query->where('sm_mutcat', 12)->get();
+            }])
+            ->with(['getMutationReff'])
+            ->with('getAgent')
+            ->with('getSalesCompDt.getItem')
+            ->orderBy('sc_date', 'desc')
+            ->get();
 
         // get total-qty each salescomp
         foreach ($datas as $data) {
@@ -1114,76 +1100,80 @@ class KonsinyasiPusatController extends Controller
         }
 
         return Datatables::of($datas)
-        ->addIndexColumn()
-        ->addColumn('placement', function($datas) {
-            return $datas->getAgent->c_name;
-        })
-        ->addColumn('items', function($datas) {
-            return '<div><button class="btn btn-primary" onclick="showDetailSalescomp('. $datas->sc_id .')" type="button"><i class="fa fa-folder"></i></button></div>';
-        })
-        ->addColumn('total_qty', function($datas) {
-            return number_format($datas->totalQty, 0, ',', '.');
-        })
-        ->addColumn('total_price', function($datas) {
-            return '<span class="pull-right">Rp '. number_format((int)$datas->sc_total, 2, ',', '.') .'</span>';
-        })
-        ->addColumn('sold_status', function($datas) {
-            return '<span class="pull-right"> '. number_format($datas->totalSoldPerc, 0, ',', '.') .' %</span>';
-        })
-        ->addColumn('sold_amount', function($datas) {
-            return '<span class="pull-right">Rp '. number_format((int)$datas->soldAmount, 2, ',', '.') .'</span>';
-        })
-        ->rawColumns(['placement', 'items', 'total_qty', 'total_price', 'sold_status', 'sold_amount'])
-        ->make(true);
+            ->addIndexColumn()
+            ->addColumn('placement', function ($datas) {
+                return $datas->getAgent->c_name;
+            })
+            ->addColumn('items', function ($datas) {
+                return '<div><button class="btn btn-primary" onclick="showDetailSalescomp(' . $datas->sc_id . ')" type="button"><i class="fa fa-folder"></i></button></div>';
+            })
+            ->addColumn('total_qty', function ($datas) {
+                return number_format($datas->totalQty, 0, ',', '.');
+            })
+            ->addColumn('total_price', function ($datas) {
+                return '<span class="pull-right">Rp ' . number_format((int)$datas->sc_total, 2, ',', '.') . '</span>';
+            })
+            ->addColumn('sold_status', function ($datas) {
+                return '<span class="pull-right"> ' . number_format($datas->totalSoldPerc, 0, ',', '.') . ' %</span>';
+            })
+            ->addColumn('sold_amount', function ($datas) {
+                return '<span class="pull-right">Rp ' . number_format((int)$datas->soldAmount, 2, ',', '.') . '</span>';
+            })
+            ->rawColumns(['placement', 'items', 'total_qty', 'total_price', 'sold_status', 'sold_amount'])
+            ->make(true);
     }
+
     // get list-cities based on province-id
     public function getCitiesMP(Request $request)
     {
         $cities = m_wil_provinsi::where('wp_id', $request->provId)
-        ->with('getCities')
-        ->firstOrFail();
+            ->with('getCities')
+            ->firstOrFail();
         return response()->json($cities);
     }
+
     // get list-agents based on citiy-id
     public function getAgentsMP(Request $request)
     {
         $agents = m_agen::where('a_area', $request->cityId)
-        ->where('a_type', 'AGEN')
-        ->with('getProvince')
-        ->with('getCity')
-        ->with('getCompany')
-        ->orderBy('a_code', 'desc')
-        ->get();
+            ->where('a_type', 'AGEN')
+            ->with('getProvince')
+            ->with('getCity')
+            ->with('getCompany')
+            ->orderBy('a_code', 'desc')
+            ->get();
 
         return response()->json($agents);
     }
+
     // find agents and retrieve it by autocomple.js
     public function findAgentsByAu(Request $request)
     {
         $term = $request->termToFind;
 
         // startu query to find specific item
-        $agents = m_company::where('c_name', 'like', '%'.$term.'%')
-        ->orWhere('c_id', 'like', '%'.$term.'%')
-        ->get();
+        $agents = m_company::where('c_name', 'like', '%' . $term . '%')
+            ->orWhere('c_id', 'like', '%' . $term . '%')
+            ->get();
 
         if (count($agents) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($agents as $agent) {
-                $results[] = ['id' => $agent->c_id, 'label' => $agent->c_id . ' - ' .strtoupper($agent->c_name)];
+                $results[] = ['id' => $agent->c_id, 'label' => $agent->c_id . ' - ' . strtoupper($agent->c_name)];
             }
         }
         return response()->json($results);
     }
+
     // get detail
     public function getSalesCompDetail($id)
     {
         $detail = d_salescomp::where('sc_id', $id)
-        ->with('getAgent')
-        ->with('getSalesCompDt.getItem')
-        ->with('getSalesCompDt.getUnit')
-        ->first();
+            ->with('getAgent')
+            ->with('getSalesCompDt.getItem')
+            ->with('getSalesCompDt.getUnit')
+            ->first();
         $detail->dateFormated = Carbon::parse($detail->sc_date)->format('d M Y');
 
         return response()->json($detail);
@@ -1198,18 +1188,19 @@ class KonsinyasiPusatController extends Controller
     {
         $agentCode = $request->agentCode;
         $listNota = d_salescomp::where('sc_member', $agentCode)
-        ->where('sc_paidoff', 'N')
-        ->select('sc_id', 'sc_nota')
-        ->get();
+            ->where('sc_paidoff', 'N')
+            ->select('sc_id', 'sc_nota')
+            ->get();
 
         return $listNota;
     }
+
     public function getPaymentPP(Request $request)
     {
         $salescompId = $request->salescompId;
         $sales = d_salescomp::where('sc_id', $salescompId)
-        ->with('getSalesCompPayment')
-        ->first();
+            ->with('getSalesCompPayment')
+            ->first();
         $sales->paidBill = 0;
         $sales->restBill = $sales->sc_total;
 
@@ -1218,13 +1209,13 @@ class KonsinyasiPusatController extends Controller
             return $sales;
         }
         // count paidBill and restBill when getSalesCompPayment not null
-        foreach ($sales->getSalesCompPayment as $payment)
-        {
+        foreach ($sales->getSalesCompPayment as $payment) {
             $sales->paidBill += $payment->scp_pay;
         }
         $sales->restBill -= $sales->paidBill;
         return $sales;
     }
+
     // store item
     public function storePP(Request $request)
     {
@@ -1258,10 +1249,9 @@ class KonsinyasiPusatController extends Controller
 
             DB::commit();
             return response()->json([
-            'status' => 'berhasil'
+                'status' => 'berhasil'
             ]);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -1271,22 +1261,23 @@ class KonsinyasiPusatController extends Controller
 
 
     }
+
     // validate form before input
     public function validatePP(Request $request)
     {
         // start: validate data before execute
         $validator = Validator::make($request->all(), [
-        'salescompId' => 'required',
-        'paymentType' => 'required',
-        'cashAccount' => 'required',
-        'paymentVal' => 'required'
+            'salescompId' => 'required',
+            'paymentType' => 'required',
+            'cashAccount' => 'required',
+            'paymentVal' => 'required'
         ],
-        [
-        'salescompId.required' => 'Silahkan pilih \'Nota\' terlebih dahulu !',
-        'paymentType.required' => 'Silahkan pilih \'Jenis Penerimaan\' terlebih dahulu !',
-        'cashAccount.required' => 'Silahkan pilih \'Akun Kas\' terlebih dahulu !',
-        'paymentVal.required' => '\'Nominal Penerimaan\' tidak boleh kosong !'
-        ]);
+            [
+                'salescompId.required' => 'Silahkan pilih \'Nota\' terlebih dahulu !',
+                'paymentType.required' => 'Silahkan pilih \'Jenis Penerimaan\' terlebih dahulu !',
+                'cashAccount.required' => 'Silahkan pilih \'Akun Kas\' terlebih dahulu !',
+                'paymentVal.required' => '\'Nominal Penerimaan\' tidak boleh kosong !'
+            ]);
         if ($validator->fails()) {
             return $validator->errors()->first();
         } else {

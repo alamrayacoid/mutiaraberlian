@@ -55,7 +55,7 @@
                                aria-controls="kelolapenjualan" data-toggle="tab" role="tab">Kelola Penjualan
                                 Langsung </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" onclick="tableHistoryColumn()">
                             <a href="#penjualanviaweb" class="nav-link" data-target="#penjualanviaweb"
                                aria-controls="penjualanviaweb" data-toggle="tab" role="tab">Kelola Penjualan Via
                                 Website</a>
@@ -87,6 +87,7 @@
         var table_do;
         var table_kpw;
         var table_historykpw;
+        var table_detailKPW;
         $(document).ready(function () {
             getStatusDO();
             var table_pus = $('#table_kelolapenjualan').DataTable({
@@ -100,12 +101,12 @@
                 paging: false
             });
             setTimeout(function () {
-                table_historykpw = $('#table_penjualanviaweb').DataTable({
-                    bAutoWidth: true,
-                    responsive: true,
-
-                });
+                TableListKPW();
             }, 1000)
+
+            setTimeout(function () {
+                table_detailKPW = $('#table_DetailKPW').DataTable();
+            }, 1250)
             var table_modal_detail = $('#detail-kelola').DataTable();
             //var table_pus = $('#table_inventoryagen').DataTable();
 
@@ -428,12 +429,12 @@
             $('#btn_search_date_kpw').on('click', function () {
                 TableListKPW();
             });
-            $('#btn_refresh_date_kpl').on('click', function () {
-                $('#filter_agent_code_kpl').val('');
+            $('#btn_refresh_date_kpw').on('click', function () {
+                $('#filter_agent_code_kpw').val('');
                 $('#date_from_kpw').datepicker('setDate', first_day);
                 $('#date_to_kpw').datepicker('setDate', last_day);
             });
-            TableListKPW();
+
             $('#filter_agent_name_kpw').on('click', function () {
                 $('#searchAgenKpw').modal('show');
             });
@@ -448,6 +449,10 @@
                 TableListKPW();
             });
         });
+
+        function tableHistoryColumn() {
+            table_historykpw.columns.adjust();
+        }
 
         // data-table -> function to retrieve DataTable server side
         var tb_listkpl;
@@ -490,20 +495,22 @@
                 bAutoWidth: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('kelolapenjualan.getListKPL') }}",
+                    url: "{{ route('kelolapenjualan.getListKPW') }}",
                     type: "get",
                     data: {
                         "_token": "{{ csrf_token() }}",
-                        "date_from": $('#date_from_kpl').val(),
-                        "date_to": $('#date_to_kpl').val(),
-                        "agent_code": $('#filter_agent_code_kpl').val()
+                        "date_from": $('#date_from_kpw').val(),
+                        "date_to": $('#date_to_kpw').val(),
+                        "agent_code": $('#filter_agent_code_kpw').val()
                     }
                 },
                 columns: [
                     {data: 'DT_RowIndex'},
+                    {data: 'c_name'},
                     {data: 'date'},
-                    {data: 's_nota'},
-                    {data: 'member', width: "40%"},
+                    {data: 'sw_reff'},
+                    {data: 'sw_transactioncode'},
+                    {data: 'sw_website'},
                     {data: 'total'},
                     {data: 'action'}
                 ],
@@ -1046,6 +1053,7 @@
                     if (response.data.status == 'success'){
                         messageSuccess("Berhasil", "Data berhasil disimpan");
                         $('#createKPW').modal('hide');
+                        table_historykpw.ajax.reload();
                     } else if (response.data.status == 'gagal'){
                         messageFailed("Gagal", response.data.message);
                     }
@@ -1145,6 +1153,101 @@
                 loadingHide();
                 alert('error');
             })
+        }
+        
+        function detailKPW(id) {
+            loadingShow();
+            axios.get('{{ route("kelolapenjualan.getDetailKPW") }}', {
+                params:{
+                    "sw_id": id
+                }
+            }).then(function (response) {
+                loadingHide();
+                let data = response.data.data;
+                let kode = response.data.kode;
+                $('#modalnama_agen').val(data.c_name);
+                $('#modalnama_customer').val(data.m_name);
+                $('#modal_website').val(data.sw_website);
+                $('#modal_transaksi').val(data.sw_transactioncode);
+                $('#modal_produk').val(data.i_name);
+                $('#modal_kuantitas').val(data.sw_qty);
+                $('#modal_satuan').val(data.u_name);
+                $('#modal_label-satuan').html(data.u_name);
+                $('#modal_harga').val(convertToRupiah(parseInt(data.sw_price)));
+                 $('#modal_total').val(convertToRupiah(parseInt(data.sw_totalprice)));
+                $('#modal_note').val(data.sw_note);
+
+                table_detailKPW.clear().destroy();
+                table_detailKPW = $('#table_DetailKPW').DataTable({
+                    bAutoWidth: true,
+                    responsive: true,
+                    info: false,
+                    searching: false,
+                    paging: false
+                });
+                table_detailKPW.columns.adjust();
+
+                $.each(response.data.kode, function (key, val) {
+                    table_detailKPW.row.add([
+                        val.sc_code,
+                        val.sc_qty
+                    ]).draw(false);
+                })
+
+                $('#modal_detailKPW').modal('show');
+            }).catch(function (error) {
+                loadingHide();
+            })
+
+        }
+
+        function editKPW(id) {
+
+        }
+
+        function deleteKPW(id) {
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apa anda yakin akan menghapus transaksi ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            loadingShow();
+                            axios.get('{{ route("kelolapenjualan.deleteKPW") }}', {
+                                params:{
+                                    '_token': '{{ @csrf_token() }}',
+                                    'id': id
+                                }
+                            }).then(function (response) {
+                                loadingHide();
+                                console.log(response);
+                                if (response.data.status == 'sukses'){
+                                    messageSuccess("Berhasil", "Transaksi berhasil dihapus");
+                                    table_historykpw.ajax.reload();
+                                } else if (response.data.status == 'gagal'){
+                                    messageFailed("Gagal", "Transaksi gagal dihapus");
+                                }
+                            }).catch(function (error) {
+                                loadingHide();
+                                alert('error');
+                            })
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
         }
     </script>
 @endsection

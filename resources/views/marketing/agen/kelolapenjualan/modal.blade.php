@@ -53,3 +53,95 @@
 
   </div>
 </div>
+
+
+<!-- Modal -->
+<div id="modal_detailKPW" class="modal fade animated fadeIn" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-info">
+                <h4 class="modal-title">Detail Penjualan via Website</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row form-group">
+                    <label for="nama_agen" class="col-2 col-form-label">Nama Agen :</label>
+                    <div class="col-10">
+                        <input id="modalnama_agen" class="form-control form-control-sm" readonly>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="nama_customer" class="col-2 col-form-label">Nama Customer :</label>
+                    <div class="col-10">
+                        <input id="modalnama_customer" class="form-control form-control-sm" readonly>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="website" class="col-2 col-form-label">Website :</label>
+                    <div class="col-10">
+                        <input type="text" class="form-control-sm form-control" id="modal_website" readonly>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="website" class="col-2 col-form-label">Kode Transaksi :</label>
+                    <div class="col-10">
+                        <input type="text" class="form-control-sm form-control" id="modal_transaksi" style="text-transform: uppercase" readonly>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="produk" class="col-2 col-form-label">Produk :</label>
+                    <div class="col-10">
+                        <input type="text" class="form-control-sm form-control" id="modal_produk" style="text-transform: uppercase" readonly>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="kuantitas" class="col-2 col-form-label">Kuantitas :</label>
+                    <div class="col-4">
+                        <input type="number" class="form-control-sm form-control" id="modal_kuantitas" readonly>
+                    </div>
+                    <label for="satuan" class="col-2 col-form-label">Satuan :</label>
+                    <div class="col-4">
+                        <input id="modal_satuan" class="form-control form-control-sm" readonly>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="harga" class="col-2 col-form-label">Harga/<span id="modal_label-satuan">-</span> :</label>
+                    <div class="col-4">
+                        <input type="text" class="form-control-sm form-control input-harga" id="modal_harga" readonly>
+                    </div>
+                    <label for="total" class="col-2 col-form-label">Total :</label>
+                    <div class="col-4">
+                        <input type="text" class="form-control-sm form-control input-harga" id="modal_total" readonly>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="note" class="col-2 col-form-label">Catatan :</label>
+                    <div class="col-10">
+                        <textarea class="form-control form-control-sm" id="modal_note" readonly></textarea>
+                    </div>
+                </div>
+                <div class="row form-group">
+
+                </div>
+                <div class="row form-group">
+                    <div class="table-responsive" style="padding: 0px 15px 0px 15px;">
+                        <table class="table table-hover table-striped display" cellspacing="0" id="table_DetailKPW" style="width: 100%">
+                            <thead class="bg-primary">
+                            <tr>
+                                <th style="width: 80%">Kode</th>
+                                <th style="width: 20%">Qty</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
