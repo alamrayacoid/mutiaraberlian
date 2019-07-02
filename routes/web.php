@@ -299,6 +299,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/opnamestock/show/{id}', 'Inventory\OpnameController@show')->name('opname.show');
     Route::get('/inventory/manajemenstok/opnamestock/create', 'Inventory\OpnameController@create')->name('opname.create');
     Route::get('/inventory/manajemenstok/opnamestock/list-code-produksi', 'Inventory\OpnameController@list_codeProduksi')->name('codeProduksi.list');
+    Route::get('/inventory/manajemenstok/opnamestock/list-code-opname', 'Inventory\OpnameController@list_codeOpname')->name('codeOpname.list');
     Route::post('/inventory/manajemenstok/opnamestock/store', 'Inventory\OpnameController@store')->name('opname.store');
     Route::get('/inventory/manajemenstok/opnamestock/edit/{id}', 'Inventory\OpnameController@edit')->name('opname.edit');
     Route::post('/inventory/manajemenstok/opnamestock/update/{id}', 'Inventory\OpnameController@update')->name('opname.update');
@@ -409,13 +410,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/targetrealisasi/updateTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@updateTarget')->name('targetReal.update');
     // End ---
     // Return Penjualan
-    Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/getnota', 'MarketingController@returnpenjualanagen_getnota');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/getdata', 'MarketingController@returnpenjualanagen_getdata');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/simpan', 'MarketingController@returnpenjualanagen_simpan');
-    Route::post('/marketing/penjualanpusat/returnpenjualan/simpan', 'MarketingController@returnpenjualanagen_simpan');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/returnpenjualanagen', 'MarketingController@returnpenjualanagen');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/hapus', 'MarketingController@hapus');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/index', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@index')->name('returnpenjualanagen.index');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@create')->name('returnpenjualanagen.create');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getcity', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getCity')->name('returnpenjualanagen.getCity');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getagent', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getAgent')->name('returnpenjualanagen.getAgent');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getprodcode', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getProdCode')->name('returnpenjualanagen.getProdCode');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getnota', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getNota')->name('returnpenjualanagen.getNota');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getdata', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getData')->name('returnpenjualanagen.getData');
+    // Route::get('/marketing/penjualanpusat/returnpenjualan/simpan', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@returnpenjualanagen_simpan');
+    Route::post('/marketing/penjualanpusat/returnpenjualan/simpan', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@store')->name('returnpenjualanagen.store');
+    Route::post('/marketing/penjualanpusat/returnpenjualan/hapus/{id}', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@delete')->name('returnpenjualanagen.delete');
     // End ---
     // Konsinyasi Pusat
     Route::get('/marketing/konsinyasipusat/index', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@konsinyasipusat')->name('konsinyasipusat.index');
@@ -540,6 +544,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/marketing/agen/kelolapenjualanviawebsite/save-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@saveKPW')->name('kelolapenjualanviawebsite.saveKPW');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/cek-code', 'Aktivitasmarketing\Agen\ManajemenAgenController@cekProductionCode')->name('kelolapenjualanviawebsite.cekProductionCode');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPW')->name('kelolapenjualan.getListKPW');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/get-detail-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailKPW')->name('kelolapenjualan.getDetailKPW');
+    Route::get('/marketing/agen/kelolapenjualanlangsung/delete-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteKPW')->name('kelolapenjualan.deleteKPW');
     // End Manajemen Agen ======================================================================================================================================================================================
 
     Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Agen\ManajemenAgenController@create_orderprodukagencabang')->name('orderagenpusat.create');
@@ -653,6 +659,7 @@ Route::group(['middleware' => 'auth'], function () {
     //Otorisasi Stock Opname
     Route::GET('/notifikasiotorisasi/otorisasi/opname/getdataopname', 'OtorisasiController@getopname');
     Route::get('/notifikasiotorisasi/otorisasi/opname/approveopname/{id}', 'OtorisasiController@approveopname');
+    Route::get('/notifikasiotorisasi/otorisasi/opname/show-detail-approve/{id}', 'OtorisasiController@detailApproveOpname')->name('detailApproveOpname.show');
     Route::get('/notifikasiotorisasi/otorisasi/opname/rejectedopname/{id}', 'OtorisasiController@rejectedopname');
 
 

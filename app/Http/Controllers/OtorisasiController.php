@@ -53,13 +53,30 @@ class OtorisasiController extends Controller
             return $tmp;
         })
         ->addColumn('aksi', function($data){
-            $setujui = '<button class="btn btn-warning btn-primary" type="button" title="Setujui" onclick="approve(\''. Crypt::encrypt($data->oa_id) .'\')"><i class="fa fa-check"></i></button>';
+            // $setujui = '<button class="btn btn-warning btn-primary" type="button" title="Setujui" onclick="approve(\''. Crypt::encrypt($data->oa_id) .'\')"><i class="fa fa-check"></i></button>';
+            $setujui = '<button class="btn btn-warning btn-primary" type="button" title="Setujui" onclick="showDetailApp(\''. Crypt::encrypt($data->oa_id) .'\')"><i class="fa fa-check"></i></button>';
             $tolak = '<button class="btn btn-danger btn-disable" type="button" title="Tolak" onclick="rejected(\''. Crypt::encrypt($data->oa_id) .'\')"><i class="fa fa-remove"></i></button>';
             return '<center><div class="btn-group btn-group-sm">' . $setujui . $tolak . '</div></center>';
         })
         ->rawColumns(['nota','aksi'])
         ->make(true);
+    }    
+
+    public function detailApproveOpname($id)
+    {
+        $temp = DB::table('d_opnameauth')
+            ->join('m_item', 'i_id', 'oa_item')
+            ->where('oa_id', '=', Crypt::decrypt($id))->first();
+        $datas = DB::table('d_opnameauthdt')->where('oad_opname', '=', $temp->oa_id)->get();
+
+        return response()->json([
+            "auth"    => $temp,
+            "id_auth" => Crypt::encrypt($temp->oa_id),
+            "code"    => $datas
+        ]);
+
     }
+
     public function approveopname($id)
     {
         try {
@@ -76,9 +93,9 @@ class OtorisasiController extends Controller
             $authdt = DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->get();
 
             // dd($auth, $authdt);
-            $id = DB::table('d_opname')->max('o_id')+1;
+            $o_id = DB::table('d_opname')->max('o_id')+1;
             DB::table('d_opname')->insert([
-                'o_id'         => $id,
+                'o_id'         => $o_id,
                 'o_comp'       => $auth->oa_comp,
                 'o_position'   => $auth->oa_position,
                 'o_date'       => $auth->oa_date,
@@ -93,7 +110,7 @@ class OtorisasiController extends Controller
 
             for ($i=0; $i < count($authdt); $i++) {
                 DB::table('d_opnamedt')->insert([
-                    'od_opname'   => $id,
+                    'od_opname'   => $o_id,
                     'od_code'     => $authdt[$i]->oad_code,
                     'od_detailid' => $authdt[$i]->oad_detailid,
                     'od_qty'      => $authdt[$i]->oad_qty
@@ -126,14 +143,14 @@ class OtorisasiController extends Controller
 
             DB::commit();
             return response()->json([
-            'status' => 'berhasil'
+                'status' => 'berhasil'
             ]);
         }
         catch (Exception $e)
         {
             DB::rollback();
             return response()->json([
-            'status' => 'gagal'
+                'status' => 'gagal'
             ]);
         }
     }
@@ -234,8 +251,9 @@ class OtorisasiController extends Controller
             
             $reff      = $data->aa_nota;
 
+            $a_id = DB::table('d_adjusment')->max('a_id') +1;
             DB::table('d_adjusment')->insert([
-                'a_id'         => $data->aa_id,
+                'a_id'         => $a_id,
                 'a_comp'       => $data->aa_comp,
                 'a_position'   => $data->aa_position,
                 'a_date'       => $data->aa_date,
@@ -252,9 +270,9 @@ class OtorisasiController extends Controller
             $listPC = [];
             $listQtyPC = [];
             for ($i=0; $i < count($codeAuth); $i++) {
-                $adjDt = DB::table('d_adjustmentcode')->where('ac_adjustment', '=', $data->aa_id)->max('ac_detailid') + 1;
+                $adjDt = DB::table('d_adjustmentcode')->where('ac_adjustment', '=', $a_id)->max('ac_detailid') + 1;
                 DB::table('d_adjustmentcode')->insert([
-                    'ac_adjustment' => $data->aa_id,
+                    'ac_adjustment' => $a_id,
                     'ac_detailid'   => $adjDt,
                     'ac_code'       => $codeAuth[$i]->aca_code,
                     'ac_qty'        => $codeAuth[$i]->aca_qty

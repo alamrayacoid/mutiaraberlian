@@ -21,4 +21,9 @@ class d_salescompcode extends Model
         ->where('ssc_detailid', '=', $this->getAttribute('ssc_detailid'));
         return $query;
     }
+
+    public function getSalesCompById()
+    {
+        return $this->belongsTo('App\d_salescomp', 'ssc_salescomp', 'sc_id');
+    }
 }

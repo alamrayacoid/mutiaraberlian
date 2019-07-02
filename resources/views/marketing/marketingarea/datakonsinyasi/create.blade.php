@@ -574,7 +574,12 @@
                         term: $(".barang").eq(idxBarang).val()
                     },
                     success: function( data ) {
-                        response( data );
+                        response($.map(data, function(v,i){
+                            return {
+                                value: v.id,
+                                label: v.label
+                            };
+                        }));
                     }
                 });
             },

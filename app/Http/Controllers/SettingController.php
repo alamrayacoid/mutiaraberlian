@@ -31,7 +31,7 @@ class SettingController extends Controller
     {
         $pegawai = DB::table('m_employee')
             ->join('d_username', 'u_code', '=', 'e_id');
-        $user = collect($user);
+        $user = collect($pegawai);
         $cekUpdate = Plasmafone::checkAkses(42, 'update');
         $cekDelete = Plasmafone::checkAkses(42, 'delete');
         return DataTables::of($user)
@@ -118,7 +118,7 @@ class SettingController extends Controller
         $company = DB::table('m_company', 'c_id', '=', $user->u_company)->first();
 
         $id = $request->id;
-
+        //dd($menu);
         return view('pengaturan.pengaturanpengguna.akses', compact('nama', 'level', 'address', 'menu', 'akses', 'company', 'id', 'user'));
     }
 
@@ -191,7 +191,7 @@ class SettingController extends Controller
                 ]);
             } else {
 
-                if ($request->type == "agen"){
+                if ($request->type == "agen") {
                     $compa = DB::table('m_company')
                         ->where('c_user', '=', $code)
                         ->first();
@@ -357,42 +357,55 @@ class SettingController extends Controller
     {
         DB::beginTransaction();
         try {
+            //dd($request);
             for ($i = 0; $i < count($request->idaccess); $i++) {
-                if ($request->read[$i] != 'N') {
-                    DB::table('d_useraccess')
-                        ->where('ua_username', $request->id)
-                        ->where('ua_access', $request->idaccess[$i])
-                        ->update([
-                            'ua_read' => $request->read[$i]
-                        ]);
-                }
+                DB::table('d_useraccess')
+                    ->where('ua_username', $request->id)
+                    ->where('ua_access', $request->idaccess[$i])
+                    ->update([
+                        'ua_read' => $request->read[$i],
+                        'ua_create' => $request->insert[$i],
+                        'ua_update' => $request->update[$i],
+                        'ua_delete' => $request->delete[$i]
+                    ]);
+//                if ($request->read[$i] != 'N') {
+//                    DB::table('d_useraccess')
+//                        ->where('ua_username', $request->id)
+//                        ->where('ua_access', $request->idaccess[$i])
+//                        ->update([
+//                            'ua_read' => $request->read[$i],
+//                            'ua_create' => $request->insert[$i],
+//                            'ua_update' => $request->update[$i],
+//                            'ua_delete' => $request->delete[$i]
+//                        ]);
+//                }
 
-                if ($request->insert[$i] != 'N') {
-                    DB::table('d_useraccess')
-                        ->where('ua_username', $request->id)
-                        ->where('ua_access', $request->idaccess[$i])
-                        ->update([
-                            'ua_create' => $request->insert[$i]
-                        ]);
-                }
-
-                if ($request->update[$i] != 'N') {
-                    DB::table('d_useraccess')
-                        ->where('ua_username', $request->id)
-                        ->where('ua_access', $request->idaccess[$i])
-                        ->update([
-                            'ua_update' => $request->update[$i]
-                        ]);
-                }
-
-                if ($request->delete[$i] != 'N') {
-                    DB::table('d_useraccess')
-                        ->where('ua_username', $request->id)
-                        ->where('ua_access', $request->idaccess[$i])
-                        ->update([
-                            'ua_delete' => $request->delete[$i]
-                        ]);
-                }
+//                if ($request->insert[$i] != 'N') {
+//                    DB::table('d_useraccess')
+//                        ->where('ua_username', $request->id)
+//                        ->where('ua_access', $request->idaccess[$i])
+//                        ->update([
+//                            'ua_create' => $request->insert[$i]
+//                        ]);
+//                }
+//
+//                if ($request->update[$i] != 'N') {
+//                    DB::table('d_useraccess')
+//                        ->where('ua_username', $request->id)
+//                        ->where('ua_access', $request->idaccess[$i])
+//                        ->update([
+//                            'ua_update' => $request->update[$i]
+//                        ]);
+//                }
+//
+//                if ($request->delete[$i] != 'N') {
+//                    DB::table('d_useraccess')
+//                        ->where('ua_username', $request->id)
+//                        ->where('ua_access', $request->idaccess[$i])
+//                        ->update([
+//                            'ua_delete' => $request->delete[$i]
+//                        ]);
+//                }
             }
 
             DB::commit();

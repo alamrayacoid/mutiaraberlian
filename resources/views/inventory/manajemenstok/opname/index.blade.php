@@ -5,42 +5,30 @@
 @include('inventory.manajemenstok.opname.opnamestock.modal')
 
 <article class="content animated fadeInLeft">
-
 	<div class="title-block text-primary">
-	    <h1 class="title"> Manajemen Penjualan Stok  </h1>
-	    <p class="title-description">
-	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Inventory</span> / <span class="text-primary" style="font-weight: bold;">Pengelolaan Manajemen Stok</span>
-	     </p>
+		<h1 class="title"> Manajemen Penjualan Stok  </h1>
+		<p class="title-description">
+			<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Inventory</span> / <span class="text-primary" style="font-weight: bold;">Pengelolaan Manajemen Stok</span>
+		</p>
 	</div>
-
 	<section class="section">
-
 		<div class="row">
-
 			<div class="col-12">
-
-                <ul class="nav nav-pills mb-3">
-                    <li class="nav-item">
-                        <a href="" class="nav-link active" data-target="#opnamestock" aria-controls="opnamestock" data-toggle="tab" role="tab">Opname Stock</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="" class="nav-link" data-target="#historyopname" aria-controls="historyopname" data-toggle="tab" role="tab">History Opname Stock</a>
+				<ul class="nav nav-pills mb-3">
+					<li class="nav-item">
+						<a href="" class="nav-link active" data-target="#opnamestock" aria-controls="opnamestock" data-toggle="tab" role="tab">Opname Stock</a>
 					</li>
-                </ul>
-
-                <div class="tab-content">
-
+					<li class="nav-item">
+						<a href="" class="nav-link" data-target="#historyopname" aria-controls="historyopname" data-toggle="tab" role="tab">History Opname Stock</a>
+					</li>
+				</ul>
+				<div class="tab-content">
 					@include('inventory.manajemenstok.opname.opnamestock.index')
-                    @include('inventory.manajemenstok.opname.historyopname.index')
-
-	            </div>
-
+					@include('inventory.manajemenstok.opname.historyopname.index')
+				</div>
 			</div>
-
 		</div>
-
 	</section>
-
 </article>
 
 @endsection
@@ -172,11 +160,11 @@
 				}
 			},
 			columns: [
-				{data: 'DT_RowIndex'},
+				{data: 'DT_RowIndex', className: 'text-center'},
 				{data: 'date'},
 				{data: 'o_nota'},
 				{data: 'name'},
-				{data: 'status'},
+				{data: 'status', className: 'text-center'},
 			],
 			pageLength: 10,
 			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]

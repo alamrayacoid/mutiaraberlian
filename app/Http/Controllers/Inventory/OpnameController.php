@@ -54,12 +54,13 @@ class OpnameController extends Controller
       $stock = d_stock::where('s_item', $request->itemId)
         ->where('s_comp', $request->owner)
         ->where('s_position', $request->position)
-        ->where('s_condition', $request->condition)
+        // ->where('s_condition', $request->condition)
         ->with('getItem')
         ->with('getItem.getUnit1')
         ->with('getItem.getUnit2')
         ->with('getItem.getUnit3')
         ->first();
+      // dd($stock);
       if ($stock != null) {
         $results = [
           'unit1_id'   => $stock->getItem['getUnit1']['u_id'],
@@ -100,6 +101,8 @@ class OpnameController extends Controller
       } elseif ($request->unit_sys == $item->i_unit3) {
         $qty = $itemStock->s_qty / $item->i_unitcompare3;
       }
+
+      // dd($qty);
       return response()->json([
         'qty' => $qty,
         'qtySystem' => $qtySystem
@@ -209,7 +212,7 @@ class OpnameController extends Controller
       $stock = DB::table('d_stock')->where('s_item', '=', $req->item)
         ->where('s_comp', '=', $req->owner)
         ->where('s_position', '=', $req->position)
-        ->where('s_condition', '=', $req->condition)
+        // ->where('s_condition', '=', $req->condition)
         ->where('s_status', '=', 'ON DESTINATION')
         ->get();
 
@@ -224,6 +227,29 @@ class OpnameController extends Controller
         ->get();
 
       return Datatables::of($codes)
+      ->make(true);
+    }
+
+    public function list_codeOpname(Request $req)
+    {
+      $stock = DB::table('d_stockdt')
+        ->join('d_stock', 'sd_stock', 's_id')
+        ->where('s_item', '=', $req->item)
+        ->where('s_comp', '=', $req->owner)
+        ->where('s_position', '=', $req->position)
+        ->get();
+
+      // if (count($stock) > 0) {
+      //   $stockId = $stock[0]->s_id;
+      // } else {
+      //   $stockId = 0;
+      // }
+
+      // $codes = DB::table('d_stockdt')
+      //   ->where('sd_stock', '=', $stockId)
+      //   ->get();
+
+      return Datatables::of($stock)
       ->make(true);
     }
 
@@ -312,12 +338,13 @@ class OpnameController extends Controller
     public function edit($id)
     {
       $data['opname'] = d_opnameauth::where('oa_id', $id)
+        ->join('m_item', 'oa_item', 'i_id')
         ->with('getItem')
         ->first();
+      $code_real = DB::table('d_opnameauthdt')->where('oad_opname', '=', $data['opname']->oa_id)->get();
       $data['company'] = DB::table('m_company')->select('c_id', 'c_name')
         ->get();
-      // dd($data);
-      return view('inventory/manajemenstok/opname/opnamestock/edit', compact('data'));
+      return view('inventory/manajemenstok/opname/opnamestock/edit', compact('data', 'code_real'));
     }
 
     /**
@@ -329,6 +356,7 @@ class OpnameController extends Controller
      */
     public function update(Request $request, $id)
     {
+      // dd($request);
       // validate request
       $isValidRequest = $this->validate_req($request);
       if ($isValidRequest != '1') {
@@ -343,15 +371,27 @@ class OpnameController extends Controller
         DB::beginTransaction();
           $opname = d_opnameauth::where('oa_id', $id)
             ->first();
-          $opname->oa_comp = $request->owner;
-          $opname->oa_position = $request->position;
-          $opname->oa_item = $request->itemId;
-          $opname->oa_qtyreal = $request->qty_real;
-          $opname->oa_unitreal = $request->unit_real;
-          $opname->oa_qtysystem = $request->qty_sys_hidden;
+          $opname->oa_comp       = $request->owner;
+          $opname->oa_position   = $request->position;
+          $opname->oa_item       = $request->itemId;
+          $opname->oa_qtyreal    = $request->qty_real;
+          $opname->oa_unitreal   = $request->unit_real;
+          $opname->oa_qtysystem  = $request->qty_sys_hidden;
           $opname->oa_unitsystem = 1;
-          $opname->oa_insert = Carbon::now();
+          $opname->oa_insert     = Carbon::now();
           $opname->save();
+
+          DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->delete();
+
+          for ($i=0; $i < count($request->code_r) ; $i++) { 
+            $detailId = DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->max('oad_detailid') + 1;
+            DB::table('d_opnameauthdt')->insert([
+                'oad_opname'   => $id,
+                'oad_detailid' => $detailId,
+                'oad_code'     => $request->code_r[$i],
+                'oad_qty'      => $request->qty_r[$i]
+            ]);
+          }
 
           otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
 

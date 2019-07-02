@@ -81,16 +81,16 @@ class PenjualanPusatController extends Controller
             ->first();
 
         // check again how to get stock, is it true ?
-//        $stockItem = array();
-//        foreach ($data->getPODt as $key => $val) {
-//            $getStock = d_stock::where('s_item', $val->pod_item)
-//                ->where('s_position', $data->po_comp)
-//                ->where('s_status', 'ON DESTINATION')
-//                ->where('s_condition', 'FINE')
-//                ->first();
-//
-//            array_push($stockItem, $getStock->s_qty);
-//        }
+       // $stockItem = array();
+       // foreach ($data->getPODt as $key => $val) {
+       //     $getStock = d_stock::where('s_item', $val->pod_item)
+       //         ->where('s_position', $data->po_comp)
+       //         ->where('s_status', 'ON DESTINATION')
+       //         ->where('s_condition', 'FINE')
+       //         ->first();
+       //
+       //     array_push($stockItem, $getStock->s_qty);
+       // }
 
         //$data->stockItem = $stockItem;
         $data->total = d_productorderdt::where('pod_productorder', $request->id)->sum('pod_totalprice');
