@@ -243,12 +243,12 @@
                                             </div>
 
                                             <div class="col-md-12" style="padding: 0px;">
-                                                <div class="col-md-6" style="margin-top: 20px; padding: 0px;">
+                                                <div class="col-md-7" style="margin-top: 20px; padding: 0px;">
                                                     <form id="level_2">
                                                     <div class="col-md-12">
                                                         <div class="row" style="margin-top: 15px;">
                                                             <div class="col-md-4 label text-center">Pilih hierarki level 1</div>
-                                                            <div class="col-md-8">
+                                                            <div class="col-md-7">
                                                                 <vue-select :name="'level_1'" :id="'level_1'" :options="level_1" :search="false" @option-change="level_1_change"></vue-select>
                                                             </div>
                                                         </div>
@@ -259,7 +259,8 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th width="10%" style="background: #eee; position: sticky; top: 0;">***</th>
-                                                                    <th width="55%" style="background: #eee; position: sticky; top: 0;">Nama Hierarki</th>
+                                                                    <th width="20%" style="background: #eee; position: sticky; top: 0;">Nomor Hierarki</th>
+                                                                    <th width="45%" style="background: #eee; position: sticky; top: 0;">Nama Hierarki</th>
                                                                     <th style="background: #eee; position: sticky; top: 0;">Subclass</th>
                                                                 </tr>
                                                             </thead>
@@ -267,16 +268,25 @@
                                                             <tbody>
                                                                 <tr v-for="(data, idx) in data">
                                                                     <td class="text-center">
-                                                                        <template v-if="data.hs_status != 'locked'">
+                                                                        <template v-if="data.hd_status != 'locked'">
                                                                             <i class="fa fa-trash hintText hint" style="font-style: normal;" @click="deleteAddition($event, idx, false)"></i>
                                                                         </template>
 
-                                                                        <template v-if="data.hs_status == 'locked'">
+                                                                        <template v-if="data.hd_status == 'locked'">
                                                                             <i class="fa fa-lock"></i>
                                                                         </template>
 
                                                                         <input type="hidden" name="hd_id[]" readonly v-model="data.hd_id">
                                                                     </td>
+                                                                    
+                                                                    <td style="padding-left: 10px;">
+                                                                        <span style="display: inline;">
+                                                                            @{{ single.level_1 }}.
+                                                                        </span>
+
+                                                                        <input type="text" name="hd_nomor[]" v-model="data.hd_nomor" style="font-size: 9pt; height: 20px; color: #666; padding-left: 0px; width: 70%; display: inline; border: 0px;" placeholder="Input nomor" @keyPress="idRules" @blur="cekId($event, false)" :data-id="data.id">
+                                                                    </td>
+
                                                                     <td>
                                                                         <input type="text" name="hd_nama[]" v-model="data.hd_nama" style="font-size: 9pt; height: 20px; border: 0px; color: #666; padding-left: 15px; width: 100%" placeholder="Nama yang kosong tidak akan disimpan">
                                                                     </td>
@@ -293,6 +303,13 @@
                                                                         <i class="fa fa-trash hintText hint" style="font-style: normal;" @click="deleteAddition($event, idx)"></i>
 
                                                                         <input type="hidden" name="hd_id[]" readonly v-model="data.hd_id">
+                                                                    </td>
+                                                                    <td style="padding-left: 10px;">
+                                                                        <span style="display: inline;">
+                                                                            @{{ single.level_1 }}.
+                                                                        </span>
+
+                                                                        <input type="text" name="hd_nomor[]" v-model="data.hd_nomor" style="font-size: 9pt; height: 20px; color: #666; padding-left: 0px; width: 70%; display: inline; border: 0px;" placeholder="Input nomor" @keyPress="idRules" @blur="cekId($event)" :data-id="data.id">
                                                                     </td>
                                                                     <td>
                                                                         <input type="text" name="hd_nama[]" v-model="data.hd_nama" style="font-size: 9pt; height: 20px; border: 0px; color: #666; padding-left: 15px; width: 100%" placeholder="Nama yang kosong tidak akan disimpan" :id="'addition-'+data.id">
@@ -408,9 +425,10 @@
             methods: {
                 idRules: function(evt){
                     evt.stopImmediatePropagation();
+                    var conteks = $(evt.target);
 
-                    if(evt.key == '.')
-                        return true;
+                    if(conteks.val().length > 2)
+                        evt.preventDefault()
 
                     if(isNaN(evt.key))
                       evt.preventDefault()
@@ -540,6 +558,35 @@
                         this.data = $.grep(this.level_subclass, function(e){ return e.hs_level_1 == that.single.level_1 });
                     else if(this.state == 'level_2')
                         this.data = $.grep(this.level_2, function(e){ return e.hd_level_1 == that.single.level_1 });
+                },
+
+                cekId: function(e, fromAddition = true){
+                    var conteks = $(e.target);
+                    var cek1 = cek2 = [];
+
+                    if(fromAddition){
+                        cek1 = $.grep(this.data, function(a){ return a.hd_nomor == conteks.val() });
+                        cek2 = $.grep(this.addition, function(a){ 
+                            return a.hd_nomor == conteks.val() && a.id != conteks.data('id');
+                        });
+                    }else{
+                        cek1 = $.grep(this.data, function(a){ 
+                            return a.hd_nomor == conteks.val() && a.id != conteks.data('id');
+                        });
+                        cek2 = $.grep(this.addition, function(a){ return a.hd_nomor == conteks.val() });
+                    }
+
+                    if(cek1.length || cek2.length){
+                        $.toast({
+                            text: 'Nomor hierarki sudah digunakan oleh hierarki lain. Harap memasukkan nomor hierarki yang lain.',
+                            showHideTransition: 'slide',
+                            icon: 'info',
+                            stack: 1
+                        });
+
+                        conteks.val('');
+                    }
+                    
                 },
 
                 resetForm: function(){

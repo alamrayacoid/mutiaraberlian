@@ -735,6 +735,12 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_level_2'
             ])->name('keuangan.hierarki_akun.save.level_2');
 
+
+        // Mutasi antar Kas
+            Route::get('keuangan/manajemen-input-transaksi/mutasi_kas/create', [
+                'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@create'
+            ])->name('keuangan.transaksi.create');
+
     // Selesai Dirga
 
 });
