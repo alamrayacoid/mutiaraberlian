@@ -26,4 +26,8 @@ class d_salescompcode extends Model
     {
         return $this->belongsTo('App\d_salescomp', 'ssc_salescomp', 'sc_id');
     }
+    public function getSalesCompDt()
+    {
+        return $this->belongsTo('App\d_salescompdt', ['ssc_salescomp', 'ssc_item'], ['scd_sales', 'scd_item']);
+    }
 }

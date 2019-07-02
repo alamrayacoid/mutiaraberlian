@@ -263,8 +263,8 @@
             });
         }, 750);
     }
- 
-    returnagen();
+
+    //returnagen();
 
     function returnagen() {
         setTimeout(function () {
@@ -991,7 +991,7 @@
            url: baseUrl + '/marketing/penjualanpusat/returnpenjualan/hapus',
            success : function(response){
                if
-           } 
+           }
         });
     }
 
@@ -1003,7 +1003,7 @@
         let tlp = $('#tlp_kurir').val();
         let resi = $('#resi_kurir').val();
         let harga = $('#biaya_kurir').val();
-        
+
         loadingShow();
         axios.post('{{ route("penjualanpusat.sendOrder") }}', {
             'nota': nota,
