@@ -405,13 +405,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/targetrealisasi/updateTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@updateTarget')->name('targetReal.update');
     // End ---
     // Return Penjualan
-    Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'MarketingController@returnpenjualanagen_create')->name('returnpenjualanagen.create');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/getnota', 'MarketingController@returnpenjualanagen_getnota');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/getdata', 'MarketingController@returnpenjualanagen_getdata');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/simpan', 'MarketingController@returnpenjualanagen_simpan');
-    Route::post('/marketing/penjualanpusat/returnpenjualan/simpan', 'MarketingController@returnpenjualanagen_simpan');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/returnpenjualanagen', 'MarketingController@returnpenjualanagen');
-    Route::get('/marketing/penjualanpusat/returnpenjualan/hapus', 'MarketingController@hapus');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/index', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@index')->name('returnpenjualanagen.index');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@create')->name('returnpenjualanagen.create');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getcity', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getCity')->name('returnpenjualanagen.getCity');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getagent', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getAgent')->name('returnpenjualanagen.getAgent');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getprodcode', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getProdCode')->name('returnpenjualanagen.getProdCode');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getnota', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getNota')->name('returnpenjualanagen.getNota');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/getdata', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getData')->name('returnpenjualanagen.getData');
+    // Route::get('/marketing/penjualanpusat/returnpenjualan/simpan', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@returnpenjualanagen_simpan');
+    Route::post('/marketing/penjualanpusat/returnpenjualan/simpan', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@store')->name('returnpenjualanagen.store');
+    Route::post('/marketing/penjualanpusat/returnpenjualan/hapus/{id}', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@delete')->name('returnpenjualanagen.delete');
     // End ---
     // Konsinyasi Pusat
     Route::get('/marketing/konsinyasipusat/index', 'Aktivitasmarketing\Konsinyasipusat\KonsinyasiPusatController@konsinyasipusat')->name('konsinyasipusat.index');
