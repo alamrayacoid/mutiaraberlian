@@ -54,7 +54,21 @@
                         <div class="col-4 mb-2">
                             <input type="text" name="rangmax" id="rangemax" class="form-control form-control-sm" readonly="">
                         </div>
-
+                    </div>
+                    <div class="row">
+                        <div class="col-6 col-md-6">
+                            <table class="table table-striped table-bordered table-hover" id="table_detail">
+                                <thead>
+                                    <tr>
+                                        <th>Kode Produksi</th>
+                                        <th>Qty</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </section>
             </div>

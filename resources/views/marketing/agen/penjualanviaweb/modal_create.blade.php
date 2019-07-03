@@ -171,7 +171,7 @@
                     <div class="col-10">
                         <input type="text" class="form-control-sm form-control" id="edit_produk"
                                style="text-transform: uppercase">
-                        <input type="hidden" class="form-control-sm form-control" id="editid_produk">
+                        <input type="hidden" class="form-control-sm form-control" id="edit_produkid">
                     </div>
                 </div>
                 <div class="row form-group">
@@ -221,12 +221,15 @@
                         <table class="table table-hover table-striped display" cellspacing="0" id="table_EditKPW"
                                style="width: 100%">
                             <thead class="bg-primary">
-                            <tr>
-                                <th style="width: 70%">Kode</th>
-                                <th style="width: 20%">Qty</th>
-                                <th style="width: 10%">Aksi</th>
-                            </tr>
+                                <tr>
+                                    <th style="width: 70%">Kode</th>
+                                    <th style="width: 20%">Qty</th>
+                                    <th style="width: 10%">Aksi</th>
+                                </tr>
                             </thead>
+                            <tbody>
+                                
+                            </tbody>
                         </table>
                     </div>
                 </div>

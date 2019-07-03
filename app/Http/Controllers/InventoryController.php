@@ -151,9 +151,11 @@ class InventoryController extends Controller
                 'd_stock.s_qty as qty', 'd_stock.s_qtymin as qtymin', 'd_stock.s_qtymax as qtymax',
                 'd_stock.s_qtysafetystart as rangemin', 'd_stock.s_qtysafetyend as rangemax')
             ->first();
+        $codes = DB::table('d_stockdt')->where('sd_stock', '=', $id)->get();
         return Response::json([
                     'status' => "Success",
-                    'message' => $data
+                    'message' => $data,
+                    'codes' => $codes
                 ]);
 
     }

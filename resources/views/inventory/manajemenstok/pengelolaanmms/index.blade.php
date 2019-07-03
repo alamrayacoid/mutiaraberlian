@@ -182,6 +182,19 @@
                         $("#rangemax").val(resp.data.message.rangemax);
                         loadingHide();
                         $("#detailPengelolaanms").modal("show");
+                        $('#table_detail').DataTable().clear().destroy();
+                        var tb_detail = $('#table_detail').DataTable({
+                            responsive: true,
+                            info: false,
+                            searching: false,
+                            paging: false
+                        });
+                        $.each(resp.data.codes, function(key, val){
+                            tb_detail.row.add([
+                                val.sd_code,
+                                val.sd_qty
+                            ]).draw(false);
+                        });
                     }
                 })
                 .catch(function (error) {

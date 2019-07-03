@@ -87,7 +87,7 @@
         var table_do;
         var table_kpw;
         var table_historykpw;
-        var table_detailKPW;
+        var table_detailKPW, table_editKPW;
         $(document).ready(function () {
             getStatusDO();
             var table_pus = $('#table_kelolapenjualan').DataTable({
@@ -1202,7 +1202,66 @@
         }
 
         function editKPW(id) {
+            $.ajax({
+                url: "{{url('marketing/agen/kelolapenjualanviawebsite/edit-kpw')}}"+"/"+id,
+                type: "get",
+                dataType: "json",
+                success:function(resp) {
+                    $('#editKPW').modal('show');
+                    $('#editnama_agen').val(resp.datas.c_name);
+                    $('#editnama_customer').val('CUSTOMER');
+                    $('#edit_website').val(resp.datas.sw_website);
+                    $('#edit_transaksi').val(resp.datas.sw_transactioncode);
+                    $('#edit_produk').val(resp.datas.i_name);
+                    $('#edit_produkid').val(resp.datas.i_id);
+                    $('#edit_kuantitas').val(resp.datas.sw_qty);
+                    var price = parseInt(resp.datas.sw_price)
+                    var total_price = parseInt(resp.datas.sw_totalprice)
+                    $('#edit_harga').val(price);
+                    $('#edit_total').val(total_price)
+                    $('#edit_note').val(resp.datas.sw_note);
+                    $('#edit')
+                    
+                    $("#edit_satuan").find('option').remove();
+                    var option = '';
+                    var selected1, selected2, selected3;
+                    if (resp.units.id1 == resp.datas.sw_unit) {
+                        var selected1 = "selected";
+                    }
+                    if (resp.units.id2 == resp.datas.sw_unit) {
+                        var selected2 = "selected";
+                    }
+                    if (resp.units.id3 == resp.datas.sw_unit) {
+                        var selected3 = "selected";
+                    }
+                    option += '<option value="'+resp.units.id1+'" '+selected1+'>'+resp.units.name1+'</option>';
+                    if (resp.units.id2 != null && resp.units.id2 != resp.units.id1) {
+                        option += '<option value="'+resp.units.id2+'" '+selected2+'>'+resp.units.name2+'</option>';
+                    }
+                    if (resp.units.id3 != null && resp.units.id3 != resp.units.id1) {
+                        option += '<option value="'+resp.units.id3+'" '+selected3+'>'+resp.units.name3+'</option>';
+                    }
+                    $("#edit_satuan").append(option);
 
+                    $('#table_EditKPW').DataTable().clear().destroy();
+                    table_editKPW = $('#table_EditKPW').DataTable({
+                        bAutoWidth: true,
+                        responsive: true,
+                        info: false,
+                        searching: false,
+                        paging: false
+                    });
+                    table_editKPW.columns.adjust();
+
+                    $.each(resp.code, function (key, val) {
+                        table_editKPW.row.add([
+                            '<input name="code[]" value="'+val.sc_code+'" class="form-control bg-light" readonly/>',
+                            '<input name="code[]" value="'+val.sc_qty+'" class="form-control bg-light" readonly/>',
+                            '<button class="btn btn-sm rounded btn-danger"><i class="fa fa-trash"></i></button>'
+                        ]).draw(false);
+                    });
+                }
+            });
         }
 
         function deleteKPW(id) {
