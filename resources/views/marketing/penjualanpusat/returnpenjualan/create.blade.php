@@ -188,6 +188,28 @@
 											</div>
 										</div>
 										<hr>
+										<!-- new kode produksi to exchange -->
+										<div class="row col-sm-12 col-md-12">
+											<div class="col-md-2 col-sm-6 col-12">
+												<label>Kode Produksi</label>
+											</div>
+											<div class="col-md-4 col-sm-6 col-12">
+												<div class="form-group">
+													<input type="text" readonly name="kodeproduksiGB" class="form-control" id="kodeproduksiGB" value="">
+												</div>
+											</div>
+											<hr>
+
+											<div class="col-md-2 col-sm-6 col-12">
+												<label>Jumlah</label>
+											</div>
+											<div class="col-md-4 col-sm-6 col-12">
+												<div class="form-group">
+													<input type="text" style="text-align:right;" name="qtyGB" class="form-control digits" id="qtyGB" value="" readonly>
+												</div>
+											</div>
+										</div>
+
 
 										<div class="col-md-2 col-sm-6 col-12">
 											<label>Jumlah return</label>
@@ -472,7 +494,8 @@
 		});
 	}
 	// store data to Database
-	function store() {
+	function store()
+	{
 		data = $('#formdata').serialize();
 		$.ajax({
 			type: 'post',

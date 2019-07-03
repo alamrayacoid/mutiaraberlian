@@ -932,7 +932,7 @@ class MarketingAreaController extends Controller
 
                 // insert stock mutation using sales 'in'
                 $mutationIn = Mutasi::salesIn(
-                    $productOrder->po_comp, // from
+                    // $productOrder->po_comp, // from
                     $productOrder->po_agen, // to
                     $PO->pod_item, // item-id
                     $productOrder->po_nota, // nota
@@ -1111,14 +1111,14 @@ class MarketingAreaController extends Controller
             // update stock using mutation distrtibution
             // acutually its public function, just add mutcat as condition to deal it
             foreach ($productOrder->getPODt as $key => $po) {
-                $mutConfirm = Mutasi::confirmDistribusiCabang(
-                    $productOrder->po_comp, // from
-                    $productOrder->po_agen,// destination
+                $mutConfirm = Mutasi::confirmSales(
+                    $productOrder->po_agen, // destination
                     $po->pod_item, // itemId
                     $productOrder->po_nota, // nota
-                    5 // mutcat
+                    20, // mutcat in
+                    5 // mutcat out
                 );
-                if ($mutConfirm !== 'success') {
+                if ($mutConfirm->original['status'] !== 'success') {
                     return $mutConfirm;
                 }
             }
