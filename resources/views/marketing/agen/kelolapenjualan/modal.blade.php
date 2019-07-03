@@ -67,57 +67,57 @@
             </div>
             <div class="modal-body">
                 <div class="row form-group">
-                    <label for="nama_agen" class="col-2 col-form-label">Nama Agen :</label>
+                    <label for="modalnama_agen" class="col-2 col-form-label">Nama Agen :</label>
                     <div class="col-10">
                         <input id="modalnama_agen" class="form-control form-control-sm" readonly>
                     </div>
                 </div>
                 <div class="row form-group">
-                    <label for="nama_customer" class="col-2 col-form-label">Nama Customer :</label>
+                    <label for="modalnama_customer" class="col-2 col-form-label">Nama Customer :</label>
                     <div class="col-10">
                         <input id="modalnama_customer" class="form-control form-control-sm" readonly>
                     </div>
                 </div>
                 <div class="row form-group">
-                    <label for="website" class="col-2 col-form-label">Website :</label>
+                    <label for="modal_website" class="col-2 col-form-label">Website :</label>
                     <div class="col-10">
                         <input type="text" class="form-control-sm form-control" id="modal_website" readonly>
                     </div>
                 </div>
                 <div class="row form-group">
-                    <label for="website" class="col-2 col-form-label">Kode Transaksi :</label>
+                    <label for="modal_transaksi" class="col-2 col-form-label">Kode Transaksi :</label>
                     <div class="col-10">
                         <input type="text" class="form-control-sm form-control" id="modal_transaksi" style="text-transform: uppercase" readonly>
                     </div>
                 </div>
                 <div class="row form-group">
-                    <label for="produk" class="col-2 col-form-label">Produk :</label>
+                    <label for="modal_produk" class="col-2 col-form-label">Produk :</label>
                     <div class="col-10">
                         <input type="text" class="form-control-sm form-control" id="modal_produk" style="text-transform: uppercase" readonly>
                     </div>
                 </div>
                 <div class="row form-group">
-                    <label for="kuantitas" class="col-2 col-form-label">Kuantitas :</label>
+                    <label for="modal_kuantitas" class="col-2 col-form-label">Kuantitas :</label>
                     <div class="col-4">
                         <input type="number" class="form-control-sm form-control" id="modal_kuantitas" readonly>
                     </div>
-                    <label for="satuan" class="col-2 col-form-label">Satuan :</label>
+                    <label for="modal_satuan" class="col-2 col-form-label">Satuan :</label>
                     <div class="col-4">
                         <input id="modal_satuan" class="form-control form-control-sm" readonly>
                     </div>
                 </div>
                 <div class="row form-group">
-                    <label for="harga" class="col-2 col-form-label">Harga/<span id="modal_label-satuan">-</span> :</label>
+                    <label for="modal_harga" class="col-2 col-form-label">Harga/<span id="modal_label-satuan">-</span> :</label>
                     <div class="col-4">
                         <input type="text" class="form-control-sm form-control input-harga" id="modal_harga" readonly>
                     </div>
-                    <label for="total" class="col-2 col-form-label">Total :</label>
+                    <label for="modal_total" class="col-2 col-form-label">Total :</label>
                     <div class="col-4">
                         <input type="text" class="form-control-sm form-control input-harga" id="modal_total" readonly>
                     </div>
                 </div>
                 <div class="row form-group">
-                    <label for="note" class="col-2 col-form-label">Catatan :</label>
+                    <label for="modal_note" class="col-2 col-form-label">Catatan :</label>
                     <div class="col-10">
                         <textarea class="form-control form-control-sm" id="modal_note" readonly></textarea>
                     </div>
