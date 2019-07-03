@@ -1255,14 +1255,18 @@
 
                     $.each(resp.code, function (key, val) {
                         table_editKPW.row.add([
-                            '<input name="code[]" value="'+val.sc_code+'" class="form-control bg-light" readonly/>',
-                            '<input name="code[]" value="'+val.sc_qty+'" class="form-control bg-light" readonly/>',
-                            '<button class="btn btn-sm rounded btn-danger"><i class="fa fa-trash"></i></button>'
+                            '<input type="text" value="'+val.sc_code+'" class="form-control bg-light code_s" readonly disabled/><input type="hidden" name="code_s[]" value="'+val.sc_code+'" class="code_s" readonly/>',
+                            '<input type="text" value="'+val.sc_qty+'" class="form-control bg-light" readonly disabled/><input type="hidden" name="code_s[]" value="'+val.sc_qty+'" class="code_s" readonly/>',
+                            '<button class="btn btn-sm rounded btn-danger btn-trash"><i class="fa fa-trash"></i></button>'
                         ]).draw(false);
                     });
                 }
             });
         }
+
+        $(document).on('click', '.btn-trash', function () {
+            $(this).parents('tr').remove();
+        });
 
         function deleteKPW(id) {
             $.confirm({

@@ -180,7 +180,7 @@
                         $("#maxstock").val(resp.data.message.qtymax);
                         $("#rangemin").val(resp.data.message.rangemin);
                         $("#rangemax").val(resp.data.message.rangemax);
-                        loadingHide();
+                        
                         $("#detailPengelolaanms").modal("show");
                         $('#table_detail').DataTable().clear().destroy();
                         var tb_detail = $('#table_detail').DataTable({
@@ -191,10 +191,11 @@
                         });
                         $.each(resp.data.codes, function(key, val){
                             tb_detail.row.add([
-                                val.sd_code,
-                                val.sd_qty
+                                val.code,
+                                val.qty
                             ]).draw(false);
                         });
+                        loadingHide();
                     }
                 })
                 .catch(function (error) {
