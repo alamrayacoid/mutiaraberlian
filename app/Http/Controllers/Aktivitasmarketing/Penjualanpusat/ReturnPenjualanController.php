@@ -101,7 +101,6 @@ class ReturnPenjualanController extends Controller
     public function getProdCode(Request $request)
     {
         $agentCode = $request->agentCode;
-        $term = $request->term;
 
         // get list salescomp-id by agent
         $salesComp = d_salescomp::where('sc_member', $agentCode)
@@ -113,12 +112,10 @@ class ReturnPenjualanController extends Controller
             array_push($listSalesCompId, $val->sc_id);
         }
 
-        $prodCode = d_salescompcode::where('ssc_code', 'like', '%'. $term .'%')
-        ->whereIn('ssc_salescomp', $listSalesCompId)
+        $prodCode = d_salescompcode::whereIn('ssc_salescomp', $listSalesCompId)
         ->groupBy('ssc_code')
         ->get();
-        // dd($prodCode, $listSalesCompId, $request->all());
-
+        
         // if (count($prodCode) == 0) {
         //     $results[] = [
         //         'id' => 0,

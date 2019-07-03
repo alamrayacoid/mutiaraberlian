@@ -188,28 +188,6 @@
 											</div>
 										</div>
 										<hr>
-										<!-- new kode produksi to exchange -->
-										<div class="row col-sm-12 col-md-12">
-											<div class="col-md-2 col-sm-6 col-12">
-												<label>Kode Produksi</label>
-											</div>
-											<div class="col-md-4 col-sm-6 col-12">
-												<div class="form-group">
-													<input type="text" readonly name="kodeproduksiGB" class="form-control" id="kodeproduksiGB" value="">
-												</div>
-											</div>
-											<hr>
-
-											<div class="col-md-2 col-sm-6 col-12">
-												<label>Jumlah</label>
-											</div>
-											<div class="col-md-4 col-sm-6 col-12">
-												<div class="form-group">
-													<input type="text" style="text-align:right;" name="qtyGB" class="form-control digits" id="qtyGB" value="" readonly>
-												</div>
-											</div>
-										</div>
-
 
 										<div class="col-md-2 col-sm-6 col-12">
 											<label>Jumlah return</label>
@@ -220,6 +198,32 @@
 											</div>
 										</div>
 										<hr>
+
+										<!-- start: detail Ganti Barang -->
+										<div class="col-md-12 col-sm-12 text-info">
+											<div class="row bordered">
+												<div class="col-md-2 col-sm-6 col-12 detailGB">
+													<label>Kode Produksi Pengganti</label>
+												</div>
+												<div class="col-md-4 col-sm-6 col-12">
+													<div class="form-group">
+														<select name="kodeproduksiGB" id="kodeproduksiGB" class="form-control form-control-sm select2 prodcodeGB">
+															<option value="" selected>=== Pilih Kode Produksi ===</option>
+														</select>
+													</div>
+				                                </div>
+
+												<div class="col-md-2 col-sm-6 col-12 detailGB">
+													<label>Jumlah Pengganti</label>
+												</div>
+												<div class="col-md-4 col-sm-6 col-12 detailGB">
+													<div class="form-group">
+														<input type="text" name="qtyGB" class="form-control digits" id="qtyGB" value="">
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- end: detail Ganti Barang -->
 
 										<div class="col-md-2 col-sm-6 col-12">
 											<label>Keterangan </label>
@@ -286,7 +290,6 @@
 			$('#itemId').val(itemId);
 			getDataSalesComp();
 		});
-
 		$('#qtyReturn').on('keyup', function(){
 			var qtyReturn = $('#qtyReturn').val();
 			var batas = $('#qty').val();
@@ -298,6 +301,14 @@
 			else if (parseFloat(qtyReturn) < 0 || qtyReturn == '') {
 				messageWarning('Info', 'Jumlah Return tidak boleh kurang dari 0');
 				$('#qtyReturn').val(0);
+			}
+		});
+		$('#type').on('change', function() {
+			if ($(this).val() == 'GB') {
+				$('.detailGB').removeClass('d-none');
+			}
+			else {
+				$('.detailGB').addClass('d-none');
 			}
 		});
 
@@ -372,7 +383,6 @@
 			url: "{{ route('returnpenjualanagen.getProdCode') }}",
 			type: "get",
 			data: {
-				term: $('#kodeproduksi').val(),
 				agentCode: agentCode
 			},
 			beforeSend: function () {
@@ -380,6 +390,7 @@
 			},
 			success: function (response) {
 				loadingHide();
+				// fill kodeproduksi option
 				$('#kodeproduksi').empty();
 				if (response.length == 0) {
 					$("#kodeproduksi").append('<option value="" selected disabled>=== Pilih Kode Produksi ===</option>');
