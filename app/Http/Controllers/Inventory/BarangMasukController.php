@@ -296,24 +296,37 @@ class BarangMasukController extends Controller
 
     public function getDetail(Request $request)
     {
-        $st = $request->stock;
+        $id = $request->stock;
         $dt = $request->detail;
 
-        $detail = DB::table('d_stock_mutation')
+        
+        // dd($request);
+        $data = DB::table('d_stock_mutation')
             ->join('d_stock', 'sm_stock', 's_id')
-            ->join('m_item', 's_item', 'i_id')
             ->join('m_company as pemilik', 's_comp', 'pemilik.c_id')
             ->join('m_company as posisi', 's_position', 'posisi.c_id')
-            ->join('d_itementry', 'sm_nota', 'ie_nota')
-            ->join('m_unit', 'ie_unit', 'u_id')
-            ->select('pemilik.c_name as pemilik', 'posisi.c_name as posisi', 'i_code', 'i_name', 'u_name', 'sm_nota', 'sm_qty', 'sm_hpp')
-            ->where('sm_stock', '=', $st)
-            ->where('sm_detailid', '=', $dt)->first();
-        return Response::json(array(
-            'success' => true,
-            'data'    => $detail,
-            'hpp'     => 'Rp. '.number_format($detail->sm_hpp, 0,',','.')
-        ));
+            ->join('m_item', 's_item', 'i_id')
+            ->join('m_unit', 'i_unit1', 'u_id')
+            ->where('sm_stock', '=', $id)
+            ->where('sm_detailid', '=', $dt)
+            ->select('m_item.i_code as code', 'm_item.i_name as i_name', 'pemilik.c_name as pemilik', 'posisi.c_name as posisi', DB::raw('format(sm_qty, 0) as jumlah'), 'm_unit.u_name as u_name', 'sm_nota as nota', 'sm_hpp')
+            ->first();
+
+        // dd($data);
+        $detail = DB::table('d_stockmutationdt')
+            ->where('smd_stock', '=', $id)
+            ->where('smd_stockmutation', '=', $dt)
+            ->get();
+        return response()->json([
+            "data" => $data,
+            "detail" => $detail,
+            "hpp" => 'Rp. '.number_format($data->sm_hpp, 0,',','.')
+        ]);
+        // return Response::json(array(
+        //     'success' => true,
+        //     'data'    => $detail,
+        //     'hpp'     => 'Rp. '.number_format($detail->sm_hpp, 0,',','.')
+        // ));
 
     }
 }
