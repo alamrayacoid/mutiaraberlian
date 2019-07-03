@@ -121,7 +121,7 @@
                                                         <div class="col-md-4 label">Nomor Mutasi Kas</div>
                                                         <div class="col-md-5">
                                                             <div class="input-group mb-3">
-                                                              <input type="text" :class="$v.single.tr_nomor.$error ? 'form-control form-control-sm error' : 'form-control form-control-sm'" placeholder="Diisi oleh system." name="tr_nomor" id="tr_nomor" v-model="$v.single.tr_nomor.$model" readonly>
+                                                              <input type="text" class="form-control form-control-sm" placeholder="Diisi oleh system." name="tr_nomor" id="tr_nomor" v-model="single.tr_nomor" readonly>
 
                                                             </div>
                                                         </div>
@@ -196,7 +196,7 @@
                                                     </div>
 
                                                     <div class="col-md-2">
-                                                        <button type="button" class="btn btn-sm btn-success" style="color: white; font-size: 8.5pt; padding-top: 5px;">
+                                                        <button type="button" class="btn btn-sm btn-success" style="color: white; font-size: 8.5pt; padding-top: 5px;" @click="addAddition">
                                                             <i class="fa fa-plus"></i> &nbsp;
                                                             Tambah Detail COA
                                                         </button>
@@ -224,7 +224,7 @@
                                                                 </template>
 
                                                                 <template v-if="detail.dt_status != 'locked'">
-                                                                    <i class="fa fa-trash hintText" style="font-style: normal;"></i>
+                                                                    <i class="fa fa-trash hintText hint" style="font-style: normal;" @click="deleteAddition($event, idx)"></i>
                                                                 </template>
                                                             </td>
 
@@ -234,20 +234,20 @@
                                                                 </template>
 
                                                                 <template v-if="idx > 0">
-                                                                    <vue-select :id="'dt_akun'" :options="tr_akun_lawan" :search="false" :styles="'border: 0px;'"></vue-select>
+                                                                    <vue-select :id="'dt_akun'" :name="'dt_akun[]'" :options="tr_akun_lawan" :search="false" :styles="'border: 0px;'"></vue-select>
                                                                 </template>
                                                             </td>
 
                                                             <td>
-                                                                <input type="text" v-model="detail.dt_keterangan" style="font-size: 9pt; height: 20px; border: 0px; width: 100%; text-align: left; color: #666; padding-left: 5px;">
+                                                                <input type="text" name="dt_keterangan[]" v-model="detail.dt_keterangan" style="font-size: 9pt; height: 20px; border: 0px; width: 100%; text-align: left; color: #666; padding-left: 5px;">
                                                             </td>
 
                                                             <td>
-                                                                <vue-inputmask :name="'debet'" :id="'debet'" :style="'background: white;'" :minus="false" :readonly="true" :css="'border: 0px; height: 20px; font-size: 9pt; width: 100%;'" v-model="detail.dt_debet"></vue-inputmask>
+                                                                <vue-inputmask :name="'dt_debet[]'" :id="'debet'" :style="'background: white;'" :minus="false" :readonly="detail.dt_status=='locked'" :css="'border: 0px; height: 20px; font-size: 9pt; width: 100%;'" v-model="detail.dt_debet" @input="cekAdditionDebet($event, idx)"></vue-inputmask>
                                                             </td>
 
                                                             <td>
-                                                                <vue-inputmask :name="'debet'" :id="'debet'" :style="'background: white;'" :minus="false" :readonly="true" :css="'border: 0px; height: 20px; font-size: 9pt; width: 100%;'" v-model="detail.dt_kredit"></vue-inputmask>
+                                                                <vue-inputmask :name="'dt_kredit[]'" :id="'debet'" :style="'background: white;'" :minus="false" :readonly="detail.dt_status=='locked'" :css="'border: 0px; height: 20px; font-size: 9pt; width: 100%;'" v-model="detail.dt_kredit" @input="cekAdditionKredit($event, idx)"></vue-inputmask>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -380,8 +380,11 @@
                 ],
 
                 tr_akun_lawan: [],
+                addition: [],
 
                 single: {
+                    tr_nomor: '',
+
                     totDebet: 0,
                     totKredit: 0,
 
@@ -392,10 +395,6 @@
 
             validations: {
                 single : {
-                    tr_nomor: {
-                        required,
-                    },
-
                     tr_keterangan: {
                         required,
                     },
@@ -404,12 +403,12 @@
 
             watch: {
                 tr_akun_detail: {
-                    handler: function(e) {
+                    handler: function(e){
                         var debet = kredit = 0;
 
-                        $.each(e, function(index, alpha){
-                            debet += alpha.dt_debet;
-                            kredit += alpha.dt_kredit;
+                        $.each(this.tr_akun_detail, function(index, alpha){
+                            debet += parseFloat(alpha.dt_debet);
+                            kredit += parseFloat(alpha.dt_kredit);
                         });
 
                         this.single.totDebet = debet;
@@ -421,12 +420,17 @@
 
             mounted: function(){
                 console.log('vue mounted');
-                axios.get("{{ Route('keuangan.akun.resource') }}")
+                axios.get("{{ Route('keuangan.mutasi_kas.resource') }}")
                         .then((response) => {
                             this.downloadingResource = false;
 
-                            this.coaChange(this.tr_akun_kas[0].id);
+                            this.tr_akun_kas = response.data.akun;
                             this.single.jenisMutasi = 'D';
+
+                            if(response.data.akun.length){
+                                this.coaChange(this.tr_akun_kas[0].id);
+                            }
+
                             this.jenisChange(this.tr_jenis[0].id);
 
                         }).catch((e) => {
@@ -449,9 +453,9 @@
                         this.disabledButton = true;
                         dataForm = $('#data-form').serialize();
 
-                        axios.post('{{ Route("keuangan.akun.save") }}', dataForm)
+                        axios.post('{{ Route("keuangan.mutasi_kas.save") }}', dataForm)
                                 .then((response) => {
-                                    console.log(response.data.hierarki);
+                                    console.log(response.data);
                                     if(response.data.status == 'success'){
                                         $.toast({
                                             text: response.data.text,
@@ -459,13 +463,6 @@
                                             icon: response.data.status,
                                             stack: 1
                                         });
-
-                                        this.dataAkun = response.data.akun;
-                                        this.data_table_akun.data.source = response.data.akun;
-
-                                        if(response.data.akun.length){
-                                            this.kelompokChange($('#ak_kelompok').val());
-                                        }
 
                                         this.resetForm();
 
@@ -575,7 +572,7 @@
                 },
 
                 nominalChange: function(e){
-                    var nominal = (e.val) ? parseFloat(e.val.replace(/\,/g, '')) : 0;
+                    var nominal = (e) ? parseFloat(e.replace(/\,/g, '')) : 0;
 
                     if(this.single.jenisMutasi == "D"){
                         this.tr_akun_detail[0].dt_debet = nominal;
@@ -610,6 +607,22 @@
                     }
                 },
 
+                addAddition: function(e){
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    this.tr_akun_detail.push(
+                        {
+                            dt_text: '',
+                            dt_keterangan: '',
+                            dt_posisi: '',
+                            dt_debet: 0,
+                            dt_kredit: 0,
+                            dt_status: 'open'
+                        },
+                    );
+                },
+
                 buttonHelpCicked: function(e){
                     e.preventDefault();
                     e.stopImmediatePropagation();
@@ -636,6 +649,25 @@
                         error: validation.$error,
                         dirty: validation.$dirty
                     }
+                },
+
+                cekAdditionDebet: function(val, idx){
+                    var nominal = (val) ? parseFloat(val.replace(/\,/g, '')) : 0;
+                    this.tr_akun_detail[idx].dt_debet = nominal;
+                    this.tr_akun_detail[idx].dt_kredit = 0;
+                },
+
+                cekAdditionKredit: function(val, idx){
+                    var nominal = (val) ? parseFloat(val.replace(/\,/g, '')) : 0;
+                    this.tr_akun_detail[idx].dt_kredit = nominal;
+                    this.tr_akun_detail[idx].dt_debet = 0;
+                },
+
+                deleteAddition: function(e, index){
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    this.tr_akun_detail.splice(index, 1);
                 },
 
                 resetForm: function(){

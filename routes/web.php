@@ -748,7 +748,15 @@ Route::group(['middleware' => 'auth'], function () {
         // Mutasi antar Kas
             Route::get('keuangan/manajemen-input-transaksi/mutasi_kas/create', [
                 'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@create'
-            ])->name('keuangan.transaksi.create');
+            ])->name('keuangan.mutasi_kas.create');
+
+            Route::get('keuangan/manajemen-input-transaksi/mutasi_kas/resource', [
+                'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@resource'
+            ])->name('keuangan.mutasi_kas.resource');
+
+            Route::post('keuangan/manajemen-input-transaksi/mutasi_kas/save', [
+                'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@save'
+            ])->name('keuangan.mutasi_kas.save');
 
     // Selesai Dirga
 
