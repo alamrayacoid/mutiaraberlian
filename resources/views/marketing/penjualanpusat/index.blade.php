@@ -983,17 +983,17 @@
         })
     }
 
-    function hapus(id){
-        $.ajax({
-           type: 'get',
-           data: {id},
-           dataType: 'json',
-           url: baseUrl + '/marketing/penjualanpusat/returnpenjualan/hapus',
-           success : function(response){
-               if
-           }
-        });
-    }
+    // function hapus(id){
+    //     $.ajax({
+    //        type: 'get',
+    //        data: {id},
+    //        dataType: 'json',
+    //        url: baseUrl + '/marketing/penjualanpusat/returnpenjualan/hapus',
+    //        success : function(response){
+    //            if
+    //        }
+    //     });
+    // }
 
     function kirim() {
         let nota = $('#notaModalSend').val();
