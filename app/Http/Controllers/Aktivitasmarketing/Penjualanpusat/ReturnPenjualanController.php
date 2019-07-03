@@ -101,7 +101,6 @@ class ReturnPenjualanController extends Controller
     public function getProdCode(Request $request)
     {
         $agentCode = $request->agentCode;
-        $term = $request->term;
 
         // get list salescomp-id by agent
         $salesComp = d_salescomp::where('sc_member', $agentCode)
@@ -113,12 +112,10 @@ class ReturnPenjualanController extends Controller
             array_push($listSalesCompId, $val->sc_id);
         }
 
-        $prodCode = d_salescompcode::where('ssc_code', 'like', '%'. $term .'%')
-        ->whereIn('ssc_salescomp', $listSalesCompId)
+        $prodCode = d_salescompcode::whereIn('ssc_salescomp', $listSalesCompId)
         ->groupBy('ssc_code')
         ->get();
-        // dd($prodCode, $listSalesCompId, $request->all());
-
+        
         // if (count($prodCode) == 0) {
         //     $results[] = [
         //         'id' => 0,
@@ -157,6 +154,7 @@ class ReturnPenjualanController extends Controller
             });
         })
         ->get();
+
         return response()->json($listNota);
     }
     // get sales-comp data
@@ -252,6 +250,7 @@ class ReturnPenjualanController extends Controller
             $nota = CodeGenerator::codeWithSeparator('d_return', 'r_nota', 8, 10, 3, 'RT', '-');
             $id = d_return::max('r_id') + 1;
 
+            // insert data to table d_return
             DB::table('d_return')
                 ->insert([
                     'r_id' => $id,
@@ -295,25 +294,35 @@ class ReturnPenjualanController extends Controller
             if ($mutationOut->original['status'] !== 'success') {
                 return $mutationOut;
             }
-            dd('x');
+            // set stock-parent-id
+            $stockParentId = $mutationOut->original['stockParentId'];
+            // get list
+            $listSellPrice = $mutationOut->original['listSellPrice'];
+            $listHPP = $mutationOut->original['listHPP'];
+            $listSmQty = $mutationOut->original['listSmQty'];
+            $listPCReturn = $mutationOut->original['listPCReturn'];
+            $listQtyPCReturn = $mutationOut->original['listQtyPCReturn'];
 
-            // mutasi masuk return-penjualan
-            $mutasireturn = Mutasi::mutasimasukreturn(
-                3, // mutcat return-rusak
-                $member, // item-owner
-                $dataSales->sc_comp, // destination
+            // insert stock mutation using sales 'in'
+            $mutationIn = Mutasi::salesIn(
+                // $member, // from
+                $dataSales->sc_comp, // to
                 $itemId, // item-id
-                $qtyReturn, // qty
-                'BROKEN', // item status
-                'ON DESTINATION', // item condition
-                0, // hpp
-                0, // sell-price
                 $nota, // nota return
-                $notaPenjualan, // nota refference
-                $listPC,
-                $listQtyPC
+                $listPCReturn, // list of list production-code
+                $listQtyPCReturn, // list of list production-code-qty
+                $listUnitPC, // list of production-code-unit
+                $listSellPrice, // list of sellprice
+                $listHPP,
+                $listSmQty,
+                3, // mutcat masuk return barang rusak
+                $stockParentId, // stock-parent id
+                'ON DESTINATION', // item status
+                'BROKEN' // item condition
             );
-            dd('x', $mutasireturn);
+            if ($mutationIn->original['status'] !== 'success') {
+                return $mutationIn;
+            }
 
             DB::commit();
             return response()->json([

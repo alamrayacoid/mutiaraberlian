@@ -1985,6 +1985,37 @@ class ManajemenAgenController extends Controller
         ]);
     }
 
+    public function editKPW($id)
+    {
+        // dd($id);
+        $datas = DB::table('d_salesweb')
+            ->join('m_company', 'sw_agen', 'c_id')
+            ->join('m_item', 'sw_item', 'i_id')
+            ->join('m_unit', 'sw_unit', 'u_id')
+            ->where('sw_id', '=', $id)->first();
+        $units = DB::table('m_item')
+            ->join('m_unit as unit1', 'i_unit1', 'unit1.u_id')
+            ->join('m_unit as unit2', 'i_unit2', 'unit2.u_id')
+            ->join('m_unit as unit3', 'i_unit3', 'unit3.u_id')
+            ->select('unit1.u_id as id1', 'unit1.u_name as name1', 'unit2.u_id as id2', 'unit2.u_name as name2', 'unit3.u_id as id3', 'unit3.u_name as name3')->first();
+        // $units = DB::table('m_unit')->select('m_unit.*')
+        //     ->join('m_item as unit1', 'u_id', 'unit1.i_unit1')
+        //     ->join('m_item as unit2', 'u_id', 'unit2.i_unit2')
+        //     ->join('m_item as unit3', 'u_id', 'unit3.i_unit3')
+        //     ->where('unit1.i_id', '=', $datas->sw_item)
+        //     ->where('unit2.i_id', '=', $datas->sw_item)
+        //     ->where('unit3.i_id', '=', $datas->sw_item)
+        //     ->get();
+        // dd($units);
+        $code = DB::table('d_salescode')->where('sc_sales', '=', $id)->get();
+
+        return Response::json([
+            'datas' => $datas,
+            'units' => $units,
+            'code'  => $code
+        ]);
+    }
+
     public function deleteKPW(Request $request)
     {
         $id = $request->id;
