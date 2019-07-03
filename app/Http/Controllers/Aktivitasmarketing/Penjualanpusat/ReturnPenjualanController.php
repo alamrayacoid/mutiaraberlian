@@ -5,12 +5,17 @@ namespace App\Http\Controllers\Aktivitasmarketing\Penjualanpusat;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\d_return;
 use App\d_salescomp;
 use App\d_salescompcode;
 use App\m_company;
 use App\m_wil_provinsi;
 use App\m_wil_kota;
 use Carbon\Carbon;
+use CodeGenerator;
+use DB;
+use Mutasi;
+use Validator;
 
 class ReturnPenjualanController extends Controller
 {
@@ -99,7 +104,10 @@ class ReturnPenjualanController extends Controller
         $term = $request->term;
 
         // get list salescomp-id by agent
-        $salesComp = d_salescomp::where('sc_member', $agentCode)->select('sc_id')->get();
+        $salesComp = d_salescomp::where('sc_member', $agentCode)
+        ->where('sc_type', 'C') // chek it first
+        ->select('sc_id')
+        ->get();
         $listSalesCompId = array();
         foreach ($salesComp as $key => $val) {
             array_push($listSalesCompId, $val->sc_id);
@@ -107,6 +115,7 @@ class ReturnPenjualanController extends Controller
 
         $prodCode = d_salescompcode::where('ssc_code', 'like', '%'. $term .'%')
         ->whereIn('ssc_salescomp', $listSalesCompId)
+        ->groupBy('ssc_code')
         ->get();
         // dd($prodCode, $listSalesCompId, $request->all());
 
@@ -131,18 +140,23 @@ class ReturnPenjualanController extends Controller
     public function getNota(Request $request)
     {
         $prodCode = $request->prodCode;
+        $agentCode = $request->agentCode;
         $listNota = d_salescompcode::where('ssc_code', 'like', '%'. $prodCode .'%')
-        ->groupBy('ssc_salescomp')
+        ->whereHas('getSalesCompById', function($q) use ($agentCode) {
+            $q->where('sc_member', $agentCode);
+        })
         ->with(['getSalesCompById' => function($q) {
-            // $q->select('sc_nota');
         }])
+        ->whereHas('getSalesCompDt', function($q) use ($agentCode) {
+            $q->whereHas('getStock', function ($query) use ($agentCode) {
+                $query
+                    ->where('s_status', 'ON DESTINATION')
+                    ->where('s_condition', 'FINE')
+                    ->where('s_position', $agentCode)
+                    ->where('s_comp', $agentCode);
+            });
+        })
         ->get();
-
-        // $nota = DB::table('d_salescompcode')
-        //             ->join('d_salescomp', 'sc_id', '=', 'ssc_salescomp')
-        //             ->where('ssc_code', $request->kodeproduksi)
-        //             ->get();
-        // dd($listNota);
         return response()->json($listNota);
     }
     // get sales-comp data
@@ -150,16 +164,20 @@ class ReturnPenjualanController extends Controller
     {
         $nota = $request->nota;
         $itemId = $request->itemId;
+        $prodCode = $request->prodCode;
 
         $data = d_salescomp::where('sc_nota', $request->nota)
             ->with('getComp')
             ->with('getAgent')
-            ->with(['getSalesCompDt' => function($q) use ($itemId) {
-                $q
-                    ->where('scd_item', $itemId)
-                    ->with('getItem');
+            ->with(['getSalesCompDt' => function($q) use ($itemId, $prodCode) {
+                $q->where('scd_item', $itemId)
+                    ->with('getItem')
+                    ->with(['getProdCode' => function($q) use ($prodCode) {
+                        $q->where('ssc_code', $prodCode);
+                    }]);
             }])
             ->first();
+
 
         // $comp = DB::table('m_company')
         //             ->where('c_id', $data->sc_comp)
@@ -175,60 +193,138 @@ class ReturnPenjualanController extends Controller
         //             ->where('scd_item', $request->itemid)
         //             ->first();
 
-        $data->sc_date = Carbon::parse($data->sc_date)->format('d-m-Y');
+        $data->sc_date = Carbon::parse($data->sc_date)->format('d M Y');
 
-        $data->sc_total = number_format($data->sc_total,2,",",".");
+        $data->sc_total = number_format($data->sc_total, 2, ",", ".");
 
         return response()->json([
             'data' => $data
-            // 'comp' => $comp,
-            // 'agen' => $agen,
-            // 'item' => $item
         ]);
     }
-
+    // validate request
+    public function validateData(Request $request)
+    {
+        // start: validate data before execute
+        $validator = Validator::make($request->all(), [
+            'agent' => 'required',
+            'kodeproduksi' => 'required',
+            'nota' => 'required',
+            'qty' => 'required'
+        ],
+        [
+            'agent.required' => 'Agen masih kosong !',
+            'kodeproduksi.required' => 'Kode Produksi masih kosong !',
+            'nota.required' => 'Nota masih kosong !',
+            'qty.required' => 'Jumlah barang masih kosong !'
+        ]);
+        if ($validator->fails()) {
+            return $validator->errors()->first();
+        } else {
+            return '1';
+        }
+    }
+    // store data to Database
     public function store(Request $request)
     {
+        // validate request
+        $isValidRequest = $this->validateData($request);
+        if ($isValidRequest != '1') {
+            $errors = $isValidRequest;
+            return response()->json([
+                'status' => 'invalid',
+                'message' => $errors
+            ]);
+        }
+
         DB::beginTransaction();
         try {
+            $notaPenjualan = $request->nota;
+            $member = $request->agent;
+            $itemId = $request->itemId;
+            $qty = (int)$request->qty;
+            $qtyReturn = (int)$request->qtyReturn;
+            $prodCode = $request->kodeproduksi;
+            $type = $request->type;
+
+            // get data salescomp
+            $dataSales = d_salescomp::where('sc_nota', $notaPenjualan)->first();
 
             $nota = CodeGenerator::codeWithSeparator('d_return', 'r_nota', 8, 10, 3, 'RT', '-');
-            $id = DB::table('d_return')
-                    ->max('r_id')+1;
+            $id = d_return::max('r_id') + 1;
 
             DB::table('d_return')
                 ->insert([
                     'r_id' => $id,
                     'r_nota' => $nota,
-                    'r_reff' => $request->notapenjualan,
+                    'r_reff' => $notaPenjualan,
                     'r_date' => Carbon::now('Asia/Jakarta'),
-                    'r_member' => $request->member,
-                    'r_item' => $request->itemid,
-                    'r_qty' => str_replace('.','', $request->qty),
-                    'r_code' => $request->kodeproduksi,
-                    'r_type' => $request->type
+                    'r_member' => $member,
+                    'r_item' => $itemId,
+                    'r_qty' => $qtyReturn,
+                    'r_code' => $prodCode,
+                    'r_type' => $type
                 ]);
 
-            if ($request->type == 'GB') {
+            if ($type == 'GB') {
                 $mutcat = 16;
-            } elseif ($request->type == 'GU') {
+            }
+            elseif ($type == 'GU') {
                 $mutcat = 15;
-            } else {
+            }
+            else {
                 $mutcat = 17;
             }
 
-            mutasi::mutasimasukreturn(3, 'MB0000001', 'MB0000001', $request->itemid, str_replace('.','', $request->qty), 'BROKEN', 'ON DESTINATION', $nota, $request->notapenjualan);
-            mutasi::mutasikeluarreturn($mutcat, $request->member, $request->itemid, str_replace('.','', $request->qty), $nota);
+            // set list of production-code and qty each production-code
+            $listPC = array($prodCode);
+            $listQtyPC = array($qtyReturn);
+            $listUnitPC = array();
+
+            $mutationOut = mutasi::salesOut(
+                $member, // from
+                $dataSales->sc_comp, // to
+                $itemId, // item id
+                $qtyReturn, // qty item
+                $nota, // nota return
+                $listPC, // list production-code
+                $listQtyPC, // list qty of production-code
+                $listUnitPC, // list unit pf production-code
+                null,// sellPrice
+                $mutcat // mutcat
+            );
+            if ($mutationOut->original['status'] !== 'success') {
+                return $mutationOut;
+            }
+            dd('x');
+
+            // mutasi masuk return-penjualan
+            $mutasireturn = Mutasi::mutasimasukreturn(
+                3, // mutcat return-rusak
+                $member, // item-owner
+                $dataSales->sc_comp, // destination
+                $itemId, // item-id
+                $qtyReturn, // qty
+                'BROKEN', // item status
+                'ON DESTINATION', // item condition
+                0, // hpp
+                0, // sell-price
+                $nota, // nota return
+                $notaPenjualan, // nota refference
+                $listPC,
+                $listQtyPC
+            );
+            dd('x', $mutasireturn);
 
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (Throwable $th) {
+        }
+        catch (Throwable $th) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
-                'error' => $th
+                'message' => $th->getMessage()
             ]);
         }
     }

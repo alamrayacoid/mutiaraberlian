@@ -122,16 +122,6 @@
 										<hr>
 
 										<div class="col-md-2 col-sm-6 col-12">
-											<label>Agen</label>
-										</div>
-										<div class="col-md-4 col-sm-6 col-12">
-											<div class="form-group">
-												<input type="text" name="agen" readonly class="form-control" id="agen" value="">
-											</div>
-										</div>
-										<hr>
-
-										<div class="col-md-2 col-sm-6 col-12">
 											<label>Metode Pembayaran</label>
 										</div>
 										<div class="col-md-4 col-sm-6 col-12">
@@ -141,23 +131,12 @@
 										</div>
 										<hr>
 
-
 										<div class="col-md-2 col-sm-6 col-12">
 											<label>Tanggal Transaksi</label>
 										</div>
 										<div class="col-md-4 col-sm-6 col-12">
 											<div class="form-group">
 												<input type="text" readonly name="tanggaltransaksi" class="form-control" id="tanggaltransaksi" value="">
-											</div>
-										</div>
-										<hr>
-
-										<div class="col-md-2 col-sm-6 col-12">
-											<label></label>
-										</div>
-										<div class="col-md-4 col-sm-6 col-12">
-											<div class="form-group">
-
 											</div>
 										</div>
 										<hr>
@@ -191,8 +170,7 @@
 										</div>
 										<div class="col-md-4 col-sm-6 col-12">
 											<div class="form-group">
-												<input type="text" style="text-align:right;" name="qty" class="form-control digits" id="qty" value="">
-												<input type="hidden" name="qtyhidden" id="qtyhidden">
+												<input type="text" style="text-align:right;" name="qty" class="form-control digits" id="qty" value="" readonly>
 											</div>
 										</div>
 										<hr>
@@ -202,7 +180,7 @@
 										</div>
 										<div class="col-md-4 col-sm-6 col-12">
 											<div class="form-group">
-												<select class="form-control" name="type" id="type">
+												<select class="form-control select2" name="type" id="type">
 													<option value="GB">Ganti Barang</option>
 													<option value="GU">Ganti Uang</option>
 													<option value="PN">Potong Nota</option>
@@ -212,9 +190,19 @@
 										<hr>
 
 										<div class="col-md-2 col-sm-6 col-12">
-											<label>Keterangan </label>
+											<label>Jumlah return</label>
 										</div>
 										<div class="col-md-4 col-sm-6 col-12">
+											<div class="form-group">
+												<input type="text" style="text-align:right;" name="qtyReturn" class="form-control digits" id="qtyReturn" value="">
+											</div>
+										</div>
+										<hr>
+
+										<div class="col-md-2 col-sm-6 col-12">
+											<label>Keterangan </label>
+										</div>
+										<div class="col-md-10 col-sm-6 col-12">
 											<div class="form-group">
 												<input type="text" class="form-control" id="keterangan" name="keterangan">
 											</div>
@@ -277,30 +265,22 @@
 			getDataSalesComp();
 		});
 
-		$('#qty').on('keyup', function(){
-			var qty = $('#qty').val();
-			var batas = $('#qtyhidden').val();
+		$('#qtyReturn').on('keyup', function(){
+			var qtyReturn = $('#qtyReturn').val();
+			var batas = $('#qty').val();
 			batas = batas.replace( /\[\d+\]/g, '');
-			if (parseFloat(qty) > parseFloat(batas)) {
-				messageWarning('Info', 'Qty tidak boleh melebihi qty penjualan');
-				$('#qty').val(batas);
+			if (parseFloat(qtyReturn) > parseFloat(batas)) {
+				messageWarning('Info', 'Jumlah Return tidak boleh melebihi Jumlah penjualan');
+				$('#qtyReturn').val(batas);
+			}
+			else if (parseFloat(qtyReturn) < 0 || qtyReturn == '') {
+				messageWarning('Info', 'Jumlah Return tidak boleh kurang dari 0');
+				$('#qtyReturn').val(0);
 			}
 		});
 
 		$('#simpan').on('click', function(){
-			$.ajax({
-				type: 'post',
-				data: $('#formdata').serialize()+'&_token='+"{{csrf_token()}}",
-				dataType: 'JSON',
-				url: baseUrl + '/marketing/penjualanpusat/returnpenjualan/simpan',
-				success : function(response){
-					if (response.status == 'berhasil') {
-						messageSuccess('Info', 'Berhasil Disimpan');
-					} else {
-						messageWarning('Info', 'Gagal Disimpan');
-					}
-				}
-			});
+			store();
 		});
 	});
 
@@ -397,12 +377,14 @@
 	{
 		let kodeproduksi = $('#kodeproduksi').val();
 		kodeproduksi = kodeproduksi.toUpperCase();
+		let agentCode = $('#agent').val();
 		$.ajax({
 			url: "{{ route('returnpenjualanagen.getNota') }}",
 			type: "get",
 			data: {
 				term: $('#nota').val(),
-				prodCode: kodeproduksi
+				prodCode: kodeproduksi,
+				agentCode: agentCode
 			},
 			beforeSend: function () {
 				loadingShow();
@@ -456,12 +438,14 @@
 		loadingShow();
 		let nota = $('#nota').val();
 		let itemId = $('#itemId').val();
-		console.log(itemId, nota);
+		let prodCode = $("#kodeproduksi").val();
+
 		$.ajax({
 			url: "{{ route('returnpenjualanagen.getData') }}",
 			data: {
 				nota: nota,
-				itemId: itemId
+				itemId: itemId,
+				prodCode: prodCode
 			},
 			type: 'get',
 			success: function(resp) {
@@ -477,8 +461,8 @@
 				$('#tanggaltransaksi').val(resp.data.sc_date);
 				$('#total').val(resp.data.sc_total);
 				$('#item').val(resp.data.get_sales_comp_dt[0].get_item.i_name);
-				$('#qty').val(resp.data.get_sales_comp_dt[0].scd_qty);
-				$('#qtyhidden').val(resp.data.get_sales_comp_dt[0].scd_qty);
+				$('#qty').val(resp.data.get_sales_comp_dt[0].get_prod_code[0].ssc_qty);
+				// $('#qtyhidden').val(resp.data.get_sales_comp_dt[0].get_prod_code[0].ssc_qty);
 				$('#div3').css('display', '');
 			},
 			error: function(e) {
@@ -486,35 +470,29 @@
 				messageWarning('Error', 'Gagal mengambil detail penjualan, hubungi pengembang !')
 			}
 		});
-
-		// $.ajax({
-		// 	url: "{{ route('returnpenjualanagen.getData') }}",
-		// 	type: 'get',
-		// 	data: {
-		// 		note: nota,
-		// 		itemId: itemId
-		// 	},
-		// 	success : function(response) {
-		// 		console.log(response);
-		// 		// $('#penjual').val(response.comp.c_name);
-		// 		// $('#agen').val(response.agen.c_name);
-		// 		// if (response.data.sc_type == 'C') {
-		// 		// 	$('#metodepembayaran').val('Cash');
-		// 		// } else {
-		// 		// 	$('#metodepembayaran').val('Konsinyasi');
-		// 		// }
-		// 		// $('#tanggaltransaksi').val(response.data.sc_date);
-		// 		// $('#total').val(response.data.sc_total);
-		// 		// $('#item').val(response.item.i_name);
-		// 		// $('#qty').val(response.item.scd_qty);
-		// 		// $('#qtyhidden').val(response.item.scd_qty);
-		// 		// $('#div3').css('display', '');
-		// 	},
-		// 	error: function(e) {
-		// 		messageWarning('Error', 'Gagal mengambil detail penjualan, hubungi pengembang !')
-		// 	}
-		// });
 	}
+	// store data to Database
+	function store() {
+		data = $('#formdata').serialize();
+		$.ajax({
+			type: 'post',
+			data: data,
+			dataType: 'JSON',
+			url: baseUrl + '/marketing/penjualanpusat/returnpenjualan/simpan',
+			success : function(response){
+				if (response.status == 'berhasil') {
+					messageSuccess('Info', 'Berhasil Disimpan');
+				}
+				else {
+					messageWarning('Info', 'Gagal Disimpan: '+ response.message);
+				}
+			},
+			error: function(e) {
+				messageWarning('Info', 'Terjadi kesalahan : '+ e.message);
+			}
+		});
+	}
+
 	// $(document).ready(function(){
     //     var table_returnp;
     //     table_returnp = $('#table_rp').DataTable();

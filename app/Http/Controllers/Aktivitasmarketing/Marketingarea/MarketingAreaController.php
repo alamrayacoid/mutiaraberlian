@@ -905,25 +905,51 @@ class MarketingAreaController extends Controller
                     array_push($listQtyPC, $val->poc_qty);
                 }
 
-                // insert stock mutation using distribusicabangkeluar
-                // actually its public function, not specific
-                $mutDist = Mutasi::distribusicabangkeluar(
+                // insert stock mutation sales 'out'
+                $mutationOut = Mutasi::salesOut(
                     $productOrder->po_comp, // from
                     $productOrder->po_agen, // to
                     $PO->pod_item, // item-id
                     $request->qty_proses[$idxQty], // qty of smallest-unit
                     $productOrder->po_nota, // nota
-                    $productOrder->po_nota, // nota-reff
                     $listPC, // list of production-code
                     $listQtyPC, // list of production-code-qty
                     $listUnitPC, // list of production-code-unit
                     $sellPrice, // sellprice
                     5 // mutcat
                 );
-                if ($mutDist !== 'success') {
-                    return $mutDist;
+                if ($mutationOut->original['status'] !== 'success') {
+                    return $mutationOut;
+                }
+                // set stock-parent-id
+                $stockParentId = $mutationOut->original['stockParentId'];
+                // get list
+                $listSellPrice = $mutationOut->original['listSellPrice'];
+                $listHPP = $mutationOut->original['listHPP'];
+                $listSmQty = $mutationOut->original['listSmQty'];
+                $listPCReturn = $mutationOut->original['listPCReturn'];
+                $listQtyPCReturn = $mutationOut->original['listQtyPCReturn'];
+
+                // insert stock mutation using sales 'in'
+                $mutationIn = Mutasi::salesIn(
+                    $productOrder->po_comp, // from
+                    $productOrder->po_agen, // to
+                    $PO->pod_item, // item-id
+                    $productOrder->po_nota, // nota
+                    $listPCReturn, // list of list production-code
+                    $listQtyPCReturn, // list of list production-code-qty
+                    $listUnitPC, // list of production-code-unit
+                    $listSellPrice, // sellprice
+                    $listHPP,
+                    $listSmQty,
+                    20, // mutcat masuk pembelian
+                    $stockParentId // stock-parent id
+                );
+                if ($mutationIn->original['status'] !== 'success') {
+                    return $mutationIn;
                 }
             }
+            // dd('x', $mutationIn);
 
             // update qty and status in d_productorder
             DB::table('d_productorder')
@@ -2551,7 +2577,7 @@ class MarketingAreaController extends Controller
                 // set mutation (mutation-out is called inside mutation-in)
                 $mutKons = Mutasi::mutasimasuk(
                     12, // mutcat
-                    $compItem[$key], // comp / item position from
+                    $compItem[$key], // comp / item-owner
                     $member, // position / destination
                     $data['idItem'][$key], // item-id
                     $qty_compare, // qty item with smallest unit
