@@ -206,7 +206,7 @@
                     <div class="col-6 col-md-6">
                         <div class="row">
                             <div class="col-12">
-                                <table class="table table-bordered table-hover" id="table_detail">
+                                <table class="table table-bordered table-hover" id="table_detail" style="margin-top: 0px !important;">
                                     <thead>
                                         <tr>
                                             <th>Kode Produksi</th>
@@ -315,8 +315,8 @@ function TableCabang() {
 
 function detail(stock, detail)
 {
+    // loadingShow();
     $('#mDetail').modal('show');
-    loadingShow();
     $.ajax({
         url : baseUrl+"/inventory/barangmasuk/getDetail",
         type: "get",
@@ -326,7 +326,7 @@ function detail(stock, detail)
         },
         dataType : "json",
         success : function(response){
-            // loadingShow();
+            loadingShow();
             console.log(response.data.nota)
             document.getElementById("namaB").setAttribute("value", response.data.i_name);
             document.getElementById("pemilikB").setAttribute("value", response.data.pemilik);
