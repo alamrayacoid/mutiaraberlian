@@ -1207,6 +1207,7 @@
                 type: "get",
                 dataType: "json",
                 success:function(resp) {
+                    loadingShow();
                     $('#editKPW').modal('show');
                     $('#editnama_agen').val(resp.datas.c_name);
                     $('#editnama_customer').val('CUSTOMER');
@@ -1260,6 +1261,7 @@
                             '<button class="btn btn-sm rounded btn-danger btn-trash"><i class="fa fa-trash"></i></button>'
                         ]).draw(false);
                     });
+                    loadingHide();
                 }
             });
         }
