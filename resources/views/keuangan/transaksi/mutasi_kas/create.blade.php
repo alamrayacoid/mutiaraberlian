@@ -148,7 +148,7 @@
                                                     <div class="row" style="margin-top: 15px;">
                                                         <div class="col-md-4 label">Tanggal Mutasi</div>
                                                         <div class="col-md-7">
-                                                            <vue-datepicker :name="'tr_tanggal'" :id="'tr_tanggal'" :class="'form-control'" :placeholder="'Pilih Tanggal Mutasi'" :title="'Tidak Boleh Kosong'"></vue-datepicker>
+                                                            <vue-datepicker :name="'tr_tanggal'" :id="'tr_tanggal'" :class="'form-control'" :placeholder="'Pilih Tanggal Mutasi'" :title="'Tidak Boleh Kosong'" :readonly="true"></vue-datepicker>
                                                         </div>
                                                     </div>
 
@@ -379,11 +379,29 @@
                     }
                 ],
 
+                data_table_transaksi: {
+                    data: {
+                        column: [
+                            {name: 'Nomor Transaksi', context: 'tr_nomor', width: '30%', childStyle: 'text-align: center;'},
+                            {name: 'Keterangan', context: 'tr_keterangan', width: '45%', childStyle: 'text-align: center'},
+                            {name: 'Tanggal', context: 'tr_tanggal_trans', width: '25%', childStyle: 'text-align: center'},
+                        ],
+
+                        source: []
+                    },
+
+                    option: {
+                        selectable: true,
+                        index_column: 'tr_id'
+                    }
+                },
+
                 tr_akun_lawan: [],
                 addition: [],
 
                 single: {
                     tr_nomor: '',
+                    tr_keterangan: '',
 
                     totDebet: 0,
                     totKredit: 0,
@@ -420,12 +438,14 @@
 
             mounted: function(){
                 console.log('vue mounted');
+
                 axios.get("{{ Route('keuangan.mutasi_kas.resource') }}")
                         .then((response) => {
                             this.downloadingResource = false;
 
                             this.tr_akun_kas = response.data.akun;
                             this.single.jenisMutasi = 'D';
+                            this.data_table_transaksi.data.source = response.data.transaksi
 
                             if(response.data.akun.length){
                                 this.coaChange(this.tr_akun_kas[0].id);
@@ -445,8 +465,28 @@
                 save: function(e){
                     e.preventDefault();
                     e.stopImmediatePropagation();
-                    this.$v.$touch();
+                    
+                    if($('#tr_tanggal').val() == ''){
+                        $.toast({
+                            text: 'Tanggal mutasi tidak boleh kosong.',
+                            showHideTransition: 'slide',
+                            icon: 'warning',
+                            stack: 1
+                        })
 
+                        return false;
+                    }else if(this.totDebet <= 0 || this.totKredit <= 0){
+                        $.toast({
+                            text: 'Total debet/kredit harus lebih besar dari 0.',
+                            showHideTransition: 'slide',
+                            icon: 'warning',
+                            stack: 1
+                        })
+
+                        return false;
+                    }
+
+                    this.$v.$touch();
                     if(!this.$v.$invalid){
                         this.onRequest = true;
                         this.requestMessage = 'Sedang menyimpan data..';
@@ -641,7 +681,7 @@
                 },
 
                 dataSelected: function(e){
-                    
+                    alert(e);
                 },
 
                 validStatus: function(validation){
@@ -671,7 +711,36 @@
                 },
 
                 resetForm: function(){
+                    this.tr_akun_detail = [
+                        {
+                            dt_text: '1.000.001 - Kas Kecil Ku',
+                            dt_keterangan: 'Kas Kecil Keluar',
+                            dt_posisi: 'D',
+                            dt_debet: 0,
+                            dt_kredit: 0,
+                            dt_status: 'locked'
+                        },
 
+                        {
+                            dt_text: '1.0001.001 - Bank Mandiri KCP Lombok',
+                            dt_keterangan: 'Kas Bank Masuk',
+                            dt_posisi: 'K',
+                            dt_kredit: 0,
+                            dt_debet: 0,
+                            dt_status: 'locked',
+                        }
+                    ];
+
+                    this.single.tr_keterangan = '';
+
+                    if(this.tr_akun_kas.length){
+                        this.coaChange(this.tr_akun_kas[0].id);
+                    }
+
+                    $('#tr_tanggal').val('{{ date("d/m/Y") }}');
+                    $('#tr_nominal').val(0);
+
+                    this.jenisChange(this.tr_jenis[0].id);
                 }
             }
         });

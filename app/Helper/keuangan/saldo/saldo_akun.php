@@ -60,6 +60,73 @@ class saldo_akun {
 		}
 	}
 
+	static function balancingSaldoFromJurnal(Array $detail, String $tanggal, String $type){
+
+		$year = date('Y-m', strtotime($tanggal)).'-01';
+
+		foreach($detail as $key => $data){
+			$construct = DB::table('dk_akun_saldo')
+							->join('dk_akun', 'dk_akun_saldo.as_akun', '=', 'dk_akun.ak_id')
+							->where('as_akun', $data['jrdt_akun'])
+							->where('as_periode', $year)
+							->select('dk_akun_saldo.*', 'dk_akun.ak_posisi');
+
+			if($construct->first()){
+
+
+				$debet = $kredit = $calculation = 0;
+
+				if($data['jrdt_dk'] == 'D'){
+					$debet = $calculation = $data['jrdt_value'];
+
+					if($construct->first()->ak_posisi == "K")
+						$calculation *= -1;
+
+				}else{
+					$kredit = $calculation = $data['jrdt_value'];
+
+					if($construct->first()->ak_posisi == "D")
+						$calculation *= -1;
+				}
+
+				switch ($type) {
+					case 'MK':
+						$construct->update([
+							"as_mut_kas_debet"	=> DB::raw('as_mut_kas_debet + '.$debet),
+							"as_mut_kas_kredit"	=> DB::raw('as_mut_kas_kredit + '.$kredit),
+							"as_saldo_akhir"	=> DB::raw('as_saldo_akhir + '.$calculation)
+						]);
+						break;
+
+					case 'TK':
+						$construct->update([
+							"as_trans_kas_debet"	=> DB::raw('as_trans_kas_debet + '.$debet),
+							"as_trans_kas_kredit"	=> DB::raw('as_trans_kas_kredit + '.$kredit),
+							"as_saldo_akhir"		=> DB::raw('as_saldo_akhir + '.$calculation)
+						]);
+						break;
+					
+					case 'TM':
+						$construct->update([
+							"as_trans_memorial_debet"	=> DB::raw('as_trans_memorial_debet + '.$debet),
+							"as_trans_memorial_kredit"	=> DB::raw('as_trans_memorial_kredit + '.$kredit),
+							"as_saldo_akhir"			=> DB::raw('as_saldo_akhir + '.$calculation)
+						]);
+						break;
+				}
+
+				DB::table('dk_akun_saldo')
+					->where('as_periode', '>', $year)
+					->where('as_akun', $data['jrdt_akun'])
+					->update([
+						'as_saldo_awal' 	=> DB::raw('as_saldo_awal + '.$calculation),
+						'as_saldo_akhir' 	=> DB::raw('as_saldo_akhir + '.$calculation),
+					]);
+
+			}
+		}
+	}
+
 }
 
 ?>

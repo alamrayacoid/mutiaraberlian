@@ -268,7 +268,7 @@ class akun_controller extends Controller
 
     		return json_encode([
                 'status'    => 'success',
-                'text'      => 'Data COA Baru Berhasil Disimpan',
+                'text'      => 'Data COA Berhasil Diperbarui',
                 "akun"		=> $this->grapData(),
             ]);
 
