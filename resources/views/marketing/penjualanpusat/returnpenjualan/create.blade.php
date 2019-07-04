@@ -116,6 +116,7 @@
 										</div>
 										<div class="col-md-4 col-sm-6 col-12">
 											<div class="form-group">
+												<input type="hidden" name="sellerCode" id="sellerCode">
 												<input type="text" name="penjual" readonly class="form-control" id="penjual" value="">
 											</div>
 										</div>
@@ -181,6 +182,7 @@
 										<div class="col-md-4 col-sm-6 col-12">
 											<div class="form-group">
 												<select class="form-control select2" name="type" id="type">
+													<option value="" selected disabled>=== Pilih Jenis Pengembalian ===</option>
 													<option value="GB">Ganti Barang</option>
 													<option value="GU">Ganti Uang</option>
 													<option value="PN">Potong Nota</option>
@@ -200,9 +202,9 @@
 										<hr>
 
 										<!-- start: detail Ganti Barang -->
-										<div class="col-md-12 col-sm-12 text-info">
+										<div class="col-md-12 col-sm-12 text-info detailGB d-none">
 											<div class="row bordered">
-												<div class="col-md-2 col-sm-6 col-12 detailGB">
+												<div class="col-md-2 col-sm-6 col-12">
 													<label>Kode Produksi Pengganti</label>
 												</div>
 												<div class="col-md-4 col-sm-6 col-12">
@@ -213,10 +215,10 @@
 													</div>
 				                                </div>
 
-												<div class="col-md-2 col-sm-6 col-12 detailGB">
+												<div class="col-md-2 col-sm-6 col-12">
 													<label>Jumlah Pengganti</label>
 												</div>
-												<div class="col-md-4 col-sm-6 col-12 detailGB">
+												<div class="col-md-4 col-sm-6 col-12">
 													<div class="form-group">
 														<input type="text" name="qtyGB" class="form-control digits" id="qtyGB" value="">
 													</div>
@@ -303,15 +305,29 @@
 				$('#qtyReturn').val(0);
 			}
 		});
-		$('#type').on('change', function() {
+		$('#type').on('change select2:select', function() {
 			if ($(this).val() == 'GB') {
+				getProdCodeSubstitute();
 				$('.detailGB').removeClass('d-none');
+				$('#qtyReturn').focus();
 			}
 			else {
 				$('.detailGB').addClass('d-none');
 			}
 		});
-
+		$('#kodeproduksiGB').on('change select2:select', function() {
+			$('#qtyGB').focus();
+		});
+		$('#qtyGB').on('keyup', function() {
+			if (parseInt($(this).val()) > parseInt($('#qtyReturn').val())) {
+				messageWarning('Perhatian', 'Jumlah pengganti tidak boleh melebihi jumlah return');
+				$(this).val($('#qtyReturn').val());
+			}
+			else if(parseInt($(this).val()) < 0) {
+				messageWarning('Perhatian', 'Jumlah pengganti tidak boleh lebih kecil dari 0');
+				$(this).val(0);
+			}
+		});
 		$('#simpan').on('click', function(){
 			store();
 		});
@@ -484,6 +500,7 @@
 			success: function(resp) {
 				loadingHide();
 				console.log(resp);
+				$('#sellerCode').val(resp.data.get_comp.c_id);
 				$('#penjual').val(resp.data.get_comp.c_name);
 				$('#agen').val(resp.data.get_agent.c_name);
 				if (resp.data.sc_type == 'C') {
@@ -501,6 +518,39 @@
 			error: function(e) {
 				loadingHide();
 				messageWarning('Error', 'Gagal mengambil detail penjualan, hubungi pengembang !')
+			}
+		});
+	}
+	// get production-code substitute
+	function getProdCodeSubstitute()
+	{
+		let sellerCode = $('#sellerCode').val();
+		let itemId = $('#itemId').val();
+
+		$.ajax({
+			url: "{{ route('returnpenjualanagen.getProdCodeSubstitute') }}",
+			type: "get",
+			data: {
+				sellerCode: sellerCode,
+				itemId: itemId
+			},
+			beforeSend: function () {
+				loadingShow();
+			},
+			success: function (response) {
+				loadingHide();
+				// fill kodeproduksiGB option
+				$('#kodeproduksiGB').empty();
+				if (response.length == 0) {
+					$("#kodeproduksiGB").append('<option value="" selected disabled>=== Pilih Kode Produksi ===</option>');
+				} else {
+					$("#kodeproduksiGB").append('<option value="" selected disabled>=== Pilih Kode Produksi ===</option>');
+					$.each(response, function( key, val ) {
+						$("#kodeproduksiGB").append('<option value="'+val+'">'+val+'</option>');
+					});
+				}
+				// $('#kodeproduksiGB').focus();
+				// $('#kodeproduksiGB').select2('open');
 			}
 		});
 	}

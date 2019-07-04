@@ -264,36 +264,6 @@
         }, 750);
     }
 
-    //returnagen();
-
-    function returnagen() {
-        setTimeout(function () {
-            tb_return = $('#table_return').DataTable({
-                responsive: true,
-                serverSide: true,
-                ajax: {
-                    url: baseUrl + "/marketing/penjualanpusat/returnpenjualan/returnpenjualanagen",
-                    type: "get",
-                    data: {
-                        "_token": "{{ csrf_token() }}"
-                    }
-                },
-                columns: [
-                    {data: 'DT_RowIndex'},
-                    {data: 'tanggal'},
-                    {data: 'r_nota'},
-                    {data: 'r_reff'},
-                    {data: 'r_code'},
-                    {data: 'type'},
-                    {data: 'agen'},
-                    {data: 'action'}
-                ],
-                pageLength: 10,
-                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-            });
-        }, 750);
-    }
-
     function editTarget(st_id, dt_id) {
         loadingShow();
         $.ajax({
@@ -400,6 +370,84 @@
 
     function setNull(id) {
         $('#'+id).val('');
+    }
+
+</script>
+
+<!-- script for return sales agent -->
+<script type="text/javascript">
+    $(document).ready(function() {
+        returnagen();
+    })
+
+    function returnagen() {
+        setTimeout(function () {
+            tb_return = $('#table_return').DataTable({
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('returnpenjualanagen.index') }}",
+                    type: "get"
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'tanggal'},
+                    {data: 'r_nota'},
+                    {data: 'r_reff'},
+                    {data: 'r_code'},
+                    {data: 'type'},
+                    {data: 'agen'},
+                    {data: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }, 750);
+    }
+
+    function deleteReturn(id) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apa anda yakin akan menghapus data ini ?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        loadingShow();
+                        $.ajax({
+                            url: baseUrl+ "/marketing/penjualanpusat/returnpenjualan/hapus/" + id,
+                            type: 'post',
+                            success: function(resp) {
+                                loadingHide();
+                                if (resp.status == 'berhasil') {
+                                    messageSuccess('Berhasil', 'Data berhasil dihapus !');
+                                }
+                                else {
+                                    messageWarning('Perhatian', resp.message);
+                                }
+                                tb_return.ajax.reload();
+                            },
+                            error: function(e) {
+                                loadingHide();
+                                messageWarning('Gagal', 'Terjad kesalahan : '+ e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
     }
 
 </script>
