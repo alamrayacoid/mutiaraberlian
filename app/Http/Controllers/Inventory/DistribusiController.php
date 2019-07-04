@@ -217,9 +217,9 @@ class DistribusiController extends Controller
             $dist->save();
 
             // insert new product-delivery
-            $id = d_productdelivery::max('pd_id') + 1;
+            $idDeliv = d_productdelivery::max('pd_id') + 1;
             $prodDeliv = new d_productdelivery;
-            $prodDeliv->pd_id = $id;
+            $prodDeliv->pd_id = $idDeliv;
             $prodDeliv->pd_date = Carbon::now();
             $prodDeliv->pd_nota = $nota;
             $prodDeliv->pd_expedition = $request->expedition;
@@ -712,17 +712,19 @@ class DistribusiController extends Controller
 
             // confirm each item
             foreach ($stockdist->getDistributionDt as $key => $val) {
-                $mutConfirm = Mutasi::confirmDistribusiCabang(
-                    $stockdist->sd_from,
-                    $stockdist->sd_destination,
-                    $val->sdd_item,
-                    $stockdist->sd_nota
+                $mutConfirm = Mutasi::confirmDistribution(
+                    $val->sdd_comp, // item-owner
+                    $stockdist->sd_destination, // destination
+                    $val->sdd_item, // item id
+                    $stockdist->sd_nota, // nota distribution
+                    18, // mutcat distribution 'in'
+                    19 // mutcat distribution 'out'
                 );
                 if ($mutConfirm !== 'success') {
                     return $mutConfirm;
                 }
             }
-
+            
             // update stockdist-status to 'Y'
             $stockdist->sd_status = 'Y';
             $stockdist->save();

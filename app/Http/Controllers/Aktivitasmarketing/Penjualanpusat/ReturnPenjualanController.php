@@ -42,10 +42,9 @@ class ReturnPenjualanController extends Controller
             ->addColumn('action', function ($data) {
                 return '<div class="btn-group btn-group-sm">
                     <button class="btn btn-primary btn-detail" type="button" onclick="detailReturn(' . $data->r_id . ')" title="Detail"><i class="fa fa-folder"></i></button>
-                    <button class="btn btn-warning btn-process" type="button" onclick="editReturn(' . $data->r_id . ')" title="Edit"><i class="fa fa-pencil"></i></button>
                     <button class="btn btn-danger btn-process" type="button" onclick="deleteReturn(' . $data->r_id . ')" title="Hapus"><i class="fa fa-trash"></i></button>
                 </div>';
-                // <button class="btn btn-success btn-proses" type="button" title="Proses" onclick="window.location.href=\''. route('orderpenjualan.proses') .'?id='.encrypt($data->po_id).'\'"><i class="fa fa-arrow-right"></i></button>
+                // <button class="btn btn-warning btn-process" type="button" onclick="editReturn(' . $data->r_id . ')" title="Edit"><i class="fa fa-pencil"></i></button>
             })
             ->addColumn('agen', function($data){
                 $member = DB::table('m_company')
@@ -414,7 +413,7 @@ class ReturnPenjualanController extends Controller
             ]);
         }
     }
-
+    // delete data 'return' from database
     public function delete($id)
     {
         DB::beginTransaction();
