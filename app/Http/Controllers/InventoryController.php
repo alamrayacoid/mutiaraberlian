@@ -123,12 +123,14 @@ class InventoryController extends Controller
                 return strtoupper($datas->item);
             })
             ->addColumn('qty', function($datas) {
-                return '<div class="text-center">'.$datas->qty.'</div>';
+                return '<div class="text-center"> '.number_format($datas->qty, 0, ",", ".").' </div>';
             })
             ->addColumn('action', function($datas) {
-                return '<div class="btn-group btn-group-sm">
-                            <button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''. Crypt::encrypt($datas->id) .'\')"><i class="fa fa-folder"></i></button>
-                            <button class="btn btn-warning btn-edit" type="button" title="Edit" onclick="edit(\''. Crypt::encrypt($datas->id) .'\')"><i class="fa fa-pencil"></i></button>
+                return '<div class="text-center">
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''. Crypt::encrypt($datas->id) .'\')"><i class="fa fa-folder"></i></button>
+                                <button class="btn btn-warning btn-edit" type="button" title="Edit" onclick="edit(\''. Crypt::encrypt($datas->id) .'\')"><i class="fa fa-pencil"></i></button>
+                            </div>
                         </div>';
             })
             ->rawColumns(['pemilik', 'posisi', 'item', 'qty', 'action'])
@@ -151,9 +153,11 @@ class InventoryController extends Controller
                 'd_stock.s_qty as qty', 'd_stock.s_qtymin as qtymin', 'd_stock.s_qtymax as qtymax',
                 'd_stock.s_qtysafetystart as rangemin', 'd_stock.s_qtysafetyend as rangemax')
             ->first();
+        $codes = DB::table('d_stockdt')->where('sd_stock', '=', $id)->select('sd_code as code', DB::raw('format(sd_qty, 0) as qty'))->get();
         return Response::json([
                     'status' => "Success",
-                    'message' => $data
+                    'message' => $data,
+                    'codes' => $codes
                 ]);
 
     }

@@ -450,8 +450,6 @@
                             if(response.data.akun.length){
                                 this.dataAkun = response.data.akun;
                                 this.data_table_akun.data.source = response.data.akun;
-
-                                // console.log(this.data_table_akun);
                             }
 
                             if(response.data.akunUtama.length){
@@ -686,6 +684,9 @@
                         $('#ak_kelompok').val(e).trigger('change.select2');
                     }, 0)
 
+                    // console.log(e);
+                    console.log(this.ak_kelompok);
+
                     this.single.nomorView = conteks.hd_nomor+'.';
                 },
 
@@ -728,7 +729,6 @@
                     var spliter = conteks.ak_nomor.split('.');
 
                     this.hierarkiChange(spliter[0]);
-                    this.kelompokChange(conteks.ak_kelompok);
 
                     $('#modal_tambah').modal('toggle');
                 },

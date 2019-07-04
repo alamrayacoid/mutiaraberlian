@@ -1640,7 +1640,6 @@ class ManajemenAgenController extends Controller
         $posisi = $request->posisi;
         $item = $request->item;
         $kode = $request->kode;
-
         $cek = DB::table('d_stock')
             ->join('d_stockdt', 's_id', '=', 'sd_stock')
             ->where('s_position', '=', $posisi)
@@ -1649,7 +1648,7 @@ class ManajemenAgenController extends Controller
             ->where('s_status', '=', 'ON DESTINATION')
             ->where('s_condition', '=', 'FINE')
             ->get();
-
+        // dd($cek);
         if (count($cek) > 0) {
             return Response::json([
                 'status' => 'sukses'
@@ -1985,12 +1984,41 @@ class ManajemenAgenController extends Controller
         ]);
     }
 
+    public function editKPW($id)
+    {
+        // dd($id);
+        $datas = DB::table('d_salesweb')
+            ->join('m_company', 'sw_agen', 'c_id')
+            ->join('m_item', 'sw_item', 'i_id')
+            ->join('m_unit', 'sw_unit', 'u_id')
+            ->where('sw_id', '=', $id)->first();
+
+        $units = DB::table('m_item')
+            ->join('m_unit as unit1', 'i_unit1', 'unit1.u_id')
+            ->join('m_unit as unit2', 'i_unit2', 'unit2.u_id')
+            ->join('m_unit as unit3', 'i_unit3', 'unit3.u_id')
+            ->select('unit1.u_id as id1', 'unit1.u_name as name1', 'unit2.u_id as id2', 'unit2.u_name as name2', 'unit3.u_id as id3', 'unit3.u_name as name3')
+            ->where('i_id', '=', $datas->sw_item)
+            ->first();
+
+        $code = DB::table('d_salescode')
+            ->join('d_sales', 'sc_sales', 'd_sales.s_id')
+            ->join('d_salesweb', 's_nota', 'sw_reff')
+            ->where('sw_id', '=', $id)->get();
+
+        return Response::json([
+            'datas' => $datas,
+            'units' => $units,
+            'code'  => $code
+        ]);
+    }
+
     public function deleteKPW(Request $request)
     {
         $id = $request->id;
 
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
             //info sales
             $info = DB::table('d_salesweb')
                 ->join('d_sales', 's_nota', '=', 'sw_reff')
@@ -2008,14 +2036,14 @@ class ManajemenAgenController extends Controller
                     $q->on('smd_stockmutation', '=', 'sm_detailid');
                 })
                 ->where('sm_nota', '=', $info[0]->s_nota)
-                ->get();
+                ->first();
 
             for ($i = 0; $i < count($kode); $i++){
                 //kembalikan kode ke pemilik
                 $cek = DB::table('d_stockdt')
                     ->join('d_stock', 's_id', '=', 'sd_stock')
                     ->where('sd_code', '=', $kode[$i]->sc_code)
-                    ->where('sd_stock', '=', $stock[0]->s_id)
+                    ->where('sd_stock', '=', $stock->s_id)
                     ->first();
 
                 if ($cek != null){
@@ -2132,17 +2160,17 @@ class ManajemenAgenController extends Controller
                 ->where('sc_sales', '=', $info[0]->s_id)
                 ->delete();
 
-            DB::commit();
-            return Response::json([
-                'status' => 'sukses'
-            ]);
-        } catch (DecryptException $e) {
-            DB::rollBack();
-            return Response::json([
-                'status' => 'gagal',
-                'message' => $e->getMessage()
-            ]);
-        }
+        //     DB::commit();
+        //     return Response::json([
+        //         'status' => 'sukses'
+        //     ]);
+        // } catch (DecryptException $e) {
+        //     DB::rollBack();
+        //     return Response::json([
+        //         'status' => 'gagal',
+        //         'message' => $e->getMessage()
+        //     ]);
+        // }
     }
 
 }

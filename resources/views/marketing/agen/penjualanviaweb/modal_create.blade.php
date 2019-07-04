@@ -145,6 +145,7 @@
                     <label for="editnama_agen" class="col-2 col-form-label">Nama Agen :</label>
                     <div class="col-10">
                         <input id="editnama_agen" class="form-control form-control-sm" readonly>
+                        <input type="hidden" id="edit_agen">
                     </div>
                 </div>
                 <div class="row form-group">
@@ -171,13 +172,14 @@
                     <div class="col-10">
                         <input type="text" class="form-control-sm form-control" id="edit_produk"
                                style="text-transform: uppercase">
-                        <input type="hidden" class="form-control-sm form-control" id="editid_produk">
+                        <input type="hidden" class="form-control-sm form-control" id="edit_produkid">
                     </div>
                 </div>
                 <div class="row form-group">
                     <label for="edit_kuantitas" class="col-2 col-form-label">Kuantitas :</label>
                     <div class="col-4">
-                        <input type="number" class="form-control-sm form-control" id="edit_kuantitas" onkeyup="setEditTotal()">
+                        {{-- <input type="number" class="form-control-sm form-control" id="edit_kuantitas" onkeyup="setEditTotal()"> --}}
+                        <input type="number" class="form-control-sm form-control set-total" id="edit_kuantitas">
                     </div>
                     <label for="edit_satuan" class="col-2 col-form-label">Satuan :</label>
                     <div class="col-4">
@@ -205,15 +207,15 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-8">
-                        <input type="text" class="form-control-sm form-control" id="code" onkeypress="cekEditCode(event)"
+                        <input type="text" class="form-control-sm form-control" id="add_editCode" onkeypress="cekCodeEdit(event)"
                                placeholder="Kode Produksi" style="text-transform: uppercase">
                     </div>
                     <div class="col-3">
-                        <input type="number" class="form-control-sm form-control" id="code_qty"
-                               onkeypress="cekEditCode(event)">
+                        <input type="number" class="form-control-sm form-control" id="add_codeQty"
+                               onkeypress="cekCodeEdit(event)">
                     </div>
                     <div class="col-1">
-                        <button class="btn btn-primary" onclick="addEditCode()"><i class="fa fa-plus"></i></button>
+                        <button type="button" class="btn btn-primary" onclick="addCodeEdit()"><i class="fa fa-plus"></i></button>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -221,12 +223,15 @@
                         <table class="table table-hover table-striped display" cellspacing="0" id="table_EditKPW"
                                style="width: 100%">
                             <thead class="bg-primary">
-                            <tr>
-                                <th style="width: 70%">Kode</th>
-                                <th style="width: 20%">Qty</th>
-                                <th style="width: 10%">Aksi</th>
-                            </tr>
+                                <tr>
+                                    <th style="width: 70%">Kode</th>
+                                    <th style="width: 20%">Qty</th>
+                                    <th style="width: 10%">Aksi</th>
+                                </tr>
                             </thead>
+                            <tbody>
+                                
+                            </tbody>
                         </table>
                     </div>
                 </div>

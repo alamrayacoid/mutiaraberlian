@@ -125,7 +125,7 @@
 </article>
 {{-- Modal Detail --}}
 <div class="modal fade" id="mDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Detail Barang</h5>
@@ -135,68 +135,89 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-3">
-                        <label for="codeB">Kode Barang</label>
+                    <div class="col-6 col-md-6">
+                        <div class="row">                            
+                            <div class="col-md-4">
+                                <label for="codeB">Kode Barang</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="codeB">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="namaB">Nama Barang</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="namaB">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="pemilik">Pemilik Barang</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-sm w-100 bg-light" disabled style="width: 100%;" value="" readonly id="pemilikB">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="posisiB">Posisi Barang</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="posisiB">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="qtyB">Jumlah Barang</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-sm w-100 bg-light" disabled style="width: 100%;" value="" readonly id="qtyB">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="hppB">HPP Barang</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="hppB">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="satuanB">Satuan Barang</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="satuanB">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="notaB">Nota Barang</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="notaB">
+                                </div>
+                            </div>
+                        </div>                        
                     </div>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="codeB">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="namaB">Nama Barang</label>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="namaB">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="pemilik">Pemilik Barang</label>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled style="width: 100%;" value="" readonly id="pemilikB">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="posisiB">Posisi Barang</label>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="posisiB">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="qtyB">Jumlah Barang</label>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled style="width: 100%;" value="" readonly id="qtyB">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="hppB">HPP Barang</label>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="hppB">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="satuanB">Satuan Barang</label>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="satuanB">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="notaB">Nota Barang</label>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="notaB">
+                    <div class="col-6 col-md-6">
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-bordered table-hover" id="table_detail" style="margin-top: 0px !important;">
+                                    <thead>
+                                        <tr>
+                                            <th>Kode Produksi</th>
+                                            <th>Qty</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -294,6 +315,7 @@ function TableCabang() {
 
 function detail(stock, detail)
 {
+    // loadingShow();
     $('#mDetail').modal('show');
     $.ajax({
         url : baseUrl+"/inventory/barangmasuk/getDetail",
@@ -304,14 +326,33 @@ function detail(stock, detail)
         },
         dataType : "json",
         success : function(response){
+            loadingShow();
+            console.log(response.data.nota)
             document.getElementById("namaB").setAttribute("value", response.data.i_name);
             document.getElementById("pemilikB").setAttribute("value", response.data.pemilik);
             document.getElementById("posisiB").setAttribute("value", response.data.posisi);
-            document.getElementById("codeB").setAttribute("value", response.data.i_code);
-            document.getElementById("qtyB").setAttribute("value", response.data.sm_qty);
+            document.getElementById("codeB").setAttribute("value", response.data.code);
+            document.getElementById("qtyB").setAttribute("value", response.data.jumlah);
             document.getElementById("hppB").setAttribute("value", response.hpp);
             document.getElementById("satuanB").setAttribute("value", response.data.u_name);
-            document.getElementById("notaB").setAttribute("value", response.data.sm_nota);
+            document.getElementById("notaB").setAttribute("value", response.data.nota);
+            console.log(response.detail);
+            $('#table_detail').DataTable().clear().destroy();
+            var tb_detail = $('#table_detail').DataTable({
+                responsive: true,
+                info: false,
+                paging: false,
+                searching: false
+            });
+            tb_detail.columns.adjust();
+
+            $.each(response.detail, function (key, val) {
+                tb_detail.row.add([
+                    val.smd_productioncode,
+                    val.smd_qty
+                ]).draw(false);
+            });
+            loadingHide();
         }
     })
 }

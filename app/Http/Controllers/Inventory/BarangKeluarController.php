@@ -247,14 +247,36 @@ class BarangKeluarController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getDetail($id)
+    public function getDetail($id, $dt)
     {
-        $data = d_itemout::where('io_id', $id)
-            ->with('getItem')
-            ->with('getItem.getUnit1')
-            ->with('getMutationDetail')
-            ->firstOrFail();
-        return $data;
+        // dd($request);
+        $data = DB::table('d_stock_mutation')
+            ->join('d_stock', 'sm_stock', 's_id')
+            ->join('m_company as pemilik', 's_comp', 'pemilik.c_id')
+            ->join('m_company as posisi', 's_position', 'posisi.c_id')
+            ->join('m_item', 's_item', 'i_id')
+            ->join('m_unit', 'i_unit1', 'u_id')
+            ->where('sm_stock', '=', $id)
+            ->where('sm_detailid', '=', $dt)
+            ->select('m_item.i_code as code', 'm_item.i_name as i_name', 'pemilik.c_name as pemilik', 'posisi.c_name as posisi', DB::raw('format(sm_qty, 0) as jumlah'), 'm_unit.u_name as u_name', 'sm_nota as nota', 'sm_hpp')
+            ->first();
+
+        // dd($data);
+        $detail = DB::table('d_stockmutationdt')
+            ->where('smd_stock', '=', $id)
+            ->where('smd_stockmutation', '=', $dt)
+            ->get();
+        return response()->json([
+            "data" => $data,
+            "detail" => $detail,
+            "hpp" => 'Rp. '.number_format($data->sm_hpp, 0,',','.')
+        ]);
+        // $data = d_itemout::where('io_id', $id)
+        //     ->with('getItem')
+        //     ->with('getItem.getUnit1')
+        //     ->with('getMutationDetail')
+        //     ->firstOrFail();
+        // return $data;
     }
 
     /**

@@ -258,7 +258,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Barang Keluar
     Route::get('/inventory/barangkeluar/index', 'Inventory\BarangKeluarController@index')->name('barangkeluar.index');
     Route::get('/inventory/barangkeluar/list', 'Inventory\BarangKeluarController@getList')->name('barangkeluar.list');
-    Route::get('/inventory/barangkeluar/detail/{nota}', 'Inventory\BarangKeluarController@getDetail')->name('barangkeluar.detail');
+    Route::get('/inventory/barangkeluar/detail/{id}/{detail}', 'Inventory\BarangKeluarController@getDetail')->name('barangkeluar.detail');
     Route::get('/inventory/barangkeluar/getItems', 'Inventory\BarangKeluarController@getItems')->name('barangkeluar.getItems');
     Route::get('/inventory/barangkeluar/create', 'Inventory\BarangKeluarController@create')->name('barangkeluar.create');
     Route::post('/inventory/barangkeluar/store', 'Inventory\BarangKeluarController@store')->name('barangkeluar.store');
@@ -544,6 +544,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/kelolapenjualanviawebsite/get-unit', 'Aktivitasmarketing\Agen\ManajemenAgenController@getUnit')->name('kelolapenjualanviawebsite.getUnit');
     Route::post('/marketing/agen/kelolapenjualanviawebsite/save-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@saveKPW')->name('kelolapenjualanviawebsite.saveKPW');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/cek-code', 'Aktivitasmarketing\Agen\ManajemenAgenController@cekProductionCode')->name('kelolapenjualanviawebsite.cekProductionCode');
+    Route::get('/marketing/agen/kelolapenjualanviawebsite/edit-kpw/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@editKPW')->name('kelolapenjualanviawebsite.editKPW');
+
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPW')->name('kelolapenjualan.getListKPW');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-detail-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailKPW')->name('kelolapenjualan.getDetailKPW');
     Route::get('/marketing/agen/kelolapenjualanlangsung/delete-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteKPW')->name('kelolapenjualan.deleteKPW');
@@ -747,7 +749,15 @@ Route::group(['middleware' => 'auth'], function () {
         // Mutasi antar Kas
             Route::get('keuangan/manajemen-input-transaksi/mutasi_kas/create', [
                 'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@create'
-            ])->name('keuangan.transaksi.create');
+            ])->name('keuangan.mutasi_kas.create');
+
+            Route::get('keuangan/manajemen-input-transaksi/mutasi_kas/resource', [
+                'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@resource'
+            ])->name('keuangan.mutasi_kas.resource');
+
+            Route::post('keuangan/manajemen-input-transaksi/mutasi_kas/save', [
+                'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@save'
+            ])->name('keuangan.mutasi_kas.save');
 
     // Selesai Dirga
 
