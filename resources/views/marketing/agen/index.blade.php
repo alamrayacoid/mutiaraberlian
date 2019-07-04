@@ -874,6 +874,51 @@
             })
         }
 
+        $( "#edit_produk" ).autocomplete({
+            source: function( request, response ) {
+                $.ajax({
+                    url: '{{ route('kelolapenjualanviawebsite.cariProduk') }}',
+                    data: {
+                        term: $("#edit_produk").val()
+                    },
+                    success: function( data ) {
+                        response( data );
+                    }
+                });
+            },
+            minLength: 1,
+            select: function(event, data) {
+                $('#edit_produkid').val(data.item.id);
+                getEditUnit();
+            }
+        });
+
+        function getEditUnit() {
+            let item = $('#edit_produkid').val();
+            axios.get(baseUrl + '/marketing/agen/kelolapenjualanlangsung/get-unit/' + item,).then(function (response) {
+                let id1   = response.data.get_unit1.u_id;
+                let name1 = response.data.get_unit1.u_name;
+                let id2   = response.data.get_unit2.u_id;
+                let name2 = response.data.get_unit2.u_name;
+                let id3   = response.data.get_unit3.u_id;
+                let name3 = response.data.get_unit3.u_name;
+
+                $('#edit_satuan').empty();
+                $("#edit_satuan").append('<option value="" selected disabled>== Pilih Satuan ==</option>');
+                let opsi = '';
+                opsi += '<option data-nama="'+name1+'" value="' + id1 + '">' + name1 + '</option>';
+                if (id2 != null && id2 != id1) {
+                    opsi += '<option data-nama="'+name2+'" value="' + id2 + '">' + name2 + '</option>';
+                }
+                if (id3 != null && id3 != id2) {
+                    opsi += '<option data-nama="'+name3+'" value="' + id3 + '">' + name3 + '</option>';
+                }
+                $("#edit_satuan").append(opsi);
+            }).catch(function (error) {
+                alert("error");
+            });
+        }
+
         $('.input-harga').inputmask("currency", {
             radixPoint: ",",
             groupSeparator: ".",
@@ -949,18 +994,18 @@
 
         function lanjutkan() {
             valid = 1;
-            let provinsi = $('#area_provinsi').val();
-            let kota = $('#area_kota').val();
-            let agen = $('#nama_agen').val();
-            let customer = $('#nama_customer').val();
-            let website = $('#website').val();
+            let provinsi  = $('#area_provinsi').val();
+            let kota      = $('#area_kota').val();
+            let agen      = $('#nama_agen').val();
+            let customer  = $('#nama_customer').val();
+            let website   = $('#website').val();
             let transaksi = $('#transaksi').val();
-            let produk = $('#id_produk').val();
+            let produk    = $('#id_produk').val();
             let kuantitas = $('#kuantitas').val();
-            let satuan = $('#satuan').val();
-            let harga = $('#harga').val();
-            let note = $('#note').val();
-            let kode = $("input[name='code[]']")
+            let satuan    = $('#satuan').val();
+            let harga     = $('#harga').val();
+            let note      = $('#note').val();
+            let kode      = $("input[name='code[]']")
                 .map(function(){return $(this).val();}).get();
 
             let kodeqty = $("input[name='qtycode[]']")
@@ -1227,18 +1272,25 @@
                     var selected1, selected2, selected3;
                     if (resp.units.id1 == resp.datas.sw_unit) {
                         var selected1 = "selected";
+                    } else {
+                        var selected1 = "";
                     }
                     if (resp.units.id2 == resp.datas.sw_unit) {
                         var selected2 = "selected";
+                    } else {
+                        var selected2 = "";
                     }
                     if (resp.units.id3 == resp.datas.sw_unit) {
                         var selected3 = "selected";
+                    } else {
+                        var selected3 = "";
                     }
+
                     option += '<option value="'+resp.units.id1+'" '+selected1+'>'+resp.units.name1+'</option>';
                     if (resp.units.id2 != null && resp.units.id2 != resp.units.id1) {
                         option += '<option value="'+resp.units.id2+'" '+selected2+'>'+resp.units.name2+'</option>';
                     }
-                    if (resp.units.id3 != null && resp.units.id3 != resp.units.id1) {
+                    if (resp.units.id3 != null && resp.units.id3 != resp.units.id2) {
                         option += '<option value="'+resp.units.id3+'" '+selected3+'>'+resp.units.name3+'</option>';
                     }
                     $("#edit_satuan").append(option);
@@ -1255,8 +1307,8 @@
 
                     $.each(resp.code, function (key, val) {
                         table_editKPW.row.add([
-                            '<input type="text" value="'+val.sc_code+'" class="form-control bg-light code_ds" readonly disabled/><input type="hidden" name="code_s[]" value="'+val.sc_code+'" class="code_s" readonly/>',
-                            '<input type="number" name="qty_s[]" value="'+val.sc_qty+'" class="qty_s form-control"/>',
+                            '<input type="text" value="'+val.sc_code+'" class="form-control bg-light code_sd" readonly disabled/><input type="hidden" name="code_s[]" class="code_s" value="'+val.sc_code+'"/>',
+                            '<input type="number" min="1" name="qty_s[]" value="'+val.sc_qty+'" class="qty_s form-control"/>',
                             '<div class="text-center"><button class="btn btn-sm rounded btn-danger btn-trash"><i class="fa fa-trash"></i></button></div>'
                         ]).draw(false);
                     });
@@ -1308,19 +1360,10 @@
                     if (!values.includes(code)){
                         ++counter;
                         table_editKPW.row.add([
-                            "<input type='text' class='code_sd form-control form-control-sm bg-light' value='"+code.toUpperCase()+"' readonly disabled><input type='hidden' class='code_s form-control form-control-sm' name='code_s[]' value='"+code.toUpperCase()+"'>",
-                            "<input type='text' class='qty_s form-control form-control-sm' name='qty_s[]' value='"+qty+"'>",
+                            "<input type='text' class='form-control form-control-sm bg-light code_sd' value='"+code+"' readonly disabled><input type='hidden' name='code_s[]' class='code_s' value='"+code+"'>",
+                            "<input type='number' min='1' class='form-control form-control-sm qty_s' name='qty_s[]' value='"+qty+"'>",
                             "<div class='text-center'><button class='btn btn-sm rounded btn-danger btn-trash'><i class='fa fa-trash'></i></button></div>"
                         ]).draw(false);
-                        // $('#table_EditKPW tbody').on( 'click', '.btn-delete-'+counter, function () {
-                        //     table_kpw
-                        //         .row( $(this).parents('tr') )
-                        //         .remove()
-                        //         .draw();
-                        // } );
-                        // $('#add_editCode').val('');
-                        // $('#add_codeQty').val('');
-                        // $('#add_editCode').focus();
                     } else {
                         messageWarning("Perhatian", "Kode sudah ada");
                         let idx = values.indexOf(code);

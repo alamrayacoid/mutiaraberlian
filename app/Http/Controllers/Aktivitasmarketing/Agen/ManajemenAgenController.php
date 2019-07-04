@@ -1992,20 +1992,15 @@ class ManajemenAgenController extends Controller
             ->join('m_item', 'sw_item', 'i_id')
             ->join('m_unit', 'sw_unit', 'u_id')
             ->where('sw_id', '=', $id)->first();
+
         $units = DB::table('m_item')
             ->join('m_unit as unit1', 'i_unit1', 'unit1.u_id')
             ->join('m_unit as unit2', 'i_unit2', 'unit2.u_id')
             ->join('m_unit as unit3', 'i_unit3', 'unit3.u_id')
-            ->select('unit1.u_id as id1', 'unit1.u_name as name1', 'unit2.u_id as id2', 'unit2.u_name as name2', 'unit3.u_id as id3', 'unit3.u_name as name3')->first();
-        // $units = DB::table('m_unit')->select('m_unit.*')
-        //     ->join('m_item as unit1', 'u_id', 'unit1.i_unit1')
-        //     ->join('m_item as unit2', 'u_id', 'unit2.i_unit2')
-        //     ->join('m_item as unit3', 'u_id', 'unit3.i_unit3')
-        //     ->where('unit1.i_id', '=', $datas->sw_item)
-        //     ->where('unit2.i_id', '=', $datas->sw_item)
-        //     ->where('unit3.i_id', '=', $datas->sw_item)
-        //     ->get();
-        // dd($units);
+            ->select('unit1.u_id as id1', 'unit1.u_name as name1', 'unit2.u_id as id2', 'unit2.u_name as name2', 'unit3.u_id as id3', 'unit3.u_name as name3')
+            ->where('i_id', '=', $datas->sw_item)
+            ->first();
+
         $code = DB::table('d_salescode')
             ->join('d_sales', 'sc_sales', 'd_sales.s_id')
             ->join('d_salesweb', 's_nota', 'sw_reff')
