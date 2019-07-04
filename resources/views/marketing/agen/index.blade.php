@@ -535,7 +535,6 @@
                 },
                 success: function (response) {
                     loadingHide();
-                    console.log(response);
                     $('#detail_kpl_nota').val(response.s_nota);
                     $('#detail_kpl_member_name').val(response.get_member.m_name);
                     $('#detail_kpl_total').val(parseInt(response.s_total));
@@ -691,9 +690,6 @@
                     cityId: $('#citiesKPL').val()
                 },
                 success: function (response) {
-                    // console.log('zxc');
-                    console.log(response);
-                    console.log(response.length);
                     $('#table_search_agen_kpl tbody').empty();
                     if (response.length <= 0) {
                         return 0;
@@ -706,7 +702,6 @@
                         listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgent(\'' + val.a_code + '\',\'' + val.a_name + '\')"><i class="fa fa-download"></i></button></td></tr>';
                     });
                     $('#table_search_agen_kpl > tbody:last-child').append(listAgents);
-                    // console.log($('#table_search_agen_kpl'));
                 }
             });
         }
@@ -719,7 +714,6 @@
                     cityId: $('#citiesKPW').val()
                 },
                 success: function (response) {
-                    // console.log('zxc');
                     $('#table_search_agen_kpw tbody').empty();
                     if (response.length <= 0) {
                         return 0;
@@ -732,7 +726,6 @@
                         listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgentKpw(\'' + val.a_code + '\',\'' + val.a_name + '\')"><i class="fa fa-download"></i></button></td></tr>';
                     });
                     $('#table_search_agen_kpw > tbody:last-child').append(listAgents);
-                    // console.log($('#table_search_agen_kpl'));
                 }
             });
         }
@@ -837,18 +830,15 @@
                 url: baseUrl+'/marketing/konsinyasipusat/cari-konsigner-select2/'+$("#area_provinsi").val()+'/'+$("#area_kota").val(),
                 type: 'get',
                 success: function( data ) {
-                    // console.log(data);
                     $('#nama_agen').find('option').remove();
                     $('#nama_agen').append('<option value="" selected disabled> == Pilih Agen ==</option>')
                     $.each(data, function(index, val) {
-                        // console.log(val, val.a_id);
                         $('#nama_agen').append('<option value="'+ val.c_id +'" data-code="'+ val.a_code +'">'+ val.a_name +'</option>');
                     });
                     $('#nama_agen').focus();
                     $('#nama_agen').select2('open');
                 },
                 error: function(e) {
-                    // console.log('get konsigner error: ');
                 }
             });
 
@@ -903,6 +893,14 @@
             let total = parseInt(qty) * parseInt(harga);
             $('#total').val(total);
         }
+
+        $('.set-total').on('click keyup', function(){
+            let qty = $('#edit_kuantitas').val();
+            let harga = $('#edit_harga').val();
+
+            let total = parseInt(qty) * parseInt(harga);
+            $('#edit_total').val(total);
+        });
 
         $('#satuan').change(function(){
             var selected = $(this).find('option:selected').data('nama');
@@ -1097,6 +1095,7 @@
                 }
             }).then(function (response) {
                 loadingHide();
+                code = code.toUpperCase();
                 if (response.data.status == 'gagal'){
                     messageFailed('Peringatan', 'Kode tidak ditemukan');
                 } else if (response.data.status == 'sukses'){
@@ -1109,7 +1108,7 @@
                     if (!values.includes(code)){
                         ++counter;
                         table_kpw.row.add([
-                            "<input type='text' class='code form-control form-control-sm codeprod' name='code[]' value='"+code.toUpperCase()+"' readonly>",
+                            "<input type='text' class='code form-control form-control-sm codeprod' name='code[]' value='"+code+"' readonly>",
                             "<input type='number' class='qtycode form-control form-control-sm' name='qtycode[]' value='"+qty+"'>",
                             "<button class='btn btn-danger btn-sm btn-delete-"+counter+"'><i class='fa fa-close'></i></button>"
                         ]).draw(false);
@@ -1210,6 +1209,7 @@
                     loadingShow();
                     $('#editKPW').modal('show');
                     $('#editnama_agen').val(resp.datas.c_name);
+                    $('#edit_agen').val(resp.datas.sw_agen);
                     $('#editnama_customer').val('CUSTOMER');
                     $('#edit_website').val(resp.datas.sw_website);
                     $('#edit_transaksi').val(resp.datas.sw_transactioncode);
@@ -1221,7 +1221,6 @@
                     $('#edit_harga').val(price);
                     $('#edit_total').val(total_price)
                     $('#edit_note').val(resp.datas.sw_note);
-                    $('#edit')
                     
                     $("#edit_satuan").find('option').remove();
                     var option = '';
@@ -1256,9 +1255,9 @@
 
                     $.each(resp.code, function (key, val) {
                         table_editKPW.row.add([
-                            '<input type="text" value="'+val.sc_code+'" class="form-control bg-light code_s" readonly disabled/><input type="hidden" name="code_s[]" value="'+val.sc_code+'" class="code_s" readonly/>',
-                            '<input type="text" value="'+val.sc_qty+'" class="form-control bg-light" readonly disabled/><input type="hidden" name="code_s[]" value="'+val.sc_qty+'" class="code_s" readonly/>',
-                            '<button class="btn btn-sm rounded btn-danger btn-trash"><i class="fa fa-trash"></i></button>'
+                            '<input type="text" value="'+val.sc_code+'" class="form-control bg-light code_ds" readonly disabled/><input type="hidden" name="code_s[]" value="'+val.sc_code+'" class="code_s" readonly/>',
+                            '<input type="number" name="qty_s[]" value="'+val.sc_qty+'" class="qty_s form-control"/>',
+                            '<div class="text-center"><button class="btn btn-sm rounded btn-danger btn-trash"><i class="fa fa-trash"></i></button></div>'
                         ]).draw(false);
                     });
                     loadingHide();
@@ -1266,9 +1265,76 @@
             });
         }
 
-        $(document).on('click', '.btn-trash', function () {
-            $(this).parents('tr').remove();
+        $(document).on('click', '.btn-trash', function () {            
+            table_editKPW
+                .row( $(this).parents('tr') )
+                .remove()
+                .draw();
         });
+
+
+
+        function cekCodeEdit(e){
+            if (e.keyCode == 13){
+                addCodeEdit();
+            }
+        }
+
+        var counter = 0;
+        function addCodeEdit() {
+            loadingShow();
+            //cek stockdt
+            let agen = $('#edit_agen').val();
+            let code = $('#add_editCode').val();
+            let item = $('#edit_produkid').val();
+            axios.get('{{ route("kelolapenjualanviawebsite.cekProductionCode") }}', {
+                params:{
+                    "posisi": agen,
+                    "kode": code,
+                    "item": item
+                }
+            }).then(function (response) {
+                loadingHide();
+                code = code.toUpperCase();
+                if (response.data.status == 'gagal'){
+                    messageFailed('Peringatan', 'Kode tidak ditemukan');
+                } else if (response.data.status == 'sukses'){
+                    let qty = $('#add_codeQty').val();
+                    if (qty == '' || qty == 0 || qty == null){
+                        qty = 1;
+                    }
+                    let values = $("input[name='code_s[]']")
+                        .map(function(){return $(this).val();}).get();
+                    if (!values.includes(code)){
+                        ++counter;
+                        table_editKPW.row.add([
+                            "<input type='text' class='code_sd form-control form-control-sm bg-light' value='"+code.toUpperCase()+"' readonly disabled><input type='hidden' class='code_s form-control form-control-sm' name='code_s[]' value='"+code.toUpperCase()+"'>",
+                            "<input type='text' class='qty_s form-control form-control-sm' name='qty_s[]' value='"+qty+"'>",
+                            "<div class='text-center'><button class='btn btn-sm rounded btn-danger btn-trash'><i class='fa fa-trash'></i></button></div>"
+                        ]).draw(false);
+                        // $('#table_EditKPW tbody').on( 'click', '.btn-delete-'+counter, function () {
+                        //     table_kpw
+                        //         .row( $(this).parents('tr') )
+                        //         .remove()
+                        //         .draw();
+                        // } );
+                        // $('#add_editCode').val('');
+                        // $('#add_codeQty').val('');
+                        // $('#add_editCode').focus();
+                    } else {
+                        messageWarning("Perhatian", "Kode sudah ada");
+                        let idx = values.indexOf(code);
+                        let qtylama = $('.qty_s').val();
+                        let total = parseInt(qty) + parseInt(qtylama);
+                        $('.qty_s').val(total);
+                        $('.qty_s').focus();
+                    }
+                }
+            }).catch(function (error) {
+                loadingHide();
+                alert('error');
+            });
+        }
 
         function deleteKPW(id) {
             $.confirm({
@@ -1292,7 +1358,6 @@
                                 }
                             }).then(function (response) {
                                 loadingHide();
-                                console.log(response);
                                 if (response.data.status == 'sukses'){
                                     messageSuccess("Berhasil", "Transaksi berhasil dihapus");
                                     table_historykpw.ajax.reload();

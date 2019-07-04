@@ -322,11 +322,6 @@ class BarangMasukController extends Controller
             "detail" => $detail,
             "hpp" => 'Rp. '.number_format($data->sm_hpp, 0,',','.')
         ]);
-        // return Response::json(array(
-        //     'success' => true,
-        //     'data'    => $detail,
-        //     'hpp'     => 'Rp. '.number_format($detail->sm_hpp, 0,',','.')
-        // ));
 
     }
 }
