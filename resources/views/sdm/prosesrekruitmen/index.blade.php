@@ -13,6 +13,10 @@
 	.w-35 {
 		width: 35% !important;
 	}
+	.fa-disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
 </style>
 @endsection
 @section('content')
@@ -43,11 +47,15 @@
 					<li class="nav-item">
 						<a href="#kelola_rekruitment" class="nav-link" data-target="#kelola_rekruitment" aria-controls="kelola_rekruitment" data-toggle="tab" role="tab">Kelola Rekruitment</a>
 					</li>
+					<li class="nav-item">
+						<a href="#manage_position_sdm" class="nav-link" data-target="#manage_position_sdm" aria-controls="manage_position_sdm" data-toggle="tab" role="tab">Kelola Posisi SDM</a>
+					</li>
 				</ul>
 				<div class="tab-content">
 					@include('sdm.prosesrekruitmen.rekrutmen.tab_rekruitmen')
 					@include('sdm.prosesrekruitmen.pelamarditerima.tab_pelamarditerima')
 					@include('sdm.prosesrekruitmen.kelolarekrutmen.kelola_rekruitment')
+					@include('sdm.prosesrekruitmen.kelolaposisisdm.index')
 				</div>
 			</div>
 		</div>
@@ -149,7 +157,7 @@
 		    }
 		});
 	});
-	
+
 	// Recruitment ---------------------------------------------------------------------------------
 	function TableRekrutmen() {
 		if ($.fn.DataTable.isDataTable("#table_rekrutmen")) {
@@ -540,5 +548,168 @@
 	$("#diterima_to").on('change', function() {
 		TableDiterima();
 	});
+</script>
+
+<!-- script for kelola-posisi-sdm -->
+<script type="text/javascript">
+	$(document).ready(function() {
+		var tb_kps;
+		const cur_date = new Date();
+		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+		const last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+		$('#date_from_kps').datepicker('setDate', first_day);
+		$('#date_to_kps').datepicker('setDate', last_day);
+
+		$('#modal_createposition').on('hidden.bs.modal', function() {
+			$('#newPosition').trigger('reset');
+			$('#btnStorePos').addClass('simpanKPS');
+			$('#btnStorePos').removeClass('editKPS');
+		});
+
+		$('#date_from_kps').on('change', function() {
+			getTableKPS();
+		});
+		$('#date_to_kps').on('change', function() {
+			getTableKPS();
+		});
+		$('#btn_refresh_date_kps').on('click', function() {
+			$('#date_from_kps').datepicker('setDate', first_day);
+			$('#date_to_kps').datepicker('setDate', last_day);
+		});
+		getTableKPS();
+		// button store new-kps
+		$('#btnStorePos').on('click', function() {
+			if ($(this).hasClass('simpanKPS')) {
+				storeKPS();
+			}
+			else if ($(this).hasClass('editKPS')) {
+				updateKPS();
+			}
+			$('#modal_createposition').modal('hide');
+		});
+	});
+	// function to retrieve datatable 'table_kps'
+	function getTableKPS() {
+		$('#table_kps').dataTable().fnDestroy();
+		tb_kps = $('#table_kps').DataTable({
+			responsive: true,
+			serverSide: true,
+			processing: true,
+			ajax: {
+				url: "{{ route('kps.getTableKPS') }}",
+				type: 'get',
+				data: {
+					date_from: $('#date_from_kps').val(),
+					date_to: $('#date_to_kps').val()
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'position'},
+				{data: 'action'}
+			],
+			pageLength: 10,
+			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
+	}
+	// function to store data to database
+	function storeKPS() {
+		loadingShow();
+		$.ajax({
+			url: "{{ route('kps.store') }}",
+			type: 'post',
+			data: $('#newPosition').serialize(),
+			success: function(resp) {
+				loadingHide();
+				if (resp.status == 'berhasil') {
+					messageSuccess('Berhasil', 'Data posisi baru berhasil ditambahkan !');
+					$('#newPosition').trigger('reset');
+					tb_kps.ajax.reload();
+				}
+				else {
+					// messageWarning('Perhatian', 'Terjadi kesalahan saat menyimpan data posisi. Hubungi pengembang !');
+					messageWarning('Perhatian', 'Terjadi kesalahan : '+ resp.message);
+				}
+			},
+			error: function(e) {
+				loadingHide();
+				messageWarning('Error', 'Error saat menyimpan data posisi. Hubungi pengembang !');
+			}
+		});
+	}
+	// function to delete data from database
+	function deleteKPS(id) {
+		$.confirm({
+			animation: 'RotateY',
+			closeAnimation: 'scale',
+			animationBounce: 1.5,
+			icon: 'fa fa-exclamation-triangle',
+			title: 'Peringatan!',
+			content: 'Apa anda akan mengapus data posisi SDM ini ?',
+			theme: 'disable',
+		    buttons: {
+		        info: {
+					btnClass: 'btn-blue',
+		        	text:'Ya',
+		        	action : function(){
+						// ajax request to delete data from db
+						loadingShow();
+						$.ajax({
+							url: baseUrl +"/sdm/prosesrekruitment/delete/"+ id,
+							type: 'post',
+							success: function(resp) {
+								loadingHide();
+								if (resp.status == 'berhasil') {
+									messageSuccess('Berhasil', 'Data posisi berhasil dihapus !');
+									tb_kps.ajax.reload();
+								}
+								else {
+									// messageWarning('Perhatian', 'Terjadi kesalahan saat menyimpan data posisi. Hubungi pengembang !');
+									messageWarning('Perhatian', 'Terjadi kesalahan : '+ resp.message);
+								}
+							},
+							error: function(e) {
+								loadingHide();
+								messageWarning('Error', 'Error saat menghapus data posisi. Hubungi pengembang !');
+							}
+						});
+			        }
+		        },
+		        cancel:{
+		        	text: 'Tidak',
+				    action: function () {
+  			            // tutup confirm
+  			        }
+  			    }
+		    }
+		});
+
+	}
+	// function display modal to edit data
+	function editKPS(id) {
+		loadingShow();
+		$.ajax({
+			url: baseUrl +"/sdm/prosesrekruitment/edit/"+ id,
+			type: 'get',
+			success: function(resp) {
+				loadingHide();
+				if (resp.status == 'berhasil') {
+					$('#idPosition').val(id);
+					$('#positionName').val(resp.positionName);
+					$('#btnStorePos').addClass('editKPS');
+					$('#btnStorePos').removeClass('simpanKPS');
+					$('#modal_createposition').modal('show');
+				}
+				else {
+					messageWarning('Error', 'Error saat menyimpan data ');
+				}
+			},
+			error: function(e) {
+				loadingHide();
+				messageWarning('Error', 'Error saat menyimpan data posisi. Hubungi pengembang !');
+			}
+		});
+	}
+
 </script>
 @endsection
