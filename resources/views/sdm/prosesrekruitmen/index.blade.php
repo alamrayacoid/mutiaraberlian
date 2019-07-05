@@ -554,11 +554,6 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		var tb_kps;
-		const cur_date = new Date();
-		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
-		const last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
-		$('#date_from_kps').datepicker('setDate', first_day);
-		$('#date_to_kps').datepicker('setDate', last_day);
 
 		$('#modal_createposition').on('hidden.bs.modal', function() {
 			$('#newPosition').trigger('reset');
@@ -566,16 +561,6 @@
 			$('#btnStorePos').removeClass('editKPS');
 		});
 
-		$('#date_from_kps').on('change', function() {
-			getTableKPS();
-		});
-		$('#date_to_kps').on('change', function() {
-			getTableKPS();
-		});
-		$('#btn_refresh_date_kps').on('click', function() {
-			$('#date_from_kps').datepicker('setDate', first_day);
-			$('#date_to_kps').datepicker('setDate', last_day);
-		});
 		getTableKPS();
 		// button store new-kps
 		$('#btnStorePos').on('click', function() {
@@ -583,7 +568,8 @@
 				storeKPS();
 			}
 			else if ($(this).hasClass('editKPS')) {
-				updateKPS();
+				let id = $('#idPosition').val();
+				updateKPS(id);
 			}
 			$('#modal_createposition').modal('hide');
 		});
@@ -710,6 +696,30 @@
 			}
 		});
 	}
-
+	// function update data
+	function updateKPS(id) {
+		loadingShow();
+		$.ajax({
+			url: baseUrl +"/sdm/prosesrekruitment/update/"+ id,
+			type: 'post',
+			data: $('#newPosition').serialize(),
+			success: function(resp) {
+				loadingHide();
+				if (resp.status == 'berhasil') {
+					messageSuccess('Berhasil', 'Data posisi berhasil diperbarui !');
+					$('#newPosition').trigger('reset');
+					tb_kps.ajax.reload();
+				}
+				else {
+					// messageWarning('Perhatian', 'Terjadi kesalahan saat menyimpan data posisi. Hubungi pengembang !');
+					messageWarning('Perhatian', 'Terjadi kesalahan : '+ resp.message);
+				}
+			},
+			error: function(e) {
+				loadingHide();
+				messageWarning('Error', 'Error saat menyimpan data posisi. Hubungi pengembang !');
+			}
+		});
+	}
 </script>
 @endsection

@@ -92,6 +92,28 @@ class KpsController extends Controller
             ]);
         }
     }
+    // update data
+    public function update(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $data = m_jabatan::where('j_id', $id)->first();
+            $data->j_name = $request->positionName;
+            $data->save();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+              'status'  => 'gagal',
+              'message' => $e->getMessage()
+            ]);
+        }
+    }
     // delete data
     public function delete($id)
     {

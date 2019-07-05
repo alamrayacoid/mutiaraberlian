@@ -13,20 +13,6 @@
 		</div>
 		<div class="card-block">
 			<section>
-                <div class="row mb-3">
-                    <div class="col-sm-3 col-md-3">
-                    </div>
-                    <div class="col-md-6 col-sm-12">
-                        <div class="input-group input-group-sm input-daterange">
-                            <input type="text" class="form-control" id="date_from_kps">
-                            <span class="input-group-addon">-</span>
-                            <input type="text" class="form-control" id="date_to_kps">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button" id="btn_refresh_date_kps"><i class="fa fa-refresh"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 				<div class="table-responsive">
 					<table class="table table-hover table-striped display nowrap" cellspacing="0" style="width: 100%" id="table_kps">
 						<thead class="bg-primary">

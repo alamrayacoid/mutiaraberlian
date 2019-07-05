@@ -351,6 +351,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/prosesrekruitment/get-list-kps', 'SDM\KpsController@getTableKPS')->name('kps.getTableKPS');
     Route::post('/sdm/prosesrekruitment/store', 'SDM\KpsController@store')->name('kps.store');
     Route::get('/sdm/prosesrekruitment/edit/{id}', 'SDM\KpsController@edit')->name('kps.edit');
+    Route::post('/sdm/prosesrekruitment/update/{id}', 'SDM\KpsController@update')->name('kps.update');
     Route::post('/sdm/prosesrekruitment/delete/{id}', 'SDM\KpsController@delete')->name('kps.delete');
 
     // Kinerja
