@@ -203,7 +203,6 @@
 
         tbl_item = $('#table_golonganharga').DataTable({
 			"paging":   false,
-			"ordering": false,
 			"info":     false,
             "searching": false,
     	});
@@ -1163,7 +1162,6 @@
         }
         tbl_item = $('#table_golonganharga').DataTable({
             "paging":   false,
-            "ordering": false,
             "info":     false,
             "searching": false,
             responsive: true,
@@ -1197,8 +1195,8 @@
         }
         tbl_itemHPA = $('#table_golonganhargaHPA').DataTable({
             "paging":   false,
-            "ordering": false,
             "info":     false,
+            "ordering": false,
             "searching": false,
             responsive: true,
             processing: true,

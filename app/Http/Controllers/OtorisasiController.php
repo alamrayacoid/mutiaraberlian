@@ -511,7 +511,7 @@ class OtorisasiController extends Controller
         ->join('d_priceclassauthdt', 'pc_id', '=', 'pcad_classprice')
         ->join('m_item', 'i_id', '=', 'pcad_item')
         ->join('m_unit', 'u_id', '=', 'pcad_unit')
-        ->select('pc_id', 'pc_name', DB::raw('concat(i_code, "-", i_name) as nama'), 'u_name', 'd_priceclassauthdt.*')
+        ->select('pc_id', 'pc_name', DB::raw('concat(i_code, " - ", i_name) as nama'), 'u_name', 'd_priceclassauthdt.*')
         ->get();
 
         return DataTables::of($data)

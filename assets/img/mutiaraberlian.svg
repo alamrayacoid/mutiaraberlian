@@ -16,7 +16,10 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="mutiaraberlian.svg">
+   sodipodi:docname="mutiaraberlian.svg"
+   inkscape:export-filename="C:\Users\roliz\Desktop\mutiaraberlian.png"
+   inkscape:export-xdpi="160.16255"
+   inkscape:export-ydpi="160.16255">
   <defs
      id="defs2">
     <linearGradient
@@ -693,14 +696,14 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.40904745"
      inkscape:cx="353.98688"
-     inkscape:cy="424.88224"
+     inkscape:cy="327.09407"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1366"
-     inkscape:window-height="686"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-height="705"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:pagecheckerboard="false"
      fit-margin-top="0"
@@ -715,7 +718,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -728,7 +731,8 @@
        id="g2261"
        inkscape:export-filename="/home/ddr/Pictures/mutiaralogo.png"
        inkscape:export-xdpi="73.202614"
-       inkscape:export-ydpi="73.202614">
+       inkscape:export-ydpi="73.202614"
+       transform="matrix(0.96380285,0,0,0.96380285,3.7739236,4.6863584)">
       <g
          transform="matrix(0.66516864,0,0,0.66516864,-153.7501,1.8521534)"
          id="g2171">
@@ -1309,7 +1313,7 @@
                       </g>
                       <g
                          id="g1501"
-                         transform="rotate(0.06730101,37597.347,14043.338)">
+                         transform="rotate(0.06730101,37597.347,14043.32)">
                         <path
                            d="m 255.86608,251.13302 a 17.433262,17.433262 0 0 1 18.7568,15.96618 17.433262,17.433262 0 0 1 -15.93219,18.78568 17.433262,17.433262 0 0 1 -18.8145,-15.89815 17.433262,17.433262 0 0 1 15.86405,-18.84326"
                            sodipodi:open="true"
