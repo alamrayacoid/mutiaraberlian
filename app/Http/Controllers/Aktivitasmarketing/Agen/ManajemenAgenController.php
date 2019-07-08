@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Aktivitasmarketing\Agen;
 
 use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
@@ -299,6 +300,9 @@ class ManajemenAgenController extends Controller
         // in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
         $idx = null;
         foreach ($array as $key => $val) {
+            if ($value <= $val->pcd_rangeqtystart && $val->pcd_rangeqtyend == 0){
+                $val->pcd_rangeqtyend = $val->pcd_rangeqtystart + $value + 2;
+            }
             $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
             if ($x == true) {
                 $idx = $key;
@@ -1662,19 +1666,19 @@ class ManajemenAgenController extends Controller
 
     public function saveKPW(Request $request)
     {
-        $agen = $request->agen;
-        $customer = $request->customer;
-        $website = $request->website;
+        $agen      = $request->agen;
+        $customer  = $request->customer;
+        $website   = $request->website;
         $transaksi = $request->transaksi;
-        $item = $request->item;
-        $qty = $request->qty;
-        $unit = $request->unit;
-        $price = $request->price;
-        $note = $request->note;
-        $code = $request->code;
-        $qtycode = $request->qtycode;
-        $mutcat = 4;
-        $sekarang = Carbon::now('Asia/Jakarta');
+        $item      = $request->item;
+        $qty       = $request->qty;
+        $unit      = $request->unit;
+        $price     = $request->price;
+        $note      = $request->note;
+        $code      = $request->code;
+        $qtycode   = $request->qtycode;
+        $mutcat    = 4;
+        $sekarang  = Carbon::now('Asia/Jakarta');
 
         DB::beginTransaction();
         try {
@@ -1688,14 +1692,14 @@ class ManajemenAgenController extends Controller
             $total = intval($qty) * intval($price);
             DB::table('d_sales')
                 ->insert([
-                    's_id' => $id_sales,
-                    's_comp' => $agen,
+                    's_id'     => $id_sales,
+                    's_comp'   => $agen,
                     's_member' => $customer,
-                    's_type' => 'C',
-                    's_date' => $sekarang->format('Y-m-d'),
-                    's_nota' => $nota,
-                    's_total' => $total,
-                    's_user' => Auth::user()->u_id,
+                    's_type'   => 'C',
+                    's_date'   => $sekarang->format('Y-m-d'),
+                    's_nota'   => $nota,
+                    's_total'  => $total,
+                    's_user'   => Auth::user()->u_id,
                 ]);
 
             $datamutcat = DB::table('m_mutcat')->where('m_status', '=', 'M')->get();
@@ -1763,16 +1767,16 @@ class ManajemenAgenController extends Controller
                     if ($cek_idstock != $stock[$j]->s_id){
                         ++$id_salesdt;
                         $temp = [
-                            'sd_sales' => $id_sales,
-                            'sd_detailid' => $id_salesdt,
-                            'sd_comp' => $stock[$j-1]->s_comp,
-                            'sd_item' => $stock[$j-1]->s_item,
-                            'sd_qty' => $sales_qty,
-                            'sd_unit' => $unit,
-                            'sd_value' => $price,
+                            'sd_sales'      => $id_sales,
+                            'sd_detailid'   => $id_salesdt,
+                            'sd_comp'       => $stock[$j-1]->s_comp,
+                            'sd_item'       => $stock[$j-1]->s_item,
+                            'sd_qty'        => $sales_qty,
+                            'sd_unit'       => $unit,
+                            'sd_value'      => $price,
                             'sd_discpersen' => 0,
-                            'sd_discvalue' => 0,
-                            'sd_totalnet' => $price * $sales_qty
+                            'sd_discvalue'  => 0,
+                            'sd_totalnet'   => $price * $sales_qty
                         ];
                         array_push($insert_salesdt, $temp);
                         $sales_qty = 0;
@@ -1802,16 +1806,16 @@ class ManajemenAgenController extends Controller
 
                     ++$id_salesdt;
                     $temp = [
-                        'sd_sales' => $id_sales,
-                        'sd_detailid' => $id_salesdt,
-                        'sd_comp' => $stock[$j]->s_comp,
-                        'sd_item' => $stock[$j]->s_item,
-                        'sd_qty' => $permintaan,
-                        'sd_unit' => $unit,
-                        'sd_value' => $price,
+                        'sd_sales'      => $id_sales,
+                        'sd_detailid'   => $id_salesdt,
+                        'sd_comp'       => $stock[$j]->s_comp,
+                        'sd_item'       => $stock[$j]->s_item,
+                        'sd_qty'        => $permintaan,
+                        'sd_unit'       => $unit,
+                        'sd_value'      => $price,
                         'sd_discpersen' => 0,
-                        'sd_discvalue' => 0,
-                        'sd_totalnet' => $price * $sales_qty
+                        'sd_discvalue'  => 0,
+                        'sd_totalnet'   => $price * $sales_qty
                     ];
                     array_push($insert_salesdt, $temp);
 
@@ -1822,11 +1826,11 @@ class ManajemenAgenController extends Controller
                 $salescode = [];
                 for ($i = 0; $i < count($code); $i++){
                     $temp = [
-                        'sc_sales' => $id_sales,
-                        'sc_item' => $item,
+                        'sc_sales'    => $id_sales,
+                        'sc_item'     => $item,
                         'sc_detailid' => $i + 1,
-                        'sc_code' => $code[$i],
-                        'sc_qty' => $qtycode[$i]
+                        'sc_code'     => $code[$i],
+                        'sc_qty'      => $qtycode[$i]
                     ];
                     array_push($salescode, $temp);
                 }
@@ -1837,18 +1841,18 @@ class ManajemenAgenController extends Controller
                 // insert new stock-mutation out
                 DB::table('d_stock_mutation')
                     ->insert([
-                        'sm_stock' => $stock[$j]->sm_stock,
+                        'sm_stock'    => $stock[$j]->sm_stock,
                         'sm_detailid' => $detailid,
-                        'sm_date' => $sekarang,
-                        'sm_mutcat' => 4,
-                        'sm_qty' => $smQty,
-                        'sm_use' => 0,
-                        'sm_residue' => 0,
-                        'sm_hpp' => $stock[$j]->sm_hpp,
-                        'sm_sell' => $price,
-                        'sm_nota' => $nota,
-                        'sm_reff' => $stock[$j]->sm_nota,
-                        'sm_user' => Auth::user()->u_id,
+                        'sm_date'     => $sekarang,
+                        'sm_mutcat'   => 4,
+                        'sm_qty'      => $smQty,
+                        'sm_use'      => 0,
+                        'sm_residue'  => 0,
+                        'sm_hpp'      => $stock[$j]->sm_hpp,
+                        'sm_sell'     => $price,
+                        'sm_nota'     => $nota,
+                        'sm_reff'     => $stock[$j]->sm_nota,
+                        'sm_user'     => Auth::user()->u_id,
                     ]);
 
                 // currently, it's special case for 'penjualan-langsung / mutcat 14'
@@ -1884,19 +1888,19 @@ class ManajemenAgenController extends Controller
             ++$sw_id;
             DB::table('d_salesweb')
                 ->insert([
-                    'sw_id' => $sw_id,
-                    'sw_reff' => $nota,
+                    'sw_id'              => $sw_id,
+                    'sw_reff'            => $nota,
                     'sw_transactioncode' => $transaksi,
-                    'sw_agen' => $agen,
-                    'sw_website' => $website,
-                    'sw_date' => $sekarang,
-                    'sw_item' => $item,
-                    'sw_qty' => $qty,
-                    'sw_unit' => $unit,
-                    'sw_price' => $price,
-                    'sw_totalprice' => intval($qty) * intval($price),
-                    'sw_note' => $note,
-                    'sw_insert' => $sekarang
+                    'sw_agen'            => $agen,
+                    'sw_website'         => $website,
+                    'sw_date'            => $sekarang,
+                    'sw_item'            => $item,
+                    'sw_qty'             => $qty,
+                    'sw_unit'            => $unit,
+                    'sw_price'           => $price,
+                    'sw_totalprice'      => intval($qty) * intval($price),
+                    'sw_note'            => $note,
+                    'sw_insert'          => $sekarang
                 ]);
 
             DB::commit();
@@ -1952,10 +1956,10 @@ class ManajemenAgenController extends Controller
             ->addColumn('action', function ($datas) {
                 return
                     '<div class="btn-group btn-group-sm">
-            <button class="btn btn-primary btn-detailKPW" type="button" title="Detail" onclick="detailKPW(' . $datas->sw_id . ')"><i class="fa fa-folder"></i></button>
-            <button class="btn btn-warning btn-editKPW" type="button" title="Edit" onclick="editKPW(' . $datas->sw_id . ')"><i class="fa fa-pencil"></i></button>
-            <button class="btn btn-danger btn-deleteKPW" type="button" title="Delete" onclick="deleteKPW(' . $datas->sw_id . ')"><i class="fa fa-trash"></i></button>
-            </div>';
+                        <button class="btn btn-primary btn-detailKPW" type="button" title="Detail" onclick="detailKPW(' . $datas->sw_id . ')"><i class="fa fa-folder"></i></button>
+                        <button class="btn btn-warning btn-editKPW" type="button" title="Edit" onclick="editKPW(' . $datas->sw_id . ')"><i class="fa fa-pencil"></i></button>
+                        <button class="btn btn-danger btn-deleteKPW" type="button" title="Delete" onclick="deleteKPW(' . $datas->sw_id . ')"><i class="fa fa-trash"></i></button>
+                    </div>';
             })
             ->rawColumns(['date', 'total', 'action'])
             ->make(true);
@@ -2009,16 +2013,64 @@ class ManajemenAgenController extends Controller
         return Response::json([
             'datas' => $datas,
             'units' => $units,
-            'code'  => $code
+            'code'  => $code,
+            'dataId'=> Crypt::encrypt($id)
         ]);
+    }
+
+    public function updateKPW(Request $request)
+    {
+        // dd($request);
+        try{
+            $id = Crypt::decrypt($request->id);
+        }catch (DecryptException $e){
+            return view('errors.404');
+        }
+
+        // DB::beginTransaction();
+        // try {
+        $requestId = new \Illuminate\Http\Request();
+
+        $requestId->replace(['id' => $id]);
+
+        self::deleteKPW($requestId);
+        self::saveKPW($request);
+
+        $delete = self::deleteKPW($requestId);
+        $save = self::saveKPW($request);
+
+        $delete = $delete->original['status'];
+        $save = $save->original['status'];
+
+        if ($delete == 'sukses' && $save == 'success') {
+            return Response::json([
+                'status' => 'sukses'
+            ]);
+        } else {                
+            return Response::json([
+                'status'  => 'gagal'
+            ]);
+        }
+
+        //     DB::commit();
+        //     return Response::json([
+        //         'status' => 'sukses'
+        //     ]);
+        // } catch (DecryptException $e) {
+        //     DB::rollBack();
+        //     return Response::json([
+        //         'status'  => 'gagal',
+        //         'message' => $e->getMessage()
+        //     ]);
+        // }
     }
 
     public function deleteKPW(Request $request)
     {
         $id = $request->id;
 
-        // DB::beginTransaction();
-        // try {
+        DB::beginTransaction();
+        try {
             //info sales
             $info = DB::table('d_salesweb')
                 ->join('d_sales', 's_nota', '=', 'sw_reff')
@@ -2078,7 +2130,7 @@ class ManajemenAgenController extends Controller
                             ->where('sm_stock', '=', $data[$j]->sm_stock)
                             ->where('sm_nota', '=', $data[$j]->sm_reff)
                             ->update([
-                                'sm_use' => $pembelian->sm_use - $kode[$i]->sc_qty,
+                                'sm_use'     => $pembelian->sm_use - $kode[$i]->sc_qty,
                                 'sm_residue' => $pembelian->sm_residue + $kode[$i]->sc_qty,
                             ]);
                     }
@@ -2094,10 +2146,10 @@ class ManajemenAgenController extends Controller
                     ++$detailid;
                     DB::table('d_salesdt')
                         ->insert([
-                            'sd_stock' => $stock[0]->s_id,
+                            'sd_stock'    => $stock[0]->s_id,
                             'sd_detailid' => $detailid,
-                            'sd_code' => $kode[$i]->sc_code,
-                            'sd_qty' => $kode[$i]->sc_qty
+                            'sd_code'     => $kode[$i]->sc_code,
+                            'sd_qty'      => $kode[$i]->sc_qty
                         ]);
                     DB::table('d_stock')
                         ->where('s_id', '=', $stock[0]->s_id)
@@ -2160,17 +2212,17 @@ class ManajemenAgenController extends Controller
                 ->where('sc_sales', '=', $info[0]->s_id)
                 ->delete();
 
-        //     DB::commit();
-        //     return Response::json([
-        //         'status' => 'sukses'
-        //     ]);
-        // } catch (DecryptException $e) {
-        //     DB::rollBack();
-        //     return Response::json([
-        //         'status' => 'gagal',
-        //         'message' => $e->getMessage()
-        //     ]);
-        // }
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (DecryptException $e) {
+            DB::rollBack();
+            return Response::json([
+                'status'  => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
 }

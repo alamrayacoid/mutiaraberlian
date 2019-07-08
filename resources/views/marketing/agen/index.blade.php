@@ -86,7 +86,7 @@
     <script type="text/javascript">
         var table_do;
         var table_kpw;
-        var table_historykpw;
+        var table_listKPW;
         var table_detailKPW, table_editKPW;
         $(document).ready(function () {
             getStatusDO();
@@ -451,7 +451,7 @@
         });
 
         function tableHistoryColumn() {
-            table_historykpw.columns.adjust();
+            table_listKPW.columns.adjust();
         }
 
         // data-table -> function to retrieve DataTable server side
@@ -489,7 +489,7 @@
 
         function TableListKPW() {
             $('#table_penjualanviaweb').dataTable().fnDestroy();
-            table_historykpw = $('#table_penjualanviaweb').DataTable({
+            table_listKPW = $('#table_penjualanviaweb').DataTable({
                 responsive: true,
                 processing: true,
                 bAutoWidth: true,
@@ -939,14 +939,6 @@
             $('#total').val(total);
         }
 
-        $('.set-total').on('click keyup', function(){
-            let qty = $('#edit_kuantitas').val();
-            let harga = $('#edit_harga').val();
-
-            let total = parseInt(qty) * parseInt(harga);
-            $('#edit_total').val(total);
-        });
-
         $('#satuan').change(function(){
             var selected = $(this).find('option:selected').data('nama');
             $('#label-satuan').html(selected);
@@ -1096,7 +1088,7 @@
                     if (response.data.status == 'success'){
                         messageSuccess("Berhasil", "Data berhasil disimpan");
                         $('#createKPW').modal('hide');
-                        table_historykpw.ajax.reload();
+                        table_listKPW.ajax.reload();
                     } else if (response.data.status == 'gagal'){
                         messageFailed("Gagal", response.data.message);
                     }
@@ -1147,6 +1139,8 @@
                     let qty = $('#code_qty').val();
                     if (qty == '' || qty == 0 || qty == null){
                         qty = 1;
+                    } else if (true) {}{
+
                     }
                     let values = $("input[name='code[]']")
                         .map(function(){return $(this).val();}).get();
@@ -1242,7 +1236,6 @@
             }).catch(function (error) {
                 loadingHide();
             })
-
         }
 
         function editKPW(id) {
@@ -1253,6 +1246,7 @@
                 success:function(resp) {
                     loadingShow();
                     $('#editKPW').modal('show');
+                    $('#data_id').val(resp.dataId);
                     $('#editnama_agen').val(resp.datas.c_name);
                     $('#edit_agen').val(resp.datas.sw_agen);
                     $('#editnama_customer').val('CUSTOMER');
@@ -1317,14 +1311,205 @@
             });
         }
 
+        function setEditTotal() {
+            let qty = $('#edit_kuantitas').val();
+            let harga = $('#edit_harga').val();
+
+            let total = parseInt(qty) * parseInt(harga);
+            $('#edit_total').val(total);
+        }
+
+        $('.set-total').on('click keyup', function(){
+            let qty = $('#edit_kuantitas').val();
+            let harga = $('#edit_harga').val();
+
+            let total = parseInt(qty) * parseInt(harga);
+            $('#edit_total').val(total);
+        });
+        
+        function updateKPW() {
+            let kuantitas = $('#edit_kuantitas').val();
+            let qty = $("input[name='qty_s[]']")
+                .map(function(){return $(this).val();}).get();
+            let totalqty = 0;
+            for (let i = 0; i < qty.length; i++) {
+                totalqty = totalqty + parseInt(qty[i]);
+            }
+
+            if (parseInt(kuantitas) != parseInt(totalqty)){
+                return $.confirm({
+                    animation: 'RotateY',
+                    closeAnimation: 'scale',
+                    animationBounce: 2.5,
+                    icon: 'fa fa-exclamation-triangle',
+                    title: 'Peringatan!',
+                    content: 'Kuantitas barang tidak sama dengan jumlah kode!!',
+                    theme: 'disable',
+                    buttons: {
+                        info: {
+                            btnClass: 'btn-blue',
+                            text: 'Lanjutkan',
+                            action: function () {
+                                lanjutkanUpdate();
+                                // return post;
+                            }
+                        },
+                        cancel: {
+                            text: 'Batal',
+                            action: function () {
+                                // tutup confirm
+                                // valid = 0;
+                            }
+                        }
+                    }
+                });
+            } else {
+                lanjutkanUpdate();
+                // return post;
+            }
+        }
+
+        function lanjutkanUpdate() {
+            valid = 1;
+            let agen      = $('#edit_agen').val();
+            let customer  = $('#editnama_customer').val();
+            let website   = $('#edit_website').val();
+            let transaksi = $('#edit_transaksi').val();
+            let produk    = $('#edit_produkid').val();
+            let kuantitas = $('#edit_kuantitas').val();
+            let satuan    = $('#edit_satuan').val();
+            let harga     = $('#edit_harga').val();
+            let note      = $('#edit_note').val();
+            let kode      = $("input[name='code_s[]']")
+                .map(function(){return $(this).val();}).get();
+
+            let kodeqty = $("input[name='qty_s[]']")
+                .map(function(){return $(this).val();}).get();
+            if (agen == '' || agen == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#edit_agen').focus();
+                $('#edit_agen').select2('open');
+                return false;
+            }
+            if (customer == '' || customer == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#editnama_customer').focus();
+                $('#editnama_customer').select2('open');
+                return false;
+            }
+            if (website == '' || website == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#edit_website').focus();
+                return false;
+            }
+            if (transaksi == '' || transaksi == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#edit_transaksi').focus();
+                return false;
+            }
+            if (produk == '' || produk == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#edit_produkid').focus();
+                return false;
+            }
+            if (kuantitas == '' || kuantitas == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#edit_kuantitas').focus();
+                return false;
+            }
+            if (satuan == '' || satuan == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#edit_satuan').focus();
+                $('#edit_satuan').select2('open');
+                return false;
+            }
+            if (harga == '' || harga == null){
+                valid = 0;
+                messageWarning("Perhatian", "Form harus lengkap");
+                $('#edit_harga').focus();
+                return false;
+            }
+            if (valid == 1){
+                var post = [];
+                post = {
+                    "id"        : $('#data_id').val(),
+                    "agen"      : agen,
+                    "website"   : website,
+                    "customer"  : customer,
+                    "transaksi" : transaksi.toUpperCase(),
+                    "item"      : produk,
+                    "qty"       : kuantitas,
+                    "unit"      : satuan,
+                    "price"     : harga,
+                    "note"      : note,
+                    "code"      : kode,
+                    "qtycode"   : kodeqty,
+                    "_token"    : '{{ csrf_token() }}'
+                };
+
+                updateSalesWeb(post);
+            }
+        }
+
+        function updateSalesWeb(post){
+            // if (post != false) {
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apa anda yakin akan mengupdate transaksi ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            loadingShow();
+                            $.ajax({
+                                url: "{{url('/marketing/agen/kelolapenjualanviawebsite/update-kpw')}}",
+                                type: "get",
+                                data: post,
+                                success:function(response){
+                                    loadingHide();
+                                    if (response.status == 'sukses'){
+                                        $('#editKPW').modal('hide');
+                                        messageSuccess("Sukses", "Transaksi berhasil diperbarui!");
+                                        table_listKPW.ajax.reload();
+                                    } else if (response.data.status == 'gagal'){
+                                        messageFailed("gagal", "Transaksi gagal diupdate");
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+            // }else{
+            //     messageFailed("Gagal", "Ada yang kurang!");
+            // }
+        }
+
         $(document).on('click', '.btn-trash', function () {            
             table_editKPW
                 .row( $(this).parents('tr') )
                 .remove()
                 .draw();
         });
-
-
 
         function cekCodeEdit(e){
             if (e.keyCode == 13){
@@ -1355,22 +1540,39 @@
                     if (qty == '' || qty == 0 || qty == null){
                         qty = 1;
                     }
-                    let values = $("input[name='code_s[]']")
-                        .map(function(){return $(this).val();}).get();
-                    if (!values.includes(code)){
-                        ++counter;
-                        table_editKPW.row.add([
-                            "<input type='text' class='form-control form-control-sm bg-light code_sd' value='"+code+"' readonly disabled><input type='hidden' name='code_s[]' class='code_s' value='"+code+"'>",
-                            "<input type='number' min='1' class='form-control form-control-sm qty_s' name='qty_s[]' value='"+qty+"'>",
-                            "<div class='text-center'><button class='btn btn-sm rounded btn-danger btn-trash'><i class='fa fa-trash'></i></button></div>"
-                        ]).draw(false);
-                    } else {
-                        messageWarning("Perhatian", "Kode sudah ada");
-                        let idx = values.indexOf(code);
-                        let qtylama = $('.qty_s').val();
-                        let total = parseInt(qty) + parseInt(qtylama);
-                        $('.qty_s').val(total);
-                        $('.qty_s').focus();
+                    if (parseInt(qty) > parseInt($('#edit_kuantitas').val())) {
+                        messageFailed("Peringatan!", "Qty terlalu besar");
+                    }else{
+                        let values = $("input[name='code_s[]']")
+                            .map(function(){return $(this).val();}).get();
+                        let valuesQty = $("input[name='qty_s[]']")
+                            .map(function(){return $(this).val();}).get();
+
+                        let total = 0;
+                        for (var i = 0; i < valuesQty.length; i++) {
+                            total += parseInt(valuesQty[i])
+                        }
+
+                        let totalQty = parseInt(qty) + total;
+                        if (totalQty > parseInt($('#edit_kuantitas').val())) {
+                            messageFailed("Peringatan!", "Jumlah melebihi kuantitas");
+                        }else{
+                            if (!values.includes(code)){
+                                ++counter;
+                                table_editKPW.row.add([
+                                    "<input type='text' class='form-control form-control-sm bg-light code_sd' value='"+code+"' readonly disabled><input type='hidden' name='code_s[]' class='code_s' value='"+code+"'>",
+                                    "<input type='number' min='1' class='form-control form-control-sm qty_s' name='qty_s[]' value='"+qty+"'>",
+                                    "<div class='text-center'><button class='btn btn-sm rounded btn-danger btn-trash'><i class='fa fa-trash'></i></button></div>"
+                                ]).draw(false);
+                            } else {
+                                messageWarning("Perhatian", "Kode sudah ada");
+                                let idx = values.indexOf(code);
+                                let qtylama = $('.qty_s').val();
+                                let total = parseInt(qty) + parseInt(qtylama);
+                                $('.qty_s').val(total);
+                                $('.qty_s').focus();
+                            }
+                        }
                     }
                 }
             }).catch(function (error) {
@@ -1403,7 +1605,7 @@
                                 loadingHide();
                                 if (response.data.status == 'sukses'){
                                     messageSuccess("Berhasil", "Transaksi berhasil dihapus");
-                                    table_historykpw.ajax.reload();
+                                    table_listKPW.ajax.reload();
                                 } else if (response.data.status == 'gagal'){
                                     messageFailed("Gagal", "Transaksi gagal dihapus");
                                 }

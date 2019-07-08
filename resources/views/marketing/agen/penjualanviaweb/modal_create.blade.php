@@ -146,6 +146,7 @@
                     <div class="col-10">
                         <input id="editnama_agen" class="form-control form-control-sm" readonly>
                         <input type="hidden" id="edit_agen">
+                        <input type="hidden" id="data_id">                        
                     </div>
                 </div>
                 <div class="row form-group">
@@ -238,7 +239,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="updateSalesWeb()">Simpan</button>
+                <button type="button" class="btn btn-primary" onclick="updateKPW()">Simpan</button>
             </div>
         </div>
 
