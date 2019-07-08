@@ -54,6 +54,29 @@
 
 @endsection
 @section('extra_script')
+<!-- nav tabs management  -->
+<script type="text/javascript">
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        console.log(e.target);
+        console.log($(e.target).attr('href'));
+        if ($(e.target).attr('href') == '#distribusibarang') {
+            console.log('adjust width data-table in distribusibarang');
+            table_dist.ajax.reload();
+            table_dist.columns.adjust();
+        }
+        else if ($(e.target).attr('href') == '#history') {
+            console.log('adjust width data-table in history');
+            table_hist.ajax.reload();
+            table_hist.columns.adjust();
+        }
+        else if ($(e.target).attr('href') == '#penerimaan') {
+            console.log('adjust width data-table in penerimaan');
+            table_accept.ajax.reload();
+            table_accept.columns.adjust();
+        }
+    });
+</script>
+
 <!-- script for distribusibarang  -->
 <script type="text/javascript">
     var table_dist;
@@ -134,11 +157,12 @@
   			pageLength: 10,
   			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
   		});
+        // table_dist.columns.adjust().draw();
   	}
 
     function printNota(id)
 	{
-		window.location.href='{{ url('inventory/distribusibarang/nota') }}?id='+id;
+		window.open('{{ url('inventory/distribusibarang/nota') }}?id='+id, 'Cetak Nota Distribusi');
 	}
 
     function hapus(id){
@@ -254,8 +278,10 @@
             pageLength: 10,
             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
         });
+        // table_hist.responsive.recalc();
+        // table_hist.columns.adjust().draw();
     }
-
+    // show detail distribution
     function showDetailHt(idx)
     {
         $.ajax({
@@ -273,7 +299,8 @@
                     kodeXnamaBrg = '<td>'+ val.get_item.i_code +' / '+ val.get_item.i_name +'</td>';
                     qty = '<td class="digits">'+ val.sdd_qty +'</td>';
                     unit = '<td>'+ val.get_unit.u_name +'</td>';
-                    appendItem = no + kodeXnamaBrg + qty + unit;
+                    btnShowPC = '<td><button class="btn btn-info btn-sm" onclick="shwoPC('+ val.sdd_stockdistribution +', '+ val.sdd_detailid +')" title="Tampilkan Kode Produksi">Tampilkan</button></td>';
+                    appendItem = no + kodeXnamaBrg + qty + unit + btnShowPC;
                     $('#table_detail_ht > tbody:last-child').append('<tr>'+ appendItem +'</tr>');
                 });
                 //mask digits
@@ -290,7 +317,42 @@
                 });
 
                 $('#modalHistory').modal('show');
+            },
+            error: function(xhr, status, error) {
+				let err = JSON.parse(xhr.responseText);
+                messageWarning('Error', err.message);
+                // console.log(err.message);
+            }
+        });
+    }
+    // show detail production code each item
+    function shwoPC(id, detailId) {
+        console.log(id, detailId);
+        $.ajax({
+            url: baseUrl + "/inventory/distribusibarang/show-pc/"+ id +"/"+ detailId,
+            type: "get",
+            success: function(response) {
+                $('#table_detail_showpc tbody').empty();
+                $.each(response, function (index, val) {
+                    code = '<td>'+ val.sdc_code +'</td>';
+                    qty = '<td class="digits">'+ val.sdc_qty +'</td>';
+                    appendItem = code + qty;
+                    $('#table_detail_showpc > tbody:last-child').append('<tr>'+ appendItem +'</tr>');
+                });
+                //mask digits
+                $('.digits').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 0,
+                    autoGroup: true,
+                    prefix: '', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
 
+                $('#modalHistory').modal('show');
             },
             error: function(xhr, status, error) {
 				let err = JSON.parse(xhr.responseText);

@@ -73,14 +73,20 @@ class DistribusiController extends Controller
     public function printNota(Request $request)
     {
         $data = DB::table('d_stockdistribution')->where('sd_id', $request->id)->first();
-
         $tujuan = DB::table('m_company')->where('c_id', $data->sd_destination)->first();
-
         $cabang = DB::table('m_company')->where('c_id', $data->sd_from)->first();
+        $ekspedisi = d_productdelivery::where('pd_nota', $data->sd_nota)
+        ->with('getExpedition')
+        ->with('getExpeditionType')
+        ->first();
+        
+        $dt = DB::table('d_stockdistributiondt')
+            ->join('m_item', 'i_id', '=', 'sdd_item')
+            ->join('m_unit', 'u_id', '=', 'sdd_unit')
+            ->where('sdd_stockdistribution', $request->id)
+            ->get();
 
-        $dt = DB::table('d_stockdistributiondt')->join('m_item', 'i_id', '=', 'sdd_item')->join('m_unit', 'u_id', '=', 'sdd_unit')->where('sdd_stockdistribution', $request->id)->get();
-
-        return view('inventory/distribusibarang/distribusi/nota', compact('data', 'tujuan', 'cabang', 'dt'));
+        return view('inventory/distribusibarang/distribusi/nota', compact('data', 'tujuan', 'cabang', 'dt', 'ekspedisi'));
     }
 
     // get list items for AutoComplete
@@ -224,7 +230,7 @@ class DistribusiController extends Controller
             $prodDeliv->pd_nota = $nota;
             $prodDeliv->pd_expedition = $request->expedition;
             $prodDeliv->pd_product = $request->expeditionType;
-            $prodDeliv->pd_resi = $request->resi;
+            $prodDeliv->pd_resi = strtoupper($request->resi);
             $prodDeliv->pd_couriername = $request->courierName;
             $prodDeliv->pd_couriertelp = $request->courierTelp;
             $prodDeliv->pd_price = $request->shippingCost;
@@ -321,13 +327,20 @@ class DistribusiController extends Controller
         $validator = Validator::make($request->all(), [
             'selectBranch' => 'required',
             'itemsId.*' => 'required',
-            'qty.*' => 'required'
+            'qty.*' => 'required',
+            'expedition' => 'required',
+            'expeditionType' => 'required',
+            'resi' => 'required'
         ],
-            [
-                'selectBranch.required' => 'Silahkan pilih \'Cabang\' terlebih dahulu !',
-                'itemsId.*.required' => 'Masih terdapat baris item yang kosong !',
-                'qty.*.required' => 'Masih terdapat \'Jumlah Item\' yang kosong !'
-            ]);
+        [
+            'selectBranch.required' => 'Silahkan pilih \'Cabang\' terlebih dahulu !',
+            'itemsId.*.required' => 'Masih terdapat baris item yang kosong !',
+            'qty.*.required' => 'Masih terdapat \'Jumlah Item\' yang kosong !',
+            'expedition.required' => 'Silahkan pilih \'Jasa Ekspedisi\' yang akan digunakan !',
+            'expeditionType.required' => 'Silahkan pilih \'Jenis Ekspedisi\' yang akan digunakan !',
+            'resi.required' => 'Silahkan isi \'Nomor Resi\' terlebih dahulu !'
+        ]);
+
         if ($validator->fails()) {
             return $validator->errors()->first();
         } else {
@@ -724,7 +737,7 @@ class DistribusiController extends Controller
                     return $mutConfirm;
                 }
             }
-            
+
             // update stockdist-status to 'Y'
             $stockdist->sd_status = 'Y';
             $stockdist->save();
@@ -780,6 +793,8 @@ class DistribusiController extends Controller
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
         $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
+            ->where('sd_from', Auth::user()->u_company)
+            ->where('sd_status', 'Y')
             ->orderBy('sd_date', 'desc')
             ->orderBy('sd_nota', 'desc')
             ->get();
@@ -793,12 +808,20 @@ class DistribusiController extends Controller
                 $tmp = DB::table('m_company')->where('c_id', $data->sd_destination)->first();
                 return $tmp->c_name;
             })
+            // ->addColumn('status', function($data) {
+            //     if ($data->sd_status == 'Y') {
+            //         return '<span class="badge badge-pill badge-primary text-center">Telah diterima</span>';
+            //     }
+            //     else {
+            //         return '<span class="badge badge-pill badge-warning text-center">Belum diterima</span>';
+            //     }
+            // })
             ->addColumn('action', function ($data) {
                 return '<div class="btn-group btn-group-sm">
-                <button class="btn btn-primary" onclick="showDetailHt(' . $data->sd_id . ')"><i class="fa fa-folder"></i></button>
+                <button class="btn btn-primary" onclick="showDetailHt(' . $data->sd_id . ')" title="Detail distribusi"><i class="fa fa-folder"></i></button>
             </div>';
             })
-            ->rawColumns(['tanggal', 'action', 'tujuan', 'type'])
+            ->rawColumns(['tanggal', 'status', 'action', 'tujuan', 'type'])
             ->make(true);
     }
 
@@ -819,27 +842,34 @@ class DistribusiController extends Controller
         return response()->json($detail);
     }
 
+    // retrieve list of production code from distribution
+    public function showPC($idDist, $detailId)
+    {
+        $listPC = d_stockdistributioncode::where('sdc_stockdistribution', $idDist)
+        ->where('sdc_stockdistributiondt', $detailId)
+        ->get();
+
+        return response()->json($listPC);
+    }
+
     // retrieve DataTable for acceptance distribusibarang
     public function tableAcceptance(Request $request)
     {
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
 
+        $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
+        ->where('sd_status', 'P') // status == 'pending'
+        ->orderBy('sd_date', 'asc')
+        ->orderBy('sd_nota', 'asc');
+
         // if logged in user is 'pusat'
         if (Auth::user()->u_user == 'E' && Auth::user()->getCompany->c_type == 'PUSAT') {
-            $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
-            ->where('sd_status', 'P') // status == 'pending'
-            ->orderBy('sd_date', 'asc')
-            ->orderBy('sd_nota', 'asc')
-            ->get();
+            $data = $data->get();
         }
         // if logged in user is 'cabang'
         elseif (Auth::user()->u_user == 'E' && Auth::user()->getCompany->c_type == 'CABANG') {
-            $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
-            ->where('sd_status', 'P') // status == 'pending'
-            ->where('sd_destination', '=', Auth::user()->u_company)
-            ->orderBy('sd_date', 'asc')
-            ->orderBy('sd_nota', 'asc')
+            $data = $data->where('sd_destination', '=', Auth::user()->u_company)
             ->get();
         }
 
@@ -854,7 +884,7 @@ class DistribusiController extends Controller
             })
             ->addColumn('action', function ($data) {
                 return '<div class="btn-group btn-group-sm">
-            <button class="btn btn-primary" onclick="showDetailAc(' . $data->sd_id . ')"><i class="fa fa-folder"></i></button>
+            <button class="btn btn-primary" title="Terima Barang" onclick="showDetailAc(' . $data->sd_id . ')"><i class="fa fa-get-pocket"></i></button>
             </div>';
             })
             ->rawColumns(['tanggal', 'action', 'tujuan', 'type'])

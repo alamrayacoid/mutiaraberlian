@@ -281,6 +281,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/distribusibarang/table', 'Inventory\DistribusiController@table');
     Route::get('/inventory/distribusibarang/table-history', 'Inventory\DistribusiController@tableHistory');
     Route::get('/inventory/distribusibarang/detail-ht/{id}', 'Inventory\DistribusiController@showDetailHt')->name('distribusibarang.showDetailHt');
+    Route::get('/inventory/distribusibarang/show-pc/{id}/{detailid}', 'Inventory\DistribusiController@showPC')->name('distribusibarang.showPC');
     Route::get('/inventory/distribusibarang/table-acceptance', 'Inventory\DistribusiController@tableAcceptance');
     Route::get('/inventory/distribusibarang/detail-ac/{id}', 'Inventory\DistribusiController@showDetailAc')->name('distribusibarang.showDetailAc');
     Route::post('/inventory/distribusibarang/set-acceptance/{id}', 'Inventory\DistribusiController@setAcceptance')->name('distribusibarang.setAcceptance');

@@ -41,19 +41,34 @@
                     </div>
                 </section>
 
-                <div class="table-responsive">
-                    <table class="table table-striped data-table table-hover" cellspacing="0" id="table_detail_ht">
-                        <thead class="bg-primary">
+                <div class="row">
+                    <div class="table-responsive col-md-8 col-sm-8">
+                        <table class="table table-striped table-hover" cellspacing="0" id="table_detail_ht">
+                            <thead class="bg-primary">
+                                <tr>
+                                    <th width="10%">No</th>
+                                    <th width="50%">Kode Barang/Nama Barang</th>
+                                    <th width="10%">Jumlah</th>
+                                    <th width="15%">Satuan</th>
+                                    <th width="15%">Kode Produksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4 col-sm-4">
+                        <table class="table table-striped table-hover display table-bordered" cellspacing="0" id="table_detail_showpc" width="100%">
+                            <thead class="bg-primary">
                             <tr>
-                                <th width="10%">No</th>
-                                <th width="50%">Kode Barang/Nama Barang</th>
-                                <th width="25%">Jumlah</th>
-                                <th width="15%">Satuan</th>
+                                <th>Kode Produksi</th>
+                                <th>Kuantitas</th>
                             </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
