@@ -938,6 +938,10 @@
         })
     });
 
+    $('#jenis_ekspedisi').on('change select2:select', function() {
+        $('#nama_kurir').focus();
+    });
+
     function addCodeProd(id, item, nama){
         idxProdCode = $('.btnAddProdCode').index(this);
         console.log(idxProdCode);

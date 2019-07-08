@@ -32,7 +32,9 @@ class PenjualanPusatController extends Controller
         return view('marketing/penjualanpusat/index');
     }
 
-    public function create()
+
+    // Terima Order Penjualan
+    public function createTOP()
     {
         if (!AksesUser::checkAkses(20, 'create')) {
             abort('401');
@@ -40,17 +42,16 @@ class PenjualanPusatController extends Controller
         $data = 'employee';
         if (Auth::user()->u_user == 'A') {
             $data = DB::table('m_agen')
-                ->where('a_code', '=', Auth::user()->u_code)
-                ->first();
+            ->where('a_code', '=', Auth::user()->u_code)
+            ->first();
         }
         $pusat = DB::table('m_company')
-            ->where('c_type', '=', 'PUSAT')
-            ->first();
+        ->where('c_type', '=', 'PUSAT')
+        ->first();
 
         return view('marketing/penjualanpusat/terimaorder/create', compact('data', 'pusat'));
     }
 
-    // Terima Order Penjualan
     public function getTableTOP()
     {
         $data = DB::table('d_productorder')
