@@ -626,6 +626,10 @@ class HargaController extends Controller
                     return response()->json(['status' => "Success"]);
                 }
             } else {
+                $qtyend = $request->rangeend;
+                if ($qtyend == "~"){
+                    $qtyend == 0;
+                }
                 $check = DB::table('d_priceclassauthdt')
                     ->where('pcad_classprice', '=', $idGol)
                     ->where('pcad_item', '=', $request->idBarang)
@@ -644,6 +648,9 @@ class HargaController extends Controller
 
                 $sts = 'Null';
                 foreach ($check as $key => $val) {
+                    if ($val->pcd_rangeqtyend == 0 && $request->rangeend < $val->pcd_rangeqtystart  && $request->rangeend != "~"){
+                        $val->pcad_rangeqtyend = $val->pcad_rangeqtystart * 2;
+                    }
                     if (in_array($request->rangestart, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend))) {
                         $sts = 'Not Null';
                         return response()->json(['status' => "Range Ada"]);
@@ -655,6 +662,9 @@ class HargaController extends Controller
                 }
 
                 foreach ($check2 as $key => $val) {
+                    if ($val->pcd_rangeqtyend == 0 && $request->rangeend < $val->pcd_rangeqtystart && $request->rangeend != "~"){
+                        $val->pcd_rangeqtyend = $val->pcd_rangeqtystart * 2;
+                    }
                     if (in_array($request->rangestart, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend))) {
                         $sts = 'Not Null';
                         return response()->json(['status' => "Range Ada"]);
