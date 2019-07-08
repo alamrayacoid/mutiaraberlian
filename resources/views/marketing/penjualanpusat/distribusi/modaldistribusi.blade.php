@@ -120,17 +120,19 @@
                         <div class="row col-12">
                             <p>Masukkan kode produksi untuk barang <span class="text-item">-</span> kemudian tekan Enter untuk memasukkan ke tabel distribusi</p>
                         </div>
-                        <table class="table table-striped table-hover display table-bordered" cellspacing="0" id="table_prosesordercode" width="100%">
-                            <thead class="bg-primary">
-                            <tr>
-                                <th>Kode Produksi</th>
-                                <th>Kuantitas</th>
-                                <th class="text-center">Aksi</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                        <div class="row col-12 pr-0">
+                            <table class="table table-striped table-hover display table-bordered" cellspacing="0" id="table_prosesordercode">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th>Kode Produksi</th>
+                                    <th>Kuantitas</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 

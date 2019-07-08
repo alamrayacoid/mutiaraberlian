@@ -12,7 +12,7 @@
             <section>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover" cellspacing="0" id="table_return">
+                    <table class="table table-striped table-hover w-100" cellspacing="0" id="table_return">
                         <thead class="bg-primary">
                             <tr>
                                 <th>No</th>

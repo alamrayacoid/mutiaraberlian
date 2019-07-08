@@ -2672,6 +2672,24 @@ class MarketingAreaController extends Controller
         }
     }
 
+    public function getExpedition()
+    {
+        $data = DB::table('m_expedition')->where('e_isactive', '=', 'Y')->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
+    public function getExpeditionType($id)
+    {
+        $data = DB::table('m_expeditiondt')->where('ed_expedition', '=', $id)->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
     // Start: orderprodukagent =================================================
     public function create_orderprodukagenpusat()
     {

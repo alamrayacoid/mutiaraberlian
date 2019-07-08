@@ -12,7 +12,7 @@
 		<div class="card-block">
 			<section>
 				<div class="table-responsive">
-					<table class="table table-hover table-striped" cellspacing="0" id="table_terimaop">
+					<table class="table table-hover table-striped w-100" cellspacing="0" id="table_terimaop">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>
