@@ -32,6 +32,24 @@ class PenjualanPusatController extends Controller
         return view('marketing/penjualanpusat/index');
     }
 
+    public function create()
+    {
+        if (!AksesUser::checkAkses(20, 'create')) {
+            abort('401');
+        }
+        $data = 'employee';
+        if (Auth::user()->u_user == 'A') {
+            $data = DB::table('m_agen')
+                ->where('a_code', '=', Auth::user()->u_code)
+                ->first();
+        }
+        $pusat = DB::table('m_company')
+            ->where('c_type', '=', 'PUSAT')
+            ->first();
+
+        return view('marketing/penjualanpusat/terimaorder/create', compact('data', 'pusat'));
+    }
+
     // Terima Order Penjualan
     public function getTableTOP()
     {

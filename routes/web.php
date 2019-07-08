@@ -407,7 +407,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/get-table-distribusi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTableDistribusi')->name('penjualanpusat.getTableDistribusi');
     Route::get('/marketing/penjualanpusat/get-produk-ekspedisi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getProdukEkspedisi')->name('penjualanpusat.getProdukEkspedisi');
     Route::post('/marketing/penjualanpusat/send-order-penjualan', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@sendOrder')->name('penjualanpusat.sendOrder');
-
+    Route::get('/marketing/penjualanpusat/create', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@create')->name('penjualanpusat.create');
     // Target Realisasi
     Route::get('/marketing/penjualanpusat/targetrealisasi/targetList', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetList')->name('targetReal.list');
     Route::get('/marketing/penjualanpusat/targetrealisasi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@createTargetReal')->name('targetReal.create');

@@ -5,7 +5,7 @@
 				<h3 class="title">Terima Order Penjualan</h3>
 			</div>
 	        <div class="header-block pull-right">
-                <a class="btn btn-primary" href="#"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
+                <a class="btn btn-primary" href="{{ route('penjualanpusat.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
 	        </div>
 			<div class=""></div>
 		</div>
