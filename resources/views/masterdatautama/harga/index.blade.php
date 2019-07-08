@@ -210,16 +210,16 @@
         });
 
         tbl_item = $('#table_golonganharga').DataTable({
-			"paging":   false,
+			"paging":   true,
 			"info":     false,
-            "searching": false,
+            "searching": true,
     	});
 
         tbl_itemHPA = $('#table_golonganhargaHPA').DataTable({
-            "paging":   false,
-            "ordering": false,
+            "paging":   true,
+            "ordering": true,
             "info":     false,
-            "searching": false,
+            "searching": true,
         });
 
 		$(document).on('click','#btngolongan', function (evt) {
@@ -1169,9 +1169,9 @@
             $('#table_golonganharga').DataTable().clear().destroy();
         }
         tbl_item = $('#table_golonganharga').DataTable({
-            "paging":   false,
+            "paging":   true,
             "info":     false,
-            "searching": false,
+            "searching": true,
             responsive: true,
             processing: true,
             serverSide: true,
@@ -1202,10 +1202,10 @@
             $('#table_golonganhargaHPA').DataTable().clear().destroy();
         }
         tbl_itemHPA = $('#table_golonganhargaHPA').DataTable({
-            "paging":   false,
+            "paging":   true,
             "info":     false,
-            "ordering": false,
-            "searching": false,
+            "ordering": true,
+            "searching": true,
             responsive: true,
             processing: true,
             serverSide: true,

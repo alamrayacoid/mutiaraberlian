@@ -245,6 +245,24 @@
                                 <input type="text" class="form-control form-control-sm rupiah" id="total_modaldt" readonly="">
                             </div>
                         </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="expedition">Jasa Ekspedisi</label>
+                            </div>
+                            <div class="col-4">
+                                <select name="" id="expedition" class="form-control form-control-sm select2">
+                                    <option value="" selected disabled>== Pilih Jasa Ekspedisi ==</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label for="jenis_exp">Jenis Ekspedisi</label>
+                            </div>
+                            <div class="col-4">
+                                <select name="" id="jenis_exp" class="form-control form-control-sm select2">
+                                    <option value="" selected="" disabled="">== Pilih Jenis Ekspedisi ==</option>
+                                </select>
+                            </div>
+                        </div>
                     </section>
                     <div class="row" style="margin-top: 10px">
                         <div class="table-responsive col-8">
@@ -344,8 +362,38 @@
                 TableListDK();
             });
 
+            getExpedition();
         });
-        // retrieve list
+
+        function getExpedition() {
+            $.ajax({
+                url: "{{url('/marketing/marketingarea/get-expedition')}}",
+                type: "get",
+                success:function(resp) {
+                    $('#expedition').empty();
+                    $('#expedition').append('<option value="" selected disabled>== Pilih Jasa Ekspedisi ==</option>');
+                    $.each(resp.data, function(key, val){
+                        $('#expedition').append('<option value="'+val.e_id+'">'+val.e_name+'</option>');
+                    });
+                }
+            });
+        }
+
+        $('#expedition').on('change', function(){
+            let id = $('#expedition').val();
+            $.ajax({
+                url: "{{url('/marketing/marketingarea/get-expeditionType')}}"+"/"+id,
+                type: "get",
+                success:function(resp) {
+                    $('#jenis_exp').empty();
+                    $('#jenis_exp').append('<option value="" selected disabled>== Pilih Jenis Ekspedisi ==</option>');
+                    $.each(resp.data, function(key, val){
+                        $('#jenis_exp').append('<option value="'+val.ed_detailid+'">'+val.ed_product+'</option>');
+                    });
+                    $('#jenis_exp').select2('open');
+                }
+            });
+        });        // retrieve list
         function TableListDK() {
             // let start = $('#date_from_dk').val();
             // let end = $('#date_to_dk').val();
