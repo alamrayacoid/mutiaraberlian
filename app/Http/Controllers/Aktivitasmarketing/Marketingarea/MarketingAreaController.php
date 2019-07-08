@@ -1197,6 +1197,9 @@ class MarketingAreaController extends Controller
        // in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
         $idx = null;
         foreach ($array as $key =>  $val) {
+            if ($value <= $val->pcd_rangeqtystart && $val->pcd_rangeqtyend == 0){
+                $val->pcd_rangeqtyend = $val->pcd_rangeqtystart + $value + 2;
+            }
             $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
             if ($x == true) {
                 $idx = $key;

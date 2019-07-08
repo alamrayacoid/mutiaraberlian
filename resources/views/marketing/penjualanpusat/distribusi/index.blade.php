@@ -4,9 +4,6 @@
             <div class="header-block">
                 <h3 class="title">Distribusi Penjualan</h3>
             </div>
-            {{--<div class="header-block pull-right">
-                <a class="btn btn-primary" href="#"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
-            </div>--}}
             <div class=""></div>
         </div>
         <div class="card-block">
