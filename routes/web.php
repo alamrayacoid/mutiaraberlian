@@ -545,6 +545,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/marketing/agen/kelolapenjualanviawebsite/save-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@saveKPW')->name('kelolapenjualanviawebsite.saveKPW');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/cek-code', 'Aktivitasmarketing\Agen\ManajemenAgenController@cekProductionCode')->name('kelolapenjualanviawebsite.cekProductionCode');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/edit-kpw/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@editKPW')->name('kelolapenjualanviawebsite.editKPW');
+    Route::get('/marketing/agen/kelolapenjualanviawebsite/update-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@updateKPW')->name('kelolapenjualanviawebsite.updateKPW');
 
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPW')->name('kelolapenjualan.getListKPW');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-detail-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailKPW')->name('kelolapenjualan.getDetailKPW');
