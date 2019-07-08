@@ -136,9 +136,8 @@
         });
 
         tbl_gln = $('#table_golongan').DataTable({
-			"paging":   false,
-			"ordering": false,
-			"info":     false,
+			paging:   false,
+			info:     false,
             responsive: true,
             processing: true,
             serverSide: true,
@@ -151,6 +150,11 @@
                 {data: 'pc_name'},
                 {data: 'action'}
             ],
+            aoColumnDefs: [
+                {'bSortable': false, 'aTargets': [0]},
+                {'bSearchable': false, 'aTargets': [0]},
+                {'bOrderable': true, 'aTargets': [0]}
+            ],
             dom: 'l<"toolbar">frtip',
             initComplete: function(){
                 $("div.toolbar").html('<button type="button" id="btngolongan" class="btn btn-primary" title="Tambah Golongan"><i class="fa fa-plus"></i></button>');
@@ -159,7 +163,6 @@
 
         tbl_glnHPA = $('#table_golonganHPA').DataTable({
             "paging":   false,
-            "ordering": false,
             "info":     false,
             responsive: true,
             processing: true,
@@ -172,6 +175,11 @@
                 {data: 'DT_RowIndex'},
                 {data: 'sp_name'},
                 {data: 'action'}
+            ],
+            aoColumnDefs: [
+                {'bSortable': false, 'aTargets': [0]},
+                {'bSearchable': false, 'aTargets': [0]},
+                {'bOrderable': true, 'aTargets': [0]}
             ],
             dom: 'l<"toolbarhpa">frtip',
             initComplete: function(){
