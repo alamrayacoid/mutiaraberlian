@@ -319,6 +319,19 @@
             nullable: false,
             // unmaskAsNumber: true,
         });
+        // mask to rupiah without digits after comma 'Rp 10.000'
+        $('.rupiah-without-comma').inputmask("currency", {
+            radixPoint: ",",
+            groupSeparator: ".",
+            digits: 0,
+            autoGroup: true,
+            prefix: ' Rp ', //Space after $, this will not truncate the first character.
+            rightAlign: true,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
+        });
+
 
         // mask money with left-align
         $('.rupiah-left').inputmask("currency", {

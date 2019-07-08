@@ -25,7 +25,7 @@
 					</div>
 				</fieldset>
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_history">
+                    <table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_history" width="100%">
                         <thead class="bg-primary">
                             <tr>
                                 <th>No</th>
@@ -36,7 +36,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
+
                         </tbody>
                     </table>
                 </div>

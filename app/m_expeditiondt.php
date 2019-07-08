@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class m_expeditiondt extends Model
 {
+    // use third-party library to create relationship multi-column
+    use \Awobaz\Compoships\Compoships;
+    
     protected $table = 'm_expeditiondt';
     public $timestamps = false;
 
