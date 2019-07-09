@@ -4,7 +4,9 @@
 			<div class="header-block">
 				<h3 class="title">Master KPI</h3>
 			</div>
-			<div class=""></div>
+            <div class="header-block pull-right">
+                <button class="btn btn-primary" id="btn-tambah-masterkpi" data-toggle="modal" data-target="#modal_createmasterkpi"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button>
+            </div>
 		</div>
 		<div class="card-block">
 			<section>
