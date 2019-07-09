@@ -409,6 +409,8 @@
             // }
 
             $("#fromBayarTermin").on("submit", function (evt) {
+                var id = $('#poid').val();
+                var termin = $('#termin').val();
                 evt.preventDefault();
                 if ($("#nilai_bayar").val() == "" || $("#nilai_bayar").val() == "Rp. 0") {
                     $("#nilai_bayar").focus();
@@ -425,6 +427,8 @@
                                 $("#modalBayar").modal("hide");
                                 loadingHide();
                                 messageSuccess("Berhasil", response.data.message);
+                                // printNota(id, termin);
+                                window.location.href="{{ url("/produksi/pembayaran/nota?") }}" + "id=" + id + "&termin=" + termin
                             }
                         })
                         .catch(function (error) {
@@ -442,6 +446,17 @@
         });
 
         var tb_pembayaran;
+
+        function printNota(id, termin) {
+            // alert(id); return false;
+            $.ajax({
+                url: '{{ url("/produksi/pembayaran/nota") }}',
+                type: 'get',
+                data: {
+                    id: id, termin: termin
+                }
+            })
+        }
 
         function TablePembayaran() {
             $('#table_pembayaran').dataTable().fnDestroy();
