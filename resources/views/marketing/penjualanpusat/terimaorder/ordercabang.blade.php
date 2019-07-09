@@ -49,19 +49,7 @@
                 </div>
             </div>
         @endif
-
-
-        <div class="col-md-2 col-sm-6 col-xs-12">
-            <label>Cabang</label>
-        </div>
-
-        <div class="col-md-10 col-sm-6 col-xs-12">
-            <div class="form-group">
-                <select name="c_cabang" id="c_cabang" class="form-control form-control-sm select2" disabled>
-                </select>
-            </div>
-        </div>
-
+        
         <div class="col-md-2 col-sm-6 col-xs-12">
             <label>Total Harga</label>
         </div>

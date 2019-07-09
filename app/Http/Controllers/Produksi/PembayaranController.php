@@ -187,6 +187,44 @@ class PembayaranController extends Controller
         return Response::json(['status' => "Success", 'data' => $data]);
     }
 
+    public function printNota(Request $request)
+    {
+
+        try {
+            $id = Crypt::decrypt($request->id);
+            $termin = $request->termin;
+        } catch (DecryptException $e) {
+            return Response::json(['status' => 'Failed', 'message' => $e]);
+        }
+
+        $data = DB::table('d_productionorder')
+            ->join('d_productionorderpayment', function ($x) use ($termin) {
+                $x->on('d_productionorder.po_id', '=', 'd_productionorderpayment.pop_productionorder');
+                $x->where('d_productionorderpayment.pop_termin', '=', $termin);
+            })
+            ->join('m_supplier', function ($y) use ($termin) {
+                $y->on('d_productionorder.po_supplier', '=', 'm_supplier.s_id');
+            })
+            ->where('d_productionorder.po_id', '=', $id)
+            ->select('d_productionorder.po_id', 'd_productionorder.po_nota', 'd_productionorder.po_date',
+                'm_supplier.s_name', 'd_productionorderpayment.pop_termin', 'd_productionorderpayment.pop_value', 'd_productionorderpayment.pop_pay')
+            ->first();
+
+
+        if ($data->pop_pay == null || $data->pop_pay == "") {
+            $pay = 0;
+        } else {
+            $pay = $data->pop_pay;
+        }
+
+        $kekurangan = $data->pop_value - $pay;
+
+
+        $date = Carbon::now()->format('M-d-y');
+
+        return view('produksi.pembayaran.nota')->with(compact('data', 'date', 'kekurangan'));
+    }
+
     public function bayar(Request $request)
     {
         $bayar = Currency::removeRupiah($request->nilai_bayar);
