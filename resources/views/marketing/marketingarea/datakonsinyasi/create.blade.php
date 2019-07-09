@@ -532,7 +532,7 @@
                     $('#agent').append('<option value="" selected>Pilih Agen</option>')
                     $.each(data, function(index, val) {
                         console.log(val);
-                        $('#agent').append('<option value="'+ val.get_company.c_id +'">'+ val.a_name +'</option>');
+                        $('#agent').append('<option value="'+ val.get_company.c_id +'">'+ val.a_name +' ('+val.a_address+')</option>');
                     })
                     loadingHide();
                     $('#agent').focus();
