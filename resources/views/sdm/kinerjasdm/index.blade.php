@@ -11,8 +11,8 @@
 @include('sdm.kinerjasdm.manajemenscoreboard.modal_edit')
 <!-- end -->
 <!-- modal scoreboard manajemen scoreboard & KPI-->
-@include('sdm.kinerjasdm.manajemenscoreboardkpi.modal_detail')
-@include('sdm.kinerjasdm.manajemenscoreboardkpi.modal_edit')
+@include('sdm.kinerjasdm.masterkpi.modal_detail')
+@include('sdm.kinerjasdm.masterkpi.modal_edit')
 <!-- end -->
 <!-- modal inputkpi -->
 @include('sdm.kinerjasdm.inputkpi.modal_tambah_datakpi')
@@ -45,7 +45,7 @@
 				<a href="#list_manajemenscoreboard" class="nav-link" data-target="#list_manajemenscoreboard" aria-controls="list_manajemenscoreboard" data-toggle="tab" role="tab">Kelola SOP</a>
 			</li>
 			<li class="nav-item">
-				<a href="#list_manajemenscoreboardkpi" class="nav-link" data-target="#list_manajemenscoreboardkpi" aria-controls="list_manajemenscoreboardkpi" data-toggle="tab" role="tab">Master KPI</a>
+				<a href="#masterkpi" class="nav-link" data-target="#masterkpi" aria-controls="masterkpi" data-toggle="tab" role="tab">Master KPI</a>
 			</li>
 		</ul>
 
@@ -54,7 +54,7 @@
 			@include('sdm.kinerjasdm.scoreboardpegawai.tab_scoreboardpegawai')
 			@include('sdm.kinerjasdm.inputkpi.tab_inputkpi')
 			@include('sdm.kinerjasdm.manajemenscoreboard.tab_manajemenscoreboard')
-			@include('sdm.kinerjasdm.manajemenscoreboardkpi.tab_manajemenscoreboardkpi')
+			@include('sdm.kinerjasdm.masterkpi.tab_masterkpi')
 
 		</div>
 
@@ -73,7 +73,7 @@
 	$(document).ready(function(){
 		var table_sup = $('#table_scoreboard').DataTable();
 		var table_bar = $('#table_inputkpi').DataTable();
-		var table_pus = $('#table_manajemenscoreboard').DataTable();
+		var table_kpi = $('#table_masterkpi').DataTable();
 		var table_rab = $('#table_manajemenscoreboardkpi').DataTable();
 
 // scoreboard pegawai
