@@ -339,4 +339,33 @@ class InventoryController extends Controller
         }
     }
 
+    public function analisaTO()
+    {
+        return view('inventory.manajemenstok.analisastockto.index');
+    }
+
+    public function analisaTO_list()
+    {
+        $data = DB::table('d_salescomp')
+            ->join('d_salescompdt', 'scd_sales', 'sc_id')
+            ->join('m_item', 'scd_item', 'm_item.i_id')
+            ->join('d_stock_mutation', 'sc_nota', 'sm_nota')
+            ->join('m_mutcat', 'sm_mutcat', 'm_mutcat.m_id')
+            ->where('sc_paidoff', '=', 'Y')
+            ->where('m_mutcat.m_status', '=', 'K')
+            ->groupBy('scd_item');
+        // dd($data->sm_hpp);
+
+        return DataTables::of($data)
+            // ->addIndexColumn()
+            // ->addColumn('ratarata', function($data) {
+            //     for ($i=0; $i < count($data->sm_hpp) ; $i++) { 
+                    
+            //     }
+            //     return strtoupper($data->pemilik);
+            // })
+            // ->rawColumns(['ratarata'])
+            ->make(true);
+    }
+
 }

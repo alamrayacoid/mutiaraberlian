@@ -19,6 +19,7 @@ use App\d_productorder;
 use App\d_productorderdt;
 use App\d_productordercode;
 use App\d_stock;
+use Currency;
 use Mutasi;
 
 
@@ -917,5 +918,64 @@ class PenjualanPusatController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    // Penerimaan Piutang -------------------------->
+    public function getProvinsi()
+    {
+        $data = DB::table('m_wil_provinsi')->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
+    public function getCity($id)
+    {
+        $data = DB::table('m_wil_kota')->where('wc_provinsi', '=', $id)->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
+    public function getAgen($id)
+    {
+        $data = DB::table('m_company')
+            ->join('m_agen',  'c_user', 'a_code')
+            ->where('a_area', '=', $id)
+            ->get();
+        return response()->json([
+            'data' =>$data
+        ]);
+    }
+
+    public function getNotaAgen($code)
+    {
+        // dd($code);
+        $data = DB::table('d_salescomp')
+            ->join('m_company', 'c_id', 'sc_comp')
+            ->join('m_agen', 'a_code', 'c_user')
+            ->leftJoin('d_salescomppayment', 'scp_salescomp', 'sc_id')
+            ->select('sc_total', 'sc_nota', DB::raw('COALESCE(SUM(scp_pay), 0) as payment'))
+            ->where('c_user', '=', $code)
+            ->groupBy('sc_id');
+            // dd($data);
+        return Datatables::of($data)
+            ->addColumn('sisa', function($data){
+                $sisa = $data->sc_total - $data->payment;
+                $sisa = Currency::addRupiah($sisa);
+                return $sisa;
+            })
+            ->addColumn('action', function($data){
+                return '<button class="btn btn-sm btn-success" onclick="get_list('.$data->sc_nota.')"><i class="fa fa-download"></i> Gunakan</button>';
+            })            
+            ->rawColumns(['sisa','action'])
+            ->make(true);
+    }
+
+    public function listPiutang($nota)
+    {
+        $datas = DB::table('');
     }
 }

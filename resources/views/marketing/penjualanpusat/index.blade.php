@@ -33,6 +33,7 @@
     @include('marketing.penjualanpusat.distribusi.modaldistribusi')
     @include('marketing.penjualanpusat.terimaorder.modal-process')
     @include('marketing.penjualanpusat.targetrealisasi.modal')
+    @include('marketing.penjualanpusat.penerimaanpiutang.modalnota')
 
     <article class="content animated fadeInLeft">
 
@@ -67,6 +68,10 @@
                             <a href="" class="nav-link" data-target="#targetrealisasi" aria-controls="targetrealisasi"
                                data-toggle="tab" role="tab">Target & Realisasi Penjualan</a>
                         </li>
+                        <li class="nav-item" id="tab4">
+                            <a href="" class="nav-link" data-target="#terimapiutang" aria-controls="terimapiutang"
+                               data-toggle="tab" role="tab">Penerimaan Piutang</a>
+                        </li>
                     </ul>
 
                     <div class="tab-content">
@@ -75,6 +80,7 @@
                         @include('marketing.penjualanpusat.distribusi.index')
                         @include('marketing.penjualanpusat.returnpenjualan.index')
                         @include('marketing.penjualanpusat.targetrealisasi.index')
+                        @include('marketing.penjualanpusat.penerimaanpiutang.index')
 
                     </div>
 
@@ -1075,6 +1081,117 @@
             loadingHide();
             alert('error');
         })
+    }
+    // Penerimaan Piutang ->
+    var tb_piutang, tb_getNota;
+    $(document).ready(function(){
+        $('#table_piutang').DataTable({
+            searching: false,
+        });
+        $('#table_getNota').DataTable();
+        $('#nota_s').css('text-transform', 'uppercase');
+    });
+
+    function getNota(){
+        $('#modal_nota').modal('show');
+        getProvinsi();
+    }
+
+    function getProvinsi() {
+        $.ajax({
+            url: "{{url('/get-provinsi')}}",
+            type: "get",
+            success:function(resp) {
+                $('#provId').empty()
+                $('#provId').append('<option value="" selected disabled>Pilih Provinsi</option>');
+                $.each(resp.data, function(key, val){
+                    $('#provId').append('<option value="'+val.wp_id+'">'+val.wp_name+'</option>');
+                });
+            }
+        })
+    }
+
+    $('#provId').on('change', function(){
+        let id = $('#provId').val();
+        getCity(id);
+    });
+
+    function getCity(id) {
+        $.ajax({
+            url:"{{url('/get-city')}}"+"/"+id,
+            type: "get",
+            success:function(resp) {
+                $('#kabId').empty()
+                $('#kabId').append('<option value="" selected disabled>Pilih Kabupaten / Kota</option>');
+                $.each(resp.data, function(key, val){
+                    $('#kabId').append('<option value="'+val.wc_id+'">'+val.wc_name+'</option>');
+                });
+                $('#kabId').select2('open');
+            }
+        })
+    }
+
+    $('#kabId').on('change', function(){
+        let id = $('#kabId').val();
+        getAgen(id);
+    });
+
+    function getAgen(id) {
+        $.ajax({
+            url: "{{url('/marketing/penjualanpusat/penerimaanpiutang/get-agen')}}"+"/"+id,
+            type: "get",
+            success:function(resp) {
+                // console.log(resp);
+                $('#agen').empty();
+                $('#agen').append('<option value="" selected disabled>Pilih Agen</option>');
+                $.each(resp.data, function(key, val){
+                    $('#agen').append('<option value="'+val.a_code+'">'+val.a_name+'</option>');
+                });
+                $('#agen').select2('open');
+            }
+        })
+    }
+
+    $('#agen').on('change', function(){
+        var code = $('#agen').val();
+        $('#table_getNota').dataTable().fnDestroy();
+        tb_piutang = $('#table_getNota').DataTable({
+            searching: false,
+            responsive: true,
+            serverSide: true,
+            ajax: {
+                url: "{{url('/marketing/penjualanpusat/penerimaanpiutang/get-nota-agen')}}"+"/"+code,
+                type: "get",
+            },
+            columns: [
+                {data: 'sc_nota'},
+                {data: 'sisa'},
+                {data: 'action', className: 'text-center'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    });
+
+    function get_list(nota){
+        $('#table_piutang').dataTable().fnDestroy();
+        tb_piutang = $('#table_piutang').DataTable({
+            searching: false,
+            responsive: true,
+            serverSide: true,
+            ajax: {
+                url: "{{url('/marketing/penjualanpusat/penerimaanpiutang/get-list')}}",
+                type: "get",
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'deadline'},
+                {data: 'sisa', className: 'text-right'},
+                {data: 'bayar'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
     }
 </script>
 @endsection

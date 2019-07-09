@@ -72,7 +72,7 @@
 			</div>
 
 			<div class="col-md-4 col-sm-6 col-12">
-				<a href="#">
+				<a href="{{route('analisaTO.index')}}">
 					<div class="card text-center p-4 card-custom text-info">
 						<img src="{{asset('assets/img/increase.png')}}" height="128px" width="128px">
 						<h6>Analisa Stock Turn Over</h6>

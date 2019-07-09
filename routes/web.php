@@ -291,6 +291,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
     Route::get('/inventory/manajemenstok/create', 'InventoryController@manajemenstok_create')->name('manajemenstok.create');
     Route::get('/inventory/manajemenstok/edit', 'InventoryController@manajemenstok_edit')->name('manajemenstok.edit');
+    // Analisa Stock Turn Over
+    Route::get('/inventory/analisaturnover/index', 'InventoryController@analisaTO')->name('analisaTO.index');
+    Route::get('/inventory/analisaturnover/get-list', 'InventoryController@analisaTO_list')->name('analisaTO.list');
     // Opname
     Route::get('/inventory/manajemenstok/opnamestock/index', 'Inventory\OpnameController@index')->name('opname.index');
     Route::get('/inventory/manajemenstok/opnamestock/list', 'Inventory\OpnameController@getList')->name('opname.list');
@@ -417,6 +420,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/targetrealisasi/store', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetRealStore')->name('targetReal.store');
     Route::get('/marketing/penjualanpusat/targetrealisasi/editTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@editTarget')->name('targetReal.edit');
     Route::get('/marketing/penjualanpusat/targetrealisasi/updateTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@updateTarget')->name('targetReal.update');
+    // Penerimaan Piutang ---------------------------    
+    Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-list/{nota}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@listPiutang')->name('piutang.list');
+    Route::get('/get-provinsi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getProvinsi')->name('get.provinsi');
+    Route::get('/get-city/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getCity')->name('get.city');
+    Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-agen/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getAgen')->name('piutang.getAgen');
+    Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-nota-agen/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getNotaAgen')->name('piutang.getNotaAgen');
     // End ---
     // Return Penjualan
     Route::get('/marketing/penjualanpusat/returnpenjualan/index', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@index')->name('returnpenjualanagen.index');
