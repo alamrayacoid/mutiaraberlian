@@ -9,7 +9,7 @@
         </div>
         <div class="card-block">
             <section>
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-5 pr-0">
                         <input type="text" placeholder="Tulis Nota / Filterisasi --->" class="form-control form-control-sm" id="nota_s">
                         <input type="hidden" id="nota_r">
@@ -23,6 +23,7 @@
                         <thead class="bg-primary">
                         <tr>
                             <th width="1%">No</th>
+                            <th>Nota</th>
                             <th>Deadline</th>
                             <th>Sisa</th>
                             <th>Bayar</th>

@@ -40,6 +40,7 @@
                         <thead class="bg-primary">
                         <tr>
                             <th width="30%">Nota</th>
+                            <th>Deadline</th>
                             <th>Sisa</th>
                             <th width="20%">Aksi</th>
                         </tr>

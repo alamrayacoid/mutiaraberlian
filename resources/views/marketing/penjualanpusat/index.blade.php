@@ -1169,6 +1169,7 @@
             },
             columns: [
                 {data: 'sc_nota'},
+                {data: 'sc_datetop'},
                 {data: 'sisa'},
                 {data: 'action', className: 'text-center'}
             ],
@@ -1178,17 +1179,19 @@
     });
 
     function get_list(nota){
+        // var nota = subString(nota);
         $('#table_piutang').dataTable().fnDestroy();
         tb_piutang = $('#table_piutang').DataTable({
             searching: false,
             responsive: true,
             serverSide: true,
             ajax: {
-                url: "{{url('/marketing/penjualanpusat/penerimaanpiutang/get-list')}}",
+                url: "{{url('/marketing/penjualanpusat/penerimaanpiutang/get-list')}}"+"/"+nota,
                 type: "get",
             },
             columns: [
                 {data: 'DT_RowIndex'},
+                {data: 'sc_nota'},
                 {data: 'deadline'},
                 {data: 'sisa', className: 'text-right'},
                 {data: 'bayar'}
@@ -1196,6 +1199,7 @@
             pageLength: 10,
             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
         });
+        $('#modal_nota').modal('hide');
     }
 </script>
 @endsection
