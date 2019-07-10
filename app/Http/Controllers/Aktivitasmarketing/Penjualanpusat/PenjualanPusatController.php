@@ -971,7 +971,7 @@ class PenjualanPusatController extends Controller
                 return $sisa;
             })
             ->addColumn('action', function($data){
-                return '<button class="btn btn-sm btn-success" onclick="get_list(\''.$data->sc_nota.'\')"><i class="fa fa-download"></i> Gunakan</button>';
+                return '<button class="btn btn-sm btn-success" onclick="get_list(\''.Crypt::encrypt($data->sc_nota).'\')"><i class="fa fa-download"></i> Gunakan</button>';
             })
             ->rawColumns(['sisa','action'])
             ->make(true);
@@ -979,21 +979,22 @@ class PenjualanPusatController extends Controller
 
     public function listPiutang($nota)
     {
+        $nota = Crypt::decrypt($nota);
         $datas = DB::table('d_salescomp')
             ->leftJoin('d_salescomppayment', 'scp_salescomp', 'sc_id')
-            ->select('sc_total', 'sc_datetop', 'sc_nota', DB::raw('COALESCE(SUM(scp_pay), 0) as payment'))
+            ->select('sc_total', DB::raw('date_format(sc_datetop, "%d/%m/%Y") as deadline'), 'sc_nota', DB::raw('COALESCE(SUM(scp_pay), 0) as payment'))
             ->where('sc_nota', '=', $nota)
             ->groupBy('sc_id');
 
         return Datatables::of($datas)
-            ->addIndexColumn()
+            // ->addIndexColumn()
             ->addColumn('sisa', function($datas){
                 $sisa = $datas->sc_total - $datas->payment;
                 $sisa = Currency::addRupiah($sisa);
                 return $sisa;
             })
-            ->addColumn('bayar', function($data){
-                return '<button class="btn btn-sm btn-success" onclick="get_list(\''.$datas->sc_nota.'\')"><i class="fa fa-dolar"></i> Bayar</button>';
+            ->addColumn('bayar', function($datas){
+                return '<button class="btn btn-sm btn-success" onclick="toPayment(\''.Crypt::encrypt($datas->sc_nota).'\')"><i class="fa fa-money"></i> Bayar</button>';
             })
             ->rawColumns(['sisa','bayar'])
             ->make(true);

@@ -1,30 +1,33 @@
 @extends('main')
 @section('extra_style')
-    <style>
-        @media (min-width: 992px) {
-            .modal-lg .modal-xl {
-                max-width: 1000px !important;
-            }
+<style>
+    @media (min-width: 992px) {
+        .modal-lg .modal-xl {
+            max-width: 1000px !important;
         }
-        .tolak {
-            background-color: #d1d1d1;
-            color: #8a8a8a;
+    }
+    .tolak {
+        background-color: #d1d1d1;
+        color: #8a8a8a;
+    }
+    #table_modalPr tr.tolak:hover{
+        background-color: #eaeaea;
+    }
+    @media (min-width: 992px) {
+        .modal-xl {
+            max-width: 1200px !important;
         }
-        #table_modalPr tr.tolak:hover{
-            background-color: #eaeaea;
-        }
-        @media (min-width: 992px) {
-            .modal-xl {
-                max-width: 1200px !important;
-            }
-        }
-        .btn-xs {
-            padding: 0.20rem 0.4rem;
-            font-size: 0.675rem;
-            line-height: 1.3;
-            border-radius: 0.2rem;
-        }
-    </style>
+    }
+    .btn-xs {
+        padding: 0.20rem 0.4rem;
+        font-size: 0.675rem;
+        line-height: 1.3;
+        border-radius: 0.2rem;
+    }
+    .select2-container--bootstrap.select2-container--open {
+        width: auto !important;
+    }
+</style>
 @stop
 @section('content')
 
@@ -34,6 +37,7 @@
     @include('marketing.penjualanpusat.terimaorder.modal-process')
     @include('marketing.penjualanpusat.targetrealisasi.modal')
     @include('marketing.penjualanpusat.penerimaanpiutang.modalnota')
+    @include('marketing.penjualanpusat.penerimaanpiutang.modalpayment')
 
     <article class="content animated fadeInLeft">
 
@@ -1094,11 +1098,12 @@
         });
         $('#table_getNota').DataTable();
         $('#nota_s').css('text-transform', 'uppercase');
+        getProvinsi();
     });
 
     function getNota(){
         $('#modal_nota').modal('show');
-        getProvinsi();
+        // $('#provId').select2('open');
     }
 
     function getProvinsi() {
@@ -1180,6 +1185,7 @@
 
     function get_list(nota){
         // var nota = subString(nota);
+        $('#nota_s').val(nota);
         $('#table_piutang').dataTable().fnDestroy();
         tb_piutang = $('#table_piutang').DataTable({
             searching: false,
@@ -1190,16 +1196,32 @@
                 type: "get",
             },
             columns: [
-                {data: 'DT_RowIndex'},
+                // {data: 'DT_RowIndex'},
                 {data: 'sc_nota'},
                 {data: 'deadline'},
                 {data: 'sisa', className: 'text-right'},
-                {data: 'bayar'}
+                {data: 'bayar', className: 'text-center'}
             ],
             pageLength: 10,
             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
         });
         $('#modal_nota').modal('hide');
+    }
+
+    function toPayment(nota) {
+        $('#sc_nota').val(nota);
+        $('#modal_payment').modal('show');
+    }
+
+    $('#nominal').keypress(function(e){
+        if(e.which == 13) {
+          e.preventDefault();
+          savePayment();
+        }
+    });
+
+    function savePayment() {
+        alert($('#nominal').val());
     }
 </script>
 @endsection
