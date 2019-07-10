@@ -27,6 +27,11 @@
 
 @include('sdm.prosesrekruitmen.kelolarekrutmen.modal_edit')
 
+@include('sdm.prosesrekruitmen.penggajuansdm.modal_create')
+
+@include('sdm.prosesrekruitmen.penggajuansdm.modal_edit')
+
+
 <article class="content">
 	<div class="title-block text-primary">
 		<h1 class="title"> Proses Rekruitmen </h1>
@@ -44,6 +49,9 @@
 					<li class="nav-item">
 						<a href="#list_pelamarditerima" class="nav-link" data-target="#list_pelamarditerima" aria-controls="list_pelamarditerima" data-toggle="tab" role="tab">Daftar Pelamar Diterima</a>
 					</li>
+                    <li class="nav-item">
+                        <a href="#penggajuan_sdms" class="nav-link" data-target="#penggajuan_sdms" aria-controls="penggajuan_sdms" data-toggle="tab" role="tab">Pengajuan SDM</a>
+                    </li>
 					<li class="nav-item">
 						<a href="#kelola_rekruitment" class="nav-link" data-target="#kelola_rekruitment" aria-controls="kelola_rekruitment" data-toggle="tab" role="tab">Kelola Rekruitment</a>
 					</li>
@@ -54,6 +62,7 @@
 				<div class="tab-content">
 					@include('sdm.prosesrekruitmen.rekrutmen.tab_rekruitmen')
 					@include('sdm.prosesrekruitmen.pelamarditerima.tab_pelamarditerima')
+                    @include('sdm.prosesrekruitmen.penggajuansdm.index')
 					@include('sdm.prosesrekruitmen.kelolarekrutmen.kelola_rekruitment')
 					@include('sdm.prosesrekruitmen.kelolaposisisdm.index')
 				</div>
@@ -85,6 +94,7 @@
 		TableRekrutmen();
 		TableDiterima();
 		kelolaRekrutmen();
+        PengajuanSdm();
 	});
 	// End Document Ready --------------------------------------------------------------------------
 
@@ -285,6 +295,270 @@
 	}
 	// End Code -----------------------------------------------------------------------------------
 
+    // Penggajuan SDM -----------------------------------------------------------------------------
+    function PengajuanSdm() {
+        if ($.fn.DataTable.isDataTable("#penggajuan_sdm")) {
+            $('#penggajuan_sdm').dataTable().fnDestroy();
+        }
+        penggajuan_sdm = $('#penggajuan_sdm').DataTable({
+            responsive: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('/sdm/prosesrekruitmen/listPengajuan') }}",
+                type: "get"
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'ss_reff'},
+                {data: 'tanggal'},
+                {data: 'm_name'},
+                {data: 'j_name'},
+                {data: 'ss_qtyneed'},
+                {data: 'status'},
+                {data: 'action'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    }
+
+    function simpanPengajuan() {
+        $.ajax({
+            url: "{{url('/sdm/prosesrekruitmen/simpanPengajuan')}}",
+            type: "get",
+            data: $('#simpanPengajuan').serialize(),
+            beforeSend: function () {
+                loadingShow();
+            },
+            success: function (response) {
+                if (response.status == 'sukses') {
+                    loadingHide();
+                    messageSuccess('Success', 'Data berhasil ditambahkan!');
+                    penggajuan_sdm.ajax.reload();
+                } else {
+                    loadingHide();
+                    messageFailed('Gagal', response.message);
+                }
+            },
+            error: function (e) {
+                loadingHide();
+                messageWarning('Peringatan', e.message);
+            }
+        });
+    }
+
+    function activatePengajuan(id) {
+        var active_pengajuan = "{{url('/sdm/prosesrekruitment/activatePengajuan/')}}"+"/"+id;
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Pesan!',
+            content: 'Apakah anda yakin ingin aktifkan data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function() {
+                        return $.ajax({
+                            type: "post",
+                            url: active_pengajuan,
+                            data: {
+                                "_token": "{{ csrf_token() }}"
+                            },
+                            beforeSend: function() {
+                                loadingShow();
+                            },
+                            success: function(response) {
+                                if (response.status == 'sukses') {
+                                    loadingHide();
+                                    messageSuccess('Berhasil', 'Pengaktifan berhasil!');
+                                    penggajuan_sdm.ajax.reload();
+                                } else {
+                                    loadingHide();
+                                    messageFailed('Gagal', response.message);
+                                }
+                            },
+                            error: function(e) {
+                                loadingHide();
+                                messageWarning('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function(response) {
+                        loadingHide();
+                        messageWarning('Peringatan', 'Anda telah membatalkan!');
+                    }
+                }
+            }
+        });
+    }
+
+    function nonPengajuan(id) {
+        var non_pengajuan = "{{url('/sdm/prosesrekruitment/nonPengajuan/')}}"+"/"+id;
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Pesan!',
+            content: 'Apakah anda yakin ingin Nonaktifkan data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function() {
+                        return $.ajax({
+                            type: "post",
+                            url: non_pengajuan,
+                            data: {
+                                "_token": "{{ csrf_token() }}"
+                            },
+                            beforeSend: function() {
+                                loadingShow();
+                            },
+                            success: function(response) {
+                                if (response.status == 'sukses') {
+                                    loadingHide();
+                                    messageSuccess('Berhasil', 'Data berhasil dinonaktifkan!');
+                                    penggajuan_sdm.ajax.reload();
+                                } else {
+                                    loadingHide();
+                                    messageFailed('Gagal', response.message);
+                                }
+                            },
+                            error: function(e) {
+                                loadingHide();
+                                messageWarning('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function(response) {
+                        loadingHide();
+                        messageWarning('Peringatan', 'Anda telah membatalkan!');
+                    }
+                }
+            }
+        });
+    }
+
+    function deletePengajuan(id) {
+        var non_pengajuan = "{{url('/sdm/prosesrekruitment/deletePengajuan/')}}"+"/"+id;
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Pesan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function() {
+                        return $.ajax({
+                            type: "get",
+                            url: non_pengajuan,
+                            data: {
+                                "_token": "{{ csrf_token() }}"
+                            },
+                            beforeSend: function() {
+                                loadingShow();
+                            },
+                            success: function(response) {
+                                if (response.status == 'sukses') {
+                                    loadingHide();
+                                    messageSuccess('Berhasil', 'Data berhasil dihapus!');
+                                    penggajuan_sdm.ajax.reload();
+                                } else if (response.status == 'warning') {
+                                    loadingHide();
+                                    messageWarning('Peringatan', 'Data ini masih aktif!');
+                                    penggajuan_sdm.ajax.reload();
+                                } else {
+                                    loadingHide();
+                                    messageFailed('Gagal', response.message);
+                                }
+                            },
+                            error: function(e) {
+                                loadingHide();
+                                messageWarning('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function(response) {
+                        loadingHide();
+                        messageWarning('Peringatan', 'Anda telah membatalkan!');
+                    }
+                }
+            }
+        });
+    }
+
+    function editPengajuan(id) {
+        var modal_edit_pengajuan = "{{url('/sdm/prosesrekruitment/editPengajuan/')}}"+"/"+id;
+        $.ajax({
+            url: modal_edit_pengajuan,
+            type: "get",
+            success:function(res) {
+                $('#editPengajuan').modal('show');
+                $('#id_pengajuan').val(res.data1.ss_id);
+                $('#qtyneed').val(res.data1.ss_qtyneed);
+                $('#positions_edit').find('option').remove();
+                $('#positions_edit').append('<option value="" disabled>=== Pilih Posisi/Jabatan ===</option>'+
+                    '<option value="'+res.data1.ss_position+'" selected>'+res.data1.j_name+'</option>');
+                $.each(res.data2, function(key, val){
+                    $('#positions_edit').append('<option value="'+val.j_id+'">'+val.j_name+'</option>');
+                });
+                $('#divisis_edit').find('option').remove();
+                $('#divisis_edit').append('<option value="" disabled>=== Pilih Posisi/Jabatan ===</option>'+
+                    '<option value="'+res.data1.ss_department+'" selected>'+res.data1.m_name+'</option>');
+                $.each(res.data3, function(key, val){
+                    $('#divisis_edit').append('<option value="'+val.m_id+'">'+val.m_name+'</option>');
+                });
+            }
+        })
+    }
+
+    function updatePengajuan() {
+        $.ajax({
+            url: "{{url('/sdm/prosesrekruitment/updatePengajuan')}}",
+            type: "get",
+            data: $('#formEditPengajuan').serialize(),
+            beforeSend: function () {
+                loadingShow();
+            },
+            success: function (response) {
+                if (response.status == 'sukses') {
+                    $('#editPengajuan').modal('hide');
+                    loadingHide();
+                    messageSuccess('Success', 'Data berhasil diperbarui!');
+                    penggajuan_sdm.ajax.reload();
+                } else {
+                    loadingHide();
+                    messageFailed('Gagal', response.message);
+                }
+            },
+            error: function (e) {
+                loadingHide();
+                messageWarning('Peringatan', e.message);
+            }
+        });
+    }
+    // End Code -----------------------------------------------------------------------------------
+
 	// Kelola Data Recruitment --------------------------------------------------------------------
 	function kelolaRekrutmen() {
 		if ($.fn.DataTable.isDataTable("#kelola_rekrutmen")) {
@@ -322,7 +596,6 @@
         if (response.status == 'sukses') {
             loadingHide();
             messageSuccess('Success', 'Data berhasil ditambahkan!');
-            kelola_rekrutmen.ajax.reload();
         } else {
             loadingHide();
             messageFailed('Gagal', response.message);

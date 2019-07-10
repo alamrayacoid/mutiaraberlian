@@ -342,6 +342,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/prosesrekruitmen/addProses/{id}', 'SDM\RecruitmentController@addProses')->name('rekruitmen.addProses');
     Route::get('/sdm/prosesrekruitmen/delete-pelamar/{id}', 'SDM\RecruitmentController@deletePelamar')->name('rekruitmen.deletePelamar');
 
+    Route::get('sdm/prosesrekruitmen/simpanPengajuan','SDM\RecruitmentController@simpanPengajuan')->name('pengajuan.simpanPengajuan');
+    Route::get('/sdm/prosesrekruitmen/listPengajuan', 'SDM\RecruitmentController@getListPengajuan')->name('pengajuan.listPengajuan');
+    Route::post('/sdm/prosesrekruitment/activatePengajuan/{id}', 'SDM\RecruitmentController@activatePengajuan')->name('pengajuan.activatePengajuan');
+    Route::post('/sdm/prosesrekruitment/nonPengajuan/{id}', 'SDM\RecruitmentController@nonPengajuan')->name('pengajuan.nonPengajuan');
+    Route::get('/sdm/prosesrekruitment/deletePengajuan/{id}', 'SDM\RecruitmentController@deletePengajuan')->name('pengajuan.deletePengajuan');
+    Route::get('/sdm/prosesrekruitment/editPengajuan/{id}', 'SDM\RecruitmentController@editPengajuan')->name('pengajuan.editPengajuan');
+    Route::get('/sdm/prosesrekruitment/updatePengajuan', 'SDM\RecruitmentController@updatePengajuan')->name('pengajuan.updatePengajuan');
+
     Route::get('/sdm/prosesrekruitmen/listTerima', 'SDM\RecruitmentController@getListTerima')->name('rekruitmen.listTerima');
 
     Route::get('/sdm/prosesrekruitmen/listLoker', 'SDM\RecruitmentController@getListLoker')->name('rekruitmen.listLoker');
@@ -668,6 +676,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifikasiotorisasi/otorisasi/promotion/data-promotion', 'OtorisasiController@getDataPromotion')->name('promotion.data');
     Route::post('/notifikasiotorisasi/otorisasi/promotion/approve-promotion', 'OtorisasiController@approvePromotion')->name('promotion.approve');
     Route::post('/notifikasiotorisasi/otorisasi/promotion/reject-promotion', 'OtorisasiController@rejectPromotion')->name('promotion.reject');
+
+    Route::get('/notifikasiotorisasi/otorisasi/sdm/index', 'OtorisasiController@sdm')->name('sdm');
+    Route::get('/notifikasiotorisasi/otorisasi/sdm/getListPengajuanInOtorisasi', 'OtorisasiController@getListPengajuanInOtorisasi')->name('otorisasi.ListPengajuanInOtorisasi');
+    Route::post('/notifikasiotorisasi/otorisasi/sdm/ApprovePengajuan/{id}', 'OtorisasiController@ApprovePengajuan')->name('otorisasi.ApprovePengajuan');
+    Route::post('/notifikasiotorisasi/otorisasi/sdm/DeclinePengajuan/{id}', 'OtorisasiController@DeclinePengajuan')->name('otorisasi.DeclinePengajuan');
     // !================================================ END OTORISASI NOTIFIKASI ============================================!
 
     // Profile
