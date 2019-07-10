@@ -1,6 +1,6 @@
 Vue.component('vue-inputmask', {
 
-    props: ['placeholder', 'name', 'id', 'disabled', 'css', 'value', 'minus', 'leading', 'types'],
+    props: ['placeholder', 'name', 'id', 'disabled', 'css', 'value', 'minus', 'leading', 'types', 'classes'],
 
     mounted: function () {
       var vm = this; var radix = '.'; var separator = ','; var digit = 2;
@@ -29,6 +29,6 @@ Vue.component('vue-inputmask', {
     },
 
     template: `
-        <input type="text" :name="name" class="form-control text-right modul-keuangan" :id="id" :disabled="disabled" :style="css" :value="(value) ? value : ''">
+        <input type="text" :name="name" :class="'form-control text-right modul-keuangan '+classes" :id="id" :disabled="disabled" :style="css" :value="(value) ? value : ''">
     `,
 });

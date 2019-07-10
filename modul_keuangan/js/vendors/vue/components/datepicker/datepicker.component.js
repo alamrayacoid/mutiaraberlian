@@ -12,7 +12,7 @@ Vue.component('vue-datepicker', {
 
     watch: {
       value: function(e){
-        alert('datepicker value change '+e);
+        // alert('datepicker value change '+e);
       }
     },
 
