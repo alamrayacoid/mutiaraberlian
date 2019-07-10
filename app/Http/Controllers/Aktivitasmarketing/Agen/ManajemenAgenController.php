@@ -644,7 +644,7 @@ class ManajemenAgenController extends Controller
                                             type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
                                     <button class="btn btn-danger hint--top-left hint--error" type="button"
                                             aria-label="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
-                                    <button class="btn btn-success" type="button" aria-label="Terima" onclick="terimaDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-check"></i></button>
+                                    <button class="btn btn-success hint--top-left hint--success" type="button" aria-label="Terima" onclick="terimaDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-download"></i></button>
                                 </div></center>';
                     } elseif ($data->send == 'Y') {
                         return '<center><div class="btn-group btn-group-sm">
