@@ -12,6 +12,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Mockery\Exception;
 use DataTables;
 use Response;
+
 class InventoryController extends Controller
 {
     // BARANG MASUK
@@ -29,6 +30,7 @@ class InventoryController extends Controller
     {
         return view('inventory/barangmasuk/edit');
     }
+
     // BARANG KELUAR
 
     public function barangkeluar_index()
@@ -51,6 +53,7 @@ class InventoryController extends Controller
     {
         return view('inventory/barangkeluar/edit');
     }
+
     // DISTRIBUSI BARANG
 
     public function distribusibarang_index()
@@ -67,6 +70,7 @@ class InventoryController extends Controller
     {
         return view('inventory/distribusibarang/distribusi/edit');
     }
+
     // MANAJEMEN STOK
 
     public function manajemenstok_index()
@@ -108,28 +112,29 @@ class InventoryController extends Controller
     public function dataStock()
     {
         $datas = Stock::join('m_company as comp', 'd_stock.s_comp', '=', 'comp.c_id')
-                ->join('m_company as position', 'd_stock.s_position', '=', 'position.c_id')
-                ->join('m_item', 'd_stock.s_item', '=', 'm_item.i_id')
-                ->select('d_stock.s_id as id', 'comp.c_name as pemilik', 'position.c_name as posisi', 'm_item.i_name as item',
-                    'd_stock.s_qty as qty');
+            ->join('m_company as position', 'd_stock.s_position', '=', 'position.c_id')
+            ->join('m_item', 'd_stock.s_item', '=', 'm_item.i_id')
+            ->select('d_stock.s_id as id', 'comp.c_name as pemilik', 'position.c_name as posisi', 'm_item.i_name as item',
+                'd_stock.s_qty as qty');
+
         return Datatables::of($datas)
-            ->addColumn('pemilik', function($datas) {
+            ->addColumn('pemilik', function ($datas) {
                 return strtoupper($datas->pemilik);
             })
-            ->addColumn('posisi', function($datas) {
+            ->addColumn('posisi', function ($datas) {
                 return strtoupper($datas->posisi);
             })
-            ->addColumn('item', function($datas) {
+            ->addColumn('item', function ($datas) {
                 return strtoupper($datas->item);
             })
-            ->addColumn('qty', function($datas) {
-                return '<div class="text-center"> '.number_format($datas->qty, 0, ",", ".").' </div>';
+            ->addColumn('qty', function ($datas) {
+                return '<div class="text-center"> ' . number_format($datas->qty, 0, ",", ".") . ' </div>';
             })
-            ->addColumn('action', function($datas) {
+            ->addColumn('action', function ($datas) {
                 return '<div class="text-center">
                             <div class="btn-group btn-group-sm">
-                                <button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''. Crypt::encrypt($datas->id) .'\')"><i class="fa fa-folder"></i></button>
-                                <button class="btn btn-warning btn-edit" type="button" title="Edit" onclick="edit(\''. Crypt::encrypt($datas->id) .'\')"><i class="fa fa-pencil"></i></button>
+                                <button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\'' . Crypt::encrypt($datas->id) . '\')"><i class="fa fa-folder"></i></button>
+                                <button class="btn btn-warning btn-edit" type="button" title="Edit" onclick="edit(\'' . Crypt::encrypt($datas->id) . '\')"><i class="fa fa-pencil"></i></button>
                             </div>
                         </div>';
             })
@@ -139,9 +144,9 @@ class InventoryController extends Controller
 
     public function detailStock($id = null)
     {
-        try{
+        try {
             $id = Crypt::decrypt($id);
-        }catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return Response::json(['status' => "Failed", 'message' => $e]);
         }
 
@@ -155,10 +160,10 @@ class InventoryController extends Controller
             ->first();
         $codes = DB::table('d_stockdt')->where('sd_stock', '=', $id)->select('sd_code as code', DB::raw('format(sd_qty, 0) as qty'))->get();
         return Response::json([
-                    'status' => "Success",
-                    'message' => $data,
-                    'codes' => $codes
-                ]);
+            'status' => "Success",
+            'message' => $data,
+            'codes' => $codes
+        ]);
 
     }
 
@@ -179,22 +184,22 @@ class InventoryController extends Controller
         }
 
         return Datatables::of($datas)
-            ->addColumn('pemilik', function($datas) {
+            ->addColumn('pemilik', function ($datas) {
                 return strtoupper($datas->pemilik);
             })
-            ->addColumn('posisi', function($datas) {
+            ->addColumn('posisi', function ($datas) {
                 return strtoupper($datas->posisi);
             })
-            ->addColumn('item', function($datas) {
+            ->addColumn('item', function ($datas) {
                 return strtoupper($datas->item);
             })
-            ->addColumn('qty', function($datas) {
-                return '<div class="text-center">'.$datas->qty.'</div>';
+            ->addColumn('qty', function ($datas) {
+                return '<div class="text-center">' . $datas->qty . '</div>';
             })
-            ->addColumn('action', function($datas) {
+            ->addColumn('action', function ($datas) {
                 return '<div class="btn-group btn-group-sm">
-                            <button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''. Crypt::encrypt($datas->id) .'\')"><i class="fa fa-folder"></i></button>
-                            <button class="btn btn-warning btn-edit" type="button" title="Edit" onclick="edit(\''. Crypt::encrypt($datas->id) .'\')"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\'' . Crypt::encrypt($datas->id) . '\')"><i class="fa fa-folder"></i></button>
+                            <button class="btn btn-warning btn-edit" type="button" title="Edit" onclick="edit(\'' . Crypt::encrypt($datas->id) . '\')"><i class="fa fa-pencil"></i></button>
                         </div>';
             })
             ->rawColumns(['pemilik', 'posisi', 'item', 'qty', 'action'])
@@ -213,9 +218,9 @@ class InventoryController extends Controller
 
         $nama = DB::table('m_item')
             ->join('d_itemsupplier', 'is_item', '=', 'i_id')
-            ->where(function ($q) use ($cari){
-                $q->orWhere('i_name', 'like', '%'.$cari.'%');
-                $q->orWhere('i_code', 'like', '%'.$cari.'%');
+            ->where(function ($q) use ($cari) {
+                $q->orWhere('i_name', 'like', '%' . $cari . '%');
+                $q->orWhere('i_code', 'like', '%' . $cari . '%');
             })
             ->get();
 
@@ -223,7 +228,7 @@ class InventoryController extends Controller
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query];
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' . strtoupper($query->i_name), 'data' => $query];
             }
         }
         return Response::json($results);
@@ -232,7 +237,7 @@ class InventoryController extends Controller
     public function addPengelolaanms(Request $request)
     {
         DB::beginTransaction();
-        try{
+        try {
             $check = Stock::where('s_comp', $request->pemilik)
                 ->where('s_position', $request->posisi)
                 ->where('s_item', $request->idBarang)
@@ -241,10 +246,10 @@ class InventoryController extends Controller
 
             if ($check > 0) {
                 $values = [
-                    's_qtymin'          => $request->minStock,
-                    's_qtymax'          => $request->maxStock,
-                    's_qtysafetystart'  => $request->firstRange,
-                    's_qtysafetyend'    => $request->secondRange
+                    's_qtymin' => $request->minStock,
+                    's_qtymax' => $request->maxStock,
+                    's_qtysafetystart' => $request->firstRange,
+                    's_qtysafetyend' => $request->secondRange
                 ];
 
                 Stock::where('s_comp', $request->pemilik)
@@ -255,39 +260,39 @@ class InventoryController extends Controller
                     ->update($values);
             } else {
                 $values = [
-                    's_id'              => (Stock::max('s_id')) ? Stock::max('s_id') + 1 : 1,
-                    's_comp'            => $request->pemilik,
-                    's_position'        => $request->posisi,
-                    's_item'            => $request->idBarang,
-                    's_qty'             => 0,
-                    's_status'          => "ON DESTINATION",
-                    's_condition'       => "FINE",
-                    's_qtymin'          => $request->minStock,
-                    's_qtymax'          => $request->maxStock,
-                    's_qtysafetystart'  => $request->firstRange,
-                    's_qtysafetyend'    => $request->secondRange
+                    's_id' => (Stock::max('s_id')) ? Stock::max('s_id') + 1 : 1,
+                    's_comp' => $request->pemilik,
+                    's_position' => $request->posisi,
+                    's_item' => $request->idBarang,
+                    's_qty' => 0,
+                    's_status' => "ON DESTINATION",
+                    's_condition' => "FINE",
+                    's_qtymin' => $request->minStock,
+                    's_qtymax' => $request->maxStock,
+                    's_qtysafetystart' => $request->firstRange,
+                    's_qtysafetyend' => $request->secondRange
                 ];
                 Stock::insert($values);
             }
             DB::commit();
             return Response::json([
                 'status' => "Success",
-                'message'=> "Data berhasil disimpan"
+                'message' => "Data berhasil disimpan"
             ]);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             DB::rollback();
             return Response::json([
                 'status' => "Failed",
-                'message'=> $e
+                'message' => $e
             ]);
         }
     }
-    
+
     public function pengelolaanmms_edit(Request $request, $id = null)
     {
-        try{
+        try {
             $id = Crypt::decrypt($id);
-        }catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return abort(404);
         }
 
@@ -306,7 +311,7 @@ class InventoryController extends Controller
             return view('inventory.manajemenstok.pengelolaanmms.edit')->with(compact('data', 'companies', 'idx'));
         } else if ($request->isMethod('post')) {
             DB::beginTransaction();
-            try{
+            try {
                 if ($request->idBarang == "") {
                     $iditem = $request->idItem;
                 } else {
@@ -314,13 +319,13 @@ class InventoryController extends Controller
                 }
 
                 $values = [
-                    's_comp'            => $request->pemilik,
-                    's_position'        => $request->posisi,
-                    's_item'            => $iditem,
-                    's_qtymin'          => $request->qtymin,
-                    's_qtymax'          => $request->qtymax,
-                    's_qtysafetystart'  => $request->rangemin,
-                    's_qtysafetyend'    => $request->rangemax
+                    's_comp' => $request->pemilik,
+                    's_position' => $request->posisi,
+                    's_item' => $iditem,
+                    's_qtymin' => $request->qtymin,
+                    's_qtymax' => $request->qtymax,
+                    's_qtysafetystart' => $request->rangemin,
+                    's_qtysafetyend' => $request->rangemax
                 ];
 
                 Stock::where('s_id', $id)->update($values);
@@ -329,7 +334,7 @@ class InventoryController extends Controller
                     'status' => "Success",
                     'message' => "Data berhasil diperbarui"
                 ]);
-            }catch (Exception $e){
+            } catch (Exception $e) {
                 DB::rollback();
                 return Response::json([
                     'status' => "Failed",
@@ -360,7 +365,7 @@ class InventoryController extends Controller
             // ->addIndexColumn()
             // ->addColumn('ratarata', function($data) {
             //     for ($i=0; $i < count($data->sm_hpp) ; $i++) { 
-                    
+
             //     }
             //     return strtoupper($data->pemilik);
             // })

@@ -22,11 +22,11 @@
                     <table class="table table-hover table-striped w-100" cellspacing="0" id="table_piutang">
                         <thead class="bg-primary">
                         <tr>
-                            <th width="1%">No</th>
+                            {{-- <th width="1%">No</th> --}}
                             <th>Nota</th>
                             <th>Deadline</th>
                             <th>Sisa</th>
-                            <th>Bayar</th>
+                            <th width="10%">Bayar</th>
                         </tr>
                         </thead>
                         <tbody>

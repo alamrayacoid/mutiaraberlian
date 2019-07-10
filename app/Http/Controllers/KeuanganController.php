@@ -30,7 +30,7 @@ class KeuanganController extends Controller
     // Laporan Keuangan
     public function laporankeuangan_index()
     {
-        return view('keuangan/laporankeuangan/index');
+        return view('keuangan/laporan/index');
     }
 
     public function laporankeuangan_jurnal()

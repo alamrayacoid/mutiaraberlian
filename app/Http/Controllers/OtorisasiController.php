@@ -32,6 +32,10 @@ class OtorisasiController extends Controller
     {
         return view('notifikasiotorisasi.otorisasi.opname.index');
     }
+    public function sdm()
+    {
+        return view('notifikasiotorisasi.otorisasi.sdm.index');
+    }
 
 
     // ================== Opname =================
@@ -1028,4 +1032,114 @@ class OtorisasiController extends Controller
             ]);
         }
     }
+
+    public function getListPengajuanInOtorisasi()
+    {
+        $pengajuan = DB::table('d_sdmsubmission')
+            ->join('m_divisi', 'ss_department','m_id')
+            ->join('m_jabatan', 'ss_position', 'j_id')
+            ->where('ss_isactive', '=', 'Y')
+            ->get();
+
+        return Datatables::of($pengajuan)
+            ->addIndexColumn()
+            ->addColumn('tanggal', function($pengajuan) {
+                return '<td>'. Carbon::parse($pengajuan->ss_date)->format('d M Y') .'</td>';
+            })
+            ->addColumn('status', function($pengajuan) {
+                if ($pengajuan->ss_isapproved == "P") {
+                    return '<span class="btn-sm btn-block btn-disabled bg-danger text-light text-center" disabled>Pending</span>';
+                } else if ($pengajuan->ss_isapproved == "Y") {
+                    return '<span class="btn-sm btn-block btn-disabled bg-success text-light text-center" disabled>Diterima</span>';
+                } else if ($pengajuan->ss_isapproved == "N") {
+                    return '<span class="btn-sm btn-block btn-disabled bg-danger text-light text-center" disabled>Ditolak</span>';
+                }
+
+            })
+            ->addColumn('action', function($pengajuan) {
+                if ($pengajuan->ss_isapproved == "P") {
+                    return '<div class="text-center">
+                    <div class="btn-group btn-group-sm">
+                      <button class="btn btn-success hint--top-left hint--success" type="button"  aria-label="Terima" onclick="ApprovePengajuan(\''.Crypt::encrypt($pengajuan->ss_id).'\')"><i class="fa fa-check-circle-o"></i></button>
+                      <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Tolak" onclick="DeclinePengajuan(\''.Crypt::encrypt($pengajuan->ss_id).'\')"><i class="fa fa-times-circle-o"></i></button>
+                    </div>
+                  </div>';
+                } else if ($pengajuan->ss_isapproved == "Y"){
+                    return '<div class="text-center">
+                     <div class="btn-group btn-group-sm">
+                      <button class="btn btn-disabled" type="button"  aria-label="Terima" onclick="ApprovePengajuan(\''.Crypt::encrypt($pengajuan->ss_id).'\')"><i class="fa fa-check-circle-o"></i></button>
+                      <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Tolak" onclick="DeclinePengajuan(\''.Crypt::encrypt($pengajuan->ss_id).'\')"><i class="fa fa-times-circle-o"></i></button>
+                    </div>
+                  </div>';
+                } else if ($pengajuan->ss_isapproved == "N") {
+                    return '<div class="text-center">
+                     <div class="btn-group btn-group-sm">
+                      <button class="btn btn-success hint--top-left hint--success" type="button"  aria-label="Terima" onclick="ApprovePengajuan(\'' . Crypt::encrypt($pengajuan->ss_id) . '\')"><i class="fa fa-check-circle-o"></i></button>
+                      <button class="btn btn-disabled" type="button" aria-label="Tolak" onclick="DeclinePengajuan(\'' . Crypt::encrypt($pengajuan->ss_id) . '\')"><i class="fa fa-times-circle-o"></i></button>
+                    </div>
+                  </div>';
+                }
+            })
+            ->rawColumns(['tanggal', 'status', 'action'])
+            ->make(true);
+    }
+
+    public function ApprovePengajuan($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_sdmsubmission')
+                ->where('ss_id', $id)
+                ->update([
+                    'ss_isapproved' => "Y"
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status'  => 'Gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function DeclinePengajuan($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_sdmsubmission')
+                ->where('ss_id', $id)
+                ->update([
+                    'ss_isapproved' => "N"
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status'  => 'Gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
 }

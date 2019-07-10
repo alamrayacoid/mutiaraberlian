@@ -312,7 +312,7 @@
         $('.rupiah').inputmask("currency", {
             radixPoint: ",",
             groupSeparator: ".",
-            digits: 2,
+            digits: 0,
             autoGroup: true,
             prefix: ' Rp ', //Space after $, this will not truncate the first character.
             rightAlign: true,

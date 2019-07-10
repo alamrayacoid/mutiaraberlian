@@ -335,7 +335,7 @@
                         animationBounce: 1.5,
                         icon: 'fa fa-exclamation-triangle',
                         title: 'Konfirmasi!',
-                        content: 'Apakah anda yakin akan menyimpan data order produk ke agen/cabang ini?',
+                        content: 'Apakah anda yakin akan menyimpan data order produk ke pusat ini?',
                         theme: 'disable',
                         buttons: {
                             info: {

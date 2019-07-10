@@ -91,10 +91,11 @@
                                id="table_senddistribution">
                             <thead class="bg-primary">
                             <tr>
-                                <th width="30%">Barang</th>
-                                <th width="15%%">Jumlah</th>
-                                <th width="15%">Satuan</th>
+                                <th width="25%">Barang</th>
+                                <th width="10%">Jumlah</th>
+                                <th width="10%">Satuan</th>
                                 <th width="15%">Harga Satuan</th>
+                                <th width="15%">Diskon Satuan</th>
                                 <th width="15%">Total Harga</th>
                                 <th width="10%">Aksi</th>
                             </tr>
