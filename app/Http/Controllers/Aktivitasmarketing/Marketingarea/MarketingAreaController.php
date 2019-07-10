@@ -897,8 +897,8 @@ class MarketingAreaController extends Controller
                 ->where('poc_item', $PO->pod_item)
                 ->select('poc_code', 'poc_qty')
                 ->get();
-                $listPC = array();
-                $listQtyPC = array();
+                $listPC     = array();
+                $listQtyPC  = array();
                 $listUnitPC = array();
                 foreach ($prodCode as $key => $val) {
                     array_push($listPC, $val->poc_code);
@@ -924,10 +924,10 @@ class MarketingAreaController extends Controller
                 // set stock-parent-id
                 $stockParentId = $mutationOut->original['stockParentId'];
                 // get list
-                $listSellPrice = $mutationOut->original['listSellPrice'];
-                $listHPP = $mutationOut->original['listHPP'];
-                $listSmQty = $mutationOut->original['listSmQty'];
-                $listPCReturn = $mutationOut->original['listPCReturn'];
+                $listSellPrice   = $mutationOut->original['listSellPrice'];
+                $listHPP         = $mutationOut->original['listHPP'];
+                $listSmQty       = $mutationOut->original['listSmQty'];
+                $listPCReturn    = $mutationOut->original['listPCReturn'];
                 $listQtyPCReturn = $mutationOut->original['listQtyPCReturn'];
 
                 // insert stock mutation using sales 'in'
@@ -982,16 +982,16 @@ class MarketingAreaController extends Controller
             $val_salesdt = array();
             foreach ($productOrder->getPODt as $key => $po) {
                 $val_salesdt[] = [
-                    'scd_sales' => $salescompId,
-                    'scd_detailid' => $salescompdtid,
-                    'scd_comp' => $productOrder->po_comp,
-                    'scd_item' => $po->pod_item,
-                    'scd_qty' => $po->pod_qty,
-                    'scd_unit' => $po->pod_unit,
-                    'scd_value' => $po->pod_price,
+                    'scd_sales'      => $salescompId,
+                    'scd_detailid'   => $salescompdtid,
+                    'scd_comp'       => $productOrder->po_comp,
+                    'scd_item'       => $po->pod_item,
+                    'scd_qty'        => $po->pod_qty,
+                    'scd_unit'       => $po->pod_unit,
+                    'scd_value'      => $po->pod_price,
                     'scd_discpersen' => 0,
-                    'scd_discvalue' => 0,
-                    'scd_totalnet' => $po->pod_totalprice
+                    'scd_discvalue'  => 0,
+                    'scd_totalnet'   => $po->pod_totalprice
                 ];
 
                 // clone data from productordercode to salescompcode
@@ -1003,10 +1003,10 @@ class MarketingAreaController extends Controller
                 foreach ($prodCode as $key => $poc) {
                     $val_salescode[] = [
                         'ssc_salescomp' => $salescompId,
-                        'ssc_item' => $po->pod_item,
-                        'ssc_detailid' => $salescompcodeid,
-                        'ssc_code' => $poc->poc_code,
-                        'ssc_qty' => $poc->poc_qty
+                        'ssc_item'      => $po->pod_item,
+                        'ssc_detailid'  => $salescompcodeid,
+                        'ssc_code'      => $poc->poc_code,
+                        'ssc_qty'       => $poc->poc_qty
                     ];
                     $salescompcodeid++;
                 }
@@ -1015,6 +1015,20 @@ class MarketingAreaController extends Controller
                 $salescompdtid++;
             }
             DB::table('d_salescompdt')->insert($val_salesdt);
+
+            // Insert to Delivery Products --------------------
+            $pd_id = DB::table('d_productdelivery')->max('pd_id') + 1;
+            DB::table('d_productdelivery')->insert([
+                "pd_id"          => $pd_id,
+                "pd_date"        => Carbon::now(),
+                "pd_nota"        => $request->pd_nota,
+                "pd_expedition"  => $request->pd_expedition,
+                "pd_product"     => $request->pd_product,
+                "pd_resi"        => $request->pd_resi,
+                "pd_couriername" => $request->pd_couriername,
+                "pd_couriertelp" => $request->pd_couriertelp,
+                "pd_price"       => $request->pd_price
+            ]);
 
             DB::commit();
             return response()->json([
