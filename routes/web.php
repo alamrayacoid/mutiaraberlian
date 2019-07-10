@@ -833,6 +833,30 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses'  => 'Keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@delete'
             ])->name('keuangan.transaksi_memorial.delete');
 
+
+        // laporan keuangan
+            // laporan Jurnal Umum
+                Route::get('modul/keuangan/laporan/jurnal_umum', [
+                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@index'
+                ])->name('laporan.keuangan.jurnal_umum');
+
+                Route::get('modul/keuangan/laporan/jurnal_umum/resource', [
+                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@resource'
+                ])->name('laporan.keuangan.jurnal_umum.resource');
+
+                Route::get('modul/keuangan/laporan/jurnal_umum/print', [
+                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@print'
+                ])->name('laporan.keuangan.jurnal_umum.print');
+
+                Route::get('modul/keuangan/laporan/jurnal_umum/print/excel', [
+                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@excel'
+                ])->name('laporan.keuangan.jurnal_umum.print.excel');
+
+                Route::get('modul/keuangan/laporan/jurnal_umum/print/pdf', [
+                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@pdf'
+                ])->name('laporan.keuangan.jurnal_umum.print.pdf');
+
+
     // Selesai Dirga
 });
 
