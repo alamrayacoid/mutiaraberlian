@@ -45,10 +45,10 @@
             </div>
 
             <div class="col-md-4 col-sm-6 col-12">
-                <a href="{{route('keuangan.mutasi_kas.create')}}">
+                <a href="{{route('laporan.keuangan.neraca')}}">
                     <div class="card text-center p-4 card-custom text-info">
                         <img src="{{asset('assets/img/quality.png')}}" height="128px" width="128px">
-                        <h6>Laporan Buku Besar</h6>
+                        <h6>Laporan Neraca</h6>
                     </div>
                 </a>
             </div>
