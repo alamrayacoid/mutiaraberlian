@@ -428,7 +428,7 @@
                                 loadingHide();
                                 messageSuccess("Berhasil", response.data.message);
                                 // printNota(id, termin);
-                                window.location.href="{{ url("/produksi/pembayaran/nota?") }}" + "id=" + id + "&termin=" + termin
+                                window.open("{{ url("/produksi/pembayaran/nota?") }}" + "id=" + id + "&termin=" + termin, '_blank')
                             }
                         })
                         .catch(function (error) {
