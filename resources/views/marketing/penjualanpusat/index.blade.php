@@ -1,30 +1,33 @@
 @extends('main')
 @section('extra_style')
-    <style>
-        @media (min-width: 992px) {
-            .modal-lg .modal-xl {
-                max-width: 1000px !important;
-            }
+<style>
+    @media (min-width: 992px) {
+        .modal-lg .modal-xl {
+            max-width: 1000px !important;
         }
-        .tolak {
-            background-color: #d1d1d1;
-            color: #8a8a8a;
+    }
+    .tolak {
+        background-color: #d1d1d1;
+        color: #8a8a8a;
+    }
+    #table_modalPr tr.tolak:hover{
+        background-color: #eaeaea;
+    }
+    @media (min-width: 992px) {
+        .modal-xl {
+            max-width: 1200px !important;
         }
-        #table_modalPr tr.tolak:hover{
-            background-color: #eaeaea;
-        }
-        @media (min-width: 992px) {
-            .modal-xl {
-                max-width: 1200px !important;
-            }
-        }
-        .btn-xs {
-            padding: 0.20rem 0.4rem;
-            font-size: 0.675rem;
-            line-height: 1.3;
-            border-radius: 0.2rem;
-        }
-    </style>
+    }
+    .btn-xs {
+        padding: 0.20rem 0.4rem;
+        font-size: 0.675rem;
+        line-height: 1.3;
+        border-radius: 0.2rem;
+    }
+    .select2-container--bootstrap.select2-container--open {
+        width: auto !important;
+    }
+</style>
 @stop
 @section('content')
 
@@ -34,6 +37,7 @@
     @include('marketing.penjualanpusat.terimaorder.modal-process')
     @include('marketing.penjualanpusat.targetrealisasi.modal')
     @include('marketing.penjualanpusat.penerimaanpiutang.modalnota')
+    @include('marketing.penjualanpusat.penerimaanpiutang.modalpayment')
 
     <article class="content animated fadeInLeft">
 
@@ -606,20 +610,33 @@
                     let subTotalN = '<td><span class="subtotalprice-'+val.pod_item+'"> '+ convertToRupiah(hargasubtotal.toString().replace(".00", "")) +'</span>';
                     let aksiP = '<td><button type="button" class="btn btn-sm btn-danger" onclick="changeStatus('+val.pod_productorder+', '+val.pod_detailid+', \'N\')"><i class="fa fa-close"></i></button></td>';
                     let aksiN = '<td><button type="button" class="btn btn-sm btn-success" onclick="changeStatus('+val.pod_productorder+', '+val.pod_detailid+', \'P\')"><i class="fa fa-check"></i></button></td>';
+                    let diskon = '<td><input type="text" class="form-control form-control-sm diskon diskon-rupiah text-right" name="diskon[]" onkeyup="setTotalTransaksi()"></td>';
                     if (val.pod_isapproved == 'P'){
                         let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name + itemIdP +'</td>';
                         let unit = '<td>'+ selectUnitP +'</td>';
-                        appendItem = '<tr>'+ item + stok + qtyP + unit + priceP + subTotalP + aksiP +'</tr>';
+                        appendItem = '<tr>'+ item + stok + qtyP + unit + priceP + diskon + subTotalP + aksiP +'</tr>';
                     } else if (val.pod_isapproved == 'N') {
                         let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name + itemIdN +'</td>';
                         let unit = '<td>'+ selectUnitN +'</td>';
-                        appendItem = '<tr class="tolak">'+ item + stok + qtyN + unit + priceN + subTotalN + aksiN +'</tr>';
+                        appendItem = '<tr class="tolak">'+ item + stok + qtyN + unit + priceN + diskon + subTotalN + aksiN +'</tr>';
                     }
                     // append data to table-row
 
                     $('#table_modalPr > tbody:last-child').append(appendItem);
                     // set unitModalPr selected item
                     $('.unitModalPr option[value='+ val.pod_unit +']').attr('selected', 'selected');
+                    $('.diskon').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 0,
+                        autoGroup: true,
+                        prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
+                    });
+
                 });
                 // show modal
                 $('#modalProcessTOP').modal('show');
@@ -663,6 +680,11 @@
             validateQty();
             hitungTotal();
             changePrice();
+        });
+
+        $('.diskon').on('keyup', function() {
+            idxItem = $('.diskon').index(this);
+            hitungTotal();
         });
         // set event handler for unit
         $('.unitModalPr').on('change', function() {
@@ -756,9 +778,10 @@
     function hitungTotal() {
         var hargasatuan = parseInt($('.hargasatuan').eq(idxItem).val());
         var kuantitas = parseInt($('.qtyModalPr').eq(idxItem).val());
+        var diskon = parseInt(convertToAngka($('.diskon').eq(idxItem).val()));
         var item = $('.idItem').eq(idxItem).val();
 
-        var subTotal = hargasatuan * kuantitas;
+        var subTotal = (hargasatuan - diskon) * kuantitas;
         if (isNaN(subTotal)){
             subTotal = 0;
         }
@@ -799,6 +822,7 @@
                 if (response.status == 'success'){
                     messageSuccess("Berhasil", "Data berhasil disimpan");
                     table_top.ajax.reload();
+                    table_distribusi.ajax.reload();
                     $('#modalProcessTOP').modal('hide');
                 } else if (response.status == 'gagal'){
                     messageFailed("Gagal", "data gagal disimpan");
@@ -815,13 +839,16 @@
 
     function setTotalTransaksi(){
         let allprice = $('.hargasubtotal').serializeArray();
+        let alldiskon = $('.diskon').serializeArray();
         var total = 0;
 
         for (let i = 0; i < allprice.length; i++) {
+            if (alldiskon[i].value == ""){
+                alldiskon[i].value = "Rp. 0";
+            }
             total = total + parseInt(allprice[i].value);
         }
         $('#totalModalPr').val(convertToRupiah(total));
-        console.log(total);
     }
 
     // Distribusi penjualan
@@ -877,9 +904,10 @@
                     let qty = '<td class="digits">'+ val.pod_qty +'</td>';
                     let unit = '<td>'+ val.get_unit.u_name +'</td>';
                     let price = '<td class="rupiah">'+ parseFloat(val.pod_price) +'</td>';
+                    let diskon = '<td class="rupiah">'+ parseFloat(val.pod_discvalue) +'</td>';
                     let subTotal = '<td class="rupiah">'+ parseFloat(val.pod_totalprice) +'</td>';
                     let aksi = '<td class="text-center"><button type="button" onclick="addCodeProd('+response.po_id+', '+val.pod_item+', \''+val.get_item.i_name+'\')" class="btn btn-info btn-xs btnAddProdCode"><i class="fa fa-plus"></i> Kode Produksi</button></td>';
-                    appendItem = '<tr>'+ item + qty + unit + price + subTotal + aksi +'</tr>';
+                    appendItem = '<tr>'+ item + qty + unit + price + diskon + subTotal + aksi +'</tr>';
                     // append data to table-row
                     $('#table_senddistribution > tbody:last-child').append(appendItem);
                 });
@@ -950,7 +978,6 @@
 
     function addCodeProd(id, item, nama){
         idxProdCode = $('.btnAddProdCode').index(this);
-        console.log(idxProdCode);
         $('.text-item').html(nama);
         $('#inputkodeproduksi').removeAttr('readonly');
         $('#iditem_modaldt').val(item);
@@ -1072,13 +1099,12 @@
             "resi": resi,
             "harga": harga
         }).then(function (response) {
+            loadingHide();
             if (response.data.status == 'success'){
-                loadingHide();
                 messageSuccess("Berhasil", "Data berhasil disimpan");
                 $('#modal_distribusi').modal('hide');
                 table_distribusi.ajax.reload();
             } else if (response.data.status == 'gagal'){
-                loadingHide();
                 messageFailed("Gagal", response.data.message);
             }
         }).catch(function (error) {
@@ -1094,11 +1120,12 @@
         });
         $('#table_getNota').DataTable();
         $('#nota_s').css('text-transform', 'uppercase');
+        getProvinsi();
     });
 
     function getNota(){
         $('#modal_nota').modal('show');
-        getProvinsi();
+        // $('#provId').select2('open');
     }
 
     function getProvinsi() {
@@ -1180,6 +1207,7 @@
 
     function get_list(nota){
         // var nota = subString(nota);
+        $('#nota_s').val(nota);
         $('#table_piutang').dataTable().fnDestroy();
         tb_piutang = $('#table_piutang').DataTable({
             searching: false,
@@ -1190,16 +1218,32 @@
                 type: "get",
             },
             columns: [
-                {data: 'DT_RowIndex'},
+                // {data: 'DT_RowIndex'},
                 {data: 'sc_nota'},
                 {data: 'deadline'},
                 {data: 'sisa', className: 'text-right'},
-                {data: 'bayar'}
+                {data: 'bayar', className: 'text-center'}
             ],
             pageLength: 10,
             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
         });
         $('#modal_nota').modal('hide');
+    }
+
+    function toPayment(nota) {
+        $('#sc_nota').val(nota);
+        $('#modal_payment').modal('show');
+    }
+
+    $('#nominal').keypress(function(e){
+        if(e.which == 13) {
+          e.preventDefault();
+          savePayment();
+        }
+    });
+
+    function savePayment() {
+        alert($('#nominal').val());
     }
 </script>
 @endsection
