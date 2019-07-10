@@ -88,6 +88,15 @@
                     </div>
                 </a>
             </div>
+
+            <div class="col-md-4 col-sm-6 col-12">
+                <a href="#">
+                    <div class="card text-center p-4 card-custom text-info">
+                        <img src="{{asset('assets/img/employee.png')}}" height="128px" width="128px">
+                        <h6>Otorisasi SDM</h6>
+                    </div>
+                </a>
+            </div>
 		</div>
 
 	</section>

@@ -9,7 +9,7 @@ class KeuanganController extends Controller
     //Input Transaksi
     public function inputtransaksi_index()
     {
-        return view('keuangan/inputtransaksi/index');
+        return view('keuangan/transaksi/index');
     }
 
     public function create_transaksikas()

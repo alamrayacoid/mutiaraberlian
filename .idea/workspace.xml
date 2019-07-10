@@ -2,11 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/create.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/ordercabang.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Penjualanpusat/PenjualanPusatController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Penjualanpusat/PenjualanPusatController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/layouts/_script.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/layouts/_script.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_create.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_detail.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_detail.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/tab_masterkpi.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/tab_masterkpi.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
@@ -25,7 +26,7 @@
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="202">
-              <caret line="396" column="145" lean-forward="true" selection-start-line="396" selection-start-column="125" selection-end-line="396" selection-end-column="145" />
+              <caret line="54" column="81" selection-start-line="54" selection-start-column="63" selection-end-line="54" selection-end-column="81" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
               </folding>
@@ -34,82 +35,45 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Penjualanpusat/PenjualanPusatController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="464">
-              <caret line="49" column="93" lean-forward="true" selection-start-line="49" selection-start-column="93" selection-end-line="49" selection-end-column="93" />
-              <folding>
-                <element signature="e#74#109#0#PHP" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/marketing/penjualanpusat/index.blade.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="73" column="73" selection-start-line="73" selection-start-column="73" selection-end-line="73" selection-end-column="73" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/index.blade.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="7" column="134" lean-forward="true" selection-start-line="7" selection-start-column="134" selection-end-line="7" selection-end-column="134" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/create.blade.php">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SDM/MasterKPIController.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="260">
-              <caret line="46" column="61" selection-start-line="44" selection-start-column="48" selection-end-line="46" selection-end-column="61" />
+              <caret line="70" column="115" selection-start-line="70" selection-start-column="115" selection-end-line="70" selection-end-column="115" />
               <folding>
-                <element signature="n#style#0;n#p#0;n#td#3;n#tr#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#p#0;n#td#3;n#tr#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
+                <element signature="e#44#72#0#PHP" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/ordercabang.blade.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="45" selection-start-column="45" selection-end-column="45" />
+            <state relative-caret-position="184">
+              <caret line="281" column="31" selection-start-line="281" selection-start-column="31" selection-end-line="281" selection-end-column="31" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Agen/ManajemenAgenController.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/tab_masterkpi.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="384">
-              <caret line="522" column="74" lean-forward="true" selection-start-line="513" selection-start-column="8" selection-end-line="522" selection-end-column="74" />
+            <state relative-caret-position="160">
+              <caret line="20" column="46" selection-start-line="20" selection-start-column="46" selection-end-line="20" selection-end-column="46" />
               <folding>
-                <element signature="e#64#99#0#PHP" expanded="true" />
+                <element signature="n#style#0;n#table#0;n#div#1;n#section#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/marketing/agen/orderproduk/create.blade.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_create.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="13" column="14" lean-forward="true" selection-end-line="1425" />
-              <folding>
-                <element signature="n#style#0;n#p#0;n#td#3;n#tr#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#p#0;n#td#3;n#tr#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-              </folding>
+            <state relative-caret-position="-236">
+              <caret line="1" column="30" selection-start-line="1" selection-start-column="9" selection-end-line="1" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -118,36 +82,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>table_penjualanviaweb</find>
-      <find>savesal`</find>
-      <find>adju</find>
-      <find>histor</find>
-      <find>table_historykpw</find>
-      <find>adjust</find>
-      <find>adjus</find>
-      <find>width</find>
-      <find>simpanaks</find>
-      <find>pengaturan/pengaturanpengguna/akses</find>
-      <find>sread</find>
-      <find>ua_read</find>
-      <find>masterdatautama/harga/index</find>
-      <find>ordering</find>
-      <find>table_golonganharga</find>
-      <find>notifikasiotorisasi/otorisasi/perubahanhargajual/getdataperubahan</find>
-      <find>perubahanhargajual</find>
-      <find>table_otorisasi</find>
-      <find>notifikasiotorisasi/otorisasi/perubahanhargajual/index</find>
-      <find>getDataPerubahanHarga</find>
-      <find>masterdatautama/harga/add-golongan-harga</find>
-      <find>inventory/distribusibarang/store</find>
-      <find>marketing/agen/orderproduk/cek-harga</find>
-      <find>distribusi</find>
-      <find>inventory/distribusibarang/index</find>
       <find>distribusibarang</find>
       <find>marketing/agen/orderproduk/create</find>
       <find>marketing/penjualanpusat/index</find>
       <find>penjualanpusat.index</find>
       <find>select-order</find>
+      <find>table_manajemenscoreboard</find>
+      <find>table_pus</find>
+      <find>simpan</find>
+      <find>btn_submit</find>
+      <find>(&quot;Berhasil&quot;, &quot;Data Order Produksi Berhasil Disimpan&quot;)</find>
+      <find>produksi/orderproduksi/create</find>
+      <find>agentCode</find>
+      <find>autocomplete</find>
+      <find>agen</find>
+      <find>agent</find>
+      <find>marketing/marketingarea/datakonsinyasi/create</find>
+      <find>create</find>
+      <find>axios</find>
+      <find>photo</find>
+      <find>datatable</find>
+      <find>masterkpi.create</find>
+      <find>index(</find>
+      <find>server</find>
+      <find>masterdatautama/produk/index</find>
+      <find>sdm/kinerjasdm/index</find>
+      <find>jenisitem.getdata</find>
+      <find>getData</find>
+      <find>masterkpi.getData</find>
+      <find>jenis</find>
+      <find>getdata</find>
     </findStrings>
     <replaceStrings>
       <replace>done_</replace>
@@ -160,13 +124,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/Http/Controllers/Inventory/AdjusmentController.php" />
-        <option value="$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/masterdatautama/produk/modal-create.blade.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/Master/SatuanController.php" />
-        <option value="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/modal.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/tahunan/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/bulanan/edit.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/tahunan/create.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/manajemenmarketing/tahunan/edit.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/index.blade.php" />
@@ -205,11 +162,19 @@
         <option value="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Konsinyasipusat/KonsinyasiPusatController.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Marketingarea/MarketingAreaController.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/distribusi/index.blade.php" />
-        <option value="$PROJECT_DIR$/routes/web.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/ordercabang.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/create.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Penjualanpusat/PenjualanPusatController.php" />
+        <option value="$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/marketing/marketingarea/datakonsinyasi/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/layouts/_script.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_detail.blade.php" />
+        <option value="$PROJECT_DIR$/routes/web.php" />
+        <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/tab_masterkpi.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/SDM/MasterKPIController.php" />
       </list>
     </option>
   </component>
@@ -349,7 +314,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -360,6 +324,32 @@
             <path>
               <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
               <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
+              <item name="SDM" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -373,98 +363,24 @@
               <item name="mutiara" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="marketing" type="462c0819:PsiDirectoryNode" />
+              <item name="sdm" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
               <item name="mutiara" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="marketing" type="462c0819:PsiDirectoryNode" />
-              <item name="agen" type="462c0819:PsiDirectoryNode" />
+              <item name="sdm" type="462c0819:PsiDirectoryNode" />
+              <item name="kinerjasdm" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
               <item name="mutiara" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="marketing" type="462c0819:PsiDirectoryNode" />
-              <item name="agen" type="462c0819:PsiDirectoryNode" />
-              <item name="orderproduk" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="marketing" type="462c0819:PsiDirectoryNode" />
-              <item name="agen" type="462c0819:PsiDirectoryNode" />
-              <item name="penjualanviaweb" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="marketing" type="462c0819:PsiDirectoryNode" />
-              <item name="penjualanpusat" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="marketing" type="462c0819:PsiDirectoryNode" />
-              <item name="penjualanpusat" type="462c0819:PsiDirectoryNode" />
-              <item name="terimaorder" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="notifikasiotorisasi" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="notifikasiotorisasi" type="462c0819:PsiDirectoryNode" />
-              <item name="otorisasi" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="notifikasiotorisasi" type="462c0819:PsiDirectoryNode" />
-              <item name="otorisasi" type="462c0819:PsiDirectoryNode" />
-              <item name="perubahanhargajual" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="pengaturan" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="pengaturan" type="462c0819:PsiDirectoryNode" />
-              <item name="otoritas" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="pengaturan" type="462c0819:PsiDirectoryNode" />
-              <item name="otoritas" type="462c0819:PsiDirectoryNode" />
-              <item name="perubahanhargajual" type="462c0819:PsiDirectoryNode" />
+              <item name="sdm" type="462c0819:PsiDirectoryNode" />
+              <item name="kinerjasdm" type="462c0819:PsiDirectoryNode" />
+              <item name="masterkpi" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
@@ -475,6 +391,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -492,7 +409,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.postfix.templates" />
+    <property name="settings.editor.selected.configurable" value="Settings.CustomPostfixTemplates" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -562,7 +479,11 @@
       <workItem from="1562401223748" duration="2967000" />
       <workItem from="1562462469547" duration="2390000" />
       <workItem from="1562483540844" duration="905000" />
-      <workItem from="1562570098196" duration="5184000" />
+      <workItem from="1562570098196" duration="7897000" />
+      <workItem from="1562637056785" duration="8244000" />
+      <workItem from="1562663454295" duration="5100000" />
+      <workItem from="1562713118565" duration="2221000" />
+      <workItem from="1562722787917" duration="1834000" />
     </task>
     <task id="LOCAL-00001" summary="perbaikan jenis produk">
       <created>1560755279119</created>
@@ -711,11 +632,18 @@
       <option name="project" value="LOCAL" />
       <updated>1562571151265</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="sedikit perbaikan">
+      <created>1562580025994</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1562580025994</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="231249000" />
+    <option name="totallyTimeSpent" value="251361000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -730,11 +658,11 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49917355" visible="true" weight="0.19213313" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49917355" visible="true" weight="0.204236" />
       <window_info id="Structure" order="1" sideWeight="0.5008264" side_tool="true" weight="0.19818456" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3289256" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -774,105 +702,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="sedikit perbaikan" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/satuanHPA.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="122">
-          <caret line="7" column="14" lean-forward="true" selection-start-line="7" selection-start-column="14" selection-end-line="7" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/hargaAgen.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="56" column="73" lean-forward="true" selection-start-line="56" selection-start-column="73" selection-end-line="56" selection-end-column="73" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="485" column="68" selection-start-line="485" selection-start-column="68" selection-end-line="485" selection-end-column="68" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/editGolHrgRangeHPA.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-836" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/agen/create.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6660">
-          <caret line="333" column="11" selection-start-line="322" selection-start-column="8" selection-end-line="333" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/addGolonganHPA.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="9" column="30" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/AgenController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="254" column="47" selection-start-line="254" selection-start-column="47" selection-end-line="254" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/EkspedisiController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="15" column="50" selection-start-line="15" selection-start-column="50" selection-end-line="15" selection-end-column="50" />
-          <folding>
-            <element signature="e#47#100#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/ekspedisi/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="67" column="61" selection-start-line="67" selection-start-column="61" selection-end-line="67" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="452" column="50" lean-forward="true" selection-start-line="452" selection-start-column="50" selection-end-line="452" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/ItemSupplierController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="484">
-          <caret line="50" column="42" lean-forward="true" selection-start-line="25" selection-start-column="8" selection-end-line="50" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/storage/framework/views/346e3a41fcf02ebe78b38ae2cedb155499a912a1.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="76" column="45" lean-forward="true" selection-start-line="76" selection-start-column="45" selection-end-line="76" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/storage/framework/views/423ceee28e438368837167e2727d3ba972b92712.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="25" column="15" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/layouts/_script.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="69" column="22" selection-start-line="69" selection-start-column="12" selection-end-line="69" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/CodeGenerator.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="220">
@@ -1035,13 +864,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Marketingarea/MarketingAreaController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="1201" column="13" selection-start-line="1201" selection-start-column="13" selection-end-line="1201" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/marketing/penjualanpusat/distribusi/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="100">
@@ -1066,23 +888,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/marketing/agen/orderproduk/create.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="13" column="14" lean-forward="true" selection-end-line="1425" />
-          <folding>
-            <element signature="n#style#0;n#p#0;n#td#3;n#tr#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#td#3;n#tr#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Agen/ManajemenAgenController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="384">
-          <caret line="522" column="74" lean-forward="true" selection-start-line="513" selection-start-column="8" selection-end-line="522" selection-end-column="74" />
+          <caret line="522" column="74" selection-start-line="513" selection-start-column="8" selection-end-line="522" selection-end-column="74" />
           <folding>
             <element signature="e#64#99#0#PHP" expanded="true" />
           </folding>
@@ -1092,17 +901,7 @@
     <entry file="file://$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="140">
-          <caret line="7" column="134" lean-forward="true" selection-start-line="7" selection-start-column="134" selection-end-line="7" selection-end-column="134" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/web.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="396" column="145" lean-forward="true" selection-start-line="396" selection-start-column="125" selection-end-line="396" selection-end-column="145" />
-          <folding>
-            <element signature="e#7#389#0#PHP" expanded="true" />
-          </folding>
+          <caret line="7" column="134" selection-start-line="7" selection-start-column="134" selection-end-line="7" selection-end-column="134" />
         </state>
       </provider>
     </entry>
@@ -1135,10 +934,157 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Penjualanpusat/PenjualanPusatController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="464">
-          <caret line="49" column="93" lean-forward="true" selection-start-line="49" selection-start-column="93" selection-end-line="49" selection-end-column="93" />
+        <state relative-caret-position="284">
+          <caret line="40" column="38" lean-forward="true" selection-start-line="40" selection-start-column="38" selection-end-line="40" selection-end-column="38" />
           <folding>
             <element signature="e#74#109#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="345" column="127" selection-start-line="345" selection-start-column="127" selection-end-line="345" selection-end-column="127" />
+          <folding>
+            <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="200" column="53" selection-start-line="200" selection-start-column="53" selection-end-line="200" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/penggajian/produksi/tambah_produksi.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="87" column="85" selection-start-line="87" selection-start-column="79" selection-end-line="87" selection-end-column="85" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/marketing/marketingarea/datakonsinyasi/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="533" column="41" lean-forward="true" selection-start-line="533" selection-start-column="41" selection-end-line="533" selection-end-column="41" />
+          <folding>
+            <element signature="n#style#0;n#input#0;n#td#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#p#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#td#5;n#tr#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/marketing/agen/orderproduk/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2560">
+          <caret line="145" column="15" lean-forward="true" selection-start-line="145" selection-start-column="15" selection-end-line="145" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Marketingarea/MarketingAreaController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="213">
+          <caret line="2695" column="52" selection-start-line="2695" selection-start-column="52" selection-end-line="2695" selection-end-column="52" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/layouts/_script.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="410">
+          <caret line="722" lean-forward="true" selection-start-line="722" selection-end-line="722" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_detail.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="23" column="26" lean-forward="true" selection-start-line="23" selection-start-column="26" selection-end-line="23" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="422">
+          <caret line="254" column="67" lean-forward="true" selection-start-line="240" selection-start-column="16" selection-end-line="254" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SDMController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="504">
+          <caret line="46" column="54" selection-start-line="46" selection-start-column="54" selection-end-line="46" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="490" column="25" lean-forward="true" selection-start-line="482" selection-start-column="8" selection-end-line="490" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/EmployeeController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="14" selection-start-line="14" selection-end-line="14" selection-end-column="15" />
+          <folding>
+            <element signature="n#style#0;n#strike#0;n#i#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#strike#0;n#i#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#strike#0;n#i#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/web.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="54" column="81" selection-start-line="54" selection-start-column="63" selection-end-line="54" selection-end-column="81" />
+          <folding>
+            <element signature="e#7#389#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-236">
+          <caret line="1" column="30" selection-start-line="1" selection-start-column="9" selection-end-line="1" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="281" column="31" selection-start-line="281" selection-start-column="31" selection-end-line="281" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/tab_masterkpi.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="20" column="46" selection-start-line="20" selection-start-column="46" selection-end-line="20" selection-end-column="46" />
+          <folding>
+            <element signature="n#style#0;n#table#0;n#div#1;n#section#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SDM/MasterKPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="70" column="115" selection-start-line="70" selection-start-column="115" selection-end-line="70" selection-end-column="115" />
+          <folding>
+            <element signature="e#44#72#0#PHP" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>

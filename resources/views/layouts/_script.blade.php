@@ -716,8 +716,8 @@ $(document).ready(function(){
         'f1' : easyCreate
     });
 </script>
-<script>
+{{--<script>
 $(document).ready(function(){
     $('[data-gallery=example]').photoviewer();
 });
-</script>
+</script>--}}
