@@ -71,6 +71,10 @@ class saldo_akun {
 							->where('as_periode', $year)
 							->select('dk_akun_saldo.*', 'dk_akun.ak_posisi');
 
+			$kolomUpdate =  DB::table('dk_akun_saldo')
+								->where('as_akun', $data['jrdt_akun'])
+								->where('as_periode', $year);
+
 			if($construct->first()){
 
 
@@ -91,7 +95,7 @@ class saldo_akun {
 
 				switch ($type) {
 					case 'MK':
-						$construct->update([
+						$kolomUpdate->update([
 							"as_mut_kas_debet"	=> DB::raw('as_mut_kas_debet + '.$debet),
 							"as_mut_kas_kredit"	=> DB::raw('as_mut_kas_kredit + '.$kredit),
 							"as_saldo_akhir"	=> DB::raw('as_saldo_akhir + '.$calculation)
@@ -99,7 +103,7 @@ class saldo_akun {
 						break;
 
 					case 'TK':
-						$construct->update([
+						$kolomUpdate->update([
 							"as_trans_kas_debet"	=> DB::raw('as_trans_kas_debet + '.$debet),
 							"as_trans_kas_kredit"	=> DB::raw('as_trans_kas_kredit + '.$kredit),
 							"as_saldo_akhir"		=> DB::raw('as_saldo_akhir + '.$calculation)
@@ -107,7 +111,7 @@ class saldo_akun {
 						break;
 					
 					case 'TM':
-						$construct->update([
+						$kolomUpdate->update([
 							"as_trans_memorial_debet"	=> DB::raw('as_trans_memorial_debet + '.$debet),
 							"as_trans_memorial_kredit"	=> DB::raw('as_trans_memorial_kredit + '.$kredit),
 							"as_saldo_akhir"			=> DB::raw('as_saldo_akhir + '.$calculation)

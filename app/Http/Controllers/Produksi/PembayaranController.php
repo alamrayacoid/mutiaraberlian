@@ -15,6 +15,8 @@ use DB;
 use Mockery\Exception;
 use Response;
 use Yajra\DataTables\DataTables;
+use App\Helper\keuangan\jurnal\jurnal;
+use Auth;
 
 class PembayaranController extends Controller
 {
@@ -228,6 +230,9 @@ class PembayaranController extends Controller
 
     public function bayar(Request $request)
     {
+
+        // return json_encode($request->all());
+
         $bayar = Currency::removeRupiah($request->nilai_bayar);
         $termin = $request->termin;
         try {
@@ -282,6 +287,64 @@ class PembayaranController extends Controller
                         'po_status' => "LUNAS"
                     ]);
             }
+
+            // Tambahan Dirga
+                $acc_kas = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Pembayaran Order Produksi')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA Kas/Setara Kas')
+                                        ->first();
+
+                $hutang = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Pembayaran Order Produksi')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA Hutang')
+                                        ->first();
+                
+                $pembukuan = DB::table('dk_pembukuan')
+                                    ->where('pe_nama', 'Pembayaran Order Produksi')
+                                    ->where('pe_comp', Auth::user()->u_company)->first();
+
+                $details = []; $count = 0;
+
+                if(!$hutang || !$acc_kas || !$pembukuan){
+                    return response()->json([
+                        'status' => 'Failed',
+                        'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                    ]);
+                }
+
+                array_push($details, [
+                    "jrdt_nomor"        => 1,
+                    "jrdt_akun"         => $acc_kas->pd_acc,
+                    "jrdt_value"        => $bayar,
+                    "jrdt_dk"           => "K",
+                    "jrdt_keterangan"   => $pembukuan->pe_keterangan,
+                    "jrdt_cashflow"     => $acc_kas->pd_cashflow
+                ]);
+
+                array_push($details, [
+                    "jrdt_nomor"        => 2,
+                    "jrdt_akun"         => $hutang->pd_acc,
+                    "jrdt_value"        => $bayar,
+                    "jrdt_dk"           => "D",
+                    "jrdt_keterangan"   => $pembukuan->pe_keterangan,
+                    "jrdt_cashflow"     => null
+                ]);
+
+                $nota = $request->nota.'-'.$termin;
+
+                $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $nota, $pembukuan->pe_keterangan, 'TK', Auth::user()->u_company);
+
+                if($jurnal['status'] == 'error'){
+                    return json_encode($jurnal);
+                }
+
+            // selesai dirga
 
             DB::commit();
             return Response::json(['status' => "Success", 'message' => "Data berhasil disimpan"]);
