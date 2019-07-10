@@ -72,6 +72,7 @@ class saldo_akun {
 							->select('dk_akun_saldo.*', 'dk_akun.ak_posisi');
 
 			$kolomUpdate =  DB::table('dk_akun_saldo')
+								->where('as_akun', $data['jrdt_akun'])
 								->where('as_periode', $year);
 
 			if($construct->first()){
