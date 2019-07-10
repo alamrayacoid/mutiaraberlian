@@ -14,4 +14,9 @@ class m_employee extends Model
     {
         return $this->belongsTo(d_username::class, 'e_id', 'u_code');
     }
+    // get division
+    public function getDivision()
+    {
+        return $this->belongsTo('App\m_divisi', 'e_department', 'm_id');
+    }
 }
