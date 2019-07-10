@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\SDM;
 
+use function GuzzleHttp\Psr7\str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
@@ -28,7 +29,11 @@ class RecruitmentController extends Controller
       ->join('m_jabatan', 'a_position', 'j_id')
       ->where('a_isactive', '=', 'Y')
       ->get();
-    return view('sdm/prosesrekruitmen/index', compact('jabatan', 'applicant'));
+    $divisi = DB::table('m_divisi')
+      ->select('m_divisi.*')
+      ->select('m_id','m_name')
+      ->get();
+    return view('sdm/prosesrekruitmen/index', compact('jabatan', 'applicant','divisi'));
   }
   // Recruitment ============================================================================================
   public function getList(Request $request)
@@ -394,6 +399,241 @@ class RecruitmentController extends Controller
       ->rawColumns(['tgl_apply', 'status', 'approval'])
       ->make(true);
   }
+  // End Code =============================================================================================
+
+  // Penggajuan SDM =======================================================================================
+    public function getListPengajuan()
+    {
+        $pengajuan = DB::table('d_sdmsubmission')
+            ->join('m_divisi', 'ss_department','m_id')
+            ->join('m_jabatan', 'ss_position', 'j_id')
+            ->select('d_sdmsubmission.*', 'j_name', 'm_name')
+            ->get();
+
+        return Datatables::of($pengajuan)
+            ->addIndexColumn()
+            ->addColumn('tanggal', function($pengajuan) {
+                return '<td>'. Carbon::parse($pengajuan->ss_date)->format('d M Y') .'</td>';
+            })
+            ->addColumn('status', function($pengajuan) {
+                if ($pengajuan->ss_isapproved == "P") {
+                    return '<span class="btn-sm btn-block btn-disabled bg-danger text-light text-center" disabled>Pending</span>';
+                } else if ($pengajuan->ss_isapproved == "Y") {
+                    return '<span class="btn-sm btn-block btn-disabled bg-success text-light text-center" disabled>Diterima</span>';
+                } else if ($pengajuan->ss_isapproved == "N") {
+                    return '<span class="btn-sm btn-block btn-disabled bg-danger text-light text-center" disabled>Ditolak</span>';
+                }
+
+            })
+            ->addColumn('action', function($pengajuan) {
+                if ($pengajuan->ss_isactive == "Y") {
+                    return '<div class="text-center">
+                    <div class="btn-group btn-group-sm">
+                      <button class="btn btn-disabled" type="button" onclick="detailLoker(\''.Crypt::encrypt($pengajuan->ss_id).'\')" disabled><i class="fa fa-fw fa-check"></i></button>
+                      <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Nonaktifkan" onclick="nonPengajuan(\''.Crypt::encrypt($pengajuan->ss_id).'\')"><i class="fa fa-fw fa-times"></i></button>
+                      <button class="btn btn-warning btn-proses-rekruitmen hint--top-left hint--warning" type="button" aria-label="Edit" onclick="editPengajuan(\''.Crypt::encrypt($pengajuan->ss_id).'\')"><i class="fa fa-fw fa-pencil"></i></button>
+                      <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Hapus" onclick="deletePengajuan(\''.Crypt::encrypt($pengajuan->ss_id).'\')"><i class="fa fa-fw fa-trash"></i></button>
+                    </div>
+                  </div>';
+                } else {
+                    return '<div class="text-center">
+                    <div class="btn-group btn-group-sm">
+                      <button class="btn btn-success hint--top-left hint--success" type="button" aria-label="Aktifkan" onclick="activatePengajuan(\''.Crypt::encrypt($pengajuan->ss_id).'\')"><i class="fa fa-fw fa-check"></i></button>
+                      <button class="btn btn-disabled" type="button" onclick="nonPengajuan(\''.Crypt::encrypt($pengajuan->ss_id).'\')" disabled><i class="fa fa-fw fa-times"></i></button>
+                      <button class="btn btn-disabled" type="button" onclick="editPengajuan(\''.Crypt::encrypt($pengajuan->ss_id).'\')" disabled><i class="fa fa-fw fa-pencil"></i></button>
+                      <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Hapus" onclick="deletePengajuan(\''.Crypt::encrypt($pengajuan->ss_id).'\')"><i class="fa fa-fw fa-trash"></i></button>
+                    </div>
+                  </div>';
+                }
+            })
+            ->rawColumns(['tanggal', 'status', 'action'])
+            ->make(true);
+    }
+
+    public function simpanPengajuan(Request $request)
+    {
+      $date     = Carbon::now('Asia/Jakarta');
+      $ids      = DB::table('d_sdmsubmission')->max('ss_id');
+      $id       = $ids+1;
+      $reff     = str_pad($id,3,"0",STR_PAD_LEFT); // 001
+      $reff2    = 'PK-'.$reff.'/'.$date->format('d/m/Y');
+
+      $idSdmSubmission = DB::table('d_sdmsubmission')->max('ss_id');
+      DB::beginTransaction();
+      try {
+          DB::table('d_sdmsubmission')->insert([
+              'ss_id'           => $idSdmSubmission+1,
+              'ss_date'         => $date,
+              'ss_reff'         => $reff2,
+              'ss_department'   => $request->ss_department,
+              'ss_position'     => $request->ss_position,
+              'ss_qtyneed'      => $request->ss_qtyneed
+          ]);
+          DB::commit();
+          return response()->json([
+              'status' => 'sukses'
+          ]);
+      } catch (\Exception $e) {
+          DB::rollback();
+          return response()->json([
+              'status'  => 'Gagal',
+              'message' => $e
+          ]);
+      }
+
+    }
+
+    public function activatePengajuan($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_sdmsubmission')
+                ->where('ss_id', $id)
+                ->update([
+                    'ss_isactive' => "Y"
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status'  => 'Gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function nonPengajuan($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_sdmsubmission')
+                ->where('ss_id', $id)
+                ->update([
+                    'ss_isactive' => "N"
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status'  => 'Gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function deletePengajuan($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_sdmsubmission')
+                ->where('ss_id', $id)
+                ->delete();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status'  => 'Gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function editPengajuan($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        $data1 = DB::table('d_sdmsubmission')
+            ->join('m_jabatan', 'ss_position', 'j_id')
+            ->join('m_divisi', 'ss_department', 'm_id')
+            ->select('d_sdmsubmission.*', DB::raw('date_format(ss_date, "%d-%m-%Y") as date'), 'm_jabatan.*', 'm_divisi.*')
+            ->where('ss_id', $id)
+            ->first();
+        $data2 = DB::table('m_jabatan')
+            ->select('m_jabatan.*')
+            ->where('j_id', '!=', $data1->ss_position)
+            ->where('j_id', '<', 7)
+            ->get();
+        $data3 = DB::table('m_divisi')
+            ->select('m_divisi.*')
+            ->where('m_id', '!=', $data1->ss_department)
+            ->get();
+
+        return Response::json(array(
+            'success' => true,
+            'data1'   => $data1,
+            'data2'   => $data2,
+            'data3'   => $data3
+        ));
+    }
+
+    public function updatePengajuan(Request $request)
+    {
+        $date     = Carbon::now('Asia/Jakarta');
+        $ids      = DB::table('d_sdmsubmission')->max('ss_id');
+        $id       = $ids+1;
+        $reff     = str_pad($id,3,"0",STR_PAD_LEFT); // 001
+        $reff2    = 'PK-'.$reff.'/'.$date->format('d/m/Y');
+        $id = $request->id_pengajuan;
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_sdmsubmission')
+                ->where('ss_id', $id)
+                ->update([
+                    'ss_date'         => $date,
+                    'ss_reff'         => $reff2,
+                    'ss_department'   => $request->ss_department,
+                    'ss_position'     => $request->ss_position,
+                    'ss_qtyneed'      => $request->ss_qtyneed
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status'  => 'Gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
   // End Code =============================================================================================
 
   // Kelola Recruitment ===================================================================================

@@ -341,6 +341,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/prosesrekruitmen/addProses/{id}', 'SDM\RecruitmentController@addProses')->name('rekruitmen.addProses');
     Route::get('/sdm/prosesrekruitmen/delete-pelamar/{id}', 'SDM\RecruitmentController@deletePelamar')->name('rekruitmen.deletePelamar');
 
+    Route::get('sdm/prosesrekruitmen/simpanPengajuan','SDM\RecruitmentController@simpanPengajuan')->name('pengajuan.simpanPengajuan');
+    Route::get('/sdm/prosesrekruitmen/listPengajuan', 'SDM\RecruitmentController@getListPengajuan')->name('pengajuan.listPengajuan');
+    Route::post('/sdm/prosesrekruitment/activatePengajuan/{id}', 'SDM\RecruitmentController@activatePengajuan')->name('pengajuan.activatePengajuan');
+    Route::post('/sdm/prosesrekruitment/nonPengajuan/{id}', 'SDM\RecruitmentController@nonPengajuan')->name('pengajuan.nonPengajuan');
+    Route::get('/sdm/prosesrekruitment/deletePengajuan/{id}', 'SDM\RecruitmentController@deletePengajuan')->name('pengajuan.deletePengajuan');
+    Route::get('/sdm/prosesrekruitment/editPengajuan/{id}', 'SDM\RecruitmentController@editPengajuan')->name('pengajuan.editPengajuan');
+    Route::get('/sdm/prosesrekruitment/updatePengajuan', 'SDM\RecruitmentController@updatePengajuan')->name('pengajuan.updatePengajuan');
+
     Route::get('/sdm/prosesrekruitmen/listTerima', 'SDM\RecruitmentController@getListTerima')->name('rekruitmen.listTerima');
 
     Route::get('/sdm/prosesrekruitmen/listLoker', 'SDM\RecruitmentController@getListLoker')->name('rekruitmen.listLoker');
@@ -366,6 +374,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sdm/kinerjasdm/master-kpi/get-data', 'SDM\MasterKPIController@getData')->name('masterkpi.getData');
     // Absensi
     Route::get('/sdm/absensisdm/index', 'SDMController@absensi')->name('absensisdm.index');
+    Route::get('/sdm/absensisdm/presensi/get-summary', 'SDM\Absensi\PresensiController@getPresenceSummary')->name('presensi.getPresenceSummary');
+    Route::get('/sdm/absensisdm/presensi/get-detail-presence', 'SDM\Absensi\PresensiController@getDetailPresence')->name('presensi.getDetailPresence');
     Route::get('/sdm/absensisdm/presensi/get-branch', 'SDM\Absensi\PresensiController@getBranch')->name('presensi.getBranch');
     Route::get('/sdm/absensisdm/presensi/get-presence', 'SDM\Absensi\PresensiController@getPresence')->name('presensi.getPresence');
     Route::get('/sdm/absensisdm/presensi/get-employee', 'SDM\Absensi\PresensiController@getEmployee')->name('presensi.getEmployee');
@@ -430,6 +440,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/targetrealisasi/updateTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@updateTarget')->name('targetReal.update');
     // Penerimaan Piutang ---------------------------    
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-list', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@listPiutang')->name('piutang.list');
+    // Penerimaan Piutang ---------------------------
+    Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-list/{nota}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@listPiutang')->name('piutang.list');
     Route::get('/get-provinsi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getProvinsi')->name('get.provinsi');
     Route::get('/get-city/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getCity')->name('get.city');
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-agen/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getAgen')->name('piutang.getAgen');
@@ -675,6 +687,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifikasiotorisasi/otorisasi/promotion/data-promotion', 'OtorisasiController@getDataPromotion')->name('promotion.data');
     Route::post('/notifikasiotorisasi/otorisasi/promotion/approve-promotion', 'OtorisasiController@approvePromotion')->name('promotion.approve');
     Route::post('/notifikasiotorisasi/otorisasi/promotion/reject-promotion', 'OtorisasiController@rejectPromotion')->name('promotion.reject');
+
+    Route::get('/notifikasiotorisasi/otorisasi/sdm/index', 'OtorisasiController@sdm')->name('sdm');
+    Route::get('/notifikasiotorisasi/otorisasi/sdm/getListPengajuanInOtorisasi', 'OtorisasiController@getListPengajuanInOtorisasi')->name('otorisasi.ListPengajuanInOtorisasi');
+    Route::post('/notifikasiotorisasi/otorisasi/sdm/ApprovePengajuan/{id}', 'OtorisasiController@ApprovePengajuan')->name('otorisasi.ApprovePengajuan');
+    Route::post('/notifikasiotorisasi/otorisasi/sdm/DeclinePengajuan/{id}', 'OtorisasiController@DeclinePengajuan')->name('otorisasi.DeclinePengajuan');
     // !================================================ END OTORISASI NOTIFIKASI ============================================!
 
     // Profile
@@ -851,17 +868,14 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@resource'
                 ])->name('laporan.keuangan.jurnal_umum.resource');
 
-                Route::get('modul/keuangan/laporan/jurnal_umum/print', [
-                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@print'
-                ])->name('laporan.keuangan.jurnal_umum.print');
+            // laporan Neraca
+                Route::get('modul/keuangan/laporan/neraca', [
+                    'uses'  => 'keuangan\laporan\neraca\laporan_neraca_controller@index'
+                ])->name('laporan.keuangan.neraca');
 
-                Route::get('modul/keuangan/laporan/jurnal_umum/print/excel', [
-                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@excel'
-                ])->name('laporan.keuangan.jurnal_umum.print.excel');
-
-                Route::get('modul/keuangan/laporan/jurnal_umum/print/pdf', [
-                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@pdf'
-                ])->name('laporan.keuangan.jurnal_umum.print.pdf');
+                Route::get('modul/keuangan/laporan/neraca/resource', [
+                    'uses'  => 'keuangan\laporan\neraca\laporan_neraca_controller@resource'
+                ])->name('laporan.keuangan.neraca.resource');
 
 
     // Selesai Dirga
