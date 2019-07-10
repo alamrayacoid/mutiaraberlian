@@ -222,7 +222,10 @@
 
 				            <tr>
 				              <th style="text-align: center; font-size: 8pt; font-weight: 500; padding-bottom: 10px; color: #666; font-style: italic;">
-				              	tanggal : {{ $_GET['lap_tanggal_awal'] }} - {{ $_GET['lap_tanggal_akhir'] }}
+				              	
+				              	@if(isset($_GET['lap_tanggal_awal']) && isset($_GET['lap_tanggal_akhir']))
+				              		tanggal : {{ $_GET['lap_tanggal_awal'] }} - {{ $_GET['lap_tanggal_akhir'] }}
+				              	@endif
 				              </th>
 				            </tr>
 				          </thead>

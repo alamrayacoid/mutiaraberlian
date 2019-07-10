@@ -864,17 +864,14 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@resource'
                 ])->name('laporan.keuangan.jurnal_umum.resource');
 
-                Route::get('modul/keuangan/laporan/jurnal_umum/print', [
-                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@print'
-                ])->name('laporan.keuangan.jurnal_umum.print');
+            // laporan Neraca
+                Route::get('modul/keuangan/laporan/neraca', [
+                    'uses'  => 'keuangan\laporan\neraca\laporan_neraca_controller@index'
+                ])->name('laporan.keuangan.neraca');
 
-                Route::get('modul/keuangan/laporan/jurnal_umum/print/excel', [
-                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@excel'
-                ])->name('laporan.keuangan.jurnal_umum.print.excel');
-
-                Route::get('modul/keuangan/laporan/jurnal_umum/print/pdf', [
-                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@pdf'
-                ])->name('laporan.keuangan.jurnal_umum.print.pdf');
+                Route::get('modul/keuangan/laporan/neraca/resource', [
+                    'uses'  => 'keuangan\laporan\neraca\laporan_neraca_controller@resource'
+                ])->name('laporan.keuangan.neraca.resource');
 
 
     // Selesai Dirga
