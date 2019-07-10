@@ -415,7 +415,8 @@ class Mutasi extends Controller
             if ($mutcat == 12 && $statusKons == 'pusat') {
                 // insert mutation-out
                 // add $stockChildId as param
-                $comp = 'MB0000001'; // set comp as 'pusat'
+                $comp = m_company::where('c_type', 'PUSAT')->first();
+                $comp = $comp->c_id; // set comp as 'pusat'
                 $konsinyasiKeluar = self::mutasikeluartanpapemilik(
                     13, // mutcat
                     $comp, // user->u_company
@@ -493,7 +494,7 @@ class Mutasi extends Controller
     {
         DB::beginTransaction();
         try {
-            dd($mutcat, $comp, $position, $item, $qty, $nota, $sellprice, $listPC, $listQtyPC, $reff, $stockChildId);
+            // dd($mutcat, $comp, $position, $item, $qty, $nota, $sellprice, $listPC, $listQtyPC, $reff, $stockChildId);
 
             ($sellprice === null) ? $sellprice = null : $sellprice = $sellprice;
             ($listPC === null) ? $listPC = null : $listPC = $listPC;
