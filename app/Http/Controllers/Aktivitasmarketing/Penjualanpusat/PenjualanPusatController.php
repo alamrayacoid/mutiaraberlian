@@ -202,6 +202,7 @@ class PenjualanPusatController extends Controller
 
     public function confirmProcessTOP(Request $request, $id)
     {
+        dd($request);
         $id_po = $request->idPO;
         $qty = $request->qty;
         $item = $request->itemId;
