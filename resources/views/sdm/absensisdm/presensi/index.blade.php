@@ -8,11 +8,17 @@
 		background-color: #dddddd;
 		pointer-events:none;
 	}
+	.onlyread {
+		pointer-events:none;
+		word-wrap: break-word;
+		word-break: break-all;
+	}
 </style>
 @endsection
 
 <div class="tab-pane fade in show" id="presensi">
 	@include('sdm.absensisdm.presensi.modal_create')
+	@include('sdm.absensisdm.presensi.modal_detail')
 
 	<div class="card">
 		<div class="card-header bordered p-2">
@@ -25,20 +31,55 @@
 		</div>
 		<div class="card-block">
 			<section>
+				<div class="row mb-3">
+					<div class="col-md-6 col-sm-12">
+						<div class="input-group input-group-sm input-daterange">
+							<input type="text" class="form-control" id="filterDateFromPr" name="filterDateFromPr">
+							<span class="input-group-addon">-</span>
+							<input type="text" class="form-control" id="filterDateToPr" name="filterDateToPr">
+							<div class="input-group-append">
+								<button class="btn btn-primary" type="button" id="brnRefreshDatePr"><i class="fa fa-refresh"></i></button>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-1 col-sm-12">
+						<!-- empty -->
+					</div>
+					<div class="col-md-5 col-sm-6">
+						<div class="row col-md-12 col-sm-12">
+							<div class="col-md-3 col-sm-12">
+								<label for="">Cabang</label>
+							</div>
+							<div class="col-md-9 col-sm-12">
+								<div class="form-group">
+									<select name="filterByBranch" id="filterByBranch" class="form-control form-control-sm select2">
+										<option value="" selected>=== Pilih Cabang ===</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<hr>
 				<div class="table-responsive">
-					<table class="table table-hover table-striped display nowrap" cellspacing="0" style="width: 100%" id="table_presensi_sdm">
+					<table class="table table-hover data-table table-striped table-bordered display nowrap" cellspacing="0" style="width: 100%" id="table_presensi_sdm">
 						<thead class="bg-primary">
 							<tr>
-								<th class="w-5 text-center">No</th>
-								<th class="w-35">Posisi</th>
-								<th class="w-15">Tgl Mulai</th>
-								<th class="w-15">Tgl Akhir</th>
-								<th class="w-15 text-center">Status</th>
-								<th class="w-15 text-center">Aksi</th>
+								<th class="text-center" rowspan="2">No</th>
+								<th class="text-center" rowspan="2">Tanggal</th>
+								<th class="text-center" colspan="4">Status</th>
+								<th class="text-center" rowspan="2">Aksi</th>
+							</tr>
+							<tr>
+								<th class="text-center">Hadir</th>
+								<th class="text-center">Ijin</th>
+								<th class="text-center">Tidak masuk</th>
+								<th class="text-center">Cuti</th>
 							</tr>
 						</thead>
+						<!-- <thead class="bg-primary">
+						</thead> -->
 						<tbody>
-
 						</tbody>
 					</table>
 				</div>
@@ -48,7 +89,21 @@
 </div>
 
 @section('extra_script')
-<!-- script for 'Daftar Presensi SDM' -->
+<!-- public set time -->
+<script type="text/javascript">
+	$(document).ready(function() {
+		var cur_date = new Date();
+		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+		const last_day = new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+		// date for 'Index Daftar Presensi SDM'
+		$('#filterDateFromPr').datepicker('setDate', first_day);
+		$('#filterDateToPr').datepicker('setDate', last_day);
+		// date for 'Create Daftar Presensi SDM'
+		$('.dateNowPr').datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth(), cur_date.getDate()));
+	});
+</script>
+
+<!-- script for 'Create Daftar Presensi SDM' -->
 <script type="text/javascript">
 	var idxRow = 0;
 	var branchId = null;
@@ -75,12 +130,14 @@
 		$('#modalCreate').on('hidden.bs.modal', function() {
 			$('#presenceForm')[0].reset();
 			$("#table_presence > tbody").find("tr:gt(0)").remove();
-			$('#branchPr')[0].selectedIndex = 0;
 		});
 		// reset form on hidden modal
-		$('#modalCreate').on('show.bs.modal', function() {
-			var cur_date = new Date();
-			$('.dateNowPr').datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth(), cur_date.getDate()));
+		$('#modalCreate').on('shown.bs.modal', function() {
+			// var cur_date = new Date();
+			// const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+            // const last_day = new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+			// $('.dateNowPr').datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth(), cur_date.getDate()));
+			$('#branchPr').selectedIndex = 0;
 			// $('#branchPr').val($('#branchPr option:first').val());
 		});
 
@@ -112,7 +169,7 @@
 				</select>
 			</td>
 			<td class="pad-1">
-				<input type="text" name="notePr[]" value="" class="w-100">
+				<textarea name="notePr[]" rows="1" class="w-100"></textarea>
 			</td>
 			<td class="pad-1 text-center">
 				<button class="btn btn-danger btn-sm rounded-circle btnRemoveEmployee" style="color:white;" type="button">
@@ -177,7 +234,7 @@
 			type: 'get',
 			success: function(resp) {
 				$('#branchPr').empty();
-				$('#branchPr').append('<option value="" selected disabled>=== Pilih Cabang ===</option>');
+				$('#branchPr').append('<option value="" selected>=== Pilih Cabang ===</option>');
 				$.each(resp, function (idx, val) {
 					$('#branchPr').append('<option value="'+val.c_id+'">'+val.c_name+'</option>');
 				});
@@ -229,9 +286,7 @@
 
 					let iNote = null;
 					(val.p_note == null) ? iNote = '' : iNote = val.p_note;
-					let note = `<td class="pad-1">
-									<input type="text" name="notePr[]" value="`+ iNote +`" class="w-100">
-								</td>`;
+					let note = `<td class="pad-1"><textarea name="notePr[]" rows="1" class="w-100">`+ iNote +`</textarea></td>`;
 
 					let action= null;
 					if (key == 0) {
@@ -343,6 +398,148 @@
 			}
 		})
 	}
+</script>
 
+<!-- script for 'Index Daftar Presensi SDM' -->
+<script type="text/javascript">
+	$(document).ready(function() {
+		getFilterBranch();
+		// $('#filterDateFromPr').datepicker('setDate', first_day);
+		// $('#filterDateToPr').datepicker('setDate', last_day);
+
+		// call function when filter activated
+		$('#filterByBranch').on('change select2:select', function() {
+			getPresenceSummary();
+		});
+		$('#filterDateFromPr').on('change', function() {
+			getPresenceSummary();
+		});
+		$('#filterDateToPr').on('change', function() {
+			getPresenceSummary();
+		})
+	});
+	// get list branch for filter-by-branch
+	function getFilterBranch()
+	{
+		$.ajax({
+			url: "{{ route('presensi.getBranch') }}",
+			type: 'get',
+			success: function(resp) {
+				$('#filterByBranch').empty();
+				$('#filterByBranch').append('<option value="" selected>=== Pilih Cabang ===</option>');
+				$.each(resp, function (idx, val) {
+					$('#filterByBranch').append('<option value="'+val.c_id+'">'+val.c_name+'</option>');
+				});
+			},
+			error: function(e) {
+				messageWarning('Error', 'getBranch error : ' + e.message);
+			}
+		})
+	}
+	// get list summary presence
+	function getPresenceSummary()
+	{
+		let dateFrom = $('#filterDateFromPr').serialize();
+		let dateTo = $('#filterDateToPr').serialize();
+		let branch = $('#filterByBranch').serialize();
+		let param = dateFrom +'&'+ dateTo +'&'+ branch;
+
+		console.log(param);
+
+		$('#table_presensi_sdm').dataTable().fnDestroy();
+		tb_listmpa = $('#table_presensi_sdm').DataTable({
+			responsive: true,
+			serverSide: true,
+			ajax: {
+				url: "{{ route('presensi.getPresenceSummary') }}",
+				type: 'get',
+				data: {
+					filterDateFromPr: $('#filterDateFromPr').val(),
+					filterDateToPr: $('#filterDateToPr').val(),
+					filterByBranch: $('#filterByBranch').val()
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'date'},
+				{data: 'hadir'},
+				{data: 'ijin'},
+				{data: 'tidakMasuk'},
+				{data: 'cuti'},
+				{data: 'action'}
+			],
+			pageLength: 10,
+			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
+	}
+	// show modal detail presence
+	function showDetailPresence(id)
+	{
+		$.ajax({
+			url: "{{ route('presensi.getDetailPresence') }}",
+			data: {
+				id: id
+			},
+			success: function(resp) {
+				console.log(resp);
+				if (resp.length > 0) {
+					$("#table_detail_presence > tbody").find('tr').remove();
+				}
+				else {
+					$("#table_detail_presence > tbody").find('tr:gt(0)').remove();
+				}
+				$("#table_detail_presence > tbody").find('input').val('');
+				$.each(resp, function(key, val) {
+			        let empId = `<td class="pad-1">
+									<input type="hidden" name="employeePrId[]" class="employeePrId" value="`+ val.get_employee.e_id +`">
+									<input type="text" name="employeePr[]" class="form-control-plaintext employeePr onlyread w-100" value="`+ val.get_employee.e_name + ' ('+ val.get_employee.get_division.m_name +') / '+ val.p_employee +`">
+								</td>`;
+
+					let aTime = null;
+					(val.p_entry == null) ? aTime = '' : aTime = val.p_entry;
+					let arriveTime = `<td class="pad-1">
+										<input type="text" name="arriveTimePr[]" class="form-control-plaintext arriveTimePr onlyread w-100" value="`+ aTime +`">
+										</td>`;
+
+					let rTime = null;
+					(val.p_out == null) ? rTime = '' : rTime = val.p_out;
+					let returnTime = `<td class="pad-1"><input type="text" name="returnTimePr[]" class="form-control-plaintext returnTimePr onlyread w-100" value="`+ rTime +`"></td>`;
+
+					let status
+					if (val.p_status == 'H') {
+						status = `<td class="pad-1"><input type="text" name="statusPr[]" class="form-control-plaintext statusPr onlyread w-100" value="Hadir"></td>`;
+					}
+					else if (val.p_status =='I') {
+						status = `<td class="pad-1"><input type="text" name="statusPr[]" class="form-control-plaintext statusPr onlyread w-100" value="Ijin"></td>`;
+					}
+					else if (val.p_status == 'T') {
+						status = `<td class="pad-1"><input type="text" name="statusPr[]" class="form-control-plaintext statusPr onlyread w-100" value="Tidak Masuk"></td>`;
+					}
+					else if (val.p_status == 'C') {
+						status = `<td class="pad-1"><input type="text" name="statusPr[]" class="form-control-plaintext statusPr onlyread w-100" value="Cuti"></td>`;
+					}
+
+					let iNote = null;
+					(val.p_note == null || val.p_note == '') ? iNote = '' : iNote = val.p_note;
+					let note = `<td class="pad-1"><textarea name="notePr[]" rows="2" class="w-100" readonly>`+ iNote +`</textarea></td>`;
+
+					let row = '<tr>'+ empId + arriveTime + returnTime + status + note +'</tr>'
+			        $('#table_detail_presence tbody').append(row);
+					// get recently added item to update read-only for 'tidak masuk'
+					if ($('.statusPr').filter(':last').val() == 'T') {
+						let idxTemp = $('.statusPr').index(this);
+						$('.arriveTimePr').eq(idxTemp).attr('readonly', true);
+						$('.returnTimePr').eq(idxTemp).attr('readonly', true);
+					}
+				});
+				$('#branchPrDetail').val(resp[0].get_employee.get_company.c_name);
+				$('#dateNowPrDetail').val(resp[0].p_date);
+				$('#modalDetail').modal('show');
+			},
+			error: function(e) {
+				messageWarning('Error', 'Error getDataPresence: '+ e.message);
+			}
+		});
+	}
 </script>
 @endsection
