@@ -18,7 +18,7 @@
                         <div class="col-sm-12 col-md-4">
                             <input type="text" class="form-control-plaintext"
                                    style="font-weight: bold; text-align: left;"
-                                   id="nota" name="nota" value="PO-001/13/03/2019" readonly>
+                                   id="nota" name="nota" readonly>
                         </div>
                     </div>
                     <div class="row">

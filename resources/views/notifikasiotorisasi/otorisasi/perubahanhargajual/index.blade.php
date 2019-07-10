@@ -84,7 +84,7 @@
             columns: [
                 {data: 'DT_RowIndex'},
                 {data: 'pc_name', name: 'pc_name'},
-                {data: 'nama', name: 'name'},
+                {data: 'nama'},
                 {data: 'pcad_payment', name: 'pcad_payment'},
                 {data: 'qty', name: 'qty'},
                 {data: 'pcad_price', name: 'pcad_price'},

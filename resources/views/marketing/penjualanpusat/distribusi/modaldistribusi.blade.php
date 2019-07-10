@@ -13,72 +13,81 @@
                     <div class="col-md-2 col-sm-12">
                         <label for="">Tanggal</label>
                     </div>
-                    <div class="col-md-10 col-sm-12 mb-3">
+                    <div class="col-md-4 col-sm-12 mb-3">
                         <input type="text" id="dateModalSend" class="form-control form-control-sm" readonly="">
                     </div>
-                    <div class="col-md-2 col-sm-12">
-                        <label for="">Nama Agen</label>
-                    </div>
-                    <div class="col-md-10 col-sm-12 mb-3">
-                        <input type="text" id="agentModalSend" class="form-control form-control-sm" readonly="">
-                    </div>
+
                     <div class="col-md-2 col-sm-12">
                         <label for="">No Nota</label>
                     </div>
-                    <div class="col-md-10 col-sm-12 mb-3">
+                    <div class="col-md-4 col-sm-12 mb-3">
                         <input type="text" id="notaModalSend" class="form-control form-control-sm" readonly="">
                     </div>
+
+                    <div class="col-md-2 col-sm-12">
+                        <label for="">Nama Agen</label>
+                    </div>
+                    <div class="col-md-4 col-sm-12 mb-3">
+                        <input type="text" id="agentModalSend" class="form-control form-control-sm" readonly="">
+                    </div>
+
                     <div class="col-md-2 col-sm-12">
                         <label for="">Total Transaksi</label>
                     </div>
-                    <div class="col-md-10 col-sm-12 mb-3">
-                        <input type="text" id="totalModalSend" class="form-control form-control-sm rupiah-left"
-                               readonly="">
+                    <div class="col-md-4 col-sm-12 mb-3">
+                        <input type="text" id="totalModalSend" class="form-control form-control-sm rupiah-left" readonly="">
                     </div>
+
                     <div class="col-md-2 col-sm-12">
                         <label for="">Jasa Ekspedisi</label>
                     </div>
-                    <div class="col-md-10 col-sm-12 mb-3">
+                    <div class="col-md-2 col-sm-12 mb-3">
                         <select class="select2" id="ekspedisi">
                             <option></option>
                         </select>
                     </div>
+
                     <div class="col-md-2 col-sm-12">
                         <label for="">Jenis Ekspedisi</label>
                     </div>
-                    <div class="col-md-10 col-sm-12 mb-3">
+                    <div class="col-md-2 col-sm-12 mb-3">
                         <select class="select2" id="jenis_ekspedisi">
                             <option></option>
                         </select>
                     </div>
+
                     <div class="col-md-2 col-sm-12">
                         <label for="">Nama Kurir</label>
                     </div>
-                    <div class="col-md-10 col-sm-12 mb-3">
+                    <div class="col-md-2 col-sm-12 mb-3">
                         <input type="text" id="nama_kurir" class="form-control form-control-sm">
                     </div>
+
                     <div class="col-md-2 col-sm-12">
                         <label for="">Nomor Telepon</label>
                     </div>
-                    <div class="col-md-10 col-sm-12 mb-3">
-                        <input type="text" id="tlp_kurir" class="form-control form-control-sm">
+                    <div class="col-md-2 col-sm-12 mb-3">
+                        <input type="text" id="tlp_kurir" class="form-control form-control-sm hp">
                     </div>
+
                     <div class="col-md-2 col-sm-12">
                         <label for="">Nomor Resi</label>
                     </div>
-                    <div class="col-md-10 col-sm-12 mb-3">
-                        <input type="text" id="resi_kurir" class="form-control form-control-sm">
+                    <div class="col-md-2 col-sm-12 mb-3">
+                        <input type="text" id="resi_kurir" class="form-control form-control-sm text-uppercase">
                     </div>
+
                     <div class="col-md-2 col-sm-12">
                         <label for="">Biaya</label>
                     </div>
-                    <div class="col-md-10 col-sm-12 mb-3">
+                    <div class="col-md-2 col-sm-12 mb-3">
                         <input type="text" id="biaya_kurir" class="form-control form-control-sm rupiah">
                     </div>
                 </div>
+                <hr>
                 <div class="row">
                     <div class="table-responsive col-8">
-                        <table class="table table-striped data-table table-hover display nowrap" cellspacing="0"
+                        <table class="table table-striped table-hover display nowrap" cellspacing="0"
                                id="table_senddistribution">
                             <thead class="bg-primary">
                             <tr>
@@ -111,17 +120,19 @@
                         <div class="row col-12">
                             <p>Masukkan kode produksi untuk barang <span class="text-item">-</span> kemudian tekan Enter untuk memasukkan ke tabel distribusi</p>
                         </div>
-                        <table class="table table-striped table-hover display table-bordered" cellspacing="0" id="table_prosesordercode" width="100%">
-                            <thead class="bg-primary">
-                            <tr>
-                                <th>Kode Produksi</th>
-                                <th>Kuantitas</th>
-                                <th class="text-center">Aksi</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                        <div class="row col-12 pr-0">
+                            <table class="table table-striped table-hover display table-bordered" cellspacing="0" id="table_prosesordercode">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th>Kode Produksi</th>
+                                    <th>Kuantitas</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 

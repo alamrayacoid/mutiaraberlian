@@ -19,6 +19,7 @@ use App\d_productorder;
 use App\d_productorderdt;
 use App\d_productordercode;
 use App\d_stock;
+use Currency;
 use Mutasi;
 
 
@@ -32,7 +33,26 @@ class PenjualanPusatController extends Controller
         return view('marketing/penjualanpusat/index');
     }
 
+
     // Terima Order Penjualan
+    public function createTOP()
+    {
+        if (!AksesUser::checkAkses(20, 'create')) {
+            abort('401');
+        }
+        $data = 'employee';
+        if (Auth::user()->u_user == 'A') {
+            $data = DB::table('m_agen')
+            ->where('a_code', '=', Auth::user()->u_code)
+            ->first();
+        }
+        $pusat = DB::table('m_company')
+        ->where('c_type', '=', 'PUSAT')
+        ->first();
+
+        return view('marketing/penjualanpusat/terimaorder/create', compact('data', 'pusat'));
+    }
+
     public function getTableTOP()
     {
         $data = DB::table('d_productorder')
@@ -899,5 +919,83 @@ class PenjualanPusatController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    // Penerimaan Piutang -------------------------->
+    public function getProvinsi()
+    {
+        $data = DB::table('m_wil_provinsi')->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
+    public function getCity($id)
+    {
+        $data = DB::table('m_wil_kota')->where('wc_provinsi', '=', $id)->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
+    public function getAgen($id)
+    {
+        $data = DB::table('m_company')
+            ->join('m_agen',  'c_user', 'a_code')
+            ->where('a_area', '=', $id)
+            ->get();
+        return response()->json([
+            'data' =>$data
+        ]);
+    }
+
+    public function getNotaAgen($code)
+    {
+        // dd($code);
+        $data = DB::table('d_salescomp')
+            ->join('m_company', 'c_id', 'sc_comp')
+            ->join('m_agen', 'a_code', 'c_user')
+            ->leftJoin('d_salescomppayment', 'scp_salescomp', 'sc_id')
+            ->select('sc_total', 'sc_datetop', 'sc_nota', DB::raw('COALESCE(SUM(scp_pay), 0) as payment'))
+            ->where('c_user', '=', $code)
+            ->where('sc_paidoff', '=', 'N')
+            ->where('sc_type', '=', 'C')
+            ->groupBy('sc_id');
+            // dd($data);
+        return Datatables::of($data)
+            ->addColumn('sisa', function($data){
+                $sisa = $data->sc_total - $data->payment;
+                $sisa = Currency::addRupiah($sisa);
+                return $sisa;
+            })
+            ->addColumn('action', function($data){
+                return '<button class="btn btn-sm btn-success" onclick="get_list(\''.$data->sc_nota.'\')"><i class="fa fa-download"></i> Gunakan</button>';
+            })
+            ->rawColumns(['sisa','action'])
+            ->make(true);
+    }
+
+    public function listPiutang($nota)
+    {
+        $datas = DB::table('d_salescomp')
+            ->leftJoin('d_salescomppayment', 'scp_salescomp', 'sc_id')
+            ->select('sc_total', 'sc_datetop', 'sc_nota', DB::raw('COALESCE(SUM(scp_pay), 0) as payment'))
+            ->where('sc_nota', '=', $nota)
+            ->groupBy('sc_id');
+
+        return Datatables::of($datas)
+            ->addIndexColumn()
+            ->addColumn('sisa', function($datas){
+                $sisa = $datas->sc_total - $datas->payment;
+                $sisa = Currency::addRupiah($sisa);
+                return $sisa;
+            })
+            ->addColumn('bayar', function($data){
+                return '<button class="btn btn-sm btn-success" onclick="get_list(\''.$datas->sc_nota.'\')"><i class="fa fa-dolar"></i> Bayar</button>';
+            })
+            ->rawColumns(['sisa','bayar'])
+            ->make(true);
     }
 }

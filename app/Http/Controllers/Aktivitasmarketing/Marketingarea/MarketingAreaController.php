@@ -1197,6 +1197,9 @@ class MarketingAreaController extends Controller
        // in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
         $idx = null;
         foreach ($array as $key =>  $val) {
+            if ($value <= $val->pcd_rangeqtystart && $val->pcd_rangeqtyend == 0){
+                $val->pcd_rangeqtyend = $val->pcd_rangeqtystart + $value + 2;
+            }
             $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
             if ($x == true) {
                 $idx = $key;
@@ -2667,6 +2670,24 @@ class MarketingAreaController extends Controller
                 'message'=> $e->getMessage()
             ]);
         }
+    }
+
+    public function getExpedition()
+    {
+        $data = DB::table('m_expedition')->where('e_isactive', '=', 'Y')->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
+    public function getExpeditionType($id)
+    {
+        $data = DB::table('m_expeditiondt')->where('ed_expedition', '=', $id)->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
     }
 
     // Start: orderprodukagent =================================================

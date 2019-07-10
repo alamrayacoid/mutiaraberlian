@@ -22,6 +22,7 @@ use App\m_item;
 use App\m_member;
 use App\m_priceclass;
 use App\m_wil_provinsi;
+use App\m_wil_kota;
 use DataTables;
 use DB;
 use Carbon\Carbon;
@@ -120,7 +121,8 @@ class ManajemenAgenController extends Controller
     {
         // khusus tuban
         //$prov = DB::table('m_wil_provinsi')->where('wp_id', 35)->get();
-        $prov = DB::table('m_wil_provinsi')->get();
+        $prov = m_wil_provinsi::orderBy('wp_name', 'asc')
+        ->get();
         return Response::json($prov);
     }
 
@@ -128,7 +130,9 @@ class ManajemenAgenController extends Controller
     {
         // khusus tuban
         //$kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->where('wc_id', 3523)->get();
-        $kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->get();
+        $kota = m_wil_kota::where('wc_provinsi', $idprov)
+        ->orderBy('wc_name', 'asc')
+        ->get();
         return Response::json($kota);
     }
 
@@ -300,6 +304,9 @@ class ManajemenAgenController extends Controller
         // in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
         $idx = null;
         foreach ($array as $key => $val) {
+            if ($value <= $val->pcd_rangeqtystart && $val->pcd_rangeqtyend == 0){
+                $val->pcd_rangeqtyend = $val->pcd_rangeqtystart + $value + 2;
+            }
             $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
             if ($x == true) {
                 $idx = $key;
@@ -420,7 +427,8 @@ class ManajemenAgenController extends Controller
                     'message' => $e
                 ]);
             }
-        } else if ($data['select_order'] == "2") {
+        }
+        else if ($data['select_order'] == "2" || $data['select_order'] == 'x') {
             $po_id = (DB::table('d_productorder')
                 ->max('po_id')) ?
                 DB::table('d_productorder')
@@ -470,7 +478,8 @@ class ManajemenAgenController extends Controller
                     'status' => "Success",
                     'message' => "Data berhasil disimpan"
                 ]);
-            } catch (Exception $e) {
+            }
+            catch (Exception $e) {
                 DB::rollBack();
                 return Response::json([
                     'status' => "Failed",
@@ -2043,7 +2052,7 @@ class ManajemenAgenController extends Controller
             return Response::json([
                 'status' => 'sukses'
             ]);
-        } else {                
+        } else {
             return Response::json([
                 'status'  => 'gagal'
             ]);

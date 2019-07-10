@@ -343,7 +343,7 @@
                     axios.post(baseUrl+'/produksi/orderproduksi/create', data).then(function (response){
                         if(response.data.status == 'Success'){
                             loadingHide();
-                            messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan");
+                            messageSuccess("Berhasil", "Data Order Produksi Berhasil Disimpan, Silahkan masuk di menu Otorisasi");
                             setInterval(function(){location.reload(true);}, 3500)
                         }else{
                             loadingHide();

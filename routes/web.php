@@ -217,6 +217,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/pembayaran/show/{id}/{termin}', 'Produksi\PembayaranController@show')->name('pembayaran.show');
     Route::get('/produksi/pembayaran/bayar-list', 'Produksi\PembayaranController@listBayar')->name('pembayaran.listbayar');
     Route::post('/produksi/pembayaran/bayar', 'Produksi\PembayaranController@bayar')->name('pembayaran.bayar');
+    Route::get('/produksi/pembayaran/nota', 'Produksi\PembayaranController@printNota' )->name('pembayaran.print');
     Route::get('/produksi/pembayaran/find-nota-history', 'Produksi\PembayaranController@findNotaHistory')->name('pembayaran.findNotaHistory');
     Route::get('/produksi/pembayaran/find-supplier', 'Produksi\PembayaranController@findSupplier')->name('pembayaran.findSupplier');
     Route::get('/produksi/pembayaran/get-list-history', 'Produksi\PembayaranController@getListHistory')->name('pembayaran.getListHistory');
@@ -281,6 +282,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/distribusibarang/table', 'Inventory\DistribusiController@table');
     Route::get('/inventory/distribusibarang/table-history', 'Inventory\DistribusiController@tableHistory');
     Route::get('/inventory/distribusibarang/detail-ht/{id}', 'Inventory\DistribusiController@showDetailHt')->name('distribusibarang.showDetailHt');
+    Route::get('/inventory/distribusibarang/show-pc/{id}/{detailid}', 'Inventory\DistribusiController@showPC')->name('distribusibarang.showPC');
     Route::get('/inventory/distribusibarang/table-acceptance', 'Inventory\DistribusiController@tableAcceptance');
     Route::get('/inventory/distribusibarang/detail-ac/{id}', 'Inventory\DistribusiController@showDetailAc')->name('distribusibarang.showDetailAc');
     Route::post('/inventory/distribusibarang/set-acceptance/{id}', 'Inventory\DistribusiController@setAcceptance')->name('distribusibarang.setAcceptance');
@@ -290,6 +292,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
     Route::get('/inventory/manajemenstok/create', 'InventoryController@manajemenstok_create')->name('manajemenstok.create');
     Route::get('/inventory/manajemenstok/edit', 'InventoryController@manajemenstok_edit')->name('manajemenstok.edit');
+    // Analisa Stock Turn Over
+    Route::get('/inventory/analisaturnover/index', 'InventoryController@analisaTO')->name('analisaTO.index');
+    Route::get('/inventory/analisaturnover/get-list', 'InventoryController@analisaTO_list')->name('analisaTO.list');
     // Opname
     Route::get('/inventory/manajemenstok/opnamestock/index', 'Inventory\OpnameController@index')->name('opname.index');
     Route::get('/inventory/manajemenstok/opnamestock/list', 'Inventory\OpnameController@getList')->name('opname.list');
@@ -395,6 +400,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/manajemenmarketing/data-history-promotion', 'MarketingController@getHistoryPromotion')->name('historypromotion.data');
     // Penjualan Pusat
     Route::get('/marketing/penjualanpusat/index', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@index')->name('penjualanpusat.index');
+    Route::get('/marketing/penjualanpusat/create', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@createTOP')->name('penjualanpusat.createTOP');
     Route::get('/marketing/penjualanpusat/get-table-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTableTOP')->name('penjualanpusat.getTableTOP');
     Route::get('/marketing/penjualanpusat/get-detail-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getDetailTOP')->name('penjualanpusat.getDetailTOP');
     Route::get('/marketing/penjualanpusat/get-detail-send', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getDetailSend')->name('penjualanpusat.getDetailSend');
@@ -415,6 +421,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/targetrealisasi/store', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetRealStore')->name('targetReal.store');
     Route::get('/marketing/penjualanpusat/targetrealisasi/editTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@editTarget')->name('targetReal.edit');
     Route::get('/marketing/penjualanpusat/targetrealisasi/updateTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@updateTarget')->name('targetReal.update');
+    // Penerimaan Piutang ---------------------------    
+    Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-list/{nota}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@listPiutang')->name('piutang.list');
+    Route::get('/get-provinsi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getProvinsi')->name('get.provinsi');
+    Route::get('/get-city/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getCity')->name('get.city');
+    Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-agen/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getAgen')->name('piutang.getAgen');
+    Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-nota-agen/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getNotaAgen')->name('piutang.getNotaAgen');
     // End ---
     // Return Penjualan
     Route::get('/marketing/penjualanpusat/returnpenjualan/index', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@index')->name('returnpenjualanagen.index');
@@ -459,6 +471,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Marketing Area
     Route::get('/marketing/marketingarea/index', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@index')->name('marketingarea.index');
+    Route::get('/marketing/marketingarea/get-expedition', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getExpedition')->name('marketingarea.getExpedition');
+    Route::get('/marketing/marketingarea/get-expeditionType/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getExpeditionType')->name('marketingarea.getExpeditionType');
     // Order Produk Ke Cabang
     Route::get('/marketing/marketingarea/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@createOrderProduk')->name('orderProduk.create');
     Route::get('/marketing/marketingarea/orderproduk/list', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@orderList')->name('orderProduk.list');
@@ -820,7 +834,6 @@ Route::group(['middleware' => 'auth'], function () {
             ])->name('keuangan.transaksi_memorial.delete');
 
     // Selesai Dirga
-
 });
 
 // End Route Group

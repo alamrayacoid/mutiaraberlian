@@ -5,6 +5,10 @@
         .cls-readonly {
             cursor: not-allowed;
         }
+        .txt-readonly {
+            background-color: transparent;
+            pointer-events: none;
+        }
     </style>
 @endsection
 
@@ -139,7 +143,7 @@
                                         </div>
                                         <div class="col-md-4 col-sm-6 col-xs-12">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm rupiah" id="shippingCost" name="shippingCost" value="">
+                                                <input type="text" class="form-control form-control-sm rupiah-without-comma" id="shippingCost" name="shippingCost" value="">
                                             </div>
                                         </div>
                                     </div>
@@ -314,7 +318,7 @@
         $('.btnAddProdCode').on('click', function() {
             prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]"></input></td>';
             qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="0"></input></td>';
-            action = '<td><button class="btn btn-success btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
+            action = '<td><button class="btn btn-danger btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
             listProdCode = '<tr>'+ prodCode + qtyProdCode + action +'</tr>';
             // idxItem is referenced from btnCodeProd above
             $(listProdCode).insertBefore($('.modalCodeProd:eq('+ idxItem +')').find('.table_listcodeprod .rowBtnAdd'));
@@ -395,7 +399,8 @@
         });
     }
     // get expedition type
-    function getExpeditionType() {
+    function getExpeditionType()
+    {
         var id = $('#expedition').val();
         $.ajax({
             url: "{{ route('distribusibarang.getExpeditionType') }}",
