@@ -13,6 +13,9 @@ use Currency;
 use CodeGenerator;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
+use App\Helper\keuangan\jurnal\jurnal;
+
+use Auth;
 
 class OtorisasiController extends Controller
 {
@@ -435,6 +438,7 @@ class OtorisasiController extends Controller
     }
     public function agree($id = null)
     {
+
         try{
             $id = Crypt::decrypt($id);
         }catch (DecryptException $e){
@@ -447,15 +451,73 @@ class OtorisasiController extends Controller
             ->where('poa_id', '=', $id)->first();
 
             $values = [
-            'po_id'         => $data->poa_id,
-            'po_nota'       => CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-'),
-            'po_date'       => $data->poa_date,
-            'po_supplier'   => $data->poa_supplier,
-            'po_totalnet'   => $data->poa_totalnet,
-            'po_status'     => $data->poa_status,
+                'po_id'         => $data->poa_id,
+                'po_nota'       => CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-'),
+                'po_date'       => $data->poa_date,
+                'po_supplier'   => $data->poa_supplier,
+                'po_totalnet'   => $data->poa_totalnet,
+                'po_status'     => $data->poa_status,
             ];
 
             DB::table('d_productionorder')->insert($values);
+
+            // Tambahan Dirga
+                $detail = DB::table('d_productionorderdt')->where('pod_productionorder', $id)->get();
+
+                $acc_persediaan = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Order Produksi')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA Persediaan dalam perjalanan')
+                                        ->first();
+
+                $hutang = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Order Produksi')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA Hutang')
+                                        ->first();
+                
+                $details = []; $count = 0;
+
+                if(!$hutang || !$acc_persediaan){
+                    return response()->json([
+                        'status' => 'Failed',
+                        'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                    ]);
+                }
+
+                foreach ($detail as $key => $value) {
+                    $count += $value->pod_value * $value->pod_qty;
+                }
+
+                array_push($details, [
+                    "jrdt_nomor"        => 1,
+                    "jrdt_akun"         => $acc_persediaan->pd_acc,
+                    "jrdt_value"        => $count,
+                    "jrdt_dk"           => "D",
+                    "jrdt_keterangan"   => "Persediaan Dalam Perjalanan Order Produksi",
+                    "jrdt_cashflow"     => null
+                ]);
+
+                array_push($details, [
+                    "jrdt_nomor"        => 2,
+                    "jrdt_akun"         => $hutang->pd_acc,
+                    "jrdt_value"        => $count,
+                    "jrdt_dk"           => "K",
+                    "jrdt_keterangan"   => "Hutang Order Produksi",
+                    "jrdt_cashflow"     => null
+                ]);
+
+                $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $data->poa_nota, 'Order Produksi', 'TM', Auth::user()->u_company);
+
+                if($jurnal['status'] == 'error'){
+                    return json_encode($jurnal);
+                }
+
+            // selesai dirga
 
             DB::table('d_productionorderauth')
             ->where('poa_id', '=', $id)
@@ -465,7 +527,7 @@ class OtorisasiController extends Controller
             return response()->json(['status'=>'Success']);
         }
         catch (\Exception $e){
-            DB::commit();
+            // DB::commit();
             return response()->json([
                 'status' => 'Failed',
                 'message' => $e->getMessage()
