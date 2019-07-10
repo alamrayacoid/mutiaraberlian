@@ -1,5 +1,14 @@
 @extends('main')
 
+@section('extra_style')
+    <style type="text/css">
+        .txt-readonly {
+            background-color: transparent;
+            pointer-events: none;
+        }
+    </style>
+@endsection
+
 @section('content')
     <form class="formCodeProd">
         <!-- modal-code-production -->
