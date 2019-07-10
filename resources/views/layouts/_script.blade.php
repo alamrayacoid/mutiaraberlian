@@ -39,6 +39,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.3/mousetrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.3/plugins/bind-dictionary/mousetrap-bind-dictionary.min.js"></script>
 <script src="{{asset('assets/inputmask/min/jquery.inputmask.bundle.min.js')}}"></script>
+<script src="{{asset('assets/JTimepicker-JohnHRTN/jquery.timepicker.min.js')}}"></script>
 
 <script type="text/javascript">
     var getstorage;
@@ -311,7 +312,7 @@
         $('.rupiah').inputmask("currency", {
             radixPoint: ",",
             groupSeparator: ".",
-            digits: 2,
+            digits: 0,
             autoGroup: true,
             prefix: ' Rp ', //Space after $, this will not truncate the first character.
             rightAlign: true,
@@ -715,8 +716,8 @@ $(document).ready(function(){
         'f1' : easyCreate
     });
 </script>
-<script>
+{{--<script>
 $(document).ready(function(){
     $('[data-gallery=example]').photoviewer();
 });
-</script>
+</script>--}}

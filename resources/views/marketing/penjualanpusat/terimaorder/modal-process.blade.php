@@ -46,12 +46,13 @@
                         <table class="table table-striped table-hover display" cellspacing="0" id="table_modalPr" style="width: 100%">
                             <thead class="bg-primary">
                                 <tr>
-                                    <th width="25%">Barang</th>
-                                    <th width="13%">Stock</th>
-                                    <th width="12%">Order</th>
+                                    <th width="20%">Barang</th>
+                                    <th width="10%">Stock</th>
+                                    <th width="10%">Order</th>
                                     <th width="10%">Satuan</th>
-                                    <th width="17%">Harga Satuan</th>
-                                    <th width="18%">Total Harga</th>
+                                    <th width="13%">Harga Satuan</th>
+                                    <th width="16%">Diskon @</th>
+                                    <th width="16%">Total Harga</th>
                                     <th width="5%">Aksi</th>
                                 </tr>
                             </thead>

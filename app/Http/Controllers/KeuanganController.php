@@ -9,7 +9,7 @@ class KeuanganController extends Controller
     //Input Transaksi
     public function inputtransaksi_index()
     {
-        return view('keuangan/inputtransaksi/index');
+        return view('keuangan/transaksi/index');
     }
 
     public function create_transaksikas()
@@ -30,7 +30,7 @@ class KeuanganController extends Controller
     // Laporan Keuangan
     public function laporankeuangan_index()
     {
-        return view('keuangan/laporankeuangan/index');
+        return view('keuangan/laporan/index');
     }
 
     public function laporankeuangan_jurnal()

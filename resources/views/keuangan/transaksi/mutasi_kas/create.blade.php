@@ -112,7 +112,7 @@
                             <div class="card-block">
                                 <form id="data-form" enctype="multipart/form-data">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}" readonly>
-                                    <input type="hidden" name="ak_id" v-model="single.ak_id" readonly>
+                                    <input type="hidden" name="tr_id" v-model="single.tr_id" readonly>
                                     <section>
                                         <div class="row keuangan-form" style="border-bottom: 1px solid #ddd; padding-bottom: 30px;">
                                             <div class="col-md-6" style="border-right: 1px solid #ddd;">
@@ -141,14 +141,14 @@
                                                     <div class="row">
                                                         <div class="col-md-4 label">Jenis Mutasi Kas</div>
                                                         <div class="col-md-7">
-                                                            <vue-select :name="'tr_jenis'" :id="'tr_jenis'" :options="tr_jenis" :search="false" @option-change="jenisChange"></vue-select>
+                                                            <vue-select :name="'tr_jenis'" :id="'tr_jenis'" :options="tr_jenis" :search="false" @option-change="jenisChange" v-model="single.tr_jenis"></vue-select>
                                                         </div>
                                                     </div>
 
                                                     <div class="row" style="margin-top: 15px;">
                                                         <div class="col-md-4 label">Tanggal Mutasi</div>
                                                         <div class="col-md-7">
-                                                            <vue-datepicker :name="'tr_tanggal'" :id="'tr_tanggal'" :class="'form-control'" :placeholder="'Pilih Tanggal Mutasi'" :title="'Tidak Boleh Kosong'" :readonly="true"></vue-datepicker>
+                                                            <vue-datepicker :name="'tr_tanggal'" :id="'tr_tanggal'" :class="'form-control'" :placeholder="'Pilih Tanggal Mutasi'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.tr_tanggal" :disabled="stateForm == 'update'"></vue-datepicker>
                                                         </div>
                                                     </div>
 
@@ -166,14 +166,23 @@
                                                 <div class="row" style="margin-top: 15px;">
                                                     <div class="col-md-4 label">Keterangan Mutasi</div>
                                                     <div class="col-md-7">
-                                                        <input type="text" name="tr_keterangan" :class="$v.single.tr_keterangan.$error ? 'form-control form-control-sm error' : 'form-control form-control-sm'" placeholder="contoh: Transfer bank ke akun kas" v-model="$v.single.tr_keterangan.$model" :disabled="single.akunUtama">
+                                                        <div class="input-group mb-3">
+                                                          <input type="text" name="tr_keterangan" :class="$v.single.tr_keterangan.$error ? 'form-control form-control-sm error' : 'form-control form-control-sm'" placeholder="contoh: Transfer bank ke akun kas" v-model="$v.single.tr_keterangan.$model" :disabled="single.akunUtama">
+
+                                                          <div class="input-group-append">
+                                                            <span class="input-group-text hint" id="basic-addon2" style="min-width: 20px;" @click="keteranganModal">
+                                                                <i class="fa fa-search"></i>
+                                                            </span>
+                                                          </div>
+
+                                                        </div>
                                                     </div>
                                                 </div>
 
-                                                <div class="row" style="margin-top: 15px;">
+                                                <div class="row" style="margin-top: 0px;">
                                                     <div class="col-md-4 label">Pilih COA Kas</div>
                                                     <div class="col-md-7">
-                                                        <vue-select :name="'tr_akun_kas'" :id="'tr_akun_kas'" :options="tr_akun_kas" :search="false" @option-change="coaChange"></vue-select>
+                                                        <vue-select :name="'tr_akun_kas'" :id="'tr_akun_kas'" :options="tr_akun_kas" :search="false" @option-change="coaChange" v-model="single.tr_akun_kas"></vue-select>
                                                     </div>
                                                 </div>
 
@@ -219,35 +228,35 @@
                                                     <tbody>
                                                         <tr v-for="(detail, idx) in tr_akun_detail">
                                                             <td class="text-center">
-                                                                <template v-if="detail.dt_status == 'locked'">
+                                                                <template v-if="idx <= 1">
                                                                     <i class="fa fa-lock"></i>
                                                                 </template>
 
-                                                                <template v-if="detail.dt_status != 'locked'">
+                                                                <template v-if="idx > 1">
                                                                     <i class="fa fa-trash hintText hint" style="font-style: normal;" @click="deleteAddition($event, idx)"></i>
                                                                 </template>
                                                             </td>
 
                                                             <td style="padding-left: 10px;">
                                                                 <template v-if="idx == 0">
-                                                                    @{{ detail.dt_text }}
+                                                                    @{{ detail.dt_akun_nama }}
                                                                 </template>
 
                                                                 <template v-if="idx > 0">
-                                                                    <vue-select :id="'dt_akun'" :name="'dt_akun[]'" :options="tr_akun_lawan" :search="false" :styles="'border: 0px;'"></vue-select>
+                                                                    <vue-select :classes="'akun_detail'" :id="'dt_akun_'+idx" :name="'dt_akun[]'" :options="tr_akun_kas" :search="false" :styles="'border: 0px;'" v-model="detail.dt_akun"></vue-select>
                                                                 </template>
                                                             </td>
 
                                                             <td>
-                                                                <input type="text" name="dt_keterangan[]" v-model="detail.dt_keterangan" style="font-size: 9pt; height: 20px; border: 0px; width: 100%; text-align: left; color: #666; padding-left: 5px;">
+                                                                <input type="text" name="dt_keterangan[]" v-model="detail.dt_keterangan" style="font-size: 9pt; height: 20px; border: 0px; width: 100%; text-align: left; color: #666; padding-left: 5px;" placeholder="Berikan keterangan tentang COA ini">
                                                             </td>
 
                                                             <td>
-                                                                <vue-inputmask :name="'dt_debet[]'" :id="'debet'" :style="'background: white;'" :minus="false" :readonly="detail.dt_status=='locked'" :css="'border: 0px; height: 20px; font-size: 9pt; width: 100%;'" v-model="detail.dt_debet" @input="cekAdditionDebet($event, idx)"></vue-inputmask>
+                                                                <vue-inputmask :name="'dt_debet[]'" :classes="'debet'" :id="'debet'" :style="'background: white;'" :minus="false" :readonly="detail.dt_status=='locked'" :css="'border: 0px; height: 20px; font-size: 9pt; width: 100%;'" v-model="detail.dt_debet" @input="cekAdditionDebet($event, idx)"></vue-inputmask>
                                                             </td>
 
                                                             <td>
-                                                                <vue-inputmask :name="'dt_kredit[]'" :id="'debet'" :style="'background: white;'" :minus="false" :readonly="detail.dt_status=='locked'" :css="'border: 0px; height: 20px; font-size: 9pt; width: 100%;'" v-model="detail.dt_kredit" @input="cekAdditionKredit($event, idx)"></vue-inputmask>
+                                                                <vue-inputmask :name="'dt_kredit[]'" :classes="'kredit'" :id="'debet'" :style="'background: white;'" :minus="false" :readonly="detail.dt_status=='locked'" :css="'border: 0px; height: 20px; font-size: 9pt; width: 100%;'" v-model="detail.dt_kredit" @input="cekAdditionKredit($event, idx)"></vue-inputmask>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -279,10 +288,15 @@
                                                     <div class="col-md-6 text-right">
                                                         <template v-if="stateForm == 'insert'">
                                                             <button class="btn btn-primary btn-sm" @click="save" :disabled="disabledButton">Simpan Data</button>
+
+                                                            <button type="button" class="btn btn-primary btn-sm" @click="resetForm" :disabled="disabledButton">Reset</button>
+
                                                         </template>
 
                                                         <template v-if="stateForm == 'update'">
                                                             <button class="btn btn-primary btn-sm" @click="update" :disabled="disabledButton">Simpan Perubahan</button>
+
+                                                            <button type="button" class="btn btn-danger btn-sm" @click="deleted" :disabled="disabledButton">Hapus Transaksi</button>
                                                         </template>
                                                     </div>
                                                 </div>
@@ -335,17 +349,7 @@
                 disabledButton: false,
 
                 // addition
-                tr_akun_kas: [
-                    {
-                        id: '1',
-                        text: '1.000.001 - Kas Kecil'
-                    },
-
-                    {
-                        id: '2',
-                        text: '1.000.002 - Kas Besar'
-                    }
-                ],
+                tr_akun_kas: [],
 
                 tr_jenis: [
                     {
@@ -361,21 +365,23 @@
 
                 tr_akun_detail: [
                     {
-                        dt_text: '1.000.001 - Kas Kecil Ku',
-                        dt_keterangan: 'Kas Kecil Keluar',
-                        dt_posisi: 'D',
-                        dt_debet: 0,
-                        dt_kredit: 0,
-                        dt_status: 'locked'
-                    },
-
-                    {
-                        dt_text: '1.0001.001 - Bank Mandiri KCP Lombok',
-                        dt_keterangan: 'Kas Bank Masuk',
-                        dt_posisi: 'K',
+                        dt_akun_nama: '',
+                        dt_keterangan: '',
                         dt_kredit: 0,
                         dt_debet: 0,
                         dt_status: 'locked',
+                        dt_akun: '',
+                        dt_deleted: false,
+                    },
+
+                    {
+                        dt_akun_nama: '',
+                        dt_keterangan: '',
+                        dt_kredit: 0,
+                        dt_debet: 0,
+                        dt_status: 'open',
+                        dt_akun: '',
+                        dt_deleted: false,
                     }
                 ],
 
@@ -396,12 +402,31 @@
                     }
                 },
 
+                data_table_keterangan: {
+                    data: {
+                        column: [
+                            {name: 'Keterangan', context: 'tr_keterangan', width: '30%', childStyle: 'text-align: left;'}
+                        ],
+
+                        source: []
+                    },
+
+                    option: {
+                        selectable: true,
+                        index_column: 'tr_keterangan'
+                    }
+                },
+
                 tr_akun_lawan: [],
                 addition: [],
 
                 single: {
+                    tr_id: '',
                     tr_nomor: '',
+                    tr_akun_kas: '',
+                    tr_jenis : 'D',
                     tr_keterangan: '',
+                    tr_tanggal: '',
 
                     totDebet: 0,
                     totKredit: 0,
@@ -420,20 +445,7 @@
             },
 
             watch: {
-                tr_akun_detail: {
-                    handler: function(e){
-                        var debet = kredit = 0;
 
-                        $.each(this.tr_akun_detail, function(index, alpha){
-                            debet += parseFloat(alpha.dt_debet);
-                            kredit += parseFloat(alpha.dt_kredit);
-                        });
-
-                        this.single.totDebet = debet;
-                        this.single.totKredit = kredit;
-                    },
-                    deep: true
-                }
             },
 
             mounted: function(){
@@ -443,12 +455,15 @@
                         .then((response) => {
                             this.downloadingResource = false;
 
+                            this.single.tr_tanggal = '{{ date("d/m/Y") }}';
                             this.tr_akun_kas = response.data.akun;
                             this.single.jenisMutasi = 'D';
-                            this.data_table_transaksi.data.source = response.data.transaksi
+                            this.data_table_transaksi.data.source = response.data.transaksi;
+                            this.data_table_keterangan.data.source = response.data.keterangan;
 
                             if(response.data.akun.length){
                                 this.coaChange(this.tr_akun_kas[0].id);
+                                this.tr_akun_detail[1].dt_akun = this.tr_akun_kas[0].id;
                             }
 
                             this.jenisChange(this.tr_jenis[0].id);
@@ -465,7 +480,7 @@
                 save: function(e){
                     e.preventDefault();
                     e.stopImmediatePropagation();
-                    
+
                     if($('#tr_tanggal').val() == ''){
                         $.toast({
                             text: 'Tanggal mutasi tidak boleh kosong.',
@@ -484,10 +499,28 @@
                         })
 
                         return false;
+                    }else if(this.single.totDebet != this.single.totKredit){
+                        $.toast({
+                            text: 'Total debet/kredit harus sama.',
+                            showHideTransition: 'slide',
+                            icon: 'warning',
+                            stack: 1
+                        })
+
+                        return false;
                     }
 
                     this.$v.$touch();
                     if(!this.$v.$invalid){
+
+                        if(this.checkSame()){
+                            var cfrm = confirm("Beberapa COA detail sama dengan COA detail lain, Apakah anda tetap ingin menyimpannya ? ")
+
+                            if(!cfrm){
+                                return false;
+                            }
+                        }
+
                         this.onRequest = true;
                         this.requestMessage = 'Sedang menyimpan data..';
                         this.disabledButton = true;
@@ -503,6 +536,9 @@
                                             icon: response.data.status,
                                             stack: 1
                                         });
+
+                                        this.data_table_transaksi.data.source = response.data.transaksi;
+                                        this.data_table_keterangan.data.source = response.data.keterangan;
 
                                         this.resetForm();
 
@@ -542,17 +578,56 @@
                 update: function(e){
                     e.preventDefault();
                     e.stopImmediatePropagation();
+
+                    if($('#tr_tanggal').val() == ''){
+                        $.toast({
+                            text: 'Tanggal mutasi tidak boleh kosong.',
+                            showHideTransition: 'slide',
+                            icon: 'warning',
+                            stack: 1
+                        })
+
+                        return false;
+                    }else if(this.totDebet <= 0 || this.totKredit <= 0){
+                        $.toast({
+                            text: 'Total debet/kredit harus lebih besar dari 0.',
+                            showHideTransition: 'slide',
+                            icon: 'warning',
+                            stack: 1
+                        })
+
+                        return false;
+                    }else if(this.single.totDebet != this.single.totKredit){
+                        $.toast({
+                            text: 'Total debet/kredit harus sama.',
+                            showHideTransition: 'slide',
+                            icon: 'warning',
+                            stack: 1
+                        })
+
+                        return false;
+                    }
+
                     this.$v.$touch();
 
                     if(!this.$v.$invalid){
+
+                        if(this.checkSame()){
+                            var cfrm = confirm("Beberapa COA detail sama dengan COA detail lain, Apakah anda tetap ingin menyimpannya ? ")
+
+                            if(!cfrm){
+                                return false;
+                            }
+                        }
+
                         this.onRequest = true;
                         this.requestMessage = 'Sedang memperbarui data..';
                         this.disabledButton = true;
                         dataForm = $('#data-form').serialize();
 
-                        axios.post('{{ Route("keuangan.akun.update") }}', dataForm)
+                        axios.post('{{ Route("keuangan.mutasi_kas.update") }}', dataForm)
                                 .then((response) => {
-                                    console.log(response.data.hierarki);
+                                    console.log(response.data);
                                     if(response.data.status == 'success'){
                                         $.toast({
                                             text: response.data.text,
@@ -561,12 +636,8 @@
                                             stack: 1
                                         });
 
-                                        this.dataAkun = response.data.akun;
-                                        this.data_table_akun.data.source = response.data.akun;
-
-                                        if(response.data.akun.length){
-                                            this.kelompokChange($('#ak_kelompok').val());
-                                        }
+                                        this.data_table_transaksi.data.source = response.data.transaksi;
+                                        this.data_table_keterangan.data.source = response.data.keterangan;
 
                                         this.resetForm();
 
@@ -603,63 +674,105 @@
                     }
                 },
 
+                deleted: function(e){
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    var cfrm = confirm('Apa anda yakin ?')
+
+                    if(cfrm){
+                        axios.post('{{ Route("keuangan.mutasi_kas.delete") }}', {_token: '{{ csrf_token() }}', tr_id: this.single.tr_id})
+                                .then((response) => {
+                                    console.log(response.data);
+                                    if(response.data.status == 'success'){
+                                        $.toast({
+                                            text: response.data.text,
+                                            showHideTransition: 'slide',
+                                            icon: response.data.status,
+                                            stack: 1
+                                        });
+
+                                        this.data_table_transaksi.data.source = response.data.transaksi;
+                                        this.data_table_keterangan.data.source = response.data.keterangan;
+
+                                        this.resetForm();
+
+                                    }else{
+                                        $.toast({
+                                            text: response.data.text,
+                                            showHideTransition: 'slide',
+                                            icon: response.data.status,
+                                            stack: 1
+                                        })
+                                    }
+
+                                }).catch((e) => {
+                                    console.log(e);
+                                    $.toast({
+                                        text: 'System Error, '+e,
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        stack: 1
+                                    })
+                                }).then((e) => {
+                                    this.onRequest = false;
+                                    this.requestMessage = 'Sedang menyimpan data..';
+                                    this.disabledButton = false;
+                                })
+                    }
+                },
+
                 coaChange: function(e){
                     var idx = this.tr_akun_kas.findIndex(a => a.id == e);
                     var conteks = this.tr_akun_kas[idx];
+                    this.single.tr_akun_kas = conteks.id;
 
-                    this.tr_akun_detail[0].dt_text = conteks.text;
-                    this.tr_akun_lawan = $.grep(this.tr_akun_kas, function(a){ return a.id != e });
+                    this.tr_akun_detail[0].dt_akun_nama = conteks.text;
+                    this.tr_akun_detail[0].dt_akun = conteks.id;
                 },
 
                 nominalChange: function(e){
                     var nominal = (e) ? parseFloat(e.replace(/\,/g, '')) : 0;
 
-                    if(this.single.jenisMutasi == "D"){
+                    if(this.single.jenisMutasi == 'D'){
                         this.tr_akun_detail[0].dt_debet = nominal;
-                        this.tr_akun_detail[1].dt_kredit = nominal;
                     }else{
                         this.tr_akun_detail[0].dt_kredit = nominal;
-                        this.tr_akun_detail[1].dt_debet = nominal;
                     }
+
+                    this.calculatedTotal();
                 },
 
                 jenisChange: function(e){
-                    if(e == "D"){
+                    if(e == 'D'){
                         this.tr_akun_detail[0].dt_debet = this.tr_akun_detail[0].dt_kredit;
                         this.tr_akun_detail[0].dt_kredit = 0;
-                        this.tr_akun_detail[0].dt_posisi = 'D';
-
-                        this.tr_akun_detail[1].dt_kredit = this.tr_akun_detail[0].dt_debet;
-                        this.tr_akun_detail[1].dt_debet = 0;
-                        this.tr_akun_detail[1].dt_posisi = 'K';
-
-                        this.single.jenisMutasi = 'D';
+                        this.single.jenisMutasi = 'D';                        
                     }else{
                         this.tr_akun_detail[0].dt_kredit = this.tr_akun_detail[0].dt_debet;
                         this.tr_akun_detail[0].dt_debet = 0;
-                        this.tr_akun_detail[0].dt_posisi = 'K';
-
-                        this.tr_akun_detail[1].dt_debet = this.tr_akun_detail[0].dt_kredit;
-                        this.tr_akun_detail[1].dt_kredit = 0;
-                        this.tr_akun_detail[1].dt_posisi = 'D';
-
                         this.single.jenisMutasi = 'K';
                     }
+
+                    this.calculatedTotal();
                 },
 
                 addAddition: function(e){
                     e.preventDefault();
                     e.stopImmediatePropagation();
+                    var that = this;
+                    var dbFeed = [];
 
-                    this.tr_akun_detail.push(
+                    that.tr_akun_detail.push(
                         {
-                            dt_text: '',
+                            dt_akun_nama: that.tr_akun_kas[0].text,
                             dt_keterangan: '',
-                            dt_posisi: '',
-                            dt_debet: 0,
                             dt_kredit: 0,
-                            dt_status: 'open'
-                        },
+                            dt_debet: 0,
+                            dt_status: 'open',
+                            dt_akun: that.tr_akun_kas[0].id,
+                            dt_deleted: false,
+                        }
                     );
                 },
 
@@ -680,8 +793,58 @@
                     $('#modal_tambah').modal('show');
                 },
 
+                keteranganModal: function(e){
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    $('#modal_keterangan').modal('show');
+                },
+
                 dataSelected: function(e){
-                    alert(e);
+                    var idx = this.data_table_transaksi.data.source.findIndex(a => a.tr_id == e);
+                    var conteks = this.data_table_transaksi.data.source[idx];
+                    var that = this;
+
+                    if(idx >= 0){
+                        this.stateForm = 'update';
+                        this.single.tr_id = conteks.tr_id;
+                        this.single.tr_nomor = conteks.tr_nomor;
+                        this.single.tr_keterangan = conteks.tr_keterangan;
+                        this.single.jenisMutasi = conteks.detail[0].trdt_dk;
+                        this.single.tr_tanggal = this.humanizeDate(conteks.tr_tanggal_trans);
+
+                        $('#tr_jenis').val(conteks.detail[0].trdt_dk).trigger('change.select2');
+                        $('#tr_nominal').val(conteks.detail[0].trdt_value);
+
+                        this.tr_akun_detail = []; var feeder = [];
+
+                        $.each(conteks.detail, function(index, data){
+                            feeder.push(
+                                {
+                                    dt_akun_nama: data.akun_nama,
+                                    dt_keterangan: data.trdt_keterangan,
+                                    dt_kredit: (data.trdt_dk == 'K') ? data.trdt_value : 0,
+                                    dt_debet: (data.trdt_dk == 'D') ? data.trdt_value : 0,
+                                    dt_status: (index == 0) ? 'locked' : 'open',
+                                    dt_akun: data.trdt_akun,
+                                    dt_deleted: false,
+                                }
+                            );
+                        });
+
+                        setTimeout(function(){
+                            that.tr_akun_detail = feeder;
+                            $('#dt_akun_1').val(conteks.detail[1].trdt_akun).trigger('change.select2');
+                            that.calculatedTotal();
+                        }, 0);
+                    }
+
+                    $('#modal_tambah').modal('toggle');
+                },
+
+                keteranganSelected: function(e){
+                    this.single.tr_keterangan = e;
+                    $('#modal_keterangan').modal('toggle');
                 },
 
                 validStatus: function(validation){
@@ -695,52 +858,110 @@
                     var nominal = (val) ? parseFloat(val.replace(/\,/g, '')) : 0;
                     this.tr_akun_detail[idx].dt_debet = nominal;
                     this.tr_akun_detail[idx].dt_kredit = 0;
+
+                    this.calculatedTotal();
                 },
 
                 cekAdditionKredit: function(val, idx){
                     var nominal = (val) ? parseFloat(val.replace(/\,/g, '')) : 0;
                     this.tr_akun_detail[idx].dt_kredit = nominal;
                     this.tr_akun_detail[idx].dt_debet = 0;
+
+                    this.calculatedTotal();
                 },
 
                 deleteAddition: function(e, index){
                     e.preventDefault();
                     e.stopImmediatePropagation();
+                    var conteks = $(e.target).closest('tr').remove();
 
-                    this.tr_akun_detail.splice(index, 1);
+                    this.tr_akun_detail[index].dt_deleted = true;
+                },
+
+                calculatedTotal: function(e){
+                    var debet = kredit = 0;
+
+                    $.each(this.tr_akun_detail, function(index, conteks){
+                        if(!conteks.dt_deleted){
+                            if(conteks.dt_debet != 0)
+                                debet += parseFloat(conteks.dt_debet);
+                            else
+                                kredit += parseFloat(conteks.dt_kredit);
+                        }
+                    })
+
+                    this.single.totDebet = debet;
+                    this.single.totKredit = kredit;
+                },
+
+                humanizeDate: function(conteks){
+                    var data = conteks.split('-')[2]+'/'+conteks.split('-')[1]+'/'+conteks.split('-')[0];
+
+                    return data;
+                },
+
+                checkSame: function(e){
+                    var dictionary = [this.tr_akun_detail[0].dt_akun]; var ret = false;
+                    $('.akun_detail').each(function(e){
+                        var ctx = $(this);
+                        var cek = $.grep(dictionary, function(e){ return e == ctx.val() }) 
+
+                        if(cek.length){
+                            ret = true;
+                            return;
+                        }
+
+                        dictionary.push(ctx.val());
+                    });
+
+                    return ret;
                 },
 
                 resetForm: function(){
+                    var that = this;
+                    this.stateForm = 'insert';
+
+                    this.single.tr_id = '';
+                    this.single.tr_nomor = '';
+                    this.single.tr_akun_kas = '';
+                    this.single.tr_jenis = 'D';
+                    this.single.tr_keterangan = '';
+                    this.single.tr_tanggal = '{{ date("d/m/Y") }}';
+
+                    this.single.totDebet = 0;
+                    this.single.totKredit = 0;
+
                     this.tr_akun_detail = [
                         {
-                            dt_text: '1.000.001 - Kas Kecil Ku',
-                            dt_keterangan: 'Kas Kecil Keluar',
-                            dt_posisi: 'D',
-                            dt_debet: 0,
-                            dt_kredit: 0,
-                            dt_status: 'locked'
-                        },
-
-                        {
-                            dt_text: '1.0001.001 - Bank Mandiri KCP Lombok',
-                            dt_keterangan: 'Kas Bank Masuk',
-                            dt_posisi: 'K',
+                            dt_akun_nama: this.tr_akun_kas[0].text,
+                            dt_keterangan: '',
                             dt_kredit: 0,
                             dt_debet: 0,
                             dt_status: 'locked',
+                            dt_akun: this.tr_akun_kas[0].id,
+                            dt_deleted: false,
+                        },
+
+                        {
+                            dt_akun_nama: '',
+                            dt_keterangan: '',
+                            dt_kredit: 0,
+                            dt_debet: 0,
+                            dt_status: 'open',
+                            dt_akun: this.tr_akun_kas[0].id,
+                            dt_deleted: false,
                         }
                     ];
 
-                    this.single.tr_keterangan = '';
-
-                    if(this.tr_akun_kas.length){
-                        this.coaChange(this.tr_akun_kas[0].id);
+                    if(that.tr_akun_kas.length){
+                        that.coaChange(that.tr_akun_kas[0].id);
+                        $('#dt_akun_1').val(this.tr_akun_kas[0].id).trigger('change.select2');
                     }
 
-                    $('#tr_tanggal').val('{{ date("d/m/Y") }}');
-                    $('#tr_nominal').val(0);
-
                     this.jenisChange(this.tr_jenis[0].id);
+
+                    $('#tr_jenis').val('D').trigger('change.select2');
+                    $('#tr_nominal').val(0);
                 }
             }
         });

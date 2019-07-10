@@ -125,6 +125,7 @@ class hierarki_akun_controller extends Controller
                         // return 'kk';
                         DB::table('dk_hierarki_dua')->insert([
                             'hd_id'            => $id,
+                            'hd_nomor'         => $request->level_1.'.'.$request->hd_nomor[$key],
                             'hd_nama'          => $request->hd_nama[$key],
                             'hd_level_1'       => $request->level_1,
                             'hd_subclass'      => $request->hd_subclass[$key]

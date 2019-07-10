@@ -1,5 +1,14 @@
 @extends('main')
 
+@section('extra_style')
+    <style type="text/css">
+        .txt-readonly {
+            background-color: transparent;
+            pointer-events: none;
+        }
+    </style>
+@endsection
+
 @section('content')
 <form class="formCodeProd">
     <!-- modal-code-production -->
@@ -480,7 +489,8 @@
                     $(".jumlah").eq(idxBarang).attr("readonly", true);
                     $(".satuan").eq(idxBarang).find('option').remove();
                     updateTotalTampil();
-                }else{
+                }
+                else{
                     $(".jumlah").eq(idxBarang).val(0);
                     $(".harga").eq(idxBarang).val("Rp. 0");
                     $(".jumlah").eq(idxBarang).attr("readonly", false);

@@ -13,8 +13,15 @@
                         <label for="">Item tanpa kode produksi : </label>
                     </div>
                     <div class="col-md-3 col-sm-6">
-                        <input type="hidden" class="QtyH" value="0">
-                        <input type="text" class="form-control form-control-plaintext border-bottom digits restQty" name="" value="10.000" readonly style="background-color: transparent;">
+                        <div class="row">
+                            <div class="col-md-9 col-sm-6">
+                                <input type="hidden" class="QtyH" value="0">
+                                <input type="text" class="form-control form-control-plaintext border-bottom digits restQty txt-readonly" name="" value="10.000">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <button class="btn btn-success btnAddProdCode btn-sm rounded-circle" title="Tambah Kode Produksi" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-3 col-sm-6">
                         <label for="">Satuan yang digunakan : </label>
@@ -35,7 +42,11 @@
                         </thead>
                         <tbody>
                             <input type="hidden" name="prodCodeLength[]" class="prodcode-length" value="0">
-                            <tr class="rowBtnAdd"><td colspan="3" class="text-center"><button class="btn btn-success btnAddProdCode btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button></td></tr>
+                            <tr class="rowBtnAdd">
+                                <td colspan="3" class="text-center">
+                                    <!-- <button class="btn btn-success btnAddProdCode btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button> -->
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

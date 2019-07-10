@@ -610,20 +610,33 @@
                     let subTotalN = '<td><span class="subtotalprice-'+val.pod_item+'"> '+ convertToRupiah(hargasubtotal.toString().replace(".00", "")) +'</span>';
                     let aksiP = '<td><button type="button" class="btn btn-sm btn-danger" onclick="changeStatus('+val.pod_productorder+', '+val.pod_detailid+', \'N\')"><i class="fa fa-close"></i></button></td>';
                     let aksiN = '<td><button type="button" class="btn btn-sm btn-success" onclick="changeStatus('+val.pod_productorder+', '+val.pod_detailid+', \'P\')"><i class="fa fa-check"></i></button></td>';
+                    let diskon = '<td><input type="text" class="form-control form-control-sm diskon diskon-rupiah text-right" name="diskon[]" onkeyup="setTotalTransaksi()"></td>';
                     if (val.pod_isapproved == 'P'){
                         let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name + itemIdP +'</td>';
                         let unit = '<td>'+ selectUnitP +'</td>';
-                        appendItem = '<tr>'+ item + stok + qtyP + unit + priceP + subTotalP + aksiP +'</tr>';
+                        appendItem = '<tr>'+ item + stok + qtyP + unit + priceP + diskon + subTotalP + aksiP +'</tr>';
                     } else if (val.pod_isapproved == 'N') {
                         let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name + itemIdN +'</td>';
                         let unit = '<td>'+ selectUnitN +'</td>';
-                        appendItem = '<tr class="tolak">'+ item + stok + qtyN + unit + priceN + subTotalN + aksiN +'</tr>';
+                        appendItem = '<tr class="tolak">'+ item + stok + qtyN + unit + priceN + diskon + subTotalN + aksiN +'</tr>';
                     }
                     // append data to table-row
 
                     $('#table_modalPr > tbody:last-child').append(appendItem);
                     // set unitModalPr selected item
                     $('.unitModalPr option[value='+ val.pod_unit +']').attr('selected', 'selected');
+                    $('.diskon').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 0,
+                        autoGroup: true,
+                        prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
+                    });
+
                 });
                 // show modal
                 $('#modalProcessTOP').modal('show');
@@ -667,6 +680,11 @@
             validateQty();
             hitungTotal();
             changePrice();
+        });
+
+        $('.diskon').on('keyup', function() {
+            idxItem = $('.diskon').index(this);
+            hitungTotal();
         });
         // set event handler for unit
         $('.unitModalPr').on('change', function() {
@@ -760,9 +778,10 @@
     function hitungTotal() {
         var hargasatuan = parseInt($('.hargasatuan').eq(idxItem).val());
         var kuantitas = parseInt($('.qtyModalPr').eq(idxItem).val());
+        var diskon = parseInt(convertToAngka($('.diskon').eq(idxItem).val()));
         var item = $('.idItem').eq(idxItem).val();
 
-        var subTotal = hargasatuan * kuantitas;
+        var subTotal = (hargasatuan - diskon) * kuantitas;
         if (isNaN(subTotal)){
             subTotal = 0;
         }
@@ -803,6 +822,7 @@
                 if (response.status == 'success'){
                     messageSuccess("Berhasil", "Data berhasil disimpan");
                     table_top.ajax.reload();
+                    table_distribusi.ajax.reload();
                     $('#modalProcessTOP').modal('hide');
                 } else if (response.status == 'gagal'){
                     messageFailed("Gagal", "data gagal disimpan");
@@ -819,13 +839,16 @@
 
     function setTotalTransaksi(){
         let allprice = $('.hargasubtotal').serializeArray();
+        let alldiskon = $('.diskon').serializeArray();
         var total = 0;
 
         for (let i = 0; i < allprice.length; i++) {
+            if (alldiskon[i].value == ""){
+                alldiskon[i].value = "Rp. 0";
+            }
             total = total + parseInt(allprice[i].value);
         }
         $('#totalModalPr').val(convertToRupiah(total));
-        console.log(total);
     }
 
     // Distribusi penjualan
@@ -881,9 +904,10 @@
                     let qty = '<td class="digits">'+ val.pod_qty +'</td>';
                     let unit = '<td>'+ val.get_unit.u_name +'</td>';
                     let price = '<td class="rupiah">'+ parseFloat(val.pod_price) +'</td>';
+                    let diskon = '<td class="rupiah">'+ parseFloat(val.pod_discvalue) +'</td>';
                     let subTotal = '<td class="rupiah">'+ parseFloat(val.pod_totalprice) +'</td>';
                     let aksi = '<td class="text-center"><button type="button" onclick="addCodeProd('+response.po_id+', '+val.pod_item+', \''+val.get_item.i_name+'\')" class="btn btn-info btn-xs btnAddProdCode"><i class="fa fa-plus"></i> Kode Produksi</button></td>';
-                    appendItem = '<tr>'+ item + qty + unit + price + subTotal + aksi +'</tr>';
+                    appendItem = '<tr>'+ item + qty + unit + price + diskon + subTotal + aksi +'</tr>';
                     // append data to table-row
                     $('#table_senddistribution > tbody:last-child').append(appendItem);
                 });
@@ -954,7 +978,6 @@
 
     function addCodeProd(id, item, nama){
         idxProdCode = $('.btnAddProdCode').index(this);
-        console.log(idxProdCode);
         $('.text-item').html(nama);
         $('#inputkodeproduksi').removeAttr('readonly');
         $('#iditem_modaldt').val(item);

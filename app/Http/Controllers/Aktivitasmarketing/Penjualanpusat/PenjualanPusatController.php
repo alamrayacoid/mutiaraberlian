@@ -207,6 +207,7 @@ class PenjualanPusatController extends Controller
         $item = $request->itemId;
         $unit = $request->unit;
         $harga = $request->hargasatuan;
+        $diskon = $request->diskon;
 
         DB::beginTransaction();
         try {
@@ -225,7 +226,8 @@ class PenjualanPusatController extends Controller
                         'pod_unit' => $unit[$i],
                         'pod_price' => $harga[$i],
                         'pod_qty' => $qty[$i],
-                        'pod_totalprice' => $qty[$i] * $harga[$i],
+                        'pod_discvalue' => $diskon[$i],
+                        'pod_totalprice' => $qty[$i] * ($harga[$i] - $diskon[$i]),
                         'pod_isapproved' => 'Y'
                     ]);
             }
@@ -824,7 +826,7 @@ class PenjualanPusatController extends Controller
                 // waiit, check the name of $reff
                 $reff = $nota;
                 //sm_sell $sellprice
-                $mutDist = Mutasi::distribusicabangkeluar(
+                $mutDist = Mutasi::salesOut(
                     $productOrder->po_comp, // from
                     $productOrder->po_agen, // to
                     $PO->pod_item, // item-id
@@ -869,7 +871,8 @@ class PenjualanPusatController extends Controller
                     'scd_qty' => $data[$i]->pod_qty,
                     'scd_unit' => $data[$i]->pod_unit,
                     'scd_value' => $data[$i]->pod_price,
-                    'scd_totalnet' => $data[$i]->pod_qty * $data[$i]->pod_price
+                    'scd_discvalue' => $data[$i]->pod_discvalue,
+                    'scd_totalnet' => $data[$i]->pod_qty * ($data[$i]->pod_price - $data[$i]->pod_discvalue)
                 ];
                 $total = $total + ($data[$i]->pod_qty * $data[$i]->pod_price);
                 array_push($insert, $temp);
@@ -995,6 +998,7 @@ class PenjualanPusatController extends Controller
             })
             ->addColumn('bayar', function($datas){
                 return '<button class="btn btn-sm btn-success" onclick="toPayment(\''.Crypt::encrypt($datas->sc_nota).'\')"><i class="fa fa-money"></i> Bayar</button>';
+                return '<button class="btn btn-sm btn-success" onclick="get_list(\''.$datas->sc_nota.'\')"><i class="fa fa-dolar"></i> Bayar</button>';
             })
             ->rawColumns(['sisa','bayar'])
             ->make(true);

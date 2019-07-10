@@ -20,7 +20,7 @@
         <link rel="stylesheet" type="text/css" href="{{asset('assets/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css')}}">
         <link rel="stylesheet" href="{{asset('assets/css/animate.min.css')}}">
         <link rel="stylesheet" href="{{asset('assets/css/hint.css')}}">
-
+        <link rel="stylesheet" href="{{asset('assets/JTimepicker-JohnHRTN/jquery.timepicker.css')}}">
 
         <!-- Theme initialization -->
 {{--         <script>
