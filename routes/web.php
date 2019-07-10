@@ -150,7 +150,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/agen/disable/{id}', 'Master\AgenController@disable')->name('agen.disable');
     Route::post('/masterdatautama/agen/enable/{id}', 'Master\AgenController@enable')->name('agen.enable');
 
-
     Route::get('/masterdatautama/agen/kelolaagen/index', 'MasterController@kelolaagen')->name('kelolaagen.index');
 
     Route::get('/masterdatautama/datasatuan/index', 'Master\SatuanController@index')->name('datasatuan.index');
@@ -369,8 +368,16 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Kinerja
     Route::get('/sdm/kinerjasdm/index', 'SDMController@kinerja')->name('kinerjasdm.index');
+
+    //Master KPI
+    Route::post('/sdm/kinerjasdm/master-kpi/create', 'SDM\MasterKPIController@create')->name('masterkpi.create');
+    Route::post('/sdm/kinerjasdm/master-kpi/get-data', 'SDM\MasterKPIController@getData')->name('masterkpi.getData');
     // Absensi
     Route::get('/sdm/absensisdm/index', 'SDMController@absensi')->name('absensisdm.index');
+    Route::get('/sdm/absensisdm/presensi/get-branch', 'SDM\Absensi\PresensiController@getBranch')->name('presensi.getBranch');
+    Route::get('/sdm/absensisdm/presensi/get-presence', 'SDM\Absensi\PresensiController@getPresence')->name('presensi.getPresence');
+    Route::get('/sdm/absensisdm/presensi/get-employee', 'SDM\Absensi\PresensiController@getEmployee')->name('presensi.getEmployee');
+    Route::post('/sdm/absensisdm/presensi/store', 'SDM\Absensi\PresensiController@store')->name('presensi.store');
     // Penggajian
     Route::get('/sdm/penggajian/index', 'SDMController@penggajian')->name('penggajian.index');
     // TAB MANAJEMEN
@@ -845,6 +852,30 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('keuangan/manajemen-input-transaksi/transaksi_memorial/delete', [
                 'uses'  => 'Keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@delete'
             ])->name('keuangan.transaksi_memorial.delete');
+
+
+        // laporan keuangan
+            // laporan Jurnal Umum
+                Route::get('modul/keuangan/laporan/jurnal_umum', [
+                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@index'
+                ])->name('laporan.keuangan.jurnal_umum');
+
+                Route::get('modul/keuangan/laporan/jurnal_umum/resource', [
+                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@resource'
+                ])->name('laporan.keuangan.jurnal_umum.resource');
+
+                Route::get('modul/keuangan/laporan/jurnal_umum/print', [
+                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@print'
+                ])->name('laporan.keuangan.jurnal_umum.print');
+
+                Route::get('modul/keuangan/laporan/jurnal_umum/print/excel', [
+                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@excel'
+                ])->name('laporan.keuangan.jurnal_umum.print.excel');
+
+                Route::get('modul/keuangan/laporan/jurnal_umum/print/pdf', [
+                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@pdf'
+                ])->name('laporan.keuangan.jurnal_umum.print.pdf');
+
 
     // Selesai Dirga
 });

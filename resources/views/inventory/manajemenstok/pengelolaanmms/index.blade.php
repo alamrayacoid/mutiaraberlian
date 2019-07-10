@@ -125,22 +125,25 @@
     <script type="text/javascript">
         var table;
         $(document).ready(function () {
-            table = $('#table_pengelolaanmms').DataTable({
-                responsive: true,
-                serverSide: true,
-                processing: true,
-                ajax: {
-                    url: "{{ route('pengelolaanmms.liststock') }}",
-                    type: "get"
-                },
-                columns: [
-                    {data: 'pemilik'},
-                    {data: 'posisi'},
-                    {data: 'item'},
-                    {data: 'qty'},
-                    {data: 'action'}
-                ]
-            });
+
+            setTimeout(function () {
+                table = $('#table_pengelolaanmms').DataTable({
+                    responsive: true,
+                    serverSide: true,
+                    processing: true,
+                    ajax: {
+                        url: "{{ route('pengelolaanmms.liststock') }}",
+                        type: "get"
+                    },
+                    columns: [
+                        {data: 'pemilik'},
+                        {data: 'posisi'},
+                        {data: 'item'},
+                        {data: 'qty'},
+                        {data: 'action'}
+                    ]
+                });
+            },500)
 
             $("#q_barang").on("keyup", function () {
                 $("#q_idItem").val('');
