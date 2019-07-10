@@ -158,11 +158,22 @@ class KonsinyasiPusatController extends Controller
 
     public function carikonsignerselect2($prov = null, $kota = null)
     {
+        $datapusat = DB::table('m_company')
+            ->where('c_type', '=', 'PUSAT')
+            ->get();
+
+        $id_pusat = [];
+
+        for ($i = 0; $i < count($datapusat); $i++){
+            $id_pusat[$i] = $datapusat[$i]->c_id;
+        }
+
         $nama = DB::table('m_agen')
             ->join('m_company', 'a_code', '=', 'c_user')
             ->where('m_agen.a_area', '=', $kota)
             ->where('a_isactive', '=', 'Y')
             ->where('m_company.c_type', '=', 'AGEN')
+            ->whereIn('a_mma', $id_pusat)
             ->get();
 
         return Response::json($nama);
