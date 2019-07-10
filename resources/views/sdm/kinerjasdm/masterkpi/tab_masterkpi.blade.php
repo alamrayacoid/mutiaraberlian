@@ -15,21 +15,21 @@
                         <label>Status</label>
                     </div>
                     <div class="col-4">
-                        <select class="select2 form-control form-control-sm" name="statuskpi" id="statuskpi">
-                            <option selected disabled>== Pilih Status ==</option>
-                            <option value="Y">Aktif</option>
+                        <select class="select2 form-control form-control-sm" name="statuskpi" id="statuskpi" onchange="getDataMasterKPI()">
+                            <option value="Y" selected>Aktif</option>
                             <option value="N">Tidak Aktif</option>
+                            <option value="all">Semua</option>
                         </select>
                     </div>
 				</div>
 					<hr>
 					<div class="table-responsive">
-						<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_masterkpi">
+						<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_masterkpi" style="width: 100%">
 							<thead class="bg-primary">
 								<tr>
-									<th width="1%">No</th>
-									<th>Indikator</th>
-									<th>Status</th>
+									<th width="10%">No</th>
+									<th width="70%">Indikator</th>
+									<th width="20%">Aksi</th>
 								</tr>
 							</thead>
 						</table>

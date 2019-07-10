@@ -1,24 +1,12 @@
 @extends('main')
-
+@section('extra_style')
+    <style>
+        table {
+            width: 100%;
+        }
+    </style>
+@endsection
 @section('content')
-    <!-- modal scoreboard pegawai -->
-    @include('sdm.kinerjasdm.scoreboardpegawai.modal_tambah_scoreboardp')
-    @include('sdm.kinerjasdm.scoreboardpegawai.modal_edit_scoreboardp')
-    @include('sdm.kinerjasdm.scoreboardpegawai.modal_detail_scoreboardp')
-    <!-- end -->
-    <!-- modal scoreboard manajemen scoreboard -->
-    @include('sdm.kinerjasdm.manajemenscoreboard.modal_detail')
-    @include('sdm.kinerjasdm.manajemenscoreboard.modal_edit')
-    <!-- end -->
-    <!-- modal scoreboard manajemen scoreboard & KPI-->
-    @include('sdm.kinerjasdm.masterkpi.modal_detail')
-    @include('sdm.kinerjasdm.masterkpi.modal_edit')
-    <!-- end -->
-    <!-- modal inputkpi -->
-    @include('sdm.kinerjasdm.inputkpi.modal_tambah_datakpi')
-    @include('sdm.kinerjasdm.inputkpi.modal_edit_datakpi')
-    <!-- end -->
-
     <article class="content animated fadeInLeft">
 
         <div class="title-block text-primary">
@@ -71,17 +59,40 @@
         </section>
 
     </article>
-//===================== Modal ============================
+{{--===================== Modal ============================--}}
+    {{--===================== Modal ============================--}}
+    <!-- modal scoreboard pegawai -->
+    @include('sdm.kinerjasdm.scoreboardpegawai.modal_tambah_scoreboardp')
+    @include('sdm.kinerjasdm.scoreboardpegawai.modal_edit_scoreboardp')
+    @include('sdm.kinerjasdm.scoreboardpegawai.modal_detail_scoreboardp')
+    <!-- end -->
+    <!-- modal scoreboard manajemen scoreboard -->
+    @include('sdm.kinerjasdm.manajemenscoreboard.modal_detail')
+    @include('sdm.kinerjasdm.manajemenscoreboard.modal_edit')
+    <!-- end -->
+    <!-- modal master KPI-->
+    @include('sdm.kinerjasdm.masterkpi.modal_detail')
+    @include('sdm.kinerjasdm.masterkpi.modal_edit')
     @include('sdm.kinerjasdm.masterkpi.modal_create')
+    <!-- end -->
+    <!-- modal inputkpi -->
+    @include('sdm.kinerjasdm.inputkpi.modal_tambah_datakpi')
+    @include('sdm.kinerjasdm.inputkpi.modal_edit_datakpi')
+    <!-- end -->
 @endsection
 @section('extra_script')
     <script type="text/javascript">
 
+        var table_sup = $('#table_scoreboard').DataTable();
+        var table_bar = $('#table_inputkpi').DataTable();
+        var table_kpi;
+        var table_rab = $('#table_manajemenscoreboardkpi').DataTable();
+
         $(document).ready(function () {
-            var table_sup = $('#table_scoreboard').DataTable();
-            var table_bar = $('#table_inputkpi').DataTable();
-            var table_kpi = $('#table_masterkpi').DataTable();
-            var table_rab = $('#table_manajemenscoreboardkpi').DataTable();
+
+            setTimeout(function () {
+                getDataMasterKPI();
+            }, 1500)
 
 // scoreboard pegawai
             $(document).on('click', '.btn-disable-sbpegawai', function () {
@@ -240,5 +251,57 @@
 
             }
         });
+
+        function simpanMasterKPI() {
+            let indikator = $('#indikator_masterkpi').val();
+            if (indikator == '' || indikator == ' '){
+                messageWarning("Perhatian", "Indikator tidak boleh kosong");
+                return false;
+            } else {
+                axios.post('{{ route("masterkpi.create") }}', {
+                    'indikator': indikator,
+                    '_token': '{{ csrf_token() }}'
+                }).then(function (response) {
+                    if (response.data.status == 'sukses'){
+                        messageSuccess("Berhasil", "Data KPI berhasil dibuat");
+                        $('#modal_createmasterkpi').modal('hide');
+                    } else if (response.data.status == 'gagal') {
+                        messageFailed("Gagal", response.data.message);
+                    }
+                }).catch(function (error) {
+                    alert('error');
+                });
+            }
+        }
+
+        function getDataMasterKPI() {
+            if ( $.fn.DataTable.isDataTable('#table_masterkpi') ) {
+                $('#table_masterkpi').DataTable().destroy();
+            }
+
+            $('#table_masterkpi tbody').empty();
+
+            var status = $('#statuskpi').val();
+            table_kpi = $('#table_masterkpi').DataTable({
+                serverSide: true,
+                bAutoWidth: true,
+                processing:true,
+                ajax: {
+                    url: '{{route("masterkpi.getData")}}',
+                    type: "post",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "status": status
+                    }
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'k_indicator', name: 'k_indicator'},
+                    {data: 'action', name: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
     </script>
 @endsection
