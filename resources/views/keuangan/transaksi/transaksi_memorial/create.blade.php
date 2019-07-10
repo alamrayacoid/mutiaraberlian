@@ -2,9 +2,9 @@
 
 @section('extra_style')
     
-     <link rel="stylesheet" type="text/css" href="{{asset('modul_keuangan/css/style.css')}}">
-     <link rel="stylesheet" type="text/css" href="{{asset('modul_keuangan/js/vendors/vue/components/datatable-v2/style.css')}}">
-     <link rel="stylesheet" type="text/css" href="{{ asset('modul_keuangan/js/vendors/toast/dist/jquery.toast.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{asset('modul_keuangan/css/style.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('modul_keuangan/js/vendors/vue/components/datatable-v2/style.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('modul_keuangan/js/vendors/toast/dist/jquery.toast.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('modul_keuangan/js/vendors/datepicker/dist/datepicker.min.css') }}">
 
      <style type="text/css">
@@ -77,7 +77,7 @@
                         <div class="card">
                             <div class="card-header bordered p-2">
                                 <div class="header-block">
-                                    <h3 class="title"> Transaksi Mutasi Antar Kas </h3>
+                                    <h3 class="title"> Transaksi Memorial </h3>
                                 </div>
                                 <div class="header-block pull-right">
                                     <div class="loader" style="background: none; vertical-align: top;">
@@ -118,7 +118,7 @@
                                             <div class="col-md-6" style="border-right: 1px solid #ddd;">
                                                 <div class="col-md-12">
                                                     <div class="row">
-                                                        <div class="col-md-4 label">Nomor Mutasi Kas</div>
+                                                        <div class="col-md-4 label">Nomor Transaksi</div>
                                                         <div class="col-md-5">
                                                             <div class="input-group mb-3">
                                                               <input type="text" class="form-control form-control-sm" placeholder="Diisi oleh system." name="tr_nomor" id="tr_nomor" v-model="single.tr_nomor" readonly>
@@ -139,16 +139,16 @@
                                                     </div>
 
                                                     <div class="row">
-                                                        <div class="col-md-4 label">Jenis Mutasi Kas</div>
+                                                        <div class="col-md-4 label">Jenis Transaksi</div>
                                                         <div class="col-md-7">
                                                             <vue-select :name="'tr_jenis'" :id="'tr_jenis'" :options="tr_jenis" :search="false" @option-change="jenisChange" v-model="single.tr_jenis"></vue-select>
                                                         </div>
                                                     </div>
 
                                                     <div class="row" style="margin-top: 15px;">
-                                                        <div class="col-md-4 label">Tanggal Mutasi</div>
+                                                        <div class="col-md-4 label">Tanggal Transaksi</div>
                                                         <div class="col-md-7">
-                                                            <vue-datepicker :name="'tr_tanggal'" :id="'tr_tanggal'" :class="'form-control'" :placeholder="'Pilih Tanggal Mutasi'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.tr_tanggal" :disabled="stateForm == 'update'"></vue-datepicker>
+                                                            <vue-datepicker :name="'tr_tanggal'" :id="'tr_tanggal'" :class="'form-control'" :placeholder="'Pilih Tanggal Transaksi'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.tr_tanggal" :disabled="stateForm == 'update'"></vue-datepicker>
                                                         </div>
                                                     </div>
 
@@ -164,7 +164,7 @@
 
                                             <div class="col-md-6" style="border: 0px solid #eee; margin-top: -10px;">
                                                 <div class="row" style="margin-top: 15px;">
-                                                    <div class="col-md-4 label">Keterangan Mutasi</div>
+                                                    <div class="col-md-4 label">Keterangan Transaksi</div>
                                                     <div class="col-md-7">
                                                         <div class="input-group mb-3">
                                                           <input type="text" name="tr_keterangan" :class="$v.single.tr_keterangan.$error ? 'form-control form-control-sm error' : 'form-control form-control-sm'" placeholder="contoh: Transfer bank ke akun kas" v-model="$v.single.tr_keterangan.$model" :disabled="single.akunUtama">
@@ -180,14 +180,14 @@
                                                 </div>
 
                                                 <div class="row" style="margin-top: 0px;">
-                                                    <div class="col-md-4 label">Pilih COA Kas</div>
+                                                    <div class="col-md-4 label">Pilih COA Utama</div>
                                                     <div class="col-md-7">
                                                         <vue-select :name="'tr_akun_kas'" :id="'tr_akun_kas'" :options="tr_akun_kas" :search="false" @option-change="coaChange" v-model="single.tr_akun_kas"></vue-select>
                                                     </div>
                                                 </div>
 
                                                 <div class="row" style="margin-top: 15px;">
-                                                    <div class="col-md-4 label">Nominal Mutasi</div>
+                                                    <div class="col-md-4 label">Nominal Transaksi</div>
                                                     <div class="col-md-7">
                                                         <vue-inputmask :name="'tr_nominal'" :id="'tr_nominal'" :style="'background: white;'" :minus="false" @input="nominalChange"></vue-inputmask>
                                                     </div>
@@ -311,7 +311,7 @@
             </section>
         </template>
 
-         @include('keuangan.transaksi.mutasi_kas._partials._modal')
+         @include('keuangan.transaksi.transaksi_memorial._partials._modal')
     </article>
 
 @endsection
@@ -354,12 +354,12 @@
                 tr_jenis: [
                     {
                         id: 'D',
-                        text: 'Mutasi Masuk Antar Kas'
+                        text: 'Transaksi Memorial Debet'
                     },
 
                     {
                         id: 'K',
-                        text: 'Mutasi Keluar Antar Kas'
+                        text: 'Transaksi Memorial Kredit'
                     },
                 ],
 
@@ -451,7 +451,7 @@
             mounted: function(){
                 console.log('vue mounted');
 
-                axios.get("{{ Route('keuangan.mutasi_kas.resource') }}")
+                axios.get("{{ Route('keuangan.transaksi_memorial.resource') }}")
                         .then((response) => {
                             this.downloadingResource = false;
 
@@ -464,6 +464,8 @@
                             if(response.data.akun.length){
                                 this.coaChange(this.tr_akun_kas[0].id);
                                 this.tr_akun_detail[1].dt_akun = this.tr_akun_kas[0].id;
+                            }else{
+                                $('#modal_err').modal('show');
                             }
 
                             this.jenisChange(this.tr_jenis[0].id);
@@ -526,7 +528,7 @@
                         this.disabledButton = true;
                         dataForm = $('#data-form').serialize();
 
-                        axios.post('{{ Route("keuangan.mutasi_kas.save") }}', dataForm)
+                        axios.post('{{ Route("keuangan.transaksi_memorial.save") }}', dataForm)
                                 .then((response) => {
                                     console.log(response.data);
                                     if(response.data.status == 'success'){
@@ -625,7 +627,7 @@
                         this.disabledButton = true;
                         dataForm = $('#data-form').serialize();
 
-                        axios.post('{{ Route("keuangan.mutasi_kas.update") }}', dataForm)
+                        axios.post('{{ Route("keuangan.transaksi_memorial.update") }}', dataForm)
                                 .then((response) => {
                                     console.log(response.data);
                                     if(response.data.status == 'success'){
@@ -681,7 +683,7 @@
                     var cfrm = confirm('Apa anda yakin ?')
 
                     if(cfrm){
-                        axios.post('{{ Route("keuangan.mutasi_kas.delete") }}', {_token: '{{ csrf_token() }}', tr_id: this.single.tr_id})
+                        axios.post('{{ Route("keuangan.transaksi_memorial.delete") }}', {_token: '{{ csrf_token() }}', tr_id: this.single.tr_id})
                                 .then((response) => {
                                     console.log(response.data);
                                     if(response.data.status == 'success'){
