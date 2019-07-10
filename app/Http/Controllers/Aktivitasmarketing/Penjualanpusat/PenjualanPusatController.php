@@ -826,20 +826,21 @@ class PenjualanPusatController extends Controller
                 // waiit, check the name of $reff
                 $reff = $nota;
                 //sm_sell $sellprice
+                $sell = $PO->pod_price - $PO->pod_discvalue;
                 $mutDist = Mutasi::salesOut(
                     $productOrder->po_comp, // from
                     $productOrder->po_agen, // to
                     $PO->pod_item, // item-id
                     $kuantitas, // qty of smallest-unit
                     $productOrder->po_nota, // nota
-                    $reff, // nota-reff
                     $listPC, // list of production-code
                     $listQtyPC, // list of production-code-qty
                     $listUnitPC, // list of production-code-unit
-                    null
+                    $sell,
+                    5
                 );
 
-                if ($mutDist !== 'success') {
+                if ($mutDist->original['status'] !== 'success') {
                     return $mutDist;
                 }
             }
@@ -874,7 +875,7 @@ class PenjualanPusatController extends Controller
                     'scd_discvalue' => $data[$i]->pod_discvalue,
                     'scd_totalnet' => $data[$i]->pod_qty * ($data[$i]->pod_price - $data[$i]->pod_discvalue)
                 ];
-                $total = $total + ($data[$i]->pod_qty * $data[$i]->pod_price);
+                $total = $total + ($data[$i]->pod_qty * ($data[$i]->pod_price - $data[$i]->pod_discvalue));
                 array_push($insert, $temp);
             }
 
