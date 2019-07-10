@@ -19,4 +19,9 @@ class m_employee extends Model
     {
         return $this->belongsTo('App\m_divisi', 'e_department', 'm_id');
     }
+    // get company
+    public function getCompany()
+    {
+        return $this->belongsTo('App\m_company', 'e_company', 'c_id');
+    }
 }
