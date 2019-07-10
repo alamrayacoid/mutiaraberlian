@@ -50,7 +50,7 @@
         </tr>
         <tr>
             <td width="30%" style="background-color: #bdc3c7; font-weight: bold">Tanggal Pembelian</td>
-            <td>{{ $data->po_date }}</td>
+            <td>{{ $tglbeli }}</td>
         </tr>
         <tr>
             <td width="30%" style="background-color: #bdc3c7; font-weight: bold">Termin ke-</td>

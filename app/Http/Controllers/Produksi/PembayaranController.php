@@ -219,10 +219,11 @@ class PembayaranController extends Controller
 
         $kekurangan = $data->pop_value - $pay;
 
+        $tglbeli = Carbon::parse($data->po_date)->format('d-m-Y');
 
-        $date = Carbon::now()->format('M-d-y');
+        $date = Carbon::now()->format('d-m-Y');
 
-        return view('produksi.pembayaran.nota')->with(compact('data', 'date', 'kekurangan'));
+        return view('produksi.pembayaran.nota')->with(compact('data', 'date', 'kekurangan', 'tglbeli'));
     }
 
     public function bayar(Request $request)
