@@ -77,7 +77,7 @@
             								<th style="width: 10%" class="text-center">Datang</th>
             								<th style="width: 10%" class="text-center">Pulang</th>
             								<th style="width: 10%" class="text-center">Status</th>
-            								<th style="width: 10%" class="text-center">Note</th>
+            								<th style="width: 20%" class="text-center">Note</th>
                                             <th style="width: 10%" class="text-center">aksi</th>
             							</tr>
             						</thead>

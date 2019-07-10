@@ -109,9 +109,14 @@ class PresensiController extends Controller
             $status = $request->statusPr;
             $notes = $request->notePr;
             $date = Carbon::parse($request->datePr);
+            $branchId = $request->branch;
 
             // delete all related data
-            $oldData = d_presence::whereDate('p_date', $date)->get();
+            $oldData = d_presence::whereDate('p_date', $date)
+            ->whereHas('getEmployee', function ($q) use ($branchId) {
+                $q->where('e_company', $branchId);
+            })
+            ->get();
             if (count($oldData) != 0) {
                 $id = $oldData[0]->p_id;
                 foreach ($oldData as $key => $od) {

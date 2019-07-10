@@ -251,6 +251,12 @@
 
 					let row = '<tr>'+ empId + arriveTime + returnTime + status + note + action +'</tr>'
 			        $('#table_presence tbody').append(row);
+					// get recently added item to update read-only for 'tidak masuk'
+					if ($('.statusPr').filter(':last').val() == 'T') {
+						let idxTemp = $('.statusPr').index(this);
+						$('.arriveTimePr').eq(idxTemp).attr('readonly', true);
+						$('.returnTimePr').eq(idxTemp).attr('readonly', true);
+					}
 				});
 				getEventsReady();
 			},
@@ -323,6 +329,13 @@
 			data: data,
 			type: 'post',
 			success: function(resp) {
+				if (resp.status == 'berhasil') {
+					messageSuccess('Berhasil', 'Presensi berhasil disimpan !');
+					getPresence();
+				}
+				else {
+					messageWarning('Perhatian', 'Terjadi kesalahan : '+ resp.message);
+				}
 				console.log(resp);
 			},
 			error: function(e) {
