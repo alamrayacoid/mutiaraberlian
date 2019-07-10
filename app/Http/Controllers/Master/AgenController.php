@@ -13,6 +13,7 @@ use DB;
 use File;
 use Image;
 use Session;
+use Auth;
 use Validator;
 use Yajra\DataTables\DataTables;
 
@@ -202,10 +203,22 @@ class AgenController extends Controller
      */
     public function getList()
     {
+        $user = Auth::user();
+        $comp = $user->u_company;
+        $info = DB::table('m_company')
+            ->where('c_id', '=', $comp)
+            ->first();
+
         $datas = DB::table('m_agen')
             ->join('m_wil_kota', 'a_area', 'wc_id')
-            ->orderBy('a_code', 'asc')
-            ->get();
+            ->orderBy('a_code', 'asc');
+
+        if ($info->c_type == 'PUSAT'){
+            $datas = $datas->get();
+        } else {
+            $datas = $datas->where('a_mma', '=', $info->c_id)->get();
+        }
+
         return Datatables::of($datas)
             ->addIndexColumn()
             ->addColumn('area', function ($datas) {
@@ -247,10 +260,24 @@ class AgenController extends Controller
         if (!AksesUser::checkAkses(7, 'create')){
             abort(401);
         }
+
+        $data['mma'] = [];
+
+        $user = Auth::user();
+        $comp = $user->u_company;
+        $info = DB::table('m_company')
+            ->where('c_id', '=', $comp)
+            ->first();
+
+        if ($info->c_type != 'PUSAT'){
+            $data['mma'] = m_company::where('c_id', '=', $info->c_id)->get();
+        } else {
+            $data['mma'] = m_company::where('c_type', '!=', 'AGEN')->get();
+        }
+
         $data['provinces'] = $this->getProvinces();
         $data['classes'] = $this->getClasses();
         $data['salesPrice'] = $this->getSalesPrice();
-        $data['mma'] = m_company::where('c_type', 'CABANG')->orWhere('c_type', 'PUSAT')->get();
 
         return view('masterdatautama.agen.create', compact('data'));
     }
@@ -356,7 +383,20 @@ class AgenController extends Controller
         $data['agen'] = DB::table('m_agen')
             ->where('a_id', $id)
             ->first();
-        $data['mma'] = m_company::where('c_type', 'CABANG')->orWhere('c_type', 'PUSAT')->get();
+
+        $data['mma'] = [];
+
+        $user = Auth::user();
+        $comp = $user->u_company;
+        $info = DB::table('m_company')
+            ->where('c_id', '=', $comp)
+            ->first();
+
+        if ($info->c_type != 'PUSAT'){
+            $data['mma'] = m_company::where('c_id', '=', $info->c_id)->get();
+        } else {
+            $data['mma'] = m_company::where('c_type', '!=', 'AGEN')->get();
+        }
 
         $provinceId = $this->getProvinceByCity($data['agen']->a_area);
 

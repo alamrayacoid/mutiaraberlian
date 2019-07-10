@@ -150,7 +150,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/agen/disable/{id}', 'Master\AgenController@disable')->name('agen.disable');
     Route::post('/masterdatautama/agen/enable/{id}', 'Master\AgenController@enable')->name('agen.enable');
 
-
     Route::get('/masterdatautama/agen/kelolaagen/index', 'MasterController@kelolaagen')->name('kelolaagen.index');
 
     Route::get('/masterdatautama/datasatuan/index', 'Master\SatuanController@index')->name('datasatuan.index');
