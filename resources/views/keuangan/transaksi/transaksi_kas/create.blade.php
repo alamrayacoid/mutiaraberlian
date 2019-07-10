@@ -2,9 +2,9 @@
 
 @section('extra_style')
     
-     <link rel="stylesheet" type="text/css" href="{{asset('modul_keuangan/css/style.css')}}">
-     <link rel="stylesheet" type="text/css" href="{{asset('modul_keuangan/js/vendors/vue/components/datatable-v2/style.css')}}">
-     <link rel="stylesheet" type="text/css" href="{{ asset('modul_keuangan/js/vendors/toast/dist/jquery.toast.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{asset('modul_keuangan/css/style.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('modul_keuangan/js/vendors/vue/components/datatable-v2/style.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('modul_keuangan/js/vendors/toast/dist/jquery.toast.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('modul_keuangan/js/vendors/datepicker/dist/datepicker.min.css') }}">
 
      <style type="text/css">
@@ -77,7 +77,7 @@
                         <div class="card">
                             <div class="card-header bordered p-2">
                                 <div class="header-block">
-                                    <h3 class="title"> Transaksi Mutasi Antar Kas </h3>
+                                    <h3 class="title"> Transaksi Kas </h3>
                                 </div>
                                 <div class="header-block pull-right">
                                     <div class="loader" style="background: none; vertical-align: top;">
@@ -118,7 +118,7 @@
                                             <div class="col-md-6" style="border-right: 1px solid #ddd;">
                                                 <div class="col-md-12">
                                                     <div class="row">
-                                                        <div class="col-md-4 label">Nomor Mutasi Kas</div>
+                                                        <div class="col-md-4 label">Nomor Transaksi</div>
                                                         <div class="col-md-5">
                                                             <div class="input-group mb-3">
                                                               <input type="text" class="form-control form-control-sm" placeholder="Diisi oleh system." name="tr_nomor" id="tr_nomor" v-model="single.tr_nomor" readonly>
@@ -139,16 +139,32 @@
                                                     </div>
 
                                                     <div class="row">
-                                                        <div class="col-md-4 label">Jenis Mutasi Kas</div>
+                                                        <div class="col-md-4 label">Jenis Transaksi</div>
                                                         <div class="col-md-7">
                                                             <vue-select :name="'tr_jenis'" :id="'tr_jenis'" :options="tr_jenis" :search="false" @option-change="jenisChange" v-model="single.tr_jenis"></vue-select>
                                                         </div>
                                                     </div>
 
                                                     <div class="row" style="margin-top: 15px;">
-                                                        <div class="col-md-4 label">Tanggal Mutasi</div>
+                                                        <div class="col-md-4 label">Tanggal Transaksi</div>
                                                         <div class="col-md-7">
-                                                            <vue-datepicker :name="'tr_tanggal'" :id="'tr_tanggal'" :class="'form-control'" :placeholder="'Pilih Tanggal Mutasi'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.tr_tanggal" :disabled="stateForm == 'update'"></vue-datepicker>
+                                                            <vue-datepicker :name="'tr_tanggal'" :id="'tr_tanggal'" :class="'form-control'" :placeholder="'Pilih Tanggal Transaksi'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.tr_tanggal" :disabled="stateForm == 'update'"></vue-datepicker>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row" style="margin-top: 15px;">
+                                                        <div class="col-md-4 label">Keterangan Transaksi</div>
+                                                        <div class="col-md-7">
+                                                            <div class="input-group mb-3">
+                                                              <input type="text" name="tr_keterangan" :class="$v.single.tr_keterangan.$error ? 'form-control form-control-sm error' : 'form-control form-control-sm'" placeholder="contoh: Transfer bank ke akun kas" v-model="$v.single.tr_keterangan.$model" :disabled="single.akunUtama">
+
+                                                              <div class="input-group-append">
+                                                                <span class="input-group-text hint" id="basic-addon2" style="min-width: 20px;" @click="keteranganModal">
+                                                                    <i class="fa fa-search"></i>
+                                                                </span>
+                                                              </div>
+
+                                                            </div>
                                                         </div>
                                                     </div>
 
@@ -163,31 +179,30 @@
                                             </div>
 
                                             <div class="col-md-6" style="border: 0px solid #eee; margin-top: -10px;">
-                                                <div class="row" style="margin-top: 15px;">
-                                                    <div class="col-md-4 label">Keterangan Mutasi</div>
+                                                
+                                                <div class="row" style="margin-top: 0px;">
+                                                    <div class="col-md-4 label">Type Cashflow</div>
                                                     <div class="col-md-7">
-                                                        <div class="input-group mb-3">
-                                                          <input type="text" name="tr_keterangan" :class="$v.single.tr_keterangan.$error ? 'form-control form-control-sm error' : 'form-control form-control-sm'" placeholder="contoh: Transfer bank ke akun kas" v-model="$v.single.tr_keterangan.$model" :disabled="single.akunUtama">
-
-                                                          <div class="input-group-append">
-                                                            <span class="input-group-text hint" id="basic-addon2" style="min-width: 20px;" @click="keteranganModal">
-                                                                <i class="fa fa-search"></i>
-                                                            </span>
-                                                          </div>
-
-                                                        </div>
+                                                        <vue-select :name="'tr_cashflow'" :id="'tr_cashflow'" :options="tr_cashflow" :search="false" @option-change="cashflowChange" v-model="single.tr_cashflow"></vue-select>
                                                     </div>
                                                 </div>
 
-                                                <div class="row" style="margin-top: 0px;">
-                                                    <div class="col-md-4 label">Pilih COA Kas</div>
+                                                <div class="row" style="margin-top: 15px;">
+                                                    <div class="col-md-4 label">Akun Cashflow</div>
+                                                    <div class="col-md-7">
+                                                        <vue-select :name="'tr_ac_cashflow'" :id="'tr_ac_cashflow'" :options="cashflowOption" :search="false" v-model="single.tr_akun_cashflow"></vue-select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row" style="margin-top: 15px;">
+                                                    <div class="col-md-4 label">Pilih COA Utama</div>
                                                     <div class="col-md-7">
                                                         <vue-select :name="'tr_akun_kas'" :id="'tr_akun_kas'" :options="tr_akun_kas" :search="false" @option-change="coaChange" v-model="single.tr_akun_kas"></vue-select>
                                                     </div>
                                                 </div>
 
                                                 <div class="row" style="margin-top: 15px;">
-                                                    <div class="col-md-4 label">Nominal Mutasi</div>
+                                                    <div class="col-md-4 label">Nominal Transaksi</div>
                                                     <div class="col-md-7">
                                                         <vue-inputmask :name="'tr_nominal'" :id="'tr_nominal'" :style="'background: white;'" :minus="false" @input="nominalChange"></vue-inputmask>
                                                     </div>
@@ -243,7 +258,7 @@
                                                                 </template>
 
                                                                 <template v-if="idx > 0">
-                                                                    <vue-select :classes="'akun_detail'" :id="'dt_akun_'+idx" :name="'dt_akun[]'" :options="tr_akun_kas" :search="false" :styles="'border: 0px;'" v-model="detail.dt_akun"></vue-select>
+                                                                    <vue-select :classes="'akun_detail'" :id="'dt_akun_'+idx" :name="'dt_akun[]'" :options="tr_akun_lawan" :search="false" :styles="'border: 0px;'" v-model="detail.dt_akun"></vue-select>
                                                                 </template>
                                                             </td>
 
@@ -311,7 +326,7 @@
             </section>
         </template>
 
-         @include('keuangan.transaksi.mutasi_kas._partials._modal')
+         @include('keuangan.transaksi.transaksi_memorial._partials._modal')
     </article>
 
 @endsection
@@ -354,12 +369,29 @@
                 tr_jenis: [
                     {
                         id: 'D',
-                        text: 'Mutasi Masuk Antar Kas'
+                        text: 'Transaksi Kas Debet'
                     },
 
                     {
                         id: 'K',
-                        text: 'Mutasi Keluar Antar Kas'
+                        text: 'Transaksi Kas Kredit'
+                    },
+                ],
+
+                tr_cashflow: [
+                    {
+                        id: 'OCF',
+                        text: 'Operating Cashflow'
+                    },
+
+                    {
+                        id: 'ICF',
+                        text: 'Investing Cashflow'
+                    },
+
+                    {
+                        id: 'FCF',
+                        text: 'Financial Cashflow'
                     },
                 ],
 
@@ -418,6 +450,7 @@
                 },
 
                 tr_akun_lawan: [],
+                dataCashflow : [],
                 addition: [],
 
                 single: {
@@ -427,6 +460,8 @@
                     tr_jenis : 'D',
                     tr_keterangan: '',
                     tr_tanggal: '',
+                    tr_cashflow: 'OCF',
+                    tr_akun_cashflow: '',
 
                     totDebet: 0,
                     totKredit: 0,
@@ -444,26 +479,45 @@
                 }
             },
 
-            watch: {
+            computed: {
+                cashflowOption: function(e){
+                    var that = this;
+                    var data = $.grep(this.dataCashflow, function(e){ return e.type == that.single.tr_cashflow });
+                    this.single.tr_akun_cashflow = data[0].id;
 
+                    return data;
+                }
+            },
+
+            watch: {
+                
             },
 
             mounted: function(){
                 console.log('vue mounted');
 
-                axios.get("{{ Route('keuangan.mutasi_kas.resource') }}")
+                axios.get("{{ Route('keuangan.transaksi_kas.resource') }}")
                         .then((response) => {
                             this.downloadingResource = false;
 
                             this.single.tr_tanggal = '{{ date("d/m/Y") }}';
                             this.tr_akun_kas = response.data.akun;
+                            this.tr_akun_lawan = response.data.akunLawan;
+                            this.dataCashflow = response.data.cashflow;
                             this.single.jenisMutasi = 'D';
                             this.data_table_transaksi.data.source = response.data.transaksi;
                             this.data_table_keterangan.data.source = response.data.keterangan;
 
                             if(response.data.akun.length){
                                 this.coaChange(this.tr_akun_kas[0].id);
-                                this.tr_akun_detail[1].dt_akun = this.tr_akun_kas[0].id;
+                            }
+
+                            if(response.data.akunLawan.length){
+                                this.tr_akun_detail[1].dt_akun = this.tr_akun_lawan[0].id;
+                            }
+
+                            if(!response.data.akunLawan.length || !response.data.akun.length){
+                                $('#modal_err').modal('show');
                             }
 
                             this.jenisChange(this.tr_jenis[0].id);
@@ -526,7 +580,7 @@
                         this.disabledButton = true;
                         dataForm = $('#data-form').serialize();
 
-                        axios.post('{{ Route("keuangan.mutasi_kas.save") }}', dataForm)
+                        axios.post('{{ Route("keuangan.transaksi_kas.save") }}', dataForm)
                                 .then((response) => {
                                     console.log(response.data);
                                     if(response.data.status == 'success'){
@@ -625,7 +679,7 @@
                         this.disabledButton = true;
                         dataForm = $('#data-form').serialize();
 
-                        axios.post('{{ Route("keuangan.mutasi_kas.update") }}', dataForm)
+                        axios.post('{{ Route("keuangan.transaksi_kas.update") }}', dataForm)
                                 .then((response) => {
                                     console.log(response.data);
                                     if(response.data.status == 'success'){
@@ -681,7 +735,7 @@
                     var cfrm = confirm('Apa anda yakin ?')
 
                     if(cfrm){
-                        axios.post('{{ Route("keuangan.mutasi_kas.delete") }}', {_token: '{{ csrf_token() }}', tr_id: this.single.tr_id})
+                        axios.post('{{ Route("keuangan.transaksi_kas.delete") }}', {_token: '{{ csrf_token() }}', tr_id: this.single.tr_id})
                                 .then((response) => {
                                     console.log(response.data);
                                     if(response.data.status == 'success'){
@@ -757,6 +811,10 @@
                     this.calculatedTotal();
                 },
 
+                cashflowChange: function(e){
+                    this.single.tr_cashflow = e;
+                },
+
                 addAddition: function(e){
                     e.preventDefault();
                     e.stopImmediatePropagation();
@@ -770,7 +828,7 @@
                             dt_kredit: 0,
                             dt_debet: 0,
                             dt_status: 'open',
-                            dt_akun: that.tr_akun_kas[0].id,
+                            dt_akun: that.tr_akun_lawan[0].id,
                             dt_deleted: false,
                         }
                     );
@@ -812,7 +870,11 @@
                         this.single.tr_keterangan = conteks.tr_keterangan;
                         this.single.jenisMutasi = conteks.detail[0].trdt_dk;
                         this.single.tr_tanggal = this.humanizeDate(conteks.tr_tanggal_trans);
+                        var cashflow = $.grep(conteks.detail, function(e){ return e.trdt_cashflow });
+                        this.single.tr_cashflow = cashflow[0].ac_type;
+                        this.single.tr_akun_cashflow = cashflow[0].trdt_cashflow;
 
+                        $('#tr_cashflow').val(this.single.tr_cashflow).trigger('change.select2');
                         $('#tr_jenis').val(conteks.detail[0].trdt_dk).trigger('change.select2');
                         $('#tr_nominal').val(conteks.detail[0].trdt_value);
 
@@ -834,6 +896,7 @@
 
                         setTimeout(function(){
                             that.tr_akun_detail = feeder;
+                            $('#tr_ac_cashflow').val(cashflow[0].trdt_cashflow).trigger('change.select2');
                             $('#dt_akun_1').val(conteks.detail[1].trdt_akun).trigger('change.select2');
                             that.calculatedTotal();
                         }, 0);
@@ -955,7 +1018,10 @@
 
                     if(that.tr_akun_kas.length){
                         that.coaChange(that.tr_akun_kas[0].id);
-                        $('#dt_akun_1').val(this.tr_akun_kas[0].id).trigger('change.select2');
+                    }
+
+                    if(that.tr_akun_lawan.length){
+                        $('#dt_akun_1').val(this.tr_akun_lawan[0].id).trigger('change.select2');
                     }
 
                     this.jenisChange(this.tr_jenis[0].id);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Keuangan\transaksi\mutasi_kas;
+namespace App\Http\Controllers\Keuangan\transaksi\transaksi_kas;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -11,10 +11,10 @@ use DB;
 use Auth;
 use Session;
 
-class mutasi_kas_controller extends Controller
+class transaksi_kas_controller extends Controller
 {
     protected function create(){
-    	return view('keuangan.transaksi.mutasi_kas.create');
+    	return view('keuangan.transaksi.transaksi_kas.create');
     }
 
     protected function resource(){
@@ -23,8 +23,19 @@ class mutasi_kas_controller extends Controller
     				->where('ak_setara_kas', '1')
     				->select('ak_id as id', 'ak_id', DB::raw('concat(ak_nomor, " - ", ak_nama) as text'))->get();
 
+    	$akunLawan = DB::table('dk_akun')
+    				->where('ak_comp', Auth::user()->u_company)
+    				->where('ak_setara_kas', '0')
+    				->select('ak_id as id', 'ak_id', DB::raw('concat(ak_nomor, " - ", ak_nama) as text'))->get();
+
+    	$cashflow = DB::table('dk_akun_cashflow')
+    					->select('ac_id as id', 'ac_nama as text', 'ac_type as type')
+    					->orderBy('ac_nama', 'asc')->get();
+
     	return json_encode([
     		"akun"		  => $akun,
+    		"akunLawan"	  => $akunLawan,
+    		"cashflow"	  => $cashflow,
     		"transaksi"	  => $this->grapData(),
             "keterangan"  => $keterangan = DB::table('dk_transaksi')->distinct('tr_keterangan')->select('tr_keterangan')->get()
     	]);
@@ -57,7 +68,7 @@ class mutasi_kas_controller extends Controller
 
     		DB::table('dk_transaksi')->insert([
     			'tr_id'				=> $id,
-    			'tr_type'			=> 'MK',
+    			'tr_type'			=> 'TK',
     			'tr_comp'			=> Auth::user()->u_company,
     			'tr_nomor'			=> $nomor,
     			'tr_tanggal_trans'	=> $tanggal,
@@ -74,6 +85,7 @@ class mutasi_kas_controller extends Controller
     				"trdt_value"		=> str_replace(',', '', $request->tr_nominal),
     				"trdt_dk"			=> $request->tr_jenis,
 					"trdt_keterangan" 	=> $request->dt_keterangan[0],
+					"trdt_cashflow"		=> (isset($request->tr_ac_cashflow)) ? $request->tr_ac_cashflow : null
     			];
 
     			$detail[0] = [
@@ -82,6 +94,7 @@ class mutasi_kas_controller extends Controller
     				"jrdt_value"		=> str_replace(',', '', $request->tr_nominal),
     				"jrdt_dk"			=> $request->tr_jenis,
 					"jrdt_keterangan" 	=> $request->dt_keterangan[0],
+					"jrdt_cashflow"		=> (isset($request->tr_ac_cashflow)) ? $request->tr_ac_cashflow : null
     			];
     		}
 
@@ -98,7 +111,8 @@ class mutasi_kas_controller extends Controller
 	    				"trdt_akun"			=> $akun,
 	    				"trdt_value"		=> $nominal,
 	    				"trdt_dk"			=> (is_null($request->dt_debet[$key + 1])) ? "K" : "D",
-	    				"trdt_keterangan"	=> $request->dt_keterangan[$key + 1]
+	    				"trdt_keterangan"	=> $request->dt_keterangan[$key + 1],
+	    				"trdt_cashflow"		=> null
 	    			]);
 
 	    			array_push($detail, [
@@ -107,6 +121,7 @@ class mutasi_kas_controller extends Controller
 	    				"jrdt_value"		=> $nominal,
 	    				"jrdt_dk"			=> (is_null($request->dt_debet[$key + 1])) ? "K" : "D",
 						"jrdt_keterangan" 	=> $request->dt_keterangan[$key + 1],
+						"jrdt_cashflow"		=> (isset($request->tr_ac_cashflow)) ? $request->tr_ac_cashflow : null
 	    			]);
     			}
 
@@ -115,7 +130,7 @@ class mutasi_kas_controller extends Controller
 
     		DB::table('dk_transaksi_detail')->insert($feeder);
 
-    		$jurnal = jurnal::jurnalTransaksi($detail, $tanggal, $nomor, $request->tr_keterangan, 'MK', Auth::user()->u_company);
+    		$jurnal = jurnal::jurnalTransaksi($detail, $tanggal, $nomor, $request->tr_keterangan, 'TK', Auth::user()->u_company);
 
             if($jurnal['status'] == 'error'){
                 return json_encode($jurnal);
@@ -125,7 +140,7 @@ class mutasi_kas_controller extends Controller
 
     		return json_encode([
                 'status'        => 'success',
-                'text'          => 'Data mutasi antar kas baru berhasil disimpan',
+                'text'          => 'Data transaksi kas berhasil disimpan',
                 "transaksi"		=> $this->grapData(),
                 "keterangan"    => $keterangan = DB::table('dk_transaksi')->distinct('tr_keterangan')->select('tr_keterangan')->get()
             ]);
@@ -169,6 +184,8 @@ class mutasi_kas_controller extends Controller
                     "trdt_value"        => str_replace(',', '', $request->tr_nominal),
                     "trdt_dk"           => $request->tr_jenis,
                     "trdt_keterangan"   => $request->dt_keterangan[0],
+					"trdt_cashflow"		=> (isset($request->tr_ac_cashflow)) ? $request->tr_ac_cashflow : null
+
                 ];
 
                 $detail[0] = [
@@ -177,6 +194,7 @@ class mutasi_kas_controller extends Controller
                     "jrdt_value"        => str_replace(',', '', $request->tr_nominal),
                     "jrdt_dk"           => $request->tr_jenis,
                     "jrdt_keterangan"   => $request->dt_keterangan[0],
+					"jrdt_cashflow"		=> (isset($request->tr_ac_cashflow)) ? $request->tr_ac_cashflow : null
                 ];
             }
 
@@ -193,7 +211,9 @@ class mutasi_kas_controller extends Controller
                         "trdt_akun"         => $akun,
                         "trdt_value"        => $nominal,
                         "trdt_dk"           => (is_null($request->dt_debet[$key + 1])) ? "K" : "D",
-                        "trdt_keterangan"   => $request->dt_keterangan[$key + 1]
+                        "trdt_keterangan"   => $request->dt_keterangan[$key + 1],
+						"trdt_cashflow"		=> null
+
                     ]);
 
                     array_push($detail, [
@@ -202,6 +222,7 @@ class mutasi_kas_controller extends Controller
                         "jrdt_value"        => $nominal,
                         "jrdt_dk"           => (is_null($request->dt_debet[$key + 1])) ? "K" : "D",
                         "jrdt_keterangan"   => $request->dt_keterangan[$key + 1],
+						"jrdt_cashflow"		=> (isset($request->tr_ac_cashflow)) ? $request->tr_ac_cashflow : null
                     ]);
                 }
 
@@ -210,7 +231,7 @@ class mutasi_kas_controller extends Controller
 
             DB::table('dk_transaksi_detail')->insert($feeder);
 
-            $jurnal = jurnal::updateJurnal($detail, $transaksi->first()->tr_tanggal_trans, $transaksi->first()->tr_nomor, $request->tr_keterangan, 'MK', Auth::user()->u_company);
+            $jurnal = jurnal::updateJurnal($detail, $transaksi->first()->tr_tanggal_trans, $transaksi->first()->tr_nomor, $request->tr_keterangan, 'TK', Auth::user()->u_company);
 
             if($jurnal['status'] == 'error'){
                 return json_encode($jurnal);
@@ -220,7 +241,7 @@ class mutasi_kas_controller extends Controller
 
             return json_encode([
                 'status'        => 'success',
-                'text'          => 'Data mutasi antar kas berhasil diperbarui',
+                'text'          => 'Data transaksi kas berhasil diperbarui',
                 "transaksi"     => $this->grapData(),
                 "keterangan"    => $keterangan = DB::table('dk_transaksi')->distinct('tr_keterangan')->select('tr_keterangan')->get()
             ]);
@@ -264,7 +285,7 @@ class mutasi_kas_controller extends Controller
 
             return json_encode([
                 'status'        => 'success',
-                'text'          => 'Data mutasi antar kas berhasil dihapus',
+                'text'          => 'Data transaksi kas berhasil dihapus',
                 "transaksi"     => $this->grapData(),
                 "keterangan"    => $keterangan = DB::table('dk_transaksi')->distinct('tr_keterangan')->select('tr_keterangan')->get()
             ]);
@@ -285,13 +306,13 @@ class mutasi_kas_controller extends Controller
 
     	$data = DB::table('dk_transaksi')
     				->where(DB::raw('DATE_FORMAT(tr_tanggal_trans, "%Y-%m")'), $keyword)
-                    ->where('tr_type', 'MK')
+                    ->where('tr_type', 'TK')
     				->select(DB::raw('substring(tr_nomor, 13) as nomor'))
     				->orderBy('tr_id', 'desc')
     				->first();
 
     	$data = ($data) ? ($data->nomor + 1) : 1;
-    	$nomor = 'MK-'.date('d', strtotime($date)).'/'.date('m', strtotime($date)).'/'.date('y', strtotime($date)).'/'.$data;
+    	$nomor = 'TK-'.date('d', strtotime($date)).'/'.date('m', strtotime($date)).'/'.date('y', strtotime($date)).'/'.$data;
 
     	return $nomor;
     }
@@ -301,14 +322,13 @@ class mutasi_kas_controller extends Controller
     				->with([
                         'detail' => function($query){
                             $query->join('dk_akun', 'dk_akun.ak_id', '=', 'dk_transaksi_detail.trdt_akun')
-                                        ->select('dk_transaksi_detail.*', DB::raw('concat(ak_nomor, " - ", ak_nama) as akun_nama'));
+                            			->leftJoin('dk_akun_cashflow', 'dk_akun_cashflow.ac_id', '=', 'dk_transaksi_detail.trdt_cashflow')
+                                        ->select('dk_transaksi_detail.*', DB::raw('concat(ak_nomor, " - ", ak_nama) as akun_nama'), 'dk_akun_cashflow.ac_type');
                         }
                     ])
-    				->where('tr_type', 'MK')
+    				->where('tr_type', 'TK')
     				->get();
 
     	return $data;
     }
-
-
 }

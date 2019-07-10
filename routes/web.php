@@ -292,6 +292,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
     Route::get('/inventory/manajemenstok/create', 'InventoryController@manajemenstok_create')->name('manajemenstok.create');
     Route::get('/inventory/manajemenstok/edit', 'InventoryController@manajemenstok_edit')->name('manajemenstok.edit');
+    // Analisa Stock Turn Over
+    Route::get('/inventory/analisaturnover/index', 'InventoryController@analisaTO')->name('analisaTO.index');
+    Route::get('/inventory/analisaturnover/get-list', 'InventoryController@analisaTO_list')->name('analisaTO.list');
     // Opname
     Route::get('/inventory/manajemenstok/opnamestock/index', 'Inventory\OpnameController@index')->name('opname.index');
     Route::get('/inventory/manajemenstok/opnamestock/list', 'Inventory\OpnameController@getList')->name('opname.list');
@@ -418,6 +421,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/targetrealisasi/store', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetRealStore')->name('targetReal.store');
     Route::get('/marketing/penjualanpusat/targetrealisasi/editTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@editTarget')->name('targetReal.edit');
     Route::get('/marketing/penjualanpusat/targetrealisasi/updateTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@updateTarget')->name('targetReal.update');
+    // Penerimaan Piutang ---------------------------    
+    Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-list/{nota}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@listPiutang')->name('piutang.list');
+    Route::get('/get-provinsi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getProvinsi')->name('get.provinsi');
+    Route::get('/get-city/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getCity')->name('get.city');
+    Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-agen/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getAgen')->name('piutang.getAgen');
+    Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-nota-agen/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getNotaAgen')->name('piutang.getNotaAgen');
     // End ---
     // Return Penjualan
     Route::get('/marketing/penjualanpusat/returnpenjualan/index', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@index')->name('returnpenjualanagen.index');
@@ -771,6 +780,58 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('keuangan/manajemen-input-transaksi/mutasi_kas/save', [
                 'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@save'
             ])->name('keuangan.mutasi_kas.save');
+
+            Route::post('keuangan/manajemen-input-transaksi/mutasi_kas/update', [
+                'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@update'
+            ])->name('keuangan.mutasi_kas.update');
+
+            Route::post('keuangan/manajemen-input-transaksi/mutasi_kas/delete', [
+                'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@delete'
+            ])->name('keuangan.mutasi_kas.delete');
+
+
+        // Transaksi Kas
+            Route::get('keuangan/manajemen-input-transaksi/transaksi_kas/create', [
+                'uses'  => 'Keuangan\transaksi\transaksi_kas\transaksi_kas_controller@create'
+            ])->name('keuangan.transaksi_kas.create');
+
+            Route::get('keuangan/manajemen-input-transaksi/transaksi_kas/resource', [
+                'uses'  => 'Keuangan\transaksi\transaksi_kas\transaksi_kas_controller@resource'
+            ])->name('keuangan.transaksi_kas.resource');
+
+            Route::post('keuangan/manajemen-input-transaksi/transaksi_kas/save', [
+                'uses'  => 'Keuangan\transaksi\transaksi_kas\transaksi_kas_controller@save'
+            ])->name('keuangan.transaksi_kas.save');
+
+            Route::post('keuangan/manajemen-input-transaksi/transaksi_kas/update', [
+                'uses'  => 'Keuangan\transaksi\transaksi_kas\transaksi_kas_controller@update'
+            ])->name('keuangan.transaksi_kas.update');
+
+            Route::post('keuangan/manajemen-input-transaksi/transaksi_kas/delete', [
+                'uses'  => 'Keuangan\transaksi\transaksi_kas\transaksi_kas_controller@delete'
+            ])->name('keuangan.transaksi_kas.delete');
+
+
+        // Transaksi Memorial
+            Route::get('keuangan/manajemen-input-transaksi/transaksi_memorial/create', [
+                'uses'  => 'Keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@create'
+            ])->name('keuangan.transaksi_memorial.create');
+
+            Route::get('keuangan/manajemen-input-transaksi/transaksi_memorial/resource', [
+                'uses'  => 'Keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@resource'
+            ])->name('keuangan.transaksi_memorial.resource');
+
+            Route::post('keuangan/manajemen-input-transaksi/transaksi_memorial/save', [
+                'uses'  => 'Keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@save'
+            ])->name('keuangan.transaksi_memorial.save');
+
+            Route::post('keuangan/manajemen-input-transaksi/transaksi_memorial/update', [
+                'uses'  => 'Keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@update'
+            ])->name('keuangan.transaksi_memorial.update');
+
+            Route::post('keuangan/manajemen-input-transaksi/transaksi_memorial/delete', [
+                'uses'  => 'Keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@delete'
+            ])->name('keuangan.transaksi_memorial.delete');
 
     // Selesai Dirga
 });

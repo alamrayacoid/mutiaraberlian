@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Keuangan\transaksi\mutasi_kas;
+namespace App\Http\Controllers\Keuangan\transaksi\transaksi_memorial;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -11,16 +11,16 @@ use DB;
 use Auth;
 use Session;
 
-class mutasi_kas_controller extends Controller
+class transaksi_memorial_controller extends Controller
 {
     protected function create(){
-    	return view('keuangan.transaksi.mutasi_kas.create');
+    	return view('keuangan.transaksi.transaksi_memorial.create');
     }
 
     protected function resource(){
     	$akun = DB::table('dk_akun')
     				->where('ak_comp', Auth::user()->u_company)
-    				->where('ak_setara_kas', '1')
+    				->where('ak_setara_kas', '0')
     				->select('ak_id as id', 'ak_id', DB::raw('concat(ak_nomor, " - ", ak_nama) as text'))->get();
 
     	return json_encode([
@@ -57,7 +57,7 @@ class mutasi_kas_controller extends Controller
 
     		DB::table('dk_transaksi')->insert([
     			'tr_id'				=> $id,
-    			'tr_type'			=> 'MK',
+    			'tr_type'			=> 'TM',
     			'tr_comp'			=> Auth::user()->u_company,
     			'tr_nomor'			=> $nomor,
     			'tr_tanggal_trans'	=> $tanggal,
@@ -115,7 +115,7 @@ class mutasi_kas_controller extends Controller
 
     		DB::table('dk_transaksi_detail')->insert($feeder);
 
-    		$jurnal = jurnal::jurnalTransaksi($detail, $tanggal, $nomor, $request->tr_keterangan, 'MK', Auth::user()->u_company);
+    		$jurnal = jurnal::jurnalTransaksi($detail, $tanggal, $nomor, $request->tr_keterangan, 'TM', Auth::user()->u_company);
 
             if($jurnal['status'] == 'error'){
                 return json_encode($jurnal);
@@ -125,7 +125,7 @@ class mutasi_kas_controller extends Controller
 
     		return json_encode([
                 'status'        => 'success',
-                'text'          => 'Data mutasi antar kas baru berhasil disimpan',
+                'text'          => 'Data transaksi memorial baru berhasil disimpan',
                 "transaksi"		=> $this->grapData(),
                 "keterangan"    => $keterangan = DB::table('dk_transaksi')->distinct('tr_keterangan')->select('tr_keterangan')->get()
             ]);
@@ -210,7 +210,7 @@ class mutasi_kas_controller extends Controller
 
             DB::table('dk_transaksi_detail')->insert($feeder);
 
-            $jurnal = jurnal::updateJurnal($detail, $transaksi->first()->tr_tanggal_trans, $transaksi->first()->tr_nomor, $request->tr_keterangan, 'MK', Auth::user()->u_company);
+            $jurnal = jurnal::updateJurnal($detail, $transaksi->first()->tr_tanggal_trans, $transaksi->first()->tr_nomor, $request->tr_keterangan, 'TM', Auth::user()->u_company);
 
             if($jurnal['status'] == 'error'){
                 return json_encode($jurnal);
@@ -220,7 +220,7 @@ class mutasi_kas_controller extends Controller
 
             return json_encode([
                 'status'        => 'success',
-                'text'          => 'Data mutasi antar kas berhasil diperbarui',
+                'text'          => 'Data transaksi memorial berhasil diperbarui',
                 "transaksi"     => $this->grapData(),
                 "keterangan"    => $keterangan = DB::table('dk_transaksi')->distinct('tr_keterangan')->select('tr_keterangan')->get()
             ]);
@@ -264,7 +264,7 @@ class mutasi_kas_controller extends Controller
 
             return json_encode([
                 'status'        => 'success',
-                'text'          => 'Data mutasi antar kas berhasil dihapus',
+                'text'          => 'Data transaksi memorial berhasil dihapus',
                 "transaksi"     => $this->grapData(),
                 "keterangan"    => $keterangan = DB::table('dk_transaksi')->distinct('tr_keterangan')->select('tr_keterangan')->get()
             ]);
@@ -277,7 +277,7 @@ class mutasi_kas_controller extends Controller
                 'text'    => 'System Mengalami Masalah. '.$e
             ]);
         }
-    } 
+    }
 
     private function getNomor(String $date){
 
@@ -285,13 +285,13 @@ class mutasi_kas_controller extends Controller
 
     	$data = DB::table('dk_transaksi')
     				->where(DB::raw('DATE_FORMAT(tr_tanggal_trans, "%Y-%m")'), $keyword)
-                    ->where('tr_type', 'MK')
+    				->where('tr_type', 'TM')
     				->select(DB::raw('substring(tr_nomor, 13) as nomor'))
     				->orderBy('tr_id', 'desc')
     				->first();
 
     	$data = ($data) ? ($data->nomor + 1) : 1;
-    	$nomor = 'MK-'.date('d', strtotime($date)).'/'.date('m', strtotime($date)).'/'.date('y', strtotime($date)).'/'.$data;
+    	$nomor = 'TM-'.date('d', strtotime($date)).'/'.date('m', strtotime($date)).'/'.date('y', strtotime($date)).'/'.$data;
 
     	return $nomor;
     }
@@ -304,11 +304,9 @@ class mutasi_kas_controller extends Controller
                                         ->select('dk_transaksi_detail.*', DB::raw('concat(ak_nomor, " - ", ak_nama) as akun_nama'));
                         }
                     ])
-    				->where('tr_type', 'MK')
+    				->where('tr_type', 'TM')
     				->get();
 
     	return $data;
     }
-
-
 }

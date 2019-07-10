@@ -1,6 +1,6 @@
 Vue.component('vue-select', {
 
-	props: ['name', 'id', 'title', 'options', 'disabled', 'search', 'value', 'styles'],
+	props: ['name', 'id', 'title', 'options', 'disabled', 'search', 'value', 'styles', 'classes'],
 
     mounted: function(){
     	var vm = this;
@@ -18,7 +18,7 @@ Vue.component('vue-select', {
 
             // if(this.value){
             //     // alert(this.value);
-            //     $(this.$el).val(this.value).trigger('change.select2');
+                $(this.$el).val(this.value).trigger('change.select2');
             // }
         }else{
             this.$select2 = $(this.$el).select2({
@@ -32,7 +32,7 @@ Vue.component('vue-select', {
 
             // if(this.value){
             //     // alert(this.value);
-            //     $(this.$el).val(this.value).trigger('change.select2');
+                $(this.$el).val(this.value).trigger('change.select2');
             // }
         }
     },
@@ -50,7 +50,7 @@ Vue.component('vue-select', {
 
                 // if(this.value){
                 //     // alert(this.value);
-                //     $(this.$el).val(this.value).trigger('change.select2');
+                    $(this.$el).val(this.value).trigger('change.select2');
                 // }
             }else{
                 this.$select2.empty().select2({
@@ -62,13 +62,13 @@ Vue.component('vue-select', {
 
                 // if(this.value){
                 //     // alert(this.value);
-                //     $(this.$el).val(this.value).trigger('change.select2');
+                    $(this.$el).val(this.value).trigger('change.select2');
                 // }
             }
     	}
     },
 
     template: `
-      	<select class="form-control form-control-sm" :name="name" :id="id" :title="title" :disabled="disabled" :style="styles"></select>
+      	<select :class="'form-control form-control-sm '+classes" :name="name" :id="id" :title="title" :disabled="disabled" :style="styles"></select>
     `,
 });

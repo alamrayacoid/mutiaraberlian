@@ -170,7 +170,7 @@
 	border-radius: 0px;
 }
 
-.keuangan-form #basic-addon1{
+.keuangan-form #basic-addon1, .keuangan-form #basic-addon2{
 	/*background: red;*/
 	height: 30px;
 	font-size: 9pt;
