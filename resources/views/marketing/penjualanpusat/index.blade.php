@@ -1214,7 +1214,7 @@
             responsive: true,
             serverSide: true,
             ajax: {
-                url: "{{url('/marketing/penjualanpusat/penerimaanpiutang/get-list')}}"+"/"+nota,
+                url: "{{url('/marketing/penjualanpusat/penerimaanpiutang/get-list?')}}"+"nota="+nota,
                 type: "get",
             },
             columns: [

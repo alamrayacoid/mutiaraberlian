@@ -175,7 +175,7 @@
                                                         <select name="units[]" class="form-control form-control-sm select2 units"></select>
                                                     </td>
                                                     <td>
-                                                        <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
+                                                        <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button"><i class="fa fa-plus"></i> kode produksi</button>
                                                     </td>
                                                     <td>
                                                         <button class="btn btn-success btnAddItem btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
@@ -246,7 +246,7 @@
                     <select name="units[]" class="form-control form-control-sm select2 units"></select>
                 </td>
                 <td>
-                    <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
+                    <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button"><i class="fa fa-plus"></i> kode produksi</button>
                 </td>
                 <td>
                     <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
@@ -321,8 +321,8 @@
             action = '<td><button class="btn btn-danger btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
             listProdCode = '<tr>'+ prodCode + qtyProdCode + action +'</tr>';
             // idxItem is referenced from btnCodeProd above
-            $(listProdCode).insertBefore($('.modalCodeProd:eq('+ idxItem +')').find('.table_listcodeprod .rowBtnAdd'));
-            // $('.modalCodeProd:eq('+ idxItem +')').find('.table_listcodeprod').append(listProdCode);
+            // $(listProdCode).insertBefore($('.modalCodeProd:eq('+ idxItem +')').find('.table_listcodeprod .rowBtnAdd'));
+            $('.modalCodeProd:eq('+ idxItem +')').find('.table_listcodeprod').append(listProdCode);
             getFieldsReady();
         });
         // event to remove an prod-code from table_listcodeprod

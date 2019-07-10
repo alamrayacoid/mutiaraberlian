@@ -421,7 +421,7 @@ class RecruitmentController extends Controller
                 } else if ($pengajuan->ss_isapproved == "Y") {
                     return '<span class="btn-sm btn-block btn-disabled bg-success text-light text-center" disabled>Diterima</span>';
                 } else if ($pengajuan->ss_isapproved == "N") {
-                    return '<span class="btn-sm btn-block btn-disabled bg-success text-light text-center" disabled>Ditolak</span>';
+                    return '<span class="btn-sm btn-block btn-disabled bg-danger text-light text-center" disabled>Ditolak</span>';
                 }
 
             })
