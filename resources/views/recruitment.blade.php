@@ -131,7 +131,7 @@
                                 <select name="applicant" id="applicant" class="form-control col-lg-9 col-sm-12 select2">
                                     <option value="" selected="" disabled="">=== Pilih Posisi ===</option>
                                     @foreach($posisi as $key => $pos)
-                                        <option value="{{$pos->a_id}}">{{$pos->j_name}}</option>
+                                        <option value="{{$pos->ss_id}}">{{$pos->j_name}}</option>
                                     @endforeach
                                 </select>
 

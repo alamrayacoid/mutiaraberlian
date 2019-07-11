@@ -152,9 +152,14 @@ class RecruitmentController extends Controller
      */
     public function index()
     {
-      $posisi = DB::table('d_applicant')
-        ->join('m_jabatan', 'a_position', 'j_id')
-        ->where('a_isactive', '=', 'Y')
+      $date_now = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+      $posisi = DB::table('d_sdmsubmission')
+        ->join('m_jabatan', 'ss_position', 'j_id')
+        ->whereDate('ss_startdate', '<=', $date_now)
+        ->whereDate('ss_enddate', '>=', $date_now)
+        ->where('ss_publish', '=','Y')
+        ->where('ss_isactive','=','Y')
+        ->where('ss_isapproved','=','Y')
         ->get();
       return view('recruitment', compact('posisi'));
     }
@@ -213,7 +218,7 @@ class RecruitmentController extends Controller
           ->insert([
             'p_id'          => $id,
             'p_date'        => Carbon::now('Asia/Jakarta'),
-            'p_applicant'   => $request->applicant,
+            'p_sdmsubmission'   => $request->applicant,
             'p_nik'         => $request->nik,
             'p_name'        => $request->name,
             'p_address'     => $request->address,
