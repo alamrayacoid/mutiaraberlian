@@ -138,7 +138,7 @@ Route::group(['middleware' => 'auth'], function () {
 //    ==========End Master Outlet======
 
     Route::get('/masterdatautama/agen/index', 'Master\AgenController@index')->name('agen.index');
-    Route::get('/masterdatautama/agen/list', 'Master\AgenController@getList')->name('agen.list');
+    Route::post('/masterdatautama/agen/list', 'Master\AgenController@getList')->name('agen.list');
     Route::get('/masterdatautama/agen/create', 'Master\AgenController@create')->name('agen.create');
     Route::get('/masterdatautama/agen/agents', 'Master\AgenController@getAgents')->name('agen.agents');
     Route::get('/masterdatautama/agen/provinces', 'Master\AgenController@getProvinces')->name('agen.provinces');
@@ -424,6 +424,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/create', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@createTOP')->name('penjualanpusat.createTOP');
     Route::get('/marketing/penjualanpusat/get-table-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTableTOP')->name('penjualanpusat.getTableTOP');
     Route::get('/marketing/penjualanpusat/get-detail-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getDetailTOP')->name('penjualanpusat.getDetailTOP');
+    Route::post('/marketing/penjualanpusat/delete-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@deleteTOP')->name('penjualanpusat.deleteTOP');
     Route::get('/marketing/penjualanpusat/get-detail-send', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getDetailSend')->name('penjualanpusat.getDetailSend');
     Route::get('/marketing/penjualanpusat/get-proses-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getProsesTOP')->name('penjualanpusat.getProsesTOP');
     Route::post('/marketing/penjualanpusat/confirm-process-top/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@confirmProcessTOP')->name('penjualanpusat.confirmProcessTOP');
@@ -452,7 +453,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-nota-agen/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getNotaAgen')->name('piutang.getNotaAgen');
     // End ---
     // Return Penjualan
-    Route::get('/marketing/penjualanpusat/returnpenjualan/index', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@index')->name('returnpenjualanagen.index');
+    Route::post('/marketing/penjualanpusat/returnpenjualan/index', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@index')->name('returnpenjualanagen.index');
     Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@create')->name('returnpenjualanagen.create');
     Route::get('/marketing/penjualanpusat/returnpenjualan/getcity', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getCity')->name('returnpenjualanagen.getCity');
     Route::get('/marketing/penjualanpusat/returnpenjualan/getagent', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getAgent')->name('returnpenjualanagen.getAgent');

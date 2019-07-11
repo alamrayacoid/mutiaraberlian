@@ -325,6 +325,7 @@
             url: baseUrl + '/masterdatautama/agen/cities/' + $('#area_prov').val(),
             success: function(data) {
                 $('#area_city').empty();
+                $("#area_city").append('<option value="" selected>Pilih Kota</option>');
                 $.each(data, function(key, val) {
                     $("#area_city").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
                 });
@@ -344,6 +345,7 @@
                 $('#address_city').empty();
                 $('#address_district').empty();
                 $('#address_village').empty();
+                $("#address_city").append('<option value="" selected>Pilih Kota</option>');
                 $.each(data, function(key, val) {
                     $("#address_city").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
                 });
@@ -380,6 +382,7 @@
             success: function(data) {
                 $('#address_district').empty();
                 $('#address_village').empty();
+                $("#address_district").append('<option value="" selected>Pilih Kecamatan</option>');
                 $.each(data, function(key, val) {
                     $("#address_district").append('<option value="' + val.wk_id + '">' + val.wk_name + '</option>');
                 });
@@ -397,6 +400,7 @@
             url: baseUrl + '/masterdatautama/agen/villages/' + $('#address_district').val(),
             success: function(data) {
                 $('#address_village').empty();
+                $("#address_village").append('<option value="" selected>Pilih Desa</option>');
                 $.each(data, function(key, val) {
                     $("#address_village").append('<option value="' + val.wd_id + '">' + val.wd_name + '</option>');
                 });
