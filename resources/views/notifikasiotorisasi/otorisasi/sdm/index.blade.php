@@ -1,6 +1,9 @@
 @extends('main')
 
 @section('content')
+
+    @include('notifikasiotorisasi.otorisasi.sdm.modal_create')
+    
     <article class="content animated fadeInLeft">
 
         <div class="title-block text-primary">
@@ -19,7 +22,6 @@
                     <div class="header-block">
                         <h3 class="title">Data Pengajuan SDM</h3>
                     </div>
-                    <div class=""></div>
                 </div>
                 <div class="card-block">
                     <section>
@@ -28,6 +30,7 @@
                                 <thead class="bg-primary">
                                 <tr>
                                     <th class="w-5 text-center">No</th>
+                                    <th>ID</th>
                                     <th class="w-35">Reff</th>
                                     <th class="w-15">Tanggal</th>
                                     <th class="w-15">Divisi</th>
@@ -61,8 +64,12 @@
                         url: "{{ url('/notifikasiotorisasi/otorisasi/sdm/getListPengajuanInOtorisasi') }}",
                         type: "get"
                     },
+                    createdRow: function( row,) {
+                        $(row).find('td:eq(1)').attr('name', 'id_pengajuan')
+                    },
                     columns: [
                         {data: 'DT_RowIndex'},
+                        {data: 'ss_id'},
                         {data: 'ss_reff'},
                         {data: 'tanggal'},
                         {data: 'm_name'},
@@ -77,6 +84,12 @@
             }
 
         });
+        
+        
+        function getModal(id) {
+            $('#id_pengajuan').val(id);
+            $('#modal_create').modal('show');
+        }
 
         function ApprovePengajuan(id) {
             var approve_pengajuan = "{{url('/notifikasiotorisasi/otorisasi/sdm/ApprovePengajuan/')}}"+"/"+id;
@@ -86,7 +99,7 @@
                 animationBounce: 1.5,
                 icon: 'fa fa-exclamation-triangle',
                 title: 'Terima',
-                content: 'Apakah anda yakin ingin ?',
+                content: 'Apakah anda yakin ingin menyetujui data ini?',
                 theme: 'disable',
                 buttons: {
                     info: {
@@ -105,8 +118,7 @@
                                 success: function(response) {
                                     if (response.status == 'sukses') {
                                         loadingHide();
-                                        messageSuccess('Berhasil', 'Berhasil Diterima');
-                                        penggajuan_sdm.ajax.reload();
+                                        getModal(id);
                                     } else {
                                         loadingHide();
                                         messageFailed('Gagal', response.message);
@@ -139,7 +151,7 @@
                 animationBounce: 1.5,
                 icon: 'fa fa-exclamation-triangle',
                 title: 'Tolak!',
-                content: 'Apakah anda yakin ingin ?',
+                content: 'Apakah anda yakin ingin menolak data ini?',
                 theme: 'disable',
                 buttons: {
                     info: {
@@ -179,6 +191,32 @@
                             messageWarning('Peringatan', 'Anda telah membatalkan!');
                         }
                     }
+                }
+            });
+        }
+
+        function simpanPublikasi() {
+            $.ajax({
+                url: "{{url('/notifikasiotorisasi/otorisasi/sdm/simpanPublikasi')}}",
+                type: "get",
+                data: $('#simpanPublikasi').serialize(),
+                beforeSend: function () {
+                    loadingShow();
+                },
+                success: function (response) {
+                    if (response.status == 'sukses') {
+                        $('#modal_create').modal('hide');
+                        loadingHide();
+                        messageSuccess('Success', 'Data publikasi berhasil di input!');
+                        penggajuan_sdm.ajax.reload();
+                    } else {
+                        loadingHide();
+                        messageFailed('Gagal', response.message);
+                    }
+                },
+                error: function (e) {
+                    loadingHide();
+                    messageWarning('Peringatan', e.message);
                 }
             });
         }

@@ -100,9 +100,9 @@ class MarketingAreaController extends Controller
         }
         return Datatables::of($order)
             ->addIndexColumn()
-            ->addColumn('totalprice', function ($order) {
-                return Currency::addRupiah($order->totalprice);
-            })
+            // ->addColumn('totalprice', function ($order) {
+            //     return Currency::addRupiah($order->totalprice);
+            // })
             ->addColumn('action', function ($order) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                             <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
@@ -115,7 +115,7 @@ class MarketingAreaController extends Controller
                             </button>
                         </div>';
             })
-            ->rawColumns(['totalprice', 'action'])
+            ->rawColumns(['action'])
             ->make(true);
     }
 
@@ -325,7 +325,7 @@ class MarketingAreaController extends Controller
                     if ($query2) {
 
                         $qtyAkhir = $query2->pod_qty + $data['po_qty'][$i];
-                        $priceAkhir = $query2->pod_totalprice + $data['sbtotal'][$i];
+                        // $priceAkhir = $query2->pod_totalprice + $data['sbtotal'][$i];
 
                         DB::table('d_productorderdt')
                             ->where('pod_productorder', '=', $query1->po_id)
@@ -333,7 +333,7 @@ class MarketingAreaController extends Controller
                             ->where('pod_unit', '=', $data['po_unit'][$i])
                             ->update([
                                 'pod_qty' => $qtyAkhir,
-                                'pod_totalprice' => $priceAkhir
+                                'pod_totalprice' => 0
                             ]);
                     } else {
 
@@ -347,11 +347,12 @@ class MarketingAreaController extends Controller
                             'pod_item'         => $data['idItem'][$i],
                             'pod_unit'         => $data['po_unit'][$i],
                             'pod_qty'          => $data['po_qty'][$i],
-                            'pod_price'        => $data['po_hrg'][$i],
-                            'pod_totalprice'   => $data['sbtotal'][$i]
+                            'pod_price'        => 0,
+                            'pod_totalprice'   => 0
                         ]);
                     }
-                } else {
+                }
+                else {
 
                     $getIdMax = DB::table('d_productorder')->max('po_id');
                     $poId = $getIdMax + 1;
@@ -371,8 +372,8 @@ class MarketingAreaController extends Controller
                         'pod_item'         => $data['idItem'][$i],
                         'pod_unit'         => $data['po_unit'][$i],
                         'pod_qty'          => $data['po_qty'][$i],
-                        'pod_price'        => $data['po_hrg'][$i],
-                        'pod_totalprice'   => $data['sbtotal'][$i]
+                        'pod_price'        => 0,
+                        'pod_totalprice'   => 0
                     ]);
                 }
             }
@@ -385,7 +386,7 @@ class MarketingAreaController extends Controller
             DB::rollback();
             return response()->json([
                 'status' => 'Gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -439,9 +440,9 @@ class MarketingAreaController extends Controller
                     'pod_detailid' => ++$detailId,
                     'pod_item' => $data['idItem'][$i],
                     'pod_unit' => $data['po_unit'][$i],
-                    'pod_qty' => $data['po_qty'][$i],
-                    'pod_price' => $data['po_hrg'][$i],
-                    'pod_totalprice' => $data['sbtotal'][$i]
+                    'pod_qty' => $data['po_qty'][$i]
+                    // 'pod_price' => $data['po_hrg'][$i],
+                    // 'pod_totalprice' => $data['sbtotal'][$i]
                 ]);
             }
 
@@ -453,7 +454,7 @@ class MarketingAreaController extends Controller
             DB::rollback();
             return response()->json([
                 'status' => 'Gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -1200,6 +1201,11 @@ class MarketingAreaController extends Controller
             if ($value <= $val->pcd_rangeqtystart && $val->pcd_rangeqtyend == 0){
                 $val->pcd_rangeqtyend = $val->pcd_rangeqtystart + $value + 2;
             }
+
+            if ($val->pcd_rangeqtyend == 0){
+                $val->pcd_rangeqtyend = $value + $val->pcd_rangeqtyend + 2;
+            }
+
             $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
             if ($x == true) {
                 $idx = $key;

@@ -419,7 +419,7 @@ class RecruitmentController extends Controller
                 if ($pengajuan->ss_isapproved == "P") {
                     return '<span class="btn-sm btn-block btn-disabled bg-danger text-light text-center" disabled>Pending</span>';
                 } else if ($pengajuan->ss_isapproved == "Y") {
-                    return '<span class="btn-sm btn-block btn-disabled bg-success text-light text-center" disabled>Diterima</span>';
+                    return '<span class="btn-sm btn-block btn-disabled bg-success text-light text-center" disabled>Disetujui</span>';
                 } else if ($pengajuan->ss_isapproved == "N") {
                     return '<span class="btn-sm btn-block btn-disabled bg-danger text-light text-center" disabled>Ditolak</span>';
                 }
@@ -636,47 +636,34 @@ class RecruitmentController extends Controller
 
   // End Code =============================================================================================
 
-  // Kelola Recruitment ===================================================================================
-  public function getListLoker()
+  // Publikasi Recruitment ===================================================================================
+  public function getListPublish()
   {
-    $loker = DB::table('d_applicant')
-      ->join('m_jabatan', 'a_position', 'j_id')
-      ->select('d_applicant.*', 'j_name')
-      ->get();
+    $publish = DB::table('d_sdmsubmission')
+        ->join('m_divisi', 'ss_department','m_id')
+        ->join('m_jabatan', 'ss_position', 'j_id')
+        ->where('ss_isapproved', '=', 'Y')
+        ->get();
 
-    return Datatables::of($loker)
+    return Datatables::of($publish)
       ->addIndexColumn()
-      ->addColumn('start', function($loker) {
-        return '<td>'. Carbon::parse($loker->a_startdate)->format('d M Y') .'</td>';
+      ->addColumn('start', function($publish) {
+        return '<td>'. Carbon::parse($publish->ss_startdate)->format('d M Y') .'</td>';
       })
-      ->addColumn('end', function($loker) {
-        return '<td>'. Carbon::parse($loker->a_enddate)->format('d M Y') .'</td>';
+      ->addColumn('end', function($publish) {
+        return '<td>'. Carbon::parse($publish->ss_enddate)->format('d M Y') .'</td>';
       })
-      ->addColumn('status', function($loker) {
-        if ($loker->a_isactive == "Y") {
-          return '<span class="btn-sm btn-block btn-disabled bg-success text-light text-center" disabled>Activated</span>';
-        } else {
-          return '<span class="btn-sm btn-block btn-disabled bg-danger text-light text-center" disabled>Non Activated</span>';
-        }
-        
-      })
-      ->addColumn('action', function($loker) {
-        if ($loker->a_isactive == "Y") {
+      ->addColumn('action', function($publish) {
+        if ($publish->ss_publish == "Y") {
           return '<div class="text-center">
                     <div class="btn-group btn-group-sm">
-                      <button class="btn btn-disabled" type="button" onclick="detailLoker(\''.Crypt::encrypt($loker->a_id).'\')" disabled><i class="fa fa-fw fa-check"></i></button>
-                      <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Nonaktifkan" onclick="nonLoker(\''.Crypt::encrypt($loker->a_id).'\')"><i class="fa fa-fw fa-times"></i></button>
-                      <button class="btn btn-warning btn-proses-rekruitmen hint--top-left hint--warning" type="button" aria-label="Edit" onclick="editLoker(\''.Crypt::encrypt($loker->a_id).'\')"><i class="fa fa-fw fa-pencil"></i></button>
-                      <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Hapus" onclick="deleteLoker(\''.Crypt::encrypt($loker->a_id).'\')"><i class="fa fa-fw fa-trash"></i></button>
+                      <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Tolak Publikasi" onclick="rejectPublish(\''.Crypt::encrypt($publish->ss_id).'\')"><i class="fa fa-fw fa-times"></i></button>
                     </div>
                   </div>';
         } else {
           return '<div class="text-center">
                     <div class="btn-group btn-group-sm">
-                      <button class="btn btn-success hint--top-left hint--success" type="button" aria-label="Aktifkan" onclick="activateLoker(\''.Crypt::encrypt($loker->a_id).'\')"><i class="fa fa-fw fa-check"></i></button>
-                      <button class="btn btn-disabled" type="button" onclick="nonLoker(\''.Crypt::encrypt($loker->a_id).'\')" disabled><i class="fa fa-fw fa-times"></i></button>
-                      <button class="btn btn-disabled" type="button" onclick="editLoker(\''.Crypt::encrypt($loker->a_id).'\')" disabled><i class="fa fa-fw fa-pencil"></i></button>
-                      <button class="btn btn-danger hint--top-left hint--error" type="button" aria-label="Hapus" onclick="deleteLoker(\''.Crypt::encrypt($loker->a_id).'\')"><i class="fa fa-fw fa-trash"></i></button>
+                     <button class="btn btn-success hint--top-left hint--success" type="button" aria-label="Terima Publikasi" onclick="approvePublish(\''.Crypt::encrypt($publish->ss_id).'\')"><i class="fa fa-share-square" aria-hidden="true"></i></button>
                     </div>
                   </div>';
         }        
@@ -715,7 +702,7 @@ class RecruitmentController extends Controller
     }
   }
 
-  public function activateLoker($id)
+  public function approvePublish($id)
   {
     try {
         $id = Crypt::decrypt($id);
@@ -725,10 +712,10 @@ class RecruitmentController extends Controller
 
     DB::beginTransaction();
     try {
-      DB::table('d_applicant')
-        ->where('a_id', $id)
+      DB::table('d_sdmsubmission')
+        ->where('ss_id', $id)
         ->update([
-          'a_isactive' => "Y"
+          'ss_publish' => "Y"
         ]);
 
       DB::commit();
@@ -744,7 +731,7 @@ class RecruitmentController extends Controller
     }
   }
 
-  public function nonLoker($id)
+  public function rejectPublish($id)
   {
     try {
         $id = Crypt::decrypt($id);
@@ -754,10 +741,10 @@ class RecruitmentController extends Controller
 
     DB::beginTransaction();
     try {
-      DB::table('d_applicant')
-        ->where('a_id', $id)
+      DB::table('d_sdmsubmission')
+        ->where('ss_id', $id)
         ->update([
-          'a_isactive' => "N"
+          'ss_publish' => "N"
         ]);
 
       DB::commit();

@@ -1097,10 +1097,13 @@ class OtorisasiController extends Controller
 
     public function getListPengajuanInOtorisasi()
     {
+
+
         $pengajuan = DB::table('d_sdmsubmission')
             ->join('m_divisi', 'ss_department','m_id')
             ->join('m_jabatan', 'ss_position', 'j_id')
             ->where('ss_isactive', '=', 'Y')
+            ->where('ss_isapproved',['P','N'])
             ->get();
 
         return Datatables::of($pengajuan)
@@ -1112,7 +1115,7 @@ class OtorisasiController extends Controller
                 if ($pengajuan->ss_isapproved == "P") {
                     return '<span class="btn-sm btn-block btn-disabled bg-danger text-light text-center" disabled>Pending</span>';
                 } else if ($pengajuan->ss_isapproved == "Y") {
-                    return '<span class="btn-sm btn-block btn-disabled bg-success text-light text-center" disabled>Diterima</span>';
+                    return '<span class="btn-sm btn-block btn-disabled bg-success text-light text-center" disabled>Disetujui</span>';
                 } else if ($pengajuan->ss_isapproved == "N") {
                     return '<span class="btn-sm btn-block btn-disabled bg-danger text-light text-center" disabled>Ditolak</span>';
                 }
@@ -1144,6 +1147,37 @@ class OtorisasiController extends Controller
             })
             ->rawColumns(['tanggal', 'status', 'action'])
             ->make(true);
+    }
+
+    public function simpanPublikasi(Request $request)
+    {
+        $date1 = strtotime($request->ss_startdate);
+        $start_date = date('Y-m-d', $date1);
+        $date2 = strtotime($request->ss_enddate);
+        $end_date = date('Y-m-d', $date2);
+        $id = $request->id_pengajuan;
+        $ids = decrypt($id);
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_sdmsubmission')
+                ->where('ss_id', $ids)
+                ->update([
+                    'ss_startdate' => $start_date,
+                    'ss_enddate' => $end_date,
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e
+            ]);
+        }
     }
 
     public function ApprovePengajuan($id)

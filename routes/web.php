@@ -36,6 +36,7 @@ Route::get('errors/404', function(){
 
 Route::get('/loading', 'RecruitmentController@loading')->name('loading.index');
 Route::get('/recruitment', 'RecruitmentController@index')->name('recruitment.index');
+Route::get('/rekrutmen', 'RecruitmentController@index');
 Route::post('/recruitment/store', 'RecruitmentController@store')->name('recruitment.store');
 Route::get('/recruitment/isduplicated/{field}/{value}', 'RecruitmentController@isDuplicated')->name('recruitment.isduplicated');
 
@@ -137,7 +138,7 @@ Route::group(['middleware' => 'auth'], function () {
 //    ==========End Master Outlet======
 
     Route::get('/masterdatautama/agen/index', 'Master\AgenController@index')->name('agen.index');
-    Route::get('/masterdatautama/agen/list', 'Master\AgenController@getList')->name('agen.list');
+    Route::post('/masterdatautama/agen/list', 'Master\AgenController@getList')->name('agen.list');
     Route::get('/masterdatautama/agen/create', 'Master\AgenController@create')->name('agen.create');
     Route::get('/masterdatautama/agen/agents', 'Master\AgenController@getAgents')->name('agen.agents');
     Route::get('/masterdatautama/agen/provinces', 'Master\AgenController@getProvinces')->name('agen.provinces');
@@ -351,10 +352,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/sdm/prosesrekruitmen/listTerima', 'SDM\RecruitmentController@getListTerima')->name('rekruitmen.listTerima');
 
-    Route::get('/sdm/prosesrekruitmen/listLoker', 'SDM\RecruitmentController@getListLoker')->name('rekruitmen.listLoker');
+    Route::get('/sdm/prosesrekruitmen/listPublish', 'SDM\RecruitmentController@getListPublish')->name('rekruitmen.listPublish');
     Route::get('/sdm/prosesrekruitment/kelolarekruitment', 'SDM\RecruitmentController@kelola_rekruitment')->name('rekruitment.kelola');
-    Route::post('/sdm/prosesrekruitment/activateLoker/{id}', 'SDM\RecruitmentController@activateLoker')->name('rekruitment.activateLoker');
-    Route::post('/sdm/prosesrekruitment/nonLoker/{id}', 'SDM\RecruitmentController@nonLoker')->name('rekruitment.nonLoker');
+    Route::post('/sdm/prosesrekruitment/approvePublish/{id}', 'SDM\RecruitmentController@approvePublish')->name('rekruitment.approvePublish');
+    Route::post('/sdm/prosesrekruitment/rejectPublish/{id}', 'SDM\RecruitmentController@rejectPublish')->name('rekruitment.rejectPublish');
     Route::get('/sdm/prosesrekruitment/deleteLoker/{id}', 'SDM\RecruitmentController@deleteLoker')->name('rekruitment.deleteLoker');
     Route::get('/sdm/prosesrekruitment/editLoker/{id}', 'SDM\RecruitmentController@editLoker')->name('rekruitment.editLoker');
     Route::get('/sdm/prosesrekruitment/updateLoker', 'SDM\RecruitmentController@updateLoker')->name('rekruitment.updateLoker');
@@ -372,14 +373,17 @@ Route::group(['middleware' => 'auth'], function () {
     //Master KPI
     Route::post('/sdm/kinerjasdm/master-kpi/create', 'SDM\MasterKPIController@create')->name('masterkpi.create');
     Route::post('/sdm/kinerjasdm/master-kpi/get-data', 'SDM\MasterKPIController@getData')->name('masterkpi.getData');
-    // Absensi
+    // Absensi -> presensi
     Route::get('/sdm/absensisdm/index', 'SDMController@absensi')->name('absensisdm.index');
     Route::get('/sdm/absensisdm/presensi/get-summary', 'SDM\Absensi\PresensiController@getPresenceSummary')->name('presensi.getPresenceSummary');
     Route::get('/sdm/absensisdm/presensi/get-detail-presence', 'SDM\Absensi\PresensiController@getDetailPresence')->name('presensi.getDetailPresence');
     Route::get('/sdm/absensisdm/presensi/get-branch', 'SDM\Absensi\PresensiController@getBranch')->name('presensi.getBranch');
+    Route::get('/sdm/absensisdm/presensi/get-division', 'SDM\Absensi\PresensiController@getDivision')->name('presensi.getDivision');
     Route::get('/sdm/absensisdm/presensi/get-presence', 'SDM\Absensi\PresensiController@getPresence')->name('presensi.getPresence');
     Route::get('/sdm/absensisdm/presensi/get-employee', 'SDM\Absensi\PresensiController@getEmployee')->name('presensi.getEmployee');
     Route::post('/sdm/absensisdm/presensi/store', 'SDM\Absensi\PresensiController@store')->name('presensi.store');
+    // Absensi -> Dashboard
+    Route::get('/sdm/absensisdm/dashboard/get-presence', 'SDM\Absensi\DashboardController@getPresence')->name('presensiDash.getPresence');
     // Penggajian
     Route::get('/sdm/penggajian/index', 'SDMController@penggajian')->name('penggajian.index');
     // TAB MANAJEMEN
@@ -420,6 +424,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/create', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@createTOP')->name('penjualanpusat.createTOP');
     Route::get('/marketing/penjualanpusat/get-table-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTableTOP')->name('penjualanpusat.getTableTOP');
     Route::get('/marketing/penjualanpusat/get-detail-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getDetailTOP')->name('penjualanpusat.getDetailTOP');
+    Route::post('/marketing/penjualanpusat/delete-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@deleteTOP')->name('penjualanpusat.deleteTOP');
     Route::get('/marketing/penjualanpusat/get-detail-send', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getDetailSend')->name('penjualanpusat.getDetailSend');
     Route::get('/marketing/penjualanpusat/get-proses-top', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getProsesTOP')->name('penjualanpusat.getProsesTOP');
     Route::post('/marketing/penjualanpusat/confirm-process-top/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@confirmProcessTOP')->name('penjualanpusat.confirmProcessTOP');
@@ -438,7 +443,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/targetrealisasi/store', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetRealStore')->name('targetReal.store');
     Route::get('/marketing/penjualanpusat/targetrealisasi/editTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@editTarget')->name('targetReal.edit');
     Route::get('/marketing/penjualanpusat/targetrealisasi/updateTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@updateTarget')->name('targetReal.update');
-    // Penerimaan Piutang ---------------------------    
+    // Penerimaan Piutang ---------------------------
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-list', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@listPiutang')->name('piutang.list');
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/cari-nota', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@cariNota')->name('piutang.cariNota');
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-list/{nota}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@listPiutang')->name('piutang.list');
@@ -449,7 +454,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-nota-agen/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getNotaAgen')->name('piutang.getNotaAgen');
     // End ---
     // Return Penjualan
-    Route::get('/marketing/penjualanpusat/returnpenjualan/index', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@index')->name('returnpenjualanagen.index');
+    Route::post('/marketing/penjualanpusat/returnpenjualan/index', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@index')->name('returnpenjualanagen.index');
     Route::get('/marketing/penjualanpusat/returnpenjualan/create', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@create')->name('returnpenjualanagen.create');
     Route::get('/marketing/penjualanpusat/returnpenjualan/getcity', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getCity')->name('returnpenjualanagen.getCity');
     Route::get('/marketing/penjualanpusat/returnpenjualan/getagent', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getAgent')->name('returnpenjualanagen.getAgent');
@@ -693,6 +698,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/notifikasiotorisasi/otorisasi/sdm/index', 'OtorisasiController@sdm')->name('sdm');
     Route::get('/notifikasiotorisasi/otorisasi/sdm/getListPengajuanInOtorisasi', 'OtorisasiController@getListPengajuanInOtorisasi')->name('otorisasi.ListPengajuanInOtorisasi');
+    Route::get('/notifikasiotorisasi/otorisasi/sdm/simpanPublikasi', 'OtorisasiController@simpanPublikasi')->name('otorisasi.simpanPublikasi');
     Route::post('/notifikasiotorisasi/otorisasi/sdm/ApprovePengajuan/{id}', 'OtorisasiController@ApprovePengajuan')->name('otorisasi.ApprovePengajuan');
     Route::post('/notifikasiotorisasi/otorisasi/sdm/DeclinePengajuan/{id}', 'OtorisasiController@DeclinePengajuan')->name('otorisasi.DeclinePengajuan');
     // !================================================ END OTORISASI NOTIFIKASI ============================================!

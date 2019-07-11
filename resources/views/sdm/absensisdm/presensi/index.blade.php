@@ -53,7 +53,7 @@
 							<div class="col-md-9 col-sm-12">
 								<div class="form-group">
 									<select name="filterByBranch" id="filterByBranch" class="form-control form-control-sm select2">
-										<option value="" selected>=== Pilih Cabang ===</option>
+										<option value="" selected>Semua Cabang</option>
 									</select>
 								</div>
 							</div>
@@ -118,6 +118,11 @@
 		getBranchPr();
 		$('#branchPr').on('select2:select', function() {
 			branchId = $(this).val();
+			getPresence();
+		});
+		// get list division
+		getDivisionPr();
+		$('#divisionPr').on('select2:select', function() {
 			getPresence();
 		});
 
@@ -234,9 +239,26 @@
 			type: 'get',
 			success: function(resp) {
 				$('#branchPr').empty();
-				$('#branchPr').append('<option value="" selected>=== Pilih Cabang ===</option>');
+				$('#branchPr').append('<option value="" selected>Semua Cabang</option>');
 				$.each(resp, function (idx, val) {
 					$('#branchPr').append('<option value="'+val.c_id+'">'+val.c_name+'</option>');
+				});
+			},
+			error: function(e) {
+				messageWarning('Error', 'getBranch error : ' + e.message);
+			}
+		})
+	}
+	// get list division
+	function getDivisionPr() {
+		$.ajax({
+			url: "{{ route('presensi.getDivision') }}",
+			type: 'get',
+			success: function(resp) {
+				$('#divisionPr').empty();
+				$('#divisionPr').append('<option value="" selected>Semua Divisi</option>');
+				$.each(resp, function (idx, val) {
+					$('#divisionPr').append('<option value="'+val.m_id+'">'+val.m_name+'</option>');
 				});
 			},
 			error: function(e) {
@@ -248,7 +270,8 @@
 	function getPresence() {
 		let date = $('.dateNowPr').serialize();
 		let branch = $('#branchPr').serialize();
-		let data = date +'&'+ branch;
+		let division = $('#divisionPr').serialize();
+		let data = date +'&'+ branch +'&'+ division;
 		$.ajax({
 			url: "{{ route('presensi.getPresence') }}",
 			data: data,
@@ -262,33 +285,32 @@
 				$("#table_presence > tbody").find('input').val('');
 				$.each(resp, function(key, val) {
 			        let empId = `<td class="pad-1">
-									<input type="hidden" name="employeePrId[]" class="employeePrId" value="`+ val.get_employee.e_id +`">
-									<input type="text" name="employeePr[]" class="employeePr w-100" value="`+ val.get_employee.e_name + ' ('+ val.get_employee.get_division.m_name +') / '+ val.p_employee +`">
+									<input type="hidden" name="employeePrId[]" class="employeePrId" value="`+ val.e_id +`">
+									<input type="text" name="employeePr[]" class="employeePr w-100" value="`+ val.e_name + ' ('+ val.get_division.m_name +') / '+ val.e_id +`">
 								</td>`;
 
-					let aTime = null;
-					(val.p_entry == null) ? aTime = '' : aTime = val.p_entry;
-					let arriveTime = `<td class="pad-1">
-										<input type="text" name="arriveTimePr[]" class="arriveTimePr w-100" value="`+ aTime +`">
-										</td>`;
+					let aTime = '';
+					let rTime = '';
+					let h = `<option value="H">Hadir</option>`;
+					let i = `<option value="I">Izin</option>`;
+					let t = `<option value="T">Tidak Masuk</option>`;
+					let c = `<option value="C">Cuti</option>`;
+					let iNote = '';
+					let action;
 
-					let rTime = null;
-					(val.p_out == null) ? rTime = '' : rTime = val.p_out;
-					let returnTime = `<td class="pad-1">
-										<input type="text" name="returnTimePr[]" class="returnTimePr w-100" value="`+ rTime +`">
-									</td>`;
-
-					let h = (val.p_status == 'H') ? `<option value="H" selected>Hadir</option>` : `<option value="H">Hadir</option>`;
-					let i = (val.p_status == 'I') ? `<option value="I" selected>Ijin</option>` : `<option value="I">Ijin</option>`;
-					let t = (val.p_status == 'T') ? `<option value="T" selected>Tidak Masuk</option>` : `<option value="T">Tidak Masuk</option>`;
-					let c = (val.p_status == 'C') ? `<option value="C" selected>Cuti</option>` : `<option value="C">Cuti</option>`;
+					if (val.get_presence.length > 0) {
+						(val.get_presence[0].p_entry == null) ? aTime = '' : aTime = val.get_presence[0].p_entry;
+						(val.get_presence[0].p_out == null) ? rTime = '' : rTime = val.get_presence[0].p_out;
+						h = (val.get_presence[0].p_status == 'H') ? `<option value="H" selected>Hadir</option>` : `<option value="H">Hadir</option>`;
+						i = (val.get_presence[0].p_status == 'I') ? `<option value="I" selected>Ijin</option>` : `<option value="I">Ijin</option>`;
+						t = (val.get_presence[0].p_status == 'T') ? `<option value="T" selected>Tidak Masuk</option>` : `<option value="T">Tidak Masuk</option>`;
+						c = (val.get_presence[0].p_status == 'C') ? `<option value="C" selected>Cuti</option>` : `<option value="C">Cuti</option>`;
+						(val.get_presence[0].p_note == null) ? iNote = '' : iNote = val.get_presence[0].p_note;
+					}
+					let arriveTime = `<td class="pad-1"><input type="text" name="arriveTimePr[]" class="arriveTimePr w-100" value="`+ aTime +`"></td>`;
+					let returnTime = `<td class="pad-1"><input type="text" name="returnTimePr[]" class="returnTimePr w-100" value="`+ rTime +`"></td>`;
 					let status = `<td class="pad-1"><select name="statusPr[]" class="statusPr w-100">` + h + i + t + c + `</select></td>`;
-
-					let iNote = null;
-					(val.p_note == null) ? iNote = '' : iNote = val.p_note;
 					let note = `<td class="pad-1"><textarea name="notePr[]" rows="1" class="w-100">`+ iNote +`</textarea></td>`;
-
-					let action= null;
 					if (key == 0) {
 						action = `<td class="pad-1 text-center">
 						<button class="btn btn-success btn-sm rounded-circle btnAddEmployee" style="color:white;" type="button">
@@ -426,7 +448,7 @@
 			type: 'get',
 			success: function(resp) {
 				$('#filterByBranch').empty();
-				$('#filterByBranch').append('<option value="" selected>=== Pilih Cabang ===</option>');
+				$('#filterByBranch').append('<option value="" selected>Semua Cabang</option>');
 				$.each(resp, function (idx, val) {
 					$('#filterByBranch').append('<option value="'+val.c_id+'">'+val.c_name+'</option>');
 				});

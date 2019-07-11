@@ -129,11 +129,11 @@
                         <table id="detailOrder" class="table table-sm table-hover table-bordered">
                             <thead>
                             <tr class="bg-primary text-light">
-                                <th>Nama Barang</th>
-                                <th>Satuan</th>
-                                <th>Qty</th>
-                                <th>Harga Satuan</th>
-                                <th>Total Harga</th>
+                                <th class="text-center">Nama Barang</th>
+                                <th class="text-center">Satuan</th>
+                                <th class="text-center">Jumlah</th>
+                                <!-- <th>Harga Satuan</th>
+                                <th>Total Harga</th> -->
                             </tr>
                             </thead>
                             <tbody class="empty">
@@ -277,7 +277,7 @@
                                 <input type="text" id="no_hpkurir" class="form-control form-control-sm hp">
                             </div>
                         </div>
-                        <div class="row" style="margin-top: 5px;">                            
+                        <div class="row" style="margin-top: 5px;">
                             <div class="col-2">
                                 <label for="jenis_exp">Nomor Resi</label>
                             </div>
@@ -739,7 +739,7 @@
                     {data: 'po_nota'},
                     {data: 'comp'},
                     {data: 'agen'},
-                    {data: 'totalprice'},
+                    // {data: 'totalprice'},
                     {data: 'action'}
                 ],
                 pageLength: 10,
@@ -766,9 +766,9 @@
                         $('#detailOrder tbody').append('<tr>' +
                             '<td>' + val.barang + '</td>' +
                             '<td>' + val.unit + '</td>' +
-                            '<td>' + val.qty + '</td>' +
-                            '<td>' + val.price + '</td>' +
-                            '<td>' + val.totalprice + '</td>' +
+                            '<td class="text-right">' + val.qty + '</td>' +
+                            // '<td>' + val.price + '</td>' +
+                            // '<td>' + val.totalprice + '</td>' +
                             '</tr>');
                     });
                 }
