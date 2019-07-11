@@ -351,10 +351,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/sdm/prosesrekruitmen/listTerima', 'SDM\RecruitmentController@getListTerima')->name('rekruitmen.listTerima');
 
-    Route::get('/sdm/prosesrekruitmen/listLoker', 'SDM\RecruitmentController@getListLoker')->name('rekruitmen.listLoker');
+    Route::get('/sdm/prosesrekruitmen/listPublish', 'SDM\RecruitmentController@getListPublish')->name('rekruitmen.listPublish');
     Route::get('/sdm/prosesrekruitment/kelolarekruitment', 'SDM\RecruitmentController@kelola_rekruitment')->name('rekruitment.kelola');
-    Route::post('/sdm/prosesrekruitment/activateLoker/{id}', 'SDM\RecruitmentController@activateLoker')->name('rekruitment.activateLoker');
-    Route::post('/sdm/prosesrekruitment/nonLoker/{id}', 'SDM\RecruitmentController@nonLoker')->name('rekruitment.nonLoker');
+    Route::post('/sdm/prosesrekruitment/approvePublish/{id}', 'SDM\RecruitmentController@approvePublish')->name('rekruitment.approvePublish');
+    Route::post('/sdm/prosesrekruitment/rejectPublish/{id}', 'SDM\RecruitmentController@rejectPublish')->name('rekruitment.rejectPublish');
     Route::get('/sdm/prosesrekruitment/deleteLoker/{id}', 'SDM\RecruitmentController@deleteLoker')->name('rekruitment.deleteLoker');
     Route::get('/sdm/prosesrekruitment/editLoker/{id}', 'SDM\RecruitmentController@editLoker')->name('rekruitment.editLoker');
     Route::get('/sdm/prosesrekruitment/updateLoker', 'SDM\RecruitmentController@updateLoker')->name('rekruitment.updateLoker');
@@ -688,6 +688,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/notifikasiotorisasi/otorisasi/sdm/index', 'OtorisasiController@sdm')->name('sdm');
     Route::get('/notifikasiotorisasi/otorisasi/sdm/getListPengajuanInOtorisasi', 'OtorisasiController@getListPengajuanInOtorisasi')->name('otorisasi.ListPengajuanInOtorisasi');
+    Route::get('/notifikasiotorisasi/otorisasi/sdm/simpanPublikasi', 'OtorisasiController@simpanPublikasi')->name('otorisasi.simpanPublikasi');
     Route::post('/notifikasiotorisasi/otorisasi/sdm/ApprovePengajuan/{id}', 'OtorisasiController@ApprovePengajuan')->name('otorisasi.ApprovePengajuan');
     Route::post('/notifikasiotorisasi/otorisasi/sdm/DeclinePengajuan/{id}', 'OtorisasiController@DeclinePengajuan')->name('otorisasi.DeclinePengajuan');
     // !================================================ END OTORISASI NOTIFIKASI ============================================!
