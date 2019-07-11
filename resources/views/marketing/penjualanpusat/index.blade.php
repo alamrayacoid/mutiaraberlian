@@ -1117,6 +1117,7 @@
     $(document).ready(function(){
         $('#table_piutang').DataTable({
             searching: false,
+            lengthChange: false
         });
         $('#table_getNota').DataTable();
         getProvinsi();
@@ -1133,17 +1134,17 @@
                     response(data);
                 }
             });
-        },
-        // minLength: 1,
-        // select: function (event, data) {
-        //     setItem(data.item);
-        // }
+        }
     });
 
     $("#nota_s").keypress(function(e){
         if (e.which == 13) {
             goSearch();
         }
+    });
+
+    $("#nota_s").on('keyup change',function(){
+        goSearch();
     });
 
     function goSearch() {
@@ -1239,6 +1240,7 @@
         $('#table_piutang').dataTable().fnDestroy();
         tb_piutang = $('#table_piutang').DataTable({
             searching: false,
+            lengthChange: false,
             responsive: true,
             serverSide: true,
             ajax: {
@@ -1260,6 +1262,7 @@
 
     function toPayment(nota) {
         $('#sc_nota').val(nota);
+        $('#nominal').val('');
         $('#modal_payment').modal('show');
     }
 
@@ -1271,7 +1274,53 @@
     });
 
     function savePayment() {
-        alert($('#nominal').val());
+        let nominal = $('#nominal').val();
+        let nota = $('#sc_nota').val();
+
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Nominal pembayaran sebesar '+convertToRupiah(nominal)+'. Apakah nominal sudah benar?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        loadingShow();
+                        $.ajax({
+                            url: baseUrl+ "/marketing/penjualanpusat/penerimaanpiutang/save-payment?"+"nota=" + nota + "&nominal=" + nominal,
+                            type: 'get',
+                            success: function(resp) {
+                                loadingHide();
+                                if (resp.status == 'sukses') {
+                                    $('#modal_payment').modal('hide');
+                                    messageSuccess('Berhasil', 'Pembayaran berhasil!');
+                                    tb_piutang.ajax.reload();
+                                }
+                                else {
+                                    messageWarning('Perhatian', resp.message);
+                                }
+                            },
+                            error: function(e) {
+                                loadingHide();
+                                messageWarning('Gagal', 'Terjad kesalahan : '+ e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+
     }
 </script>
 @endsection

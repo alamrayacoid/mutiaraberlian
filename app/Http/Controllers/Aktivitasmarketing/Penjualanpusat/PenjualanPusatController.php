@@ -1014,14 +1014,61 @@ class PenjualanPusatController extends Controller
         return Datatables::of($datas)
             // ->addIndexColumn()
             ->addColumn('sisa', function($datas){
-                $sisa = $datas->sc_total - $datas->payment;
+                $sisa = (int)$datas->sc_total - (int)$datas->payment;
                 $sisa = Currency::addRupiah($sisa);
                 return $sisa;
             })
             ->addColumn('bayar', function($datas){
-                return '<button class="btn btn-sm btn-success" onclick="toPayment(\''.$datas->sc_nota.'\')"><i class="fa fa-money"></i> Bayar</button>';
+                $sisa = (int)$datas->sc_total - (int)$datas->payment;
+                if ($sisa == 0) {
+                    return '<button class="btn btn-sm btn-success" disabled><i class="fa fa-money"></i> Bayar</button>';
+                } else {
+                    return '<button class="btn btn-sm btn-success" onclick="toPayment(\''.$datas->sc_nota.'\')"><i class="fa fa-money"></i> Bayar</button>';
+                }
             })
             ->rawColumns(['sisa','bayar'])
             ->make(true);
+    }
+
+    public function savePayment(Request $request)
+    {
+        $nota    = $request->nota;
+        $nominal = $request->nominal;
+
+        DB::beginTransaction();
+        try {
+            $sales = DB::table('d_salescomp')->where('sc_nota', '=', $nota)->first();
+            $dtId  = DB::table('d_salescomppayment')->where('scp_salescomp', '=', $sales->sc_id)->max('scp_detailid') + 1;
+            DB::table('d_salescomppayment')->insert([
+                'scp_salescomp' => $sales->sc_id,
+                'scp_detailid'  => $dtId,
+                'scp_date'      => Carbon::now(),
+                'scp_pay'       => $nominal
+            ]);
+
+            $checkSCP = DB::table('d_salescomppayment')->where('scp_salescomp', '=', $sales->sc_id)->get();
+
+            $jumlah = 0;
+            for ($i=0; $i < count($checkSCP) ; $i++) { 
+                $jumlah += (int)$checkSCP[$i]->scp_pay;
+            }
+
+            if ((int)$jumlah == (int)$sales->sc_total) {
+                DB::table('d_salescomp')->where('sc_nota', '=', $nota)->update([
+                    'sc_paidoff' => 'Y'
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (DecryptException $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 }

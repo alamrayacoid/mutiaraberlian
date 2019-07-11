@@ -442,6 +442,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-list', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@listPiutang')->name('piutang.list');
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/cari-nota', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@cariNota')->name('piutang.cariNota');
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-list/{nota}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@listPiutang')->name('piutang.list');
+    Route::get('/marketing/penjualanpusat/penerimaanpiutang/save-payment', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@savePayment')->name('piutang.savePayment');
     Route::get('/get-provinsi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getProvinsi')->name('get.provinsi');
     Route::get('/get-city/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getCity')->name('get.city');
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-agen/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getAgen')->name('piutang.getAgen');
@@ -565,6 +566,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/index', 'Aktivitasmarketing\Agen\ManajemenAgenController@index')->name('manajemenagen.index');
     Route::get('/marketing/agen/get-agen/{city}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getAgen')->name('manajemenagen.getAgen');
     Route::post('/marketing/agen/filter-data/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@filterData')->name('manajemenagen.filterData');
+    Route::get('/marketing/agen/get-detail-inventory/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetail_inventory')->name('inventoryAgen.getDetail');
+
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpl', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPL')->name('kelolapenjualan.getListKPL');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-cities', 'Aktivitasmarketing\Agen\ManajemenAgenController@getCitiesKPL')->name('kelolapenjualan.getCitiesKPL');
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-agents-kpl', 'Aktivitasmarketing\Agen\ManajemenAgenController@getAgentsKPL')->name('kelolapenjualan.getAgentsKPL');

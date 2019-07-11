@@ -534,13 +534,29 @@ class ManajemenAgenController extends Controller
         if (!AksesUser::checkAkses(23, 'read')) {
             abort(401);
         }
+
         $provinsi = DB::table('m_wil_provinsi')
             ->select('m_wil_provinsi.*')
             ->orderBy('wp_name')
             ->get();
+
+        $kota = DB::table('m_wil_kota')
+            ->select('m_wil_kota.*')
+            ->orderBy('wc_name')
+            ->get();
+
+        $kecamatan = DB::table('m_wil_kecamatan')
+            ->select('m_wil_kecamatan.*')
+            ->orderBy('wk_name')
+            ->get();
         // get current user
         $user = Auth::user();
-        return view('marketing/agen/index', compact('provinsi', 'user'));
+        // dd($user);
+        $company = DB::table('m_company')
+            ->leftJoin('m_agen', 'a_code', 'c_user')
+            ->where('c_id', '=', $user->u_company)->first();
+        // dd($company);
+        return view('marketing/agen/index', compact('provinsi', 'kota', 'kecamatan', 'user', 'company'));
     }
 
 //    order produk ke agen
@@ -821,7 +837,7 @@ class ManajemenAgenController extends Controller
             ->leftJoin('m_company as agen', 's_comp', 'agen.c_id')
             ->leftJoin('m_item', 's_item', 'i_id')
             ->where('s_position', '=', $id)
-            ->select('agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_condition', 's_qty')
+            ->select('s_id','agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_condition', 's_qty')
             ->get();
 
         return Datatables::of($data)
@@ -836,8 +852,27 @@ class ManajemenAgenController extends Controller
             ->addColumn('qty', function ($data) {
                 return "<div class='text-center'>$data->s_qty</div>";
             })
-            ->rawColumns(['kondisi', 'qty'])
+            ->addColumn('aksi', function ($data) {
+                return '<button class="btn btn-sm btn-primary" onclick="detail_agen('.$data->s_id.')"><i class="fa fa-folder"></i></button>';
+            })
+            ->rawColumns(['kondisi', 'qty', 'aksi'])
             ->make(true);
+    }
+
+    public function getDetail_inventory($id)
+    {
+        $data = DB::table('d_stock')
+            ->leftJoin('d_stockdt', 's_id', 'sd_stock')
+            ->leftJoin('m_company as pemilik', 'pemilik.c_id', 's_comp')
+            ->leftJoin('m_company as position', 'position.c_id', 's_comp')
+            ->leftJoin('m_item', 'i_id', 's_item')
+            ->select('pemilik.c_name as pemilik', 'position.c_name as position', 'i_name', 'd_stockdt.*')
+            ->where('s_id', '=', $id)
+            ->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
     }
     // End: Kelola Data Inventory Agen ----------------
 
