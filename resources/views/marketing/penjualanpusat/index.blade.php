@@ -388,7 +388,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
         returnagen();
-    })
+    });
 
     function returnagen() {
         setTimeout(function () {
@@ -397,7 +397,10 @@
                 serverSide: true,
                 ajax: {
                     url: "{{ route('returnpenjualanagen.index') }}",
-                    type: "get"
+                    type: "post",
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    }
                 },
                 columns: [
                     {data: 'DT_RowIndex'},
@@ -483,6 +486,7 @@
             $('#table_terimaop').dataTable().fnDestroy();
             table_top = $('#table_terimaop').DataTable({
                 responsive: true,
+                processing: true,
                 serverSide: true,
                 ajax: {
                     url: baseUrl + '/marketing/penjualanpusat/get-table-top',
@@ -560,6 +564,49 @@
                 loadingHide();
 				let err = JSON.parse(xhr.responseText);
                 messageWarning('Error', err.message);
+            }
+        });
+    }
+
+    function deleteTOP(id){
+        console.log(id);
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apa anda yakin akan menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        loadingShow();
+                        axios.post('{{ route("penjualanpusat.deleteTOP") }}', {
+                            "po_id": id,
+                            "_token": "{{ csrf_token() }}"
+                        }).then(function (response) {
+                            loadingHide();
+                            if (response.data.status == 'sukses'){
+                                messageSuccess("Berhasil", "Data berhasil dihapus");
+                                table_top.ajax.reload();
+                                table_distribusi.ajax.reload();
+                            } else {
+                                messageFailed("Gagal", response.data.message);
+                            }
+                        }).catch(function (error) {
+                            loadingHide();
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
             }
         });
     }
@@ -861,7 +908,7 @@
                 responsive: true,
                 processing: true,
                 serverSide: true,
-                "bAutoWidth": false,
+                bAutoWidth: false,
                 ajax: {
                     url: baseUrl + '/marketing/penjualanpusat/get-table-distribusi',
                     type: "get",

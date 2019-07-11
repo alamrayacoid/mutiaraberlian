@@ -1201,6 +1201,11 @@ class MarketingAreaController extends Controller
             if ($value <= $val->pcd_rangeqtystart && $val->pcd_rangeqtyend == 0){
                 $val->pcd_rangeqtyend = $val->pcd_rangeqtystart + $value + 2;
             }
+
+            if ($val->pcd_rangeqtyend == 0){
+                $val->pcd_rangeqtyend = $value + $val->pcd_rangeqtyend + 2;
+            }
+
             $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
             if ($x == true) {
                 $idx = $key;

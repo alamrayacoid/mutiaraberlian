@@ -89,7 +89,7 @@
             serverSide: true,
             ajax: {
                 url: "{{ route('agen.list') }}",
-                type: "get",
+                type: "post",
                 data: {
                     "_token": "{{ csrf_token() }}"
                 }
