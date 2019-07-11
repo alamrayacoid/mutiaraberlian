@@ -372,14 +372,17 @@ Route::group(['middleware' => 'auth'], function () {
     //Master KPI
     Route::post('/sdm/kinerjasdm/master-kpi/create', 'SDM\MasterKPIController@create')->name('masterkpi.create');
     Route::post('/sdm/kinerjasdm/master-kpi/get-data', 'SDM\MasterKPIController@getData')->name('masterkpi.getData');
-    // Absensi
+    // Absensi -> presensi
     Route::get('/sdm/absensisdm/index', 'SDMController@absensi')->name('absensisdm.index');
     Route::get('/sdm/absensisdm/presensi/get-summary', 'SDM\Absensi\PresensiController@getPresenceSummary')->name('presensi.getPresenceSummary');
     Route::get('/sdm/absensisdm/presensi/get-detail-presence', 'SDM\Absensi\PresensiController@getDetailPresence')->name('presensi.getDetailPresence');
     Route::get('/sdm/absensisdm/presensi/get-branch', 'SDM\Absensi\PresensiController@getBranch')->name('presensi.getBranch');
+    Route::get('/sdm/absensisdm/presensi/get-division', 'SDM\Absensi\PresensiController@getDivision')->name('presensi.getDivision');
     Route::get('/sdm/absensisdm/presensi/get-presence', 'SDM\Absensi\PresensiController@getPresence')->name('presensi.getPresence');
     Route::get('/sdm/absensisdm/presensi/get-employee', 'SDM\Absensi\PresensiController@getEmployee')->name('presensi.getEmployee');
     Route::post('/sdm/absensisdm/presensi/store', 'SDM\Absensi\PresensiController@store')->name('presensi.store');
+    // Absensi -> Dashboard
+    Route::get('/sdm/absensisdm/dashboard/get-presence', 'SDM\Absensi\DashboardController@getPresence')->name('presensiDash.getPresence');
     // Penggajian
     Route::get('/sdm/penggajian/index', 'SDMController@penggajian')->name('penggajian.index');
     // TAB MANAJEMEN
@@ -438,7 +441,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/targetrealisasi/store', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetRealStore')->name('targetReal.store');
     Route::get('/marketing/penjualanpusat/targetrealisasi/editTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@editTarget')->name('targetReal.edit');
     Route::get('/marketing/penjualanpusat/targetrealisasi/updateTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@updateTarget')->name('targetReal.update');
-    // Penerimaan Piutang ---------------------------    
+    // Penerimaan Piutang ---------------------------
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-list', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@listPiutang')->name('piutang.list');
     // Penerimaan Piutang ---------------------------
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-list/{nota}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@listPiutang')->name('piutang.list');

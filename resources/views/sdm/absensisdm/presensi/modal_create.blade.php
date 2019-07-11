@@ -21,20 +21,33 @@
 				<form id="presenceForm">
 					<section>
 						<div class="row col-md-12 col-sm-12">
-							<div class="col-md-3 col-sm-12">
+							<div class="col-md-2 col-sm-12">
 								<label for="">Cabang</label>
 							</div>
 							<div class="col-md-3 col-sm-12">
 								<div class="form-group">
 									<select name="branch" id="branchPr" class="form-control form-control-sm select2">
-										<option value="" selected>=== Pilih Cabang ===</option>
+										<option value="" selected>Semua Cabang</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="col-md-2"></div>
+
+							<div class="col-md-2 col-sm-12">
+								<label for="">Divisi</label>
+							</div>
+							<div class="col-md-3 col-sm-12">
+								<div class="form-group">
+									<select name="division" id="divisionPr" class="form-control form-control-sm select2">
+										<option value="" selected>Semua Divisi</option>
 									</select>
 								</div>
 							</div>
 						</div>
 
 						<div class="row col-md-12 col-sm-12">
-							<div class="col-md-3 col-sm-12">
+							<div class="col-md-2 col-sm-12">
 								<label for="">Tanggal</label>
 							</div>
 							<div class="col-md-3 col-sm-12">
