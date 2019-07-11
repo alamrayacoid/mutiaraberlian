@@ -37,6 +37,7 @@
 				</ul>
 
 				<div class="tab-content">
+					@include('sdm.absensisdm.dashboard.index')
 					@include('sdm.absensisdm.presensi.index')
 				</div>
 			</div>

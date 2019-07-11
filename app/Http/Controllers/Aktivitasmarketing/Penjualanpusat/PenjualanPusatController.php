@@ -926,6 +926,26 @@ class PenjualanPusatController extends Controller
     }
 
     // Penerimaan Piutang -------------------------->
+    public function cariNota(Request $request)
+    {
+        $cari = $request->term;
+        $nota = DB::table('d_salescomp')
+            ->select('d_salescomp.*')
+            ->where(function ($q) use ($cari) {
+                $q->whereRaw("sc_nota like '%" . $cari . "%'");
+            })
+            ->get();
+
+        if (count($nota) == 0) {
+            $results[] = ['label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nota as $query) {
+                $results[] = ['label' => strtoupper($query->sc_nota), 'data' => $query];
+            }
+        }
+        return Response::json($results);
+    }
+
     public function getProvinsi()
     {
         $data = DB::table('m_wil_provinsi')->get();
@@ -975,15 +995,16 @@ class PenjualanPusatController extends Controller
                 return $sisa;
             })
             ->addColumn('action', function($data){
-                return '<button class="btn btn-sm btn-success" onclick="get_list(\''.Crypt::encrypt($data->sc_nota).'\')"><i class="fa fa-download"></i> Gunakan</button>';
+                // return '<button class="btn btn-sm btn-success" onclick="get_list(\''.Crypt::encrypt($data->sc_nota).'\')"><i class="fa fa-download"></i> Gunakan</button>';
+                return '<button class="btn btn-sm btn-success" onclick="get_list(\''.$data->sc_nota.'\')"><i class="fa fa-download"></i> Gunakan</button>';
             })
             ->rawColumns(['sisa','action'])
             ->make(true);
     }
 
-    public function listPiutang($nota)
+    public function listPiutang(Request $request)
     {
-        $nota = Crypt::decrypt($nota);
+        $nota = $request->nota;
         $datas = DB::table('d_salescomp')
             ->leftJoin('d_salescomppayment', 'scp_salescomp', 'sc_id')
             ->select('sc_total', DB::raw('date_format(sc_datetop, "%d/%m/%Y") as deadline'), 'sc_nota', DB::raw('COALESCE(SUM(scp_pay), 0) as payment'))
@@ -998,8 +1019,7 @@ class PenjualanPusatController extends Controller
                 return $sisa;
             })
             ->addColumn('bayar', function($datas){
-                return '<button class="btn btn-sm btn-success" onclick="toPayment(\''.Crypt::encrypt($datas->sc_nota).'\')"><i class="fa fa-money"></i> Bayar</button>';
-                return '<button class="btn btn-sm btn-success" onclick="get_list(\''.$datas->sc_nota.'\')"><i class="fa fa-dolar"></i> Bayar</button>';
+                return '<button class="btn btn-sm btn-success" onclick="toPayment(\''.$datas->sc_nota.'\')"><i class="fa fa-money"></i> Bayar</button>';
             })
             ->rawColumns(['sisa','bayar'])
             ->make(true);

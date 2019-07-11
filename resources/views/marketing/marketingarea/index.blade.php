@@ -129,11 +129,11 @@
                         <table id="detailOrder" class="table table-sm table-hover table-bordered">
                             <thead>
                             <tr class="bg-primary text-light">
-                                <th>Nama Barang</th>
-                                <th>Satuan</th>
-                                <th>Qty</th>
-                                <th>Harga Satuan</th>
-                                <th>Total Harga</th>
+                                <th class="text-center">Nama Barang</th>
+                                <th class="text-center">Satuan</th>
+                                <th class="text-center">Jumlah</th>
+                                <!-- <th>Harga Satuan</th>
+                                <th>Total Harga</th> -->
                             </tr>
                             </thead>
                             <tbody class="empty">
@@ -261,6 +261,34 @@
                                 <select name="" id="jenis_exp" class="form-control form-control-sm select2">
                                     <option value="" selected="" disabled="">== Pilih Jenis Ekspedisi ==</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="jenis_exp">Nama Kurir</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" id="kurir_name" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-2">
+                                <label for="expedition">Nomor Telepon</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" id="no_hpkurir" class="form-control form-control-sm hp">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="jenis_exp">Nomor Resi</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" id="no_resi" class="form-control form-control-sm text-uppercase">
+                            </div>
+                            <div class="col-2">
+                                <label for="jenis_exp">Biaya</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" id="biaya_kurir" class="form-control form-control-sm rupiah">
                             </div>
                         </div>
                     </section>
@@ -711,7 +739,7 @@
                     {data: 'po_nota'},
                     {data: 'comp'},
                     {data: 'agen'},
-                    {data: 'totalprice'},
+                    // {data: 'totalprice'},
                     {data: 'action'}
                 ],
                 pageLength: 10,
@@ -738,9 +766,9 @@
                         $('#detailOrder tbody').append('<tr>' +
                             '<td>' + val.barang + '</td>' +
                             '<td>' + val.unit + '</td>' +
-                            '<td>' + val.qty + '</td>' +
-                            '<td>' + val.price + '</td>' +
-                            '<td>' + val.totalprice + '</td>' +
+                            '<td class="text-right">' + val.qty + '</td>' +
+                            // '<td>' + val.price + '</td>' +
+                            // '<td>' + val.totalprice + '</td>' +
                             '</tr>');
                     });
                 }
@@ -1131,7 +1159,14 @@
         var tb_listcodeprosesorder;
 
         function approveAgen(id) {
-            $('#prosesorder').modal('show');
+            loadingShow();
+            let pd_expedition  = $('#expedition').val();
+            $('#jenis_exp').val('');
+            $('#no_resi').val('');
+            $('#kurir_name').val('');
+            $('#no_hpkurir').val('');
+            $('#biaya_kurir').val('');
+
             axios.get('{{ route("keloladataorder.getdetailorderagen") }}', {
                 params:{
                     id: id
@@ -1146,6 +1181,12 @@
                 $('#tanggal_modaldt').val(tanggal);
                 $('#idagen_modaldt').val(response.data.data.po_agen);
                 $('#total_modaldt').val(convertToRupiah(response.data.data.pod_totalprice));
+
+                loadingHide();
+                $('#prosesorder').modal('show');
+                setTimeout(function(){
+                    $('#expedition').select2('open');
+                }, 500)
             }).catch(function (error) {
 
             });
@@ -1371,11 +1412,20 @@
         }
 
         function approveAndSendItems() {
-            let listQty = $('.input-qty-proses').serialize();
-            let listItemsId = $('.itemsId').serialize();
-            let listUnits = $('.units').serialize();
-            idProductOrder = $('#idProductOrder').val();
-            let dataX = listQty +'&'+ listItemsId +'&'+ listUnits;
+            idProductOrder  = $('#idProductOrder').val();
+
+            let listQty        = $('.input-qty-proses').serialize();
+            let listItemsId    = $('.itemsId').serialize();
+            let listUnits      = $('.units').serialize();
+            let pd_nota        = $('#nota_modaldt').val();
+            let pd_expedition  = $('#expedition').val();
+            let pd_product     = $('#jenis_exp').val();
+            let pd_resi        = $('#no_resi').val();
+            let pd_couriername = $('#kurir_name').val();
+            let pd_couriertelp = $('#no_hpkurir').val();
+            let pd_price       = $('#biaya_kurir').val();
+
+            let dataX = listQty +'&'+ listItemsId +'&'+ listUnits +'&'+ pd_nota +'&'+ pd_expedition +'&'+ pd_product +'&'+ pd_resi +'&'+ pd_couriername +'&'+ pd_couriertelp +'&'+ pd_price ;
             loadingShow();
 
             $.ajax({

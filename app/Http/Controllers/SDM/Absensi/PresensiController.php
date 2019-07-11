@@ -23,11 +23,15 @@ class PresensiController extends Controller
         $branch = $request->filterByBranch;
 
         // get result of presence-query
-        $datas = d_presence::whereBetween('p_date', [$dateFrom, $dateTo])
-        ->whereHas('getEmployee', function ($q) use ($branch) {
-            $q->where('e_company', $branch);
-        })
-        ->groupBy('p_date')
+        $datas = d_presence::whereBetween('p_date', [$dateFrom, $dateTo]);
+        // filter by branchId
+        if (!is_null($branch)) {
+            $datas = $datas->whereHas('getEmployee', function ($q) use ($branch) {
+                $q->where('e_company', $branch);
+            });
+        }
+        // get data
+        $datas = $datas->groupBy('p_date')
         ->get();
 
         // count each status
@@ -36,17 +40,20 @@ class PresensiController extends Controller
         $listCountT = array();
         $listCountC = array();
         foreach ($datas as $key => $val) {
-            $presences = d_presence::where('p_date', $val->p_date)
-            ->whereHas('getEmployee', function ($q) use ($branch) {
-                $q->where('e_company', $branch);
-            })
-            ->select(
+            $presences = d_presence::where('p_date', $val->p_date);
+            // filter presence by branch
+            if (!is_null($branch)) {
+                $presences = $presences->whereHas('getEmployee', function ($q) use ($branch) {
+                    $q->where('e_company', $branch);
+                });
+            }
+            // get presence
+            $presences = $presences->select(
                 'p_status',
                 DB::RAW('COUNT(*) as count')
             )
             ->groupBy('p_status')
             ->get();
-
 
             // insert count to each array
             foreach ($presences as $idx => $prs) {
@@ -104,10 +111,10 @@ class PresensiController extends Controller
                 }
             })
             ->addColumn('action', function ($datas) {
-                return '<div class="btn-group btn-group-sm">
+                return '<div class="text-center"><div class="btn-group btn-group-sm">
                 <button class="btn btn-primary btn-detail" type="button" onclick="showDetailPresence(' . $datas->p_id . ')" title="Detail Presensi"><i class="fa fa-folder"></i></button>
-                <button class="btn btn-warning btn-edit" type="button" onclick="editDetailPresence(' . $datas->p_id . ')"  title="Edit Presensi"><i class="fa fa-arrow-right"></i></button>
-                </div>';
+                </div></div>';
+                // <button class="btn btn-warning btn-edit" type="button" onclick="editDetailPresence(' . $datas->p_id . ')"  title="Edit Presensi"><i class="fa fa-arrow-right"></i></button>
             })
             ->rawColumns(['date', 'hadir', 'ijin', 'tidakMasuk', 'cuti', 'action'])
             ->make(true);
@@ -123,6 +130,22 @@ class PresensiController extends Controller
             ->get();
 
             return response()->json($branchs);
+        }
+        catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+
+    }
+    // get list division for select-option
+    public function getDivision()
+    {
+        try {
+            $division = m_divisi::get();
+
+            return response()->json($division);
         }
         catch (\Exception $e) {
             return response()->json([
@@ -164,15 +187,27 @@ class PresensiController extends Controller
         try {
             $date = Carbon::parse($request->datePr);
             $branchId = $request->branch;
+            $divisionId = $request->division;
 
-            $presences = d_presence::whereDate('p_date', $date)
-            ->whereHas('getEmployee', function ($q) use ($branchId) {
-                $q->where('e_company', $branchId);
-            })
-            ->with('getEmployee.getDivision')
-            ->join('m_employee', 'p_employee', 'e_id')
+            $presences = m_employee::with(['getPresence' => function ($q) use ($date) {
+                $q->whereDate('p_date', $date);
+            }]);
+            // filter by branchId
+            if (!is_null($branchId)) {
+                $presences = $presences->where('e_company', $branchId);
+            }
+            // filter by divisionId
+            if (!is_null($divisionId)) {
+                $presences = $presences->whereHas('getDivision', function($q) use ($divisionId) {
+                    $q->where('m_id', $divisionId);
+                });
+            }
+            // get data
+            $presences = $presences->with('getDivision')
             ->orderBy('e_name', 'asc')
             ->get();
+
+            // dd($request->all(), $divisionId, $presences);
 
             return response()->json($presences);
         }

@@ -24,4 +24,9 @@ class m_employee extends Model
     {
         return $this->belongsTo('App\m_company', 'e_company', 'c_id');
     }
+    // get presence
+    public function getPresence()
+    {
+        return $this->hasMany('App\d_presence', 'p_employee', 'e_id');
+    }
 }
