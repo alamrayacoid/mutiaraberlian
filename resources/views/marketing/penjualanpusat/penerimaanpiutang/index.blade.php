@@ -11,11 +11,15 @@
             <section>
                 <div class="row mb-3">
                     <div class="col-5 pr-0">
-                        <input type="text" placeholder="Tulis Nota / Filterisasi --->" class="form-control form-control-sm" id="nota_s">
-                        <input type="hidden" id="nota_r">
+                        <div class="input-group">
+                            <input type="text" placeholder="Tulis Nota / Filterisasi --->" class="form-control" id="nota_s" autocomplete="off" style="text-transform:uppercase">
+                            <div class="input-group-append">
+                                <button type="button" class="input-group-text btn btn-sm btn-primary btn-block rounded" style="height: 100%;" onclick="goSearch()">Go</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-1 pl-1">
-                        <button type="button" class="btn btn-sm btn-primary btn-block rounded" style="height: 100%;" onclick="getNota()"><i class="fa fa-search"></i></button>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-lg btn-primary btn-block rounded" onclick="getNota()"><i class="fa fa-filter"></i></button>
                     </div>
                 </div>
                 <div class="table-responsive">

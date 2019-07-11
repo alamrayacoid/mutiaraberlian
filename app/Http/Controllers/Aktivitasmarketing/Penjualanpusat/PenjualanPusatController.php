@@ -926,6 +926,26 @@ class PenjualanPusatController extends Controller
     }
 
     // Penerimaan Piutang -------------------------->
+    public function cariNota(Request $request)
+    {
+        $cari = $request->term;
+        $nota = DB::table('d_salescomp')
+            ->select('d_salescomp.*')
+            ->where(function ($q) use ($cari) {
+                $q->whereRaw("sc_nota like '%" . $cari . "%'");
+            })
+            ->get();
+
+        if (count($nota) == 0) {
+            $results[] = ['label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nota as $query) {
+                $results[] = ['label' => strtoupper($query->sc_nota), 'data' => $query];
+            }
+        }
+        return Response::json($results);
+    }
+
     public function getProvinsi()
     {
         $data = DB::table('m_wil_provinsi')->get();

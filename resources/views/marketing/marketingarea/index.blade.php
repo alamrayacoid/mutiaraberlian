@@ -1159,10 +1159,14 @@
         var tb_listcodeprosesorder;
 
         function approveAgen(id) {
-            $('#prosesorder').modal('show');
-            setTimeout(function(){
-                $('#expedition').select2('open');
-            }, 500)
+            loadingShow();
+            let pd_expedition  = $('#expedition').val();
+            $('#jenis_exp').val('');
+            $('#no_resi').val('');
+            $('#kurir_name').val('');
+            $('#no_hpkurir').val('');
+            $('#biaya_kurir').val('');
+
             axios.get('{{ route("keloladataorder.getdetailorderagen") }}', {
                 params:{
                     id: id
@@ -1177,6 +1181,12 @@
                 $('#tanggal_modaldt').val(tanggal);
                 $('#idagen_modaldt').val(response.data.data.po_agen);
                 $('#total_modaldt').val(convertToRupiah(response.data.data.pod_totalprice));
+
+                loadingHide();
+                $('#prosesorder').modal('show');
+                setTimeout(function(){
+                    $('#expedition').select2('open');
+                }, 500)
             }).catch(function (error) {
 
             });

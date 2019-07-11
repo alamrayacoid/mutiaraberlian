@@ -1119,9 +1119,37 @@
             searching: false,
         });
         $('#table_getNota').DataTable();
-        $('#nota_s').css('text-transform', 'uppercase');
         getProvinsi();
     });
+
+    $("#nota_s").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "{{url('/marketing/penjualanpusat/penerimaanpiutang/cari-nota')}}",
+                data: {
+                    term: $("#nota_s").val()
+                },
+                success: function (data) {
+                    response(data);
+                }
+            });
+        },
+        // minLength: 1,
+        // select: function (event, data) {
+        //     setItem(data.item);
+        // }
+    });
+
+    $("#nota_s").keypress(function(e){
+        if (e.which == 13) {
+            goSearch();
+        }
+    });
+
+    function goSearch() {
+        let nota = $('#nota_s').val();
+        get_list(nota);
+    }
 
     function getNota(){
         $('#modal_nota').modal('show');
