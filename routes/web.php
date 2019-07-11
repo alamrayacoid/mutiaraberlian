@@ -861,20 +861,20 @@ Route::group(['middleware' => 'auth'], function () {
         // laporan keuangan
             // laporan Jurnal Umum
                 Route::get('modul/keuangan/laporan/jurnal_umum', [
-                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@index'
+                    'uses'  => 'Keuangan\laporan\jurnal\laporan_jurnal_controller@index'
                 ])->name('laporan.keuangan.jurnal_umum');
 
                 Route::get('modul/keuangan/laporan/jurnal_umum/resource', [
-                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@resource'
+                    'uses'  => 'Keuangan\laporan\jurnal\laporan_jurnal_controller@resource'
                 ])->name('laporan.keuangan.jurnal_umum.resource');
 
             // laporan Neraca
                 Route::get('modul/keuangan/laporan/neraca', [
-                    'uses'  => 'keuangan\laporan\neraca\laporan_neraca_controller@index'
+                    'uses'  => 'Keuangan\laporan\neraca\laporan_neraca_controller@index'
                 ])->name('laporan.keuangan.neraca');
 
                 Route::get('modul/keuangan/laporan/neraca/resource', [
-                    'uses'  => 'keuangan\laporan\neraca\laporan_neraca_controller@resource'
+                    'uses'  => 'Keuangan\laporan\neraca\laporan_neraca_controller@resource'
                 ])->name('laporan.keuangan.neraca.resource');
 
 

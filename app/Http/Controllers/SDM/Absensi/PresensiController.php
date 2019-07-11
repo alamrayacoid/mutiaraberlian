@@ -104,10 +104,10 @@ class PresensiController extends Controller
                 }
             })
             ->addColumn('action', function ($datas) {
-                return '<div class="btn-group btn-group-sm">
+                return '<div class="text-center"><div class="btn-group btn-group-sm">
                 <button class="btn btn-primary btn-detail" type="button" onclick="showDetailPresence(' . $datas->p_id . ')" title="Detail Presensi"><i class="fa fa-folder"></i></button>
-                <button class="btn btn-warning btn-edit" type="button" onclick="editDetailPresence(' . $datas->p_id . ')"  title="Edit Presensi"><i class="fa fa-arrow-right"></i></button>
-                </div>';
+                </div></div>';
+                // <button class="btn btn-warning btn-edit" type="button" onclick="editDetailPresence(' . $datas->p_id . ')"  title="Edit Presensi"><i class="fa fa-arrow-right"></i></button>
             })
             ->rawColumns(['date', 'hadir', 'ijin', 'tidakMasuk', 'cuti', 'action'])
             ->make(true);
