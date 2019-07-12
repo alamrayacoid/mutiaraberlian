@@ -84,330 +84,363 @@
 
 @endsection
 @section('extra_script')
-    <script type="text/javascript">
-        var table_do;
-        var table_kpw;
-        var table_listKPW;
-        var table_detailKPW, table_editKPW;
-        $(document).ready(function () {
+<!-- script for tim/date in each-tabs -->
+<script type="text/javascript">
+    $(document).ready(function() {
+        var cur_date = new Date();
+        var first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+        var last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+        // order produk ke agen
+        $('#date_from_od').datepicker('setDate', first_day);
+        $('#date_to_od').datepicker('setDate', last_day);
+    })
+</script>
+
+<!-- order product and other -->
+<script type="text/javascript">
+    var table_do;
+    var table_kpw;
+    var table_listKPW;
+    var table_detailKPW, table_editKPW;
+    $(document).ready(function () {
+        // start: order produk ke agen/cabang
+        getStatusDO();
+        $('#date_from_od').on('change', function() {
             getStatusDO();
-            var table_pus = $('#table_kelolapenjualan').DataTable({
-                bAutoWidth: true
-            });
-            table_kpw = $('#table_KPW').DataTable({
-                bAutoWidth: true,
-                responsive: true,
-                info: false,
-                searching: false,
-                paging: false
-            });
-            setTimeout(function () {
-                TableListKPW();
-            }, 1000)
+        });
+        $('#date_to_od').on('change', function() {
+            getStatusDO();
+        });
+        $('#btn_refresh_date_od').on('click', function() {
+            $('#date_from_od').datepicker('setDate', first_day);
+            $('#date_to_od').datepicker('setDate', last_day);
+        });
+        // end: ---
 
-            setTimeout(function () {
-                table_detailKPW = $('#table_DetailKPW').DataTable();
-            }, 1250)
-            var table_modal_detail = $('#detail-kelola').DataTable();
-            //var table_pus = $('#table_inventoryagen').DataTable();
+        var table_pus = $('#table_kelolapenjualan').DataTable({
+            bAutoWidth: true
+        });
+        table_kpw = $('#table_KPW').DataTable({
+            bAutoWidth: true,
+            responsive: true,
+            info: false,
+            searching: false,
+            paging: false
+        });
+        setTimeout(function () {
+            TableListKPW();
+        }, 1000)
 
-            $(document).on('click', '.btn-edit', function () {
-                window.location.href = '{{ route('orderagenpusat.edit') }}'
-            });
+        setTimeout(function () {
+            table_detailKPW = $('#table_DetailKPW').DataTable();
+        }, 1250)
+        var table_modal_detail = $('#detail-kelola').DataTable();
+        //var table_pus = $('#table_inventoryagen').DataTable();
 
-            $(document).on('click', '.btn-disable', function () {
-                var ini = $(this);
-                $.confirm({
-                    animation: 'RotateY',
-                    closeAnimation: 'scale',
-                    animationBounce: 1.5,
-                    icon: 'fa fa-exclamation-triangle',
-                    title: 'Peringatan!',
-                    content: 'Apa anda yakin mau menonaktifkan data ini?',
-                    theme: 'disable',
-                    buttons: {
-                        info: {
-                            btnClass: 'btn-blue',
-                            text: 'Ya',
-                            action: function () {
-                                $.toast({
-                                    heading: 'Information',
-                                    text: 'Data Berhasil di Nonaktifkan.',
-                                    bgColor: '#0984e3',
-                                    textColor: 'white',
-                                    loaderBg: '#fdcb6e',
-                                    icon: 'info'
-                                })
-                                ini.parents('.btn-group').html('<button class="btn btn-success btn-enable" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-                            }
-                        },
-                        cancel: {
-                            text: 'Tidak',
-                            action: function () {
-                                // tutup confirm
-                            }
-                        }
-                    }
-                });
-
-                $(document).ready(function () {
-                    $('#modal-order').DataTable({
-                        "iDisplayLength": 5
-                    });
-                });
-
-                $(document).ready(function () {
-                    $('#detail-monitoring').DataTable({
-                        "iDisplayLength": 5
-                    });
-                });
-            });
-
-            $(document).on('click', '.btn-enable', function () {
-                $.toast({
-                    heading: 'Information',
-                    text: 'Data Berhasil di Aktifkan.',
-                    bgColor: '#0984e3',
-                    textColor: 'white',
-                    loaderBg: '#fdcb6e',
-                    icon: 'info'
-                })
-                $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
-                    '<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-            })
-
-            $("#search-list-agen").on("click", function () {
-                $(".table-modal").removeClass('d-none');
-            });
-
-            $('#table_inventoryagen').DataTable({
-                initComplete: function () {
-                    this.api().columns().every(function () {
-                        var column = this;
-                        var select = $('<select class="filter select2"><option value=""></option></select>')
-                            .appendTo($(column.header()).empty()).on('change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
-
-                                column
-                                    .search(val ? '^' + val + '$' : '', true, false)
-                                    .draw();
-                            });
-
-                        column.data().unique().sort().each(function (d, j) {
-                            select.append('<option value="' + d + '">' + d + '</option>')
-                        });
-                    });
-                    $('.filter').select2();
-                }
-            });
+        $(document).on('click', '.btn-edit', function () {
+            window.location.href = '{{ route('orderagenpusat.edit') }}'
         });
 
-        function getStatusDO() {
-            var st = $('#statusDO').val();
-            $('#table_orderprodukagenpusat').DataTable().clear().destroy();
-            table_do = $('#table_orderprodukagenpusat').DataTable({
-                responsive: true,
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('orderagenpusat.getDO') }}",
-                    type: "get",
-                    data: {status: st}
-                },
-                columns: [
-                    {data: 'tanggal'},
-                    {data: 'nota'},
-                    {data: 'penjual'},
-                    {data: 'pembeli'},
-                    {data: 'status'},
-                    {data: 'action'}
-                ]
-            });
-        }
-
-        function terimaDO(id) {
-            var surl = "{{url('/marketing/agen/orderproduk/terima-delivery-order')}}"+"/"+id;
-
+        $(document).on('click', '.btn-disable', function () {
+            var ini = $(this);
             $.confirm({
                 animation: 'RotateY',
                 closeAnimation: 'scale',
                 animationBounce: 1.5,
                 icon: 'fa fa-exclamation-triangle',
-                title: 'Pesan!',
-                content: 'Apakah anda yakin ingin menyetujui orderan ini?',
+                title: 'Peringatan!',
+                content: 'Apa anda yakin mau menonaktifkan data ini?',
                 theme: 'disable',
                 buttons: {
                     info: {
                         btnClass: 'btn-blue',
                         text: 'Ya',
                         action: function () {
-                            return $.ajax({
-                                type: "post",
-                                url: surl,
-                                data: {
-                                    "_token": "{{ csrf_token() }}"
-                                },
-                                beforeSend: function () {
-                                    loadingShow();
-                                },
-                                success: function (response) {
-                                    //var table_agen = $('#table_dataAgen').DataTable();
-                                    if (response.status == 'sukses') {
-                                        loadingHide();
-                                        messageSuccess('Berhasil', 'Data berhasil disetujui!');
-                                        table_do.ajax.reload();
-                                    } else {
-                                        loadingHide();
-                                        messageFailed('Gagal', response.message);
-                                    }
-                                },
-                                error: function (e) {
-                                    loadingHide();
-                                    messageWarning('Peringatan', e.message);
-                                }
-                            });
+                            $.toast({
+                                heading: 'Information',
+                                text: 'Data Berhasil di Nonaktifkan.',
+                                bgColor: '#0984e3',
+                                textColor: 'white',
+                                loaderBg: '#fdcb6e',
+                                icon: 'info'
+                            })
+                            ini.parents('.btn-group').html('<button class="btn btn-success btn-enable" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
                         }
                     },
                     cancel: {
                         text: 'Tidak',
-                        action: function (response) {
-                            loadingHide();
-                            messageWarning('Peringatan', 'Anda telah membatalkan!');
+                        action: function () {
+                            // tutup confirm
                         }
                     }
                 }
             });
-        }
 
-        function getProvId() {
-            var id = document.getElementById("prov").value;
-            $.ajax({
-                url: "{{route('orderProduk.getCity')}}",
-                type: "get",
-                data: {
-                    provId: id
-                },
-                success: function (response) {
-                    $('#city').empty();
-                    $("#city").append('<option value="" selected disabled>=== Pilih Kota ===</option>');
-                    $.each(response.data, function (key, val) {
-                        $("#city").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
-                    });
-                    $('#city').focus();
-                    $('#city').select2('open');
-                }
+            $(document).ready(function () {
+                $('#modal-order').DataTable({
+                    "iDisplayLength": 5
+                });
             });
-        }
 
-        $('#city').on('change', function () {
-            var city = $('#city').val();
-            $.ajax({
-                url: "{{url('/marketing/agen/get-agen')}}" + "/" + city,
-                type: "get",
-                success: function (response) {
-                    $('#agen').empty();
-                    $("#agen").append('<option value="" selected disabled>=== Pilih Agen ===</option>');
-                    $.each(response.data, function (key, val) {
-                        $("#agen").append('<option value="' + val.c_id + '">' + val.a_name + '</option>');
-                    });
-                    $('#agen').focus();
-                    $('#agen').select2('open');
-                }
+            $(document).ready(function () {
+                $('#detail-monitoring').DataTable({
+                    "iDisplayLength": 5
+                });
             });
         });
 
-        function filterData() {
-            var id = $('#agen').val();
+        $(document).on('click', '.btn-enable', function () {
+            $.toast({
+                heading: 'Information',
+                text: 'Data Berhasil di Aktifkan.',
+                bgColor: '#0984e3',
+                textColor: 'white',
+                loaderBg: '#fdcb6e',
+                icon: 'info'
+            })
+            $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
+                '<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
+        })
 
-            $('#table_inventoryagen').DataTable().clear().destroy();
-            table_agen = $('#table_inventoryagen').DataTable({
-                responsive: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ url('/marketing/agen/filter-data') }}" + "/" + id,
-                    type: "post",
-                    data: {
-                        "_token": "{{ csrf_token() }}"
+        $("#search-list-agen").on("click", function () {
+            $(".table-modal").removeClass('d-none');
+        });
+
+        $('#table_inventoryagen').DataTable({
+            initComplete: function () {
+                this.api().columns().every(function () {
+                    var column = this;
+                    var select = $('<select class="filter select2"><option value=""></option></select>')
+                        .appendTo($(column.header()).empty()).on('change', function () {
+                            var val = $.fn.dataTable.util.escapeRegex(
+                                $(this).val()
+                            );
+
+                            column
+                                .search(val ? '^' + val + '$' : '', true, false)
+                                .draw();
+                        });
+
+                    column.data().unique().sort().each(function (d, j) {
+                        select.append('<option value="' + d + '">' + d + '</option>')
+                    });
+                });
+                $('.filter').select2();
+            }
+        });
+    });
+
+    function getStatusDO() {
+        var st = $('#statusDO').val();
+        let date_from = $('#date_from_od').val();
+        let date_to = $('#date_to_od').val();
+
+        $('#table_orderprodukagenpusat').DataTable().clear().destroy();
+        table_do = $('#table_orderprodukagenpusat').DataTable({
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('orderagenpusat.getDO') }}",
+                type: "get",
+                data: {
+                    status: st,
+                    date_from: date_from,
+                    date_to: date_to
+                }
+            },
+            columns: [
+                {data: 'tanggal'},
+                {data: 'nota'},
+                {data: 'penjual'},
+                {data: 'pembeli'},
+                {data: 'status'},
+                {data: 'action'}
+            ]
+        });
+    }
+
+    function terimaDO(id) {
+        var surl = "{{url('/marketing/agen/orderproduk/terima-delivery-order')}}"+"/"+id;
+
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Pesan!',
+            content: 'Apakah anda yakin ingin menyetujui orderan ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "post",
+                            url: surl,
+                            data: {
+                                "_token": "{{ csrf_token() }}"
+                            },
+                            beforeSend: function () {
+                                loadingShow();
+                            },
+                            success: function (response) {
+                                //var table_agen = $('#table_dataAgen').DataTable();
+                                if (response.status == 'sukses') {
+                                    loadingHide();
+                                    messageSuccess('Berhasil', 'Data berhasil disetujui!');
+                                    table_do.ajax.reload();
+                                } else {
+                                    loadingHide();
+                                    messageFailed('Gagal', response.message);
+                                }
+                            },
+                            error: function (e) {
+                                loadingHide();
+                                messageWarning('Peringatan', e.message);
+                            }
+                        });
                     }
                 },
-                columns: [
-                    {data: 'agen'},
-                    {data: 'comp'},
-                    {data: 'i_name'},
-                    {data: 'kondisi'},
-                    {data: 'qty'},
-                    {data: 'aksi', className: 'text-center'}
-                ],
-                pageLength: 10,
-                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
+                cancel: {
+                    text: 'Tidak',
+                    action: function (response) {
+                        loadingHide();
+                        messageWarning('Peringatan', 'Anda telah membatalkan!');
+                    }
+                }
+            }
+        });
+    }
 
-                initComplete: function () {
-                    this.api().columns().every(function () {
-                        var column = this;
-                        var select = $('<select class="filter select2"><option value=""></option></select>')
-                            .appendTo($(column.header()).empty()).on('change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
+    function getProvId() {
+        var id = document.getElementById("prov").value;
+        $.ajax({
+            url: "{{route('orderProduk.getCity')}}",
+            type: "get",
+            data: {
+                provId: id
+            },
+            success: function (response) {
+                $('#city').empty();
+                $("#city").append('<option value="" selected disabled>=== Pilih Kota ===</option>');
+                $.each(response.data, function (key, val) {
+                    $("#city").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
+                });
+                $('#city').focus();
+                $('#city').select2('open');
+            }
+        });
+    }
 
-                                column
-                                    .search(val ? '^' + val + '$' : '', true, false)
-                                    .draw();
-                            });
+    $('#city').on('change', function () {
+        var city = $('#city').val();
+        $.ajax({
+            url: "{{url('/marketing/agen/get-agen')}}" + "/" + city,
+            type: "get",
+            success: function (response) {
+                $('#agen').empty();
+                $("#agen").append('<option value="" selected disabled>=== Pilih Agen ===</option>');
+                $.each(response.data, function (key, val) {
+                    $("#agen").append('<option value="' + val.c_id + '">' + val.a_name + '</option>');
+                });
+                $('#agen').focus();
+                $('#agen').select2('open');
+            }
+        });
+    });
 
-                        column.data().unique().sort().each(function (d, j) {
-                            select.append('<option value="' + d + '">' + d + '</option>')
+    function filterData() {
+        var id = $('#agen').val();
+
+        $('#table_inventoryagen').DataTable().clear().destroy();
+        table_agen = $('#table_inventoryagen').DataTable({
+            responsive: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('/marketing/agen/filter-data') }}" + "/" + id,
+                type: "post",
+                data: {
+                    "_token": "{{ csrf_token() }}"
+                }
+            },
+            columns: [
+                {data: 'agen'},
+                {data: 'comp'},
+                {data: 'i_name'},
+                {data: 'kondisi'},
+                {data: 'qty'},
+                {data: 'aksi', className: 'text-center'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
+
+            initComplete: function () {
+                this.api().columns().every(function () {
+                    var column = this;
+                    var select = $('<select class="filter select2"><option value=""></option></select>')
+                        .appendTo($(column.header()).empty()).on('change', function () {
+                            var val = $.fn.dataTable.util.escapeRegex(
+                                $(this).val()
+                            );
+
+                            column
+                                .search(val ? '^' + val + '$' : '', true, false)
+                                .draw();
                         });
+
+                    column.data().unique().sort().each(function (d, j) {
+                        select.append('<option value="' + d + '">' + d + '</option>')
                     });
-                    $('.filter').select2();
-                }
-            });
-        }
+                });
+                $('.filter').select2();
+            }
+        });
+    }
 
-        function detail_agen(id) {
-            loadingShow();
+    function detail_agen(id) {
+        loadingShow();
 
-            $.ajax({
-                url: "{{url('/marketing/agen/get-detail-inventory')}}"+"/"+id,
-                type: "get",
-                success:function(resp){
-                    $('#owner_s').val(resp.data[0].pemilik);
-                    $('#owner_r').val(resp.data[0].pemilik);
-                    $('#position_s').val(resp.data[0].position);
-                    $('#position_r').val(resp.data[0].position);
-                    $('#item_s').val(resp.data[0].i_name);
-                    $('#item_r').val(resp.data[0].i_name);
+        $.ajax({
+            url: "{{url('/marketing/agen/get-detail-inventory')}}"+"/"+id,
+            type: "get",
+            success:function(resp){
+                $('#owner_s').val(resp.data[0].pemilik);
+                $('#owner_r').val(resp.data[0].pemilik);
+                $('#position_s').val(resp.data[0].position);
+                $('#position_r').val(resp.data[0].position);
+                $('#item_s').val(resp.data[0].i_name);
+                $('#item_r').val(resp.data[0].i_name);
 
-                    $('#table_inventory_agen').DataTable().clear().destroy()
-                    var tb_dtInventory = $('#table_inventory_agen').DataTable({
-                        responsive: true,
-                        info: false,
-                        searching: false,
-                        paging: false
-                    });
-                    $.each(resp.data, function(key, val){
-                        let angka = val.sd_qty;
-                        if (val.sd_qty == null) {
-                            qty = '';
-                        } else {
-                            qty = convertToRibuan(angka);
-                        }
-                        tb_dtInventory.row.add([
-                            val.sd_code,
-                            '<div class="text-right">'+qty+'</div>'
-                        ]).draw(false);
-                    });
-                    $('#modalDetail_agen').modal('show');
-                    loadingHide();
-                }
-            })
-        }
-    </script>
+                $('#table_inventory_agen').DataTable().clear().destroy()
+                var tb_dtInventory = $('#table_inventory_agen').DataTable({
+                    responsive: true,
+                    info: false,
+                    searching: false,
+                    paging: false
+                });
+                $.each(resp.data, function(key, val){
+                    let angka = val.sd_qty;
+                    if (val.sd_qty == null) {
+                        qty = '';
+                    } else {
+                        qty = convertToRibuan(angka);
+                    }
+                    tb_dtInventory.row.add([
+                        val.sd_code,
+                        '<div class="text-right">'+qty+'</div>'
+                    ]).draw(false);
+                });
+                $('#modalDetail_agen').modal('show');
+                loadingHide();
+            }
+        })
+    }
+</script>
 
-    <!-- kelola penjualan langsung -->
-    <script type="text/javascript">
+<!-- kelola penjualan langsung -->
+<script type="text/javascript">
         $(document).ready(function () {
             cur_date = new Date();
             first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
@@ -849,7 +882,7 @@
                     messageWarning("Error", error)
                 })
         }
-        
+
         function getCity() {
             $.ajax({
                 type: 'get',
@@ -984,7 +1017,7 @@
             var selected = $(this).find('option:selected').data('nama');
             $('#label-satuan').html(selected);
         });
-        
+
         function saveSalesWeb() {
             let kuantitas = $('#kuantitas').val();
             let qty = $("input[name='qtycode[]']")
@@ -1233,7 +1266,7 @@
                 alert('error');
             })
         }
-        
+
         function detailKPW(id) {
             loadingShow();
             axios.get('{{ route("kelolapenjualan.getDetailKPW") }}', {
@@ -1301,7 +1334,7 @@
                     $('#edit_harga').val(price);
                     $('#edit_total').val(total_price)
                     $('#edit_note').val(resp.datas.sw_note);
-                    
+
                     $("#edit_satuan").find('option').remove();
                     var option = '';
                     var selected1, selected2, selected3;
@@ -1367,7 +1400,7 @@
             let total = parseInt(qty) * parseInt(harga);
             $('#edit_total').val(total);
         });
-        
+
         function updateKPW() {
             let kuantitas = $('#edit_kuantitas').val();
             let qty = $("input[name='qty_s[]']")
@@ -1545,7 +1578,7 @@
             // }
         }
 
-        $(document).on('click', '.btn-trash', function () {            
+        $(document).on('click', '.btn-trash', function () {
             table_editKPW
                 .row( $(this).parents('tr') )
                 .remove()

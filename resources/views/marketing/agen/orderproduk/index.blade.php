@@ -10,15 +10,33 @@
         </div>
         <div class="card-block">
             <div class="row mb-3">
-                <div class="col-3 col-md-3 col-sm-3 text-left">
-                    <select id="statusDO" class="select2" onchange="getStatusDO()">
-                        <option value="" selected="">=== Pilih Status ===</option>
-                        <option value="pending">Pending</option>
-                        <option value="ditolak">Ditolak</option>
-                        <option value="disetujui">Disetujui</option>
-                        <option value="dikirim">Dikirim</option>
-                        <option value="diterima">Diterima</option>
-                    </select>
+                <div class="col-md-6 col-sm-12">
+                    <div class="input-group input-group-sm input-daterange">
+                        <input type="text" class="form-control" id="date_from_od" autocomplete="off">
+                        <span class="input-group-addon">-</span>
+                        <input type="text" class="form-control" id="date_to_od" autocomplete="off">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" id="btn_refresh_date_od"><i class="fa fa-refresh"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-12"></div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="row col-md-12 col-sm-12">
+                        <div class="col-md-4">
+                            <label for="statusDO">Status :</label>
+                        </div>
+                        <div class="col-md-8">
+                            <select id="statusDO" class="select2" onchange="getStatusDO()">
+                                <option value="" selected="">=== Pilih Status ===</option>
+                                <option value="pending">Pending</option>
+                                <option value="ditolak">Ditolak</option>
+                                <option value="disetujui">Disetujui</option>
+                                <option value="dikirim">Dikirim</option>
+                                <option value="diterima">Diterima</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
             <section>

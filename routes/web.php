@@ -181,6 +181,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/ekspedisi/disable-produk', 'Master\EkspedisiController@disableProduk')->name('ekspedisi.disableProduk');
     Route::post('/masterdatautama/ekspedisi/enable-ekspedisi', 'Master\EkspedisiController@enableEkspedisi')->name('ekspedisi.enableEkspedisi');
     Route::post('/masterdatautama/ekspedisi/enable-produk', 'Master\EkspedisiController@enableProduk')->name('ekspedisi.enableProduk');
+
+    //Master Pembayaran
+    Route::get('/masterdatautama/masterpembayaran', 'Master\PembayaranController@index')->name('masterdatautama.masterpembayaran');
+    Route::post('/masterdatautama/masterpembayaran/simpan', 'Master\PembayaranController@save')->name('masterdatautama.save');
+    Route::post('/masterdatautama/masterpembayaran/get-data', 'Master\PembayaranController@getDataPembayaran')->name('masterdatautama.getData');
     // !===================================================== End Master Data Utama =====================================================!
 
     // !===================================================== PRODUKSI =====================================================!
@@ -291,7 +296,8 @@ Route::group(['middleware' => 'auth'], function () {
     // Distribusi -> Receive order from branch
     Route::get('/inventory/distribusibarang/get-list-order', 'Inventory\Distribusi\ProsesOrderController@getListOrder')->name('distribusibarangorder.getListOrder');
     Route::get('/inventory/distribusibarang/approve-order/{id}', 'Inventory\Distribusi\ProsesOrderController@approveOrder')->name('distribusibarangorder.approveOrder');
-    Route::get('/inventory/distribusibarang/reject-order', 'Inventory\Distribusi\ProsesOrderController@rejectOrder')->name('distribusibarangorder.rejectOrder');
+    Route::post('/inventory/distribusibarang/store-approval/{id}', 'Inventory\Distribusi\ProsesOrderController@storeApproval')->name('distribusibarangorder.storeApproval');
+    Route::get('/inventory/distribusibarang/reject-order/{id}', 'Inventory\Distribusi\ProsesOrderController@rejectOrder')->name('distribusibarangorder.rejectOrder');
 
     // Manajemen Stok
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
