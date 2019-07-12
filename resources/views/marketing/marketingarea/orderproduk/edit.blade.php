@@ -4,12 +4,12 @@
 
 <article class="content animated fadeInLeft">
     <div class="title-block text-primary">
-        <h1 class="title"> Tambah Data Order Produk ke Cabang</h1>
+        <h1 class="title"> Edit Data Order Produk ke Pusat</h1>
         <p class="title-description">
             <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
             / <span>Marketing</span>
             / <a href="{{route('manajemenagen.index')}}"><span>Manajemen Marketing Area </span></a>
-            / <span class="text-primary" style="font-weight: bold;"> Tambah Data Order Produk ke Cabang </span>
+            / <span class="text-primary" style="font-weight: bold;"> Edit Data Order Produk ke Pusat </span>
         </p>
     </div>
     <section class="section">
@@ -18,7 +18,7 @@
                 <div class="card">
                     <div class="card-header bordered p-2">
                         <div class="header-block">
-                            <h3 class="title"> Tambah Data Order Produk ke Cabang </h3>
+                            <h3 class="title"> Edit Data Order Produk ke Pusat </h3>
                         </div>
                         <div class="header-block pull-right">
                             <a href="{{route('marketingarea.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
@@ -29,16 +29,16 @@
                             <section>
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
-                                          <label for="cabang">Nama Cabang</label>
-                                          <input type="text" class="form-control bg-light" id="cabang" value="{{$produk->comp}}" readonly="" disabled="">
+                                          <label for="cabang">Pusat</label>
+                                          <input type="text" class="form-control bg-light" id="cabang" value="{{ $produk->getOrigin->c_name }}" readonly="" disabled="">
                                         </div>
                                         <div class="form-group col-md-4">
                                           <label for="nota">Nomer Nota</label>
-                                          <input type="text" class="form-control bg-light" id="nota" value="{{$produk->po_nota}}" readonly="" disabled="">
+                                          <input type="text" class="form-control bg-light" id="nota" value="{{ $produk->sd_nota}}" readonly="" disabled="">
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label for="agen">Nama Agen</label>
-                                            <input type="text" class="form-control bg-light" id="agen" value="{{$produk->agen}}" readonly="" disabled="">
+                                            <label for="agen">Cabang</label>
+                                            <input type="text" class="form-control bg-light" id="agen" value="{{ $produk->getDestination->c_name }}" readonly="" disabled="">
                                         </div>
                                     </div>
                                     <hr>
@@ -62,32 +62,32 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($detail as $key => $dt)
+                                                @foreach($produk->getDistributionDt as $key => $dt)
                                                 <tr>
                                                     <td>
                                                         <input type="text" name="barang[]"
                                                         class="form-control form-control-sm barang"
-                                                        style="text-transform:uppercase" autocomplete="off" value="{{$dt->i_code}} - {{$dt->i_name}}">
-                                                        <input type="hidden" name="idItem[]" class="itemId" value="{{$dt->pod_item}}">
-                                                        <input type="hidden" name="kode[]" class="kode" value="{{$dt->i_code}}">
+                                                        style="text-transform:uppercase" autocomplete="off" value="{{ $dt->getItem->i_code }} - {{ $dt->getItem->i_name }}">
+                                                        <input type="hidden" name="idItem[]" class="itemId" value="{{ $dt->sdd_item }}">
+                                                        <input type="hidden" name="kode[]" class="kode" value="{{ $dt->getItem->i_code }}">
                                                     </td>
                                                     <td>
                                                         <select name="po_unit[]"
                                                             class="form-control form-control-sm select2 satuan">
-                                                            <option value="{{$dt->pod_unit}}" selected>{{$dt->u_name}}</option>
-                                                            @if($dt->uid_1 != $dt->pod_unit)
-                                                                <option value="{{$dt->uid_1}}">{{$dt->uname_1}}</option>
+                                                            <option value="{{ $dt->sdd_unit }}" selected>{{ $dt->getUnit->u_name}}</option>
+                                                            @if($dt->getItem->getUnit1->u_id != $dt->sdd_unit)
+                                                                <option value="{{ $dt->getItem->getUnit1->u_id }}">{{ $dt->getItem->getUnit1->u_name }}</option>
                                                             @endif
-                                                            @if($dt->uid_2 != $dt->pod_unit)
-                                                                <option value="{{$dt->uid_2}}">{{$dt->uname_2}}</option>
+                                                            @if($dt->getItem->getUnit2->u_id != $dt->sdd_unit)
+                                                                <option value="{{ $dt->getItem->getUnit2->u_id }}">{{ $dt->getItem->getUnit2->u_name }}</option>
                                                             @endif
-                                                            @if($dt->uid_3 != $dt->pod_unit)
-                                                                <option value="{{$dt->uid_3}}">{{$dt->uname_3}}</option>
+                                                            @if($dt->getItem->getUnit3->u_id != $dt->sdd_unit)
+                                                                <option value="{{ $dt->getItem->getUnit3->u_id }}">{{ $dt->getItem->getUnit3->u_name }}</option>
                                                             @endif
                                                         </select>
                                                     </td>
                                                     <td>
-                                                        <input type="number" name="po_qty[]" min="0" class="form-control form-control-sm jumlah" value="{{$dt->pod_qty}}">
+                                                        <input type="number" name="po_qty[]" min="0" class="form-control form-control-sm jumlah" value="{{ $dt->sdd_qty }}">
                                                     </td>
                                                     {{-- <!-- <td>
                                                         <input type="text" name="po_harga[]" class="form-control form-control-sm input-rupiah harga bg-light" value="{{Currency::addRupiah($dt->pod_price)}}" readonly disabled>
@@ -114,7 +114,7 @@
                         </form>
                     </div>
                     <div class="card-footer text-right">
-                        <button class="btn btn-primary" type="button" onclick="updateOrder('{{Crypt::encrypt($produk->po_id)}}')">Simpan</button>
+                        <button class="btn btn-primary" type="button" onclick="updateOrder('{{ Crypt::encrypt($produk->sd_id) }}')">Simpan</button>
                         <a href="{{route('marketingarea.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>

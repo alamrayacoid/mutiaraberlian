@@ -462,12 +462,12 @@
 					<tr>
 						<td width="20%">No. Nota</td>
 						<td width="1%">:</td>
-						<td>{{$order->po_nota}}</td>
+						<td>{{ $order->sd_nota }}</td>
 					</tr>
 					<tr>
 						<td>Tanggal</td>
 						<td width="5%">:</td>
-						<td>{{$order->po_date}}</td>
+						<td>{{ $order->sd_date }}</td>
 					</tr>
 				</table>
 			</div>
@@ -475,14 +475,14 @@
 			<div class="col-6" style="margin-bottom:20px;">
 				<table class="border-none" width="100%">
 					<tr>
-						<td width="30%">Nama Pusat</td>
+						<td width="30%">Pusat</td>
 						<td width="1%">:</td>
-						<td>{{$order->comp}}</td>
+						<td>{{ $order->getOrigin->c_name }}</td>
 					</tr>
 					<tr>
-						<td>Nama Cabang</td>
+						<td>Cabang</td>
 						<td width="5%">:</td>
-						<td>{{$order->agen}}</td>
+						<td>{{ $order->getDestination->c_name }}</td>
 					</tr>
 				</table>
 			</div>
@@ -490,22 +490,22 @@
 				<thead>
 					<tr>
 						<th width="1%">No</th>
-						<th width="40%">Nama - Kode Barang</th>
+						<th width="50%">Nama - Kode Barang</th>
 						<th>Satuan</th>
-						<th>Qty</th>
-						<th>Harga Satuan</th>
-						<th>Total Harga</th>
+						<th>Jumlah</th>
+						<!-- <th>Harga Satuan</th>
+						<th>Total Harga</th> -->
 					</tr>
 				</thead>
 				<tbody>
-					@foreach($nota as $key => $n)
+					@foreach($order->getDistributionDt as $key => $val)
 					<tr>
-						<td align="center">{{++$key}}</td>
-						<td align="center">{{$n->i_name}} - {{$n->i_code}}</td>
-						<td align="center">{{$n->u_name}}</td>
-						<td align="center">{{$n->pod_qty}}</td>
-						<td align="center">{{Currency::addRupiah($n->pod_price)}}</td>
-						<td align="center">{{Currency::addRupiah($n->pod_totalprice)}}</td>
+						<td class="text-right">{{ ++$key }}</td>
+						<td class="text-left">{{ $val->getItem->i_name }} - {{ $val->getItem->i_code}}</td>
+						<td class="text-left">{{ $val->getUnit->u_name }}</td>
+						<td class="text-right">{{ $val->sdd_qty }}</td>
+						<!-- <td align="center">{{ Currency::addRupiah($val->pod_price)}}</td>
+						<td align="center">{{ Currency::addRupiah($val->pod_totalprice)}}</td> -->
 					</tr>
 					@endforeach
 				</tbody>

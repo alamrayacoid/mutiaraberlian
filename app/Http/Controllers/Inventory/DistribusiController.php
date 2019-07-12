@@ -79,7 +79,7 @@ class DistribusiController extends Controller
         ->with('getExpedition')
         ->with('getExpeditionType')
         ->first();
-        
+
         $dt = DB::table('d_stockdistributiondt')
             ->join('m_item', 'i_id', '=', 'sdd_item')
             ->join('m_unit', 'u_id', '=', 'sdd_unit')
@@ -762,6 +762,7 @@ class DistribusiController extends Controller
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
         $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
             ->where('sd_status', '!=', 'Y')
+            ->where('sd_status', '!=', 'N')
             ->orderBy('sd_date', 'desc')
             ->orderBy('sd_nota', 'desc')
             ->get();
