@@ -43,7 +43,6 @@ class ProsesOrderController extends Controller
                 <button class="btn btn-warning btn-approve-order" onclick="approveOrder(\'' . encrypt($data->sd_id) . '\')" type="button" title="Proses Order"><i class="fa fa-get-pocket"></i></button>
                 <button class="btn btn-danger btn-reject-order" onclick="rejectOrder(\'' . encrypt($data->sd_id) . '\')" type="button" title="Tolak Order"><i class="fa fa-ban"></i></button>
             </div>';
-            // <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(' . $data->sd_id . ')"><i class="fa fa-print"></i></button>
             })
             ->addColumn('tujuan', function ($data) {
                 $tmp = DB::table('m_company')->where('c_id', $data->sd_destination)->first();
@@ -75,13 +74,9 @@ class ProsesOrderController extends Controller
                     ->with('getUnit')
                     ->with('getProdCode');
             }])
-            // ->with('getProductDelivery')
             ->first();
         // set variabel to store nota number
         $nota = $data['stockdist']->sd_nota;
-        // change number format to int before send it to view
-        // $data['stockdist']->getProductDelivery->pd_price = (int)$data['stockdist']->getProductDelivery->pd_price;
-        // dd($data);
         // get data item-stock
         foreach ($data['stockdist']->getDistributionDt as $key => $val)
         {
@@ -93,8 +88,6 @@ class ProsesOrderController extends Controller
                 ->where('s_condition', 'FINE')
                 ->with('getItem')
                 ->first();
-
-            // dd($mainStock);
 
             if (is_null($mainStock)) {
                 $val->stockUnit1 = 0;
@@ -164,21 +157,10 @@ class ProsesOrderController extends Controller
             ->first();
 
             // update stockdist
-            // $stockdist->sd_from = Auth::user()->u_company;
             $stockdist->sd_date = Carbon::now();
             $stockdist->sd_status = 'P';
             $stockdist->sd_user = Auth::user()->u_id;
             $stockdist->save();
-            // insert new stockdist
-            // $id = d_stockdistribution::max('sd_id') + 1;
-            // $dist = new d_stockdistribution;
-            // $dist->sd_id = $id;
-            // $dist->sd_from = Auth::user()->u_company;
-            // $dist->sd_destination = $request->selectBranch;
-            // $dist->sd_date = Carbon::now();
-            // $dist->sd_nota = $nota;
-            // $dist->sd_user = Auth::user()->u_id;
-            // $dist->save();
 
             // insert new product-delivery
             $idDeliv = d_productdelivery::max('pd_id') + 1;
@@ -250,9 +232,8 @@ class ProsesOrderController extends Controller
                     $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                     $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                     $listUnitPC = [];
+
                     // insert stock-mutation
-                    // waiit, check the name of $reff
-                    // $reff = 'DISTRIBUSI-MASUK';
                     $mutDist = Mutasi::distribusicabangkeluar(
                         Auth::user()->u_company,
                         $request->sd_destination,
@@ -270,7 +251,7 @@ class ProsesOrderController extends Controller
                     $startProdCodeIdx += $prodCodeLength;
                 }
             }
-            // dd('x', $mutDist);
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -300,32 +281,11 @@ class ProsesOrderController extends Controller
             ->with('getProductDelivery')
             ->first();
 
-            // foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
-            //     // rollBack qty in stock-mutation and stock-item
-            //     $rollbackDist = Mutasi::rollbackStockMutDist(
-            //         $stockdist->sd_nota, // distribution nota
-            //         $stockdistDt->sdd_item // item-id
-            //     );
-            //     if ($rollbackDist !== 'success') {
-            //         DB::rollback();
-            //         return $rollbackDist;
-            //     }
-            //     // delete production-code of selected stockdistribution
-            //     if (count($stockdistDt->getProdCode) != 0) {
-            //         foreach ($stockdistDt->getProdCode as $idx => $prodCode) {
-            //             $prodCode->delete();
-            //         }
-            //     }
-            // }
-            
             // delete selected stockdistribution-detail
             foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
                 $stockdistDt->delete();
             }
-            // // delete selected productDelivery
-            // if (!is_null($stockdist->getProductDelivery)) {
-            //     $stockdist->getProductDelivery->delete();
-            // }
+
             // delete selected stockdistribution
             $stockdist->delete();
 

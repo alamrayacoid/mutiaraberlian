@@ -568,9 +568,13 @@ class ManajemenAgenController extends Controller
     public function getOrder(Request $req)
     {
         $st = $req->status;
+        $dateFrom = Carbon::parse($req->date_from);
+        $datetTo = Carbon::parse($req->date_to);
+        // dd($dateFrom, $datetTo, $req->all());
 
         if ($st == null || $st == "") {
             $data = DB::table('d_productorder')
+                ->whereBetween('po_date', [$dateFrom, $datetTo])
                 ->select('d_productorder.po_id as id',
                     'd_productorder.po_date as tanggal',
                     'd_productorder.po_nota as nota',
@@ -594,6 +598,7 @@ class ManajemenAgenController extends Controller
                     $status = 'Y';
                 }
                 $data = DB::table('d_productorder')
+                    ->whereBetween('po_date', [$dateFrom, $datetTo])
                     ->select('d_productorder.po_id as id',
                         'd_productorder.po_date as tanggal',
                         'd_productorder.po_nota as nota',
@@ -613,6 +618,7 @@ class ManajemenAgenController extends Controller
                     $status = 'Y';
                 }
                 $data = DB::table('d_productorder')
+                    ->whereBetween('po_date', [$dateFrom, $datetTo])
                     ->select('d_productorder.po_id as id',
                         'd_productorder.po_date as tanggal',
                         'd_productorder.po_nota as nota',
@@ -629,7 +635,7 @@ class ManajemenAgenController extends Controller
 
         return DataTables::of($data)
             ->addColumn('tanggal', function ($data) {
-                return $data->tanggal;
+                return Carbon::parse($data->tanggal)->format('d M Y');
             })
             ->addColumn('nota', function ($data) {
                 return $data->nota;
