@@ -16,8 +16,8 @@
 							<tr>
 								<th>Bulan</th>
 								<th>Nomer Nota</th>
-								<th>Nama Cabang</th>
-								<th>Nama Agen</th>
+								<th>Pusat</th>
+								<th>Cabang</th>
 								<!-- <th>Total Harga</th> -->
 								<th>Aksi</th>
 							</tr>

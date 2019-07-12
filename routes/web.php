@@ -288,6 +288,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/inventory/distribusibarang/set-acceptance/{id}', 'Inventory\DistribusiController@setAcceptance')->name('distribusibarang.setAcceptance');
     Route::get('/inventory/distribusibarang/hapus', 'Inventory\DistribusiController@hapus');
     Route::get('/inventory/distribusibarang/nota', 'Inventory\DistribusiController@printNota')->name('ditribusibarang.nota');
+    // Distribusi -> Receive order from branch
+    Route::get('/inventory/distribusibarang/get-list-order', 'Inventory\Distribusi\ProsesOrderController@getListOrder')->name('distribusibarangorder.getListOrder');
+    Route::get('/inventory/distribusibarang/approve-order/{id}', 'Inventory\Distribusi\ProsesOrderController@approveOrder')->name('distribusibarangorder.approveOrder');
+    Route::get('/inventory/distribusibarang/reject-order', 'Inventory\Distribusi\ProsesOrderController@rejectOrder')->name('distribusibarangorder.rejectOrder');
+
     // Manajemen Stok
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
     Route::get('/inventory/manajemenstok/create', 'InventoryController@manajemenstok_create')->name('manajemenstok.create');
@@ -509,7 +514,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/orderproduk/cari-barang', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@cariBarang')->name('orderProduk.cariBarang');
     Route::get('/marketing/marketingarea/orderproduk/get-satuan/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getSatuan')->name('orderProduk.getSatuan');
     Route::get('/marketing/marketingarea/orderproduk/get-price', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@cekHarga')->name('orderProduk.getPrice');
-    Route::get('/marketing/marketingarea/orderproduk/delete-order/{id}/{dt}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@deleteOrder')->name('orderProduk.delete');
+    Route::get('/marketing/marketingarea/orderproduk/delete-order/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@deleteOrder')->name('orderProduk.delete');
     Route::get('/marketing/marketingarea/orderproduk/nota/{id}/{dt}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@printNota')->name('orderProduk.nota');
     Route::get('/marketing/marketingarea/orderproduk/detail/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@detailOrder')->name('orderProduk.detail');
     // End Order Ke Cabang ==================

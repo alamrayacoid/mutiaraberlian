@@ -35,7 +35,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="#list_manajemenscoreboard" class="nav-link" data-target="#list_manajemenscoreboard"
-                               aria-controls="list_manajemenscoreboard" data-toggle="tab" role="tab">Kelola SOP</a>
+                               aria-controls="list_manajemenscoreboard" data-toggle="tab" role="tab">KPI Pegawai</a>
                         </li>
                         <li class="nav-item">
                             <a href="#masterkpi" class="nav-link" data-target="#masterkpi" aria-controls="masterkpi"

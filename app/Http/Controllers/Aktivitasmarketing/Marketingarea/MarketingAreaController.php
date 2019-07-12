@@ -19,6 +19,8 @@ use App\d_salescomp;
 use App\d_salescompdt;
 use App\d_salescompcode;
 use App\d_stock;
+use App\d_stockdistribution;
+use App\d_stockdistributiondt;
 use App\d_stock_mutation;
 use App\d_username;
 use App\m_agen;
@@ -45,73 +47,112 @@ class MarketingAreaController extends Controller
         return view('marketing/marketingarea/index', compact('provinsi', 'city', 'user'));
     }
 
-    public function printNota($id, $dt)
+
+    // Order Produk Ke Cabang ==============================================================================
+    public function printNota($id)
     {
         try {
             $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
             return view('errors.404');
         }
-        $order = DB::table('d_productorder')
-            ->join('m_company as comp', 'po_comp', 'comp.c_id')
-            ->join('m_company as agen', 'po_agen', 'agen.c_id')
-            ->select('d_productorder.*', 'comp.c_name as comp', 'agen.c_name as agen')
-            ->where('po_id', $id)
-            ->first();
-        $nota = DB::table('d_productorder')
-            ->join('d_productorderdt', 'po_id', 'pod_productorder')
-            ->join('m_company as comp', 'po_comp', 'comp.c_id')
-            ->join('m_company as agen', 'po_agen', 'agen.c_id')
-            ->join('m_item', 'pod_item', 'i_id')
-            ->join('m_unit', 'pod_unit', 'u_id')
-            ->select('d_productorderdt.*', 'd_productorder.*', 'm_item.*', 'm_unit.*', 'comp.c_name as comp', 'agen.c_name as agen')
-            ->where('pod_productorder', $id)
-            ->get();
-        return view('marketing/marketingarea/orderproduk/nota', compact('order', 'nota'));
+
+        $order = d_stockdistribution::where('sd_id', $id)
+        ->with('getOrigin')
+        ->with('getDestination')
+        ->with(['getDistributionDt' => function ($q) {
+            $q->with('getItem')->with('getUnit');
+        }])
+        ->first();
+
+        $order->sd_date = Carbon::parse($order->sd_date)->format('d M Y');
+
+
+        // $order = DB::table('d_productorder')
+        // ->join('m_company as comp', 'po_comp', 'comp.c_id')
+        // ->join('m_company as agen', 'po_agen', 'agen.c_id')
+        // ->select('d_productorder.*', 'comp.c_name as comp', 'agen.c_name as agen')
+        // ->where('po_id', $id)
+        // ->first();
+
+        // $nota = DB::table('d_productorder')
+        // ->join('d_productorderdt', 'po_id', 'pod_productorder')
+        // ->join('m_company as comp', 'po_comp', 'comp.c_id')
+        // ->join('m_company as agen', 'po_agen', 'agen.c_id')
+        // ->join('m_item', 'pod_item', 'i_id')
+        // ->join('m_unit', 'pod_unit', 'u_id')
+        // ->select('d_productorderdt.*', 'd_productorder.*', 'm_item.*', 'm_unit.*', 'comp.c_name as comp', 'agen.c_name as agen')
+        // ->where('pod_productorder', $id)
+        // ->get();
+
+        return view('marketing/marketingarea/orderproduk/nota', compact('order'));
     }
 
-    // Order Produk Ke Cabang ==============================================================================
     public function orderList()
     {
         $order = [];
-        if (Auth::user()->getCompany->c_type == "PUSAT") {
-            $order = DB::table('d_productorder')
-                ->join('d_productorderdt', 'po_id', 'pod_productorder')
-                ->join('m_company as comp', 'po_comp', 'comp.c_id')
-                ->join('m_company as agen', 'po_agen', 'agen.c_id')
-                ->join('m_item', 'pod_item', 'i_id')
-                ->join('m_unit', 'pod_unit', 'u_id')
-                ->select('d_productorder.*', DB::raw('date_format(po_date, "%m/%Y") as po_date'), 'i_name', 'u_name', 'comp.c_name as comp', 'agen.c_name as agen', DB::raw('SUM(pod_totalprice) as totalprice'))
-                ->where('comp.c_type', '=', "PUSAT")
-                ->groupBy('po_id')
-                ->get();
-        } else {
-            $order = DB::table('d_productorder')
-                ->join('d_productorderdt', 'po_id', 'pod_productorder')
-                ->join('m_company as comp', 'po_comp', 'comp.c_id')
-                ->join('m_company as agen', 'po_agen', 'agen.c_id')
-                ->join('m_item', 'pod_item', 'i_id')
-                ->join('m_unit', 'pod_unit', 'u_id')
-                ->select('d_productorder.*', DB::raw('date_format(po_date, "%m/%Y") as po_date'), 'i_name', 'u_name', 'comp.c_name as comp', 'agen.c_name as agen', DB::raw('SUM(pod_totalprice) as totalprice'))
-                ->where('comp.c_type', '=', "PUSAT")
-                ->where('agen.c_id', '=', Auth::user()->u_company)
-                ->groupBy('po_id')
-                ->get();
+        $order = d_stockdistribution::with('getDistributionDt')
+        ->where('sd_status', 'N')
+        ->whereHas('getOrigin', function ($q) {
+            $q->where('c_type', 'PUSAT');
+        });
+        // filter for branch logged-in
+        if (Auth::user()->getCompany->c_type != "PUSAT") {
+            $order = $order->whereHas('getDestination', function ($q) {
+                $q->where('c_id', Auth::user()->u_company);
+            });
         }
+        // get data
+        $order = $order->with('getOrigin')
+        ->with('getDestination')
+        ->get();
+
+        // if (Auth::user()->getCompany->c_type == "PUSAT") {
+        //     $order = DB::table('d_productorder')
+        //         ->join('d_productorderdt', 'po_id', 'pod_productorder')
+        //         ->join('m_company as comp', 'po_comp', 'comp.c_id')
+        //         ->join('m_company as agen', 'po_agen', 'agen.c_id')
+        //         ->join('m_item', 'pod_item', 'i_id')
+        //         ->join('m_unit', 'pod_unit', 'u_id')
+        //         ->select('d_productorder.*', DB::raw('date_format(po_date, "%m/%Y") as po_date'), 'i_name', 'u_name', 'comp.c_name as comp', 'agen.c_name as agen', DB::raw('SUM(pod_totalprice) as totalprice'))
+        //         ->where('comp.c_type', '=', "PUSAT")
+        //         ->groupBy('po_id')
+        //         ->get();
+        // }
+        // else {
+        //     $order = DB::table('d_productorder')
+        //         ->join('d_productorderdt', 'po_id', 'pod_productorder')
+        //         ->join('m_company as comp', 'po_comp', 'comp.c_id')
+        //         ->join('m_company as agen', 'po_agen', 'agen.c_id')
+        //         ->join('m_item', 'pod_item', 'i_id')
+        //         ->join('m_unit', 'pod_unit', 'u_id')
+        //         ->select('d_productorder.*', DB::raw('date_format(po_date, "%m/%Y") as po_date'), 'i_name', 'u_name', 'comp.c_name as comp', 'agen.c_name as agen', DB::raw('SUM(pod_totalprice) as totalprice'))
+        //         ->where('comp.c_type', '=', "PUSAT")
+        //         ->where('agen.c_id', '=', Auth::user()->u_company)
+        //         ->groupBy('po_id')
+        //         ->get();
+        // }
+
         return Datatables::of($order)
             ->addIndexColumn()
+            ->addColumn('comp', function ($order) {
+                return $order->getOrigin->c_name;
+            })
+            ->addColumn('branch', function ($order) {
+                return $order->getDestination->c_name;
+            })
             // ->addColumn('totalprice', function ($order) {
             //     return Currency::addRupiah($order->totalprice);
             // })
             ->addColumn('action', function ($order) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                            <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->po_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                            <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-folder"></i>
                             </button>
-                            <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->po_id) . '\')"><i class="fa fa-fw fa-print"></i>
+                            <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-print"></i>
                             </button>
-                            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->po_id) . '\')"><i class="fa fa-fw fa-pencil"></i>
+                            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-pencil"></i>
                             </button>
-                            <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->po_id) . '\')"><i class="fa fa-fw fa-trash"></i>
+                            <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-trash"></i>
                             </button>
                         </div>';
             })
@@ -308,72 +349,65 @@ class MarketingAreaController extends Controller
             $detailId = 0;
             for ($i = 0; $i < count($data['idItem']); $i++) {
 
-                $query1 = DB::table('d_productorder')
-                    ->where('po_date', '=', $time)
-                    ->where('po_comp', '=', $data['po_comp'])
-                    ->where('po_agen', '=', $data['po_agen'])
+                $query1 = DB::table('d_stockdistribution')
+                    ->where('sd_date', '=', $time)
+                    ->where('sd_from', '=', $data['po_comp'])
+                    ->where('sd_destination', '=', $data['po_agen'])
                     ->first();
 
                 if ($query1) {
-
-                    $query2 = DB::table('d_productorderdt')
-                        ->where('pod_productorder', '=', $query1->po_id)
-                        ->where('pod_item', '=', $data['idItem'][$i])
-                        ->where('pod_unit', '=', $data['po_unit'][$i])
+                    $query2 = DB::table('d_stockdistributiondt')
+                        ->where('sdd_stockdistribution', '=', $query1->sd_id)
+                        ->where('sdd_item', '=', $data['idItem'][$i])
+                        ->where('sdd_unit', '=', $data['po_unit'][$i])
                         ->first();
 
                     if ($query2) {
+                        $qtyAkhir = $query2->sdd_qty + $data['po_qty'][$i];
 
-                        $qtyAkhir = $query2->pod_qty + $data['po_qty'][$i];
-                        // $priceAkhir = $query2->pod_totalprice + $data['sbtotal'][$i];
-
-                        DB::table('d_productorderdt')
-                            ->where('pod_productorder', '=', $query1->po_id)
-                            ->where('pod_item', '=', $data['idItem'][$i])
-                            ->where('pod_unit', '=', $data['po_unit'][$i])
+                        DB::table('d_stockdistributiondt')
+                            ->where('sdd_stockdistribution', '=', $query1->sd_id)
+                            ->where('sdd_item', '=', $data['idItem'][$i])
+                            ->where('sdd_unit', '=', $data['po_unit'][$i])
                             ->update([
-                                'pod_qty' => $qtyAkhir,
-                                'pod_totalprice' => 0
+                                'sdd_qty' => $qtyAkhir
                             ]);
-                    } else {
+                    }
+                    else {
+                        $detailId = DB::table('d_stockdistributiondt')
+                            ->where('sdd_stockdistribution', '=', $query1->sd_id)
+                            ->max('sdd_detailid');
 
-                        $detailId = DB::table('d_productorderdt')
-                            ->where('pod_productorder', '=', $query1->po_id)
-                            ->max('pod_detailid');
-
-                        DB::table('d_productorderdt')->insert([
-                            'pod_productorder' => $query1->po_id,
-                            'pod_detailid'     => $detailId + 1,
-                            'pod_item'         => $data['idItem'][$i],
-                            'pod_unit'         => $data['po_unit'][$i],
-                            'pod_qty'          => $data['po_qty'][$i],
-                            'pod_price'        => 0,
-                            'pod_totalprice'   => 0
+                        DB::table('d_stockdistributiondt')->insert([
+                            'sdd_stockdistribution' => $query1->sd_id,
+                            'sdd_detailid'     => $detailId + 1,
+                            'sdd_item'         => $data['idItem'][$i],
+                            'sdd_unit'         => $data['po_unit'][$i],
+                            'sdd_qty'          => $data['po_qty'][$i]
                         ]);
                     }
                 }
                 else {
-
-                    $getIdMax = DB::table('d_productorder')->max('po_id');
+                    $getIdMax = DB::table('d_stockdistribution')->max('sd_id');
                     $poId = $getIdMax + 1;
 
-                    DB::table('d_productorder')->insert([
-                        'po_id'     => $poId,
-                        'po_comp'   => $data['po_comp'],
-                        'po_agen'   => $data['po_agen'],
-                        'po_date'   => $time,
-                        'po_nota'   => CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-'),
-                        'po_status' => "P"
+                    DB::table('d_stockdistribution')->insert([
+                        'sd_id'     => $poId,
+                        'sd_from'   => $data['po_comp'],
+                        'sd_destination'   => $data['po_agen'],
+                        'sd_date'   => $time,
+                        'sd_nota'   => CodeGenerator::codeWithSeparator('d_stockdistribution', 'sd_nota', 9, 10, 3, 'PRO', '-'),
+                        'sd_status' => "N",
+                        'sd_user' => Auth::user()->u_id
                     ]);
 
-                    DB::table('d_productorderdt')->insert([
-                        'pod_productorder' => $poId,
-                        'pod_detailid'     => ++$detailId,
-                        'pod_item'         => $data['idItem'][$i],
-                        'pod_unit'         => $data['po_unit'][$i],
-                        'pod_qty'          => $data['po_qty'][$i],
-                        'pod_price'        => 0,
-                        'pod_totalprice'   => 0
+                    DB::table('d_stockdistributiondt')->insert([
+                        'sdd_stockdistribution' => $poId,
+                        'sdd_detailid'     => ++$detailId,
+                        'sdd_comp' => null,
+                        'sdd_item'         => $data['idItem'][$i],
+                        'sdd_unit'         => $data['po_unit'][$i],
+                        'sdd_qty'          => $data['po_qty'][$i]
                     ]);
                 }
             }
@@ -382,7 +416,8 @@ class MarketingAreaController extends Controller
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'Gagal',
@@ -399,23 +434,38 @@ class MarketingAreaController extends Controller
             return view('errors.404');
         }
 
-        $produk = DB::table('d_productorder')
-            ->join('m_company as comp', 'po_comp', 'comp.c_id')
-            ->join('m_company as agen', 'po_agen', 'agen.c_id')
-            ->select('d_productorder.*', DB::raw('date_format(po_date, "%d/%m/%Y") as po_date'), 'comp.c_name as comp', 'agen.c_name as agen')
-            ->where('po_id', $id)
-            ->first();
+        $produk = d_stockdistribution::where('sd_id', $id)
+        ->with('getOrigin')
+        ->with('getDestination')
+        ->with(['getDistributionDt' => function ($q) {
+            $q
+                ->with(['getItem' => function ($que) {
+                    $que
+                        ->with('getUnit1')
+                        ->with('getUnit2')
+                        ->with('getUnit3');
+                }])
+                ->with('getUnit');
+        }])
+        ->first();
 
-        $detail = DB::table('d_productorderdt')
-            ->join('m_item', 'pod_item', 'i_id')
-            ->join('m_unit', 'pod_unit', 'u_id')
-            ->join('m_unit as unit1', 'm_item.i_unit1', 'unit1.u_id')
-            ->join('m_unit as unit2', 'm_item.i_unit2', 'unit2.u_id')
-            ->join('m_unit as unit3', 'm_item.i_unit3', 'unit3.u_id')
-            ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*', 'unit1.u_id as uid_1', 'unit2.u_id as uid_2', 'unit3.u_id as uid_3', 'unit1.u_name as uname_1', 'unit2.u_name as uname_2', 'unit3.u_name as uname_3')
-            ->where('pod_productorder', $id)
-            ->get();
-        return view('marketing/marketingarea/orderproduk/edit', compact('produk', 'detail'));
+        // $produk = DB::table('d_productorder')
+        //     ->join('m_company as comp', 'po_comp', 'comp.c_id')
+        //     ->join('m_company as agen', 'po_agen', 'agen.c_id')
+        //     ->select('d_productorder.*', DB::raw('date_format(po_date, "%d/%m/%Y") as po_date'), 'comp.c_name as comp', 'agen.c_name as agen')
+        //     ->where('po_id', $id)
+        //     ->first();
+
+        // $detail = DB::table('d_productorderdt')
+        //     ->join('m_item', 'pod_item', 'i_id')
+        //     ->join('m_unit', 'pod_unit', 'u_id')
+        //     ->join('m_unit as unit1', 'm_item.i_unit1', 'unit1.u_id')
+        //     ->join('m_unit as unit2', 'm_item.i_unit2', 'unit2.u_id')
+        //     ->join('m_unit as unit3', 'm_item.i_unit3', 'unit3.u_id')
+        //     ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*', 'unit1.u_id as uid_1', 'unit2.u_id as uid_2', 'unit3.u_id as uid_3', 'unit1.u_name as uname_1', 'unit2.u_name as uname_2', 'unit3.u_name as uname_3')
+        //     ->where('pod_productorder', $id)
+        //     ->get();
+        return view('marketing/marketingarea/orderproduk/edit', compact('produk'));
     }
 
     public function updateOrderProduk($id, Request $request)
@@ -429,18 +479,26 @@ class MarketingAreaController extends Controller
         $data = $request->all();
         DB::beginTransaction();
         try {
-            DB::table('d_productorderdt')
-                ->where('pod_productorder', $id)
-                ->delete();
+            // delete current order-detail
+            $oldData = d_stockdistributiondt::where('sdd_stockdistribution', $id)
+            ->get();
+            foreach ($oldData as $key => $value) {
+                $value->delete();
+            }
+            //
+            // DB::table('d_productorderdt')
+            //     ->where('pod_productorder', $id)
+            //     ->delete();
 
+            // re-insert new detail
             $detailId = 0;
             for ($i = 0; $i < count($data['idItem']); $i++) {
-                DB::table('d_productorderdt')->insert([
-                    'pod_productorder' => $id,
-                    'pod_detailid' => ++$detailId,
-                    'pod_item' => $data['idItem'][$i],
-                    'pod_unit' => $data['po_unit'][$i],
-                    'pod_qty' => $data['po_qty'][$i]
+                DB::table('d_stockdistributiondt')->insert([
+                    'sdd_stockdistribution' => $id,
+                    'sdd_detailid' => ++$detailId,
+                    'sdd_item' => $data['idItem'][$i],
+                    'sdd_unit' => $data['po_unit'][$i],
+                    'sdd_qty' => $data['po_qty'][$i]
                     // 'pod_price' => $data['po_hrg'][$i],
                     // 'pod_totalprice' => $data['sbtotal'][$i]
                 ]);
@@ -459,29 +517,38 @@ class MarketingAreaController extends Controller
         }
     }
 
-    public function deleteOrder($id, $dt)
+    public function deleteOrder($id)
     {
         try {
             $id = Crypt::decrypt($id);
-            $dt = Crypt::decrypt($dt);
         } catch (\Exception $e) {
             return view('errors.404');
         }
 
         DB::beginTransaction();
         try {
-            $query1 = DB::table('d_productorderdt')
-                ->join('d_productorder', 'pod_productorder', 'po_id')
-                ->select('d_productorderdt.*', 'd_productorder.*')
-                ->where('pod_productorder', $id)
-                ->where('pod_detailid', $dt)
-                ->first();
-            if ($query1->po_status == "P" || $query1->po_status == "N") {
-                DB::table('d_productorderdt')
-                    ->where('pod_productorder', $id)
-                    ->where('pod_detailid', $dt)
-                    ->delete();
-            } else {
+            $query1 = d_stockdistribution::where('sd_id', $id)
+            ->with('getDistributionDt')
+            ->first();
+
+            // $query1 = DB::table('d_productorderdt')
+            //     ->join('d_productorder', 'pod_productorder', 'po_id')
+            //     ->select('d_productorderdt.*', 'd_productorder.*')
+            //     ->where('pod_productorder', $id)
+            //     ->where('pod_detailid', $dt)
+            //     ->first();
+
+            if ($query1->sd_status == "N") {
+                foreach ($query1->getDistributionDt as $key => $value) {
+                    $value->delete();
+                }
+                $query1->delete();
+                // DB::table('d_productorderdt')
+                //     ->where('pod_productorder', $id)
+                //     ->where('pod_detailid', $dt)
+                //     ->delete();
+            }
+            else {
                 DB::commit();
                 return response()->json([
                     'status' => 'warning'
@@ -492,11 +559,12 @@ class MarketingAreaController extends Controller
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'Gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -509,27 +577,35 @@ class MarketingAreaController extends Controller
             return view('errors.404');
         }
 
-        $produk = DB::table('d_productorder')
-            ->join('m_company as comp', 'po_comp', 'comp.c_id')
-            ->join('m_company as agen', 'po_agen', 'agen.c_id')
-            ->select('d_productorder.*', DB::raw('date_format(po_date, "%d/%m/%Y") as po_date'), 'comp.c_name as comp', 'agen.c_name as agen')
-            ->where('po_id', $id)
-            ->first();
+        $produk = d_stockdistribution::where('sd_id', $id)
+        ->with('getOrigin')
+        ->with('getDestination')
+        ->with(['getDistributionDt' => function ($q) {
+            $q->with('getItem')->with('getUnit');
+        }])
+        ->first();
 
-        $detail = DB::table('d_productorderdt')
-            ->join('m_item', 'pod_item', 'i_id')
-            ->join('m_unit', 'pod_unit', 'u_id')
-            ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*')
-            ->where('pod_productorder', $id)
-            ->get();
+        // $produk = DB::table('d_productorder')
+        //     ->join('m_company as comp', 'po_comp', 'comp.c_id')
+        //     ->join('m_company as agen', 'po_agen', 'agen.c_id')
+        //     ->select('d_productorder.*', DB::raw('date_format(po_date, "%d/%m/%Y") as po_date'), 'comp.c_name as comp', 'agen.c_name as agen')
+        //     ->where('po_id', $id)
+        //     ->first();
 
-        foreach ($detail as $key => $dt) {
+        // $detail = DB::table('d_productorderdt')
+        //     ->join('m_item', 'pod_item', 'i_id')
+        //     ->join('m_unit', 'pod_unit', 'u_id')
+        //     ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*')
+        //     ->where('pod_productorder', $id)
+        //     ->get();
+
+        foreach ($produk->getDistributionDt as $key => $dt) {
             $order[] = [
-                'barang' => $dt->i_name,
-                'unit' => $dt->u_name,
-                'qty' => $dt->pod_qty,
-                'price' => Currency::addRupiah($dt->pod_price),
-                'totalprice' => Currency::addRupiah($dt->pod_totalprice)
+                'barang' => $dt->getItem->i_name,
+                'unit' => $dt->getUnit->u_name,
+                'qty' => $dt->sdd_qty
+                // 'price' => Currency::addRupiah($dt->pod_price),
+                // 'totalprice' => Currency::addRupiah($dt->pod_totalprice)
             ];
         }
 

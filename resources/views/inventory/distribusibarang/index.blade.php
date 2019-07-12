@@ -26,7 +26,10 @@
 
                 <ul class="nav nav-pills mb-3" id="Tabzs">
                     <li class="nav-item">
-                        <a href="#distribusibarang" class="nav-link active" data-target="#distribusibarang" aria-controls="distribusibarang" data-toggle="tab" role="tab">Distribusi Barang</a>
+                        <a href="#prosesorder" class="nav-link active" data-target="#prosesorder" aria-controls="prosesorder" data-toggle="tab" role="tab">Terima Order dari Cabang</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#distribusibarang" class="nav-link" data-target="#distribusibarang" aria-controls="distribusibarang" data-toggle="tab" role="tab">Distribusi Barang</a>
                     </li>
                     <li class="nav-item">
                         <a href="#history" class="nav-link" data-target="#history" aria-controls="history" data-toggle="tab" role="tab">Riwayat Distribusi Barang</a>
@@ -38,6 +41,7 @@
 
                 <div class="tab-content">
 
+                    @include('inventory.distribusibarang.prosesorder.index')
                     @include('inventory.distribusibarang.distribusi.index')
                     @include('inventory.distribusibarang.history.index')
                     @include('inventory.distribusibarang.penerimaan.index')
@@ -59,7 +63,12 @@
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
         console.log(e.target);
         console.log($(e.target).attr('href'));
-        if ($(e.target).attr('href') == '#distribusibarang') {
+        if ($(e.target).attr('href') == '#prosesorder') {
+            console.log('adjust width data-table in prosesorder');
+            table_pros.ajax.reload();
+            table_pros.columns.adjust();
+        }
+        else if ($(e.target).attr('href') == '#distribusibarang') {
             console.log('adjust width data-table in distribusibarang');
             table_dist.ajax.reload();
             table_dist.columns.adjust();
@@ -77,16 +86,97 @@
     });
 </script>
 
+<!-- script for time/date in each tabs -->
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.datepicker').datepicker();
+
+    cur_date = new Date();
+    first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+    last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+    // prosesorder
+    $('#date_from_pr').datepicker('setDate', first_day);
+    $('#date_to_pr').datepicker('setDate', last_day);
+    // distribution
+    $('#date_from').datepicker('setDate', first_day);
+    $('#date_to').datepicker('setDate', last_day);
+    // history distribution
+    $('#date_from_ht').datepicker('setDate', first_day);
+    $('#date_to_ht').datepicker('setDate', last_day);
+    // acceptance
+    $('#date_from_ac').datepicker('setDate', first_day);
+    $('#date_to_ac').datepicker('setDate', last_day);
+});
+</script>
+
+<!-- script for proses order from branch -->
+<script type="text/javascript">
+    var table_pros;
+    $(document).ready(function() {
+
+        $('#date_from_pr').on('change', function() {
+            getTablePros();
+        });
+        $('#date_to_pr').on('change', function() {
+            getTablePros();
+        });
+        // $('#btn_search_date').on('click', function() {
+        //     getTablePros();
+        // });
+        $('#btn_refresh_date_pr').on('click', function() {
+            $('#date_from_pr').datepicker('setDate', first_day);
+            $('#date_to_pr').datepicker('setDate', last_day);
+        });
+        getTablePros();
+    });
+    // retrieve dataTable : list order from branch
+    function getTablePros()
+    {
+        $('#table_proses_order').dataTable().fnDestroy();
+  		table_pros = $('#table_proses_order').DataTable({
+  			responsive: true,
+  			serverSide: true,
+  			ajax: {
+  				url: "{{ route('distribusibarangorder.getListOrder') }}",
+  				type: "get",
+  				data: {
+  					"_token": "{{ csrf_token() }}",
+                    "date_from" : $('#date_from_pr').val(),
+  					"date_to" : $('#date_to_pr').val()
+  				}
+  			},
+  			columns: [
+  				{data: 'DT_RowIndex'},
+  				{data: 'tanggal'},
+  				{data: 'tujuan'},
+  				{data: 'sd_nota'},
+  				{data: 'action', name: 'action'}
+  			],
+  			pageLength: 10,
+  			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+  		});
+    }
+    // approve order from branch
+    function approveOrder(id) {
+        window.location.href = baseUrl + '/inventory/distribusibarang/approve-order/'+id;
+    }
+    // reject order from branch
+    function rejectOrder(id) {
+
+    }
+</script>
+
+
 <!-- script for distribusibarang  -->
 <script type="text/javascript">
     var table_dist;
     $(document).ready(function() {
-        cur_date = new Date();
-        first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
-        last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
-        $('#date_from').datepicker('setDate', first_day);
-        $('#date_to').datepicker('setDate', last_day);
-        tabledistribusi();
+        // cur_date = new Date();
+        // first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+        // last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+        // $('#date_from').datepicker('setDate', first_day);
+        // $('#date_to').datepicker('setDate', last_day);
+        // tabledistribusi();
 
         $('#date_from').on('change', function() {
             tabledistribusi();
@@ -104,7 +194,6 @@
         // retrieve data-table
         tabledistribusi();
 
-        $('.datepicker').datepicker();
         $(document).on('click', '.btn-enable-distribusi', function() {
             $.toast({
                 heading: 'Information',
@@ -232,8 +321,8 @@
 <script type="text/javascript">
     var table_hist;
     $(document).ready(function() {
-        $('#date_from_ht').datepicker('setDate', first_day);
-        $('#date_to_ht').datepicker('setDate', last_day);
+        // $('#date_from_ht').datepicker('setDate', first_day);
+        // $('#date_to_ht').datepicker('setDate', last_day);
 
         $('#date_from_ht').on('change', function() {
             tablehistory();
@@ -368,8 +457,8 @@
 <script type="text/javascript">
     var table_accept;
     $(document).ready(function() {
-        $('#date_from_ac').datepicker('setDate', first_day);
-        $('#date_to_ac').datepicker('setDate', last_day);
+        // $('#date_from_ac').datepicker('setDate', first_day);
+        // $('#date_to_ac').datepicker('setDate', last_day);
 
         $('#date_from_ac').on('change', function() {
             tableAcceptance();
@@ -493,4 +582,5 @@
         });
     }
 </script>
+
 @endsection
