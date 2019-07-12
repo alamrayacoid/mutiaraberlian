@@ -96,19 +96,87 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-2">
+                                            <label>Ekspedisi</label>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <select class="select2 form-control-sm form-control" id="ekspedisi" name="ekspedisi">
+                                                    <option>== Pilih Ekspedisi ==</option>
+                                                    @foreach($ekspedisi as $eks)
+                                                        <option value="{{ $eks->e_id }}">{{ $eks->e_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-2">
+                                            <label>Jenis Ekspedisi</label>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <select class="select2 form-control-sm form-control" id="jenis_ekspedisi" name="jenis_ekspedisi">
+                                                    <option>== Pilih Jenis Ekspedisi ==</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-2">
+                                            <label>Nama Kurir</label>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-sm namakurir" name="namakurir" id="nama_kurir" placeholder="Nama Kurir">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-2">
+                                            <label>Tlp Kurir</label>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-sm tlpkurir hp" name="tlpkurir" id="tlpkurir" placeholder="Nomor Telpon Kurir">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-2">
+                                            <label>Nomor Resi</label>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-sm nomorresi text-uppercase" name="nomorresi" id="nomorresi" placeholder="Nomor Resi">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-2">
+                                            <label>Biaya</label>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-sm rupiah biaya" name="biaya" id="biaya" placeholder="Biaya Pengiriman">
+                                            </div>
+                                        </div>
+
                                         <div class="container" id="tbl_item">
                                             <div class="table-responsive mt-3">
                                                 <table class="table table-hover table-striped" id="table_rencana"
                                                        cellspacing="0">
                                                     <thead class="bg-primary">
                                                     <tr>
-                                                        <th>Kode/Nama Barang</th>
+                                                        <th width="15%">Kode/Nama Barang</th>
                                                         <th width="10%">Satuan</th>
-                                                        <th>Jumlah</th>
-                                                        <th>Kode Produksi</th>
-                                                        <th>Harga Satuan</th>
-                                                        <th>Sub Total</th>
-                                                        <th>Aksi</th>
+                                                        <th width="10%">Jumlah</th>
+                                                        <th width="15%">Kode Produksi</th>
+                                                        <th width="15%">Harga Satuan</th>
+                                                        <th width="15%">Diskon @</th>
+                                                        <th width="15%">Sub Total</th>
+                                                        <th width="5%">Aksi</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -142,6 +210,9 @@
                                                                    class="form-control form-control-sm text-right harga"
                                                                    value="Rp. 0" readonly>
                                                             <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah" value="Rp. 0">
                                                         </td>
                                                         <td>
                                                             <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly>
@@ -219,42 +290,6 @@
                 $( "#kodeKonsigner" ).val($(this).find('option:selected').data('code'));
                 visibleTableItem();
             });
-
-            // $("#konsigner").on("keyup", function (evt) {
-            //     evt.preventDefault();
-            //     if (evt.which == 8 || evt.which == 46)
-            //     {
-            //         $("#idKonsigner").val('');
-            //         $("#kodeKonsigner").val('');
-            //         visibleTableItem();
-            //     } else if (evt.which <= 90 && evt.which >= 48)
-            //     {
-            //         $("#idKonsigner").val('');
-            //         $("#kodeKonsigner").val('');
-            //         visibleTableItem();
-            //     }
-            //
-            // })
-            //
-            // $( "#konsigner" ).autocomplete({
-            //     source: function( request, response ) {
-            //         $.ajax({
-            //             url: baseUrl+'/marketing/konsinyasipusat/cari-konsigner/'+$("#provinsi").val()+'/'+$("#kota").val(),
-            //             data: {
-            //                 term: $( "#konsigner" ).val()
-            //             },
-            //             success: function( data ) {
-            //                 response( data );
-            //             }
-            //         });
-            //     },
-            //     minLength: 1,
-            //     select: function(event, data) {
-            //         $( "#idKonsigner" ).val(data.item.id);
-            //         $( "#kodeKonsigner" ).val(data.item.kode);
-            //         visibleTableItem();
-            //     }
-            // });
 
             $(document).on('click', '.btn-hapus', function () {
                 // get index of clicked element and delete a production-code-modal
@@ -338,6 +373,25 @@
             })
         });
 
+        $('#ekspedisi').on('change', function () {
+            let id = $('#ekspedisi').val();
+            axios.get('http://localhost/mutiara/marketing/penjualanpusat/get-produk-ekspedisi', {
+                params:{
+                    "id": id
+                }
+            }).then(function (response) {
+                $('#jenis_ekspedisi').empty();
+                $("#jenis_ekspedisi").append('<option value="" selected="" disabled="">=== Pilih Jenis Ekspedisi ===</option>');
+                $.each(response.data, function (key, val) {
+                    $("#jenis_ekspedisi").append('<option value="' + val.ed_detailid + '">' + val.ed_product + '</option>');
+                });
+                $('#jenis_ekspedisi').focus();
+                $('#jenis_ekspedisi').select2('open');
+            }).catch(function (error) {
+                alert('error');
+            })
+        });
+
         // get list of konsigner based on prov and city
         function getKonsigner() {
             loadingShow();
@@ -388,16 +442,22 @@
                                 return input.value;
                             });
 
+                        var inpHarga = document.getElementsByClassName( 'diskon' ),
+                            diskon  = [].map.call(inpHarga, function( input ) {
+                                return input.value;
+                            });
+
                         for (var i = 0; i < jumlah.length; i++) {
                             var hasil = 0;
                             var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
                             var jml = jumlah[i];
+                            var disc = diskon[i];
 
                             if (jml == "") {
                                 jml = 0;
                             }
 
-                            hasil += parseInt(hrg) * parseInt(jml);
+                            hasil += (parseInt(hrg) - parseInt(disc)) * parseInt(jml);
 
                             if (isNaN(hasil)) {
                                 hasil = 0;
@@ -460,16 +520,22 @@
                         return input.value;
                     });
 
+                    var inpHarga = document.getElementsByClassName( 'diskon' ),
+                        diskon  = [].map.call(inpHarga, function( input ) {
+                            return input.value;
+                        });
+
                     for (var i = 0; i < jumlah.length; i++) {
-                        var hasil = 0;
-                        var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                        var jml = jumlah[i];
+                        let hasil = 0;
+                        let hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                        let jml = jumlah[i];
+                        let disc = diskon[i];
 
                         if (jml == "") {
                             jml = 0;
                         }
 
-                        hasil += parseInt(hrg) * parseInt(jml);
+                        hasil += (parseInt(hrg) - parseInt(disc)) * parseInt(jml);
 
                         if (isNaN(hasil)) {
                             hasil = 0;
@@ -530,6 +596,7 @@
                 '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>'+
                 '<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button"><i class="fa fa-plus"></i> kode produksi</button></td>' +
                 '<td><input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="Rp. 0" readonly><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>'+
+                '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah" value="Rp. 0"></td>'+
                 '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
                 '<td>'+
                 '<button class="btn btn-danger btn-hapus btn-sm" type="button">'+
@@ -554,6 +621,29 @@
                 decimal: ",",
                 prefix: "Rp. "
             });
+
+            $('.rupiah').inputmask("currency", {
+                radixPoint: ",",
+                groupSeparator: ".",
+                digits: 0,
+                autoGroup: true,
+                prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                rightAlign: true,
+                autoUnmask: true,
+                nullable: false,
+                // unmaskAsNumber: true,
+            });
+
+            $(".diskon").on('keyup', function (evt) {
+                let idx = $('.diskon').index(this);
+                let diskon = $('.diskon').eq(idx).val();
+                let harga = $('.harga').eq(idx).val();
+                let jumlah = $('.jumlah').eq(idx).val();
+                let subharga = (parseInt(convertToAngka(harga)) - parseInt(diskon)) * parseInt(jumlah);
+                $('.subtotal').eq(idx).val(convertToRupiah(subharga));
+                updateTotalTampil();
+            })
+
             updateTotalTampil();
         }
 
@@ -671,6 +761,16 @@
                 // unmaskAsNumber: true,
             });
         }
+
+        $(".diskon").on('keyup', function (evt) {
+            let idx = $('.diskon').index(this);
+            let diskon = $('.diskon').eq(idx).val();
+            let harga = $('.harga').eq(idx).val();
+            let jumlah = $('.jumlah').eq(idx).val();
+            let subharga = (parseInt(convertToAngka(harga)) - parseInt(diskon)) * parseInt(jumlah);
+            $('.subtotal').eq(idx).val(convertToRupiah(subharga));
+            updateTotalTampil();
+        })
 
         function simpan() {
             loadingShow();

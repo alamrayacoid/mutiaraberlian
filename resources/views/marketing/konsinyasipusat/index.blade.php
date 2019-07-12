@@ -177,6 +177,7 @@
                         {data: 'barang'},
                         {data: 'jumlah'},
                         {data: 'harga', className: "text-right"},
+                        {data: 'diskon', className: "text-right"},
                         {data: 'total_harga', className: "text-right"}
                     ],
                     "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, 100]],

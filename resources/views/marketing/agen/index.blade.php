@@ -33,6 +33,7 @@
     @include('marketing.agen.kelolapenjualan.modal-search')
     @include('marketing.agen.kelolapenjualan.modal')
     @include('marketing.agen.penjualanviaweb.modal_create')
+    @include('marketing.agen.inventoryagen.modal_detail_agen')
     <article class="content animated fadeInLeft">
         <div class="title-block text-primary">
             <h1 class="title"> Manajemen Agen </h1>
@@ -336,7 +337,8 @@
                     {data: 'comp'},
                     {data: 'i_name'},
                     {data: 'kondisi'},
-                    {data: 'qty'}
+                    {data: 'qty'},
+                    {data: 'aksi', className: 'text-center'}
                 ],
                 pageLength: 10,
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
@@ -362,6 +364,45 @@
                     $('.filter').select2();
                 }
             });
+        }
+
+        function detail_agen(id) {
+            loadingShow();
+
+            $.ajax({
+                url: "{{url('/marketing/agen/get-detail-inventory')}}"+"/"+id,
+                type: "get",
+                success:function(resp){
+                    $('#owner_s').val(resp.data[0].pemilik);
+                    $('#owner_r').val(resp.data[0].pemilik);
+                    $('#position_s').val(resp.data[0].position);
+                    $('#position_r').val(resp.data[0].position);
+                    $('#item_s').val(resp.data[0].i_name);
+                    $('#item_r').val(resp.data[0].i_name);
+
+                    $('#table_inventory_agen').DataTable().clear().destroy()
+                    var tb_dtInventory = $('#table_inventory_agen').DataTable({
+                        responsive: true,
+                        info: false,
+                        searching: false,
+                        paging: false
+                    });
+                    $.each(resp.data, function(key, val){
+                        let angka = val.sd_qty;
+                        if (val.sd_qty == null) {
+                            qty = '';
+                        } else {
+                            qty = convertToRibuan(angka);
+                        }
+                        tb_dtInventory.row.add([
+                            val.sd_code,
+                            '<div class="text-right">'+qty+'</div>'
+                        ]).draw(false);
+                    });
+                    $('#modalDetail_agen').modal('show');
+                    loadingHide();
+                }
+            })
         }
     </script>
 

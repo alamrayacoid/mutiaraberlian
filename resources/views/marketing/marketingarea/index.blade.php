@@ -32,6 +32,10 @@
         #table_prosesorder th.input-padding {
             width: 10% !important;
         }
+        /* style for modal detail order */
+        .b-border {
+            pointer-events: none;
+        }
     </style>
 @stop
 @section('content')
@@ -97,7 +101,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Detail Order Ke Cabang</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Detail Order Cabang Ke Pusat</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -105,24 +109,22 @@
                 <div class="modal-body">
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="cabang">Nama Cabang</label>
-                            <input type="text" class="form-control bg-light" id="cabang" value="" readonly=""
-                                   disabled="">
+                            <label for="cabang">Pusat :</label>
+                            <input type="text" class="form-control-plaintext b-border border-bottom" id="cabang" value="">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="nota">Nomer Nota</label>
-                            <input type="text" class="form-control bg-light" id="nota" value="" readonly="" disabled="">
+                            <label for="nota">Nomer Nota :</label>
+                            <input type="text" class="form-control-plaintext b-border border-bottom" id="nota" value="">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="agen">Nama Agen</label>
-                            <input type="text" class="form-control bg-light" id="agen" value="" readonly="" disabled="">
+                            <label for="agen">Cabang :</label>
+                            <input type="text" class="form-control-plaintext b-border border-bottom" id="agen" value="">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="tanggal">Tanggal Order</label>
-                            <input type="text" class="form-control bg-light" id="tanggal" value="" readonly=""
-                                   disabled="">
+                            <label for="tanggal">Tanggal Order :</label>
+                            <input type="text" class="form-control-plaintext b-border border-bottom" id="tanggal" value="">
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -735,10 +737,10 @@
                     }
                 },
                 columns: [
-                    {data: 'po_date'},
-                    {data: 'po_nota'},
+                    {data: 'sd_date'},
+                    {data: 'sd_nota'},
                     {data: 'comp'},
-                    {data: 'agen'},
+                    {data: 'branch'},
                     // {data: 'totalprice'},
                     {data: 'action'}
                 ],
@@ -756,11 +758,10 @@
                 },
                 success: function (res) {
                     loadingHide();
-                    $('#modalOrderCabang').modal('show');
-                    $('#cabang').val(res.data2.comp);
-                    $('#agen').val(res.data2.agen);
-                    $('#nota').val(res.data2.po_nota);
-                    $('#tanggal').val(res.data2.po_date);
+                    $('#cabang').val(res.data2.get_origin.c_name);
+                    $('#agen').val(res.data2.get_destination.c_name);
+                    $('#nota').val(res.data2.sd_nota);
+                    $('#tanggal').val(res.data2.sd_date);
                     $('.empty').empty();
                     $.each(res.data1, function (key, val) {
                         $('#detailOrder tbody').append('<tr>' +
@@ -771,6 +772,7 @@
                             // '<td>' + val.totalprice + '</td>' +
                             '</tr>');
                     });
+                    $('#modalOrderCabang').modal('show');
                 }
             });
         }
@@ -780,19 +782,19 @@
         }
 
         function printNota(id, dt) {
-            var url = '{{ url('/marketing/marketingarea/orderproduk/nota') }}' + "/" + id + "/" + dt;
+            var url = '{{ url('/marketing/marketingarea/orderproduk/nota') }}' + "/" + id;
             window.open(url);
         }
 
-        function deleteOrder(id, dt) {
-            var hapus_order = "{{url('/marketing/marketingarea/orderproduk/delete-order')}}" + "/" + id + "/" + dt;
+        function deleteOrder(id) {
+            var hapus_order = "{{ url('/marketing/marketingarea/orderproduk/delete-order') }}" + "/" + id;
             $.confirm({
                 animation: 'RotateY',
                 closeAnimation: 'scale',
                 animationBounce: 1.5,
                 icon: 'fa fa-exclamation-triangle',
                 title: 'Pesan!',
-                content: 'Apakah anda yakin ingin menghapus data ini?',
+                content: 'Apakah anda yakin ingin menghapus data ini ?',
                 theme: 'disable',
                 buttons: {
                     info: {
@@ -808,7 +810,7 @@
                                 success: function (response) {
                                     if (response.status == 'sukses') {
                                         loadingHide();
-                                        messageSuccess('Berhasil', 'Data berhasil dihapus!');
+                                        messageSuccess('Berhasil', 'Data order berhasil dihapus !');
                                         tb_order.ajax.reload();
                                     } else if (response.status == 'warning') {
                                         loadingHide();

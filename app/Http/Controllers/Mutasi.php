@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use DB;
-
+use App\m_company;
 use App\d_stock;
 use App\d_stockdt;
 use App\d_stock_mutation;
@@ -528,7 +528,6 @@ class Mutasi extends Controller
             }
             $stock = $stock->get();
             $permintaan = $qty;
-
 
             // set callback if stock-item-parent is empty
             if (sizeof($stock) <= 0) {

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Http\Controllers\Controller;
-
+use App\Http\Controllers\AksesUser;
 use Auth;
 use App\d_salescomp;
 use App\d_salescompdt;
@@ -121,6 +121,7 @@ class KonsinyasiPusatController extends Controller
                 ->select('i_name as barang',
                     DB::raw("CONCAT(scd_qty, ' - ', u_name) as jumlah"),
                     DB::raw("CONCAT('Rp. ',FORMAT(scd_value, 0, 'de_DE')) as harga"),
+                    DB::raw("CONCAT('Rp. ',FORMAT(scd_discvalue, 0, 'de_DE')) as diskon"),
                     DB::raw("CONCAT('Rp. ',FORMAT(scd_totalnet, 0, 'de_DE')) as total_harga"));
 
             return DataTables::of($data)
@@ -136,7 +137,10 @@ class KonsinyasiPusatController extends Controller
                 ->addColumn('total_harga', function ($data) {
                     return $data->total_harga;
                 })
-                ->rawColumns(['barang', 'jumlah', 'harga', 'total_harga'])
+                ->addColumn('diskon', function ($data) {
+                    return $data->diskon;
+                })
+                ->rawColumns(['barang', 'jumlah', 'harga', 'diskon', 'total_harga'])
                 ->make(true);
         }
     }
@@ -462,11 +466,23 @@ class KonsinyasiPusatController extends Controller
 
     public function create_penempatanproduk()
     {
-        return view('marketing/konsinyasipusat/penempatanproduk/create');
+        if (!AksesUser::checkAkses(21, 'create')){
+            abort(401);
+        }
+        $ekspedisi = DB::table('m_expedition')
+            ->where('e_isactive', '=', 'Y')
+            ->get();
+        return view('marketing/konsinyasipusat/penempatanproduk/create', compact('ekspedisi'));
     }
 
     public function add_penempatanproduk(Request $request)
     {
+        if (!AksesUser::checkAkses(21, 'create')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ini"
+            ]);
+        }
         $data = $request->all();
         $comp = Auth::user()->u_company;
         $compItem = $data['idStock']; // pemilik item
@@ -480,6 +496,7 @@ class KonsinyasiPusatController extends Controller
         $update = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
         $nota = CodeGenerator::codeWithSeparator('d_salescomp', 'sc_nota', 8, 10, 3, 'SK', '-');
         $idSales = (DB::table('d_salescomp')->max('sc_id')) ? DB::table('d_salescomp')->max('sc_id') + 1 : 1;
+        $diskon = $request->diskon;
 
         DB::beginTransaction();
 
@@ -496,11 +513,32 @@ class KonsinyasiPusatController extends Controller
             $request->prodCode, // list production-code
             $request->prodCodeLength // list production-code length each item
         );
+
         if ($validateProdCode !== 'validated') {
             return $validateProdCode;
         }
 
         try {
+
+            //simpan info ekspedisi
+            $pd_id = DB::table('d_productdelivery')
+                ->max('pd_id');
+            ++$pd_id;
+            DB::table('d_productdelivery')
+                ->insert([
+                    'pd_id' => $pd_id,
+                    'pd_date' => $date,
+                    'pd_nota' => $nota,
+                    'pd_expedition' => $request->ekspedisi,
+                    'pd_product' => $request->jenis_ekspedisi,
+                    'pd_resi' => strtoupper($request->nomorresi),
+                    'pd_couriername' => $request->namakurir,
+                    'pd_couriertelp' => $request->tlpkurir,
+                    'pd_price' => $request->biaya,
+                    'pd_paidoff' => 'N'
+                ]);
+            //end ekspedisi
+
             $val_sales = [
                 'sc_id' => $idSales,
                 'sc_comp' => $comp, // pelaku konsinyasi
@@ -514,11 +552,18 @@ class KonsinyasiPusatController extends Controller
                 'sc_update' => $update
             ];
 
-            $sddetail = (DB::table('d_salescompdt')->where('scd_sales', '=', $idSales)->max('scd_detailid')) ? (DB::table('d_salescompdt')->where('scd_sales', '=', $idSales)->max('sd_detailid')) + 1 : 1;
+            $sddetail = (DB::table('d_salescompdt')
+                ->where('scd_sales', '=', $idSales)
+                ->max('scd_detailid')) ?
+                (DB::table('d_salescompdt')
+                    ->where('scd_sales', '=', $idSales)
+                    ->max('sd_detailid')) + 1 : 1;
+
             $detailsd = $sddetail;
             $val_salesdt = [];
             for ($i = 0; $i < count($data['idItem']); $i++) {
                 // values for insert to salescomp-dt
+                $totalnet = (Currency::removeRupiah($data['harga'][$i]) - $diskon[$i]) * $data['jumlah'][$i];
                 $val_salesdt[] = [
                     'scd_sales' => $idSales,
                     'scd_detailid' => $detailsd,
@@ -528,8 +573,8 @@ class KonsinyasiPusatController extends Controller
                     'scd_unit' => $data['satuan'][$i],
                     'scd_value' => Currency::removeRupiah($data['harga'][$i]),
                     'scd_discpersen' => 0,
-                    'scd_discvalue' => 0,
-                    'scd_totalnet' => Currency::removeRupiah($data['subtotal'][$i])
+                    'scd_discvalue' => $diskon[$i],
+                    'scd_totalnet' => $totalnet
                 ];
 
                 // values for insert to salescomp-code
@@ -538,6 +583,19 @@ class KonsinyasiPusatController extends Controller
                 }
                 $prodCodeLength = (int)$request->prodCodeLength[$i];
                 $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+
+                if ($data['jumlah'][$i] != $request->qtyProdCode[$i]){
+                    $item = DB::table('m_item')
+                        ->where('i_id', '=', $data['idItem'][$i])
+                        ->first();
+
+                    DB::rollBack();
+                    return Response::json([
+                        'status' => "Failed",
+                        'message' => "Jumlah kode produksi " . $item->i_name . " tidak sesuai"
+                    ]);
+                }
+
                 for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
                     // skip inserting when val is null or qty-pc is 0
                     if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
@@ -569,13 +627,13 @@ class KonsinyasiPusatController extends Controller
                 $sellPrice = 0;
                 if ($data['satuan'][$i] == $data_check->unit1) {
                     $qty_compare = $data['jumlah'][$i];
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]);
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) - (int)$diskon[$i];
                 } else if ($data['satuan'][$i] == $data_check->unit2) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare2;
+                    $sellPrice = ((int)Currency::removeRupiah($data['harga'][$i]) - (int)$diskon[$i]) / $data_check->compare2;
                 } else if ($data['satuan'][$i] == $data_check->unit3) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare3;
+                    $sellPrice = ((int)Currency::removeRupiah($data['harga'][$i]) - (int)$diskon[$i]) / $data_check->compare3;
                 }
 
                 $stock = DB::table('d_stock')
@@ -649,6 +707,12 @@ class KonsinyasiPusatController extends Controller
 
         // post method -> update
         if ($request->isMethod('post')) {
+            if (!AksesUser::checkAkses(21, 'update')){
+                return Response::json([
+                    'status' => "Failed",
+                    'message' => "Anda tidak memiliki akses ini"
+                ]);
+            }
             $data = $request->all();
             $comp = Auth::user()->u_company;
             $compItem = $data['idStock']; // pemilik item
@@ -658,9 +722,51 @@ class KonsinyasiPusatController extends Controller
             $total = $data['tot_hrg'];
             $update = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
             $nota = $data['nota'];
+            $date = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+            $diskon = $request->diskon;
 
             DB::beginTransaction();
             try {
+
+                //simpan info ekspedisi
+                $cek = DB::table('d_productdelivery')
+                    ->where('pd_nota', '=', $nota)
+                    ->get();
+
+                if (count($cek) > 0){
+                    //update
+                    DB::table('d_productdelivery')
+                        ->update([
+                            'pd_date' => $date,
+                            'pd_nota' => $nota,
+                            'pd_expedition' => $request->ekspedisi,
+                            'pd_product' => $request->jenis_ekspedisi,
+                            'pd_resi' => strtoupper($request->nomorresi),
+                            'pd_couriername' => $request->namakurir,
+                            'pd_couriertelp' => $request->tlpkurir,
+                            'pd_price' => $request->biaya,
+                        ]);
+                } else {
+                    //create
+                    $pd_id = DB::table('d_productdelivery')
+                        ->max('pd_id');
+                    ++$pd_id;
+                    DB::table('d_productdelivery')
+                        ->insert([
+                            'pd_id' => $pd_id,
+                            'pd_date' => $date,
+                            'pd_nota' => $nota,
+                            'pd_expedition' => $request->ekspedisi,
+                            'pd_product' => $request->jenis_ekspedisi,
+                            'pd_resi' => strtoupper($request->nomorresi),
+                            'pd_couriername' => $request->namakurir,
+                            'pd_couriertelp' => $request->tlpkurir,
+                            'pd_price' => $request->biaya,
+                            'pd_paidoff' => 'N'
+                        ]);
+                    //end ekspedisi
+                }
+
                 // get item owner
                 foreach ($compItem as $key => $val) {
                     $owner = d_stock::where('s_id', $val)->first();
@@ -697,6 +803,7 @@ class KonsinyasiPusatController extends Controller
                             'scd_qty' => $konsDt->scd_qty,
                             'scd_unit' => $konsDt->scd_unit,
                             'scd_value' => (int)$konsDt->scd_value,
+                            'scd_discvalue' => (int)$konsDt->discvalue,
                             'scd_totalnet' => (int)$konsDt->scd_totalnet
                         ];
                         // set salescompdt from input/request
@@ -705,6 +812,7 @@ class KonsinyasiPusatController extends Controller
                             'scd_qty' => (int)$data['jumlah'][$localIdx],
                             'scd_unit' => (int)$data['satuan'][$localIdx],
                             'scd_value' => (int)Currency::removeRupiah($data['harga'][$localIdx]),
+                            'scd_discvalue' => $diskon[$localIdx],
                             'scd_totalnet' => (int)Currency::removeRupiah($data['subtotal'][$localIdx])
                         ];
                         // compare the result, return failed if different
@@ -772,12 +880,26 @@ class KonsinyasiPusatController extends Controller
                         $salescompdt->scd_qty = $data['jumlah'][$key];
                         $salescompdt->scd_unit = $data['satuan'][$key];
                         $salescompdt->scd_value = Currency::removeRupiah($data['harga'][$key]);
+                        $salescompdt->scd_discvalue = $diskon[$key];
                         $salescompdt->scd_totalnet = Currency::removeRupiah($data['subtotal'][$key]);
                         $salescompdt->save();
 
                         // insert new production-code
                         $prodCodeLength = (int)$request->prodCodeLength[$key];
                         $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+
+                        if ($data['jumlah'][$i] != $request->qtyProdCode[$i]){
+                            $item = DB::table('m_item')
+                                ->where('i_id', '=', $data['idItem'][$i])
+                                ->first();
+
+                            DB::rollBack();
+                            return Response::json([
+                                'status' => "Failed",
+                                'message' => "Jumlah kode produksi " . $item->i_name . " tidak sesuai"
+                            ]);
+                        }
+
                         for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
                             // skip inserting when val is null or qty-pc is 0
                             if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
@@ -802,6 +924,7 @@ class KonsinyasiPusatController extends Controller
                     }
 
                     // set new value for re-insert konsinyasi-detail /salescompdt
+                    $totalnet = (Currency::removeRupiah($data['harga'][$key]) - $diskon[$key]) * $data['jumlah'][$key];
                     $val_salesdt[] = [
                         'scd_sales' => $id,
                         'scd_detailid' => $detailsd,
@@ -811,7 +934,7 @@ class KonsinyasiPusatController extends Controller
                         'scd_unit' => $data['satuan'][$key],
                         'scd_value' => Currency::removeRupiah($data['harga'][$key]),
                         'scd_discpersen' => 0,
-                        'scd_discvalue' => 0,
+                        'scd_discvalue' => $diskon[$key],
                         'scd_totalnet' => Currency::removeRupiah($data['subtotal'][$key])
                     ];
 
@@ -848,13 +971,13 @@ class KonsinyasiPusatController extends Controller
                     $sellPrice = 0;
                     if ($data['satuan'][$key] == $data_check->unit1) {
                         $qty_compare = $data['jumlah'][$key];
-                        $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]);
+                        $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]) - (int)$diskon[$key];
                     } else if ($data['satuan'][$key] == $data_check->unit2) {
                         $qty_compare = $data['jumlah'][$key] * $data_check->compare2;
-                        $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]) / $data_check->compare2;
+                        $sellPrice = ((int)Currency::removeRupiah($data['harga'][$key]) - (int)$diskon[$key]) / $data_check->compare2;
                     } else if ($data['satuan'][$key] == $data_check->unit3) {
                         $qty_compare = $data['jumlah'][$key] * $data_check->compare3;
-                        $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]) / $data_check->compare3;
+                        $sellPrice = ((int)Currency::removeRupiah($data['harga'][$key]) - (int)$diskon[$key]) / $data_check->compare3;
                     }
 
                     // get item stock
@@ -920,6 +1043,10 @@ class KonsinyasiPusatController extends Controller
             }
         } // another method -> edit
         else {
+            if (!AksesUser::checkAkses(21, 'update')){
+                abort(401);
+            }
+
             $detail = DB::table('d_salescomp')
                 ->where('d_salescomp.sc_id', '=', $id)
                 ->join('m_company', function ($c) {
@@ -1011,15 +1138,31 @@ class KonsinyasiPusatController extends Controller
 
             $ids = Crypt::encrypt($id);
 
-            return view('marketing/konsinyasipusat/penempatanproduk/edit')->with(compact('detail', 'data_item', 'ids'));
+            $info = DB::table('d_productdelivery')
+                ->where('pd_nota', '=', $nota)
+                ->first();
+
+            $ekspedisi = DB::table('m_expedition')
+                ->where('e_isactive', '=', 'Y')
+                ->get();
+
+            $jenisekspedisi = [];
+
+            if ($info != null){
+                $jenisekspedisi = DB::table('m_expeditiondt')
+                    ->where('ed_expedition', '=', $info->pd_expedition)
+                    ->get();
+            }
+
+            return view('marketing/konsinyasipusat/penempatanproduk/edit')->with(compact('detail', 'data_item', 'ids', 'info', 'ekspedisi', 'jenisekspedisi'));
         }
     }
 
     public function deletePenempatanproduk(Request $request)
     {
-        // if (!AksesUser::checkAkses(21, 'delete')){
-        //     abort(401);
-        // }
+         if (!AksesUser::checkAkses(21, 'delete')){
+             abort(401);
+         }
 
         try {
             $id = Crypt::decrypt($request->id);
