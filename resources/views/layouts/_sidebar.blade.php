@@ -200,11 +200,14 @@
                                 <a href="{{route('ekspedisi.index')}}"> Master Ekspedisi</a>
                             </li>
                             <li class="{{Request::is('keuangan/masterdatautama/akun-utama') || Request::is('keuangan/masterdatautama/akun-utama/*') ? 'active' : ''}}">
-                                 <a href="{{route('keuangan.akun-utama.index')}}">Master COA Utama</a>
-                             </li>
+                                <a href="{{route('keuangan.akun-utama.index')}}">Master COA Utama</a>
+                            </li>
                             <li class="{{Request::is('keuangan/masterdatautama/akun-keuangan') || Request::is('keuangan/masterdatautama/akun-keuangan/*') ? 'active' : ''}}">
-                                 <a href="{{route('keuangan.akun.index')}}">Master COA Keuangan</a>
-                             </li>
+                                <a href="{{route('keuangan.akun.index')}}">Master COA Keuangan</a>
+                            </li>
+                            <li class="{{Request::is('masterdatautama/masterpembayaran/*') || Request::is('masterdatautama/masterpembayaran') ? 'active' : ''}}">
+                                <a href="{{route('masterdatautama.masterpembayaran')}}">Master Pembayaran</a>
+                            </li>
                         </ul>
                     </li>
                 @endif

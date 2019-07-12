@@ -181,6 +181,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/ekspedisi/disable-produk', 'Master\EkspedisiController@disableProduk')->name('ekspedisi.disableProduk');
     Route::post('/masterdatautama/ekspedisi/enable-ekspedisi', 'Master\EkspedisiController@enableEkspedisi')->name('ekspedisi.enableEkspedisi');
     Route::post('/masterdatautama/ekspedisi/enable-produk', 'Master\EkspedisiController@enableProduk')->name('ekspedisi.enableProduk');
+
+    //Master Pembayaran
+    Route::get('/masterdatautama/masterpembayaran', 'Master\PembayaranController@index')->name('masterdatautama.masterpembayaran');
     // !===================================================== End Master Data Utama =====================================================!
 
     // !===================================================== PRODUKSI =====================================================!
