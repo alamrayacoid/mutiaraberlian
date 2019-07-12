@@ -181,6 +181,20 @@
         return parseInt(rupiah.replace(/,.*|[^0-9]/g, ''), 10);
     }
 
+    function convertToRibuan(angka) {
+        var number_string = angka.toString(),
+            sisa    = number_string.length % 3,
+            rupiah  = number_string.substr(0, sisa),
+            ribuan  = number_string.substr(sisa).match(/\d{3}/g);
+                
+        if (ribuan) {
+            separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+
+        return rupiah;
+    }
+
     function handleInput(e) {
         var ss = e.target.selectionStart;
         var se = e.target.selectionEnd;

@@ -41,7 +41,7 @@
                     <div class="col-md-2 col-sm-12">
                         <label for="">Jasa Ekspedisi</label>
                     </div>
-                    <div class="col-md-2 col-sm-12 mb-3">
+                    <div class="col-md-4 col-sm-12 mb-3">
                         <select class="select2" id="ekspedisi">
                             <option></option>
                         </select>
@@ -50,7 +50,7 @@
                     <div class="col-md-2 col-sm-12">
                         <label for="">Jenis Ekspedisi</label>
                     </div>
-                    <div class="col-md-2 col-sm-12 mb-3">
+                    <div class="col-md-4 col-sm-12 mb-3">
                         <select class="select2" id="jenis_ekspedisi">
                             <option></option>
                         </select>
@@ -59,29 +59,51 @@
                     <div class="col-md-2 col-sm-12">
                         <label for="">Nama Kurir</label>
                     </div>
-                    <div class="col-md-2 col-sm-12 mb-3">
+                    <div class="col-md-4 col-sm-12 mb-3">
                         <input type="text" id="nama_kurir" class="form-control form-control-sm">
                     </div>
 
                     <div class="col-md-2 col-sm-12">
                         <label for="">Nomor Telepon</label>
                     </div>
-                    <div class="col-md-2 col-sm-12 mb-3">
+                    <div class="col-md-4 col-sm-12 mb-3">
                         <input type="text" id="tlp_kurir" class="form-control form-control-sm hp">
                     </div>
 
                     <div class="col-md-2 col-sm-12">
                         <label for="">Nomor Resi</label>
                     </div>
-                    <div class="col-md-2 col-sm-12 mb-3">
+                    <div class="col-md-4 col-sm-12 mb-3">
                         <input type="text" id="resi_kurir" class="form-control form-control-sm text-uppercase">
                     </div>
 
                     <div class="col-md-2 col-sm-12">
                         <label for="">Biaya</label>
                     </div>
-                    <div class="col-md-2 col-sm-12 mb-3">
+                    <div class="col-md-4 col-sm-12 mb-3">
                         <input type="text" id="biaya_kurir" class="form-control form-control-sm rupiah">
+                    </div>
+
+                    <div class="col-md-2 col-sm-12">
+                        <label for="">Jenis Pembayaran</label>
+                    </div>
+                    <div class="col-md-4 col-sm-12 mb-3">
+                        <select class="select2 form-control form-control-sm" id="jenis_pembayaran" name="jenis_pembayaran">
+                            <option value="C">Cash</option>
+                            <option value="T">Cash Tempo</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2 col-sm-12">
+                        <label for="">Metode Pembayaran</label>
+                    </div>
+                    <div class="col-md-4 col-sm-12 mb-3">
+                        <select class="select2 form-control form-control-sm" id="metode_pembayaran">
+                            <option value="C">Cash</option>
+                            <option value="T">Transfer BRI</option>
+                            <option value="T">Transfer BNI</option>
+                            <option value="T">Transfer BCA</option>
+                        </select>
                     </div>
                 </div>
                 <hr>
@@ -139,6 +161,7 @@
 
             </div>
             <div class="modal-footer">
+                <span class="float-left text-left" style="float: left">Periksa terlebih dahulu kode produksi sebelum mengirim barang</span>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" onclick="kirim()">Simpan dan Kirim</button>
             </div>

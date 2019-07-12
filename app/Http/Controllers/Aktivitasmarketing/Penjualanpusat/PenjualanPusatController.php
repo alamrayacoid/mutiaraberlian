@@ -27,7 +27,7 @@ class PenjualanPusatController extends Controller
 {
     public function index()
     {
-        if (!AksesUser::checkAkses(20, 'read')){
+        if (!AksesUser::checkAkses(20, 'read')) {
             abort(401);
         }
         return view('marketing/penjualanpusat/index');
@@ -43,12 +43,12 @@ class PenjualanPusatController extends Controller
         $data = 'employee';
         if (Auth::user()->u_user == 'A') {
             $data = DB::table('m_agen')
-            ->where('a_code', '=', Auth::user()->u_code)
-            ->first();
+                ->where('a_code', '=', Auth::user()->u_code)
+                ->first();
         }
         $pusat = DB::table('m_company')
-        ->where('c_type', '=', 'PUSAT')
-        ->first();
+            ->where('c_type', '=', 'PUSAT')
+            ->first();
 
         return view('marketing/penjualanpusat/terimaorder/create', compact('data', 'pusat'));
     }
@@ -69,6 +69,7 @@ class PenjualanPusatController extends Controller
             ->addColumn('action', function ($data) {
                 return '<div class="btn-group btn-group-sm">
                 <button class="btn btn-primary btn-detail" type="button" onclick="getDetailTOP(' . $data->po_id . ')" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
+                <button class="btn btn-danger btn-delete" type="button" onclick="deleteTOP(' . $data->po_id . ')" title="Hapus"><i class="fa fa-close"></i></button>
                 <button class="btn btn-success btn-process" type="button" onclick="processTOP(' . $data->po_id . ')" title="Proses" data-toggle="modal" data-target="#modalProcessTOP"><i class="fa fa-arrow-right"></i></button>
                 </div>';
                 // <button class="btn btn-success btn-proses" type="button" title="Proses" onclick="window.location.href=\''. route('orderpenjualan.proses') .'?id='.encrypt($data->po_id).'\'"><i class="fa fa-arrow-right"></i></button>
@@ -80,6 +81,44 @@ class PenjualanPusatController extends Controller
             })
             ->rawColumns(['tanggal', 'action', 'total'])
             ->make(true);
+    }
+
+    public function deleteTOP(Request $request)
+    {
+        $id = $request->po_id;
+
+        if (!AksesUser::checkAkses(20, 'delete')) {
+            return Response::json([
+                'status' => 'gagal',
+                'message' => 'Anda tidak memiliki akses'
+            ]);
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('d_productorder')
+                ->where('po_id', '=', $id)
+                ->delete();
+
+            DB::table('d_productordercode')
+                ->where('poc_productorder', '=', $id)
+                ->delete();
+
+            DB::table('d_productorderdt')
+                ->where('pod_productorder', '=', $id)
+                ->delete();
+
+            DB::commit();
+            return Response::json([
+                'status' => 'sukses'
+            ]);
+        } catch (DecryptException $e) {
+            DB::rollBack();
+            return Response::json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     public function getDetailTOP(Request $request)
@@ -101,16 +140,16 @@ class PenjualanPusatController extends Controller
             ->first();
 
         // check again how to get stock, is it true ?
-       // $stockItem = array();
-       // foreach ($data->getPODt as $key => $val) {
-       //     $getStock = d_stock::where('s_item', $val->pod_item)
-       //         ->where('s_position', $data->po_comp)
-       //         ->where('s_status', 'ON DESTINATION')
-       //         ->where('s_condition', 'FINE')
-       //         ->first();
-       //
-       //     array_push($stockItem, $getStock->s_qty);
-       // }
+        // $stockItem = array();
+        // foreach ($data->getPODt as $key => $val) {
+        //     $getStock = d_stock::where('s_item', $val->pod_item)
+        //         ->where('s_position', $data->po_comp)
+        //         ->where('s_status', 'ON DESTINATION')
+        //         ->where('s_condition', 'FINE')
+        //         ->first();
+        //
+        //     array_push($stockItem, $getStock->s_qty);
+        // }
 
         //$data->stockItem = $stockItem;
         $data->total = d_productorderdt::where('pod_productorder', $request->id)->sum('pod_totalprice');
@@ -182,11 +221,10 @@ class PenjualanPusatController extends Controller
                 ->where('i_id', '=', $val->pod_item)
                 ->first();
 
-            if ($getStock != null){
+            if ($getStock != null) {
                 array_push($satuanItem, $getStock->s_qty . ' ' . $item->u_name);
                 array_push($stockItem, $getStock->s_qty);
-            }
-            else {
+            } else {
                 array_push($satuanItem, 0 . ' ' . $item->u_name);
                 array_push($stockItem, 0);
             }
@@ -218,7 +256,7 @@ class PenjualanPusatController extends Controller
                     'po_status' => 'Y'
                 ]);
 
-            for($i = 0; $i < count($item); $i++){
+            for ($i = 0; $i < count($item); $i++) {
                 DB::table('d_productorderdt')
                     ->where('pod_productorder', '=', $id_po)
                     ->where('pod_item', '=', $item[$i])
@@ -245,7 +283,7 @@ class PenjualanPusatController extends Controller
             return Response::json([
                 'status' => 'success'
             ]);
-        } catch (DecryptException $e){
+        } catch (DecryptException $e) {
             DB::rollBack();
             return Response::json([
                 'status' => 'gagal',
@@ -624,7 +662,7 @@ class PenjualanPusatController extends Controller
         $item = $request->item;
         $qty = $request->kuantitas;
 
-        if ($agen->c_user == null || $agen->c_user == ''){
+        if ($agen->c_user == null || $agen->c_user == '') {
             return response()->json([
                 'status' => 'gagal',
                 'pesan' => 'agen tidak ditemukan'
@@ -644,7 +682,7 @@ class PenjualanPusatController extends Controller
             ->where('pcd_unit', '=', $unit)
             ->get();
 
-        if (count($get_price) == 0){
+        if (count($get_price) == 0) {
             return response()->json([
                 'status' => 'gagal',
                 'pesan' => 'harga tidak ditemukan'
@@ -665,7 +703,7 @@ class PenjualanPusatController extends Controller
                     }
                 }
             } else if ($qty > 1) {
-                if ($price->pcd_rangeqtyend == 0){
+                if ($price->pcd_rangeqtyend == 0) {
                     if ($qty >= $price->pcd_rangeqtystart) {
                         $harga = $price->pcd_price;
                     }
@@ -691,9 +729,9 @@ class PenjualanPusatController extends Controller
             ->where('po_status', 'Y')
             ->where('po_comp', '=', Auth::user()->u_company);
 
-        if ($status == 'P'){
+        if ($status == 'P') {
             $data->where('po_send', '=', 'P');
-        } elseif ($status == 'Y'){
+        } elseif ($status == 'Y') {
             $data->where('po_send', '=', 'Y');
         } else {
             $data->whereNull('po_send');
@@ -706,11 +744,18 @@ class PenjualanPusatController extends Controller
                 return '<td>' . Carbon::parse($data->po_date)->format('d-m-Y') . '</td>';
             })
             ->addColumn('action', function ($data) {
+                if ($data->po_send == null){
+                    return '<div class="btn-group btn-group-sm">
+                            <button class="btn btn-primary btn-detail" type="button" onclick="getDetailTOP(' . $data->po_id . ')" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
+                            <button class="btn btn-danger btn-delete" type="button" onclick="deleteTOP(' . $data->po_id . ')" title="Hapus"><i class="fa fa-close"></i></button>
+                            <button class="btn btn-warning btn-process" type="button" onclick="distribusiPenjualan(' . $data->po_id . ')" title="Kirim" data-toggle="modal" data-target="#modal_distribusi"><i class="fa fa-send"></i></button>
+                        </div>';
+                } else {
+                    return '<div class="btn-group btn-group-sm">
+                            <button class="btn btn-primary btn-detail" type="button" onclick="getDetailTOP(' . $data->po_id . ')" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
+                        </div>';
+                }
 
-                return '<div class="btn-group btn-group-sm">
-                <button class="btn btn-primary btn-detail" type="button" onclick="getDetailTOP(' . $data->po_id . ')" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
-                <button class="btn btn-warning btn-process" type="button" onclick="distribusiPenjualan(' . $data->po_id . ')" title="Kirim" data-toggle="modal" data-target="#modal_distribusi"><i class="fa fa-send"></i></button>
-                </div>';
                 // <button class="btn btn-success btn-proses" type="button" title="Proses" onclick="window.location.href=\''. route('orderpenjualan.proses') .'?id='.encrypt($data->po_id).'\'"><i class="fa fa-arrow-right"></i></button>
             })
             ->addColumn('total', function ($data) {
@@ -745,6 +790,31 @@ class PenjualanPusatController extends Controller
             $tlp = $request->tlp;
             $resi = $request->resi;
             $harga = $request->harga;
+
+            $cek = DB::table('d_productorderdt')
+                ->join('d_productorder', 'po_id', '=', 'pod_productorder')
+                ->where('po_nota', '=', $nota)
+                ->get();
+
+            for ($i = 0; $i < count($cek); $i++){
+                $kode = DB::table('d_productordercode')
+                    ->join('d_productorderdt', function ($q) use ($cek){
+                        $q->on('pod_productorder', '=', 'poc_productorder');
+                        $q->on('pod_item', '=', 'poc_item');
+                    })
+                    ->select(DB::raw('sum(poc_qty) as poc_qty'))
+                    ->where('poc_item', '=', $cek[$i]->pod_item)
+                    ->where('poc_productorder', '=', $cek[$i]->pod_productorder)
+                    ->groupBy('poc_item')
+                    ->get();
+
+                if ($kode[0]->poc_qty != $cek[$i]->pod_qty){
+                    return Response::json([
+                        'status' => 'gagal',
+                        'message' => 'Jumlah kode produksi tidak sama'
+                    ]);
+                }
+            }
 
             DB::table('d_productorder')
                 ->where('po_nota', '=', $nota)
@@ -782,7 +852,7 @@ class PenjualanPusatController extends Controller
 
             $idItems = [];
 
-            for($i = 0; $i < count($dataItem);$i++){
+            for ($i = 0; $i < count($dataItem); $i++) {
                 array_push($idItems, $dataItem[$i]->pod_item);
             }
 
@@ -810,13 +880,13 @@ class PenjualanPusatController extends Controller
                 $kuantitas = 0;
                 $sellprice = 0;
 
-                if ($PO->pod_unit == $barang->i_unit1){
+                if ($PO->pod_unit == $barang->i_unit1) {
                     $kuantitas = $PO->pod_qty;
                     $sellprice = $PO->pod_price;
-                }elseif ($PO->pod_unit == $barang->i_unit2){
+                } elseif ($PO->pod_unit == $barang->i_unit2) {
                     $kuantitas = ($PO->pod_qty * $barang->i_unitcompare2);
                     $sellprice = $PO->pod_price / $barang->i_unitcompare2;
-                }elseif ($PO->pod_unit == $barang->i_unit3){
+                } elseif ($PO->pod_unit == $barang->i_unit3) {
                     $kuantitas = ($PO->pod_qty * $barang->i_unitcompare3);
                     $sellprice = $PO->pod_price / $barang->i_unitcompare3;
                 }
@@ -863,10 +933,10 @@ class PenjualanPusatController extends Controller
 
             $total = 0;
             $insert = [];
-            for ($i = 0; $i < count($data); $i++){
+            for ($i = 0; $i < count($data); $i++) {
                 $temp = [
                     'scd_sales' => $s_id,
-                    'scd_detailid' => $i +1,
+                    'scd_detailid' => $i + 1,
                     'scd_comp' => $data[0]->po_comp,
                     'scd_item' => $data[$i]->pod_item,
                     'scd_qty' => $data[$i]->pod_qty,
@@ -880,7 +950,7 @@ class PenjualanPusatController extends Controller
             }
 
             $code = [];
-            for ($i = 0;$i < count($kode);$i++){
+            for ($i = 0; $i < count($kode); $i++) {
                 $temp = [
                     'ssc_salescomp' => $s_id,
                     'ssc_item' => $kode[$i]->poc_item,
@@ -916,7 +986,7 @@ class PenjualanPusatController extends Controller
             return Response::json([
                 'status' => 'success'
             ]);
-        } catch (DecryptException $e){
+        } catch (DecryptException $e) {
             DB::rollBack();
             return Response::json([
                 'status' => 'gagal',
@@ -967,11 +1037,11 @@ class PenjualanPusatController extends Controller
     public function getAgen($id)
     {
         $data = DB::table('m_company')
-            ->join('m_agen',  'c_user', 'a_code')
+            ->join('m_agen', 'c_user', 'a_code')
             ->where('a_area', '=', $id)
             ->get();
         return response()->json([
-            'data' =>$data
+            'data' => $data
         ]);
     }
 
@@ -987,18 +1057,18 @@ class PenjualanPusatController extends Controller
             ->where('sc_paidoff', '=', 'N')
             ->where('sc_type', '=', 'C')
             ->groupBy('sc_id');
-            // dd($data);
+        // dd($data);
         return Datatables::of($data)
-            ->addColumn('sisa', function($data){
+            ->addColumn('sisa', function ($data) {
                 $sisa = $data->sc_total - $data->payment;
                 $sisa = Currency::addRupiah($sisa);
                 return $sisa;
             })
-            ->addColumn('action', function($data){
+            ->addColumn('action', function ($data) {
                 // return '<button class="btn btn-sm btn-success" onclick="get_list(\''.Crypt::encrypt($data->sc_nota).'\')"><i class="fa fa-download"></i> Gunakan</button>';
-                return '<button class="btn btn-sm btn-success" onclick="get_list(\''.$data->sc_nota.'\')"><i class="fa fa-download"></i> Gunakan</button>';
+                return '<button class="btn btn-sm btn-success" onclick="get_list(\'' . $data->sc_nota . '\')"><i class="fa fa-download"></i> Gunakan</button>';
             })
-            ->rawColumns(['sisa','action'])
+            ->rawColumns(['sisa', 'action'])
             ->make(true);
     }
 
@@ -1014,14 +1084,68 @@ class PenjualanPusatController extends Controller
         return Datatables::of($datas)
             // ->addIndexColumn()
             ->addColumn('sisa', function($datas){
-                $sisa = $datas->sc_total - $datas->payment;
+                $sisa = (int)$datas->sc_total - (int)$datas->payment;
                 $sisa = Currency::addRupiah($sisa);
                 return $sisa;
             })
             ->addColumn('bayar', function($datas){
-                return '<button class="btn btn-sm btn-success" onclick="toPayment(\''.$datas->sc_nota.'\')"><i class="fa fa-money"></i> Bayar</button>';
+                $sisa = (int)$datas->sc_total - (int)$datas->payment;
+                if ($sisa == 0) {
+                    return '<button class="btn btn-sm btn-success" disabled><i class="fa fa-money"></i> Bayar</button>';
+                } else {
+                    return '<button class="btn btn-sm btn-success" onclick="toPayment(\''.$datas->sc_nota.'\')"><i class="fa fa-money"></i> Bayar</button>';
+                }
+            ->addColumn('sisa', function ($datas) {
+                $sisa = $datas->sc_total - $datas->payment;
+                $sisa = Currency::addRupiah($sisa);
+                return $sisa;
             })
-            ->rawColumns(['sisa','bayar'])
+            ->addColumn('bayar', function ($datas) {
+                return '<button class="btn btn-sm btn-success" onclick="toPayment(\'' . $datas->sc_nota . '\')"><i class="fa fa-money"></i> Bayar</button>';
+            })
+            ->rawColumns(['sisa', 'bayar'])
             ->make(true);
+    }
+
+    public function savePayment(Request $request)
+    {
+        $nota    = $request->nota;
+        $nominal = $request->nominal;
+
+        DB::beginTransaction();
+        try {
+            $sales = DB::table('d_salescomp')->where('sc_nota', '=', $nota)->first();
+            $dtId  = DB::table('d_salescomppayment')->where('scp_salescomp', '=', $sales->sc_id)->max('scp_detailid') + 1;
+            DB::table('d_salescomppayment')->insert([
+                'scp_salescomp' => $sales->sc_id,
+                'scp_detailid'  => $dtId,
+                'scp_date'      => Carbon::now(),
+                'scp_pay'       => $nominal
+            ]);
+
+            $checkSCP = DB::table('d_salescomppayment')->where('scp_salescomp', '=', $sales->sc_id)->get();
+
+            $jumlah = 0;
+            for ($i=0; $i < count($checkSCP) ; $i++) { 
+                $jumlah += (int)$checkSCP[$i]->scp_pay;
+            }
+
+            if ((int)$jumlah == (int)$sales->sc_total) {
+                DB::table('d_salescomp')->where('sc_nota', '=', $nota)->update([
+                    'sc_paidoff' => 'Y'
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'status' => 'sukses'
+            ]);
+        } catch (DecryptException $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 }

@@ -53,7 +53,7 @@
                         <a href="#penggajuan_sdms" class="nav-link" data-target="#penggajuan_sdms" aria-controls="penggajuan_sdms" data-toggle="tab" role="tab">Pengajuan SDM</a>
                     </li>
 					<li class="nav-item">
-						<a href="#kelola_rekruitment" class="nav-link" data-target="#kelola_rekruitment" aria-controls="kelola_rekruitment" data-toggle="tab" role="tab">Kelola Rekruitment</a>
+						<a href="#kelola_rekruitment" class="nav-link" data-target="#kelola_rekruitment" aria-controls="kelola_rekruitment" data-toggle="tab" role="tab">Publikasi Rekruitment</a>
 					</li>
 					<li class="nav-item">
 						<a href="#manage_position_sdm" class="nav-link" data-target="#manage_position_sdm" aria-controls="manage_position_sdm" data-toggle="tab" role="tab">Kelola Posisi SDM</a>
@@ -93,7 +93,7 @@
 
 		TableRekrutmen();
 		TableDiterima();
-		kelolaRekrutmen();
+		publishRekrutmen();
         PengajuanSdm();
 	});
 	// End Document Ready --------------------------------------------------------------------------
@@ -559,8 +559,8 @@
     }
     // End Code -----------------------------------------------------------------------------------
 
-	// Kelola Data Recruitment --------------------------------------------------------------------
-	function kelolaRekrutmen() {
+	// Publish Recruitment --------------------------------------------------------------------
+	function publishRekrutmen() {
 		if ($.fn.DataTable.isDataTable("#kelola_rekrutmen")) {
     	$('#kelola_rekrutmen').dataTable().fnDestroy();
     }
@@ -568,15 +568,17 @@
 			responsive: true,
 			serverSide: true,
 			ajax: {
-				url: "{{ url('/sdm/prosesrekruitmen/listLoker') }}",
+				url: "{{ url('/sdm/prosesrekruitmen/listPublish') }}",
 				type: "get"
 			},
 			columns: [
 				{data: 'DT_RowIndex'},
+				{data: 'ss_reff'},
+				{data: 'm_name'},
 				{data: 'j_name'},
+                {data: 'ss_qtyneed'},
 				{data: 'start'},
-				{data: 'end'},
-				{data: 'status'},
+                {data: 'end'},
 				{data: 'action'}
 			],
 			pageLength: 10,
@@ -608,15 +610,15 @@
 		});
 	}
 
-	function activateLoker(id) {
-		var active_loker = "{{url('/sdm/prosesrekruitment/activateLoker/')}}"+"/"+id;
+	function approvePublish(id) {
+		var approve_publish = "{{url('/sdm/prosesrekruitment/approvePublish/')}}"+"/"+id;
     $.confirm({
         animation: 'RotateY',
         closeAnimation: 'scale',
         animationBounce: 1.5,
         icon: 'fa fa-exclamation-triangle',
         title: 'Pesan!',
-        content: 'Apakah anda yakin ingin aktifkan data ini?',
+        content: 'Apakah anda yakin ingin menyetujui data ini?',
         theme: 'disable',
         buttons: {
             info: {
@@ -625,7 +627,7 @@
                 action: function() {
                     return $.ajax({
                         type: "post",
-                        url: active_loker,
+                        url: approve_publish,
 							          data: {
 							              "_token": "{{ csrf_token() }}"
 							          },
@@ -635,7 +637,7 @@
                         success: function(response) {
                             if (response.status == 'sukses') {
                                 loadingHide();
-                                messageSuccess('Berhasil', 'Pengaktifan berhasil!');
+                                messageSuccess('Berhasil', 'Data publikasi berhasil diterima!');
                                 kelola_rekrutmen.ajax.reload();
                             } else {
                                 loadingHide();
@@ -660,15 +662,15 @@
     });
 	}
 
-	function nonLoker(id) {
-		var non_loker = "{{url('/sdm/prosesrekruitment/nonLoker/')}}"+"/"+id;
+	function rejectPublish(id) {
+		var reject_publish = "{{url('/sdm/prosesrekruitment/rejectPublish/')}}"+"/"+id;
     $.confirm({
         animation: 'RotateY',
         closeAnimation: 'scale',
         animationBounce: 1.5,
         icon: 'fa fa-exclamation-triangle',
         title: 'Pesan!',
-        content: 'Apakah anda yakin ingin Nonaktifkan data ini?',
+        content: 'Apakah anda yakin ingin membatalkan publikasi data ini?',
         theme: 'disable',
         buttons: {
             info: {
@@ -677,7 +679,7 @@
                 action: function() {
                     return $.ajax({
                         type: "post",
-                        url: non_loker,
+                        url: reject_publish,
 							          data: {
 							              "_token": "{{ csrf_token() }}"
 							          },
@@ -687,7 +689,7 @@
                         success: function(response) {
                             if (response.status == 'sukses') {
                                 loadingHide();
-                                messageSuccess('Berhasil', 'Data berhasil dinonaktifkan!');
+                                messageSuccess('Berhasil', 'Data publikasi berhasil dibatalkan!');
                                 kelola_rekrutmen.ajax.reload();
                             } else {
                                 loadingHide();

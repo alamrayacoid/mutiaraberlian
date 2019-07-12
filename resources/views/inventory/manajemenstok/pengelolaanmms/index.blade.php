@@ -184,7 +184,6 @@
                         $("#rangemin").val(resp.data.message.rangemin);
                         $("#rangemax").val(resp.data.message.rangemax);
                         
-                        $("#detailPengelolaanms").modal("show");
                         $('#table_detail').DataTable().clear().destroy();
                         var tb_detail = $('#table_detail').DataTable({
                             responsive: true,
@@ -199,6 +198,7 @@
                             ]).draw(false);
                         });
                         loadingHide();
+                        $("#detailPengelolaanms").modal("show");
                     }
                 })
                 .catch(function (error) {
