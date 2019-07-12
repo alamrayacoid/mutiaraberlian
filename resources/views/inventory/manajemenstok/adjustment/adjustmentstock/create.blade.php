@@ -198,6 +198,7 @@
       if (parseInt(response.data.data.o_qtysystem) != parseInt(response.data.stock.s_qty)) {
         $('#btnsimpan').css('display', 'none');
         messageFailed('Failed', 'Data Stock System Sudah Berubah');
+        loadingHide();
       } else {
         loadingHide();
         $('#btnsimpan').css('display', '');
