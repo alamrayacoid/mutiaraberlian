@@ -57,8 +57,7 @@ class PembayaranController extends Controller
     {
         $data = DB::table('m_paymentmethod')->get();
 
-        return DataTables::of($data)
-            ->addIndexColumn()
+
     }
 
 }
