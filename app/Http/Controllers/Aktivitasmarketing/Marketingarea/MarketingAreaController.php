@@ -11,6 +11,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 
 use Auth;
 use App\d_canvassing;
+use App\d_productdelivery;
 use App\d_productorder;
 use App\d_productorderdt;
 use App\d_productordercode;
@@ -26,6 +27,7 @@ use App\d_username;
 use App\m_agen;
 use App\m_company;
 use App\m_item;
+use App\m_paymentmethod;
 use App\m_wil_provinsi;
 use Carbon\Carbon;
 use CodeGenerator;
@@ -962,6 +964,21 @@ class MarketingAreaController extends Controller
             ->with('getPODt')
             ->first();
 
+            // insert new product-delivery
+            $pd_id = d_productdelivery::max('pd_id') + 1;
+            $val_deliv = [
+                'pd_id' => $pd_id,
+                'pd_date' => Carbon::now(),
+                'pd_nota'  => $productOrder->po_nota,
+                'pd_expedition' => $request->expedition,
+                'pd_product' => $request->expeditionType,
+                'pd_resi' => strtoupper($request->resi),
+                'pd_couriername' => $request->courierName,
+                'pd_couriertelp' => $request->courierTelp,
+                'pd_price' => $request->shippingCost,
+            ];
+            DB::table('d_productdelivery')->insert($val_deliv);
+
             // mutation
             foreach ($productOrder->getPODt as $key => $PO) {
                 $idxQty = array_search($PO->pod_item, $request->itemsId);
@@ -1051,6 +1068,8 @@ class MarketingAreaController extends Controller
                 'sc_date'    => $productOrder->po_date,
                 'sc_nota'    => $productOrder->po_nota,
                 'sc_total'   => $totalPrice,
+                'sc_paymenttype' => $request->paymentType,
+                'sc_paymentmethod' => $request->paymentMethod,
                 'sc_user'    => Auth::user()->u_id,
                 'sc_insert'  => Carbon::now(),
                 'sc_update'  => Carbon::now()
@@ -1094,7 +1113,7 @@ class MarketingAreaController extends Controller
                 $salescompdtid++;
             }
             DB::table('d_salescompdt')->insert($val_salesdt);
-
+// dd('x');
             DB::commit();
             return response()->json([
                 'status' => 'sukses'
@@ -2755,7 +2774,7 @@ class MarketingAreaController extends Controller
             ]);
         }
     }
-
+    // get list of expedition
     public function getExpedition()
     {
         $data = DB::table('m_expedition')->where('e_isactive', '=', 'Y')->get();
@@ -2764,10 +2783,19 @@ class MarketingAreaController extends Controller
             'data' => $data
         ]);
     }
-
+    // get list of expeditionType
     public function getExpeditionType($id)
     {
         $data = DB::table('m_expeditiondt')->where('ed_expedition', '=', $id)->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+    // get list of paymentMethod
+    public function getPaymentMethod()
+    {
+        $data = m_paymentmethod::where('pm_isactive', 'Y')->get();
 
         return response()->json([
             'data' => $data

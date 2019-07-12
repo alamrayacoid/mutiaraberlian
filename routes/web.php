@@ -503,6 +503,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Marketing Area
     Route::get('/marketing/marketingarea/index', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@index')->name('marketingarea.index');
     Route::get('/marketing/marketingarea/get-expedition', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getExpedition')->name('marketingarea.getExpedition');
+    Route::get('/marketing/marketingarea/get-payment-method', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getPaymentMethod')->name('marketingarea.getPaymentMethod');
     Route::get('/marketing/marketingarea/get-expeditionType/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getExpeditionType')->name('marketingarea.getExpeditionType');
     // Order Produk Ke Cabang
     Route::get('/marketing/marketingarea/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@createOrderProduk')->name('orderProduk.create');
