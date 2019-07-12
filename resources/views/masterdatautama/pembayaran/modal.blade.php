@@ -1,4 +1,4 @@
-<div class="modal fade" id="modal_create" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal_create" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content" style="border-radius: 5px;">
             <div class="modal-header">
@@ -23,7 +23,7 @@
                     </div>
                     <div class="col-9">
                         <div class="form-group">
-                            <select class="form-control-sm select2" id="akun" name="akun">
+                            <select class="form-control-sm form-control select2" id="akun" name="akun">
                                 <option selected>== Pilih Akun ==</option>
                                 @foreach($akun as $dk)
                                     <option value="{{ $dk->ak_id }}">{{ $dk->ak_nomor }} - {{ $dk->ak_nama }}</option>
@@ -31,10 +31,21 @@
                             </select>
                         </div>
                     </div>
+
+                    <div class="col-3">
+                        <label>Catatan</label>
+                    </div>
+                    <div class="col-9">
+                        <div class="form-group">
+                            <textarea class="form-control form-control-sm" id="note"></textarea>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">
+                <button type="button" class="btn btn-primary" onclick="simpan()">
                     <span class="glyphicon glyphicon-floppy-disk"></span> Simpan
                 </button>
             </div>

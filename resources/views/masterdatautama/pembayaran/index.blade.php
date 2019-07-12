@@ -30,7 +30,7 @@
                                 <h3 class="title"> Master Pembayaran </h3>
                             </div>
                             <div class="header-block pull-right">
-                                <button data-toggle="modal" data-target="#modal_create" class="btn btn-primary" id="e-create">
+                                <button class="btn btn-primary" id="e-create" data-toggle="modal" data-target="#modal_create">
                                     <i class="fa fa-plus"></i>&nbsp;Tambah Data
                                 </button>
                             </div>
@@ -66,6 +66,44 @@
 @endsection
 @section('extra_script')
     <script type="text/javascript">
+        var table;
+        $('document').ready(function () {
 
+        })
+
+        $('#modal_create').on('shown.bs.modal', function () {
+            $('#nama').val('');
+            $('#akun').val('');
+            $('#note').val('');
+        })
+
+        function simpan() {
+            let nama = $('#nama').val();
+            let akun = $('#akun').val();
+
+            if (nama == '' || akun == '' || note == ''){
+                loadingHide();
+                messageWarning('Perhatian', 'Form wajib diisi');
+                return false;
+            }
+
+            axios.post('{{ route("masterdatautama.save") }}', {
+                "nama": nama,
+                "akun": akun,
+                "note": note,
+                "_token": '{{ csrf_token() }}'
+            }).then(function (response) {
+                loadingHide();
+                if (response.data.status == 'sukses'){
+                    messageSuccess("Berhasil", "Data berhasil disimpan");
+
+                } else if (response.data.status == 'gagal'){
+                    messageFailed("Gagal", response.data.status);
+
+                }
+            }).catch(function (error) {
+                alert('error');
+            })
+        }
     </script>
 @endsection

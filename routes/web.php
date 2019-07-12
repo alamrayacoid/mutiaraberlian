@@ -184,6 +184,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     //Master Pembayaran
     Route::get('/masterdatautama/masterpembayaran', 'Master\PembayaranController@index')->name('masterdatautama.masterpembayaran');
+    Route::post('/masterdatautama/masterpembayaran/simpan', 'Master\PembayaranController@save')->name('masterdatautama.save');
+    Route::post('/masterdatautama/masterpembayaran/get-data', 'Master\PembayaranController@getDataPembayaran')->name('masterdatautama.getData');
     // !===================================================== End Master Data Utama =====================================================!
 
     // !===================================================== PRODUKSI =====================================================!
