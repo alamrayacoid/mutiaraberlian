@@ -157,12 +157,59 @@ $(document).ready(function() {
   		});
     }
     // approve order from branch
-    function approveOrder(id) {
+    function approveOrder(id)
+    {
         window.location.href = baseUrl + '/inventory/distribusibarang/approve-order/'+id;
     }
     // reject order from branch
-    function rejectOrder(id) {
-
+    function rejectOrder(id)
+    {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin akan menolak order ini ?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function() {
+                      $.ajax({
+                        type: 'get',
+                        data: {id},
+                        dataType: 'json',
+                        url: baseUrl + '/inventory/distribusibarang/reject-order/' + id,
+                        success : function(response) {
+                          if (response.status == 'berhasil') {
+                            $.toast({
+                                heading: 'Information',
+                                text: 'Data order berhasil ditolak !',
+                                bgColor: '#0984e3',
+                                textColor: 'white',
+                                loaderBg: '#fdcb6e',
+                                icon: 'info'
+                            })
+                            table_pros.ajax.reload();
+                          } else if (response.status == 'failed') {
+                            messageFailed('Failed', response.message);
+                          } else {
+                            messageFailed('Failed', 'Proses penolakan gagal, hubungi pengembang !');
+                          }
+                        }
+                      });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function() {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
     }
 </script>
 
@@ -255,52 +302,52 @@ $(document).ready(function() {
 	}
 
     function hapus(id){
-      $.confirm({
-          animation: 'RotateY',
-          closeAnimation: 'scale',
-          animationBounce: 1.5,
-          icon: 'fa fa-exclamation-triangle',
-          title: 'Peringatan!',
-          content: 'Apa anda yakin mau menonaktifkan data ini?',
-          theme: 'disable',
-          buttons: {
-              info: {
-                  btnClass: 'btn-blue',
-                  text: 'Ya',
-                  action: function() {
-                    $.ajax({
-                      type: 'get',
-                      data: {id},
-                      dataType: 'json',
-                      url: baseUrl + '/inventory/distribusibarang/hapus',
-                      success : function(response){
-                        if (response.status == 'berhasil') {
-                          $.toast({
-                              heading: 'Information',
-                              text: 'Data Berhasil di Nonaktifkan.',
-                              bgColor: '#0984e3',
-                              textColor: 'white',
-                              loaderBg: '#fdcb6e',
-                              icon: 'info'
-                          })
-                          table_dist.ajax.reload();
-                        } else if (response.status == 'failed') {
-                          messageFailed('Failed', response.ex);
-                        } else {
-                          messageFailed('Failed', 'Data Berhasil Gagal di Nonaktifkan');
-                        }
-                      }
-                    });
-                  }
-              },
-              cancel: {
-                  text: 'Tidak',
-                  action: function() {
-                      // tutup confirm
-                  }
-              }
-          }
-      });
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apa anda yakin mau menonaktifkan data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function() {
+                        $.ajax({
+                            type: 'get',
+                            data: {id},
+                            dataType: 'json',
+                            url: baseUrl + '/inventory/distribusibarang/hapus',
+                            success : function(response){
+                                if (response.status == 'berhasil') {
+                                    $.toast({
+                                        heading: 'Information',
+                                        text: 'Data Berhasil di Nonaktifkan.',
+                                        bgColor: '#0984e3',
+                                        textColor: 'white',
+                                        loaderBg: '#fdcb6e',
+                                        icon: 'info'
+                                    })
+                                    table_dist.ajax.reload();
+                                } else if (response.status == 'failed') {
+                                    messageFailed('Failed', response.ex);
+                                } else {
+                                    messageFailed('Failed', 'Data Berhasil Gagal di Nonaktifkan');
+                                }
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function() {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
     }
 
     $('#rekrut_from').on('change', function() {

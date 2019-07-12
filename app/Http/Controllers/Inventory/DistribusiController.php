@@ -312,7 +312,8 @@ class DistribusiController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -473,7 +474,7 @@ class DistribusiController extends Controller
             $prodDeliv->pd_date = Carbon::now();
             $prodDeliv->pd_expedition = $request->expedition;
             $prodDeliv->pd_product = $request->expeditionType;
-            $prodDeliv->pd_resi = $request->resi;
+            $prodDeliv->pd_resi = strtoupper($request->resi);
             $prodDeliv->pd_couriername = $request->courierName;
             $prodDeliv->pd_couriertelp = $request->courierTelp;
             $prodDeliv->pd_price = $request->shippingCost;
@@ -701,7 +702,8 @@ class DistribusiController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',

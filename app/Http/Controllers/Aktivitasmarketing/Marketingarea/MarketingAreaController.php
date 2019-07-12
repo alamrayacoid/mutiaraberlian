@@ -344,6 +344,7 @@ class MarketingAreaController extends Controller
         $data = $request->all();
         $now = Carbon::now('Asia/Jakarta');
         $time = date('Y-m-d', strtotime($now));
+        // dd($data);
         DB::beginTransaction();
         try {
             $detailId = 0;
@@ -353,6 +354,7 @@ class MarketingAreaController extends Controller
                     ->where('sd_date', '=', $time)
                     ->where('sd_from', '=', $data['po_comp'])
                     ->where('sd_destination', '=', $data['po_agen'])
+                    ->where('sd_status', '=', 'N')
                     ->first();
 
                 if ($query1) {
@@ -411,7 +413,7 @@ class MarketingAreaController extends Controller
                     ]);
                 }
             }
-
+// dd($request->all());
             DB::commit();
             return response()->json([
                 'status' => 'sukses'

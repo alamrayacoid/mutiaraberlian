@@ -34,6 +34,12 @@ class Mutasi extends Controller
                     ->where('s_condition', '=', 'FINE')
                     ->first();
 
+                // callback if stock item is null / empty
+                if (is_null($stock)) {
+                    $item = m_item::where('i_id', $itemId)->first();
+                    throw new Exception("Stok '" . strtoupper($item->i_name) . "' kosong !");
+                }
+
                 $lengthPC = (int)$prodCodeLength[$key];
                 $endProdCodeIdx = $startProdCodeIdx + $lengthPC;
                 for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {

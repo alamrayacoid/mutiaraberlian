@@ -317,7 +317,7 @@
         // event to add more row to insert production-code
         $('.btnAddProdCode').on('click', function() {
             prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]"></input></td>';
-            qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="0"></input></td>';
+            qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]"></input></td>';
             action = '<td><button class="btn btn-danger btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
             listProdCode = '<tr>'+ prodCode + qtyProdCode + action +'</tr>';
             // idxItem is referenced from btnCodeProd above
