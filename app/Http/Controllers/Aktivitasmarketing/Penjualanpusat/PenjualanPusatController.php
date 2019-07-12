@@ -1095,6 +1095,7 @@ class PenjualanPusatController extends Controller
                 } else {
                     return '<button class="btn btn-sm btn-success" onclick="toPayment(\''.$datas->sc_nota.'\')"><i class="fa fa-money"></i> Bayar</button>';
                 }
+            })
             ->addColumn('sisa', function ($datas) {
                 $sisa = $datas->sc_total - $datas->payment;
                 $sisa = Currency::addRupiah($sisa);
