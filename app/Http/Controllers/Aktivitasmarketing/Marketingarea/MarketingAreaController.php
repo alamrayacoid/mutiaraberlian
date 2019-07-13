@@ -159,13 +159,18 @@ class MarketingAreaController extends Controller
                         <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-pencil"></i>
                         </button>';
                 }
+
                 $returData = $returData . '<button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-folder"></i>
                     </button>
                     <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-print"></i>
-                    </button>
-                    <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-trash"></i>
-                    </button>
-                    </div>';
+                    </button>';
+
+                if ($order->sd_status == 'N') {
+                    $returData = $returData . '<button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-trash"></i></button>';
+                }
+
+                $returData = $returData . '</div>';
+
 
                 return $returData;
             })
@@ -622,7 +627,7 @@ class MarketingAreaController extends Controller
             $stockdist = d_stockdistribution::where('sd_id', $id)
             ->with('getDistributionDt')
             ->first();
-            
+
             // confirm each item
             foreach ($stockdist->getDistributionDt as $key => $val) {
                 $mutConfirm = Mutasi::confirmDistribution(

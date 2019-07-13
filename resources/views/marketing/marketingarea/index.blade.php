@@ -2199,8 +2199,8 @@
             window.location.href = '{{ url('/marketing/marketingarea/orderproduk/edit') }}' + "/" + id;
         }
         // print nota
-        function printNota(id, dt) {
-            var url = '{{ url('/marketing/marketingarea/orderproduk/nota') }}' + "/" + id;
+        function printNota(id) {
+            var url = baseUrl + '/marketing/marketingarea/orderproduk/nota/' + id;
             window.open(url);
         }
         // cancel and delete order
