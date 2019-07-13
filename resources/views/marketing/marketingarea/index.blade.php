@@ -47,6 +47,8 @@
     @include('marketing.marketingarea.datacanvassing.modal-create')
     @include('marketing.marketingarea.datacanvassing.modal-edit')
     @include('marketing.marketingarea.datacanvassing.modal-search')
+    @include('marketing.marketingarea.orderproduk.modal')
+
 
     <article class="content animated fadeInLeft">
         <div class="title-block text-primary">
@@ -610,6 +612,9 @@
     <!-- script for Kelola-Data-Order etc -->
     <script type="text/javascript">
         var table_agen, table_search, table_bar, table_rab, table_bro;
+        var tb_listprosesorder;
+        var tb_listcodeprosesorder;
+
 
         var idAgen = [];
         var namaAgen = null;
@@ -748,123 +753,6 @@
             });
         });
         // End Document Ready -------------------------------------------
-
-        // Order Produk Ke Cabang -------------------------------
-        function orderProdukList() {
-            tb_order = $('#table_orderproduk').DataTable({
-                responsive: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('orderProduk.list') }}",
-                    type: "get",
-                    data: {
-                        "_token": "{{ csrf_token() }}"
-                    }
-                },
-                columns: [
-                    {data: 'sd_date'},
-                    {data: 'sd_nota'},
-                    {data: 'comp'},
-                    {data: 'branch'},
-                    // {data: 'totalprice'},
-                    {data: 'action'}
-                ],
-                pageLength: 10,
-                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-            });
-        }
-
-        function detailOrder(id) {
-            $.ajax({
-                url: "{{ url('/marketing/marketingarea/orderproduk/detail') }}" + "/" + id,
-                type: "get",
-                beforeSend: function () {
-                    loadingShow();
-                },
-                success: function (res) {
-                    loadingHide();
-                    $('#cabang').val(res.data2.get_origin.c_name);
-                    $('#agen').val(res.data2.get_destination.c_name);
-                    $('#nota').val(res.data2.sd_nota);
-                    $('#tanggal').val(res.data2.sd_date);
-                    $('.empty').empty();
-                    $.each(res.data1, function (key, val) {
-                        $('#detailOrder tbody').append('<tr>' +
-                            '<td>' + val.barang + '</td>' +
-                            '<td>' + val.unit + '</td>' +
-                            '<td class="text-right">' + val.qty + '</td>' +
-                            // '<td>' + val.price + '</td>' +
-                            // '<td>' + val.totalprice + '</td>' +
-                            '</tr>');
-                    });
-                    $('#modalOrderCabang').modal('show');
-                }
-            });
-        }
-
-        function editOrder(id) {
-            window.location.href = '{{ url('/marketing/marketingarea/orderproduk/edit') }}' + "/" + id;
-        }
-
-        function printNota(id, dt) {
-            var url = '{{ url('/marketing/marketingarea/orderproduk/nota') }}' + "/" + id;
-            window.open(url);
-        }
-
-        function deleteOrder(id) {
-            var hapus_order = "{{ url('/marketing/marketingarea/orderproduk/delete-order') }}" + "/" + id;
-            $.confirm({
-                animation: 'RotateY',
-                closeAnimation: 'scale',
-                animationBounce: 1.5,
-                icon: 'fa fa-exclamation-triangle',
-                title: 'Pesan!',
-                content: 'Apakah anda yakin ingin menghapus data ini ?',
-                theme: 'disable',
-                buttons: {
-                    info: {
-                        btnClass: 'btn-blue',
-                        text: 'Ya',
-                        action: function () {
-                            return $.ajax({
-                                type: "get",
-                                url: hapus_order,
-                                beforeSend: function () {
-                                    loadingShow();
-                                },
-                                success: function (response) {
-                                    if (response.status == 'sukses') {
-                                        loadingHide();
-                                        messageSuccess('Berhasil', 'Data order berhasil dihapus !');
-                                        tb_order.ajax.reload();
-                                    } else if (response.status == 'warning') {
-                                        loadingHide();
-                                        messageWarning('Peringatan', 'Data ini tidak boleh dihapus!');
-                                        tb_order.ajax.reload();
-                                    } else {
-                                        loadingHide();
-                                        messageFailed('Gagal', response.message);
-                                    }
-                                },
-                                error: function (e) {
-                                    loadingHide();
-                                    messageWarning('Peringatan', e.message);
-                                }
-                            });
-                        }
-                    },
-                    cancel: {
-                        text: 'Tidak',
-                        action: function (response) {
-                            loadingHide();
-                            messageWarning('Peringatan', 'Anda telah membatalkannya!');
-                        }
-                    }
-                }
-            });
-        }
-
-        // End Order Produk --------------------------------------------
 
         // Kelola Data Order Agen --------------------------------------
         function kelolaDataAgen() {
@@ -1180,9 +1068,6 @@
                 }
             });
         }
-
-        var tb_listprosesorder;
-        var tb_listcodeprosesorder;
 
         function approveAgen(id) {
             loadingShow();
@@ -2175,5 +2060,201 @@
             $('#modalSearchAgentDC').modal('hide');
         }
 
+    </script>
+
+    <!-- ========================================================================-->
+    <!-- some script for Order-Produk-Ke-Pusat -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#btn_confirmAc').on('click', function() {
+                confirmAcceptance();
+            });
+        });
+        // retrieve DataTable for list of order-produk-ke-pusat
+        function orderProdukList() {
+            tb_order = $('#table_orderproduk').DataTable({
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('orderProduk.list') }}",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                columns: [
+                    {data: 'sd_date'},
+                    {data: 'sd_nota'},
+                    {data: 'comp'},
+                    {data: 'branch'},
+                    // {data: 'totalprice'},
+                    {data: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
+        // show detail order before acceptance
+        function showDetailAc(idx)
+        {
+            loadingShow();
+            $.ajax({
+                url: baseUrl + "/marketing/marketingarea/orderproduk/show-detail-ac/" + idx,
+                type: "get",
+                success: function(response) {
+                    $('#id_ac').val(response.sd_id);
+                    $('#nota_ac').val(response.sd_nota);
+                    $('#date_ac').val(response.dateFormated);
+                    $('#origin_ac').val(response.get_origin.c_name);
+                    $('#dest_ac').val(response.get_destination.c_name);
+                    $('#table_detail_ac tbody').empty();
+                    $.each(response.get_distribution_dt, function (index, val) {
+                        no = '<td>'+ (index + 1) +'</td>';
+                        kodeXnamaBrg = '<td>'+ val.get_item.i_code +' / '+ val.get_item.i_name +'</td>';
+                        qty = '<td class="digits">'+ val.sdd_qty +'</td>';
+                        unit = '<td>'+ val.get_unit.u_name +'</td>';
+                        appendItem = no + kodeXnamaBrg + qty + unit;
+                        $('#table_detail_ac > tbody:last-child').append('<tr>'+ appendItem +'</tr>');
+                    });
+                    //mask digits
+                    $('.digits').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 0,
+                        autoGroup: true,
+                        prefix: '', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
+                    });
+
+                    $('#modalAcceptance').modal('show');
+                    loadingHide();
+                },
+                error: function(xhr, status, error) {
+                    let err = JSON.parse(xhr.responseText);
+                    messageWarning('Error', err.message);
+                    loadingHide();
+                }
+            });
+        }
+        // accept item that has been ordered and delivered
+        function confirmAcceptance() {
+            loadingShow();
+            let stockdistId = $('#id_ac').val();
+            console.log(stockdistId);
+            $.ajax({
+                url: baseUrl + "/marketing/marketingarea/orderproduk/set-acceptance/" + stockdistId,
+                type: "post",
+                success: function (response) {
+                    loadingHide();
+                    if (response.status == 'berhasil') {
+                        messageSuccess('Selamat', 'Konfirmasi penerimaan berhasil dilakukan !');
+                        $('#modalAcceptance').modal('hide');
+                        tb_order.ajax.reload();
+                    } else if (response.status == 'gagal') {
+                        messageWarning('Perhatian', response.message);
+                    } else {
+                        messageWarning('Terjadi Kesalahan', response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    loadingHide();
+                    let err = JSON.parse(xhr.responseText);
+                    messageWarning('Error', err.message);
+                }
+            });
+        }
+        // show detail of order
+        function detailOrder(id) {
+            $.ajax({
+                url: "{{ url('/marketing/marketingarea/orderproduk/detail') }}" + "/" + id,
+                type: "get",
+                beforeSend: function () {
+                    loadingShow();
+                },
+                success: function (res) {
+                    loadingHide();
+                    $('#cabang').val(res.data2.get_origin.c_name);
+                    $('#agen').val(res.data2.get_destination.c_name);
+                    $('#nota').val(res.data2.sd_nota);
+                    $('#tanggal').val(res.data2.sd_date);
+                    $('.empty').empty();
+                    $.each(res.data1, function (key, val) {
+                        $('#detailOrder tbody').append('<tr>' +
+                        '<td>' + val.barang + '</td>' +
+                        '<td>' + val.unit + '</td>' +
+                        '<td class="text-right">' + val.qty + '</td>' +
+                        // '<td>' + val.price + '</td>' +
+                        // '<td>' + val.totalprice + '</td>' +
+                        '</tr>');
+                    });
+                    $('#modalOrderCabang').modal('show');
+                }
+            });
+        }
+        // edit order
+        function editOrder(id) {
+            window.location.href = '{{ url('/marketing/marketingarea/orderproduk/edit') }}' + "/" + id;
+        }
+        // print nota
+        function printNota(id, dt) {
+            var url = '{{ url('/marketing/marketingarea/orderproduk/nota') }}' + "/" + id;
+            window.open(url);
+        }
+        // cancel and delete order
+        function deleteOrder(id) {
+            var hapus_order = "{{ url('/marketing/marketingarea/orderproduk/delete-order') }}" + "/" + id;
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Pesan!',
+                content: 'Apakah anda yakin ingin menghapus data ini ?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return $.ajax({
+                                type: "get",
+                                url: hapus_order,
+                                beforeSend: function () {
+                                    loadingShow();
+                                },
+                                success: function (response) {
+                                    if (response.status == 'sukses') {
+                                        loadingHide();
+                                        messageSuccess('Berhasil', 'Data order berhasil dihapus !');
+                                        tb_order.ajax.reload();
+                                    } else if (response.status == 'warning') {
+                                        loadingHide();
+                                        messageWarning('Peringatan', 'Data ini tidak boleh dihapus!');
+                                        tb_order.ajax.reload();
+                                    } else {
+                                        loadingHide();
+                                        messageFailed('Gagal', response.message);
+                                    }
+                                },
+                                error: function (e) {
+                                    loadingHide();
+                                    messageWarning('Peringatan', e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function (response) {
+                            loadingHide();
+                            messageWarning('Peringatan', 'Anda telah membatalkannya!');
+                        }
+                    }
+                }
+            });
+        }
     </script>
 @endsection

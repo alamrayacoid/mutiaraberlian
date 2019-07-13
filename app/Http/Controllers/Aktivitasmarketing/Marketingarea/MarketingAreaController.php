@@ -94,7 +94,8 @@ class MarketingAreaController extends Controller
     {
         $order = [];
         $order = d_stockdistribution::with('getDistributionDt')
-        ->where('sd_status', 'N')
+        // ->where('sd_status', 'N')
+        ->where('sd_status', '!=', 'Y')
         ->whereHas('getOrigin', function ($q) {
             $q->where('c_type', 'PUSAT');
         });
@@ -147,16 +148,26 @@ class MarketingAreaController extends Controller
             //     return Currency::addRupiah($order->totalprice);
             // })
             ->addColumn('action', function ($order) {
-                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                            <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-folder"></i>
-                            </button>
-                            <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-print"></i>
-                            </button>
-                            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-pencil"></i>
-                            </button>
-                            <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-trash"></i>
-                            </button>
-                        </div>';
+                $returData = '';
+                if ($order->sd_status == 'P') {
+                    $returData = '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                        <button class="btn btn-success hint--top-left hint--info" aria-label="Terima Barang Pesanan" onclick="showDetailAc(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-get-pocket"></i>
+                        </button>';
+                }
+                elseif ($order->sd_status == 'N') {
+                    $returData = '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                        <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-pencil"></i>
+                        </button>';
+                }
+                $returData = $returData . '<button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                    </button>
+                    <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-print"></i>
+                    </button>
+                    <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-trash"></i>
+                    </button>
+                    </div>';
+
+                return $returData;
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -415,7 +426,7 @@ class MarketingAreaController extends Controller
                     ]);
                 }
             }
-// dd($request->all());
+            // dd($request->all());
             DB::commit();
             return response()->json([
                 'status' => 'sukses'
@@ -572,7 +583,79 @@ class MarketingAreaController extends Controller
             ]);
         }
     }
+    // return detail order before acceptance
+    public function showDetailAc($id)
+    {
+        try {
+            $id = decrypt($id);
 
+            $detail = d_stockdistribution::where('sd_id', $id)
+            ->with('getOrigin')
+            ->with('getDestination')
+            ->with(['getDistributionDt' => function ($query) {
+                $query
+                ->with('getItem')
+                ->with('getUnit');
+            }])
+            ->first();
+            $detail->dateFormated = Carbon::parse($detail->sd_date)->format('d M Y');
+
+            return response()->json($detail);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    // confirm received items that has been ordered
+    public function setAcceptance($id)
+    {
+        // if (!AksesUser::checkAkses(7, 'update')){
+        //     abort(401);
+        // }
+
+        DB::beginTransaction();
+        try {
+            $stockdist = d_stockdistribution::where('sd_id', $id)
+            ->with('getDistributionDt')
+            ->first();
+            
+            // confirm each item
+            foreach ($stockdist->getDistributionDt as $key => $val) {
+                $mutConfirm = Mutasi::confirmDistribution(
+                    $val->sdd_comp, // item-owner
+                    $stockdist->sd_destination, // destination
+                    $val->sdd_item, // item id
+                    $stockdist->sd_nota, // nota distribution
+                    18, // mutcat distribution 'in'
+                    19 // mutcat distribution 'out'
+                );
+                if ($mutConfirm !== 'success') {
+                    return $mutConfirm;
+                }
+            }
+
+            // update stockdist-status to 'Y'
+            $stockdist->sd_status = 'Y';
+            $stockdist->save();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    // return detail of order-produk
     public function detailOrder($id)
     {
         try {
@@ -1113,7 +1196,7 @@ class MarketingAreaController extends Controller
                 $salescompdtid++;
             }
             DB::table('d_salescompdt')->insert($val_salesdt);
-// dd('x');
+            // dd('x');
             DB::commit();
             return response()->json([
                 'status' => 'sukses'
