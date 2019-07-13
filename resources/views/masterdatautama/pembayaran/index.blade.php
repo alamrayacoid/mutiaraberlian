@@ -100,6 +100,7 @@
         })
 
         function simpan() {
+            loadingShow();
             let nama = $('#nama').val();
             let akun = $('#akun').val();
             let note = $('#note').val();
@@ -144,10 +145,12 @@
                         btnClass: 'btn-blue',
                         text:'Ya',
                         action : function(){
+                            loadingShow();
                             axios.post('{{ route("masterdatautama.delete") }}', {
                                 "id": id,
                                 "_token": "{{ @csrf_token() }}"
                             }).then(function(response){
+                                loadingHide()
                                 if (response.data.status == 'sukses'){
                                     messageSuccess("Berhasil", "Data berhasil dihapus");
                                     table.ajax.reload();
@@ -155,6 +158,7 @@
                                     messageFailed("Gagal", response.data.status);
                                 }
                             }).catch(function(error){
+                                loadingHide();
                                 alert("error");
                             })
                         }
@@ -183,10 +187,12 @@
                         btnClass: 'btn-blue',
                         text:'Ya',
                         action : function(){
+                            loadingShow();
                             axios.post('{{ route("masterdatautama.enable") }}', {
                                 "id": id,
                                 "_token": "{{ @csrf_token() }}"
                             }).then(function(response){
+                                loadingHide();
                                 if (response.data.status == 'sukses'){
                                     messageSuccess("Berhasil", "Data berhasil diaktifkan");
                                     table.ajax.reload();
@@ -194,6 +200,7 @@
                                     messageFailed("Gagal", response.data.status);
                                 }
                             }).catch(function(error){
+                                loadingHide();
                                 alert("error");
                             })
                         }
@@ -222,10 +229,12 @@
                         btnClass: 'btn-blue',
                         text:'Ya',
                         action : function(){
+                            loadingShow();
                             axios.post('{{ route("masterdatautama.disable") }}', {
                                 "id": id,
                                 "_token": "{{ @csrf_token() }}"
                             }).then(function(response){
+                                loadingHide();
                                 if (response.data.status == 'sukses'){
                                     messageSuccess("Berhasil", "Data berhasil dinonaktifkan");
                                     table.ajax.reload();
@@ -233,6 +242,7 @@
                                     messageFailed("Gagal", response.data.status);
                                 }
                             }).catch(function(error){
+                                loadingHide();
                                 alert("error");
                             })
                         }
@@ -248,7 +258,55 @@
         }
 
         function edit(id){
+            loadingShow();
+            axios.post('{{ route("masterdatautama.detail") }}', {
+                "id": id,
+                "_token": '{{ csrf_token() }}'
+            }).then(function (response) {
+                loadingHide();
+                $('#edit_nama').val(response.data.pm_name);
+                $('#edit_akun').val(response.data.pm_akun).trigger('change');
+                $('#edit_note').val(response.data.pm_note);
+                $('#pm_id').val(response.data.pm_id);
+                $('#modal_edit').modal('show');
+            }).catch(function (error) {
+                loadingHide();
+                alert('error');
+            })
+        }
 
+        function update() {
+            loadingShow();
+            let nama = $('#edit_nama').val();
+            let akun = $('#edit_akun').val();
+            let note = $('#edit_note').val();
+            let pm_id = $('#pm_id').val();
+
+            if (nama == '' || akun == '' || note == ''){
+                loadingHide();
+                messageWarning('Perhatian', 'Form wajib diisi');
+                return false;
+            }
+
+            axios.post('{{ route("masterdatautama.update") }}', {
+                "nama": nama,
+                "akun": akun,
+                "note": note,
+                "id": pm_id,
+                "_token": '{{ csrf_token() }}'
+            }).then(function (response) {
+                loadingHide();
+                if (response.data.status == 'sukses'){
+                    messageSuccess("Berhasil", "Data berhasil diganti");
+                    $('#modal_edit').modal('hide');
+                    table.ajax.reload();
+                } else if (response.data.status == 'gagal'){
+                    messageFailed("Gagal", response.data.status);
+
+                }
+            }).catch(function (error) {
+                alert('error');
+            })
         }
 
     </script>

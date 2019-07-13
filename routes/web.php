@@ -188,6 +188,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/masterpembayaran/delete', 'Master\PembayaranController@delete')->name('masterdatautama.delete');
     Route::post('/masterdatautama/masterpembayaran/enable', 'Master\PembayaranController@enable')->name('masterdatautama.enable');
     Route::post('/masterdatautama/masterpembayaran/disable', 'Master\PembayaranController@disable')->name('masterdatautama.disable');
+    Route::post('/masterdatautama/masterpembayaran/detail', 'Master\PembayaranController@detail')->name('masterdatautama.detail');
+    Route::post('/masterdatautama/masterpembayaran/update', 'Master\PembayaranController@update')->name('masterdatautama.update');
     Route::post('/masterdatautama/masterpembayaran/get-data', 'Master\PembayaranController@getDataPembayaran')->name('masterdatautama.getData');
     // !===================================================== End Master Data Utama =====================================================!
 

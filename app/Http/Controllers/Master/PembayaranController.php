@@ -171,4 +171,45 @@ class PembayaranController extends Controller
         }
     }
 
+    public function detail(Request $request)
+    {
+        $id = Crypt::decrypt($request->id);
+
+        $data = DB::table('m_paymentmethod')
+            ->where('pm_id', '=', $id)
+            ->first();
+
+        return json_encode($data);
+    }
+
+    public function update(Request $request)
+    {
+        $nama = $request->nama;
+        $note = $request->note;
+        $akun = $request->akun;
+        $pm_id = $request->id;
+
+        DB::beginTransaction();
+        try {
+            DB::table('m_paymentmethod')
+                ->where('pm_id', '=', $pm_id)
+                ->update([
+                    'pm_name' => $nama,
+                    'pm_note' => $note,
+                    'pm_akun' => $akun,
+                ]);
+
+            DB::commit();
+            return Response::json([
+                'status' => 'sukses'
+            ]);
+        } catch (DecryptException $e) {
+            DB::rollBack();
+            return Response::json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
 }
