@@ -153,7 +153,9 @@
                     </a>
                 </li>
                 <!-- MASTER DATA UTAMA -->
-                @if ($sidebar[0]->ua_read == 'Y' || $sidebar[1]->ua_read == 'Y' || $sidebar[2]->ua_read == 'Y' || $sidebar[3]->ua_read == 'Y' || $sidebar[4]->ua_read == 'Y' || $sidebar[5]->ua_read == 'Y'|| $sidebar[6]->ua_read == 'Y')
+                @if ($sidebar[0]->ua_read == 'Y' || $sidebar[1]->ua_read == 'Y' || $sidebar[2]->ua_read == 'Y' || $sidebar[3]->ua_read == 'Y' ||
+                $sidebar[4]->ua_read == 'Y' || $sidebar[5]->ua_read == 'Y'|| $sidebar[6]->ua_read == 'Y' || $sidebar[49]->ua_read == 'Y' ||
+                $sidebar[50]->ua_read == 'Y' || $sidebar[51]->ua_read == 'Y' || $sidebar[52]->ua_read == 'Y' || $sidebar[53]->ua_read == 'Y')
                     <li class="{{Request::is('masterdatautama/*') || Request::is('keuangan/masterdatautama/*') ? 'active open' : ''}}">
                         <a href="#">
                             <i class="fa fa-th-large"></i> <span class="menu-title">Master Data Utama</span>
@@ -196,18 +198,26 @@
                                     <a href="{{ route('member.index')}}">Master Member</a>
                                 </li>
                             @endif
+                            @if ($sidebar[50]->ua_read == 'Y')
                             <li class="{{Request::is('masterdatautama/ekspedisi/*') || Request::is('masterdatautama/ekspedisi') ? 'active' : ''}}">
                                 <a href="{{route('ekspedisi.index')}}"> Master Ekspedisi</a>
                             </li>
+                            @endif
+                            @if ($sidebar[51]->ua_read == 'Y')
                             <li class="{{Request::is('keuangan/masterdatautama/akun-utama') || Request::is('keuangan/masterdatautama/akun-utama/*') ? 'active' : ''}}">
                                 <a href="{{route('keuangan.akun-utama.index')}}">Master COA Utama</a>
                             </li>
+                            @endif
+                            @if ($sidebar[52]->ua_read == 'Y')
                             <li class="{{Request::is('keuangan/masterdatautama/akun-keuangan') || Request::is('keuangan/masterdatautama/akun-keuangan/*') ? 'active' : ''}}">
                                 <a href="{{route('keuangan.akun.index')}}">Master COA Keuangan</a>
                             </li>
+                            @endif
+                            @if ($sidebar[53]->ua_read == 'Y')
                             <li class="{{Request::is('masterdatautama/masterpembayaran/*') || Request::is('masterdatautama/masterpembayaran') ? 'active' : ''}}">
                                 <a href="{{route('masterdatautama.masterpembayaran')}}">Master Pembayaran</a>
                             </li>
+                            @endif
                         </ul>
                     </li>
                 @endif
@@ -485,16 +495,19 @@
                             <i class="fa arrow"></i>
                         </a>
                         <ul class="sidebar-nav">
+                            @if ($sidebar[48]->ua_read == 'Y')
                             <li class="{{Request::is('pengaturan/pengaturanpengguna/*') ? 'active' : ''}}">
                                 <a href="{{ route('pengaturanpengguna.index') }}">Pengaturan Pengguna</a>
                             </li>
-
+                            @endif
+                            @if ($sidebar[49]->ua_read == 'Y')
                             <li class="{{Request::is('keuangan/pengaturan/hierarki-akun') ? 'active' : ''}}">
                                 <a href="{{ route('keuangan.hierarki_akun.index') }}">Pengaturan Hierarki COA</a>
                             </li>
+                            @endif
                         </ul>
                     </li>
-            @endif
+                @endif
             <!-- END AKTIVITAS Setting -->
             </ul>
         </nav>
