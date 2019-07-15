@@ -96,12 +96,16 @@ class SettingController extends Controller
 
     public function pengaturanpengguna_akses(Request $request)
     {
+        $id = decrypt($request->id);
         $menu = DB::table('m_access')
-            ->leftjoin('d_useraccess', 'ua_access', '=', 'a_id')
-            ->where('ua_username', $request->id)
+            ->leftJoin('d_useraccess', function ($q) use ($id){
+                $q->on('ua_access', '=', 'a_id');
+                $q->where('ua_username', '=', $id);
+            })
             ->orderBy('a_order')
             ->get();
-        $user = DB::table('d_username')->where('u_id', '=', $request->id)->first();
+
+        $user = DB::table('d_username')->where('u_id', '=', $id)->first();
 
         $level = DB::table('m_level')->where('m_id', $user->u_level)->first();
 
@@ -144,10 +148,10 @@ class SettingController extends Controller
     {
         DB::beginTransaction();
         try {
+            $id = decrypt($request->id);
+            DB::table('d_username')->where('u_id', $id)->delete();
 
-            DB::table('d_username')->where('u_id', $request->id)->delete();
-
-            DB::table('d_useraccess')->where('ua_username', $request->id)->delete();
+            DB::table('d_useraccess')->where('ua_username', $id)->delete();
 
             DB::commit();
             return response()->json([
@@ -284,10 +288,10 @@ class SettingController extends Controller
             })
             ->addColumn('action', function ($datas) {
                 return '<center><div class="btn-group btn-group-sm">
-                <button class="btn btn-success btn-akses" onclick="akses(' . $datas->u_id . ')" title="Akses"><i class="fa fa-wrench"></i></button>
-                <button class="btn btn-warning btn-edit" onclick="editlevel(' . $datas->u_id . ')" type="button" title="Edit Level"><i class="fa fa-pencil"></i></button>
-                <button class="btn btn-primary btn-change" onclick="changepass(' . $datas->u_id . ')" data-toggle="modal" data-target="#change" type="button" title="Ganti Password"><i class="fa fa-exchange"></i></button>
-                <button class="btn btn-danger btn-nonaktif" onclick="hapus(' . $datas->u_id . ')" type="button" title="Nonaktif"><i class="fa fa-times-circle"></i></button>
+                <button class="btn btn-success btn-akses" onclick="akses(\'' . encrypt($datas->u_id) . '\')" title="Akses"><i class="fa fa-wrench"></i></button>
+                <button class="btn btn-warning btn-edit" onclick="editlevel(\'' . encrypt($datas->u_id) . '\')" type="button" title="Edit Level"><i class="fa fa-pencil"></i></button>
+                <button class="btn btn-primary btn-change" onclick="changepass(\'' . encrypt($datas->u_id) . '\')" data-toggle="modal" data-target="#change" type="button" title="Ganti Password"><i class="fa fa-exchange"></i></button>
+                <button class="btn btn-danger btn-nonaktif" onclick="hapus(\'' . encrypt($datas->u_id) . '\')" type="button" title="Nonaktif"><i class="fa fa-times-circle"></i></button>
                 </div></center>';
             })
             ->rawColumns(['action'])
@@ -298,8 +302,8 @@ class SettingController extends Controller
     {
         DB::beginTransaction();
         try {
-
-            $cek = DB::table('d_username')->where('u_id', $request->id)->first();
+            $id = decrypt($request->id);
+            $cek = DB::table('d_username')->where('u_id', $id)->first();
             if (sha1(md5('islamjaya') . $request->lama) == $cek->u_password) {
                 if ($request->baru == $request->confirm) {
                     DB::table('d_username')->where('u_id', $request->id)->update([
@@ -335,8 +339,8 @@ class SettingController extends Controller
     {
         DB::beginTransaction();
         try {
-
-            DB::table('d_username')->where('u_id', $request->id)->update([
+            $id = decrypt($request->id);
+            DB::table('d_username')->where('u_id', $id)->update([
                 'u_level' => $request->level
             ]);
 
@@ -358,55 +362,25 @@ class SettingController extends Controller
         DB::beginTransaction();
         try {
             //dd($request);
+            $id = decrypt($request->id);
+            DB::table('d_useraccess')
+                ->where('ua_username', '=', $id)
+                ->delete();
+            $insert = [];
             for ($i = 0; $i < count($request->idaccess); $i++) {
-                DB::table('d_useraccess')
-                    ->where('ua_username', $request->id)
-                    ->where('ua_access', $request->idaccess[$i])
-                    ->update([
-                        'ua_read' => $request->read[$i],
-                        'ua_create' => $request->insert[$i],
-                        'ua_update' => $request->update[$i],
-                        'ua_delete' => $request->delete[$i]
-                    ]);
-//                if ($request->read[$i] != 'N') {
-//                    DB::table('d_useraccess')
-//                        ->where('ua_username', $request->id)
-//                        ->where('ua_access', $request->idaccess[$i])
-//                        ->update([
-//                            'ua_read' => $request->read[$i],
-//                            'ua_create' => $request->insert[$i],
-//                            'ua_update' => $request->update[$i],
-//                            'ua_delete' => $request->delete[$i]
-//                        ]);
-//                }
-
-//                if ($request->insert[$i] != 'N') {
-//                    DB::table('d_useraccess')
-//                        ->where('ua_username', $request->id)
-//                        ->where('ua_access', $request->idaccess[$i])
-//                        ->update([
-//                            'ua_create' => $request->insert[$i]
-//                        ]);
-//                }
-//
-//                if ($request->update[$i] != 'N') {
-//                    DB::table('d_useraccess')
-//                        ->where('ua_username', $request->id)
-//                        ->where('ua_access', $request->idaccess[$i])
-//                        ->update([
-//                            'ua_update' => $request->update[$i]
-//                        ]);
-//                }
-//
-//                if ($request->delete[$i] != 'N') {
-//                    DB::table('d_useraccess')
-//                        ->where('ua_username', $request->id)
-//                        ->where('ua_access', $request->idaccess[$i])
-//                        ->update([
-//                            'ua_delete' => $request->delete[$i]
-//                        ]);
-//                }
+                $temp = array(
+                    'ua_access' => $request->idaccess[$i],
+                    'ua_username' => $id,
+                    'ua_read' => $request->read[$i],
+                    'ua_create' => $request->insert[$i],
+                    'ua_update' => $request->update[$i],
+                    'ua_delete' => $request->delete[$i]
+                );
+                array_push($insert, $temp);
             }
+
+            DB::table('d_useraccess')
+                ->insert($insert);
 
             DB::commit();
             return response()->json([

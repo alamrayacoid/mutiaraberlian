@@ -661,7 +661,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Perubahan Harga Jual
     Route::get('/pengaturan/otoritas/perubahanhargajual/index', 'SettingController@perubahanhargajual_index')->name('perubahanhargajual.index');
     Route::get('/pengaturan/pengaturanpengguna/index', 'SettingController@pengaturanpengguna_index')->name('pengaturanpengguna.index');
-    Route::POST('/pengaturan/pengaturanpengguna/datatable', 'SettingController@datatable')->name('pengaturanpengguna.datatable');
+    Route::post('/pengaturan/pengaturanpengguna/datatable', 'SettingController@datatable')->name('pengaturanpengguna.datatable');
     Route::get('/pengaturan/pengaturanpengguna/datatable', 'SettingController@datatable')->name('pengaturanpengguna.datatable');
     Route::get('/pengaturan/pengaturanpengguna/akses', 'SettingController@pengaturanpengguna_akses')->name('pengaturanpengguna.akses');
     Route::get('/pengaturan/pengaturanpengguna/create', 'SettingController@pengaturanpengguna_create')->name('pengaturanpengguna.create');
@@ -669,7 +669,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/pengaturan/pengaturanpengguna/hapus', 'SettingController@pengaturanpengguna_hapus')->name('pengaturanpengguna.hapus');
     Route::get('/pengaturan/pengaturanpengguna/updatepassword', 'SettingController@pengaturanpengguna_updatepassword')->name('pengaturanpengguna.updatepassword');
     Route::get('/pengaturan/pengaturanpengguna/edit', 'SettingController@pengaturanpengguna_edit')->name('pengaturanpengguna.edit');
-    Route::get('/pengaturan/pengaturanpengguna/simpanakses', 'SettingController@pengaturanpengguna_simpanakses')->name('pengaturanpengguna.simpanakses');
+    Route::post('/pengaturan/pengaturanpengguna/simpanakses', 'SettingController@pengaturanpengguna_simpanakses')->name('pengaturanpengguna.simpanakses');
     Route::get('/pengaturan/pengaturanpengguna/updatelevel', 'SettingController@pengaturanpengguna_updatelevel')->name('pengaturanpengguna.updatelevel');
     // !===================================================== END PENGATURAN =====================================================!
 
