@@ -52,11 +52,13 @@ class AksesUser
     public static function aksesSidebar()
     {
         $m_id = Auth::user()->u_id;
-        $cek = DB::table('d_useraccess')
-                  ->join('m_access', 'a_id', '=', 'ua_access')
-                  ->select('ua_username', 'ua_read', 'a_name', 'a_order')
-                  ->where('ua_username', '=', $m_id)
-                  ->get();
+        $cek = DB::table('m_access')
+            ->leftJoin('d_useraccess', function ($q) use ($m_id){
+                $q->on('ua_access', '=', 'a_id');
+                $q->where('ua_username', '=', $m_id);
+            })
+            ->select('ua_username', 'ua_read', 'a_name', 'a_order')
+            ->get();
 
         return $cek;
     }
