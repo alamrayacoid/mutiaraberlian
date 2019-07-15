@@ -590,7 +590,7 @@ class HargaController extends Controller
                 } else {
                     $checkGol1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->count();
                     $checkGol2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->count();
-
+                    $detailid = 1;
                     if ($checkGol1 > 0 && $checkGol2 > 0) {
                         $tmp_detail1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->max('pcd_detailid');
                         $tmp_detail2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->max('pcad_detailid');
@@ -648,7 +648,7 @@ class HargaController extends Controller
 
                 $sts = 'Null';
                 foreach ($check as $key => $val) {
-                    if ($val->pcd_rangeqtyend == 0 && $request->rangeend < $val->pcd_rangeqtystart  && $request->rangeend != "~"){
+                    if ($val->pcad_rangeqtyend == 0 && $request->rangeend < $val->pcad_rangeqtystart  && $request->rangeend != "~"){
                         $val->pcad_rangeqtyend = $val->pcad_rangeqtystart * 2;
                     }
                     if (in_array($request->rangestart, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend))) {
@@ -732,6 +732,7 @@ class HargaController extends Controller
 
         DB::beginTransaction();
         try {
+            //Unit
             if ($request->jenishargaHPA == "U") {
 
                 $check = DB::table('d_salespriceauth')
@@ -788,6 +789,11 @@ class HargaController extends Controller
                     return response()->json(['status' => "Success"]);
                 }
             } else {
+                // Range
+                $qtyend = $request->rangeendHPA;
+                if ($qtyend == "~"){
+                    $qtyend == 0;
+                }
                 $check = DB::table('d_salespriceauth')
                     ->where('spa_salesprice', '=', $idGol)
                     ->where('spa_item', '=', $request->idBarangHPA)
@@ -804,6 +810,9 @@ class HargaController extends Controller
 
                 $sts = '';
                 foreach ($check as $key => $val) {
+                    if ($val->spa_rangeqtyend == 0 && $request->rangeendHPA < $val->spa_rangeqtystart  && $request->rangeendHPA != "~"){
+                        $val->spa_rangeqtyend = $val->spa_rangeqtystart * 2;
+                    }
                     if (in_array($request->rangestartHPA, range($val->spa_rangeqtystart, $val->spa_rangeqtyend))) {
                         $sts = 'Not Null';
                         return response()->json(['status' => "Range Ada"]);
@@ -815,6 +824,9 @@ class HargaController extends Controller
                 }
 
                 foreach ($check2 as $key => $val) {
+                    if ($val->spd_rangeqtyend == 0 && $request->rangeendHPA < $val->spd_rangeqtystart  && $request->rangeendHPA != "~"){
+                        $val->spd_rangeqtyend = $val->spd_rangeqtystart * 2;
+                    }
                     if (in_array($request->rangestartHPA, range($val->spd_rangeqtystart, $val->spd_rangeqtyend))) {
                         $sts = 'Not Null';
                         return response()->json(['status' => "Range Ada"]);
@@ -828,7 +840,7 @@ class HargaController extends Controller
                 if ($sts = "Null") {
                     $checkGol1 = DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->count();
                     $checkGol2 = DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->count();
-                    $detailid = 1;
+
                     if ($checkGol1 > 0 && $checkGol2 > 0) {
                         $tmp_detail1 = DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->max('spd_detailid');
                         $tmp_detail2 = DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->max('spa_detailid');
