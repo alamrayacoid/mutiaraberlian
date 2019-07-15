@@ -349,35 +349,6 @@
                         $(".jumlah").eq(idx).val(resp.data);
                         // trigger on-input 'jumlah'
                         $(".jumlah").eq(idx).trigger('input');
-
-                        var inpJumlah = document.getElementsByClassName('jumlah'),
-                            jumlah = [].map.call(inpJumlah, function (input) {
-                                return parseInt(input.value);
-                            });
-
-                        var inpHarga = document.getElementsByClassName('harga'),
-                            harga = [].map.call(inpHarga, function (input) {
-                                return input.value;
-                            });
-
-                        for (var i = 0; i < jumlah.length; i++) {
-                            var hasil = 0;
-                            var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                            var jml = jumlah[i];
-
-                            if (jml == "") {
-                                jml = 0;
-                            }
-
-                            hasil += parseInt(hrg) * parseInt(jml);
-
-                            if (isNaN(hasil)) {
-                                hasil = 0;
-                            }
-                            hasil = convertToRupiah(hasil);
-                            $(".subtotal").eq(i).val(hasil);
-                        }
-                        updateTotalTampil();
                     })
                     .catch(function (error) {
                         loadingHide();
@@ -424,35 +395,8 @@
                         $('.unknow').eq(idx).css('display', 'none');
                     }
                     $('.harga').eq(idx).val(convertToRupiah(price));
-
-                    var inpJumlah = document.getElementsByClassName('jumlah'),
-                        jumlah = [].map.call(inpJumlah, function (input) {
-                            return parseInt(input.value);
-                        });
-
-                    var inpHarga = document.getElementsByClassName('harga'),
-                        harga = [].map.call(inpHarga, function (input) {
-                            return input.value;
-                        });
-
-                    for (var i = 0; i < jumlah.length; i++) {
-                        var hasil = 0;
-                        var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                        var jml = jumlah[i];
-
-                        if (jml == "") {
-                            jml = 0;
-                        }
-
-                        hasil += parseInt(hrg) * parseInt(jml);
-
-                        if (isNaN(hasil)) {
-                            hasil = 0;
-                        }
-                        hasil = convertToRupiah(hasil);
-                        $(".subtotal").eq(i).val(hasil);
-                    }
-                    updateTotalTampil();
+                    // trigger diskon to 'keyup'
+                    $(".diskon").trigger('keyup');
                 },
                 error: function (e) {
                     console.error(e);

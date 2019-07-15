@@ -1160,7 +1160,8 @@ class ManajemenAgenController extends Controller
                 })
                 ->groupBy('d_stock.s_id')
                 ->get();
-        } else {
+        }
+        else {
             $nama = DB::table('m_item')
                 ->join('d_stock', function ($s) use ($comp) {
                     $s->on('i_id', '=', 's_item');
@@ -1366,16 +1367,17 @@ class ManajemenAgenController extends Controller
                 $salesDt->sd_unit = $data['satuan'][$i];
                 $salesDt->sd_value = Currency::removeRupiah($data['harga'][$i]);
                 $salesDt->sd_discpersen = 0;
-                $salesDt->sd_discvalue = 0;
+                $salesDt->sd_discvalue = $data['diskon'][$i];
                 $salesDt->sd_totalnet = Currency::removeRupiah($data['subtotal'][$i]);
                 $salesDt->save();
-
+                // dd($data['subtotal'][$i], Currency::removeRupiah($data['subtotal'][$i]));
                 // values for insert to salescomp-code
                 if ($i == 0) {
                     $startProdCodeIdx = 0;
                 }
                 $prodCodeLength = (int)$request->prodCodeLength[$i];
                 $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                $sumQtyPC = 0;
                 for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
                     // skip inserting when val is null or qty-pc is 0
                     if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
@@ -1394,7 +1396,14 @@ class ManajemenAgenController extends Controller
                         'sc_qty' => $request->qtyProdCode[$j]
                     ];
                     DB::table('d_salescode')->insert($val_salescode);
+                    $sumQtyPC += (int)$request->qtyProdCode[$j];
                 }
+
+                if ($sumQtyPC != (int)$data['jumlah'][$i]) {
+                    $item = m_item::where('i_id', $data['idItem'][$i])->first();
+                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
+                }
+                // dd($sumQtyPC, (int)$data['jumlah'][$i]);
 
                 // get qty in smallest unit
                 $data_check = DB::table('m_item')
@@ -1442,7 +1451,7 @@ class ManajemenAgenController extends Controller
                 $startProdCodeIdx += $prodCodeLength;
                 $salesDtId++;
             }
-
+            // dd('x');
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
