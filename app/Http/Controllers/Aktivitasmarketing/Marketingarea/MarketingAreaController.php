@@ -19,6 +19,7 @@ use App\d_sales;
 use App\d_salescomp;
 use App\d_salescompdt;
 use App\d_salescompcode;
+use App\d_salescomppayment;
 use App\d_stock;
 use App\d_stockdistribution;
 use App\d_stockdistributiondt;
@@ -924,6 +925,11 @@ class MarketingAreaController extends Controller
             ->addColumn('kode', function ($data){
                 return "<div class='text-center' style='width: 100%'><button type='button' onclick='addCodeProd(".$data->po_id.", ".$data->pod_item.",\"".$data->i_name."\")' class='btn btn-info btn-xs btnAddProdCode'><i class='fa fa-plus'></i> Kode Produksi</button></div>";
             })
+            ->addColumn('discount', function ($data) {
+                return "<div class='text-center'>
+                <input type='text' style='width: 100%;' name='discount[]' value='0' class='listDiscount rupiah'>
+                </div>";
+            })
             ->addColumn('input', function ($data){
                 return "<div class='text-center'>
                 <input type='number' onkeyup='getHargaGolongan(".$data->pod_item.")' onchange='getHargaGolongan(".$data->pod_item.")' style='text-align: right; width: 100%;' class='input-qty-proses qty-modaldt-".$data->pod_item."' name='qty_proses[]' value='".$data->pod_qty."'>
@@ -931,7 +937,7 @@ class MarketingAreaController extends Controller
                 <input type='hidden' name='units[]' class='units' value='". $data->i_unit1 ."'>
                 </div>";
             })
-            ->rawColumns(['kode', 'input', 'pod_price', 'pod_totalprice'])
+            ->rawColumns(['kode', 'input', 'pod_price', 'discount', 'pod_totalprice'])
             ->make(true);
 
     }
@@ -1039,6 +1045,7 @@ class MarketingAreaController extends Controller
     // approve order agent and create mutation
     public function approveAgen(Request $request, $id)
     {
+        // dd($request->all(), $request->payCash, $request->dateTop);
         try {
             $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
@@ -1155,18 +1162,22 @@ class MarketingAreaController extends Controller
                 'sc_type'    => 'C',
                 'sc_date'    => $productOrder->po_date,
                 'sc_nota'    => $productOrder->po_nota,
-                'sc_total'   => $totalPrice,
+                'sc_total'   => 0,
                 'sc_paymenttype' => $request->paymentType,
                 'sc_paymentmethod' => $request->paymentMethod,
                 'sc_user'    => Auth::user()->u_id,
                 'sc_insert'  => Carbon::now(),
                 'sc_update'  => Carbon::now()
             ];
-            DB::table('d_salescomp')->insert($val_sales);
+
             // clone data from  d_productorderdt to d_salescompdt
             $salescompdtid = (DB::table('d_salescompdt')->where('scd_sales', '=', $salescompId)->max('scd_detailid')) ? (DB::table('d_salescompdt')->where('scd_sales', '=', $salescompId)->max('sd_detailid')) + 1 : 1;
             $val_salesdt = array();
             foreach ($productOrder->getPODt as $key => $po) {
+                $totalAfterDisc = ($po->pod_qty * $po->pod_price) - ($po->pod_qty * $request->discount[$key]);
+                // update total in salescomp
+                $val_sales['sc_total'] += $totalAfterDisc;
+                // value for salescompdt
                 $val_salesdt[] = [
                     'scd_sales' => $salescompId,
                     'scd_detailid' => $salescompdtid,
@@ -1176,8 +1187,8 @@ class MarketingAreaController extends Controller
                     'scd_unit' => $po->pod_unit,
                     'scd_value' => $po->pod_price,
                     'scd_discpersen' => 0,
-                    'scd_discvalue' => 0,
-                    'scd_totalnet' => $po->pod_totalprice
+                    'scd_discvalue' => $request->discount[$key],
+                    'scd_totalnet' => $totalAfterDisc
                 ];
 
                 // clone data from productordercode to salescompcode
@@ -1197,10 +1208,33 @@ class MarketingAreaController extends Controller
                     $salescompcodeid++;
                 }
                 DB::table('d_salescompcode')->insert($val_salescode);
-
                 $salescompdtid++;
             }
+
+            // set paid of for 'cash' payment
+            if ($request->paymentType == 'C') {
+                $val_sales += [
+                    'sc_paidoff' => 'Y'
+                ];
+                $payCash = $val_sales['sc_total'];
+            }
+            else {
+                $payCash = $request->payCash;
+            }
+            // set value for salespayment
+            $val_salespayment = [
+                'scp_salescomp' => $salescompId,
+                'scp_detailid' => d_salescomppayment::where('scp_salescomp', $salescompId)->max('scp_detailid') + 1,
+                'scp_date' => Carbon::now(),
+                'scp_pay' => $payCash,
+                'scp_payment' => $request->paymentMethod
+            ];
+            // dd($val_sales, $val_salespayment);
+
             DB::table('d_salescompdt')->insert($val_salesdt);
+            DB::table('d_salescomp')->insert($val_sales);
+            DB::table('d_salescomppayment')->insert($val_salespayment);
+            // dd($val_sales, $val_salespayment);
             // dd('x');
             DB::commit();
             return response()->json([
@@ -1249,11 +1283,19 @@ class MarketingAreaController extends Controller
                 ->update([
                     'po_status' => "P"
                 ]);
-
             // get salescomp by nota
             $salescomp = d_salescomp::where('sc_nota', $productOrder->po_nota)
             ->with('getSalesCompDt')
             ->first();
+            // delete productDelivery
+            $prodDeliv = d_productdelivery::where('pd_nota', $salescomp->sc_nota)->first();
+            $prodDeliv->delete();
+            // delete salescomp-payment
+            $salescompPayment = d_salescomppayment::where('scp_salescomp', $salescomp->sc_id)->get();
+            foreach ($salescompPayment as $key => $val) {
+                $val->delete();
+            }
+
             // delete linked production code
             foreach ($salescomp->getSalesCompDt as $key => $salescompdt) {
                 DB::table('d_salescompcode')->where('ssc_salescomp', $salescomp->sc_id)
@@ -1587,6 +1629,36 @@ class MarketingAreaController extends Controller
             "status" => "success"
         ]);
     }
+    // get list of expedition
+    public function getExpedition()
+    {
+        $data = DB::table('m_expedition')->where('e_isactive', '=', 'Y')->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+    // get list of expeditionType
+    public function getExpeditionType($id)
+    {
+        $data = DB::table('m_expeditiondt')->where('ed_expedition', '=', $id)->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+    // get list of paymentMethod
+    public function getPaymentMethod()
+    {
+        $data = m_paymentmethod::where('pm_isactive', 'Y')
+        ->with('getAkun')
+        ->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
     // Kelola Data Order Agen End ==========================================================================
 
     // Kelola Data Canvassing Start ==============================================================================
@@ -2862,34 +2934,6 @@ class MarketingAreaController extends Controller
             ]);
         }
     }
-    // get list of expedition
-    public function getExpedition()
-    {
-        $data = DB::table('m_expedition')->where('e_isactive', '=', 'Y')->get();
-
-        return response()->json([
-            'data' => $data
-        ]);
-    }
-    // get list of expeditionType
-    public function getExpeditionType($id)
-    {
-        $data = DB::table('m_expeditiondt')->where('ed_expedition', '=', $id)->get();
-
-        return response()->json([
-            'data' => $data
-        ]);
-    }
-    // get list of paymentMethod
-    public function getPaymentMethod()
-    {
-        $data = m_paymentmethod::where('pm_isactive', 'Y')->get();
-
-        return response()->json([
-            'data' => $data
-        ]);
-    }
-
     // Start: orderprodukagent =================================================
     public function create_orderprodukagenpusat()
     {

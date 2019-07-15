@@ -301,8 +301,8 @@
                             </div>
                             <div class="col-4">
                                 <select name="paymentType" id="paymentType" class="form-control form-control-sm select2">
-                                    <option value="" selected disabled>== Pilih Tipe Pembayaran ==</option>
-                                    <option value="C">Cash</option>
+                                    <!-- <option value="" selected disabled>== Pilih Tipe Pembayaran ==</option> -->
+                                    <option value="C" selected>Cash</option>
                                     <option value="T">Cash Tempo</option>
                                 </select>
                             </div>
@@ -315,6 +315,20 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="row paymentRow d-none" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="payCash">Bayar</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" name="payCash" id="payCash" class="form-control form-control-sm rupiah" value="">
+                            </div>
+                            <div class="col-2">
+                                <label for="dateTop">Batas Akhir Pelunasan</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" name="dateTop" id="dateTop" class="form-control form-control-sm datepicker" value="">
+                            </div>
+                        </div>
                     </section>
                     <div class="row" style="margin-top: 10px">
                         <div class="table-responsive col-8">
@@ -325,6 +339,7 @@
                                     <th>Kuantitas</th>
                                     <th>Satuan</th>
                                     <th>Harga @</th>
+                                    <th>Diskon @</th>
                                     <th>Harga Total</th>
                                     <th class="text-center">Kode</th>
                                 </tr>
@@ -749,7 +764,19 @@
 
             getPaymentMethod();
             $('#paymentType').on('select2:select', function() {
-                $('#paymentMethod').select2('open');
+                if ($(this).val() == 'C') {
+                    $('.paymentRow :input').attr('disabled', true);
+                    $('.paymentRow').addClass('d-none');
+                    // $('#paymentMethod').attr('disabled', false);
+                    // $('#paymentMethod').select2('open');
+                }
+                else {
+                    $('.paymentRow :input').attr('disabled', false);
+                    $('.paymentRow').removeClass('d-none');
+                    $('#payCash').val(0);
+                    $('#dateTop').datepicker('setDate', 'today');
+                    // $('#paymentMethod').attr('disabled', true);
+                }
             });
         });
         // End Document Ready -------------------------------------------
@@ -1091,7 +1118,8 @@
                 $('#agen_modaldt').val(agen);
                 $('#tanggal_modaldt').val(tanggal);
                 $('#idagen_modaldt').val(response.data.data.po_agen);
-                $('#total_modaldt').val(convertToRupiah(response.data.data.pod_totalprice));
+                // $('#total_modaldt').val(convertToRupiah(response.data.data.pod_totalprice));
+                $('#total_modaldt').val(response.data.data.pod_totalprice);
 
                 loadingHide();
                 $('#prosesorder').modal('show');
@@ -1099,7 +1127,8 @@
                     $('#expedition').select2('open');
                 }, 500)
             }).catch(function (error) {
-
+                loadingHide();
+                messageWarning('Error', 'Terjadi kesalahan (approveAgen) : ' + error);
             });
 
             $('#table_prosesorder').dataTable().fnDestroy();
@@ -1118,14 +1147,30 @@
                 },
                 columns: [
                     {data: 'i_name'},
-                    {data: 'input', "className": "input-padding", },
+                    {data: 'input', "className": "input-padding"},
                     {data: 'u_name'},
                     {data: 'pod_price'},
+                    {data: 'discount'},
                     {data: 'pod_totalprice'},
                     {data: 'kode'}
                 ],
                 pageLength: 10,
-                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
+                drawCallback : function() {
+                    // re-activate mask-money
+                    $('.rupiah').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 0,
+                        autoGroup: true,
+                        prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
+                    });
+
+                }
             });
         }
 
@@ -1137,7 +1182,7 @@
                     $('#paymentMethod').empty();
                     $('#paymentMethod').append('<option value="" selected disabled>== Pilih Metode Pembayaran ==</option>');
                     $.each(resp.data, function(key, val){
-                        $('#paymentMethod').append('<option value="'+ val.pm_id +'">'+ val.pm_akun +' - '+ val.pm_name +'</option>');
+                        $('#paymentMethod').append('<option value="'+ val.pm_id +'">'+ val.get_akun.ak_nomor +' - '+ val.pm_name +'</option>');
                     });
                 }
             });
@@ -1194,7 +1239,8 @@
             $('input[name^="subtotalmodaldt"]').each(function() {
                 totalprice = totalprice + parseInt($(this).val());
             });
-            $('#total_modaldt').val(convertToRupiah(totalprice));
+            // $('#total_modaldt').val(convertToRupiah(totalprice));
+            $('#total_modaldt').val(totalprice);
         }
 
         function addCodeProd(id, item, nama){
@@ -1340,6 +1386,7 @@
             idProductOrder  = $('#idProductOrder').val();
 
             let listQty        = $('.input-qty-proses').serialize();
+            let listDiscount   = $('.listDiscount').serialize();
             let listItemsId    = $('.itemsId').serialize();
             let listUnits      = $('.units').serialize();
             let pd_nota        = $('#nota_modaldt').serialize();
@@ -1351,8 +1398,14 @@
             let pd_price       = $('#biaya_kurir').serialize();
             let paymentType    = $('#paymentType').serialize();
             let paymentMethod  = $('#paymentMethod').serialize();
+            let payCash        = $('#payCash').serialize();
+            let dateTop        = $('#dateTop').serialize();
 
-            let dataX = listQty +'&'+ listItemsId +'&'+ listUnits +'&'+ pd_nota +'&'+ pd_expedition +'&'+ pd_product +'&'+ pd_resi +'&'+ pd_couriername +'&'+ pd_couriertelp +'&'+ pd_price +'&'+ paymentType +'&'+ paymentMethod;
+            let dataX = listQty +'&'+ listDiscount +'&'+ listItemsId +'&'+
+                        listUnits +'&'+ pd_nota +'&'+ pd_expedition +'&'+
+                        pd_product +'&'+ pd_resi +'&'+ pd_couriername +'&'+
+                        pd_couriertelp +'&'+ pd_price +'&'+ paymentType +'&'+
+                        paymentMethod +'&'+ payCash +'&'+ dateTop;
             loadingShow();
 
             $.ajax({

@@ -2031,7 +2031,7 @@ class Mutasi extends Controller
                 // if : mutcat is 'pembelian in' (20) / stock-child
                 if ($sm->sm_mutcat == 18 || $sm->sm_mutcat == 20) {
                     // get stock-mutation parent
-                    foreach ($stockMutations as $key => $sm) {
+                    foreach ($stockMutations as $idx => $sm) {
                         // parent for penjualan-agent out
                         if ($mutcat == 5) {
                             if ($sm->sm_mutcat == 5) {

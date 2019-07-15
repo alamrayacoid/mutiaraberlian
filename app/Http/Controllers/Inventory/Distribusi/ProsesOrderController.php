@@ -40,8 +40,8 @@ class ProsesOrderController extends Controller
             })
             ->addColumn('action', function ($data) {
                 return '<div class="btn-group btn-group-sm">
-                <button class="btn btn-warning btn-approve-order" onclick="approveOrder(\'' . encrypt($data->sd_id) . '\')" type="button" title="Proses Order"><i class="fa fa-get-pocket"></i></button>
-                <button class="btn btn-danger btn-reject-order" onclick="rejectOrder(\'' . encrypt($data->sd_id) . '\')" type="button" title="Tolak Order"><i class="fa fa-ban"></i></button>
+                <button class="btn btn-warning btn-approve-order hint--top-left hint--warning" aria-label="Proses Order" onclick="approveOrder(\'' . encrypt($data->sd_id) . '\')" type="button" title="Proses Order"><i class="fa fa-get-pocket"></i></button>
+                <button class="btn btn-danger btn-reject-order hint--top-left hint--danger" aria-label="Tolak Order" onclick="rejectOrder(\'' . encrypt($data->sd_id) . '\')" type="button" title="Tolak Order"><i class="fa fa-ban"></i></button>
             </div>';
             })
             ->addColumn('tujuan', function ($data) {
