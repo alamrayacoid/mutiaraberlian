@@ -36,6 +36,7 @@ use Currency;
 use DataTables;
 use DB;
 use Mutasi;
+use Mockery\Exception;
 use Response;
 use Validator;
 
@@ -1091,11 +1092,18 @@ class MarketingAreaController extends Controller
                 $listPC = array();
                 $listQtyPC = array();
                 $listUnitPC = array();
-                foreach ($prodCode as $key => $val) {
+                foreach ($prodCode as $idx => $val) {
                     array_push($listPC, $val->poc_code);
                     array_push($listQtyPC, $val->poc_qty);
                 }
 
+                // validate sum-qty of production-code
+                $sumQtyPC = array_sum($listQtyPC);
+                if ($sumQtyPC != $PO->pod_qty) {
+                    $item = m_item::where('i_id', $PO->pod_item)->first();
+                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
+                }
+                
                 // insert stock mutation sales 'out'
                 $mutationOut = Mutasi::salesOut(
                     $productOrder->po_comp, // from
@@ -1140,7 +1148,6 @@ class MarketingAreaController extends Controller
                     return $mutationIn;
                 }
             }
-            // dd('x', $mutationIn);
 
             // update qty and status in d_productorder
             DB::table('d_productorder')

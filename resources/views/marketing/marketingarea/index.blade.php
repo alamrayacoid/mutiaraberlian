@@ -630,7 +630,6 @@
         var tb_listprosesorder;
         var tb_listcodeprosesorder;
 
-
         var idAgen = [];
         var namaAgen = null;
         var kode = null;
@@ -1180,7 +1179,7 @@
                 type: "get",
                 success:function(resp) {
                     $('#paymentMethod').empty();
-                    $('#paymentMethod').append('<option value="" selected disabled>== Pilih Metode Pembayaran ==</option>');
+                    // $('#paymentMethod').append('<option value="" selected disabled>== Pilih Metode Pembayaran ==</option>');
                     $.each(resp.data, function(key, val){
                         $('#paymentMethod').append('<option value="'+ val.pm_id +'">'+ val.get_akun.ak_nomor +' - '+ val.pm_name +'</option>');
                     });
