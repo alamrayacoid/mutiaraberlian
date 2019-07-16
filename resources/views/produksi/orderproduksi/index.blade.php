@@ -40,10 +40,10 @@
 	                                    	<th>No</th>
 	                                		<th>Nota Order</th>
 	                                		<th>Produsen</th>
-	                                		<th>Nilai Order</th>
-	                                		<th>Total Bayar</th>
+	                                		<th width="12%">Nilai Order</th>
+	                                		<th width="15%">Total Bayar</th>
                                             <th>Status</th>
-	                                		<th width="15%">Aksi</th>
+	                                		<th width="17%">Aksi</th>
 	                                	</tr>
 	                                </thead>
 	                                <tbody id="bodyTableIndex">

@@ -117,11 +117,6 @@ class ProduksiController extends Controller
         $getData = DB::table('d_productionorder')
             ->join('m_supplier', 's_id', '=', 'po_supplier')
             ->join('d_productionorderpayment', 'pop_productionorder', '=', 'po_id')
-            // ->join('d_productionorderdt', function ($q){
-            //     $q->on('pod_productionorder', '=', 'po_id');
-            //     $q->on('pod_productionorder', '=', 'pop_productionorder');
-            // })
-            // ->where('pod_received', '=', 'N')
             ->groupBy('po_id')
             ->select(
                 'po_id',
@@ -155,11 +150,15 @@ class ProduksiController extends Controller
             array_push($listReceivedProdOrdId, $val->po_id);
         }
 
-        // // filter getData to just display un-received production-order
-        // $getData = $getData->whereNotIn('po_id', $listReceivedProdOrdId);
-        //
+        // filter user for preventing 'force delete'
+        if (Auth::user()->u_level < 3) {
+            $isUserHasAccessFD = true;
+        }
+        else {
+            $isUserHasAccessFD = false;
+        }
+
         $data = $getData->get();
-        // $data = $getData;
 
         return DataTables::of($data)
             ->addIndexColumn()
@@ -184,12 +183,17 @@ class ProduksiController extends Controller
                     return '<div class="text-center">LUNAS</div>';
                 }
             })
-            ->addColumn('aksi', function ($data) use ($listReceivedProdOrdId) {
+            ->addColumn('aksi', function ($data) use ($listReceivedProdOrdId, $isUserHasAccessFD) {
                 $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrder(\'' . Crypt::encrypt($data->po_id) . '\')"><i class="fa fa-folder"></i></button>';
                 if (in_array($data->po_id, $listReceivedProdOrdId)) {
                     $edit = '<button class="btn btn-warning btn-edit hint--top-left hint--warning" aria-label="Edit Order" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')" disabled><i class="fa fa-pencil"></i></button>';
                     $hapus = '<button class="btn btn-danger btn-disable hint--top-left hint--danger" aria-label="Hapus Order" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')" disabled><i class="fa fa-trash"></i></button>';
-                    $forceDelete = '<button class="btn btn-danger hint--top-left hint--danger" aria-label="Paksa Hapus" type="button" title="Hapus Data" onclick="paksaHapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-times-circle"></i></button>';
+                    if ($isUserHasAccessFD == true) {
+                        $forceDelete = '<button class="btn btn-danger hint--top-left hint--danger" aria-label="Paksa Hapus" type="button" title="Hapus Data" onclick="paksaHapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-times-circle"></i></button>';
+                    }
+                    else {
+                        $forceDelete = '';
+                    }
                 }
                 else {
                     $edit = '<button class="btn btn-warning btn-edit hint--top-left hint--warning" aria-label="Edit Order" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-pencil"></i></button>';
@@ -388,7 +392,8 @@ class ProduksiController extends Controller
     }
 
     // delete order
-    public function delete_produksi($id = null){
+    public function delete_produksi($id = null)
+    {
         try{
             $id = Crypt::decrypt($id);
         } catch (DecryptException $e) {
