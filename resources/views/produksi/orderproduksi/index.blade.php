@@ -64,8 +64,10 @@
 <script type="text/javascript">
 	var tblOrder;
 	$(document).ready(function(){
-        tblOrder = $('#table_order').DataTable();
-		TableIndex();
+        setTimeout(function () {
+            tblOrder = $('#table_order').DataTable();
+            TableIndex();
+        }, 500)
 	});
 
 	function TableIndex(){
@@ -76,10 +78,14 @@
         tblOrder = $('#table_order').DataTable({
 			responsive: true,
 			autoWidth: false,
+            processing: true,
 			serverSide: true,
 			ajax: {
 				url: "{{ route('order.getOrderProd') }}",
-				type: "get"
+				type: "post",
+                data: {
+				    '_token': '{{ @csrf_token() }}'
+                }
 			},
 			columns: [
 				{data: 'DT_RowIndex'},

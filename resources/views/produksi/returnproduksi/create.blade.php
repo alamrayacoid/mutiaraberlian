@@ -57,17 +57,6 @@
                             </div>
                             <br>
                             <div class="row">
-                                <!-- <div class="col-md-2 col-sm-6 col-12">
-                                    <label>No. Nota</label>
-                                </div>
-                                <div class="col-md-4 col-sm-6 col-12">
-                                    <div class="input-group">
-                                        <input type="hidden" name="q_idpo" id="q_idpo">
-                                        <input type="text" name="q_nota" id="q_nota" class="form-control form-control-sm">
-
-                                        <button class="btn btn-md btn-secondary" title="Pencarian No. Nota" id="btn_searchnota" style="border-left:none;"><i class="fa fa-search"></i></button>
-                                    </div>
-                                </div> -->
                                 <div class="col-md-2 col-sm-6 col-12">
                                     <label id="searchLabel">Kode Produksi</label>
                                 </div>
@@ -75,7 +64,7 @@
                                     <div class="input-group">
                                         <input type="hidden" name="q_idpo" id="q_idpo">
                                         <input type="hidden" name="q_nota" id="q_nota" class="form-control form-control-sm">
-                                        <input type="text" name="q_prodcode" id="q_prodcode" class="form-control form-control-sm">
+                                        <input type="text" name="q_prodcode" id="q_prodcode" class="form-control form-control-sm" style="text-transform: uppercase">
 
                                         <button class="btn btn-md btn-secondary d-none" title="Pencarian Kode Produksi" id="btn_searchsupplier" style="border-left:none;" disabled><i class="fa fa-search"></i></button>
                                     </div>
