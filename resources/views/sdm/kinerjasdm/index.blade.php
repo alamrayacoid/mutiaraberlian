@@ -34,12 +34,16 @@
                                aria-controls="list_inputkpi" data-toggle="tab" role="tab">Kelola KPI</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#list_manajemenscoreboard" class="nav-link" data-target="#list_manajemenscoreboard"
-                               aria-controls="list_manajemenscoreboard" data-toggle="tab" role="tab">KPI Pegawai</a>
+                            <a href="#kpipegawai" class="nav-link" data-target="#kpipegawai"
+                               aria-controls="kpipegawai" data-toggle="tab" role="tab">KPI Pegawai</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#kpidivisi" class="nav-link" data-target="#kpidivisi"
+                               aria-controls="kpidivisi" data-toggle="tab" role="tab">KPI Divisi</a>
                         </li>
                         <li class="nav-item">
                             <a href="#masterkpi" class="nav-link" data-target="#masterkpi" aria-controls="masterkpi"
-                               data-toggle="tab" role="tab">Master KPI</a>
+                               data-toggle="tab" role="tab">Master Indikator</a>
                         </li>
                     </ul>
 
@@ -47,7 +51,8 @@
 
                         @include('sdm.kinerjasdm.scoreboardpegawai.tab_scoreboardpegawai')
                         @include('sdm.kinerjasdm.inputkpi.tab_inputkpi')
-                        @include('sdm.kinerjasdm.manajemenscoreboard.tab_manajemenscoreboard')
+                        @include('sdm.kinerjasdm.kpipegawai.index')
+                        @include('sdm.kinerjasdm.kpidivisi.index')
                         @include('sdm.kinerjasdm.masterkpi.tab_masterkpi')
 
                     </div>
@@ -85,6 +90,8 @@
 
         var table_sup = $('#table_scoreboard').DataTable();
         var table_bar = $('#table_inputkpi').DataTable();
+        var table_pegawai = $('#table_pegawai').DataTable();
+        var table_divisi = $('#table_divisi').DataTable();
         var table_kpi;
         var table_rab = $('#table_manajemenscoreboardkpi').DataTable();
 
@@ -265,8 +272,10 @@
                     if (response.data.status == 'sukses'){
                         messageSuccess("Berhasil", "Data KPI berhasil dibuat");
                         $('#modal_createmasterkpi').modal('hide');
+                        table_kpi.ajax.reload();
                     } else if (response.data.status == 'gagal') {
                         messageFailed("Gagal", response.data.message);
+                        table_kpi.ajax.reload();
                     }
                 }).catch(function (error) {
                     alert('error');
@@ -301,6 +310,166 @@
                 ],
                 pageLength: 10,
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
+
+        function activeKpi(id) {
+            var active_kpi = "{{url('/sdm/kinerjasdm/master-kpi/activeKpi')}}"+"/"+id;
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Pesan!',
+                content: 'Apakah anda yakin ingin menyetujui data ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function() {
+                            return $.ajax({
+                                type: "post",
+                                url: active_kpi,
+                                data: {
+                                    "_token": "{{ csrf_token() }}"
+                                },
+                                beforeSend: function() {
+                                    loadingShow();
+                                },
+                                success: function(response) {
+                                    if (response.status == 'sukses') {
+                                        loadingHide();
+                                        messageSuccess('Berhasil', 'Data publikasi berhasil diterima!');
+                                        table_kpi.ajax.reload();
+                                    } else {
+                                        loadingHide();
+                                        messageFailed('Gagal', response.message);
+                                    }
+                                },
+                                error: function(e) {
+                                    loadingHide();
+                                    messageWarning('Peringatan', e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function(response) {
+                            loadingHide();
+                            messageWarning('Peringatan', 'Anda telah membatalkan!');
+                        }
+                    }
+                }
+            });
+        }
+
+        function nonKpi(id) {
+            var nonactive_kpi = "{{url('/sdm/kinerjasdm/master-kpi/nonKpi')}}"+"/"+id;
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Pesan!',
+                content: 'Apakah anda yakin ingin membatalkan publikasi data ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function() {
+                            return $.ajax({
+                                type: "post",
+                                url: nonactive_kpi,
+                                data: {
+                                    "_token": "{{ csrf_token() }}"
+                                },
+                                beforeSend: function() {
+                                    loadingShow();
+                                },
+                                success: function(response) {
+                                    if (response.status == 'sukses') {
+                                        loadingHide();
+                                        messageSuccess('Berhasil', 'Data publikasi berhasil dibatalkan!');
+                                        table_kpi.ajax.reload();
+                                    } else {
+                                        loadingHide();
+                                        messageFailed('Gagal', response.message);
+                                    }
+                                },
+                                error: function(e) {
+                                    loadingHide();
+                                    messageWarning('Peringatan', e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function(response) {
+                            loadingHide();
+                            messageWarning('Peringatan', 'Anda telah membatalkan!');
+                        }
+                    }
+                }
+            });
+        }
+
+        function deleteKpi(id) {
+            var delete_kpi = "{{url('/sdm/kinerjasdm/master-kpi/deleteKpi')}}"+"/"+id;
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Pesan!',
+                content: 'Apakah anda yakin ingin menghapus data ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function() {
+                            return $.ajax({
+                                type: "get",
+                                url: delete_kpi,
+                                data: {
+                                    "_token": "{{ csrf_token() }}"
+                                },
+                                beforeSend: function() {
+                                    loadingShow();
+                                },
+                                success: function(response) {
+                                    if (response.status == 'sukses') {
+                                        loadingHide();
+                                        messageSuccess('Berhasil', 'Data berhasil dihapus!');
+                                        table_kpi.ajax.reload();
+                                    } else if (response.status == 'warning') {
+                                        loadingHide();
+                                        messageWarning('Peringatan', 'Data ini masih aktif!');
+                                        table_kpi.ajax.reload();
+                                    } else {
+                                        loadingHide();
+                                        messageFailed('Gagal', response.message);
+                                    }
+                                },
+                                error: function(e) {
+                                    loadingHide();
+                                    messageWarning('Peringatan', e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function(response) {
+                            loadingHide();
+                            messageWarning('Peringatan', 'Anda telah membatalkan!');
+                        }
+                    }
+                }
             });
         }
     </script>

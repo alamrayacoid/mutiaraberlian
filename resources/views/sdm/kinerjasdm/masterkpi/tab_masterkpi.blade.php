@@ -2,7 +2,7 @@
 	<div class="card">
 		<div class="card-header bordered p-2">
 			<div class="header-block">
-				<h3 class="title">Master KPI</h3>
+				<h3 class="title">Master Indikator</h3>
 			</div>
             <div class="header-block pull-right">
                 <button class="btn btn-primary" id="btn-tambah-masterkpi" data-toggle="modal" data-target="#modal_createmasterkpi"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button>
@@ -29,7 +29,7 @@
 								<tr>
 									<th width="10%">No</th>
 									<th width="70%">Indikator</th>
-									<th width="20%">Aksi</th>
+									<th width="10%">Aksi</th>
 								</tr>
 							</thead>
 						</table>

@@ -340,6 +340,16 @@ class PenerimaanProduksiController extends Controller
 
         DB::beginTransaction();
         try{
+            $totalqty = 0;
+            for ($i = 0; $i < count($request->prodCode); $i++){
+                if ($request->prodCode[$i] != " " && $request->prodCode[$i] !== null){
+                    $totalqty = $totalqty + (int)$request->qtyProdCode[$i];
+                }
+            }
+            if ((int)$request->qty !=  $totalqty){
+                return Response::json(['status' => 'Failed', 'message' => "Jumlah kode produksi tidak sesuai"]);
+            }
+
             $data_check = DB::table('d_productionorder')
                 ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
                     'd_productionorderdt.pod_qty as jumlah', 'd_productionorderdt.pod_unit', DB::raw('sum(d_itemreceiptdt.ird_qty) as terima'), 'm_unit.u_name as satuan')
