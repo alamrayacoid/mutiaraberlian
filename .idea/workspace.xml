@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Mutasi.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Mutasi.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/nota.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/nota.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
-    </list>
+    <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,7 +18,7 @@
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="174">
-              <caret line="253" column="99" selection-start-line="253" selection-start-column="89" selection-end-line="253" selection-end-column="99" />
+              <caret line="254" column="99" selection-start-line="254" selection-start-column="89" selection-end-line="254" selection-end-column="99" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
               </folding>
@@ -36,8 +29,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="444">
-              <caret line="1450" column="22" lean-forward="true" selection-start-line="1450" selection-start-column="22" selection-end-line="1450" selection-end-column="22" />
+            <state relative-caret-position="117">
+              <caret line="1517" column="47" lean-forward="true" selection-start-line="1517" selection-start-column="47" selection-end-line="1517" selection-end-column="47" />
             </state>
           </provider>
         </entry>
@@ -63,8 +56,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Mutasi.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="597" column="16" selection-start-line="597" selection-start-column="16" selection-end-line="597" selection-end-column="16" />
+            <state relative-caret-position="180">
+              <caret line="599" column="16" selection-start-line="599" selection-start-column="16" selection-end-line="599" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -421,7 +414,7 @@
       <workItem from="1563158795796" duration="5877000" />
       <workItem from="1563170601722" duration="14194000" />
       <workItem from="1563240751311" duration="4928000" />
-      <workItem from="1563247550797" duration="12058000" />
+      <workItem from="1563247550797" duration="12485000" />
     </task>
     <task id="LOCAL-00001" summary="perbaikan jenis produk">
       <created>1560755279119</created>
@@ -661,11 +654,18 @@
       <option name="project" value="LOCAL" />
       <updated>1563157747332</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="update return produksi">
+      <created>1563269542090</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1563269542090</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="368130000" />
+    <option name="totallyTimeSpent" value="368557000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -678,7 +678,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49917355" weight="0.14750378" />
       <window_info id="Structure" order="1" sideWeight="0.5008264" side_tool="true" weight="0.19818456" />
@@ -705,7 +704,6 @@
     <option name="version" value="1" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="perbaikan jenis produk" />
     <MESSAGE value="tambahan promosi bulanan" />
     <MESSAGE value="promosi tahunan" />
     <MESSAGE value="approval promosi" />
@@ -730,7 +728,8 @@
     <MESSAGE value="update master pembyaran 90%" />
     <MESSAGE value="update master pembyaran done" />
     <MESSAGE value="update kelola penjualan langsung" />
-    <option name="LAST_COMMIT_MESSAGE" value="update kelola penjualan langsung" />
+    <MESSAGE value="update return produksi" />
+    <option name="LAST_COMMIT_MESSAGE" value="update return produksi" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SDMController.php">
@@ -1098,8 +1097,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Mutasi.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="597" column="16" selection-start-line="597" selection-start-column="16" selection-end-line="597" selection-end-column="16" />
+        <state relative-caret-position="180">
+          <caret line="599" column="16" selection-start-line="599" selection-start-column="16" selection-end-line="599" selection-end-column="16" />
         </state>
       </provider>
     </entry>
@@ -1120,7 +1119,7 @@
     <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="174">
-          <caret line="253" column="99" selection-start-line="253" selection-start-column="89" selection-end-line="253" selection-end-column="99" />
+          <caret line="254" column="99" selection-start-line="254" selection-start-column="89" selection-end-line="254" selection-end-column="99" />
           <folding>
             <element signature="e#7#389#0#PHP" expanded="true" />
           </folding>
@@ -1136,8 +1135,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="444">
-          <caret line="1450" column="22" lean-forward="true" selection-start-line="1450" selection-start-column="22" selection-end-line="1450" selection-end-column="22" />
+        <state relative-caret-position="117">
+          <caret line="1517" column="47" lean-forward="true" selection-start-line="1517" selection-start-column="47" selection-end-line="1517" selection-end-column="47" />
         </state>
       </provider>
     </entry>
