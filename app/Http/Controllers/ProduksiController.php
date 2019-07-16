@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\d_itemreceipt as ItemReceipt;
 use App\d_productionorder as ProductionOrder;
 use App\d_productionorderdt as ProductionOrderDT;
 use App\d_productionordercode;
@@ -109,8 +110,9 @@ class ProduksiController extends Controller
             ->rawColumns(['termin','date','value'])
             ->make(true);
     }
-
-    public function get_order(Request $request){
+    // retrieve DataTable for index
+    public function get_order(Request $request)
+    {
         $data = '';
         $getData = DB::table('d_productionorder')
             ->join('m_supplier', 's_id', '=', 'po_supplier')
@@ -142,6 +144,15 @@ class ProduksiController extends Controller
         $listReceivedProdOrdId = array();
         foreach ($prodOrderReceived as $key => $value) {
             array_push($listReceivedProdOrdId, $value['po_id']);
+        }
+
+        // get production order that exist in itemreceipt
+        $prodOrderWithReceipt = ProductionOrder::whereNotIn('po_id', $listReceivedProdOrdId)
+        ->whereHas('getItemReceipt')
+        ->get();
+        // update $listReceivedProdOrdId
+        foreach ($prodOrderWithReceipt as $idx => $val) {
+            array_push($listReceivedProdOrdId, $val->po_id);
         }
 
         // // filter getData to just display un-received production-order
@@ -176,15 +187,17 @@ class ProduksiController extends Controller
             ->addColumn('aksi', function($data) use ($listReceivedProdOrdId) {
                 $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrder(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-folder"></i></button>';
                 if (in_array($data->po_id, $listReceivedProdOrdId)) {
-                    $edit = '<button class="btn btn-warning btn-edit" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')" disabled><i class="fa fa-pencil"></i></button>';
-                    $hapus = '<button class="btn btn-danger btn-disable" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')" disabled><i class="fa fa-trash"></i></button>';
+                    $edit = '<button class="btn btn-warning btn-edit hint--top-left hint--warning" aria-label="Edit Order" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')" disabled><i class="fa fa-pencil"></i></button>';
+                    $hapus = '<button class="btn btn-danger btn-disable hint--top-left hint--danger" aria-label="Hapus Order" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')" disabled><i class="fa fa-trash"></i></button>';
+                    $forceDelete = '<button class="btn btn-danger hint--top-left hint--danger" aria-label="Paksa Hapus" type="button" title="Hapus Data" onclick="paksaHapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-times-circle"></i></button>';
                 }
                 else {
-                    $edit = '<button class="btn btn-warning btn-edit" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-pencil"></i></button>';
-                    $hapus = '<button class="btn btn-danger btn-disable" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-trash"></i></button>';
+                    $edit = '<button class="btn btn-warning btn-edit hint--top-left hint--warning" aria-label="Edit Order" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-pencil"></i></button>';
+                    $hapus = '<button class="btn btn-danger hint--top-left hint--danger" aria-label="Hapus Order" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-trash"></i></button>';
+                    $forceDelete = '';
                 }
-                $nota = '<button class="btn btn-info btn-nota" title="Nota" type="button" onclick="printNota(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-print"></i></button>';
-                return '<div class="btn-group btn-group-sm">'. $detail . $nota . $edit . $hapus . '</div>';
+                $nota = '<button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Cetak Nota" title="Nota" type="button" onclick="printNota(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-print"></i></button>';
+                return '<div class="row"><div class="btn-group btn-group-sm">'. $detail . $nota . $edit . $hapus . '</div><div class="col-md-1"></div><div class="btn-group btn-group-sm">'. $forceDelete .'</div></div>';
             })
             ->rawColumns(['totalnet','bayar', 'status','aksi'])
             ->make(true);
@@ -366,7 +379,7 @@ class ProduksiController extends Controller
             ]);
         }
     }
-
+    // delete order
     public function delete_produksi($id = null){
         try{
             $id = Crypt::decrypt($id);
@@ -385,6 +398,64 @@ class ProduksiController extends Controller
         }catch (\Exception $e){
             DB::rollback();
             return response()->json(['status'=>"Failed"]);
+        }
+    }
+    // force-delete
+    public function forceDeleteProduksi($id = null)
+    {
+        try{
+            $id = Crypt::decrypt($id);
+        }
+        catch (DecryptException $e){
+            return response()->json(['status'=>"Failed"]);
+        }
+
+        DB::beginTransaction();
+        try {
+
+            // get production order
+            $po = ProductionOrder::where('po_id', $id)->with('getPODt')->first();
+            // get item received
+            $itemReceive = ItemReceipt::where('ir_notapo', $po->po_nota)->with('getIRDetail')->first();
+            // get list of item-id that is exist in item-receipt
+            $listItemInReceipt = array();
+            foreach ($itemReceive->getIRDetail as $i => $ir) {
+                array_push($listItemInReceipt, $ir->ird_item);
+            }
+            
+            // rollback mutation 'in'
+            foreach ($po->getPODt as $key => $val) {
+                if (in_array($val->pod_item, $listItemInReceipt)) {
+                    $mutRollbackIn = Mutasi::rollbackSalesIn(
+                        $po->po_nota, // nota
+                        $val->pod_item, // item id
+                        1 // mutcat-in
+                    );
+                    if ($mutRollbackIn->original['status'] !== 'success') {
+                        return $mutRollbackIn;
+                    }
+                }
+            }
+
+            DB::table('d_itemreceiptdt')->where('ird_itemreceipt', $itemReceive->ir_id)->delete();
+            $itemReceive->delete();
+
+            DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
+            DB::table('d_productionordercode')->where('poc_productionorder', '=', $id)->delete();
+            DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
+            $po->delete();
+            // dd('force delete x');
+            DB::commit();
+            return response()->json([
+                'status' => 'Success'
+            ]);
+        }
+        catch (\Exception $e){
+            DB::rollback();
+            return response()->json([
+                'status' => 'Failed',
+                'message' => $e->getMessage()
+            ]);
         }
     }
 

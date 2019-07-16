@@ -434,7 +434,8 @@ class Mutasi extends Controller
                     $listPC, // list of production-code
                     $listQtyPC // list qty of production-cpde
                 );
-            } elseif ($mutcat == 12 && $statusKons == 'cabang') {
+            }
+            elseif ($mutcat == 12 && $statusKons == 'cabang') {
                 $konsinyasiKeluar = self::mutasikeluar(
                     13, // mutcat
                     $comp, // item owner
@@ -476,7 +477,8 @@ class Mutasi extends Controller
 
             DB::commit();
             return true;
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             DB::rollback();
             return response()->json([
                 'error' => $e
@@ -1433,15 +1435,15 @@ class Mutasi extends Controller
     // mutation for sales 'in'
     static function salesIn(
         // $from, // from
-        $to, // destination
+        $to, // destination (item owner and item position)
         $item, // item id
         $nota, // nota sales
-        $listPC, // list of list production-code
+        $listPC, // list of list production-code (based on how many smQty used / each smQty has a list of prod-code)
         $listQtyPC, // list of list qty of production-code
-        $listUnitPC, // list unit of production-code
+        $listUnitPC, // list  unit of production-code (unused)
         $listSellPrice, // list of sellprice
         $listHPP, // list of hpp
-        $listSmQty, // lsit of sm-qty
+        $listSmQty, // lsit of sm-qty (it got from salesOut, each qty used from different stock-mutation)
         $mutcat, // mutation category
         $stockParentId, // stock parent id
         $status = 'ON GOING', // items status in stock
@@ -1529,6 +1531,7 @@ class Mutasi extends Controller
                 if ($insertSMProdCode !== 'success') {
                     throw new Exception($insertSMProdCode->getData()->message);
                 }
+                // dd('as');
 
                 // insert/update stock-detail production-code
                 $stockParentId = $stockParentId;
