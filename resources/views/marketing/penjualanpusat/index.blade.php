@@ -244,7 +244,25 @@
                 '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
         })
         targetReal();
+
+        // Distribusi ------------------------------------------------------
         tableDistribusi();
+        getPaymentMethod();
+        $('#paymentType').on('select2:select', function() {
+            if ($(this).val() == 'C') {
+                $('.paymentRow :input').attr('disabled', true);
+                $('.paymentRow').addClass('d-none');
+                // $('#paymentMethod').attr('disabled', false);
+                // $('#paymentMethod').select2('open');
+            }
+            else {
+                $('.paymentRow :input').attr('disabled', false);
+                $('.paymentRow').removeClass('d-none');
+                $('#payCash').val(0);
+                $('#dateTop').datepicker('setDate', 'today');
+                // $('#paymentMethod').attr('disabled', true);
+            }
+        });
     });
 
     function targetReal() {
@@ -465,8 +483,8 @@
 
 </script>
 
+<!-- script for distribusi -->
 <script type="text/javascript">
-    // Distribusi penjualan
     function tableDistribusi() {
         let status = $('#status_distribusi').val();
         setTimeout(function () {
@@ -496,6 +514,20 @@
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 100]]
             });
         }, 250);
+    }
+
+    function getPaymentMethod() {
+        $.ajax({
+            url: "{{ route('penjualanpusat.getPaymentMethod') }}",
+            type: "get",
+            success:function(resp) {
+                $('#paymentMethod').empty();
+                // $('#paymentMethod').append('<option value="" selected disabled>== Pilih Metode Pembayaran ==</option>');
+                $.each(resp.data, function(key, val){
+                    $('#paymentMethod').append('<option value="'+ val.pm_id +'">'+ val.get_akun.ak_nomor +' - '+ val.pm_name +'</option>');
+                });
+            }
+        });
     }
 
     function distribusiPenjualan(id) {
@@ -702,6 +734,10 @@
         let tlp = $('#tlp_kurir').val();
         let resi = $('#resi_kurir').val();
         let harga = $('#biaya_kurir').val();
+        let paymentType = $('#paymentType').val();
+        let paymentMethod = $('#paymentMethod').val();
+        let payCash = ($('#paymentType').val() == 'C') ? 0 : $('#payCash').val();
+        let dateTop = ($('#paymentType').val() == 'C') ? null : $('#dateTop').val();
 
         loadingShow();
         axios.post('{{ route("penjualanpusat.sendOrder") }}', {
@@ -711,7 +747,11 @@
             "nama": nama,
             "tlp": tlp,
             "resi": resi,
-            "harga": harga
+            "harga": harga,
+            "paymentType": paymentType,
+            "paymentMethod": paymentMethod,
+            "payCash": payCash,
+            "dateTop": dateTop
         }).then(function (response) {
             loadingHide();
             if (response.data.status == 'success'){
@@ -723,7 +763,8 @@
             }
         }).catch(function (error) {
             loadingHide();
-            alert('error');
+            messageWarning('Error', 'Terjadi kesalahan, hubungi pengembang !');
+            // alert('error');
         })
     }
 </script>

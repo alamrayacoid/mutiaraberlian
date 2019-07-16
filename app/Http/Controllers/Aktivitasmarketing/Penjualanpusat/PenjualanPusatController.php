@@ -19,8 +19,12 @@ use App\d_productorder;
 use App\d_productorderdt;
 use App\d_productordercode;
 use App\d_stock;
+use App\d_salescomppayment;
+use App\m_item;
+use App\m_paymentmethod;
 use Currency;
 use Mutasi;
+use Mockery\Exception;
 
 
 class PenjualanPusatController extends Controller
@@ -155,35 +159,6 @@ class PenjualanPusatController extends Controller
         $data->total = d_productorderdt::where('pod_productorder', $request->id)->sum('pod_totalprice');
         $data->dateFormated = Carbon::parse($data->po_date)->format('d M Y');
 
-        return response()->json($data);
-    }
-
-    public function getDetailSend(Request $request)
-    {
-        $data = d_productorder::where('po_id', $request->id)
-            ->with('getAgent')
-            ->with(['getPODt' => function ($query) {
-                $query
-                    ->with(['getItem' => function ($query) {
-                        $query
-                            ->with('getUnit1')
-                            ->with('getUnit2')
-                            ->with('getUnit3')
-                            ->get();
-                    }])
-                    ->with('getUnit')
-                    ->get();
-            }])
-            ->first();
-
-        $ekspedisi = DB::table('m_expedition')
-            ->where('e_isactive', '=', 'Y')
-            ->get();
-
-        //$data->stockItem = $stockItem;
-        $data->total = d_productorderdt::where('pod_productorder', $request->id)->sum('pod_totalprice');
-        $data->dateFormated = Carbon::parse($data->po_date)->format('d M Y');
-        $data->ekspedisi = $ekspedisi;
         return response()->json($data);
     }
 
@@ -748,7 +723,7 @@ class PenjualanPusatController extends Controller
                     return '<div class="btn-group btn-group-sm">
                             <button class="btn btn-primary btn-detail" type="button" onclick="getDetailTOP(' . $data->po_id . ')" title="Detail" data-toggle="modal" data-target="#detail"><i class="fa fa-folder"></i></button>
                             <button class="btn btn-danger btn-delete" type="button" onclick="deleteTOP(' . $data->po_id . ')" title="Hapus"><i class="fa fa-close"></i></button>
-                            <button class="btn btn-warning btn-process" type="button" onclick="distribusiPenjualan(' . $data->po_id . ')" title="Kirim" data-toggle="modal" data-target="#modal_distribusi"><i class="fa fa-send"></i></button>
+                            <button class="btn btn-warning btn-process" type="button" onclick="distribusiPenjualan(' . $data->po_id . ')" title="Kirim Barang" data-toggle="modal" data-target="#modal_distribusi"><i class="fa fa-send"></i></button>
                         </div>';
                 } else {
                     return '<div class="btn-group btn-group-sm">
@@ -766,6 +741,47 @@ class PenjualanPusatController extends Controller
             ->rawColumns(['tanggal', 'action', 'total'])
             ->make(true);
     }
+    // get detail item that will send
+    public function getDetailSend(Request $request)
+    {
+        $data = d_productorder::where('po_id', $request->id)
+        ->with('getAgent')
+        ->with(['getPODt' => function ($query) {
+            $query
+            ->where('pod_isapproved', 'Y')
+            ->with(['getItem' => function ($query) {
+                $query
+                ->with('getUnit1')
+                ->with('getUnit2')
+                ->with('getUnit3')
+                ->get();
+            }])
+            ->with('getUnit')
+            ->get();
+        }])
+        ->first();
+
+        $ekspedisi = DB::table('m_expedition')
+        ->where('e_isactive', '=', 'Y')
+        ->get();
+
+        //$data->stockItem = $stockItem;
+        $data->total = d_productorderdt::where('pod_productorder', $request->id)->sum('pod_totalprice');
+        $data->dateFormated = Carbon::parse($data->po_date)->format('d M Y');
+        $data->ekspedisi = $ekspedisi;
+        return response()->json($data);
+    }
+    // get list of paymentMethod
+    public function getPaymentMethod()
+    {
+        $data = m_paymentmethod::where('pm_isactive', 'Y')
+        ->with('getAkun')
+        ->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
 
     public function getProdukEkspedisi(Request $request)
     {
@@ -781,6 +797,7 @@ class PenjualanPusatController extends Controller
 
     public function sendOrder(Request $request)
     {
+        // dd($request->all());
         DB::beginTransaction();
         try {
             $nota = $request->nota;
@@ -790,12 +807,18 @@ class PenjualanPusatController extends Controller
             $tlp = $request->tlp;
             $resi = $request->resi;
             $harga = $request->harga;
+            // $paymentType = $request->paymentType;
+            // $paymentMethod = $request->paymentMethod;
+            // $payCash = $request->payCash;
+            // $dateTop = $request->dateTop;
 
             $cek = DB::table('d_productorderdt')
                 ->join('d_productorder', 'po_id', '=', 'pod_productorder')
                 ->where('po_nota', '=', $nota)
+                ->where('pod_isapproved', 'Y')
                 ->get();
 
+            // validate qty of production-code
             for ($i = 0; $i < count($cek); $i++){
                 $kode = DB::table('d_productordercode')
                     ->join('d_productorderdt', function ($q) use ($cek){
@@ -808,11 +831,15 @@ class PenjualanPusatController extends Controller
                     ->groupBy('poc_item')
                     ->get();
 
-                if ($kode[0]->poc_qty != $cek[$i]->pod_qty){
-                    return Response::json([
-                        'status' => 'gagal',
-                        'message' => 'Jumlah kode produksi tidak sama'
-                    ]);
+                // if the items is not-found
+                if (count($kode) == 0) {
+                    $item = m_item::where('i_id', $cek[$i]->pod_item)->first();
+                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
+                }
+                // if the prod-code is not same
+                if (count($kode) > 0 && $kode[0]->poc_qty != $cek[$i]->pod_qty){
+                    $item = m_item::where('i_id', $cek[$i]->pod_item)->first();
+                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
                 }
             }
 
@@ -821,7 +848,6 @@ class PenjualanPusatController extends Controller
                 ->update([
                     'po_send' => 'P'
                 ]);
-
             $pd_id = DB::table('d_productdelivery')
                 ->max('pd_id');
 
@@ -840,22 +866,25 @@ class PenjualanPusatController extends Controller
                     'pd_price' => $harga
                 ]);
 
-
             $productOrder = d_productorder::where('po_nota', '=', $nota)
-                ->with('getPODt')
+                ->with(['getPODt' => function ($q) {
+                    $q
+                        ->where('pod_isapproved', 'Y')
+                        ->with('getProdCode');
+                }])
                 ->first();
 
-            $dataItem = DB::table('d_productorder')
-                ->join('d_productorderdt', 'pod_productorder', '=', 'po_id')
-                ->where('po_nota', '=', $nota)
-                ->get();
+            // $dataItem = DB::table('d_productorder')
+            //     ->join('d_productorderdt', 'pod_productorder', '=', 'po_id')
+            //     ->where('po_nota', '=', $nota)
+            //     ->get();
 
-            $idItems = [];
-
-            for ($i = 0; $i < count($dataItem); $i++) {
-                array_push($idItems, $dataItem[$i]->pod_item);
+            $idItems = array();
+            // dd($idItems, $productOrder->getPODt[0]->pod_item);
+            for ($i = 0; $i < count($productOrder->getPODt); $i++) {
+                array_push($idItems, $productOrder->getPODt[$i]->pod_item);
             }
-
+            // dd('list id-items: ', $idItems);
             // mutation
             foreach ($productOrder->getPODt as $key => $PO) {
                 // get list production-code
@@ -915,78 +944,113 @@ class PenjualanPusatController extends Controller
                 }
             }
 
-            //d_salescomp
+            // d_salescomp
             $s_id = DB::table('d_salescomp')
                 ->max('sc_id');
             ++$s_id;
 
-            $data = DB::table('d_productorder')
-                ->join('d_productorderdt', 'pod_productorder', '=', 'po_id')
-                ->where('po_nota', '=', $nota)
-                ->get();
+            // $data = DB::table('d_productorder')
+            //     ->join('d_productorderdt', 'pod_productorder', '=', 'po_id')
+            //     ->where('po_nota', '=', $nota)
+            //     ->get();
 
-            $kode = DB::table('d_productordercode')
-                ->where('poc_productorder', '=', $data[0]->po_id)
-                ->get();
+            // $kode = DB::table('d_productordercode')
+            //     ->where('poc_productorder', '=', $productOrder->po_id)
+            //     ->get();
 
-            $notasales = CodeGenerator::codeWithSeparator('d_salescomp', 'sc_nota', '8', '3', '3', 'SC', '-');
+            $notasales = CodeGenerator::codeWithSeparator('d_salescomp', 'sc_nota', '8', '10', '3', 'SC', '-');
 
             $total = 0;
             $insert = [];
-            for ($i = 0; $i < count($data); $i++) {
+            for ($i = 0; $i < count($productOrder->getPODt); $i++) {
                 $temp = [
                     'scd_sales' => $s_id,
                     'scd_detailid' => $i + 1,
-                    'scd_comp' => $data[0]->po_comp,
-                    'scd_item' => $data[$i]->pod_item,
-                    'scd_qty' => $data[$i]->pod_qty,
-                    'scd_unit' => $data[$i]->pod_unit,
-                    'scd_value' => $data[$i]->pod_price,
-                    'scd_discvalue' => $data[$i]->pod_discvalue,
-                    'scd_totalnet' => $data[$i]->pod_qty * ($data[$i]->pod_price - $data[$i]->pod_discvalue)
+                    'scd_comp' => $productOrder->po_comp,
+                    'scd_item' => $productOrder->getPODt[$i]->pod_item,
+                    'scd_qty' => $productOrder->getPODt[$i]->pod_qty,
+                    'scd_unit' => $productOrder->getPODt[$i]->pod_unit,
+                    'scd_value' => $productOrder->getPODt[$i]->pod_price,
+                    'scd_discpersen' => 0,
+                    'scd_discvalue' => $productOrder->getPODt[$i]->pod_discvalue,
+                    'scd_totalnet' => $productOrder->getPODt[$i]->pod_qty * ($productOrder->getPODt[$i]->pod_price - $productOrder->getPODt[$i]->pod_discvalue)
                 ];
-                $total = $total + ($data[$i]->pod_qty * ($data[$i]->pod_price - $data[$i]->pod_discvalue));
+                $total = $total + ($productOrder->getPODt[$i]->pod_qty * ($productOrder->getPODt[$i]->pod_price - $productOrder->getPODt[$i]->pod_discvalue));
                 array_push($insert, $temp);
-            }
 
-            $code = [];
-            for ($i = 0; $i < count($kode); $i++) {
-                $temp = [
-                    'ssc_salescomp' => $s_id,
-                    'ssc_item' => $kode[$i]->poc_item,
-                    'ssc_detailid' => $i + 1,
-                    'ssc_code' => $kode[$i]->poc_code,
-                    'ssc_qty' => $kode[$i]->poc_qty
-                ];
-                array_push($code, $temp);
+                // insert data production-code
+                $code = [];
+                foreach ($productOrder->getPODt[$i]->getProdCode as $j => $val) {
+                    $temp = [
+                        'ssc_salescomp' => $s_id,
+                        'ssc_item' => $val->poc_item,
+                        'ssc_detailid' => $j + 1,
+                        'ssc_code' => $val->poc_code,
+                        'ssc_qty' => $val->poc_qty
+                    ];
+                    array_push($code, $temp);
+                }
+                // for ($j = 0; $j < count(); $j++) {
+                // }
+                DB::table('d_salescompcode')
+                ->insert($code);
             }
-
             DB::table('d_salescompdt')
                 ->insert($insert);
+
+            // set paid of for 'cash' payment
+            if ($request->paymentType == 'C') {
+                $paidOff = 'Y';
+                $payCash = $total;
+            }
+            else {
+                $paidOff = 'N';
+                $payCash = $request->payCash;
+            }
 
             DB::table('d_salescomp')
                 ->insert([
                     'sc_id' => $s_id,
-                    'sc_comp' => $data[0]->po_comp,
-                    'sc_member' => $data[0]->po_agen,
+                    'sc_comp' => $productOrder->po_comp,
+                    // 'sc_member' => $data[0]->po_agen,
+                    'sc_member' => $productOrder->po_agen,
                     'sc_type' => 'C',
                     'sc_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
                     'sc_nota' => $notasales,
                     'sc_total' => $total,
-                    'sc_paidoff' => 'Y',
+                    'sc_paidoff' => $paidOff,
+                    'sc_datetop'   => Carbon::parse($request->dateTop),
+                    'sc_paymenttype' => $request->paymentType,
+                    'sc_paymentmethod' => $request->paymentMethod,
                     'sc_user' => Auth::user()->u_id,
-                    'sc_insert' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
-                    'sc_update' => Carbon::now('Asia/Jakarta')->format('Y-m-d')
+                    'sc_insert' => Carbon::now('Asia/Jakarta'),
+                    'sc_update' => Carbon::now('Asia/Jakarta')
                 ]);
 
-            DB::table('d_salescompcode')
-                ->insert($code);
+            // set value for salespayment
+            $val_salespayment = [
+                'scp_salescomp' => $s_id,
+                'scp_detailid' => d_salescomppayment::where('scp_salescomp', $s_id)->max('scp_detailid') + 1,
+                'scp_date' => Carbon::now(),
+                'scp_pay' => $payCash,
+                'scp_payment' => $request->paymentMethod
+            ];
+            DB::table('d_salescomppayment')->insert($val_salespayment);
 
+            // dd('x');
             DB::commit();
             return Response::json([
                 'status' => 'success'
             ]);
-        } catch (DecryptException $e) {
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            return Response::json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+        catch (DecryptException $e) {
             DB::rollBack();
             return Response::json([
                 'status' => 'gagal',
@@ -994,7 +1058,6 @@ class PenjualanPusatController extends Controller
             ]);
         }
     }
-
     // Penerimaan Piutang -------------------------->
     public function cariNota(Request $request)
     {
@@ -1127,7 +1190,7 @@ class PenjualanPusatController extends Controller
             $checkSCP = DB::table('d_salescomppayment')->where('scp_salescomp', '=', $sales->sc_id)->get();
 
             $jumlah = 0;
-            for ($i=0; $i < count($checkSCP) ; $i++) { 
+            for ($i=0; $i < count($checkSCP) ; $i++) {
                 $jumlah += (int)$checkSCP[$i]->scp_pay;
             }
 

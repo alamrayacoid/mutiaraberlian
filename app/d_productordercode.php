@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Builder;
 
 class d_productordercode extends Model
 {
+    // use third-party library to create relationship multi-column
+    // used in getProdCode
+    use \Awobaz\Compoships\Compoships;
+    
     protected $table = 'd_productordercode';
     public $timestamps = false;
 

@@ -1103,7 +1103,7 @@ class MarketingAreaController extends Controller
                     $item = m_item::where('i_id', $PO->pod_item)->first();
                     throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
                 }
-                
+
                 // insert stock mutation sales 'out'
                 $mutationOut = Mutasi::salesOut(
                     $productOrder->po_comp, // from
@@ -1170,6 +1170,7 @@ class MarketingAreaController extends Controller
                 'sc_date'    => $productOrder->po_date,
                 'sc_nota'    => $productOrder->po_nota,
                 'sc_total'   => 0,
+                'sc_datetop'   => $request->dateTop,
                 'sc_paymenttype' => $request->paymentType,
                 'sc_paymentmethod' => $request->paymentMethod,
                 'sc_user'    => Auth::user()->u_id,
