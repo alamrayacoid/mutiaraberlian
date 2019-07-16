@@ -85,7 +85,10 @@
             serverSide: true,
             ajax: {
                 url: "{{ route('return.list') }}",
-                type: "get"
+                type: "post",
+                data: {
+                    '_token': '{{ @csrf_token() }}'
+                }
             },
             columns: [
                 {data: 'tanggal'},
@@ -137,7 +140,10 @@
                 ajax: {
                     url: "{{ route('return.list') }}",
                     data: {awal: $("#dateStart").val(), akhir: $("#dateEnd").val()},
-                    type: "get"
+                    type: "post",
+                    data: {
+                        '_token': '{{ @csrf_token() }}'
+                    }
                 },
                 columns: [
                     {data: 'tanggal'},

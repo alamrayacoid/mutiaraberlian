@@ -201,7 +201,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/orderproduksi/get-satuan/{id}', 'ProduksiController@getSatuan')->name('order.getsatuan');
     Route::get('/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
     Route::post('/produksi/orderproduksi/edit-order-produksi', 'ProduksiController@editOrderProduksi');
-    Route::get('/produksi/orderproduksi/get-order-produksi', 'ProduksiController@get_order')->name('order.getOrderProd');
+    Route::post('/produksi/orderproduksi/get-order-produksi', 'ProduksiController@get_order')->name('order.getOrderProd');
     Route::get('/produksi/orderproduksi/detailitem', 'ProduksiController@getProduksiDetailItem')->name('order.detailitem');
     Route::get('/produksi/orderproduksi/detailtermin', 'ProduksiController@getProduksiDetailTermin')->name('order.detailtermin');
     Route::get('/produksi/orderproduksi/hapus/{id}', 'ProduksiController@delete_produksi')->name('order.delete');
@@ -237,7 +237,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/pembayaran/get-termin-date', 'Produksi\PembayaranController@getTerminByDate')->name('pembayaran.getTerminByDate');
     // Return Produksi
     Route::get('/produksi/returnproduksi/index', 'ProduksiController@return_produksi')->name('return.index');
-    Route::get('/produksi/returnproduksi/list', 'ProduksiController@listReturn')->name('return.list');
+    Route::post('/produksi/returnproduksi/list', 'ProduksiController@listReturn')->name('return.list');
     Route::get('/produksi/returnproduksi/detail-return/{id}/{detail}', 'ProduksiController@detailReturn')->name('return.detailreturn');
     Route::get('/produksi/returnproduksi/get-editreturn/{id}/{detail}', 'ProduksiController@getEditReturn')->name('return.geteditreturn');
     Route::get('/produksi/returnproduksi/create', 'ProduksiController@create_return_produksi')->name('return.create');

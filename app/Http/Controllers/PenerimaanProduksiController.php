@@ -544,7 +544,7 @@ class PenerimaanProduksiController extends Controller
             ->select('po_id')
             ->first() ;
             // insert production-code for each item
-            if ($request->prodCode != null) {
+            if ($request->prodCode !== null) {
                 $valuesProdCode = array();
                 foreach ($request->prodCode as $key => $val) {
                     $detailId = d_productionordercode::where('poc_productionorder', $prodCodeId->po_id)
@@ -554,7 +554,7 @@ class PenerimaanProduksiController extends Controller
                         'poc_productionorder' => $prodCodeId->po_id,
                         'poc_detailid' => $detailId,
                         'poc_item' => $item,
-                        'poc_productioncode' => $val,
+                        'poc_productioncode' => strtoupper($val),
                         'poc_qty' => $request->qtyProdCode[$key],
                         'poc_unit' => $request->satuan
                     );

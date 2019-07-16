@@ -34,15 +34,15 @@ class ProduksiController extends Controller
 
     public function order_produksi()
     {
-    	return view('produksi/orderproduksi/index');
+        return view('produksi/orderproduksi/index');
     }
 
     public function getProduksiDetailItem(Request $request)
     {
-        try{
+        try {
             $id = Crypt::decrypt($request->id);
-        }catch (DecryptException $e){
-            return response()->json(['status'=>'Failed']);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => 'Failed']);
         }
 
         $data = DB::table('d_productionorderdt')
@@ -51,9 +51,9 @@ class ProduksiController extends Controller
                 'd_productionorderdt.pod_qty',
                 'd_productionorderdt.pod_value',
                 'd_productionorderdt.pod_totalnet')
-            ->join('m_item', function ($q){
+            ->join('m_item', function ($q) {
                 $q->on('d_productionorderdt.pod_item', '=', 'm_item.i_id');
-            })->join('m_unit', function ($q){
+            })->join('m_unit', function ($q) {
                 $q->on('d_productionorderdt.pod_unit', '=', 'm_unit.u_id');
             })
             ->where('d_productionorderdt.pod_productionorder', '=', $id)
@@ -61,31 +61,31 @@ class ProduksiController extends Controller
 
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('item', function($data){
+            ->addColumn('item', function ($data) {
                 return $data->i_name;
             })
-            ->addColumn('unit', function($data){
+            ->addColumn('unit', function ($data) {
                 return $data->u_name;
             })
-            ->addColumn('qty', function($data){
-                return '<p class="text-center">'. $data->pod_qty .'</p>';
+            ->addColumn('qty', function ($data) {
+                return '<p class="text-center">' . $data->pod_qty . '</p>';
             })
-            ->addColumn('value', function($data){
-                return '<p class="text-right">'. Currency::addRupiah($data->pod_value) .'</p>';
+            ->addColumn('value', function ($data) {
+                return '<p class="text-right">' . Currency::addRupiah($data->pod_value) . '</p>';
             })
-            ->addColumn('totalnet', function($data){
-                return '<p class="text-right">'. Currency::addRupiah($data->pod_totalnet) .'</p><input type="hidden" class="totalnet" value="'.number_format($data->pod_totalnet,0,'','').'">';
+            ->addColumn('totalnet', function ($data) {
+                return '<p class="text-right">' . Currency::addRupiah($data->pod_totalnet) . '</p><input type="hidden" class="totalnet" value="' . number_format($data->pod_totalnet, 0, '', '') . '">';
             })
-            ->rawColumns(['item','unit','qty','value','totalnet'])
+            ->rawColumns(['item', 'unit', 'qty', 'value', 'totalnet'])
             ->make(true);
     }
 
     public function getProduksiDetailTermin(Request $request)
     {
-        try{
+        try {
             $id = Crypt::decrypt($request->id);
-        }catch (DecryptException $e){
-            return response()->json(['status'=>'Failed']);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => 'Failed']);
         }
 
         $data = DB::table('d_productionorderpayment')
@@ -98,16 +98,16 @@ class ProduksiController extends Controller
 
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('termin', function($data){
+            ->addColumn('termin', function ($data) {
                 return $data->pop_termin;
             })
-            ->addColumn('date', function($data){
+            ->addColumn('date', function ($data) {
                 return date('d-m-Y', strtotime($data->pop_datetop));
             })
-            ->addColumn('value', function($data){
-                return '<p class="text-right">'. Currency::addRupiah($data->pop_value) .'</p><input type="hidden" class="totaltermin" value="'.number_format($data->pop_value,0,'','').'">';
+            ->addColumn('value', function ($data) {
+                return '<p class="text-right">' . Currency::addRupiah($data->pop_value) . '</p><input type="hidden" class="totaltermin" value="' . number_format($data->pop_value, 0, '', '') . '">';
             })
-            ->rawColumns(['termin','date','value'])
+            ->rawColumns(['termin', 'date', 'value'])
             ->make(true);
     }
     // retrieve DataTable for index
@@ -138,9 +138,9 @@ class ProduksiController extends Controller
         $prodOrderReceived = ProductionOrder::whereHas('getPODt', function ($q) {
             $q->where('pod_received', 'Y');
         })
-        ->select('po_id')
-        ->get()
-        ->toArray();
+            ->select('po_id')
+            ->get()
+            ->toArray();
         $listReceivedProdOrdId = array();
         foreach ($prodOrderReceived as $key => $value) {
             array_push($listReceivedProdOrdId, $value['po_id']);
@@ -163,29 +163,29 @@ class ProduksiController extends Controller
 
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('nota', function($data){
+            ->addColumn('nota', function ($data) {
                 return $data->nota;
             })
-            ->addColumn('supplier', function($data){
+            ->addColumn('supplier', function ($data) {
                 return $data->supplier;
             })
-            ->addColumn('totalnet', function($data){
-                return '<div class="text-right">'.Currency::addRupiah($data->nilai_order).'</div>';
+            ->addColumn('totalnet', function ($data) {
+                return '<div class="text-right">' . Currency::addRupiah($data->nilai_order) . '</div>';
             })
-            ->addColumn('bayar', function($data){
-                return '<div class="text-right">'.Currency::addRupiah($data->terbayar).'</div>';
+            ->addColumn('bayar', function ($data) {
+                return '<div class="text-right">' . Currency::addRupiah($data->terbayar) . '</div>';
             })
-            ->addColumn('status', function($data){
-                if($data->status == 'BELUM'){
-                   // return '<div class="status-termin-lunas"><p>BELUM LUNAS</p></div>';
+            ->addColumn('status', function ($data) {
+                if ($data->status == 'BELUM') {
+                    // return '<div class="status-termin-lunas"><p>BELUM LUNAS</p></div>';
                     return '<div class="text-center">BELUM LUNAS</div>';
-                }else{
-                   // return '<div class="status-termin-belum"><p>LUNAS</p></div>';
+                } else {
+                    // return '<div class="status-termin-belum"><p>LUNAS</p></div>';
                     return '<div class="text-center">LUNAS</div>';
                 }
             })
-            ->addColumn('aksi', function($data) use ($listReceivedProdOrdId) {
-                $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrder(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-folder"></i></button>';
+            ->addColumn('aksi', function ($data) use ($listReceivedProdOrdId) {
+                $detail = '<button class="btn btn-primary btn-modal" type="button" title="Detail Data" onclick="detailOrder(\'' . Crypt::encrypt($data->po_id) . '\')"><i class="fa fa-folder"></i></button>';
                 if (in_array($data->po_id, $listReceivedProdOrdId)) {
                     $edit = '<button class="btn btn-warning btn-edit hint--top-left hint--warning" aria-label="Edit Order" type="button" title="Edit Data" onclick="edit(\''. Crypt::encrypt($data->po_id) .'\')" disabled><i class="fa fa-pencil"></i></button>';
                     $hapus = '<button class="btn btn-danger btn-disable hint--top-left hint--danger" aria-label="Hapus Order" type="button" title="Hapus Data" onclick="hapus(\''. Crypt::encrypt($data->po_id) .'\')" disabled><i class="fa fa-trash"></i></button>';
@@ -199,7 +199,7 @@ class ProduksiController extends Controller
                 $nota = '<button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Cetak Nota" title="Nota" type="button" onclick="printNota(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-print"></i></button>';
                 return '<div class="row"><div class="btn-group btn-group-sm">'. $detail . $nota . $edit . $hapus . '</div><div class="col-md-1"></div><div class="btn-group btn-group-sm">'. $forceDelete .'</div></div>';
             })
-            ->rawColumns(['totalnet','bayar', 'status','aksi'])
+            ->rawColumns(['totalnet', 'bayar', 'status', 'aksi'])
             ->make(true);
     }
 
@@ -218,9 +218,9 @@ class ProduksiController extends Controller
             $productionorderdt = [];
             $productionorderpayment = [];
             DB::beginTransaction();
-            try{
+            try {
                 // dd($request);
-                $idpo= (DB::table('d_productionorderdt')->max('pod_productionorder')) ? (DB::table('d_productionorderdt')->max('pod_productionorder')) + 1 : 1;
+                $idpo = (DB::table('d_productionorderdt')->max('pod_productionorder')) ? (DB::table('d_productionorderdt')->max('pod_productionorder')) + 1 : 1;
                 $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
                 $productionorderauth[] = [
                     'poa_id' => $idpo,
@@ -263,7 +263,7 @@ class ProduksiController extends Controller
                 return json_encode([
                     'status' => 'Success'
                 ]);
-            }catch (\Exception $e){
+            } catch (\Exception $e) {
                 DB::rollBack();
                 return json_encode([
                     'status' => 'Failed',
@@ -275,9 +275,9 @@ class ProduksiController extends Controller
 
     public function edit_produksi(Request $request)
     {
-        try{
+        try {
             $id = Crypt::decrypt($request->id);
-        }catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return abort(404);
         }
 
@@ -290,16 +290,16 @@ class ProduksiController extends Controller
             ->where('po_id', $id)->first();
 
         $dataEditDT = DB::table('d_productionorderdt')
-            ->select('d_productionorderdt.*', 'm_item.*', 'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2',
+            ->select('d_productionorderdt.*', 'm_item.*', 'a.u_id as id1', 'a.u_name as unit1', 'b.u_id as id2',
                 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
             ->join('m_item', 'i_id', '=', 'pod_item')
-            ->join('m_unit as a', function ($x){
+            ->join('m_unit as a', function ($x) {
                 $x->on('m_item.i_unit1', '=', 'a.u_id');
             })
-            ->leftjoin('m_unit as b', function ($y){
+            ->leftjoin('m_unit as b', function ($y) {
                 $y->on('m_item.i_unit2', '=', 'b.u_id');
             })
-            ->leftjoin('m_unit as c', function ($z){
+            ->leftjoin('m_unit as c', function ($z) {
                 $z->on('m_item.i_unit3', '=', 'c.u_id');
             })
             ->where('pod_productionorder', $id)->get();
@@ -315,22 +315,22 @@ class ProduksiController extends Controller
 
     public function editOrderProduksi(Request $request)
     {
-        $data                   = $request->all();
-        try{
+        $data = $request->all();
+        try {
             $id = Crypt::decrypt($data['orderId']);
-        }catch (DecryptException $e){
-            return response()->json(['status'=>"Failed"]);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => "Failed"]);
         }
 
-        $tanggal                = date('Y-m-d', strtotime($data['po_date']));
-        $supplier               = $data['sup'];
-        $totalnet               = $data['tot_hrg'];
-        $productionorder        = [];
-        $productionorderdt      = [];
+        $tanggal = date('Y-m-d', strtotime($data['po_date']));
+        $supplier = $data['sup'];
+        $totalnet = $data['tot_hrg'];
+        $productionorder = [];
+        $productionorderdt = [];
         $productionorderpayment = [];
 
         DB::beginTransaction();
-        try{
+        try {
             $productionorder = [
                 'po_date' => $tanggal,
                 'po_supplier' => $supplier,
@@ -371,7 +371,7 @@ class ProduksiController extends Controller
             return json_encode([
                 'status' => 'Success'
             ]);
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             return json_encode([
                 'status' => 'Failed',
@@ -379,25 +379,26 @@ class ProduksiController extends Controller
             ]);
         }
     }
+
     // delete order
     public function delete_produksi($id = null){
         try{
             $id = Crypt::decrypt($id);
-        }catch (DecryptException $e){
-            return response()->json(['status'=>"Failed"]);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => "Failed"]);
         }
 
         DB::beginTransaction();
-        try{
+        try {
 
             DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
             DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
             DB::table('d_productionorder')->where('po_id', '=', $id)->delete();
             DB::commit();
-            return response()->json(['status'=>"Success"]);
-        }catch (\Exception $e){
+            return response()->json(['status' => "Success"]);
+        } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['status'=>"Failed"]);
+            return response()->json(['status' => "Failed"]);
         }
     }
     // force-delete
@@ -422,7 +423,7 @@ class ProduksiController extends Controller
             foreach ($itemReceive->getIRDetail as $i => $ir) {
                 array_push($listItemInReceipt, $ir->ird_item);
             }
-            
+
             // rollback mutation 'in'
             foreach ($po->getPODt as $key => $val) {
                 if (in_array($val->pod_item, $listItemInReceipt)) {
@@ -461,79 +462,79 @@ class ProduksiController extends Controller
 
     public function deleteItemProduksi($order = null, $detail = null, $item = null)
     {
-        try{
+        try {
             $order = Crypt::decrypt($order);
             $detail = Crypt::decrypt($detail);
             $item = Crypt::decrypt($item);
-        }catch (DecryptException $e){
-            return response()->json(['status'=>"Failed"]);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => "Failed"]);
         }
 
         DB::beginTransaction();
-        try{
+        try {
             DB::table('d_productionorderdt')
-            ->where('pod_productionorder', '=', $order)
-            ->where('pod_detailid', '=', $detail)
-            ->where('pod_item', '=', $item)
-            ->delete();
+                ->where('pod_productionorder', '=', $order)
+                ->where('pod_detailid', '=', $detail)
+                ->where('pod_item', '=', $item)
+                ->delete();
             DB::commit();
-            return response()->json(['status'=>"Success"]);
-        }catch (\Exception $e){
+            return response()->json(['status' => "Success"]);
+        } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['status'=>"Failed"]);
+            return response()->json(['status' => "Failed"]);
         }
     }
 
     public function deleteTerminProduksi($order = null, $termin = null)
     {
-        try{
+        try {
             $order = Crypt::decrypt($order);
             $termin = Crypt::decrypt($termin);
-        }catch (DecryptException $e){
-            return response()->json(['status'=>"Failed"]);
+        } catch (DecryptException $e) {
+            return response()->json(['status' => "Failed"]);
         }
 
         DB::beginTransaction();
-        try{
+        try {
             DB::table('d_productionorderpayment')
                 ->where('pop_productionorder', '=', $order)
                 ->where('pop_termin', '=', $termin)
                 ->delete();
             DB::commit();
-            return response()->json(['status'=>"Success"]);
-        }catch (\Exception $e){
+            return response()->json(['status' => "Success"]);
+        } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['status'=>"Failed"]);
+            return response()->json(['status' => "Failed"]);
         }
     }
 
     public function cariBarang(Request $request)
     {
         $is_item = array();
-        for($i = 0; $i < count($request->idItem); $i++){
-            if($request->idItem[$i] != null){
+        for ($i = 0; $i < count($request->idItem); $i++) {
+            if ($request->idItem[$i] != null) {
                 array_push($is_item, $request->idItem[$i]);
             }
         }
 
         $cari = $request->term;
-        if(count($is_item) == 0){
+        if (count($is_item) == 0) {
             $nama = DB::table('m_item')
                 ->join('d_itemsupplier', 'is_item', '=', 'i_id')
                 ->where('is_supplier', $request->supp)
-                ->where(function ($q) use ($cari){
-                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
-                    $q->orWhere('i_code', 'like', '%'.$cari.'%');
+                ->where(function ($q) use ($cari) {
+                    $q->orWhere('i_name', 'like', '%' . $cari . '%');
+                    $q->orWhere('i_code', 'like', '%' . $cari . '%');
                 })
                 ->get();
-        }else{
+        } else {
             $nama = DB::table('m_item')
                 ->join('d_itemsupplier', 'is_item', '=', 'i_id')
                 ->whereNotIn('i_id', $is_item)
                 ->where('is_supplier', $request->supp)
-                ->where(function ($q) use ($cari){
-                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
-                    $q->orWhere('i_code', 'like', '%'.$cari.'%');
+                ->where(function ($q) use ($cari) {
+                    $q->orWhere('i_name', 'like', '%' . $cari . '%');
+                    $q->orWhere('i_code', 'like', '%' . $cari . '%');
                 })
                 ->get();
         }
@@ -542,7 +543,7 @@ class ProduksiController extends Controller
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' .strtoupper($query->i_name), 'data' => $query];
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' . strtoupper($query->i_name), 'data' => $query];
             }
         }
         return Response::json($results);
@@ -551,15 +552,15 @@ class ProduksiController extends Controller
     public function getSatuan($id)
     {
         $data = DB::table('m_item')
-            ->select('m_item.*', 'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
+            ->select('m_item.*', 'a.u_id as id1', 'a.u_name as unit1', 'b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
             ->where('m_item.i_id', '=', $id)
-            ->join('m_unit as a', function ($x){
+            ->join('m_unit as a', function ($x) {
                 $x->on('m_item.i_unit1', '=', 'a.u_id');
             })
-            ->leftjoin('m_unit as b', function ($y){
+            ->leftjoin('m_unit as b', function ($y) {
                 $y->on('m_item.i_unit2', '=', 'b.u_id');
             })
-            ->leftjoin('m_unit as c', function ($z){
+            ->leftjoin('m_unit as c', function ($z) {
                 $z->on('m_item.i_unit3', '=', 'c.u_id');
             })
             ->first();
@@ -568,15 +569,15 @@ class ProduksiController extends Controller
 
     public function printNota($id = null)
     {
-        try{
+        try {
             $id = Crypt::decrypt($id);
-        }catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return abort(404);
         }
 
         $header = DB::table('d_productionorder')
             ->select('d_productionorder.po_nota as nota', 'd_productionorder.po_date as tanggal', 'm_supplier.s_name as supplier')
-            ->join('m_supplier', function ($q){
+            ->join('m_supplier', function ($q) {
                 $q->on('d_productionorder.po_supplier', '=', 'm_supplier.s_id');
             })
             ->where('po_id', '=', $id)
@@ -588,9 +589,9 @@ class ProduksiController extends Controller
                 'd_productionorderdt.pod_qty as qty',
                 'd_productionorderdt.pod_value as value',
                 'd_productionorderdt.pod_totalnet as totalnet')
-            ->join('m_item', function ($q){
+            ->join('m_item', function ($q) {
                 $q->on('d_productionorderdt.pod_item', '=', 'm_item.i_id');
-            })->join('m_unit', function ($q){
+            })->join('m_unit', function ($q) {
                 $q->on('d_productionorderdt.pod_unit', '=', 'm_unit.u_id');
             })
             ->where('d_productionorderdt.pod_productionorder', '=', $id)
@@ -615,14 +616,14 @@ class ProduksiController extends Controller
     // Pembayaran
     public function pembayaran()
     {
-    	return view('produksi/pembayaran/index');
+        return view('produksi/pembayaran/index');
     }
 
     /////////////////////////////////////////////////////
     // Return Produksi
     public function return_produksi()
     {
-    	return view('produksi/returnproduksi/index');
+        return view('produksi/returnproduksi/index');
     }
 
     public function listReturn(Request $request)
@@ -633,27 +634,27 @@ class ProduksiController extends Controller
             ->select('rpo_productionorder as id', 'rpo_detailid as detail', 'rpo_date as tanggal', 'rpo_nota as nota', 'rpo_action as metode', 'rpo_item as idItem', 'i_name as barang',
                 'rpo_qty as qty', 'u_name as satuan');
 
-        if ($request->awal != null){
+        if ($request->awal != null) {
             $awal = Carbon::createFromFormat('d-m-Y', $request->awal)->format("Y-m-d");
             $data->where('rpo_date', '>=', $awal);
         }
-        if ($request->akhir != null){
+        if ($request->akhir != null) {
             $akhir = Carbon::createFromFormat('d-m-Y', $request->akhir)->format("Y-m-d");
             $data->where('rpo_date', '<=', $akhir);
         }
-        if ($request->awal == null && $request->akhir == null){
+        if ($request->awal == null && $request->akhir == null) {
             $date = Carbon::now()->format('Y-m-d');
             $data->where('rpo_date', '=', $date);
         }
 
         return DataTables::of($data)
-            ->addColumn('tanggal', function($data){
+            ->addColumn('tanggal', function ($data) {
                 return Carbon::parse($data->tanggal)->format('d-m-Y');
             })
-            ->addColumn('nota', function($data){
+            ->addColumn('nota', function ($data) {
                 return $data->nota;
             })
-            ->addColumn('metode', function($data){
+            ->addColumn('metode', function ($data) {
                 if ($data->metode == "GB") {
                     return "Ganti Barang";
                 } else if ($data->metode == "PT") {
@@ -662,31 +663,31 @@ class ProduksiController extends Controller
                     return "Return Dana";
                 }
             })
-            ->addColumn('barang', function($data){
+            ->addColumn('barang', function ($data) {
                 return $data->barang;
             })
-            ->addColumn('qty', function($data){
+            ->addColumn('qty', function ($data) {
                 return $data->qty . ' ' . $data->satuan;
             })
-            ->addColumn('action', function($data){
-                $detail = '<button class="btn btn-primary" type="button" title="Detail" onclick="detailReturn(\''.Crypt::encrypt($data->id).'\', \''.Crypt::encrypt($data->detail).'\')"><i class="fa fa-folder"></i></button>';
-                $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editReturn(\''.Crypt::encrypt($data->id).'\', \''.Crypt::encrypt($data->detail).'\', \''.Crypt::encrypt($data->idItem).'\')"><i class="fa fa-pencil-square-o"></i></button>';
-                $hapus = '<button class="btn btn-danger" type="button" title="Hapus" onclick="hapusReturn(\''.Crypt::encrypt($data->id).'\', \''.Crypt::encrypt($data->detail).'\', \''.$data->qty.'\')"><i class="fa fa-trash-o"></i></button>';
-                return '<div class="btn-group btn-group-sm">'. $detail . $edit . $hapus .'</div>';
+            ->addColumn('action', function ($data) {
+                $detail = '<button class="btn btn-primary" type="button" title="Detail" onclick="detailReturn(\'' . Crypt::encrypt($data->id) . '\', \'' . Crypt::encrypt($data->detail) . '\')"><i class="fa fa-folder"></i></button>';
+                $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editReturn(\'' . Crypt::encrypt($data->id) . '\', \'' . Crypt::encrypt($data->detail) . '\', \'' . Crypt::encrypt($data->idItem) . '\')"><i class="fa fa-pencil-square-o"></i></button>';
+                $hapus = '<button class="btn btn-danger" type="button" title="Hapus" onclick="hapusReturn(\'' . Crypt::encrypt($data->id) . '\', \'' . Crypt::encrypt($data->detail) . '\', \'' . $data->qty . '\')"><i class="fa fa-trash-o"></i></button>';
+                return '<div class="btn-group btn-group-sm">' . $detail . $edit . $hapus . '</div>';
             })
-            ->rawColumns(['tanggal','nota', 'metode', 'barang', 'qty', 'action'])
+            ->rawColumns(['tanggal', 'nota', 'metode', 'barang', 'qty', 'action'])
             ->make(true);
     }
 
     public function detailReturn($id = null, $detail = null)
     {
-        try{
-            $id     = Crypt::decrypt($id);
+        try {
+            $id = Crypt::decrypt($id);
             $detail = Crypt::decrypt($detail);
-        }catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return Response::json([
                 'status' => "Failed",
-                'message'=> "Data tidak ditemukan"
+                'message' => "Data tidak ditemukan"
             ]);
         }
 
@@ -699,7 +700,7 @@ class ProduksiController extends Controller
         if ($data->count() == 0) {
             return Response::json([
                 'status' => "Failed",
-                'message'=> "Data tidak ditemukan"
+                'message' => "Data tidak ditemukan"
             ]);
         } else {
             if ($data->first()->rpo_action == "GB") {
@@ -711,30 +712,30 @@ class ProduksiController extends Controller
             }
 
             $val = [
-                'tanggal'    => Carbon::parse($data->first()->rpo_date)->format('d-m-Y'),
-                'nota'       => $data->first()->rpo_nota,
-                'barang'     => $data->first()->i_name,
-                'qty'        => $data->first()->rpo_qty . ' ' . $data->first()->u_name,
-                'metode'     => $metode,
+                'tanggal' => Carbon::parse($data->first()->rpo_date)->format('d-m-Y'),
+                'nota' => $data->first()->rpo_nota,
+                'barang' => $data->first()->i_name,
+                'qty' => $data->first()->rpo_qty . ' ' . $data->first()->u_name,
+                'metode' => $metode,
                 'keterangan' => $data->first()->rpo_note
             ];
 
             return Response::json([
                 'status' => "Success",
-                'message'=> $val
+                'message' => $val
             ]);
         }
     }
 
     public function getEditReturn($id = null, $detail = null)
     {
-        try{
-            $id     = Crypt::decrypt($id);
+        try {
+            $id = Crypt::decrypt($id);
             $detail = Crypt::decrypt($detail);
-        }catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return Response::json([
                 'status' => "Failed",
-                'message'=> "Data tidak ditemukan"
+                'message' => "Data tidak ditemukan"
             ]);
         }
 
@@ -747,7 +748,7 @@ class ProduksiController extends Controller
         if ($data->count() == 0) {
             return Response::json([
                 'status' => "Failed",
-                'message'=> "Data tidak ditemukan"
+                'message' => "Data tidak ditemukan"
             ]);
         } else {
 
@@ -762,20 +763,20 @@ class ProduksiController extends Controller
             }
 
             $val = [
-                'tanggal'    => Carbon::parse($data->first()->rpo_date)->format('d-m-Y'),
-                'nota'       => $data->first()->rpo_nota,
-                'barang'     => $data->first()->i_name,
+                'tanggal' => Carbon::parse($data->first()->rpo_date)->format('d-m-Y'),
+                'nota' => $data->first()->rpo_nota,
+                'barang' => $data->first()->i_name,
                 'qty_return' => $data->first()->rpo_qty . ' ' . $data->first()->u_name,
-                'qty'        => $data->first()->rpo_qty,
-                'unit'       => $data->first()->i_unit1,
-                'txtmetode'     => $metode,
-                'metode'     => $data->first()->rpo_action,
+                'qty' => $data->first()->rpo_qty,
+                'unit' => $data->first()->i_unit1,
+                'txtmetode' => $metode,
+                'metode' => $data->first()->rpo_action,
                 'keterangan' => $data->first()->rpo_note
             ];
 
             return Response::json([
                 'status' => "Success",
-                'message'=> $val,
+                'message' => $val,
                 'satuan' => $satuan
             ]);
         }
@@ -794,31 +795,31 @@ class ProduksiController extends Controller
                 ->join('m_supplier', 's_id', '=', 'po_supplier')
                 ->select('po_id', 'po_nota as nota', 's_company as supplier', 'po_date as tanggal');
 
-            if ($request->dateStart != ""){
+            if ($request->dateStart != "") {
                 $data->whereDate('po_date', '>=', Carbon::parse($request->dateStart)->format('Y-m-d'));
             }
-            if ($request->dateEnd != ""){
+            if ($request->dateEnd != "") {
                 $data->whereDate('po_date', '<=', Carbon::parse($request->dateEnd)->format('Y-m-d'));
             }
-            if ($request->supplier != ""){
+            if ($request->supplier != "") {
                 $data->where('po_supplier', '=', $request->supplier);
             }
             return DataTables::of($data)
-                ->addColumn('supplier', function($data){
+                ->addColumn('supplier', function ($data) {
                     return $data->supplier;
                 })
-                ->addColumn('tanggal', function($data){
+                ->addColumn('tanggal', function ($data) {
                     return date('d-m-Y', strtotime($data->tanggal));
                 })
-                ->addColumn('nota', function($data){
+                ->addColumn('nota', function ($data) {
                     return $data->nota;
                 })
-                ->addColumn('action', function($data){
-                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''.Crypt::encrypt($data->po_id).'\')"><i class="fa fa-folder"></i></button>';
-                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Pilih" onclick="pilih(\''.Crypt::encrypt($data->po_id).'\', \''.$data->nota.'\')"><i class="fa fa-arrow-down"></i></button>';
-                    return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
+                ->addColumn('action', function ($data) {
+                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\'' . Crypt::encrypt($data->po_id) . '\')"><i class="fa fa-folder"></i></button>';
+                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Pilih" onclick="pilih(\'' . Crypt::encrypt($data->po_id) . '\', \'' . $data->nota . '\')"><i class="fa fa-arrow-down"></i></button>';
+                    return '<div class="btn-group btn-group-sm">' . $detail . $ambil . '</div>';
                 })
-                ->rawColumns(['supplier','tanggal', 'nota','action'])
+                ->rawColumns(['supplier', 'tanggal', 'nota', 'action'])
                 ->make(true);
         } else {
             $data = ProductionOrder::rightJoin('d_itemreceipt', 'ir_notapo', '=', 'po_nota')
@@ -826,21 +827,21 @@ class ProduksiController extends Controller
                 ->select('po_id', 'po_nota as nota', 's_company as supplier', 'po_date as tanggal');
 
             return DataTables::of($data)
-                ->addColumn('supplier', function($data){
+                ->addColumn('supplier', function ($data) {
                     return $data->supplier;
                 })
-                ->addColumn('tanggal', function($data){
+                ->addColumn('tanggal', function ($data) {
                     return date('d-m-Y', strtotime($data->tanggal));
                 })
-                ->addColumn('nota', function($data){
+                ->addColumn('nota', function ($data) {
                     return $data->nota;
                 })
-                ->addColumn('action', function($data){
-                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\''.Crypt::encrypt($data->po_id).'\')"><i class="fa fa-folder"></i></button>';
-                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Pilih" onclick="pilih(\''.Crypt::encrypt($data->po_id).'\', \''.$data->nota.'\')"><i class="fa fa-arrow-down"></i></button>';
-                    return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
+                ->addColumn('action', function ($data) {
+                    $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" onclick="detail(\'' . Crypt::encrypt($data->po_id) . '\')"><i class="fa fa-folder"></i></button>';
+                    $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Pilih" onclick="pilih(\'' . Crypt::encrypt($data->po_id) . '\', \'' . $data->nota . '\')"><i class="fa fa-arrow-down"></i></button>';
+                    return '<div class="btn-group btn-group-sm">' . $detail . $ambil . '</div>';
                 })
-                ->rawColumns(['supplier','tanggal', 'nota','action'])
+                ->rawColumns(['supplier', 'tanggal', 'nota', 'action'])
                 ->make(true);
         }
     }
@@ -853,33 +854,33 @@ class ProduksiController extends Controller
             ->select('m_item.i_name as barang', 'd_productionorderdt.pod_qty as qty', DB::raw("CONCAT('Rp. ',FORMAT(d_productionorderdt.pod_totalnet, 0, 'de_DE')) as harga"));
 
         return DataTables::of($data)
-            ->addColumn('barang', function($data){
+            ->addColumn('barang', function ($data) {
                 return $data->barang;
             })
-            ->addColumn('qty', function($data){
+            ->addColumn('qty', function ($data) {
                 return $data->qty;
             })
-            ->addColumn('harga', function($data){
+            ->addColumn('harga', function ($data) {
                 return $data->harga;
             })
-            ->rawColumns(['barang','qty', 'harga'])
+            ->rawColumns(['barang', 'qty', 'harga'])
             ->make(true);
     }
 
     public function searchSupplier(Request $request)
     {
         $cari = $request->term;
-        $nama = Supplier::where(function ($q) use ($cari){
-                $q->orWhere('s_company', 'like', '%'.$cari.'%');
-                $q->orWhere('s_name', 'like', '%'.$cari.'%');
-            })
+        $nama = Supplier::where(function ($q) use ($cari) {
+            $q->orWhere('s_company', 'like', '%' . $cari . '%');
+            $q->orWhere('s_name', 'like', '%' . $cari . '%');
+        })
             ->get();
 
         if (count($nama) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
             foreach ($nama as $query) {
-                $results[] = ['id' => $query->s_id, 'label' => strtoupper($query->s_name) . ' - ' .strtoupper($query->s_company), 'data' => $query];
+                $results[] = ['id' => $query->s_id, 'label' => strtoupper($query->s_name) . ' - ' . strtoupper($query->s_company), 'data' => $query];
             }
         }
         return Response::json($results);
@@ -899,21 +900,21 @@ class ProduksiController extends Controller
         }
 
         return DataTables::of($data)
-            ->addColumn('supplier', function($data){
+            ->addColumn('supplier', function ($data) {
                 return $data->supplier;
             })
-            ->addColumn('tanggal', function($data){
+            ->addColumn('tanggal', function ($data) {
                 return date('d-m-Y', strtotime($data->tanggal));
             })
-            ->addColumn('nota', function($data){
+            ->addColumn('nota', function ($data) {
                 return $data->nota;
             })
-            ->addColumn('action', function($data){
+            ->addColumn('action', function ($data) {
                 $detail = '<button class="btn btn-primary btn-detail" type="button" title="Detail" data-toggle="modal" data-target="#detail" data-backdrop="static" data-keyboard="false"><i class="fa fa-folder"></i></button>';
                 $ambil = '<button class="btn btn-success btn-ambil" type="button" title="Ambil"><i class="fa fa-hand-lizard-o"></i></button>';
-                return '<div class="btn-group btn-group-sm">'. $detail . $ambil . '</div>';
+                return '<div class="btn-group btn-group-sm">' . $detail . $ambil . '</div>';
             })
-            ->rawColumns(['supplier','tanggal', 'nota','action'])
+            ->rawColumns(['supplier', 'tanggal', 'nota', 'action'])
             ->make(true);
     }
 
@@ -921,11 +922,11 @@ class ProduksiController extends Controller
     public function cariProdKode(Request $request)
     {
         $cari = $request->term;
-        $prodCode = d_productionordercode::where('poc_productioncode', 'like', '%'.$cari.'%')
-        ->with('getItem')
-        ->groupBy('poc_productioncode')
-        ->orderBy('poc_productioncode', 'desc')
-        ->get();
+        $prodCode = d_productionordercode::where('poc_productioncode', 'like', '%' . $cari . '%')
+            ->with('getItem')
+            ->groupBy('poc_productioncode')
+            ->orderBy('poc_productioncode', 'desc')
+            ->get();
 
         if (count($prodCode) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
@@ -947,13 +948,13 @@ class ProduksiController extends Controller
     {
         $cari = $request->term;
         $nama = ProductionOrder::rightJoin('d_itemreceipt', 'ir_notapo', '=', 'po_nota')
-        ->where(function ($q) use ($cari){
-            $q->orWhere('ir_notapo', 'like', '%'.$cari.'%');
-        })
-        ->join('m_supplier', 's_id', '=', 'po_supplier')
-        ->orderBy('po_date', 'desc')
-        ->orderBy('po_nota', 'desc')
-        ->get();
+            ->where(function ($q) use ($cari) {
+                $q->orWhere('ir_notapo', 'like', '%' . $cari . '%');
+            })
+            ->join('m_supplier', 's_id', '=', 'po_supplier')
+            ->orderBy('po_date', 'desc')
+            ->orderBy('po_nota', 'desc')
+            ->get();
         if (count($nama) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
@@ -980,82 +981,81 @@ class ProduksiController extends Controller
         // if user search using nota of production-order
         if ($searchBy == 'nota') {
             $data = ProductionOrderDT::join('m_item', 'i_id', '=', 'pod_item')
-            ->join('m_unit', 'u_id', '=', 'pod_unit')
-            ->where('pod_productionorder', '=', Crypt::decrypt($id))
-            ->select('pod_productionorder', 'pod_item', 'i_name', 'pod_qty', 'u_name', 'pod_value', 'pod_totalnet');
+                ->join('m_unit', 'u_id', '=', 'pod_unit')
+                ->where('pod_productionorder', '=', Crypt::decrypt($id))
+                ->select('pod_productionorder', 'pod_item', 'i_name', 'pod_qty', 'u_name', 'pod_value', 'pod_totalnet');
 
             return DataTables::of($data)
-            ->addColumn('barang', function($data){
-                return $data->i_name;
-            })
-            ->addColumn('qty', function($data){
-                return $data->pod_qty . ' - ' . $data->u_name;
-            })
-            ->addColumn('harga', function($data){
-                return number_format($data->pod_value, 2, '.', ',');
-            })
-            ->addColumn('total', function($data){
-                return number_format($data->pod_totalnet, 2, '.', ',');
-            })
-            ->addColumn('action', function($data){
-                $qty = $data->pod_qty . ' - ' . $data->u_name;
-                $pilih = '<button class="btn btn-sm btn-primary" title="Pilih" onclick="selectItem(\''.
-                    'nota'.'\', \''.
-                    Crypt::encrypt($data->pod_productionorder).'\', \''.
-                    Crypt::encrypt($data->pod_item).'\', \''.
-                    $data->i_name.'\', \''.
-                    $qty.'\', \''.
-                    $data->pod_value.'\', \''.
-                    $data->pod_totalnet.
-                    '\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
-                return '<div class="btn-group btn-group-sm">'. $pilih . '</div>';
-            })
-            ->rawColumns(['barang','qty', 'harga', 'total', 'action'])
-            ->make(true);
-        }
-        // if user search using production-code
+                ->addColumn('barang', function ($data) {
+                    return $data->i_name;
+                })
+                ->addColumn('qty', function ($data) {
+                    return $data->pod_qty . ' - ' . $data->u_name;
+                })
+                ->addColumn('harga', function ($data) {
+                    return number_format($data->pod_value, 2, '.', ',');
+                })
+                ->addColumn('total', function ($data) {
+                    return number_format($data->pod_totalnet, 2, '.', ',');
+                })
+                ->addColumn('action', function ($data) {
+                    $qty = $data->pod_qty . ' - ' . $data->u_name;
+                    $pilih = '<button class="btn btn-sm btn-primary" title="Pilih" onclick="selectItem(\'' .
+                        'nota' . '\', \'' .
+                        Crypt::encrypt($data->pod_productionorder) . '\', \'' .
+                        Crypt::encrypt($data->pod_item) . '\', \'' .
+                        $data->i_name . '\', \'' .
+                        $qty . '\', \'' .
+                        $data->pod_value . '\', \'' .
+                        $data->pod_totalnet .
+                        '\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
+                    return '<div class="btn-group btn-group-sm">' . $pilih . '</div>';
+                })
+                ->rawColumns(['barang', 'qty', 'harga', 'total', 'action'])
+                ->make(true);
+        } // if user search using production-code
         elseif ($searchBy == 'kodeproduksi') {
             $prodCd = d_productionordercode::where('poc_productionorder', Crypt::decrypt($id))
-            ->where('poc_productioncode', $prodCode)
-            ->with('getItem')
-            ->with('getUnit')
-            ->groupBy('poc_productioncode')
-            ->selectRaw('*, SUM(poc_qty) as qty')
-            ->get();
+                ->where('poc_productioncode', $prodCode)
+                ->with('getItem')
+                ->with('getUnit')
+                ->groupBy('poc_productioncode')
+                ->selectRaw('*, SUM(poc_qty) as qty')
+                ->get();
 
             $prodOrder = ProductionOrderDT::where('pod_productionorder', Crypt::decrypt($id))
-            ->where('pod_item', $prodCd[0]->poc_item)
-            ->first();
+                ->where('pod_item', $prodCd[0]->poc_item)
+                ->first();
 
             return DataTables::of($prodCd)
-            ->addColumn('barang', function($prodCd){
-                return $prodCd->getItem->i_name;
-            })
-            ->addColumn('qty', function($prodCd){
-                return $prodCd->qty . ' - ' . $prodCd->getUnit->u_name;
-            })
-            ->addColumn('harga', function($prodCd) use ($prodOrder){
-                return number_format($prodOrder->pod_value, 2, '.', ',');
-            })
-            ->addColumn('total', function($prodCd) use ($prodOrder){
-                $total = $prodCd->qty * $prodOrder->pod_value;
-                return number_format($total, 2, '.', ',');
-            })
-            ->addColumn('action', function($prodCd) use ($prodOrder){
-                $qty = $prodCd->qty . ' - ' . $prodCd->getUnit->u_name;
-                $pilih = '<button class="btn btn-sm btn-primary" title="Pilih" onclick="selectItem(\''.
-                    'kodeproduksi'.'\', \''.
-                    Crypt::encrypt($prodCd->poc_productionorder).'\', \''.
-                    Crypt::encrypt($prodCd->poc_item).'\', \''.
-                    $prodCd->getItem->i_name.'\', \''.
-                    $qty.'\', \''.
-                    $prodOrder->pod_value.'\', \''.
-                    $prodCd->qty * $prodOrder->pod_value.
-                    '\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
-                return '<div class="btn-group btn-group-sm">'. $pilih . '</div>';
-            })
-            ->rawColumns(['barang','qty', 'harga', 'total', 'action'])
-            ->make(true);
+                ->addColumn('barang', function ($prodCd) {
+                    return $prodCd->getItem->i_name;
+                })
+                ->addColumn('qty', function ($prodCd) {
+                    return $prodCd->qty . ' - ' . $prodCd->getUnit->u_name;
+                })
+                ->addColumn('harga', function ($prodCd) use ($prodOrder) {
+                    return number_format($prodOrder->pod_value, 2, '.', ',');
+                })
+                ->addColumn('total', function ($prodCd) use ($prodOrder) {
+                    $total = $prodCd->qty * $prodOrder->pod_value;
+                    return number_format($total, 2, '.', ',');
+                })
+                ->addColumn('action', function ($prodCd) use ($prodOrder) {
+                    $qty = $prodCd->qty . ' - ' . $prodCd->getUnit->u_name;
+                    $pilih = '<button class="btn btn-sm btn-primary" title="Pilih" onclick="selectItem(\'' .
+                        'kodeproduksi' . '\', \'' .
+                        Crypt::encrypt($prodCd->poc_productionorder) . '\', \'' .
+                        Crypt::encrypt($prodCd->poc_item) . '\', \'' .
+                        $prodCd->getItem->i_name . '\', \'' .
+                        $qty . '\', \'' .
+                        $prodOrder->pod_value . '\', \'' .
+                        $prodCd->qty * $prodOrder->pod_value .
+                        '\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
+                    return '<div class="btn-group btn-group-sm">' . $pilih . '</div>';
+                })
+                ->rawColumns(['barang', 'qty', 'harga', 'total', 'action'])
+                ->make(true);
         }
     }
 
@@ -1063,15 +1063,15 @@ class ProduksiController extends Controller
     public function setSatuan($id = null)
     {
         $data = DB::table('m_item')
-            ->select('m_item.*', 'a.u_id as id1', 'a.u_name as unit1','b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
+            ->select('m_item.*', 'a.u_id as id1', 'a.u_name as unit1', 'b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
             ->where('m_item.i_id', '=', Crypt::decrypt($id))
-            ->join('m_unit as a', function ($x){
+            ->join('m_unit as a', function ($x) {
                 $x->on('m_item.i_unit1', '=', 'a.u_id');
             })
-            ->leftjoin('m_unit as b', function ($y){
+            ->leftjoin('m_unit as b', function ($y) {
                 $y->on('m_item.i_unit2', '=', 'b.u_id');
             })
-            ->leftjoin('m_unit as c', function ($z){
+            ->leftjoin('m_unit as c', function ($z) {
                 $z->on('m_item.i_unit3', '=', 'c.u_id');
             })
             ->first();
@@ -1080,33 +1080,32 @@ class ProduksiController extends Controller
 
     public function addReturn(Request $request)
     {
-        try{
+        try {
             $poid = Crypt::decrypt($request->idPO);
             $idItem = Crypt::decrypt($request->idItem);
-        }
-        catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return Response::json([
                 'status' => "Failed",
-                'message'=> $e->getMessage()
+                'message' => $e->getMessage()
             ]);
         }
 
-        $detailid = (DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')) ? DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')+1 : 1;
+        $detailid = (DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')) ? DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid') + 1 : 1;
         // return-po/001/23/03/2019
         $nota = CodeGenerator::codeWithSeparator('d_returnproductionorder', 'rpo_nota', 15, 10, 3, 'RETURN-PO', '/');
 
         $data_check = DB::table('d_productionorder')
-        ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
-        'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-        'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-        'm_item.i_unit3 as unit3', 'd_productionorderdt.pod_unit as unit', 'd_productionorderdt.pod_value as value')
-        ->join('d_productionorderdt', function ($x) use ($idItem){
-            $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
-            $x->where('d_productionorderdt.pod_item', '=', $idItem);
-        })
-        ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
-        ->where('d_productionorder.po_id', '=', $poid)
-        ->first();
+            ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
+                'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                'm_item.i_unit3 as unit3', 'd_productionorderdt.pod_unit as unit', 'd_productionorderdt.pod_value as value')
+            ->join('d_productionorderdt', function ($x) use ($idItem) {
+                $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
+                $x->where('d_productionorderdt.pod_item', '=', $idItem);
+            })
+            ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
+            ->where('d_productionorder.po_id', '=', $poid)
+            ->first();
 
         $qty_compare = 0;
         if ($request->satuan_return == $data_check->unit1) {
@@ -1118,12 +1117,11 @@ class ProduksiController extends Controller
         }
 
         // if searchMethod is using 'kodeproduksi'
-        if ($request->searchMethod == 'kodeproduksi')
-        {
+        if ($request->searchMethod == 'kodeproduksi') {
             // get production-code by PO-id and production-code-number
             $data = d_productionordercode::where('poc_productionorder', $poid)
-            ->where('poc_productioncode', $request->prodCode)
-            ->get();
+                ->where('poc_productioncode', $request->prodCode)
+                ->get();
 
             // get qty-item from production-code
             $qtydata_compare = 0;
@@ -1144,18 +1142,16 @@ class ProduksiController extends Controller
                 DB::rollBack();
                 return Response::json([
                     'status' => "Failed",
-                    'message'=> "Jumlah permintaan pengembalian melebihi jumlah yang tersedia !"
+                    'message' => "Jumlah permintaan pengembalian melebihi jumlah yang tersedia !"
                 ]);
             }
 
-        }
-        // if searchMethod is using 'nota'
-        elseif ($request->searchMethod == 'nota')
-        {
+        } // if searchMethod is using 'nota'
+        elseif ($request->searchMethod == 'nota') {
             // get production-order-dt by PO-id and item-id
             $data = ProductionOrderDT::where('pod_productionorder', $poid)
-            ->where('pod_item', $idItem)
-            ->get();
+                ->where('pod_item', $idItem)
+                ->get();
 
             // get qty-item from production-order-dt
             $qtydata_compare = 0;
@@ -1176,22 +1172,22 @@ class ProduksiController extends Controller
                 DB::rollBack();
                 return Response::json([
                     'status' => "Failed",
-                    'message'=> "Jumlah permintaan pengembalian melebihi jumlah yang tersedia !"
+                    'message' => "Jumlah permintaan pengembalian melebihi jumlah yang tersedia !"
                 ]);
             }
         }
 
         DB::beginTransaction();
-        try{
+        try {
             $values = [
                 'rpo_productionorder' => $poid,
-                'rpo_detailid'        => $detailid,
-                'rpo_date'            => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
-                'rpo_nota'            => $nota,
-                'rpo_item'            => $idItem,
-                'rpo_qty'             => $qty_compare,
-                'rpo_action'          => $request->methode_return,
-                'rpo_note'            => $request->note_return
+                'rpo_detailid' => $detailid,
+                'rpo_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                'rpo_nota' => $nota,
+                'rpo_item' => $idItem,
+                'rpo_qty' => $qty_compare,
+                'rpo_action' => $request->methode_return,
+                'rpo_note' => $request->note_return
             ];
 
             $comp = Auth::user()->u_company;
@@ -1224,17 +1220,15 @@ class ProduksiController extends Controller
 
             return Response::json([
                 'status' => "Success",
-                'message'=> "Data berhasil disimpan",
-                'id'     => Crypt::encrypt($poid),
+                'message' => "Data berhasil disimpan",
+                'id' => Crypt::encrypt($poid),
                 'detail' => Crypt::encrypt($detailid)
             ]);
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollBack();
             return Response::json([
                 'status' => "Failed",
-                'message'=> $e->getMessage()
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -1242,14 +1236,14 @@ class ProduksiController extends Controller
     public function editReturn(Request $request)
     {
         $comp = Auth::user()->u_company;
-        try{
-            $rpoid      = Crypt::decrypt($request->idRPO);
+        try {
+            $rpoid = Crypt::decrypt($request->idRPO);
             $rpo_detail = Crypt::decrypt($request->idDetail);
-            $item       = Crypt::decrypt($request->idItem);
-        }catch (DecryptException $e){
+            $item = Crypt::decrypt($request->idItem);
+        } catch (DecryptException $e) {
             return Response::json([
                 'status' => "Failed",
-                'message'=> $e
+                'message' => $e
             ]);
         }
 
@@ -1269,24 +1263,24 @@ class ProduksiController extends Controller
         }
 
         DB::beginTransaction();
-        try{
+        try {
             $stock = Stock::where('s_comp', $comp)
-                    ->where('s_position', $comp)
-                    ->where('s_item', $item)
-                    ->where('s_status', 'ON DESTINATION')
-                    ->where('s_condition', 'FINE');
+                ->where('s_position', $comp)
+                ->where('s_item', $item)
+                ->where('s_status', 'ON DESTINATION')
+                ->where('s_condition', 'FINE');
 
             $stock_mutation = StockMutation::where('sm_stock', $stock->first()->s_id);
 
             $stock_awal = $stock->first()->s_qty + $request->qty_current;
 
-            $sm_qtyawal     = $stock_mutation->first()->sm_qty + $request->qty_current;
+            $sm_qtyawal = $stock_mutation->first()->sm_qty + $request->qty_current;
             $sm_residueawal = $sm_qtyawal - $stock_mutation->first()->sm_use;
-            $sm_qty         = $sm_qtyawal - $qty_compare;
-            $sm_residue     = $sm_qty - $stock_mutation->first()->sm_use;
+            $sm_qty = $sm_qtyawal - $qty_compare;
+            $sm_residue = $sm_qty - $stock_mutation->first()->sm_use;
 
             $val_mutasi = [
-                'sm_qty'     => $sm_qty,
+                'sm_qty' => $sm_qty,
                 'sm_residue' => $sm_residue
             ];
 
@@ -1295,9 +1289,9 @@ class ProduksiController extends Controller
             ];
 
             $val_return = [
-                'rpo_qty'    => $qty_compare,
+                'rpo_qty' => $qty_compare,
                 'rpo_action' => $request->methode_return_edit,
-                'rpo_note'   => $request->note_return_edit
+                'rpo_note' => $request->note_return_edit
             ];
 
             $stock_mutation->update($val_mutasi);
@@ -1310,15 +1304,15 @@ class ProduksiController extends Controller
             DB::commit();
             return Response::json([
                 'status' => "Success",
-                'message'=> "Data berhasil diperbarui",
-                'id'     => Crypt::encrypt($rpoid),
+                'message' => "Data berhasil diperbarui",
+                'id' => Crypt::encrypt($rpoid),
                 'detail' => Crypt::encrypt($rpo_detail)
             ]);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
             return Response::json([
                 'status' => "Failed",
-                'message'=> $e
+                'message' => $e
             ]);
         }
     }
@@ -1326,20 +1320,20 @@ class ProduksiController extends Controller
     function deleteReturn($id = null, $detail = null, $qty = null)
     {
         $comp = Auth::user()->u_company;
-        try{
+        try {
             $id = Crypt::decrypt($id);
             $detail = Crypt::decrypt($detail);
-        }catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return Response::json([
                 'status' => "Failed",
-                'message'=> $e
+                'message' => $e
             ]);
         }
 
         if ($qty == null || $qty == "") {
             return Response::json([
                 'status' => "Failed",
-                'message'=> "Kuantitas barang tidak diketahui"
+                'message' => "Kuantitas barang tidak diketahui"
             ]);
         }
 
@@ -1350,7 +1344,7 @@ class ProduksiController extends Controller
         if ($return_po->count() == 0) {
             return Response::json([
                 'status' => "Failed",
-                'message'=> "Data return produksi tidak ditemukan"
+                'message' => "Data return produksi tidak ditemukan"
             ]);
         } else {
             $stock = Stock::where('s_comp', $comp)
@@ -1361,12 +1355,12 @@ class ProduksiController extends Controller
 
             $stock_mutation = StockMutation::where('sm_stock', $stock->first()->s_id);
 
-            $s_qty      = $stock->first()->s_qty + $qty;
-            $sm_qty     = $stock_mutation->first()->sm_qty + $qty;
+            $s_qty = $stock->first()->s_qty + $qty;
+            $sm_qty = $stock_mutation->first()->sm_qty + $qty;
             $sm_residue = $sm_qty - $stock_mutation->first()->sm_use;
 
             $val_mutasi = [
-                'sm_qty'     => $sm_qty,
+                'sm_qty' => $sm_qty,
                 'sm_residue' => $sm_residue
             ];
 
@@ -1375,20 +1369,20 @@ class ProduksiController extends Controller
             ];
 
             DB::beginTransaction();
-            try{
+            try {
                 $stock_mutation->update($val_mutasi);
                 $stock->update($val_stock);
                 $return_po->delete();
                 DB::commit();
                 return Response::json([
                     'status' => "Success",
-                    'message'=> "Data berhasil dihapus"
+                    'message' => "Data berhasil dihapus"
                 ]);
-            }catch (Exception $e){
+            } catch (Exception $e) {
                 DB::rollBack();
                 return Response::json([
                     'status' => "Failed",
-                    'message'=> $e
+                    'message' => $e
                 ]);
             }
         }
@@ -1396,10 +1390,10 @@ class ProduksiController extends Controller
 
     public function notaReturn($id = null, $detail = null)
     {
-        try{
-            $id     = Crypt::decrypt($id);
+        try {
+            $id = Crypt::decrypt($id);
             $detail = Crypt::decrypt($detail);
-        }catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return abort(404);
         }
 
@@ -1423,20 +1417,21 @@ class ProduksiController extends Controller
             }
 
             $val = [
-                'tanggal'       => Carbon::parse($data->first()->rpo_date)->format('d-m-Y'),
-                'nota'          => $data->first()->rpo_nota,
-                'nota_po'       => $data->first()->po_nota,
-                'supplier'      => $data->first()->s_company,
-                'barang'        => $data->first()->i_name,
-                'qty'           => $data->first()->rpo_qty . ' ' . $data->first()->u_name,
-                'metode'        => $metode,
-                'keterangan'    => $data->first()->rpo_note
+                'tanggal' => Carbon::parse($data->first()->rpo_date)->format('d-m-Y'),
+                'nota' => $data->first()->rpo_nota,
+                'nota_po' => $data->first()->po_nota,
+                'supplier' => $data->first()->s_company,
+                'barang' => $data->first()->i_name,
+                'qty' => $data->first()->rpo_qty . ' ' . $data->first()->u_name,
+                'metode' => $metode,
+                'keterangan' => $data->first()->rpo_note
             ];
         }
         return view('produksi.returnproduksi.nota')->with(compact('val'));
     }
 
-    public function nota(){
+    public function nota()
+    {
         return view('produksi/orderproduksi/nota');
     }
 }
