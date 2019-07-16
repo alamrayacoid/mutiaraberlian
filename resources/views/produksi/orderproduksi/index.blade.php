@@ -37,13 +37,13 @@
 	                            <table class="table table-striped table-hover" cellspacing="0" id="table_order">
 	                                <thead class="bg-primary">
 	                                    <tr>
-	                                    	<th>No</th>
+	                                    	<th width="5%">No</th>
 	                                		<th>Nota Order</th>
 	                                		<th>Produsen</th>
-	                                		<th width="12%">Nilai Order</th>
+	                                		<th width="15%">Nilai Order</th>
 	                                		<th width="15%">Total Bayar</th>
                                             <th>Status</th>
-	                                		<th width="17%">Aksi</th>
+	                                		<th width="15%">Aksi</th>
 	                                	</tr>
 	                                </thead>
 	                                <tbody id="bodyTableIndex">
