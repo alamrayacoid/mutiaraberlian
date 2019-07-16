@@ -527,7 +527,6 @@
             axios.post('{{ route('return.add') }}', $("#formCreateReturn").serialize())
             .then(function (resp) {
                 loadingHide();
-                console.log(resp);
                 if (resp.data.status == "Failed") {
                     messageWarning("Gagal", resp.data.message);
                 }

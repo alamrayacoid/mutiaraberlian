@@ -595,6 +595,9 @@ class Mutasi extends Controller
                 }
 
                 // insert new stock-mutation out
+                if ($mutcat == 15){
+                    $sellprice = $stock[$j]->sm_hpp;
+                }
                 DB::table('d_stock_mutation')
                     ->insert([
                         'sm_stock' => $stock[$j]->sm_stock,

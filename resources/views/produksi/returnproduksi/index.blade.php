@@ -79,26 +79,28 @@
 <script type="text/javascript">
     var table;
 	$(document).ready(function(){
-        table = $('#table_return').DataTable({
-            responsive: true,
-            autoWidth: false,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('return.list') }}",
-                type: "post",
-                data: {
-                    '_token': '{{ @csrf_token() }}'
-                }
-            },
-            columns: [
-                {data: 'tanggal'},
-                {data: 'nota'},
-                {data: 'metode'},
-                {data: 'barang'},
-                {data: 'qty'},
-                {data: 'action'}
-            ],
-        });
+        setTimeout(function () {
+            table = $('#table_return').DataTable({
+                responsive: true,
+                autoWidth: false,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('return.list') }}",
+                    type: "post",
+                    data: {
+                        '_token': '{{ @csrf_token() }}'
+                    }
+                },
+                columns: [
+                    {data: 'tanggal'},
+                    {data: 'nota'},
+                    {data: 'metode'},
+                    {data: 'barang'},
+                    {data: 'qty'},
+                    {data: 'action'}
+                ],
+            });
+        }, 500);
 
         $("#formEditReturn").on("submit", function (evt) {
             evt.preventDefault();

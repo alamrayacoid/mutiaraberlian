@@ -222,6 +222,13 @@ class ProduksiController extends Controller
                 // dd($request);
                 $idpo = (DB::table('d_productionorderdt')->max('pod_productionorder')) ? (DB::table('d_productionorderdt')->max('pod_productionorder')) + 1 : 1;
                 $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
+                $cekNota = DB::table('d_productionorder')
+                    ->where('po_nota', '=', $nota)
+                    ->get();
+
+                if (count($cekNota) > 0){
+                    $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
+                }
                 $productionorderauth[] = [
                     'poa_id' => $idpo,
                     'poa_nota' => $nota,
@@ -993,10 +1000,10 @@ class ProduksiController extends Controller
                     return $data->pod_qty . ' - ' . $data->u_name;
                 })
                 ->addColumn('harga', function ($data) {
-                    return number_format($data->pod_value, 2, '.', ',');
+                    return number_format($data->pod_value, 0, ',', '.');
                 })
                 ->addColumn('total', function ($data) {
-                    return number_format($data->pod_totalnet, 2, '.', ',');
+                    return number_format($data->pod_totalnet, 0, ',', '.');
                 })
                 ->addColumn('action', function ($data) {
                     $qty = $data->pod_qty . ' - ' . $data->u_name;
@@ -1008,7 +1015,7 @@ class ProduksiController extends Controller
                         $qty . '\', \'' .
                         $data->pod_value . '\', \'' .
                         $data->pod_totalnet .
-                        '\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
+                        '\')">Lakukan Return</button>';
                     return '<div class="btn-group btn-group-sm">' . $pilih . '</div>';
                 })
                 ->rawColumns(['barang', 'qty', 'harga', 'total', 'action'])
@@ -1035,11 +1042,11 @@ class ProduksiController extends Controller
                     return $prodCd->qty . ' - ' . $prodCd->getUnit->u_name;
                 })
                 ->addColumn('harga', function ($prodCd) use ($prodOrder) {
-                    return number_format($prodOrder->pod_value, 2, '.', ',');
+                    return number_format($prodOrder->pod_value, 0, ',', '.');
                 })
                 ->addColumn('total', function ($prodCd) use ($prodOrder) {
                     $total = $prodCd->qty * $prodOrder->pod_value;
-                    return number_format($total, 2, '.', ',');
+                    return number_format($total, 0, ',', '.');
                 })
                 ->addColumn('action', function ($prodCd) use ($prodOrder) {
                     $qty = $prodCd->qty . ' - ' . $prodCd->getUnit->u_name;
@@ -1051,7 +1058,7 @@ class ProduksiController extends Controller
                         $qty . '\', \'' .
                         $prodOrder->pod_value . '\', \'' .
                         $prodCd->qty * $prodOrder->pod_value .
-                        '\')"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>';
+                        '\')">Lakukan Return</button>';
                     return '<div class="btn-group btn-group-sm">' . $pilih . '</div>';
                 })
                 ->rawColumns(['barang', 'qty', 'harga', 'total', 'action'])
@@ -1108,8 +1115,10 @@ class ProduksiController extends Controller
             ->first();
 
         $qty_compare = 0;
+        $unit = 0;
         if ($request->satuan_return == $data_check->unit1) {
             $qty_compare = (int)$request->qty_return;
+            $unit = $data_check->unit1;
         } else if ($request->satuan_return == $data_check->unit2) {
             $qty_compare = $request->qty_return * $data_check->compare2;
         } else if ($request->satuan_return == $data_check->unit3) {
@@ -1190,7 +1199,19 @@ class ProduksiController extends Controller
                 'rpo_note' => $request->note_return
             ];
 
-            $comp = Auth::user()->u_company;
+            $valCode = [
+                'rpod_productionorder' => $poid,
+                'rpod_returnproductionorder' => $detailid,
+                'rpod_detailid' => 1,
+                'rpod_productioncode' => $request->prodCode,
+                'rpod_qty' => $qty_compare,
+                'rpod_unit' => $unit
+            ];
+            $infocomp = DB::table('m_company')
+                ->where('c_type', '=', 'PUSAT')
+                ->first();
+
+            $comp = $infocomp->c_id;
             // // update stock
             // $get_stock = Stock::where('s_comp', $comp)
             // ->where('s_position', $comp)
@@ -1202,7 +1223,7 @@ class ProduksiController extends Controller
                 $comp, // item owner
                 $comp, // destination
                 $idItem, // item id
-                $request->qty_return, // qty
+                $qty_compare, // qty
                 $nota, // nota
                 null, // sellprice
                 null, // list of productioncode
@@ -1213,11 +1234,99 @@ class ProduksiController extends Controller
                 return $mutasi;
             }
 
+            // mengurangi qty kode sesuai jumlah return
+            $kode = $request->prodCode;
+            $info_stock = DB::table('d_stock')
+                ->leftJoin('d_stockdt', function ($q) use ($kode) {
+                    $q->on('sd_stock', '=', 's_id');
+                    $q->where('sd_code', '=', $kode);
+                })
+                ->where('s_comp', '=', $comp)
+                ->where('s_position', '=', $comp)
+                ->where('s_item', '=', $idItem)
+                ->where('s_status', '=', 'ON DESTINATION')
+                ->first();
+
+            //update d_stockdt
+            $qtystockdt = $qty_compare;
+            DB::table('d_stockdt')
+                ->where('sd_stock', '=', $info_stock->s_id)
+                ->where('sd_code', '=', $kode)
+                ->update([
+                    'sd_qty' => $info_stock->sd_qty - $qtystockdt
+                ]);
+
+            //create stockmutationdt
+            $info_mutation = DB::table('d_stock_mutation')
+                ->where('sm_nota', '=', $nota)
+                ->get();
+
+            for ($i = 0; $i < count($info_mutation); $i++){
+                $smd_detailid = DB::table('d_stockmutationdt')
+                    ->where('smd_stock', '=', $info_mutation[$i]->sm_stock)
+                    ->where('smd_stockmutation', '=', $info_mutation[$i]->sm_detailid)
+                    ->max('smd_detailid');
+
+                ++$smd_detailid;
+
+                DB::table('d_stockmutationdt')
+                    ->insert([
+                        'smd_stock' => $info_mutation[$i]->sm_stock,
+                        'smd_stockmutation' => $info_mutation[$i]->sm_detailid,
+                        'smd_detailid' => $smd_detailid,
+                        'smd_productioncode' => $kode,
+                        'smd_qty' => $info_mutation[$i]->sm_qty,
+                        'smd_unit' => $unit
+                    ]);
+            }
             // insert return
             DB::table('d_returnproductionorder')->insert($values);
+            DB::table('d_returnproductionorderdt')->insert($valCode);
+            $dataPO = DB::table('d_productionorder')
+                ->join('d_productionorderdt', 'pod_productionorder', '=', 'po_id')
+                ->where('po_nota', '=', $request->notaPO)
+                ->where('pod_item', '=', $idItem)
+                ->get();
+            //metode return
+            if ($request->methode_return == "GB"){
+                //Ganti Barang
+                //Pembuatan Nota Pembelian
+                $po_id = DB::table('d_productionorderdt')
+                    ->max('pod_productionorder');
+                ++$po_id;
+
+                $po_nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'Return', '-');
+                $totalnet = 0;
+
+                DB::table('d_productionorder')
+                    ->insert([
+                        'po_id' => $po_id,
+                        'po_nota' => $po_nota,
+                        'po_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                        'po_supplier' => $dataPO[0]->po_supplier,
+                        'po_totalnet' => (int)$dataPO[0]->pod_value * $qty_compare,
+                        'po_status' => 'BELUM'
+                    ]);
+
+                DB::table('d_productionorderdt')
+                    ->insert([
+                        'pod_productionorder' => $po_id,
+                        'pod_detailid' => 1,
+                        'pod_item' => $idItem,
+                        'pod_qty' => $qty_compare,
+                        'pod_unit' => $unit,
+                        'pod_value' => (int)$dataPO[0]->pod_value,
+                        'pod_received' => 'N',
+                        'pod_totalnet' => (int)$dataPO[0]->pod_value * $qty_compare
+                    ]);
+
+            } elseif ($request->methode_return == "PT"){
+                //Potong tagihan
+            } elseif ($request->methode_return == "RD"){
+                //Return Dana
+            }
             // $get_stockmutation->update($val_stockmutation);
             DB::commit();
-
             return Response::json([
                 'status' => "Success",
                 'message' => "Data berhasil disimpan",
@@ -1402,6 +1511,10 @@ class ProduksiController extends Controller
             ->join('m_unit', 'i_unit1', '=', 'u_id')
             ->join('d_productionorder', 'po_id', '=', 'rpo_productionorder')
             ->join('m_supplier', 's_id', '=', 'po_supplier')
+            ->join('d_returnproductionorderdt', function ($q){
+                $q->on('rpod_productionorder', '=', 'po_id');
+                $q->on('rpod_returnproductionorder', '=', 'rpo_detailid');
+            })
             ->where('rpo_productionorder', $id)
             ->where('rpo_detailid', $detail);
 
@@ -1424,7 +1537,9 @@ class ProduksiController extends Controller
                 'barang' => $data->first()->i_name,
                 'qty' => $data->first()->rpo_qty . ' ' . $data->first()->u_name,
                 'metode' => $metode,
-                'keterangan' => $data->first()->rpo_note
+                'keterangan' => $data->first()->rpo_note,
+                'kode' => $data->first()->rpod_productioncode,
+                'qtykode' => $data->first()->rpod_qty,
             ];
         }
         return view('produksi.returnproduksi.nota')->with(compact('val'));

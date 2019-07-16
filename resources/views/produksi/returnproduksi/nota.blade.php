@@ -66,6 +66,21 @@
             </tr>
         </tbody>
     </table>
+
+    <table width="100%" class="mt-3" cellpadding="5px">
+        <thead>
+        <tr>
+            <th width="70%">Kode</th>
+            <th width="30%">Qty</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{ $val['kode'] }}</td>
+            <td>{{ $val['qtykode'] }}</td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>
