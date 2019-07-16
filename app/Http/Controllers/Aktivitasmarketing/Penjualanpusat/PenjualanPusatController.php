@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Aktivitasmarketing\Penjualanpusat;
 
 use App\Http\Controllers\AksesUser;
-use App\Http\Controllers\MarketingController;
+use App\Http\Controllers\Aktivitasmarketing\Marketingarea\MarketingAreaController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
@@ -708,7 +708,7 @@ class PenjualanPusatController extends Controller
                         $harga = $price->pcd_price;
                     }
                 } else {
-                    $marketing = new MarketingController();
+                    $marketing = new MarketingAreaController();
                     $z = $marketing->inRange($qty, $get_price);
                     if ($z !== null) {
                         $harga = $get_price[$z]->pcd_price;

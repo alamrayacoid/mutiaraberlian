@@ -297,7 +297,7 @@
                         }
                     } else {
                         loadingHide();
-                        messageFailed("Gagal", "Terjadi kesalahan sistem");
+                        messageFailed("Gagal", response.data.message);
                     }
                 })
                 .catch(function (error) {

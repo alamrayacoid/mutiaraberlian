@@ -527,7 +527,7 @@
     // Simpan Order Produk --------------------------------------------
     $('.btn-submit').on('click', function(){
         $.ajax({
-            url: "{{route('orderProduk.store')}}",
+            url: "{{ route('orderProduk.store') }}",
             type: "get",
             data: $('#formOrder').serialize(),
             beforeSend: function () {
@@ -537,7 +537,9 @@
                 if (response.status == 'sukses') {
                     loadingHide();
                     messageSuccess('Success', 'Data berhasil ditambahkan!');
-                    window.location.href = "{{route('marketingarea.index')}}";
+                    // window.location.href = "{{route('marketingarea.index')}}";
+                    $('.btn-submit').off();
+                    window.location.reload();
                 } else {
                     loadingHide();
                     messageFailed('Gagal', response.message);

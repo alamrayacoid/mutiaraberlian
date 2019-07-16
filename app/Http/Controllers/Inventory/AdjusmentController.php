@@ -136,6 +136,10 @@ class AdjusmentController extends Controller
                 ]);
             }
 
+            DB::table('d_opname')->where('o_nota', '=', $request->data['o_nota'])->update([
+                'o_status' => 'Y'
+            ]);
+
             // Mutasi::insertStockMutationDt('')
 
             otorisasi::otorisasiup('d_adjusmentauth', 'Adjusment Stock', '#');

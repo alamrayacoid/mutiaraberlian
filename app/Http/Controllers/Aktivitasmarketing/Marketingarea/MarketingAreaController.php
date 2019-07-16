@@ -11,6 +11,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 
 use Auth;
 use App\d_canvassing;
+use App\d_productdelivery;
 use App\d_productorder;
 use App\d_productorderdt;
 use App\d_productordercode;
@@ -18,6 +19,7 @@ use App\d_sales;
 use App\d_salescomp;
 use App\d_salescompdt;
 use App\d_salescompcode;
+use App\d_salescomppayment;
 use App\d_stock;
 use App\d_stockdistribution;
 use App\d_stockdistributiondt;
@@ -26,6 +28,7 @@ use App\d_username;
 use App\m_agen;
 use App\m_company;
 use App\m_item;
+use App\m_paymentmethod;
 use App\m_wil_provinsi;
 use Carbon\Carbon;
 use CodeGenerator;
@@ -33,6 +36,7 @@ use Currency;
 use DataTables;
 use DB;
 use Mutasi;
+use Mockery\Exception;
 use Response;
 use Validator;
 
@@ -92,7 +96,8 @@ class MarketingAreaController extends Controller
     {
         $order = [];
         $order = d_stockdistribution::with('getDistributionDt')
-        ->where('sd_status', 'N')
+        // ->where('sd_status', 'N')
+        ->where('sd_status', '!=', 'Y')
         ->whereHas('getOrigin', function ($q) {
             $q->where('c_type', 'PUSAT');
         });
@@ -145,16 +150,31 @@ class MarketingAreaController extends Controller
             //     return Currency::addRupiah($order->totalprice);
             // })
             ->addColumn('action', function ($order) {
-                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                            <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-folder"></i>
-                            </button>
-                            <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-print"></i>
-                            </button>
-                            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-pencil"></i>
-                            </button>
-                            <button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-trash"></i>
-                            </button>
-                        </div>';
+                $returData = '';
+                if ($order->sd_status == 'P') {
+                    $returData = '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                        <button class="btn btn-success hint--top-left hint--info" aria-label="Terima Barang Pesanan" onclick="showDetailAc(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-get-pocket"></i>
+                        </button>';
+                }
+                elseif ($order->sd_status == 'N') {
+                    $returData = '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                        <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Order" onclick="editOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-pencil"></i>
+                        </button>';
+                }
+
+                $returData = $returData . '<button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-folder"></i>
+                    </button>
+                    <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-print"></i>
+                    </button>';
+
+                if ($order->sd_status == 'N') {
+                    $returData = $returData . '<button class="btn btn-danger hint--top-left hint--error" aria-label="Hapus Order" onclick="deleteOrder(\'' . Crypt::encrypt($order->sd_id) . '\')"><i class="fa fa-fw fa-trash"></i></button>';
+                }
+
+                $returData = $returData . '</div>';
+
+
+                return $returData;
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -344,6 +364,7 @@ class MarketingAreaController extends Controller
         $data = $request->all();
         $now = Carbon::now('Asia/Jakarta');
         $time = date('Y-m-d', strtotime($now));
+        // dd($data);
         DB::beginTransaction();
         try {
             $detailId = 0;
@@ -353,6 +374,7 @@ class MarketingAreaController extends Controller
                     ->where('sd_date', '=', $time)
                     ->where('sd_from', '=', $data['po_comp'])
                     ->where('sd_destination', '=', $data['po_agen'])
+                    ->where('sd_status', '=', 'N')
                     ->first();
 
                 if ($query1) {
@@ -411,7 +433,7 @@ class MarketingAreaController extends Controller
                     ]);
                 }
             }
-
+            // dd($request->all());
             DB::commit();
             return response()->json([
                 'status' => 'sukses'
@@ -568,7 +590,79 @@ class MarketingAreaController extends Controller
             ]);
         }
     }
+    // return detail order before acceptance
+    public function showDetailAc($id)
+    {
+        try {
+            $id = decrypt($id);
 
+            $detail = d_stockdistribution::where('sd_id', $id)
+            ->with('getOrigin')
+            ->with('getDestination')
+            ->with(['getDistributionDt' => function ($query) {
+                $query
+                ->with('getItem')
+                ->with('getUnit');
+            }])
+            ->first();
+            $detail->dateFormated = Carbon::parse($detail->sd_date)->format('d M Y');
+
+            return response()->json($detail);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    // confirm received items that has been ordered
+    public function setAcceptance($id)
+    {
+        // if (!AksesUser::checkAkses(7, 'update')){
+        //     abort(401);
+        // }
+
+        DB::beginTransaction();
+        try {
+            $stockdist = d_stockdistribution::where('sd_id', $id)
+            ->with('getDistributionDt')
+            ->first();
+
+            // confirm each item
+            foreach ($stockdist->getDistributionDt as $key => $val) {
+                $mutConfirm = Mutasi::confirmDistribution(
+                    $val->sdd_comp, // item-owner
+                    $stockdist->sd_destination, // destination
+                    $val->sdd_item, // item id
+                    $stockdist->sd_nota, // nota distribution
+                    18, // mutcat distribution 'in'
+                    19 // mutcat distribution 'out'
+                );
+                if ($mutConfirm !== 'success') {
+                    return $mutConfirm;
+                }
+            }
+
+            // update stockdist-status to 'Y'
+            $stockdist->sd_status = 'Y';
+            $stockdist->save();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    // return detail of order-produk
     public function detailOrder($id)
     {
         try {
@@ -832,6 +926,11 @@ class MarketingAreaController extends Controller
             ->addColumn('kode', function ($data){
                 return "<div class='text-center' style='width: 100%'><button type='button' onclick='addCodeProd(".$data->po_id.", ".$data->pod_item.",\"".$data->i_name."\")' class='btn btn-info btn-xs btnAddProdCode'><i class='fa fa-plus'></i> Kode Produksi</button></div>";
             })
+            ->addColumn('discount', function ($data) {
+                return "<div class='text-center'>
+                <input type='text' style='width: 100%;' name='discount[]' value='0' class='listDiscount rupiah'>
+                </div>";
+            })
             ->addColumn('input', function ($data){
                 return "<div class='text-center'>
                 <input type='number' onkeyup='getHargaGolongan(".$data->pod_item.")' onchange='getHargaGolongan(".$data->pod_item.")' style='text-align: right; width: 100%;' class='input-qty-proses qty-modaldt-".$data->pod_item."' name='qty_proses[]' value='".$data->pod_qty."'>
@@ -839,7 +938,7 @@ class MarketingAreaController extends Controller
                 <input type='hidden' name='units[]' class='units' value='". $data->i_unit1 ."'>
                 </div>";
             })
-            ->rawColumns(['kode', 'input', 'pod_price', 'pod_totalprice'])
+            ->rawColumns(['kode', 'input', 'pod_price', 'discount', 'pod_totalprice'])
             ->make(true);
 
     }
@@ -947,6 +1046,7 @@ class MarketingAreaController extends Controller
     // approve order agent and create mutation
     public function approveAgen(Request $request, $id)
     {
+        // dd($request->all(), $request->payCash, $request->dateTop);
         try {
             $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
@@ -959,6 +1059,21 @@ class MarketingAreaController extends Controller
             $productOrder = d_productorder::where('po_id', $id)
             ->with('getPODt')
             ->first();
+
+            // insert new product-delivery
+            $pd_id = d_productdelivery::max('pd_id') + 1;
+            $val_deliv = [
+                'pd_id' => $pd_id,
+                'pd_date' => Carbon::now(),
+                'pd_nota'  => $productOrder->po_nota,
+                'pd_expedition' => $request->expedition,
+                'pd_product' => $request->expeditionType,
+                'pd_resi' => strtoupper($request->resi),
+                'pd_couriername' => $request->courierName,
+                'pd_couriertelp' => $request->courierTelp,
+                'pd_price' => $request->shippingCost,
+            ];
+            DB::table('d_productdelivery')->insert($val_deliv);
 
             // mutation
             foreach ($productOrder->getPODt as $key => $PO) {
@@ -977,11 +1092,18 @@ class MarketingAreaController extends Controller
                 $listPC = array();
                 $listQtyPC = array();
                 $listUnitPC = array();
-                foreach ($prodCode as $key => $val) {
+                foreach ($prodCode as $idx => $val) {
                     array_push($listPC, $val->poc_code);
                     array_push($listQtyPC, $val->poc_qty);
                 }
 
+                // validate sum-qty of production-code
+                $sumQtyPC = array_sum($listQtyPC);
+                if ($sumQtyPC != $PO->pod_qty) {
+                    $item = m_item::where('i_id', $PO->pod_item)->first();
+                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
+                }
+                
                 // insert stock mutation sales 'out'
                 $mutationOut = Mutasi::salesOut(
                     $productOrder->po_comp, // from
@@ -1026,7 +1148,6 @@ class MarketingAreaController extends Controller
                     return $mutationIn;
                 }
             }
-            // dd('x', $mutationIn);
 
             // update qty and status in d_productorder
             DB::table('d_productorder')
@@ -1048,16 +1169,22 @@ class MarketingAreaController extends Controller
                 'sc_type'    => 'C',
                 'sc_date'    => $productOrder->po_date,
                 'sc_nota'    => $productOrder->po_nota,
-                'sc_total'   => $totalPrice,
+                'sc_total'   => 0,
+                'sc_paymenttype' => $request->paymentType,
+                'sc_paymentmethod' => $request->paymentMethod,
                 'sc_user'    => Auth::user()->u_id,
                 'sc_insert'  => Carbon::now(),
                 'sc_update'  => Carbon::now()
             ];
-            DB::table('d_salescomp')->insert($val_sales);
+
             // clone data from  d_productorderdt to d_salescompdt
             $salescompdtid = (DB::table('d_salescompdt')->where('scd_sales', '=', $salescompId)->max('scd_detailid')) ? (DB::table('d_salescompdt')->where('scd_sales', '=', $salescompId)->max('sd_detailid')) + 1 : 1;
             $val_salesdt = array();
             foreach ($productOrder->getPODt as $key => $po) {
+                $totalAfterDisc = ($po->pod_qty * $po->pod_price) - ($po->pod_qty * $request->discount[$key]);
+                // update total in salescomp
+                $val_sales['sc_total'] += $totalAfterDisc;
+                // value for salescompdt
                 $val_salesdt[] = [
                     'scd_sales' => $salescompId,
                     'scd_detailid' => $salescompdtid,
@@ -1067,8 +1194,8 @@ class MarketingAreaController extends Controller
                     'scd_unit' => $po->pod_unit,
                     'scd_value' => $po->pod_price,
                     'scd_discpersen' => 0,
-                    'scd_discvalue' => 0,
-                    'scd_totalnet' => $po->pod_totalprice
+                    'scd_discvalue' => $request->discount[$key],
+                    'scd_totalnet' => $totalAfterDisc
                 ];
 
                 // clone data from productordercode to salescompcode
@@ -1088,11 +1215,34 @@ class MarketingAreaController extends Controller
                     $salescompcodeid++;
                 }
                 DB::table('d_salescompcode')->insert($val_salescode);
-
                 $salescompdtid++;
             }
-            DB::table('d_salescompdt')->insert($val_salesdt);
 
+            // set paid of for 'cash' payment
+            if ($request->paymentType == 'C') {
+                $val_sales += [
+                    'sc_paidoff' => 'Y'
+                ];
+                $payCash = $val_sales['sc_total'];
+            }
+            else {
+                $payCash = $request->payCash;
+            }
+            // set value for salespayment
+            $val_salespayment = [
+                'scp_salescomp' => $salescompId,
+                'scp_detailid' => d_salescomppayment::where('scp_salescomp', $salescompId)->max('scp_detailid') + 1,
+                'scp_date' => Carbon::now(),
+                'scp_pay' => $payCash,
+                'scp_payment' => $request->paymentMethod
+            ];
+            // dd($val_sales, $val_salespayment);
+
+            DB::table('d_salescompdt')->insert($val_salesdt);
+            DB::table('d_salescomp')->insert($val_sales);
+            DB::table('d_salescomppayment')->insert($val_salespayment);
+            // dd($val_sales, $val_salespayment);
+            // dd('x');
             DB::commit();
             return response()->json([
                 'status' => 'sukses'
@@ -1140,11 +1290,19 @@ class MarketingAreaController extends Controller
                 ->update([
                     'po_status' => "P"
                 ]);
-
             // get salescomp by nota
             $salescomp = d_salescomp::where('sc_nota', $productOrder->po_nota)
             ->with('getSalesCompDt')
             ->first();
+            // delete productDelivery
+            $prodDeliv = d_productdelivery::where('pd_nota', $salescomp->sc_nota)->first();
+            $prodDeliv->delete();
+            // delete salescomp-payment
+            $salescompPayment = d_salescomppayment::where('scp_salescomp', $salescomp->sc_id)->get();
+            foreach ($salescompPayment as $key => $val) {
+                $val->delete();
+            }
+
             // delete linked production code
             foreach ($salescomp->getSalesCompDt as $key => $salescompdt) {
                 DB::table('d_salescompcode')->where('ssc_salescomp', $salescomp->sc_id)
@@ -1478,6 +1636,36 @@ class MarketingAreaController extends Controller
             "status" => "success"
         ]);
     }
+    // get list of expedition
+    public function getExpedition()
+    {
+        $data = DB::table('m_expedition')->where('e_isactive', '=', 'Y')->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+    // get list of expeditionType
+    public function getExpeditionType($id)
+    {
+        $data = DB::table('m_expeditiondt')->where('ed_expedition', '=', $id)->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+    // get list of paymentMethod
+    public function getPaymentMethod()
+    {
+        $data = m_paymentmethod::where('pm_isactive', 'Y')
+        ->with('getAkun')
+        ->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
     // Kelola Data Order Agen End ==========================================================================
 
     // Kelola Data Canvassing Start ==============================================================================
@@ -2753,25 +2941,6 @@ class MarketingAreaController extends Controller
             ]);
         }
     }
-
-    public function getExpedition()
-    {
-        $data = DB::table('m_expedition')->where('e_isactive', '=', 'Y')->get();
-
-        return response()->json([
-            'data' => $data
-        ]);
-    }
-
-    public function getExpeditionType($id)
-    {
-        $data = DB::table('m_expeditiondt')->where('ed_expedition', '=', $id)->get();
-
-        return response()->json([
-            'data' => $data
-        ]);
-    }
-
     // Start: orderprodukagent =================================================
     public function create_orderprodukagenpusat()
     {

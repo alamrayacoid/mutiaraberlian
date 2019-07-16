@@ -89,7 +89,7 @@
                     </div>
                     <div class="col-md-4 col-sm-12 mb-3">
                         <select class="select2 form-control form-control-sm" id="jenis_pembayaran" name="jenis_pembayaran">
-                            <option value="C">Cash</option>
+                            <option value="C" selected>Cash</option>
                             <option value="T">Cash Tempo</option>
                         </select>
                     </div>

@@ -47,6 +47,8 @@
     @include('marketing.marketingarea.datacanvassing.modal-create')
     @include('marketing.marketingarea.datacanvassing.modal-edit')
     @include('marketing.marketingarea.datacanvassing.modal-search')
+    @include('marketing.marketingarea.orderproduk.modal')
+
 
     <article class="content animated fadeInLeft">
         <div class="title-block text-primary">
@@ -252,7 +254,7 @@
                                 <label for="expedition">Jasa Ekspedisi</label>
                             </div>
                             <div class="col-4">
-                                <select name="" id="expedition" class="form-control form-control-sm select2">
+                                <select name="expedition" id="expedition" class="form-control form-control-sm select2">
                                     <option value="" selected disabled>== Pilih Jasa Ekspedisi ==</option>
                                 </select>
                             </div>
@@ -260,7 +262,7 @@
                                 <label for="jenis_exp">Jenis Ekspedisi</label>
                             </div>
                             <div class="col-4">
-                                <select name="" id="jenis_exp" class="form-control form-control-sm select2">
+                                <select name="expeditionType" id="jenis_exp" class="form-control form-control-sm select2">
                                     <option value="" selected="" disabled="">== Pilih Jenis Ekspedisi ==</option>
                                 </select>
                             </div>
@@ -270,13 +272,13 @@
                                 <label for="jenis_exp">Nama Kurir</label>
                             </div>
                             <div class="col-4">
-                                <input type="text" id="kurir_name" class="form-control form-control-sm">
+                                <input type="text" name="courierName" id="kurir_name" class="form-control form-control-sm">
                             </div>
                             <div class="col-2">
                                 <label for="expedition">Nomor Telepon</label>
                             </div>
                             <div class="col-4">
-                                <input type="text" id="no_hpkurir" class="form-control form-control-sm hp">
+                                <input type="text" name="courierTelp" id="no_hpkurir" class="form-control form-control-sm hp">
                             </div>
                         </div>
                         <div class="row" style="margin-top: 5px;">
@@ -284,13 +286,47 @@
                                 <label for="jenis_exp">Nomor Resi</label>
                             </div>
                             <div class="col-4">
-                                <input type="text" id="no_resi" class="form-control form-control-sm text-uppercase">
+                                <input type="text" name="resi" id="no_resi" class="form-control form-control-sm text-uppercase">
                             </div>
                             <div class="col-2">
                                 <label for="jenis_exp">Biaya</label>
                             </div>
                             <div class="col-4">
-                                <input type="text" id="biaya_kurir" class="form-control form-control-sm rupiah">
+                                <input type="text" name="shippingCost" id="biaya_kurir" class="form-control form-control-sm rupiah">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="paymentType">Tipe Pembayaran</label>
+                            </div>
+                            <div class="col-4">
+                                <select name="paymentType" id="paymentType" class="form-control form-control-sm select2">
+                                    <!-- <option value="" selected disabled>== Pilih Tipe Pembayaran ==</option> -->
+                                    <option value="C" selected>Cash</option>
+                                    <option value="T">Cash Tempo</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label for="paymentMethod">Metode Pembayaran</label>
+                            </div>
+                            <div class="col-4">
+                                <select name="paymentMethod" id="paymentMethod" class="form-control form-control-sm select2">
+                                    <option value="" selected="" disabled="">== Pilih Metode Pembayaran ==</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row paymentRow d-none" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="payCash">Bayar</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" name="payCash" id="payCash" class="form-control form-control-sm rupiah" value="">
+                            </div>
+                            <div class="col-2">
+                                <label for="dateTop">Batas Akhir Pelunasan</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" name="dateTop" id="dateTop" class="form-control form-control-sm datepicker" value="">
                             </div>
                         </div>
                     </section>
@@ -303,6 +339,7 @@
                                     <th>Kuantitas</th>
                                     <th>Satuan</th>
                                     <th>Harga @</th>
+                                    <th>Diskon @</th>
                                     <th>Harga Total</th>
                                     <th class="text-center">Kode</th>
                                 </tr>
@@ -393,6 +430,21 @@
             });
 
             getExpedition();
+            $('#expedition').on('change', function(){
+                let id = $('#expedition').val();
+                $.ajax({
+                    url: "{{url('/marketing/marketingarea/get-expeditionType')}}"+"/"+id,
+                    type: "get",
+                    success:function(resp) {
+                        $('#jenis_exp').empty();
+                        $('#jenis_exp').append('<option value="" selected disabled>== Pilih Jenis Ekspedisi ==</option>');
+                        $.each(resp.data, function(key, val){
+                            $('#jenis_exp').append('<option value="'+val.ed_detailid+'">'+val.ed_product+'</option>');
+                        });
+                        $('#jenis_exp').select2('open');
+                    }
+                });
+            });        // retrieve list
         });
 
         function getExpedition() {
@@ -409,21 +461,6 @@
             });
         }
 
-        $('#expedition').on('change', function(){
-            let id = $('#expedition').val();
-            $.ajax({
-                url: "{{url('/marketing/marketingarea/get-expeditionType')}}"+"/"+id,
-                type: "get",
-                success:function(resp) {
-                    $('#jenis_exp').empty();
-                    $('#jenis_exp').append('<option value="" selected disabled>== Pilih Jenis Ekspedisi ==</option>');
-                    $.each(resp.data, function(key, val){
-                        $('#jenis_exp').append('<option value="'+val.ed_detailid+'">'+val.ed_product+'</option>');
-                    });
-                    $('#jenis_exp').select2('open');
-                }
-            });
-        });        // retrieve list
         function TableListDK() {
             // let start = $('#date_from_dk').val();
             // let end = $('#date_to_dk').val();
@@ -590,6 +627,8 @@
     <!-- script for Kelola-Data-Order etc -->
     <script type="text/javascript">
         var table_agen, table_search, table_bar, table_rab, table_bro;
+        var tb_listprosesorder;
+        var tb_listcodeprosesorder;
 
         var idAgen = [];
         var namaAgen = null;
@@ -721,125 +760,25 @@
             $('#btn-addprodcode').on('click', function () {
                 addCodetoTable();
             });
+
+            getPaymentMethod();
+            $('#paymentType').on('select2:select', function() {
+                if ($(this).val() == 'C') {
+                    $('.paymentRow :input').attr('disabled', true);
+                    $('.paymentRow').addClass('d-none');
+                    // $('#paymentMethod').attr('disabled', false);
+                    // $('#paymentMethod').select2('open');
+                }
+                else {
+                    $('.paymentRow :input').attr('disabled', false);
+                    $('.paymentRow').removeClass('d-none');
+                    $('#payCash').val(0);
+                    $('#dateTop').datepicker('setDate', 'today');
+                    // $('#paymentMethod').attr('disabled', true);
+                }
+            });
         });
         // End Document Ready -------------------------------------------
-
-        // Order Produk Ke Cabang -------------------------------
-        function orderProdukList() {
-            tb_order = $('#table_orderproduk').DataTable({
-                responsive: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('orderProduk.list') }}",
-                    type: "get",
-                    data: {
-                        "_token": "{{ csrf_token() }}"
-                    }
-                },
-                columns: [
-                    {data: 'sd_date'},
-                    {data: 'sd_nota'},
-                    {data: 'comp'},
-                    {data: 'branch'},
-                    // {data: 'totalprice'},
-                    {data: 'action'}
-                ],
-                pageLength: 10,
-                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-            });
-        }
-
-        function detailOrder(id) {
-            $.ajax({
-                url: "{{ url('/marketing/marketingarea/orderproduk/detail') }}" + "/" + id,
-                type: "get",
-                beforeSend: function () {
-                    loadingShow();
-                },
-                success: function (res) {
-                    loadingHide();
-                    $('#cabang').val(res.data2.get_origin.c_name);
-                    $('#agen').val(res.data2.get_destination.c_name);
-                    $('#nota').val(res.data2.sd_nota);
-                    $('#tanggal').val(res.data2.sd_date);
-                    $('.empty').empty();
-                    $.each(res.data1, function (key, val) {
-                        $('#detailOrder tbody').append('<tr>' +
-                            '<td>' + val.barang + '</td>' +
-                            '<td>' + val.unit + '</td>' +
-                            '<td class="text-right">' + val.qty + '</td>' +
-                            // '<td>' + val.price + '</td>' +
-                            // '<td>' + val.totalprice + '</td>' +
-                            '</tr>');
-                    });
-                    $('#modalOrderCabang').modal('show');
-                }
-            });
-        }
-
-        function editOrder(id) {
-            window.location.href = '{{ url('/marketing/marketingarea/orderproduk/edit') }}' + "/" + id;
-        }
-
-        function printNota(id, dt) {
-            var url = '{{ url('/marketing/marketingarea/orderproduk/nota') }}' + "/" + id;
-            window.open(url);
-        }
-
-        function deleteOrder(id) {
-            var hapus_order = "{{ url('/marketing/marketingarea/orderproduk/delete-order') }}" + "/" + id;
-            $.confirm({
-                animation: 'RotateY',
-                closeAnimation: 'scale',
-                animationBounce: 1.5,
-                icon: 'fa fa-exclamation-triangle',
-                title: 'Pesan!',
-                content: 'Apakah anda yakin ingin menghapus data ini ?',
-                theme: 'disable',
-                buttons: {
-                    info: {
-                        btnClass: 'btn-blue',
-                        text: 'Ya',
-                        action: function () {
-                            return $.ajax({
-                                type: "get",
-                                url: hapus_order,
-                                beforeSend: function () {
-                                    loadingShow();
-                                },
-                                success: function (response) {
-                                    if (response.status == 'sukses') {
-                                        loadingHide();
-                                        messageSuccess('Berhasil', 'Data order berhasil dihapus !');
-                                        tb_order.ajax.reload();
-                                    } else if (response.status == 'warning') {
-                                        loadingHide();
-                                        messageWarning('Peringatan', 'Data ini tidak boleh dihapus!');
-                                        tb_order.ajax.reload();
-                                    } else {
-                                        loadingHide();
-                                        messageFailed('Gagal', response.message);
-                                    }
-                                },
-                                error: function (e) {
-                                    loadingHide();
-                                    messageWarning('Peringatan', e.message);
-                                }
-                            });
-                        }
-                    },
-                    cancel: {
-                        text: 'Tidak',
-                        action: function (response) {
-                            loadingHide();
-                            messageWarning('Peringatan', 'Anda telah membatalkannya!');
-                        }
-                    }
-                }
-            });
-        }
-
-        // End Order Produk --------------------------------------------
 
         // Kelola Data Order Agen --------------------------------------
         function kelolaDataAgen() {
@@ -946,7 +885,6 @@
             $(".agenId").val(idAgen);
             setArrayAgen();
         }
-
         // End Autocomplete -----------------------------------------------------
 
         // Modal Kelola Data Order Agen -----------------------------------------
@@ -1157,9 +1095,6 @@
             });
         }
 
-        var tb_listprosesorder;
-        var tb_listcodeprosesorder;
-
         function approveAgen(id) {
             loadingShow();
             let pd_expedition  = $('#expedition').val();
@@ -1182,7 +1117,8 @@
                 $('#agen_modaldt').val(agen);
                 $('#tanggal_modaldt').val(tanggal);
                 $('#idagen_modaldt').val(response.data.data.po_agen);
-                $('#total_modaldt').val(convertToRupiah(response.data.data.pod_totalprice));
+                // $('#total_modaldt').val(convertToRupiah(response.data.data.pod_totalprice));
+                $('#total_modaldt').val(response.data.data.pod_totalprice);
 
                 loadingHide();
                 $('#prosesorder').modal('show');
@@ -1190,7 +1126,8 @@
                     $('#expedition').select2('open');
                 }, 500)
             }).catch(function (error) {
-
+                loadingHide();
+                messageWarning('Error', 'Terjadi kesalahan (approveAgen) : ' + error);
             });
 
             $('#table_prosesorder').dataTable().fnDestroy();
@@ -1209,14 +1146,44 @@
                 },
                 columns: [
                     {data: 'i_name'},
-                    {data: 'input', "className": "input-padding", },
+                    {data: 'input', "className": "input-padding"},
                     {data: 'u_name'},
                     {data: 'pod_price'},
+                    {data: 'discount'},
                     {data: 'pod_totalprice'},
                     {data: 'kode'}
                 ],
                 pageLength: 10,
-                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
+                drawCallback : function() {
+                    // re-activate mask-money
+                    $('.rupiah').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 0,
+                        autoGroup: true,
+                        prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
+                    });
+
+                }
+            });
+        }
+
+        function getPaymentMethod() {
+            $.ajax({
+                url: "{{ route('marketingarea.getPaymentMethod') }}",
+                type: "get",
+                success:function(resp) {
+                    $('#paymentMethod').empty();
+                    // $('#paymentMethod').append('<option value="" selected disabled>== Pilih Metode Pembayaran ==</option>');
+                    $.each(resp.data, function(key, val){
+                        $('#paymentMethod').append('<option value="'+ val.pm_id +'">'+ val.get_akun.ak_nomor +' - '+ val.pm_name +'</option>');
+                    });
+                }
             });
         }
 
@@ -1271,7 +1238,8 @@
             $('input[name^="subtotalmodaldt"]').each(function() {
                 totalprice = totalprice + parseInt($(this).val());
             });
-            $('#total_modaldt').val(convertToRupiah(totalprice));
+            // $('#total_modaldt').val(convertToRupiah(totalprice));
+            $('#total_modaldt').val(totalprice);
         }
 
         function addCodeProd(id, item, nama){
@@ -1417,17 +1385,26 @@
             idProductOrder  = $('#idProductOrder').val();
 
             let listQty        = $('.input-qty-proses').serialize();
+            let listDiscount   = $('.listDiscount').serialize();
             let listItemsId    = $('.itemsId').serialize();
             let listUnits      = $('.units').serialize();
-            let pd_nota        = $('#nota_modaldt').val();
-            let pd_expedition  = $('#expedition').val();
-            let pd_product     = $('#jenis_exp').val();
-            let pd_resi        = $('#no_resi').val();
-            let pd_couriername = $('#kurir_name').val();
-            let pd_couriertelp = $('#no_hpkurir').val();
-            let pd_price       = $('#biaya_kurir').val();
+            let pd_nota        = $('#nota_modaldt').serialize();
+            let pd_expedition  = $('#expedition').serialize();
+            let pd_product     = $('#jenis_exp').serialize();
+            let pd_resi        = $('#no_resi').serialize();
+            let pd_couriername = $('#kurir_name').serialize();
+            let pd_couriertelp = $('#no_hpkurir').serialize();
+            let pd_price       = $('#biaya_kurir').serialize();
+            let paymentType    = $('#paymentType').serialize();
+            let paymentMethod  = $('#paymentMethod').serialize();
+            let payCash        = $('#payCash').serialize();
+            let dateTop        = $('#dateTop').serialize();
 
-            let dataX = listQty +'&'+ listItemsId +'&'+ listUnits +'&'+ pd_nota +'&'+ pd_expedition +'&'+ pd_product +'&'+ pd_resi +'&'+ pd_couriername +'&'+ pd_couriertelp +'&'+ pd_price ;
+            let dataX = listQty +'&'+ listDiscount +'&'+ listItemsId +'&'+
+                        listUnits +'&'+ pd_nota +'&'+ pd_expedition +'&'+
+                        pd_product +'&'+ pd_resi +'&'+ pd_couriername +'&'+
+                        pd_couriertelp +'&'+ pd_price +'&'+ paymentType +'&'+
+                        paymentMethod +'&'+ payCash +'&'+ dateTop;
             loadingShow();
 
             $.ajax({
@@ -2135,5 +2112,201 @@
             $('#modalSearchAgentDC').modal('hide');
         }
 
+    </script>
+
+    <!-- ========================================================================-->
+    <!-- some script for Order-Produk-Ke-Pusat -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#btn_confirmAc').on('click', function() {
+                confirmAcceptance();
+            });
+        });
+        // retrieve DataTable for list of order-produk-ke-pusat
+        function orderProdukList() {
+            tb_order = $('#table_orderproduk').DataTable({
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('orderProduk.list') }}",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                columns: [
+                    {data: 'sd_date'},
+                    {data: 'sd_nota'},
+                    {data: 'comp'},
+                    {data: 'branch'},
+                    // {data: 'totalprice'},
+                    {data: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
+        // show detail order before acceptance
+        function showDetailAc(idx)
+        {
+            loadingShow();
+            $.ajax({
+                url: baseUrl + "/marketing/marketingarea/orderproduk/show-detail-ac/" + idx,
+                type: "get",
+                success: function(response) {
+                    $('#id_ac').val(response.sd_id);
+                    $('#nota_ac').val(response.sd_nota);
+                    $('#date_ac').val(response.dateFormated);
+                    $('#origin_ac').val(response.get_origin.c_name);
+                    $('#dest_ac').val(response.get_destination.c_name);
+                    $('#table_detail_ac tbody').empty();
+                    $.each(response.get_distribution_dt, function (index, val) {
+                        no = '<td>'+ (index + 1) +'</td>';
+                        kodeXnamaBrg = '<td>'+ val.get_item.i_code +' / '+ val.get_item.i_name +'</td>';
+                        qty = '<td class="digits">'+ val.sdd_qty +'</td>';
+                        unit = '<td>'+ val.get_unit.u_name +'</td>';
+                        appendItem = no + kodeXnamaBrg + qty + unit;
+                        $('#table_detail_ac > tbody:last-child').append('<tr>'+ appendItem +'</tr>');
+                    });
+                    //mask digits
+                    $('.digits').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 0,
+                        autoGroup: true,
+                        prefix: '', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
+                    });
+
+                    $('#modalAcceptance').modal('show');
+                    loadingHide();
+                },
+                error: function(xhr, status, error) {
+                    let err = JSON.parse(xhr.responseText);
+                    messageWarning('Error', err.message);
+                    loadingHide();
+                }
+            });
+        }
+        // accept item that has been ordered and delivered
+        function confirmAcceptance() {
+            loadingShow();
+            let stockdistId = $('#id_ac').val();
+            console.log(stockdistId);
+            $.ajax({
+                url: baseUrl + "/marketing/marketingarea/orderproduk/set-acceptance/" + stockdistId,
+                type: "post",
+                success: function (response) {
+                    loadingHide();
+                    if (response.status == 'berhasil') {
+                        messageSuccess('Selamat', 'Konfirmasi penerimaan berhasil dilakukan !');
+                        $('#modalAcceptance').modal('hide');
+                        tb_order.ajax.reload();
+                    } else if (response.status == 'gagal') {
+                        messageWarning('Perhatian', response.message);
+                    } else {
+                        messageWarning('Terjadi Kesalahan', response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    loadingHide();
+                    let err = JSON.parse(xhr.responseText);
+                    messageWarning('Error', err.message);
+                }
+            });
+        }
+        // show detail of order
+        function detailOrder(id) {
+            $.ajax({
+                url: "{{ url('/marketing/marketingarea/orderproduk/detail') }}" + "/" + id,
+                type: "get",
+                beforeSend: function () {
+                    loadingShow();
+                },
+                success: function (res) {
+                    loadingHide();
+                    $('#cabang').val(res.data2.get_origin.c_name);
+                    $('#agen').val(res.data2.get_destination.c_name);
+                    $('#nota').val(res.data2.sd_nota);
+                    $('#tanggal').val(res.data2.sd_date);
+                    $('.empty').empty();
+                    $.each(res.data1, function (key, val) {
+                        $('#detailOrder tbody').append('<tr>' +
+                        '<td>' + val.barang + '</td>' +
+                        '<td>' + val.unit + '</td>' +
+                        '<td class="text-right">' + val.qty + '</td>' +
+                        // '<td>' + val.price + '</td>' +
+                        // '<td>' + val.totalprice + '</td>' +
+                        '</tr>');
+                    });
+                    $('#modalOrderCabang').modal('show');
+                }
+            });
+        }
+        // edit order
+        function editOrder(id) {
+            window.location.href = '{{ url('/marketing/marketingarea/orderproduk/edit') }}' + "/" + id;
+        }
+        // print nota
+        function printNota(id) {
+            var url = baseUrl + '/marketing/marketingarea/orderproduk/nota/' + id;
+            window.open(url);
+        }
+        // cancel and delete order
+        function deleteOrder(id) {
+            var hapus_order = "{{ url('/marketing/marketingarea/orderproduk/delete-order') }}" + "/" + id;
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Pesan!',
+                content: 'Apakah anda yakin ingin menghapus data ini ?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return $.ajax({
+                                type: "get",
+                                url: hapus_order,
+                                beforeSend: function () {
+                                    loadingShow();
+                                },
+                                success: function (response) {
+                                    if (response.status == 'sukses') {
+                                        loadingHide();
+                                        messageSuccess('Berhasil', 'Data order berhasil dihapus !');
+                                        tb_order.ajax.reload();
+                                    } else if (response.status == 'warning') {
+                                        loadingHide();
+                                        messageWarning('Peringatan', 'Data ini tidak boleh dihapus!');
+                                        tb_order.ajax.reload();
+                                    } else {
+                                        loadingHide();
+                                        messageFailed('Gagal', response.message);
+                                    }
+                                },
+                                error: function (e) {
+                                    loadingHide();
+                                    messageWarning('Peringatan', e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function (response) {
+                            loadingHide();
+                            messageWarning('Peringatan', 'Anda telah membatalkannya!');
+                        }
+                    }
+                }
+            });
+        }
     </script>
 @endsection

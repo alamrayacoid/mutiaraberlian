@@ -39,7 +39,7 @@ class HistoryOpnameController extends Controller
       ->addColumn('status', function($datas) {
         if ($datas->o_status == 'P') {
             return '<td><button class="btn btn-primary status-pending" style="pointer-events: none">Pending</button></td>';
-        } elseif ($datas->o_status == 'D') {
+        } elseif ($datas->o_status == 'Y') {
           return '<td><button class="btn btn-primary status-approve" style="pointer-events: none">Sudah Digunakan</button></td>';
         }
       })

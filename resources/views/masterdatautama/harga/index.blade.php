@@ -372,8 +372,8 @@
             loadingShow();
             var data = $('#formedtgln').serialize();
             axios.post('{{route("dataharga.editgolongan")}}', data).then(function (response) {
+                loadingHide();
                 if (response.data.status == "Success") {
-                    loadingHide();
                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                     reloadTable();
                 } else {
@@ -388,12 +388,11 @@
             loadingShow();
             var data = $('#formedtglnHPA').serialize();
             axios.post('{{route("dataharga.editgolonganhpa")}}', data).then(function (response) {
+                loadingHide();
                 if (response.data.status == "Success") {
-                    loadingHide();
                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                     tbl_glnHPA.ajax.reload();
                 } else {
-                    loadingHide();
                     messageWarning("Gagal", "Data gagal diperbarui!");
                 }
             })
@@ -404,13 +403,12 @@
             loadingShow();
             var data = $('#formedtglnPA').serialize();
             axios.post('{{route("dataharga.editgolonganpa")}}', data).then(function (response) {
+                loadingHide();
                 if (response.data.status == "Success") {
-                    loadingHide();
                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                     tbl_agenprice.ajax.reload();
                     $('#editgolonganPA').modal('hide');
                 } else {
-                    loadingHide();
                     messageWarning("Gagal", "Data gagal diperbarui!");
                 }
             })
@@ -447,8 +445,8 @@
                     loadingShow();
                     var data = $('#formsetharga').serialize();
                     axios.post('{{route("dataharga.addgolonganharga")}}', data).then(function (response) {
+                        loadingHide();
                         if (response.data.status == "Success") {
-                            loadingHide();
                             messageSuccess("Berhasil", "Data berhasil disimpan!");
                             $("#idBarang").val("");
                             $(".barang").val("");
@@ -467,19 +465,14 @@
                             $("#satuan").addClass('d-none');
                             $("#range").addClass('d-none');
                         } else if (response.data.status == "Failed") {
-                            loadingHide();
                             messageWarning("Gagal", "Data gagal disimpan!");
                         } else if (response.data.status == "Range Ada") {
-                            loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
                         } else if (response.data.status == "Unit Ada") {
-                            loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
                         } else if (response.data.status == 'unauth'){
-                            loadingHide();
                             messageWarning("Peringatan", "Anda tidak memiliki akses");
                         } else {
-                            loadingHide();
                             messageWarning("Gagal", "Data gagal disimpan!");
                         }
                     });
@@ -547,8 +540,8 @@
                     loadingShow();
                     var data = $('#formsethargaHPA').serialize();
                     axios.post('{{route("dataharga.addgolonganhargahpa")}}', data).then(function (response) {
+                        loadingHide();
                         if (response.data.status == "Success") {
-                            loadingHide();
                             messageSuccess("Berhasil", "Data berhasil disimpan!");
                             $("#idBarangHPA").val("");
                             $(".barangHPA").val("");
@@ -566,19 +559,14 @@
                             $("#satuanHPA").addClass('d-none');
                             $("#rangeHPA").addClass('d-none');
                         } else if (response.data.status == "Failed") {
-                            loadingHide();
                             messageWarning("Gagal", "Data gagal disimpan!");
                         } else if (response.data.status == "Range Ada") {
-                            loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
                         } else if (response.data.status == "Unit Ada") {
-                            loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
                         } else if (response.data.status == 'unauth'){
-                            loadingHide();
                             messageWarning("Peringatan", "Anda tidak memiliki akses");
                         } else {
-                            loadingHide();
                             messageWarning("Gagal", "Data gagal disimpan!");
                         }
                     });
@@ -598,8 +586,8 @@
                     loadingShow();
                     var data = $('#formsethargaHPA').serialize();
                     axios.post('{{route("dataharga.addgolonganhargahpa")}}', data).then(function (response) {
+                        loadingHide();
                         if (response.data.status == "Success") {
-                            loadingHide();
                             messageSuccess("Berhasil", "Data berhasil disimpan!");
                             $("#idBarangHPA").val("");
                             $(".barangHPA").val("");
@@ -617,13 +605,10 @@
                             $("#satuanHPA").addClass('d-none');
                             $("#rangeHPA").addClass('d-none');
                         } else if (response.data.status == "Failed") {
-                            loadingHide();
                             messageWarning("Gagal", "Data gagal disimpan!");
                         } else if (response.data.status == "Range Ada") {
-                            loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range, satuan dan jenis pembayaran tersebut!");
                         } else if (response.data.status == "Unit Ada") {
-                            loadingHide();
                             messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga dan satuan tersebut!");
                         }
                     });
@@ -667,12 +652,11 @@
                         action: function () {
                             loadingShow();
                             return axios.post('{{route("dataharga.editgolonganhargaunit")}}', data).then(function (response) {
+                                loadingHide();
                                 if (response.data.status == "Success") {
-                                    loadingHide();
                                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                                     tbl_item.ajax.reload();
                                 } else {
-                                    loadingHide();
                                     messageWarning("Gagal", "Data gagal diperbarui!");
                                 }
                             });
@@ -707,12 +691,11 @@
                         action: function () {
                             loadingShow();
                             return axios.post('{{route("dataharga.editgolonganhargaunithpa")}}', data).then(function (response) {
+                                loadingHide();
                                 if (response.data.status == "Success") {
-                                    loadingHide();
                                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                                     tbl_itemHPA.ajax.reload();
                                 } else {
-                                    loadingHide();
                                     messageWarning("Gagal", "Data gagal diperbarui!");
                                 }
                             });
@@ -747,15 +730,13 @@
                         action: function () {
                             loadingShow();
                             return axios.post('{{route("dataharga.editgolonganhargarange")}}', data).then(function (response) {
+                                loadingHide();
                                 if (response.data.status == "Success") {
-                                    loadingHide();
                                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                                     tbl_item.ajax.reload();
                                 } else if (response.data.status == "Range Ada") {
-                                    loadingHide();
                                     messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
                                 } else {
-                                    loadingHide();
                                     messageWarning("Gagal", "Data gagal diperbarui!");
                                 }
                             });
@@ -790,15 +771,13 @@
                         action: function () {
                             loadingShow();
                             return axios.post('{{route("dataharga.editgolonganhargarangehpa")}}', data).then(function (response) {
+                                loadingHide();
                                 if (response.data.status == "Success") {
-                                    loadingHide();
                                     messageSuccess("Berhasil", "Data berhasil perbarui!");
                                     tbl_itemHPA.ajax.reload();
                                 } else if (response.data.status == "Range Ada") {
-                                    loadingHide();
                                     messageWarning("Peringatan", "Barang ini sudah dibuatkan harga untuk jenis harga, range dan satuan tersebut!");
                                 } else {
-                                    loadingHide();
                                     messageWarning("Gagal", "Data gagal diperbarui!");
                                 }
                             });

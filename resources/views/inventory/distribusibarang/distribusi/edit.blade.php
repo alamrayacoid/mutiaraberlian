@@ -629,7 +629,7 @@
         $.each($('.modalCodeProd:eq('+idxItem+') .table_listcodeprod').find('.qtyProdCode'), function (key, val) {
             qtyWithProdCode += parseInt($(this).val());
         });
-        return qtyWithProdCode;
+        return (isNaN(qtyWithProdCode)) ? 0 : qtyWithProdCode;
     }
 </script>
 @endsection

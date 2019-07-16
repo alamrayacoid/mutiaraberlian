@@ -34,6 +34,12 @@ class Mutasi extends Controller
                     ->where('s_condition', '=', 'FINE')
                     ->first();
 
+                // callback if stock item is null / empty
+                if (is_null($stock)) {
+                    $item = m_item::where('i_id', $itemId)->first();
+                    throw new Exception("Stok '" . strtoupper($item->i_name) . "' kosong !");
+                }
+
                 $lengthPC = (int)$prodCodeLength[$key];
                 $endProdCodeIdx = $startProdCodeIdx + $lengthPC;
                 for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
@@ -2025,7 +2031,7 @@ class Mutasi extends Controller
                 // if : mutcat is 'pembelian in' (20) / stock-child
                 if ($sm->sm_mutcat == 18 || $sm->sm_mutcat == 20) {
                     // get stock-mutation parent
-                    foreach ($stockMutations as $key => $sm) {
+                    foreach ($stockMutations as $idx => $sm) {
                         // parent for penjualan-agent out
                         if ($mutcat == 5) {
                             if ($sm->sm_mutcat == 5) {

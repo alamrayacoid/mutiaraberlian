@@ -239,16 +239,6 @@ class OpnameController extends Controller
         ->where('s_position', '=', $req->position)
         ->get();
 
-      // if (count($stock) > 0) {
-      //   $stockId = $stock[0]->s_id;
-      // } else {
-      //   $stockId = 0;
-      // }
-
-      // $codes = DB::table('d_stockdt')
-      //   ->where('sd_stock', '=', $stockId)
-      //   ->get();
-
       return Datatables::of($stock)
       ->make(true);
     }

@@ -122,7 +122,7 @@ class ManajemenAgenController extends Controller
         // khusus tuban
         //$prov = DB::table('m_wil_provinsi')->where('wp_id', 35)->get();
         $prov = m_wil_provinsi::orderBy('wp_name', 'asc')
-        ->get();
+            ->get();
         return Response::json($prov);
     }
 
@@ -131,8 +131,8 @@ class ManajemenAgenController extends Controller
         // khusus tuban
         //$kota = DB::table('m_wil_kota')->where('wc_provinsi', $idprov)->where('wc_id', 3523)->get();
         $kota = m_wil_kota::where('wc_provinsi', $idprov)
-        ->orderBy('wc_name', 'asc')
-        ->get();
+            ->orderBy('wc_name', 'asc')
+            ->get();
         return Response::json($kota);
     }
 
@@ -304,11 +304,11 @@ class ManajemenAgenController extends Controller
         // in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
         $idx = null;
         foreach ($array as $key => $val) {
-            if ($value <= $val->pcd_rangeqtystart && $val->pcd_rangeqtyend == 0){
+            if ($value <= $val->pcd_rangeqtystart && $val->pcd_rangeqtyend == 0) {
                 $val->pcd_rangeqtyend = $val->pcd_rangeqtystart + $value + 2;
             }
 
-            if ($val->pcd_rangeqtyend == 0){
+            if ($val->pcd_rangeqtyend == 0) {
                 $val->pcd_rangeqtyend = $value + $val->pcd_rangeqtyend + 2;
             }
 
@@ -432,8 +432,7 @@ class ManajemenAgenController extends Controller
                     'message' => $e
                 ]);
             }
-        }
-        else if ($data['select_order'] == "2" || $data['select_order'] == 'x') {
+        } else if ($data['select_order'] == "2" || $data['select_order'] == 'x') {
             $po_id = (DB::table('d_productorder')
                 ->max('po_id')) ?
                 DB::table('d_productorder')
@@ -483,8 +482,7 @@ class ManajemenAgenController extends Controller
                     'status' => "Success",
                     'message' => "Data berhasil disimpan"
                 ]);
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 DB::rollBack();
                 return Response::json([
                     'status' => "Failed",
@@ -568,9 +566,13 @@ class ManajemenAgenController extends Controller
     public function getOrder(Request $req)
     {
         $st = $req->status;
+        $dateFrom = Carbon::parse($req->date_from);
+        $datetTo = Carbon::parse($req->date_to);
+        // dd($dateFrom, $datetTo, $req->all());
 
         if ($st == null || $st == "") {
             $data = DB::table('d_productorder')
+                ->whereBetween('po_date', [$dateFrom, $datetTo])
                 ->select('d_productorder.po_id as id',
                     'd_productorder.po_date as tanggal',
                     'd_productorder.po_nota as nota',
@@ -594,6 +596,7 @@ class ManajemenAgenController extends Controller
                     $status = 'Y';
                 }
                 $data = DB::table('d_productorder')
+                    ->whereBetween('po_date', [$dateFrom, $datetTo])
                     ->select('d_productorder.po_id as id',
                         'd_productorder.po_date as tanggal',
                         'd_productorder.po_nota as nota',
@@ -613,6 +616,7 @@ class ManajemenAgenController extends Controller
                     $status = 'Y';
                 }
                 $data = DB::table('d_productorder')
+                    ->whereBetween('po_date', [$dateFrom, $datetTo])
                     ->select('d_productorder.po_id as id',
                         'd_productorder.po_date as tanggal',
                         'd_productorder.po_nota as nota',
@@ -629,7 +633,7 @@ class ManajemenAgenController extends Controller
 
         return DataTables::of($data)
             ->addColumn('tanggal', function ($data) {
-                return $data->tanggal;
+                return Carbon::parse($data->tanggal)->format('d M Y');
             })
             ->addColumn('nota', function ($data) {
                 return $data->nota;
@@ -842,7 +846,7 @@ class ManajemenAgenController extends Controller
             ->leftJoin('m_company as agen', 's_comp', 'agen.c_id')
             ->leftJoin('m_item', 's_item', 'i_id')
             ->where('s_position', '=', $id)
-            ->select('s_id','agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_condition', 's_qty')
+            ->select('s_id', 'agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_condition', 's_qty')
             ->get();
 
         return Datatables::of($data)
@@ -858,7 +862,7 @@ class ManajemenAgenController extends Controller
                 return "<div class='text-center'>$data->s_qty</div>";
             })
             ->addColumn('aksi', function ($data) {
-                return '<button class="btn btn-sm btn-primary" onclick="detail_agen('.$data->s_id.')"><i class="fa fa-folder"></i></button>';
+                return '<button class="btn btn-sm btn-primary" onclick="detail_agen(' . $data->s_id . ')"><i class="fa fa-folder"></i></button>';
             })
             ->rawColumns(['kondisi', 'qty', 'aksi'])
             ->make(true);
@@ -983,6 +987,40 @@ class ManajemenAgenController extends Controller
         return response()->json($agents);
     }
 
+    public function getAgenKPL(Request $request)
+    {
+        $provinsi = $request->provinsi;
+        $kota = $request->kota;
+        $cek = DB::table('m_company')
+            ->where('c_id', '=', Auth::user()->u_company)
+            ->first();
+        $type = $cek->c_type;
+        $data = [];
+
+        if ($type == 'PUSAT'){
+            $data = DB::table('m_company')
+                ->join('m_agen', 'a_code', '=', 'c_user')
+                ->where('a_area', '=', $kota)
+                ->where('c_type', '=', 'AGEN')
+                ->get();
+        } elseif ($type == 'CABANG'){
+            $data = DB::table('m_company')
+                ->join('m_agen', 'a_code', '=', 'c_user')
+                ->where('a_area', '=', $kota)
+                ->where('c_type', '=', 'AGEN')
+                ->where('a_mma', '=', $cek->u_company)
+                ->select('m_agen.*')
+                ->get();
+        } else {
+            $data = m_agen::join('m_company', 'c_user', '=', 'a_code')
+                ->where('c_id', '=', $cek->c_id)
+                ->select('m_agen.*')
+                ->get();
+        }
+
+        return response()->json($data);
+    }
+
     // get detail-kpl
     public function getDetailPenjualan(Request $request)
     {
@@ -1041,12 +1079,33 @@ class ManajemenAgenController extends Controller
     // show page to create new KPL
     public function createKPL()
     {
+        if (!AksesUser::checkAkses(23, 'create')){
+            abort(401);
+        }
         $data['user'] = Auth::user()->u_user;
-        $data['agents'] = m_agen::get();
+        $cek = DB::table('m_company')
+            ->where('c_id', '=', Auth::user()->u_company)
+            ->first();
+        $type = $cek->c_type;
+        $provinsi = [];
+        $data['agents'] = [];
+        if ($type == 'PUSAT'){
+            $data['agents'] = m_agen::get();
+            $provinsi = DB::table('m_wil_provinsi')
+                ->get();
+        } elseif ($type == 'CABANG'){
+            $data['agents'] = m_agen::where('a_mma', '=', $cek->c_id)->get();
+        } else {
+            $data['agents'] = m_agen::join('m_company', 'c_user', '=', 'a_code')
+                ->where('c_id', '=', $cek->c_id)
+                ->select('m_agen.*')
+                ->get();
+        }
         $data['member'] = m_member::orWhere('m_id', 1)
             ->orWhere('m_agen', Auth::user()->u_code)
             ->get();
-        return view('marketing/agen/kelolapenjualan/create', compact('data'));
+
+        return view('marketing/agen/kelolapenjualan/create', compact('data', 'type', 'provinsi'));
     }
 
     // get member for KPL if the user is Employee, not Agent
@@ -1101,7 +1160,8 @@ class ManajemenAgenController extends Controller
                 })
                 ->groupBy('d_stock.s_id')
                 ->get();
-        } else {
+        }
+        else {
             $nama = DB::table('m_item')
                 ->join('d_stock', function ($s) use ($comp) {
                     $s->on('i_id', '=', 's_item');
@@ -1160,6 +1220,7 @@ class ManajemenAgenController extends Controller
 
         foreach ($get_price as $key => $price) {
             if ($qty == 1) {
+                //satuan
                 if ($this->existsInArrayKPL("U", $get_price) == true) {
                     if ($get_price[$key]->spd_type == "U") {
                         $harga = $get_price[$key]->spd_price;
@@ -1170,6 +1231,7 @@ class ManajemenAgenController extends Controller
                     }
                 }
             } else if ($qty > 1) {
+                //range
                 if ($price->spd_rangeqtyend == 0) {
                     if ($qty >= $price->spd_rangeqtystart) {
                         $harga = $price->spd_price;
@@ -1202,6 +1264,13 @@ class ManajemenAgenController extends Controller
     {
         $idx = null;
         foreach ($array as $key => $val) {
+            if ($value <= $val->spd_rangeqtystart && $val->spd_rangeqtyend == 0){
+                $val->spd_rangeqtyend = $val->spd_rangeqtystart + $value + 2;
+            }
+
+            if ($val->spd_rangeqtyend == 0){
+                $val->spd_rangeqtyend = $value + $val->spd_rangeqtyend + 2;
+            }
             $x = in_array($value, range($val->spd_rangeqtystart, $val->spd_rangeqtyend));
             if ($x == true) {
                 $idx = $key;
@@ -1226,15 +1295,12 @@ class ManajemenAgenController extends Controller
     // store new KPL
     public function storeKPL(Request $request)
     {
-        // // validate request
-        // $isValidRequest = $this->validate_req($request);
-        // if ($isValidRequest != '1') {
-        //     $errors = $isValidRequest;
-        //     return response()->json([
-        //         'status' => 'invalid',
-        //         'message' => $errors
-        //     ]);
-        // }
+        if (!AksesUser::checkAkses(23, 'create')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ini"
+            ]);
+        }
 
         DB::beginTransaction();
 
@@ -1301,16 +1367,17 @@ class ManajemenAgenController extends Controller
                 $salesDt->sd_unit = $data['satuan'][$i];
                 $salesDt->sd_value = Currency::removeRupiah($data['harga'][$i]);
                 $salesDt->sd_discpersen = 0;
-                $salesDt->sd_discvalue = 0;
+                $salesDt->sd_discvalue = $data['diskon'][$i];
                 $salesDt->sd_totalnet = Currency::removeRupiah($data['subtotal'][$i]);
                 $salesDt->save();
-
+                // dd($data['subtotal'][$i], Currency::removeRupiah($data['subtotal'][$i]));
                 // values for insert to salescomp-code
                 if ($i == 0) {
                     $startProdCodeIdx = 0;
                 }
                 $prodCodeLength = (int)$request->prodCodeLength[$i];
                 $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                $sumQtyPC = 0;
                 for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
                     // skip inserting when val is null or qty-pc is 0
                     if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
@@ -1329,7 +1396,14 @@ class ManajemenAgenController extends Controller
                         'sc_qty' => $request->qtyProdCode[$j]
                     ];
                     DB::table('d_salescode')->insert($val_salescode);
+                    $sumQtyPC += (int)$request->qtyProdCode[$j];
                 }
+
+                if ($sumQtyPC != (int)$data['jumlah'][$i]) {
+                    $item = m_item::where('i_id', $data['idItem'][$i])->first();
+                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
+                }
+                // dd($sumQtyPC, (int)$data['jumlah'][$i]);
 
                 // get qty in smallest unit
                 $data_check = DB::table('m_item')
@@ -1377,7 +1451,7 @@ class ManajemenAgenController extends Controller
                 $startProdCodeIdx += $prodCodeLength;
                 $salesDtId++;
             }
-
+            // dd('x');
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -1712,19 +1786,19 @@ class ManajemenAgenController extends Controller
 
     public function saveKPW(Request $request)
     {
-        $agen      = $request->agen;
-        $customer  = $request->customer;
-        $website   = $request->website;
+        $agen = $request->agen;
+        $customer = $request->customer;
+        $website = $request->website;
         $transaksi = $request->transaksi;
-        $item      = $request->item;
-        $qty       = $request->qty;
-        $unit      = $request->unit;
-        $price     = $request->price;
-        $note      = $request->note;
-        $code      = $request->code;
-        $qtycode   = $request->qtycode;
-        $mutcat    = 4;
-        $sekarang  = Carbon::now('Asia/Jakarta');
+        $item = $request->item;
+        $qty = $request->qty;
+        $unit = $request->unit;
+        $price = $request->price;
+        $note = $request->note;
+        $code = $request->code;
+        $qtycode = $request->qtycode;
+        $mutcat = 4;
+        $sekarang = Carbon::now('Asia/Jakarta');
 
         DB::beginTransaction();
         try {
@@ -1738,14 +1812,14 @@ class ManajemenAgenController extends Controller
             $total = intval($qty) * intval($price);
             DB::table('d_sales')
                 ->insert([
-                    's_id'     => $id_sales,
-                    's_comp'   => $agen,
+                    's_id' => $id_sales,
+                    's_comp' => $agen,
                     's_member' => $customer,
-                    's_type'   => 'C',
-                    's_date'   => $sekarang->format('Y-m-d'),
-                    's_nota'   => $nota,
-                    's_total'  => $total,
-                    's_user'   => Auth::user()->u_id,
+                    's_type' => 'C',
+                    's_date' => $sekarang->format('Y-m-d'),
+                    's_nota' => $nota,
+                    's_total' => $total,
+                    's_user' => Auth::user()->u_id,
                 ]);
 
             $datamutcat = DB::table('m_mutcat')->where('m_status', '=', 'M')->get();
@@ -1810,19 +1884,19 @@ class ManajemenAgenController extends Controller
                     // qty that will store to sm_qty in new stock-mutation
                     $smQty = $stock[$j]->sm_sisa;
 
-                    if ($cek_idstock != $stock[$j]->s_id){
+                    if ($cek_idstock != $stock[$j]->s_id) {
                         ++$id_salesdt;
                         $temp = [
-                            'sd_sales'      => $id_sales,
-                            'sd_detailid'   => $id_salesdt,
-                            'sd_comp'       => $stock[$j-1]->s_comp,
-                            'sd_item'       => $stock[$j-1]->s_item,
-                            'sd_qty'        => $sales_qty,
-                            'sd_unit'       => $unit,
-                            'sd_value'      => $price,
+                            'sd_sales' => $id_sales,
+                            'sd_detailid' => $id_salesdt,
+                            'sd_comp' => $stock[$j - 1]->s_comp,
+                            'sd_item' => $stock[$j - 1]->s_item,
+                            'sd_qty' => $sales_qty,
+                            'sd_unit' => $unit,
+                            'sd_value' => $price,
                             'sd_discpersen' => 0,
-                            'sd_discvalue'  => 0,
-                            'sd_totalnet'   => $price * $sales_qty
+                            'sd_discvalue' => 0,
+                            'sd_totalnet' => $price * $sales_qty
                         ];
                         array_push($insert_salesdt, $temp);
                         $sales_qty = 0;
@@ -1852,16 +1926,16 @@ class ManajemenAgenController extends Controller
 
                     ++$id_salesdt;
                     $temp = [
-                        'sd_sales'      => $id_sales,
-                        'sd_detailid'   => $id_salesdt,
-                        'sd_comp'       => $stock[$j]->s_comp,
-                        'sd_item'       => $stock[$j]->s_item,
-                        'sd_qty'        => $permintaan,
-                        'sd_unit'       => $unit,
-                        'sd_value'      => $price,
+                        'sd_sales' => $id_sales,
+                        'sd_detailid' => $id_salesdt,
+                        'sd_comp' => $stock[$j]->s_comp,
+                        'sd_item' => $stock[$j]->s_item,
+                        'sd_qty' => $permintaan,
+                        'sd_unit' => $unit,
+                        'sd_value' => $price,
                         'sd_discpersen' => 0,
-                        'sd_discvalue'  => 0,
-                        'sd_totalnet'   => $price * $sales_qty
+                        'sd_discvalue' => 0,
+                        'sd_totalnet' => $price * $sales_qty
                     ];
                     array_push($insert_salesdt, $temp);
 
@@ -1870,13 +1944,13 @@ class ManajemenAgenController extends Controller
 
                 //insert d_salescode
                 $salescode = [];
-                for ($i = 0; $i < count($code); $i++){
+                for ($i = 0; $i < count($code); $i++) {
                     $temp = [
-                        'sc_sales'    => $id_sales,
-                        'sc_item'     => $item,
+                        'sc_sales' => $id_sales,
+                        'sc_item' => $item,
                         'sc_detailid' => $i + 1,
-                        'sc_code'     => $code[$i],
-                        'sc_qty'      => $qtycode[$i]
+                        'sc_code' => $code[$i],
+                        'sc_qty' => $qtycode[$i]
                     ];
                     array_push($salescode, $temp);
                 }
@@ -1887,18 +1961,18 @@ class ManajemenAgenController extends Controller
                 // insert new stock-mutation out
                 DB::table('d_stock_mutation')
                     ->insert([
-                        'sm_stock'    => $stock[$j]->sm_stock,
+                        'sm_stock' => $stock[$j]->sm_stock,
                         'sm_detailid' => $detailid,
-                        'sm_date'     => $sekarang,
-                        'sm_mutcat'   => 4,
-                        'sm_qty'      => $smQty,
-                        'sm_use'      => 0,
-                        'sm_residue'  => 0,
-                        'sm_hpp'      => $stock[$j]->sm_hpp,
-                        'sm_sell'     => $price,
-                        'sm_nota'     => $nota,
-                        'sm_reff'     => $stock[$j]->sm_nota,
-                        'sm_user'     => Auth::user()->u_id,
+                        'sm_date' => $sekarang,
+                        'sm_mutcat' => 4,
+                        'sm_qty' => $smQty,
+                        'sm_use' => 0,
+                        'sm_residue' => 0,
+                        'sm_hpp' => $stock[$j]->sm_hpp,
+                        'sm_sell' => $price,
+                        'sm_nota' => $nota,
+                        'sm_reff' => $stock[$j]->sm_nota,
+                        'sm_user' => Auth::user()->u_id,
                     ]);
 
                 // currently, it's special case for 'penjualan-langsung / mutcat 14'
@@ -1934,19 +2008,19 @@ class ManajemenAgenController extends Controller
             ++$sw_id;
             DB::table('d_salesweb')
                 ->insert([
-                    'sw_id'              => $sw_id,
-                    'sw_reff'            => $nota,
+                    'sw_id' => $sw_id,
+                    'sw_reff' => $nota,
                     'sw_transactioncode' => $transaksi,
-                    'sw_agen'            => $agen,
-                    'sw_website'         => $website,
-                    'sw_date'            => $sekarang,
-                    'sw_item'            => $item,
-                    'sw_qty'             => $qty,
-                    'sw_unit'            => $unit,
-                    'sw_price'           => $price,
-                    'sw_totalprice'      => intval($qty) * intval($price),
-                    'sw_note'            => $note,
-                    'sw_insert'          => $sekarang
+                    'sw_agen' => $agen,
+                    'sw_website' => $website,
+                    'sw_date' => $sekarang,
+                    'sw_item' => $item,
+                    'sw_qty' => $qty,
+                    'sw_unit' => $unit,
+                    'sw_price' => $price,
+                    'sw_totalprice' => intval($qty) * intval($price),
+                    'sw_note' => $note,
+                    'sw_insert' => $sekarang
                 ]);
 
             DB::commit();
@@ -2059,17 +2133,17 @@ class ManajemenAgenController extends Controller
         return Response::json([
             'datas' => $datas,
             'units' => $units,
-            'code'  => $code,
-            'dataId'=> Crypt::encrypt($id)
+            'code' => $code,
+            'dataId' => Crypt::encrypt($id)
         ]);
     }
 
     public function updateKPW(Request $request)
     {
         // dd($request);
-        try{
+        try {
             $id = Crypt::decrypt($request->id);
-        }catch (DecryptException $e){
+        } catch (DecryptException $e) {
             return view('errors.404');
         }
 
@@ -2094,7 +2168,7 @@ class ManajemenAgenController extends Controller
             ]);
         } else {
             return Response::json([
-                'status'  => 'gagal'
+                'status' => 'gagal'
             ]);
         }
 
@@ -2129,14 +2203,14 @@ class ManajemenAgenController extends Controller
             //info stock
             $stock = DB::table('d_stock_mutation')
                 ->join('d_stock', 's_id', '=', 'sm_stock')
-                ->join('d_stockmutationdt', function ($q){
+                ->join('d_stockmutationdt', function ($q) {
                     $q->on('smd_stock', '=', 's_id');
                     $q->on('smd_stockmutation', '=', 'sm_detailid');
                 })
                 ->where('sm_nota', '=', $info[0]->s_nota)
                 ->first();
 
-            for ($i = 0; $i < count($kode); $i++){
+            for ($i = 0; $i < count($kode); $i++) {
                 //kembalikan kode ke pemilik
                 $cek = DB::table('d_stockdt')
                     ->join('d_stock', 's_id', '=', 'sd_stock')
@@ -2144,7 +2218,7 @@ class ManajemenAgenController extends Controller
                     ->where('sd_stock', '=', $stock->s_id)
                     ->first();
 
-                if ($cek != null){
+                if ($cek != null) {
                     //update qty
                     DB::table('d_stockdt')
                         ->where('sd_stock', '=', $cek->sd_stock)
@@ -2165,7 +2239,7 @@ class ManajemenAgenController extends Controller
                         ->where('sm_nota', '=', $info[0]->s_nota)
                         ->get();
 
-                    for ($j = 0; $j < count($data); $j++){
+                    for ($j = 0; $j < count($data); $j++) {
                         //data pembelian
                         $pembelian = DB::table('d_stock_mutation')
                             ->where('sm_stock', '=', $data[$j]->sm_stock)
@@ -2176,7 +2250,7 @@ class ManajemenAgenController extends Controller
                             ->where('sm_stock', '=', $data[$j]->sm_stock)
                             ->where('sm_nota', '=', $data[$j]->sm_reff)
                             ->update([
-                                'sm_use'     => $pembelian->sm_use - $kode[$i]->sc_qty,
+                                'sm_use' => $pembelian->sm_use - $kode[$i]->sc_qty,
                                 'sm_residue' => $pembelian->sm_residue + $kode[$i]->sc_qty,
                             ]);
                     }
@@ -2192,10 +2266,10 @@ class ManajemenAgenController extends Controller
                     ++$detailid;
                     DB::table('d_salesdt')
                         ->insert([
-                            'sd_stock'    => $stock[0]->s_id,
+                            'sd_stock' => $stock[0]->s_id,
                             'sd_detailid' => $detailid,
-                            'sd_code'     => $kode[$i]->sc_code,
-                            'sd_qty'      => $kode[$i]->sc_qty
+                            'sd_code' => $kode[$i]->sc_code,
+                            'sd_qty' => $kode[$i]->sc_qty
                         ]);
                     DB::table('d_stock')
                         ->where('s_id', '=', $stock[0]->s_id)
@@ -2208,7 +2282,7 @@ class ManajemenAgenController extends Controller
                     $data = DB::table('d_stock_mutation')
                         ->where('sm_nota', '=', $info[0]->s_nota)
                         ->get();
-                    for ($j = 0; $j < count($data); $j++){
+                    for ($j = 0; $j < count($data); $j++) {
                         //data pembelian
                         $pembelian = DB::table('d_stock_mutation')
                             ->where('sm_stock', '=', $data[$j]->sm_stock)
@@ -2233,7 +2307,7 @@ class ManajemenAgenController extends Controller
 
             //delete mutasi
             DB::table('d_stockmutationdt')
-                ->join('d_stock_mutation', function ($q){
+                ->join('d_stock_mutation', function ($q) {
                     $q->on('sm_stock', '=', 'smd_stock');
                     $q->on('sm_detailid', '=', 'smd_stockmutation');
                 })
@@ -2265,7 +2339,7 @@ class ManajemenAgenController extends Controller
         } catch (DecryptException $e) {
             DB::rollBack();
             return Response::json([
-                'status'  => 'gagal',
+                'status' => 'gagal',
                 'message' => $e->getMessage()
             ]);
         }

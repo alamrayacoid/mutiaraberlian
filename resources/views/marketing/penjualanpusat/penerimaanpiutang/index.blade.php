@@ -14,12 +14,12 @@
                         <div class="input-group">
                             <input type="text" placeholder="Tulis Nota / Filterisasi --->" class="form-control" id="nota_s" autocomplete="off" style="text-transform:uppercase">
                             <div class="input-group-append">
-                                <button type="button" class="input-group-text btn btn-sm btn-primary btn-block rounded" style="height: 100%;" onclick="goSearch()"><i class="fa fa-arrow-right"></i></button>
+                                <button type="button" class="input-group-text btn btn-sm btn-primary btn-block" style="height: 100%;" onclick="goSearch()"><i class="fa fa-arrow-right"></i></button>
                             </div>
                         </div>
                     </div>
                     <div class="col-1">
-                        <button type="button" class="btn btn-lg btn-primary btn-block rounded" onclick="getNota()"><i class="fa fa-filter"></i></button>
+                        <button type="button" class="btn btn-lg btn-primary btn-block" onclick="getNota()"><i class="fa fa-filter"></i></button>
                     </div>
                 </div>
                 <div class="table-responsive">

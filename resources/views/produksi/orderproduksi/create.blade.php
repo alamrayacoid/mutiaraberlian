@@ -548,6 +548,9 @@
                 });
 
             for (var i = 0; i < subtotal.length; i++) {
+                if (subtotal[i] == ''){
+                    subtotal[i] = 'Rp. 0';
+                }
                 total += parseInt(subtotal[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", ""));
             }
             $("#tot_hrg").val(total);
