@@ -29,7 +29,7 @@
 								<tr>
 									<th width="10%">No</th>
 									<th width="70%">Indikator</th>
-									<th width="20%">Aksi</th>
+									<th width="10%">Aksi</th>
 								</tr>
 							</thead>
 						</table>

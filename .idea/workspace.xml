@@ -1,7 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="" />
+    <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Marketingarea/MarketingAreaController.php.swp" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Marketingarea/MarketingAreaController.php.swp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Penjualanpusat/PenjualanPusatController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Penjualanpusat/PenjualanPusatController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Inventory/Distribusi/ProsesOrderController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Inventory/Distribusi/ProsesOrderController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/laporan/jurnal/laporan_jurnal_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/laporan/jurnal/laporan_jurnal_controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/laporan/neraca/laporan_neraca_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/laporan/neraca/laporan_neraca_controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/transaksi/transaksi_kas/transaksi_kas_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/transaksi/transaksi_kas/transaksi_kas_controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/transaksi/transaksi_memorial/transaksi_memorial_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/transaksi/transaksi_memorial/transaksi_memorial_controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SDM/Absensi/DashboardController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SDM/Absensi/DashboardController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SDM/Absensi/PresensiController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SDM/Absensi/PresensiController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SDM/MasterKPIController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SDM/MasterKPIController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Model/keuangan/dk_hierarki_subclass.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Model/keuangan/dk_hierarki_subclass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Model/keuangan/dk_jurnal.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Model/keuangan/dk_jurnal.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Model/keuangan/dk_jurnal_detail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Model/keuangan/dk_jurnal_detail.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/d_presence.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/d_presence.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/m_divisi.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/m_divisi.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modal_create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/modal_create.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/JTimepicker-JohnHRTN/jquery.timepicker.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/JTimepicker-JohnHRTN/jquery.timepicker.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/JTimepicker-JohnHRTN/jquery.timepicker.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/JTimepicker-JohnHRTN/jquery.timepicker.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/JTimepicker-JohnHRTN/jquery.timepicker.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/JTimepicker-JohnHRTN/jquery.timepicker.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/img/employee.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/img/employee.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/inventory/distribusibarang/prosesorder/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/distribusibarang/prosesorder/edit.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/inventory/distribusibarang/prosesorder/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/distribusibarang/prosesorder/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/inventory/manajemenstok/analisastockto/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/manajemenstok/analisastockto/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/aruskas/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/aruskas/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/aruskas/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/aruskas/print/excel.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/aruskas/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/aruskas/print/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/aruskas/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/aruskas/print/pdf.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/bukubesar/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/bukubesar/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/bukubesar/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/bukubesar/print/excel.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/bukubesar/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/bukubesar/print/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/bukubesar/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/bukubesar/print/pdf.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/jurnal/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/jurnal/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/jurnal/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/jurnal/print/excel.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/jurnal/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/jurnal/print/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/jurnal/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/jurnal/print/pdf.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/labarugi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/labarugi/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/labarugi/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/labarugi/print/excel.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/labarugi/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/labarugi/print/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/labarugi/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/labarugi/print/pdf.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/neraca/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/neraca/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/neraca/print/excel.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/neraca/print/excel.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/neraca/print/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/neraca/print/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/laporan/neraca/print/pdf.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/laporan/neraca/print/pdf.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/transaksi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/transaksi/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/transaksi/transaksi_kas/_partials/_modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/transaksi/transaksi_kas/_partials/_modal.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/transaksi/transaksi_kas/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/transaksi/transaksi_kas/create.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/transaksi/transaksi_memorial/_partials/_modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/transaksi/transaksi_memorial/_partials/_modal.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/transaksi/transaksi_memorial/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/transaksi/transaksi_memorial/create.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/marketing/agen/inventoryagen/modal_detail_agen.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/agen/inventoryagen/modal_detail_agen.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/penerimaanpiutang/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/penerimaanpiutang/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/penerimaanpiutang/modalnota.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/penerimaanpiutang/modalnota.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/penerimaanpiutang/modalpayment.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/penerimaanpiutang/modalpayment.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/sdm/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/notifikasiotorisasi/otorisasi/sdm/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/produksi/pembayaran/nota.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/pembayaran/nota.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/absensisdm/dashboard/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/absensisdm/dashboard/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/absensisdm/presensi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/absensisdm/presensi/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/absensisdm/presensi/modal_create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/absensisdm/presensi/modal_create.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/absensisdm/presensi/modal_detail.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/absensisdm/presensi/modal_detail.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_create.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_detail.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_detail.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_edit.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/tab_masterkpi.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/tab_masterkpi.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/penggajuansdm/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/penggajuansdm/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/uploads/recruitment/123123-ijazah.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/storage/uploads/recruitment/123123-ijazah.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/uploads/recruitment/123123-ktp.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/storage/uploads/recruitment/123123-ktp.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/uploads/recruitment/123123-other.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/storage/uploads/recruitment/123123-other.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/uploads/recruitment/123123-photo.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/storage/uploads/recruitment/123123-photo.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/uploads/recruitment/12312321-ijazah.png" beforeDir="false" afterPath="$PROJECT_DIR$/storage/uploads/recruitment/12312321-ijazah.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/uploads/recruitment/12312321-ktp.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/storage/uploads/recruitment/12312321-ktp.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/uploads/recruitment/12312321-other.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/storage/uploads/recruitment/12312321-other.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/uploads/recruitment/12312321-photo.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/storage/uploads/recruitment/12312321-photo.jpeg" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,10 +91,35 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SDM/RecruitmentController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="11130">
+              <caret line="543" selection-start-line="543" selection-end-line="568" selection-end-column="5" />
+              <folding>
+                <element signature="e#44#77#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SDM/MasterKPIController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="453">
+              <caret line="178" column="45" selection-start-line="178" selection-start-column="45" selection-end-line="178" selection-end-column="45" />
+              <folding>
+                <element signature="e#44#72#0#PHP" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9580">
-              <caret line="488" column="173" selection-start-line="488" selection-start-column="173" selection-end-line="488" selection-end-column="173" />
+            <state relative-caret-position="444">
+              <caret line="386" column="108" selection-start-line="386" selection-start-column="108" selection-end-line="386" selection-end-column="108" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
               </folding>
@@ -26,41 +127,60 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Konsinyasipusat/KonsinyasiPusatController.php">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="344">
-              <caret line="932" column="59" lean-forward="true" selection-start-line="932" selection-start-column="59" selection-end-line="932" selection-end-column="59" />
+            <state relative-caret-position="231">
+              <caret line="11" selection-start-line="11" selection-end-line="17" selection-end-column="14" />
               <folding>
-                <element signature="e#75#103#0#PHP" expanded="true" />
+                <element signature="e#502#528#0#HTML" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/edit.blade.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/kpipegawai/create.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8440">
-              <caret line="422" column="11" selection-start-line="422" selection-start-column="11" selection-end-line="422" selection-end-column="11" />
+            <state relative-caret-position="234">
+              <caret line="126" column="72" lean-forward="true" selection-start-line="126" selection-start-column="23" selection-end-line="126" selection-end-column="72" />
+              <folding>
+                <element signature="e#392#418#0#HTML" expanded="true" />
+                <element signature="e#580#606#0#HTML" expanded="true" />
+                <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/kpidivisi/create.blade.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="122">
+              <caret line="126" column="72" selection-start-line="126" selection-start-column="72" selection-end-line="126" selection-end-column="72" />
+              <folding>
+                <element signature="e#392#418#0#HTML" expanded="true" />
+                <element signature="e#578#604#0#HTML" expanded="true" />
+                <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/kpidivisi/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7580">
-              <caret line="379" column="28" selection-start-line="379" selection-start-column="28" selection-end-line="379" selection-end-column="28" />
+            <state relative-caret-position="147">
+              <caret line="7" column="139" selection-start-line="7" selection-start-column="139" selection-end-line="7" selection-end-column="139" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/layouts/_sidebar.blade.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/scoreboardpegawai/tab_scoreboardpegawai.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2980">
-              <caret line="149" column="50" selection-start-line="149" selection-start-column="49" selection-end-line="149" selection-end-column="50" />
+            <state relative-caret-position="399">
+              <caret line="19" column="61" lean-forward="true" selection-end-line="76" />
             </state>
           </provider>
         </entry>
@@ -69,19 +189,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>.btn-submit</find>
-      <find>m_compan</find>
-      <find>dd</find>
-      <find>detailKonsinyasi</find>
-      <find>marketing/konsinyasipusat/index</find>
-      <find>modal-penempatan</find>
-      <find>/marketing/konsinyasipusat/detail-konsinyasi</find>
-      <find>diskon</find>
-      <find>marketing/konsinyasipusat/penempatanproduk/create</find>
-      <find>btn-submit</find>
-      <find>resi</find>
-      <find>nota</find>
-      <find>abort</find>
       <find>edit</find>
       <find>ekspe</find>
       <find>edit_pene</find>
@@ -99,6 +206,19 @@
       <find>edit_</find>
       <find>produ</find>
       <find>d_productdelivery</find>
+      <find>approve</find>
+      <find>master</find>
+      <find>active</find>
+      <find>dele</find>
+      <find>sdm</find>
+      <find>delet</find>
+      <find>delete</find>
+      <find>destroy</find>
+      <find>pengajuan</find>
+      <find>kpi</find>
+      <find>deletePenga</find>
+      <find>deleteKpi</find>
+      <find>status</find>
     </findStrings>
     <replaceStrings>
       <replace>done_</replace>
@@ -111,12 +231,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/satuanHPA.blade.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php" />
-        <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/golongan/addGolonganHPA.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/masterdatautama/ekspedisi/index.blade.php" />
-        <option value="$PROJECT_DIR$/app/m_agen.php" />
-        <option value="$PROJECT_DIR$/resources/views/marketing/agen/kelolapenjualan/modal-search.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/agen/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/agen/penjualanviaweb/index.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/AksesUser.php" />
@@ -126,7 +240,6 @@
         <option value="$PROJECT_DIR$/resources/views/marketing/agen/kelolapenjualan/modal.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/agen/penjualanviaweb/modal_create.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/harga/index.blade.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Inventory/DistribusiController.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/distribusi/index.blade.php" />
@@ -135,9 +248,6 @@
         <option value="$PROJECT_DIR$/resources/views/marketing/marketingarea/datakonsinyasi/create.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_create.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_detail.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/tab_masterkpi.blade.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/SDM/MasterKPIController.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/marketingarea/index.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Master/AgenController.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" />
@@ -152,7 +262,6 @@
         <option value="$PROJECT_DIR$/resources/views/marketing/penjualanpusat/distribusi/modaldistribusi.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Penjualanpusat/PenjualanPusatController.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/agen/index.blade.php" />
-        <option value="$PROJECT_DIR$/routes/web.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/agen/create.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Marketingarea/MarketingAreaController.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Agen/ManajemenAgenController.php" />
@@ -162,6 +271,17 @@
         <option value="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/create.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/edit.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Konsinyasipusat/KonsinyasiPusatController.php" />
+        <option value="$PROJECT_DIR$/.env" />
+        <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/tab_masterkpi.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php" />
+        <option value="$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/kpipegawai/index.blade.php" />
+        <option value="$PROJECT_DIR$/routes/web.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/SDM/MasterKPIController.php" />
+        <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/kpidivisi/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/kpipegawai/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/sdm/kinerjasdm/kpidivisi/create.blade.php" />
       </list>
     </option>
   </component>
@@ -291,10 +411,10 @@
     </include_path>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="10" />
-    <option name="y" value="20" />
-    <option name="width" value="1346" />
-    <option name="height" value="688" />
+    <option name="x" value="14" />
+    <option name="y" value="27" />
+    <option name="width" value="1322" />
+    <option name="height" value="713" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -306,74 +426,78 @@
         <subPane>
           <expand>
             <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="Http" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="Http" type="462c0819:PsiDirectoryNode" />
               <item name="Controllers" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="Http" type="462c0819:PsiDirectoryNode" />
               <item name="Controllers" type="462c0819:PsiDirectoryNode" />
               <item name="SDM" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="sdm" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="views" type="462c0819:PsiDirectoryNode" />
               <item name="sdm" type="462c0819:PsiDirectoryNode" />
-              <item name="kinerjasdm" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="views" type="462c0819:PsiDirectoryNode" />
               <item name="sdm" type="462c0819:PsiDirectoryNode" />
               <item name="kinerjasdm" type="462c0819:PsiDirectoryNode" />
-              <item name="masterkpi" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
-              <item name="routes" type="462c0819:PsiDirectoryNode" />
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="sdm" type="462c0819:PsiDirectoryNode" />
+              <item name="kinerjasdm" type="462c0819:PsiDirectoryNode" />
+              <item name="kpidivisi" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiaraberlian" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiaraberlian" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="sdm" type="462c0819:PsiDirectoryNode" />
+              <item name="kinerjasdm" type="462c0819:PsiDirectoryNode" />
+              <item name="kpipegawai" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -474,6 +598,7 @@
       <workItem from="1562809803326" duration="18730000" />
       <workItem from="1562849713818" duration="8427000" />
       <workItem from="1562897446023" duration="900000" />
+      <workItem from="1562916269525" duration="5855000" />
     </task>
     <task id="LOCAL-00001" summary="perbaikan jenis produk">
       <created>1560755279119</created>
@@ -682,7 +807,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="301042000" />
+    <option name="totallyTimeSpent" value="314285000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -694,10 +819,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
-    <editor active="true" />
+    <frame x="0" y="23" width="1366" height="717" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49917355" visible="true" weight="0.1482602" />
+      <window_info id="npm" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49917355" visible="true" weight="0.25530303" />
       <window_info id="Structure" order="1" sideWeight="0.5008264" side_tool="true" weight="0.19818456" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -746,205 +871,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="update konsinyasi" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/resources/views/marketing/agen/orderproduk/cabang.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-line="131" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/produksi/orderproduksi/create.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="345" column="127" selection-start-line="345" selection-start-column="127" selection-end-line="345" selection-end-column="127" />
-          <folding>
-            <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="200" column="53" selection-start-line="200" selection-start-column="53" selection-end-line="200" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/sdm/penggajian/produksi/tambah_produksi.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="87" column="85" selection-start-line="87" selection-start-column="79" selection-end-line="87" selection-end-column="85" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/marketing/marketingarea/datakonsinyasi/create.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="533" column="41" lean-forward="true" selection-start-line="533" selection-start-column="41" selection-end-line="533" selection-end-column="41" />
-          <folding>
-            <element signature="n#style#0;n#input#0;n#td#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#td#5;n#tr#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/marketing/agen/orderproduk/create.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2560">
-          <caret line="145" column="15" lean-forward="true" selection-start-line="145" selection-start-column="15" selection-end-line="145" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_detail.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="23" column="26" lean-forward="true" selection-start-line="23" selection-start-column="26" selection-end-line="23" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="254" column="67" lean-forward="true" selection-start-line="240" selection-start-column="16" selection-end-line="254" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SDMController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="46" column="54" selection-start-line="46" selection-start-column="54" selection-end-line="46" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="302">
-          <caret line="490" column="25" lean-forward="true" selection-start-line="482" selection-start-column="8" selection-end-line="490" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/EmployeeController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="14" selection-start-line="14" selection-end-line="14" selection-end-column="15" />
-          <folding>
-            <element signature="n#style#0;n#strike#0;n#i#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#strike#0;n#i#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#strike#0;n#i#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/modal_create.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-236">
-          <caret line="1" column="30" selection-start-line="1" selection-start-column="9" selection-end-line="1" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="281" column="31" selection-start-line="281" selection-start-column="31" selection-end-line="281" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/tab_masterkpi.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="20" column="46" selection-start-line="20" selection-start-column="46" selection-end-line="20" selection-end-column="46" />
-          <folding>
-            <element signature="n#style#0;n#table#0;n#div#1;n#section#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SDM/MasterKPIController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="72" column="32" lean-forward="true" selection-start-line="72" selection-start-column="32" selection-end-line="72" selection-end-column="32" />
-          <folding>
-            <element signature="e#44#72#0#PHP" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/marketing/marketingarea/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="79" column="29" selection-start-line="79" selection-start-column="29" selection-end-line="79" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/InventoryController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="118" selection-start-line="118" selection-end-line="118" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/inventory/manajemenstok/pengelolaanmms/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="125" column="18" lean-forward="true" selection-start-line="125" selection-start-column="18" selection-end-line="125" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/ordercabang.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="109" column="25" selection-start-line="109" selection-start-column="25" selection-end-line="109" selection-end-column="25" />
-          <folding>
-            <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/create.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="337" column="93" selection-start-line="337" selection-start-column="93" selection-end-line="337" selection-end-column="93" />
-          <folding>
-            <element signature="n#style#0;n#p#0;n#td#3;n#tr#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/modal.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-560">
-          <caret line="11" column="33" lean-forward="true" selection-start-line="11" selection-start-column="33" selection-end-line="11" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="7" column="134" selection-start-line="7" selection-start-column="134" selection-end-line="7" selection-end-column="134" />
-          <folding>
-            <element signature="e#382#388#0#HTML" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/storage/framework/views/76306de45490a6450dea4382df401de444cf1c1a.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="461" column="8" selection-start-line="461" selection-start-column="8" selection-end-line="461" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/layouts/_script.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="302">
-          <caret line="314" column="21" selection-start-line="314" selection-start-column="21" selection-end-line="314" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/marketing/penjualanpusat/terimaorder/modal-process.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="824">
@@ -976,20 +902,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8820">
-          <caret line="454" column="35" selection-start-line="454" selection-start-column="35" selection-end-line="454" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Produksi/PembayaranController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9240">
-          <caret line="476" column="22" selection-start-line="476" selection-start-column="22" selection-end-line="476" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/PenerimaanProduksiController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2140">
@@ -1008,13 +920,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="340">
           <caret line="183" column="30" lean-forward="true" selection-start-line="183" selection-start-column="30" selection-end-line="183" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SDM/RecruitmentController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="644" column="5" selection-start-line="644" selection-start-column="5" selection-end-line="644" selection-end-column="5" />
         </state>
       </provider>
     </entry>
@@ -1120,16 +1025,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/web.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9580">
-          <caret line="488" column="173" selection-start-line="488" selection-start-column="173" selection-end-line="488" selection-end-column="173" />
-          <folding>
-            <element signature="e#7#389#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/marketing/konsinyasipusat/penempatanproduk/edit.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8440">
@@ -1157,6 +1052,207 @@
           <caret line="932" column="59" lean-forward="true" selection-start-line="932" selection-start-column="59" selection-end-line="932" selection-end-column="59" />
           <folding>
             <element signature="e#75#103#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/detail_return.blade.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.env">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="11" column="26" selection-start-line="11" selection-start-column="26" selection-end-line="11" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/produksi/orderproduksi/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1081" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/produksi/pembayaran/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1459" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/absensisdm/dashboard/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-586" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-420" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/produksi/penerimaanbarang/penerimaan/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-109" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/kelolarekrutmen/kelola_rekruitment.blade.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/masterkpi/tab_masterkpi.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="31" column="49" selection-start-line="31" selection-start-column="49" selection-end-line="31" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-9">
+          <caret line="22" column="6" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/MarketingController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="33">
+          <caret line="245" column="36" lean-forward="true" selection-start-line="245" selection-start-column="36" selection-end-line="245" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/RecruitmentController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="10" column="6" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SDMController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="966">
+          <caret line="46" column="54" selection-start-line="46" selection-start-column="54" selection-end-line="46" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/HargaController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="474">
+          <caret line="495" column="5" lean-forward="true" selection-start-line="495" selection-start-column="5" selection-end-line="495" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Produksi/PembayaranController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="487" column="43" selection-start-line="487" selection-start-column="43" selection-end-line="487" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SDM/KpsController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="17" column="32" selection-start-line="17" selection-start-column="32" selection-end-line="17" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/InventoryController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="24" column="5" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OtorisasiController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="341" column="89" lean-forward="true" selection-start-line="341" selection-start-column="89" selection-end-line="341" selection-end-column="89" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/prosesrekruitmen/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="745" column="54" selection-start-line="745" selection-start-column="48" selection-end-line="745" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SDM/RecruitmentController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="11130">
+          <caret line="543" selection-start-line="543" selection-end-line="568" selection-end-column="5" />
+          <folding>
+            <element signature="e#44#77#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/scoreboardpegawai/tab_scoreboardpegawai.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="19" column="61" lean-forward="true" selection-end-line="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="11" selection-start-line="11" selection-end-line="17" selection-end-column="14" />
+          <folding>
+            <element signature="e#502#528#0#HTML" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/kpipegawai/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="29" selection-start-column="29" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SDM/MasterKPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="453">
+          <caret line="178" column="45" selection-start-line="178" selection-start-column="45" selection-end-line="178" selection-end-column="45" />
+          <folding>
+            <element signature="e#44#72#0#PHP" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/web.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="444">
+          <caret line="386" column="108" selection-start-line="386" selection-start-column="108" selection-end-line="386" selection-end-column="108" />
+          <folding>
+            <element signature="e#7#389#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/kpidivisi/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="7" column="139" selection-start-line="7" selection-start-column="139" selection-end-line="7" selection-end-column="139" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/kpipegawai/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="126" column="72" lean-forward="true" selection-start-line="126" selection-start-column="23" selection-end-line="126" selection-end-column="72" />
+          <folding>
+            <element signature="e#392#418#0#HTML" expanded="true" />
+            <element signature="e#580#606#0#HTML" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/sdm/kinerjasdm/kpidivisi/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="122">
+          <caret line="126" column="72" selection-start-line="126" selection-start-column="72" selection-end-line="126" selection-end-column="72" />
+          <folding>
+            <element signature="e#392#418#0#HTML" expanded="true" />
+            <element signature="e#578#604#0#HTML" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
