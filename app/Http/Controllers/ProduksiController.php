@@ -201,7 +201,7 @@ class ProduksiController extends Controller
                     $forceDelete = '';
                 }
                 $nota = '<button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Cetak Nota" title="Nota" type="button" onclick="printNota(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-print"></i></button>';
-                return '<div class="row text-center"><div class="btn-group btn-group-sm">'. $detail . $nota . $edit . $hapus . '</div><div class="col-md-1"></div><div class="btn-group btn-group-sm">'. $forceDelete .'</div></div>';
+                return '<div class="row h-100 justify-content-center align-items-center"><div class="btn-group btn-group-sm">'. $detail . $nota . $edit . $hapus . '</div><div class="col-md-1"></div><div class="btn-group btn-group-sm">'. $forceDelete .'</div></div>';
             })
             ->rawColumns(['totalnet', 'bayar', 'status', 'aksi'])
             ->make(true);

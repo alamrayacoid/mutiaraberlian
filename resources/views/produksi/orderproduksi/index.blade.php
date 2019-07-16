@@ -43,7 +43,7 @@
 	                                		<th width="15%">Nilai Order</th>
 	                                		<th width="15%">Total Bayar</th>
                                             <th>Status</th>
-	                                		<th width="15%">Aksi</th>
+	                                		<th width="20%">Aksi</th>
 	                                	</tr>
 	                                </thead>
 	                                <tbody id="bodyTableIndex">
