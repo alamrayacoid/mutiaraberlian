@@ -4,6 +4,40 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\d_stock
+ *
+ * @property int $s_id
+ * @property string $s_comp pemilik barang
+ * @property string $s_position posisi barang
+ * @property int $s_item
+ * @property int $s_qty
+ * @property string $s_status ON GOING | ON DESTINATION
+ * @property string $s_condition FINE | BROKEN
+ * @property int|null $s_qtymin
+ * @property int|null $s_qtymax
+ * @property int|null $s_qtysafetystart
+ * @property int|null $s_qtysafetyend
+ * @property \Illuminate\Support\Carbon $s_created_at
+ * @property \Illuminate\Support\Carbon $s_updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock whereSComp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock whereSCondition($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock whereSCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock whereSId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock whereSItem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock whereSPosition($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock whereSQty($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock whereSQtymax($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock whereSQtymin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock whereSQtysafetyend($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock whereSQtysafetystart($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock whereSStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock whereSUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class d_stock extends Model
 {
     protected $table = 'd_stock';

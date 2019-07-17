@@ -50,30 +50,38 @@
                         <div class="col-12">
                             <h5 style="font-weight:bold;">Return</h5>
                         </div>
-                        <div class="col-md-4 col-sm-12">
+                        <div class="col-6">
+                            <div class="col-12">
+                                <label>Kode Produksi <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" name="kode_produksi" id="kode_produksi" class="form-control form-control-sm"/>
+                            </div>
+                        </div>
+                        <div class="col-6">
                             <div class="col-12">
                                 <label>Qty <span class="text-danger">*</span></label>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <input type="hidden" name="qty_current" id="qty_current">
                                 <input type="number" name="qty_return_edit" id="qty_return_edit" min="0" value="0" class="form-control form-control-sm"/>
                             </div>
                         </div>
-                        <div class="col-md-4 col-sm-12">
+                        <div class="col-6">
                             <div class="col-12">
                                 <label>Satuan <span class="text-danger">*</span></label>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <select name="satuan_return_edit" id="satuan_return_edit" class="form-control form-control-sm">
 
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4 col-sm-12 mb-4">
+                        <div class="col-6">
                             <div class="col-12">
                                 <label>Metode <span class="text-danger">*</span></label>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <select name="methode_return_edit" id="methode_return_edit" class="form-control form-control-sm">
                                     <option value="GB">Ganti Barang</option>
                                     <option value="PT">Potong Tagihan</option>

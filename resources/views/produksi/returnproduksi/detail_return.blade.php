@@ -52,15 +52,11 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover" cellspacing="0" id="table_return">
+                    <table class="table table-striped table-hover" cellspacing="0" id="table_detailreturn">
                         <thead class="bg-primary">
                         <tr>
-                            <th>Tgl Return</th>
-                            <th>Nota</th>
-                            <th>Metode</th>
-                            <th>Barang</th>
-                            <th>Qty</th>
-                            <th>Aksi</th>
+                            <th width="70%">Kode Produksi</th>
+                            <th width="30%">Kuantitas</th>
                         </tr>
                         </thead>
                         <tbody>

@@ -5,6 +5,26 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * App\d_stockdistributiondt
+ *
+ * @property int $sdd_stockdistribution
+ * @property int $sdd_detailid
+ * @property string|null $sdd_comp pemilik barang
+ * @property int|null $sdd_item
+ * @property int|null $sdd_qty
+ * @property int|null $sdd_unit
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdistributiondt newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdistributiondt newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdistributiondt query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdistributiondt whereSddComp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdistributiondt whereSddDetailid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdistributiondt whereSddItem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdistributiondt whereSddQty($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdistributiondt whereSddStockdistribution($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdistributiondt whereSddUnit($value)
+ * @mixin \Eloquent
+ */
 class d_stockdistributiondt extends Model
 {
     // use third-party library to create relationship multi-column
