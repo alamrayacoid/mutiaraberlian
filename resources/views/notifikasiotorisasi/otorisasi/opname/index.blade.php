@@ -133,7 +133,7 @@
 				$('#item').val(resp.auth.i_id);
 				$('#qtyS').val(resp.auth.oa_qtysystem);
 				$('#qtyR').val(resp.auth.oa_qtyreal);
-				
+
 				$('#table_detail tbody').empty();
 				$.each(resp.code, function(key, val){
 					$('#table_detail tbody').append(`<tr>
@@ -162,17 +162,27 @@
                   btnClass: 'btn-blue',
                   text: 'Ya',
                   action: function () {
-											loadingShow();
-                      axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/opname/approveopname'+'/'+id).then(function(response) {
+					  loadingShow();
+                      axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/opname/approveopname'+'/'+id)
+					  .then(function(response) {
+						  console.log(response.data);
                           if(response.data.status == 'berhasil'){
                               loadingHide();
                               messageSuccess("Berhasil", "Data Stock Opname Berhasil Disetujui");
                               table1.ajax.reload();
-                          }else{
+                          }
+						  else if (response.data.status == 'gagal') {
+							  loadingHide();
+							  messageWarning('Error', 'Terjadi kesalahan, hubungi pengembang : '+ response.data.message);
+						  }
+						  else{
                               loadingHide();
                               messageFailed("Gagal", "Data Stock Opname Gagal Disetujui");
                           }
                       })
+					  .catch(function(e) {
+						  loadingHide();
+					  });
                   }
               },
               cancel: {
@@ -201,17 +211,26 @@
                 text: 'Ya',
                 action: function () {
 										loadingShow();
-                    axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/opname/approveopname'+'/'+id).then(function(response) {
+                    axios.get(baseUrl+'/notifikasiotorisasi/otorisasi/opname/approveopname'+'/'+id)
+					.then(function(response) {
                         if(response.data.status == 'berhasil'){
                             loadingHide();
                             messageSuccess("Berhasil", "Data Stock Opname Berhasil Disetujui");
                             table1.ajax.reload();
-														$('#detail').modal('hide');
-                        }else{
+							$('#detail').modal('hide');
+                        }
+						else if (response.data.status == 'gagal') {
+							loadingHide();
+							messageWarning('Error', 'Terjadi kesalahan, hubungi pengembang : '+ response.data.message);
+						}
+						else{
                             loadingHide();
                             messageFailed("Gagal", "Data Stock Opname Gagal Disetujui");
                         }
                     })
+					.catch(function(e) {
+						loadingHide();
+					});
                 }
             },
             cancel: {
@@ -223,7 +242,7 @@
         }
     });
   });
-	
+
 	function rejected(id) {
 		$.confirm({
 			animation: 'RotateY',
