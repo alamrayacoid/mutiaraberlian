@@ -646,15 +646,15 @@ class ProduksiController extends Controller
             ->select('rpo_productionorder as id', 'rpo_detailid as detail', 'rpo_date as tanggal', 'rpo_nota as nota', 'rpo_action as metode', 'rpo_item as idItem', 'i_name as barang',
                 'rpo_qty as qty', 'u_name as satuan');
 
-        if ($request->awal != null) {
+        if ($request->awal !== null) {
             $awal = Carbon::createFromFormat('d-m-Y', $request->awal)->format("Y-m-d");
             $data->where('rpo_date', '>=', $awal);
         }
-        if ($request->akhir != null) {
+        if ($request->akhir !== null) {
             $akhir = Carbon::createFromFormat('d-m-Y', $request->akhir)->format("Y-m-d");
             $data->where('rpo_date', '<=', $akhir);
         }
-        if ($request->awal == null && $request->akhir == null) {
+        if ($request->awal === null && $request->akhir === null) {
             $date = Carbon::now()->format('Y-m-d');
             $data->where('rpo_date', '=', $date);
         }

@@ -83,6 +83,7 @@
             table = $('#table_return').DataTable({
                 responsive: true,
                 autoWidth: false,
+                processing: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('return.list') }}",
@@ -138,14 +139,12 @@
             table = $('#table_return').DataTable({
                 responsive: true,
                 autoWidth: false,
+                processing: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('return.list') }}",
-                    data: {awal: $("#dateStart").val(), akhir: $("#dateEnd").val()},
-                    type: "post",
-                    data: {
-                        '_token': '{{ @csrf_token() }}'
-                    }
+                    data: {awal: $("#dateStart").val(), akhir: $("#dateEnd").val(), '_token': '{{ @csrf_token() }}'},
+                    type: "post"
                 },
                 columns: [
                     {data: 'tanggal'},
@@ -174,6 +173,17 @@
                     $('#txt_metode').val(resp.data.message.metode);
                     $('#txt_ket').text(resp.data.message.keterangan);
                     $("#detailReturn").modal("show");
+
+                    if ( $.fn.DataTable.isDataTable('#table_detail') ) {
+                        $('#table_detail').DataTable().destroy();
+                    }
+
+                    $('#table_detail').DataTable({
+                        responsive: true,
+                        searching: false,
+                        paging: false
+                    });
+
                 }
             })
             .catch(function (error) {
