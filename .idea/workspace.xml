@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/detail_return.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/detail_return.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/produksi/returnproduksi/index.blade.php" afterDir="false" />
-    </list>
+    <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,13 +11,16 @@
   </component>
   <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution>
+      <executable />
+    </execution>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="205">
+            <state>
               <caret line="240" column="103" selection-start-line="240" selection-start-column="91" selection-end-line="240" selection-end-column="103" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
@@ -31,11 +29,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="424">
-              <caret line="647" lean-forward="true" selection-start-line="647" selection-end-line="647" />
+            <state relative-caret-position="117">
+              <caret line="656" column="66" lean-forward="true" selection-start-line="656" selection-start-column="66" selection-end-line="656" selection-end-column="66" />
             </state>
           </provider>
         </entry>
@@ -43,17 +41,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="474">
-              <caret line="62" column="34" lean-forward="true" selection-start-line="46" selection-start-column="28" selection-end-line="62" selection-end-column="34" />
+            <state>
+              <caret line="62" column="34" selection-start-line="46" selection-start-column="28" selection-end-line="62" selection-end-column="34" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/detail_return.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="254">
-              <caret line="57" column="42" selection-start-line="57" selection-start-column="36" selection-end-line="57" selection-end-column="42" />
+            <state relative-caret-position="-7">
+              <caret line="50" column="19" selection-start-line="50" selection-start-column="19" selection-end-line="50" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -284,7 +282,7 @@
       <path value="$PROJECT_DIR$/vendor/awobaz/compoships" />
     </include_path>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="10" />
     <option name="y" value="20" />
     <option name="width" value="1346" />
@@ -660,7 +658,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="373153000" />
+    <option name="totallyTimeSpent" value="374119000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -672,7 +670,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="754" extended-state="7" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49917355" weight="0.14750378" />
       <window_info id="Structure" order="1" sideWeight="0.5008264" side_tool="true" weight="0.19818456" />
@@ -687,7 +685,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.3284553" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.3284553" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" weight="0.3289256" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -1103,14 +1101,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="424">
-          <caret line="647" lean-forward="true" selection-start-line="647" selection-end-line="647" />
+        <state relative-caret-position="117">
+          <caret line="656" column="66" lean-forward="true" selection-start-line="656" selection-start-column="66" selection-end-line="656" selection-end-column="66" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
+        <state>
           <caret line="240" column="103" selection-start-line="240" selection-start-column="91" selection-end-line="240" selection-end-column="103" />
           <folding>
             <element signature="e#7#389#0#PHP" expanded="true" />
@@ -1120,15 +1118,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="474">
-          <caret line="62" column="34" lean-forward="true" selection-start-line="46" selection-start-column="28" selection-end-line="62" selection-end-column="34" />
+        <state>
+          <caret line="62" column="34" selection-start-line="46" selection-start-column="28" selection-end-line="62" selection-end-column="34" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/produksi/returnproduksi/detail_return.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="57" column="42" selection-start-line="57" selection-start-column="36" selection-end-line="57" selection-end-column="42" />
+        <state relative-caret-position="-7">
+          <caret line="50" column="19" selection-start-line="50" selection-start-column="19" selection-end-line="50" selection-end-column="19" />
         </state>
       </provider>
     </entry>
