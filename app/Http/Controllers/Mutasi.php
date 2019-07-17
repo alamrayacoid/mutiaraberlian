@@ -1067,7 +1067,6 @@ class Mutasi extends Controller
             for ($i = 0; $i < count($datamutcat); $i++) {
                 $tmp[] = $datamutcat[$i]->m_id;
             }
-
             $mutasi = DB::table('d_stock')
                 ->join('d_stock_mutation', 's_id', '=', 'sm_stock')
                 ->select('d_stock.*', 'd_stock_mutation.*', DB::raw('(sm_qty - sm_use) as sm_sisa'))
@@ -1200,13 +1199,14 @@ class Mutasi extends Controller
                     ]);
 
                 // insert new stock-mutation-detail production-code for mutcat-in
-                $insertSMProdCode = self::insertStockMutationDt($mutasi[$i]->sm_stock, $detailid, $listPC, $listQtyPC);
+                $insertSMProdCode = self::insertStockMutationDt($mutasi[$counter]->sm_stock, $detailid, $listPC, $listQtyPC);
                 if ($insertSMProdCode !== 'success') {
                     throw new Exception($insertSMProdCode->getData()->message);
                 }
+                
                 // insert new stock-detail production-code for mutation-in
                 $stockParentId = null;
-                $stockChildId = $mutasi[$i]->sm_stock;
+                $stockChildId = $mutasi[$counter]->sm_stock;
                 $insertStockDt = self::insertStockDetail($stockParentId, $stockChildId, $listPC, $listQtyPC);
                 if ($insertStockDt !== 'success') {
                     throw new Exception($insertStockDt->getData()->message);
