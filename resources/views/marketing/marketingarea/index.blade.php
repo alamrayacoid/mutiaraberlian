@@ -557,7 +557,7 @@
                                 id: id
                             })
                             .then(function (response) {
-                                if(response.data.status == 'Success'){
+                                if(response.data.status == 'success'){
                                     loadingHide();
                                     messageSuccess("Berhasil", response.data.message);
                                     table_konsinyasi.ajax.reload();
