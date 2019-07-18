@@ -1232,6 +1232,8 @@ class Mutasi extends Controller
                 }
             }
 
+            
+
             DB::commit();
             return true;
         } catch (Exception $e) {

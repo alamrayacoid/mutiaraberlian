@@ -262,6 +262,9 @@ class OpnameController extends Controller
       }
       // insert data to db
       try {
+
+        // return json_encode($request->all());
+
         DB::beginTransaction();
           $nota = $this->getNewNota();
           $newId = d_opnameauth::max('oa_id') + 1;
