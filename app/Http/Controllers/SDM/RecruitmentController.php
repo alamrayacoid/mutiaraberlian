@@ -607,7 +607,7 @@ class RecruitmentController extends Controller
         $id       = $ids+1;
         $reff     = str_pad($id,3,"0",STR_PAD_LEFT); // 001
         $reff2    = 'PK-'.$reff.'/'.$date->format('d/m/Y');
-        $id = $request->id_pengajuan;
+        $id       = $request->id_pengajuan;
 
         DB::beginTransaction();
         try {

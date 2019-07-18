@@ -194,19 +194,20 @@ Route::group(['middleware' => 'auth'], function () {
     // !===================================================== End Master Data Utama =====================================================!
 
     // !===================================================== PRODUKSI =====================================================!
-    // Order Produksi
+    // Order Produksic
     Route::get('/produksi/orderproduksi/index', 'ProduksiController@order_produksi')->name('order.index');
     Route::match(['get', 'post'], '/produksi/orderproduksi/create', 'ProduksiController@create_produksi')->name('order.create');
     Route::get('/produksi/orderproduksi/cari-barang', 'ProduksiController@cariBarang')->name('order.caribarang');
     Route::get('/produksi/orderproduksi/get-satuan/{id}', 'ProduksiController@getSatuan')->name('order.getsatuan');
     Route::get('/produksi/orderproduksi/edit', 'ProduksiController@edit_produksi')->name('order.edit');
     Route::post('/produksi/orderproduksi/edit-order-produksi', 'ProduksiController@editOrderProduksi');
-    Route::get('/produksi/orderproduksi/get-order-produksi', 'ProduksiController@get_order')->name('order.getOrderProd');
+    Route::post('/produksi/orderproduksi/get-order-produksi', 'ProduksiController@get_order')->name('order.getOrderProd');
     Route::get('/produksi/orderproduksi/detailitem', 'ProduksiController@getProduksiDetailItem')->name('order.detailitem');
     Route::get('/produksi/orderproduksi/detailtermin', 'ProduksiController@getProduksiDetailTermin')->name('order.detailtermin');
     Route::get('/produksi/orderproduksi/hapus/{id}', 'ProduksiController@delete_produksi')->name('order.delete');
     Route::get('/produksi/orderproduksi/hapus-item/{order}/{detail}/{item}', 'ProduksiController@deleteItemProduksi')->name('order.delete.item');
     Route::get('/produksi/orderproduksi/hapus-termin/{order}/{termin}', 'ProduksiController@deleteTerminProduksi')->name('order.delete.termin');
+    Route::get('/produksi/orderproduksi/paksa-hapus/{id}', 'ProduksiController@forceDeleteProduksi')->name('order.forceDeleteProduksi');
     Route::get('/produksi/orderproduksi/nota/{id}', 'ProduksiController@printNota')->name('order.nota');
 
     // Penerimaan Barang
@@ -236,7 +237,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/pembayaran/get-termin-date', 'Produksi\PembayaranController@getTerminByDate')->name('pembayaran.getTerminByDate');
     // Return Produksi
     Route::get('/produksi/returnproduksi/index', 'ProduksiController@return_produksi')->name('return.index');
-    Route::get('/produksi/returnproduksi/list', 'ProduksiController@listReturn')->name('return.list');
+    Route::post('/produksi/returnproduksi/list', 'ProduksiController@listReturn')->name('return.list');
     Route::get('/produksi/returnproduksi/detail-return/{id}/{detail}', 'ProduksiController@detailReturn')->name('return.detailreturn');
     Route::get('/produksi/returnproduksi/get-editreturn/{id}/{detail}', 'ProduksiController@getEditReturn')->name('return.geteditreturn');
     Route::get('/produksi/returnproduksi/create', 'ProduksiController@create_return_produksi')->name('return.create');
@@ -389,6 +390,13 @@ Route::group(['middleware' => 'auth'], function () {
     //Master KPI
     Route::post('/sdm/kinerjasdm/master-kpi/create', 'SDM\MasterKPIController@create')->name('masterkpi.create');
     Route::post('/sdm/kinerjasdm/master-kpi/get-data', 'SDM\MasterKPIController@getData')->name('masterkpi.getData');
+    Route::post('/sdm/kinerjasdm/master-kpi/nonKpi/{id}', 'SDM\MasterKPIController@nonKpi')->name('masterkpi.nonKpi');
+    Route::post('/sdm/kinerjasdm/master-kpi/activeKpi/{id}', 'SDM\MasterKPIController@activeKpi')->name('masterkpi.activeKpi');
+    Route::get('/sdm/kinerjasdm/master-kpi/deleteKpi/{id}', 'SDM\MasterKPIController@deleteKpi')->name('masterkpi.deleteKpi');
+    // KPI Pegawi
+    Route::get('/sdm/kinerjasdm/kpi-pegawai/create', 'SDM\MasterKPIController@kpi_create_p')->name('kpipegawai.create');
+    // KPI Divisi
+    Route::get('/sdm/kinerjasdm/kpi-divisi/create', 'SDM\MasterKPIController@kpi_create_d')->name('kpidivisi.create');
     // Absensi -> presensi
     Route::get('/sdm/absensisdm/index', 'SDMController@absensi')->name('absensisdm.index');
     Route::get('/sdm/absensisdm/presensi/get-summary', 'SDM\Absensi\PresensiController@getPresenceSummary')->name('presensi.getPresenceSummary');
@@ -448,6 +456,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/ganti-status', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@changeStatus')->name('penjualanpusat.gantistatus');
     Route::get('/marketing/penjualanpusat/get-harga-satuan', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getPrice')->name('penjualanpusat.gantisatuan');
     Route::get('/marketing/penjualanpusat/get-table-distribusi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getTableDistribusi')->name('penjualanpusat.getTableDistribusi');
+    Route::get('/marketing/penjualanpusat/get-payment-method', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getPaymentMethod')->name('penjualanpusat.getPaymentMethod');
     Route::get('/marketing/penjualanpusat/get-produk-ekspedisi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getProdukEkspedisi')->name('penjualanpusat.getProdukEkspedisi');
     Route::post('/marketing/penjualanpusat/send-order-penjualan', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@sendOrder')->name('penjualanpusat.sendOrder');
     // Target Realisasi

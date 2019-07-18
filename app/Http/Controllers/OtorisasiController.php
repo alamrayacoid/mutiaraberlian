@@ -67,7 +67,7 @@ class OtorisasiController extends Controller
         })
         ->rawColumns(['nota','aksi'])
         ->make(true);
-    }    
+    }
 
     public function detailApproveOpname($id)
     {
@@ -136,11 +136,12 @@ class OtorisasiController extends Controller
                 'status' => 'berhasil'
             ]);
         }
-        catch (Exception $e)
+        catch (\Exception $e)
         {
             DB::rollback();
             return response()->json([
-                'status' => 'gagal'
+                'status' => 'gagal',
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -156,11 +157,12 @@ class OtorisasiController extends Controller
                 'status' => 'berhasil'
             ]);
         }
-        catch (Exception $e)
+        catch (\Exception $e)
         {
             DB::rollback();
             return response()->json([
-                'status' => 'gagal'
+                'status' => 'gagal',
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -254,13 +256,13 @@ class OtorisasiController extends Controller
 
             $comp      = $data->aa_comp;
             $position  = $data->aa_position;
-            
+
             $qtysistem = $data->aa_qtysystem;
-            
+
             $qtyreal   = $data->aa_qtyreal;
-            
+
             $nota      = $data->aa_nota;
-            
+
             $reff      = $data->aa_nota;
 
             $a_id = DB::table('d_adjusment')->max('a_id') +1;
@@ -302,6 +304,7 @@ class OtorisasiController extends Controller
             // dd((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
 
             Mutasi::opname((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
+            // dd(count($codeAuth));
 
             // tambahan dirga
                 $dataHpp = DB::table('d_stock_mutation')
@@ -380,10 +383,11 @@ class OtorisasiController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'status' => 'gagal'
+                'status' => 'gagal',
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -394,16 +398,18 @@ class OtorisasiController extends Controller
             $id = Decrypt($id);
 
             DB::table('d_adjusmentauth')->where('aa_id', $id)->delete();
-            DB::table('d_adjustmentcode')->where('ac_adjustment', '=', $id)->delete();
+            DB::table('d_adjustmentcodeauth')->where('aca_adjustment', '=', $id)->delete();
 
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'status' => 'gagal'
+                'status' => 'gagal',
+                'message' => $e->getMessage()
             ]);
         }
 
@@ -558,7 +564,7 @@ class OtorisasiController extends Controller
                                                         ->where('pe_comp', Auth::user()->u_company)->first();
                                         })->where('pd_nama', 'COA Hutang')
                                         ->first();
-                
+
                 $details = []; $count = 0;
 
                 if(!$hutang || !$acc_persediaan){
@@ -824,7 +830,7 @@ class OtorisasiController extends Controller
             DB::rollBack();
             return response()->json([
             'status' => 'gagal',
-            'message' => $e
+            'message' => $e->getMessage()
             ]);
         }
     }
@@ -893,7 +899,7 @@ class OtorisasiController extends Controller
             DB::rollBack();
             return response()->json([
             'status' => 'gagal',
-            'message' => $e
+            'message' => $e->getMessage()
             ]);
         }
     }
@@ -1254,7 +1260,7 @@ class OtorisasiController extends Controller
             DB::rollback();
             return response()->json([
                 'status' => 'Gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -1283,7 +1289,7 @@ class OtorisasiController extends Controller
             DB::rollback();
             return response()->json([
                 'status'  => 'Gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }

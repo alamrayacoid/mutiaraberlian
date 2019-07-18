@@ -299,7 +299,7 @@
 	}
 
 	function editlevel(id){
-		$('#updatelevel').attr('onclick', 'updatelevel('+id+')');
+		$('#updatelevel').attr('onclick', 'updatelevel(\''+ id +'\')');
 		$('#level').modal('show');
 	}
 
@@ -307,7 +307,7 @@
 		loadingShow();
 		$.ajax({
 			type: 'get',
-			data: $('#datalevel').serialize()+'&id='+id,
+			data: $('#datalevel').serialize() +'&id='+ id,
 			dataType: 'JSON',
 			url: baseUrl + '/pengaturan/pengaturanpengguna/updatelevel',
 			success : function(response){
