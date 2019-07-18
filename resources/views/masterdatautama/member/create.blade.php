@@ -100,7 +100,7 @@
                     <input type="text" name="nameAgen" class="form-control form-control-sm agen" autocomplete="off" style="text-transform: uppercase;">
                     <input type="hidden" name="idAgen" class="agenId">
                     <input type="hidden" name="codeAgen" class="codeAgen">
-                    <a class="btn btn-primary rounded-right btn-modal" style="border-left:none;"><i class="fa fa-search"></i></a>
+                    <a class="btn btn-primary rounded-right btn-modal" style="border-left:none;"><i class="fa fa-search"></i> Pencarian Lanjutan</a>
                   </div>
                 </div>
 

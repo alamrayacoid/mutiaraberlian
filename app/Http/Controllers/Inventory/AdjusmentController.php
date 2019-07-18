@@ -108,16 +108,24 @@ class AdjusmentController extends Controller
 
     public function simpan(Request $request)
     {
-        // dd($request);
         DB::beginTransaction();
         try {
+            $notaAdjust = CodeGenerator::codeWithSeparator('d_adjusment', 'a_nota', 16, 10, 3, 'ADJUSTMENT', '-');
+            $notaAdjustAuth = CodeGenerator::codeWithSeparator('d_adjusmentauth', 'aa_nota', 16, 10, 3, 'ADJUSTMENT', '-');
+            if (strcmp($notaAdjust, $notaAdjustAuth) > 0) {
+                $nota = $notaAdjust;
+            }
+            else {
+                $nota = $notaAdjustAuth;
+            };
+
             $adjId = DB::table('d_adjusmentauth')->max('aa_id') + 1;
             DB::table('d_adjusmentauth')->insert([
                 'aa_id'         => $adjId,
                 'aa_comp'       => $request->data['o_comp'],
                 'aa_position'   => $request->data['o_position'],
                 'aa_date'       => $request->data['o_date'],
-                'aa_nota'       => CodeGenerator::codeWithSeparator('d_adjusmentauth', 'aa_nota', 16, 10, 3, 'ADJUSTMENT', '-'),
+                'aa_nota'       => $nota,
                 'aa_item'       => $request->data['o_item'],
                 'aa_qtyreal'    => $request->qtyreal,
                 'aa_unitreal'   => $request->satuanreal,
@@ -140,19 +148,18 @@ class AdjusmentController extends Controller
                 'o_status' => 'Y'
             ]);
 
-            // Mutasi::insertStockMutationDt('')
-
             otorisasi::otorisasiup('d_adjusmentauth', 'Adjusment Stock', '#');
 
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
-                'ex' => $e
+                'ex' => $e->getMessage()
             ]);
         }
 

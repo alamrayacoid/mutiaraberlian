@@ -88,8 +88,8 @@
                         <label for="">Jenis Pembayaran</label>
                     </div>
                     <div class="col-md-4 col-sm-12 mb-3">
-                        <select class="select2 form-control form-control-sm" id="jenis_pembayaran" name="jenis_pembayaran">
-                            <option value="C">Cash</option>
+                        <select class="select2 form-control form-control-sm" id="paymentType" name="paymentType">
+                            <option value="C" selected>Cash</option>
                             <option value="T">Cash Tempo</option>
                         </select>
                     </div>
@@ -98,13 +98,25 @@
                         <label for="">Metode Pembayaran</label>
                     </div>
                     <div class="col-md-4 col-sm-12 mb-3">
-                        <select class="select2 form-control form-control-sm" id="metode_pembayaran">
-                            <option value="C">Cash</option>
-                            <option value="T">Transfer BRI</option>
-                            <option value="T">Transfer BNI</option>
-                            <option value="T">Transfer BCA</option>
+                        <select class="select2 form-control form-control-sm" id="paymentMethod" name="paymentMethod">
+                            
                         </select>
                     </div>
+
+                    <div class="col-md-2 paymentRow d-none">
+                        <label for="payCash">Bayar</label>
+                    </div>
+                    <div class="col-md-4 paymentRow d-none">
+                        <input type="text" name="payCash" id="payCash" class="form-control form-control-sm rupiah" value="">
+                    </div>
+                    <div class="col-md-2 paymentRow d-none">
+                        <label for="dateTop">Batas Akhir Pelunasan</label>
+                    </div>
+                    <div class="col-md-4 paymentRow d-none">
+                        <input type="text" name="dateTop" id="dateTop" class="form-control form-control-sm datepicker" value="">
+                    </div>
+                    <!-- <div class="row col-md-12 col-sm-12 paymentRow">
+                    </div> -->
                 </div>
                 <hr>
                 <div class="row">

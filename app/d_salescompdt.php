@@ -5,6 +5,34 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * App\d_salescompdt
+ *
+ * @property int $scd_sales
+ * @property int $scd_detailid
+ * @property string|null $scd_comp
+ * @property int|null $scd_item
+ * @property int|null $scd_qty
+ * @property int|null $scd_unit
+ * @property float|null $scd_value
+ * @property int $scd_discpersen
+ * @property float $scd_discvalue
+ * @property float|null $scd_totalnet
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_salescompdt newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_salescompdt newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_salescompdt query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_salescompdt whereScdComp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_salescompdt whereScdDetailid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_salescompdt whereScdDiscpersen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_salescompdt whereScdDiscvalue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_salescompdt whereScdItem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_salescompdt whereScdQty($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_salescompdt whereScdSales($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_salescompdt whereScdTotalnet($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_salescompdt whereScdUnit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_salescompdt whereScdValue($value)
+ * @mixin \Eloquent
+ */
 class d_salescompdt extends Model
 {
     // use third-party library to create relationship multi-column

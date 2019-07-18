@@ -51,6 +51,19 @@
                         </div>
                     </div>
                 </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" cellspacing="0" id="table_detailreturn">
+                        <thead class="bg-primary">
+                        <tr>
+                            <th width="70%">Kode Produksi</th>
+                            <th width="30%">Kuantitas</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>

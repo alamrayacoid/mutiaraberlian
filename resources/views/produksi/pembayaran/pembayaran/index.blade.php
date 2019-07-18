@@ -24,7 +24,7 @@
                         </select>
                     </div>
                     <div class="col-3 float-right">
-                        <button class="btn btn-primary btn-md btn-primary float-right" title="Pencarian Lanjutan" style=";" data-toggle="modal" data-target="#searchLanjutan"><i class="fa fa-search"> Lanjutan</i></button>
+                        <button class="btn btn-primary btn-md btn-primary float-right" title="Pencarian Lanjutan" style=";" data-toggle="modal" data-target="#searchLanjutan"><i class="fa fa-search"></i> Pencarian Lanjutan</button>
                     </div>
                 </div>
                 <hr style="border:0.5px solid grey">

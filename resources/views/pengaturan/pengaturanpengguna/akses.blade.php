@@ -173,7 +173,7 @@
                             </div>
                         </div>
                         <div class="card-footer text-right">
-                            <button class="btn btn-primary btn-submit" type="button" onclick="simpan({{$id}})"
+                            <button class="btn btn-primary btn-submit" type="button" onclick="simpan('{{$id}}')"
                                     id="btn_simpan">Simpan
                             </button>
                             <a href="{{route('pengaturanpengguna.index')}}" class="btn btn-secondary">Kembali</a>
@@ -220,7 +220,7 @@
         function simpan(id) {
             loadingShow();
             $.ajax({
-                type: 'get',
+                type: 'post',
                 data: $('#dataakses').serialize() + '&id=' + id,
                 dataType: 'JSON',
                 url: baseUrl + '/pengaturan/pengaturanpengguna/simpanakses',

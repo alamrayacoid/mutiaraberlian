@@ -297,7 +297,7 @@
                         }
                     } else {
                         loadingHide();
-                        messageFailed("Gagal", "Terjadi kesalahan sistem");
+                        messageFailed("Gagal", response.data.message);
                     }
                 })
                 .catch(function (error) {
@@ -308,13 +308,12 @@
                     if (check == true) {
                         axios.post('{{ route('penerimaan.terimaitem') }}', $("#formTerimaBarang").serialize())
                         .then(function(resp){
+                            loadingHide();
                             if (resp.data.status == "Success") {
                                 $("#penerimaanOrderProduksi").modal('hide');
                                 tbl_receiptitem.ajax.reload();
-                                loadingHide();
                                 messageSuccess("Berhasil", resp.data.message);
                             } else {
-                                loadingHide();
                                 messageFailed("Gagal", resp.data.message);
                             }
                         })

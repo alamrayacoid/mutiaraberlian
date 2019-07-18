@@ -789,7 +789,7 @@
                     loadingHide();
                     if (response.data.status == 'Success') {
                         messageSuccess("Berhasil", response.data.message);
-                        setInterval(function(){location.reload();}, 3500)
+                        setInterval(function(){location.reload();}, 1500)
                     }
                     else if (response.data.status === 'invalid') {
                         messageWarning('Perhatian', response.data.message);

@@ -5,6 +5,38 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * App\d_stock_mutation
+ *
+ * @property int $sm_stock
+ * @property int $sm_detailid
+ * @property string|null $sm_date
+ * @property int|null $sm_mutcat
+ * @property int|null $sm_qty
+ * @property int|null $sm_use
+ * @property int|null $sm_residue
+ * @property float|null $sm_hpp
+ * @property float|null $sm_sell
+ * @property string|null $sm_nota
+ * @property string|null $sm_reff
+ * @property string|null $sm_user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation whereSmDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation whereSmDetailid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation whereSmHpp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation whereSmMutcat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation whereSmNota($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation whereSmQty($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation whereSmReff($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation whereSmResidue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation whereSmSell($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation whereSmStock($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation whereSmUse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stock_mutation whereSmUser($value)
+ * @mixin \Eloquent
+ */
 class d_stock_mutation extends Model
 {
     protected $table = 'd_stock_mutation';

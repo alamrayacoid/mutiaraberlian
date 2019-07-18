@@ -244,7 +244,25 @@
                 '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
         })
         targetReal();
+
+        // Distribusi ------------------------------------------------------
         tableDistribusi();
+        getPaymentMethod();
+        $('#paymentType').on('select2:select', function() {
+            if ($(this).val() == 'C') {
+                $('.paymentRow :input').attr('disabled', true);
+                $('.paymentRow').addClass('d-none');
+                // $('#paymentMethod').attr('disabled', false);
+                // $('#paymentMethod').select2('open');
+            }
+            else {
+                $('.paymentRow :input').attr('disabled', false);
+                $('.paymentRow').removeClass('d-none');
+                $('#payCash').val(0);
+                $('#dateTop').datepicker('setDate', 'today');
+                // $('#paymentMethod').attr('disabled', true);
+            }
+        });
     });
 
     function targetReal() {
@@ -463,6 +481,292 @@
         });
     }
 
+</script>
+
+<!-- script for distribusi -->
+<script type="text/javascript">
+    function tableDistribusi() {
+        let status = $('#status_distribusi').val();
+        setTimeout(function () {
+            $('#table_distribusi').dataTable().fnDestroy();
+            table_distribusi = $('#table_distribusi').DataTable({
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                bAutoWidth: false,
+                ajax: {
+                    url: baseUrl + '/marketing/penjualanpusat/get-table-distribusi',
+                    type: "get",
+                    data: {
+                        "status": status,
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'tanggal'},
+                    {data: 'c_name'},
+                    {data: 'po_nota'},
+                    {data: 'total'},
+                    {data: 'action', name: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 100]]
+            });
+        }, 250);
+    }
+
+    function getPaymentMethod() {
+        $.ajax({
+            url: "{{ route('penjualanpusat.getPaymentMethod') }}",
+            type: "get",
+            success:function(resp) {
+                $('#paymentMethod').empty();
+                // $('#paymentMethod').append('<option value="" selected disabled>== Pilih Metode Pembayaran ==</option>');
+                $.each(resp.data, function(key, val){
+                    $('#paymentMethod').append('<option value="'+ val.pm_id +'">'+ val.get_akun.ak_nomor +' - '+ val.pm_name +'</option>');
+                });
+            }
+        });
+    }
+
+    function distribusiPenjualan(id) {
+        loadingShow();
+        $.ajax({
+            type: 'get',
+            data: {id},
+            dataType: 'JSON',
+            url: "{{ route('penjualanpusat.getDetailSend') }}",
+            success : function(response){
+                loadingHide();
+                $('#dateModalSend').val(response.dateFormated);
+                $('#agentModalSend').val(response.get_agent.c_name);
+                $('#notaModalSend').val(response.po_nota);
+                $('#totalModalSend').val(parseFloat(response.total));
+
+                $('#table_senddistribution tbody').empty();
+                $.each(response.get_p_o_dt, function (key, val) {
+                    let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name +'</td>';
+                    let qty = '<td class="digits">'+ val.pod_qty +'</td>';
+                    let unit = '<td>'+ val.get_unit.u_name +'</td>';
+                    let price = '<td class="rupiah">'+ parseFloat(val.pod_price) +'</td>';
+                    let diskon = '<td class="rupiah">'+ parseFloat(val.pod_discvalue) +'</td>';
+                    let subTotal = '<td class="rupiah">'+ parseFloat(val.pod_totalprice) +'</td>';
+                    let aksi = '<td class="text-center"><button type="button" onclick="addCodeProd('+response.po_id+', '+val.pod_item+', \''+val.get_item.i_name+'\')" class="btn btn-info btn-xs btnAddProdCode"><i class="fa fa-plus"></i> Kode Produksi</button></td>';
+                    appendItem = '<tr>'+ item + qty + unit + price + diskon + subTotal + aksi +'</tr>';
+                    // append data to table-row
+                    $('#table_senddistribution > tbody:last-child').append(appendItem);
+                });
+                //mask money
+                $('.rupiah').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 0,
+                    autoGroup: true,
+                    prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
+                //mask digits
+                $('.digits').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 0,
+                    autoGroup: true,
+                    prefix: '', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
+
+                //ekspedisi
+                $('#ekspedisi').empty();
+                $("#ekspedisi").append('<option value="" selected="" disabled="">=== Pilih Ekspedisi ===</option>');
+                $.each(response.ekspedisi, function (key, val) {
+                    $("#ekspedisi").append('<option value="' + val.e_id + '">' + val.e_name + '</option>');
+                });
+                $('#ekspedisi').focus();
+                $('#ekspedisi').select2('open');
+            },
+            error: function(xhr, status, error) {
+                loadingHide();
+                let err = JSON.parse(xhr.responseText);
+                messageWarning('Error', err.message);
+            }
+        });
+    }
+
+    $('#ekspedisi').on('change', function () {
+        let id = $('#ekspedisi').val();
+        axios.get('{{ route("penjualanpusat.getProdukEkspedisi") }}', {
+            params:{
+                "id": id
+            }
+        }).then(function (response) {
+            $('#jenis_ekspedisi').empty();
+            $("#jenis_ekspedisi").append('<option value="" selected="" disabled="">=== Pilih Jenis ===</option>');
+            $.each(response.data, function (key, val) {
+                $("#jenis_ekspedisi").append('<option value="' + val.ed_detailid + '">' + val.ed_product + '</option>');
+            });
+            $('#jenis_ekspedisi').focus();
+            $('#jenis_ekspedisi').select2('open');
+        }).catch(function (error) {
+            alert('error');
+        })
+    });
+
+    $('#jenis_ekspedisi').on('change select2:select', function() {
+        $('#nama_kurir').focus();
+    });
+
+    function addCodeProd(id, item, nama){
+        idxProdCode = $('.btnAddProdCode').index(this);
+        $('.text-item').html(nama);
+        $('#inputkodeproduksi').removeAttr('readonly');
+        $('#iditem_modaldt').val(item);
+        $('#inputqtyproduksi').removeAttr('readonly');
+        $('#table_prosesordercode').dataTable().fnDestroy();
+        tb_listcodeprosesorder = $('#table_prosesordercode').DataTable({
+            responsive: true,
+            serverSide: true,
+            paging: false,
+            searching: false,
+            ordering: false,
+            ajax: {
+                url: "{{ route('keloladataorder.getdetailcodeorder') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "id": id,
+                    "item": item
+                }
+            },
+            columns: [
+                {data: 'poc_code'},
+                {data: 'poc_qty'},
+                {data: 'aksi'},
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    }
+
+    function pressCode(e) {
+        if (e.keyCode == 13){
+            addCodetoTable();
+        }
+    }
+
+    function addCodetoTable(){
+        let qty = $('#inputqtyproduksi').val();
+        let kode = $.trim($('#inputkodeproduksi').val());
+        let nota = $('#notaModalSend').val();
+        let item = $('#iditem_modaldt').val();
+
+        if (isNaN(qty) || qty == '' || qty == null){
+            qty = 1;
+        }
+        if (kode == '' || kode == null) {
+            messageWarning('Perhatian', 'Silahkan masukkan kode produksi terlebih dahulu !');
+            return 0;
+        }
+
+        axios.get('{{ route("keloladataorder.setKode") }}', {
+            params:{
+                "qty": qty,
+                "kode": kode,
+                "nota": nota,
+                "item": item
+            }
+        }).then(function (response) {
+            if (response.data.status == 'success'){
+                messageSuccess("Berhasil", "Kode berhasil ditambahkan");
+                $('#inputkodeproduksi').val("");
+                $('#inputqtyproduksi').val("");
+                tb_listcodeprosesorder.ajax.reload();
+            } else if (response.data.status == 'gagal'){
+                messageWarning("Gagal", response.data.message);
+            }
+        }).catch(function (error) {
+            alert('error');
+        })
+    }
+
+    function removeCodeOrder(id, item, kode) {
+        axios.get('{{ route("keloladataorder.removeKode") }}', {
+            params:{
+                "id": id,
+                "item": item,
+                "kode": kode
+            }
+        }).then(function (response) {
+            if (response.data.status == 'success'){
+                messageSuccess("Berhasil", "Kode berhasil dihapus");
+                tb_listcodeprosesorder.ajax.reload();
+            } else {
+                messageWarning("Gagal", "Kode gagal dihapus");
+            }
+        }).catch(function (error) {
+
+        })
+    }
+
+    // function hapus(id){
+    //     $.ajax({
+    //        type: 'get',
+    //        data: {id},
+    //        dataType: 'json',
+    //        url: baseUrl + '/marketing/penjualanpusat/returnpenjualan/hapus',
+    //        success : function(response){
+    //            if
+    //        }
+    //     });
+    // }
+
+    function kirim() {
+        let nota = $('#notaModalSend').val();
+        let ekspedisi = $('#ekspedisi').val();
+        let produk = $('#jenis_ekspedisi').val();
+        let nama = $('#nama_kurir').val();
+        let tlp = $('#tlp_kurir').val();
+        let resi = $('#resi_kurir').val();
+        let harga = $('#biaya_kurir').val();
+        let paymentType = $('#paymentType').val();
+        let paymentMethod = $('#paymentMethod').val();
+        let payCash = ($('#paymentType').val() == 'C') ? 0 : $('#payCash').val();
+        let dateTop = ($('#paymentType').val() == 'C') ? null : $('#dateTop').val();
+
+        loadingShow();
+        axios.post('{{ route("penjualanpusat.sendOrder") }}', {
+            'nota': nota,
+            "ekspedisi": ekspedisi,
+            "produk": produk,
+            "nama": nama,
+            "tlp": tlp,
+            "resi": resi,
+            "harga": harga,
+            "paymentType": paymentType,
+            "paymentMethod": paymentMethod,
+            "payCash": payCash,
+            "dateTop": dateTop
+        }).then(function (response) {
+            loadingHide();
+            if (response.data.status == 'success'){
+                messageSuccess("Berhasil", "Data berhasil disimpan");
+                $('#modal_distribusi').modal('hide');
+                table_distribusi.ajax.reload();
+            } else if (response.data.status == 'gagal'){
+                messageFailed("Gagal", response.data.message);
+            }
+        }).catch(function (error) {
+            loadingHide();
+            messageWarning('Error', 'Terjadi kesalahan, hubungi pengembang !');
+            // alert('error');
+        })
+    }
 </script>
 
 <!-- script for 'terima order' -->
@@ -898,267 +1202,6 @@
         $('#totalModalPr').val(convertToRupiah(total));
     }
 
-    // Distribusi penjualan
-
-    function tableDistribusi() {
-        let status = $('#status_distribusi').val();
-        setTimeout(function () {
-            $('#table_distribusi').dataTable().fnDestroy();
-            table_distribusi = $('#table_distribusi').DataTable({
-                responsive: true,
-                processing: true,
-                serverSide: true,
-                bAutoWidth: false,
-                ajax: {
-                    url: baseUrl + '/marketing/penjualanpusat/get-table-distribusi',
-                    type: "get",
-                    data: {
-                        "status": status,
-                        "_token": "{{ csrf_token() }}"
-                    }
-                },
-                columns: [
-                    {data: 'DT_RowIndex'},
-                    {data: 'tanggal'},
-                    {data: 'c_name'},
-                    {data: 'po_nota'},
-                    {data: 'total'},
-                    {data: 'action', name: 'action'}
-                ],
-                pageLength: 10,
-                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 100]]
-            });
-        }, 250);
-    }
-
-    function distribusiPenjualan(id) {
-        loadingShow();
-        $.ajax({
-            type: 'get',
-            data: {id},
-            dataType: 'JSON',
-            url: "{{ route('penjualanpusat.getDetailSend') }}",
-            success : function(response){
-                loadingHide();
-                $('#dateModalSend').val(response.dateFormated);
-                $('#agentModalSend').val(response.get_agent.c_name);
-                $('#notaModalSend').val(response.po_nota);
-                $('#totalModalSend').val(parseFloat(response.total));
-
-                $('#table_senddistribution tbody').empty();
-                $.each(response.get_p_o_dt, function (key, val) {
-                    let item = '<td>'+ val.get_item.i_code + ' - ' + val.get_item.i_name +'</td>';
-                    let qty = '<td class="digits">'+ val.pod_qty +'</td>';
-                    let unit = '<td>'+ val.get_unit.u_name +'</td>';
-                    let price = '<td class="rupiah">'+ parseFloat(val.pod_price) +'</td>';
-                    let diskon = '<td class="rupiah">'+ parseFloat(val.pod_discvalue) +'</td>';
-                    let subTotal = '<td class="rupiah">'+ parseFloat(val.pod_totalprice) +'</td>';
-                    let aksi = '<td class="text-center"><button type="button" onclick="addCodeProd('+response.po_id+', '+val.pod_item+', \''+val.get_item.i_name+'\')" class="btn btn-info btn-xs btnAddProdCode"><i class="fa fa-plus"></i> Kode Produksi</button></td>';
-                    appendItem = '<tr>'+ item + qty + unit + price + diskon + subTotal + aksi +'</tr>';
-                    // append data to table-row
-                    $('#table_senddistribution > tbody:last-child').append(appendItem);
-                });
-                //mask money
-                $('.rupiah').inputmask("currency", {
-                    radixPoint: ",",
-                    groupSeparator: ".",
-                    digits: 0,
-                    autoGroup: true,
-                    prefix: ' Rp ', //Space after $, this will not truncate the first character.
-                    rightAlign: true,
-                    autoUnmask: true,
-                    nullable: false,
-                    // unmaskAsNumber: true,
-                });
-                //mask digits
-                $('.digits').inputmask("currency", {
-                    radixPoint: ",",
-                    groupSeparator: ".",
-                    digits: 0,
-                    autoGroup: true,
-                    prefix: '', //Space after $, this will not truncate the first character.
-                    rightAlign: true,
-                    autoUnmask: true,
-                    nullable: false,
-                    // unmaskAsNumber: true,
-                });
-
-                //ekspedisi
-                $('#ekspedisi').empty();
-                $("#ekspedisi").append('<option value="" selected="" disabled="">=== Pilih Ekspedisi ===</option>');
-                $.each(response.ekspedisi, function (key, val) {
-                    $("#ekspedisi").append('<option value="' + val.e_id + '">' + val.e_name + '</option>');
-                });
-                $('#ekspedisi').focus();
-                $('#ekspedisi').select2('open');
-            },
-            error: function(xhr, status, error) {
-                loadingHide();
-                let err = JSON.parse(xhr.responseText);
-                messageWarning('Error', err.message);
-            }
-        });
-    }
-
-    $('#ekspedisi').on('change', function () {
-        let id = $('#ekspedisi').val();
-        axios.get('{{ route("penjualanpusat.getProdukEkspedisi") }}', {
-            params:{
-                "id": id
-            }
-        }).then(function (response) {
-            $('#jenis_ekspedisi').empty();
-            $("#jenis_ekspedisi").append('<option value="" selected="" disabled="">=== Pilih Jenis ===</option>');
-            $.each(response.data, function (key, val) {
-                $("#jenis_ekspedisi").append('<option value="' + val.ed_detailid + '">' + val.ed_product + '</option>');
-            });
-            $('#jenis_ekspedisi').focus();
-            $('#jenis_ekspedisi').select2('open');
-        }).catch(function (error) {
-            alert('error');
-        })
-    });
-
-    $('#jenis_ekspedisi').on('change select2:select', function() {
-        $('#nama_kurir').focus();
-    });
-
-    function addCodeProd(id, item, nama){
-        idxProdCode = $('.btnAddProdCode').index(this);
-        $('.text-item').html(nama);
-        $('#inputkodeproduksi').removeAttr('readonly');
-        $('#iditem_modaldt').val(item);
-        $('#inputqtyproduksi').removeAttr('readonly');
-        $('#table_prosesordercode').dataTable().fnDestroy();
-        tb_listcodeprosesorder = $('#table_prosesordercode').DataTable({
-            responsive: true,
-            serverSide: true,
-            paging: false,
-            searching: false,
-            ordering: false,
-            ajax: {
-                url: "{{ route('keloladataorder.getdetailcodeorder') }}",
-                type: "get",
-                data: {
-                    "_token": "{{ csrf_token() }}",
-                    "id": id,
-                    "item": item
-                }
-            },
-            columns: [
-                {data: 'poc_code'},
-                {data: 'poc_qty'},
-                {data: 'aksi'},
-            ],
-            pageLength: 10,
-            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-        });
-    }
-
-    function pressCode(e) {
-        if (e.keyCode == 13){
-            addCodetoTable();
-        }
-    }
-
-    function addCodetoTable(){
-        let qty = $('#inputqtyproduksi').val();
-        let kode = $.trim($('#inputkodeproduksi').val());
-        let nota = $('#notaModalSend').val();
-        let item = $('#iditem_modaldt').val();
-
-        if (isNaN(qty) || qty == '' || qty == null){
-            qty = 1;
-        }
-        if (kode == '' || kode == null) {
-            messageWarning('Perhatian', 'Silahkan masukkan kode produksi terlebih dahulu !');
-            return 0;
-        }
-
-        axios.get('{{ route("keloladataorder.setKode") }}', {
-            params:{
-                "qty": qty,
-                "kode": kode,
-                "nota": nota,
-                "item": item
-            }
-        }).then(function (response) {
-            if (response.data.status == 'success'){
-                messageSuccess("Berhasil", "Kode berhasil ditambahkan");
-                $('#inputkodeproduksi').val("");
-                $('#inputqtyproduksi').val("");
-                tb_listcodeprosesorder.ajax.reload();
-            } else if (response.data.status == 'gagal'){
-                messageWarning("Gagal", response.data.message);
-            }
-        }).catch(function (error) {
-            alert('error');
-        })
-    }
-
-    function removeCodeOrder(id, item, kode) {
-        axios.get('{{ route("keloladataorder.removeKode") }}', {
-            params:{
-                "id": id,
-                "item": item,
-                "kode": kode
-            }
-        }).then(function (response) {
-            if (response.data.status == 'success'){
-                messageSuccess("Berhasil", "Kode berhasil dihapus");
-                tb_listcodeprosesorder.ajax.reload();
-            } else {
-                messageWarning("Gagal", "Kode gagal dihapus");
-            }
-        }).catch(function (error) {
-
-        })
-    }
-
-    // function hapus(id){
-    //     $.ajax({
-    //        type: 'get',
-    //        data: {id},
-    //        dataType: 'json',
-    //        url: baseUrl + '/marketing/penjualanpusat/returnpenjualan/hapus',
-    //        success : function(response){
-    //            if
-    //        }
-    //     });
-    // }
-
-    function kirim() {
-        let nota = $('#notaModalSend').val();
-        let ekspedisi = $('#ekspedisi').val();
-        let produk = $('#jenis_ekspedisi').val();
-        let nama = $('#nama_kurir').val();
-        let tlp = $('#tlp_kurir').val();
-        let resi = $('#resi_kurir').val();
-        let harga = $('#biaya_kurir').val();
-
-        loadingShow();
-        axios.post('{{ route("penjualanpusat.sendOrder") }}', {
-            'nota': nota,
-            "ekspedisi": ekspedisi,
-            "produk": produk,
-            "nama": nama,
-            "tlp": tlp,
-            "resi": resi,
-            "harga": harga
-        }).then(function (response) {
-            loadingHide();
-            if (response.data.status == 'success'){
-                messageSuccess("Berhasil", "Data berhasil disimpan");
-                $('#modal_distribusi').modal('hide');
-                table_distribusi.ajax.reload();
-            } else if (response.data.status == 'gagal'){
-                messageFailed("Gagal", response.data.message);
-            }
-        }).catch(function (error) {
-            loadingHide();
-            alert('error');
-        })
-    }
     // Penerimaan Piutang ->
     var tb_piutang, tb_getNota;
     $(document).ready(function(){

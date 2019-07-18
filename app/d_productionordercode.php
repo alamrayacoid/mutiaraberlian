@@ -5,6 +5,26 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * App\d_productionordercode
+ *
+ * @property int $poc_productionorder
+ * @property int $poc_detailid
+ * @property int|null $poc_item
+ * @property string|null $poc_productioncode
+ * @property int|null $poc_qty
+ * @property int|null $poc_unit
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productionordercode newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productionordercode newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productionordercode query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productionordercode wherePocDetailid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productionordercode wherePocItem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productionordercode wherePocProductioncode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productionordercode wherePocProductionorder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productionordercode wherePocQty($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productionordercode wherePocUnit($value)
+ * @mixin \Eloquent
+ */
 class d_productionordercode extends Model
 {
     protected $table = 'd_productionordercode';

@@ -75,7 +75,7 @@
                         <th class="text-center">Qty</th>
                       </thead>
                       <tbody>
-                        
+
                       </tbody>
                     </table>
                   </form>
@@ -96,7 +96,7 @@
                     <input type="number" class="form-control form-control-sm" id="qtyreal">
                     <span class="text-danger errorQtyR1 d-none">Harap masukkan qty!</span>
                   </div>
-                  
+
                   <div class="form-group" style="margin-bottom: 1.1rem !important;">
                     <div class="row">
                       <div class="col-6">
@@ -121,7 +121,7 @@
                         <th class="text-center">Action</th>
                       </thead>
                       <tbody>
-                        
+
                       </tbody>
                     </table>
                   </form>
@@ -144,12 +144,12 @@
 @section('extra_script')
 <script type="text/javascript">
   var data = [];
-  var nota, code, qty, idX, tb_code_produksi, tb_addCodeReal, 
+  var nota, code, qty, idX, tb_code_produksi, tb_addCodeReal,
     codeExist = false,
     idxCode = null,
     codeReal = [];
   $(document).ready(function(){
-    
+
     $('#tb_code_produksi').dataTable({
       "searching": false,
       "lengthChange": false,
@@ -342,8 +342,8 @@
     if (codeExist == true) {
       var qty_r = $('.qty_r').eq(idxCode).val();
       qty_r = parseInt(qty_r) + parseInt(qty);
-      $('.qty_r').eq(idxCode).val(qty_r);  
-      $('.qty_s').eq(idxCode).val(qty_r);  
+      $('.qty_r').eq(idxCode).val(qty_r);
+      $('.qty_s').eq(idxCode).val(qty_r);
     } else {
       $('#tb_addCodeReal tbody').append(`<tr>
                                           <td style="padding: 8px;">
@@ -408,6 +408,7 @@
                   loadingHide();
                   messageWarning('Peringatan!', 'Opname Expired!');
                 } else {
+                    loadingHide();
                   messageFailed('Gagal!', 'Opname gagal!');
                 }
               }

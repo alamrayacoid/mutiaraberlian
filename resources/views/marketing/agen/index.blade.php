@@ -84,7 +84,7 @@
 
 @endsection
 @section('extra_script')
-<!-- script for tim/date in each-tabs -->
+<!-- script for time/date in each-tabs -->
 <script type="text/javascript">
     $(document).ready(function() {
         var cur_date = new Date();
