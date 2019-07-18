@@ -36,8 +36,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="415">
-              <caret line="1523" column="67" lean-forward="true" selection-start-line="1523" selection-start-column="67" selection-end-line="1523" selection-end-column="67" />
+            <state relative-caret-position="142">
+              <caret line="1523" selection-start-line="1523" selection-end-line="1523" />
             </state>
           </provider>
         </entry>
@@ -433,7 +433,7 @@
       <workItem from="1563324689027" duration="102000" />
       <workItem from="1563327163787" duration="2632000" />
       <workItem from="1563415862713" duration="150000" />
-      <workItem from="1563416385391" duration="6625000" />
+      <workItem from="1563416385391" duration="6973000" />
     </task>
     <task id="LOCAL-00001" summary="perbaikan jenis produk">
       <created>1560755279119</created>
@@ -691,7 +691,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="390496000" />
+    <option name="totallyTimeSpent" value="390844000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -704,7 +704,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49917355" weight="0.14750378" />
       <window_info id="Structure" order="1" sideWeight="0.5008264" side_tool="true" weight="0.19818456" />
@@ -719,7 +718,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.3284553" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.3284553" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" weight="0.3289256" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -1159,8 +1158,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProduksiController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="415">
-          <caret line="1523" column="67" lean-forward="true" selection-start-line="1523" selection-start-column="67" selection-end-line="1523" selection-end-column="67" />
+        <state relative-caret-position="142">
+          <caret line="1523" selection-start-line="1523" selection-end-line="1523" />
         </state>
       </provider>
     </entry>
