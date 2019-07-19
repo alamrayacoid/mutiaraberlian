@@ -800,6 +800,9 @@ class PenjualanPusatController extends Controller
         // dd($request->all());
         DB::beginTransaction();
         try {
+
+            // return json_encode($request->all());
+
             $nota = $request->nota;
             $ekspedisi = $request->ekspedisi;
             $produk = $request->produk;
@@ -886,6 +889,9 @@ class PenjualanPusatController extends Controller
             }
             // dd('list id-items: ', $idItems);
             // mutation
+
+            // return json_encode($productOrder);
+
             foreach ($productOrder->getPODt as $key => $PO) {
                 // get list production-code
                 $prodCode = d_productordercode::where('poc_productorder', $productOrder->po_id)
@@ -938,6 +944,8 @@ class PenjualanPusatController extends Controller
                     $sell,
                     5
                 );
+
+                // return json_encode($mutDist->original);
 
                 if ($mutDist->original['status'] !== 'success') {
                     return $mutDist;
