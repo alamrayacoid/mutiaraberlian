@@ -1696,16 +1696,7 @@ class ManajemenAgenController extends Controller
                 if ($mutRollbackOut->original['status'] !== 'success') {
                     return $mutRollbackOut;
                 }
-                // // rollback mutasi-sales which is updated
-                // $mutasi = Mutasi::rollback(
-                //     $sales->s_nota,
-                //     $val->sd_item,
-                //     14 // mutcat
-                // );
-                // if (!is_bool($mutasi)) {
-                //     DB::rollback();
-                //     return $mutasi;
-                // }
+
                 // delete production-code of selected stockdistribution
                 foreach ($val->getProdCode as $idx => $prodCode) {
                     $prodCode->delete();
@@ -1828,23 +1819,6 @@ class ManajemenAgenController extends Controller
                 if ($mutationOut->original['status'] !== 'success') {
                     return $mutationOut;
                 }
-
-                // // mutasi keluar
-                // $mutasi = Mutasi::mutasikeluar(
-                //     14, // mutcat
-                //     $stock->s_comp, // item-owner
-                //     $stock->s_position, // item-position
-                //     $data['idItem'][$i], // item-id
-                //     $qty_compare, // item-qty in smallest unit
-                //     $sales->s_nota, // nota
-                //     Currency::removeRupiah($data['harga'][$i]), // item-price
-                //     $listPC, // list production-code
-                //     $listQtyPC // list qty roduction code
-                // );
-                // if (!is_bool($mutasi)) {
-                //     DB::rollback();
-                //     return $mutasi;
-                // }
 
                 $startProdCodeIdx += $prodCodeLength;
                 $salesDtId++;

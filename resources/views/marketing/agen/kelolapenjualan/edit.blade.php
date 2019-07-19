@@ -276,7 +276,7 @@
             let subharga = (parseInt(convertToAngka(harga)) - parseInt(diskon)) * parseInt(jumlah);
             $('.subtotal').eq(idx).val(convertToRupiah(subharga));
             updateTotalTampil();
-        })
+        });
     }); // end: document ready
 
     function changeSatuan() {
@@ -296,35 +296,6 @@
                 $(".jumlah").eq(idx).val(resp.data);
                 // trigger on-input 'jumlah'
                 $(".jumlah").eq(idx).trigger('input');
-
-                // var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-                // jumlah  = [].map.call(inpJumlah, function( input ) {
-                //     return parseInt(input.value);
-                // });
-                //
-                // var inpHarga = document.getElementsByClassName( 'harga' ),
-                // harga  = [].map.call(inpHarga, function( input ) {
-                //     return input.value;
-                // });
-                //
-                // for (var i = 0; i < jumlah.length; i++) {
-                //     var hasil = 0;
-                //     var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                //     var jml = jumlah[i];
-                //
-                //     if (jml == "") {
-                //         jml = 0;
-                //     }
-                //
-                //     hasil += parseInt(hrg) * parseInt(jml);
-                //
-                //     if (isNaN(hasil)) {
-                //         hasil = 0;
-                //     }
-                //     hasil = convertToRupiah(hasil);
-                //     $(".subtotal").eq(i).val(hasil);
-                // }
-                // updateTotalTampil();
             })
             .catch(function (error) {
                 loadingHide();
@@ -374,33 +345,6 @@
                 // trigger diskon to 'keyup'
                 $(".diskon").trigger('keyup');
 
-                // var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-                // jumlah  = [].map.call(inpJumlah, function( input ) {
-                //     return parseInt(input.value);
-                // });
-                //
-                // var inpHarga = document.getElementsByClassName( 'harga' ),
-                // harga  = [].map.call(inpHarga, function( input ) {
-                //     return input.value;
-                // });
-                //
-                // for (var i = 0; i < jumlah.length; i++) {
-                //     var hasil = 0;
-                //     var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                //     var jml = jumlah[i];
-                //
-                //     if (jml == "") {
-                //         jml = 0;
-                //     }
-                //
-                //     hasil += parseInt(hrg) * parseInt(jml);
-                //
-                //     if (isNaN(hasil)) {
-                //         hasil = 0;
-                //     }
-                //     hasil = convertToRupiah(hasil);
-                //     $(".subtotal").eq(i).val(hasil);
-                // }
                 updateTotalTampil();
             },
             error : function(e){
@@ -416,37 +360,8 @@
         .then(function (resp) {
             $(".jumlah").eq(idx).val(resp.data);
 
-            getPrice(idx, jumlah);
+            getPrices(idx, jumlah);
 
-            var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-            jumlah  = [].map.call(inpJumlah, function( input ) {
-                return parseInt(input.value);
-            });
-
-            var inpHarga = document.getElementsByClassName( 'harga' ),
-            harga  = [].map.call(inpHarga, function( input ) {
-                return input.value;
-            });
-
-            for (var i = 0; i < jumlah.length; i++) {
-                var hasil = 0;
-                var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                var jml = jumlah[i];
-
-                if (jml == "") {
-                    jml = 0;
-                }
-
-                hasil += parseInt(hrg) * parseInt(jml);
-
-                if (isNaN(hasil)) {
-                    hasil = 0;
-                }
-                hasil = convertToRupiah(hasil);
-                $(".subtotal").eq(i).val(hasil);
-
-            }
-            updateTotalTampil();
         })
         .catch(function (error) {
             messageWarning("Error", error);
@@ -525,11 +440,16 @@
 
         setArrayCode();
 
-        $('.input-rupiah').maskMoney({
-            thousands: ".",
-            precision: 0,
-            decimal: ",",
-            prefix: "Rp. "
+        $('.rupiah').inputmask("currency", {
+            radixPoint: ",",
+            groupSeparator: ".",
+            digits: 2,
+            autoGroup: true,
+            prefix: ' Rp ', //Space after $, this will not truncate the first character.
+            rightAlign: true,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
         });
 
         $(".diskon").on('keyup', function (evt) {
@@ -558,16 +478,21 @@
             $('.modalCodeProd:eq('+ key +')').find('.table_listcodeprod > tbody > tr').remove();
             if (val.get_prod_code.length > 0) {
                 $.each(val.get_prod_code, function (idx, val) {
-                    console.log(idx +': '+ val);
                     prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]" value="'+ val.sc_code +'"></input></td>';
                     qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="'+ val.sc_qty +'"></input></td>';
-                    action = '<td><button class="btn btn-success btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
+                    action = '';
+                    if (idx == 0) {
+                        action = '<td><button class="btn btn-success btnAddProdCode btn-sm rounded-circle" title="Tambah Kode Produksi" type="button"><i class="fa fa-plus" aria-hidden="true"></button></td>';
+                    }
+                    else {
+                        action = '<td><button class="btn btn-danger btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
+                    }
                     listProdCode = '<tr>'+ prodCode + qtyProdCode + action +'</tr>';
                     $('.modalCodeProd:eq('+ key +')').find('.table_listcodeprod').append(listProdCode);
                 });
             }
-            rowBtnAdd = '<tr class="rowBtnAdd"><td colspan="3" class="text-center"><button class="btn btn-success btnAddProdCode btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button></td></tr>';
-            $('.modalCodeProd:eq('+ key +')').find('.table_listcodeprod').append(rowBtnAdd);
+            // rowBtnAdd = '<tr class="rowBtnAdd"><td colspan="3" class="text-center"><button class="btn btn-success btnAddProdCode btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button></td></tr>';
+            // $('.modalCodeProd:eq('+ key +')').find('.table_listcodeprod').append(rowBtnAdd);
         });
     }
 
@@ -657,11 +582,11 @@
         $('.btnAddProdCode').on('click', function() {
             prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]"></input></td>';
             qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="0"></input></td>';
-            action = '<td><button class="btn btn-success btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
+            action = '<td><button class="btn btn-danger btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
             listProdCode = '<tr>'+ prodCode + qtyProdCode + action +'</tr>';
             // idxBarang is referenced from btnCodeProd above
-            $(listProdCode).insertBefore($('.modalCodeProd:eq('+ idxBarang +')').find('.table_listcodeprod .rowBtnAdd'));
-            // $('.modalCodeProd:eq('+ idxBarang +')').find('.table_listcodeprod').append(listProdCode);
+            // $(listProdCode).insertBefore($('.modalCodeProd:eq('+ idxBarang +')').find('.table_listcodeprod .rowBtnAdd'));
+            $('.modalCodeProd:eq('+ idxBarang +')').find('.table_listcodeprod').append(listProdCode);
             getEventsReady();
         });
         // event to remove an prod-code from table_listcodeprod

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Aktivitasmarketing\Marketingarea;
 
+use App\Http\Controllers\AksesUser;
 use function foo\func;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -465,7 +466,7 @@ class MarketingAreaController extends Controller
 
     public function editOrderProduk($id)
     {
-        if (!AksesUser::checkAkses(22, 'edit')){
+        if (!AksesUser::checkAkses(22, 'update')){
             abort(401);
         }
 
@@ -1929,7 +1930,7 @@ class MarketingAreaController extends Controller
     // display edit page
     public function editDC($id)
     {
-        if (!AksesUser::checkAkses(22, 'edit')){
+        if (!AksesUser::checkAkses(22, 'update')){
             abort(401);
         }
 
@@ -2639,6 +2640,10 @@ class MarketingAreaController extends Controller
     // edit
     public function edit_datakonsinyasi($id)
     {
+        if (!AksesUser::checkAkses(22, 'update')){
+            abort(401);
+        }
+
         $data_item = d_salescomp::where('sc_id', $id)
         ->with(['getSalesCompDt' => function ($query) {
             $query
@@ -2834,7 +2839,7 @@ class MarketingAreaController extends Controller
             $val_sales = [
                 'sc_comp'    => $comp,
                 'sc_member'  => $member,
-                'sc_total'   => $total,
+                'sc_total'   => (int)$total,
                 'sc_user'    => $user,
                 'sc_update'  => $update
             ];
@@ -2861,6 +2866,7 @@ class MarketingAreaController extends Controller
                     $salescompdt->scd_qty = $data['jumlah'][$key];
                     $salescompdt->scd_unit = $data['satuan'][$key];
                     $salescompdt->scd_value = Currency::removeRupiah($data['harga'][$key]);
+                    $salescompdt->scd_discvalue = $data['diskon'][$key];
                     $salescompdt->scd_totalnet = Currency::removeRupiah($data['subtotal'][$key]);
                     $salescompdt->save();
 
@@ -2906,7 +2912,7 @@ class MarketingAreaController extends Controller
                     'scd_unit' => $data['satuan'][$key],
                     'scd_value' => Currency::removeRupiah($data['harga'][$key]),
                     'scd_discpersen' => 0,
-                    'scd_discvalue' => 0,
+                    'scd_discvalue' => $data['diskon'][$key],
                     'scd_totalnet' => Currency::removeRupiah($data['subtotal'][$key])
                 ];
 
@@ -3116,7 +3122,7 @@ class MarketingAreaController extends Controller
 
     public function edit_orderprodukagenpusat()
     {
-        if (!AksesUser::checkAkses(22, 'edit')){
+        if (!AksesUser::checkAkses(22, 'update')){
             abort(401);
         }
 

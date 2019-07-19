@@ -248,7 +248,7 @@
             $('#agentCode').val($(this).find('option:selected').val());
         });
 
-        $(document).on('click', '.btn-hapus', function () {
+        $('.btnRemoveItem').on('click', function () {
             // get index of clicked element and delete a production-code-modal
             idxBarang = $('.btnRemoveItem').index(this);
             $('.modalCodeProd').eq(idxBarang).remove();
@@ -345,6 +345,7 @@
         // $('.barang').off();
         $(".satuan").off();
         $('.btnCodeProd').off();
+        $('.btnRemoveItem').off();
         $('.btnAddProdCode').off();
         $('.btnRemoveProdCode').off();
         $('.qtyProdCode').off();
@@ -399,6 +400,14 @@
         });
         changeSatuan();
 
+        // event to remove an item from table_items
+        $('.btnRemoveItem').on('click', function() {
+            idxItem = $('.btnRemoveItem').index(this);
+            $('.modalCodeProd').eq(idxItem).remove();
+            $(this).parents('tr').remove();
+            updateTotalTampil();
+            setArrayCode();
+        });
         // event to show modal to display list of code-production
         $('.btnCodeProd').on('click', function() {
             idxBarang = $('.btnCodeProd').index(this);
@@ -422,8 +431,8 @@
             action = '<td><button class="btn btn-danger btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
             listProdCode = '<tr>'+ prodCode + qtyProdCode + action +'</tr>';
             // idxBarang is referenced from btnCodeProd above
-            $(listProdCode).insertBefore($('.modalCodeProd:eq('+ idxBarang +')').find('.table_listcodeprod .rowBtnAdd'));
-            // $('.modalCodeProd:eq('+ idxBarang +')').find('.table_listcodeprod').append(listProdCode);
+            // $(listProdCode).insertBefore($('.modalCodeProd:eq('+ idxBarang +')').find('.table_listcodeprod .rowBtnAdd'));
+            $('.modalCodeProd:eq('+ idxBarang +')').find('.table_listcodeprod').append(listProdCode);
             getEventsReady();
         });
         // event to remove an prod-code from table_listcodeprod
@@ -844,7 +853,7 @@
             '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah" value="Rp. 0"></td>'+
             '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
             '<td>'+
-            '<button class="btn btn-danger btn-hapus btn-sm" type="button">'+
+            '<button class="btn btn-danger btnRemoveItem rounded-circle btn-sm" type="button">'+
             '<i class="fa fa-remove" aria-hidden="true"></i>'+
             '</button>'+
             '</td>'+
