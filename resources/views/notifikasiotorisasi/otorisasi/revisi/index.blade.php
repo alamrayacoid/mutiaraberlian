@@ -58,22 +58,24 @@
 	$(document).ready(function(){
 		table_sup = $('#table_dataproduk').DataTable();
 		table_bar = $('#table_datapenjualan').DataTable();
-		table_pus = $('#table_orderproduksi').DataTable({
-            responsive: true,
-            autoWidth: false,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('getproduksi') }}",
-                type: "get"
-            },
-            columns: [
-                {data: 'DT_RowIndex'},
-                {data: 'date'},
-                {data: 'supplier'},
-                {data: 'nota'},
-                {data: 'aksi'}
-            ],
-        });
+		setTimeout(function () {
+            table_pus = $('#table_orderproduksi').DataTable({
+                responsive: true,
+                autoWidth: false,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('getproduksi') }}",
+                    type: "get"
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'date'},
+                    {data: 'supplier'},
+                    {data: 'nota'},
+                    {data: 'aksi'}
+                ],
+            });
+        },1000)
 	});
 
 	function detailOrderProduksi(id) {

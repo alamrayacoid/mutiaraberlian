@@ -96,11 +96,12 @@ class MarketingAreaController extends Controller
     {
         $order = [];
         $order = d_stockdistribution::with('getDistributionDt')
-        // ->where('sd_status', 'N')
-        ->where('sd_status', '!=', 'Y')
-        ->whereHas('getOrigin', function ($q) {
-            $q->where('c_type', 'PUSAT');
-        });
+            // ->where('sd_status', 'N')
+            ->select('*', DB::raw('date_format(sd_date, "%d-%m-%Y") as sd_date'))
+            ->where('sd_status', '!=', 'Y')
+            ->whereHas('getOrigin', function ($q) {
+                $q->where('c_type', 'PUSAT');
+            });
         // filter for branch logged-in
         if (Auth::user()->getCompany->c_type != "PUSAT") {
             $order = $order->whereHas('getDestination', function ($q) {
@@ -457,19 +458,19 @@ class MarketingAreaController extends Controller
         }
 
         $produk = d_stockdistribution::where('sd_id', $id)
-        ->with('getOrigin')
-        ->with('getDestination')
-        ->with(['getDistributionDt' => function ($q) {
-            $q
-                ->with(['getItem' => function ($que) {
-                    $que
-                        ->with('getUnit1')
-                        ->with('getUnit2')
-                        ->with('getUnit3');
-                }])
-                ->with('getUnit');
-        }])
-        ->first();
+            ->with('getOrigin')
+            ->with('getDestination')
+            ->with(['getDistributionDt' => function ($q) {
+                $q
+                    ->with(['getItem' => function ($que) {
+                        $que
+                            ->with('getUnit1')
+                            ->with('getUnit2')
+                            ->with('getUnit3');
+                    }])
+                    ->with('getUnit');
+            }])
+            ->first();
 
         // $produk = DB::table('d_productorder')
         //     ->join('m_company as comp', 'po_comp', 'comp.c_id')
@@ -487,6 +488,7 @@ class MarketingAreaController extends Controller
         //     ->select('d_productorderdt.*', 'm_item.*', 'm_unit.*', 'unit1.u_id as uid_1', 'unit2.u_id as uid_2', 'unit3.u_id as uid_3', 'unit1.u_name as uname_1', 'unit2.u_name as uname_2', 'unit3.u_name as uname_3')
         //     ->where('pod_productorder', $id)
         //     ->get();
+        //dd($produk->getDistributionDt[1]->getUnit);
         return view('marketing/marketingarea/orderproduk/edit', compact('produk'));
     }
 
@@ -672,12 +674,13 @@ class MarketingAreaController extends Controller
         }
 
         $produk = d_stockdistribution::where('sd_id', $id)
-        ->with('getOrigin')
-        ->with('getDestination')
-        ->with(['getDistributionDt' => function ($q) {
-            $q->with('getItem')->with('getUnit');
-        }])
-        ->first();
+            ->select('*', DB::raw("date_format(sd_date, '%d-%m-%Y') as sd_date"))
+            ->with('getOrigin')
+            ->with('getDestination')
+            ->with(['getDistributionDt' => function ($q) {
+                $q->with('getItem')->with('getUnit');
+            }])
+            ->first();
 
         // $produk = DB::table('d_productorder')
         //     ->join('m_company as comp', 'po_comp', 'comp.c_id')

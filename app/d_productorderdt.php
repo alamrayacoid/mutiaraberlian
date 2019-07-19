@@ -5,6 +5,34 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * App\d_productorderdt
+ *
+ * @property int $pod_productorder
+ * @property int $pod_detailid
+ * @property int|null $pod_item
+ * @property int|null $pod_qty
+ * @property int|null $pod_unit
+ * @property float|null $pod_price
+ * @property float $pod_discvalue
+ * @property float $pod_discpersen
+ * @property float|null $pod_totalprice
+ * @property string $pod_isapproved
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productorderdt newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productorderdt newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productorderdt query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productorderdt wherePodDetailid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productorderdt wherePodDiscpersen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productorderdt wherePodDiscvalue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productorderdt wherePodIsapproved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productorderdt wherePodItem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productorderdt wherePodPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productorderdt wherePodProductorder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productorderdt wherePodQty($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productorderdt wherePodTotalprice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productorderdt wherePodUnit($value)
+ * @mixin \Eloquent
+ */
 class d_productorderdt extends Model
 {
     // use third-party library to create relationship multi-column

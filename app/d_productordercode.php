@@ -5,6 +5,24 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * App\d_productordercode
+ *
+ * @property int $poc_productorder
+ * @property int $poc_item
+ * @property int $poc_detailid
+ * @property string|null $poc_code
+ * @property int|null $poc_qty
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productordercode newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productordercode newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productordercode query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productordercode wherePocCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productordercode wherePocDetailid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productordercode wherePocItem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productordercode wherePocProductorder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_productordercode wherePocQty($value)
+ * @mixin \Eloquent
+ */
 class d_productordercode extends Model
 {
     // use third-party library to create relationship multi-column

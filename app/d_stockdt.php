@@ -5,6 +5,22 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * App\d_stockdt
+ *
+ * @property int $sd_stock
+ * @property int $sd_detailid
+ * @property string|null $sd_code
+ * @property int|null $sd_qty
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdt newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdt newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdt query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdt whereSdCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdt whereSdDetailid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdt whereSdQty($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\d_stockdt whereSdStock($value)
+ * @mixin \Eloquent
+ */
 class d_stockdt extends Model
 {
     protected $table = 'd_stockdt';

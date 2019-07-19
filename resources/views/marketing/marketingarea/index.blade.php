@@ -134,8 +134,8 @@
                             <thead>
                             <tr class="bg-primary text-light">
                                 <th class="text-center">Nama Barang</th>
-                                <th class="text-center">Satuan</th>
                                 <th class="text-center">Jumlah</th>
+                                <th class="text-center">Satuan</th>
                                 <!-- <th>Harga Satuan</th>
                                 <th>Total Harga</th> -->
                             </tr>
@@ -599,7 +599,7 @@
                                 id: id
                             })
                             .then(function (response) {
-                                if(response.data.status == 'Success'){
+                                if(response.data.status == 'success'){
                                     loadingHide();
                                     messageSuccess("Berhasil", response.data.message);
                                     table_konsinyasi.ajax.reload();
@@ -2254,8 +2254,8 @@
                     $.each(res.data1, function (key, val) {
                         $('#detailOrder tbody').append('<tr>' +
                         '<td>' + val.barang + '</td>' +
-                        '<td>' + val.unit + '</td>' +
                         '<td class="text-right">' + val.qty + '</td>' +
+                        '<td>' + val.unit + '</td>' +
                         // '<td>' + val.price + '</td>' +
                         // '<td>' + val.totalprice + '</td>' +
                         '</tr>');

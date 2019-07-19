@@ -78,11 +78,13 @@
 @section('extra_script')
 <script type="text/javascript">
     var table;
+    var table_detail;
 	$(document).ready(function(){
         setTimeout(function () {
             table = $('#table_return').DataTable({
                 responsive: true,
                 autoWidth: false,
+                processing: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('return.list') }}",
@@ -141,11 +143,8 @@
                 serverSide: true,
                 ajax: {
                     url: "{{ route('return.list') }}",
-                    data: {awal: $("#dateStart").val(), akhir: $("#dateEnd").val()},
-                    type: "post",
-                    data: {
-                        '_token': '{{ @csrf_token() }}'
-                    }
+                    data: {awal: $("#dateStart").val(), akhir: $("#dateEnd").val(), '_token': '{{ @csrf_token() }}'},
+                    type: "post"
                 },
                 columns: [
                     {data: 'tanggal'},
@@ -174,6 +173,22 @@
                     $('#txt_metode').val(resp.data.message.metode);
                     $('#txt_ket').text(resp.data.message.keterangan);
                     $("#detailReturn").modal("show");
+
+                    if ( $.fn.DataTable.isDataTable('#table_detailreturn') ) {
+                        $('#table_detailreturn').DataTable().destroy();
+                    }
+
+                    table_detail = $('#table_detailreturn').DataTable({
+                        responsive: true,
+                        searching: false,
+                        paging: false
+                    });
+                    table_detail.clear();
+                    table_detail.row.add( [
+                        resp.data.message.kode,
+                        resp.data.message.qtykode
+                    ] ).draw( false );
+
                 }
             })
             .catch(function (error) {
@@ -208,11 +223,11 @@
                     $('#txt_barang_edit').val(resp.data.message.barang);
                     $('#txt_qty_edit').val(resp.data.message.qty_return);
                     $('#qty_current').val(resp.data.message.qty);
-                    $('#qty_return_edit').val(resp.data.message.qty);
+                    $('#qty_return_edit').val(resp.data.message.qtykode);
                     $('#satuan_return_edit').val(resp.data.message.unit);
                     $('#methode_return_edit').val(resp.data.message.metode);
                     $('#note_return_edit').text(resp.data.message.keterangan);
-
+                    $('#kode_produksi').val(resp.data.message.kode);
                     $("#editReturn").modal({backdrop: 'static', keyboard: false});
                 } else {
                     messageFailed("Gagal", resp.data.message);

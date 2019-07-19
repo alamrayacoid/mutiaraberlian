@@ -51,7 +51,7 @@
                                 <div class="col-md-4 col-sm-6">
                                     <select class="form-control select2" name="" id="searchBy">
                                         <option value="kodeproduksi" selected>Cari berdasarkan kode produksi</option>
-                                        <option value="nota">Cari berdasarkan nota</option>
+                                        {{--<option value="nota">Cari berdasarkan nota</option>--}}
                                     </select>
                                 </div>
                             </div>
@@ -536,6 +536,7 @@
                     $("#note_return").val('');
                     $("#createReturn").modal("hide");
                     window.open(baseUrl+'/produksi/returnproduksi/nota-return/'+resp.data.id+'/'+resp.data.detail);
+                    window.location.href = '{{ route("return.index") }}';
                 }
                 else {
                     messageFailed("Perhatian", resp.data.error);

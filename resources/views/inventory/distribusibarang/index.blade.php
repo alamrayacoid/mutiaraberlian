@@ -129,6 +129,35 @@ $(document).ready(function() {
         });
         getTablePros();
     });
+
+    // show detail of order
+    function detailOrder(id) {
+        $.ajax({
+            url: "{{ url('/marketing/marketingarea/orderproduk/detail') }}" + "/" + id,
+            type: "get",
+            beforeSend: function () {
+                loadingShow();
+            },
+            success: function (res) {
+                loadingHide();
+                $('#cabang').val(res.data2.get_origin.c_name);
+                $('#agen').val(res.data2.get_destination.c_name);
+                $('#nota').val(res.data2.sd_nota);
+                $('#tanggal').val(res.data2.sd_date);
+                $('.empty').empty();
+                $.each(res.data1, function (key, val) {
+                    $('#detailOrder tbody').append('<tr>' +
+                        '<td>' + val.barang + '</td>' +
+                        '<td class="text-right">' + val.qty + '</td>' +
+                        '<td>' + val.unit + '</td>' +
+                        // '<td>' + val.price + '</td>' +
+                        // '<td>' + val.totalprice + '</td>' +
+                        '</tr>');
+                });
+                $('#modalOrderCabang').modal('show');
+            }
+        });
+    }
     // retrieve dataTable : list order from branch
     function getTablePros()
     {
