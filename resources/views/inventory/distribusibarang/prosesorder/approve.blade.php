@@ -131,7 +131,8 @@
                                         <thead class="bg-primary">
                                             <tr>
                                                 <th width="5%">No</th>
-                                                <th width="50%">Kode Barang/Nama Barang</th>
+                                                <th width="40%">Kode Barang/Nama Barang</th>
+                                                <th>Stock</th>
                                                 <th>Jumlah</th>
                                                 <th>Satuan</th>
                                                 <th>Kode Produksi</th>
@@ -142,20 +143,23 @@
                                         <tbody>
                                             @foreach ($data['stockdist']->getDistributionDt as $key => $value)
                                             <tr class="rowStatus">
-                                                <td class="text-right">{{ $key + 1 }}</td>
-                                                <td>
+                                                <td class="text-right" width="5%">{{ $key + 1 }}</td>
+                                                <td width="35%">
                                                     <input type="text" data-counter="0" class="form-control form-control-sm itemsName" value="{{ $value->getItem->i_code }} - {{ $value->getItem->i_name }}" disabled>
                                                     <input type="hidden" name="itemsId[]" value="{{ $value->getItem->i_id }}" class="itemsId">
                                                     <input type="hidden" name="isDeleted[]" value="false" class="isDeleted">
                                                 </td>
-                                                <td>
+                                                <td width="15%" class="text-center">
+                                                    {{ $value->kondisistock }}
+                                                </td>
+                                                <td width="15%">
                                                     <input type="text" name="qty[]" class="form-control form-control-sm digits qty" value="{{ $value->sdd_qty }}">
                                                     <input type="hidden" name="qtyUsed[]" class="form-control form-control-sm digits qtyUsed" value="{{ $value->qtyUsed }}">
                                                     <input type="hidden" class="qtyStock1" value="{{ $value->stockUnit1 }}">
                                                     <input type="hidden" class="qtyStock2" value="{{ $value->stockUnit2 }}">
                                                     <input type="hidden" class="qtyStock3" value="{{ $value->stockUnit3 }}">
                                                 </td>
-                                                <td>
+                                                <td width="15%">
                                                     <select name="units[]" class="form-control form-control-sm select2 units">
                                                         @if(isset($value->getItem->getUnit1))
                                                         <option value="{{ $value->getItem->getUnit1->u_id }}" data-unitcmp="{{ $value->getItem->i_unitcompare1 }}" @if($value->sdd_unit == $value->getItem->getUnit1->u_id) selected @endif>{{ $value->getItem->getUnit1->u_name }}</option>
@@ -168,48 +172,17 @@
                                                         @endif
                                                     </select>
                                                 </td>
-                                                <td class="text-center">
+                                                <td class="text-center" width="15%">
                                                     <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
                                                 </td>
-                                                {{-- <!-- @if ($value->status == 'used')
-                                                    <td>
-                                                        <h5><span class="badge badge-warning">Stock sudah digunakan ({{ $value->qtyUsed }})</span></h5>
-                                                        <input type="hidden" name="status[]" class="status" value="{{ $value->status }}">
-                                                    </td>
-                                                @else
-                                                    <td>
-                                                        <h5><span class="badge badge-primary">Stock belum digunakan</span></h5>
-                                                        <input type="hidden" name="status[]" class="status" value="{{ $value->status }}">
-                                                    </td>
-                                                @endif -->
-                                                <!-- <td>
-                                                    @if ($key == 0)
-                                                        <button class="btn btn-success btnAddItem btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                                                        @if ($value->status == 'used')
-                                                            <button class="btn btn-primary btnAppointItem btn-sm rounded-circle d-none" type="button"><i class="fa fa-power-off" aria-hidden="true"></i></button>
-                                                            <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button" disabled><i class="fa fa-trash" aria-hidden="true"></i></button>
-                                                        @else
-                                                            <button class="btn btn-primary btnAppointItem btn-sm rounded-circle d-none" type="button"><i class="fa fa-power-off" aria-hidden="true"></i></button>
-                                                            <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
-                                                        @endif
-                                                    @else
-                                                        @if ($value->status == 'used')
-                                                            <button class="btn btn-primary btnAppointItem btn-sm rounded-circle d-none" type="button"><i class="fa fa-power-off" aria-hidden="true"></i></button>
-                                                            <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button" disabled><i class="fa fa-trash" aria-hidden="true"></i></button>
-                                                        @else
-                                                            <button class="btn btn-primary btnAppointItem btn-sm rounded-circle d-none" type="button"><i class="fa fa-power-off" aria-hidden="true"></i></button>
-                                                            <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
-                                                        @endif
-                                                    @endif
-                                                </td> --> --}}
                                             </tr>
                                             <input type="hidden" name="counter" value="{{ $key }}">
                                             @endforeach
                                         </tbody>
                                     </table>
                                 </div>
-                            </form>
-                        </section>
+                            </section>
+                        </form>
                     </div>
                     <div class="card-footer text-right">
                         <button class="btn btn-primary" type="button" id="btn_simpan">Setujui Order dan Kirim</button>
@@ -610,9 +583,10 @@
             type: "post",
             success: function(response) {
                 loadingHide();
+                console.log(response);
                 if (response.status === 'berhasil') {
                     messageSuccess('Selamat', 'Order berhasil disetujui dan barang segera akan dikirimkan !');
-                    window.history.back();
+                    window.location.href = '{{ route("distribusibarang.index") }}';
                 } else if (response.status === 'invalid') {
                     messageWarning('Perhatian', response.message);
                 } else if (response.status === 'gagal') {

@@ -70,6 +70,57 @@ class Mutasi extends Controller
         }
     }
 
+    static function validateProductionCodeWithQty($from, $listItemsId, $qty, $listProdCode, $listProdCodeLength)
+    {
+        DB::beginTransaction();
+        try {
+            $prodCode = $listProdCode;
+            $prodCodeLength = $listProdCodeLength;
+            $startProdCodeIdx = 0;
+            foreach ($listItemsId as $key => $itemId) {
+                // get stock-item-parent
+                $stock = d_stock::where('s_position', '=', $from)
+                    ->where('s_item', '=', $itemId)
+                    ->where('s_status', '=', 'ON DESTINATION')
+                    ->where('s_condition', '=', 'FINE')
+                    ->first();
+
+                // callback if stock item is null / empty
+                if (is_null($stock) && $qty[$key] != 0) {
+                    $item = m_item::where('i_id', $itemId)->first();
+                    throw new Exception("Stok '" . strtoupper($item->i_name) . "' kosong !");
+                }
+
+                $lengthPC = (int)$prodCodeLength[$key];
+                $endProdCodeIdx = $startProdCodeIdx + $lengthPC;
+                for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
+                    // skip inserting when val is null or qty-pc is 0
+                    if ($prodCode[$j] == '' || $prodCode[$j] == null) {
+                        continue;
+                    }
+                    // get stock-detail-parent
+                    $stockDt = d_stockdt::where('sd_stock', $stock->s_id)
+                        ->where('sd_code', $prodCode[$j])
+                        ->first();
+
+                    if (is_null($stockDt)) {
+                        throw new Exception("Kode produksi '" . strtoupper($prodCode[$j]) . "' tidak ditemukan !");
+                    }
+                }
+                $startProdCodeIdx += $lengthPC;
+            }
+
+            DB::commit();
+            return 'validated';
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
     // ...PC = production-code
     static function distribusicabangkeluar(
         $from, $to, $item, $qty, $nota, $reff,

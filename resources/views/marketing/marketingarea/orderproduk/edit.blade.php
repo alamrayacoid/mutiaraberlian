@@ -78,11 +78,15 @@
                                                             @if($dt->getItem->getUnit1->u_id != $dt->sdd_unit)
                                                                 <option value="{{ $dt->getItem->getUnit1->u_id }}">{{ $dt->getItem->getUnit1->u_name }}</option>
                                                             @endif
-                                                            @if($dt->getItem->getUnit2->u_id != $dt->sdd_unit)
-                                                                <option value="{{ $dt->getItem->getUnit2->u_id }}">{{ $dt->getItem->getUnit2->u_name }}</option>
+                                                            @if (isset($dt->getItem->getUnit2->u_id))
+                                                                @if($dt->getItem->getUnit2->u_id != $dt->sdd_unit && $dt->getItem->getUnit2->u_id !== null)
+                                                                    <option value="{{ $dt->getItem->getUnit2->u_id }}">{{ $dt->getItem->getUnit2->u_name }}</option>
+                                                                @endif
                                                             @endif
-                                                            @if($dt->getItem->getUnit3->u_id != $dt->sdd_unit)
-                                                                <option value="{{ $dt->getItem->getUnit3->u_id }}">{{ $dt->getItem->getUnit3->u_name }}</option>
+                                                            @if (isset($dt->getItem->getUnit3->u_id))
+                                                                @if($dt->getItem->getUnit3->u_id != $dt->sdd_unit && $dt->getItem->getUnit3->u_id !== null)
+                                                                    <option value="{{ $dt->getItem->getUnit3->u_id }}">{{ $dt->getItem->getUnit3->u_name }}</option>
+                                                                @endif
                                                             @endif
                                                         </select>
                                                     </td>
