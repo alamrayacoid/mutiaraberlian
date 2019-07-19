@@ -384,6 +384,7 @@
                 {data: 'agen'},
                 {data: 'comp'},
                 {data: 'i_name'},
+                {data: 'status'},
                 {data: 'kondisi'},
                 {data: 'qty'},
                 {data: 'aksi', className: 'text-center'}

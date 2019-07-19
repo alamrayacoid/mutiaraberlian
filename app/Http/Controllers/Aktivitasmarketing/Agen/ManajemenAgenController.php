@@ -885,7 +885,7 @@ class ManajemenAgenController extends Controller
             ->leftJoin('m_company as agen', 's_comp', 'agen.c_id')
             ->leftJoin('m_item', 's_item', 'i_id')
             ->where('s_position', '=', $id)
-            ->select('s_id', 'agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_condition', 's_qty')
+            ->select('s_id', 'agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_status', 's_condition', 's_qty')
             ->get();
 
         return Datatables::of($data)
@@ -897,13 +897,20 @@ class ManajemenAgenController extends Controller
                     return "Rusak";
                 }
             })
+            ->addColumn('status', function ($data) {
+                if ($data->s_status == "ON DESTINATION") {
+                    return "Sampai Tujuan";
+                } else {
+                    return "Di Jalan";
+                }
+            })
             ->addColumn('qty', function ($data) {
                 return "<div class='text-center'>$data->s_qty</div>";
             })
             ->addColumn('aksi', function ($data) {
                 return '<button class="btn btn-sm btn-primary" onclick="detail_agen(' . $data->s_id . ')"><i class="fa fa-folder"></i></button>';
             })
-            ->rawColumns(['kondisi', 'qty', 'aksi'])
+            ->rawColumns(['kondisi', 'status', 'qty', 'aksi'])
             ->make(true);
     }
 
