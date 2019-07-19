@@ -99,6 +99,7 @@ class PenerimaanBarangController extends Controller
 
         DB::beginTransaction();
         try{
+
             $order = $data[0]->po_id;
             $data_check = DB::table('d_productionorder')
                 ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
