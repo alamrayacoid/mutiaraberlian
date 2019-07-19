@@ -78,7 +78,7 @@
 
                                     <div class="container">
                                         <div class="table-responsive mt-3">
-                                            <table class="table table-hover table-striped diplay nowrap" id="table_create">
+                                            <table class="table table-hover table-striped diplay nowrap w-100" id="table_create">
                                                 <thead class="bg-primary">
                                                     <tr>
                                                         <th>Kode/Nama Barang</th>

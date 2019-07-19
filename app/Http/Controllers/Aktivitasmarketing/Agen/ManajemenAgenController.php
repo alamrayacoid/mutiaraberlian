@@ -376,9 +376,11 @@ class ManajemenAgenController extends Controller
         if (!AksesUser::checkAkses(23, 'create')) {
             return Response::json([
                 'status' => "Failed",
-                'message' => 'Anda tidak memiliki akses'
+                'message' => 'Anda tidak memiliki akses ke menu ini !'
             ]);
         }
+
+
         $data = $request->all();
 
         if ($data['select_order'] == "1") {
@@ -526,6 +528,7 @@ class ManajemenAgenController extends Controller
         if (!AksesUser::checkAkses(23, 'create')) {
             abort('401');
         }
+
         $data = 'employee';
         if (Auth::user()->u_user == 'A') {
             $data = DB::table('m_agen')
@@ -763,9 +766,10 @@ class ManajemenAgenController extends Controller
         if (!AksesUser::checkAkses(23, 'delete')) {
             return Response::json([
                 'status' => "Failed",
-                'message' => 'Anda tidak memiliki akses'
+                'message' => 'Anda tidak memiliki akses ke menu ini !'
             ]);
         }
+
         try {
             $id = Crypt::decrypt($id);
         } catch (DecryptException $e) {
@@ -801,6 +805,16 @@ class ManajemenAgenController extends Controller
 
     public function terimaDO($id)
     {
+        if (!AksesUser::checkAkses(23, 'update')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+        if (!AksesUser::checkAkses(23, 'create')){
+            abort(401);
+        }
+
         try {
             $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
@@ -1060,6 +1074,13 @@ class ManajemenAgenController extends Controller
     // delete detail-kpl
     public function deleteDetailPenjualan(Request $request)
     {
+        if (!AksesUser::checkAkses(23, 'delete')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses menu ini !"
+            ]);
+        }
+
         $id = $request->id;
         DB::beginTransaction();
         try {
@@ -1117,6 +1138,7 @@ class ManajemenAgenController extends Controller
         if (!AksesUser::checkAkses(23, 'create')){
             abort(401);
         }
+
         $data['user'] = Auth::user()->u_user;
         $cek = DB::table('m_company')
             ->where('c_id', '=', Auth::user()->u_company)
@@ -1333,7 +1355,17 @@ class ManajemenAgenController extends Controller
         if (!AksesUser::checkAkses(23, 'create')){
             return Response::json([
                 'status' => "Failed",
-                'message' => "Anda tidak memiliki akses ini"
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
+        // validate request
+        $isValidRequest = $this->validate_req($request);
+        if ($isValidRequest != '1') {
+            $errors = $isValidRequest;
+            return response()->json([
+                'status' => 'invalid',
+                'message' => $errors
             ]);
         }
 
@@ -1416,11 +1448,11 @@ class ManajemenAgenController extends Controller
                 $sumQtyPC = 0;
                 $listPC = array();
                 for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
-                    array_push($listPC, strtoupper($request->prodCode[$j]));
                     // skip inserting when val is null or qty-pc is 0
                     if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
                         continue;
                     }
+                    array_push($listPC, strtoupper($request->prodCode[$j]));
                     $detailidcode = (d_salescode::where('sc_sales', $salesId)
                         ->where('sc_item', $data['idItem'][$i])
                         ->max('sc_detailid')) ? d_salescode::where('sc_sales', $salesId)
@@ -1523,6 +1555,10 @@ class ManajemenAgenController extends Controller
     // edit selected kpl
     public function editKPL($id)
     {
+        if (!AksesUser::checkAkses(23, 'update')){
+            abort(401);
+        }
+
         $data['user'] = Auth::user();
         $data['agents'] = m_agen::get();
 
@@ -1592,15 +1628,22 @@ class ManajemenAgenController extends Controller
     // update selected kpl
     public function updateKPL(Request $request, $id)
     {
-        // // validate request
-        // $isValidRequest = $this->validate_req($request);
-        // if ($isValidRequest != '1') {
-        //     $errors = $isValidRequest;
-        //     return response()->json([
-        //         'status' => 'invalid',
-        //         'message' => $errors
-        //     ]);
-        // }
+        if (!AksesUser::checkAkses(23, 'update')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
+        // validate request
+        $isValidRequest = $this->validate_req($request);
+        if ($isValidRequest != '1') {
+            $errors = $isValidRequest;
+            return response()->json([
+                'status' => 'invalid',
+                'message' => $errors
+            ]);
+        }
 
         DB::beginTransaction();
         try {
@@ -1873,6 +1916,13 @@ class ManajemenAgenController extends Controller
 
     public function saveKPW(Request $request)
     {
+        if (!AksesUser::checkAkses(23, 'create')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         $agen = $request->agen;
         $customer = $request->customer;
         $website = $request->website;
@@ -2256,6 +2306,10 @@ class ManajemenAgenController extends Controller
 
     public function editKPW($id)
     {
+        if (!AksesUser::checkAkses(23, 'update')){
+            abort(401);
+        }
+
         $datas = DB::table('d_salesweb')
             ->join('m_company', 'sw_agen', 'c_id')
             ->join('m_item', 'sw_item', 'i_id')
@@ -2285,6 +2339,13 @@ class ManajemenAgenController extends Controller
 
     public function updateKPW(Request $request)
     {
+        if (!AksesUser::checkAkses(23, 'update')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         // dd($request->all());
         try {
             $id = Crypt::decrypt($request->id);
@@ -2333,6 +2394,13 @@ class ManajemenAgenController extends Controller
 
     public function deleteKPW(Request $request)
     {
+        if (!AksesUser::checkAkses(23, 'delete')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         $id = $request->id;
 
         DB::beginTransaction();

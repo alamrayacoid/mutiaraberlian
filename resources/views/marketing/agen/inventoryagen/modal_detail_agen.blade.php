@@ -44,7 +44,7 @@
                     </div>
                 <div class="row form-group">
                     <div class="table-responsive" style="padding: 0px 15px 0px 15px;">
-                        <table class="table table-striped table-bordered table-hover" id="table_inventory_agen">
+                        <table class="table table-striped table-bordered table-hover w-100" id="table_inventory_agen">
                             <thead class="bg-primary">
                                 <tr>
                                     <th>Kode</th>
@@ -53,7 +53,7 @@
                             </thead>
                         </table>
                         <tbody>
-                            
+
                         </tbody>
                     </div>
                 </div>

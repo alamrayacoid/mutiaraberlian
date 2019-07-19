@@ -33,7 +33,8 @@ class Mutasi extends Controller
             $prodCode = $listProdCode;
             $prodCodeLength = $listProdCodeLength;
             $prodCodeQty = $listQtyProdCode;
-            // $startProdCodeIdx = 0;
+            $startProdCodeIdx = 0;
+
             foreach ($listItemsId as $key => $itemId) {
                 // get all stock-item-parent
                 $stock = d_stock::where('s_position', '=', $from)
@@ -48,35 +49,34 @@ class Mutasi extends Controller
                     throw new Exception("Stok '" . strtoupper($item->i_name) . "' kosong !");
                 }
 
-                //  ----------------------- modified code
                 // declare list-qty-pc in stock
                 $listQtyPCStock = array();
                 $listQtyPCRequest = array();
-                foreach ($prodCode as $idxPC => $iPC) {
-                    if ($iPC == '' || $iPC == null) {
-                        // unset($prodCode[$idxPC]);
+
+                $lengthPC = (int)$prodCodeLength[$key];
+                $endProdCodeIdx = $startProdCodeIdx + $lengthPC;
+                // find the match prod-code
+                for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
+                    // skip inserting when val is null or qty-pc is 0
+                    if ($prodCode[$j] == '' || $prodCode[$j] == null) {
                         continue;
                     }
-                    // $prodCode[$idxPC] = strtoupper($iPC);
-                    $listQtyPCStock[strtoupper($iPC)] = 0;
-                    $listQtyPCRequest[strtoupper($iPC)] = (int)$prodCodeQty[$idxPC];
+                    $listQtyPCStock[strtoupper($prodCode[$j])] = 0;
+                    $listQtyPCRequest[strtoupper($prodCode[$j])] = (int)$prodCodeQty[$j];
                 }
-                // // re-index list prodcode
-                // $prodCode = array_values($prodCode);
+                $startProdCodeIdx += $lengthPC;
 
                 // loop each stock to get match prod-code and fill qty-prod-code ins
                 foreach ($stock as $idx => $iStock) {
                     $stockDt = d_stockdt::where('sd_stock', $iStock->s_id)
                     ->get();
-
-                    foreach ($stockDt as $stockdt) {
-                        if (in_array($stockdt->sd_code, $listQtyPCStock)) {
-                            $listQtyPCStock[$stockdt->sd_code] += $stockdt->sd_qty;
+                    foreach ($stockDt as $sdt) {
+                        if (array_key_exists($sdt->sd_code, $listQtyPCStock)) {
+                            $listQtyPCStock[$sdt->sd_code] += $sdt->sd_qty;
                         }
                     }
                 }
-
-                // dd($prodCode, $listQtyPCRequest, $listQtyPCStock);
+                
                 foreach ($listQtyPCStock as $idxQty => $qtyPCStock) {
                     if ($qtyPCStock < 1) {
                         throw new Exception("Kode produksi '" . $idxQty . "' tidak ditemukan !");
@@ -85,26 +85,6 @@ class Mutasi extends Controller
                         throw new Exception("Kode produksi '" . $idxQty . "' tidak mencukupi, stock tersedia : ". $qtyPCStock ." item !");
                     }
                 }
-
-                // // ---------------- base code
-                // $lengthPC = (int)$prodCodeLength[$key];
-                // $endProdCodeIdx = $startProdCodeIdx + $lengthPC;
-                // // find the match prod-code
-                // for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
-                //     // skip inserting when val is null or qty-pc is 0
-                //     if ($prodCode[$j] == '' || $prodCode[$j] == null) {
-                //         continue;
-                //     }
-                //     // get stock-detail-parent
-                //     $stockDt = d_stockdt::where('sd_stock', $iStock->s_id)
-                //     ->where('sd_code', $prodCode[$j])
-                //     ->first();
-                //
-                //     if (is_null($stockDt)) {
-                //         throw new Exception("Kode produksi '" . strtoupper($prodCode[$j]) . "' tidak ditemukan !");
-                //     }
-                // }
-                // $startProdCodeIdx += $lengthPC;
             }
 
             DB::commit();
@@ -1342,7 +1322,7 @@ class Mutasi extends Controller
                 }
             }
 
-            
+
 
             DB::commit();
             return true;
@@ -1994,12 +1974,12 @@ class Mutasi extends Controller
         try {
             // insert new mutation-detail (filled with production-code of the products)
             foreach ($listPC as $key => $val) {
-                $val = strtoupper($val);
                 $listQtyPC[$key] = (int)$listQtyPC[$key];
                 // skip inserting when val is null or qty-pc is 0
                 if ($val == '' || $val == null || $listQtyPC[$key] == 0) {
                     continue;
                 }
+                $val = strtoupper($val);
                 // get stock-mutation-dt
                 $detailidPC = DB::table('d_stockmutationdt')
                         ->where('smd_stock', $stockId)

@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped display" cellspacing="0" id="table_kelolapenjualan">
+                    <table class="table table-hover table-striped display w-100" cellspacing="0" id="table_kelolapenjualan">
                         <thead class="bg-primary">
                             <tr>
                                 <th width="10%">No</th>

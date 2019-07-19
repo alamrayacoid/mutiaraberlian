@@ -75,7 +75,7 @@
     </div>
     <div class="container" id="tbl_item_cabang" style="display: none;">
         <div class="table-responsive">
-            <table class="table table-striped table-hover" cellspacing="0" id="table_cabang">
+            <table class="table table-striped table-hover w-100" cellspacing="0" id="table_cabang">
                 <thead class="bg-primary">
                 <tr>
                     <th width="30%">Kode Barang/Nama Barang</th>

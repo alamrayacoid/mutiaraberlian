@@ -467,9 +467,6 @@
         }
 
         function TableListDK() {
-            // let start = $('#date_from_dk').val();
-            // let end = $('#date_to_dk').val();
-
             $('#table_konsinyasi').DataTable().clear().destroy();
             table_konsinyasi = $('#table_konsinyasi').DataTable({
                 responsive: true,
@@ -599,7 +596,7 @@
                                 id: id
                             })
                             .then(function (response) {
-                                if(response.data.status == 'success'){
+                                if(response.data.status == 'Success'){
                                     loadingHide();
                                     messageSuccess("Berhasil", response.data.message);
                                     table_konsinyasi.ajax.reload();
