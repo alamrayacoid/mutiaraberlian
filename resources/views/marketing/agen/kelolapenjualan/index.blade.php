@@ -41,7 +41,7 @@
                                 <th width="10%">No</th>
                                 <th width="15%">Tanggal</th>
                                 <th width="20%">Nota</th>
-                                <th width="20%">Member</th>
+                                <th>Member</th>
                                 <th width="20%">Total</th>
                                 <th width="10%">Aksi</th>
                             </tr>

@@ -41,6 +41,7 @@
 					<div class="col-md-4 col-sm-12">
             @if($company->c_type == 'AGEN')
             <input type="text" class="form-control form-control-sm" value="{{$company->a_name}}" readonly="">
+			<input type="hidden" id="agen" value="{{ $company->c_id }}">
             @else
             <select name="m_agen" id="agen" class="form-control form-control-sm select2 agen">
               <option value="" selected disabled>=== Pilih Agen ===</option>

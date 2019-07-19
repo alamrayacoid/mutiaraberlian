@@ -405,6 +405,11 @@
                 $('.filterBranch').addClass('d-none');
                 $('#branchCode').val("{{ Auth::user()->getCompany->c_id }}");
                 console.log($('#branchCode').val());
+                // retrieve data-table
+                setTimeout(function(){
+                    TableListDK();
+                }, 1000);
+
             }
 
             $(".cityIdxDK").on("change", function (evt) {
@@ -636,7 +641,6 @@
         var icode = [];
         var idxProdCode = null;
         $(document).ready(function () {
-            orderProdukList();
             table_search = $('#table_search_agen').DataTable();
             table_bar = $('#table_monitoringpenjualanagen').DataTable();
             table_rab = $('#table_canvassing').DataTable();
@@ -1228,10 +1232,12 @@
         function updateSubtotal(item){
             let qty = $('.qty-modaldt-'+item).val();
             let harga = $('.input-modaldtharga'+item).val();
+            let discount = $('.discount-'+ item).val();
+            console.log('discount: '+ discount);
             if (isNaN(qty)){
                 qty = 0;
             }
-            let total = parseInt(qty) * parseInt(harga);
+            let total = (parseInt(qty) * parseInt(harga)) - (parseInt(qty) * parseInt(discount));
             $('.modaldtsubharga-'+item).html(convertToRupiah(total));
             $('.input-modaldtsubharga'+item).val(total);
             let totalprice = 0;
@@ -1388,6 +1394,7 @@
             let listDiscount   = $('.listDiscount').serialize();
             let listItemsId    = $('.itemsId').serialize();
             let listUnits      = $('.units').serialize();
+            let listSubTotal   = $('.subtotalmodaldt').serialize();
             let pd_nota        = $('#nota_modaldt').serialize();
             let pd_expedition  = $('#expedition').serialize();
             let pd_product     = $('#jenis_exp').serialize();
@@ -1401,7 +1408,7 @@
             let dateTop        = $('#dateTop').serialize();
 
             let dataX = listQty +'&'+ listDiscount +'&'+ listItemsId +'&'+
-                        listUnits +'&'+ pd_nota +'&'+ pd_expedition +'&'+
+                        listUnits +'&'+ listSubTotal +'&'+ pd_nota +'&'+ pd_expedition +'&'+
                         pd_product +'&'+ pd_resi +'&'+ pd_couriername +'&'+
                         pd_couriertelp +'&'+ pd_price +'&'+ paymentType +'&'+
                         paymentMethod +'&'+ payCash +'&'+ dateTop;
@@ -1585,7 +1592,10 @@
                 $('#date_to_mpa').datepicker('setDate', last_day);
             });
             // retrieve data-table
-            TableListMPA();
+            setTimeout(function(){
+                TableListMPA();
+            }, 500);
+
             // filter agent based on area (province and city)
             $('.provMPA').on('change', function () {
                 getCitiesMPA();
@@ -1744,8 +1754,9 @@
                         let itemQty = '<td class="digits">' + response.listQty[index] + '</td>';
                         let itemUnit = '<td>' + val.get_item.get_unit1.u_name + '</td>';
                         let itemPrice = '<td class="rupiah">' + parseInt(val.sd_value) + '</td>';
+                        let itemDiscount = '<td class="rupiah">' + parseInt(val.sd_discvalue) + '</td>';
                         let itemSubTotal = '<td class="rupiah">' + parseInt(val.sd_totalnet) + '</td>';
-                        $('#table_detailmpa > tbody:last-child').append('<tr>' + idx + itemName + itemQty + itemUnit + itemPrice + itemSubTotal + '</tr>');
+                        $('#table_detailmpa > tbody:last-child').append('<tr>' + idx + itemName + itemQty + itemUnit + itemPrice + itemDiscount + itemSubTotal + '</tr>');
                     });
                     // re-activate mask-money
                     $('.rupiah').inputmask("currency", {
@@ -1833,7 +1844,10 @@
                 $('#date_to_dc').datepicker('setDate', last_day);
             });
             // retrieve data-table
-            TableListDC();
+            setTimeout(function(){
+                TableListDC();
+            }, 750);
+
             // filter agent based on area (province and city)
             $('.provDC').on('change', function () {
                 getCitiesDC();
@@ -2118,6 +2132,10 @@
     <!-- some script for Order-Produk-Ke-Pusat -->
     <script type="text/javascript">
         $(document).ready(function() {
+            setTimeout(function(){
+                orderProdukList();
+            }, 250);
+
             $('#btn_confirmAc').on('click', function() {
                 confirmAcceptance();
             });
