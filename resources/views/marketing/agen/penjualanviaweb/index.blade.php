@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped display" cellspacing="0" id="table_penjualanviaweb" style="width: 100%">
+                    <table class="table table-hover table-striped display w-100" cellspacing="0" id="table_penjualanviaweb" style="width: 100%">
                         <thead class="bg-primary">
                         <tr>
                             <th width="5%">No</th>

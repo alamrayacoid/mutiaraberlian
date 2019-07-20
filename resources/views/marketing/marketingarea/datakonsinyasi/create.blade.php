@@ -109,6 +109,7 @@
                                                         <th>Jumlah</th>
                                                         <th>Kode Produksi</th>
                                                         <th>Harga Satuan</th>
+                                                        <th>Diskon @</th>
                                                         <th>Sub Total</th>
                                                         <th>Aksi</th>
                                                     </tr>
@@ -143,6 +144,9 @@
                                                                 class="form-control form-control-sm text-right harga"
                                                                 value="Rp. 0" readonly>
                                                             <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p>
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm diskon rupiah text-right" id="diskon" name="diskon[]">
                                                         </td>
                                                         <td>
                                                             <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly>
@@ -224,7 +228,7 @@
                 $("#agentCode").val('');
                 $("#agent").val('');
                 $("#agent").attr('autofocus', true);
-                getAgent();
+                // getAgent();
             }
         })
         // on select branch
@@ -325,6 +329,16 @@
                 });
             }
         })
+
+        $(".diskon").on('keyup', function (evt) {
+            let idx = $('.diskon').index(this);
+            let diskon = $('.diskon').eq(idx).val();
+            let harga = $('.harga').eq(idx).val();
+            let jumlah = $('.jumlah').eq(idx).val();
+            let subharga = (parseInt(convertToAngka(harga)) - parseInt(diskon)) * parseInt(jumlah);
+            $('.subtotal').eq(idx).val(convertToRupiah(subharga));
+            updateTotalTampil();
+        });
     });
 
     function getEventsReady() {
@@ -405,7 +419,7 @@
         $('.btnAddProdCode').on('click', function() {
             prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]"></input></td>';
             qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="0"></input></td>';
-            action = '<td><button class="btn btn-success btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
+            action = '<td><button class="btn btn-danger btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
             listProdCode = '<tr>'+ prodCode + qtyProdCode + action +'</tr>';
             // idxBarang is referenced from btnCodeProd above
             $(listProdCode).insertBefore($('.modalCodeProd:eq('+ idxBarang +')').find('.table_listcodeprod .rowBtnAdd'));
@@ -652,35 +666,35 @@
                     $(".jumlah").eq(idx).val(resp.data);
                     // trigger on-input 'jumlah'
                     $(".jumlah").eq(idx).trigger('input');
-
-                    var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-                    jumlah  = [].map.call(inpJumlah, function( input ) {
-                        return parseInt(input.value);
-                    });
-
-                    var inpHarga = document.getElementsByClassName( 'harga' ),
-                    harga  = [].map.call(inpHarga, function( input ) {
-                        return input.value;
-                    });
-
-                    for (var i = 0; i < jumlah.length; i++) {
-                        var hasil = 0;
-                        var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                        var jml = jumlah[i];
-
-                        if (jml == "") {
-                            jml = 0;
-                        }
-
-                        hasil += parseInt(hrg) * parseInt(jml);
-
-                        if (isNaN(hasil)) {
-                            hasil = 0;
-                        }
-                        hasil = convertToRupiah(hasil);
-                        $(".subtotal").eq(i).val(hasil);
-                    }
-                    updateTotalTampil();
+                    //
+                    // var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                    // jumlah  = [].map.call(inpJumlah, function( input ) {
+                    //     return parseInt(input.value);
+                    // });
+                    //
+                    // var inpHarga = document.getElementsByClassName( 'harga' ),
+                    // harga  = [].map.call(inpHarga, function( input ) {
+                    //     return input.value;
+                    // });
+                    //
+                    // for (var i = 0; i < jumlah.length; i++) {
+                    //     var hasil = 0;
+                    //     var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                    //     var jml = jumlah[i];
+                    //
+                    //     if (jml == "") {
+                    //         jml = 0;
+                    //     }
+                    //
+                    //     hasil += parseInt(hrg) * parseInt(jml);
+                    //
+                    //     if (isNaN(hasil)) {
+                    //         hasil = 0;
+                    //     }
+                    //     hasil = convertToRupiah(hasil);
+                    //     $(".subtotal").eq(i).val(hasil);
+                    // }
+                    // updateTotalTampil();
                 },
                 error: function (e) {
                     loadingHide();
@@ -740,35 +754,37 @@
                             $('.unknow').eq(idx).css('display', 'none');
                         }
                         $('.harga').eq(idx).val(convertToRupiah(price));
+                        // trigger diskon to 'keyup'
+                        $(".diskon").trigger('keyup');
 
-                        var inpJumlah = document.getElementsByClassName( 'jumlah' ),
-                        jumlah  = [].map.call(inpJumlah, function( input ) {
-                            return parseInt(input.value);
-                        });
-
-                        var inpHarga = document.getElementsByClassName( 'harga' ),
-                        harga  = [].map.call(inpHarga, function( input ) {
-                            return input.value;
-                        });
-
-                        for (var i = 0; i < jumlah.length; i++) {
-                            var hasil = 0;
-                            var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
-                            var jml = jumlah[i];
-
-                            if (jml == "") {
-                                jml = 0;
-                            }
-
-                            hasil += parseInt(hrg) * parseInt(jml);
-
-                            if (isNaN(hasil)) {
-                                hasil = 0;
-                            }
-                            hasil = convertToRupiah(hasil);
-                            $(".subtotal").eq(i).val(hasil);
-                        }
-                        updateTotalTampil();
+                        // var inpJumlah = document.getElementsByClassName( 'jumlah' ),
+                        // jumlah  = [].map.call(inpJumlah, function( input ) {
+                        //     return parseInt(input.value);
+                        // });
+                        //
+                        // var inpHarga = document.getElementsByClassName( 'harga' ),
+                        // harga  = [].map.call(inpHarga, function( input ) {
+                        //     return input.value;
+                        // });
+                        //
+                        // for (var i = 0; i < jumlah.length; i++) {
+                        //     var hasil = 0;
+                        //     var hrg = harga[i].replace("Rp.", "").replace(".", "").replace(".", "").replace(".", "");
+                        //     var jml = jumlah[i];
+                        //
+                        //     if (jml == "") {
+                        //         jml = 0;
+                        //     }
+                        //
+                        //     hasil += parseInt(hrg) * parseInt(jml);
+                        //
+                        //     if (isNaN(hasil)) {
+                        //         hasil = 0;
+                        //     }
+                        //     hasil = convertToRupiah(hasil);
+                        //     $(".subtotal").eq(i).val(hasil);
+                        // }
+                        // updateTotalTampil();
                     },
                     error: function (err) {
                         messageWarning('Error', err.message);
@@ -825,6 +841,7 @@
             '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>'+
             '<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button></td>' +
             '<td><input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="Rp. 0" readonly><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>'+
+            '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah" value="Rp. 0"></td>'+
             '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
             '<td>'+
             '<button class="btn btn-danger btn-hapus btn-sm" type="button">'+
@@ -849,6 +866,28 @@
             decimal: ",",
             prefix: "Rp. "
         });
+
+        $('.rupiah').inputmask("currency", {
+            radixPoint: ",",
+            groupSeparator: ".",
+            digits: 0,
+            autoGroup: true,
+            prefix: ' Rp ', //Space after $, this will not truncate the first character.
+            rightAlign: true,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
+        });
+
+        $(".diskon").on('keyup', function (evt) {
+            let idx = $('.diskon').index(this);
+            let diskon = $('.diskon').eq(idx).val();
+            let harga = $('.harga').eq(idx).val();
+            let jumlah = $('.jumlah').eq(idx).val();
+            let subharga = (parseInt(convertToAngka(harga)) - parseInt(diskon)) * parseInt(jumlah);
+            $('.subtotal').eq(idx).val(convertToRupiah(subharga));
+            updateTotalTampil();
+        })
         updateTotalTampil();
     }
 

@@ -44,8 +44,12 @@ class MarketingAreaController extends Controller
 {
     public function index()
     {
-        $provinsi = DB::table('m_wil_provinsi')->select('m_wil_provinsi.*')->get();
-        $city = DB::table('m_wil_kota')->select('m_wil_kota.*')->get();
+        if (!AksesUser::checkAkses(22, 'read')){
+            abort(401);
+        }
+
+        $provinsi = DB::table('m_wil_provinsi')->select('m_wil_provinsi.*')->orderBy('wp_name', 'asc')->get();
+        $city = DB::table('m_wil_kota')->select('m_wil_kota.*')->orderBy('wc_name', 'asc')->get();
         $user = Auth::user();
 
         return view('marketing/marketingarea/index', compact('provinsi', 'city', 'user'));
@@ -183,6 +187,10 @@ class MarketingAreaController extends Controller
 
     public function createOrderProduk(Request $req)
     {
+        if (!AksesUser::checkAkses(22, 'create')){
+            abort(401);
+        }
+
         try {
             $u_id = Crypt::decrypt($req->user);
         } catch (\Exception $e) {
@@ -361,11 +369,17 @@ class MarketingAreaController extends Controller
 
     public function orderProdukStore(Request $request)
     {
-        // dd($request);
+        if (!AksesUser::checkAkses(22, 'create')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         $data = $request->all();
         $now = Carbon::now('Asia/Jakarta');
         $time = date('Y-m-d', strtotime($now));
-        // dd($data);
+
         DB::beginTransaction();
         try {
             $detailId = 0;
@@ -451,6 +465,10 @@ class MarketingAreaController extends Controller
 
     public function editOrderProduk($id)
     {
+        if (!AksesUser::checkAkses(22, 'edit')){
+            abort(401);
+        }
+
         try {
             $id = Crypt::decrypt($id);
         } catch (Exception $e) {
@@ -494,6 +512,13 @@ class MarketingAreaController extends Controller
 
     public function updateOrderProduk($id, Request $request)
     {
+        if (!AksesUser::checkAkses(22, 'update')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         try {
             $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
@@ -543,6 +568,13 @@ class MarketingAreaController extends Controller
 
     public function deleteOrder($id)
     {
+        if (!AksesUser::checkAkses(22, 'delete')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         try {
             $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
@@ -622,9 +654,12 @@ class MarketingAreaController extends Controller
     // confirm received items that has been ordered
     public function setAcceptance($id)
     {
-        // if (!AksesUser::checkAkses(7, 'update')){
-        //     abort(401);
-        // }
+        if (!AksesUser::checkAkses(22, 'update')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
 
         DB::beginTransaction();
         try {
@@ -937,7 +972,7 @@ class MarketingAreaController extends Controller
             })
             ->addColumn('discount', function ($data) {
                 return "<div class='text-center'>
-                <input type='text' style='width: 100%;' name='discount[]' value='0' class='listDiscount rupiah'>
+                <input type='text' style='width: 100%;' name='discount[]' value='0' class='listDiscount discount-". $data->pod_item ." rupiah' onkeyup='updateSubtotal(".$data->pod_item.")'>
                 </div>";
             })
             ->addColumn('input', function ($data){
@@ -1055,6 +1090,13 @@ class MarketingAreaController extends Controller
     // approve order agent and create mutation
     public function approveAgen(Request $request, $id)
     {
+        if (!AksesUser::checkAkses(22, 'update')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         // dd($request->all(), $request->payCash, $request->dateTop);
         try {
             $id = Crypt::decrypt($id);
@@ -1083,12 +1125,15 @@ class MarketingAreaController extends Controller
                 'pd_price' => $request->shippingCost,
             ];
             DB::table('d_productdelivery')->insert($val_deliv);
-
             // mutation
             foreach ($productOrder->getPODt as $key => $PO) {
                 $idxQty = array_search($PO->pod_item, $request->itemsId);
+                // update qty and unit
                 $PO->pod_qty = $request->qty_proses[$idxQty];
                 $PO->pod_unit = $request->units[$idxQty];
+                $PO->pod_discvalue = $request->discount[$idxQty];
+                $PO->pod_totalprice = $request->subtotalmodaldt[$idxQty];
+                $PO->pod_isapproved = 'Y';
                 $PO->save();
                 // get sellprice
                 $sellPrice = $PO->pod_price;
@@ -1130,7 +1175,7 @@ class MarketingAreaController extends Controller
                     return $mutationOut;
                 }
                 // set stock-parent-id
-                $stockParentId = $mutationOut->original['stockParentId'];
+                $listStockParentId = $mutationOut->original['stockParentId'];
                 // get list
                 $listSellPrice = $mutationOut->original['listSellPrice'];
                 $listHPP = $mutationOut->original['listHPP'];
@@ -1151,18 +1196,19 @@ class MarketingAreaController extends Controller
                     $listHPP,
                     $listSmQty,
                     20, // mutcat masuk pembelian
-                    $stockParentId // stock-parent id
+                    $listStockParentId // stock-parent id
                 );
                 if ($mutationIn->original['status'] !== 'success') {
                     return $mutationIn;
                 }
             }
 
-            // update qty and status in d_productorder
+            // update send-status and approval-status in d_productorder
             DB::table('d_productorder')
                 ->where('po_id', $id)
                 ->update([
-                    'po_status' => "Y"
+                    'po_status' => 'Y',
+                    'po_send' => 'P'
                 ]);
 
             // get total-price based on d_productorderdt
@@ -1269,6 +1315,13 @@ class MarketingAreaController extends Controller
     // reject approved order and roll-it-back
     public function rejectApproveAgen($id)
     {
+        if (!AksesUser::checkAkses(22, 'delete')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         try {
             $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
@@ -1340,6 +1393,13 @@ class MarketingAreaController extends Controller
     // receive order and make it disabeld for editing
     public function receiveItemOrder($id)
     {
+        if (!AksesUser::checkAkses(22, 'update')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         try {
             $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
@@ -1560,13 +1620,15 @@ class MarketingAreaController extends Controller
         array_push($listItemsId, $item);
         array_push($listProdCode, $kode);
         array_push($listProdCodeLength, 1);
+        array_push($listProdCodeQty, $qty);
 
         // validate production-code is exist in stock-item
         $validateProdCode = Mutasi::validateProductionCode(
             Auth::user()->u_company, // from
             $listItemsId, // list item-id
             $listProdCode, // list production-code
-            $listProdCodeLength // list production-code length each item
+            $listProdCodeLength, // list production-code length each item
+            $listProdCodeQty // list of qty each production-code
         );
         if ($validateProdCode !== 'validated') {
             return $validateProdCode;
@@ -1675,7 +1737,6 @@ class MarketingAreaController extends Controller
             'data' => $data
         ]);
     }
-
     // Kelola Data Order Agen End ==========================================================================
 
     // Kelola Data Canvassing Start ==============================================================================
@@ -1765,7 +1826,9 @@ class MarketingAreaController extends Controller
     public function getCitiesDC(Request $request)
     {
         $cities = m_wil_provinsi::where('wp_id', $request->provId)
-            ->with('getCities')
+            ->with(['getCities' => function ($q) {
+                $q->orderBy('wc_name', 'asc');
+            }])
             ->firstOrFail();
         return response()->json($cities);
     }
@@ -1824,6 +1887,13 @@ class MarketingAreaController extends Controller
     // store item to db
     public function storeDC(Request $request)
     {
+        if (!AksesUser::checkAkses(22, 'create')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         // validate request
         $isValidRequest = $this->validateDC($request);
         if ($isValidRequest != '1') {
@@ -1865,6 +1935,10 @@ class MarketingAreaController extends Controller
     // display edit page
     public function editDC($id)
     {
+        if (!AksesUser::checkAkses(22, 'edit')){
+            abort(401);
+        }
+
         $data = d_canvassing::where('c_id', $id)->firstOrFail();
         return response()->json($data);
     }
@@ -1872,6 +1946,13 @@ class MarketingAreaController extends Controller
     // update specific item in db
     public function updateDC(Request $request, $id)
     {
+        if (!AksesUser::checkAkses(22, 'update')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         // validate request
         $isValidRequest = $this->validateDC($request);
         if ($isValidRequest != '1') {
@@ -1911,6 +1992,13 @@ class MarketingAreaController extends Controller
     // delete specific item from db
     public function deleteDC($id)
     {
+        if (!AksesUser::checkAkses(22, 'delete')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         // start insert data
         DB::beginTransaction();
         try {
@@ -2111,6 +2199,10 @@ class MarketingAreaController extends Controller
     // create
     public function create_datakonsinyasi()
     {
+        if (!AksesUser::checkAkses(22, 'create')){
+            abort(401);
+        }
+
         return view('marketing/marketingarea/datakonsinyasi/create');
     }
     // get branch
@@ -2152,25 +2244,27 @@ class MarketingAreaController extends Controller
         // dd($comp);
         // start: query to get items
         $nama = DB::table('m_item')
-                ->join('d_stock', function ($s) use ($comp){
-                    $s->on('i_id', '=', 's_item');
-                    $s->where('s_position', '=', $comp);
-                    $s->where('s_status', '=', 'ON DESTINATION');
-                    $s->where('s_condition', '=', 'FINE');
-                })
-                ->join('d_stock_mutation', function ($sm){
-                    $sm->on('sm_stock', '=', 's_id');
-                    $sm->where('sm_residue', '!=', 0);
-                });
+        ->join('d_stock', function ($s) use ($comp){
+            $s->on('i_id', '=', 's_item');
+            $s->where('s_position', '=', $comp);
+            $s->where('s_status', '=', 'ON DESTINATION');
+            $s->where('s_condition', '=', 'FINE');
+        })
+        ->join('d_stock_mutation', function ($sm){
+            $sm->on('sm_stock', '=', 's_id');
+            $sm->where('sm_residue', '!=', 0);
+        });
+
         if(count($is_item) != 0){
             $nama = $nama->whereNotIn('i_id', $is_item);
         }
+
         $nama = $nama->where(function ($q) use ($cari){
-                    $q->orWhere('i_name', 'like', '%'.$cari.'%');
-                    $q->orWhere('i_code', 'like', '%'.$cari.'%');
-                })
-                ->groupBy('d_stock.s_id')
-                ->get();
+            $q->orWhere('i_name', 'like', '%'.$cari.'%');
+            $q->orWhere('i_code', 'like', '%'.$cari.'%');
+        })
+        ->groupBy('d_stock.s_id')
+        ->get();
 
         // end: query to get items
         if (count($nama) == 0) {
@@ -2360,6 +2454,13 @@ class MarketingAreaController extends Controller
     // store
     public function storeDK(Request $request)
     {
+        if (!AksesUser::checkAkses(22, 'create')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         $data   = $request->all();
         $comp   = $data['branchCode']; // pelaku konsinyasi
         $member = $data['agentCode']; // penerima item
@@ -2386,11 +2487,13 @@ class MarketingAreaController extends Controller
                 Auth::user()->u_company, // from / position
                 $request->idItem, // list item-id
                 $request->prodCode, // list production-code
-                $request->prodCodeLength // list production-code length each item
+                $request->prodCodeLength, // list production-code length each item
+                $request->qtyProdCode // list of qty each production-code
             );
             if ($validateProdCode !== 'validated') {
                 return $validateProdCode;
             }
+
             $val_sales = [
                 'sc_id'      => $idSales,
                 'sc_comp'    => $comp,
@@ -2418,7 +2521,7 @@ class MarketingAreaController extends Controller
                     'scd_unit' => $data['satuan'][$i],
                     'scd_value' => Currency::removeRupiah($data['harga'][$i]),
                     'scd_discpersen' => 0,
-                    'scd_discvalue' => 0,
+                    'scd_discvalue' => $data['diskon'][$i],
                     'scd_totalnet' => Currency::removeRupiah($data['subtotal'][$i])
                 ];
 
@@ -2428,11 +2531,14 @@ class MarketingAreaController extends Controller
                 }
                 $prodCodeLength = (int)$request->prodCodeLength[$i];
                 $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                $sumQtyPC = 0;
+                $listPC = array();
                 for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
                     // skip inserting when val is null or qty-pc is 0
                     if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
                         continue;
                     }
+                    array_push($listPC, strtoupper($request->prodCode[$j]));
                     $detailidcode = d_salescompcode::where('ssc_salescomp', $idSales)
                     ->where('ssc_item', $data['idItem'][$i])
                     ->max('ssc_detailid') + 1;
@@ -2445,6 +2551,13 @@ class MarketingAreaController extends Controller
                         'ssc_qty' => $request->qtyProdCode[$j]
                     ];
                     DB::table('d_salescompcode')->insert($val_salescode);
+                    $sumQtyPC += (int)$request->qtyProdCode[$j];
+                }
+
+                // validate qty production-code
+                if ($sumQtyPC != (int)$data['jumlah'][$i]) {
+                    $item = m_item::where('i_id', $data['idItem'][$i])->first();
+                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
                 }
 
                 // mutasi
@@ -2481,7 +2594,7 @@ class MarketingAreaController extends Controller
                 ->first();
 
                 // declaare list of production-code
-                $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
+                // $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                 $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                 $listUnitPC = [];
 
@@ -2514,7 +2627,7 @@ class MarketingAreaController extends Controller
             // insert into db
             DB::table('d_salescomp')->insert($val_sales);
             DB::table('d_salescompdt')->insert($val_salesdt);
-
+            // dd('x');
             DB::commit();
             return Response::json([
                 'status' => "Success",
@@ -2532,14 +2645,6 @@ class MarketingAreaController extends Controller
     // edit
     public function edit_datakonsinyasi($id)
     {
-        // $detail = d_salescomp::where('sc_id', $id)
-        // ->with(['getComp' => function ($q) {
-        //     $q->with('getCity');
-        // }])
-        // ->with(['getAgent' => function ($q) {
-        // }])
-        // ->first();
-
         $data_item = d_salescomp::where('sc_id', $id)
         ->with(['getSalesCompDt' => function ($query) {
             $query
@@ -2628,6 +2733,13 @@ class MarketingAreaController extends Controller
     // update
     public function updateDK(Request $request, $id)
     {
+        if (!AksesUser::checkAkses(22, 'update')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         // dd($request->all());
         $data   = $request->all();
         $comp   = $data['branchCode']; // pelaku konsinyasi
@@ -2651,11 +2763,13 @@ class MarketingAreaController extends Controller
                 Auth::user()->u_company, // from
                 $request->idItem, // list item-id
                 $request->prodCode, // list production-code
-                $request->prodCodeLength // list production-code length each item
+                $request->prodCodeLength, // list production-code length each item
+                $request->qtyProdCode // list of qty each production-code
             );
             if ($validateProdCode !== 'validated') {
                 return $validateProdCode;
             }
+
             // get konsinyasi by id
             $konsinyasi = d_salescomp::where('sc_id', $id)
             ->with('getSalesCompDt.getProdCode')
@@ -2759,6 +2873,7 @@ class MarketingAreaController extends Controller
                     // insert new production-code
                     $prodCodeLength = (int)$request->prodCodeLength[$key];
                     $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                    $sumQtyPC = 0;
                     for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
                         // skip inserting when val is null or qty-pc is 0
                         if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
@@ -2776,6 +2891,11 @@ class MarketingAreaController extends Controller
                             'ssc_qty' => $request->qtyProdCode[$j]
                         ];
                         DB::table('d_salescompcode')->insert($val_salescode);
+                        $sumQtyPC += (int)$request->qtyProdCode[$j];
+                    }
+                    if ($sumQtyPC != (int)$data['jumlah'][$key]) {
+                        $item = m_item::where('i_id', $data['idItem'][$key])->first();
+                        throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
                     }
                     // increments production-code index
                     $startProdCodeIdx += $prodCodeLength;
@@ -2798,11 +2918,14 @@ class MarketingAreaController extends Controller
 
                 $prodCodeLength = (int)$request->prodCodeLength[$key];
                 $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                $sumQtyPC = 0;
+                $listPC = array();
                 for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
                     // skip inserting when val is null or qty-pc is 0
                     if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
                         continue;
                     }
+                    array_push($listPC, strtoupper($request->prodCode[$j]));
                     $detailidcode = d_salescompcode::where('ssc_salescomp', $id)
                     ->where('ssc_item', $data['idItem'][$key])
                     ->max('ssc_detailid') + 1;
@@ -2815,6 +2938,12 @@ class MarketingAreaController extends Controller
                         'ssc_qty' => $request->qtyProdCode[$j]
                     ];
                     DB::table('d_salescompcode')->insert($val_salescode);
+                    $sumQtyPC += (int)$request->qtyProdCode[$j];
+                }
+
+                if ($sumQtyPC != (int)$data['jumlah'][$key]) {
+                    $item = m_item::where('i_id', $data['idItem'][$key])->first();
+                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
                 }
 
                 // mutasi
@@ -2824,6 +2953,7 @@ class MarketingAreaController extends Controller
                 'm_item.i_unit3 as unit3')
                 ->where('i_id', '=', $data['idItem'][$key])
                 ->first();
+
                 // get qty with smallest unit
                 $qty_compare = 0;
                 $sellPrice = 0;
@@ -2852,7 +2982,7 @@ class MarketingAreaController extends Controller
                 ->first();
 
                 // declaare list of production-code
-                $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
+                // $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                 $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                 $listUnitPC = [];
 
@@ -2905,9 +3035,12 @@ class MarketingAreaController extends Controller
     // delete
     public function deleteDK(Request $request)
     {
-        // if (!AksesUser::checkAkses(21, 'delete')){
-        //     abort(401);
-        // }
+        if (!AksesUser::checkAkses(22, 'delete')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
 
         $id = $request->id;
 
@@ -2918,21 +3051,47 @@ class MarketingAreaController extends Controller
             ->first();
 
             foreach ($konsinyasi->getSalesCompDt as $key => $konsDt) {
-                $rollbackKons = Mutasi::rollback(
-                    $konsinyasi->sc_nota, // nota
-                    $konsDt->scd_item, // itemId
-                    12 // mutcat
-                );
-                if (!is_bool($rollbackKons)) {
-                    DB::rollBack();
-                    return $rollbackKons;
+                // get item-stock in destination
+                $item = $konsDt->scd_item;
+                $st_mutation = d_stock_mutation::where('sm_nota', '=', $konsinyasi->sc_nota)
+                ->whereHas('getStock', function ($query) use ($item) {
+                    $query->where('s_item', $item);
+                })
+                ->get();
+
+                // count used item
+                $qtyUsed = 0;
+                foreach ($st_mutation as $keysm => $valsm) {
+                    if ($valsm->sm_use > 0) {
+                        $qtyUsed += $valsm->sm_use;
+                    }
+                    else {
+                        $qtyUsed += 0;
+                    }
                 }
-                // delete production-code of selected stockdistribution
-                foreach ($konsDt->getProdCode as $idx => $prodCode) {
-                    $prodCode->delete();
+                // item is used, break operation
+                if ($qtyUsed > 0) {
+                    $item = m_item::where('i_id', $item)->first();
+                    throw new Exception(strtoupper($item->i_name) ." sudah digunakan, konsinyasi tidak dapat dihapus !");
                 }
-                // delete konsinyasi-detail
-                $konsDt->delete();
+                // item is unused, continue to delete
+                else {
+                    $rollbackKons = Mutasi::rollback(
+                        $konsinyasi->sc_nota, // nota
+                        $konsDt->scd_item, // itemId
+                        12 // mutcat
+                    );
+                    if (!is_bool($rollbackKons)) {
+                        DB::rollBack();
+                        return $rollbackKons;
+                    }
+                    // delete production-code of selected stockdistribution
+                    foreach ($konsDt->getProdCode as $idx => $prodCode) {
+                        $prodCode->delete();
+                    }
+                    // delete konsinyasi-detail
+                    $konsDt->delete();
+                }
             }
             // delete konsinyasi
             $konsinyasi->delete();
@@ -2954,11 +3113,19 @@ class MarketingAreaController extends Controller
     // Start: orderprodukagent =================================================
     public function create_orderprodukagenpusat()
     {
+        if (!AksesUser::checkAkses(22, 'create')){
+            abort(401);
+        }
+
         return view('marketing/agen/orderproduk/create');
     }
 
     public function edit_orderprodukagenpusat()
     {
+        if (!AksesUser::checkAkses(22, 'edit')){
+            abort(401);
+        }
+
         return view('marketing/agen/orderproduk/edit');
     }
 

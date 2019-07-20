@@ -30,7 +30,7 @@
             <br>
 
             <div class="table-responsive">
-                <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_detail_kelola" width="100%">
+                <table class="table table-striped table-hover display nowrap w-100" cellspacing="0" id="table_detail_kelola" width="100%">
                     <thead class="bg-primary">
                         <tr>
                             <th>Kode/Nama Barang</th>
@@ -127,7 +127,7 @@
                 </div>
                 <div class="row form-group">
                     <div class="table-responsive" style="padding: 0px 15px 0px 15px;">
-                        <table class="table table-hover table-striped display" cellspacing="0" id="table_DetailKPW" style="width: 100%">
+                        <table class="table table-hover table-striped display w-100" cellspacing="0" id="table_DetailKPW" style="width: 100%">
                             <thead class="bg-primary">
                             <tr>
                                 <th style="width: 80%">Kode</th>

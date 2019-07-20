@@ -149,7 +149,8 @@ class ProsesOrderController extends Controller
                 $request->itemsId, // list item-id
                 $request->qty,
                 $request->prodCode, // list production-code
-                $request->prodCodeLength // list production-code length each item
+                $request->prodCodeLength, // list production-code length each item
+                $request->qtyProdCode // list of qty each production-code
             );
 
             if ($validateProdCode !== 'validated') {

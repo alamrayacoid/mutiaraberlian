@@ -55,7 +55,7 @@
 					</div>
 				</div> -->
 				<div class="table-responsive">
-					<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_konsinyasi">
+					<table class="table table-hover table-striped display nowrap w-100" cellspacing="0" id="table_konsinyasi">
 						<thead class="bg-primary">
 							<tr>
 								<th class="text-center">Tanggal</th>

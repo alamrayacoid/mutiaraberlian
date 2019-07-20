@@ -250,7 +250,6 @@ class Mutasi extends Controller
                         'sm_sell' => $stock[$j]->sm_sell,
                     ];
                 }
-
                 $val_stockmut += [
                     'sm_nota' => $nota,
                     'sm_reff' => $stock[$j]->sm_nota,
@@ -291,7 +290,7 @@ class Mutasi extends Controller
                 if (count($stockId) < 1) {
                     // insert new stock-item
                     $stockId = d_stock::max('s_id') + 1;
-                    $insertstock = array(
+                    $stock = array(
                         's_id' => $stockId,
                         's_comp' => $comp,
                         's_position' => $position,
@@ -302,7 +301,7 @@ class Mutasi extends Controller
                         's_created_at' => $dateNow,
                         's_updated_at' => $dateNow
                     );
-                    d_stock::insert($insertstock);
+                    d_stock::insert($stock);
                     // detail id for stock-mutation
                     $smDetailId = 1;
                 }
@@ -334,7 +333,7 @@ class Mutasi extends Controller
                     'sm_hpp' => $hpp,
                     'sm_sell' => $sell,
                     'sm_nota' => $nota,
-                    'sm_reff' => $stock[$j]->sm_nota,
+                    'sm_reff' => $reff,
                     'sm_user' => Auth::user()->u_id
                 );
                 d_stock_mutation::insert($mutasi);
@@ -486,7 +485,8 @@ class Mutasi extends Controller
                     $listPC, // list of production-code
                     $listQtyPC // list qty of production-cpde
                 );
-            } elseif ($mutcat == 12 && $statusKons == 'cabang') {
+            }
+            elseif ($mutcat == 12 && $statusKons == 'cabang') {
                 $konsinyasiKeluar = self::mutasikeluar(
                     13, // mutcat
                     $comp, // item owner
@@ -528,7 +528,8 @@ class Mutasi extends Controller
 
             DB::commit();
             return true;
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             DB::rollback();
             return response()->json([
                 'error' => $e
@@ -645,7 +646,7 @@ class Mutasi extends Controller
                 }
 
                 // insert new stock-mutation out
-                if ($mutcat == 15) {
+                if ($mutcat == 15){
                     $sellprice = $stock[$j]->sm_hpp;
                 }
                 DB::table('d_stock_mutation')
@@ -1253,7 +1254,7 @@ class Mutasi extends Controller
                 if ($insertSMProdCode !== 'success') {
                     throw new Exception($insertSMProdCode->getData()->message);
                 }
-
+                
                 // insert new stock-detail production-code for mutation-in
                 $stockParentId = null;
                 $stockChildId = $mutasi[$counter]->sm_stock;
@@ -1287,6 +1288,7 @@ class Mutasi extends Controller
                 }
             }
 
+            
 
             DB::commit();
             return true;

@@ -214,7 +214,8 @@ class DistribusiController extends Controller
                 Auth::user()->u_company, // from
                 $request->itemsId, // list item-id
                 $request->prodCode, // list production-code
-                $request->prodCodeLength // list production-code length each item
+                $request->prodCodeLength, // list production-code length each item
+                $request->qtyProdCode // list of qty each production-code
             );
             if ($validateProdCode !== 'validated') {
                 return $validateProdCode;
@@ -553,7 +554,8 @@ class DistribusiController extends Controller
                     Auth::user()->u_company, // from
                     $listItemsId, // item-id
                     $request->prodCode, // production-code
-                    $request->prodCodeLength // production-code length each item
+                    $request->prodCodeLength, // production-code length each item
+                    $request->qtyProdCode // list of qty each production-code
                 );
                 if ($validateProdCode !== 'validated') {
                     return $validateProdCode;

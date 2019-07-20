@@ -41,7 +41,7 @@
             </div>
             <section>
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_orderprodukagenpusat">
+                    <table class="table table-hover table-striped display nowrap w-100" cellspacing="0" id="table_orderprodukagenpusat">
                         <thead class="bg-primary">
                             <tr>
                                 <th>Tanggal Order</th>

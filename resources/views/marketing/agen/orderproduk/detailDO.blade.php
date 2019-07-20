@@ -64,7 +64,7 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_itemDO" width="100%">
+                    <table class="table table-striped table-hover display nowrap w-100" cellspacing="0" id="table_itemDO" width="100%">
                         <thead class="bg-primary">
                         <tr>
                             <th width="30%">Kode Barang/Nama Barang</th>
