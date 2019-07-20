@@ -120,15 +120,15 @@
                                 </div>
 
                                 <div class="table-responsive">
-                                    <table class="table table-striped table-hover data-table" cellspacing="0" id="table_items">
+                                    <table class="table table-striped table-hover" cellspacing="0" id="table_items">
                                         <thead class="bg-primary">
                                             <tr>
-                                                <th>Kode Barang/Nama Barang</th>
-                                                <th>Jumlah</th>
-                                                <th>Satuan</th>
-                                                <th>Kode Produksi</th>
-                                                <th>Status</th>
-                                                <th>Aksi</th>
+                                                <th width="30%">Kode Barang/Nama Barang</th>
+                                                <th width="15%">Jumlah</th>
+                                                <th width="15%">Satuan</th>
+                                                <th width="15%">Kode Produksi</th>
+                                                <th width="15%">Status</th>
+                                                <th width="10%">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -164,34 +164,36 @@
                                                 </td>
                                                 @if ($value->status == 'used')
                                                     <td>
-                                                        <h5><span class="badge badge-warning">Stock sudah digunakan ({{ $value->qtyUsed }})</span></h5>
+                                                        <span class="badge badge-warning">sudah digunakan ({{ $value->qtyUsed }})</span>
                                                         <input type="hidden" name="status[]" class="status" value="{{ $value->status }}">
                                                     </td>
                                                 @else
                                                     <td>
-                                                        <h5><span class="badge badge-primary">Stock belum digunakan</span></h5>
+                                                        <span>Aman diedit</span>
                                                         <input type="hidden" name="status[]" class="status" value="{{ $value->status }}">
                                                     </td>
                                                 @endif
                                                 <td>
+                                                    <center>
                                                     @if ($key == 0)
                                                         <button class="btn btn-success btnAddItem btn-sm rounded-circle" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button>
                                                         @if ($value->status == 'used')
-                                                            <button class="btn btn-primary btnAppointItem btn-sm rounded-circle d-none" type="button"><i class="fa fa-power-off" aria-hidden="true"></i></button>
-                                                            <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button" disabled><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                                            <button class="hint--top-left hint--success btn btn-success btnAppointItem btn-sm rounded-circle d-none" aria-label="Aktifkan" type="button"><i class="fa fa-check" aria-hidden="true"></i></button>
+                                                            <button class="hint--top-left hint--danger btn btn-danger btnRemoveItem btn-sm rounded-circle" aria-label="Hapus" type="button" disabled><i class="fa fa-trash" aria-hidden="true"></i></button>
                                                         @else
-                                                            <button class="btn btn-primary btnAppointItem btn-sm rounded-circle d-none" type="button"><i class="fa fa-power-off" aria-hidden="true"></i></button>
-                                                            <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                                            <button class="hint--top-left hint--success btn btn-success btnAppointItem btn-sm rounded-circle d-none" aria-label="Aktifkan" type="button"><i class="fa fa-check" aria-hidden="true"></i></button>
+                                                            <button class="hint--top-left hint--danger btn btn-danger btnRemoveItem btn-sm rounded-circle" aria-label="Hapus" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
                                                         @endif
                                                     @else
                                                         @if ($value->status == 'used')
-                                                            <button class="btn btn-primary btnAppointItem btn-sm rounded-circle d-none" type="button"><i class="fa fa-power-off" aria-hidden="true"></i></button>
-                                                            <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button" disabled><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                                            <button class="hint--top-left hint--success btn btn-success btnAppointItem btn-sm rounded-circle d-none" aria-label="Aktifkan" type="button"><i class="fa fa-check" aria-hidden="true"></i></button>
+                                                            <button class="hint--top-left hint--danger btn btn-danger btnRemoveItem btn-sm rounded-circle" aria-label="Hapus" type="button" disabled><i class="fa fa-trash" aria-hidden="true"></i></button>
                                                         @else
-                                                            <button class="btn btn-primary btnAppointItem btn-sm rounded-circle d-none" type="button"><i class="fa fa-power-off" aria-hidden="true"></i></button>
-                                                            <button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                                            <button class="hint--top-left hint--success btn btn-success btnAppointItem btn-sm rounded-circle d-none" aria-label="Aktifkan" type="button"><i class="fa fa-check" aria-hidden="true"></i></button>
+                                                            <button class="hint--top-left hint--danger btn btn-danger btnRemoveItem btn-sm rounded-circle" aria-label="Hapus" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button>
                                                         @endif
                                                     @endif
+                                                    </center>
                                                 </td>
                                             </tr>
                                             <input type="hidden" name="counter" value="{{ $key }}">
@@ -235,9 +237,9 @@
         // re-initialize DataTable
         $('#table_items').DataTable( {
             "paging":   false,
-            "ordering": false,
+            "ordering": true,
             "searching": false,
-            "info":     false
+            "info": true
         });
 
         // find jenis ekspedisi

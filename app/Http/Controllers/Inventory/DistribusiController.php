@@ -41,32 +41,35 @@ class DistribusiController extends Controller
         // dd($expeditions);
         return view('inventory/distribusibarang/distribusi/create', compact('provinces', 'expeditions'));
     }
+
     // get list-cities based on province-id
     public function getAreas(Request $request)
     {
         $cities = m_wil_provinsi::where('wp_id', $request->provId)
-        ->with(['getCities' => function ($q) {
-            $q->orderBy('wc_name');
-        }])
-        ->first();
+            ->with(['getCities' => function ($q) {
+                $q->orderBy('wc_name');
+            }])
+            ->first();
         return response()->json($cities);
     }
+
     // get list-branches based on area-id
     public function getBranch(Request $request)
     {
         $branches = m_company::where('c_type', 'CABANG')
-        ->where('c_area', $request->areaId)
-        ->orderBy('c_name')
-        ->get();
+            ->where('c_area', $request->areaId)
+            ->orderBy('c_name')
+            ->get();
         return response()->json($branches);
     }
+
     // get list-expeditionType based on expedition
     public function getExpeditionType(Request $request)
     {
         $expdtId = $request->id;
         $expeditionType = m_expeditiondt::where('ed_expedition', $expdtId)
-        ->orderBy('ed_product', 'asc')
-        ->get();
+            ->orderBy('ed_product', 'asc')
+            ->get();
         return response()->json($expeditionType);
     }
 
@@ -76,9 +79,9 @@ class DistribusiController extends Controller
         $tujuan = DB::table('m_company')->where('c_id', $data->sd_destination)->first();
         $cabang = DB::table('m_company')->where('c_id', $data->sd_from)->first();
         $ekspedisi = d_productdelivery::where('pd_nota', $data->sd_nota)
-        ->with('getExpedition')
-        ->with('getExpeditionType')
-        ->first();
+            ->with('getExpedition')
+            ->with('getExpeditionType')
+            ->first();
 
         $dt = DB::table('d_stockdistributiondt')
             ->join('m_item', 'i_id', '=', 'sdd_item')
@@ -141,6 +144,7 @@ class DistribusiController extends Controller
         }
         return response()->json($results);
     }
+
     // get item stock
     public function getStock($id)
     {
@@ -169,6 +173,7 @@ class DistribusiController extends Controller
 
         return response()->json($stock);
     }
+
     // get list unit for selct-option
     public function getListUnit(Request $request)
     {
@@ -179,12 +184,16 @@ class DistribusiController extends Controller
             ->first();
         return $units;
     }
+
     // store new-distribusibarang to db
     public function store(Request $request)
     {
-        // if (!AksesUser::checkAkses(7, 'create')){
-        //     abort(401);
-        // }
+        if (!AksesUser::checkAkses(16, 'create')) {
+            return response()->json([
+                'status' => 'invalid',
+                'message' => 'Anda tidak memiliki akses ini'
+            ]);
+        }
 
         // validate request
         $isValidRequest = $this->validateDist($request);
@@ -239,7 +248,33 @@ class DistribusiController extends Controller
             $startProdCodeIdx = 0;
             // insert new stockdist-detail
             foreach ($request->itemsId as $i => $itemId) {
-                if ($request->qty[$i] != 0) {
+                $jumlahkode = 0;
+                if ($i == 0) {
+                    $startProdCodeIdx = 0;
+                }
+
+                if ($request->prodCode[$i] === null || $request->qtyProdCode[$i] === null){
+                    $barang = m_item::where('i_id', $itemId)->first();
+                    DB::rollback();
+                    return response()->json([
+                        'status' => 'gagal',
+                        'message' => 'Kode produksi ' . strtoupper($barang->i_name) . ' tidak boleh kosong!!!'
+                    ]);
+                } else {
+                    //menghitung jumlah kode produksi per-item
+                    $prodCodeLength = (int)$request->prodCodeLength[$i];
+                    $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                    for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
+                        // skip inserting when val is null or qty-pc is 0
+                        if ($request->prodCode[$j] == '' || $request->prodCode[$j] === null || $request->qtyProdCode[$j] == 0) {
+                            continue;
+                        } else {
+                            $jumlahkode = $jumlahkode + $request->qtyProdCode[$j];
+                        }
+                    }
+                }
+                if ($request->qty[$i] != 0 && $request->qty[$i] == $jumlahkode) {
+                    //insert stock distribusi dt
                     $detailid = d_stockdistributiondt::where('sdd_stockdistribution', $id)->max('sdd_detailid') + 1;
                     $distdt = new d_stockdistributiondt;
                     $distdt->sdd_stockdistribution = $id;
@@ -262,8 +297,9 @@ class DistribusiController extends Controller
                             continue;
                         }
                         $detailidcode = d_stockdistributioncode::where('sdc_stockdistribution', $id)
-                        ->where('sdc_stockdistributiondt', $detailid)
-                        ->max('sdc_detailid') + 1;
+                                ->where('sdc_stockdistributiondt', $detailid)
+                                ->max('sdc_detailid') + 1;
+
                         $distcode = new d_stockdistributioncode;
                         $distcode->sdc_stockdistribution = $id;
                         $distcode->sdc_stockdistributiondt = $detailid;
@@ -276,11 +312,9 @@ class DistribusiController extends Controller
                     $item = m_item::where('i_id', $itemId)->first();
                     if ($item->i_unit1 == $request->units[$i]) {
                         $convert = (int)$request->qty[$i] * $item->i_unitcompare1;
-                    }
-                    elseif ($item->i_unit2 == $request->units[$i]) {
+                    } elseif ($item->i_unit2 == $request->units[$i]) {
                         $convert = (int)$request->qty[$i] * $item->i_unitcompare2;
-                    }
-                    elseif ($item->i_unit3 == $request->units[$i]) {
+                    } elseif ($item->i_unit3 == $request->units[$i]) {
                         $convert = (int)$request->qty[$i] * $item->i_unitcompare3;
                     }
                     // declaare list of production-code
@@ -305,6 +339,15 @@ class DistribusiController extends Controller
                         return $mutDist;
                     }
                     $startProdCodeIdx += $prodCodeLength;
+                } else {
+                    if ($request->qty[$i] != 0){
+                        $barang = m_item::where('i_id', $itemId)->first();
+                        DB::rollback();
+                        return response()->json([
+                            'status' => 'gagal',
+                            'message' => 'Kode produksi ' . strtoupper($barang->i_name) . ' tidak tidak sesuai!!!'
+                        ]);
+                    }
                 }
             }
             // dd($validateProdCode);
@@ -312,8 +355,7 @@ class DistribusiController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -321,6 +363,7 @@ class DistribusiController extends Controller
             ]);
         }
     }
+
     // validate request
     public function validateDist(Request $request)
     {
@@ -333,14 +376,14 @@ class DistribusiController extends Controller
             'expeditionType' => 'required',
             'resi' => 'required'
         ],
-        [
-            'selectBranch.required' => 'Silahkan pilih \'Cabang\' terlebih dahulu !',
-            'itemsId.*.required' => 'Masih terdapat baris item yang kosong !',
-            'qty.*.required' => 'Masih terdapat \'Jumlah Item\' yang kosong !',
-            'expedition.required' => 'Silahkan pilih \'Jasa Ekspedisi\' yang akan digunakan !',
-            'expeditionType.required' => 'Silahkan pilih \'Jenis Ekspedisi\' yang akan digunakan !',
-            'resi.required' => 'Silahkan isi \'Nomor Resi\' terlebih dahulu !'
-        ]);
+            [
+                'selectBranch.required' => 'Silahkan pilih \'Cabang\' terlebih dahulu !',
+                'itemsId.*.required' => 'Masih terdapat baris item yang kosong !',
+                'qty.*.required' => 'Masih terdapat \'Jumlah Item\' yang kosong !',
+                'expedition.required' => 'Silahkan pilih \'Jasa Ekspedisi\' yang akan digunakan !',
+                'expeditionType.required' => 'Silahkan pilih \'Jenis Ekspedisi\' yang akan digunakan !',
+                'resi.required' => 'Silahkan isi \'Nomor Resi\' terlebih dahulu !'
+            ]);
 
         if ($validator->fails()) {
             return $validator->errors()->first();
@@ -379,8 +422,7 @@ class DistribusiController extends Controller
         $data['stockdist']->getProductDelivery->pd_price = (int)$data['stockdist']->getProductDelivery->pd_price;
         // dd($data);
         // get data item-stock
-        foreach ($data['stockdist']->getDistributionDt as $key => $val)
-        {
+        foreach ($data['stockdist']->getDistributionDt as $key => $val) {
             $item = $val->sdd_item;
             // get item-stock in pusat/werehouse
             $mainStock = d_stock::where('s_position', $val->sdd_comp)
@@ -420,16 +462,14 @@ class DistribusiController extends Controller
             foreach ($st_mutation as $keysm => $valsm) {
                 if ($valsm->sm_use > 0) {
                     $val->qtyUsed += $valsm->sm_use;
-                }
-                else {
+                } else {
                     $val->qtyUsed += 0;
                 }
             }
             // set status of the distributed item (used or unused)
             if ($val->qtyUsed > 0) {
                 $val->status = 'used';
-            }
-            else {
+            } else {
                 $val->status = 'unused';
             }
         }
@@ -438,13 +478,17 @@ class DistribusiController extends Controller
 
         return view('inventory/distribusibarang/distribusi/edit', compact('data'));
     }
+
     // update selected item
     public function update(Request $request, $id)
     {
-        // dd($request->all());
-        // if (!AksesUser::checkAkses(7, 'update')){
-        //     abort(401);
-        // }
+        //dd($request->all());
+        if (!AksesUser::checkAkses(16, 'update')) {
+            return response()->json([
+                'status' => 'invalid',
+                'message' => 'Anda tidak memiliki akses ini'
+            ]);
+        }
 
         // validate request
         $isValidRequest = $this->validateDist($request);
@@ -533,9 +577,29 @@ class DistribusiController extends Controller
                 $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                 $listUnitPC = [];
 
+                //validasi jumlah kuantitas kode produksi
+                $jumlahkode = 0;
+
+                for ($g = 0; $g < count($listPC); $g++) {
+                    if ($listQtyPC[$g] == '' || $listQtyPC[$g] === null || $listQtyPC[$g] == 0
+                    || $listPC[$g] === null || $listPC == '') {
+                        continue;
+                    } else {
+                        $jumlahkode = $jumlahkode + (int)$listQtyPC[$g];
+                    }
+                }
+
+                if ($jumlahkode != $request->qty[$key]){
+                    $barang = m_item::where('i_id', $request->itemsId[$key])->first();
+                    DB::rollback();
+                    return response()->json([
+                        'status' => 'gagal',
+                        'message' => 'Jumlah kode produksi ' . strtoupper($barang->i_name) . ' tidak tidak sesuai dengan jumlah permintaan'
+                    ]);
+                }
+
                 // if : qty in stock-mutation still 'unused'
-                if ($request->status[$key] == "unused")
-                {
+                if ($request->status[$key] == "unused") {
                     // rollBack qty in stock-mutation and stock-item
                     $rollbackDist = Mutasi::rollbackStockMutDist(
                         $stockdist->sd_nota, // dist-nota
@@ -561,8 +625,7 @@ class DistribusiController extends Controller
                     if ($mutDist !== 'success') {
                         return $mutDist;
                     }
-                }
-                // else : stock already 'used'
+                } // else : stock already 'used'
                 elseif ($request->status[$key] == "used") {
                     // update qty in stock-mutation and in stock-item
                     $qty = $convert;
@@ -629,8 +692,9 @@ class DistribusiController extends Controller
                         continue;
                     }
                     $detailidcode = d_stockdistributioncode::where('sdc_stockdistribution', $id)
-                    ->where('sdc_stockdistributiondt', $detailid)
-                    ->max('sdc_detailid') + 1;
+                            ->where('sdc_stockdistributiondt', $detailid)
+                            ->max('sdc_detailid') + 1;
+
                     $distcode = new d_stockdistributioncode;
                     $distcode->sdc_stockdistribution = $id;
                     $distcode->sdc_stockdistributiondt = $detailid;
@@ -647,8 +711,7 @@ class DistribusiController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -665,14 +728,13 @@ class DistribusiController extends Controller
         // if (!AksesUser::checkAkses(7, 'delete')){
         //     abort(401);
         // }
-
         DB::beginTransaction();
         try {
             // get stockdist
             $stockdist = d_stockdistribution::where('sd_id', $request->id)
-            ->with('getDistributionDt.getProdCode')
-            ->with('getProductDelivery')
-            ->first();
+                ->with('getDistributionDt.getProdCode')
+                ->with('getProductDelivery')
+                ->first();
 
             foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
                 // rollBack qty in stock-mutation and stock-item
@@ -702,8 +764,7 @@ class DistribusiController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -722,8 +783,8 @@ class DistribusiController extends Controller
         DB::beginTransaction();
         try {
             $stockdist = d_stockdistribution::where('sd_id', $id)
-            ->with('getDistributionDt')
-            ->first();
+                ->with('getDistributionDt')
+                ->first();
 
             // confirm each item
             foreach ($stockdist->getDistributionDt as $key => $val) {
@@ -748,8 +809,7 @@ class DistribusiController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -849,8 +909,8 @@ class DistribusiController extends Controller
     public function showPC($idDist, $detailId)
     {
         $listPC = d_stockdistributioncode::where('sdc_stockdistribution', $idDist)
-        ->where('sdc_stockdistributiondt', $detailId)
-        ->get();
+            ->where('sdc_stockdistributiondt', $detailId)
+            ->get();
 
         return response()->json($listPC);
     }
@@ -862,18 +922,17 @@ class DistribusiController extends Controller
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
 
         $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
-        ->where('sd_status', 'P') // status == 'pending'
-        ->orderBy('sd_date', 'asc')
-        ->orderBy('sd_nota', 'asc');
+            ->where('sd_status', 'P')// status == 'pending'
+            ->orderBy('sd_date', 'asc')
+            ->orderBy('sd_nota', 'asc');
 
         // if logged in user is 'pusat'
         if (Auth::user()->u_user == 'E' && Auth::user()->getCompany->c_type == 'PUSAT') {
             $data = $data->get();
-        }
-        // if logged in user is 'cabang'
+        } // if logged in user is 'cabang'
         elseif (Auth::user()->u_user == 'E' && Auth::user()->getCompany->c_type == 'CABANG') {
             $data = $data->where('sd_destination', '=', Auth::user()->u_company)
-            ->get();
+                ->get();
         }
 
         return Datatables::of($data)
