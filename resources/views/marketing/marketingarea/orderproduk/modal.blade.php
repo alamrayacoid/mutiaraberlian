@@ -59,6 +59,22 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="keterangan" style="margin-top: 10px">
+                    <span>Kode Produksi untuk - <strong id="product_name"></strong></span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" cellspacing="0" id="table_detail_ackode">
+                        <thead class="bg-primary">
+                        <tr>
+                            <th width="10%">No</th>
+                            <th width="60%">Kode Produksi</th>
+                            <th width="30%">Jumlah</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="btn_confirmAc">Konfirmasi Penerimaan</button>

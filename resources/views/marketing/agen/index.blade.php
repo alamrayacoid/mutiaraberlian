@@ -976,6 +976,7 @@
                 paging: false
             });
             table_kpw.columns.adjust();
+            $('#provKPW').select2('open');
         });
         $('#createKPW').on('hide.bs.modal', function () {
             // $('#citiesKPW option:not(:first)').remove();
@@ -983,7 +984,6 @@
             // $('#nama_customer option:not(:first)').remove();
             $('.formCreateKPW')[0].reset();
         });
-
     });
 
     function TableListKPW() {
@@ -1095,33 +1095,35 @@
         }
 
         if (parseInt(kuantitas) != parseInt(totalqty)){
-            return jc = $.confirm({
-                animation: 'RotateY',
-                backgroundDismiss: true,
-                closeAnimation: 'scale',
-                animationBounce: 2.5,
-                icon: 'fa fa-exclamation-triangle',
-                title: 'Peringatan!',
-                content: 'Kuantitas barang tidak sama dengan jumlah kode produksi !',
-                theme: 'disable',
-                buttons: {
-                    info: {
-                        btnClass: 'btn-blue',
-                        text: 'Lanjutkan',
-                        action: function () {
-                           return lanjutkan();
-                        }
-                    },
-                    cancel: {
-                        text: 'Batal',
-                        action: function () {
-                            // tutup confirm
-                            valid = 0;
-                        }
-                    }
-                }
-            });
-        } else {
+            // return jc = $.confirm({
+            //     animation: 'RotateY',
+            //     backgroundDismiss: true,
+            //     closeAnimation: 'scale',
+            //     animationBounce: 2.5,
+            //     icon: 'fa fa-exclamation-triangle',
+            //     title: 'Peringatan!',
+            //     content: 'Kuantitas barang tidak sama dengan jumlah kode produksi !',
+            //     theme: 'disable',
+            //     buttons: {
+            //         info: {
+            //             btnClass: 'btn-blue',
+            //             text: 'Lengkapi Kode Produksi',
+            //             action: function () {
+            //                // return lanjutkan();
+            //             }
+            //         },
+            //         cancel: {
+            //             text: 'Batal',
+            //             action: function () {
+            //                 // tutup confirm
+            //                 valid = 0;
+            //             }
+            //         }
+            //     }
+            // });
+            messageWarning('Perhatian', 'Kuantitas barang tidak sama dengan jumlah kode produksi !')
+        }
+        else {
             lanjutkan();
         }
     }
@@ -1314,7 +1316,8 @@
                 "kode": code,
                 "item": item
             }
-        }).then(function (response) {
+        })
+        .then(function (response) {
             loadingHide();
             code = code.toUpperCase();
             if (response.data.status == 'gagal'){
@@ -1353,25 +1356,27 @@
                     $('.qtycode').eq(idx).focus();
                 }
             }
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
             loadingHide();
             alert('error');
         });
     }
 
     function editKPW(id) {
+        loadingShow();
         $.ajax({
             url: "{{url('marketing/agen/kelolapenjualanviawebsite/edit-kpw')}}"+"/"+id,
             type: "get",
             dataType: "json",
             success:function(resp) {
-                loadingShow();
+                console.log(resp);
                 $('#editKPW').modal('show');
                 $('#data_id').val(resp.dataId);
                 $('#editnama_agen').val(resp.datas.c_name);
                 $('#edit_agen').val(resp.datas.sw_agen);
                 $('#editnama_customerView').val('CUSTOMER');
-                $('#editnama_customer').val(resp    .code[0].s_member);
+                $('#editnama_customer').val(resp.code[0].s_member);
                 $('#edit_website').val(resp.datas.sw_website);
                 $('#edit_transaksi').val(resp.datas.sw_transactioncode);
                 $('#edit_produk').val(resp.datas.i_name);
@@ -1428,6 +1433,10 @@
                     '<div class="text-center"><button class="btn btn-sm rounded btn-danger btn-trash"><i class="fa fa-trash"></i></button></div>'
                     ]).draw(false);
                 });
+                loadingHide();
+            },
+            error: function(e) {
+                messageWarning('Error', 'e');
                 loadingHide();
             }
         });

@@ -3,6 +3,7 @@
         <div class="card-header bordered p-2">
             <div class="header-block">
                 <h3 class="title">Penerimaan Distribusi Barang</h3>
+                <span> (Fitur untuk mewakili cabang dalam menerima barang hasil distribusi)</span>
             </div>
             <div class=""></div>
         </div>

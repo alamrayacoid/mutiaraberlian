@@ -524,6 +524,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/get-expedition', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getExpedition')->name('marketingarea.getExpedition');
     Route::get('/marketing/marketingarea/get-payment-method', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getPaymentMethod')->name('marketingarea.getPaymentMethod');
     Route::get('/marketing/marketingarea/get-expeditionType/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getExpeditionType')->name('marketingarea.getExpeditionType');
+    Route::get('/marketing/marketingarea/terima-barang/get-kode-produksi', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getKodeProduksi')->name('orderProduk.getKodeProduksi');
     // Order Produk Ke Cabang
     Route::get('/marketing/marketingarea/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@createOrderProduk')->name('orderProduk.create');
     Route::get('/marketing/marketingarea/orderproduk/list', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@orderList')->name('orderProduk.list');
@@ -540,7 +541,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/orderproduk/show-detail-ac/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@showDetailAc')->name('orderProduk.showDetailAc');
     Route::post('/marketing/marketingarea/orderproduk/set-acceptance/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@setAcceptance')->name('orderProduk.setAcceptance');
     Route::get('/marketing/marketingarea/orderproduk/detail/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@detailOrder')->name('orderProduk.detail');
-    Route::get('/marketing/marketingarea/orderproduk/detail/get-kode-produksi', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getKodeProduksi')->name('orderProduk.getKodeProduksi');
     // End Order Ke Cabang ==================
 
     // Kelola Data Order Agen ========================================================================================
