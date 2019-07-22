@@ -2192,7 +2192,7 @@ class Mutasi extends Controller
                     $stockItemParent->s_qty += $sm->sm_qty;
                     $stockItemParent->save();
                 }
-
+                
                 // for mutation-in and out
                 $rollStatus = 'RollMutInOut';
                 // rollBack stock-mutation-detail

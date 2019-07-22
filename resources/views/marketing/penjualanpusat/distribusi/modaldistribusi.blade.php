@@ -148,7 +148,7 @@
                             <div class="input-group col-4" style="width: 100%; padding-right: 0px;">
                                 <input type="number" onkeypress="pressCode(event)" class="inputqtyproduksi form-control form-control-sm" id="inputqtyproduksi" readonly>
                                 <span class="input-group-append">
-                                        <button type="button" class="btn btn-sm btn-primary" id="btn-addprodcode"><i class="fa fa-plus"></i></button>
+                                        <button type="button" class="btn btn-sm btn-primary" id="btn-addprodcode" onclick="addCodetoTable()"><i class="fa fa-plus"></i></button>
                                     </span>
                             </div>
                         </div>

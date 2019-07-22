@@ -46,11 +46,16 @@ class ManajemenAgenController extends Controller
 // oerder produk ke agen
     public function getPembeli($kode)
     {
-        $data = DB::table('m_agen')
-            ->join('m_company', 'a_code', '=', 'c_user')
-            ->where('a_parent', '=', $kode)
-            ->get();
+        $data = m_agen::where('a_parent', $kode)
+        ->get();
+        
         return Response::json($data);
+
+        // $data = DB::table('m_agen')
+        //     ->join('m_company', 'a_code', '=', 'c_user')
+        //     ->where('a_parent', '=', $kode)
+        //     ->get();
+        // return Response::json($data);
     }
 
     public function cariPembeli(Request $request, $kode)
@@ -82,12 +87,21 @@ class ManajemenAgenController extends Controller
 
     public function getPenjual($prov = null, $kota = null)
     {
-        $data = DB::table('m_agen')
-            ->join('m_company', 'a_code', '=', 'c_user')
-            ->where('m_agen.a_provinsi', '=', $prov)
-            ->where('m_agen.a_kabupaten', '=', $kota)
-            ->get();
-            // dd($data, $prov, $kota);
+        $data = m_agen::where('m_agen.a_provinsi', '=', $prov)
+        ->where('m_agen.a_kabupaten', '=', $kota);
+
+        if (Auth::user()->u_user == 'A') {
+            if (Auth::user()->agen->a_type == 'AGEN') {
+                $data = $data->where('a_code', Auth::user()->agen->a_code)->get();
+            }
+            elseif (Auth::user()->agen->a_type == 'SUB AGEN') {
+                $data = $data->where('a_code', Auth::user()->agen->a_parent)->get();
+            }
+        }
+        elseif (Auth::user()->u_user == 'E') {
+            $data = $data->where('a_mma', Auth::user()->u_company)->get();
+        }
+
         return Response::json($data);
     }
 
@@ -380,16 +394,23 @@ class ManajemenAgenController extends Controller
             ]);
         }
 
-
         $data = $request->all();
+        $notaPO = CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-');
+        $notaDist = CodeGenerator::codeWithSeparator('d_stockdistribution', 'sd_nota', 9, 10, 3, 'PRO', '-');
+        if (strcmp($notaPO, $notaDist) > 0) {
+            $nota = $notaPO;
+        }
+        else {
+            $nota = $notaDist;
+        };
 
         if ($data['select_order'] == "1") {
             $po_id = (DB::table('d_productorder')->max('po_id')) ? DB::table('d_productorder')->max('po_id') + 1 : 1;
             $penjual = $data['a_compapj'];
             $pembeli = $data['a_compapb'];
             $date = Carbon::now('Asia/Jakarta')->format('Y-m-d');
-            $nota = CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-');
             $status = "P";
+
 
             DB::beginTransaction();
             try {
@@ -445,7 +466,7 @@ class ManajemenAgenController extends Controller
             $penjual = $data['c_cabang'];
             $pembeli = $data['c_compapb'];
             $date = Carbon::now('Asia/Jakarta')->format('Y-m-d');
-            $nota = CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-');
+            // $nota = CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-');
             $status = "P";
 
             DB::beginTransaction();
@@ -560,11 +581,11 @@ class ManajemenAgenController extends Controller
             ->get();
         // get current user
         $user = Auth::user();
-        // dd($user);
+
         $company = DB::table('m_company')
             ->leftJoin('m_agen', 'a_code', 'c_user')
             ->where('c_id', '=', $user->u_company)->first();
-        // dd($company);
+
         return view('marketing/agen/index', compact('provinsi', 'kota', 'kecamatan', 'user', 'company'));
     }
 
@@ -674,7 +695,7 @@ class ManajemenAgenController extends Controller
                                             type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
                                     <button class="btn btn-danger hint--top-left hint--error" type="button"
                                             aria-label="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')" disabled><i class="fa fa-trash"></i></button>
-                                    <button class="btn btn-success hint--top-left hint--success" type="button" aria-label="Terima" onclick="terimaDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-download"></i></button>
+                                    <button class="btn btn-success hint--top-left hint--success" type="button" aria-label="Terima" onclick="showDetailAc(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-fw fa-get-pocket"></i></button>
                                 </div></center>';
                     }
                     else if ($data->send == 'Y') {
@@ -705,10 +726,11 @@ class ManajemenAgenController extends Controller
         if ($action == "detail") {
             try {
                 $id = Crypt::decrypt($id);
-            } catch (DecryptException $e) {
+            }
+            catch (DecryptException $e) {
                 return Response::json([
                     'status' => "Failed",
-                    'message' => $e
+                    'message' => $e->getMessage()
                 ]);
             }
 
@@ -727,7 +749,8 @@ class ManajemenAgenController extends Controller
                 ->first();
 
             return Response::json($data);
-        } else if ($action == "table") {
+        }
+        else if ($action == "table") {
             $data = DB::table('d_productorderdt')
                 ->select('m_item.i_code as kode',
                     'm_item.i_name as barang',
@@ -803,6 +826,58 @@ class ManajemenAgenController extends Controller
         }
     }
 
+    // get detail order for acceptance
+    public function getDetailDOAccept($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        try {
+            // get product-order
+            $productOrder = d_productorder::where('po_id', $id)
+            ->with('getOrigin')
+            ->with('getDestination')
+            ->with(['getPODt' => function ($query) {
+                $query
+                ->with('getItem')
+                ->with('getUnit');
+            }])
+            ->first();
+
+            $productOrder->dateFormated = Carbon::parse($productOrder->po_date)->format('d M Y');
+            $productOrder->poId = Crypt::encrypt($productOrder->po_id);
+
+            return response()->json($productOrder);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function getDetailDOCode(Request $request)
+    {
+        $id = $request->id;
+        $itemId = $request->itemId;
+
+        // get product-order
+        $productOrder = d_productorder::where('po_id', $id)
+        ->with(['getPODt' => function ($query) use ($itemId) {
+            $query
+            ->where('pod_item', $itemId)
+            ->with('getProdCode')
+            ->with('getItem');
+        }])
+        ->first();
+
+        return response()->json($productOrder);
+    }
+
     public function terimaDO($id)
     {
         if (!AksesUser::checkAkses(23, 'update')){
@@ -810,9 +885,6 @@ class ManajemenAgenController extends Controller
                 'status' => "Failed",
                 'message' => "Anda tidak memiliki akses ke menu ini !"
             ]);
-        }
-        if (!AksesUser::checkAkses(23, 'create')){
-            abort(401);
         }
 
         try {
@@ -1919,7 +1991,6 @@ class ManajemenAgenController extends Controller
             ->where('s_condition', '=', 'FINE')
             ->get();
 
-        // dd($request->all(), $cek);
         if (count($cek) > 0) {
             return Response::json([
                 'status' => 'sukses'
@@ -2068,7 +2139,6 @@ class ManajemenAgenController extends Controller
             if ($mutationOut->original['status'] !== 'success') {
                 return $mutationOut;
             }
-            // dd($mutationOut->original);
 
             // $datamutcat = DB::table('m_mutcat')->where('m_status', '=', 'M')->get();
             //
@@ -2325,7 +2395,7 @@ class ManajemenAgenController extends Controller
             ->select('c_name', 'm_name', 'd_salesweb.*', 'i_name', 'u_name', 's_id')
             ->where('sw_id', '=', $sw_id)
             ->first();
-        // dd($sw_id, $request->all(), $data);
+
         $kode = DB::table('d_salescode')
             ->where('sc_sales', '=', $data->s_id)
             ->get();
@@ -2378,7 +2448,6 @@ class ManajemenAgenController extends Controller
             ]);
         }
 
-        // dd($request->all());
         try {
             $id = Crypt::decrypt($request->id);
         }

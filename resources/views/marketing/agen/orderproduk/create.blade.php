@@ -962,9 +962,11 @@
                             $("#a_apj").attr("disabled", false);
                             var option = '<option value="">Pilih Agen Penjual</option>';
                             var penjual = resp.data;
-                            penjual.forEach(function (data) {
-                                option += '<option value="'+data.a_id+'" data-code="'+data.a_code+'" data-comp="'+data.c_id+'">'+data.a_name+'</option>';
-                            })
+                            if (penjual.length > 0) {
+                                penjual.forEach(function (data) {
+                                    option += '<option value="'+data.a_id+'" data-code="'+data.a_code+'" data-comp="'+data.c_id+'">'+data.a_name+'</option>';
+                                });
+                            }
                             $("#a_apj").append(option);
                             loadingHide();
                             $("#a_apj").focus();
@@ -1009,9 +1011,11 @@
                             $("#a_apb").attr("disabled", false);
                             var option = '<option value="">Pilih Agen Pembeli</option>';
                             var pembeli = resp.data;
-                            pembeli.forEach(function (data) {
-                                option += '<option value="'+data.a_id+'" data-code="'+data.a_code+'" data-comp="'+data.c_id+'">'+data.a_name+'</option>';
-                            })
+                            if (pembeli.length > 0) {
+                                pembeli.forEach(function (data) {
+                                    option += '<option value="'+data.a_id+'" data-code="'+data.a_code+'" data-comp="'+data.c_id+'">'+data.a_name+'</option>';
+                                });
+                            }
                             $("#a_apb").append(option);
                             loadingHide();
                             $("#a_apb").focus();

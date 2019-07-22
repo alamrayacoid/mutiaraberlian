@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div id="modalAcceptance" class="modal fade animated fadeIn" role="dialog">
+<div id="modalAcceptanceDO" class="modal fade animated fadeIn" role="dialog">
     <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
@@ -77,7 +77,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="btn_confirmAc" onclick="">Konfirmasi Penerimaan</button>
+                <button type="button" class="btn btn-primary" id="btn_confirmAc" onclick="terimaDO()">Konfirmasi Penerimaan</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>

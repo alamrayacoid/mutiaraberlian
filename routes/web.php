@@ -544,7 +544,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/get-expedition', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getExpedition')->name('marketingarea.getExpedition');
     Route::get('/marketing/marketingarea/get-payment-method', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getPaymentMethod')->name('marketingarea.getPaymentMethod');
     Route::get('/marketing/marketingarea/get-expeditionType/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getExpeditionType')->name('marketingarea.getExpeditionType');
-    Route::get('/marketing/marketingarea/terima-barang/get-kode-produksi', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getKodeProduksi')->name('orderProduk.getKodeProduksi');
     // Order Produk Ke Cabang
     Route::get('/marketing/marketingarea/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@createOrderProduk')->name('orderProduk.create');
     Route::get('/marketing/marketingarea/orderproduk/list', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@orderList')->name('orderProduk.list');
@@ -559,6 +558,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/orderproduk/delete-order/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@deleteOrder')->name('orderProduk.delete');
     Route::get('/marketing/marketingarea/orderproduk/nota/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@printNota')->name('orderProduk.nota');
     Route::get('/marketing/marketingarea/orderproduk/show-detail-ac/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@showDetailAc')->name('orderProduk.showDetailAc');
+    Route::get('/marketing/marketingarea/terima-barang/get-kode-produksi', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getKodeProduksi')->name('orderProduk.getKodeProduksi');
     Route::post('/marketing/marketingarea/orderproduk/set-acceptance/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@setAcceptance')->name('orderProduk.setAcceptance');
     Route::get('/marketing/marketingarea/orderproduk/detail/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@detailOrder')->name('orderProduk.detail');
     // End Order Ke Cabang ==================
@@ -579,6 +579,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/marketing/marketingarea/keloladataorder/activate-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@activateAgen')->name('keloladataorder.activateAgen');
     Route::post('/marketing/marketingarea/keloladataorder/approve-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@approveAgen')->name('keloladataorder.approveAgen');
     Route::post('/marketing/marketingarea/keloladataorder/reject-approve-agen/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@rejectApproveAgen')->name('keloladataorder.rejectApproveAgen');
+    Route::get('/marketing/marketingarea/keloladataorder/show-detail-ac/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@showDetailAcOrderAgen')->name('keloladataorder.showDetailAcOrderAgen');
+    Route::get('/marketing/marketingarea/keloladataorder/get-kode-produksi', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getKodeProduksiOrderAgen')->name('keloladataorder.getKodeProduksiOrderAgen');
     Route::post('/marketing/marketingarea/keloladataorder/receive-item-order/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@receiveItemOrder')->name('keloladataorder.receiveItemOrder');
     // End Order Agen ================================================================================================
 
@@ -667,6 +669,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/orderproduk/delivery-order', 'Aktivitasmarketing\Agen\ManajemenAgenController@getOrder')->name('orderagenpusat.getDO');
     Route::get('/marketing/agen/orderproduk/hapus-delivery-order/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteDO')->name('orderagenpusat.deleteDO');
     Route::get('/marketing/agen/orderproduk/detail-delivery-order/{id}/{action}', 'Aktivitasmarketing\Agen\ManajemenAgenController@detailDO')->name('orderagenpusat.detailDO');
+    Route::get('/marketing/agen/orderproduk/get-detail-do-accept/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailDOAccept')->name('orderagenpusat.getDetailDOAccept');
+    Route::get('/marketing/agen/orderproduk/get-detail-do-code', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailDOCode')->name('orderagenpusat.getDetailDOCode');
     Route::post('/marketing/agen/orderproduk/terima-delivery-order/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@terimaDO')->name('orderagenpusat.terimaDO');
     Route::get('/marketing/agen/orderproduk/get-cabang', 'Aktivitasmarketing\Agen\ManajemenAgenController@getCabang')->name('orderagenpusat.getcabang');
     Route::get('/marketing/agen/orderproduk/get-pembeli-cabang/{prov}/{kota}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getPembeliCabang')->name('orderagenpusat.getpembelicabang');
