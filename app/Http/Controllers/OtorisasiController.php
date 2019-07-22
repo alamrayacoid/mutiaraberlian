@@ -319,6 +319,7 @@ class OtorisasiController extends Controller
                                     ->select('*')->get()->last();
 
                 $hpp = ($dataHpp) ? (float) $dataHpp->sm_hpp : 0;
+                
                 $selisih = ($data->aa_qtysystem - $data->aa_qtyreal) * $hpp;
 
                 if($selisih > 0){
