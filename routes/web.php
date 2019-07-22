@@ -830,6 +830,18 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_level_2'
             ])->name('keuangan.hierarki_akun.save.level_2');
 
+        // Setting coa pembukuan
+            Route::get('keuangan/pengaturan/pembukuan', [
+                'uses'  => 'Keuangan\pengaturan\pembukuan\pembukuan_controller@index'
+            ])->name('keuangan.pembukuan.index');
+
+            Route::get('keuangan/pengaturan/pembukuan/resource', [
+                'uses'  => 'Keuangan\pengaturan\pembukuan\pembukuan_controller@resource'
+            ])->name('keuangan.pembukuan.resource');
+
+            Route::post('keuangan/pengaturan/pembukuan/store', [
+                'uses'  => 'Keuangan\pengaturan\pembukuan\pembukuan_controller@store'
+            ])->name('keuangan.pembukuan.store');
 
         // Mutasi antar Kas
             Route::get('keuangan/manajemen-input-transaksi/mutasi_kas/create', [

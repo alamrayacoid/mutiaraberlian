@@ -505,6 +505,9 @@
                                 <a href="{{ route('keuangan.hierarki_akun.index') }}">Pengaturan Hierarki COA</a>
                             </li>
                             @endif
+                            <li class="{{Request::is('keuangan/pengaturan/coa-pembukuan') ? 'active' : ''}}">
+                                <a href="{{ route('keuangan.pembukuan.index') }}">Pengaturan COA Pembukuan</a>
+                            </li>
                         </ul>
                     </li>
                 @endif

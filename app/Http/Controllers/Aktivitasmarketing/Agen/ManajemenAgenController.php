@@ -828,6 +828,8 @@ class ManajemenAgenController extends Controller
             ->with('getPODt')
             ->first();
 
+            // return json_encode($productOrder);
+
             // update stock using mutation distrtibution
             // acutually its public function, just add mutcat as condition to deal it
             foreach ($productOrder->getPODt as $key => $po) {
