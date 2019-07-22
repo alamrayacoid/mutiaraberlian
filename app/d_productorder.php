@@ -41,4 +41,14 @@ class d_productorder extends Model
     {
         return $this->belongsTo('App\m_company', 'po_agen', 'c_id');
     }
+    // get 'from' (company)
+    public function getOrigin()
+    {
+        return $this->belongsTo('App\m_company','po_comp' , 'c_id');
+    }
+    // get 'to' (company)
+    public function getDestination()
+    {
+        return $this->belongsTo('App\m_company','po_agen' , 'c_id');
+    }
 }

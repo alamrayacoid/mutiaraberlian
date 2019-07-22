@@ -38,14 +38,23 @@ class CodeGenerator extends Controller
         // mulai: index (start with '1') after awalan and separator (date-start) ex: PC-001/01/01/2019 so mulai = 8
         // panjang: date-length (default with 10)
         // lebar: max digits of incrementing number
-        // CodeGenerator::codeWithSeparator('m_company', 'c_id', 8, 10, 3, 'MB', '-');
-        $code = DB::table($table)->where(DB::raw('substr(' . $field . ', ' . $mulai . ', ' . $panjang . ')'), '=', Carbon::now('Asia/Jakarta')->format('d/m/Y'));
+        // ex: CodeGenerator::codeWithSeparator('m_company', 'c_id', 8, 10, 3, 'MB', '-');
 
-        $countData = $code->count();
+        // (-2) its because start by '0', and count '/' (separator between number and date)
+        $codeX = DB::table($table)
+        ->where(DB::raw('substr(' . $field . ', ' . $mulai . ', ' . $panjang . ')'), '=', Carbon::now('Asia/Jakarta')->format('d/m/Y'))
+        // ->select(DB::RAW('MAX(SUBSTRING(' . $field . ', ' . ($mulai - $lebar - 2) . ', ' . $lebar . ') + 0)'))
+        ->get();
 
-        $nomor = $countData + 1;
-
-
+        if (count($codeX)) {
+            $lastNota = $codeX->last()->$field;
+            $subsNota = substr($lastNota, $mulai - $lebar - 2, $lebar);
+            $nomor = (int)$subsNota + 1;
+        }
+        else {
+            $nomor = 1;
+        }
+        
         if ($lebar > 0) {
             $angka = $awalan . $separator . str_pad($nomor, $lebar, "0", STR_PAD_LEFT) . '/' . Carbon::now('Asia/Jakarta')->format('d/m/Y');
         } else {

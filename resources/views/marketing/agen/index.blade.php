@@ -31,6 +31,7 @@
 
     @include('marketing.agen.penjualanviaweb.modal_create')
     @include('marketing.agen.orderproduk.detailDO')
+    @include('marketing.agen.orderproduk.modal-acceptance')
     @include('marketing.agen.kelolapenjualan.modal-search')
     @include('marketing.agen.kelolapenjualan.modal')
     @include('marketing.agen.inventoryagen.modal_detail_agen')
@@ -117,6 +118,8 @@
     var table_kpw;
     var table_listKPW;
     var table_detailKPW, table_editKPW;
+    var tableKodeProduksi;
+
     $(document).ready(function () {
         // start: order produk ke agen/cabang
         getStatusDO();
@@ -275,7 +278,95 @@
         });
     }
 
-    function terimaDO(id) {
+    // show detail order before acceptance
+    function showDetailAc(idx)
+    {
+        loadingShow();
+        $.ajax({
+            url: baseUrl + "/marketing/agen/orderproduk/get-detail-do-accept/" + idx,
+            type: "get",
+            success: function(response) {
+                $('#id_ac').val(response.poId);
+                $('#nota_ac').val(response.po_nota);
+                $('#date_ac').val(response.dateFormated);
+                $('#origin_ac').val(response.get_origin.c_name);
+                $('#dest_ac').val(response.get_destination.c_name);
+                $('#table_detail_ac tbody').empty();
+                $.each(response.get_p_o_dt, function (index, val) {
+                    no = '<td>'+ (index + 1) +'</td>';
+                    kodeXnamaBrg = '<td>'+ val.get_item.i_code +' - '+ val.get_item.i_name +'</td>';
+                    qty = '<td class="digits">'+ val.pod_qty +'</td>';
+                    unit = '<td>'+ val.get_unit.u_name +'</td>';
+                    aksi = '<td><button type="button" class="btn btn-info btn-sm" onclick="getDetailDOCode('+ val.pod_productorder +', '+ val.pod_item +')">Lihat Kode</button></td>';
+                    appendItem = no + kodeXnamaBrg + qty + unit + aksi;
+                    $('#table_detail_ac > tbody:last-child').append('<tr>'+ appendItem +'</tr>');
+
+                    if ( $.fn.DataTable.isDataTable('#table_detail_ackode') ) {
+                        $('#table_detail_ackode').DataTable().destroy();
+                    }
+                    $('#tblRemittanceList tbody').empty();
+
+                    tableKodeProduksi = $('#table_detail_ackode').DataTable({
+                        "searching": false,
+                        "paging": false,
+                    });
+                    tableKodeProduksi.clear();
+                    $('#product_name').html('');
+                });
+                //mask digits
+                $('.digits').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 0,
+                    autoGroup: true,
+                    prefix: '', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
+
+                $('#modalAcceptanceDO').modal('show');
+                loadingHide();
+            },
+            error: function(xhr, status, error) {
+                let err = JSON.parse(xhr.responseText);
+                messageWarning('Error', err.message);
+                loadingHide();
+            }
+        });
+    }
+    // show list of production-code that will be received (acceptance)
+    function getDetailDOCode(id, itemId)
+    {
+        loadingShow();
+        axios.get('{{ route("orderagenpusat.getDetailDOCode") }}', {
+            params:{
+                "id": id,
+                "itemId": itemId
+            }
+        })
+        .then(function (response) {
+            loadingHide();
+            let data = response.data;
+            tableKodeProduksi.clear();
+            $.each(data.get_p_o_dt[0].get_prod_code, function(idx, val) {
+                tableKodeProduksi.row.add([
+                idx + 1,
+                val.poc_code,
+                val.poc_qty
+                ]).draw(false);
+            })
+            $('#product_name').html(data.get_p_o_dt[0].get_item.i_name);
+        })
+        .catch(function (error) {
+            loadingHide();
+            messageWarning('Error', 'Terjadi kesalahan : '+ error);
+        })
+    }
+    // acc receive item
+    function terimaDO() {
+        let id = $('#id_ac').val();
         var surl = "{{url('/marketing/agen/orderproduk/terima-delivery-order')}}"+"/"+id;
 
         $.confirm({
@@ -291,6 +382,8 @@
                     btnClass: 'btn-blue',
                     text: 'Ya',
                     action: function () {
+                        $('#modalAcceptanceDO').modal('hide');
+
                         return $.ajax({
                             type: "post",
                             url: surl,
