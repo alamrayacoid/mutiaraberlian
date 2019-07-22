@@ -393,10 +393,21 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sdm/kinerjasdm/master-kpi/nonKpi/{id}', 'SDM\MasterKPIController@nonKpi')->name('masterkpi.nonKpi');
     Route::post('/sdm/kinerjasdm/master-kpi/activeKpi/{id}', 'SDM\MasterKPIController@activeKpi')->name('masterkpi.activeKpi');
     Route::get('/sdm/kinerjasdm/master-kpi/deleteKpi/{id}', 'SDM\MasterKPIController@deleteKpi')->name('masterkpi.deleteKpi');
+
     // KPI Pegawi
     Route::get('/sdm/kinerjasdm/kpi-pegawai/create', 'SDM\MasterKPIController@kpi_create_p')->name('kpipegawai.create');
+    Route::get('/sdm/kinerjasdm/kpi-pegawai/get-kpi-pegawai', 'SDM\MasterKPIController@get_kpi_pegawai')->name('kpipegawai.get_kpi_pegawai');
+    Route::get('/sdm/kinerjasdm/kpi-pegawai/get-kpi-employee', 'SDM\MasterKPIController@get_kpi_employee')->name('kpipegawai.get_employee');
+    Route::get('/sdm/kinerjasdm/kpi-pegawai/get-kpi-indikator', 'SDM\MasterKPIController@get_kpi_indikator')->name('kpipegawai.get_indikator');
+    Route::post('/sdm/kinerjasdm/kpi-pegawai/save-kpi-pegawai', 'SDM\MasterKPIController@save_kpi_pegawai')->name('kpipegawai.save_kpi_pegawai');
+    Route::get('/sdm/kinerjasdm/kpi-pegawai/get-detail-kpi-pegawai', 'SDM\MasterKPIController@get_detail_kpi_pegawai')->name('kpipegawai.get_detail_kpi_pegawai');
+    Route::get('/sdm/kinerjasdm/kpi-pegawai/edit-kpi-pegawai', 'SDM\MasterKPIController@edit_kpi_pegawai')->name('kpipegawai.edit_kpi_pegawai');
+    Route::post('/sdm/kinerjasdm/kpi-pegawai/update-kpi-pegawai', 'SDM\MasterKPIController@update_kpi_pegawai')->name('kpipegawai.update_kpi_pegawai');
+    Route::post('/sdm/kinerjasdm/kpi-pegawai/delete-kpi-pegawai/{emp}', 'SDM\MasterKPIController@delete_kpi_pegawai')->name('kpipegawai.delete_kpi_pegawai');
+
     // KPI Divisi
     Route::get('/sdm/kinerjasdm/kpi-divisi/create', 'SDM\MasterKPIController@kpi_create_d')->name('kpidivisi.create');
+
     // Absensi -> presensi
     Route::get('/sdm/absensisdm/index', 'SDMController@absensi')->name('absensisdm.index');
     Route::get('/sdm/absensisdm/presensi/get-summary', 'SDM\Absensi\PresensiController@getPresenceSummary')->name('presensi.getPresenceSummary');
@@ -462,6 +473,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Target Realisasi
     Route::get('/marketing/penjualanpusat/targetrealisasi/targetList', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetList')->name('targetReal.list');
     Route::get('/marketing/penjualanpusat/targetrealisasi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@createTargetReal')->name('targetReal.create');
+    Route::get('/marketing/penjualanpusat/targetrealisasi/get-periode', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getPeriode')->name('targetReal.getPeriode');
     Route::get('/marketing/penjualanpusat/targetrealisasi/cari-barang', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@cariBarang')->name('targetReal.caribarang');
     Route::get('/marketing/penjualanpusat/targetrealisasi/get-satuan/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getSatuan')->name('targetReal.getsatuan');
     Route::get('/marketing/penjualanpusat/targetrealisasi/get-company', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getComp')->name('targetReal.getcomp');
@@ -835,6 +847,18 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_level_2'
             ])->name('keuangan.hierarki_akun.save.level_2');
 
+        // Setting coa pembukuan
+            Route::get('keuangan/pengaturan/pembukuan', [
+                'uses'  => 'Keuangan\pengaturan\pembukuan\pembukuan_controller@index'
+            ])->name('keuangan.pembukuan.index');
+
+            Route::get('keuangan/pengaturan/pembukuan/resource', [
+                'uses'  => 'Keuangan\pengaturan\pembukuan\pembukuan_controller@resource'
+            ])->name('keuangan.pembukuan.resource');
+
+            Route::post('keuangan/pengaturan/pembukuan/store', [
+                'uses'  => 'Keuangan\pengaturan\pembukuan\pembukuan_controller@store'
+            ])->name('keuangan.pembukuan.store');
 
         // Mutasi antar Kas
             Route::get('keuangan/manajemen-input-transaksi/mutasi_kas/create', [

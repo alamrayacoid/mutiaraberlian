@@ -269,6 +269,7 @@
         setTimeout(function () {
             tb_target = $('#table_target').DataTable({
                 responsive: true,
+                processing: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('targetReal.list') }}",
@@ -523,6 +524,7 @@
             success:function(resp) {
                 $('#paymentMethod').empty();
                 // $('#paymentMethod').append('<option value="" selected disabled>== Pilih Metode Pembayaran ==</option>');
+                console.log(resp);
                 $.each(resp.data, function(key, val){
                     $('#paymentMethod').append('<option value="'+ val.pm_id +'">'+ val.get_akun.ak_nomor +' - '+ val.pm_name +'</option>');
                 });
@@ -1222,20 +1224,23 @@
                 },
                 success: function (data) {
                     response(data);
+                    console.log(data);
                 }
             });
+        },select: function (suggestion) {
+            console.log('agfasdf');
         }
     });
 
-    $("#nota_s").keypress(function(e){
-        if (e.which == 13) {
-            goSearch();
-        }
-    });
+    // $("#nota_s").keypress(function(e){
+    //     if (e.which == 13) {
+    //         goSearch();
+    //     }
+    // });
 
-    $("#nota_s").on('keyup change',function(){
-        goSearch();
-    });
+    // $("#nota_s").on('keyup change',function(){
+    //     goSearch();
+    // });
 
     function goSearch() {
         let nota = $('#nota_s').val();

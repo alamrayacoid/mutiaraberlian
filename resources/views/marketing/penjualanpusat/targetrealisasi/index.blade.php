@@ -25,7 +25,7 @@
                             <label for="">Periode</label>
                         </div>
                         <div class="col-3">
-                            <input type="text" class="form-control form-control-sm cari_periode" id="datepicker">
+                            <input type="text" class="form-control form-control-sm cari_periode" value="{{ \Carbon\Carbon::now('Asia/Jakarta')->format('m/Y') }}" id="datepicker">
                         </div>
                         <div class="col-1">
                             <button class="btn btn-sm btn-primary" type="button" onclick="cariTarget()"><i class="fa fa-search"></i>

@@ -322,13 +322,17 @@ class PenjualanPusatController extends Controller
     // Target Realisasi
     public function targetList()
     {
+        $sekarang = Carbon::now('Asia/Jakarta');
         $target = DB::table('d_salestargetdt')
             ->join('d_salestarget', 'std_salestarget', 'st_id')
             ->join('m_item', 'std_item', 'i_id')
             ->join('m_unit', 'std_unit', 'u_id')
             ->join('m_company', 'st_comp', 'c_id')
             ->select('d_salestargetdt.*', DB::raw('concat(std_qty, " ", u_name) as target'), 'st_id', 'c_name', DB::raw("concat(i_code, '-', i_name) as i_name"), 'st_periode', DB::raw('date_format(st_periode, "%m/%Y") as st_periode'))
+            ->whereMonth('st_periode', '=', $sekarang->format('m'))
+            ->whereYear('st_periode', '=', $sekarang->format('Y'))
             ->get();
+
         return Datatables::of($target)
             ->addIndexColumn()
             ->addColumn('status', function ($target) {
@@ -776,8 +780,8 @@ class PenjualanPusatController extends Controller
     public function getPaymentMethod()
     {
         $data = m_paymentmethod::where('pm_isactive', 'Y')
-        ->with('getAkun')
-        ->get();
+            ->with('getAkun')
+            ->get();
 
         return response()->json([
             'data' => $data
@@ -1261,6 +1265,8 @@ class PenjualanPusatController extends Controller
             ->where(function ($q) use ($cari) {
                 $q->whereRaw("sc_nota like '%" . $cari . "%'");
             })
+            ->where('sc_paidoff', '=', 'N')
+            ->where('sc_type', '=', 'C')
             ->get();
 
         if (count($nota) == 0) {
@@ -1306,9 +1312,9 @@ class PenjualanPusatController extends Controller
     {
         // dd($code);
         $data = DB::table('d_salescomp')
-            ->join('m_company', 'c_id', 'sc_comp')
-            ->join('m_agen', 'a_code', 'c_user')
-            ->leftJoin('d_salescomppayment', 'scp_salescomp', 'sc_id')
+            ->join('m_company', 'c_id', '=', 'sc_member')
+            ->join('m_agen', 'a_code', '=', 'c_user')
+            ->leftJoin('d_salescomppayment', 'scp_salescomp', '=', 'sc_id')
             ->select('sc_total', 'sc_datetop', 'sc_nota', DB::raw('COALESCE(SUM(scp_pay), 0) as payment'))
             ->where('c_user', '=', $code)
             ->where('sc_paidoff', '=', 'N')
