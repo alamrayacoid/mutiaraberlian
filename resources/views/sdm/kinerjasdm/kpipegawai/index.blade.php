@@ -12,16 +12,18 @@
             <section>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_pegawai">
+                    <table class="table table-striped table-hover display nowrap w-100" cellspacing="0" id="table_kpi_pegawai">
                         <thead class="bg-primary">
                         <tr align="center">
                             <th width="1%">No</th>
-                            <th width="20%">Nama Pegawai</th>
-                            <th width="40%">Indikator</th>
-                            <th width="5%">Aksi</th>
+                            <th>Nama Pegawai</th>
+                            <th>Divisi</th>
+                            <th>Posisi</th>
+                            <th width="15%">Aksi</th>
                         </tr>
                         </thead>
                         <tbody>
+
                         </tbody>
                     </table>
                 </div>

@@ -34,27 +34,30 @@
 
                         <div class="card-block">
                             <section>
-                                <form action="" id="form-add">
+                                <form action="" id="form-edit">
                                     @csrf
+
+                                    <input type="hidden" name="employee" value="{{$kpiemp_first->ke_employee}}">
                                 <div id="section-kpi">
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="row">
-                                                <div class="col-md-2 col-sm-4 col-xs-12">
+                                                <div class="col-md-2 col-sm-6 col-xs-12">
                                                     <label>Nama Pegawai</label>
                                                 </div>
 
-                                                <div class="col-md-4 col-sm-8 col-xs-12">
+                                                <div class="col-md-4 col-sm-6 col-xs-12">
                                                     <div class="form-group">
-                                                        <select class="form-control form-control-sm select2" id="m_employee" name="employee">
-                                                            <option value="" selected="" disabled="">Pilih Pegawai</option>
+                                                        <select class="form-control form-control-sm select2" id="m_employee" name="ke_employee">
+                                                            <option value="" disabled="">Pilih Pegawai</option>
+                                                            @foreach($employee as $key => $employee)
+                                                            <option value="{{$employee->e_id}}" @if($employee->e_id == $kpiemp[0]->ke_employee) selected="" @endif>{{$employee->e_name}} ({{$employee->d_name}} / {{$employee->j_name}})</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col-12">
                                             <div id="private-section">
                                                 <div class="row">
@@ -67,12 +70,15 @@
                                                             <div class="col-6 col-md-6 col-sm-4 col-xs-12">
                                                                 <div class="form-group">
                                                                     <select class="form-control form-control-sm select2 indicator" name="indicator[]" data-last="null">
-                                                                        <option value="" selected="" disabled="">Pilih Indikator</option>
+                                                                        <option value="" disabled="">Pilih Indikator</option>
+                                                                        @foreach($kpi as $key => $kpi1)
+                                                                        <option value="{{$kpi1->k_id}}" @if($kpi1->k_id == $kpiemp_first->ke_kpi) selected="" @endif>{{$kpi1->k_indicator}}</option>
+                                                                        @endforeach
                                                                     </select>
                                                                 </div>
                                                             </div>
 
-                                                            <div class="col-2 col-md-2 col-sm-2 align-items-center" style="height: 30px;display: flex; align-items: center;">
+                                                            <div class="col-2 col-md-2 align-items-center" style="height: 30px;display: flex; align-items: center;">
                                                                 <button type="button" class="btn btn-block btn-primary btn-sm rounded btn-tambahp align-self-center idx-btn"><i class="fa fa-plus"></i></button>
                                                             </div>
                                                             <div class="offset-md-4 col-8 col-md-8 col-sm-6 col-xs-12 mb-1 messageError d-none" style="margin-top: -18px;">
@@ -87,7 +93,7 @@
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="form-group">
-                                                                    <input type="text" name="bobot[]" class="form-control form-control-sm digits">
+                                                                    <input type="text" name="bobot[]" class="form-control form-control-sm digits" value="{{$kpiemp_first->ke_weight}}">
                                                                 </div>
                                                             </div>
                                                             <div class="col-2">
@@ -95,12 +101,59 @@
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="form-group">
-                                                                    <input type="text" name="target[]" class="form-control form-control-sm digits">
+                                                                    <input type="text" name="target[]" class="form-control form-control-sm digits" value="{{$kpiemp_first->ke_target}}">
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @foreach($kpiemp as $idx => $kpiemp)
+                                                <div class="row section2">
+                                                    <div class="col-6 col-md-6 col-sm-12">
+                                                        <div class="row">
+                                                            <div class="col-4 col-md-4 col-sm-6 col-xs-12">
+                                                                <label style="display: none;">~</label>
+                                                            </div>
+                                                            <div class="col-6 col-md-6 col-sm-4 col-xs-12">
+                                                                <div class="form-group">
+                                                                    <select class="form-control form-control-sm select2 indicator" id="" name="indicator[]" data-last="{{$kpiemp->ke_kpi}}">
+                                                                        <option value="" disabled>Pilih Indikator</option>
+                                                                        @foreach($kpi as $key => $kpi2)
+                                                                        <option value="{{$kpi2->k_id}}" @if($kpi2->k_id == $kpiemp->ke_kpi) selected="" @endif>{{$kpi2->k_indicator}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-2 col-md-2 col-sm-2" style="height: 30px;display: flex; align-items: center;">
+                                                                <button type="button" class="btn btn-block btn-danger btn-sm rounded btn-hapus idx-btn btn-del"><i class="fa fa-trash"></i></button>
+                                                            </div>
+                                                            <div class="offset-md-4 col-8 col-md-8 col-sm-6 col-xs-12 mb-1 messageError d-none" style="margin-top: -18px;">
+                                                                <span class="text-danger" style="font-size: 12px;">Indikator sudah terpilih</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6 col-md-6 col-sm-12">
+                                                        <div class="row">
+                                                            <div class="col-2">
+                                                                <label for="">Bobot</label>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="form-group">
+                                                                    <input type="text" name="bobot[]" class="form-control form-control-sm digits" value="{{$kpiemp->ke_weight}}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-2">
+                                                                <label for="">Target</label>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="form-group">
+                                                                    <input type="text" name="target[]" class="form-control form-control-sm digits" value="{{$kpiemp->ke_target}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @endforeach
                                             </div>
                                         </div>
                                     </div>
@@ -128,16 +181,10 @@
     var index = null;
     var keranjang = [];
     $(document).ready(function(){
-        axios.get('{{url('/sdm/kinerjasdm/kpi-pegawai/get-kpi-employee')}}')
-        .then(function(resp) {
-            var data = resp.data.data
-            $.each(data, function(key, val) {
-                $('#m_employee').append('<option value="'+val.e_id+'">'+val.e_name+' ('+val.d_name+'/'+val.j_name+')</option>')
-            })
-        })
-
-        index = $('.indicator').index(this);
-        getIndicator(index);
+        for (var i = 0; i < $('.indicator').length; i++) {
+            var indicat = $('.indicator')[i].value
+            keranjang.push(indicat);
+        }
     });
 
     $('#private-section').on('change', '.indicator', function(){
@@ -167,9 +214,6 @@
     })
 
     $('.btn-tambahp').on('click',function(){
-
-        index = $('.indicator').index(this);
-        getIndicator(index);
 
         $('#private-section')
             .append(
@@ -236,6 +280,9 @@
             // unmaskAsNumber: true,
         });
 
+        index = $('.indicator').index(this);
+        getIndicator(index);
+
         $('.btn-del').on('click', function(){
             var idx = $('.idx-btn').index(this);
             var isi = $('.indicator').eq(idx).val();
@@ -248,6 +295,17 @@
         })
     });
 
+    $('.btn-del').on('click', function(){
+        var idx = $('.idx-btn').index(this);
+        var isi = $('.indicator').eq(idx).val();
+
+        var findArray = keranjang.findIndex(e => e == isi)
+        if (findArray >= 0) {
+            keranjang.splice(findArray, 1)
+        }
+        $(this).parents('.section2').remove()
+    })
+
     function getIndicator(index) {
         axios.get('{{url('/sdm/kinerjasdm/kpi-pegawai/get-kpi-indikator')}}')
         .then(function(resp) {
@@ -259,21 +317,45 @@
     }
 
     $('.btn-submit').on('click', function() {
-        var datas = $('#form-add').serialize();
-        axios.post('{{url('/sdm/kinerjasdm/kpi-pegawai/save-kpi-pegawai')}}', datas)
-        .then(function(resp){
-            if (resp.data.status == 'success') {
-                messageSuccess('Berhasil!', 'Data berhasil disimpan!');
-                setTimeout(function(){
-                    window.location.href = "{{url('/sdm/kinerjasdm/index')}}"
-                }, 1000)                
-            }else{
-                messageFailed('Gagal!', 'Data gagal disimpan!');
-            }
-        })
-        .catch(function(error) {
+        var datas = $('#form-edit').serialize();
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Pesan!',
+            content: 'Apakah anda yakin ingin mengubah data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function() {
+                        axios.post('{{url('/sdm/kinerjasdm/kpi-pegawai/update-kpi-pegawai')}}', datas)
+                        .then(function(resp){
+                            if (resp.data.status == 'success') {
+                                messageSuccess('Berhasil!', 'Data berhasil diperbarui!');
+                                setTimeout(function(){
+                                    window.location.href = "{{url('/sdm/kinerjasdm/index')}}"
+                                }, 1000)                
+                            }else{
+                                messageFailed('Gagal!', 'Data gagal diperbarui!');
+                            }
+                        })
+                        .catch(function(error) {
 
-        })
+                        })
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function(response) {
+                        loadingHide();
+                        messageWarning('Peringatan', 'Anda telah membatalkan!');
+                    }
+                }
+            }
+        })        
     })
 </script>
 @endsection
