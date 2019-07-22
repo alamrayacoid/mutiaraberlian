@@ -957,6 +957,34 @@ class PenjualanPusatController extends Controller
                     return $mutDist;
                 }
 
+                // set stock-parent-id
+                $listStockParentId = $mutDist->original['listStockParentId'];
+                // get list
+                $listSellPrice = $mutDist->original['listSellPrice'];
+                $listHPP = $mutDist->original['listHPP'];
+                $listSmQty = $mutDist->original['listSmQty'];
+                $listPCReturn = $mutDist->original['listPCReturn'];
+                $listQtyPCReturn = $mutDist->original['listQtyPCReturn'];
+
+                // insert stock mutation using sales 'in'
+                $mutationIn = Mutasi::salesIn(
+                // $productOrder->po_comp, // from
+                    $productOrder->po_agen, // to
+                    $PO->pod_item, // item-id
+                    $productOrder->po_nota, // nota
+                    $listPCReturn, // list of list production-code
+                    $listQtyPCReturn, // list of list production-code-qty
+                    $listUnitPC, // list of production-code-unit
+                    $listSellPrice, // sellprice
+                    $listHPP,
+                    $listSmQty,
+                    20, // mutcat masuk pembelian
+                    $listStockParentId // stock-parent id
+                );
+                if ($mutationIn->original['status'] !== 'success') {
+                    return $mutationIn;
+                }
+
                 // Tambahan Dirga
                     foreach ($mutDist->original['listSmQty'] as $key => $value) {
                         $totalHpp += (float) $value * (float) $mutDist->original['listHPP'][$key];
