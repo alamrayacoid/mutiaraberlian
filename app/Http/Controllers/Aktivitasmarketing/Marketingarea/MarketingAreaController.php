@@ -1618,6 +1618,7 @@ class MarketingAreaController extends Controller
         $listItemsId = array();
         $listProdCode = array();
         $listProdCodeLength = array();
+        $listProdCodeQty = array();
         array_push($listItemsId, $item);
         array_push($listProdCode, $kode);
         array_push($listProdCodeLength, 1);
