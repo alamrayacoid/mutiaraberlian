@@ -191,6 +191,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/masterpembayaran/detail', 'Master\PembayaranController@detail')->name('masterdatautama.detail');
     Route::post('/masterdatautama/masterpembayaran/update', 'Master\PembayaranController@update')->name('masterdatautama.update');
     Route::post('/masterdatautama/masterpembayaran/get-data', 'Master\PembayaranController@getDataPembayaran')->name('masterdatautama.getData');
+
+    // Master Cashflow
+    Route::get('/masterdatautama/mastercashflow', 'Keuangan\master\cashflow\CashflowController@index')->name('masterdatautama.mastercashflow');
+    Route::get('/masterdatautama/mastercashflow/get-data', 'Keuangan\master\cashflow\CashflowController@get_data_cashflow')->name('masterdatautama.mastercashflow_getData');
+    Route::post('/masterdatautama/mastercashflow/save', 'Keuangan\master\cashflow\CashflowController@save')->name('masterdatautama.mastercashflow_save');
+    Route::get('/masterdatautama/mastercashflow/edit/{id}', 'Keuangan\master\cashflow\CashflowController@edit')->name('masterdatautama.mastercashflow_edit');
+    Route::post('/masterdatautama/mastercashflow/update/', 'Keuangan\master\cashflow\CashflowController@update')->name('masterdatautama.mastercashflow_update');
+    Route::get('/masterdatautama/mastercashflow/delete/{id}', 'Keuangan\master\cashflow\CashflowController@delete')->name('masterdatautama.mastercashflow_delete');
     // !===================================================== End Master Data Utama =====================================================!
 
     // !===================================================== PRODUKSI =====================================================!
