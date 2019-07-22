@@ -307,7 +307,7 @@ class ReturnPenjualanController extends Controller
                 return $mutationOut;
             }
             // set stock-parent-id
-            $stockParentId = $mutationOut->original['stockParentId'];
+            $listStockParentId = $mutationOut->original['listStockParentId'];
             // get list
             $listSellPrice = $mutationOut->original['listSellPrice'];
             $listHPP = $mutationOut->original['listHPP'];
@@ -328,7 +328,7 @@ class ReturnPenjualanController extends Controller
                 $listHPP,
                 $listSmQty,
                 3, // mutcat masuk return barang rusak
-                $stockParentId, // stock-parent id
+                $listStockParentId, // stock-parent id
                 'ON DESTINATION', // item status
                 'BROKEN' // item condition
             );
@@ -359,7 +359,7 @@ class ReturnPenjualanController extends Controller
                     return $mutationOut;
                 }
                 // set stock-parent-id
-                $stockParentId = $mutationOut->original['stockParentId'];
+                $listStockParentId = $mutationOut->original['listStockParentId'];
                 // get list
                 $listSellPrice = $mutationOut->original['listSellPrice'];
                 $listHPP = $mutationOut->original['listHPP'];
@@ -379,7 +379,7 @@ class ReturnPenjualanController extends Controller
                     $listHPP,
                     $listSmQty,
                     20, // mutcat masuk return barang rusak
-                    $stockParentId // stock-parent id
+                    $listStockParentId // stock-parent id
                 );
                 if ($mutationIn->original['status'] !== 'success') {
                     return $mutationIn;
