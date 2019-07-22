@@ -83,8 +83,8 @@
                                                     <tr>
                                                         <th>Kode/Nama Barang</th>
                                                         <th width="10%">Satuan</th>
-                                                        <th>Jumlah</th>
-                                                        <th>Kode Produksi</th>
+                                                        <th width="7%">Jumlah</th>
+                                                        <th width="5%">Kode Produksi</th>
                                                         <th>Harga Satuan</th>
                                                         <th>Diskon @</th>
                                                         <th>Sub Total</th>
@@ -125,7 +125,7 @@
                                                             <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p>
                                                         </td>
                                                         <td>
-                                                            <input class="form-control form-control-sm diskon rupiah" id="diskon" name="diskon[]" value="{{ (int)$val->sd_discvalue }}">
+                                                            <input class="form-control form-control-sm diskon rupiah-without-dec" id="diskon" name="diskon[]" value="{{ (int)$val->sd_discvalue }}">
                                                         </td>
                                                         <td>
                                                             <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="{{ Currency::addRupiah($val->sd_totalnet) }}" readonly>
@@ -422,7 +422,7 @@
             '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" data-label="new" value="0" readonly><input type="hidden" name="status[]" class="status" value="unused"></td>'+
             '<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button></td>' +
             '<td><input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="Rp. 0" readonly><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>'+
-            '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah" value="Rp. 0"></td>'+
+            '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah-without-dec" value="Rp. 0"></td>'+
             '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
             '<td>'+
             '<button class="btn btn-danger btn-hapus btn-sm" type="button">'+
@@ -439,18 +439,6 @@
         // changeHarga();
 
         setArrayCode();
-
-        $('.rupiah').inputmask("currency", {
-            radixPoint: ",",
-            groupSeparator: ".",
-            digits: 2,
-            autoGroup: true,
-            prefix: ' Rp ', //Space after $, this will not truncate the first character.
-            rightAlign: true,
-            autoUnmask: true,
-            nullable: false,
-            // unmaskAsNumber: true,
-        });
 
         $(".diskon").on('keyup', function (evt) {
             let idx = $('.diskon').index(this);
@@ -604,6 +592,28 @@
             theme: "bootstrap",
             dropdownAutoWidth: true,
             width: '100%'
+        });
+        $('.rupiah').inputmask("currency", {
+            radixPoint: ",",
+            groupSeparator: ".",
+            digits: 2,
+            autoGroup: true,
+            prefix: ' Rp ', //Space after $, this will not truncate the first character.
+            rightAlign: true,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
+        });
+        $('.rupiah-without-dec').inputmask("currency", {
+            radixPoint: ",",
+            groupSeparator: ".",
+            digits: 0,
+            autoGroup: true,
+            prefix: ' Rp ', //Space after $, this will not truncate the first character.
+            rightAlign: true,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
         });
         // inputmask-digits
         $('.digits').inputmask("currency", {

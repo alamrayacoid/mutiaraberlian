@@ -1883,7 +1883,7 @@ class ManajemenAgenController extends Controller
             ->where('s_condition', '=', 'FINE')
             ->get();
 
-        // dd($request->all(), $cek);
+        dd($request->all(), $cek);
         if (count($cek) > 0) {
             return Response::json([
                 'status' => 'sukses'
