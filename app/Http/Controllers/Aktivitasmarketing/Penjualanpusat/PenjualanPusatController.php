@@ -948,9 +948,7 @@ class PenjualanPusatController extends Controller
                     $sell,
                     5
                 );
-
                 // return json_encode($mutDist->original);
-
                 if ($mutDist->original['status'] !== 'success') {
                     return $mutDist;
                 }
