@@ -1997,11 +1997,12 @@ class Mutasi extends Controller
         try {
             foreach ($listPC as $key => $prodCode) {
                 // skip inserting when val is null or qty-pc is 0
+                $qtyProdCode = (int)$listQtyPC[$key];
+                $prodCode = strtoupper($prodCode);
+
                 if ($prodCode == '' || $prodCode == null || $qtyProdCode == 0) {
                     continue;
                 }
-                $qtyProdCode = (int)$listQtyPC[$key];
-                $prodCode = strtoupper($prodCode);
 
                 // update stock-detail-parent
                 if (!is_null($stockParentId)) {
