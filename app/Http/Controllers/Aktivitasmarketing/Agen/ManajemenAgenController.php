@@ -48,7 +48,7 @@ class ManajemenAgenController extends Controller
     {
         $data = m_agen::where('a_parent', $kode)
         ->get();
-        
+
         return Response::json($data);
 
         // $data = DB::table('m_agen')
@@ -655,6 +655,10 @@ class ManajemenAgenController extends Controller
                         $b->on('d_productorder.po_agen', '=', 'buyer.c_id');
                     })->where('po_send', '=', $status);
             }
+        }
+
+        if (Auth::user()->u_user == 'A') {
+            $data = $data->where('po_agen', Auth::user()->u_company);
         }
 
         return DataTables::of($data)

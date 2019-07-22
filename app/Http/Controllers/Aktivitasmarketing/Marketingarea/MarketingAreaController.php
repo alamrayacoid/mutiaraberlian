@@ -713,7 +713,7 @@ class MarketingAreaController extends Controller
             // update stockdist-status to 'Y'
             $stockdist->sd_status = 'Y';
             $stockdist->save();
-            
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -1121,7 +1121,6 @@ class MarketingAreaController extends Controller
             ]);
         }
 
-        // dd($request->all(), $request->payCash, $request->dateTop);
         try {
             $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
@@ -1316,13 +1315,11 @@ class MarketingAreaController extends Controller
                 'scp_pay' => $payCash,
                 'scp_payment' => $request->paymentMethod
             ];
-            // dd($val_sales, $val_salespayment);
 
             DB::table('d_salescompdt')->insert($val_salesdt);
             DB::table('d_salescomp')->insert($val_sales);
             DB::table('d_salescomppayment')->insert($val_salespayment);
-            // dd($val_sales, $val_salespayment);
-            // dd('x');
+            
             DB::commit();
             return response()->json([
                 'status' => 'sukses'
