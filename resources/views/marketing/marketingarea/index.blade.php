@@ -643,61 +643,6 @@
             table_rab = $('#table_canvassing').DataTable();
             table_bro = $('#table_konsinyasi').DataTable();
 
-            // $(document).on('click', '.btn-disable', function () {
-            //     var ini = $(this);
-            //     $.confirm({
-            //         animation: 'RotateY',
-            //         closeAnimation: 'scale',
-            //         animationBounce: 1.5,
-            //         icon: 'fa fa-exclamation-triangle',
-            //         title: 'Peringatan!',
-            //         content: 'Apa anda yakin mau menonaktifkan data ini?',
-            //         theme: 'disable',
-            //         buttons: {
-            //             info: {
-            //                 btnClass: 'btn-blue',
-            //                 text: 'Ya',
-            //                 action: function () {
-            //                     $.toast({
-            //                         heading: 'Information',
-            //                         text: 'Data Berhasil di Nonaktifkan.',
-            //                         bgColor: '#0984e3',
-            //                         textColor: 'white',
-            //                         loaderBg: '#fdcb6e',
-            //                         icon: 'info'
-            //                     })
-            //                     ini.parents('.btn-group').html('<button class="btn btn-success btn-enable" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-            //                 }
-            //             },
-            //             cancel: {
-            //                 text: 'Tidak',
-            //                 action: function () {
-            //                     // tutup confirm
-            //                 }
-            //             }
-            //         }
-            //     });
-            // });
-            //
-            // $(document).on('click', '.btn-enable', function () {
-            //     $.toast({
-            //         heading: 'Information',
-            //         text: 'Data Berhasil di Aktifkan.',
-            //         bgColor: '#0984e3',
-            //         textColor: 'white',
-            //         loaderBg: '#fdcb6e',
-            //         icon: 'info'
-            //     })
-            //     $(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
-            //         '<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-            // })
-            //
-            // $(document).ready(function () {
-            //     $('#detail-monitoring').DataTable({
-            //         "iDisplayLength": 5
-            //     });
-            // });
-
             // Konsinyasi
             $(document).on('click', '.btn-disable-kons', function () {
                 var ini = $(this);
@@ -1434,54 +1379,145 @@
             })
         }
 
-        function receiveItemOrder(id) {
-            $.confirm({
-                animation: 'RotateY',
-                closeAnimation: 'scale',
-                animationBounce: 1.5,
-                icon: 'fa fa-exclamation-triangle',
-                title: 'Pesan!',
-                content: 'Apakah anda yakin ingin mengkonfirmasi penerimaan order ?',
-                theme: 'disable',
-                buttons: {
-                    info: {
-                        btnClass: 'btn-blue',
-                        text: 'Ya',
-                        action: function () {
-                            return $.ajax({
-                                type: "post",
-                                url: baseUrl +'/marketing/marketingarea/keloladataorder/receive-item-order/'+ id,
-                                data: {
-                                    "_token": "{{ csrf_token() }}"
-                                },
-                                beforeSend: function () {
-                                    loadingShow();
-                                },
-                                success: function (response) {
-                                    if (response.status == 'sukses') {
-                                        loadingHide();
-                                        messageSuccess('Berhasil', 'Konfirmasi penerimaan order berhasil dilakukan !');
-                                        table_agen.ajax.reload();
-                                    } else {
-                                        loadingHide();
-                                        messageFailed('Gagal', response.message);
-                                    }
-                                },
-                                error: function (e) {
-                                    loadingHide();
-                                    messageWarning('Peringatan', e.message);
-                                }
-                            });
+
+        // show detail order before acceptance
+        function showDetailAcOrderAgen(idx)
+        {
+            loadingShow();
+            $.ajax({
+                url: baseUrl + "/marketing/marketingarea/keloladataorder/show-detail-ac/" + idx,
+                type: "get",
+                success: function(response) {
+                    $('#id_ac').val(response.poId);
+                    $('#nota_ac').val(response.po_nota);
+                    $('#date_ac').val(response.dateFormated);
+                    $('#origin_ac').val(response.get_origin.c_name);
+                    $('#dest_ac').val(response.get_destination.c_name);
+                    $('#table_detail_ac tbody').empty();
+                    $.each(response.get_p_o_dt, function (index, val) {
+                        no = '<td>'+ (index + 1) +'</td>';
+                        kodeXnamaBrg = '<td>'+ val.get_item.i_code +' - '+ val.get_item.i_name +'</td>';
+                        qty = '<td class="digits">'+ val.pod_qty +'</td>';
+                        unit = '<td>'+ val.get_unit.u_name +'</td>';
+                        aksi = '<td><button type="button" class="btn btn-info btn-sm" onclick="getKodeProduksiOrderAgen('+ val.pod_productorder +', '+ val.pod_item +')">Lihat Kode</button></td>';
+                        appendItem = no + kodeXnamaBrg + qty + unit + aksi;
+                        $('#table_detail_ac > tbody:last-child').append('<tr>'+ appendItem +'</tr>');
+
+                        if ( $.fn.DataTable.isDataTable('#table_detail_ackode') ) {
+                            $('#table_detail_ackode').DataTable().destroy();
                         }
-                    },
-                    cancel: {
-                        text: 'Tidak',
-                        action: function (response) {
-                            loadingHide();
-                        }
-                    }
+                        $('#tblRemittanceList tbody').empty();
+
+                    });
+                    $('#product_name').html('');
+                    tableKodeProduksi = $('#table_detail_ackode').DataTable({
+                        "searching": false,
+                        "paging": false,
+                    });
+                    tableKodeProduksi.clear();
+                    //mask digits
+                    $('.digits').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 0,
+                        autoGroup: true,
+                        prefix: '', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
+                    });
+
+                    // set on-click event on 'receive item button'
+                    $('#btn_confirmAc').attr('onclick', 'receiveItemOrder()');
+                    $('#modalAcceptance').modal('show');
+                    loadingHide();
+                },
+                error: function(xhr, status, error) {
+                    let err = JSON.parse(xhr.responseText);
+                    messageWarning('Error', err.message);
+                    loadingHide();
                 }
             });
+        }
+        // show list of production-code that will be received (acceptance)
+        function getKodeProduksiOrderAgen(id, itemId){
+            loadingShow();
+            axios.get('{{ route("keloladataorder.getKodeProduksiOrderAgen") }}', {
+                params:{
+                    "id": id,
+                    "itemId": itemId
+                }
+            }).then(function (response) {
+                loadingHide();
+                let data = response.data;
+                tableKodeProduksi.clear();
+                $.each(data.get_p_o_dt[0].get_prod_code, function(idx, val) {
+                    tableKodeProduksi.row.add([
+                    idx + 1,
+                    val.poc_code,
+                    val.poc_qty
+                    ]).draw(false);
+                })
+                $('#product_name').html(data.get_p_o_dt[0].get_item.i_name);
+            }).catch(function (error) {
+                loadingHide();
+                messageWarning('Error', 'Terjadi kesalahan : '+ error);
+            })
+        }
+        // receive item order
+        function receiveItemOrder() {
+            console.log('receiveItemOrder()');
+            let id = $('#id_ac').val();
+            $.ajax({
+                type: "post",
+                url: baseUrl +'/marketing/marketingarea/keloladataorder/receive-item-order/'+ id,
+                data: {
+                    "_token": "{{ csrf_token() }}"
+                },
+                beforeSend: function () {
+                    loadingShow();
+                },
+                success: function (response) {
+                    if (response.status == 'sukses') {
+                        loadingHide();
+                        messageSuccess('Berhasil', 'Konfirmasi penerimaan order berhasil dilakukan !');
+                        $('#modalAcceptance').modal('hide');
+                        table_agen.ajax.reload();
+                    } else {
+                        loadingHide();
+                        messageFailed('Gagal', response.message);
+                    }
+                },
+                error: function (e) {
+                    loadingHide();
+                    messageWarning('Peringatan', e.message);
+                }
+            });
+            // $.confirm({
+            //     animation: 'RotateY',
+            //     closeAnimation: 'scale',
+            //     animationBounce: 1.5,
+            //     icon: 'fa fa-exclamation-triangle',
+            //     title: 'Pesan!',
+            //     content: 'Apakah anda yakin ingin mengkonfirmasi penerimaan order ?',
+            //     theme: 'disable',
+            //     buttons: {
+            //         info: {
+            //             btnClass: 'btn-blue',
+            //             text: 'Ya',
+            //             action: function () {
+            //                 return ;
+            //             }
+            //         },
+            //         cancel: {
+            //             text: 'Tidak',
+            //             action: function (response) {
+            //                 loadingHide();
+            //             }
+            //         }
+            //     }
+            // });
         }
 
         // End Data Order Agen -----------------------------------------
@@ -2133,9 +2169,9 @@
                 orderProdukList();
             }, 250);
 
-            $('#btn_confirmAc').on('click', function() {
-                confirmAcceptance();
-            });
+            // $('#btn_confirmAc').on('click', function() {
+            //     confirmAcceptance();
+            // });
         });
         // retrieve DataTable for list of order-produk-ke-pusat
         function orderProdukList() {
@@ -2189,14 +2225,13 @@
                             $('#table_detail_ackode').DataTable().destroy();
                         }
                         $('#tblRemittanceList tbody').empty();
-
-                        tableKodeProduksi = $('#table_detail_ackode').DataTable({
-                            "searching": false,
-                            "paging": false,
-                        });
-                        tableKodeProduksi.clear();
-                        $('#product_name').html('');
                     });
+                    tableKodeProduksi = $('#table_detail_ackode').DataTable({
+                        "searching": false,
+                        "paging": false,
+                    });
+                    tableKodeProduksi.clear();
+                    $('#product_name').html('');
                     //mask digits
                     $('.digits').inputmask("currency", {
                         radixPoint: ",",
@@ -2209,7 +2244,8 @@
                         nullable: false,
                         // unmaskAsNumber: true,
                     });
-
+                    // set on-click event on 'receive item button'
+                    $('#btn_confirmAc').attr('onclick', 'confirmAcceptance()');
                     $('#modalAcceptance').modal('show');
                     loadingHide();
                 },
@@ -2220,7 +2256,7 @@
                 }
             });
         }
-
+        // show list of production-code that will be received (acceptance)
         function getKodeProduksi(id, detailid){
             loadingShow();
             axios.get('{{ route("orderProduk.getKodeProduksi") }}', {
@@ -2231,21 +2267,24 @@
             }).then(function (response) {
                 loadingHide();
                 let data = response.data;
-                for (let i = 0; i < data.length; i++) {
+                tableKodeProduksi.clear();
+                $.each(data.get_distribution_dt[0].get_prod_code, function(idx, val) {
                     tableKodeProduksi.row.add([
-                        i + 1,
-                        data[i].sdc_code,
-                        data[i].sdc_qty
+                        idx + 1,
+                        val.sdc_code,
+                        val.sdc_qty
                     ]).draw(false);
-                }
-                $('#product_name').html(data[0].nama.i_name);
+                });
+                $('#product_name').html(data.get_distribution_dt[0].get_item.i_name);
             }).catch(function (error) {
                 loadingHide();
-                alert('error');
+                messageWarning('Error', 'Terjadi kesalahan : '+ error);
             })
         }
+
         // accept item that has been ordered and delivered
         function confirmAcceptance() {
+            console.log('confirmAcceptance()');
             loadingShow();
             let stockdistId = $('#id_ac').val();
             $.ajax({

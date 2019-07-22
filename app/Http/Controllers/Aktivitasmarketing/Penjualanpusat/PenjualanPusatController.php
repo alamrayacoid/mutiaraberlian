@@ -1265,6 +1265,8 @@ class PenjualanPusatController extends Controller
             ->where(function ($q) use ($cari) {
                 $q->whereRaw("sc_nota like '%" . $cari . "%'");
             })
+            ->where('sc_paidoff', '=', 'N')
+            ->where('sc_type', '=', 'C')
             ->get();
 
         if (count($nota) == 0) {
@@ -1310,9 +1312,9 @@ class PenjualanPusatController extends Controller
     {
         // dd($code);
         $data = DB::table('d_salescomp')
-            ->join('m_company', 'c_id', 'sc_comp')
-            ->join('m_agen', 'a_code', 'c_user')
-            ->leftJoin('d_salescomppayment', 'scp_salescomp', 'sc_id')
+            ->join('m_company', 'c_id', '=', 'sc_member')
+            ->join('m_agen', 'a_code', '=', 'c_user')
+            ->leftJoin('d_salescomppayment', 'scp_salescomp', '=', 'sc_id')
             ->select('sc_total', 'sc_datetop', 'sc_nota', DB::raw('COALESCE(SUM(scp_pay), 0) as payment'))
             ->where('c_user', '=', $code)
             ->where('sc_paidoff', '=', 'N')

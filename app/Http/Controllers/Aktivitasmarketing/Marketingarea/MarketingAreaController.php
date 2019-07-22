@@ -428,13 +428,22 @@ class MarketingAreaController extends Controller
                 else {
                     $getIdMax = DB::table('d_stockdistribution')->max('sd_id');
                     $poId = $getIdMax + 1;
+                    $notaPO = CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-');
+                    $notaDist = CodeGenerator::codeWithSeparator('d_stockdistribution', 'sd_nota', 9, 10, 3, 'PRO', '-');
+
+                    if (strcmp($notaPO, $notaDist) > 0) {
+                        $nota = $notaPO;
+                    }
+                    else {
+                        $nota = $notaDist;
+                    };
 
                     DB::table('d_stockdistribution')->insert([
                         'sd_id'     => $poId,
                         'sd_from'   => $data['po_comp'],
                         'sd_destination'   => $data['po_agen'],
                         'sd_date'   => $time,
-                        'sd_nota'   => CodeGenerator::codeWithSeparator('d_stockdistribution', 'sd_nota', 9, 10, 3, 'PRO', '-'),
+                        'sd_nota'   => $nota,
                         'sd_status' => "N",
                         'sd_user' => Auth::user()->u_id
                     ]);
@@ -652,6 +661,24 @@ class MarketingAreaController extends Controller
             ]);
         }
     }
+    // return detail code-production
+    public function getKodeProduksi(Request $request)
+    {
+        // dd($request->all());
+        $distId = $request->id;
+        $detailId = $request->detailid;
+
+        $detail = d_stockdistribution::where('sd_id', $distId)
+        ->with(['getDistributionDt' => function ($query) use ($detailId) {
+            $query
+            ->where('sdd_detailid', $detailId)
+            ->with('getProdCode')
+            ->with('getItem');
+        }])
+        ->first();
+
+        return response()->json($detail);
+    }
     // confirm received items that has been ordered
     public function setAcceptance($id)
     {
@@ -686,7 +713,7 @@ class MarketingAreaController extends Controller
             // update stockdist-status to 'Y'
             $stockdist->sd_status = 'Y';
             $stockdist->save();
-
+            
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -701,10 +728,6 @@ class MarketingAreaController extends Controller
         }
     }
 
-    public function getKodeProduksi(Request $request)
-    {
-        dd($request);
-    }
 
     // return detail of order-produk
     public function detailOrder($id)
@@ -905,12 +928,12 @@ class MarketingAreaController extends Controller
                                 <button class="btn btn-primary hint--top-left hint--info" aria-label="Detail Order" onclick="detailAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-folder"></i></button>';
                     if ($data_agen->po_send == "Y") {
                         $btns = $btns .'<button class="btn btn-disabled hint--top-left hint--error" aria-label="Reject Approve" onclick="rejectApproveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-times"></i></button>
-                            <button class="btn btn-disabled hint--top-left hint--info" aria-label="Receive" onclick="receiveItemOrder(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-get-pocket"></i></button>
+                            <button class="btn btn-disabled hint--top-left hint--info" aria-label="Receive" onclick="showDetailAcOrderAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-get-pocket"></i></button>
                             <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i></button>
                             </div>';
                     } else {
                         $btns = $btns .'<button class="btn btn-danger hint--top-left hint--error" aria-label="Reject Approve" onclick="rejectApproveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-times"></i></button>
-                            <button class="btn btn-warning hint--top-left hint--info" aria-label="Receive" onclick="receiveItemOrder(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-get-pocket"></i></button>
+                            <button class="btn btn-warning hint--top-left hint--info" aria-label="Receive" onclick="showDetailAcOrderAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')"><i class="fa fa-fw fa-get-pocket"></i></button>
                             <button class="btn btn-disabled" Order" onclick="approveAgen(\'' . Crypt::encrypt($data_agen->po_id) . '\')" disabled><i class="fa fa-fw fa-check"></i></button>
                             </div>';
                     }
@@ -1176,7 +1199,7 @@ class MarketingAreaController extends Controller
                     return $mutationOut;
                 }
                 // set stock-parent-id
-                $listStockParentId = $mutationOut->original['stockParentId'];
+                $listStockParentId = $mutationOut->original['listStockParentId'];
                 // get list
                 $listSellPrice = $mutationOut->original['listSellPrice'];
                 $listHPP = $mutationOut->original['listHPP'];
@@ -1348,6 +1371,7 @@ class MarketingAreaController extends Controller
                     return $rollbackPO;
                 }
             }
+
             // update status of productorder
             DB::table('d_productorder')
                 ->where('po_id', $id)
@@ -1390,6 +1414,59 @@ class MarketingAreaController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    // return detail order before acceptance
+    public function showDetailAcOrderAgen($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        try {
+            // get product-order
+            $productOrder = d_productorder::where('po_id', $id)
+            ->with('getOrigin')
+            ->with('getDestination')
+            ->with(['getPODt' => function ($query) {
+                $query
+                ->with('getItem')
+                ->with('getUnit');
+            }])
+            ->first();
+
+            $productOrder->dateFormated = Carbon::parse($productOrder->po_date)->format('d M Y');
+            $productOrder->poId = Crypt::encrypt($productOrder->po_id);
+
+            return response()->json($productOrder);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    // return detail code-production
+    public function getKodeProduksiOrderAgen(Request $request)
+    {
+        $id = $request->id;
+        $itemId = $request->itemId;
+
+        // get product-order
+        $productOrder = d_productorder::where('po_id', $id)
+        ->with(['getPODt' => function ($query) use ($itemId) {
+            $query
+            ->where('pod_item', $itemId)
+            ->with('getProdCode')
+            ->with('getItem');
+        }])
+        ->first();
+
+        return response()->json($productOrder);
     }
     // receive order and make it disabeld for editing
     public function receiveItemOrder($id)
@@ -1613,7 +1690,7 @@ class MarketingAreaController extends Controller
         $qty = $request->qty;
         $kode = strtoupper($request->kode);
         $item = $request->item;
-
+        // dd($request->all());
         // set variable to validate production
         $listItemsId = array();
         $listProdCode = array();

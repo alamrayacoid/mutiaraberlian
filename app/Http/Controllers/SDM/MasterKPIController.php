@@ -169,13 +169,208 @@ class MasterKPIController extends Controller
             ]);
         }
     }
+    public function kpi_create_d()
+    {
+        return view('sdm.kinerjasdm.kpidivisi.create');
+    }
 
+    // KPI Pegawai --> --> --> --> --> --> --> --> -->
     public function kpi_create_p()
     {
         return view('sdm.kinerjasdm.kpipegawai.create');
     }
-    public function kpi_create_d()
+
+    public function get_kpi_pegawai()
     {
-        return view('sdm.kinerjasdm.kpidivisi.create');
+        $datas = DB::table('m_employee')
+            ->join('m_divisi', 'm_divisi.m_id', 'e_department')
+            ->join('m_jabatan', 'j_id', 'e_position')
+            ->whereIn('e_id', function($query){
+                $query->select('ke_employee')->from('d_kpiemp')->get();
+            })->get();
+
+        return Datatables::of($datas)
+            ->addIndexColumn()
+            ->addColumn('action', function ($datas) {
+                return '<div class="btn-group btn-group-sm">
+                            <button class="btn btn-info btn-edit-masterkpi btn-sm hint--top-left hint--info" type="button" onclick="deatilKpiPegawai(\''.Crypt::encrypt($datas->e_id).'\')" aria-label="Detail"><i class="fa fa-folder-open"></i></button>
+                            <button class="btn btn-warning btn-disable-masterkpi btn-sm hint--top-left hint--warning" type="button" aria-label="Edit" onclick="editKpiPegawai(\''.Crypt::encrypt($datas->e_id).'\')"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-danger btn-sm hint--top-left hint--error" type="button" aria-label="Hapus" onclick="delKpiPegawai(\''.Crypt::encrypt($datas->e_id).'\')"><i class="fa fa-trash"></i></button>
+                        </div>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+    public function get_kpi_employee()
+    {
+        $data = DB::table('m_employee')
+            ->select('m_employee.*', 'm_company.*', 'm_divisi.m_name as d_name', 'm_jabatan.*')
+            ->join('m_company', 'c_id', 'e_company')
+            ->join('m_divisi', 'm_divisi.m_id', 'e_department')
+            ->join('m_jabatan', 'j_id', 'e_position')
+            ->where('m_company.c_type', '=', 'PUSAT')->get();
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
+    public function get_kpi_indikator()
+    {
+        $data = DB::table('m_kpi')
+            ->where('k_isactive', '=', 'Y')->get();
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
+    public function save_kpi_pegawai(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+        
+            $indicator = $request->indicator;
+            for ($i=0; $i < count($indicator); $i++) { 
+                DB::table('d_kpiemp')->insert([
+                    'ke_kpi'      => $indicator[$i],
+                    'ke_detailid' => DB::table('d_kpiemp')->where('ke_kpi', $indicator[$i])->max('ke_detailid') + 1,
+                    'ke_type'     => 'P',
+                    'ke_employee' => $request->employee,
+                    'ke_weight'   => $request->bobot[$i],
+                    'ke_target'   => $request->target[$i]
+                ]);
+            }
+        
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'data'   => ''
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status'  => 'Gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function get_detail_kpi_pegawai(Request $request)
+    {
+        try {
+            $emp = Crypt::decrypt($request->employee);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        $datas = DB::table('d_kpiemp')
+            ->join('m_employee', 'e_id', 'ke_employee')
+            ->join('m_divisi', 'm_divisi.m_id', 'e_department')
+            ->join('m_jabatan', 'j_id', 'e_position')
+            ->join('m_kpi', 'k_id', 'ke_kpi')
+            ->select('e_name', 'm_name', 'j_name', 'k_indicator', 'k_isactive', 'ke_weight', 'ke_target')
+            ->where('ke_employee', '=', $emp)->get();
+
+        return response()->json([
+            'data' => $datas
+        ]);
+    }
+
+    public function delete_kpi_pegawai($emp)
+    {
+        try {
+            $emp = Crypt::decrypt($emp);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        DB::beginTransaction();
+        try {
+        
+            DB::table('d_kpiemp')->where('ke_employee', $emp)->delete();
+        
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'data'   => ''
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status'  => 'Gagal',
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function edit_kpi_pegawai(Request $request)
+    {
+        try {
+            $emp = Crypt::decrypt($request->employee);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
+        $employee = DB::table('m_employee')
+            ->select('m_employee.*', 'm_company.*', 'm_divisi.m_name as d_name', 'm_jabatan.*')
+            ->join('m_company', 'c_id', 'e_company')
+            ->join('m_divisi', 'm_divisi.m_id', 'e_department')
+            ->join('m_jabatan', 'j_id', 'e_position')
+            ->where('m_company.c_type', '=', 'PUSAT')->get();
+
+        $kpi = DB::table('m_kpi')->get();
+
+        $kpiemp_first = DB::table('d_kpiemp')
+            ->join('m_employee', 'e_id', 'ke_employee')
+            ->join('m_divisi', 'm_divisi.m_id', 'e_department')
+            ->join('m_jabatan', 'j_id', 'e_position')
+            ->join('m_kpi', 'k_id', 'ke_kpi')
+            ->select('e_name', 'm_name', 'j_name', 'k_indicator', 'k_isactive', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi')
+            ->where('ke_employee', '=', $emp)->first();
+
+        $kpiemp = DB::table('d_kpiemp')
+            ->join('m_employee', 'e_id', 'ke_employee')
+            ->join('m_divisi', 'm_divisi.m_id', 'e_department')
+            ->join('m_jabatan', 'j_id', 'e_position')
+            ->join('m_kpi', 'k_id', 'ke_kpi')
+            ->select('e_name', 'm_name', 'j_name', 'k_indicator', 'k_isactive', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi')
+            ->where('ke_employee', '=', $emp)->offset(1)->take(100)->get();
+        
+        return view('sdm.kinerjasdm.kpipegawai.edit', compact('employee', 'kpi', 'kpi2', 'kpiemp_first', 'kpiemp'));
+    }
+
+    public function update_kpi_pegawai(Request $request)
+    {
+        // return json_encode($request->all());
+        $emp = $request->employee;
+
+        DB::beginTransaction();
+        try {
+            
+            DB::table('d_kpiemp')->where('ke_employee', $emp)->delete();
+        
+            $indicator = $request->indicator;
+            for ($i=0; $i < count($indicator); $i++) { 
+                DB::table('d_kpiemp')->insert([
+                    'ke_kpi'      => $indicator[$i],
+                    'ke_detailid' => DB::table('d_kpiemp')->where('ke_kpi', $indicator[$i])->max('ke_detailid') + 1,
+                    'ke_type'     => 'P',
+                    'ke_employee' => $request->ke_employee,
+                    'ke_weight'   => $request->bobot[$i],
+                    'ke_target'   => $request->target[$i]
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'data'   => ''
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status'  => 'Gagal',
+                'message' => $e
+            ]);
+        }
     }
 }
