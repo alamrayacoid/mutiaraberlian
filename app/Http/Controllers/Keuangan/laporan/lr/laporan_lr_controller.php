@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Keuangan\laporan\neraca;
+namespace App\Http\Controllers\keuangan\laporan\lr;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Model\keuangan\dk_jurnal as jurnal;
 use App\Model\keuangan\dk_hierarki_satu as level_1;
-use App\Helper\keuangan\laporan\laporan as laporan;
 
 use DB;
 use Auth;
 
-class laporan_neraca_controller extends Controller
+class laporan_lr_controller extends Controller
 {
     protected function index(){
     	$cabang = json_encode(DB::table('m_company')
@@ -19,11 +18,10 @@ class laporan_neraca_controller extends Controller
                     ->select('c_id as id', 'c_name as text')
                     ->get());
 
-    	return view('keuangan.laporan.neraca.index', compact('cabang'));
+    	return view('keuangan.laporan.lr.index', compact('cabang'));
     }
 
     protected function resource(Request $request){
-
     	try {
     		$d1 = $periode = 0;
 
@@ -36,7 +34,7 @@ class laporan_neraca_controller extends Controller
 	        if($request->lap_cabang == 'all'){
     			$data = [];
     		}else{
-		        $data = level_1::where('hs_id', '<=', '3')
+		        $data = level_1::where('hs_id', '>', '3')
 		                    ->with([
 		                        'subclass' => function($query) use ($d1){
 		                            $query->select('hs_id', 'hs_nama', 'hs_level_1')
@@ -54,7 +52,7 @@ class laporan_neraca_controller extends Controller
 		                                                                    'ak_kelompok',
 		                                                                    'ak_nama',
 		                                                                    'ak_posisi',
-		                                                                    DB::raw('coalesce(as_saldo_akhir, 2) as saldo_akhir')
+		                                                                    DB::raw('coalesce((as_saldo_akhir - as_saldo_awal), 2) as saldo_akhir')
 		                                                                );
 		                                                    }
 		                                                ]);
@@ -70,16 +68,11 @@ class laporan_neraca_controller extends Controller
     			}
 		    }
 
-		    $saldoLaba = laporan::getSaldoLaba($request);
-
-		    if($saldoLaba['status'] != 'success')
-		    	return $saldoLaba;
 
 	        return json_encode([
 	    		"data"	        => $data,
-	            "namaCabang" 	=> $namaCabang,
-	            "periode"		=> $periode,
-	            'saldoLaba'		=> $saldoLaba['data']
+	            "namaCabang" => $namaCabang,
+	            "periode"	=> $periode,
 	    	]);
 
     	} catch (Exception $e) {

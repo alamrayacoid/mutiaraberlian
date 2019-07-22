@@ -958,6 +958,15 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses'  => 'keuangan\laporan\neraca\laporan_neraca_controller@resource'
                 ])->name('laporan.keuangan.neraca.resource');
 
+                // laporan Laba Rugi
+                Route::get('modul/keuangan/laporan/laba_rugi', [
+                    'uses'  => 'keuangan\laporan\lr\laporan_lr_controller@index'
+                ])->name('laporan.keuangan.lr');
+
+                Route::get('modul/keuangan/laporan/laba_rugi/resource', [
+                    'uses'  => 'keuangan\laporan\lr\laporan_lr_controller@resource'
+                ])->name('laporan.keuangan.lr.resource');
+
 
     // Selesai Dirga
 });

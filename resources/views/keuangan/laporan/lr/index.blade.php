@@ -5,7 +5,7 @@
 		<meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Laporan Neraca</title>
+		<title>Laporan Laba Rugi</title>
         
         <link rel="stylesheet" type="text/css" href="{{asset('assets/css/app.css')}}">
 		<link rel="stylesheet" type="text/css" href="{{ asset('modul_keuangan/bootstrap_4_1_3/css/bootstrap.min.css') }}">
@@ -112,7 +112,7 @@
 		    }
 
 		    #contentnya{
-	          width: 65%;
+	          width: 55%;
 	          padding: 0px 20px;
 	          background: white;
 	          min-height: 700px;
@@ -216,14 +216,14 @@
 
 				            <tr>
 				              <th style="text-align: center; font-size: 14pt; color: #0099CC; font-weight: bold;" colspan="2">
-				              	Laporan Neraca
+				              	Laporan Laba Rugi
 				              </th>
 				            </tr>
 
 				            <tr>
 				              <th style="text-align: center; font-size: 8pt; font-weight: 500; padding-bottom: 10px; color: #666; font-style: italic;">
 				              	
-				              		@{{ single.periode }}
+				              		Periode @{{ single.periode }}
 				              </th>
 				            </tr>
 				          </thead>
@@ -239,68 +239,12 @@
 				        </table>
 
 				        <table class="table-data" width="100%" style="font-size: 8pt; margin-top: 15px;" border="0">
-				        	<thead>
-				        		<tr>
-				        			<th width="50%" style="text-align: center; border-bottom: 1px solid #ccc; padding: 5px; border-top: 1px solid #ccc;">Aktiva</th>
-				        			<th width="50%" style="text-align: center; border-bottom: 1px solid #ccc; padding: 5px; border-top: 1px solid #ccc;">Pasiva</th>
-				        		</tr>
-				        	</thead>
-
 				        	<tbody>
 				        		<tr>
-				        			<td style="padding: 0px; border-right: 1px solid #ccc; vertical-align: top;">
-				        				<table class="table-data" width="100%" style="font-size: 9pt; margin-top: 0px;" border="0">
-				        					<tbody>
-				        						<template v-for="(level1, idx) in data" v-if="level1.hs_id == 1">
-				        							<tr>
-					        							<td colspan="2" style="font-weight: bold; background: none;">@{{ level1.hs_nama }}</td>
-					        						</tr>
-
-					        						<template v-for="(subclass, idx) in level1.subclass">
-					        							<tr>
-					        								<td colspan="2" style="padding-left: 20px; font-style: italic; font-weight: 600; background: none" v-if="subclass.hs_nama != 'Tidak Memiliki'">@{{ subclass.hs_nama }}</td>
-					        							</tr>
-
-					        							<template v-for="(level2, idx) in subclass.level2">
-					        								<tr>
-					        									<td colspan="2" style="padding-left: 35px; font-weight: 600; color: #0099CC; background: none">
-					        										@{{ level2.hd_nomor+' - '+level2.hd_nama }}
-					        									</td>
-					        								</tr>
-
-					        								<template v-for="(akun, idx) in level2.akun">
-						        								<tr>
-						        									<td style="padding-left: 50px; font-weight: normal; font-style: italic;">
-						        										@{{ akun.ak_nomor+' - '+akun.ak_nama }}
-						        									</td>
-
-						        									<td style="text-align: right">@{{ humanizePrice(akun.saldo_akhir) }}</td>
-						        								</tr>
-						        							</template>
-
-						        							<tr>
-						        								<td style="padding-left: 35px; font-weight: 600; color: #0099CC; background: none;">
-					        										@{{ 'Total '+level2.hd_nama }}
-					        									</td>
-
-					        									<td style="text-align: right; border-top: 1px solid #aaa; font-weight: bold">@{{ humanizePrice(detail.level2[level2.hd_nomor]) }}</td>
-						        							</tr>
-
-						        							<tr><td colspan="2" style="padding: 0px;">.</td></tr>
-					        							</template>
-
-					        						</template>
-
-					        						<!-- <tr><td>&nbsp;</td></tr> -->
-				        						</template>
-				        					</tbody>
-				        				</table>
-				        			</td>
-
 				        			<td style="vertical-align: top; padding: 0px;">
 				        				<table class="table-data" width="100%" style="font-size: 9pt; margin-top: 0px;" border="0">
 				        					<tbody>
-				        						<template v-for="(level1, idx) in data" v-if="level1.hs_id != 1">
+				        						<template v-for="(level1, idx) in data" v-if="level1.hs_id < 6">
 				        							<tr>
 					        							<td colspan="2" style="font-weight: bold; background: none;">@{{ level1.hs_nama }}</td>
 					        						</tr>
@@ -323,37 +267,192 @@
 						        										@{{ akun.ak_nomor+' - '+akun.ak_nama }}
 						        									</td>
 
-						        									<td style="text-align: right">@{{ humanizePrice(akun.saldo_akhir) }}</td>
+						        									<td style="text-align: right">@{{ (akun.ak_posisi == 'D') ? humanizePrice(akun.saldo_akhir * -1) : humanizePrice(akun.saldo_akhir) }}</td>
 						        								</tr>
 						        							</template>
 
-						        							<tr>
-						        								<td style="padding-left: 35px; font-weight: 600; color: #0099CC; background: none;">
-					        										@{{ 'Total '+level2.hd_nama }}
-					        									</td>
-
-					        									<td style="text-align: right; border-top: 1px solid #aaa; font-weight: bold">@{{ humanizePrice(detail.level2[level2.hd_nomor]) }}</td>
-						        							</tr>
-
-						        							<tr><td colspan="2" style="padding: 0px;">.</td></tr>
 					        							</template>
 
 					        						</template>
 
-					        						<template v-if="level1.hs_id == 3">
-					        							<tr>
-				        									<td style="padding-left: 35px; font-weight: 600; color: #0099CC; background: none">
-				        										Saldo Laba Berjalan
-				        									</td>
+					        						<tr>
+				        								<td style="font-weight: bold; background: none;">
+			        										@{{ 'Total '+level1.hs_nama }}
+			        									</td>
 
-				        									<td style="text-align: right; font-weight: 600; color: #0099CC; background: none">
-				        										@{{ humanizePrice(saldoLaba) }}
-				        									</td>
-				        								</tr>
+			        									<td style="text-align: right; border-top: 1px solid #aaa; font-weight: bold">@{{ humanizePrice(detail.level1[level1.hs_id]) }}</td>
+				        							</tr>
+
+				        							<tr><td colspan="2" style="padding: 0px;">.</td></tr>
+
+				        						</template>
+
+				        						<tr>
+		        									<td style="padding-left: 35px; font-weight: 600; color: #0d47a1; background: none">
+		        										Total Laba Rugi Kotor
+		        									</td>
+
+		        									<td style="text-align: right; padding-left: 35px; font-weight: 600; color: #0d47a1; background: none">@{{ humanizePrice(detail.lr_kotor) }}</td>
+		        								</tr>
+
+		        								<tr><td colspan="2" style="padding: 0px;">.</td></tr>
+
+		        								<template v-for="(level1, idx) in data" v-if="level1.hs_id < 8 && level1.hs_id > 5">
+				        							<tr>
+					        							<td colspan="2" style="font-weight: bold; background: none;">@{{ level1.hs_nama }}</td>
+					        						</tr>
+
+					        						<template v-for="(subclass, idx) in level1.subclass">
+					        							<tr>
+					        								<td colspan="2" style="padding-left: 20px; font-style: italic; font-weight: 600; background: none" v-if="subclass.hs_nama != 'Tidak Memiliki'">@{{ subclass.hs_nama }}</td>
+					        							</tr>
+
+					        							<template v-for="(level2, idx) in subclass.level2">
+					        								<tr>
+					        									<td colspan="2" style="padding-left: 35px; font-weight: 600; color: #0099CC; background: none">
+					        										@{{ level2.hd_nomor+' - '+level2.hd_nama }}
+					        									</td>
+					        								</tr>
+
+					        								<template v-for="(akun, idx) in level2.akun">
+						        								<tr>
+						        									<td style="padding-left: 50px; font-weight: normal; font-style: italic;">
+						        										@{{ akun.ak_nomor+' - '+akun.ak_nama }}
+						        									</td>
+
+						        									<td style="text-align: right">@{{ (akun.ak_posisi == 'D') ? humanizePrice(akun.saldo_akhir * -1) : humanizePrice(akun.saldo_akhir) }}</td>
+						        								</tr>
+						        							</template>
+
+					        							</template>
+
 					        						</template>
 
-					        						<!-- <tr><td>&nbsp;</td></tr> -->
+					        						<tr>
+				        								<td style="font-weight: bold; background: none;">
+			        										@{{ 'Total '+level1.hs_nama }}
+			        									</td>
+
+			        									<td style="text-align: right; border-top: 1px solid #aaa; font-weight: bold">@{{ humanizePrice(detail.level1[level1.hs_id] * -1) }}</td>
+				        							</tr>
+
+				        							<tr><td colspan="2" style="padding: 0px;">.</td></tr>
+
 				        						</template>
+
+				        						<tr>
+		        									<td style="padding-left: 35px; font-weight: 600; color: #0d47a1; background: none">
+		        										Total Beban Operasi & Administrasi Umum
+		        									</td>
+
+		        									<td style="text-align: right; padding-left: 35px; font-weight: 600; color: #0d47a1; background: none">@{{ humanizePrice(detail.beban_au * -1) }}</td>
+		        								</tr>
+
+		        								<tr>
+		        									<td style="padding-left: 35px; font-weight: 600; color: #0d47a1; background: none">
+		        										Laba Setelah Beban Operasi dan AU
+		        									</td>
+
+		        									<td style="text-align: right; padding-left: 35px; font-weight: 600; color: #0d47a1; background: none">@{{ humanizePrice(detail.lr_au) }}</td>
+		        								</tr>
+
+		        								<tr><td colspan="2" style="padding: 0px;">.</td></tr>
+
+		        								<template v-for="(level1, idx) in data" v-if="level1.hs_id == 8">
+				        							<tr>
+					        							<td colspan="2" style="font-weight: bold; background: none;">@{{ level1.hs_nama }}</td>
+					        						</tr>
+
+					        						<template v-for="(subclass, idx) in level1.subclass">
+					        							<tr>
+					        								<td colspan="2" style="padding-left: 20px; font-style: italic; font-weight: 600; background: none" v-if="subclass.hs_nama != 'Tidak Memiliki'">@{{ subclass.hs_nama }}</td>
+					        							</tr>
+
+					        							<template v-for="(level2, idx) in subclass.level2">
+					        								<tr>
+					        									<td colspan="2" style="padding-left: 35px; font-weight: 600; color: #0099CC; background: none">
+					        										@{{ level2.hd_nomor+' - '+level2.hd_nama }}
+					        									</td>
+					        								</tr>
+
+					        								<template v-for="(akun, idx) in level2.akun">
+						        								<tr>
+						        									<td style="padding-left: 50px; font-weight: normal; font-style: italic;">
+						        										@{{ akun.ak_nomor+' - '+akun.ak_nama }}
+						        									</td>
+
+						        									<td style="text-align: right">@{{ (akun.ak_posisi == 'D') ? humanizePrice(akun.saldo_akhir * -1) : humanizePrice(akun.saldo_akhir) }}</td>
+						        								</tr>
+						        							</template>
+
+					        							</template>
+
+					        						</template>
+
+					        						<tr>
+				        								<td style="font-weight: bold; background: none;">
+			        										@{{ 'Total '+level1.hs_nama }}
+			        									</td>
+
+			        									<td style="text-align: right; border-top: 1px solid #aaa; font-weight: bold">@{{ humanizePrice(detail.level1[level1.hs_id]) }}</td>
+				        							</tr>
+
+				        							<tr><td colspan="2" style="padding: 0px;">.</td></tr>
+
+				        						</template>
+
+				        						<template v-for="(level1, idx) in data" v-if="level1.hs_id == 9">
+				        							<tr>
+					        							<td colspan="2" style="font-weight: bold; background: none;">@{{ level1.hs_nama }}</td>
+					        						</tr>
+
+					        						<template v-for="(subclass, idx) in level1.subclass">
+					        							<tr>
+					        								<td colspan="2" style="padding-left: 20px; font-style: italic; font-weight: 600; background: none" v-if="subclass.hs_nama != 'Tidak Memiliki'">@{{ subclass.hs_nama }}</td>
+					        							</tr>
+
+					        							<template v-for="(level2, idx) in subclass.level2">
+					        								<tr>
+					        									<td colspan="2" style="padding-left: 35px; font-weight: 600; color: #0099CC; background: none">
+					        										@{{ level2.hd_nomor+' - '+level2.hd_nama }}
+					        									</td>
+					        								</tr>
+
+					        								<template v-for="(akun, idx) in level2.akun">
+						        								<tr>
+						        									<td style="padding-left: 50px; font-weight: normal; font-style: italic;">
+						        										@{{ akun.ak_nomor+' - '+akun.ak_nama }}
+						        									</td>
+
+						        									<td style="text-align: right">@{{ (akun.ak_posisi == 'D') ? humanizePrice(akun.saldo_akhir * -1) : humanizePrice(akun.saldo_akhir) }}</td>
+						        								</tr>
+						        							</template>
+
+					        							</template>
+
+					        						</template>
+
+					        						<tr>
+				        								<td style="font-weight: bold; background: none;">
+			        										@{{ 'Total '+level1.hs_nama }}
+			        									</td>
+
+			        									<td style="text-align: right; border-top: 1px solid #aaa; font-weight: bold">@{{ humanizePrice(detail.level1[level1.hs_id] * -1) }}</td>
+				        							</tr>
+
+				        							<tr><td colspan="2" style="padding: 0px;">.</td></tr>
+
+				        						</template>
+
+				        						<tr>
+		        									<td style="padding-left: 35px; font-weight: 600; color: #0d47a1; background: none">
+		        										Total Pendapatan Bersih
+		        									</td>
+
+		        									<td style="text-align: right; padding-left: 35px; font-weight: 600; color: #0d47a1; background: none">@{{ humanizePrice(detail.lr) }}</td>
+		        								</tr>
+
+		        								<tr><td colspan="2" style="padding: 0px;">.</td></tr>
 				        					</tbody>
 				        				</table>
 				        			</td>
@@ -366,21 +465,9 @@
 				        				<table class="table-data" width="100%" style="font-size: 9pt; margin-top: 0px;" border="0">
 				        					<tbody>
 				        						<tr>
-				        							<td style="font-weight: bold; text-align: center;">Total Aktiva</td>
+				        							<td style="font-weight: bold; text-align: center;">&nbsp;</td>
 				        							<td style="font-weight: bold; text-align: right;">
-				        								@{{ humanizePrice(detail.totAktiva) }}
-				        							</td>
-				        						</tr>
-				        					</tbody>
-				        				</table>
-				        			</th>
-				        			<th width="50%" style="text-align: center; border-bottom: 1px solid #ccc; padding: 5px; border-top: 1px solid #ccc">
-				        				<table class="table-data" width="100%" style="font-size: 9pt; margin-top: 0px;" border="0">
-				        					<tbody>
-				        						<tr>
-				        							<td style="font-weight: bold; text-align: center;">Total Pasiva</td>
-				        							<td style="font-weight: bold; text-align: right;">
-				        								@{{ humanizePrice(detail.totPasiva + saldoLaba) }}
+				        								&nbsp;
 				        							</td>
 				        						</tr>
 				        					</tbody>
@@ -401,34 +488,34 @@
 							<div class="card">
 	                            <div class="card-header bordered p-2">
 	                                <div class="header-block">
-	                                    <h3 class="title"> Setting Laporan Neraca </h3>
+	                                    <h3 class="title"> Setting Laporan Laba Rugi </h3>
 	                                </div>
 	                            </div>
 	                            <div class="card-block">
-	                                <form id="data-form" enctype="multipart/form-data" action="{{ Route('laporan.keuangan.neraca') }}">
+	                                <form id="data-form" enctype="multipart/form-data" action="{{ Route('laporan.keuangan.lr') }}">
 	                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" readonly>
 	                                    <section>
 	                                        <div class="row keuangan-form" style="border-bottom: 0px solid #ddd; padding-bottom: 30px;">
 	                                            <div class="col-md-12" style="border-right: 1px solid #ddd;">
 	                                                <div class="col-md-12">
 	                                                	<div class="row" style="margin-top: 0px;">
-	                                                        <div class="col-md-5 label">Neraca Milik</div>
+	                                                        <div class="col-md-5 label">Laporan Milik</div>
 	                                                        <div class="col-md-7">
 	                                                            <vue-select :name="'lap_cabang'" :id="'lap_cabang'" :options="lap_cabang" :search="false" v-model="single.lap_cabang"></vue-select>
 	                                                        </div>
 	                                                    </div>
 
 	                                                    <div class="row" style="margin-top: 15px;">
-	                                                        <div class="col-md-5 label">Jenis Neraca</div>
+	                                                        <div class="col-md-5 label">Jenis Laporan</div>
 	                                                        <div class="col-md-7">
 	                                                            <vue-select :name="'lap_jenis'" :id="'lap_jenis'" :options="lap_jenis" :search="false" v-model="single.lap_jenis"></vue-select>
 	                                                        </div>
 	                                                    </div>
 
 	                                                    <div class="row" style="margin-top: 15px;">
-	                                                        <div class="col-md-5 label">Periode Neraca</div>
+	                                                        <div class="col-md-5 label">Periode Laporan</div>
 	                                                        <div class="col-md-7">
-	                                                        	<vue-datepicker :name="'lap_tanggal_awal'" :id="'lap_tanggal_awal'" :class="'form-control'" :placeholder="'Pilih Periode Neraca'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_awal" :style="'font-size: 8pt;'" @input="tanggalAwalChange" :format="'mm/YYYY'"></vue-datepicker>
+	                                                        	<vue-datepicker :name="'lap_tanggal_awal'" :id="'lap_tanggal_awal'" :class="'form-control'" :placeholder="'Pilih Periode Laba Rugi'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_awal" :style="'font-size: 8pt;'" @input="tanggalAwalChange" :format="'mm/YYYY'"></vue-datepicker>
 	                                                        </div>
 	                                                    </div>
 
@@ -466,19 +553,19 @@
 				<div class="modal-dialog">
 					<div class="modal-content" style="border-radius: 5px;">
 						<div class="modal-header">
-							<span class="modal-title keuangan" id="myModalLabel">Setting Laporan Neraca</span>
+							<span class="modal-title keuangan" id="myModalLabel">Setting Laporan Laba Rugi</span>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					        	<span aria-hidden="true">&times;</span>
 					        </button>
 						</div>
 						<div class="modal-body" style="font-size: 9.5pt;">
-							<form id="data-form" enctype="multipart/form-data" action="{{ Route('laporan.keuangan.neraca') }}">
+							<form id="data-form" enctype="multipart/form-data" action="{{ Route('laporan.keuangan.lr') }}">
 								<input type="hidden" name="_token" value="{{ csrf_token() }}" readonly>
 								<div class="row keuangan-form" style="border-bottom: 0px solid #ddd; padding-bottom: 30px;">
 	                                <div class="col-md-12" style="border-right: 1px solid #ddd;">
 	                                    <div class="col-md-12">
 	                                    	<div class="row" style="margin-top: 0px;">
-	                                            <div class="col-md-5 label">Jurnal Milik</div>
+	                                            <div class="col-md-5 label">Laporan Milik</div>
 	                                            <div class="col-md-7">
 	                                                <vue-select :name="'lap_cabang'" :id="'lap_cabang'" :options="lap_cabang" :search="false" v-model="single.lap_cabang"></vue-select>
 	                                            </div>
@@ -492,9 +579,9 @@
 	                                        </div>
 
 	                                        <div class="row" style="margin-top: 15px;">
-	                                            <div class="col-md-5 label">Periode Neraca</div>
+	                                            <div class="col-md-5 label">Periode Laba Rugi</div>
                                                 <div class="col-md-7">
-                                                	<vue-datepicker :name="'lap_tanggal_awal'" :id="'lap_tanggal_awal'" :class="'form-control'" :placeholder="'Pilih Periode Neraca'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_awal" :style="'font-size: 8pt;'" @input="tanggalAwalChange" :format="'mm/YYYY'"></vue-datepicker>
+                                                	<vue-datepicker :name="'lap_tanggal_awal'" :id="'lap_tanggal_awal'" :class="'form-control'" :placeholder="'Pilih Periode Laba Rugi'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_awal" :style="'font-size: 8pt;'" @input="tanggalAwalChange" :format="'mm/YYYY'"></vue-datepicker>
                                                 </div>
 	                                        </div>
 
@@ -551,12 +638,12 @@
     				lap_jenis: [
     					{
     						id: 'B',
-    						text: 'Neraca Bulanan'
+    						text: 'Laba Rugi Bulanan'
     					},
     				],
 
     				lap_cabang: [],
-    				saldoLaba: 0,
+
     				data: [],
 
     				single: {
@@ -579,13 +666,12 @@
 	            	if(this.laporanReady == 'true'){
 	            		this.downloadingResource = true;
 
-	            		axios.get("{{ Route('laporan.keuangan.neraca.resource') }}?"+this.url.searchParams)
+	            		axios.get("{{ Route('laporan.keuangan.lr.resource') }}?"+this.url.searchParams)
 	                        .then((response) => {
 	                            this.downloadingResource = false;
 	                            this.data = response.data.data;
 	                            this.single.cabang = response.data.namaCabang;
 	                            this.single.periode = response.data.periode;
-	                            this.saldoLaba = response.data.saldoLaba;
 
 	                        }).catch((e) => {
 	                            this.downloadingResource = false;
@@ -599,29 +685,34 @@
 	            	detail: function(e){
 	            		var bucket = {
 	            				level2: new Object,
-	            				totAktiva: 0,
-	            				totPasiva: 0,
+	            				level1: new Object,
+	            				lr_kotor: 0,
+	            				beban_au: 0,
+	            				lr_au: 0,
+	            				lr: 0
 	            			}
 	            		;
 
 	            		$.each(this.data, function(a, alpha){
+	            			var level1 = 0;
 	            			$.each(alpha.subclass, function(b, beta){
 	            				$.each(beta.level2, function(c, cupcake){
 	            					var level2 = 0;
 	            					$.each(cupcake.akun, function(d, doughnut){
 	            						level2 += parseFloat(doughnut.saldo_akhir);
-
-	            						if(alpha.hs_id == 1)
-	            							bucket.totAktiva += parseFloat(doughnut.saldo_akhir);
-	            						else
-	            							bucket.totPasiva += parseFloat(doughnut.saldo_akhir);
-
+	            						level1 += parseFloat(doughnut.saldo_akhir);
 	            					})
-
 	            					bucket.level2[cupcake.hd_nomor] = level2;
 	            				})
 	            			})
+
+	            			bucket.level1[alpha.hs_id] = level1;
 	            		})
+
+	            		bucket.lr_kotor = parseFloat(bucket.level1[4]) - parseFloat(bucket.level1[5]);
+	            		bucket.beban_au = parseFloat(bucket.level1[6]) + parseFloat(bucket.level1[7]);
+	            		bucket.lr_au = parseFloat(bucket.lr_kotor) - parseFloat(bucket.beban_au);
+	            		bucket.lr = parseFloat(bucket.lr_au) + (parseFloat(bucket.level1[8]) - parseFloat(bucket.level1[9]));
 
 	            		return bucket;
 
