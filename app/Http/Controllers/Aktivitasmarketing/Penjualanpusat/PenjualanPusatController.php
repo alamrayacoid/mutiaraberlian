@@ -1059,14 +1059,16 @@ class PenjualanPusatController extends Controller
 
 
             // tambahan dirga
-                $jurnalSendOrder = $this->jurnalSendOrder($totalHpp, (float) $request->harga, $notasales);
+                $jurnalSendOrder = $this->jurnalSendOrder($totalHpp, (float) $request->harga, $notasales, $request);
+
+                // return json_encode($jurnalSendOrder);
 
                 if($jurnalSendOrder['status'] != 'berhasil')
                     return json_encode($jurnalSendOrder);
 
             // end dirga
 
-            return json_encode($request->all());
+            // return json_encode($request->all());
 
             DB::commit();
             return Response::json([
@@ -1089,7 +1091,7 @@ class PenjualanPusatController extends Controller
         }
     }
 
-     private function jurnalSendOrder(float $totHpp, float $ongkir, String $notasales){
+     private function jurnalSendOrder(float $totHpp, float $ongkir, String $notasales, Request $request){
         
         $details = [];
 
@@ -1110,7 +1112,7 @@ class PenjualanPusatController extends Controller
                                             })->where('pd_nama', 'COA Persediaan dalam perjalanan')
                                             ->first();
 
-            if(!is_null($ongkir) && $ongkir != 0){
+            if(!is_null($request->harga) && $request->harga != 0){
                 // Acc Ongkir
                     $acc_beban_ongkir = DB::table('dk_pembukuan_detail')
                                             ->where('pd_pembukuan', function($query){
@@ -1148,11 +1150,11 @@ class PenjualanPusatController extends Controller
                 "jrdt_cashflow"     => $acc_persediaan_jalan->pd_cashflow
             ]);
 
-            if(!is_null($ongkir) && $ongkir != 0){
+            if(!is_null($request->harga) && $request->harga != 0){
                 array_push($details, [
                     "jrdt_nomor"        => 2,
                     "jrdt_akun"         => $acc_beban_ongkir->pd_acc,
-                    "jrdt_value"        => $ongkir,
+                    "jrdt_value"        => $request->harga,
                     "jrdt_dk"           => "D",
                     "jrdt_keterangan"   => $acc_beban_ongkir->pd_keterangan,
                     "jrdt_cashflow"     => $acc_beban_ongkir->pd_cashflow
@@ -1168,24 +1170,83 @@ class PenjualanPusatController extends Controller
                 "jrdt_cashflow"     => $acc_persediaan->pd_cashflow,
             ]);
 
-            if(!is_null($ongkir) && $ongkir != 0){
+            if(!is_null($request->harga) && $request->harga != 0){
                 array_push($details, [
-                    "jrdt_nomor"        => 3,
+                    "jrdt_nomor"        => 4,
                     "jrdt_akun"         => $acc_kas->pd_acc,
-                    "jrdt_value"        => $ongkir,
+                    "jrdt_value"        => $request->harga,
                     "jrdt_dk"           => "K",
                     "jrdt_keterangan"   => $acc_kas->pd_keterangan,
                     "jrdt_cashflow"     => $acc_kas->pd_cashflow,
                 ]);
             }
 
-            // return json_encode($details);
+            // return $details;
 
             $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $notasales, $parrent->pe_nama, 'TK', Auth::user()->u_company);
 
             if($jurnal['status'] == 'error'){
                 return $jurnal;
             }
+
+            if($request->paymentType == 'T'){
+                $details = [];
+
+                $acc_kas = m_paymentmethod::where('pm_id', $request->paymentMethod)
+                                        ->first();
+
+                $acc_kas_ket = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Penjualan Pusat Dengan DP')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA Kas/Setara Kas')
+                                            ->first();
+
+                $acc_DP = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Penjualan Pusat Dengan DP')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA Pendapatan Dibayar Dimuka')
+                                            ->first();
+
+                $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Penjualan Pusat Dengan DP')
+                        ->where('pe_comp', Auth::user()->u_company)->first();
+
+                if(!$parrent || !$acc_DP || !$acc_kas){
+                    return [
+                        'status' => 'gagal',
+                        'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                    ];
+                }
+
+                array_push($details, [
+                    "jrdt_nomor"        => 1,
+                    "jrdt_akun"         => $acc_kas->pm_akun,
+                    "jrdt_value"        => $request->payCash,
+                    "jrdt_dk"           => "D",
+                    "jrdt_keterangan"   => $acc_kas_ket->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_kas_ket->pd_cashflow
+                ]);
+
+                array_push($details, [
+                    "jrdt_nomor"        => 1,
+                    "jrdt_akun"         => $acc_DP->pd_acc,
+                    "jrdt_value"        => $request->payCash,
+                    "jrdt_dk"           => "K",
+                    "jrdt_keterangan"   => $acc_DP->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_DP->pd_cashflow
+                ]);
+
+                $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $notasales, $parrent->pe_nama, 'TK', Auth::user()->u_company);
+
+                if($jurnal['status'] == 'error'){
+                    return $jurnal;
+                }
+            }
+
+            // return $details;
 
             return [
                 'status' => 'berhasil',
