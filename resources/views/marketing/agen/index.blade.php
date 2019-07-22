@@ -990,6 +990,14 @@
     function setTotal() {
         let qty = $('#kuantitas').val();
         let harga = $('#harga').val();
+
+        let total = parseInt(qty) * parseInt(harga);
+        $('#total').val(total);
+    }
+
+    function checkStock() {
+        let qty = $('#kuantitas').val();
+        let harga = $('#harga').val();
         let agen = $('#nama_agen').val();
         let item = $('#id_produk').val();
 
@@ -1001,13 +1009,13 @@
             }
         })
         .then(function (response) {
-            console.log(response);
             if (response.data.status == 'sukses') {
                 let total = parseInt(qty) * parseInt(harga);
                 $('#total').val(total);
             }
             else {
                 messageWarning('Perhatian', 'Stock tersedia : '+ parseInt(response.data.stock));
+                $('#kuantitas').val(response.data.stock);
                 let total = parseInt(response.data.stock) * parseInt(harga);
                 $('#total').val(total);
             }
@@ -1016,8 +1024,9 @@
             loadingHide();
             messageWarning('Error', 'Terjadi kesalahan !');
         });
-
     }
+
+
 
     function TableListKPW() {
         $('#table_penjualanviaweb').dataTable().fnDestroy();

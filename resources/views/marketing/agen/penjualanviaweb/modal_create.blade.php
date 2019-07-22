@@ -67,7 +67,7 @@
                     <div class="row form-group">
                         <label for="kuantitas" class="col-2 col-form-label">Kuantitas :</label>
                         <div class="col-4">
-                            <input type="number" class="form-control-sm form-control" id="kuantitas" min="0" onkeyup="setTotal()">
+                            <input type="number" class="form-control-sm form-control" id="kuantitas" min="0" onkeyup="checkStock()">
                         </div>
                         <label for="satuan" class="col-2 col-form-label">Satuan :</label>
                         <div class="col-4">
