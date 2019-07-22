@@ -1065,7 +1065,6 @@
                 $('#idagen_modaldt').val(response.data.data.po_agen);
                 // $('#total_modaldt').val(convertToRupiah(response.data.data.pod_totalprice));
                 $('#total_modaldt').val(response.data.data.pod_totalprice);
-
                 loadingHide();
                 $('#prosesorder').modal('show');
                 setTimeout(function(){
@@ -1095,7 +1094,7 @@
                     {data: 'input', "className": "input-padding"},
                     {data: 'u_name'},
                     {data: 'pod_price'},
-                    {data: 'discount'},
+                    {data: 'discount', "className": "input-padding"},
                     {data: 'pod_totalprice'},
                     {data: 'kode'}
                 ],
