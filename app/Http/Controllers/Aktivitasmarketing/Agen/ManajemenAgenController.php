@@ -1883,7 +1883,7 @@ class ManajemenAgenController extends Controller
             ->where('s_condition', '=', 'FINE')
             ->get();
 
-        dd($request->all(), $cek);
+        // dd($request->all(), $cek);
         if (count($cek) > 0) {
             return Response::json([
                 'status' => 'sukses'
@@ -1922,6 +1922,21 @@ class ManajemenAgenController extends Controller
 
         DB::beginTransaction();
         try {
+            // validate production-code is exist in stock-item
+            $listItemsId = array($item);
+            $prodCodeLength = array(count($listPC));
+            $validateProdCode = Mutasi::validateProductionCode(
+                $agen, // from
+                $listItemsId, // list item-id
+                $listPC, // list production-code
+                $prodCodeLength, // list production-code length each item
+                $listQtyPC // list of qty each production-code
+            );
+            if ($validateProdCode !== 'validated') {
+                DB::rollback();
+                return $validateProdCode;
+            }
+            dd('x', $validateProdCode, $agen, $listItemsId, $listPC, $prodCodeLength, $listQtyPC);
             $nota = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
             $totalPrice = intval($qty) * intval($price);
 

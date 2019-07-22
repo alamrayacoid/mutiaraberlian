@@ -976,6 +976,7 @@
                 paging: false
             });
             table_kpw.columns.adjust();
+            $('#provKPW').select2('open');
         });
         $('#createKPW').on('hide.bs.modal', function () {
             // $('#citiesKPW option:not(:first)').remove();
@@ -1304,63 +1305,62 @@
     }
 
     function addCode() {
-        console.log('addCode !');
-        // loadingShow();
+        loadingShow();
         //cek stockdt
         let agen = $('#nama_agen').val();
         let code = $('#code').val();
         let item = $('#id_produk').val();
-        // axios.get('{{ route("kelolapenjualanviawebsite.cekProductionCode") }}', {
-        //     params:{
-        //         "posisi": agen,
-        //         "kode": code,
-        //         "item": item
-        //     }
-        // })
-        // .then(function (response) {
-        //     loadingHide();
-        //     code = code.toUpperCase();
-        //     if (response.data.status == 'gagal'){
-        //         messageFailed('Peringatan', 'Kode tidak ditemukan');
-        //     } else if (response.data.status == 'sukses'){
-        //         let qty = $('#code_qty').val();
-        //         if (qty == '' || qty == 0 || qty == null){
-        //             qty = 1;
-        //         } else if (true) {}{
-        //
-        //         }
-        //         let values = $("input[name='code[]']")
-        //             .map(function(){return $(this).val();}).get();
-        //         if (!values.includes(code)){
-        //             ++counter;
-        //             table_kpw.row.add([
-        //                 "<input type='text' class='code form-control form-control-sm codeprod' name='code[]' value='"+code+"' readonly>",
-        //                 "<input type='number' class='qtycode form-control form-control-sm text-right' name='qtycode[]' value='"+qty+"'>",
-        //                 "<button class='btn btn-danger btn-sm btn-delete-"+counter+"'><i class='fa fa-close'></i></button>"
-        //             ]).draw(false);
-        //             $('#table_KPW tbody').on( 'click', '.btn-delete-'+counter, function () {
-        //                 table_kpw
-        //                     .row( $(this).parents('tr') )
-        //                     .remove()
-        //                     .draw();
-        //             } );
-        //             $('#code').val('');
-        //             $('#code_qty').val('');
-        //             $('#code').focus();
-        //         } else {
-        //             messageWarning("Perhatian", "Kode sudah ada");
-        //             let idx = values.indexOf(code);
-        //             let qtylama = $('.qtycode').eq(idx).val();
-        //             let total = parseInt(qty) + parseInt(qtylama);
-        //             $('.qtycode').eq(idx).val(total);
-        //             $('.qtycode').eq(idx).focus();
-        //         }
-        //     }
-        // })
-        // .catch(function (error) {
-        //     loadingHide();
-        //     alert('error');
-        // });
+        axios.get('{{ route("kelolapenjualanviawebsite.cekProductionCode") }}', {
+            params:{
+                "posisi": agen,
+                "kode": code,
+                "item": item
+            }
+        })
+        .then(function (response) {
+            loadingHide();
+            code = code.toUpperCase();
+            if (response.data.status == 'gagal'){
+                messageFailed('Peringatan', 'Kode tidak ditemukan');
+            } else if (response.data.status == 'sukses'){
+                let qty = $('#code_qty').val();
+                if (qty == '' || qty == 0 || qty == null){
+                    qty = 1;
+                } else if (true) {}{
+
+                }
+                let values = $("input[name='code[]']")
+                    .map(function(){return $(this).val();}).get();
+                if (!values.includes(code)){
+                    ++counter;
+                    table_kpw.row.add([
+                        "<input type='text' class='code form-control form-control-sm codeprod' name='code[]' value='"+code+"' readonly>",
+                        "<input type='number' class='qtycode form-control form-control-sm text-right' name='qtycode[]' value='"+qty+"'>",
+                        "<button class='btn btn-danger btn-sm btn-delete-"+counter+"'><i class='fa fa-close'></i></button>"
+                    ]).draw(false);
+                    $('#table_KPW tbody').on( 'click', '.btn-delete-'+counter, function () {
+                        table_kpw
+                            .row( $(this).parents('tr') )
+                            .remove()
+                            .draw();
+                    } );
+                    $('#code').val('');
+                    $('#code_qty').val('');
+                    $('#code').focus();
+                } else {
+                    messageWarning("Perhatian", "Kode sudah ada");
+                    let idx = values.indexOf(code);
+                    let qtylama = $('.qtycode').eq(idx).val();
+                    let total = parseInt(qty) + parseInt(qtylama);
+                    $('.qtycode').eq(idx).val(total);
+                    $('.qtycode').eq(idx).focus();
+                }
+            }
+        })
+        .catch(function (error) {
+            loadingHide();
+            alert('error');
+        });
     }
 
     function editKPW(id) {

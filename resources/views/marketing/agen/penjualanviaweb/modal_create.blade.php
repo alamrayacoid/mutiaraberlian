@@ -1,6 +1,6 @@
 <!-- Modal -->
 <div id="createKPW" class="modal fade animated fadeIn" role="dialog">
-    <form class="formCreateKPW" action="index.html" method="post">
+    <form class="formCreateKPW">
         <div class="modal-dialog modal-lg">
 
             <!-- Modal content-->
@@ -103,7 +103,7 @@
                             onkeypress="cekCode(event)">
                         </div>
                         <div class="col-1">
-                            <button class="btn btn-primary" onclick="addCode()"><i class="fa fa-plus"></i></button>
+                            <button class="btn btn-primary" type="button" onclick="addCode()"><i class="fa fa-plus"></i></button>
                         </div>
                     </div>
                     <div class="row form-group">
@@ -121,8 +121,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="saveSalesWeb()">Simpan</button>
+                    <button type="button" class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" type="button" onclick="saveSalesWeb()">Simpan</button>
                 </div>
             </div>
 
