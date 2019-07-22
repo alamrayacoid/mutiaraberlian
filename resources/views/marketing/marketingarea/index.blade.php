@@ -2162,6 +2162,7 @@
             });
         }
         // show detail order before acceptance
+        var tableKodeProduksi;
         function showDetailAc(idx)
         {
             loadingShow();
@@ -2180,9 +2181,21 @@
                         kodeXnamaBrg = '<td>'+ val.get_item.i_code +' - '+ val.get_item.i_name +'</td>';
                         qty = '<td class="digits">'+ val.sdd_qty +'</td>';
                         unit = '<td>'+ val.get_unit.u_name +'</td>';
-                        aksi = '<td><button type="button" class="btn btn-info btn-sm" onclick="getKodeProduksi('+ val.sdd_stockdistribution +', '+ val.sdd_detailid +')">Kode Produksi</button></td>';
+                        aksi = '<td><button type="button" class="btn btn-info btn-sm" onclick="getKodeProduksi('+ val.sdd_stockdistribution +', '+ val.sdd_detailid +')">Lihat Kode</button></td>';
                         appendItem = no + kodeXnamaBrg + qty + unit + aksi;
                         $('#table_detail_ac > tbody:last-child').append('<tr>'+ appendItem +'</tr>');
+
+                        if ( $.fn.DataTable.isDataTable('#table_detail_ackode') ) {
+                            $('#table_detail_ackode').DataTable().destroy();
+                        }
+                        $('#tblRemittanceList tbody').empty();
+
+                        tableKodeProduksi = $('#table_detail_ackode').DataTable({
+                            "searching": false,
+                            "paging": false,
+                        });
+                        tableKodeProduksi.clear();
+                        $('#product_name').html('');
                     });
                     //mask digits
                     $('.digits').inputmask("currency", {
@@ -2217,7 +2230,15 @@
                 }
             }).then(function (response) {
                 loadingHide();
-                console.log(response);
+                let data = response.data;
+                for (let i = 0; i < data.length; i++) {
+                    tableKodeProduksi.row.add([
+                        i + 1,
+                        data[i].sdc_code,
+                        data[i].sdc_qty
+                    ]).draw(false);
+                }
+                $('#product_name').html(data[0].nama.i_name);
             }).catch(function (error) {
                 loadingHide();
                 alert('error');
