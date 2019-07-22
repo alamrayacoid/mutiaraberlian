@@ -79,8 +79,7 @@
                     <div class="row form-group">
                         <label for="harga" class="col-2 col-form-label">Harga/<span id="label-satuan">-</span> :</label>
                         <div class="col-4">
-                            <input type="text" class="form-control-sm form-control input-harga" id="harga"
-                            onkeyup="setTotal()">
+                            <input type="text" class="form-control-sm form-control input-harga" id="harga" onkeyup="setTotal()">
                         </div>
                         <label for="total" class="col-2 col-form-label">Total :</label>
                         <div class="col-4">
@@ -95,15 +94,13 @@
                     </div>
                     <div class="row form-group">
                         <div class="col-8">
-                            <input type="text" class="form-control-sm form-control" id="code" onkeypress="cekCode(event)"
-                            placeholder="Kode Produksi" style="text-transform: uppercase">
+                            <input type="text" class="form-control-sm form-control" id="code" placeholder="Kode Produksi" style="text-transform: uppercase">
                         </div>
                         <div class="col-3">
-                            <input type="number" class="form-control-sm form-control" id="code_qty"
-                            onkeypress="cekCode(event)">
+                            <input type="number" class="form-control-sm form-control" id="code_qty">
                         </div>
                         <div class="col-1">
-                            <button class="btn btn-primary" type="button" onclick="addCode()"><i class="fa fa-plus"></i></button>
+                            <button class="btn btn-primary" type="button" id="btnAddCodeKPW" onclick="addCode()"><i class="fa fa-plus"></i></button>
                         </div>
                     </div>
                     <div class="row form-group">

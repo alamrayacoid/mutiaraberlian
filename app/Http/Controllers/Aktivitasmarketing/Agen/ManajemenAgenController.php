@@ -1868,7 +1868,41 @@ class ManajemenAgenController extends Controller
         }
         return Response::json($hasilItem);
     }
+    // check item-stock
+    public function getStockKPW(Request $request)
+    {
+        $posisi = $request->posisi;
+        $item = $request->item;
+        $qty = $request->qty;
 
+        $stock = d_stock::where('s_position', '=', $posisi)
+            ->where('s_item', '=', $item)
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('s_condition', '=', 'FINE')
+            ->select('s_qty')
+            ->get();
+
+        $stockQty = 0;
+        if (count($stock) > 0) {
+            foreach ($stock as $key => $val) {
+                $stockQty += (int)$val->s_qty;
+            }
+        }
+
+        if ($qty <= $stockQty) {
+            return Response::json([
+                'status' => 'sukses',
+                'stock' => $stockQty
+            ]);
+        }
+        else {
+            return Response::json([
+                'status' => 'gagal',
+                'stock' => $stockQty
+            ]);
+        }
+    }
+    // cek production code
     public function cekProductionCode(Request $request)
     {
         $posisi = $request->posisi;
@@ -1936,7 +1970,7 @@ class ManajemenAgenController extends Controller
                 DB::rollback();
                 return $validateProdCode;
             }
-            dd('x', $validateProdCode, $agen, $listItemsId, $listPC, $prodCodeLength, $listQtyPC);
+
             $nota = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
             $totalPrice = intval($qty) * intval($price);
 
