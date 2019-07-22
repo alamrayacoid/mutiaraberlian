@@ -222,6 +222,14 @@
     }
 
     $(document).ready(function () {
+
+        @if(Session::has('message'))
+            alert('{{ Session::get('message') }}');
+        @endif
+
+        $('#modal_periode').modal('show');
+        $('#modal_periode_awal_success').modal('show');
+
         $("input[type='number']").keydown(function (e) {
             // Allow: backspace, delete, tab, escape, enter and .
             if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||

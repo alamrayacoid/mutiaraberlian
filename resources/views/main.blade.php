@@ -44,14 +44,17 @@
     <div id="cover-spin"></div>
 
 	<div class="main-wrapper">
-    <div class="app" id="app">
-    	@include('layouts._sidebar')
+        <div class="app" id="app">
+        	@include('layouts._sidebar')
 
-    	@yield('content')
+        	@yield('content')
 
-    	@include('layouts._footer')
+        	@include('layouts._footer')
+        </div>
     </div>
-  </div>
+
+    @include('layouts._modal')
+
   @include('layouts._script')
 
   @yield('extra_script')
