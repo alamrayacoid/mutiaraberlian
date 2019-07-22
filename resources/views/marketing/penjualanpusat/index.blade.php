@@ -269,6 +269,7 @@
         setTimeout(function () {
             tb_target = $('#table_target').DataTable({
                 responsive: true,
+                processing: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('targetReal.list') }}",
@@ -523,6 +524,7 @@
             success:function(resp) {
                 $('#paymentMethod').empty();
                 // $('#paymentMethod').append('<option value="" selected disabled>== Pilih Metode Pembayaran ==</option>');
+                console.log(resp);
                 $.each(resp.data, function(key, val){
                     $('#paymentMethod').append('<option value="'+ val.pm_id +'">'+ val.get_akun.ak_nomor +' - '+ val.pm_name +'</option>');
                 });

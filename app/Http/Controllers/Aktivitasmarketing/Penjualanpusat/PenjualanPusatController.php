@@ -322,13 +322,17 @@ class PenjualanPusatController extends Controller
     // Target Realisasi
     public function targetList()
     {
+        $sekarang = Carbon::now('Asia/Jakarta');
         $target = DB::table('d_salestargetdt')
             ->join('d_salestarget', 'std_salestarget', 'st_id')
             ->join('m_item', 'std_item', 'i_id')
             ->join('m_unit', 'std_unit', 'u_id')
             ->join('m_company', 'st_comp', 'c_id')
             ->select('d_salestargetdt.*', DB::raw('concat(std_qty, " ", u_name) as target'), 'st_id', 'c_name', DB::raw("concat(i_code, '-', i_name) as i_name"), 'st_periode', DB::raw('date_format(st_periode, "%m/%Y") as st_periode'))
+            ->whereMonth('st_periode', '=', $sekarang->format('m'))
+            ->whereYear('st_periode', '=', $sekarang->format('Y'))
             ->get();
+
         return Datatables::of($target)
             ->addIndexColumn()
             ->addColumn('status', function ($target) {
@@ -776,8 +780,8 @@ class PenjualanPusatController extends Controller
     public function getPaymentMethod()
     {
         $data = m_paymentmethod::where('pm_isactive', 'Y')
-        ->with('getAkun')
-        ->get();
+            ->with('getAkun')
+            ->get();
 
         return response()->json([
             'data' => $data
