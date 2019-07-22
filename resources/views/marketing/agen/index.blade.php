@@ -884,14 +884,6 @@
             // unmaskAsNumber: true,
         });
 
-        function setTotal() {
-            let qty = $('#kuantitas').val();
-            let harga = $('#harga').val();
-
-            let total = parseInt(qty) * parseInt(harga);
-            $('#total').val(total);
-        }
-
         $('#satuan').change(function(){
             var selected = $(this).find('option:selected').data('nama');
             $('#label-satuan').html(selected);
@@ -966,6 +958,15 @@
             TableListKPW();
         });
 
+        // add new code-production
+        // $('#code_qty').on('keypress', function(e) {
+            // cannot used, after enter always reset the table of production-code
+            // if(e.which == 13) {
+            //     $('#btnAddCodeKPW').trigger('click');
+            // }
+            // console.log('entered !');
+        // });
+
         $('#createKPW').on('shown.bs.modal', function () {
             table_kpw.clear().destroy();
             table_kpw = $('#table_KPW').DataTable({
@@ -985,6 +986,38 @@
             $('.formCreateKPW')[0].reset();
         });
     });
+
+    function setTotal() {
+        let qty = $('#kuantitas').val();
+        let harga = $('#harga').val();
+        let agen = $('#nama_agen').val();
+        let item = $('#id_produk').val();
+
+        axios.get("{{ route('kelolapenjualanviawebsite.getStockKPW') }}", {
+            params:{
+                "qty": qty,
+                "posisi": agen,
+                "item": item
+            }
+        })
+        .then(function (response) {
+            console.log(response);
+            if (response.data.status == 'sukses') {
+                let total = parseInt(qty) * parseInt(harga);
+                $('#total').val(total);
+            }
+            else {
+                messageWarning('Perhatian', 'Stock tersedia : '+ parseInt(response.data.stock));
+                let total = parseInt(response.data.stock) * parseInt(harga);
+                $('#total').val(total);
+            }
+        })
+        .catch(function (error) {
+            loadingHide();
+            messageWarning('Error', 'Terjadi kesalahan !');
+        });
+
+    }
 
     function TableListKPW() {
         $('#table_penjualanviaweb').dataTable().fnDestroy();
@@ -1298,11 +1331,11 @@
         })
     }
 
-    function cekCode(e){
-        if (e.keyCode == 13){
-            addCode();
-        }
-    }
+    // function cekCode(e){
+    //     if (e.keyCode === 13){
+    //         addCode();
+    //     }
+    // }
 
     function addCode() {
         loadingShow();
@@ -1339,15 +1372,15 @@
                         "<button class='btn btn-danger btn-sm btn-delete-"+counter+"'><i class='fa fa-close'></i></button>"
                     ]).draw(false);
                     $('#table_KPW tbody').on( 'click', '.btn-delete-'+counter, function () {
-                        table_kpw
-                            .row( $(this).parents('tr') )
+                        table_kpw.row( $(this).parents('tr') )
                             .remove()
                             .draw();
                     } );
                     $('#code').val('');
                     $('#code_qty').val('');
                     $('#code').focus();
-                } else {
+                }
+                else {
                     messageWarning("Perhatian", "Kode sudah ada");
                     let idx = values.indexOf(code);
                     let qtylama = $('.qtycode').eq(idx).val();
@@ -1359,7 +1392,7 @@
         })
         .catch(function (error) {
             loadingHide();
-            alert('error');
+            messageWarning('Error', 'Terjadi kesalahan !');
         });
     }
 
@@ -1622,9 +1655,9 @@
     }
 
     function cekCodeEdit(e){
-        if (e.keyCode == 13){
-            addCodeEdit();
-        }
+        // if (e.keyCode == 13){
+        //     addCodeEdit();
+        // }
     }
 
     function setEditTotal() {
