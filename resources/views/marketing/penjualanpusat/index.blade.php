@@ -1224,20 +1224,23 @@
                 },
                 success: function (data) {
                     response(data);
+                    console.log(data);
                 }
             });
+        },select: function (suggestion) {
+            console.log('agfasdf');
         }
     });
 
-    $("#nota_s").keypress(function(e){
-        if (e.which == 13) {
-            goSearch();
-        }
-    });
+    // $("#nota_s").keypress(function(e){
+    //     if (e.which == 13) {
+    //         goSearch();
+    //     }
+    // });
 
-    $("#nota_s").on('keyup change',function(){
-        goSearch();
-    });
+    // $("#nota_s").on('keyup change',function(){
+    //     goSearch();
+    // });
 
     function goSearch() {
         let nota = $('#nota_s').val();
