@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Aktivitasmarketing\Penjualanpusat;
 
+use App\d_stockdt;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -99,33 +100,18 @@ class ReturnPenjualanController extends Controller
         $agentCode = $request->agentCode;
 
         // get list salescomp-id by agent
-        $salesComp = d_salescomp::where('sc_member', $agentCode)
-        ->where('sc_type', 'C') // chek it first
-        ->select('sc_id')
-        ->get();
+        $kode = d_stock::with('getStockDt')
+            ->where('s_position', '=', $agentCode)
+            ->get();
+        dd($kode, $agentCode);
         $listSalesCompId = array();
         foreach ($salesComp as $key => $val) {
             array_push($listSalesCompId, $val->sc_id);
         }
 
         $prodCode = d_salescompcode::whereIn('ssc_salescomp', $listSalesCompId)
-        ->groupBy('ssc_code')
-        ->get();
-
-        // if (count($prodCode) == 0) {
-        //     $results[] = [
-        //         'id' => 0,
-        //         'label' => 'Kode produksi tidak ditemukan !'
-        //     ];
-        // }
-        // else {
-        //     foreach ($prodCode as $key => $val) {
-        //         $results[] = [
-        //             'id' => $val->ssc_code,
-        //             'label' => $val->ssc_code
-        //         ];
-        //     }
-        // }
+            ->groupBy('ssc_code')
+            ->get();
 
         return response()->json($prodCode);
     }

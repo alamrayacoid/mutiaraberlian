@@ -904,7 +904,7 @@ class ManajemenAgenController extends Controller
             ->with('getPODt')
             ->first();
 
-            // return json_encode($productOrder);
+            return json_encode($productOrder->po_agen);
 
             // update stock using mutation distrtibution
             // acutually its public function, just add mutcat as condition to deal it

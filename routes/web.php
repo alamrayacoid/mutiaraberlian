@@ -191,6 +191,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/masterdatautama/masterpembayaran/detail', 'Master\PembayaranController@detail')->name('masterdatautama.detail');
     Route::post('/masterdatautama/masterpembayaran/update', 'Master\PembayaranController@update')->name('masterdatautama.update');
     Route::post('/masterdatautama/masterpembayaran/get-data', 'Master\PembayaranController@getDataPembayaran')->name('masterdatautama.getData');
+
+    // Master Cashflow
+    Route::get('/masterdatautama/mastercashflow', 'Keuangan\master\cashflow\CashflowController@index')->name('masterdatautama.mastercashflow');
+    Route::get('/masterdatautama/mastercashflow/get-data', 'Keuangan\master\cashflow\CashflowController@get_data_cashflow')->name('masterdatautama.mastercashflow_getData');
+    Route::post('/masterdatautama/mastercashflow/save', 'Keuangan\master\cashflow\CashflowController@save')->name('masterdatautama.mastercashflow_save');
+    Route::get('/masterdatautama/mastercashflow/edit/{id}', 'Keuangan\master\cashflow\CashflowController@edit')->name('masterdatautama.mastercashflow_edit');
+    Route::post('/masterdatautama/mastercashflow/update/', 'Keuangan\master\cashflow\CashflowController@update')->name('masterdatautama.mastercashflow_update');
+    Route::get('/masterdatautama/mastercashflow/delete/{id}', 'Keuangan\master\cashflow\CashflowController@delete')->name('masterdatautama.mastercashflow_delete');
     // !===================================================== End Master Data Utama =====================================================!
 
     // !===================================================== PRODUKSI =====================================================!
@@ -770,179 +778,184 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Tambahan dirga
 
+        // periode keuangan
+            Route::post('keuangan/periode_keuangan/proses', [
+                'uses'  => 'keuangan\periode\periode_controller@proses'
+            ])->name('keuangan.periode.proses');
+
         // master akun
             Route::get('keuangan/masterdatautama/akun-keuangan', [
-                'uses'  => 'Keuangan\master\akun\akun_controller@index'
+                'uses'  => 'keuangan\master\akun\akun_controller@index'
             ])->name('keuangan.akun.index');
 
             Route::get('keuangan/masterdatautama/akun-keuangan/grap', [
-                'uses'  => 'Keuangan\master\akun\akun_controller@grap'
+                'uses'  => 'keuangan\master\akun\akun_controller@grap'
             ])->name('keuangan.akun.grap');
 
             Route::get('keuangan/masterdatautama/akun-keuangan/create', [
-                'uses'  => 'Keuangan\master\akun\akun_controller@create'
+                'uses'  => 'keuangan\master\akun\akun_controller@create'
             ])->name('keuangan.akun.create');
 
             Route::get('keuangan/masterdatautama/akun-keuangan/resource', [
-                'uses'  => 'Keuangan\master\akun\akun_controller@resource'
+                'uses'  => 'keuangan\master\akun\akun_controller@resource'
             ])->name('keuangan.akun.resource');
 
             Route::post('keuangan/masterdatautama/akun-keuangan/save', [
-                'uses'  => 'Keuangan\master\akun\akun_controller@save'
+                'uses'  => 'keuangan\master\akun\akun_controller@save'
             ])->name('keuangan.akun.save');
 
             Route::post('keuangan/masterdatautama/akun-keuangan/save/akun-utama', [
-                'uses'  => 'Keuangan\master\akun\akun_controller@saveAkunUtama'
+                'uses'  => 'keuangan\master\akun\akun_controller@saveAkunUtama'
             ])->name('keuangan.akun.save.utama');
 
             Route::post('keuangan/masterdatautama/akun-keuangan/update', [
-                'uses'  => 'Keuangan\master\akun\akun_controller@update'
+                'uses'  => 'keuangan\master\akun\akun_controller@update'
             ])->name('keuangan.akun.update');
 
 
         // master akun utama
             Route::get('keuangan/masterdatautama/akun-utama', [
-                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@index'
+                'uses'  => 'keuangan\master\akun_utama\akun_utama_controller@index'
             ])->name('keuangan.akun-utama.index');
 
             Route::get('keuangan/masterdatautama/akun-utama/grap', [
-                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@grap'
+                'uses'  => 'keuangan\master\akun_utama\akun_utama_controller@grap'
             ])->name('keuangan.akun_utama.grap');
 
             Route::get('keuangan/masterdatautama/akun-utama/create', [
-                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@create'
+                'uses'  => 'keuangan\master\akun_utama\akun_utama_controller@create'
             ])->name('keuangan.akun_utama.create');
 
             Route::get('keuangan/masterdatautama/akun-utama/resource', [
-                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@resource'
+                'uses'  => 'keuangan\master\akun_utama\akun_utama_controller@resource'
             ])->name('keuangan.akun_utama.resource');
 
             Route::post('keuangan/masterdatautama/akun-utama/save', [
-                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@save'
+                'uses'  => 'keuangan\master\akun_utama\akun_utama_controller@save'
             ])->name('keuangan.akun_utama.save');
 
             Route::post('keuangan/masterdatautama/akun-utama/update', [
-                'uses'  => 'Keuangan\master\akun_utama\akun_utama_controller@update'
+                'uses'  => 'keuangan\master\akun_utama\akun_utama_controller@update'
             ])->name('keuangan.akun_utama.update');
 
 
         // Setting hierarki
             Route::get('keuangan/pengaturan/hierarki-akun', [
-                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@index'
+                'uses'  => 'keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@index'
             ])->name('keuangan.hierarki_akun.index');
 
             Route::get('keuangan/pengaturan/hierarki-akun/resource', [
-                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@resource'
+                'uses'  => 'keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@resource'
             ])->name('keuangan.hierarki_akun.resource');
 
             Route::post('keuangan/pengaturan/hierarki-akun/save/level_1', [
-                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_level_1'
+                'uses'  => 'keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_level_1'
             ])->name('keuangan.hierarki_akun.save.level_1');
 
             Route::post('keuangan/pengaturan/hierarki-akun/save/subclass', [
-                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_subclass'
+                'uses'  => 'keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_subclass'
             ])->name('keuangan.hierarki_akun.save.subclass');
 
             Route::post('keuangan/pengaturan/hierarki-akun/save/level_2', [
-                'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_level_2'
+                'uses'  => 'keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_level_2'
             ])->name('keuangan.hierarki_akun.save.level_2');
 
         // Setting coa pembukuan
             Route::get('keuangan/pengaturan/pembukuan', [
-                'uses'  => 'Keuangan\pengaturan\pembukuan\pembukuan_controller@index'
+                'uses'  => 'keuangan\pengaturan\pembukuan\pembukuan_controller@index'
             ])->name('keuangan.pembukuan.index');
 
             Route::get('keuangan/pengaturan/pembukuan/resource', [
-                'uses'  => 'Keuangan\pengaturan\pembukuan\pembukuan_controller@resource'
+                'uses'  => 'keuangan\pengaturan\pembukuan\pembukuan_controller@resource'
             ])->name('keuangan.pembukuan.resource');
 
             Route::post('keuangan/pengaturan/pembukuan/store', [
-                'uses'  => 'Keuangan\pengaturan\pembukuan\pembukuan_controller@store'
+                'uses'  => 'keuangan\pengaturan\pembukuan\pembukuan_controller@store'
             ])->name('keuangan.pembukuan.store');
 
         // Mutasi antar Kas
             Route::get('keuangan/manajemen-input-transaksi/mutasi_kas/create', [
-                'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@create'
+                'uses'  => 'keuangan\transaksi\mutasi_kas\mutasi_kas_controller@create'
             ])->name('keuangan.mutasi_kas.create');
 
             Route::get('keuangan/manajemen-input-transaksi/mutasi_kas/resource', [
-                'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@resource'
+                'uses'  => 'keuangan\transaksi\mutasi_kas\mutasi_kas_controller@resource'
             ])->name('keuangan.mutasi_kas.resource');
 
             Route::post('keuangan/manajemen-input-transaksi/mutasi_kas/save', [
-                'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@save'
+                'uses'  => 'keuangan\transaksi\mutasi_kas\mutasi_kas_controller@save'
             ])->name('keuangan.mutasi_kas.save');
 
             Route::post('keuangan/manajemen-input-transaksi/mutasi_kas/update', [
-                'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@update'
+                'uses'  => 'keuangan\transaksi\mutasi_kas\mutasi_kas_controller@update'
             ])->name('keuangan.mutasi_kas.update');
 
             Route::post('keuangan/manajemen-input-transaksi/mutasi_kas/delete', [
-                'uses'  => 'Keuangan\transaksi\mutasi_kas\mutasi_kas_controller@delete'
+                'uses'  => 'keuangan\transaksi\mutasi_kas\mutasi_kas_controller@delete'
             ])->name('keuangan.mutasi_kas.delete');
 
 
         // Transaksi Kas
             Route::get('keuangan/manajemen-input-transaksi/transaksi_kas/create', [
-                'uses'  => 'Keuangan\transaksi\transaksi_kas\transaksi_kas_controller@create'
+                'uses'  => 'keuangan\transaksi\transaksi_kas\transaksi_kas_controller@create'
             ])->name('keuangan.transaksi_kas.create');
 
             Route::get('keuangan/manajemen-input-transaksi/transaksi_kas/resource', [
-                'uses'  => 'Keuangan\transaksi\transaksi_kas\transaksi_kas_controller@resource'
+                'uses'  => 'keuangan\transaksi\transaksi_kas\transaksi_kas_controller@resource'
             ])->name('keuangan.transaksi_kas.resource');
 
             Route::post('keuangan/manajemen-input-transaksi/transaksi_kas/save', [
-                'uses'  => 'Keuangan\transaksi\transaksi_kas\transaksi_kas_controller@save'
+                'uses'  => 'keuangan\transaksi\transaksi_kas\transaksi_kas_controller@save'
             ])->name('keuangan.transaksi_kas.save');
 
             Route::post('keuangan/manajemen-input-transaksi/transaksi_kas/update', [
-                'uses'  => 'Keuangan\transaksi\transaksi_kas\transaksi_kas_controller@update'
+                'uses'  => 'keuangan\transaksi\transaksi_kas\transaksi_kas_controller@update'
             ])->name('keuangan.transaksi_kas.update');
 
             Route::post('keuangan/manajemen-input-transaksi/transaksi_kas/delete', [
-                'uses'  => 'Keuangan\transaksi\transaksi_kas\transaksi_kas_controller@delete'
+                'uses'  => 'keuangan\transaksi\transaksi_kas\transaksi_kas_controller@delete'
             ])->name('keuangan.transaksi_kas.delete');
 
 
         // Transaksi Memorial
             Route::get('keuangan/manajemen-input-transaksi/transaksi_memorial/create', [
-                'uses'  => 'Keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@create'
+                'uses'  => 'keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@create'
             ])->name('keuangan.transaksi_memorial.create');
 
             Route::get('keuangan/manajemen-input-transaksi/transaksi_memorial/resource', [
-                'uses'  => 'Keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@resource'
+                'uses'  => 'keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@resource'
             ])->name('keuangan.transaksi_memorial.resource');
 
             Route::post('keuangan/manajemen-input-transaksi/transaksi_memorial/save', [
-                'uses'  => 'Keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@save'
+                'uses'  => 'keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@save'
             ])->name('keuangan.transaksi_memorial.save');
 
             Route::post('keuangan/manajemen-input-transaksi/transaksi_memorial/update', [
-                'uses'  => 'Keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@update'
+                'uses'  => 'keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@update'
             ])->name('keuangan.transaksi_memorial.update');
 
             Route::post('keuangan/manajemen-input-transaksi/transaksi_memorial/delete', [
-                'uses'  => 'Keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@delete'
+                'uses'  => 'keuangan\transaksi\transaksi_memorial\transaksi_memorial_controller@delete'
             ])->name('keuangan.transaksi_memorial.delete');
 
 
         // laporan keuangan
             // laporan Jurnal Umum
                 Route::get('modul/keuangan/laporan/jurnal_umum', [
-                    'uses'  => 'Keuangan\laporan\jurnal\laporan_jurnal_controller@index'
+                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@index'
                 ])->name('laporan.keuangan.jurnal_umum');
 
                 Route::get('modul/keuangan/laporan/jurnal_umum/resource', [
-                    'uses'  => 'Keuangan\laporan\jurnal\laporan_jurnal_controller@resource'
+                    'uses'  => 'keuangan\laporan\jurnal\laporan_jurnal_controller@resource'
                 ])->name('laporan.keuangan.jurnal_umum.resource');
 
             // laporan Neraca
                 Route::get('modul/keuangan/laporan/neraca', [
-                    'uses'  => 'Keuangan\laporan\neraca\laporan_neraca_controller@index'
+                    'uses'  => 'keuangan\laporan\neraca\laporan_neraca_controller@index'
                 ])->name('laporan.keuangan.neraca');
 
                 Route::get('modul/keuangan/laporan/neraca/resource', [
-                    'uses'  => 'Keuangan\laporan\neraca\laporan_neraca_controller@resource'
+                    'uses'  => 'keuangan\laporan\neraca\laporan_neraca_controller@resource'
                 ])->name('laporan.keuangan.neraca.resource');
 
 

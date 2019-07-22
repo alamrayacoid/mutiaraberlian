@@ -3,6 +3,7 @@
 namespace App\Helper\keuangan\saldo;
 
 use DB;
+use Auth;
 
 class saldo_akun {
 
@@ -206,6 +207,44 @@ class saldo_akun {
 		];
 	}
 
+	static function newPeriode(String $periode){
+		$periodeNew = $periode;
+		$periodeBefore = date('Y-m-d', strtotime('-1 months', strtotime($periodeNew)));
+		$bucket = [];
+
+		$akun = DB::table('dk_akun')->where('ak_comp', Auth::user()->u_company)->select('ak_id')->get();
+
+		$id = DB::table('dk_akun_saldo')->max('as_id') + 1;
+
+		foreach ($akun as $key => $data) {
+			$dataBefore = DB::table('dk_akun_saldo')->where('as_akun', $data->ak_id)->where('as_periode', $periodeBefore)->first();
+
+			array_push($bucket, [
+				'as_id'						=> $id,
+				'as_akun'					=> $data->ak_id,
+				'as_periode'				=> $periodeNew,
+				'as_saldo_awal'				=> ($dataBefore) ? $dataBefore->as_saldo_akhir : 0,
+				'as_mut_kas_debet'			=> 0,
+				'as_mut_kas_kredit'			=> 0,
+				'as_trans_kas_debet'		=> 0,
+				'as_trans_kas_kredit'		=> 0,
+				'as_trans_memorial_debet'	=> 0,
+				'as_trans_memorial_kredit'	=> 0,
+				'as_saldo_akhir'			=> ($dataBefore) ? $dataBefore->as_saldo_akhir : 0,
+			]);
+
+			$id++;
+		}
+
+		// return $bucket;
+
+		DB::table('dk_akun_saldo')->insert($bucket);
+
+		return [
+            'status'  => 'success',
+            'text'    => ''
+        ];
+	}
 }
 
 ?>

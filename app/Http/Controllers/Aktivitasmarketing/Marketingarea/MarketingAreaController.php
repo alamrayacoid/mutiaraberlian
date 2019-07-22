@@ -1716,6 +1716,25 @@ class MarketingAreaController extends Controller
         $po_id = $productorder->po_id;
         DB::beginTransaction();
         try {
+            //validasi kuantitas kode produksi
+            $info = DB::table('d_productorderdt')
+                ->where('pod_productorder', '=', $po_id)
+                ->where('pod_item', '=', $item)
+                ->first();
+
+            if ($qty > $info->pod_qty){
+                //kuantitas melebihi jumlah pesanan
+                $barang = DB::table('m_item')
+                    ->where('i_id', '=', $item)
+                    ->first();
+
+                DB::rollBack();
+                return Response::json([
+                    "status" => "gagal",
+                    "message" => 'jumlah kode produksi ' . strtoupper($barang->i_name) . ' tidak sesuai!!!'
+                ]);
+            }
+
             $cek = DB::table('d_productordercode')
                 ->where('poc_productorder', '=', $po_id)
                 ->where('poc_item', '=', $item)
@@ -1726,6 +1745,7 @@ class MarketingAreaController extends Controller
                 //update qty
                 $qtyawal = $cek[0]->poc_qty;
                 $qtyakhir = $qtyawal + $qty;
+
                 DB::table('d_productordercode')
                     ->where('poc_productorder', '=', $po_id)
                     ->where('poc_item', '=', $item)
@@ -1733,6 +1753,26 @@ class MarketingAreaController extends Controller
                     ->update([
                         "poc_qty" => $qtyakhir
                     ]);
+
+                $info2 = DB::table('d_productordercode')
+                    ->where('poc_productorder', '=', $po_id)
+                    ->where('poc_item', '=', $item)
+                    ->select(DB::raw('sum(poc_qty) as poc_qty'))
+                    ->groupBy('poc_item')
+                    ->first();
+
+                if ($info2->poc_qty > $info->pod_qty){
+                    //kuantitas melebihi jumlah pesanan
+                    $barang = DB::table('m_item')
+                        ->where('i_id', '=', $item)
+                        ->first();
+                    DB::rollBack();
+                    return Response::json([
+                        "status" => "gagal",
+                        "message" => 'jumlah kode produksi ' . strtoupper($barang->i_name) . ' tidak sesuai!!!'
+                    ]);
+                }
+
                 DB::commit();
                 return Response::json([
                     "status" => "success"
