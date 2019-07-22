@@ -540,6 +540,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/orderproduk/show-detail-ac/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@showDetailAc')->name('orderProduk.showDetailAc');
     Route::post('/marketing/marketingarea/orderproduk/set-acceptance/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@setAcceptance')->name('orderProduk.setAcceptance');
     Route::get('/marketing/marketingarea/orderproduk/detail/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@detailOrder')->name('orderProduk.detail');
+    Route::get('/marketing/marketingarea/orderproduk/detail/get-kode-produksi', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getKodeProduksi')->name('orderProduk.getKodeProduksi');
     // End Order Ke Cabang ==================
 
     // Kelola Data Order Agen ========================================================================================

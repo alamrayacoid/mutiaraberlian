@@ -239,6 +239,7 @@ class ProsesOrderController extends Controller
                         $detailidcode = d_stockdistributioncode::where('sdc_stockdistribution', $id)
                                 ->where('sdc_stockdistributiondt', $detailid)
                                 ->max('sdc_detailid') + 1;
+
                         $distcode = new d_stockdistributioncode;
                         $distcode->sdc_stockdistribution = $id;
                         $distcode->sdc_stockdistributiondt = $detailid;

@@ -2177,10 +2177,11 @@
                     $('#table_detail_ac tbody').empty();
                     $.each(response.get_distribution_dt, function (index, val) {
                         no = '<td>'+ (index + 1) +'</td>';
-                        kodeXnamaBrg = '<td>'+ val.get_item.i_code +' / '+ val.get_item.i_name +'</td>';
+                        kodeXnamaBrg = '<td>'+ val.get_item.i_code +' - '+ val.get_item.i_name +'</td>';
                         qty = '<td class="digits">'+ val.sdd_qty +'</td>';
                         unit = '<td>'+ val.get_unit.u_name +'</td>';
-                        appendItem = no + kodeXnamaBrg + qty + unit;
+                        aksi = '<td><button type="button" class="btn btn-info btn-sm" onclick="getKodeProduksi('+ val.sdd_stockdistribution +', '+ val.sdd_detailid +')">Kode Produksi</button></td>';
+                        appendItem = no + kodeXnamaBrg + qty + unit + aksi;
                         $('#table_detail_ac > tbody:last-child').append('<tr>'+ appendItem +'</tr>');
                     });
                     //mask digits
@@ -2206,11 +2207,26 @@
                 }
             });
         }
+
+        function getKodeProduksi(id, detailid){
+            loadingShow();
+            axios.get('{{ route("orderProduk.getKodeProduksi") }}', {
+                params:{
+                    "id": id,
+                    "detailid": detailid
+                }
+            }).then(function (response) {
+                loadingHide();
+                console.log(response);
+            }).catch(function (error) {
+                loadingHide();
+                alert('error');
+            })
+        }
         // accept item that has been ordered and delivered
         function confirmAcceptance() {
             loadingShow();
             let stockdistId = $('#id_ac').val();
-            console.log(stockdistId);
             $.ajax({
                 url: baseUrl + "/marketing/marketingarea/orderproduk/set-acceptance/" + stockdistId,
                 type: "post",

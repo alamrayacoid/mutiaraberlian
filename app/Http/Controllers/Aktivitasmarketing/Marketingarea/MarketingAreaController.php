@@ -700,6 +700,12 @@ class MarketingAreaController extends Controller
             ]);
         }
     }
+
+    public function getKodeProduksi(Request $request)
+    {
+        dd($request);
+    }
+
     // return detail of order-produk
     public function detailOrder($id)
     {
