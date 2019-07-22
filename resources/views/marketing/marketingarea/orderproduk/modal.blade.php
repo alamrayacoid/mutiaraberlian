@@ -49,10 +49,27 @@
                         <thead class="bg-primary">
                             <tr>
                                 <th width="10%">No</th>
-                                <th width="50%">Kode Barang/Nama Barang</th>
-                                <th width="25%">Jumlah</th>
+                                <th width="45%">Kode Barang/Nama Barang</th>
+                                <th width="15%">Jumlah</th>
                                 <th width="15%">Satuan</th>
+                                <th width="15%">Aksi</th>
                             </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="keterangan" style="margin-top: 10px">
+                    <span>Kode Produksi untuk - <strong id="product_name"></strong></span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" cellspacing="0" id="table_detail_ackode">
+                        <thead class="bg-primary">
+                        <tr>
+                            <th width="10%">No</th>
+                            <th width="60%">Kode Produksi</th>
+                            <th width="30%">Jumlah</th>
+                        </tr>
                         </thead>
                         <tbody>
                         </tbody>

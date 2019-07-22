@@ -1117,7 +1117,7 @@ class ProduksiController extends Controller
         $detailid = (DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')) ? DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid') + 1 : 1;
         // return-po/001/23/03/2019
         $nota = CodeGenerator::codeWithSeparator('d_returnproductionorder', 'rpo_nota', 15, 10, 3, 'RETURN-PO', '/');
-
+        $nota_reff = '';
         $data_check = DB::table('d_productionorder')
             ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
                 'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
@@ -1205,17 +1205,6 @@ class ProduksiController extends Controller
 
         DB::beginTransaction();
         try {
-            $values = [
-                'rpo_productionorder' => $poid,
-                'rpo_detailid' => $detailid,
-                'rpo_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
-                'rpo_nota' => $nota,
-                'rpo_item' => $idItem,
-                'rpo_qty' => $qty_compare,
-                'rpo_action' => $request->methode_return,
-                'rpo_note' => $request->note_return
-            ];
-
             $valCode = [
                 'rpod_productionorder' => $poid,
                 'rpod_returnproductionorder' => $detailid,
@@ -1296,9 +1285,6 @@ class ProduksiController extends Controller
                         'smd_unit' => $unit
                     ]);
             }
-            // insert return
-            DB::table('d_returnproductionorder')->insert($values);
-            DB::table('d_returnproductionorderdt')->insert($valCode);
             $dataPO = DB::table('d_productionorder')
                 ->join('d_productionorderdt', 'pod_productionorder', '=', 'po_id')
                 ->where('po_nota', '=', $request->notaPO)
@@ -1312,9 +1298,9 @@ class ProduksiController extends Controller
                     ->max('pod_productionorder');
                 ++$po_id;
 
-                $po_nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'Return', '-');
+                $po_nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'RETURN', '-');
                 $totalnet = 0;
-
+                $nota_reff = $po_nota;
                 DB::table('d_productionorder')
                     ->insert([
                         'po_id' => $po_id,
@@ -1342,7 +1328,20 @@ class ProduksiController extends Controller
             } elseif ($request->methode_return == "RD"){
                 //Return Dana
             }
-            // $get_stockmutation->update($val_stockmutation);
+            //dd($request);
+            // insert return
+            DB::table('d_returnproductionorder')->insert([
+                'rpo_productionorder' => $poid,
+                'rpo_detailid' => $detailid,
+                'rpo_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                'rpo_nota' => $nota,
+                'rpo_item' => $idItem,
+                'rpo_qty' => $qty_compare,
+                'rpo_action' => $request->methode_return,
+                'rpo_note' => $request->note_return,
+                'rpo_reff' => $nota_reff
+            ]);
+            DB::table('d_returnproductionorderdt')->insert($valCode);
             DB::commit();
             return Response::json([
                 'status' => "Success",
@@ -1513,6 +1512,16 @@ class ProduksiController extends Controller
                         $q->on('rpo_detailid', '=', 'rpod_returnproductionorder');
                     })
                     ->get();
+
+                if (count($dataReturn) > 0){
+                    if ($dataReturn[0]->rpo_action == 'GB'){
+                        //delete nota pengembalian barang
+                        DB::table('d_productionorder')
+                            ->where('po_nota', '=', $dataReturn[0]->rpo_reff)
+                            ->delete();
+                    }
+                }
+
                 $dataStock = $stock->get();
                 for ($i = 0; $i < count($dataReturn); $i++){
                     $stockDt = DB::table('d_stockdt')
@@ -1569,7 +1578,7 @@ class ProduksiController extends Controller
                                     ]);
 
                                 //update stock mutation dt
-                                $mutationdt = DB::table('d_stockmutationdt')
+                                /*$mutationdt = DB::table('d_stockmutationdt')
                                     ->where('smd_stock', '=', $mutasi[$k]->sm_stock)
                                     ->where('smd_stockmutation', '=', $mutasi[$k]->sm_detailid)
                                     ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
@@ -1581,7 +1590,7 @@ class ProduksiController extends Controller
                                     ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
                                     ->update([
                                         'smd_qty' => (int)$mutationdt->smd_qty + (int)$mutasi[$k]->sm_use
-                                    ]);
+                                    ]);*/
 
                                 $jumlahreturn = $jumlahreturn - $mutasi[$k]->sm_use;
                             } else {
@@ -1600,7 +1609,7 @@ class ProduksiController extends Controller
                                     ]);
 
                                 //update stock mutation dt
-                                $mutationdt = DB::table('d_stockmutationdt')
+                                /*$mutationdt = DB::table('d_stockmutationdt')
                                     ->where('smd_stock', '=', $mutasi[$k]->sm_stock)
                                     ->where('smd_stockmutation', '=', $mutasi[$k]->sm_detailid)
                                     ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
@@ -1612,7 +1621,9 @@ class ProduksiController extends Controller
                                     ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
                                     ->update([
                                         'smd_qty' => (int)$mutationdt->smd_qty + (int)$mutasi[$k]->sm_use
-                                    ]);
+                                    ]);*/
+                                $k = count($mutasi) + 2;
+                                break;
                             }
                         }
                     }
@@ -1621,7 +1632,9 @@ class ProduksiController extends Controller
                 /*$stock_mutation->update($val_mutasi);
                 $stock->update($val_stock);*/
                 $return_po->delete();
-
+                $stock->update([
+                    's_qty' => $dataStock[0]->s_qty + $qty
+                ]);
                 DB::table('d_stock_mutation')
                     ->where('sm_nota', '=', $dataReturn[0]->rpo_nota)
                     ->delete();

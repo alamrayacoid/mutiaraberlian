@@ -36,7 +36,7 @@
 				</div>
 			</div>
 				<div class="table-responsive">
-					<table class="table table-hover table-striped" cellspacing="0" id="table_dataAgen">
+					<table class="table table-hover table-striped w-100" cellspacing="0" id="table_dataAgen">
 						<thead class="bg-primary">
 							<tr>
 								<th width="10%">Tanggal</th>

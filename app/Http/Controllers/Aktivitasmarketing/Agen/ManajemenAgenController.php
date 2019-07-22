@@ -10,10 +10,12 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 use Auth;
+use App\d_productorder;
 use App\d_sales;
 use App\d_salescode;
 use App\d_salesdt;
 use App\d_salesprice;
+use App\d_salesweb;
 use App\d_stock;
 use App\d_username;
 use App\m_agen;
@@ -85,6 +87,7 @@ class ManajemenAgenController extends Controller
             ->where('m_agen.a_provinsi', '=', $prov)
             ->where('m_agen.a_kabupaten', '=', $kota)
             ->get();
+            // dd($data, $prov, $kota);
         return Response::json($data);
     }
 
@@ -373,9 +376,11 @@ class ManajemenAgenController extends Controller
         if (!AksesUser::checkAkses(23, 'create')) {
             return Response::json([
                 'status' => "Failed",
-                'message' => 'Anda tidak memiliki akses'
+                'message' => 'Anda tidak memiliki akses ke menu ini !'
             ]);
         }
+
+
         $data = $request->all();
 
         if ($data['select_order'] == "1") {
@@ -523,6 +528,7 @@ class ManajemenAgenController extends Controller
         if (!AksesUser::checkAkses(23, 'create')) {
             abort('401');
         }
+
         $data = 'employee';
         if (Auth::user()->u_user == 'A') {
             $data = DB::table('m_agen')
@@ -568,7 +574,6 @@ class ManajemenAgenController extends Controller
         $st = $req->status;
         $dateFrom = Carbon::parse($req->date_from);
         $datetTo = Carbon::parse($req->date_to);
-        // dd($dateFrom, $datetTo, $req->all());
 
         if ($st == null || $st == "") {
             $data = DB::table('d_productorder')
@@ -668,18 +673,20 @@ class ManajemenAgenController extends Controller
                                     <button class="btn btn-info hint--top-left hint--info" aria-label="Detail"
                                             type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
                                     <button class="btn btn-danger hint--top-left hint--error" type="button"
-                                            aria-label="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+                                            aria-label="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')" disabled><i class="fa fa-trash"></i></button>
                                     <button class="btn btn-success hint--top-left hint--success" type="button" aria-label="Terima" onclick="terimaDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-download"></i></button>
                                 </div></center>';
-                    } elseif ($data->send == 'Y') {
+                    }
+                    else if ($data->send == 'Y') {
                         return '<center><div class="btn-group btn-group-sm">
                                     <button class="btn btn-info hint--top-left hint--info" aria-label="Detail"
                                             type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
                                     <button class="btn btn-danger hint--top-left hint--error" type="button"
-                                            aria-label="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-trash"></i></button>
+                                            aria-label="Hapus" onclick="hapusDO(\'' . Crypt::encrypt($data->id) . '\')" disabled><i class="fa fa-trash"></i></button>
                                 </div></center>';
                     }
-                } elseif ($data->send == null) {
+                }
+                else if ($data->send == null) {
                     return '<center><div class="btn-group btn-group-sm">
                                 <button class="btn btn-info hint--top-left hint--info" aria-label="Detail"
                                         type="button" onclick="detailDo(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>
@@ -759,15 +766,16 @@ class ManajemenAgenController extends Controller
         if (!AksesUser::checkAkses(23, 'delete')) {
             return Response::json([
                 'status' => "Failed",
-                'message' => 'Anda tidak memiliki akses'
+                'message' => 'Anda tidak memiliki akses ke menu ini !'
             ]);
         }
+
         try {
             $id = Crypt::decrypt($id);
         } catch (DecryptException $e) {
             return Response::json([
                 'status' => "Failed",
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
 
@@ -779,22 +787,34 @@ class ManajemenAgenController extends Controller
             DB::table('d_productorder')
                 ->where('po_id', '=', $id)
                 ->delete();
+
             DB::commit();
             return Response::json([
                 'status' => "Success",
                 'message' => "Data berhasil dihapus"
             ]);
-        } catch (Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollBack();
             return Response::json([
                 'status' => "Failed",
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }
 
     public function terimaDO($id)
     {
+        if (!AksesUser::checkAkses(23, 'update')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+        if (!AksesUser::checkAkses(23, 'create')){
+            abort(401);
+        }
+
         try {
             $id = Crypt::decrypt($id);
         } catch (\Exception $e) {
@@ -803,21 +823,42 @@ class ManajemenAgenController extends Controller
 
         DB::beginTransaction();
         try {
-            DB::table('d_productorder')
-                ->where('po_id', '=', $id)
-                ->update([
-                    'po_send' => 'Y'
-                ]);
+            // get product-order
+            $productOrder = d_productorder::where('po_id', $id)
+            ->with('getPODt')
+            ->first();
+
+            // return json_encode($productOrder);
+
+            // update stock using mutation distrtibution
+            // acutually its public function, just add mutcat as condition to deal it
+            foreach ($productOrder->getPODt as $key => $po) {
+                $mutConfirm = Mutasi::confirmSales(
+                    $productOrder->po_agen, // destination
+                    $po->pod_item, // itemId
+                    $productOrder->po_nota, // nota
+                    20, // mutcat in
+                    5 // mutcat out
+                );
+                if ($mutConfirm->original['status'] !== 'success') {
+                    return $mutConfirm;
+                }
+            }
+
+            // update product-order
+            $productOrder->po_send = 'Y';
+            $productOrder->save();
 
             DB::commit();
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'Gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -846,7 +887,7 @@ class ManajemenAgenController extends Controller
             ->leftJoin('m_company as agen', 's_comp', 'agen.c_id')
             ->leftJoin('m_item', 's_item', 'i_id')
             ->where('s_position', '=', $id)
-            ->select('s_id', 'agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_condition', 's_qty')
+            ->select('s_id', 'agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_status', 's_condition', 's_qty')
             ->get();
 
         return Datatables::of($data)
@@ -858,13 +899,20 @@ class ManajemenAgenController extends Controller
                     return "Rusak";
                 }
             })
+            ->addColumn('status', function ($data) {
+                if ($data->s_status == "ON DESTINATION") {
+                    return "Sampai Tujuan";
+                } else {
+                    return "Di Jalan";
+                }
+            })
             ->addColumn('qty', function ($data) {
                 return "<div class='text-center'>$data->s_qty</div>";
             })
             ->addColumn('aksi', function ($data) {
                 return '<button class="btn btn-sm btn-primary" onclick="detail_agen(' . $data->s_id . ')"><i class="fa fa-folder"></i></button>';
             })
-            ->rawColumns(['kondisi', 'qty', 'aksi'])
+            ->rawColumns(['kondisi', 'status', 'qty', 'aksi'])
             ->make(true);
     }
 
@@ -1035,6 +1083,13 @@ class ManajemenAgenController extends Controller
     // delete detail-kpl
     public function deleteDetailPenjualan(Request $request)
     {
+        if (!AksesUser::checkAkses(23, 'delete')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses menu ini !"
+            ]);
+        }
+
         $id = $request->id;
         DB::beginTransaction();
         try {
@@ -1042,18 +1097,28 @@ class ManajemenAgenController extends Controller
                 ->with('getSalesDt.getProdCode')
                 ->first();
 
+            $mutcatOut = 14;
             // delete sales-detail
             foreach ($sales->getSalesDt as $key => $val) {
-                // rollback mutasi-sales
-                $mutasi = Mutasi::rollback(
+                // rollback mutation 'salesout'
+                $mutRollbackOut = Mutasi::rollbackSalesOut(
                     $sales->s_nota,
                     $val->sd_item,
-                    14 // mutcat
+                    $mutcatOut
                 );
-                if (!is_bool($mutasi)) {
-                    DB::rollBack();
-                    return $mutasi;
+                if ($mutRollbackOut->original['status'] !== 'success') {
+                    return $mutRollbackOut;
                 }
+                // // rollback mutasi-sales
+                // $mutasi = Mutasi::rollback(
+                //     $sales->s_nota,
+                //     $val->sd_item,
+                //     14 // mutcat
+                // );
+                // if (!is_bool($mutasi)) {
+                //     DB::rollBack();
+                //     return $mutasi;
+                // }
                 // delete production-code of selected sales-detail
                 foreach ($val->getProdCode as $idx => $prodCode) {
                     $prodCode->delete();
@@ -1082,6 +1147,7 @@ class ManajemenAgenController extends Controller
         if (!AksesUser::checkAkses(23, 'create')){
             abort(401);
         }
+
         $data['user'] = Auth::user()->u_user;
         $cek = DB::table('m_company')
             ->where('c_id', '=', Auth::user()->u_company)
@@ -1298,7 +1364,17 @@ class ManajemenAgenController extends Controller
         if (!AksesUser::checkAkses(23, 'create')){
             return Response::json([
                 'status' => "Failed",
-                'message' => "Anda tidak memiliki akses ini"
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
+        // validate request
+        $isValidRequest = $this->validate_req($request);
+        if ($isValidRequest != '1') {
+            $errors = $isValidRequest;
+            return response()->json([
+                'status' => 'invalid',
+                'message' => $errors
             ]);
         }
 
@@ -1309,8 +1385,10 @@ class ManajemenAgenController extends Controller
             // get comp using agent-code
             if (Auth::user()->u_user == "E") {
                 $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
-            } else {
+            }
+            else {
                 $agent = Auth::user();
+                $agent = m_company::where('c_id', $agent->u_company)->first();
             }
 
             // validate production-code is exist in stock-item
@@ -1318,7 +1396,8 @@ class ManajemenAgenController extends Controller
                 $agent->c_id, // from
                 $request->idItem, // list item-id
                 $request->prodCode, // list production-code
-                $request->prodCodeLength // list production-code length each item
+                $request->prodCodeLength ,// list production-code length each item
+                $request->qtyProdCode // list of qty each production-code
             );
             if ($validateProdCode !== 'validated') {
                 DB::rollback();
@@ -1344,19 +1423,17 @@ class ManajemenAgenController extends Controller
             for ($i = 0; $i < sizeof($data['idItem']); $i++) {
                 // get itemStock based on position and item-id
                 $stock = $this->getItemStock($agent->c_id, $data['idItem'][$i]);
-                ($stock === null) ? $itemStock = 0 : $itemStock = $stock->s_qty;
-
+                ($stock === null) ? $itemStock = 0 : $itemStock = $stock->sumQty;
                 // is stock sufficient ?
-                if ($stock === null || $stock->s_qty < $data['jumlah'][$i]) {
+                if ($stock === null || $itemStock < $data['jumlah'][$i]) {
                     DB::rollback();
                     // get detail item name
                     $item = m_item::where('i_id', $data['idItem'][$i])->first();
                     return response()->json([
                         'status' => 'invalid',
-                        'message' => 'Stock item ' . $item->i_name . ' tidak mencukupi. Stock tersedia: ' . $itemStock
+                        'message' => 'Stock ' . $item->i_name . ' tidak mencukupi. Stock tersedia: ' . $itemStock
                     ]);
                 }
-
                 // start insert sales-detail (each item)
                 $salesDt = new d_salesdt();
                 $salesDt->sd_sales = $salesId;
@@ -1370,7 +1447,7 @@ class ManajemenAgenController extends Controller
                 $salesDt->sd_discvalue = $data['diskon'][$i];
                 $salesDt->sd_totalnet = Currency::removeRupiah($data['subtotal'][$i]);
                 $salesDt->save();
-                // dd($data['subtotal'][$i], Currency::removeRupiah($data['subtotal'][$i]));
+
                 // values for insert to salescomp-code
                 if ($i == 0) {
                     $startProdCodeIdx = 0;
@@ -1378,11 +1455,13 @@ class ManajemenAgenController extends Controller
                 $prodCodeLength = (int)$request->prodCodeLength[$i];
                 $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
                 $sumQtyPC = 0;
+                $listPC = array();
                 for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
                     // skip inserting when val is null or qty-pc is 0
                     if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
                         continue;
                     }
+                    array_push($listPC, strtoupper($request->prodCode[$j]));
                     $detailidcode = (d_salescode::where('sc_sales', $salesId)
                         ->where('sc_item', $data['idItem'][$i])
                         ->max('sc_detailid')) ? d_salescode::where('sc_sales', $salesId)
@@ -1403,7 +1482,6 @@ class ManajemenAgenController extends Controller
                     $item = m_item::where('i_id', $data['idItem'][$i])->first();
                     throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
                 }
-                // dd($sumQtyPC, (int)$data['jumlah'][$i]);
 
                 // get qty in smallest unit
                 $data_check = DB::table('m_item')
@@ -1425,33 +1503,33 @@ class ManajemenAgenController extends Controller
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
                     $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare3;
                 }
+
                 // declaare list of production-code
-                $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
+                // $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                 $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                 $listUnitPC = [];
-
-                // mutasi keluar
-                $mutasi = Mutasi::mutasikeluar(
-                    14, // mutcat
-                    $stock->s_comp, // item-owner
-                    $stock->s_position, // item-position
+                // // try to use salesOut as mutation
+                // insert stock mutation sales 'out'
+                $mutationOut = Mutasi::salesOut(
+                    $stock->s_position, // from
+                    null, // to
                     $data['idItem'][$i], // item-id
-                    $qty_compare, // item-qty in smallest unit
+                    $qty_compare, // qty of smallest-unit
                     $salesNota, // nota
-                    $sellPrice, // item-price
-                    $listPC, // list production-code
-                    $listQtyPC, // list qty roduction code
-                    null // reff
+                    $listPC, // list of production-code
+                    $listQtyPC, // list of production-code-qty
+                    $listUnitPC, // list of production-code-unit
+                    $sellPrice, // sellprice
+                    14 // mutcat
                 );
-                if (!is_bool($mutasi)) {
-                    DB::rollback();
-                    return $mutasi;
+                if ($mutationOut->original['status'] !== 'success') {
+                    return $mutationOut;
                 }
 
                 $startProdCodeIdx += $prodCodeLength;
                 $salesDtId++;
             }
-            // dd('x');
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -1468,18 +1546,28 @@ class ManajemenAgenController extends Controller
     // getITemStock
     public function getItemStock($position, $itemId)
     {
+        $qtyStock = d_stock::where('s_item', $itemId)
+            ->where('s_position', $position)
+            ->where('s_status', 'ON DESTINATION')
+            ->where('s_condition', 'FINE')
+            ->sum('s_qty');
+
         $stock = d_stock::where('s_item', $itemId)
             ->where('s_position', $position)
             ->where('s_status', 'ON DESTINATION')
             ->where('s_condition', 'FINE')
             ->first();
-
+        $stock->sumQty = $qtyStock;
         return $stock;
     }
 
     // edit selected kpl
     public function editKPL($id)
     {
+        if (!AksesUser::checkAkses(23, 'update')){
+            abort(401);
+        }
+
         $data['user'] = Auth::user();
         $data['agents'] = m_agen::get();
 
@@ -1549,15 +1637,23 @@ class ManajemenAgenController extends Controller
     // update selected kpl
     public function updateKPL(Request $request, $id)
     {
-        // // validate request
-        // $isValidRequest = $this->validate_req($request);
-        // if ($isValidRequest != '1') {
-        //     $errors = $isValidRequest;
-        //     return response()->json([
-        //         'status' => 'invalid',
-        //         'message' => $errors
-        //     ]);
-        // }
+        if (!AksesUser::checkAkses(23, 'update')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
+        // validate request
+        $isValidRequest = $this->validate_req($request);
+        if ($isValidRequest != '1') {
+            $errors = $isValidRequest;
+            return response()->json([
+                'status' => 'invalid',
+                'message' => $errors
+            ]);
+        }
+
         DB::beginTransaction();
         try {
             $data = $request->all();
@@ -1566,6 +1662,7 @@ class ManajemenAgenController extends Controller
                 $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
             } else {
                 $agent = Auth::user();
+                $agent = m_company::where('c_id', $agent->u_company)->first();
             }
 
             // validate production-code is exist in stock-item
@@ -1573,7 +1670,8 @@ class ManajemenAgenController extends Controller
                 $agent->c_id, // from
                 $request->idItem, // list item-id
                 $request->prodCode, // list production-code
-                $request->prodCodeLength // list production-code length each item
+                $request->prodCodeLength, // list production-code length each item
+                $request->qtyProdCode // list of qty each production-code
             );
             if ($validateProdCode !== 'validated') {
                 DB::rollback();
@@ -1588,18 +1686,19 @@ class ManajemenAgenController extends Controller
             $sales->s_user = Auth::user()->u_id;
             $sales->save();
 
+            $mutcatOut = 14;
             // delete sales-detail
             foreach ($sales->getSalesDt as $key => $val) {
-                // rollback mutasi-sales which is updated
-                $mutasi = Mutasi::rollback(
+                // rollback mutation 'salesout'
+                $mutRollbackOut = Mutasi::rollbackSalesOut(
                     $sales->s_nota,
                     $val->sd_item,
-                    14 // mutcat
+                    $mutcatOut
                 );
-                if (!is_bool($mutasi)) {
-                    DB::rollback();
-                    return $mutasi;
+                if ($mutRollbackOut->original['status'] !== 'success') {
+                    return $mutRollbackOut;
                 }
+
                 // delete production-code of selected stockdistribution
                 foreach ($val->getProdCode as $idx => $prodCode) {
                     $prodCode->delete();
@@ -1611,10 +1710,10 @@ class ManajemenAgenController extends Controller
             for ($i = 0; $i < sizeof($data['idItem']); $i++) {
                 // get itemStock based on position and item-id
                 $stock = $this->getItemStock($agent->c_id, $data['idItem'][$i]);
-                ($stock === null) ? $itemStock = 0 : $itemStock = $stock->s_qty;
+                ($stock === null) ? $itemStock = 0 : $itemStock = $stock->sumQty;
 
                 // is stock sufficient ?
-                if ($stock === null || $stock->s_qty < $data['jumlah'][$i]) {
+                if ($stock === null || $itemStock < $data['jumlah'][$i]) {
                     DB::rollback();
                     // get detail item name
                     $item = m_item::where('i_id', $data['idItem'][$i])->first();
@@ -1634,21 +1733,27 @@ class ManajemenAgenController extends Controller
                 $salesDt->sd_unit = $data['satuan'][$i];
                 $salesDt->sd_value = Currency::removeRupiah($data['harga'][$i]);
                 $salesDt->sd_discpersen = 0;
-                $salesDt->sd_discvalue = 0;
+                $salesDt->sd_discvalue = $data['diskon'][$i];
                 $salesDt->sd_totalnet = Currency::removeRupiah($data['subtotal'][$i]);
                 $salesDt->save();
 
+                $sumQtyPC = 0;
                 // values for insert to salescomp-code
                 if ($i == 0) {
                     $startProdCodeIdx = 0;
                 }
                 $prodCodeLength = (int)$request->prodCodeLength[$i];
                 $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                $listPC = array();
                 for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
+                    array_push($listPC, strtoupper($request->prodCode[$j]));
                     // skip inserting when val is null or qty-pc is 0
                     if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
                         continue;
                     }
+                    // get sum-qty production code
+                    $sumQtyPC += (int)$request->qtyProdCode[$j];
+
                     $detailidcode = (d_salescode::where('sc_sales', $sales->s_id)
                         ->where('sc_item', $data['idItem'][$i])
                         ->max('sc_detailid'))
@@ -1668,6 +1773,12 @@ class ManajemenAgenController extends Controller
                     ];
                     DB::table('d_salescode')->insert($val_salescode);
                 }
+                // validate sum-qty of production-code
+                if ($sumQtyPC != $request->jumlah[$i]) {
+                    $item = m_item::where('i_id', $request->idItem[$i])->first();
+                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
+                }
+
                 // get qty in smallest unit
                 $data_check = DB::table('m_item')
                     ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
@@ -1690,25 +1801,25 @@ class ManajemenAgenController extends Controller
                 }
 
                 // declaare list of production-code
-                $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
+                // $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                 $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                 $listUnitPC = [];
 
-                // mutasi keluar
-                $mutasi = Mutasi::mutasikeluar(
-                    14, // mutcat
-                    $stock->s_comp, // item-owner
-                    $stock->s_position, // item-position
+                // insert stock mutation sales 'out'
+                $mutationOut = Mutasi::salesOut(
+                    $stock->s_position, // from
+                    null, // to
                     $data['idItem'][$i], // item-id
-                    $qty_compare, // item-qty in smallest unit
+                    $qty_compare, // qty of smallest-unit
                     $sales->s_nota, // nota
-                    Currency::removeRupiah($data['harga'][$i]), // item-price
-                    $listPC, // list production-code
-                    $listQtyPC // list qty roduction code
+                    $listPC, // list of production-code
+                    $listQtyPC, // list of production-code-qty
+                    $listUnitPC, // list of production-code-unit
+                    $sellPrice, // sellprice
+                    14 // mutcat
                 );
-                if (!is_bool($mutasi)) {
-                    DB::rollback();
-                    return $mutasi;
+                if ($mutationOut->original['status'] !== 'success') {
+                    return $mutationOut;
                 }
 
                 $startProdCodeIdx += $prodCodeLength;
@@ -1719,7 +1830,8 @@ class ManajemenAgenController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -1758,7 +1870,41 @@ class ManajemenAgenController extends Controller
         }
         return Response::json($hasilItem);
     }
+    // check item-stock
+    public function getStockKPW(Request $request)
+    {
+        $posisi = $request->posisi;
+        $item = $request->item;
+        $qty = $request->qty;
 
+        $stock = d_stock::where('s_position', '=', $posisi)
+            ->where('s_item', '=', $item)
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('s_condition', '=', 'FINE')
+            ->select('s_qty')
+            ->get();
+
+        $stockQty = 0;
+        if (count($stock) > 0) {
+            foreach ($stock as $key => $val) {
+                $stockQty += (int)$val->s_qty;
+            }
+        }
+
+        if ($qty <= $stockQty) {
+            return Response::json([
+                'status' => 'sukses',
+                'stock' => $stockQty
+            ]);
+        }
+        else {
+            return Response::json([
+                'status' => 'gagal',
+                'stock' => $stockQty
+            ]);
+        }
+    }
+    // cek production code
     public function cekProductionCode(Request $request)
     {
         $posisi = $request->posisi;
@@ -1772,7 +1918,8 @@ class ManajemenAgenController extends Controller
             ->where('s_status', '=', 'ON DESTINATION')
             ->where('s_condition', '=', 'FINE')
             ->get();
-        // dd($cek);
+
+        // dd($request->all(), $cek);
         if (count($cek) > 0) {
             return Response::json([
                 'status' => 'sukses'
@@ -1786,6 +1933,13 @@ class ManajemenAgenController extends Controller
 
     public function saveKPW(Request $request)
     {
+        if (!AksesUser::checkAkses(23, 'create')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         $agen = $request->agen;
         $customer = $request->customer;
         $website = $request->website;
@@ -1795,239 +1949,313 @@ class ManajemenAgenController extends Controller
         $unit = $request->unit;
         $price = $request->price;
         $note = $request->note;
-        $code = $request->code;
-        $qtycode = $request->qtycode;
+        // $code = $request->code;
+        // $qtycode = $request->qtycode;
+        $listPC = $request->code;
+        $listQtyPC = $request->qtycode;
         $mutcat = 4;
         $sekarang = Carbon::now('Asia/Jakarta');
 
         DB::beginTransaction();
         try {
-            //d_sales
-            $id_sales = DB::table('d_sales')
-                ->max('s_id');
-
-            ++$id_sales;
+            // validate production-code is exist in stock-item
+            $listItemsId = array($item);
+            $prodCodeLength = array(count($listPC));
+            $validateProdCode = Mutasi::validateProductionCode(
+                $agen, // from
+                $listItemsId, // list item-id
+                $listPC, // list production-code
+                $prodCodeLength, // list production-code length each item
+                $listQtyPC // list of qty each production-code
+            );
+            if ($validateProdCode !== 'validated') {
+                DB::rollback();
+                return $validateProdCode;
+            }
 
             $nota = CodeGenerator::codeWithSeparator('d_sales', 's_nota', 8, 10, 3, 'PC', '-');
-            $total = intval($qty) * intval($price);
-            DB::table('d_sales')
-                ->insert([
-                    's_id' => $id_sales,
-                    's_comp' => $agen,
-                    's_member' => $customer,
-                    's_type' => 'C',
-                    's_date' => $sekarang->format('Y-m-d'),
-                    's_nota' => $nota,
-                    's_total' => $total,
-                    's_user' => Auth::user()->u_id,
-                ]);
+            $totalPrice = intval($qty) * intval($price);
 
-            $datamutcat = DB::table('m_mutcat')->where('m_status', '=', 'M')->get();
-
-            for ($i = 0; $i < count($datamutcat); $i++) {
-                $tmp[] = $datamutcat[$i]->m_id;
-            }
-            // dd($comp, $position, $item);
-            $stock = DB::table('d_stock')
-                ->join('d_stock_mutation', 'sm_stock', '=', 's_id')
-                ->select('d_stock.*', 'd_stock_mutation.*', DB::raw('(sm_qty - sm_use) as sm_sisa'))
-                ->where('s_position', '=', $agen)
-                ->where('s_item', '=', $item)
-                ->where('s_status', '=', 'ON DESTINATION')
-                ->where('s_condition', '=', 'FINE')
-                ->whereIn('sm_mutcat', $tmp)
-                ->where('sm_residue', '>', 0);
-
-            $stock = $stock->get();
-            $permintaan = $qty;
-
-            // set callback if stock-item-parent is empty
-            if (sizeof($stock) < 1) {
-                $itemx = m_item::where('i_id', $item)->select('i_name')->first();
-                throw new Exception("Stock " . $itemx->i_name . " kosong !");
-            }
-
-            DB::table('d_stock')
-                ->where('s_id', $stock[0]->s_id)
-                ->update([
-                    's_qty' => $stock[0]->s_qty - $permintaan
-                ]);
-
-            $sales_qty = 0;
-            $cek_idstock = 0;
-            $insert_salesdt = [];
-            $id_salesdt = 0;
-            // set mutation record
-            for ($j = 0; $j < count($stock); $j++) {
-                $continueLoopStock = false;
-                $cek_idstock = $stock[$j]->s_id;
-                $detailid = (DB::table('d_stock_mutation')
-                    ->where('sm_stock', $stock[$j]->sm_stock)
-                    ->max('sm_detailid')) ?
-                    DB::table('d_stock_mutation')
-                        ->where('sm_stock', $stock[$j]->sm_stock)
-                        ->max('sm_detailid') + 1 : 1;
-
-                // insert new stock mutation
-                // use all qty from current stock-mutation
-                if ($permintaan > $stock[$j]->sm_sisa && $permintaan != 0) {
-                    DB::table('d_stock_mutation')
-                        ->where('sm_stock', '=', $stock[$j]->sm_stock)
-                        ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
-                        ->update([
-                            'sm_use' => $stock[$j]->sm_qty,
-                            'sm_residue' => 0
-                        ]);
-
-                    // update qty of request after using all qty in stock-mutation parent
-                    $permintaan = $permintaan - $stock[$j]->sm_sisa;
-                    // qty that will store to sm_qty in new stock-mutation
-                    $smQty = $stock[$j]->sm_sisa;
-
-                    if ($cek_idstock != $stock[$j]->s_id) {
-                        ++$id_salesdt;
-                        $temp = [
-                            'sd_sales' => $id_sales,
-                            'sd_detailid' => $id_salesdt,
-                            'sd_comp' => $stock[$j - 1]->s_comp,
-                            'sd_item' => $stock[$j - 1]->s_item,
-                            'sd_qty' => $sales_qty,
-                            'sd_unit' => $unit,
-                            'sd_value' => $price,
-                            'sd_discpersen' => 0,
-                            'sd_discvalue' => 0,
-                            'sd_totalnet' => $price * $sales_qty
-                        ];
-                        array_push($insert_salesdt, $temp);
-                        $sales_qty = 0;
-                    } else {
-                        $sales_qty = $sales_qty + $stock[$j]->sm_sisa;
-                    }
-
-                    $continueLoopStock = true;
-                } // use part of qty from current stock-mutation
-                elseif ($permintaan <= $stock[$j]->sm_sisa && $permintaan != 0) {
-                    $detailid = (DB::table('d_stock_mutation')
-                        ->where('sm_stock', $stock[$j]->sm_stock)
-                        ->max('sm_detailid')) ?
-                        (DB::table('d_stock_mutation')
-                            ->where('sm_stock', $stock[$j]->sm_stock)
-                            ->max('sm_detailid')) + 1 : 1;
-
-                    DB::table('d_stock_mutation')
-                        ->where('sm_stock', '=', $stock[$j]->sm_stock)
-                        ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
-                        ->update([
-                            'sm_use' => $permintaan + $stock[$j]->sm_use,
-                            'sm_residue' => $stock[$j]->sm_residue - $permintaan
-                        ]);
-                    // qty that will store to sm_qty in new stock-mutation
-                    $smQty = $permintaan;
-
-                    ++$id_salesdt;
-                    $temp = [
-                        'sd_sales' => $id_sales,
-                        'sd_detailid' => $id_salesdt,
-                        'sd_comp' => $stock[$j]->s_comp,
-                        'sd_item' => $stock[$j]->s_item,
-                        'sd_qty' => $permintaan,
-                        'sd_unit' => $unit,
-                        'sd_value' => $price,
-                        'sd_discpersen' => 0,
-                        'sd_discvalue' => 0,
-                        'sd_totalnet' => $price * $sales_qty
-                    ];
-                    array_push($insert_salesdt, $temp);
-
-                    $continueLoopStock = false;
-                }
-
-                //insert d_salescode
-                $salescode = [];
-                for ($i = 0; $i < count($code); $i++) {
-                    $temp = [
-                        'sc_sales' => $id_sales,
-                        'sc_item' => $item,
-                        'sc_detailid' => $i + 1,
-                        'sc_code' => $code[$i],
-                        'sc_qty' => $qtycode[$i]
-                    ];
-                    array_push($salescode, $temp);
-                }
-
-                DB::table('d_salescode')
-                    ->insert($salescode);
-
-                // insert new stock-mutation out
-                DB::table('d_stock_mutation')
-                    ->insert([
-                        'sm_stock' => $stock[$j]->sm_stock,
-                        'sm_detailid' => $detailid,
-                        'sm_date' => $sekarang,
-                        'sm_mutcat' => 4,
-                        'sm_qty' => $smQty,
-                        'sm_use' => 0,
-                        'sm_residue' => 0,
-                        'sm_hpp' => $stock[$j]->sm_hpp,
-                        'sm_sell' => $price,
-                        'sm_nota' => $nota,
-                        'sm_reff' => $stock[$j]->sm_nota,
-                        'sm_user' => Auth::user()->u_id,
-                    ]);
-
-                // currently, it's special case for 'penjualan-langsung / mutcat 14'
-                if ($mutcat == 4) {
-                    // insert new stock-detail production-code
-                    $stockParentId = $stock[$j]->sm_stock;
-                    $stockChildId = null;
-                    $insertStockDt = Mutasi::insertStockDetail($stockParentId, $stockChildId, $code, $qtycode);
-                    if ($insertStockDt !== 'success') {
-                        throw new Exception($insertStockDt->getData()->message);
-                    }
-
-                    // insert new stock-mutation-detail production-code
-                    $insertSMProdCode = Mutasi::insertStockMutationDt($stockParentId, $detailid, $code, $qtycode);
-                    if ($insertSMProdCode !== 'success') {
-                        throw new Exception($insertSMProdCode->getData()->message);
-                    }
-                }
-
-                if ($continueLoopStock == false) {
-                    $permintaan = 0;
-                    break;
-                }
-            }
-
-            //salesdt
-            DB::table('d_salesdt')
-                ->insert($insert_salesdt);
-
-            //salesweb
-            $sw_id = DB::table('d_salesweb')
-                ->max('sw_id');
-            ++$sw_id;
+            // salesweb
+            $sw_id = d_salesweb::max('sw_id') + 1;
             DB::table('d_salesweb')
-                ->insert([
-                    'sw_id' => $sw_id,
-                    'sw_reff' => $nota,
-                    'sw_transactioncode' => $transaksi,
-                    'sw_agen' => $agen,
-                    'sw_website' => $website,
-                    'sw_date' => $sekarang,
-                    'sw_item' => $item,
-                    'sw_qty' => $qty,
-                    'sw_unit' => $unit,
-                    'sw_price' => $price,
-                    'sw_totalprice' => intval($qty) * intval($price),
-                    'sw_note' => $note,
-                    'sw_insert' => $sekarang
+            ->insert([
+                'sw_id' => $sw_id,
+                'sw_reff' => $nota,
+                'sw_transactioncode' => $transaksi,
+                'sw_agen' => $agen,
+                'sw_website' => $website,
+                'sw_date' => Carbon::parse($sekarang),
+                'sw_item' => $item,
+                'sw_qty' => $qty,
+                'sw_unit' => $unit,
+                'sw_price' => $price,
+                'sw_totalprice' => $totalPrice,
+                'sw_note' => $note,
+                'sw_insert' => Carbon::parse($sekarang)
+            ]);
+
+            // d_sales
+            $id_sales = d_sales::max('s_id') + 1;
+            $sales = new d_sales;
+            $sales->s_id = $id_sales;
+            $sales->s_comp = $agen;
+            $sales->s_member = $customer;
+            $sales->s_type = 'C';
+            $sales->s_date = Carbon::parse($sekarang);
+            $sales->s_nota = $nota;
+            $sales->s_total = $totalPrice;
+            $sales->s_user = Auth::user()->u_id;
+            $sales->save();
+
+            // get itemStock based on position and item-id
+            $stock = $this->getItemStock($agen, $item);
+            ($stock === null) ? $itemStock = 0 : $itemStock = $stock->sumQty;
+            // is stock sufficient ?
+            if ($stock === null || $itemStock < $qty) {
+                DB::rollback();
+                // get detail item name
+                $item = m_item::where('i_id', $item)->first();
+                return response()->json([
+                    'status' => 'invalid',
+                    'message' => 'Stock item ' . $item->i_name . ' tidak mencukupi. Stock tersedia: ' . $itemStock
                 ]);
+            }
+
+            $salesDtId = d_salesdt::where('sd_sales', $id_sales)->max('sd_detailid') + 1;
+            // start insert sales-detail (each item)
+            $salesDt = new d_salesdt();
+            $salesDt->sd_sales = $id_sales;
+            $salesDt->sd_detailid = $salesDtId;
+            $salesDt->sd_comp = $stock->s_comp;
+            $salesDt->sd_item = $item;
+            $salesDt->sd_qty = (int)$qty;
+            $salesDt->sd_unit = $unit;
+            $salesDt->sd_value = $price;
+            $salesDt->sd_discpersen = 0;
+            $salesDt->sd_discvalue = 0;
+            $salesDt->sd_totalnet = $totalPrice;
+            $salesDt->save();
+
+            // insert sales-code
+            $detailidcode = d_salescode::where('sc_sales', $id_sales)->where('sc_item', $item)->max('sc_detailid') + 1;
+            foreach ($listPC as $key => $PC) {
+                $val_salescode = [
+                    'sc_sales' => $id_sales,
+                    'sc_item' => $item,
+                    'sc_detailid' => $detailidcode,
+                    'sc_code' => strtoupper($listPC[$key]),
+                    'sc_qty' => $listQtyPC[$key]
+                ];
+                DB::table('d_salescode')->insert($val_salescode);
+                $detailidcode++;
+            }
+
+            $listUnitPC = array();
+            // insert stock mutation sales 'out'
+            $mutationOut = Mutasi::salesOut(
+                $sales->s_comp, // from
+                null, // to
+                $item, // item-id
+                $qty, // qty of smallest-unit
+                $sales->s_nota, // nota
+                $listPC, // list of production-code
+                $listQtyPC, // list of production-code-qty
+                $listUnitPC, // list of production-code-unit
+                $price, // sellprice
+                $mutcat // mutcat
+            );
+            if ($mutationOut->original['status'] !== 'success') {
+                return $mutationOut;
+            }
+            // dd($mutationOut->original);
+
+            // $datamutcat = DB::table('m_mutcat')->where('m_status', '=', 'M')->get();
+            //
+            // for ($i = 0; $i < count($datamutcat); $i++) {
+            //     $tmp[] = $datamutcat[$i]->m_id;
+            // }
+            //
+            // $stock = DB::table('d_stock')
+            //     ->join('d_stock_mutation', 'sm_stock', '=', 's_id')
+            //     ->select('d_stock.*', 'd_stock_mutation.*', DB::raw('(sm_qty - sm_use) as sm_sisa'))
+            //     ->where('s_position', '=', $agen)
+            //     ->where('s_item', '=', $item)
+            //     ->where('s_status', '=', 'ON DESTINATION')
+            //     ->where('s_condition', '=', 'FINE')
+            //     ->whereIn('sm_mutcat', $tmp)
+            //     ->where('sm_residue', '>', 0);
+            //
+            // $stock = $stock->get();
+            // $permintaan = $qty;
+            //
+            // // set callback if stock-item-parent is empty
+            // if (sizeof($stock) < 1) {
+            //     $itemx = m_item::where('i_id', $item)->select('i_name')->first();
+            //     throw new Exception("Stock " . $itemx->i_name . " kosong !");
+            // }
+            //
+            // DB::table('d_stock')
+            //     ->where('s_id', $stock[0]->s_id)
+            //     ->update([
+            //         's_qty' => $stock[0]->s_qty - $permintaan
+            //     ]);
+            //
+            // $sales_qty = 0;
+            // $cek_idstock = 0;
+            // $insert_salesdt = [];
+            // $id_salesdt = 0;
+            // // set mutation record
+            // for ($j = 0; $j < count($stock); $j++) {
+            //     $continueLoopStock = false;
+            //     $cek_idstock = $stock[$j]->s_id;
+            //     $detailid = (DB::table('d_stock_mutation')
+            //         ->where('sm_stock', $stock[$j]->sm_stock)
+            //         ->max('sm_detailid')) ?
+            //         DB::table('d_stock_mutation')
+            //             ->where('sm_stock', $stock[$j]->sm_stock)
+            //             ->max('sm_detailid') + 1 : 1;
+            //
+            //     // insert new stock mutation
+            //     // use all qty from current stock-mutation
+            //     if ($permintaan > $stock[$j]->sm_sisa && $permintaan != 0) {
+            //         DB::table('d_stock_mutation')
+            //             ->where('sm_stock', '=', $stock[$j]->sm_stock)
+            //             ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
+            //             ->update([
+            //                 'sm_use' => $stock[$j]->sm_qty,
+            //                 'sm_residue' => 0
+            //             ]);
+            //
+            //         // update qty of request after using all qty in stock-mutation parent
+            //         $permintaan = $permintaan - $stock[$j]->sm_sisa;
+            //         // qty that will store to sm_qty in new stock-mutation
+            //         $smQty = $stock[$j]->sm_sisa;
+            //
+            //         if ($cek_idstock != $stock[$j]->s_id) {
+            //             ++$id_salesdt;
+            //             $temp = [
+            //                 'sd_sales' => $id_sales,
+            //                 'sd_detailid' => $id_salesdt,
+            //                 'sd_comp' => $stock[$j - 1]->s_comp,
+            //                 'sd_item' => $stock[$j - 1]->s_item,
+            //                 'sd_qty' => $sales_qty,
+            //                 'sd_unit' => $unit,
+            //                 'sd_value' => $price,
+            //                 'sd_discpersen' => 0,
+            //                 'sd_discvalue' => 0,
+            //                 'sd_totalnet' => $price * $sales_qty
+            //             ];
+            //             array_push($insert_salesdt, $temp);
+            //             $sales_qty = 0;
+            //         } else {
+            //             $sales_qty = $sales_qty + $stock[$j]->sm_sisa;
+            //         }
+            //
+            //         $continueLoopStock = true;
+            //     } // use part of qty from current stock-mutation
+            //     elseif ($permintaan <= $stock[$j]->sm_sisa && $permintaan != 0) {
+            //         $detailid = (DB::table('d_stock_mutation')
+            //             ->where('sm_stock', $stock[$j]->sm_stock)
+            //             ->max('sm_detailid')) ?
+            //             (DB::table('d_stock_mutation')
+            //                 ->where('sm_stock', $stock[$j]->sm_stock)
+            //                 ->max('sm_detailid')) + 1 : 1;
+            //
+            //         DB::table('d_stock_mutation')
+            //             ->where('sm_stock', '=', $stock[$j]->sm_stock)
+            //             ->where('sm_detailid', '=', $stock[$j]->sm_detailid)
+            //             ->update([
+            //                 'sm_use' => $permintaan + $stock[$j]->sm_use,
+            //                 'sm_residue' => $stock[$j]->sm_residue - $permintaan
+            //             ]);
+            //         // qty that will store to sm_qty in new stock-mutation
+            //         $smQty = $permintaan;
+            //
+            //         ++$id_salesdt;
+            //         $temp = [
+            //             'sd_sales' => $id_sales,
+            //             'sd_detailid' => $id_salesdt,
+            //             'sd_comp' => $stock[$j]->s_comp,
+            //             'sd_item' => $stock[$j]->s_item,
+            //             'sd_qty' => $permintaan,
+            //             'sd_unit' => $unit,
+            //             'sd_value' => $price,
+            //             'sd_discpersen' => 0,
+            //             'sd_discvalue' => 0,
+            //             'sd_totalnet' => $price * $sales_qty
+            //         ];
+            //         array_push($insert_salesdt, $temp);
+            //
+            //         $continueLoopStock = false;
+            //     }
+            //
+            //     //insert d_salescode
+            //     $salescode = [];
+            //     for ($i = 0; $i < count($code); $i++) {
+            //         $temp = [
+            //             'sc_sales' => $id_sales,
+            //             'sc_item' => $item,
+            //             'sc_detailid' => $i + 1,
+            //             'sc_code' => $code[$i],
+            //             'sc_qty' => $qtycode[$i]
+            //         ];
+            //         array_push($salescode, $temp);
+            //     }
+            //
+            //     DB::table('d_salescode')
+            //         ->insert($salescode);
+            //
+            //     // insert new stock-mutation out
+            //     DB::table('d_stock_mutation')
+            //         ->insert([
+            //             'sm_stock' => $stock[$j]->sm_stock,
+            //             'sm_detailid' => $detailid,
+            //             'sm_date' => $sekarang,
+            //             'sm_mutcat' => 4,
+            //             'sm_qty' => $smQty,
+            //             'sm_use' => 0,
+            //             'sm_residue' => 0,
+            //             'sm_hpp' => $stock[$j]->sm_hpp,
+            //             'sm_sell' => $price,
+            //             'sm_nota' => $nota,
+            //             'sm_reff' => $stock[$j]->sm_nota,
+            //             'sm_user' => Auth::user()->u_id,
+            //         ]);
+            //
+            //     // currently, it's special case for 'penjualan-langsung / mutcat 14'
+            //     if ($mutcat == 4) {
+            //         // insert new stock-detail production-code
+            //         $stockParentId = $stock[$j]->sm_stock;
+            //         $stockChildId = null;
+            //         $insertStockDt = Mutasi::insertStockDetail($stockParentId, $stockChildId, $code, $qtycode);
+            //         if ($insertStockDt !== 'success') {
+            //             throw new Exception($insertStockDt->getData()->message);
+            //         }
+            //
+            //         // insert new stock-mutation-detail production-code
+            //         $insertSMProdCode = Mutasi::insertStockMutationDt($stockParentId, $detailid, $code, $qtycode);
+            //         if ($insertSMProdCode !== 'success') {
+            //             throw new Exception($insertSMProdCode->getData()->message);
+            //         }
+            //     }
+            //
+            //     if ($continueLoopStock == false) {
+            //         $permintaan = 0;
+            //         break;
+            //     }
+            // }
+
+            // //salesdt
+            // DB::table('d_salesdt')
+            //     ->insert($insert_salesdt);
 
             DB::commit();
             return Response::json([
                 'status' => 'success'
             ]);
-        } catch (DecryptException $e) {
+        }
+        catch (DecryptException $e) {
             DB::rollBack();
             return Response::json([
                 'status' => 'gagal',
@@ -2097,7 +2325,7 @@ class ManajemenAgenController extends Controller
             ->select('c_name', 'm_name', 'd_salesweb.*', 'i_name', 'u_name', 's_id')
             ->where('sw_id', '=', $sw_id)
             ->first();
-
+        // dd($sw_id, $request->all(), $data);
         $kode = DB::table('d_salescode')
             ->where('sc_sales', '=', $data->s_id)
             ->get();
@@ -2110,7 +2338,10 @@ class ManajemenAgenController extends Controller
 
     public function editKPW($id)
     {
-        // dd($id);
+        if (!AksesUser::checkAkses(23, 'update')){
+            abort(401);
+        }
+
         $datas = DB::table('d_salesweb')
             ->join('m_company', 'sw_agen', 'c_id')
             ->join('m_item', 'sw_item', 'i_id')
@@ -2140,203 +2371,256 @@ class ManajemenAgenController extends Controller
 
     public function updateKPW(Request $request)
     {
-        // dd($request);
+        if (!AksesUser::checkAkses(23, 'update')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
+        // dd($request->all());
         try {
             $id = Crypt::decrypt($request->id);
-        } catch (DecryptException $e) {
+        }
+        catch (DecryptException $e) {
             return view('errors.404');
         }
 
-        // DB::beginTransaction();
-        // try {
-        $requestId = new \Illuminate\Http\Request();
+        DB::beginTransaction();
+        try {
+            $requestId = new \Illuminate\Http\Request();
 
-        $requestId->replace(['id' => $id]);
+            $requestId->replace(['id' => $id]);
 
-        self::deleteKPW($requestId);
-        self::saveKPW($request);
+            self::deleteKPW($requestId);
+            self::saveKPW($request);
 
-        $delete = self::deleteKPW($requestId);
-        $save = self::saveKPW($request);
+            $delete = self::deleteKPW($requestId);
+            $save = self::saveKPW($request);
 
-        $delete = $delete->original['status'];
-        $save = $save->original['status'];
+            $delete = $delete->original['status'];
+            $save = $save->original['status'];
 
-        if ($delete == 'sukses' && $save == 'success') {
+            if ($delete == 'sukses' && $save == 'success') {
+                DB::commit();
+                return Response::json([
+                    'status' => 'sukses'
+                ]);
+            }
+            else {
+                DB::rollBack();
+                return Response::json([
+                    'status' => 'gagal',
+                    'message' => $e->getMessage()
+                ]);
+            }
+        }
+        catch (DecryptException $e) {
+            DB::rollBack();
             return Response::json([
-                'status' => 'sukses'
-            ]);
-        } else {
-            return Response::json([
-                'status' => 'gagal'
+                'status'  => 'gagal',
+                'message' => $e->getMessage()
             ]);
         }
-
-        //     DB::commit();
-        //     return Response::json([
-        //         'status' => 'sukses'
-        //     ]);
-        // } catch (DecryptException $e) {
-        //     DB::rollBack();
-        //     return Response::json([
-        //         'status'  => 'gagal',
-        //         'message' => $e->getMessage()
-        //     ]);
-        // }
     }
 
     public function deleteKPW(Request $request)
     {
+        if (!AksesUser::checkAkses(23, 'delete')){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
         $id = $request->id;
 
         DB::beginTransaction();
         try {
-            //info sales
-            $info = DB::table('d_salesweb')
-                ->join('d_sales', 's_nota', '=', 'sw_reff')
-                ->join('d_salesdt', 'sd_sales', '=', 's_id')
-                ->get();
-            //info kode sales
-            $kode = DB::table('d_salescode')
-                ->where('sc_sales', '=', $info[0]->s_id)
-                ->get();
-            //info stock
-            $stock = DB::table('d_stock_mutation')
-                ->join('d_stock', 's_id', '=', 'sm_stock')
-                ->join('d_stockmutationdt', function ($q) {
-                    $q->on('smd_stock', '=', 's_id');
-                    $q->on('smd_stockmutation', '=', 'sm_detailid');
-                })
-                ->where('sm_nota', '=', $info[0]->s_nota)
-                ->first();
+            // get sales
+            $sales = d_sales::whereHas('getSalesWeb', function ($q) use ($id) {
+                $q->where('sw_id', $id);
+            })
+            ->with('getSalesWeb')
+            ->with('getSalesDt.getProdCode')
+            ->first();
 
-            for ($i = 0; $i < count($kode); $i++) {
-                //kembalikan kode ke pemilik
-                $cek = DB::table('d_stockdt')
-                    ->join('d_stock', 's_id', '=', 'sd_stock')
-                    ->where('sd_code', '=', $kode[$i]->sc_code)
-                    ->where('sd_stock', '=', $stock->s_id)
-                    ->first();
+            // delete salesweb
+            $sales->getSalesWeb->delete();
 
-                if ($cek != null) {
-                    //update qty
-                    DB::table('d_stockdt')
-                        ->where('sd_stock', '=', $cek->sd_stock)
-                        ->where('sd_detailid', '=', $cek->sd_detailid)
-                        ->update([
-                            'sd_qty' => $cek->sd_qty + $kode[$i]->sc_qty
-                        ]);
-
-                    DB::table('d_stock')
-                        ->where('s_id', '=', $cek->sd_stock)
-                        ->update([
-                            's_qty' => $cek->s_qty + $kode[$i]->sc_qty
-                        ]);
-
-                    //kembalikan ke stockmutasi
-                    //data penjualan
-                    $data = DB::table('d_stock_mutation')
-                        ->where('sm_nota', '=', $info[0]->s_nota)
-                        ->get();
-
-                    for ($j = 0; $j < count($data); $j++) {
-                        //data pembelian
-                        $pembelian = DB::table('d_stock_mutation')
-                            ->where('sm_stock', '=', $data[$j]->sm_stock)
-                            ->where('sm_nota', '=', $data[$j]->sm_reff)
-                            ->first();
-
-                        DB::table('d_stock_mutation')
-                            ->where('sm_stock', '=', $data[$j]->sm_stock)
-                            ->where('sm_nota', '=', $data[$j]->sm_reff)
-                            ->update([
-                                'sm_use' => $pembelian->sm_use - $kode[$i]->sc_qty,
-                                'sm_residue' => $pembelian->sm_residue + $kode[$i]->sc_qty,
-                            ]);
-                    }
-                } else {
-                    //create
-                    $cek = DB::table('d_stock')
-                        ->where('s_id', '=', $stock[0]->s_id)
-                        ->first();
-
-                    $detailid = DB::table('d_stockdt')
-                        ->where('sc_stock', '=', $stock[0]->s_id)
-                        ->max('sd_detailid');
-                    ++$detailid;
-                    DB::table('d_salesdt')
-                        ->insert([
-                            'sd_stock' => $stock[0]->s_id,
-                            'sd_detailid' => $detailid,
-                            'sd_code' => $kode[$i]->sc_code,
-                            'sd_qty' => $kode[$i]->sc_qty
-                        ]);
-                    DB::table('d_stock')
-                        ->where('s_id', '=', $stock[0]->s_id)
-                        ->update([
-                            's_qty' => $cek->s_qty + $kode[$i]->sc_qty
-                        ]);
-
-                    //kembalikan ke stockmutasi
-                    //data penjualan
-                    $data = DB::table('d_stock_mutation')
-                        ->where('sm_nota', '=', $info[0]->s_nota)
-                        ->get();
-                    for ($j = 0; $j < count($data); $j++) {
-                        //data pembelian
-                        $pembelian = DB::table('d_stock_mutation')
-                            ->where('sm_stock', '=', $data[$j]->sm_stock)
-                            ->where('sm_nota', '=', $data[$j]->sm_reff)
-                            ->first();
-
-                        DB::table('d_stock_mutation')
-                            ->where('sm_stock', '=', $data[$j]->sm_stock)
-                            ->where('sm_nota', '=', $data[$j]->sm_reff)
-                            ->update([
-                                'sm_use' => $pembelian->sm_use - $kode[$i]->sc_qty,
-                                'sm_residue' => $pembelian->sm_residue + $kode[$i]->sc_qty,
-                            ]);
-                    }
+            $mutcatOut = 4;
+            // delete salesdt and salescode
+            foreach ($sales->getSalesDt as $key => $salesDt) {
+                // rollback mutation 'salesout'
+                $mutRollbackOut = Mutasi::rollbackSalesOut(
+                    $sales->s_nota,
+                    $salesDt->sd_item,
+                    $mutcatOut
+                );
+                if ($mutRollbackOut->original['status'] !== 'success') {
+                    return $mutRollbackOut;
                 }
+
+                foreach ($salesDt->getProdCode as $idx => $prodCode) {
+                    $prodCode->delete();
+                }
+                $salesDt->delete();
             }
 
-            //delete d_salesweb
-            DB::table('d_salesweb')
-                ->where('sw_id', '=', $id)
-                ->delete();
+            // delete sales
+            $sales->delete();
 
-            //delete mutasi
-            DB::table('d_stockmutationdt')
-                ->join('d_stock_mutation', function ($q) {
-                    $q->on('sm_stock', '=', 'smd_stock');
-                    $q->on('sm_detailid', '=', 'smd_stockmutation');
-                })
-                ->where('sm_nota', '=', $info[0]->s_nota)
-                ->delete();
+            // $info = DB::table('d_salesweb')
+            // ->join('d_sales', 's_nota', '=', 'sw_reff')
+            // ->join('d_salesdt', 'sd_sales', '=', 's_id')
+            // ->get();
 
-            DB::table('d_stock_mutation')
-                ->where('sm_nota', '=', $info[0]->s_nota)
-                ->delete();
+            // // get kode sales
+            // $kode = DB::table('d_salescode')
+            // ->where('sc_sales', '=', $info[0]->s_id)
+            // ->get();
 
-            //delete d_sales
-            DB::table('d_sales')
-                ->where('s_nota', '=', $info[0]->s_nota)
-                ->delete();
+            // delete d_salesweb
+            // DB::table('d_salesweb')
+            // ->where('sw_id', '=', $id)
+            // ->delete();
 
-            //delete d_salesdt
-            DB::table('d_salesdt')
-                ->where('sd_sales', '=', $info[0]->s_id)
-                ->delete();
+            // delete d_sales
 
-            DB::table('d_salescode')
-                ->where('sc_sales', '=', $info[0]->s_id)
-                ->delete();
+            // DB::table('d_sales')
+            // ->where('s_nota', '=', $info[0]->s_nota)
+            // ->delete();
+
+            // //delete d_salesdt
+            // DB::table('d_salesdt')
+            // ->where('sd_sales', '=', $info[0]->s_id)
+            // ->delete();
+            //
+            // DB::table('d_salescode')
+            // ->where('sc_sales', '=', $info[0]->s_id)
+            // ->delete();
+
+            // //info stock
+            // $stock = DB::table('d_stock_mutation')
+            //     ->join('d_stock', 's_id', '=', 'sm_stock')
+            //     ->join('d_stockmutationdt', function ($q) {
+            //         $q->on('smd_stock', '=', 's_id');
+            //         $q->on('smd_stockmutation', '=', 'sm_detailid');
+            //     })
+            //     ->where('sm_nota', '=', $info[0]->s_nota)
+            //     ->first();
+
+            // for ($i = 0; $i < count($kode); $i++) {
+            //     //kembalikan kode ke pemilik
+            //     $cek = DB::table('d_stockdt')
+            //         ->join('d_stock', 's_id', '=', 'sd_stock')
+            //         ->where('sd_code', '=', $kode[$i]->sc_code)
+            //         ->where('sd_stock', '=', $stock->s_id)
+            //         ->first();
+            //
+            //     if ($cek != null) {
+            //         //update qty
+            //         DB::table('d_stockdt')
+            //             ->where('sd_stock', '=', $cek->sd_stock)
+            //             ->where('sd_detailid', '=', $cek->sd_detailid)
+            //             ->update([
+            //                 'sd_qty' => $cek->sd_qty + $kode[$i]->sc_qty
+            //             ]);
+            //
+            //         DB::table('d_stock')
+            //             ->where('s_id', '=', $cek->sd_stock)
+            //             ->update([
+            //                 's_qty' => $cek->s_qty + $kode[$i]->sc_qty
+            //             ]);
+            //
+            //         //kembalikan ke stockmutasi
+            //         //data penjualan
+            //         $data = DB::table('d_stock_mutation')
+            //             ->where('sm_nota', '=', $info[0]->s_nota)
+            //             ->get();
+            //
+            //         for ($j = 0; $j < count($data); $j++) {
+            //             //data pembelian
+            //             $pembelian = DB::table('d_stock_mutation')
+            //                 ->where('sm_stock', '=', $data[$j]->sm_stock)
+            //                 ->where('sm_nota', '=', $data[$j]->sm_reff)
+            //                 ->first();
+            //
+            //             DB::table('d_stock_mutation')
+            //                 ->where('sm_stock', '=', $data[$j]->sm_stock)
+            //                 ->where('sm_nota', '=', $data[$j]->sm_reff)
+            //                 ->update([
+            //                     'sm_use' => $pembelian->sm_use - $kode[$i]->sc_qty,
+            //                     'sm_residue' => $pembelian->sm_residue + $kode[$i]->sc_qty,
+            //                 ]);
+            //         }
+            //     }
+            //     else {
+            //         //create
+            //         $cek = DB::table('d_stock')
+            //             ->where('s_id', '=', $stock[0]->s_id)
+            //             ->first();
+            //
+            //         $detailid = DB::table('d_stockdt')
+            //             ->where('sc_stock', '=', $stock[0]->s_id)
+            //             ->max('sd_detailid');
+            //         ++$detailid;
+            //         DB::table('d_salesdt')
+            //             ->insert([
+            //                 'sd_stock' => $stock[0]->s_id,
+            //                 'sd_detailid' => $detailid,
+            //                 'sd_code' => $kode[$i]->sc_code,
+            //                 'sd_qty' => $kode[$i]->sc_qty
+            //             ]);
+            //         DB::table('d_stock')
+            //             ->where('s_id', '=', $stock[0]->s_id)
+            //             ->update([
+            //                 's_qty' => $cek->s_qty + $kode[$i]->sc_qty
+            //             ]);
+            //
+            //         //kembalikan ke stockmutasi
+            //         //data penjualan
+            //         $data = DB::table('d_stock_mutation')
+            //             ->where('sm_nota', '=', $info[0]->s_nota)
+            //             ->get();
+            //         for ($j = 0; $j < count($data); $j++) {
+            //             //data pembelian
+            //             $pembelian = DB::table('d_stock_mutation')
+            //                 ->where('sm_stock', '=', $data[$j]->sm_stock)
+            //                 ->where('sm_nota', '=', $data[$j]->sm_reff)
+            //                 ->first();
+            //
+            //             DB::table('d_stock_mutation')
+            //                 ->where('sm_stock', '=', $data[$j]->sm_stock)
+            //                 ->where('sm_nota', '=', $data[$j]->sm_reff)
+            //                 ->update([
+            //                     'sm_use' => $pembelian->sm_use - $kode[$i]->sc_qty,
+            //                     'sm_residue' => $pembelian->sm_residue + $kode[$i]->sc_qty,
+            //                 ]);
+            //         }
+            //     }
+            // }
+
+
+            // //delete mutasi
+            // DB::table('d_stockmutationdt')
+            //     ->join('d_stock_mutation', function ($q) {
+            //         $q->on('sm_stock', '=', 'smd_stock');
+            //         $q->on('sm_detailid', '=', 'smd_stockmutation');
+            //     })
+            //     ->where('sm_nota', '=', $info[0]->s_nota)
+            //     ->delete();
+
+            // DB::table('d_stock_mutation')
+            //     ->where('sm_nota', '=', $info[0]->s_nota)
+            //     ->delete();
 
             DB::commit();
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (DecryptException $e) {
+        }
+        catch (DecryptException $e) {
             DB::rollBack();
             return Response::json([
                 'status' => 'gagal',

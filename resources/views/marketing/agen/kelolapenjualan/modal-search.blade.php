@@ -31,8 +31,7 @@
                     </div>
                 </section>
                 <div class="table-responsive table-modal d-none">
-                    <table class="table table-striped table-hover display" cellspacing="0" id="table_search_agen_kpl"
-                           width="100%">
+                    <table class="table table-striped table-hover display w-100" cellspacing="0" id="table_search_agen_kpl">
                         <thead class="bg-primary">
                         <tr>
                             <th>Provinsi</th>

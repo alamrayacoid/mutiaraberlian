@@ -59,8 +59,8 @@
         </div>
     </div>
     <div class="container" id="tbl_item" style="display: none;">
-        <div class="table-responsive">
-            <table class="table table-striped table-hover" cellspacing="0" id="table_agen">
+        <div class="table-responsive w-100">
+            <table class="table table-striped table-hover w-100" cellspacing="0" id="table_agen">
                 <thead class="bg-primary">
                 <tr>
                     <th width="30%">Kode Barang/Nama Barang</th>

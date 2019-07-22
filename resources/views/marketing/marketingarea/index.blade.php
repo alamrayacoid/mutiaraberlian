@@ -134,8 +134,8 @@
                             <thead>
                             <tr class="bg-primary text-light">
                                 <th class="text-center">Nama Barang</th>
-                                <th class="text-center">Satuan</th>
                                 <th class="text-center">Jumlah</th>
+                                <th class="text-center">Satuan</th>
                                 <!-- <th>Harga Satuan</th>
                                 <th>Total Harga</th> -->
                             </tr>
@@ -405,6 +405,11 @@
                 $('.filterBranch').addClass('d-none');
                 $('#branchCode').val("{{ Auth::user()->getCompany->c_id }}");
                 console.log($('#branchCode').val());
+                // retrieve data-table
+                setTimeout(function(){
+                    TableListDK();
+                }, 1000);
+
             }
 
             $(".cityIdxDK").on("change", function (evt) {
@@ -462,9 +467,6 @@
         }
 
         function TableListDK() {
-            // let start = $('#date_from_dk').val();
-            // let end = $('#date_to_dk').val();
-
             $('#table_konsinyasi').DataTable().clear().destroy();
             table_konsinyasi = $('#table_konsinyasi').DataTable({
                 responsive: true,
@@ -594,7 +596,7 @@
                                 id: id
                             })
                             .then(function (response) {
-                                if(response.data.status == 'success'){
+                                if(response.data.status == 'Success'){
                                     loadingHide();
                                     messageSuccess("Berhasil", response.data.message);
                                     table_konsinyasi.ajax.reload();
@@ -636,7 +638,6 @@
         var icode = [];
         var idxProdCode = null;
         $(document).ready(function () {
-            orderProdukList();
             table_search = $('#table_search_agen').DataTable();
             table_bar = $('#table_monitoringpenjualanagen').DataTable();
             table_rab = $('#table_canvassing').DataTable();
@@ -1228,10 +1229,12 @@
         function updateSubtotal(item){
             let qty = $('.qty-modaldt-'+item).val();
             let harga = $('.input-modaldtharga'+item).val();
+            let discount = $('.discount-'+ item).val();
+            console.log('discount: '+ discount);
             if (isNaN(qty)){
                 qty = 0;
             }
-            let total = parseInt(qty) * parseInt(harga);
+            let total = (parseInt(qty) * parseInt(harga)) - (parseInt(qty) * parseInt(discount));
             $('.modaldtsubharga-'+item).html(convertToRupiah(total));
             $('.input-modaldtsubharga'+item).val(total);
             let totalprice = 0;
@@ -1388,6 +1391,7 @@
             let listDiscount   = $('.listDiscount').serialize();
             let listItemsId    = $('.itemsId').serialize();
             let listUnits      = $('.units').serialize();
+            let listSubTotal   = $('.subtotalmodaldt').serialize();
             let pd_nota        = $('#nota_modaldt').serialize();
             let pd_expedition  = $('#expedition').serialize();
             let pd_product     = $('#jenis_exp').serialize();
@@ -1401,7 +1405,7 @@
             let dateTop        = $('#dateTop').serialize();
 
             let dataX = listQty +'&'+ listDiscount +'&'+ listItemsId +'&'+
-                        listUnits +'&'+ pd_nota +'&'+ pd_expedition +'&'+
+                        listUnits +'&'+ listSubTotal +'&'+ pd_nota +'&'+ pd_expedition +'&'+
                         pd_product +'&'+ pd_resi +'&'+ pd_couriername +'&'+
                         pd_couriertelp +'&'+ pd_price +'&'+ paymentType +'&'+
                         paymentMethod +'&'+ payCash +'&'+ dateTop;
@@ -1585,7 +1589,10 @@
                 $('#date_to_mpa').datepicker('setDate', last_day);
             });
             // retrieve data-table
-            TableListMPA();
+            setTimeout(function(){
+                TableListMPA();
+            }, 500);
+
             // filter agent based on area (province and city)
             $('.provMPA').on('change', function () {
                 getCitiesMPA();
@@ -1744,8 +1751,9 @@
                         let itemQty = '<td class="digits">' + response.listQty[index] + '</td>';
                         let itemUnit = '<td>' + val.get_item.get_unit1.u_name + '</td>';
                         let itemPrice = '<td class="rupiah">' + parseInt(val.sd_value) + '</td>';
+                        let itemDiscount = '<td class="rupiah">' + parseInt(val.sd_discvalue) + '</td>';
                         let itemSubTotal = '<td class="rupiah">' + parseInt(val.sd_totalnet) + '</td>';
-                        $('#table_detailmpa > tbody:last-child').append('<tr>' + idx + itemName + itemQty + itemUnit + itemPrice + itemSubTotal + '</tr>');
+                        $('#table_detailmpa > tbody:last-child').append('<tr>' + idx + itemName + itemQty + itemUnit + itemPrice + itemDiscount + itemSubTotal + '</tr>');
                     });
                     // re-activate mask-money
                     $('.rupiah').inputmask("currency", {
@@ -1833,7 +1841,10 @@
                 $('#date_to_dc').datepicker('setDate', last_day);
             });
             // retrieve data-table
-            TableListDC();
+            setTimeout(function(){
+                TableListDC();
+            }, 750);
+
             // filter agent based on area (province and city)
             $('.provDC').on('change', function () {
                 getCitiesDC();
@@ -2118,6 +2129,10 @@
     <!-- some script for Order-Produk-Ke-Pusat -->
     <script type="text/javascript">
         $(document).ready(function() {
+            setTimeout(function(){
+                orderProdukList();
+            }, 250);
+
             $('#btn_confirmAc').on('click', function() {
                 confirmAcceptance();
             });
@@ -2147,6 +2162,7 @@
             });
         }
         // show detail order before acceptance
+        var tableKodeProduksi;
         function showDetailAc(idx)
         {
             loadingShow();
@@ -2162,11 +2178,24 @@
                     $('#table_detail_ac tbody').empty();
                     $.each(response.get_distribution_dt, function (index, val) {
                         no = '<td>'+ (index + 1) +'</td>';
-                        kodeXnamaBrg = '<td>'+ val.get_item.i_code +' / '+ val.get_item.i_name +'</td>';
+                        kodeXnamaBrg = '<td>'+ val.get_item.i_code +' - '+ val.get_item.i_name +'</td>';
                         qty = '<td class="digits">'+ val.sdd_qty +'</td>';
                         unit = '<td>'+ val.get_unit.u_name +'</td>';
-                        appendItem = no + kodeXnamaBrg + qty + unit;
+                        aksi = '<td><button type="button" class="btn btn-info btn-sm" onclick="getKodeProduksi('+ val.sdd_stockdistribution +', '+ val.sdd_detailid +')">Lihat Kode</button></td>';
+                        appendItem = no + kodeXnamaBrg + qty + unit + aksi;
                         $('#table_detail_ac > tbody:last-child').append('<tr>'+ appendItem +'</tr>');
+
+                        if ( $.fn.DataTable.isDataTable('#table_detail_ackode') ) {
+                            $('#table_detail_ackode').DataTable().destroy();
+                        }
+                        $('#tblRemittanceList tbody').empty();
+
+                        tableKodeProduksi = $('#table_detail_ackode').DataTable({
+                            "searching": false,
+                            "paging": false,
+                        });
+                        tableKodeProduksi.clear();
+                        $('#product_name').html('');
                     });
                     //mask digits
                     $('.digits').inputmask("currency", {
@@ -2191,11 +2220,34 @@
                 }
             });
         }
+
+        function getKodeProduksi(id, detailid){
+            loadingShow();
+            axios.get('{{ route("orderProduk.getKodeProduksi") }}', {
+                params:{
+                    "id": id,
+                    "detailid": detailid
+                }
+            }).then(function (response) {
+                loadingHide();
+                let data = response.data;
+                for (let i = 0; i < data.length; i++) {
+                    tableKodeProduksi.row.add([
+                        i + 1,
+                        data[i].sdc_code,
+                        data[i].sdc_qty
+                    ]).draw(false);
+                }
+                $('#product_name').html(data[0].nama.i_name);
+            }).catch(function (error) {
+                loadingHide();
+                alert('error');
+            })
+        }
         // accept item that has been ordered and delivered
         function confirmAcceptance() {
             loadingShow();
             let stockdistId = $('#id_ac').val();
-            console.log(stockdistId);
             $.ajax({
                 url: baseUrl + "/marketing/marketingarea/orderproduk/set-acceptance/" + stockdistId,
                 type: "post",
@@ -2236,8 +2288,8 @@
                     $.each(res.data1, function (key, val) {
                         $('#detailOrder tbody').append('<tr>' +
                         '<td>' + val.barang + '</td>' +
-                        '<td>' + val.unit + '</td>' +
                         '<td class="text-right">' + val.qty + '</td>' +
+                        '<td>' + val.unit + '</td>' +
                         // '<td>' + val.price + '</td>' +
                         // '<td>' + val.totalprice + '</td>' +
                         '</tr>');

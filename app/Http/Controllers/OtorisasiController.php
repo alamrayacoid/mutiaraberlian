@@ -95,6 +95,9 @@ class OtorisasiController extends Controller
         DB::beginTransaction();
         try
         {
+
+            // return json_encode($id);
+
             $auth = DB::table('d_opnameauth')->where('oa_id', '=', $id)->first();
 
             $authdt = DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->get();
@@ -225,6 +228,8 @@ class OtorisasiController extends Controller
         try {
             $id = Crypt::decrypt($id);
 
+            // return json_encode($id);
+            
             $data = DB::table('d_adjusmentauth')->where('aa_id', $id)->first();
 
             $date = Carbon::now('Asia/Jakarta');
@@ -297,8 +302,83 @@ class OtorisasiController extends Controller
 
             // Create to mutation ------------>>
             // dd((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
+
             Mutasi::opname((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
             // dd(count($codeAuth));
+
+            // tambahan dirga
+                $dataHpp = DB::table('d_stock_mutation')
+                                    ->whereIn('sm_stock', function($query) use ($data){
+                                        $query->select('s_id')
+                                                ->from('d_stock')
+                                                ->where('s_item', $data->aa_item)->get();
+                                    })
+                                    ->whereIn('sm_mutcat', function($query){
+                                        $query->select('m_id')->from('m_mutcat')->where('m_status', 'M')->get();
+                                    })
+                                    ->select('*')->get()->last();
+
+                $hpp = ($dataHpp) ? (float) $dataHpp->sm_hpp : 0;
+                
+                $selisih = ($data->aa_qtysystem - $data->aa_qtyreal) * $hpp;
+
+                if($selisih > 0){
+                    $acc_persediaan = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Adjustment Stok')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA Persediaan Item')
+                                        ->first();
+
+                    $acc_beban_selisih = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Adjustment Stok')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA beban selisih stok')
+                                            ->first();
+
+                    $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Adjustment Stok')
+                                ->where('pe_comp', Auth::user()->u_company)->first();
+
+                    $details = [];
+
+                    if(!$parrent || !$acc_persediaan || !$acc_beban_selisih){
+                        return response()->json([
+                            'status' => 'gagal',
+                            'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                        ]);
+                    }
+
+                    array_push($details, [
+                        "jrdt_nomor"        => 1,
+                        "jrdt_akun"         => ($selisih > 0) ? $acc_beban_selisih->pd_acc : $acc_persediaan->pd_acc,
+                        "jrdt_value"        => ($selisih > 0) ? $selisih : $selisih * -1,
+                        "jrdt_dk"           => "D",
+                        "jrdt_keterangan"   => ($selisih > 0) ? $acc_beban_selisih->pd_keterangan : $acc_persediaan->pd_keterangan,
+                        "jrdt_cashflow"     => ($selisih > 0) ? $acc_beban_selisih->pd_cashflow : $acc_persediaan->pd_cashflow
+                    ]);
+
+                    array_push($details, [
+                        "jrdt_nomor"        => 2,
+                        "jrdt_akun"         => ($selisih > 0) ? $acc_persediaan->pd_acc : $acc_beban_selisih->pd_acc,
+                        "jrdt_value"        => ($selisih > 0) ? $selisih : $selisih * -1,
+                        "jrdt_dk"           => "K",
+                        "jrdt_keterangan"   => ($selisih > 0) ? $acc_persediaan->pd_keterangan : $acc_beban_selisih->pd_keterangan,
+                        "jrdt_cashflow"     => ($selisih > 0) ? $acc_persediaan->pd_cashflow : $acc_beban_selisih->pd_cashflow,
+                    ]);
+                }
+
+                $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $data->aa_nota, $parrent->pe_nama, 'TM', Auth::user()->u_company);
+
+                if($jurnal['status'] == 'error'){
+                    return json_encode($jurnal);
+                }
+
+                // return json_encode($details);
+
+            // end dirga
 
             DB::commit();
             return response()->json([

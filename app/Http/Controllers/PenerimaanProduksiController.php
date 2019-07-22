@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Mutasi;
 use Response;
 use Yajra\DataTables\DataTables;
+use App\Helper\keuangan\jurnal\jurnal;
 
 class PenerimaanProduksiController extends Controller
 {
@@ -466,6 +467,9 @@ class PenerimaanProduksiController extends Controller
 
         DB::beginTransaction();
         try{
+
+            // return json_encode($request->all());
+
             $data_check = DB::table('d_productionorder')
                 ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
                     'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
@@ -478,6 +482,8 @@ class PenerimaanProduksiController extends Controller
                 ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
                 ->where('d_productionorder.po_id', '=', $order)
                 ->first();
+
+            // return json_encode($request->all());
 
             $nota_receipt = DB::table('d_itemreceipt')
                 ->where('ir_notapo', '=', $data_check->nota);
@@ -540,9 +546,10 @@ class PenerimaanProduksiController extends Controller
             }
 
             $prodCodeId = DB::table('d_productionorder')
-            ->where('po_id', $order)
-            ->select('po_id')
-            ->first() ;
+                                ->where('po_id', $order)
+                                ->select('po_id')
+                                ->first() ;
+
             // insert production-code for each item
             if ($request->prodCode !== null) {
                 $valuesProdCode = array();
@@ -584,6 +591,10 @@ class PenerimaanProduksiController extends Controller
                 null, // stock parent id
                 'ON DESTINATION' // status
             );
+
+            // if (!is_bool($mutasi)) {
+            //     return $mutasi;
+            
             if ($mutationIn->original['status'] !== 'success') {
                 return $mutationIn;
             }
@@ -611,6 +622,60 @@ class PenerimaanProduksiController extends Controller
 
             // update received-status of an item
             $this->UpdateStatus($order, $item);
+
+            // tambahan dirga
+                $acc_persediaan = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Penerimaan Barang Produksi')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA Persediaan Item')
+                                        ->first();
+
+                $acc_persediaan_perjalanan = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Penerimaan Barang Produksi')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA Persediaan dalam perjalanan')
+                                        ->first();
+
+                $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Penerimaan Barang Produksi')
+                                ->where('pe_comp', Auth::user()->u_company)->first();
+                $details = [];
+
+                // return json_encode($parrent);
+
+                if(!$parrent || !$acc_persediaan || !$acc_persediaan_perjalanan){
+                    return response()->json([
+                        'status' => 'Failed',
+                        'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                    ]);
+                }
+
+                array_push($details, [
+                    "jrdt_nomor"        => 1,
+                    "jrdt_akun"         => $acc_persediaan->pd_acc,
+                    "jrdt_value"        => $data_check->value * $request->qty,
+                    "jrdt_dk"           => "D",
+                    "jrdt_keterangan"   => $acc_persediaan->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_persediaan->pd_cashflow
+                ]);
+
+                array_push($details, [
+                    "jrdt_nomor"        => 2,
+                    "jrdt_akun"         => $acc_persediaan_perjalanan->pd_acc,
+                    "jrdt_value"        => $data_check->value * $request->qty,
+                    "jrdt_dk"           => "K",
+                    "jrdt_keterangan"   => $acc_persediaan_perjalanan->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_persediaan_perjalanan->pd_cashflow
+                ]);
+
+                $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $request->nota, $parrent->pe_nama, 'TM', Auth::user()->u_company);
+
+                if($jurnal['status'] == 'error'){
+                    return json_encode($jurnal);
+                }
 
             DB::commit();
             return Response::json([

@@ -473,6 +473,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Target Realisasi
     Route::get('/marketing/penjualanpusat/targetrealisasi/targetList', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetList')->name('targetReal.list');
     Route::get('/marketing/penjualanpusat/targetrealisasi', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@createTargetReal')->name('targetReal.create');
+    Route::get('/marketing/penjualanpusat/targetrealisasi/get-periode', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getPeriode')->name('targetReal.getPeriode');
     Route::get('/marketing/penjualanpusat/targetrealisasi/cari-barang', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@cariBarang')->name('targetReal.caribarang');
     Route::get('/marketing/penjualanpusat/targetrealisasi/get-satuan/{id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getSatuan')->name('targetReal.getsatuan');
     Route::get('/marketing/penjualanpusat/targetrealisasi/get-company', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getComp')->name('targetReal.getcomp');
@@ -535,6 +536,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/get-expedition', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getExpedition')->name('marketingarea.getExpedition');
     Route::get('/marketing/marketingarea/get-payment-method', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getPaymentMethod')->name('marketingarea.getPaymentMethod');
     Route::get('/marketing/marketingarea/get-expeditionType/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getExpeditionType')->name('marketingarea.getExpeditionType');
+    Route::get('/marketing/marketingarea/terima-barang/get-kode-produksi', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@getKodeProduksi')->name('orderProduk.getKodeProduksi');
     // Order Produk Ke Cabang
     Route::get('/marketing/marketingarea/orderproduk/create', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@createOrderProduk')->name('orderProduk.create');
     Route::get('/marketing/marketingarea/orderproduk/list', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@orderList')->name('orderProduk.list');
@@ -630,6 +632,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/marketing/agen/kelolapenjualanviawebsite/cari-produk', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariProduk')->name('kelolapenjualanviawebsite.cariProduk');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/get-unit', 'Aktivitasmarketing\Agen\ManajemenAgenController@getUnit')->name('kelolapenjualanviawebsite.getUnit');
+    Route::get('/marketing/agen/kelolapenjualanviawebsite/get-stock-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getStockKPW')->name('kelolapenjualanviawebsite.getStockKPW');
     Route::post('/marketing/agen/kelolapenjualanviawebsite/save-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@saveKPW')->name('kelolapenjualanviawebsite.saveKPW');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/cek-code', 'Aktivitasmarketing\Agen\ManajemenAgenController@cekProductionCode')->name('kelolapenjualanviawebsite.cekProductionCode');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/edit-kpw/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@editKPW')->name('kelolapenjualanviawebsite.editKPW');
@@ -840,6 +843,18 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses'  => 'Keuangan\pengaturan\hierarki_akun\hierarki_akun_controller@save_level_2'
             ])->name('keuangan.hierarki_akun.save.level_2');
 
+        // Setting coa pembukuan
+            Route::get('keuangan/pengaturan/pembukuan', [
+                'uses'  => 'Keuangan\pengaturan\pembukuan\pembukuan_controller@index'
+            ])->name('keuangan.pembukuan.index');
+
+            Route::get('keuangan/pengaturan/pembukuan/resource', [
+                'uses'  => 'Keuangan\pengaturan\pembukuan\pembukuan_controller@resource'
+            ])->name('keuangan.pembukuan.resource');
+
+            Route::post('keuangan/pengaturan/pembukuan/store', [
+                'uses'  => 'Keuangan\pengaturan\pembukuan\pembukuan_controller@store'
+            ])->name('keuangan.pembukuan.store');
 
         // Mutasi antar Kas
             Route::get('keuangan/manajemen-input-transaksi/mutasi_kas/create', [

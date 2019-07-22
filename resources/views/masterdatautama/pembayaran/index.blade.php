@@ -105,12 +105,11 @@
             let akun = $('#akun').val();
             let note = $('#note').val();
 
-            if (nama == '' || akun == '' || note == ''){
+            if (nama == '' || akun == '' || note == '' || nama == null || akun == null){
                 loadingHide();
                 messageWarning('Perhatian', 'Form wajib diisi');
                 return false;
             }
-
             axios.post('{{ route("masterdatautama.save") }}', {
                 "nama": nama,
                 "akun": akun,

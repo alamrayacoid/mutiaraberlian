@@ -25,6 +25,7 @@ use App\m_paymentmethod;
 use Currency;
 use Mutasi;
 use Mockery\Exception;
+use App\Helper\keuangan\jurnal\jurnal;
 
 
 class PenjualanPusatController extends Controller
@@ -321,13 +322,17 @@ class PenjualanPusatController extends Controller
     // Target Realisasi
     public function targetList()
     {
+        $sekarang = Carbon::now('Asia/Jakarta');
         $target = DB::table('d_salestargetdt')
             ->join('d_salestarget', 'std_salestarget', 'st_id')
             ->join('m_item', 'std_item', 'i_id')
             ->join('m_unit', 'std_unit', 'u_id')
             ->join('m_company', 'st_comp', 'c_id')
             ->select('d_salestargetdt.*', DB::raw('concat(std_qty, " ", u_name) as target'), 'st_id', 'c_name', DB::raw("concat(i_code, '-', i_name) as i_name"), 'st_periode', DB::raw('date_format(st_periode, "%m/%Y") as st_periode'))
+            ->whereMonth('st_periode', '=', $sekarang->format('m'))
+            ->whereYear('st_periode', '=', $sekarang->format('Y'))
             ->get();
+
         return Datatables::of($target)
             ->addIndexColumn()
             ->addColumn('status', function ($target) {
@@ -775,8 +780,8 @@ class PenjualanPusatController extends Controller
     public function getPaymentMethod()
     {
         $data = m_paymentmethod::where('pm_isactive', 'Y')
-        ->with('getAkun')
-        ->get();
+            ->with('getAkun')
+            ->get();
 
         return response()->json([
             'data' => $data
@@ -800,6 +805,9 @@ class PenjualanPusatController extends Controller
         // dd($request->all());
         DB::beginTransaction();
         try {
+
+            // return json_encode($request->all());
+
             $nota = $request->nota;
             $ekspedisi = $request->ekspedisi;
             $produk = $request->produk;
@@ -886,6 +894,12 @@ class PenjualanPusatController extends Controller
             }
             // dd('list id-items: ', $idItems);
             // mutation
+
+            // return json_encode($productOrder);
+
+            // tambahan dirga
+                $totalHpp = 0;
+
             foreach ($productOrder->getPODt as $key => $PO) {
                 // get list production-code
                 $prodCode = d_productordercode::where('poc_productorder', $productOrder->po_id)
@@ -938,11 +952,19 @@ class PenjualanPusatController extends Controller
                     $sell,
                     5
                 );
-
+                // return json_encode($mutDist->original);
                 if ($mutDist->original['status'] !== 'success') {
                     return $mutDist;
                 }
+
+                // Tambahan Dirga
+                    foreach ($mutDist->original['listSmQty'] as $key => $value) {
+                        $totalHpp += (float) $value * (float) $mutDist->original['listHPP'][$key];
+                    }
+                // end Dirga
+
             }
+
 
             // d_salescomp
             $s_id = DB::table('d_salescomp')
@@ -1037,7 +1059,19 @@ class PenjualanPusatController extends Controller
             ];
             DB::table('d_salescomppayment')->insert($val_salespayment);
 
-            // dd('x');
+
+            // tambahan dirga
+                $jurnalSendOrder = $this->jurnalSendOrder($totalHpp, (float) $request->harga, $notasales, $request);
+
+                // return json_encode($jurnalSendOrder);
+
+                if($jurnalSendOrder['status'] != 'berhasil')
+                    return json_encode($jurnalSendOrder);
+
+            // end dirga
+
+            // return json_encode($request->all());
+
             DB::commit();
             return Response::json([
                 'status' => 'success'
@@ -1058,6 +1092,170 @@ class PenjualanPusatController extends Controller
             ]);
         }
     }
+
+     private function jurnalSendOrder(float $totHpp, float $ongkir, String $notasales, Request $request){
+        
+        $details = [];
+
+            // Acc persediaan keluar
+                $acc_persediaan = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Pengiriman Distribusi Penjualan')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA Persediaan Item')
+                                        ->first();
+
+                $acc_persediaan_jalan = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Pengiriman Distribusi Penjualan')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA Persediaan dalam perjalanan')
+                                            ->first();
+
+            if(!is_null($request->harga) && $request->harga != 0){
+                // Acc Ongkir
+                    $acc_beban_ongkir = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Pengiriman Distribusi Penjualan')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA beban ongkos kirim')
+                                            ->first();
+
+                    $acc_kas = DB::table('dk_pembukuan_detail')
+                                    ->where('pd_pembukuan', function($query){
+                                        $query->select('pe_id')->from('dk_pembukuan')
+                                                    ->where('pe_nama', 'Pengiriman Distribusi Penjualan')
+                                                    ->where('pe_comp', Auth::user()->u_company)->first();
+                                    })->where('pd_nama', 'COA Kas/Setara Kas')
+                                    ->first();
+            }
+
+            $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Pengiriman Distribusi Penjualan')
+                        ->where('pe_comp', Auth::user()->u_company)->first();
+
+            if(!$parrent || !$acc_persediaan || !$acc_persediaan_jalan){
+                return [
+                    'status' => 'gagal',
+                    'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                ];
+            }
+
+            array_push($details, [
+                "jrdt_nomor"        => 1,
+                "jrdt_akun"         => $acc_persediaan_jalan->pd_acc,
+                "jrdt_value"        => $totHpp,
+                "jrdt_dk"           => "D",
+                "jrdt_keterangan"   => $acc_persediaan_jalan->pd_keterangan,
+                "jrdt_cashflow"     => $acc_persediaan_jalan->pd_cashflow
+            ]);
+
+            if(!is_null($request->harga) && $request->harga != 0){
+                array_push($details, [
+                    "jrdt_nomor"        => 2,
+                    "jrdt_akun"         => $acc_beban_ongkir->pd_acc,
+                    "jrdt_value"        => $request->harga,
+                    "jrdt_dk"           => "D",
+                    "jrdt_keterangan"   => $acc_beban_ongkir->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_beban_ongkir->pd_cashflow
+                ]);
+            }
+
+            array_push($details, [
+                "jrdt_nomor"        => 3,
+                "jrdt_akun"         => $acc_persediaan->pd_acc,
+                "jrdt_value"        => $totHpp,
+                "jrdt_dk"           => "K",
+                "jrdt_keterangan"   => $acc_persediaan->pd_keterangan,
+                "jrdt_cashflow"     => $acc_persediaan->pd_cashflow,
+            ]);
+
+            if(!is_null($request->harga) && $request->harga != 0){
+                array_push($details, [
+                    "jrdt_nomor"        => 4,
+                    "jrdt_akun"         => $acc_kas->pd_acc,
+                    "jrdt_value"        => $request->harga,
+                    "jrdt_dk"           => "K",
+                    "jrdt_keterangan"   => $acc_kas->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_kas->pd_cashflow,
+                ]);
+            }
+
+            // return $details;
+
+            $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $notasales, $parrent->pe_nama, 'TK', Auth::user()->u_company);
+
+            if($jurnal['status'] == 'error'){
+                return $jurnal;
+            }
+
+            if($request->paymentType == 'T'){
+                $details = [];
+
+                $acc_kas = m_paymentmethod::where('pm_id', $request->paymentMethod)
+                                        ->first();
+
+                $acc_kas_ket = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Penjualan Pusat Dengan DP')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA Kas/Setara Kas')
+                                            ->first();
+
+                $acc_DP = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Penjualan Pusat Dengan DP')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA Pendapatan Dibayar Dimuka')
+                                            ->first();
+
+                $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Penjualan Pusat Dengan DP')
+                        ->where('pe_comp', Auth::user()->u_company)->first();
+
+                if(!$parrent || !$acc_DP || !$acc_kas){
+                    return [
+                        'status' => 'gagal',
+                        'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                    ];
+                }
+
+                array_push($details, [
+                    "jrdt_nomor"        => 1,
+                    "jrdt_akun"         => $acc_kas->pm_akun,
+                    "jrdt_value"        => $request->payCash,
+                    "jrdt_dk"           => "D",
+                    "jrdt_keterangan"   => $acc_kas_ket->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_kas_ket->pd_cashflow
+                ]);
+
+                array_push($details, [
+                    "jrdt_nomor"        => 1,
+                    "jrdt_akun"         => $acc_DP->pd_acc,
+                    "jrdt_value"        => $request->payCash,
+                    "jrdt_dk"           => "K",
+                    "jrdt_keterangan"   => $acc_DP->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_DP->pd_cashflow
+                ]);
+
+                $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $notasales, $parrent->pe_nama, 'TK', Auth::user()->u_company);
+
+                if($jurnal['status'] == 'error'){
+                    return $jurnal;
+                }
+            }
+
+            // return $details;
+
+            return [
+                'status' => 'berhasil',
+                'message' => ''
+            ];
+     }
+
     // Penerimaan Piutang -------------------------->
     public function cariNota(Request $request)
     {

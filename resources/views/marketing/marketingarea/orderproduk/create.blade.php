@@ -164,6 +164,7 @@
                         </form>
                     </div>
                     <div class="card-footer text-right">
+                        <span><strong>Info:</strong> Jika order sebelumnya <span style="font-style: italic">belum disetujui</span>, maka barang yang diorder akan digabungkan ke order sebelumnya</span>
                         <button class="btn btn-primary btn-submit" type="button">Simpan</button>
                         <a href="{{route('marketingarea.index')}}" class="btn btn-secondary">Kembali</a>
                     </div>
