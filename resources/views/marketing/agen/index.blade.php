@@ -134,9 +134,12 @@
         });
         // end: ---
 
-        var table_pus = $('#table_kelolapenjualan').DataTable({
-            bAutoWidth: true
-        });
+        setTimeout(function () {
+            var table_pus = $('#table_kelolapenjualan').DataTable({
+                bAutoWidth: true
+            });
+        },500);
+
         table_kpw = $('#table_KPW').DataTable({
             bAutoWidth: true,
             responsive: true,
@@ -571,7 +574,7 @@
                 $('#date_from_kpl').datepicker('setDate', first_day);
                 $('#date_to_kpl').datepicker('setDate', last_day);
             });
-            TableListKPL();
+
             $('#filter_agent_name_kpl').on('click', function () {
                 $('#searchAgen').modal('show');
             });
@@ -588,6 +591,11 @@
             $('#btn_filter_kpl').on('click', function () {
                 TableListKPL();
             });
+
+            setTimeout(function () {
+                TableListKPL();
+            },1000);
+
         });
 
         function tableHistoryColumn() {
