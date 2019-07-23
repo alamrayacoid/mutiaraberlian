@@ -65,8 +65,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Penjualanpusat/PenjualanPusatController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-26">
-              <caret line="980" column="49" lean-forward="true" selection-start-line="980" selection-start-column="49" selection-end-line="980" selection-end-column="49" />
+            <state relative-caret-position="163">
+              <caret line="989" column="47" lean-forward="true" selection-start-line="989" selection-start-column="47" selection-end-line="989" selection-end-column="47" />
             </state>
           </provider>
         </entry>
@@ -483,7 +483,7 @@
       <workItem from="1563663849830" duration="5200000" />
       <workItem from="1563684717763" duration="1777000" />
       <workItem from="1563690797831" duration="3726000" />
-      <workItem from="1563763499662" duration="21948000" />
+      <workItem from="1563763499662" duration="22638000" />
     </task>
     <task id="LOCAL-00001" summary="perbaikan jenis produk">
       <created>1560755279119</created>
@@ -776,7 +776,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="455386000" />
+    <option name="totallyTimeSpent" value="456076000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1213,8 +1213,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Penjualanpusat/PenjualanPusatController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-26">
-          <caret line="980" column="49" lean-forward="true" selection-start-line="980" selection-start-column="49" selection-end-line="980" selection-end-column="49" />
+        <state relative-caret-position="163">
+          <caret line="989" column="47" lean-forward="true" selection-start-line="989" selection-start-column="47" selection-end-line="989" selection-end-column="47" />
         </state>
       </provider>
     </entry>
