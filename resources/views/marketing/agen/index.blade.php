@@ -28,7 +28,7 @@
         }
     </style>
 @endsection
-
+@section('content')
     @include('marketing.agen.penjualanviaweb.modal_create')
     @include('marketing.agen.orderproduk.detailDO')
     @include('marketing.agen.orderproduk.modal-acceptance')
@@ -36,7 +36,6 @@
     @include('marketing.agen.kelolapenjualan.modal')
     @include('marketing.agen.inventoryagen.modal_detail_agen')
 
-@section('content')
     <article class="content animated fadeInLeft">
         <div class="title-block text-primary">
             <h1 class="title"> Manajemen Agen </h1>
@@ -135,9 +134,12 @@
         });
         // end: ---
 
-        var table_pus = $('#table_kelolapenjualan').DataTable({
-            bAutoWidth: true
-        });
+        setTimeout(function () {
+            var table_pus = $('#table_kelolapenjualan').DataTable({
+                bAutoWidth: true
+            });
+        },500);
+
         table_kpw = $('#table_KPW').DataTable({
             bAutoWidth: true,
             responsive: true,
@@ -572,7 +574,7 @@
                 $('#date_from_kpl').datepicker('setDate', first_day);
                 $('#date_to_kpl').datepicker('setDate', last_day);
             });
-            TableListKPL();
+
             $('#filter_agent_name_kpl').on('click', function () {
                 $('#searchAgen').modal('show');
             });
@@ -589,6 +591,11 @@
             $('#btn_filter_kpl').on('click', function () {
                 TableListKPL();
             });
+
+            setTimeout(function () {
+                TableListKPL();
+            },1000);
+
         });
 
         function tableHistoryColumn() {
@@ -985,8 +992,9 @@
         function getCustomer() {
             loadingShow();
             let agen = $('#nama_agen').val();
-            axios.get('{{ route("kelolapenjualan.getMemberKPL") }}', {
-                'agentCode': agen
+            axios.post('{{ route("kelolapenjualan.getMemberKPL") }}', {
+                'agentCode': agen,
+                '_token': '{{ csrf_token() }}'
             }).then(function (response) {
                 loadingHide();
                 $("#nama_customer").empty();
@@ -1070,6 +1078,13 @@
                 paging: false
             });
             table_kpw.columns.adjust();
+            $('#provKPW').select2({
+                dropdownParent: $('#createKPW')
+            });
+            $('#citiesKPW').select2({
+                dropdownParent: $('#createKPW')
+            });
+            $('#provKPW').val(null).trigger('change');
             $('#provKPW').select2('open');
         });
         $('#createKPW').on('hide.bs.modal', function () {

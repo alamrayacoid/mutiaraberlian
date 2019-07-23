@@ -2,7 +2,6 @@
 <div id="createKPW" class="modal fade animated fadeIn" role="dialog">
     <form class="formCreateKPW">
         <div class="modal-dialog modal-lg">
-
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header bg-gradient-info">

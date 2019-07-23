@@ -630,7 +630,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/kelolapenjualanlangsung/get-detail-penjualan', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailPenjualan')->name('kelolapenjualan.getDetailPenjualan');
     Route::post('/marketing/agen/kelolapenjualanlangsung/delete-detail-penjualan', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteDetailPenjualan')->name('kelolapenjualan.deleteDetailPenjualan');
     Route::get('/marketing/agen/kelolapenjualanlangsung/create', 'Aktivitasmarketing\Agen\ManajemenAgenController@createKPL')->name('kelolapenjualan.create');
-    Route::get('/marketing/agen/kelolapenjualanlangsung/get-member-kpl', 'Aktivitasmarketing\Agen\ManajemenAgenController@getMemberKPL')->name('kelolapenjualan.getMemberKPL');
+    Route::post('/marketing/agen/kelolapenjualanlangsung/get-member-kpl', 'Aktivitasmarketing\Agen\ManajemenAgenController@getMemberKPL')->name('kelolapenjualan.getMemberKPL');
     Route::get('/marketing/agen/kelolapenjualanlangsung/find-item', 'Aktivitasmarketing\Agen\ManajemenAgenController@findItem')->name('kelolapenjualan.findItem');
     Route::post('/marketing/agen/kelolapenjualanlangsung/find-agen', 'Aktivitasmarketing\Agen\ManajemenAgenController@getAgenKPL')->name('kelolapenjualan.getAgenKPL');
     // Route::get('/marketing/agen/kelolapenjualanlangsung/get-item-stock', 'Aktivitasmarketing\Agen\ManajemenAgenController@getItemStock')->name('kelolapenjualan.getItemStock');

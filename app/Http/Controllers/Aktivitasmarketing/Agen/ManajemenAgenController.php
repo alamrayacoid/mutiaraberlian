@@ -87,18 +87,17 @@ class ManajemenAgenController extends Controller
 
     public function getPenjual($prov = null, $kota = null)
     {
-        $data = m_agen::where('m_agen.a_provinsi', '=', $prov)
-        ->where('m_agen.a_kabupaten', '=', $kota);
+        $data = m_agen::leftJoin('m_company', 'c_user', '=', 'a_code')
+            ->where('m_agen.a_provinsi', '=', $prov)
+            ->where('m_agen.a_kabupaten', '=', $kota);
 
         if (Auth::user()->u_user == 'A') {
             if (Auth::user()->agen->a_type == 'AGEN') {
                 $data = $data->where('a_code', Auth::user()->agen->a_code)->get();
-            }
-            elseif (Auth::user()->agen->a_type == 'SUB AGEN') {
+            } elseif (Auth::user()->agen->a_type == 'SUB AGEN') {
                 $data = $data->where('a_code', Auth::user()->agen->a_parent)->get();
             }
-        }
-        elseif (Auth::user()->u_user == 'E') {
+        } elseif (Auth::user()->u_user == 'E') {
             $data = $data->where('a_mma', Auth::user()->u_company)->get();
         }
 
@@ -1253,9 +1252,22 @@ class ManajemenAgenController extends Controller
     // get member for KPL if the user is Employee, not Agent
     public function getMemberKPL(Request $request)
     {
-        $members = m_member::where('m_id', 1)
-            ->orWhere('m_agen', $request->agentCode)
+        $getKode = DB::table('m_company')
+            ->where('c_id', '=', $request->agentCode)
             ->get();
+
+        $members = [];
+
+        if (count($getKode) > 0){
+            $members = m_member::where('m_id', 1)
+                ->orWhere('m_agen', $getKode[0]->c_user)
+                ->get();
+        } else {
+            $members = m_member::where('m_id', 1)
+                ->orWhere('m_agen', $request->agentCode)
+                ->get();
+        }
+
         return response()->json($members);
     }
 
