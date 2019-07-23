@@ -992,8 +992,9 @@
         function getCustomer() {
             loadingShow();
             let agen = $('#nama_agen').val();
-            axios.get('{{ route("kelolapenjualan.getMemberKPL") }}', {
-                'agentCode': agen
+            axios.post('{{ route("kelolapenjualan.getMemberKPL") }}', {
+                'agentCode': agen,
+                '_token': '{{ csrf_token() }}'
             }).then(function (response) {
                 loadingHide();
                 $("#nama_customer").empty();
@@ -1077,6 +1078,13 @@
                 paging: false
             });
             table_kpw.columns.adjust();
+            $('#provKPW').select2({
+                dropdownParent: $('#createKPW')
+            });
+            $('#citiesKPW').select2({
+                dropdownParent: $('#createKPW')
+            });
+            $('#provKPW').val(null).trigger('change');
             $('#provKPW').select2('open');
         });
         $('#createKPW').on('hide.bs.modal', function () {
