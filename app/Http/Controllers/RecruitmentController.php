@@ -22,7 +22,7 @@ class RecruitmentController extends Controller
       $validator = Validator::make($request->all(), [
         'applicant'     => 'required',
         'name'          => 'required',
-        'nik'           => 'required|numeric',
+        'nik'           => 'required',
         'address'       => 'required',
         'addressnow'    => 'required',
         'birthplace'    => 'required',
@@ -31,7 +31,7 @@ class RecruitmentController extends Controller
         'birthyear'     => 'required',
         'lasteducation' => 'required',
         'email'         => 'required|email',
-        'telp'          => 'required|numeric',
+        'telp'          => 'required',
         'religion'      => 'required',
         'partner'       => 'required_if:status,M',
         'schoolname'    => 'required',
@@ -47,7 +47,7 @@ class RecruitmentController extends Controller
         'applicant.required'     => 'Posisi yang ingin dilamar masih kosong !',
         'name.required'          => 'Nama masih kosong !',
         'nik.required'           => 'NIK masih kosong !',
-        'nik.numeric'            => 'NIK hanya boleh berisi angka !',
+        // 'nik.numeric'            => 'NIK hanya boleh berisi angka !',
         'address.required'       => 'Alamat masih kosong !',
         'addressnow.required'    => 'Alamat sekarang masih kosong !',
         'birthplace.required'    => 'Tempat lahir masih kosong !',
@@ -58,7 +58,7 @@ class RecruitmentController extends Controller
         'email.required'         => 'Email masih kosong !',
         'email.email'            => 'Format email tidak valid !',
         'telp.required'          => 'No telp masih kosong !',
-        'telp.numeric'           => 'No telp hanya boleh berisi angka !',
+        // 'telp.numeric'           => 'No telp hanya boleh berisi angka !',
         'religion.required'      => 'Agama masih kosong !',
         'partner.required_if'    => 'Nama suami/istri masih kosong !',
         'schoolname.required'    => 'Nama sekolah masih kosong !',
@@ -185,6 +185,10 @@ class RecruitmentController extends Controller
           'message' => 'Anda telah terdaftar !'
         ]);
       }
+
+      $request->merge(['nik' => str_replace(' ', '', $request->nik)]);
+      $request->merge(['telp' => str_replace(' ', '', $request->telp)]);
+
       // validate request
       $isValidRequest = $this->validate_req($request);
       if ($isValidRequest != '1') {
@@ -194,6 +198,7 @@ class RecruitmentController extends Controller
           'message' => $errors
         ]);
       }
+
       // start: execute insert data
       DB::beginTransaction();
       try {

@@ -777,7 +777,7 @@
 			type: "get",
 			success:function(res) {
 				$('#editLoker').modal('show');
-				$('#id_loker').val(res.data1.a_id);
+				$('#id_loker').val(res.data1.ss_id);
 				$('#start_date_edit').val(res.data1.start_date);
 				$('#end_date_edit').val(res.data1.end_date);
 				$('#position_edit').find('option').remove();

@@ -10,9 +10,6 @@
 			<section>
 				<div class="row mb-3">
 					<h6 class="col-11">Pencarian Berdasarkan :</h6>
-					<div class="d-flex justify-content-end col-1">
-						<button class="btn btn-primary rounded" type="button" onclick="TableDiterima()"><i class="fa fa-fw fa-filter"></i> Filter</button>
-					</div>
 				</div>
 				<fieldset class="mb-3">
 					<div class="row">
@@ -59,13 +56,20 @@
 								<select class="form-control form-control-sm select2" id="terima_position">
 									<option value="" selected>Tampilkan Semua</option>
 									@foreach($applicant as $key => $app)
-										<option value="{{$app->a_id}}">{{$app->j_name}}</option>
+										<option value="{{$app->ss_id}}">{{$app->j_name}}</option>
 									@endforeach
 								</select>
 							</div>
 						</div>
 					</div>
+					<hr>
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<button class="btn btn-primary rounded" type="button" onclick="TableDiterima()"><i class="fa fa-fw fa-filter"></i> Terapkan Filter</button>
+						</div>
+					</div>
 				</fieldset>
+				<br>
 				<div class="table-responsive">
 					<table class="table table-hover table-striped display nowrap" style="width: 100%" cellspacing="0" id="table_diterima">
 						<thead class="bg-primary">
@@ -80,7 +84,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							
+
 						</tbody>
 					</table>
 				</div>

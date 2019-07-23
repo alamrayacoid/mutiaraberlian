@@ -25,9 +25,9 @@ class RecruitmentController extends Controller
       ->select('m_jabatan.*')
       ->where('j_id', '<', 7)
       ->get();
-    $applicant = DB::table('d_applicant')
-      ->join('m_jabatan', 'a_position', 'j_id')
-      ->where('a_isactive', '=', 'Y')
+    $applicant = DB::table('d_sdmsubmission')
+      ->join('m_jabatan', 'ss_position', 'j_id')
+      ->where('ss_isactive', '=', 'Y')
       ->get();
     $divisi = DB::table('m_divisi')
       ->select('m_divisi.*')
@@ -128,7 +128,7 @@ class RecruitmentController extends Controller
           return '<div class="text-center">'.Carbon::parse($datas->pl_date)->format('d M Y').'</div>';
         } else {
           return '<div class="text-danger text-center">-</div>';
-        }        
+        }
       })
       ->addColumn('action', function($datas) {
         return '<div class="btn-group btn-group-sm">
@@ -165,8 +165,8 @@ class RecruitmentController extends Controller
     }
 
     $data = DB::table('d_pelamar')
-      ->join('d_applicant', 'p_applicant', 'a_id')
-      ->join('m_jabatan', 'd_applicant.a_position', 'j_id')
+      ->join('d_sdmsubmission', 'p_sdmsubmission', 'ss_id')
+      ->join('m_jabatan', 'd_sdmsubmission.ss_position', 'j_id')
       ->where('p_id', $id)
       ->first();
 
@@ -206,7 +206,7 @@ class RecruitmentController extends Controller
 
     $dtId = DB::table('d_pelamarlanjutan')->where('pl_id', '=', $id)->max('pl_detailid');
     DB::beginTransaction();
-    try {     
+    try {
 
       if ($approve3 != null && $status3 == null) {
         DB::table('d_pelamar')->where('p_id', '=', $id)->update([
@@ -255,7 +255,7 @@ class RecruitmentController extends Controller
             'pl_isapproved' => $status
           ]);
         }
-      }     
+      }
 
       DB::commit();
       return response()->json([
@@ -267,7 +267,7 @@ class RecruitmentController extends Controller
           'status'  => 'Gagal',
           'message' => $e
         ]);
-    }    
+    }
   }
 
   public function deletePelamar($id)
@@ -329,7 +329,7 @@ class RecruitmentController extends Controller
         ->where('p_state', 'Y')
         ->whereBetween('p_created', [$from, $to])
         ->where('p_education', '=', $edu)
-        ->where('p_applicant', '=', $posisi)
+        ->where('p_sdmsubmission', '=', $posisi)
         ->groupBy("p_id")
         ->orderBy('p_name', 'asc')
         ->get();
@@ -355,7 +355,7 @@ class RecruitmentController extends Controller
         })
         ->where('p_state', 'Y')
         ->whereBetween('p_created', [$from, $to])
-        ->where('p_applicant', '=', $posisi)
+        ->where('p_sdmsubmission', '=', $posisi)
         ->groupBy("p_id")
         ->orderBy('p_name', 'asc')
         ->get();
@@ -371,7 +371,7 @@ class RecruitmentController extends Controller
         ->groupBy("p_id")
         ->orderBy('p_name', 'asc')
         ->get();
-    }    
+    }
 
     return Datatables::of($datas)
       ->addIndexColumn()
@@ -666,7 +666,7 @@ class RecruitmentController extends Controller
                      <button class="btn btn-success hint--top-left hint--success" type="button" aria-label="Terima Publikasi" onclick="approvePublish(\''.Crypt::encrypt($publish->ss_id).'\')"><i class="fa fa-share-square" aria-hidden="true"></i></button>
                     </div>
                   </div>';
-        }        
+        }
       })
       ->rawColumns(['start', 'end', 'status', 'action'])
       ->make(true);
@@ -678,15 +678,15 @@ class RecruitmentController extends Controller
     $start_date = date('Y-m-d', $date1);
     $date2      = strtotime($request->a_enddate);
     $end_date   = date('Y-m-d', $date2);
-    
-    $idLoker = DB::table('d_applicant')->max('a_id');
+
+    $idLoker = DB::table('d_sdmsubmission')->max('ss_id');
     DB::beginTransaction();
     try {
-      DB::table('d_applicant')->insert([
-        'a_id'        => $idLoker+1,
-        'a_startdate' => $start_date,
-        'a_enddate'   => $end_date,
-        'a_position'  => $request->a_position
+      DB::table('d_sdmsubmission')->insert([
+        'ss_id'        => $idLoker+1,
+        'ss_startdate' => $start_date,
+        'ss_enddate'   => $end_date,
+        'ss_position'  => $request->a_position
       ]);
 
       DB::commit();
@@ -770,16 +770,16 @@ class RecruitmentController extends Controller
 
     DB::beginTransaction();
     try {
-      $query1 = DB::table('d_applicant')
+      $query1 = DB::table('d_sdmsubmission')
         ->join('d_pelamar', function($p){
-          $p->on('a_id', '=', 'p_applicant');
+          $p->on('ss_id', '=', 'p_sdmsubmission');
         })
-        ->where('p_applicant', '=', $id)
+        ->where('p_sdmsubmission', '=', $id)
         ->count();
 
-      $query2 = DB::table('d_applicant')
-        ->where('a_id', '=', $id)
-        ->where('a_isactive', '=', "Y")
+      $query2 = DB::table('d_sdmsubmission')
+        ->where('ss_id', '=', $id)
+        ->where('ss_isactive', '=', "Y")
         ->count();
 
       if ($query1 > 0) {
@@ -793,10 +793,10 @@ class RecruitmentController extends Controller
           'status' => 'warning'
         ]);
       } else {
-        DB::table('d_applicant')
-          ->where('a_id', $id)
+        DB::table('d_sdmsubmission')
+          ->where('ss_id', $id)
           ->delete();
-      }      
+      }
 
       DB::commit();
       return response()->json([
@@ -819,10 +819,10 @@ class RecruitmentController extends Controller
         return view('errors.404');
     }
 
-    $data1 = DB::table('d_applicant')
-      ->join('m_jabatan', 'a_position', 'j_id')
-      ->select('d_applicant.*', DB::raw('date_format(a_startdate, "%d-%m-%Y") as start_date'), DB::raw('date_format(a_enddate, "%d-%m-%Y") as end_date'), 'm_jabatan.*')
-      ->where('a_id', $id)
+    $data1 = DB::table('d_sdmsubmission')
+      ->join('m_jabatan', 'ss_position', 'j_id')
+      ->select('d_sdmsubmission.*', DB::raw('date_format(ss_startdate, "%d-%m-%Y") as start_date'), DB::raw('date_format(ss_enddate, "%d-%m-%Y") as end_date'), 'm_jabatan.*')
+      ->where('ss_id', $id)
       ->first();
     $data2 = DB::table('m_jabatan')
       ->select('m_jabatan.*')
@@ -847,12 +847,12 @@ class RecruitmentController extends Controller
 
     DB::beginTransaction();
     try {
-      DB::table('d_applicant')
-        ->where('a_id', $id)
+      DB::table('d_sdmsubmission')
+        ->where('ss_id', $id)
         ->update([
-          'a_startdate' => $start_date,
-          'a_enddate' => $end_date,
-          'a_position' => $request->a_position
+          'ss_startdate' => $start_date,
+          'ss_enddate' => $end_date,
+          'ss_position' => $request->a_position
         ]);
 
       DB::commit();
