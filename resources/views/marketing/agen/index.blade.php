@@ -28,7 +28,7 @@
         }
     </style>
 @endsection
-
+@section('content')
     @include('marketing.agen.penjualanviaweb.modal_create')
     @include('marketing.agen.orderproduk.detailDO')
     @include('marketing.agen.orderproduk.modal-acceptance')
@@ -36,7 +36,6 @@
     @include('marketing.agen.kelolapenjualan.modal')
     @include('marketing.agen.inventoryagen.modal_detail_agen')
 
-@section('content')
     <article class="content animated fadeInLeft">
         <div class="title-block text-primary">
             <h1 class="title"> Manajemen Agen </h1>
