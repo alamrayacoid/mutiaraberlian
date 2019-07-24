@@ -375,7 +375,7 @@
 
         $('#ekspedisi').on('change', function () {
             let id = $('#ekspedisi').val();
-            axios.get('http://localhost/mutiara/marketing/penjualanpusat/get-produk-ekspedisi', {
+            axios.get('{{ route("penjualanpusat.getProdukEkspedisi") }}', {
                 params:{
                     "id": id
                 }
