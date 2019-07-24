@@ -131,14 +131,14 @@
                                                 <table class="table table-hover table-striped diplay nowrap w-100" style="width: 100%;" id="table_create">
                                                     <thead class="bg-primary">
                                                     <tr>
-                                                        <th>Kode/Nama Barang</th>
+                                                        <th width="19%">Kode/Nama Barang</th>
                                                         <th width="10%">Satuan</th>
-                                                        <th>Jumlah</th>
-                                                        <th>Kode Produksi</th>
-                                                        <th>Harga Satuan</th>
-                                                        <th>Diskon @</th>
-                                                        <th>Sub Total</th>
-                                                        <th>Aksi</th>
+                                                        <th width="10%">Jumlah</th>
+                                                        <th width="15%">Kode Produksi</th>
+                                                        <th width="13%">Harga Satuan</th>
+                                                        <th width="13%">Diskon @</th>
+                                                        <th width="15%">Sub Total</th>
+                                                        <th width="5%">Aksi</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
