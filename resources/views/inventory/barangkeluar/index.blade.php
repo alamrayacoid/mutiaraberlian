@@ -135,7 +135,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-6 col-md-6">
-                        <div class="row">                            
+                        <div class="row">
                             <div class="col-md-4">
                                 <label for="codeB">Kode Barang</label>
                             </div>
@@ -200,7 +200,7 @@
                                     <input type="text" class="form-control form-control-sm w-100 bg-light" disabled value="" readonly id="notaB">
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                     <div class="col-6 col-md-6">
                         <div class="row">
@@ -213,7 +213,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        
+
                                     </tbody>
                                 </table>
                             </div>
@@ -283,6 +283,7 @@
           tb_barangkeluar = $('#table_barangkeluar').dataTable({
               responsive: true,
               serverSide: true,
+              searching: false,
               ajax: {
                   url: "{{ route('barangkeluar.list') }}",
                   type: "get",
