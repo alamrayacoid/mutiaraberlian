@@ -289,10 +289,10 @@
 					        		<tr>
 					        			<td colspan="6" style="background: #e5e5e5; padding: 5px;">&nbsp;</td>
 					        			<td style="background: #e5e5e5; text-align: right; font-weight: bold; padding: 5px;">
-					        				@{{ humanizePrice(jurnal.debet) }}
+					        				@{{ humanizePrice(dataTot.totJurnal[jurnal.jr_id].debet) }}
 					        			</td>
 					        			<td style="background: #e5e5e5; text-align: right; font-weight: bold; padding: 5px;">
-					        				@{{ humanizePrice(jurnal.kredit) }}
+					        				@{{ humanizePrice(dataTot.totJurnal[jurnal.jr_id].debet) }}
 					        			</td>
 					        		</tr>
 				        		</template>
@@ -562,7 +562,30 @@
 	            },
 
 	            computed: {
-	            	
+	            	dataTot: function(){
+	            		var bucket = {
+            				totJurnal: new Object,
+            				totAktiva: 0,
+            				totPasiva: 0,
+            			};
+
+            			$.each(this.data, function(alpha, conteks){
+            				var totDebet = totKredit = 0;
+            				$.each(conteks.detail, function(beta, detail){
+            					if(detail.jrdt_dk == 'D')
+            						totDebet += parseFloat(detail.jrdt_value);
+            					else
+            						totKredit += parseFloat(detail.jrdt_value);
+            				})
+
+            				bucket.totJurnal[conteks.jr_id] = {
+            					debet: totDebet,
+            					kredit: totKredit
+            				}
+            			})
+
+            			return bucket;
+	            	}
 	            },
 
 	            watch: {
