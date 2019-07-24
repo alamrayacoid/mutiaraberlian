@@ -499,7 +499,7 @@ class PenerimaanProduksiController extends Controller
                 else if ($request->satuan == $data_check->unit3) {
                     $qty_compare = $request->qty * $data_check->compare3;
                 }
-                dd($request->receiveDate, Carbon::parse($request->receiveDate));
+
                 $values = [
                     'ird_itemreceipt'  => $nota_receipt->first()->ir_id,
                     'ird_detailid'      => $detail_receipt,
@@ -567,7 +567,7 @@ class PenerimaanProduksiController extends Controller
                 }
                 d_productionordercode::insert($valuesProdCode);
             }
-
+            // dd($receiveDate);
             $listPC = array($request->prodCode);
             $listQtyPC = array($request->qtyProdCode);
             $listUnitPC = array();
@@ -588,6 +588,7 @@ class PenerimaanProduksiController extends Controller
                 1, // mutation category
                 null, // stock parent id
                 'ON DESTINATION', // status
+                'FINE',
                 $receiveDate
             );
 
@@ -597,7 +598,7 @@ class PenerimaanProduksiController extends Controller
             if ($mutationIn->original['status'] !== 'success') {
                 return $mutationIn;
             }
-
+            
             // // repair mutasimasuk, also insert production code to param
             // // check stock-mutation again
             // $mutasi = Mutasi::mutasimasuk(
