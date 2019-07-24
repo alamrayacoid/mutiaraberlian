@@ -592,13 +592,10 @@ class PenerimaanProduksiController extends Controller
                 $receiveDate
             );
 
-            // if (!is_bool($mutasi)) {
-            //     return $mutasi;
-
             if ($mutationIn->original['status'] !== 'success') {
                 return $mutationIn;
             }
-            
+
             // // repair mutasimasuk, also insert production code to param
             // // check stock-mutation again
             // $mutasi = Mutasi::mutasimasuk(
