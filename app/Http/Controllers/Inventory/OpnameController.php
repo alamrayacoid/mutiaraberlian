@@ -175,57 +175,6 @@ class OpnameController extends Controller
             ->make(true);
         }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    
-    public function store(Request $request)
-    {
-      // validate request
-      $isValidRequest = $this->validate_req($request);
-      if ($isValidRequest != '1') {
-        $errors = $isValidRequest;
-        return response()->json([
-          'status' => 'invalid',
-          'message' => $errors
-        ]);
-      }
-      // insert data to db
-      try {
-
-        // return json_encode($request->all());
-
-        DB::beginTransaction();
-          $nota = $this->getNewNota();
-          $newId = d_opnameauth::max('oa_id') + 1;
-
-          $opname                = new d_opnameauth;
-          $opname->oa_id         = $newId;
-          $opname->oa_date       = Carbon::now();
-          $opname->oa_nota       = $nota;
-          $opname->oa_comp       = $request->owner;
-          $opname->oa_position   = $request->position;
-          $opname->oa_item       = $request->itemId;
-          $opname->oa_qtyreal    = $request->qty_real;
-          $opname->oa_unitreal   = $request->unit_real;
-          $opname->oa_qtysystem  = $request->qty_sys_hidden;
-          $opname->oa_unitsystem = 1;
-          $opname->oa_insert     = Carbon::now();
-          $opname->save();
-
-          for ($i=0; $i < count($request->code_r); $i++) {
-            $dt_Id = DB::table('d_opnameauthdt')->where('oad_opname', '=', $newId)->max('oad_detailid') + 1;
-            DB::table('d_opnameauthdt')->insert([
-              'oad_opname'   => $newId,
-              'oad_detailid' => $dt_Id,
-              'oad_code'     => $request->code_r[$i],
-              'oad_qty'      => $request->qty_r[$i]
-            ]);
-          }
-
         /**
         * Display a listing of the resource.
         *
