@@ -143,7 +143,7 @@
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">Nomor Identitas (NIK)<span style="color:red;">*</span></label>
                                 </div>
-                                <input type="text" class="form-control col-lg-9 col-sm-12" name="nik">
+                                <input type="text" class="form-control col-lg-9 col-sm-12 nik" name="nik">
 
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">Alamat<span style="color:red;">*</span></label>
@@ -187,7 +187,7 @@
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">Email<span style="color:red;">*</span></label>
                                 </div>
-                                <input type="text" class="form-control col-lg-9 col-sm-12" name="email" id="email">
+                                <input type="text" class="form-control col-lg-9 col-sm-12 email" name="email" id="email">
                                 <input type="hidden" value="1" id="isEmailDuplicated">
                                 <div>
                                 <!-- <button class="btn btn-check" id="btn_checkemail">Cek Email</button> -->
@@ -196,7 +196,7 @@
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">No Telp/WA<span style="color:red;">*</span></label>
                                 </div>
-                                <input type="text" class="form-control col-lg-9 col-sm-12" name="telp" id="telp">
+                                <input type="text" class="form-control col-lg-9 col-sm-12 hp" name="telp" id="telp">
                                 <input type="hidden" value="1" id="isTelpDuplicated">
                                 <div>
                                 <!-- <button class="btn btn-check" id="btn_checktelp">Cek Nomer</button> -->
@@ -279,7 +279,7 @@
                                 <div class="col-lg-3 col-sm-12">
                                     <label for="">Nilai/IPK<span style="color:red;">*</span></label>
                                 </div>
-                                <input type="text" class="form-control col-lg-9 col-sm-12" name="finalscore">
+                                <input type="text" class="form-control col-lg-9 col-sm-12 ipk" name="finalscore">
                             </div>
                         </div>
                         <h1 class="text-md-center title-1">Riwayat Pekerjaan</h1>
@@ -420,11 +420,32 @@
         crossorigin="anonymous"></script>
 <script src="{{asset('assets/js/dobPicker.min.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+<script src="{{asset('assets/inputmask/min/jquery.inputmask.bundle.min.js')}}"></script>
 <script>
     $(document).ready(function() {
         $('.datepicker').datepicker();
         $('#applicant').select2();
     })
+
+    // mask nik
+    $('.nik').inputmask("999999 999999 9999", {
+        autoUnmask: true,
+        placeholder: ""
+    });
+    // mask email
+    $('.email').inputmask({alias: "email"});
+    // mask telp-number
+    $('.hp').inputmask("9999 9999 9999 9", {
+        autoUnmask: true,
+        placeholder: ""
+    });
+    // mask ipk
+    $('.ipk').inputmask("9.99", {
+        autoUnmask: true,
+        placeholder: "4.00"
+    });
+
+
 
     $("#datepickers").datepicker({
     format: "yyyy",
@@ -683,6 +704,7 @@
   {
     event.preventDefault();
     form_datax = new FormData($('#myForm')[0]);
+    
     $.ajax({
       data : form_datax,
       type : "post",
