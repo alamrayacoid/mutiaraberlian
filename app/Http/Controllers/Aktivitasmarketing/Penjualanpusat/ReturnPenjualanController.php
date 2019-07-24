@@ -103,7 +103,7 @@ class ReturnPenjualanController extends Controller
         $kode = d_stock::with('getStockDt')
             ->where('s_position', '=', $agentCode)
             ->get();
-        dd($kode, $agentCode);
+            
         $listSalesCompId = array();
         foreach ($salesComp as $key => $val) {
             array_push($listSalesCompId, $val->sc_id);
