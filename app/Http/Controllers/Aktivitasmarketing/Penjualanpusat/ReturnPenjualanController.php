@@ -112,7 +112,7 @@ class ReturnPenjualanController extends Controller
         $prodCode = d_salescompcode::whereIn('ssc_code', $listSalesCompId)
             ->groupBy('ssc_salescomp')
             ->get();
-
+dd($listSalesCompId, $kode, $prodCode);
         return response()->json($prodCode);
     }
     // get list nota based on production-code
