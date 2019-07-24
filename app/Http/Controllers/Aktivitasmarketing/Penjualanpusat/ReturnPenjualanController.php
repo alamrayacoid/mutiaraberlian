@@ -106,7 +106,7 @@ class ReturnPenjualanController extends Controller
 
         $listSalesCompId = array();
         foreach ($kode as $key => $val) {
-            array_push($listSalesCompId, $val->sd_code);
+            array_push($listSalesCompId, $val->getStockDt[0]->sd_code);
         }
 
         $prodCode = d_salescompcode::whereIn('ssc_code', $listSalesCompId)
