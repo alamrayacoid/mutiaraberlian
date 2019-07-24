@@ -177,9 +177,11 @@ class InventoryController extends Controller
 
         if ($request->pemilik != "") {
             $datas->where('d_stock.s_comp', '=', $request->pemilik);
-        } else if ($request->posisi != "") {
+        }
+        if ($request->posisi != "") {
             $datas->where('d_stock.s_position', '=', $request->posisi);
-        } else if ($request->item != "") {
+        }
+        if ($request->item != "") {
             $datas->where('d_stock.s_item', '=', $request->item);
         }
 
@@ -222,6 +224,7 @@ class InventoryController extends Controller
                 $q->orWhere('i_name', 'like', '%' . $cari . '%');
                 $q->orWhere('i_code', 'like', '%' . $cari . '%');
             })
+            ->groupBy('i_id')
             ->get();
 
         if (count($nama) == 0) {
