@@ -468,8 +468,6 @@ class PenerimaanProduksiController extends Controller
         DB::beginTransaction();
         try{
 
-            // return json_encode($request->all());
-
             $data_check = DB::table('d_productionorder')
                 ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
                     'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
@@ -483,11 +481,11 @@ class PenerimaanProduksiController extends Controller
                 ->where('d_productionorder.po_id', '=', $order)
                 ->first();
 
-            // return json_encode($request->all());
-
             $nota_receipt = DB::table('d_itemreceipt')
                 ->where('ir_notapo', '=', $data_check->nota);
 
+            // set date received
+            $receiveDate = Carbon::parse($request->receiveDate);
             if ($nota_receipt->count() > 0) {
                 $detail_receipt = (DB::table('d_itemreceiptdt')->where('ird_itemreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) ? (DB::table('d_itemreceiptdt')->where('ird_itemreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) + 1 : 1;
 
@@ -505,7 +503,7 @@ class PenerimaanProduksiController extends Controller
                 $values = [
                     'ird_itemreceipt'  => $nota_receipt->first()->ir_id,
                     'ird_detailid'      => $detail_receipt,
-                    'ird_date'          => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                    'ird_date'          => $receiveDate,
                     'ird_item'          => $item,
                     'ird_qty'           => $qty_compare,
                     'ird_unit'          => $data_check->unit1,
@@ -535,7 +533,7 @@ class PenerimaanProduksiController extends Controller
                 $values = [
                     'ird_itemreceipt'  => $id,
                     'ird_detailid'      => $detail_receipt,
-                    'ird_date'          => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                    'ird_date'          => $receiveDate,
                     'ird_item'          => $item,
                     'ird_qty'           => $qty_compare,
                     'ird_unit'          => $data_check->unit1,
@@ -569,7 +567,7 @@ class PenerimaanProduksiController extends Controller
                 }
                 d_productionordercode::insert($valuesProdCode);
             }
-
+            // dd($receiveDate);
             $listPC = array($request->prodCode);
             $listQtyPC = array($request->qtyProdCode);
             $listUnitPC = array();
@@ -589,16 +587,18 @@ class PenerimaanProduksiController extends Controller
                 $listSmQty, // lsit of sm-qty (it got from salesOut)
                 1, // mutation category
                 null, // stock parent id
-                'ON DESTINATION' // status
+                'ON DESTINATION', // status
+                'FINE',
+                $receiveDate
             );
 
             // if (!is_bool($mutasi)) {
             //     return $mutasi;
-            
+
             if ($mutationIn->original['status'] !== 'success') {
                 return $mutationIn;
             }
-
+            
             // // repair mutasimasuk, also insert production code to param
             // // check stock-mutation again
             // $mutasi = Mutasi::mutasimasuk(
