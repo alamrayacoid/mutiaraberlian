@@ -109,8 +109,8 @@ class ReturnPenjualanController extends Controller
             array_push($listSalesCompId, $val->sd_code);
         }
 
-        $prodCode = d_salescompcode::whereIn('ssc_salescomp', $listSalesCompId)
-            ->groupBy('ssc_code')
+        $prodCode = d_salescompcode::whereIn('ssc_code', $listSalesCompId)
+            ->groupBy('ssc_salescomp')
             ->get();
 
         return response()->json($prodCode);
