@@ -615,6 +615,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/datakonsinyasi/edit/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datakonsinyasi')->name('datakonsinyasi.edit');
     Route::post('/marketing/marketingarea/datakonsinyasi/update/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@updateDK')->name('datakonsinyasi.updateDK');
     Route::post('/marketing/marketingarea/datakonsinyasi/delete', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@deleteDK')->name('datakonsinyasi.deleteDK');
+    //End MMA Kelola data Konsinyasi
+
+    // Start: MMA Pembayaran Piutang ===================================================================================
+    Route::get('/marketing/marketingarea/penerimaanpiutang/getdata', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datakonsinyasi')->name('datakonsinyasi.edit');
+    // End: MMA Pembayaran Piutang =====================================================================================
 
     // End: MMA kelola data konsinyasi ================================================================================================
 

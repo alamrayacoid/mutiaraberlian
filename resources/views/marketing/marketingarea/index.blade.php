@@ -84,6 +84,10 @@
                             <a href="#datakonsinyasi" class="nav-link" data-target="#datakonsinyasi"
                                aria-controls="datakonsinyasi" data-toggle="tab" role="tab">Kelola Data Konsinyasi </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="#penerimaanpiutang" class="nav-link" data-target="#penerimaanpiutang"
+                               aria-controls="penerimaanpiutang" data-toggle="tab" role="tab">Penerimaan Piutang </a>
+                        </li>
                     </ul>
                     <div class="tab-content">
                         @include('marketing.marketingarea.orderproduk.index')
@@ -91,6 +95,7 @@
                         @include('marketing.marketingarea.monitoring.index')
                         @include('marketing.marketingarea.datacanvassing.index')
                         @include('marketing.marketingarea.datakonsinyasi.index')
+                        @include('marketing.marketingarea.penerimaanpiutang.index')
                     </div>
                 </div>
             </div>

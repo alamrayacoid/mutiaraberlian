@@ -52,8 +52,10 @@ class MarketingAreaController extends Controller
         $provinsi = DB::table('m_wil_provinsi')->select('m_wil_provinsi.*')->orderBy('wp_name', 'asc')->get();
         $city = DB::table('m_wil_kota')->select('m_wil_kota.*')->orderBy('wc_name', 'asc')->get();
         $user = Auth::user();
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
 
-        return view('marketing/marketingarea/index', compact('provinsi', 'city', 'user'));
+        return view('marketing/marketingarea/index', compact('provinsi', 'city', 'user', 'start', 'end'));
     }
 
 
