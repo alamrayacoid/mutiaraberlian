@@ -34,6 +34,7 @@ use Mockery\Exception;
 use Mutasi;
 use Response;
 use Validator;
+use Session;
 
 class ManajemenAgenController extends Controller
 {
@@ -581,11 +582,26 @@ class ManajemenAgenController extends Controller
         // get current user
         $user = Auth::user();
 
+        if(Session::get('isPusat')){
+            $cabang = DB::table('m_company')
+                    ->whereIn('c_type', ['AGEN', 'CABANG'])
+                    ->orderBy('c_name', 'asc')
+                    ->select('c_id', 'c_name')->get();
+        }else{
+            $cabang = DB::table('m_company')
+                    ->whereIn('c_type', ['AGEN', 'CABANG'])
+                    ->where('c_id', Auth::user()->u_company)
+                    ->orderBy('c_name', 'asc')
+                    ->select('c_id', 'c_name')->get();
+        }
+
+        // return json_encode($cabang);
+
         $company = DB::table('m_company')
             ->leftJoin('m_agen', 'a_code', 'c_user')
             ->where('c_id', '=', $user->u_company)->first();
 
-        return view('marketing/agen/index', compact('provinsi', 'kota', 'kecamatan', 'user', 'company'));
+        return view('marketing/agen/index', compact('provinsi', 'kota', 'kecamatan', 'user', 'company', 'cabang'));
     }
 
 //    order produk ke agen
@@ -2713,5 +2729,22 @@ class ManajemenAgenController extends Controller
             ]);
         }
     }
+
+    // Tambahan dirga
+        protected function getLaporan(Request $request){
+            $penjualan = DB::table('d_sales')
+                            ->where(DB::raw('concat(MONTH(s_date), "-", YEAR(s_date))'), date('n-Y'))
+                            ->select(DB::raw('coalesce(sum(s_total), 0) as penjualan'));
+
+            if($request->search == 'all'){
+                $penjualan = $penjualan->first();
+            }else{
+                $penjualan = $penjualan->where('s_comp', $request->search)->first();
+            }
+
+            return json_encode([
+                "penjualan"     => ($penjualan) ? $penjualan->penjualan : 0
+            ]);
+        }
 
 }
