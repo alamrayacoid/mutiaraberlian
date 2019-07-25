@@ -53,12 +53,12 @@
                             <div class="col-4 form-group select-agent">
                                 <input id="editnama_agen" class="form-control form-control-sm" value="{{ $datas->c_name }}" readonly>
                                 <input type="hidden" id="edit_agen" value="{{ $datas->sw_agen }}">
-                                <input type="hidden" id="data_id" value="{{ $datas->sw_id }}">
+                                <input type="hidden" id="data_id" value="{{ $datas->dataId }}">
                             </div>
 
                             <label for="nama_customer" class="col-2 form-group">Nama Customer :</label>
                             <div class="col-4 form-group">
-                                <input id="editnama_customerView" class="form-control form-control-sm" value="xxx" readonly>
+                                <input id="editnama_customerView" class="form-control form-control-sm" value="{{ $datas->customerName }}" readonly>
                                 <input id="editnama_customer" class="form-control form-control-sm d-none" value="{{ $code[0]->s_member }}" readonly>
                             </div>
 
@@ -84,13 +84,16 @@
 
                             <label for="kuantitas" class="col-2 form-group">Kuantitas :</label>
                             <div class="col-2 form-group">
-                                <input type="number" class="form-control-sm form-control set-total text-right" id="edit_kuantitas" value="{{ $datas->sw_qty }}">
+                                <input type="number" class="form-control-sm form-control text-right" id="edit_kuantitas" value="{{ $datas->sw_qty }}">
                             </div>
 
-                            <label for="satuan" class="col-2 form-group">Satuan :</label>
+                            <label for="edit_satuan" class="col-2 form-group">Satuan :</label>
                             <div class="col-2 form-group">
-                                <select class="select2" id="satuan">
-                                    <!-- <option>== Pilih Satuan ==</option> -->
+                                <input type="hidden" class="unitHiddenSW" value="{{ $datas->sw_unit }}">
+                                <input type="hidden" class="unitHidden" value="{{ $units->id1 }}" data-name="{{ $units->name1 }}">
+                                <input type="hidden" class="unitHidden" value="{{ $units->id2 }}" data-name="{{ $units->name2 }}">
+                                <input type="hidden" class="unitHidden" value="{{ $units->id3 }}" data-name="{{ $units->name3 }}">
+                                <select class="select2" id="edit_satuan">
                                 </select>
                             </div>
 
@@ -163,13 +166,55 @@
         console.log(dateKPW);
         $('#dateEditKPW').datepicker('setDate', new Date(dateKPW[0], parseInt(dateKPW[1]) - 1, dateKPW[2]));
 
+        // append option to 'satuan'
+        let option = null;
+        $("#edit_satuan").empty();
+        $.each($('.unitHidden'), function (idx, val) {
+            // just show first unit
+            if (idx > 0) {
+                return ;
+            }
+            if ($('.unitHidden').eq(idx).val() == $('.unitHiddenSW').val()) {
+                option = '<option value="'+ $('.unitHidden').eq(idx).val() +'" selected>'+ $('.unitHidden').eq(idx).data('name') +'</option>';
+            }
+            else {
+                option = '<option value="'+ $('.unitHidden').eq(idx).val() +'">'+ $('.unitHidden').eq(idx).data('name') +'</option>';
+            }
+            $("#edit_satuan").append(option);
+            $('#label-satuan').html($('.unitHidden').eq(idx).data('name'));
+        });
+        // qty on changed
+        $('#edit_kuantitas').on('click keyup', function () {
+            setEditTotal();
+        });
+        // select2 satuan
         $('#satuan').change(function(){
             var selected = $(this).find('option:selected').data('nama');
             $('#label-satuan').html(selected);
         });
+        // code-production list
+        $('#table_EditKPW').DataTable().clear().destroy();
+        table_editKPW = $('#table_EditKPW').DataTable({
+            bAutoWidth: true,
+            responsive: true,
+            info: false,
+            searching: false,
+            paging: false
+        });
+        table_editKPW.columns.adjust();
+
+        let code = {!! $code !!};
+        console.log(code);
+        $.each(code, function (key, val) {
+            table_editKPW.row.add([
+                '<input type="text" value="'+ val.sc_code +'" class="form-control bg-light code_sd" readonly disabled/><input type="hidden" name="code_s[]" class="code_s" value="'+ val.sc_code +'"/>',
+                '<input type="number" min="1" name="qty_s[]" value="'+ val.sc_qty +'" class="qty_s form-control form-control-sm text-right"/>',
+                '<div class="text-center"><button type="button" class="btn btn-sm rounded btn-danger btn-trash"><i class="fa fa-trash"></i></button></div>'
+            ]).draw(false);
+        });
 
         $('#btn_simpan').on('click', function() {
-            saveSalesWeb();
+            updateKPW();
         });
     });
 
@@ -191,6 +236,12 @@
             getEditUnit();
         }
     });
+
+    function cekCodeEdit(e){
+        if (e.keyCode == 13){
+            addCodeEdit();
+        }
+    }
 
     function getEditUnit() {
         let item = $('#edit_produkid').val();
@@ -308,6 +359,7 @@
 
     function lanjutkanUpdate() {
         valid = 1;
+        let date      = $('#dateEditKPW').val();
         let agen      = $('#edit_agen').val();
         let customer  = $('#editnama_customer').val();
         let website   = $('#edit_website').val();
@@ -377,6 +429,7 @@
             var post = [];
             post = {
                 "id"        : $('#data_id').val(),
+                "date"      : date,
                 "agen"      : agen,
                 "website"   : website,
                 "customer"  : customer,
@@ -417,15 +470,22 @@
                             data: post,
                             success:function(response){
                                 loadingHide();
+                                console.log(response);
                                 if (response.status == 'sukses'){
                                     $('#editKPW').modal('hide');
                                     messageSuccess("Sukses", "Transaksi berhasil diperbarui!");
-                                    table_listKPW.ajax.reload();
-                                } else if (response.data.status == 'gagal'){
-                                    messageFailed("gagal", "Transaksi gagal diupdate");
+                                    setTimeout(function () {
+                                        window.history.back();
+                                    }, 1000);
+                                } else if (response.status == 'gagal'){
+                                    messageFailed("gagal", "Transaksi gagal diupdate !");
                                 } else {
                                     messageWarning('Error', 'Terjadi kesalahan, hubungi pengembang !');
                                 }
+                            },
+                            error: function(e) {
+                                loadingHide();
+                                messageWarning('Error', 'Terjadi kesalahan, hubungi pengembang !');
                             }
                         });
                     }
@@ -438,9 +498,6 @@
                 }
             }
         });
-        // }else{
-        //     messageFailed("Gagal", "Ada yang kurang!");
-        // }
     }
 </script>
 @endsection

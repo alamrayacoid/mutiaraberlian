@@ -226,6 +226,15 @@
                 saveSalesWeb();
             })
 
+            // add new code-production
+            $('#code_qty').on('keypress', function(e) {
+            // cannot used, after enter always reset the table of production-code
+            if(e.which == 13) {
+                $('#btnAddCodeKPW').trigger('click');
+            }
+            console.log('entered !');
+            });
+
         }); // end: document ready
 
         $( "#produk" ).autocomplete({
@@ -536,7 +545,7 @@
                         table_kpw.row.add([
                             "<input type='text' class='code form-control form-control-sm codeprod' name='code[]' value='"+code+"' readonly>",
                             "<input type='number' class='qtycode form-control form-control-sm text-right' name='qtycode[]' value='"+qty+"'>",
-                            "<button class='btn btn-danger btn-sm btn-delete-"+counter+"'><i class='fa fa-close'></i></button>"
+                            "<button type='button' class='btn btn-danger btn-sm btn-delete-"+counter+"'><i class='fa fa-close'></i></button>"
                         ]).draw(false);
                         $('#table_KPW tbody').on( 'click', '.btn-delete-'+counter, function () {
                             table_kpw.row( $(this).parents('tr') )
