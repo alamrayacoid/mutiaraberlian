@@ -38,6 +38,14 @@
                                 <input type="hidden" name="idOrder" id="idOrder">
                                 <input type="hidden" name="idItem" id="idItem">
                                 <div class="form-group row">
+                                    <label for="receiveDate" class="col-sm-2 col-form-label">Tanggal Terima</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-control-sm datepicker" id="receiveDate" name="receiveDate">
+                                        <!-- <input type="text" class="form-control form-control-sm" name="receiveDate" id="receiveDate"
+                                               placeholder="Masukkan nomor nota order produksi" autofocus> -->
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <label for="nota" class="col-sm-2 col-form-label">No. Nota DO</label>
                                     <div class="col-sm-10">
                                         <input type="text" class="form-control form-control-sm" name="nota" id="nota"

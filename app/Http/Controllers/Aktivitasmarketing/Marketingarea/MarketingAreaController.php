@@ -52,8 +52,10 @@ class MarketingAreaController extends Controller
         $provinsi = DB::table('m_wil_provinsi')->select('m_wil_provinsi.*')->orderBy('wp_name', 'asc')->get();
         $city = DB::table('m_wil_kota')->select('m_wil_kota.*')->orderBy('wc_name', 'asc')->get();
         $user = Auth::user();
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
 
-        return view('marketing/marketingarea/index', compact('provinsi', 'city', 'user'));
+        return view('marketing/marketingarea/index', compact('provinsi', 'city', 'user', 'start', 'end'));
     }
 
 
@@ -1248,7 +1250,7 @@ class MarketingAreaController extends Controller
                 'sc_date'    => $productOrder->po_date,
                 'sc_nota'    => $productOrder->po_nota,
                 'sc_total'   => 0,
-                'sc_datetop'   => $request->dateTop,
+                'sc_datetop'   => Carbon::createFromFormat('d-m-Y', $request->dateTop)->format('Y-m-d'),
                 'sc_paymenttype' => $request->paymentType,
                 'sc_paymentmethod' => $request->paymentMethod,
                 'sc_user'    => Auth::user()->u_id,

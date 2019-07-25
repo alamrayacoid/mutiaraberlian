@@ -1891,20 +1891,25 @@ class Mutasi extends Controller
         $mutcat, // mutation category
         $stockParentId, // stock parent id
         $status = 'ON GOING', // items status in stock
-        $condition = 'FINE' // item condition in stock
+        $condition = 'FINE', // item condition in stock
+        $receiveDate = null // date for received item
     )
     {
         DB::beginTransaction();
         try {
             // dd($to, $item, $nota, $listPC, $listQtyPC, $listUnitPC, $listSellPrice, $listHPP, $listSmQty, $mutcat, $stockParentId, $status, $condition);
-            // insert stock-mutation 'in'
-            $dateNow = Carbon::now();
+
+            // set date if receiveDate is not null
+            (is_null($receiveDate)) ? $dateNow = Carbon::now() : $dateNow = $receiveDate;
             $mutcat = $mutcat;
             $comp = $to; // item owner
             $position = $to; // item position
             $itemId = $item;
-            $status = $status;
-            $condition = $condition;
+            (is_null($status)) ? $status = 'ON GOING' : $status = $status;
+            (is_null($condition)) ? $status = 'FINE' : $condition = $condition;
+            
+            // $status = $status;
+            // $condition = $condition;
             $nota = $nota;
             $reff = $nota;
             $totalQty = array_sum($listSmQty);

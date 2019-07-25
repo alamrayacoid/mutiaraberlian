@@ -411,7 +411,6 @@ class ManajemenAgenController extends Controller
             $date = Carbon::now('Asia/Jakarta')->format('Y-m-d');
             $status = "P";
 
-
             DB::beginTransaction();
             try {
                 $val_po = [
@@ -463,6 +462,7 @@ class ManajemenAgenController extends Controller
                 ->max('po_id')) ?
                 DB::table('d_productorder')
                     ->max('po_id') + 1 : 1;
+
             $penjual = $data['c_cabang'];
             $pembeli = $data['c_compapb'];
             $date = Carbon::now('Asia/Jakarta')->format('Y-m-d');
@@ -486,6 +486,7 @@ class ManajemenAgenController extends Controller
                     (DB::table('d_productorderdt')
                         ->where('pod_productorder', '=', $po_id)
                         ->max('pod_detailid')) + 1 : 1;
+
                 $detailpo = $podetail;
                 $val_podt = [];
                 for ($i = 0; $i < count($data['c_idItem']); $i++) {
@@ -502,6 +503,7 @@ class ManajemenAgenController extends Controller
                 }
 
                 DB::table('d_productorder')->insert($val_po);
+
                 DB::table('d_productorderdt')->insert($val_podt);
                 DB::commit();
                 return Response::json([

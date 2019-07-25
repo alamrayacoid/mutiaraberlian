@@ -8,7 +8,7 @@
 
 
         <div class="title-block text-primary">
-            <h1 class="title"> Manajemen Penjualan Stok </h1>
+            <h1 class="title"> Pengelolaan Manajemen Stok </h1>
             <p class="title-description">
                 <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> / <span>Aktivitas Inventory</span> /
                 <span class="text-primary" style="font-weight: bold;">Pengelolaan Manajemen Stok</span>
@@ -39,7 +39,7 @@
                                             <div class="col-md-1 col-sm-12">
                                                 <label for="">Pemilik</label>
                                             </div>
-                                            <div class="col-md-2 col-sm-12">
+                                            <div class="col-md-3 col-sm-12">
                                                 <select name="q_pemilik" id="q_pemilik"
                                                         class="form-control form-control-sm select2">
                                                     <option value="">Pilih</option>
@@ -65,7 +65,7 @@
                                             <div class="col-md-1 col-sm-12">
                                                 <label for="">Barang</label>
                                             </div>
-                                            <div class="col-md-3 col-sm-12">
+                                            <div class="col-md-2 col-sm-12">
                                                 <input type="hidden" name="q_idItem" id="q_idItem">
                                                 <input type="text" name="q_barang" id="q_barang"
                                                        class="form-control form-control-sm">

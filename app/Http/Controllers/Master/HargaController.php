@@ -808,7 +808,7 @@ class HargaController extends Controller
                     ->where('spd_type', '=', $request->jenishargaHPA)
                     ->get();
 
-                $sts = '';
+                $sts = 'Null';
                 foreach ($check as $key => $val) {
                     if ($val->spa_rangeqtyend == 0 && $request->rangeendHPA < $val->spa_rangeqtystart  && $request->rangeendHPA != "~"){
                         $val->spa_rangeqtyend = $val->spa_rangeqtystart * 2;
@@ -837,7 +837,8 @@ class HargaController extends Controller
                     }
                 }
 
-                if ($sts = "Null") {
+                if ($sts == "Null") {
+                    $detailid = 1;
                     $checkGol1 = DB::table('d_salespricedt')->where('spd_salesprice', '=', $idGol)->count();
                     $checkGol2 = DB::table('d_salespriceauth')->where('spa_salesprice', '=', $idGol)->count();
 
@@ -868,6 +869,7 @@ class HargaController extends Controller
                         'spa_price' => Currency::removeRupiah($request->hargarangeHPA),
                         'spa_user' => Auth::user()->u_id
                     ];
+
                     DB::table('d_salespriceauth')->insert($values);
                     DB::commit();
                     return response()->json(['status' => "Success"]);
