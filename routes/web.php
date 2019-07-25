@@ -618,7 +618,7 @@ Route::group(['middleware' => 'auth'], function () {
     //End MMA Kelola data Konsinyasi
 
     // Start: MMA Pembayaran Piutang ===================================================================================
-    Route::get('/marketing/marketingarea/penerimaanpiutang/getdata', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datakonsinyasi')->name('datakonsinyasi.edit');
+    Route::get('/marketing/marketingarea/penerimaanpiutang/getdata', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@getData')->name('mmapenerimaanpiutang.getdata');
     // End: MMA Pembayaran Piutang =====================================================================================
 
     // End: MMA kelola data konsinyasi ================================================================================================

@@ -1250,7 +1250,7 @@ class MarketingAreaController extends Controller
                 'sc_date'    => $productOrder->po_date,
                 'sc_nota'    => $productOrder->po_nota,
                 'sc_total'   => 0,
-                'sc_datetop'   => $request->dateTop,
+                'sc_datetop'   => Carbon::createFromFormat('d-m-Y', $request->dateTop)->format('Y-m-d'),
                 'sc_paymenttype' => $request->paymentType,
                 'sc_paymentmethod' => $request->paymentMethod,
                 'sc_user'    => Auth::user()->u_id,

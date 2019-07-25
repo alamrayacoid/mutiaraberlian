@@ -37,7 +37,6 @@
                     <table class="table table-hover table-striped display nowrap w-100" cellspacing="0" id="table_penerimaanpiutang">
                         <thead class="bg-primary">
                         <tr>
-                            <th class="text-center">No</th>
                             <th class="text-center">Agen</th>
                             <th class="text-center">Piutang</th>
                             <th class="text-center">Tanggal</th>
@@ -61,24 +60,7 @@
     var table_penerimaanpiutang;
     $(document).ready(function () {
         table_penerimaanpiutang = $('#table_penerimaanpiutang').DataTable({
-            responsive: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('datakonsinyasi.getListDK') }}",
-                type: "get",
-                data: {
-                    branchCode: $('#branchCode').val()
-                }
-            },
-            columns: [
-                {data: 'date'},
-                {data: 'sc_nota'},
-                {data: 'agent'},
-                {data: 'total'},
-                {data: 'action'}
-            ],
-            pageLength: 10,
-            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+
         });
     })
 </script>
