@@ -227,7 +227,7 @@
                             </div>
 
                             <div class="col-2">
-                                <label for="">Tanggal</label>
+                                <label for="">Tanggal Order</label>
                             </div>
                             <div class="col-4">
                                 <input type="text" class="form-control form-control-sm" id="tanggal_modaldt" readonly="">
@@ -272,7 +272,7 @@
                                 <label for="jenis_exp">Nama Kurir</label>
                             </div>
                             <div class="col-4">
-                                <input type="text" name="courierName" id="kurir_name" class="form-control form-control-sm">
+                                <input type="text" name="courierName" id="kurir_name" class="form-control form-control-sm" autocomplete="off">
                             </div>
                             <div class="col-2">
                                 <label for="expedition">Nomor Telepon</label>
@@ -286,15 +286,29 @@
                                 <label for="jenis_exp">Nomor Resi</label>
                             </div>
                             <div class="col-4">
-                                <input type="text" name="resi" id="no_resi" class="form-control form-control-sm text-uppercase">
+                                <input type="text" name="resi" id="no_resi" class="form-control form-control-sm text-uppercase" autocomplete="off">
                             </div>
                             <div class="col-2">
-                                <label for="jenis_exp">Biaya</label>
+                                <label for="jenis_exp">Biaya Pengiriman</label>
                             </div>
                             <div class="col-4">
                                 <input type="text" name="shippingCost" id="biaya_kurir" class="form-control form-control-sm rupiah">
                             </div>
                         </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-md-2 col-sm-6 col-xs-12">
+                                <label>Tanggal Pengiriman</label>
+                            </div>
+                            <div class="col-md-4 col-sm-6 col-xs-12">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                    </div>
+                                    <input type="text" name="dateSend" class="form-control form-control-sm datepicker" autocomplete="off" id="dateSend" value="{{ \Carbon\Carbon::now()->format('d-m-Y') }}">
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
                         <div class="row" style="margin-top: 5px;">
                             <div class="col-2">
                                 <label for="paymentType">Tipe Pembayaran</label>
@@ -1049,6 +1063,7 @@
             $('#kurir_name').val('');
             $('#no_hpkurir').val('');
             $('#biaya_kurir').val('');
+            $('#dateSend').val("{{ \Carbon\Carbon::now()->format('d-m-Y') }}");
 
             axios.get('{{ route("keloladataorder.getdetailorderagen") }}', {
                 params:{
@@ -1343,6 +1358,7 @@
             let pd_couriername = $('#kurir_name').serialize();
             let pd_couriertelp = $('#no_hpkurir').serialize();
             let pd_price       = $('#biaya_kurir').serialize();
+            let dateSend       = $('#dateSend').serialize();
             let paymentType    = $('#paymentType').serialize();
             let paymentMethod  = $('#paymentMethod').serialize();
             let payCash        = $('#payCash').serialize();
@@ -1351,7 +1367,7 @@
             let dataX = listQty +'&'+ listDiscount +'&'+ listItemsId +'&'+
                         listUnits +'&'+ listSubTotal +'&'+ pd_nota +'&'+ pd_expedition +'&'+
                         pd_product +'&'+ pd_resi +'&'+ pd_couriername +'&'+
-                        pd_couriertelp +'&'+ pd_price +'&'+ paymentType +'&'+
+                        pd_couriertelp +'&'+ pd_price +'&'+ dateSend +'&'+ paymentType +'&'+
                         paymentMethod +'&'+ payCash +'&'+ dateTop;
             loadingShow();
 
@@ -1430,6 +1446,9 @@
                     // set on-click event on 'receive item button'
                     $('#btn_confirmAc').attr('onclick', 'receiveItemOrder()');
                     $('#modalAcceptance').modal('show');
+                    $('#modalAcceptance').on('shown.bs.modal', function() {
+                        $('#dateReceive_ac').datepicker('setDate', new Date());
+                    });
                     loadingHide();
                 },
                 error: function(xhr, status, error) {
@@ -1466,13 +1485,14 @@
         }
         // receive item order
         function receiveItemOrder() {
-            console.log('receiveItemOrder()');
             let id = $('#id_ac').val();
+            let dateReceive = $('#dateReceive_ac').val();
             $.ajax({
                 type: "post",
                 url: baseUrl +'/marketing/marketingarea/keloladataorder/receive-item-order/'+ id,
                 data: {
-                    "_token": "{{ csrf_token() }}"
+                    "_token": "{{ csrf_token() }}",
+                    date: dateReceive
                 },
                 beforeSend: function () {
                     loadingShow();
@@ -2246,6 +2266,9 @@
                     // set on-click event on 'receive item button'
                     $('#btn_confirmAc').attr('onclick', 'confirmAcceptance()');
                     $('#modalAcceptance').modal('show');
+                    $('#modalAcceptance').on('shown.bs.modal', function() {
+                        $('#dateReceive_ac').datepicker('setDate', new Date());
+                    });
                     loadingHide();
                 },
                 error: function(xhr, status, error) {

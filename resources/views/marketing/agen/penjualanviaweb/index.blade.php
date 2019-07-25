@@ -5,7 +5,8 @@
                 <h3 class="title">Penjualan Via Website</h3>
             </div>
             <div class="header-block pull-right">
-                <button class="btn btn-primary" data-toggle="modal" style="color: white" data-target="#createKPW"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button>
+                <!-- <button class="btn btn-primary" data-toggle="modal" style="color: white" data-target="#createKPW"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button> -->
+                <a class="btn btn-primary" href="{{ route('kelolapenjualanviawebsite.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
             </div>
         </div>
         <div class="card-block">

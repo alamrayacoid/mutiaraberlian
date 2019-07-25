@@ -51,6 +51,18 @@
                             <div class="card-block">
                                 <section>
                                     <div id="sectionsuplier" class="row">
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>Tanggal</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                                </div>
+                                                <input type="text" name="dateKPL" class="form-control form-control-sm datepicker" autocomplete="off" id="dateKPL" value="{{ \Carbon\Carbon::now()->format('d-m-Y') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6"></div>
 
                                         @if($type == 'PUSAT')
                                             <div class="col-2">
@@ -604,9 +616,9 @@
 
         function setItem(info) {
             idStock = info.stock
-            idItem = info.data.i_id;
-            namaItem = info.data.i_name;
-            kode = info.data.i_code;
+            idItem = info.data.get_item.i_id;
+            namaItem = info.data.get_item.i_name;
+            kode = info.data.get_item.i_code;
             $(".kode").eq(idxBarang).val(kode);
             $(".itemid").eq(idxBarang).val(idItem);
             $(".idStock").eq(idxBarang).val(idStock);
@@ -789,7 +801,7 @@
                 "_token": "{{ csrf_token() }}"
             }).then(function (resp) {
                 $("#agent").empty();
-                var option = '<option value="" selected disabled>Pilih Agen Pembeli</option>';
+                var option = '<option value="" selected disabled>Pilih Agen</option>';
                 var pembeli = resp.data;
                 pembeli.forEach(function (data) {
                     option += '<option value="'+ data.a_code +'">' + data.a_name + '</option>';

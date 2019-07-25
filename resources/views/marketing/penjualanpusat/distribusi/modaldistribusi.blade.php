@@ -60,14 +60,14 @@
                         <label for="">Nama Kurir</label>
                     </div>
                     <div class="col-md-4 col-sm-12 mb-3">
-                        <input type="text" id="nama_kurir" class="form-control form-control-sm">
+                        <input type="text" id="nama_kurir" class="form-control form-control-sm" autocomplete="off">
                     </div>
 
                     <div class="col-md-2 col-sm-12">
                         <label for="">Nomor Telepon</label>
                     </div>
                     <div class="col-md-4 col-sm-12 mb-3">
-                        <input type="text" id="tlp_kurir" class="form-control form-control-sm hp">
+                        <input type="text" id="tlp_kurir" class="form-control form-control-sm hp" autocomplete="off">
                     </div>
 
                     <div class="col-md-2 col-sm-12">
@@ -99,7 +99,7 @@
                     </div>
                     <div class="col-md-4 col-sm-12 mb-3">
                         <select class="select2 form-control form-control-sm" id="paymentMethod" name="paymentMethod">
-                            
+
                         </select>
                     </div>
 

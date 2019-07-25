@@ -10,6 +10,19 @@
                 </div>
                 <div class="modal-body">
                     <div class="row form-group">
+                        <div class="col-md-2 col-sm-6 col-xs-12">
+                            <label>Tanggal Transaksi</label>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                </div>
+                                <input type="text" name="dateKPW" class="form-control form-control-sm datepicker" id="dateKPW">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group">
                         <label class="col-2 col-form-label">Area Provinsi :</label>
                         <div class="col-4">
                             <select class="form-control form-control-sm select2" id="provKPW">
@@ -137,6 +150,19 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
+                <div class="row form-group">
+                    <div class="col-md-2 col-sm-6 col-xs-12">
+                        <label>Tanggal Transaksi</label>
+                    </div>
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                            </div>
+                            <input type="text" name="dateEditKPW" class="form-control form-control-sm datepicker" autocomplete="off" id="dateEditKPW">
+                        </div>
+                    </div>
+                </div>
                 <div class="row form-group">
                     <label for="editnama_agen" class="col-2 col-form-label">Nama Agen :</label>
                     <div class="col-10">
