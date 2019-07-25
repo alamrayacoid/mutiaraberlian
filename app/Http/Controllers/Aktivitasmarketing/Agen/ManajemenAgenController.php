@@ -34,6 +34,7 @@ use Mockery\Exception;
 use Mutasi;
 use Response;
 use Validator;
+use Session;
 
 class ManajemenAgenController extends Controller
 {
@@ -411,7 +412,6 @@ class ManajemenAgenController extends Controller
             $pembeli = $data['a_compapb'];
             $status = "P";
 
-
             DB::beginTransaction();
             try
             {
@@ -468,6 +468,7 @@ class ManajemenAgenController extends Controller
                 ->max('po_id')) ?
                 DB::table('d_productorder')
                     ->max('po_id') + 1 : 1;
+
             $penjual = $data['c_cabang'];
             $pembeli = $data['c_compapb'];
             $status = "P";
@@ -490,6 +491,7 @@ class ManajemenAgenController extends Controller
                     (DB::table('d_productorderdt')
                         ->where('pod_productorder', '=', $po_id)
                         ->max('pod_detailid')) + 1 : 1;
+
                 $detailpo = $podetail;
                 $val_podt = [];
                 for ($i = 0; $i < count($data['c_idItem']); $i++) {
@@ -506,6 +508,7 @@ class ManajemenAgenController extends Controller
                 }
 
                 DB::table('d_productorder')->insert($val_po);
+
                 DB::table('d_productorderdt')->insert($val_podt);
                 DB::commit();
                 return Response::json([
@@ -588,11 +591,26 @@ class ManajemenAgenController extends Controller
         // get current user
         $user = Auth::user();
 
+        if(Session::get('isPusat')){
+            $cabang = DB::table('m_company')
+                    ->whereIn('c_type', ['AGEN', 'CABANG'])
+                    ->orderBy('c_name', 'asc')
+                    ->select('c_id', 'c_name')->get();
+        }else{
+            $cabang = DB::table('m_company')
+                    ->whereIn('c_type', ['AGEN', 'CABANG'])
+                    ->where('c_id', Auth::user()->u_company)
+                    ->orderBy('c_name', 'asc')
+                    ->select('c_id', 'c_name')->get();
+        }
+
+        // return json_encode($cabang);
+
         $company = DB::table('m_company')
             ->leftJoin('m_agen', 'a_code', 'c_user')
             ->where('c_id', '=', $user->u_company)->first();
 
-        return view('marketing/agen/index', compact('provinsi', 'kota', 'kecamatan', 'user', 'company'));
+        return view('marketing/agen/index', compact('provinsi', 'kota', 'kecamatan', 'user', 'company', 'cabang'));
     }
 
 //    order produk ke agen
@@ -2636,5 +2654,22 @@ class ManajemenAgenController extends Controller
             ]);
         }
     }
+
+    // Tambahan dirga
+        protected function getLaporan(Request $request){
+            $penjualan = DB::table('d_sales')
+                            ->where(DB::raw('concat(MONTH(s_date), "-", YEAR(s_date))'), date('n-Y'))
+                            ->select(DB::raw('coalesce(sum(s_total), 0) as penjualan'));
+
+            if($request->search == 'all'){
+                $penjualan = $penjualan->first();
+            }else{
+                $penjualan = $penjualan->where('s_comp', $request->search)->first();
+            }
+
+            return json_encode([
+                "penjualan"     => ($penjualan) ? $penjualan->penjualan : 0
+            ]);
+        }
 
 }

@@ -50,7 +50,7 @@
                     <ul class="nav nav-pills mb-3" id="Tabzs">
                         <li class="nav-item">
                             <a href="#orderprodukagenpusat" class="nav-link active" data-target="#orderprodukagenpusat"
-                               aria-controls="orderprodukagenpusat" data-toggle="tab" role="tab">Order Produk ke Agen /
+                               aria-controls="orderprodukagenpusat" data-toggle="tab" role="tab">Order ke Agen /
                                 Cabang</a>
                         </li>
                         <li class="nav-item">
@@ -60,12 +60,11 @@
                         </li>
                         <li class="nav-item" onclick="tableHistoryColumn()">
                             <a href="#penjualanviaweb" class="nav-link" data-target="#penjualanviaweb"
-                               aria-controls="penjualanviaweb" data-toggle="tab" role="tab">Kelola Penjualan Via
-                                Website</a>
+                               aria-controls="penjualanviaweb" data-toggle="tab" role="tab">Kelola Penjualan Website</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#datacanvassing" class="nav-link" data-target="#datacanvassing"
-                               aria-controls="datacanvassing" data-toggle="tab" role="tab">Kelola Laporan Keuangan
+                            <a href="#dataLaporan" class="nav-link" data-target="#dataLaporan"
+                               aria-controls="dataLaporan" data-toggle="tab" role="tab">Kelola Laporan
                                 Sederhana </a>
                         </li>
                         <li class="nav-item">
@@ -78,6 +77,7 @@
                         @include('marketing.agen.inventoryagen.index')
                         @include('marketing.agen.penjualanviaweb.index')
                         @include('marketing.agen.kelolapenjualan.index')
+                        @include('marketing.agen.laporan.index')
                     </div>
                 </div>
             </div>
@@ -1019,6 +1019,30 @@
             // $('#nama_customer option:not(:first)').remove();
             $('.formCreateKPW')[0].reset();
         });
+
+        // tambahan dirga
+            // alert($('#option-cabang').val());
+            axios.get('{{ Route("agen.laporan") }}?search='+$('#option-cabang').val())
+                    .then((response) => {
+                        console.log(response.data);
+
+                        $('#totPenjualan').html(humanizePrice(response.data.penjualan))
+                        $('#cover-spin').hide();
+                    })
+            
+        $('#option-cabang').change(function(){
+            var ctx = $(this);
+            $('#cover-spin').show();
+
+            axios.get('{{ Route("agen.laporan") }}?search='+$('#option-cabang').val())
+                    .then((response) => {
+                        console.log(response.data);
+
+                        $('#totPenjualan').html(humanizePrice(response.data.penjualan))
+                        $('#cover-spin').hide();
+                    })
+        })
+
     });
     //
     $( "#produk" ).autocomplete({
@@ -1088,6 +1112,32 @@
             loadingHide();
             alert('error');
         })
+    }
+
+    // tambahan dirga
+    function humanizePrice(alpha){
+      var kl = alpha.toString().replace('-', '');
+      bilangan = kl;
+      var commas = '00';
+
+
+      if(bilangan.split('.').length > 1){
+        commas = bilangan.split('.')[1];
+        bilangan = bilangan.split('.')[0];
+      }
+      
+      var number_string = bilangan.toString(),
+        sisa  = number_string.length % 3,
+        rupiah  = number_string.substr(0, sisa),
+        ribuan  = number_string.substr(sisa).match(/\d{3}/g);
+          
+      if (ribuan) {
+        separator = sisa ? ',' : '';
+        rupiah += separator + ribuan.join(',');
+      }
+
+      // Cetak hasil
+      return rupiah+'.'+commas; // Hasil: 23.456.789
     }
 
     function setTotal() {
