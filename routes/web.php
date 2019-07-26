@@ -619,6 +619,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Start: MMA Pembayaran Piutang ===================================================================================
     Route::get('/marketing/marketingarea/penerimaanpiutang/getdata', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@getData')->name('mmapenerimaanpiutang.getdata');
+    Route::get('/marketing/marketingarea/penerimaanpiutang/get-data-agen', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@getDataAgen')->name('mmapenerimaanpiutang.getDataAgen');
+    Route::get('/marketing/marketingarea/penerimaanpiutang/get-detail-transaksi', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@getDetailTransaksi')->name('mmapenerimaanpiutang.getDetailTransaksi');
+    Route::get('/marketing/marketingarea/penerimaanpiutang/bayar-piutang', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@bayarPiutang')->name('mmapenerimaanpiutang.bayarPiutang');
     // End: MMA Pembayaran Piutang =====================================================================================
 
     // End: MMA kelola data konsinyasi ================================================================================================
