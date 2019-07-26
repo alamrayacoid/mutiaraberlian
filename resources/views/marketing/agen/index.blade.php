@@ -1019,30 +1019,97 @@
                         console.log(response.data);
 
                         $('#totPenjualan').html(humanizePrice(response.data.penjualan))
+                        $('#totHutang').html(humanizePrice(response.data.sisahutang))
                         $('#cover-spin').hide();
                     })
 
-        $('#option-cabang').change(function(){
-            var ctx = $(this);
-            $('#cover-spin').show();
+            $('#option-cabang').change(function(){
+                var ctx = $(this);
+                $('#cover-spin').show();
 
-            axios.get('{{ Route("agen.laporan") }}?search='+$('#option-cabang').val())
-                    .then((response) => {
-                        console.log(response.data);
+                axios.get('{{ Route("agen.laporan") }}?search='+$('#option-cabang').val())
+                        .then((response) => {
+                            console.log(response.data);
 
-                        $('#totPenjualan').html(humanizePrice(response.data.penjualan))
-                        $('#cover-spin').hide();
-                    })
-        })
+                            $('#totPenjualan').html(humanizePrice(response.data.penjualan))
+                            $('#totHutang').html(humanizePrice(response.data.sisahutang))
+                            $('#cover-spin').hide();
+                        })
+            })
 
-        $('.set-total').on('click keyup', function(){
+            var lineChartData = {
+                labels: ['January', 'February', 'March', 'April', 'May'],
+                datasets: [{
+                    label: 'Sisa Hutang',
+                    borderColor: '#33b5e5',
+                    backgroundColor: 'rgba(51, 181, 229, 0.3)',
+                    fill: true,
+                    data: [90, 80, 10, 5, 15],
+                    yAxisID: 'y-axis-1',
+                    pointRadius: 4,
+                }, {
+                    label: 'Total Pendapatan',
+                    borderColor: '#00C851',
+                    backgroundColor: 'rgba(0, 200, 81, 0.3)',
+                    fill: true,
+                    data: [90, 8, 65, 80, 10],
+                    yAxisID: 'y-axis-2',
+                    pointRadius: 4,
+                }]
+            };
+
+            window.onload = function() {
+                var ctx = document.getElementById('canvasku').getContext('2d');
+                window.myLine = Chart.Line(ctx, {
+                    data: lineChartData,
+                    options: {
+                        responsive: true,
+                        stacked: false,
+                        legend: {
+                            display: false
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        title: {
+                            display: false,
+                            text: 'Chart.js Line Chart - Multi Axis'
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            yAxes: [{
+                                type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                                display: true,
+                                position: 'left',
+                                id: 'y-axis-1',
+                            }, {
+                                type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                                display: true,
+                                position: 'right',
+                                id: 'y-axis-2',
+
+                                // grid line settings
+                                gridLines: {
+                                    drawOnChartArea: false, // only want the grid lines for one axis to show up
+                                },
+                            }],
+                        }
+                    }
+                });
+            };
+       
+         $('.set-total').on('click keyup', function(){
             let qty = $('#edit_kuantitas').val();
             let harga = $('#edit_harga').val();
 
             let total = parseInt(qty) * parseInt(harga);
             $('#edit_total').val(total);
         });
-
+         
     });
     //
     $( "#produk" ).autocomplete({

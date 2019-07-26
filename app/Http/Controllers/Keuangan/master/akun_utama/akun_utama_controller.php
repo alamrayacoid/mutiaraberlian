@@ -188,6 +188,13 @@ class akun_utama_controller extends Controller
     	}
     }
 
+    protected function grap(){
+
+        return response()->json([
+            'akun'  => $this->grapData()
+        ]);
+    }
+
     private function grapData(){
     	$data = DB::table('dk_akun_utama')
     				->select('au_id as ak_id', 'au_nama as ak_nama', 'au_posisi as ak_posisi', 'au_sub_id as ak_sub_id', 'au_kelompok as ak_kelompok', 'au_nomor as ak_nomor', 'au_setara_kas as ak_setara_kas')
