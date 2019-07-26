@@ -329,6 +329,9 @@
                 });
 
                 $('#modalAcceptanceDO').modal('show');
+                $('#modalAcceptanceDO').on('shown.bs.modal', function() {
+                    $('#dateReceive_ac').datepicker('setDate', new Date());
+                });
                 loadingHide();
             },
             error: function(xhr, status, error) {
@@ -369,6 +372,7 @@
     // acc receive item
     function terimaDO() {
         let id = $('#id_ac').val();
+        let dateReceive = $('#dateReceive_ac').val();
         var surl = "{{url('/marketing/agen/orderproduk/terima-delivery-order')}}"+"/"+id;
 
         $.confirm({
@@ -390,7 +394,8 @@
                             type: "post",
                             url: surl,
                             data: {
-                                "_token": "{{ csrf_token() }}"
+                                "_token": "{{ csrf_token() }}",
+                                date: dateReceive
                             },
                             beforeSend: function () {
                                 loadingShow();
@@ -835,13 +840,20 @@
                         messageFailed("Gagal", resp.data.message)
                     } else {
                         var status = '';
-                        if (resp.data.status == "Y") {
-                            status = "Disetujui";
-                        } else if (resp.data.status == "N") {
+                        if (resp.data.status == "Y" && resp.data.pengiriman == 'P') {
+                            status = "Disetujui, barang dalam perjalanan";
+                        }
+                        else if (resp.data.status == "Y" && resp.data.pengiriman == 'Y') {
+                            status = "Disetujui, barang telah diterima";
+                        }
+                        else if (resp.data.status == "N") {
                             status = "Ditolak";
-                        } else {
+                        }
+                        else {
                             status = "Pending";
                         }
+
+
                         $("#txt_tanggal").val(resp.data.tanggal);
                         $("#txt_nota").val(resp.data.nota);
                         $("#txt_status").val(status);
@@ -855,6 +867,10 @@
                         $('#table_itemDO').DataTable({
                             responsive: true,
                             autoWidth: false,
+                            searching: false,
+                            info: false,
+                            lengthChange: false,
+                            paging: false,
                             serverSide: true,
                             ajax: {
                                 url: baseUrl + '/marketing/agen/orderproduk/detail-delivery-order/' + id + '/table',
@@ -868,10 +884,10 @@
                             ],
                             "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, 100]],
                             "drawCallback": function (settings) {
-                                loadingHide();
-                                $("#detailDO").modal('show');
                             }
                         });
+                        loadingHide();
+                        $("#detailDO").modal('show');
                     }
                 })
                 .catch(function (error) {
@@ -896,81 +912,6 @@
             });
         }
 
-        $( "#produk" ).autocomplete({
-            source: function( request, response ) {
-                $.ajax({
-                    url: '{{ route('kelolapenjualanviawebsite.cariProduk') }}',
-                    data: {
-                        term: $("#produk").val()
-                    },
-                    success: function( data ) {
-                        response( data );
-                    }
-                });
-            },
-            minLength: 1,
-            select: function(event, data) {
-                $('#id_produk').val(data.item.id);
-                getUnit();
-            }
-        });
-
-        function getUnit() {
-            let item = $('#id_produk').val();
-            axios.get(baseUrl + '/marketing/agen/kelolapenjualanlangsung/get-unit/' + item,).then(function (response) {
-                $('#satuan').empty();
-                $("#satuan").append('<option value="" selected disabled>== Pilih Satuan ==</option>');
-                $("#satuan").append('<option data-nama="'+response.data.get_unit1.u_name+'" value="' + response.data.get_unit1.u_id + '">' + response.data.get_unit1.u_name + '</option>');
-            }).catch(function (error) {
-                alert("error");
-            })
-        }
-
-        $( "#edit_produk" ).autocomplete({
-            source: function( request, response ) {
-                $.ajax({
-                    url: '{{ route('kelolapenjualanviawebsite.cariProduk') }}',
-                    data: {
-                        term: $("#edit_produk").val()
-                    },
-                    success: function( data ) {
-                        response( data );
-                    }
-                });
-            },
-            minLength: 1,
-            select: function(event, data) {
-                $('#edit_produkid').val(data.item.id);
-                getEditUnit();
-            }
-        });
-
-        function getEditUnit() {
-            let item = $('#edit_produkid').val();
-            axios.get(baseUrl + '/marketing/agen/kelolapenjualanlangsung/get-unit/' + item,).then(function (response) {
-                let id1   = response.data.get_unit1.u_id;
-                let name1 = response.data.get_unit1.u_name;
-                let id2   = response.data.get_unit2.u_id;
-                let name2 = response.data.get_unit2.u_name;
-                let id3   = response.data.get_unit3.u_id;
-                let name3 = response.data.get_unit3.u_name;
-
-                $('#edit_satuan').empty();
-                $("#edit_satuan").append('<option value="" selected disabled>== Pilih Satuan ==</option>');
-                let opsi = '';
-                opsi += '<option data-nama="'+name1+'" value="' + id1 + '">' + name1 + '</option>';
-                if (id2 != null && id2 != id1) {
-                    opsi += '<option data-nama="'+name2+'" value="' + id2 + '">' + name2 + '</option>';
-                }
-                if (id3 != null && id3 != id2) {
-                    opsi += '<option data-nama="'+name3+'" value="' + id3 + '">' + name3 + '</option>';
-                }
-                $("#edit_satuan").append(opsi);
-            }).catch(function (error) {
-                alert("error");
-            });
-        }
-
         $('.input-harga').inputmask("currency", {
             radixPoint: ",",
             groupSeparator: ".",
@@ -982,39 +923,6 @@
             nullable: false,
             allowMinus: false
             // unmaskAsNumber: true,
-        });
-
-        $('#satuan').change(function(){
-            var selected = $(this).find('option:selected').data('nama');
-            $('#label-satuan').html(selected);
-        });
-
-        function getCustomer() {
-            loadingShow();
-            let agen = $('#nama_agen').val();
-            axios.post('{{ route("kelolapenjualan.getMemberKPL") }}', {
-                'agentCode': agen,
-                '_token': '{{ csrf_token() }}'
-            }).then(function (response) {
-                loadingHide();
-                $("#nama_customer").empty();
-                $.each(response.data, function (key, val) {
-                    $("#nama_customer").append('<option value="' + val.m_code + '">' + val.m_name + '</option>');
-                });
-                $('#nama_customer').focus();
-                $('#nama_customer').select2('open');
-            }).catch(function (error) {
-                loadingHide();
-                alert('error');
-            })
-        }
-
-        $('.set-total').on('click keyup', function(){
-            let qty = $('#edit_kuantitas').val();
-            let harga = $('#edit_harga').val();
-
-            let total = parseInt(qty) * parseInt(harga);
-            $('#edit_total').val(total);
         });
 
         $(document).on('click', '.btn-trash', function () {
@@ -1059,6 +967,11 @@
             TableListKPW();
         });
 
+        $('#satuan').change(function(){
+            var selected = $(this).find('option:selected').data('nama');
+            $('#label-satuan').html(selected);
+        });
+
         // add new code-production
         // $('#code_qty').on('keypress', function(e) {
             // cannot used, after enter always reset the table of production-code
@@ -1084,8 +997,13 @@
             $('#citiesKPW').select2({
                 dropdownParent: $('#createKPW')
             });
-            $('#provKPW').val(null).trigger('change');
+            // $('#provKPW').val(null).trigger('change');
             $('#provKPW').select2('open');
+            $('#dateKPW').datepicker();
+        });
+        $('#dateKPW').datepicker().on('changeDate', function() {
+            console.log('date');
+            console.log($('#dateKPW').val());
         });
         $('#createKPW').on('hide.bs.modal', function () {
             // $('#citiesKPW option:not(:first)').remove();
@@ -1104,7 +1022,7 @@
                         $('#totHutang').html(humanizePrice(response.data.sisahutang))
                         $('#cover-spin').hide();
                     })
-            
+
             $('#option-cabang').change(function(){
                 var ctx = $(this);
                 $('#cover-spin').show();
@@ -1183,7 +1101,85 @@
                     }
                 });
             };
+       
+         $('.set-total').on('click keyup', function(){
+            let qty = $('#edit_kuantitas').val();
+            let harga = $('#edit_harga').val();
+
+            let total = parseInt(qty) * parseInt(harga);
+            $('#edit_total').val(total);
+        });
+         
     });
+    //
+    $( "#produk" ).autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+                url: '{{ route('kelolapenjualanviawebsite.cariProduk') }}',
+                data: {
+                    term: $("#produk").val()
+                },
+                success: function( data ) {
+                    response( data );
+                }
+            });
+        },
+        minLength: 1,
+        select: function(event, data) {
+            $('#id_produk').val(data.item.id);
+            getUnit();
+        }
+    });
+
+    $( "#edit_produk" ).autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+                url: '{{ route('kelolapenjualanviawebsite.cariProduk') }}',
+                data: {
+                    term: $("#edit_produk").val()
+                },
+                success: function( data ) {
+                    response( data );
+                }
+            });
+        },
+        minLength: 1,
+        select: function(event, data) {
+            $('#edit_produkid').val(data.item.id);
+            getEditUnit();
+        }
+    });
+
+    function getUnit() {
+        let item = $('#id_produk').val();
+        axios.get(baseUrl + '/marketing/agen/kelolapenjualanlangsung/get-unit/' + item,).then(function (response) {
+            $('#satuan').empty();
+            $("#satuan").append('<option value="" selected disabled>== Pilih Satuan ==</option>');
+            $("#satuan").append('<option data-nama="'+response.data.get_unit1.u_name+'" value="' + response.data.get_unit1.u_id + '">' + response.data.get_unit1.u_name + '</option>');
+        }).catch(function (error) {
+            alert("error");
+        })
+    }
+
+    function getCustomer() {
+        loadingShow();
+        let agen = $('#nama_agen').val();
+        axios.get('{{ route("kelolapenjualan.getMemberKPL") }}', {
+            'agentCode': agen,
+            '_token': '{{ csrf_token() }}'
+        }).then(function (response) {
+            loadingHide();
+            $("#nama_customer").empty();
+            $.each(response.data, function (key, val) {
+                $("#nama_customer").append('<option value="' + val.m_code + '">' + val.m_name + '</option>');
+            });
+            $('#nama_customer').focus();
+            $('#nama_customer').select2('open');
+        }).catch(function (error) {
+            loadingHide();
+            alert('error');
+        })
+    }
 
     // tambahan dirga
     function humanizePrice(alpha){
@@ -1196,12 +1192,12 @@
         commas = bilangan.split('.')[1];
         bilangan = bilangan.split('.')[0];
       }
-      
+
       var number_string = bilangan.toString(),
         sisa  = number_string.length % 3,
         rupiah  = number_string.substr(0, sisa),
         ribuan  = number_string.substr(sisa).match(/\d{3}/g);
-          
+
       if (ribuan) {
         separator = sisa ? ',' : '';
         rupiah += separator + ribuan.join(',');
@@ -1249,8 +1245,6 @@
             messageWarning('Error', 'Terjadi kesalahan !');
         });
     }
-
-
 
     function TableListKPW() {
         $('#table_penjualanviaweb').dataTable().fnDestroy();
@@ -1303,10 +1297,10 @@
             }
         });
     }
-
+    // get penjual for KPW
     function getAgen() {
         $.ajax({
-            url: baseUrl +'/marketing/agen/orderproduk/get-penjual/'+ $("#provKPW").val() +'/'+ $("#citiesKPW").val(),
+            url: baseUrl +'/marketing/agen/orderproduk/get-penjual/'+ $("#citiesKPW").val(),
             type: 'get',
             success: function( data ) {
                 $('#nama_agen').empty();
@@ -1361,33 +1355,7 @@
         }
 
         if (parseInt(kuantitas) != parseInt(totalqty)){
-            // return jc = $.confirm({
-            //     animation: 'RotateY',
-            //     backgroundDismiss: true,
-            //     closeAnimation: 'scale',
-            //     animationBounce: 2.5,
-            //     icon: 'fa fa-exclamation-triangle',
-            //     title: 'Peringatan!',
-            //     content: 'Kuantitas barang tidak sama dengan jumlah kode produksi !',
-            //     theme: 'disable',
-            //     buttons: {
-            //         info: {
-            //             btnClass: 'btn-blue',
-            //             text: 'Lengkapi Kode Produksi',
-            //             action: function () {
-            //                // return lanjutkan();
-            //             }
-            //         },
-            //         cancel: {
-            //             text: 'Batal',
-            //             action: function () {
-            //                 // tutup confirm
-            //                 valid = 0;
-            //             }
-            //         }
-            //     }
-            // });
-            messageWarning('Perhatian', 'Kuantitas barang tidak sama dengan jumlah kode produksi !')
+            messageWarning('Perhatian', 'Kuantitas barang tidak sama dengan jumlah kode produksi !');
         }
         else {
             lanjutkan();
@@ -1396,6 +1364,7 @@
 
     function lanjutkan() {
         valid = 1;
+        let dateKPW   = $('#dateKPW').val();
         let provinsi  = $('#provKPW').val();
         let kota      = $('#citiesKPW').val();
         let agen      = $('#nama_agen').val();
@@ -1491,6 +1460,7 @@
         if (valid == 1){
             loadingShow();
             axios.post('{{ route("kelolapenjualanviawebsite.saveKPW") }}', {
+                "date": dateKPW,
                 "agen": agen,
                 "website": website,
                 "customer": customer,
@@ -1564,12 +1534,6 @@
         })
     }
 
-    // function cekCode(e){
-    //     if (e.keyCode === 13){
-    //         addCode();
-    //     }
-    // }
-
     function addCode() {
         loadingShow();
         //cek stockdt
@@ -1629,82 +1593,119 @@
         });
     }
 
+    // function editKPW(id) {
+    //     loadingShow();
+    //     $.ajax({
+    //         url: "{{url('marketing/agen/kelolapenjualanviawebsite/edit-kpw')}}"+"/"+id,
+    //         type: "get",
+    //         dataType: "json",
+    //         success:function(resp) {
+    //             console.log(resp);
+    //             // set date
+    //             let dateKPW = resp.datas.sw_date;
+    //             dateKPW = dateKPW.split('-');
+    //             console.log(dateKPW);
+    //             $('#dateEditKPW').datepicker('setDate', new Date(dateKPW[2], parseInt(dateKPW[1]) - 1, dateKPW[0]));
+    //             $('#editKPW').modal('show');
+    //
+    //             $('#data_id').val(resp.dataId);
+    //             $('#editnama_agen').val(resp.datas.c_name);
+    //             $('#edit_agen').val(resp.datas.sw_agen);
+    //             $('#editnama_customerView').val('CUSTOMER');
+    //             $('#editnama_customer').val(resp.code[0].s_member);
+    //             $('#edit_website').val(resp.datas.sw_website);
+    //             $('#edit_transaksi').val(resp.datas.sw_transactioncode);
+    //             $('#edit_produk').val(resp.datas.i_name);
+    //             $('#edit_produkid').val(resp.datas.i_id);
+    //             $('#edit_kuantitas').val(resp.datas.sw_qty);
+    //             var price = parseInt(resp.datas.sw_price)
+    //             var total_price = parseInt(resp.datas.sw_totalprice)
+    //             $('#edit_harga').val(price);
+    //             $('#edit_total').val(total_price)
+    //             $('#edit_note').val(resp.datas.sw_note);
+    //
+    //             $("#edit_satuan").find('option').remove();
+    //             var option = '';
+    //             var selected1, selected2, selected3;
+    //             if (resp.units.id1 == resp.datas.sw_unit) {
+    //                 var selected1 = "selected";
+    //             } else {
+    //                 var selected1 = "";
+    //             }
+    //             if (resp.units.id2 == resp.datas.sw_unit) {
+    //                 var selected2 = "selected";
+    //             } else {
+    //                 var selected2 = "";
+    //             }
+    //             if (resp.units.id3 == resp.datas.sw_unit) {
+    //                 var selected3 = "selected";
+    //             } else {
+    //                 var selected3 = "";
+    //             }
+    //
+    //             option += '<option value="'+resp.units.id1+'" '+selected1+'>'+resp.units.name1+'</option>';
+    //             if (resp.units.id2 != null && resp.units.id2 != resp.units.id1) {
+    //                 option += '<option value="'+resp.units.id2+'" '+selected2+'>'+resp.units.name2+'</option>';
+    //             }
+    //             if (resp.units.id3 != null && resp.units.id3 != resp.units.id2) {
+    //                 option += '<option value="'+resp.units.id3+'" '+selected3+'>'+resp.units.name3+'</option>';
+    //             }
+    //             $("#edit_satuan").append(option);
+    //
+    //             $('#table_EditKPW').DataTable().clear().destroy();
+    //             table_editKPW = $('#table_EditKPW').DataTable({
+    //                 bAutoWidth: true,
+    //                 responsive: true,
+    //                 info: false,
+    //                 searching: false,
+    //                 paging: false
+    //             });
+    //             table_editKPW.columns.adjust();
+    //
+    //             $.each(resp.code, function (key, val) {
+    //                 table_editKPW.row.add([
+    //                 '<input type="text" value="'+val.sc_code+'" class="form-control bg-light code_sd" readonly disabled/><input type="hidden" name="code_s[]" class="code_s" value="'+val.sc_code+'"/>',
+    //                 '<input type="number" min="1" name="qty_s[]" value="'+val.sc_qty+'" class="qty_s form-control form-control-sm text-right"/>',
+    //                 '<div class="text-center"><button class="btn btn-sm rounded btn-danger btn-trash"><i class="fa fa-trash"></i></button></div>'
+    //                 ]).draw(false);
+    //             });
+    //             loadingHide();
+    //         },
+    //         error: function(e) {
+    //             messageWarning('Error', 'e');
+    //             loadingHide();
+    //         }
+    //     });
+    // }
+    // edit detail penjualan
     function editKPW(id) {
-        loadingShow();
-        $.ajax({
-            url: "{{url('marketing/agen/kelolapenjualanviawebsite/edit-kpw')}}"+"/"+id,
-            type: "get",
-            dataType: "json",
-            success:function(resp) {
-                console.log(resp);
-                $('#editKPW').modal('show');
-                $('#data_id').val(resp.dataId);
-                $('#editnama_agen').val(resp.datas.c_name);
-                $('#edit_agen').val(resp.datas.sw_agen);
-                $('#editnama_customerView').val('CUSTOMER');
-                $('#editnama_customer').val(resp.code[0].s_member);
-                $('#edit_website').val(resp.datas.sw_website);
-                $('#edit_transaksi').val(resp.datas.sw_transactioncode);
-                $('#edit_produk').val(resp.datas.i_name);
-                $('#edit_produkid').val(resp.datas.i_id);
-                $('#edit_kuantitas').val(resp.datas.sw_qty);
-                var price = parseInt(resp.datas.sw_price)
-                var total_price = parseInt(resp.datas.sw_totalprice)
-                $('#edit_harga').val(price);
-                $('#edit_total').val(total_price)
-                $('#edit_note').val(resp.datas.sw_note);
+        window.location.href = baseUrl +'/marketing/agen/kelolapenjualanviawebsite/edit-kpw/'+ id;
+    }
 
-                $("#edit_satuan").find('option').remove();
-                var option = '';
-                var selected1, selected2, selected3;
-                if (resp.units.id1 == resp.datas.sw_unit) {
-                    var selected1 = "selected";
-                } else {
-                    var selected1 = "";
-                }
-                if (resp.units.id2 == resp.datas.sw_unit) {
-                    var selected2 = "selected";
-                } else {
-                    var selected2 = "";
-                }
-                if (resp.units.id3 == resp.datas.sw_unit) {
-                    var selected3 = "selected";
-                } else {
-                    var selected3 = "";
-                }
 
-                option += '<option value="'+resp.units.id1+'" '+selected1+'>'+resp.units.name1+'</option>';
-                if (resp.units.id2 != null && resp.units.id2 != resp.units.id1) {
-                    option += '<option value="'+resp.units.id2+'" '+selected2+'>'+resp.units.name2+'</option>';
-                }
-                if (resp.units.id3 != null && resp.units.id3 != resp.units.id2) {
-                    option += '<option value="'+resp.units.id3+'" '+selected3+'>'+resp.units.name3+'</option>';
-                }
-                $("#edit_satuan").append(option);
+    function getEditUnit() {
+        let item = $('#edit_produkid').val();
+        axios.get(baseUrl + '/marketing/agen/kelolapenjualanlangsung/get-unit/' + item,).then(function (response) {
+            let id1   = response.data.get_unit1.u_id;
+            let name1 = response.data.get_unit1.u_name;
+            let id2   = response.data.get_unit2.u_id;
+            let name2 = response.data.get_unit2.u_name;
+            let id3   = response.data.get_unit3.u_id;
+            let name3 = response.data.get_unit3.u_name;
 
-                $('#table_EditKPW').DataTable().clear().destroy();
-                table_editKPW = $('#table_EditKPW').DataTable({
-                    bAutoWidth: true,
-                    responsive: true,
-                    info: false,
-                    searching: false,
-                    paging: false
-                });
-                table_editKPW.columns.adjust();
-
-                $.each(resp.code, function (key, val) {
-                    table_editKPW.row.add([
-                    '<input type="text" value="'+val.sc_code+'" class="form-control bg-light code_sd" readonly disabled/><input type="hidden" name="code_s[]" class="code_s" value="'+val.sc_code+'"/>',
-                    '<input type="number" min="1" name="qty_s[]" value="'+val.sc_qty+'" class="qty_s form-control form-control-sm text-right"/>',
-                    '<div class="text-center"><button class="btn btn-sm rounded btn-danger btn-trash"><i class="fa fa-trash"></i></button></div>'
-                    ]).draw(false);
-                });
-                loadingHide();
-            },
-            error: function(e) {
-                messageWarning('Error', 'e');
-                loadingHide();
+            $('#edit_satuan').empty();
+            $("#edit_satuan").append('<option value="" selected disabled>== Pilih Satuan ==</option>');
+            let opsi = '';
+            opsi += '<option data-nama="'+name1+'" value="' + id1 + '">' + name1 + '</option>';
+            if (id2 != null && id2 != id1) {
+                opsi += '<option data-nama="'+name2+'" value="' + id2 + '">' + name2 + '</option>';
             }
+            if (id3 != null && id3 != id2) {
+                opsi += '<option data-nama="'+name3+'" value="' + id3 + '">' + name3 + '</option>';
+            }
+            $("#edit_satuan").append(opsi);
+        }).catch(function (error) {
+            alert("error");
         });
     }
 

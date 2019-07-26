@@ -1681,7 +1681,8 @@ class Mutasi extends Controller
         $listQtyPC, // list qty of production-code
         $listUnitPC, // list unit of production-code
         $sellPrice = null, // sellprice
-        $mutcat = null // mutation category
+        $mutcat = null, // mutation category
+        $date = null // set custom date for mutation
     )
     {
         DB::beginTransaction();
@@ -1689,8 +1690,8 @@ class Mutasi extends Controller
             // dd($from, $to, $item, $qty, $nota, $listPC, $listQtyPC, $listUnitPC, $sellPrice, $mutcat);
             // qty item that is sending out to branch
             $qty = (int)$qty;
-            // date now
-            $dateNow = Carbon::now();
+            // set date if receiveDate is not null
+            (is_null($date)) ? $dateNow = Carbon::now() : $dateNow = $date;
             // get list of 'in' mutcat-list
             $inMutcatList = m_mutcat::where('m_status', 'M')
                 ->select('m_id')
@@ -1784,6 +1785,7 @@ class Mutasi extends Controller
                     $prodCode = d_stockmutationdt::where('smd_stock', $stockParent->s_id)
                         ->where('smd_stockmutation', $stock[$j]->sm_detailid)
                         ->get();
+
                     $listSmQtyPC = array();
                     $listSmPC = array();
                     // update qty-request each production-code
@@ -1797,6 +1799,7 @@ class Mutasi extends Controller
                     $smQty = $permintaan;
                     $continueLoopStock = false;
                 }
+
                 $detailid = d_stock_mutation::where('sm_stock', $stockParent->s_id)
                         ->max('sm_detailid') + 1;
                 // set value for new stock-mutation
@@ -1889,10 +1892,10 @@ class Mutasi extends Controller
         $listHPP, // list of hpp
         $listSmQty, // lsit of sm-qty (it got from salesOut, each qty used from different stock-mutation)
         $mutcat, // mutation category
-        $stockParentId, // stock parent id
+        $listStockParentId, // stock parent id (acutually its unuser)
         $status = 'ON GOING', // items status in stock
         $condition = 'FINE', // item condition in stock
-        $receiveDate = null // date for received item
+        $date = null // date for received item
     )
     {
         DB::beginTransaction();
@@ -1900,14 +1903,14 @@ class Mutasi extends Controller
             // dd($to, $item, $nota, $listPC, $listQtyPC, $listUnitPC, $listSellPrice, $listHPP, $listSmQty, $mutcat, $stockParentId, $status, $condition);
 
             // set date if receiveDate is not null
-            (is_null($receiveDate)) ? $dateNow = Carbon::now() : $dateNow = $receiveDate;
+            (is_null($date)) ? $dateNow = Carbon::now() : $dateNow = $date;
             $mutcat = $mutcat;
             $comp = $to; // item owner
             $position = $to; // item position
             $itemId = $item;
             (is_null($status)) ? $status = 'ON GOING' : $status = $status;
-            (is_null($condition)) ? $status = 'FINE' : $condition = $condition;
-            
+            (is_null($condition)) ? $condition = 'FINE' : $condition = $condition;
+
             // $status = $status;
             // $condition = $condition;
             $nota = $nota;
@@ -1980,10 +1983,9 @@ class Mutasi extends Controller
                 if ($insertSMProdCode !== 'success') {
                     throw new Exception($insertSMProdCode->getData()->message);
                 }
-                // dd('as');
 
                 // insert/update stock-detail production-code
-                $stockParentId = $stockParentId;
+                $stockParentId = null;
                 $stockChildId = $stockId;
                 $insertStockDt = self::insertStockDetail($stockParentId, $stockChildId, $listPC[$key], $listQtyPC[$key]);
                 if ($insertStockDt !== 'success') {
@@ -2341,6 +2343,7 @@ class Mutasi extends Controller
     {
         DB::beginTransaction();
         try {
+            // dd($stockParentId, $stockChildId, $listPC, $listQtyPC);
             foreach ($listPC as $key => $prodCode) {
                 // skip inserting when val is null or qty-pc is 0
                 $qtyProdCode = (int)$listQtyPC[$key];
@@ -3055,13 +3058,14 @@ class Mutasi extends Controller
         $item, // item id
         $nota, // nota
         $mutcatIn = null, // mutcat in
-        $mutcatOut = null // mutcat out
+        $mutcatOut = null, // mutcat out
+        $date = null // custom date confirm received item
     )
     {
         DB::beginTransaction();
         try {
-            // date now
-            $dateNow = Carbon::now();
+            // set date if receiveDate is not null
+            (is_null($date)) ? $dateNow = Carbon::now() : $dateNow = $date;
             // get stock-selected-item with 'On Going' status
             $stockDestination = d_stock::where('s_comp', $to)
                 ->where('s_position', $to)

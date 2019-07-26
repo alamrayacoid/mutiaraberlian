@@ -48,7 +48,8 @@
     @include('marketing.marketingarea.datacanvassing.modal-edit')
     @include('marketing.marketingarea.datacanvassing.modal-search')
     @include('marketing.marketingarea.orderproduk.modal')
-
+    @include('marketing.marketingarea.penerimaanpiutang.modal.detail')
+    @include('marketing.marketingarea.penerimaanpiutang.modal.bayar')
 
     <article class="content animated fadeInLeft">
         <div class="title-block text-primary">
@@ -232,7 +233,7 @@
                             </div>
 
                             <div class="col-2">
-                                <label for="">Tanggal</label>
+                                <label for="">Tanggal Order</label>
                             </div>
                             <div class="col-4">
                                 <input type="text" class="form-control form-control-sm" id="tanggal_modaldt" readonly="">
@@ -277,7 +278,7 @@
                                 <label for="jenis_exp">Nama Kurir</label>
                             </div>
                             <div class="col-4">
-                                <input type="text" name="courierName" id="kurir_name" class="form-control form-control-sm">
+                                <input type="text" name="courierName" id="kurir_name" class="form-control form-control-sm" autocomplete="off">
                             </div>
                             <div class="col-2">
                                 <label for="expedition">Nomor Telepon</label>
@@ -291,15 +292,29 @@
                                 <label for="jenis_exp">Nomor Resi</label>
                             </div>
                             <div class="col-4">
-                                <input type="text" name="resi" id="no_resi" class="form-control form-control-sm text-uppercase">
+                                <input type="text" name="resi" id="no_resi" class="form-control form-control-sm text-uppercase" autocomplete="off">
                             </div>
                             <div class="col-2">
-                                <label for="jenis_exp">Biaya</label>
+                                <label for="jenis_exp">Biaya Pengiriman</label>
                             </div>
                             <div class="col-4">
                                 <input type="text" name="shippingCost" id="biaya_kurir" class="form-control form-control-sm rupiah">
                             </div>
                         </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-md-2 col-sm-6 col-xs-12">
+                                <label>Tanggal Pengiriman</label>
+                            </div>
+                            <div class="col-md-4 col-sm-6 col-xs-12">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                    </div>
+                                    <input type="text" name="dateSend" class="form-control form-control-sm datepicker" autocomplete="off" id="dateSend" value="{{ \Carbon\Carbon::now()->format('d-m-Y') }}">
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
                         <div class="row" style="margin-top: 5px;">
                             <div class="col-2">
                                 <label for="paymentType">Tipe Pembayaran</label>
@@ -1054,6 +1069,7 @@
             $('#kurir_name').val('');
             $('#no_hpkurir').val('');
             $('#biaya_kurir').val('');
+            $('#dateSend').val("{{ \Carbon\Carbon::now()->format('d-m-Y') }}");
 
             axios.get('{{ route("keloladataorder.getdetailorderagen") }}', {
                 params:{
@@ -1348,6 +1364,7 @@
             let pd_couriername = $('#kurir_name').serialize();
             let pd_couriertelp = $('#no_hpkurir').serialize();
             let pd_price       = $('#biaya_kurir').serialize();
+            let dateSend       = $('#dateSend').serialize();
             let paymentType    = $('#paymentType').serialize();
             let paymentMethod  = $('#paymentMethod').serialize();
             let payCash        = $('#payCash').serialize();
@@ -1356,7 +1373,7 @@
             let dataX = listQty +'&'+ listDiscount +'&'+ listItemsId +'&'+
                         listUnits +'&'+ listSubTotal +'&'+ pd_nota +'&'+ pd_expedition +'&'+
                         pd_product +'&'+ pd_resi +'&'+ pd_couriername +'&'+
-                        pd_couriertelp +'&'+ pd_price +'&'+ paymentType +'&'+
+                        pd_couriertelp +'&'+ pd_price +'&'+ dateSend +'&'+ paymentType +'&'+
                         paymentMethod +'&'+ payCash +'&'+ dateTop;
             loadingShow();
 
@@ -1435,6 +1452,9 @@
                     // set on-click event on 'receive item button'
                     $('#btn_confirmAc').attr('onclick', 'receiveItemOrder()');
                     $('#modalAcceptance').modal('show');
+                    $('#modalAcceptance').on('shown.bs.modal', function() {
+                        $('#dateReceive_ac').datepicker('setDate', new Date());
+                    });
                     loadingHide();
                 },
                 error: function(xhr, status, error) {
@@ -1471,13 +1491,14 @@
         }
         // receive item order
         function receiveItemOrder() {
-            console.log('receiveItemOrder()');
             let id = $('#id_ac').val();
+            let dateReceive = $('#dateReceive_ac').val();
             $.ajax({
                 type: "post",
                 url: baseUrl +'/marketing/marketingarea/keloladataorder/receive-item-order/'+ id,
                 data: {
-                    "_token": "{{ csrf_token() }}"
+                    "_token": "{{ csrf_token() }}",
+                    date: dateReceive
                 },
                 beforeSend: function () {
                     loadingShow();
@@ -2251,6 +2272,9 @@
                     // set on-click event on 'receive item button'
                     $('#btn_confirmAc').attr('onclick', 'confirmAcceptance()');
                     $('#modalAcceptance').modal('show');
+                    $('#modalAcceptance').on('shown.bs.modal', function() {
+                        $('#dateReceive_ac').datepicker('setDate', new Date());
+                    });
                     loadingHide();
                 },
                 error: function(xhr, status, error) {
@@ -2402,6 +2426,223 @@
                     }
                 }
             });
+        }
+//======== Penerimaan Piutang ===============
+
+        function getDataPP() {
+            $('#table_penerimaanpiutang').dataTable().fnClearTable();
+            $('#table_penerimaanpiutang').dataTable().fnDestroy();
+            table_penerimaanpiutang = $('#table_penerimaanpiutang').DataTable({
+                serverSide: true,
+                processing: true,
+                searching: false,
+                paging: false,
+                responsive: true,
+                ajax: {
+                    url: "{{ route('mmapenerimaanpiutang.getdata') }}",
+                    type: "get",
+                    data: {
+                        start: $('#date_from_pp').val(),
+                        end: $('#date_to_pp').val(),
+                        status: $('#status_pp').val(),
+                        agen: $('#id_agen_pp').val()
+                    }
+                },
+                columns: [
+                    {data: 'c_name'},
+                    {data: 'sisa'},
+                    {data: 'sc_datetop'},
+                    {data: 'status'},
+                    {data: 'aksi'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
+
+        var table_penerimaanpiutang;
+        $(document).ready(function () {
+            $('#agen_pp').val('');
+            $('#id_agen_pp').val('');
+            setTimeout(function () {
+                table_penerimaanpiutang = $('#table_penerimaanpiutang').DataTable({
+                    serverSide: true,
+                    processing: true,
+                    searching: false,
+                    paging: false,
+                    responsive: true,
+                    ajax: {
+                        url: "{{ route('mmapenerimaanpiutang.getdata') }}",
+                        type: "get",
+                        data: {
+                            start: $('#date_from_pp').val(),
+                            end: $('#date_to_pp').val(),
+                            status: $('#status_pp').val(),
+                            agen: $('#id_agen_pp').val()
+                        }
+                    },
+                    columns: [
+                        {data: 'c_name'},
+                        {data: 'sisa'},
+                        {data: 'sc_datetop'},
+                        {data: 'status'},
+                        {data: 'aksi'}
+                    ],
+                    pageLength: 10,
+                    lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+                });
+            }, 800);
+        })
+
+        $("#agen_pp").on('keyup', function () {
+            $('#id_agen_pp').val('');
+        })
+
+        $("#agen_pp").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "{{ route('mmapenerimaanpiutang.getDataAgen') }}",
+                    data: {
+                        term: $("#agen_pp").val()
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, data) {
+                let agen = data.item;
+                $('#id_agen_pp').val(agen.id);
+            }
+        });
+
+        function detailnotapiutang(id){
+            loadingShow();
+            axios.get('{{ route("mmapenerimaanpiutang.getDetailTransaksi") }}', {
+                params:{
+                    "id": id
+                }
+            }).then(function (response) {
+                loadingHide();
+                let detail = response.data.data;
+                let pay = response.data.pay;
+                $('#table_detailpp > tbody').empty();
+                $('#table_detailpembayaranpp > tbody').empty();
+                $.each(detail, function (index, value) {
+                    let no = "<td>"+(index + 1)+"</td>";
+                    let nama = "<td>"+value.i_name+"</td>";
+                    let qty = "<td>"+value.scd_qty+"</td>";
+                    let satuan = "<td>"+value.u_name+"</td>";
+                    let harga = "<td>"+convertToRupiah(value.scd_value)+"</td>";
+                    let diskon = "<td>"+convertToRupiah(value.scd_discvalue)+"</td>";
+                    let total = "<td>"+convertToRupiah(value.scd_totalnet)+"</td>";
+                    $('#table_detailpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
+                });
+                let terbayar = 0;
+                $.each(pay, function (index, value) {
+                    terbayar = terbayar + parseInt(value.scp_pay);
+                    let no = "<td>"+(index + 1)+"</td>";
+                    let tanggal = "<td>"+value.scp_date+"</td>";
+                    let nominal = "<td>"+convertToRupiah(value.scp_pay)+"</td>";
+                    $('#table_detailpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
+                });
+                $('#nota_dtpp').val(detail[0].sc_nota);
+                $('#date_dtpp').val(detail[0].sc_datetop);
+                $('#agent_dtpp').val(detail[0].c_name);
+                $('#total_dtpp').val(parseInt(detail[0].sc_total)-terbayar);
+                $('#modalDetailpp').modal('show');
+            }).catch(function (error) {
+                loadingHide();
+                alert('error');
+            })
+        }
+
+        function bayarnotapiutang(id){
+            loadingShow();
+            axios.get('{{ route("mmapenerimaanpiutang.getDetailTransaksi") }}', {
+                params:{
+                    "id": id
+                }
+            }).then(function (response) {
+                loadingHide();
+                let detail = response.data.data;
+                let pay = response.data.pay;
+                let method = response.data.jenis;
+                $('#table_bayarpp > tbody').empty();
+                $('#table_bayarpembayaranpp > tbody').empty();
+                $('#paymentpp').empty();
+                $.each(detail, function (index, value) {
+                    let no = "<td>"+(index + 1)+"</td>";
+                    let nama = "<td>"+value.i_name+"</td>";
+                    let qty = "<td>"+value.scd_qty+"</td>";
+                    let satuan = "<td>"+value.u_name+"</td>";
+                    let harga = "<td>"+convertToRupiah(value.scd_value)+"</td>";
+                    let diskon = "<td>"+convertToRupiah(value.scd_discvalue)+"</td>";
+                    let total = "<td>"+convertToRupiah(value.scd_totalnet)+"</td>";
+                    $('#table_bayarpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
+                });
+                let terbayar = 0;
+                $.each(pay, function (index, value) {
+                    terbayar = terbayar + parseInt(value.scp_pay);
+                    let no = "<td>"+(index + 1)+"</td>";
+                    let tanggal = "<td>"+value.scp_date+"</td>";
+                    let nominal = "<td>"+convertToRupiah(value.scp_pay)+"</td>";
+                    $('#table_bayarpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
+                });
+                $('#paymentpp').append("<option value='disable'> == Pilih Metode Pembayaran == </option>");
+                $.each(method, function (index, value) {
+                    $('#paymentpp').append("<option value='"+value.ak_id+"'>"+value.ak_nama+"</option>");
+                });
+                $('#nota_paypp').val(detail[0].sc_nota);
+                $('#date_paypp').val(detail[0].sc_datetop);
+                $('#agent_paypp').val(detail[0].c_name);
+                $('#total_paypp').val(parseInt(detail[0].sc_total)-terbayar);
+                $('#modalBayarpp').modal('show');
+            }).catch(function (error) {
+                loadingHide();
+                alert('error');
+            })
+        }
+        
+        function bayarPP() {
+            let nota = $('#nota_paypp').val();
+            let bayar = $('#bayarpaypp').val();
+            let tanggal = $('#datepaypp').val();
+            let paymentmethod = $('#paymentpp').val();
+            if (bayar == 0 || bayar == ''){
+                messageWarning("Lengkapi form pembayaran");
+                return false;
+            }
+            if (tanggal == ''){
+                messageWarning("Lengkapi form pembayaran");
+                return false;
+            }
+            if (paymentmethod == 'disable' || paymentmethod == ''){
+                messageWarning("Lengkapi form pembayaran");
+                return false;
+            }
+            loadingShow();
+            axios.get('{{ route("mmapenerimaanpiutang.bayarPiutang") }}', {
+                params:{
+                    "nota": nota,
+                    "bayar": bayar,
+                    "tanggal": tanggal,
+                    "paymentmethod": paymentmethod
+                }
+            }).then(function (response) {
+                loadingHide();
+                if (response.data.status == 'sukses'){
+                    messageSuccess("Berhasil", "Pembayaran sudah tersimpan");
+                    table_penerimaanpiutang.ajax.reload();
+                    $('#modalBayarpp').modal('hide');
+                } else if (response.data.status == 'gagal'){
+                    messageFailed("Gagal", response.data.message);
+                }
+            }).catch(function (error) {
+                loadingHide();
+                alert("error");
+            })
         }
     </script>
 @endsection

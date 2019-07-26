@@ -41,6 +41,18 @@
                             <section>
                                 <div id="sectionsuplier" class="row">
                                     <input type="hidden" id="salesId" value="{{ $data['kpl']->s_id }}">
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Tanggal</label>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 col-xs-12">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                            </div>
+                                            <input type="text" name="dateKPL" class="form-control form-control-sm datepicker" autocomplete="off" id="dateKPL">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6"></div>
 
                                     <div class="col-md-2 col-sm-6 col-xs-12 select-agent">
                                         <label>Agen</label>
@@ -180,8 +192,13 @@
 
     $(document).ready(function()
     {
-        salesdt = {!! $data['kpl'] !!};
-        salesdt = salesdt.get_sales_dt;
+        var dataKPL = {!! $data['kpl'] !!};
+        salesdt = dataKPL.get_sales_dt;
+        // set date kpl
+        let dateKPL = dataKPL.s_date;
+        dateKPL = dateKPL.split('-');
+        $('#dateKPL').datepicker('setDate', new Date(dateKPL[2], parseInt(dateKPL[1]) - 1, dateKPL[0]));
+
         // set modal production-code
         setModalCodeProdReady();
         // re-init events for some class or id

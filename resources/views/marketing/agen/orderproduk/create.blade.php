@@ -34,7 +34,20 @@
                                 <section>
 
                                     <div class="row">
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>Tanggal</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                                </div>
+                                                <input type="text" name="dateOrder" class="form-control form-control-sm datepicker" autocomplete="off" id="dateOrder" value="{{ \Carbon\Carbon::now()->format('d-m-Y') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
 
+                                        </div>
                                         <div class="col-md-2 col-sm-6 col-xs-12">
                                             <label>Order Ke</label>
                                         </div>
