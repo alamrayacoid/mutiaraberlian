@@ -30,7 +30,7 @@ class MMAPenerimaanPiutangController extends Controller
                 DB::raw('case when sc_datetop < NOW() then "Melebihi" when sc_datetop >= NOW() then "Belum" END AS status'),
                 'member.c_name', DB::raw('date_format(scc.sc_datetop, "%d-%m-%Y") as sc_datetop'),
                 DB::raw('floor(scc.sc_total) as sc_total'), 'sc_id')
-            ->where('sc_paidoffbranch', '=', 'N')
+            ->where('sc_paidoff', '=', 'N')
             ->groupBy('sc_id')
             ->where('sc_comp', '=', $user->u_company);
 
@@ -196,6 +196,21 @@ class MMAPenerimaanPiutangController extends Controller
                     'scp_pay' => $bayar,
                     'scp_payment' => $paymentmethod
                 ]);
+
+            $cek = DB::table('d_salescomp')
+                ->join('d_salescomppayment', 'scp_salescomp', '=', 'sc_id')
+                ->select(DB::raw('sum(scp_pay) as bayar'), 'sc_total')
+                ->where('sc_id', '=', $salescomp[0]->sc_id)
+                ->groupBy('sc_id')
+                ->first();
+
+            if ($cek->bayar == $cek->sc_total){
+                DB::table('d_salescomp')
+                    ->where('sc_id', '=', $salescomp[0]->sc_id)
+                    ->update([
+                        'sc_paidoff' => 'Y'
+                    ]);
+            }
 
             DB::commit();
             return Response()->json([
