@@ -21,8 +21,8 @@
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         <select class="select2 form-control form-control-sm" id="status_pp">
                             <option value="all" selected>Semua Data</option>
-                            <option value="lebih">Melebihi Jatuh Tempo</option>
-                            <option value="belum">Belum Jatuh Tempo</option>
+                            <option value="Melebihi">Melebihi Jatuh Tempo</option>
+                            <option value="Belum">Belum Jatuh Tempo</option>
                         </select>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
@@ -30,7 +30,7 @@
                         <input type="hidden" id="id_agen_pp">
                     </div>
                     <div class="col-lg-1 col-md-1 col-sm-12">
-                        <button type="button" class="btn btn-primary">Cari</button>
+                        <button type="button" class="btn btn-primary" onclick="getDataPP()">Cari</button>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -39,7 +39,7 @@
                         <tr>
                             <th class="text-center">Agen</th>
                             <th class="text-center">Piutang</th>
-                            <th class="text-center">Tanggal</th>
+                            <th class="text-center">Jatuh Tempo</th>
                             <th class="text-center">Status</th>
                             <th class="text-center">Aksi</th>
                         </tr>
@@ -55,12 +55,3 @@
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    var table_penerimaanpiutang;
-    $(document).ready(function () {
-        table_penerimaanpiutang = $('#table_penerimaanpiutang').DataTable({
-
-        });
-    })
-</script>
