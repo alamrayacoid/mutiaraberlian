@@ -40,6 +40,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.3/plugins/bind-dictionary/mousetrap-bind-dictionary.min.js"></script>
 <script src="{{asset('assets/inputmask/min/jquery.inputmask.bundle.min.js')}}"></script>
 <script src="{{asset('assets/JTimepicker-JohnHRTN/jquery.timepicker.min.js')}}"></script>
+<script src="{{asset('assets/js/chartjs/dist/chart.min.js')}}"></script>
 
 <script type="text/javascript">
     var getstorage;

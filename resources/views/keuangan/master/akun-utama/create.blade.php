@@ -168,14 +168,14 @@
                                                     <div class="row" style="margin-top: 15px;">
                                                         <div class="col-md-4 label">Posisi Debet/Kredit</div>
                                                         <div class="col-md-7">
-                                                            <vue-select :name="'ak_posisi'" :id="'ak_posisi'" :options="ak_posisi" :search="false" :disabled="single.akunUtama"></vue-select>
+                                                            <vue-select :name="'ak_posisi'" :id="'ak_posisi'" :options="ak_posisi" :search="false" :disabled="single.akunUtama" v-model="single.dk"></vue-select>
                                                         </div>
                                                     </div>
 
                                                     <div class="row" style="margin-top: 15px;">
                                                         <div class="col-md-4 label">COA Setara Kas ?</div>
                                                         <div class="col-md-5">
-                                                            <vue-select :name="'ak_setara_kas'" :id="'ak_setara_kas'" :options="ak_setara_kas" :search="false" :disabled="single.akunUtama"></vue-select>
+                                                            <vue-select :name="'ak_setara_kas'" :id="'ak_setara_kas'" :options="ak_setara_kas" :search="false" :disabled="single.akunUtama" v-model="single.setara"></vue-select>
                                                         </div>
                                                     </div>
 
@@ -223,7 +223,7 @@
                                             <div class="col-md-6" style="border: 0px solid #eee; margin-top: -10px">
                                                 <div class="row" style="padding-right: 10px;">
 
-                                                    <div class="col-md-12" style="padding: 0px; height: 272px; background: #eee;">
+                                                    <div class="col-md-12" style="padding: 0px; height: 272px; background: #eee; overflow-y: scroll;">
                                                         <table width="100%" class="keuangan table-mini">
                                                             <thead>
                                                                 <tr>
@@ -357,6 +357,9 @@
                     ak_id: '',
                     ak_nomor: '',
                     ak_nama: '',
+
+                    dk: 'D',
+                    setara: '1',
 
                     nomorView: '-',
                     klasifikasiIdx: null,
