@@ -2428,7 +2428,6 @@
             });
         }
 //======== Penerimaan Piutang ===============
-
         function getDataPP() {
             $('#table_penerimaanpiutang').dataTable().fnClearTable();
             $('#table_penerimaanpiutang').dataTable().fnDestroy();

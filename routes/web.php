@@ -703,6 +703,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/keuangan/laporankeuangan/neraca/index', 'KeuanganController@laporankeuangan_neraca')->name('laporankeuangan.neraca');
     Route::get('/keuangan/laporankeuangan/labarugi/index', 'KeuanganController@laporankeuangan_labarugi')->name('laporankeuangan.labarugi');
     Route::get('/keuangan/laporankeuangan/aruskas/index', 'KeuanganController@laporankeuangan_aruskas')->name('laporankeuangan.aruskas');
+    // Penerimaan Piutang
+    Route::get('/keuangan/penerimaanpiutang/index', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@index')->name('penerimaanpiutang.index');
     // !===================================================== END KEUANGAN =====================================================!
 
     // !===================================================== PENGATURAN =====================================================!

@@ -401,6 +401,11 @@
                                     <a href="{{route('inputtransaksi.index')}}">Manajemen Input Transaksi</a>
                                 </li>
                             @endif
+                            @if ($sidebar[55]->ua_read == 'Y')
+                                <li class="{{Request::is('keuangan/penerimaanpiutang/*') || Request::is('keuangan/penerimaanpiutang') ? 'active' : ''}}">
+                                    <a href="{{route('penerimaanpiutang.index')}}">Penerimaan Piutang</a>
+                                </li>
+                            @endif
                             @if ($sidebar[34]->ua_read == 'Y')
                                 <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
                                     <a href="{{route('penjualanpusat.index')}}">Manajemen Hutang Piutang</a>
