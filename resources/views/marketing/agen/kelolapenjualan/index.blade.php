@@ -3,7 +3,7 @@
         <div class="card-header bordered p-2">
             <div class="header-block">
                 <h3 class="title">Kelola Penjualan Langsung</h3>
-                <input type="hidden" class="current_user_type" value="{{ $user->u_user }}">
+                <input type="hidden" class="current_user_type" value="{{ Auth::user()->getCompany->c_type }}">
             </div>
             <div class="header-block pull-right">
                 <a class="btn btn-primary" href="{{ route('kelolapenjualan.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>

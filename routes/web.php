@@ -656,14 +656,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/kelolapenjualanviawebsite/cari-produk', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariProduk')->name('kelolapenjualanviawebsite.cariProduk');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/get-unit', 'Aktivitasmarketing\Agen\ManajemenAgenController@getUnit')->name('kelolapenjualanviawebsite.getUnit');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/get-stock-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getStockKPW')->name('kelolapenjualanviawebsite.getStockKPW');
-    Route::post('/marketing/agen/kelolapenjualanviawebsite/save-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@saveKPW')->name('kelolapenjualanviawebsite.saveKPW');
+    Route::post('/marketing/agen/kelolapenjualanviawebsite/save-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@storeKPW')->name('kelolapenjualanviawebsite.storeKPW');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/cek-code', 'Aktivitasmarketing\Agen\ManajemenAgenController@cekProductionCode')->name('kelolapenjualanviawebsite.cekProductionCode');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/edit-kpw/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@editKPW')->name('kelolapenjualanviawebsite.editKPW');
-    Route::get('/marketing/agen/kelolapenjualanviawebsite/update-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@updateKPW')->name('kelolapenjualanviawebsite.updateKPW');
+    Route::post('/marketing/agen/kelolapenjualanviawebsite/update-kpw/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@updateKPW')->name('kelolapenjualanviawebsite.updateKPW');
+    Route::get('/marketing/agen/kelolapenjualanviawebsite/get-list-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPW')->name('kelolapenjualanviawebsite.getListKPW');
+    Route::get('/marketing/agen/kelolapenjualanviawebsite/get-detail-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailKPW')->name('kelolapenjualanviawebsite.getDetailKPW');
+    Route::get('/marketing/agen/kelolapenjualanviawebsite/delete-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteKPW')->name('kelolapenjualanviawebsite.deleteKPW');
 
-    Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPW')->name('kelolapenjualan.getListKPW');
-    Route::get('/marketing/agen/kelolapenjualanlangsung/get-detail-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailKPW')->name('kelolapenjualan.getDetailKPW');
-    Route::get('/marketing/agen/kelolapenjualanlangsung/delete-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteKPW')->name('kelolapenjualan.deleteKPW');
     // End Manajemen Agen ======================================================================================================================================================================================
 
     Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Agen\ManajemenAgenController@create_orderprodukagencabang')->name('orderagenpusat.create');
