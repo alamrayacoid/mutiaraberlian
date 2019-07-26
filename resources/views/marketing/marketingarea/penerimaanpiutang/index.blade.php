@@ -2,10 +2,10 @@
     <div class="card">
         <div class="card-header bordered p-2">
             <div class="header-block">
-                <h3 class="title">Kelola Pembayaran Piutang </h3>
+                <h3 class="title">Kelola Pembayaran Piutang </h3><span> (Pelunasan Agen ke Cabang/MMA)</span>
             </div>
             <div class="header-block pull-right">
-                <a class="btn btn-primary" href="{{ route('datakonsinyasi.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
+                <a class="btn btn-warning" href="#"><i class="fa fa-history"></i>&nbsp;History Pembayaran</a>
             </div>
         </div>
         <div class="card-block">
@@ -26,7 +26,7 @@
                         </select>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
-                        <input type="text" class="form-control form-control-sm" id="agen_pp" placeholder="Nama/Kode Agen">
+                        <input type="text" class="form-control form-control-sm" id="agen_pp" placeholder="Nama/Kode Agen" style="text-transform: uppercase">
                         <input type="hidden" id="id_agen_pp">
                     </div>
                     <div class="col-lg-1 col-md-1 col-sm-12">

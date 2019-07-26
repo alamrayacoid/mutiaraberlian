@@ -61,9 +61,9 @@
                 dataPegawai: {
                     feeder: {
                         column: [
-                            {text: 'Kode COA', conteks: 'ak_nomor', childStyle: 'text-align: center', style: 'width: 12%'},
-                            {text: 'Nama COA', conteks: 'ak_nama', childStyle: 'text-align: center', style: 'width: 25%'},
-                            {text: 'Posisi', conteks: 'ak_posisi', childStyle: 'text-align: center', style: 'width: 15%', overide: function(e){
+                            {text: 'Kode COA', conteks: 'au_nomor', childStyle: 'text-align: center', style: 'width: 12%'},
+                            {text: 'Nama COA', conteks: 'au_nama', childStyle: 'text-align: center', style: 'width: 25%'},
+                            {text: 'Posisi', conteks: 'au_posisi', childStyle: 'text-align: center', style: 'width: 15%', overide: function(e){
                                 if(e == "D")
                                     return "Debet";
                                 else
@@ -120,7 +120,7 @@
                 },
             },
             mounted: function(){
-                axios.get("{{ Route('keuangan.akun.grap') }}")
+                axios.get("{{ Route('keuangan.akun_utama.grap') }}")
                         .then((response) => {
                             this.downloadingResource = false;
 
