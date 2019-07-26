@@ -1131,6 +1131,8 @@ class MarketingAreaController extends Controller
 
         DB::beginTransaction();
         try {
+            $date = Carbon::createFromFormat('d-m-Y', $request->dateSend);
+
             // get product-order
             $productOrder = d_productorder::where('po_id', $id)
             ->with('getPODt')
@@ -1140,7 +1142,7 @@ class MarketingAreaController extends Controller
             $pd_id = d_productdelivery::max('pd_id') + 1;
             $val_deliv = [
                 'pd_id' => $pd_id,
-                'pd_date' => Carbon::now(),
+                'pd_date' => $date,
                 'pd_nota'  => $productOrder->po_nota,
                 'pd_expedition' => $request->expedition,
                 'pd_product' => $request->expeditionType,
@@ -1194,7 +1196,8 @@ class MarketingAreaController extends Controller
                     $listQtyPC, // list of production-code-qty
                     $listUnitPC, // list of production-code-unit
                     $sellPrice, // sellprice
-                    5 // mutcat
+                    5, // mutcat
+                    $date
                 );
                 if ($mutationOut->original['status'] !== 'success') {
                     return $mutationOut;
@@ -1221,7 +1224,10 @@ class MarketingAreaController extends Controller
                     $listHPP,
                     $listSmQty,
                     20, // mutcat masuk pembelian
-                    $listStockParentId // stock-parent id
+                    $listStockParentId, // stock-parent id
+                    null, // items status in stock
+                    null, // item condition in stock
+                    $date
                 );
                 if ($mutationIn->original['status'] !== 'success') {
                     return $mutationIn;
@@ -1321,7 +1327,7 @@ class MarketingAreaController extends Controller
             DB::table('d_salescompdt')->insert($val_salesdt);
             DB::table('d_salescomp')->insert($val_sales);
             DB::table('d_salescomppayment')->insert($val_salespayment);
-            
+
             DB::commit();
             return response()->json([
                 'status' => 'sukses'
@@ -1468,7 +1474,7 @@ class MarketingAreaController extends Controller
         return response()->json($productOrder);
     }
     // receive order and make it disabeld for editing
-    public function receiveItemOrder($id)
+    public function receiveItemOrder(Request $request, $id)
     {
         if (!AksesUser::checkAkses(22, 'update')){
             return Response::json([
@@ -1484,7 +1490,9 @@ class MarketingAreaController extends Controller
         }
 
         DB::beginTransaction();
-        try {
+        try
+        {
+            $date = Carbon::createFromFormat('d-m-Y', $request->date);
             // get product-order
             $productOrder = d_productorder::where('po_id', $id)
             ->with('getPODt')
@@ -1498,7 +1506,8 @@ class MarketingAreaController extends Controller
                     $po->pod_item, // itemId
                     $productOrder->po_nota, // nota
                     20, // mutcat in
-                    5 // mutcat out
+                    5, // mutcat out
+                    $date
                 );
                 if ($mutConfirm->original['status'] !== 'success') {
                     return $mutConfirm;
@@ -1514,7 +1523,8 @@ class MarketingAreaController extends Controller
                 'status' => 'sukses'
             ]);
         }
-        catch (\Exception $e) {
+        catch (\Exception $e)
+        {
             DB::rollback();
             return response()->json([
                 'status' => 'Gagal',

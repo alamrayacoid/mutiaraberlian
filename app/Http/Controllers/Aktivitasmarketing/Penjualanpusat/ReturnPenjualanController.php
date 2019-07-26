@@ -194,7 +194,7 @@ class ReturnPenjualanController extends Controller
             $q->where('sd_qty', '>', 0);
         }])
         ->get();
-
+        dd($sellerCode, $itemId, $stocks);
         $listProdCode = array();
         foreach ($stocks as $key => $stock) {
             foreach ($stock->getStockDt as $key => $stockDt) {

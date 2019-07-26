@@ -22,7 +22,7 @@
                         </div>
 
                         <div class="col-md-2">
-                            <label for="">Tanggal : </label>
+                            <label for="">Tanggal Pengiriman : </label>
                         </div>
                         <div class="col-md-4 mb-3">
                             <input type="text" class="form-control-plaintext border-bottom" id="date_ac" readonly="">
@@ -40,6 +40,17 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <input type="text" class="form-control-plaintext border-bottom" id="dest_ac" readonly="">
+                        </div>
+                        <div class="col-md-2 col-sm-6 col-xs-12">
+                            <label>Tanggal Diterima :</label>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                </div>
+                                <input type="text" name="dateReceive_ac" class="form-control form-control-sm datepicker" autocomplete="off" id="dateReceive_ac" value="">
+                            </div>
                         </div>
                     </div>
                 </section>

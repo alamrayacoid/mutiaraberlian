@@ -1,8 +1,6 @@
 <!-- Modal -->
-<div id="detailDO" class="modal fade animated fadeIn" role="dialog">
+<!-- <div id="detailDO" class="modal fade animated fadeIn" role="dialog">
     <div class="modal-dialog modal-lg">
-
-        <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header bg-gradient-info">
                 <h4 class="modal-title">Detail Order Produk</h4>
@@ -84,5 +82,67 @@
             </div>
         </div>
 
+    </div>
+</div> -->
+
+<div class="modal fade" id="detailDO" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Detail Order Produk</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="cabang">Nama Cabang</label>
+                        <input type="text" class="form-control bg-light" id="txt_penjual" value="" readonly=""
+                               disabled="">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="nota">Nomer Nota</label>
+                        <input type="text" class="form-control bg-light" id="txt_nota" value="" readonly=""
+                               disabled="">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="agen">Nama Agen</label>
+                        <input type="text" class="form-control bg-light" id="txt_pembeli" value="" readonly=""
+                               disabled="">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="tanggal">Tanggal Order</label>
+                        <input type="text" class="form-control bg-light" id="txt_tanggal" value="" readonly=""
+                               disabled="">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="agen">Status Order</label>
+                        <input type="text" class="form-control bg-light" id="txt_status" value="" readonly=""
+                               disabled="">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover display nowrap w-100" cellspacing="0" id="table_itemDO">
+                        <thead class="bg-primary">
+                        <tr>
+                            <th width="30%">Kode Barang/Nama Barang</th>
+                            <th width="20%">Jumlah</th>
+                            <th width="25%">Harga Satuan</th>
+                            <th width="25%">Sub Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
