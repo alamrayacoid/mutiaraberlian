@@ -559,10 +559,13 @@
 <!-- kelola penjualan langsung -->
 <script type="text/javascript">
         $(document).ready(function () {
-            if ($('.current_user_type').val() !== 'E') {
+            // remove filter agent for 'cabang' and 'agent'
+            if ($('.current_user_type').val() != 'PUSAT') {
                 $('.filter_agent').addClass('d-none');
+                $('#filter_agent_code_kpl').attr('disabled', true);
             } else {
                 $('.filter_agent').removeClass('d-none');
+                $('#filter_agent_code_kpl').attr('disabled', false);
             }
 
             $('#date_from_kpl').on('change', function () {

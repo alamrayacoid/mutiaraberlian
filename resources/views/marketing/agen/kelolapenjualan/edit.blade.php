@@ -41,6 +41,7 @@
                             <section>
                                 <div id="sectionsuplier" class="row">
                                     <input type="hidden" id="salesId" value="{{ $data['kpl']->s_id }}">
+                                    <input type="hidden" id="userType" value="{{ Auth::user()->getCompany->c_type }}">
                                     <div class="col-md-2 col-sm-6 col-xs-12">
                                         <label>Tanggal</label>
                                     </div>
@@ -60,9 +61,13 @@
                                     <div class="col-md-10 col-sm-6 col-xs-12 select-agent">
                                         <div class="form-group">
                                             <input type="hidden" value="{{ $data['user']->u_user }}" id="user">
-                                            <input type="hidden" name="agent" id="agent" value="{{ $data['kpl-agent']->a_code }}">
+                                            @if (Auth::user()->getCompany->c_type == 'PUSAT')
+                                                <input type="hidden" name="agent" id="agent" value="{{ $data['kpl-agent']->getAgent->a_code }}">
+                                            @else
+                                                <input type="hidden" name="agent" id="agent" value="">
+                                            @endif
                                             <select class="form-control form-control-sm select2" disabled>
-                                                <option>{{ $data['kpl-agent']->a_name }}</option>
+                                                <option>{{ $data['kpl-agent']->c_name }}</option>
                                             </select>
                                         </div>
                                     </div>
@@ -132,12 +137,19 @@
                                                         <td>
                                                             <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
                                                         </td>
+                                                        @if (Auth::user()->getCompany->c_type == 'CABANG')
+                                                            <td>
+                                                                <input type="text" name="harga[]" class="form-control form-control-sm rupiah harga" value="{{ (int)$val->sd_value }}">
+                                                                <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;"> Harga tidak ditemukan!</p>
+                                                            </td>
+                                                        @else
+                                                            <td>
+                                                                <input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="{{ Currency::addRupiah($val->sd_value) }}" readonly>
+                                                                <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;"> Harga tidak ditemukan!</p>
+                                                            </td>
+                                                        @endif
                                                         <td>
-                                                            <input type="text" name="harga[]" class="form-control form-control-sm harga text-right" value="{{ Currency::addRupiah($val->sd_value) }}" readonly>
-                                                            <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p>
-                                                        </td>
-                                                        <td>
-                                                            <input class="form-control form-control-sm diskon rupiah-without-dec" id="diskon" name="diskon[]" value="{{ (int)$val->sd_discvalue }}">
+                                                            <input class="form-control form-control-sm diskon rupiah" id="diskon" name="diskon[]" value="{{ (int)$val->sd_discvalue }}">
                                                         </td>
                                                         <td>
                                                             <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="{{ Currency::addRupiah($val->sd_totalnet) }}" readonly>
@@ -199,6 +211,12 @@
         dateKPL = dateKPL.split('-');
         $('#dateKPL').datepicker('setDate', new Date(dateKPL[2], parseInt(dateKPL[1]) - 1, dateKPL[0]));
 
+        if ($('#userType').val() == 'PUSAT') {
+            $('.select-agent').removeClass('d-none');
+        } else {
+            $('.select-agent').addClass('d-none');
+        }
+
         // set modal production-code
         setModalCodeProdReady();
         // re-init events for some class or id
@@ -211,15 +229,6 @@
         else {
             $(".jumlah").eq(idxBarang).attr("readonly", false);
         }
-
-        if ($('#user').val() === 'E') {
-            $('.select-agent').removeClass('d-none');
-        } else {
-            $('.select-agent').addClass('d-none');
-        }
-        $('#agent').on('change', function() {
-            getMember();
-        });
 
         // append a new row to insert more items
         $('.btn-tambahp').on('click',function(){
@@ -336,7 +345,13 @@
     }
     // get price from selected item and count all sub-total
     function getPrices(idx, qty) {
-        console.log('getPrices !');
+        // skip get-prices if user is 'cabang'
+        if ($('#userType').val() == 'CABANG') {
+            // trigger diskon to 'keyup'
+            $(".diskon").trigger('keyup');
+            return false;
+        }
+
         $.ajax({
             url : "{{ route('kelolapenjualan.getPrice') }}",
             data : {
@@ -430,22 +445,30 @@
 
     function tambah() {
         var row = '';
+        let harga = '';
         row = '<tr>' +
-            '<td><input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"><input type="hidden" name="idStock[]" class="idStock"></td>'+
-            '<td>'+
-            '<select name="satuan[]" class="form-control form-control-sm select2 satuan" data-label="new">'+
-            '</select>'+
-            '</td>'+
-            '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" data-label="new" value="0" readonly><input type="hidden" name="status[]" class="status" value="unused"></td>'+
-            '<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button></td>' +
-            '<td><input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="Rp. 0" readonly><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>'+
-            '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah-without-dec" value="Rp. 0"></td>'+
-            '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
-            '<td>'+
-            '<button class="btn btn-danger btn-hapus btn-sm" type="button">'+
-            '<i class="fa fa-remove" aria-hidden="true"></i>'+
-            '</button>'+
-            '</td>'+
+            '<td><input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"><input type="hidden" name="idStock[]" class="idStock"></td>' +
+            '<td>' +
+            '<select name="satuan[]" class="form-control form-control-sm select2 satuan">' +
+            '</select>' +
+            '</td>' +
+            '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>' +
+            '<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button></td>';
+
+        if ($('#userType').val() == 'CABANG') {
+            harga = '<td><input type="text" name="harga[]" class="form-control form-control-sm rupiah harga"><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>';
+        }
+        else {
+            harga = '<td><input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="Rp. 0" readonly><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>';
+        }
+
+        row = row + harga + '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah" value="Rp. 0"></td>'+
+            '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>' +
+            '<td>' +
+            '<button class="btn btn-danger btn-hapus btn-sm" type="button">' +
+            '<i class="fa fa-remove" aria-hidden="true"></i>' +
+            '</button>' +
+            '</td>' +
             '</tr>';
         $('#table_create tbody').append(row);
         // clone modal-code-production and insert new one
@@ -453,9 +476,19 @@
         // re-init events for some class or id
         getEventsReady();
 
-        // changeHarga();
-
         setArrayCode();
+
+        $('.rupiah').inputmask("currency", {
+            radixPoint: ",",
+            groupSeparator: ".",
+            digits: 0,
+            autoGroup: true,
+            prefix: ' Rp ', //Space after $, this will not truncate the first character.
+            rightAlign: true,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
+        });
 
         $(".diskon").on('keyup', function (evt) {
             let idx = $('.diskon').index(this);
@@ -465,7 +498,8 @@
             let subharga = (parseInt(convertToAngka(harga)) - parseInt(diskon)) * parseInt(jumlah);
             $('.subtotal').eq(idx).val(convertToRupiah(subharga));
             updateTotalTampil();
-        })
+        });
+
         updateTotalTampil();
     }
 
@@ -502,6 +536,13 @@
     }
 
     function getEventsReady() {
+        if ($('#userType').val() == 'CABANG') {
+            $('.harga').on('keyup', function() {
+                // trigger diskon to 'keyup'
+                $(".diskon").trigger('keyup');
+            });
+        }
+
         // $('.barang').off();
         $(".satuan").off();
         $('.btn-hapus').off();
@@ -613,17 +654,6 @@
         $('.rupiah').inputmask("currency", {
             radixPoint: ",",
             groupSeparator: ".",
-            digits: 2,
-            autoGroup: true,
-            prefix: ' Rp ', //Space after $, this will not truncate the first character.
-            rightAlign: true,
-            autoUnmask: true,
-            nullable: false,
-            // unmaskAsNumber: true,
-        });
-        $('.rupiah-without-dec').inputmask("currency", {
-            radixPoint: ",",
-            groupSeparator: ".",
             digits: 0,
             autoGroup: true,
             prefix: ' Rp ', //Space after $, this will not truncate the first character.
@@ -632,6 +662,17 @@
             nullable: false,
             // unmaskAsNumber: true,
         });
+        // $('.rupiah-without-dec').inputmask("currency", {
+        //     radixPoint: ",",
+        //     groupSeparator: ".",
+        //     digits: 0,
+        //     autoGroup: true,
+        //     prefix: ' Rp ', //Space after $, this will not truncate the first character.
+        //     rightAlign: true,
+        //     autoUnmask: true,
+        //     nullable: false,
+        //     // unmaskAsNumber: true,
+        // });
         // inputmask-digits
         $('.digits').inputmask("currency", {
             radixPoint: ",",
@@ -821,225 +862,6 @@
             messageWarning("Error", error);
         })
     }
-
-    // // init some function
-    // function initFunction()
-    // {
-    //     $('.select2').select2({
-    //         theme: "bootstrap",
-    //         dropdownAutoWidth: true,
-    //         width: '100%'
-    //     });
-    //     $('.rupiah').inputmask("currency", {
-    //         radixPoint: ",",
-    //         groupSeparator: ".",
-    //         digits: 2,
-    //         autoGroup: true,
-    //         prefix: ' Rp ', //Space after $, this will not truncate the first character.
-    //         rightAlign: true,
-    //         autoUnmask: true,
-    //         nullable: false,
-    //         // unmaskAsNumber: true,
-    //     });
-    //     $('.digits').inputmask("currency", {
-    //         radixPoint: ",",
-    //         groupSeparator: ".",
-    //         digits: 0,
-    //         autoGroup: true,
-    //         prefix: '', //Space after $, this will not truncate the first character.
-    //         rightAlign: true,
-    //         autoUnmask: true,
-    //         nullable: false,
-    //         // unmaskAsNumber: true,
-    //     });
-    //     $('.find-item').on('click', function() {
-    //         rowIndex = $('.find-item').index(this);
-    //         // clear row input
-    //         $('.find-item').eq(rowIndex).val('');
-    //         $('.item-id').eq(rowIndex).val('');
-    //         $('.item-owner').eq(rowIndex).val('');
-    //         $('.satuan').eq(rowIndex).find('option').remove();
-    //         $('.item-qty').eq(rowIndex).val('');
-    //         $('.item-price').eq(rowIndex).val('');
-    //         $('.item-sub-total').eq(rowIndex).val('');
-    //         findItem(rowIndex);
-    //     });
-    // }
-    // // get member based on agent (used for Employee-Login)
-    // function getMember()
-    // {
-    //     $.ajax({
-    //         data : {
-    //             "agentCode": $('#agent').val()
-    //         },
-    //         type : "get",
-    //         url : "{{ route('kelolapenjualan.getMemberKPL') }}",
-    //         dataType : 'json',
-    //         success : function (response){
-    //             if (! $.trim(response)) {
-    //                 messageFailed('Perhatian', 'Tidak ada member terdaftar !');
-    //             } else {
-    //                 let optMember = '';
-    //                 $.each(response, function(index, val) {
-    //                     optMember += '<option value="'+ val.m_code +'">'+ val.m_name +'</option>';
-    //                 })
-    //                 $('#member').find('option').remove();
-    //                 $('#member').append(optMember);
-    //                 $('#member').selectedIndex = 0;
-    //             }
-    //         },
-    //         error : function(e){
-    //             console.error(e);
-    //         }
-    //     });
-    // }
-    // // find-item autocomplete in rowIndex
-    // function findItem(rowIndex)
-    // {
-    //     let itemListId = $('.item-id[value != ""]').serialize();
-    //     $('.find-item').autocomplete({
-    //         source: function( request, response ) {
-    //             dataToSend = $(".find-item").eq(rowIndex).serialize() +'&'+ itemListId;
-    //             $.ajax({
-    //                 url: baseUrl + '/marketing/agen/kelolapenjualanlangsung/find-item',
-    //                 data: dataToSend,
-    //                 dataType: 'json',
-    //                 success: function( data ) {
-    //                     response( data );
-    //                 }
-    //             });
-    //         },
-    //         minLength: 1,
-    //         select: function(event, data) {
-    //             $('.item-id').eq(rowIndex).val(data.item.data.i_id);
-    //             appendOptSatuan(rowIndex, data.item.data);
-    //             getItemPrice(rowIndex);
-    //         }
-    //     });
-    // }
-    // // get item price
-    // function getItemPrice(rowIndex)
-    // {
-    //     $.ajax({
-    //         data : {
-    //             "itemId": $('.item-id').eq(rowIndex).val(),
-    //             "unitId": $('.satuan').eq(rowIndex).val()
-    //         },
-    //         type : "get",
-    //         url : "{{ route('kelolapenjualan.getPrice') }}",
-    //         dataType : 'json',
-    //         success : function (response){
-    //             if (! $.trim(response.get_sales_price_dt[0])) {
-    //                 messageFailed('Perhatian', 'Harga item tidak ditemukan !');
-    //                 $('.find-item').eq(rowIndex).trigger('click');
-    //             } else {
-    //                 itemPrice = parseInt(response.get_sales_price_dt[0].spd_price);
-    //                 $('.item-price').eq(rowIndex).val(itemPrice);
-    //             }
-    //             sumSubTotalItem(rowIndex);
-    //         },
-    //         error : function(e){
-    //             console.error(e);
-    //         }
-    //     });
-    // }
-    // // append option to select in rowIndex
-    // function appendOptSatuan(rowIndex, item)
-    // {
-    //     $('.satuan').eq(rowIndex).find('option').remove();
-    //     $('.item-unitcmp').eq(rowIndex).val(1);
-    //     let optSatuan = '';
-    //     optSatuan += '<option value="'+ item.get_unit1.u_id +'" data-unitcmp="'+ parseInt(item.i_unitcompare1) +'" selected>'+ item.get_unit1.u_name +'</option>';
-    //     if (item.get_unit2 != null && item.get_unit2.u_id !== item.get_unit1.u_id) {
-    //         optSatuan += '<option value="'+ item.get_unit2.u_id +'" data-unitcmp="'+ parseInt(item.i_unitcompare2) +'">'+ item.get_unit2.u_name +'</option>';
-    //     }
-    //     if (item.get_unit3 != null && item.get_unit3.u_id !== item.get_unit1.u_id && item.get_unit3.u_id !== item.get_unit2.u_id) {
-    //         optSatuan += '<option value="'+ item.get_unit3.u_id +'" data-unitcmp="'+ parseInt(item.i_unitcompare3) +'">'+ item.get_unit3.u_name +'</option>';
-    //     }
-    //     $('.satuan').eq(rowIndex).append(optSatuan);
-    // }
-    // function setUnitCmp(rowIndex)
-    // {
-    //     let selectedOpt = $('.satuan').eq(rowIndex).find('option:selected');
-    //     unitcmp = selectedOpt.data('unitcmp');
-    //     $('.item-unitcmp').eq(rowIndex).val(unitcmp);
-    //     getItemPrice(rowIndex);
-    // }
-    // // sum sub-total item in a row
-    // function sumSubTotalItem(rowIndex)
-    // {
-    //     qty = parseInt($('.item-qty').eq(rowIndex).val());
-    //     price = parseInt($('.item-price').eq(rowIndex).val());
-    //     unitcmp = parseInt($('.item-unitcmp').eq(rowIndex).val());
-    //
-    //     if (qty < 0 || isNaN(qty)) {
-    //         qty = 0;
-    //         $('.item-qty').eq(rowIndex).val(0)
-    //     }
-    //
-    //     qtyUnit1 = qty * unitcmp;
-    //     subTotal = qtyUnit1 * price;
-    //     $('.item-sub-total').eq(rowIndex).val(subTotal);
-    //     sumTotalBruto();
-    // }
-    // // sum total-bruto
-    // function sumTotalBruto()
-    // {
-    //     tableRows = document.getElementsByTagName("tr");
-    //     rowLength = tableRows.length;
-    //     subTotal = 0;
-    //     for (let i = 0; i < (rowLength-1); i++) {
-    //         subTotal += parseInt($('.item-sub-total').eq(i).val());
-    //     }
-    //     $('#total').val(subTotal);
-    // }
-    // // submit form
-    // function submitForm()
-    // {
-    //     myForm = $('.myForm').serialize();
-    //
-    //     $.ajax({
-    //         data : myForm,
-    //         type : "post",
-    //         url : baseUrl + '/marketing/agen/kelolapenjualanlangsung/update/' + $('#salesId').val(),
-    //         dataType : 'json',
-    //         success : function (response){
-    //             if(response.status == 'berhasil')
-    //             {
-    //                 messageSuccess('Berhasil', 'Penjualan berhasil diperbarui !');
-    //             }
-    //             else if (response.status == 'invalid')
-    //             {
-    //                 messageFailed('Perhatian', response.message);
-    //             }
-    //             else if (response.status == 'gagal')
-    //             {
-    //                 messageWarning('Error', response.message + ' (Hubungi pengembang !)');
-    //             }
-    //             // activate btn_simpan once again
-    //             $('#btn_simpan').one('click', function() {
-    //                 submitForm();
-    //             });
-    //         },
-    //         error : function(e){
-    //             messageWarning('Gagal', 'Data gagal diperbarui, hubungi pengembang !');
-    //             // activate btn_simpan once again
-    //             $('#btn_simpan').one('click', function() {
-    //                 submitForm();
-    //             });
-    //         }
-    //     });
-    // }
-    // // reset all input
-    // function resetAllInput()
-    // {
-    //     $('.myForm')[0].reset();
-    //     $('.satuan').find('option').remove();
-    //     $('#member').find('option:first').attr('selected', 'selected');
-    //     $('#table_create tbody').find('tr:gt(0)').remove();
-    //     $('.find-item').eq(0).trigger('click');
-    // }
-
 
 </script>
 @endsection

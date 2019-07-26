@@ -1070,10 +1070,11 @@ class ManajemenAgenController extends Controller
      */
     public function getListKPL(Request $request)
     {
-        $userType = Auth::user()->u_user;
+        $userType = Auth::user()->getCompany->c_type;
         $agentCode = $request->agent_code;
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
+
 
         if ($agentCode !== null) {
             $company = m_company::where('c_user', $agentCode)
@@ -1081,7 +1082,7 @@ class ManajemenAgenController extends Controller
             $datas = d_sales::whereBetween('s_date', [$from, $to])
                 ->where('s_comp', $company->c_id);
         } else {
-            if ($userType === 'E') {
+            if ($userType == 'PUSAT') {
                 $datas = d_sales::whereBetween('s_date', [$from, $to]);
             } else {
                 $datas = d_sales::whereBetween('s_date', [$from, $to])
@@ -1268,11 +1269,12 @@ class ManajemenAgenController extends Controller
             // $data['agents'] = m_agen::get();
             $provinsi = DB::table('m_wil_provinsi')->orderBy('wp_name', 'asc')->get();
         } elseif ($type == 'CABANG'){
-            $data['agents'] = m_agen::where('a_mma', '=', $cek->c_id)->orderBy('a_name', 'asc')->get();
+            // $data['agents'] = m_agen::where('a_mma', '=', $cek->c_id)->orderBy('a_name', 'asc')->get();
+            $data['agents'] = m_company::where('c_id', $cek->c_id)->get();
         } else {
             $data['agents'] = m_agen::join('m_company', 'c_user', '=', 'a_code')
                 ->where('c_id', '=', $cek->c_id)
-                ->select('m_agen.*')
+                // ->select('m_agen.*')
                 ->orderBy('a_name', 'asc')
                 ->get();
         }
@@ -1280,6 +1282,8 @@ class ManajemenAgenController extends Controller
             ->orWhere('m_agen', Auth::user()->u_code)
             ->orderBy('m_name', 'asc')
             ->get();
+
+        // dd(Auth::user()->getCompany->c_type);
 
         return view('marketing/agen/kelolapenjualan/create', compact('data', 'type', 'provinsi'));
     }
@@ -1318,14 +1322,14 @@ class ManajemenAgenController extends Controller
             }
         }
 
-        if (Auth::user()->u_user === 'E') {
+        if (Auth::user()->getCompany->c_type == "PUSAT") {
             if ($request->agent == '' || is_null($request->agent)) {
                 $results[] = ['id' => null, 'label' => 'Silahkan isi agen terlebih dahulu !'];
                 return Response::json($results);
             }
             $comp = m_company::where('c_user', $request->agent)->first();
         } else {
-            $comp = m_company::where('c_user', Auth::user()->u_code)->first();
+            $comp = Auth::user()->getCompany;
         }
 
         // return if $comp is-null
@@ -1397,7 +1401,7 @@ class ManajemenAgenController extends Controller
             //     ->groupBy('d_stock.s_id')
             //     ->get();
         }
-        // dd($nama);
+
         if (count($nama) == 0) {
             $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
         } else {
@@ -1411,7 +1415,7 @@ class ManajemenAgenController extends Controller
     // get price
     public function getPrice(Request $request)
     {
-        if (Auth::user()->u_user === 'E') {
+        if (Auth::user()->u_user == "E") {
             $agent = m_agen::where('a_code', $request->agentCode)
                 ->first();
         } else {
@@ -1532,15 +1536,15 @@ class ManajemenAgenController extends Controller
         try {
             $date = Carbon::createFromFormat('d-m-Y', $request->dateKPL);
             $data = $request->all();
+
             // get comp using agent-code
-            if (Auth::user()->u_user == "E") {
+            if (Auth::user()->getCompany->c_type == "PUSAT") {
                 $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
             }
             else {
-                $agent = Auth::user();
-                $agent = m_company::where('c_id', $agent->u_company)->first();
+                $agent = Auth::user()->getCompany;
+                // $agent = m_company::where('c_id', $agent->u_company)->first();
             }
-
             // validate production-code is exist in stock-item
             $validateProdCode = Mutasi::validateProductionCode(
                 $agent->c_id, // from
@@ -1676,7 +1680,6 @@ class ManajemenAgenController extends Controller
                 if ($mutationOut->original['status'] !== 'success') {
                     return $mutationOut;
                 }
-
                 $startProdCodeIdx += $prodCodeLength;
                 $salesDtId++;
             }
@@ -1796,10 +1799,15 @@ class ManajemenAgenController extends Controller
             $val->stockUnit3 = $stock['unit3'];
         }
         // get agent
-        $data['kpl-agent'] = m_agen::whereHas('getCompany', function ($query) use ($data) {
-            $query
-                ->where('c_id', $data['kpl']->s_comp);
-        })->with('getCompany')->first();
+        if (Auth::user()->getCompany->c_type == 'PUSAT') {
+            $data['kpl-agent'] = m_company::where('c_id', $data['kpl']->s_comp)
+            ->with('getAgent')
+            ->first();
+        }
+        else {
+            $data['kpl-agent'] = m_company::where('c_id', $data['kpl']->s_comp)->first();
+        }
+
         // get member
         $data['member'] = m_member::where('m_code', $data['kpl']->s_member)->first();
         $data['kpl']->s_date = Carbon::parse($data['kpl']->s_date)->format('d-m-Y');
@@ -1839,19 +1847,6 @@ class ManajemenAgenController extends Controller
                 $agent = m_company::where('c_id', $agent->u_company)->first();
             }
 
-            // validate production-code is exist in stock-item
-            $validateProdCode = Mutasi::validateProductionCode(
-                $agent->c_id, // from
-                $request->idItem, // list item-id
-                $request->prodCode, // list production-code
-                $request->prodCodeLength, // list production-code length each item
-                $request->qtyProdCode // list of qty each production-code
-            );
-            if ($validateProdCode !== 'validated') {
-                DB::rollback();
-                return $validateProdCode;
-            }
-
             // update sales
             $sales = d_sales::where('s_id', $id)
                 ->with('getSalesDt.getProdCode')
@@ -1880,6 +1875,20 @@ class ManajemenAgenController extends Controller
                 }
                 $val->delete();
             }
+            
+            // validate production-code is exist in stock-item
+            $validateProdCode = Mutasi::validateProductionCode(
+                $agent->c_id, // from
+                $request->idItem, // list item-id
+                $request->prodCode, // list production-code
+                $request->prodCodeLength, // list production-code length each item
+                $request->qtyProdCode // list of qty each production-code
+            );
+            if ($validateProdCode !== 'validated') {
+                DB::rollback();
+                return $validateProdCode;
+            }
+
 
             $salesDtId = d_salesdt::where('sd_sales', $sales->s_id)->max('sd_detailid') + 1;
             for ($i = 0; $i < sizeof($data['idItem']); $i++) {
@@ -2561,7 +2570,7 @@ class ManajemenAgenController extends Controller
             ->with('getSalesDt.getUnit')
             ->with('getMember')
             ->first();
-            
+
         return response()->json($detail);
     }
 
