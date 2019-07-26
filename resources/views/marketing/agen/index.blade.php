@@ -1014,28 +1014,6 @@
 
         // tambahan dirga
             // alert($('#option-cabang').val());
-            axios.get('{{ Route("agen.laporan") }}?search='+$('#option-cabang').val())
-                    .then((response) => {
-                        console.log(response.data);
-
-                        $('#totPenjualan').html(humanizePrice(response.data.penjualan))
-                        $('#totHutang').html(humanizePrice(response.data.sisahutang))
-                        $('#cover-spin').hide();
-                    })
-
-            $('#option-cabang').change(function(){
-                var ctx = $(this);
-                $('#cover-spin').show();
-
-                axios.get('{{ Route("agen.laporan") }}?search='+$('#option-cabang').val())
-                        .then((response) => {
-                            console.log(response.data);
-
-                            $('#totPenjualan').html(humanizePrice(response.data.penjualan))
-                            $('#totHutang').html(humanizePrice(response.data.sisahutang))
-                            $('#cover-spin').hide();
-                        })
-            })
 
             var lineChartData = {
                 labels: ['January', 'February', 'March', 'April', 'May'],
@@ -1044,7 +1022,7 @@
                     borderColor: '#33b5e5',
                     backgroundColor: 'rgba(51, 181, 229, 0.3)',
                     fill: true,
-                    data: [90, 80, 10, 5, 15],
+                    data: [0, 0, 0, 0, 0],
                     yAxisID: 'y-axis-1',
                     pointRadius: 4,
                 }, {
@@ -1052,7 +1030,7 @@
                     borderColor: '#00C851',
                     backgroundColor: 'rgba(0, 200, 81, 0.3)',
                     fill: true,
-                    data: [90, 8, 65, 80, 10],
+                    data: [0, 0, 0, 0, 0],
                     yAxisID: 'y-axis-2',
                     pointRadius: 4,
                 }]
@@ -1101,7 +1079,40 @@
                     }
                 });
             };
-       
+
+            axios.get('{{ Route("agen.laporan") }}?search='+$('#option-cabang').val())
+                    .then((response) => {
+                        // console.log(response.data);
+
+                        $('#totPenjualan').html(humanizePrice(response.data.penjualan))
+                        $('#totHutang').html(humanizePrice(response.data.sisahutang))
+
+                        lineChartData.datasets[0].data = JSON.parse(response.data.sr_penjualan);
+                        lineChartData.datasets[1].data = JSON.parse(response.data.sr_hutang);
+                        window.myLine.update();
+
+                        $('#cover-spin').hide();
+                    })
+
+            $('#option-cabang').change(function(){
+                var ctx = $(this);
+                $('#cover-spin').show();
+
+                axios.get('{{ Route("agen.laporan") }}?search='+$('#option-cabang').val())
+                        .then((response) => {
+                            // console.log(response.data);
+
+                            $('#totPenjualan').html(humanizePrice(response.data.penjualan))
+                            $('#totHutang').html(humanizePrice(response.data.sisahutang))
+
+                            lineChartData.datasets[0].data = JSON.parse(response.data.sr_penjualan);
+                            lineChartData.datasets[1].data = JSON.parse(response.data.sr_hutang);
+                            window.myLine.update();
+
+                            $('#cover-spin').hide();
+                        })
+            })
+
          $('.set-total').on('click keyup', function(){
             let qty = $('#edit_kuantitas').val();
             let harga = $('#edit_harga').val();

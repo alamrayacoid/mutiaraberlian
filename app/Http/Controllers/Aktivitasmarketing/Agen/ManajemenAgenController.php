@@ -2557,8 +2557,8 @@ class ManajemenAgenController extends Controller
                 }
 
                 array_push($bulanChart, date('M, Y', strtotime('-'.$loop.' month', strtotime($dateNow))));
-                array_push($penjualanChart, ($sr_penjualan) ? $sr_penjualan->penjualan : 0);
-                array_push($sisaHutang, ($sr_sisahutang) ? $sr_sisahutang->tagihan : 0);
+                array_push($penjualanChart, ($sr_penjualan) ? (float) $sr_penjualan->penjualan : (float) 0);
+                array_push($sisaHutang, ($sr_sisahutang) ? (float) $sr_sisahutang->tagihan : (float) 0);
 
                 $loop++;
 
