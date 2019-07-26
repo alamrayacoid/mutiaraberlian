@@ -393,8 +393,13 @@ class ManajemenAgenController extends Controller
                 'message' => 'Anda tidak memiliki akses ke menu ini !'
             ]);
         }
+        $date = '';
+        if ($request->dateOrder === null){
+            $date = Carbon::now('Asia/Jakarta');
+        } else {
+            $date = Carbon::createFromFormat('d-m-Y', $request->dateOrder);
+        }
 
-        $date = Carbon::createFromFormat('d-m-Y', $request->dateOrder);
         $data = $request->all();
         $notaPO = CodeGenerator::codeWithSeparator('d_productorder', 'po_nota', 9, 10, 3, 'PRO', '-');
         $notaDist = CodeGenerator::codeWithSeparator('d_stockdistribution', 'sd_nota', 9, 10, 3, 'PRO', '-');
