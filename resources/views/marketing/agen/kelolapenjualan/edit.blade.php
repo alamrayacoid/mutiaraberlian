@@ -664,9 +664,9 @@
 
     function setItem(info) {
         idStock = info.stock
-        idItem = info.data.i_id;
-        namaItem = info.data.i_name;
-        kode = info.data.i_code;
+        idItem = info.data.get_item.i_id;
+        namaItem = info.data.get_item.i_name;
+        kode = info.data.get_item.i_code;
         $(".kode").eq(idxBarang).val(kode);
         $(".itemid").eq(idxBarang).val(idItem);
         $(".idStock").eq(idxBarang).val(idStock);
