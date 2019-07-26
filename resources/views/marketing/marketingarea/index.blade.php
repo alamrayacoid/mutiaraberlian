@@ -2403,5 +2403,69 @@
                 }
             });
         }
+//======== Penerimaan Piutang ===============
+
+        function getDataPP() {
+            $('#table_penerimaanpiutang').dataTable().fnClearTable();
+            $('#table_penerimaanpiutang').dataTable().fnDestroy();
+            table_penerimaanpiutang = $('#table_penerimaanpiutang').DataTable({
+                serverSide: true,
+                processing: true,
+                searching: false,
+                paging: false,
+                responsive: true,
+                ajax: {
+                    url: "{{ route('mmapenerimaanpiutang.getdata') }}",
+                    type: "get",
+                    data: {
+                        start: $('#date_from_pp').val(),
+                        end: $('#date_to_pp').val(),
+                        status: $('#status_pp').val(),
+                        agen: $('#agen_pp').val()
+                    }
+                },
+                columns: [
+                    {data: 'c_name'},
+                    {data: 'sisa'},
+                    {data: 'sc_datetop'},
+                    {data: 'status'},
+                    {data: 'aksi'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
+
+        var table_penerimaanpiutang;
+        $(document).ready(function () {
+            setTimeout(function () {
+                table_penerimaanpiutang = $('#table_penerimaanpiutang').DataTable({
+                    serverSide: true,
+                    processing: true,
+                    searching: false,
+                    paging: false,
+                    responsive: true,
+                    ajax: {
+                        url: "{{ route('mmapenerimaanpiutang.getdata') }}",
+                        type: "get",
+                        data: {
+                            start: $('#date_from_pp').val(),
+                            end: $('#date_to_pp').val(),
+                            status: $('#status_pp').val(),
+                            agen: $('#agen_pp').val()
+                        }
+                    },
+                    columns: [
+                        {data: 'c_name'},
+                        {data: 'sisa'},
+                        {data: 'sc_datetop'},
+                        {data: 'status'},
+                        {data: 'aksi'}
+                    ],
+                    pageLength: 10,
+                    lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+                });
+            }, 800);
+        })
     </script>
 @endsection
