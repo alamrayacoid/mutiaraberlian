@@ -2041,7 +2041,7 @@ class ManajemenAgenController extends Controller
     // Start: Kelola Penjualan via Website -----------------
     public function getListKPW(Request $request)
     {
-        $userType = Auth::user()->u_user;
+        $userType = Auth::user()->getCompany->c_type;
         $agentCode = $request->agent_code;
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
@@ -2049,19 +2049,33 @@ class ManajemenAgenController extends Controller
         if ($agentCode !== null) {
             $company = m_company::where('c_user', $agentCode)
             ->first();
-            $datas = DB::table('d_salesweb')
-            ->whereBetween('sw_date', [$from, $to])
-            ->where('sw_agen', '=', $company->c_id);
+            $datas = d_salesweb::whereBetween('sw_date', [$from, $to])
+            ->where('sw_agen', $company->c_id);
         } else {
-            if ($userType === 'E') {
-                $datas = DB::table('d_salesweb')
-                ->whereBetween('sw_date', [$from, $to]);
+            if ($userType == 'PUSAT') {
+                $datas = d_salesweb::whereBetween('sw_date', [$from, $to]);
             } else {
-                $datas = DB::table('d_salesweb')
-                ->whereBetween('sw_date', [$from, $to])
+                $datas = d_salesweb::whereBetween('sw_date', [$from, $to])
                 ->where('sw_agen', Auth::user()->u_company);
             }
         }
+
+        // if ($agentCode !== null) {
+        //     $company = m_company::where('c_user', $agentCode)
+        //     ->first();
+        //     $datas = DB::table('d_salesweb')
+        //     ->whereBetween('sw_date', [$from, $to])
+        //     ->where('sw_agen', '=', $company->c_id);
+        // } else {
+        //     if ($userType === 'E') {
+        //         $datas = DB::table('d_salesweb')
+        //         ->whereBetween('sw_date', [$from, $to]);
+        //     } else {
+        //         $datas = DB::table('d_salesweb')
+        //         ->whereBetween('sw_date', [$from, $to])
+        //         ->where('sw_agen', Auth::user()->u_company);
+        //     }
+        // }
 
         $datas = $datas->join('m_company', 'sw_agen', '=', 'c_id')
         ->select('c_id', 'c_name', 'd_salesweb.*')
@@ -2416,158 +2430,6 @@ class ManajemenAgenController extends Controller
             ]);
         }
     }
-    // // store penjualan web
-    // public function saveKPW(Request $request)
-    // {
-    //     if (!AksesUser::checkAkses(23, 'create')){
-    //         return Response::json([
-    //             'status' => "Failed",
-    //             'message' => "Anda tidak memiliki akses ke menu ini !"
-    //         ]);
-    //     }
-    //
-    //     $date = Carbon::createFromFormat('d-m-Y', $request->date);
-    //     $agen = $request->agen;
-    //     $customer = $request->customer;
-    //     $website = $request->website;
-    //     $transaksi = $request->transaksi;
-    //     $item = $request->item;
-    //     $qty = $request->qty;
-    //     $unit = $request->unit;
-    //     $price = $request->price;
-    //     $note = $request->note;
-    //     $listPC = $request->code;
-    //     $listQtyPC = $request->qtycode;
-    //     $mutcat = 4;
-    //     $sekarang = Carbon::now('Asia/Jakarta');
-    //
-    //     DB::beginTransaction();
-    //     try {
-    //         // validate production-code is exist in stock-item
-    //         $listItemsId = array($item);
-    //         $prodCodeLength = array(count($listPC));
-    //         $validateProdCode = Mutasi::validateProductionCode(
-    //             $agen, // from
-    //             $listItemsId, // list item-id
-    //             $listPC, // list production-code
-    //             $prodCodeLength, // list production-code length each item
-    //             $listQtyPC // list of qty each production-code
-    //         );
-    //         if ($validateProdCode !== 'validated') {
-    //             DB::rollback();
-    //             return $validateProdCode;
-    //         }
-    //
-    //         $nota = CodeGenerator::codeWithSeparator('d_salesweb', 'sw_reff', 8, 10, 3, 'PW', '-');
-    //         $totalPrice = intval($qty) * intval($price);
-    //
-    //         // salesweb
-    //         $sw_id = d_salesweb::max('sw_id') + 1;
-    //         DB::table('d_salesweb')
-    //         ->insert([
-    //             'sw_id' => $sw_id,
-    //             'sw_reff' => $nota,
-    //             'sw_transactioncode' => $transaksi,
-    //             'sw_agen' => $agen,
-    //             'sw_website' => $website,
-    //             'sw_date' => $date,
-    //             'sw_item' => $item,
-    //             'sw_qty' => $qty,
-    //             'sw_unit' => $unit,
-    //             'sw_price' => $price,
-    //             'sw_totalprice' => $totalPrice,
-    //             'sw_note' => $note,
-    //             'sw_insert' => $sekarang
-    //         ]);
-    //
-    //         // d_sales
-    //         $id_sales = d_sales::max('s_id') + 1;
-    //         $sales = new d_sales;
-    //         $sales->s_id = $id_sales;
-    //         $sales->s_comp = $agen;
-    //         $sales->s_member = $customer;
-    //         $sales->s_type = 'C';
-    //         $sales->s_date = $date;
-    //         $sales->s_nota = $nota;
-    //         $sales->s_total = $totalPrice;
-    //         $sales->s_user = Auth::user()->u_id;
-    //         $sales->save();
-    //
-    //         // get itemStock based on position and item-id
-    //         $stock = $this->getItemStock($agen, $item);
-    //         ($stock === null) ? $itemStock = 0 : $itemStock = $stock->sumQty;
-    //         // is stock sufficient ?
-    //         if ($stock === null || $itemStock < $qty) {
-    //             DB::rollback();
-    //             // get detail item name
-    //             $item = m_item::where('i_id', $item)->first();
-    //             return response()->json([
-    //                 'status' => 'invalid',
-    //                 'message' => 'Stock item ' . $item->i_name . ' tidak mencukupi. Stock tersedia: ' . $itemStock
-    //             ]);
-    //         }
-    //
-    //         $salesDtId = d_salesdt::where('sd_sales', $id_sales)->max('sd_detailid') + 1;
-    //         // start insert sales-detail (each item)
-    //         $salesDt = new d_salesdt();
-    //         $salesDt->sd_sales = $id_sales;
-    //         $salesDt->sd_detailid = $salesDtId;
-    //         $salesDt->sd_comp = $stock->s_comp;
-    //         $salesDt->sd_item = $item;
-    //         $salesDt->sd_qty = (int)$qty;
-    //         $salesDt->sd_unit = $unit;
-    //         $salesDt->sd_value = $price;
-    //         $salesDt->sd_discpersen = 0;
-    //         $salesDt->sd_discvalue = 0;
-    //         $salesDt->sd_totalnet = $totalPrice;
-    //         $salesDt->save();
-    //
-    //         // insert sales-code
-    //         $detailidcode = d_salescode::where('sc_sales', $id_sales)->where('sc_item', $item)->max('sc_detailid') + 1;
-    //         foreach ($listPC as $key => $PC) {
-    //             $val_salescode = [
-    //                 'sc_sales' => $id_sales,
-    //                 'sc_item' => $item,
-    //                 'sc_detailid' => $detailidcode,
-    //                 'sc_code' => strtoupper($listPC[$key]),
-    //                 'sc_qty' => $listQtyPC[$key]
-    //             ];
-    //             DB::table('d_salescode')->insert($val_salescode);
-    //             $detailidcode++;
-    //         }
-    //
-    //         $listUnitPC = array();
-    //         // insert stock mutation sales 'out'
-    //         $mutationOut = Mutasi::salesOut(
-    //             $sales->s_comp, // from
-    //             null, // to
-    //             $item, // item-id
-    //             $qty, // qty of smallest-unit
-    //             $sales->s_nota, // nota
-    //             $listPC, // list of production-code
-    //             $listQtyPC, // list of production-code-qty
-    //             $listUnitPC, // list of production-code-unit
-    //             $price, // sellprice
-    //             $mutcat, // mutcat
-    //             $date
-    //         );
-    //         if ($mutationOut->original['status'] !== 'success') {
-    //             return $mutationOut;
-    //         }
-    //
-    //         DB::commit();
-    //         return Response::json([
-    //             'status' => 'success'
-    //         ]);
-    //     }
-    //     catch (DecryptException $e) {
-    //         DB::rollBack();
-    //         return Response::json([
-    //             'status' => 'gagal',
-    //             'message' => $e->getMessage()
-    //         ]);
-    //     }
-    // }
 
     public function getDetailKPW(Request $request)
     {
@@ -2713,7 +2575,7 @@ class ManajemenAgenController extends Controller
                 $agent = Auth::user()->getCompany;
                 // $agent = m_company::where('c_id', $agent->u_company)->first();
             }
-            
+
             // validate production-code is exist in stock-item
             $validateProdCode = Mutasi::validateProductionCode(
                 $agent->c_id, // from
