@@ -1857,7 +1857,7 @@ class ManajemenAgenController extends Controller
                 $agent = Auth::user()->getCompany;
                 // $agent = m_company::where('c_id', $agent->u_company)->first();
             }
-            
+
             // validate production-code is exist in stock-item
             $validateProdCode = Mutasi::validateProductionCode(
                 $agent->c_id, // from
@@ -2713,6 +2713,7 @@ class ManajemenAgenController extends Controller
                 $agent = Auth::user()->getCompany;
                 // $agent = m_company::where('c_id', $agent->u_company)->first();
             }
+            
             // validate production-code is exist in stock-item
             $validateProdCode = Mutasi::validateProductionCode(
                 $agent->c_id, // from
