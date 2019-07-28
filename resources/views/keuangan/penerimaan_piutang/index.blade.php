@@ -12,6 +12,9 @@
     </style>
 @stop
 @section('content')
+    @include('marketing.marketingarea.penerimaanpiutang.modal.detail')
+    @include('marketing.marketingarea.penerimaanpiutang.modal.bayar')
+
     <article class="content animated fadeInLeft">
         <div class="title-block text-primary">
             <h1 class="title"> Penerimaan Piutang </h1>
@@ -43,6 +46,7 @@
                     </ul>
                     <div class="tab-content">
                         @include('keuangan.penerimaan_piutang.pembayaranagen.index')
+                        @include('keuangan.penerimaan_piutang.pembayarancabang.index')
                     </div>
                 </div>
             </div>
@@ -52,11 +56,13 @@
 @endsection
 @section('extra_script')
     <script type="text/javascript">
-
+        var table_pembayarancabang;
         var table_penerimaanpiutang;
         $(document).ready(function () {
             $('#agen_pp').val('');
             $('#id_agen_pp').val('');
+            $('#agen_pc').val('');
+            $('#id_cabang_pc').val('');
             setTimeout(function () {
                 table_penerimaanpiutang = $('#table_penerimaanpiutang').DataTable({
                     serverSide: true,
@@ -85,6 +91,36 @@
                     lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
                 });
             }, 200);
+
+            setTimeout(function () {
+                table_pembayarancabang = $('#table_pembayarancabang').DataTable({
+                    serverSide: true,
+                    processing: true,
+                    searching: false,
+                    paging: false,
+                    responsive: true,
+                    ajax: {
+                        url: "{{ route('pembayarancabang.getdatalistcabang') }}",
+                        type: "get",
+                        data: {
+                            start: $('#date_from_pc').val(),
+                            end: $('#date_to_pc').val(),
+                            status: $('#status_pc').val(),
+                            agen: $('#id_cabang_pc').val()
+                        }
+                    },
+                    columns: [
+                        {data: 'cabang'},
+                        {data: 'c_name'},
+                        {data: 'sisa'},
+                        {data: 'sc_datetop'},
+                        {data: 'status'},
+                        {data: 'aksi'}
+                    ],
+                    pageLength: 10,
+                    lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+                });
+            }, 400);
         })
 
         //======== Penerimaan Piutang ===============
@@ -159,9 +195,9 @@
                     let nama = "<td>"+value.i_name+"</td>";
                     let qty = "<td>"+value.scd_qty+"</td>";
                     let satuan = "<td>"+value.u_name+"</td>";
-                    let harga = "<td>"+convertToRupiah(value.scd_value)+"</td>";
-                    let diskon = "<td>"+convertToRupiah(value.scd_discvalue)+"</td>";
-                    let total = "<td>"+convertToRupiah(value.scd_totalnet)+"</td>";
+                    let harga = "<td class='text-right'>"+convertToRupiah(value.scd_value)+"</td>";
+                    let diskon = "<td class='text-right'>"+convertToRupiah(value.scd_discvalue)+"</td>";
+                    let total = "<td class='text-right'>"+convertToRupiah(value.scd_totalnet)+"</td>";
                     $('#table_detailpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
                 });
                 let terbayar = 0;
@@ -169,7 +205,7 @@
                     terbayar = terbayar + parseInt(value.scp_pay);
                     let no = "<td>"+(index + 1)+"</td>";
                     let tanggal = "<td>"+value.scp_date+"</td>";
-                    let nominal = "<td>"+convertToRupiah(value.scp_pay)+"</td>";
+                    let nominal = "<td class='text-right'>"+convertToRupiah(value.scp_pay)+"</td>";
                     $('#table_detailpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
                 });
                 $('#nota_dtpp').val(detail[0].sc_nota);
@@ -202,9 +238,9 @@
                     let nama = "<td>"+value.i_name+"</td>";
                     let qty = "<td>"+value.scd_qty+"</td>";
                     let satuan = "<td>"+value.u_name+"</td>";
-                    let harga = "<td>"+convertToRupiah(value.scd_value)+"</td>";
-                    let diskon = "<td>"+convertToRupiah(value.scd_discvalue)+"</td>";
-                    let total = "<td>"+convertToRupiah(value.scd_totalnet)+"</td>";
+                    let harga = "<td class='text-right'>"+convertToRupiah(value.scd_value)+"</td>";
+                    let diskon = "<td class='text-right'>"+convertToRupiah(value.scd_discvalue)+"</td>";
+                    let total = "<td class='text-right'>"+convertToRupiah(value.scd_totalnet)+"</td>";
                     $('#table_bayarpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
                 });
                 let terbayar = 0;
@@ -212,7 +248,7 @@
                     terbayar = terbayar + parseInt(value.scp_pay);
                     let no = "<td>"+(index + 1)+"</td>";
                     let tanggal = "<td>"+value.scp_date+"</td>";
-                    let nominal = "<td>"+convertToRupiah(value.scp_pay)+"</td>";
+                    let nominal = "<td class='text-right'>"+convertToRupiah(value.scp_pay)+"</td>";
                     $('#table_bayarpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
                 });
                 $('#paymentpp').append("<option value='disable'> == Pilih Metode Pembayaran == </option>");

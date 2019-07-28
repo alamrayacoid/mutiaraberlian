@@ -705,6 +705,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/keuangan/laporankeuangan/aruskas/index', 'KeuanganController@laporankeuangan_aruskas')->name('laporankeuangan.aruskas');
     // Penerimaan Piutang
     Route::get('/keuangan/penerimaanpiutang/index', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@index')->name('penerimaanpiutang.index');
+    Route::get('/keuangan/penerimaanpiutang/pembayarancabang/get-data-list-cabang', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataListCabang')->name('pembayarancabang.getdatalistcabang');
     // !===================================================== END KEUANGAN =====================================================!
 
     // !===================================================== PENGATURAN =====================================================!
