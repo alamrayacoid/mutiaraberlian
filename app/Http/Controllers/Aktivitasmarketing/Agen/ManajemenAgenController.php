@@ -1744,10 +1744,6 @@ class ManajemenAgenController extends Controller
             abort(401);
         }
 
-        // // get list sales-web
-        // $salesWeb = d_salesweb::select('sw_reff')->get()->toArray();
-        // $x = array_flatten($salesWeb);
-
         $data['user'] = Auth::user();
         $data['agents'] = m_agen::get();
 
@@ -1844,12 +1840,35 @@ class ManajemenAgenController extends Controller
         try {
             $date = Carbon::createFromFormat('d-m-Y', $request->dateKPL);
             $data = $request->all();
+
+            // // get comp using agent-code
+            // if (Auth::user()->u_user == "E") {
+            //     $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
+            // } else {
+            //     $agent = Auth::user();
+            //     $agent = m_company::where('c_id', $agent->u_company)->first();
+            // }
+
             // get comp using agent-code
-            if (Auth::user()->u_user == "E") {
+            if (Auth::user()->getCompany->c_type == "PUSAT") {
                 $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
-            } else {
-                $agent = Auth::user();
-                $agent = m_company::where('c_id', $agent->u_company)->first();
+            }
+            else {
+                $agent = Auth::user()->getCompany;
+                // $agent = m_company::where('c_id', $agent->u_company)->first();
+            }
+            
+            // validate production-code is exist in stock-item
+            $validateProdCode = Mutasi::validateProductionCode(
+                $agent->c_id, // from
+                $request->idItem, // list item-id
+                $request->prodCode, // list production-code
+                $request->prodCodeLength, // list production-code length each item
+                $request->qtyProdCode // list of qty each production-code
+            );
+            if ($validateProdCode !== 'validated') {
+                DB::rollback();
+                return $validateProdCode;
             }
 
             // update sales
@@ -1880,20 +1899,6 @@ class ManajemenAgenController extends Controller
                 }
                 $val->delete();
             }
-            
-            // validate production-code is exist in stock-item
-            $validateProdCode = Mutasi::validateProductionCode(
-                $agent->c_id, // from
-                $request->idItem, // list item-id
-                $request->prodCode, // list production-code
-                $request->prodCodeLength, // list production-code length each item
-                $request->qtyProdCode // list of qty each production-code
-            );
-            if ($validateProdCode !== 'validated') {
-                DB::rollback();
-                return $validateProdCode;
-            }
-
 
             $salesDtId = d_salesdt::where('sd_sales', $sales->s_id)->max('sd_detailid') + 1;
             for ($i = 0; $i < sizeof($data['idItem']); $i++) {
@@ -2213,7 +2218,6 @@ class ManajemenAgenController extends Controller
                 'message' => "Anda tidak memiliki akses ke menu ini !"
             ]);
         }
-
         // validate request
         $isValidRequest = $this->validate_req($request);
         if ($isValidRequest != '1') {
@@ -2228,13 +2232,14 @@ class ManajemenAgenController extends Controller
         try {
             $date = Carbon::createFromFormat('d-m-Y', $request->dateKPL);
             $data = $request->all();
+
             // get comp using agent-code
-            if (Auth::user()->u_user == "E") {
+            if (Auth::user()->getCompany->c_type == "PUSAT") {
                 $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
             }
             else {
-                $agent = Auth::user();
-                $agent = m_company::where('c_id', $agent->u_company)->first();
+                $agent = Auth::user()->getCompany;
+                // $agent = m_company::where('c_id', $agent->u_company)->first();
             }
 
             // validate production-code is exist in stock-item
@@ -2606,7 +2611,7 @@ class ManajemenAgenController extends Controller
         }])
         ->with('getMember.getAgent')
         ->first();
-        // dd($id, $data['kpl']);
+
         // set nota
         $nota = $data['kpl']->s_nota;
         // get stock item
@@ -2645,49 +2650,27 @@ class ManajemenAgenController extends Controller
             $val->stockUnit3 = $stock['unit3'];
         }
         // get agent
-        $data['kpl-agent'] = m_agen::whereHas('getCompany', function ($query) use ($data) {
-            $query
-            ->where('c_id', $data['kpl']->s_comp);
-        })->with('getCompany')->first();
+        if (Auth::user()->getCompany->c_type == 'PUSAT') {
+            $data['kpl-agent'] = m_company::where('c_id', $data['kpl']->s_comp)
+            ->with('getAgent')
+            ->first();
+        }
+        else {
+            $data['kpl-agent'] = m_company::where('c_id', $data['kpl']->s_comp)->first();
+        }
+
+        // // get agent
+        // $data['kpl-agent'] = m_agen::whereHas('getCompany', function ($query) use ($data) {
+        //     $query
+        //     ->where('c_id', $data['kpl']->s_comp);
+        // })->with('getCompany')->first();
+
         // get member
         $data['member'] = m_member::where('m_code', $data['kpl']->s_member)->first();
         $data['kpl']->s_date = Carbon::parse($data['kpl']->s_date)->format('d-m-Y');
 
         return view('marketing/agen/penjualanviaweb/edit', compact('data'));
     }
-    // public function editKPW($id)
-    // {
-    //     if (!AksesUser::checkAkses(23, 'update')){
-    //         abort(401);
-    //     }
-    //
-    //     $datas = DB::table('d_salesweb')
-    //         ->join('m_company', 'sw_agen', 'c_id')
-    //         ->join('m_item', 'sw_item', 'i_id')
-    //         ->join('m_unit', 'sw_unit', 'u_id')
-    //         ->where('sw_id', '=', $id)->first();
-    //
-    //     $datas->dataId = Crypt::encrypt($datas->sw_id);
-    //
-    //
-    //     $units = DB::table('m_item')
-    //         ->join('m_unit as unit1', 'i_unit1', 'unit1.u_id')
-    //         ->join('m_unit as unit2', 'i_unit2', 'unit2.u_id')
-    //         ->join('m_unit as unit3', 'i_unit3', 'unit3.u_id')
-    //         ->select('unit1.u_id as id1', 'unit1.u_name as name1', 'unit2.u_id as id2', 'unit2.u_name as name2', 'unit3.u_id as id3', 'unit3.u_name as name3')
-    //         ->where('i_id', '=', $datas->sw_item)
-    //         ->first();
-    //
-    //     $code = DB::table('d_salescode')
-    //         ->join('d_sales', 'sc_sales', 'd_sales.s_id')
-    //         ->join('d_salesweb', 's_nota', 'sw_reff')
-    //         ->where('sw_id', '=', $id)->get();
-    //
-    //     $cust = m_member::where('m_code', $code[0]->s_member)->first();
-    //     $datas->customerName = $cust->m_name;
-    //
-    //     return view('marketing/agen/penjualanviaweb/edit', compact('datas', 'units', 'code'));
-    // }
 
     // update selected kpw
     public function updateKPW(Request $request, $id)
@@ -2713,14 +2696,23 @@ class ManajemenAgenController extends Controller
         try {
             $date = Carbon::createFromFormat('d-m-Y', $request->dateKPL);
             $data = $request->all();
-            // get comp using agent-code
-            if (Auth::user()->u_user == "E") {
-                $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
-            } else {
-                $agent = Auth::user();
-                $agent = m_company::where('c_id', $agent->u_company)->first();
-            }
 
+            // // get comp using agent-code
+            // if (Auth::user()->u_user == "E") {
+            //     $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
+            // } else {
+            //     $agent = Auth::user();
+            //     $agent = m_company::where('c_id', $agent->u_company)->first();
+            // }
+
+            // get comp using agent-code
+            if (Auth::user()->getCompany->c_type == "PUSAT") {
+                $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
+            }
+            else {
+                $agent = Auth::user()->getCompany;
+                // $agent = m_company::where('c_id', $agent->u_company)->first();
+            }
             // validate production-code is exist in stock-item
             $validateProdCode = Mutasi::validateProductionCode(
                 $agent->c_id, // from
@@ -2908,57 +2900,6 @@ class ManajemenAgenController extends Controller
             ]);
         }
     }
-
-    // public function updateKPW(Request $request)
-    // {
-    //     if (!AksesUser::checkAkses(23, 'update')){
-    //         return Response::json([
-    //             'status' => "Failed",
-    //             'message' => "Anda tidak memiliki akses ke menu ini !"
-    //         ]);
-    //     }
-    //
-    //     try {
-    //         $id = Crypt::decrypt($request->id);
-    //     }
-    //     catch (DecryptException $e) {
-    //         return view('errors.404');
-    //     }
-    //
-    //     DB::beginTransaction();
-    //     try {
-    //         $requestId = new \Illuminate\Http\Request();
-    //
-    //         $requestId->replace(['id' => $id]);
-    //
-    //         $delete = self::deleteKPW($requestId);
-    //         $save = self::saveKPW($request);
-    //
-    //         $delete = $delete->original['status'];
-    //         $save = $save->original['status'];
-    //
-    //         if ($delete == 'sukses' && $save == 'success') {
-    //             DB::commit();
-    //             return Response::json([
-    //                 'status' => 'sukses'
-    //             ]);
-    //         }
-    //         else {
-    //             DB::rollBack();
-    //             return Response::json([
-    //                 'status' => 'gagal',
-    //                 'message' => $e->getMessage()
-    //             ]);
-    //         }
-    //     }
-    //     catch (DecryptException $e) {
-    //         DB::rollBack();
-    //         return Response::json([
-    //             'status'  => 'gagal',
-    //             'message' => $e->getMessage()
-    //         ]);
-    //     }
-    // }
 
     public function deleteKPW(Request $request)
     {

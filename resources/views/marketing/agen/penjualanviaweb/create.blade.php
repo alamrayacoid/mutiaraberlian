@@ -51,6 +51,7 @@
                             <div class="card-block">
                                 <section>
                                     <div id="sectionsuplier" class="row">
+                                        <input type="hidden" id="userType" value="{{ $type }}">
                                         <div class="col-md-2 col-sm-6 col-xs-12">
                                             <label>Tanggal</label>
                                         </div>
@@ -104,8 +105,7 @@
                                                         class="form-control form-control-sm select2">
                                                     <option value="" selected disabled>Pilih Agen</option>
                                                     @foreach($data['agents'] as $agent)
-                                                        <option
-                                                            value="{{ $agent->a_code }}">{{ $agent->a_name }}</option>
+                                                        <option value="{{ $agent->c_id }}">{{ $agent->c_name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -208,15 +208,26 @@
                                                                 produksi
                                                             </button>
                                                         </td>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="harga[]"
-                                                                   class="form-control form-control-sm text-right harga"
-                                                                   value="Rp. 0" readonly>
-                                                            <p class="text-danger unknow mb-0"
-                                                               style="display: none; margin-bottom:-12px !important;">
+                                                        @if ($type == 'CABANG')
+                                                            <td>
+                                                                <input type="text"
+                                                                name="harga[]"
+                                                                class="form-control form-control-sm rupiah harga">
+                                                                <p class="text-danger unknow mb-0"
+                                                                style="display: none; margin-bottom:-12px !important;">
                                                                 Harga tidak ditemukan!</p>
-                                                        </td>
+                                                            </td>
+                                                        @else
+                                                            <td>
+                                                                <input type="text"
+                                                                name="harga[]"
+                                                                class="form-control form-control-sm text-right harga"
+                                                                value="Rp. 0" readonly>
+                                                                <p class="text-danger unknow mb-0"
+                                                                style="display: none; margin-bottom:-12px !important;">
+                                                                Harga tidak ditemukan!</p>
+                                                            </td>
+                                                        @endif
                                                         <td>
                                                             <input class="form-control form-control-sm diskon rupiah text-right" id="diskon" name="diskon[]">
                                                         </td>
@@ -270,9 +281,7 @@
         var checkitem = null;
 
         $(document).ready(function () {
-            // changeHarga();
-
-            if ($('#user').val() === 'E') {
+            if ($('#userType').val() == 'PUSAT') {
                 $('.select-agent').removeClass('d-none');
                 $('#table_create').addClass('d-none');
             } else {
@@ -411,6 +420,13 @@
 
         // get price from selected item and count all sub-total
         function getPrices(idx, qty) {
+            // skip get-prices if user is 'cabang'
+            if ($('#userType').val() == 'CABANG') {
+                // trigger diskon to 'keyup'
+                $(".diskon").trigger('keyup');
+                return false;
+            }
+
             $.ajax({
                 url: "{{ route('kelolapenjualan.getPrice') }}",
                 data: {
@@ -444,6 +460,7 @@
 
         function tambah() {
             var row = '';
+            let harga = '';
             row = '<tr>' +
                 '<td><input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"><input type="hidden" name="idStock[]" class="idStock"></td>' +
                 '<td>' +
@@ -451,9 +468,16 @@
                 '</select>' +
                 '</td>' +
                 '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>' +
-                '<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button"><i class="fa fa-plus"></i> kode produksi</button></td>' +
-                '<td><input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="Rp. 0" readonly><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>' +
-                '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah" value="Rp. 0"></td>'+
+                '<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button"><i class="fa fa-plus"></i> kode produksi</button></td>';
+
+            if ($('#userType').val() == 'CABANG') {
+                harga = '<td><input type="text" name="harga[]" class="form-control form-control-sm rupiah harga"><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>';
+            }
+            else {
+                harga = '<td><input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="Rp. 0" readonly><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>';
+            }
+
+            row = row + harga + '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah" value="Rp. 0"></td>'+
                 '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>' +
                 '<td>' +
                 '<button class="btn btn-danger btn-hapus btn-sm" type="button">' +
@@ -495,6 +519,13 @@
         }
 
         function getEventsReady() {
+            if ($('#userType').val() == 'CABANG') {
+                $('.harga').on('keyup', function() {
+                    // trigger diskon to 'keyup'
+                    $(".diskon").trigger('keyup');
+                });
+            }
+
             // $('.barang').off();
             $(".satuan").off();
             $('.btn-hapus').off();

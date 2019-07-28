@@ -230,10 +230,15 @@
             $(".jumlah").eq(idxBarang).attr("readonly", false);
         }
 
+        // $('#agent').on('change', function() {
+        //     getMember();
+        // });
+
         // append a new row to insert more items
         $('.btn-tambahp').on('click',function(){
             tambah();
         });
+
 
         // check if there is any empty value in table
         function checkForm() {
@@ -662,17 +667,6 @@
             nullable: false,
             // unmaskAsNumber: true,
         });
-        // $('.rupiah-without-dec').inputmask("currency", {
-        //     radixPoint: ",",
-        //     groupSeparator: ".",
-        //     digits: 0,
-        //     autoGroup: true,
-        //     prefix: ' Rp ', //Space after $, this will not truncate the first character.
-        //     rightAlign: true,
-        //     autoUnmask: true,
-        //     nullable: false,
-        //     // unmaskAsNumber: true,
-        // });
         // inputmask-digits
         $('.digits').inputmask("currency", {
             radixPoint: ",",

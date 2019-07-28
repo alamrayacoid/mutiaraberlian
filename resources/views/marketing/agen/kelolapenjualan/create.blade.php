@@ -399,6 +399,7 @@
                 $(".diskon").trigger('keyup');
                 return false;
             }
+
             $.ajax({
                 url: "{{ route('kelolapenjualan.getPrice') }}",
                 data: {
