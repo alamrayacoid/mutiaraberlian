@@ -2533,9 +2533,9 @@
                     let nama = "<td>"+value.i_name+"</td>";
                     let qty = "<td>"+value.scd_qty+"</td>";
                     let satuan = "<td>"+value.u_name+"</td>";
-                    let harga = "<td>"+convertToRupiah(value.scd_value)+"</td>";
-                    let diskon = "<td>"+convertToRupiah(value.scd_discvalue)+"</td>";
-                    let total = "<td>"+convertToRupiah(value.scd_totalnet)+"</td>";
+                    let harga = "<td class='text-right'>"+convertToRupiah(value.scd_value)+"</td>";
+                    let diskon = "<td class='text-right'>"+convertToRupiah(value.scd_discvalue)+"</td>";
+                    let total = "<td class='text-right'>"+convertToRupiah(value.scd_totalnet)+"</td>";
                     $('#table_detailpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
                 });
                 let terbayar = 0;
@@ -2543,7 +2543,7 @@
                     terbayar = terbayar + parseInt(value.scp_pay);
                     let no = "<td>"+(index + 1)+"</td>";
                     let tanggal = "<td>"+value.scp_date+"</td>";
-                    let nominal = "<td>"+convertToRupiah(value.scp_pay)+"</td>";
+                    let nominal = "<td class='text-right'>"+convertToRupiah(value.scp_pay)+"</td>";
                     $('#table_detailpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
                 });
                 $('#nota_dtpp').val(detail[0].sc_nota);
@@ -2576,9 +2576,9 @@
                     let nama = "<td>"+value.i_name+"</td>";
                     let qty = "<td>"+value.scd_qty+"</td>";
                     let satuan = "<td>"+value.u_name+"</td>";
-                    let harga = "<td>"+convertToRupiah(value.scd_value)+"</td>";
-                    let diskon = "<td>"+convertToRupiah(value.scd_discvalue)+"</td>";
-                    let total = "<td>"+convertToRupiah(value.scd_totalnet)+"</td>";
+                    let harga = "<td class='text-right'>"+convertToRupiah(value.scd_value)+"</td>";
+                    let diskon = "<td class='text-right'>"+convertToRupiah(value.scd_discvalue)+"</td>";
+                    let total = "<td class='text-right'>"+convertToRupiah(value.scd_totalnet)+"</td>";
                     $('#table_bayarpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
                 });
                 let terbayar = 0;
@@ -2586,7 +2586,7 @@
                     terbayar = terbayar + parseInt(value.scp_pay);
                     let no = "<td>"+(index + 1)+"</td>";
                     let tanggal = "<td>"+value.scp_date+"</td>";
-                    let nominal = "<td>"+convertToRupiah(value.scp_pay)+"</td>";
+                    let nominal = "<td class='text-right'>"+convertToRupiah(value.scp_pay)+"</td>";
                     $('#table_bayarpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
                 });
                 $('#paymentpp').append("<option value='disable'> == Pilih Metode Pembayaran == </option>");
