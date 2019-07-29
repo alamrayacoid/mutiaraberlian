@@ -26,7 +26,7 @@ class PenerimaanPiutangController extends Controller
         $start = 'all';
         $end = 'all';
         $status = 'all';
-        $agen = 'all';
+        $cabang = 'all';
         $user = Auth::user();
         $sekarang = Carbon::now('Asia/Jakarta')->format('Y-m-d');
 
@@ -59,9 +59,9 @@ class PenerimaanPiutangController extends Controller
                 $infoSalescomp = $infoSalescomp->whereRaw('(SELECT(case when sc_datetop < NOW() then "Melebihi" when sc_datetop >= NOW() then "Belum" END)) = "Belum"');
             }
         }
-        if (isset($request->agen) && $request->agen != '' && $request->agen !== null){
-            $agen = $request->agen;
-            $infoSalescomp = $infoSalescomp->where('sc_member', '=', $agen);
+        if (isset($request->cabang) && $request->cabang != '' && $request->cabang !== null){
+            $cabang = $request->cabang;
+            $infoSalescomp = $infoSalescomp->where('sc_comp', '=', $cabang);
         }
 
         $infoSales = DB::table('d_sales')
@@ -84,9 +84,9 @@ class PenerimaanPiutangController extends Controller
             $end = Carbon::createFromFormat('d-m-Y', $request->end)->format('Y-m-d');
             $infoSales = $infoSales->where('s_date', '<=', $end);
         }
-        if (isset($request->agen) && $request->agen != '' && $request->agen !== null){
-            $agen = $request->agen;
-            $infoSalescomp = $infoSalescomp->where('sc_member', '=', $agen);
+        if (isset($request->cabang) && $request->cabang != '' && $request->cabang !== null){
+            $cabang = $request->cabang;
+            $infoSalescomp = $infoSalescomp->where('s_comp', '=', $cabang);
         }
 
         $info = $infoSalescomp->union($infoSales);
