@@ -409,6 +409,18 @@
 @endsection
 @section('extra_script')
     <!-- ========================================================================-->
+    <!-- script for public function -->
+    <script type="text/javascript">
+    $(document).ready(function () {
+        if ($('.current_user_type').val() !== 'E') {
+            $('.filter_agent').addClass('d-none');
+        } else {
+            $('.filter_agent').removeClass('d-none');
+        }
+    });
+    </script>
+
+    <!-- ========================================================================-->
     <!-- script for Data-Konsinyasi etc -->
     <script type="text/javascript">
         $(document).ready(function () {
@@ -1865,18 +1877,6 @@
     </script>
 
     <!-- ========================================================================-->
-    <!-- script for public function -->
-    <script type="text/javascript">
-        $(document).ready(function () {
-            if ($('.current_user_type').val() !== 'E') {
-                $('.filter_agent').addClass('d-none');
-            } else {
-                $('.filter_agent').removeClass('d-none');
-            }
-        });
-    </script>
-
-    <!-- ========================================================================-->
     <!-- script for Data-Canvassing -->
     <script type="text/javascript">
         $(document).ready(function () {
@@ -2427,7 +2427,7 @@
                 }
             });
         }
-//======== Penerimaan Piutang ===============
+        //======== Penerimaan Piutang ===============
         function getDataPP() {
             $('#table_penerimaanpiutang').dataTable().fnClearTable();
             $('#table_penerimaanpiutang').dataTable().fnDestroy();
@@ -2603,7 +2603,7 @@
                 alert('error');
             })
         }
-        
+
         function bayarPP() {
             let nota = $('#nota_paypp').val();
             let bayar = $('#bayarpaypp').val();
@@ -2643,5 +2643,11 @@
                 alert("error");
             })
         }
+    </script>
+
+    <!-- ========================================================================-->
+    <!-- script for Return Penjualan -->
+    <script type="text/javascript">
+
     </script>
 @endsection

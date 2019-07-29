@@ -624,10 +624,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/penerimaanpiutang/bayar-piutang', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@bayarPiutang')->name('mmapenerimaanpiutang.bayarPiutang');
     // End: MMA Pembayaran Piutang =====================================================================================
 
+    // Start: MMA Return Penjualan ===================================================================================
+    Route::get('/marketing/marketingarea/returnpenjualan/index', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@index')->name('mmareturn.index');
+    // End: MMA Return Penjualan ===================================================================================
     // End: MMA kelola data konsinyasi ================================================================================================
 
     // Manajemen Agen ===============================================================================================
-
     // tambahan dirga
         Route::get('/marketing/agen/laporan', 'Aktivitasmarketing\Agen\ManajemenAgenController@getLaporan')->name('agen.laporan');
 
