@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/penerimaanpiutang/PenerimaanPiutangController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/penerimaanpiutang/PenerimaanPiutangController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/index.blade.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -23,8 +23,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="205">
-              <caret line="707" column="201" selection-start-line="707" selection-start-column="184" selection-end-line="707" selection-end-column="201" />
+            <state relative-caret-position="260">
+              <caret line="709" column="157" selection-start-line="709" selection-start-column="140" selection-end-line="709" selection-end-column="157" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
               </folding>
@@ -32,11 +32,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Keuangan/penerimaanpiutang/PenerimaanPiutangController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="83" column="53" lean-forward="true" selection-start-line="83" selection-start-column="53" selection-end-line="83" selection-end-column="53" />
+            <state relative-caret-position="260">
+              <caret line="77" lean-forward="true" selection-start-line="77" selection-end-line="77" />
               <folding>
                 <element signature="e#67#76#0#PHP" expanded="true" />
               </folding>
@@ -44,11 +44,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="365">
-              <caret line="310" column="21" selection-start-line="310" selection-start-column="21" selection-end-line="310" selection-end-column="21" />
+            <state relative-caret-position="69">
+              <caret line="102" column="69" selection-start-line="102" selection-start-column="69" selection-end-line="102" selection-end-column="69" />
             </state>
           </provider>
         </entry>
@@ -56,8 +56,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayarancabang/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="28" column="93" selection-start-line="28" selection-start-column="84" selection-end-line="28" selection-end-column="93" />
+            <state relative-caret-position="176">
+              <caret line="36" column="130" selection-start-line="36" selection-start-column="108" selection-end-line="36" selection-end-column="130" />
             </state>
           </provider>
         </entry>
@@ -65,7 +65,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayaranagen/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="512">
+            <state relative-caret-position="1008">
               <caret line="48" column="32" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="32" />
             </state>
           </provider>
@@ -101,10 +101,10 @@
       <find>_pp</find>
       <find>penerimaanpiutang</find>
       <find>keuANGAN</find>
-      <find>table_pembayarancabang</find>
       <find>pembayarancabang.getdatalistcabang</find>
       <find>id_agen_pc</find>
       <find>getdatalistcabang</find>
+      <find>table_pembayarancabang</find>
     </findStrings>
     <replaceStrings>
       <replace>done_</replace>
@@ -171,8 +171,8 @@
         <option value="$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayaranagen/index.blade.php" />
         <option value="$PROJECT_DIR$/routes/web.php" />
         <option value="$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayarancabang/index.blade.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/Keuangan/penerimaanpiutang/PenerimaanPiutangController.php" />
         <option value="$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/index.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/Keuangan/penerimaanpiutang/PenerimaanPiutangController.php" />
       </list>
     </option>
   </component>
@@ -540,6 +540,8 @@
       <workItem from="1564104376698" duration="23933000" />
       <workItem from="1564212949113" duration="8187000" />
       <workItem from="1564288162095" duration="2720000" />
+      <workItem from="1564394018694" duration="795000" />
+      <workItem from="1564460218259" duration="528000" />
     </task>
     <task id="LOCAL-00001" summary="perbaikan jenis produk">
       <created>1560755279119</created>
@@ -835,11 +837,18 @@
       <option name="project" value="LOCAL" />
       <updated>1563885256006</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="update penerimaan piutang versi pusat">
+      <created>1564394201621</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1564394201621</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="529253000" />
+    <option name="totallyTimeSpent" value="530576000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -854,7 +863,7 @@
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49917355" visible="true" weight="0.15582451" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49917355" weight="0.1603631" />
       <window_info id="Structure" order="1" sideWeight="0.5008264" side_tool="true" weight="0.19818456" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -879,7 +888,6 @@
     <option name="version" value="1" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="history promosi" />
     <MESSAGE value="update penjualan pusat" />
     <MESSAGE value="master ekspedisi" />
     <MESSAGE value="distribusi order penjualan" />
@@ -904,7 +912,8 @@
     <MESSAGE value="update validasi jumlah kode produksi distribusi penjualan pusat" />
     <MESSAGE value="update sales in penjualan pusat" />
     <MESSAGE value="ok" />
-    <option name="LAST_COMMIT_MESSAGE" value="ok" />
+    <MESSAGE value="update penerimaan piutang versi pusat" />
+    <option name="LAST_COMMIT_MESSAGE" value="update penerimaan piutang versi pusat" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/resources/views/inventory/distribusibarang/index.blade.php">
@@ -1263,44 +1272,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Keuangan/penerimaanpiutang/PenerimaanPiutangController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="83" column="53" lean-forward="true" selection-start-line="83" selection-start-column="53" selection-end-line="83" selection-end-column="53" />
-          <folding>
-            <element signature="e#67#76#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/web.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="707" column="201" selection-start-line="707" selection-start-column="184" selection-end-line="707" selection-end-column="201" />
-          <folding>
-            <element signature="e#7#389#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayaranagen/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="512">
+        <state relative-caret-position="1008">
           <caret line="48" column="32" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="32" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayarancabang/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="28" column="93" selection-start-line="28" selection-start-column="84" selection-end-line="28" selection-end-column="93" />
+        <state relative-caret-position="176">
+          <caret line="36" column="130" selection-start-line="36" selection-start-column="108" selection-end-line="36" selection-end-column="130" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/web.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="709" column="157" selection-start-line="709" selection-start-column="140" selection-end-line="709" selection-end-column="157" />
+          <folding>
+            <element signature="e#7#389#0#PHP" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="365">
-          <caret line="310" column="21" selection-start-line="310" selection-start-column="21" selection-end-line="310" selection-end-column="21" />
+        <state relative-caret-position="69">
+          <caret line="102" column="69" selection-start-line="102" selection-start-column="69" selection-end-line="102" selection-end-column="69" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Keuangan/penerimaanpiutang/PenerimaanPiutangController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="77" lean-forward="true" selection-start-line="77" selection-end-line="77" />
+          <folding>
+            <element signature="e#67#76#0#PHP" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -68,9 +68,10 @@ class PenerimaanPiutangController extends Controller
             ->join('m_company', 's_comp', '=', 'c_id')
             ->join('m_member', 'm_code', '=', 's_member')
             ->select(DB::raw('floor(s_total) as sisa'),
+                DB::raw('"-" AS pembayaran'),
                 DB::raw('"-" AS status'),
-                'member.c_name', DB::raw('date_format(s_date, "%d-%m-%Y") as sc_datetop'),
-                DB::raw('floor(s_total) as sc_total'), 'sc_id', 'c_name as cabang')
+                'c_name', DB::raw('date_format(s_date, "%d-%m-%Y") as sc_datetop'),
+                DB::raw('floor(s_total) as sc_total'), 's_id as sc_id', 'c_name as cabang')
             ->where('s_paidoffbranch', '=', 'N')
             ->groupBy('s_id')
             ->where('s_comp', '!=', 'MB0000001')
@@ -86,7 +87,7 @@ class PenerimaanPiutangController extends Controller
         }
         if (isset($request->cabang) && $request->cabang != '' && $request->cabang !== null){
             $cabang = $request->cabang;
-            $infoSalescomp = $infoSalescomp->where('s_comp', '=', $cabang);
+            $infoSales = $infoSales->where('s_comp', '=', $cabang);
         }
 
         $info = $infoSalescomp->union($infoSales);
