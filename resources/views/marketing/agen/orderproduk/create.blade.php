@@ -104,7 +104,9 @@
         $(document).ready(function(){
             // start ====
             // below is function for agent ====
-            getProvAgen();
+            setTimeout(function () {
+                getProvAgen();
+            }, 200)
             getKotaAgen();
             getAPJAgen();
             changeAPJAgen();
@@ -114,7 +116,9 @@
             changeHargaAgen();
             visibleTableItemAgen();
             // below is function for branch ====
-            getProvCabang();
+            setTimeout(function () {
+                getProvCabang();
+            },500)
             getKotaCabang();
             getCabang();
             getPembeliCabang();
@@ -970,7 +974,7 @@
                 visibleTableItemAgen();
                 if ($("#a_prov").val() != "" && $("#a_kota").val() != "") {
                     loadingShow();
-                    axios.get(baseUrl+'/marketing/agen/orderproduk/get-penjual/'+$("#a_prov").val()+'/'+$("#a_kota").val())
+                    axios.get(baseUrl+'/marketing/agen/orderproduk/get-penjual/'+$("#a_kota").val())
                         .then(function (resp) {
                             $("#a_apj").attr("disabled", false);
                             var option = '<option value="">Pilih Agen Penjual</option>';

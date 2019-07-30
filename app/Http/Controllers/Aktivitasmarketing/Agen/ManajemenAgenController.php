@@ -47,8 +47,9 @@ class ManajemenAgenController extends Controller
 // oerder produk ke agen
     public function getPembeli($kode)
     {
-        $data = m_agen::where('a_parent', $kode)
-        ->get();
+        $data = m_agen::join('m_company', 'c_user', '=', 'a_code')
+            ->where('a_parent', $kode)
+            ->get();
 
         return Response::json($data);
 
@@ -393,6 +394,7 @@ class ManajemenAgenController extends Controller
                 'message' => 'Anda tidak memiliki akses ke menu ini !'
             ]);
         }
+
         $date = '';
         if ($request->dateOrder === null){
             $date = Carbon::now('Asia/Jakarta');
@@ -609,13 +611,17 @@ class ManajemenAgenController extends Controller
                     ->select('c_id', 'c_name')->get();
         }
 
+        $info = DB::table('m_company')
+            ->where('c_id', '=', Auth::user()->u_company)
+            ->first();
+
         // return json_encode($cabang);
 
         $company = DB::table('m_company')
             ->leftJoin('m_agen', 'a_code', 'c_user')
             ->where('c_id', '=', $user->u_company)->first();
 
-        return view('marketing/agen/index', compact('provinsi', 'kota', 'kecamatan', 'user', 'company', 'cabang'));
+        return view('marketing/agen/index', compact('provinsi', 'kota', 'kecamatan', 'user', 'company', 'cabang', 'info'));
     }
 
 //    order produk ke agen
@@ -977,11 +983,41 @@ class ManajemenAgenController extends Controller
     // Start: Kelola Data Inventory Agen ----------------
     public function getAgen($city)
     {
-        $agen = DB::table('m_agen')
-            ->join('m_company', 'a_code', 'c_user')
-            ->select('a_code', 'a_name', 'c_id')
-            ->where('a_kabupaten', '=', $city)
-            ->get();
+        $user = Auth::user();
+        $info = DB::table('m_company')
+            ->where('c_id', '=', $user->u_company)
+            ->first();
+
+        $agen = [];
+
+        if ($info->c_type == 'CABANG'){
+            $agen = DB::table('m_agen')
+                ->join('m_company', 'a_code', 'c_user')
+                ->select('a_name', 'c_id')
+                ->where('a_kabupaten', '=', $city)
+                ->where('a_mma', '=', $info->c_id);
+
+            $cabang = DB::table('m_company')
+                ->select('c_name as a_name', 'c_id')
+                ->where('c_id', '=', $info->c_id);
+
+            $agen = $agen->union($cabang);
+            $agen = $agen->get();
+
+        } elseif ($info->c_type == 'AGEN'){
+            $agen = DB::table('m_agen')
+                ->join('m_company', 'a_code', 'c_user')
+                ->select('a_code', 'a_name', 'c_id')
+                ->where('a_kabupaten', '=', $city)
+                ->where('c_id', '=', $info->c_id)
+                ->get();
+        } elseif ($info->c_type == 'PUSAT'){
+            $agen = DB::table('m_agen')
+                ->join('m_company', 'a_code', 'c_user')
+                ->select('a_code', 'a_name', 'c_id')
+                ->where('a_kabupaten', '=', $city)
+                ->get();
+        }
 
         return response()->json([
             'success' => true,
@@ -2837,12 +2873,28 @@ class ManajemenAgenController extends Controller
                                 ->where('sc_comp', 'MB0000001')
                                 ->select(DB::raw('coalesce((sum(sc_total) - sum(scp_pay)), 0) as tagihan'));
 
+            $saldo = DB::table('m_company')
+                ->select(DB::raw('sum(floor(c_saldo)) as saldo'));
+
+            $hutangcabang = DB::table('d_salescomp')
+                ->join('d_salescomppayment', 'scp_salescomp', 'sc_id')
+                ->where(DB::raw('concat(MONTH(sc_date), "-", YEAR(sc_date))'), date('n-Y'))
+                ->whereIn('sc_comp', function ($q){
+                    $q->select('c_id')->from('m_company')->where('c_type', '=', 'CABANG');
+                })
+                ->where('sc_paidoff', '=', 'N')
+                ->select(DB::raw('coalesce(((sc_total) - sum(scp_pay)), 0) as tagihan'));
+
             if($request->search == 'all'){
                 $penjualan = $penjualan->first();
                 $sisahutang = $sisahutang->first();
+                $saldo = $saldo->first();
+                $hutangcabang = $hutangcabang->first();
             }else{
                 $penjualan = $penjualan->where('s_comp', $request->search)->first();
                 $sisahutang = $sisahutang->where('sc_member', $request->search)->first();
+                $saldo = $saldo->where('c_id', '=', $request->search)->first();
+                $hutangcabang = $hutangcabang->where('sc_member', '=', $request->search)->first();
             }
 
             $dateNow = date('Y-m-d');
@@ -2885,6 +2937,8 @@ class ManajemenAgenController extends Controller
                 "bulanChart"    => json_encode($bulanChart),
                 "sr_penjualan"  => json_encode($penjualanChart),
                 "sr_hutang"     => json_encode($sisaHutang),
+                "saldo"         => ($saldo) ? $saldo->saldo : 0,
+                "hutangcabang"  => ($hutangcabang) ? $hutangcabang->tagihan : 0
             ]);
         }
 

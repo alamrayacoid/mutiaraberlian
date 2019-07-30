@@ -26,9 +26,43 @@
         #cover-spin{
             z-index: 10002 !important;
         }
+        @media (min-width: 992px) {
+            .modal-xl {
+                max-width: 1200px !important;
+            }
+        }
+        #table_prosesorder td {
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+        #table_prosesordercode td {
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+        .btn-xs {
+            padding: 0.20rem 0.4rem;
+            font-size: 0.675rem;
+            line-height: 1.3;
+            border-radius: 0.2rem;
+        }
+        #table_prosesorder td.input-padding {
+            padding: 1px !important;
+        }
+        .input-qty-proses{
+            padding-right: 2px !important;
+        }
+        #table_prosesorder th.input-padding {
+            width: 10% !important;
+        }
+        /* style for modal detail order */
+        .b-border {
+            pointer-events: none;
+        }
     </style>
 @endsection
 @section('content')
+    @include('marketing.marketingarea.keloladataorder.modal')
+    @include('marketing.marketingarea.keloladataorder.modal-search')
     @include('marketing.agen.penjualanviaweb.modal_create')
     @include('marketing.agen.penjualanviaweb.modal-detail')
     @include('marketing.agen.orderproduk.detailDO')
@@ -36,6 +70,7 @@
     @include('marketing.agen.kelolapenjualan.modal-search')
     @include('marketing.agen.kelolapenjualan.modal')
     @include('marketing.agen.inventoryagen.modal_detail_agen')
+    @include('marketing.marketingarea.orderproduk.modal')
 
     <article class="content animated fadeInLeft">
         <div class="title-block text-primary">
@@ -53,6 +88,11 @@
                             <a href="#orderprodukagenpusat" class="nav-link active" data-target="#orderprodukagenpusat"
                                aria-controls="orderprodukagenpusat" data-toggle="tab" role="tab">Order ke Agen /
                                 Cabang</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#keloladataagen" class="nav-link" data-target="#keloladataagen"
+                               aria-controls="keloladataagen" data-toggle="tab" role="tab" onclick="kelolaDataAgen()">Kelola
+                                Data Order Agen </a>
                         </li>
                         <li class="nav-item">
                             <a href="#kelolapenjualan" class="nav-link" data-target="#kelolapenjualan"
@@ -75,6 +115,7 @@
                     </ul>
                     <div class="tab-content">
                         @include('marketing.agen.orderproduk.index')
+                        @include('marketing.marketingarea.keloladataorder.index')
                         @include('marketing.agen.inventoryagen.index')
                         @include('marketing.agen.penjualanviaweb.index')
                         @include('marketing.agen.kelolapenjualan.index')
@@ -85,10 +126,265 @@
         </section>
     </article>
 
+    {{-- Modal Detail Kelola Data Agen --}}
+    <div class="modal fade" id="modalOrderAgen" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Detail Kelola Data Agen</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="cabang">Nama Cabang</label>
+                            <input type="text" class="form-control bg-light" id="cabang2" value="" readonly=""
+                                   disabled="">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="nota">Nomer Nota</label>
+                            <input type="text" class="form-control bg-light" id="nota2" value="" readonly=""
+                                   disabled="">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="agen">Nama Agen</label>
+                            <input type="text" class="form-control bg-light" id="agen2" value="" readonly=""
+                                   disabled="">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="tanggal">Tanggal Order</label>
+                            <input type="text" class="form-control bg-light" id="tanggal2" value="" readonly=""
+                                   disabled="">
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="detailAgen" class="table table-sm table-hover table-bordered">
+                            <thead>
+                            <tr class="bg-primary text-light">
+                                <th>Nama Barang</th>
+                                <th>Satuan</th>
+                                <th>Qty</th>
+                                <th>Harga Satuan</th>
+                                <th>Total Harga</th>
+                            </tr>
+                            </thead>
+                            <tbody class="emptyAgen">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- Modal Approval Kelola Data Agen --}}
+    <div id="prosesorder" class="modal fade animated fadeIn" role="dialog">
+        <div class="modal-dialog modal-xl">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-info">
+                    <h4 class="modal-title">Detail Order</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <section>
+                        <div class="row">
+                            <div class="col-2">
+                                <label for="">Nomor Nota</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="hidden" id="idProductOrder" value="">
+                                <input type="text" class="form-control form-control-sm" id="nota_modaldt" readonly="">
+                            </div>
+
+                            <div class="col-2">
+                                <label for="">Tanggal Order</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control form-control-sm" id="tanggal_modaldt" readonly="">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="">Agen</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control form-control-sm" id="agen_modaldt" readonly="">
+                                <input type="hidden" class="form-control form-control-sm" id="idagen_modaldt">
+                            </div>
+
+                            <div class="col-2">
+                                <label for="">Total Pembelian</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control form-control-sm rupiah" id="total_modaldt" readonly="">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="expedition">Jasa Ekspedisi</label>
+                            </div>
+                            <div class="col-4">
+                                <select name="expedition" id="expedition" class="form-control form-control-sm select2">
+                                    <option value="" selected disabled>== Pilih Jasa Ekspedisi ==</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label for="jenis_exp">Jenis Ekspedisi</label>
+                            </div>
+                            <div class="col-4">
+                                <select name="expeditionType" id="jenis_exp" class="form-control form-control-sm select2">
+                                    <option value="" selected="" disabled="">== Pilih Jenis Ekspedisi ==</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="jenis_exp">Nama Kurir</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" name="courierName" id="kurir_name" class="form-control form-control-sm" autocomplete="off">
+                            </div>
+                            <div class="col-2">
+                                <label for="expedition">Nomor Telepon</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" name="courierTelp" id="no_hpkurir" class="form-control form-control-sm hp">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="jenis_exp">Nomor Resi</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" name="resi" id="no_resi" class="form-control form-control-sm text-uppercase" autocomplete="off">
+                            </div>
+                            <div class="col-2">
+                                <label for="jenis_exp">Biaya Pengiriman</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" name="shippingCost" id="biaya_kurir" class="form-control form-control-sm rupiah">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-md-2 col-sm-6 col-xs-12">
+                                <label>Tanggal Pengiriman</label>
+                            </div>
+                            <div class="col-md-4 col-sm-6 col-xs-12">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                    </div>
+                                    <input type="text" name="dateSend" class="form-control form-control-sm datepicker" autocomplete="off" id="dateSend" value="{{ \Carbon\Carbon::now()->format('d-m-Y') }}">
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        @if($info->c_type != "AGEN")
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="paymentType">Tipe Pembayaran</label>
+                            </div>
+                            <div class="col-4">
+                                <select name="paymentType" id="paymentType" class="form-control form-control-sm select2">
+                                    <!-- <option value="" selected disabled>== Pilih Tipe Pembayaran ==</option> -->
+                                    <option value="C" selected>Cash</option>
+                                    <option value="T">Cash Tempo</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label for="paymentMethod">Metode Pembayaran</label>
+                            </div>
+                            <div class="col-4">
+                                <select name="paymentMethod" id="paymentMethod" class="form-control form-control-sm select2">
+                                    <option value="" selected="" disabled="">== Pilih Metode Pembayaran ==</option>
+                                </select>
+                            </div>
+                        </div>
+                        @endif
+                        <div class="row paymentRow d-none" style="margin-top: 5px;">
+                            <div class="col-2">
+                                <label for="payCash">Bayar</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" name="payCash" id="payCash" class="form-control form-control-sm rupiah" value="">
+                            </div>
+                            <div class="col-2">
+                                <label for="dateTop">Batas Akhir Pelunasan</label>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" name="dateTop" id="dateTop" class="form-control form-control-sm datepicker" value="">
+                            </div>
+                        </div>
+                    </section>
+                    <div class="row" style="margin-top: 10px">
+                        <div class="table-responsive col-8">
+                            <table class="table table-striped table-hover display table-bordered" cellspacing="0" id="table_prosesorder" width="100%">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th>Nama Barang</th>
+                                    <th>Kuantitas</th>
+                                    <th>Satuan</th>
+                                    <th>Harga @</th>
+                                    <th>Diskon @</th>
+                                    <th>Harga Total</th>
+                                    <th class="text-center">Kode</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-4" style="padding-right: 0px;">
+                            <div class="row col-12" style="padding-right: 0px;">
+                                <div class="col-8" style="padding-left: 0px !important;">
+                                    <input type="text" onkeypress="pressCode(event)" style="width: 100%; text-transform: uppercase" class="inputkodeproduksi form-control form-control-sm" id="inputkodeproduksi" readonly>
+                                    <input type="hidden" id="iditem_modaldt">
+                                </div>
+                                <div class="input-group col-4" style="width: 100%; padding-right: 0px;">
+                                    <input type="number" onkeypress="pressCode(event)" class="inputqtyproduksi form-control form-control-sm" id="inputqtyproduksi" readonly>
+                                    <span class="input-group-append">
+                                        <button type="button" class="btn btn-sm btn-primary" id="btn-addprodcode"><i class="fa fa-plus"></i></button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row col-12">
+                                <p>Masukkan kode produksi untuk barang <span class="text-item">-</span> kemudian tekan Enter untuk memasukkan ke tabel distribusi</p>
+                            </div>
+                            <table class="table table-striped table-hover display table-bordered" cellspacing="0" id="table_prosesordercode" width="100%">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th>Kode Produksi</th>
+                                    <th>Kuantitas</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-sm" onclick="approveAndSendItems()" id="btnApproveAndSend" style="color:white;">Setuju dan Kirim Barang</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 @endsection
 @section('extra_script')
 <!-- script for time/date in each-tabs -->
 <script type="text/javascript">
+    var table_orderagen;
     $(document).ready(function() {
         var cur_date = new Date();
         var first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
@@ -109,7 +405,42 @@
         $('#date_to_kpl').datepicker('setDate', last_day);
         $('#date_from_kpw').datepicker('setDate', first_day);
         $('#date_to_kpw').datepicker('setDate', last_day);
+
+        setTimeout(function () {
+            var st = $("#status").val();
+            var start = $('#start_date').val();
+            var end = $('#end_date').val();
+            var status = $('#status').val();
+            var agen = $('.agenId').val();
+            getExpedition();
+            $('#table_dataAgen').DataTable().clear().destroy();
+            table_orderagen = $('#table_dataAgen').DataTable({
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ url('/marketing/marketingarea/keloladataorder/filter-agen') }}",
+                    type: "get",
+                    data: {
+                        start_date: start,
+                        end_date: end,
+                        state: status,
+                        agen: agen
+                    },
+                },
+                columns: [
+                    {data: 'date'},
+                    {data: 'po_nota'},
+                    {data: 'cabang'},
+                    {data: 'c_name'},
+                    {data: 'total_price'},
+                    {data: 'action_agen'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        },1000)
     });
+
 </script>
 
 <!-- order product and other -->
@@ -1039,6 +1370,8 @@
 
                         $('#totPenjualan').html(humanizePrice(response.data.penjualan))
                         $('#totHutang').html(humanizePrice(response.data.sisahutang))
+                        $('#saldoAgen').html(humanizePrice(response.data.saldo))
+                        $('#hutangCabang').html(humanizePrice(response.data.hutangcabang))
 
                         lineChartData.datasets[0].data = JSON.parse(response.data.sr_penjualan);
                         lineChartData.datasets[1].data = JSON.parse(response.data.sr_hutang);
@@ -1057,6 +1390,8 @@
 
                             $('#totPenjualan').html(humanizePrice(response.data.penjualan))
                             $('#totHutang').html(humanizePrice(response.data.sisahutang))
+                            $('#saldoAgen').html(humanizePrice(response.data.saldo))
+                            $('#hutangCabang').html(humanizePrice(response.data.hutangcabang))
 
                             lineChartData.datasets[0].data = JSON.parse(response.data.sr_penjualan);
                             lineChartData.datasets[1].data = JSON.parse(response.data.sr_hutang);
@@ -1255,5 +1590,675 @@
             }
         });
     }
+
+    // tambahan kelola data order agen
+
+    $(document).ready(function(){
+        $('#expedition').on('change', function(){
+            let id = $('#expedition').val();
+            $.ajax({
+                url: "{{url('/marketing/marketingarea/get-expeditionType')}}"+"/"+id,
+                type: "get",
+                success:function(resp) {
+                    $('#jenis_exp').empty();
+                    $('#jenis_exp').append('<option value="" selected disabled>== Pilih Jenis Ekspedisi ==</option>');
+                    $.each(resp.data, function(key, val){
+                        $('#jenis_exp').append('<option value="'+val.ed_detailid+'">'+val.ed_product+'</option>');
+                    });
+                    $('#jenis_exp').select2('open');
+                }
+            });
+        });
+
+        getPaymentMethod();
+
+        $('#paymentType').on('select2:select', function() {
+            if ($(this).val() == 'C') {
+                $('.paymentRow :input').attr('disabled', true);
+                $('.paymentRow').addClass('d-none');
+                // $('#paymentMethod').attr('disabled', false);
+                // $('#paymentMethod').select2('open');
+            }
+            else {
+                $('.paymentRow :input').attr('disabled', false);
+                $('.paymentRow').removeClass('d-none');
+                $('#payCash').val(0);
+                $('#dateTop').datepicker('setDate', 'today');
+                // $('#paymentMethod').attr('disabled', true);
+            }
+        });
+    })
+
+    function kelolaDataAgen() {
+        var st = $("#status").val();
+        var start = $('#start_date').val();
+        var end = $('#end_date').val();
+        var status = $('#status').val();
+        var agen = $('.agenId').val();
+        $('#table_dataAgen').DataTable().clear().destroy();
+        table_agen = $('#table_dataAgen').DataTable({
+            responsive: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('/marketing/marketingarea/keloladataorder/filter-agen') }}",
+                type: "get",
+                data: {
+                    start_date: start,
+                    end_date: end,
+                    state: status,
+                    agen: agen
+                },
+            },
+            columns: [
+                {data: 'date'},
+                {data: 'po_nota'},
+                {data: 'cabang'},
+                {data: 'c_name'},
+                {data: 'total_price'},
+                {data: 'action_agen'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    }
+
+    function chooseAgen(id, name, code) {
+        $('#searchAgen').modal('hide');
+        loadingShow();
+        $('.agenId').val(id);
+        loadingHide();
+        $('.agen').val(name);
+        $('.codeAgen').val(code);
+    }
+
+    function filterAgen() {
+            var start = $('#start_date').val();
+            var end = $('#end_date').val();
+            var status = $('#status').val();
+            var agen = $('.agenId').val();
+
+            $('#table_dataAgen').DataTable().clear().destroy();
+            table_agen = $('#table_dataAgen').DataTable({
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ url('/marketing/marketingarea/keloladataorder/filter-agen') }}",
+                    type: "get",
+                    data: {
+                        start_date: start,
+                        end_date: end,
+                        state: status,
+                        agen: agen
+                    },
+                },
+                columns: [
+                    {data: 'date'},
+                    {data: 'po_nota'},
+                    {data: 'cabang'},
+                    {data: 'c_name'},
+                    {data: 'total_price'},
+                    {data: 'action_agen'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
+
+        function detailAgen(id) {
+            $.ajax({
+                url: "{{ url('/marketing/marketingarea/keloladataorder/detail-agen') }}" + "/" + id,
+                type: "get",
+                beforeSend: function () {
+                    loadingShow();
+                },
+                success: function (res) {
+                    loadingHide();
+                    $('#modalOrderAgen').modal('show');
+                    $('#cabang2').val(res.agen2.comp);
+                    $('#agen2').val(res.agen2.agen);
+                    $('#nota2').val(res.agen2.po_nota);
+                    $('#tanggal2').val(res.agen2.po_date);
+                    $('.emptyAgen').empty();
+                    $.each(res.agen1, function (key, val) {
+                        $('#detailAgen tbody').append('<tr>' +
+                            '<td>' + val.barang + '</td>' +
+                            '<td>' + val.unit + '</td>' +
+                            '<td>' + val.qty + '</td>' +
+                            '<td>' + val.price + '</td>' +
+                            '<td>' + val.totalprice + '</td>' +
+                            '</tr>');
+                    });
+                }
+            });
+        }
+
+        function rejectAgen(id) {
+            var reject_agen = "{{url('/marketing/marketingarea/keloladataorder/reject-agen')}}" + "/" + id;
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Pesan!',
+                content: 'Apakah anda yakin ingin menolak agen ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return $.ajax({
+                                type: "post",
+                                url: reject_agen,
+                                data: {
+                                    "_token": "{{ csrf_token() }}"
+                                },
+                                beforeSend: function () {
+                                    loadingShow();
+                                },
+                                success: function (response) {
+                                    //var table_agen = $('#table_dataAgen').DataTable();
+                                    if (response.status == 'sukses') {
+                                        loadingHide();
+                                        messageSuccess('Berhasil', 'Penolakan berhasil!');
+                                        table_agen.ajax.reload();
+                                    } else {
+                                        loadingHide();
+                                        messageFailed('Gagal', response.message);
+                                    }
+                                },
+                                error: function (e) {
+                                    loadingHide();
+                                    messageWarning('Peringatan', e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function (response) {
+                            loadingHide();
+                            messageWarning('Peringatan', 'Anda telah membatalkan!');
+                        }
+                    }
+                }
+            });
+        }
+
+        function activateAgen(id) {
+            var aktif_agen = "{{url('/marketing/marketingarea/keloladataorder/activate-agen')}}" + "/" + id;
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Pesan!',
+                content: 'Apakah anda yakin ingin mengaktifkan agen ini?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return $.ajax({
+                                type: "post",
+                                url: aktif_agen,
+                                data: {
+                                    "_token": "{{ csrf_token() }}"
+                                },
+                                beforeSend: function () {
+                                    loadingShow();
+                                },
+                                success: function (response) {
+                                    if (response.status == 'sukses') {
+                                        loadingHide();
+                                        messageSuccess('Berhasil', 'Agen berhasil diaktifkan!');
+                                        table_agen.ajax.reload();
+                                    } else {
+                                        loadingHide();
+                                        messageFailed('Gagal', response.message);
+                                    }
+                                },
+                                error: function (e) {
+                                    loadingHide();
+                                    messageWarning('Peringatan', e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function (response) {
+                            loadingHide();
+                            messageWarning('Peringatan', 'Anda telah membatalkan!');
+                        }
+                    }
+                }
+            });
+        }
+
+        function approveAgen(id) {
+            loadingShow();
+            let pd_expedition = $('#expedition').val();
+            $('#jenis_exp').val('');
+            $('#no_resi').val('');
+            $('#kurir_name').val('');
+            $('#no_hpkurir').val('');
+            $('#biaya_kurir').val('');
+            $('#dateSend').val("{{ \Carbon\Carbon::now()->format('d-m-Y') }}");
+
+            axios.get('{{ route("keloladataorder.getdetailorderagen") }}', {
+                params:{
+                    id: id
+                }
+            }).then(function (response) {
+                let agen = response.data.data.c_name;
+                let nota = response.data.data.po_nota;
+                let tanggal = response.data.data.po_date;
+                $('#idProductOrder').val(id);
+                $('#nota_modaldt').val(nota);
+                $('#agen_modaldt').val(agen);
+                $('#tanggal_modaldt').val(tanggal);
+                $('#idagen_modaldt').val(response.data.data.po_agen);
+                // $('#total_modaldt').val(convertToRupiah(response.data.data.pod_totalprice));
+                $('#total_modaldt').val(response.data.data.pod_totalprice);
+                loadingHide();
+                $('#prosesorder').modal('show');
+                setTimeout(function(){
+                    $('#expedition').select2('open');
+                }, 500)
+            }).catch(function (error) {
+                loadingHide();
+                messageWarning('Error', 'Terjadi kesalahan (approveAgen) : ' + error);
+            });
+
+            $('#table_prosesorder').dataTable().fnDestroy();
+            tb_listprosesorder = $('#table_prosesorder').DataTable({
+                responsive: true,
+                serverSide: true,
+                paging: false,
+                searching: false,
+                ajax: {
+                    url: "{{ route('keloladataorder.getdetailorder') }}",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": id
+                    }
+                },
+                columns: [
+                    {data: 'i_name'},
+                    {data: 'input', "className": "input-padding"},
+                    {data: 'u_name'},
+                    {data: 'pod_price'},
+                    {data: 'discount', "className": "input-padding"},
+                    {data: 'pod_totalprice'},
+                    {data: 'kode'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
+                drawCallback : function() {
+                    // re-activate mask-money
+                    $('.rupiah').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 0,
+                        autoGroup: true,
+                        prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
+                    });
+
+                }
+            });
+        }
+
+        function getPaymentMethod() {
+            $.ajax({
+                url: "{{ route('marketingarea.getPaymentMethod') }}",
+                type: "get",
+                success:function(resp) {
+                    $('#paymentMethod').empty();
+                    console.log(resp);
+                    // $('#paymentMethod').append('<option value="" selected disabled>== Pilih Metode Pembayaran ==</option>');
+                    if (resp.tipe == "PUSAT") {
+                        $.each(resp.data, function(key, val){
+                            $('#paymentMethod').append('<option value="'+ val.pm_id +'">'+ val.get_akun.ak_nomor +' - '+ val.pm_name +'</option>');
+                        });
+                    } else {
+                        $.each(resp.data, function(key, val){
+                            $('#paymentMethod').append('<option value="'+ val.ak_id +'">'+ val.ak_nomor +' - '+ val.ak_nama +'</option>');
+                        });
+                    }
+                }
+            });
+        }
+
+        function pressCode(e) {
+            if (e.keyCode == 13){
+                addCodetoTable();
+            }
+        }
+
+        // get price items and get stock
+        function getHargaGolongan(item) {
+            let agen = $('#idagen_modaldt').val();
+            let qty = $('.qty-modaldt-'+item).val();
+            let id = $('#idProductOrder').val();
+            axios.get('{{ route("orderProduk.getPrice") }}', {
+                params:{
+                    'agen': agen,
+                    'qty': qty,
+                    'item': item,
+                    'id': id
+                }
+            }).then(function (response) {
+                let harga = parseInt(response.data.price);
+                let stock = parseInt(response.data.stock);
+                $('.input-modaldtharga'+item).val(harga);
+                $('.modaldtharga-'+item).html(convertToRupiah(harga));
+                // set stock restriction
+                if (parseInt(qty) > stock) {
+                    messageWarning('Perhatian', 'Permintaan tidak boleh melebihi batas stok, stok tersedia : '+ stock);
+                    $('.qty-modaldt-'+item).val(stock);
+                }
+                else if (parseInt(qty) < 0) {
+                    messageWarning('Perhatian', 'Permintaan tidak boleh kurang dari 0');
+                    $('.qty-modaldt-'+item).val(0);
+                }
+                updateSubtotal(item);
+            }).catch(function (error) {
+
+            })
+        }
+
+        function updateSubtotal(item){
+            let qty = $('.qty-modaldt-'+item).val();
+            let harga = $('.input-modaldtharga'+item).val();
+            let discount = $('.discount-'+ item).val();
+            console.log('discount: '+ discount);
+            if (isNaN(qty)){
+                qty = 0;
+            }
+            let total = (parseInt(qty) * parseInt(harga)) - (parseInt(qty) * parseInt(discount));
+            $('.modaldtsubharga-'+item).html(convertToRupiah(total));
+            $('.input-modaldtsubharga'+item).val(total);
+            let totalprice = 0;
+            $('input[name^="subtotalmodaldt"]').each(function() {
+                totalprice = totalprice + parseInt($(this).val());
+            });
+            // $('#total_modaldt').val(convertToRupiah(totalprice));
+            $('#total_modaldt').val(totalprice);
+        }
+
+        function addCodeProd(id, item, nama){
+            idxProdCode = $('.btnAddProdCode').index(this);
+            $('.text-item').html(nama);
+            $('#inputkodeproduksi').removeAttr('readonly');
+            $('#iditem_modaldt').val(item);
+            $('#inputqtyproduksi').removeAttr('readonly');
+            $('#table_prosesordercode').dataTable().fnDestroy();
+            tb_listcodeprosesorder = $('#table_prosesordercode').DataTable({
+                responsive: true,
+                serverSide: true,
+                paging: false,
+                searching: false,
+                ordering: false,
+                ajax: {
+                    url: "{{ route('keloladataorder.getdetailcodeorder') }}",
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": id,
+                        "item": item
+                    }
+                },
+                columns: [
+                    {data: 'poc_code'},
+                    {data: 'poc_qty'},
+                    {data: 'aksi'},
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }
+
+        function addCodetoTable(){
+            let qty = $('#inputqtyproduksi').val();
+            let kode = $.trim($('#inputkodeproduksi').val());
+            let nota = $('#nota_modaldt').val();
+            let item = $('#iditem_modaldt').val();
+
+            if (isNaN(qty) || qty == '' || qty == null){
+                qty = 1;
+            }
+            if (kode == '' || kode == null) {
+                messageWarning('Perhatian', 'Silahkan masukkan kode produksi terlebih dahulu !');
+                return 0;
+            }
+
+            axios.get('{{ route("keloladataorder.setKode") }}', {
+                params:{
+                    "qty": qty,
+                    "kode": kode,
+                    "nota": nota,
+                    "item": item
+                }
+            }).then(function (response) {
+                if (response.data.status == 'success'){
+                    messageSuccess("Berhasil", "Kode berhasil ditambahkan");
+                    $('#inputkodeproduksi').val("");
+                    $('#inputqtyproduksi').val("");
+                    tb_listcodeprosesorder.ajax.reload();
+                } else if (response.data.status == 'gagal'){
+                    messageWarning("Gagal", response.data.message);
+                }
+            }).catch(function (error) {
+                alert('error');
+            })
+        }
+
+        function removeCodeOrder(id, item, kode) {
+            axios.get('{{ route("keloladataorder.removeKode") }}', {
+                params:{
+                    "id": id,
+                    "item": item,
+                    "kode": kode
+                }
+            }).then(function (response) {
+                if (response.data.status == 'success'){
+                    messageSuccess("Berhasil", "Kode berhasil dihapus");
+                    tb_listcodeprosesorder.ajax.reload();
+                } else {
+                    messageWarning("Gagal", "Kode gagal dihapus");
+                }
+            }).catch(function (error) {
+
+            })
+        }
+
+        function rejectApproveAgen(id) {
+            var reject_approve_agen = "{{url('/marketing/marketingarea/keloladataorder/reject-approve-agen')}}" + "/" + id;
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Pesan!',
+                content: 'Apakah anda yakin ingin membatalkan approve agen ini ?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            return $.ajax({
+                                type: "post",
+                                url: reject_approve_agen,
+                                data: {
+                                    "_token": "{{ csrf_token() }}"
+                                },
+                                beforeSend: function () {
+                                    loadingShow();
+                                },
+                                success: function (response) {
+                                    if (response.status == 'sukses') {
+                                        loadingHide();
+                                        messageSuccess('Berhasil', 'Approve berhasil dibatalkan!');
+                                        table_agen.ajax.reload();
+                                    } else {
+                                        loadingHide();
+                                        messageFailed('Gagal', response.message);
+                                    }
+                                },
+                                error: function (e) {
+                                    loadingHide();
+                                    messageWarning('Peringatan', e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function (response) {
+                            loadingHide();
+                            // messageWarning('Peringatan', 'Anda telah membatalkan!');
+                        }
+                    }
+                }
+            });
+        }
+
+        function approveAndSendItems() {
+            idProductOrder  = $('#idProductOrder').val();
+
+            let listQty        = $('.input-qty-proses').serialize();
+            let listDiscount   = $('.listDiscount').serialize();
+            let listItemsId    = $('.itemsId').serialize();
+            let listUnits      = $('.units').serialize();
+            let listSubTotal   = $('.subtotalmodaldt').serialize();
+            let pd_nota        = $('#nota_modaldt').serialize();
+            let pd_expedition  = $('#expedition').serialize();
+            let pd_product     = $('#jenis_exp').serialize();
+            let pd_resi        = $('#no_resi').serialize();
+            let pd_couriername = $('#kurir_name').serialize();
+            let pd_couriertelp = $('#no_hpkurir').serialize();
+            let pd_price       = $('#biaya_kurir').serialize();
+            let dateSend       = $('#dateSend').serialize();
+            let paymentType    = $('#paymentType').serialize();
+            let paymentMethod  = $('#paymentMethod').serialize();
+            let payCash        = $('#payCash').serialize();
+            let dateTop        = $('#dateTop').serialize();
+
+            let dataX = listQty +'&'+ listDiscount +'&'+ listItemsId +'&'+
+                        listUnits +'&'+ listSubTotal +'&'+ pd_nota +'&'+ pd_expedition +'&'+
+                        pd_product +'&'+ pd_resi +'&'+ pd_couriername +'&'+
+                        pd_couriertelp +'&'+ pd_price +'&'+ dateSend +'&'+ paymentType +'&'+
+                        paymentMethod +'&'+ payCash +'&'+ dateTop;
+            loadingShow();
+
+            $.ajax({
+                url: baseUrl + '/marketing/marketingarea/keloladataorder/approve-agen/'+ idProductOrder,
+                data: dataX,
+                type: 'post',
+                success: function(resp) {
+                    loadingHide();
+                    if (resp.status == 'sukses') {
+                        // close modal
+                        $('#prosesorder').modal('hide');
+                        messageSuccess('Berhasil', 'Data Order berhasil di \'Approve\'');
+                        table_agen.ajax.reload();
+                    }
+                    else {
+                        messageWarning('Gagal', resp.message);
+                    }
+                },
+                error: function(e) {
+                    loadingHide();
+                    messageWarning('Gagal', e.message);
+                }
+            })
+        }
+
+        function getExpedition() {
+            $.ajax({
+                url: "{{url('/marketing/marketingarea/get-expedition')}}",
+                type: "get",
+                success:function(resp) {
+                    $('#expedition').empty();
+                    $('#expedition').append('<option value="" selected disabled>== Pilih Jasa Ekspedisi ==</option>');
+                    $.each(resp.data, function(key, val){
+                        $('#expedition').append('<option value="'+val.e_id+'">'+val.e_name+'</option>');
+                    });
+                }
+            });
+        }
+
+// show detail order before acceptance
+        function showDetailAcOrderAgen(idx)
+        {
+            loadingShow();
+            $.ajax({
+                url: baseUrl + "/marketing/marketingarea/keloladataorder/show-detail-ac/" + idx,
+                type: "get",
+                success: function(response) {
+                    $('#id_ac').val(response.poId);
+                    $('#nota_ac').val(response.po_nota);
+                    $('#date_ac').val(response.dateFormated);
+                    $('#origin_ac').val(response.get_origin.c_name);
+                    $('#dest_ac').val(response.get_destination.c_name);
+                    $('#table_detail_ac tbody').empty();
+                    $.each(response.get_p_o_dt, function (index, val) {
+                        no = '<td>'+ (index + 1) +'</td>';
+                        kodeXnamaBrg = '<td>'+ val.get_item.i_code +' - '+ val.get_item.i_name +'</td>';
+                        qty = '<td class="digits">'+ val.pod_qty +'</td>';
+                        unit = '<td>'+ val.get_unit.u_name +'</td>';
+                        aksi = '<td><button type="button" class="btn btn-info btn-sm" onclick="getKodeProduksiOrderAgen('+ val.pod_productorder +', '+ val.pod_item +')">Lihat Kode</button></td>';
+                        appendItem = no + kodeXnamaBrg + qty + unit + aksi;
+                        $('#table_detail_ac > tbody:last-child').append('<tr>'+ appendItem +'</tr>');
+
+                        if ( $.fn.DataTable.isDataTable('#table_detail_ackode') ) {
+                            $('#table_detail_ackode').DataTable().destroy();
+                        }
+                        $('#tblRemittanceList tbody').empty();
+
+                    });
+                    $('#product_name').html('');
+                    tableKodeProduksi = $('#table_detail_ackode').DataTable({
+                        "searching": false,
+                        "paging": false,
+                    });
+                    tableKodeProduksi.clear();
+                    //mask digits
+                    $('.digits').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 0,
+                        autoGroup: true,
+                        prefix: '', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
+                    });
+
+                    // set on-click event on 'receive item button'
+                    $('#btn_confirmAc').attr('onclick', 'receiveItemOrder()');
+                    $('#modalAcceptance').modal('show');
+                    $('#modalAcceptance').on('shown.bs.modal', function() {
+                        $('#dateReceive_ac').datepicker('setDate', new Date());
+                    });
+                    loadingHide();
+                },
+                error: function(xhr, status, error) {
+                    let err = JSON.parse(xhr.responseText);
+                    messageWarning('Error', err.message);
+                    loadingHide();
+                }
+            });
+        }
+
 </script>
 @endsection
