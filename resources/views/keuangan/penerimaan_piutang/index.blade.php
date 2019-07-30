@@ -106,7 +106,7 @@
                             start: $('#date_from_pc').val(),
                             end: $('#date_to_pc').val(),
                             status: $('#status_pc').val(),
-                            agen: $('#id_cabang_pc').val()
+                            cabang: $('#id_cabang_pc').val()
                         }
                     },
                     columns: [
@@ -305,5 +305,11 @@
                 alert("error");
             })
         }
+//====== end peneirmaan piutang agen =======
+
+//====== start Pembayaran cabang ===========
+        $("#cabang_pc").on('keyup', function () {
+            $('#id_agen_pp').val('');
+        })
     </script>
 @endsection

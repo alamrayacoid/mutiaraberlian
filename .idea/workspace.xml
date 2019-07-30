@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayarancabang/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/penerimaanpiutang/PenerimaanPiutangController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/penerimaanpiutang/PenerimaanPiutangController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayaranagen/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayaranagen/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/marketing/marketingarea/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/marketing/marketingarea/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,7 +24,7 @@
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="205">
-              <caret line="707" column="157" selection-start-line="707" selection-start-column="140" selection-end-line="707" selection-end-column="157" />
+              <caret line="707" column="201" selection-start-line="707" selection-start-column="184" selection-end-line="707" selection-end-column="201" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
               </folding>
@@ -40,8 +35,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Keuangan/penerimaanpiutang/PenerimaanPiutangController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="21">
-              <caret line="33" selection-start-line="33" selection-end-line="51" selection-end-column="42" />
+            <state relative-caret-position="225">
+              <caret line="83" column="53" lean-forward="true" selection-start-line="83" selection-start-column="53" selection-end-line="83" selection-end-column="53" />
               <folding>
                 <element signature="e#67#76#0#PHP" expanded="true" />
               </folding>
@@ -52,8 +47,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="827">
-              <caret line="292" column="17" lean-forward="true" selection-start-line="292" selection-start-column="17" selection-end-line="292" selection-end-column="17" />
+            <state relative-caret-position="365">
+              <caret line="310" column="21" selection-start-line="310" selection-start-column="21" selection-end-line="310" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -61,11 +56,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayarancabang/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="183">
-              <caret line="29" column="61" selection-start-line="29" selection-start-column="49" selection-end-line="29" selection-end-column="61" />
-              <folding>
-                <element signature="n#style#0;n#input#0;n#div#2;n#div#0;n#section#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-              </folding>
+            <state relative-caret-position="162">
+              <caret line="28" column="93" selection-start-line="28" selection-start-column="84" selection-end-line="28" selection-end-column="93" />
             </state>
           </provider>
         </entry>
@@ -73,8 +65,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayaranagen/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1008">
-              <caret line="48" column="32" lean-forward="true" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="32" />
+            <state relative-caret-position="512">
+              <caret line="48" column="32" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -83,7 +75,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>server</find>
       <find>Index</find>
       <find>datatable</find>
       <find>encrypt</find>
@@ -113,6 +104,7 @@
       <find>table_pembayarancabang</find>
       <find>pembayarancabang.getdatalistcabang</find>
       <find>id_agen_pc</find>
+      <find>getdatalistcabang</find>
     </findStrings>
     <replaceStrings>
       <replace>done_</replace>
@@ -178,8 +170,8 @@
         <option value="$PROJECT_DIR$/resources/views/marketing/marketingarea/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayaranagen/index.blade.php" />
         <option value="$PROJECT_DIR$/routes/web.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/Keuangan/penerimaanpiutang/PenerimaanPiutangController.php" />
         <option value="$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayarancabang/index.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/Keuangan/penerimaanpiutang/PenerimaanPiutangController.php" />
         <option value="$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/index.blade.php" />
       </list>
     </option>
@@ -327,6 +319,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -415,7 +408,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -547,6 +539,7 @@
       <workItem from="1564036939537" duration="17026000" />
       <workItem from="1564104376698" duration="23933000" />
       <workItem from="1564212949113" duration="8187000" />
+      <workItem from="1564288162095" duration="2720000" />
     </task>
     <task id="LOCAL-00001" summary="perbaikan jenis produk">
       <created>1560755279119</created>
@@ -846,7 +839,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="526533000" />
+    <option name="totallyTimeSpent" value="529253000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -859,8 +852,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49917355" visible="true" weight="0.15355521" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49917355" visible="true" weight="0.15582451" />
       <window_info id="Structure" order="1" sideWeight="0.5008264" side_tool="true" weight="0.19818456" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -1269,47 +1263,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayaranagen/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1008">
-          <caret line="48" column="32" lean-forward="true" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/web.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="707" column="157" selection-start-line="707" selection-start-column="140" selection-end-line="707" selection-end-column="157" />
-          <folding>
-            <element signature="e#7#389#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayarancabang/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="29" column="61" selection-start-line="29" selection-start-column="49" selection-end-line="29" selection-end-column="61" />
-          <folding>
-            <element signature="n#style#0;n#input#0;n#div#2;n#div#0;n#section#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Keuangan/penerimaanpiutang/PenerimaanPiutangController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="21">
-          <caret line="33" selection-start-line="33" selection-end-line="51" selection-end-column="42" />
+        <state relative-caret-position="225">
+          <caret line="83" column="53" lean-forward="true" selection-start-line="83" selection-start-column="53" selection-end-line="83" selection-end-column="53" />
           <folding>
             <element signature="e#67#76#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/routes/web.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="205">
+          <caret line="707" column="201" selection-start-line="707" selection-start-column="184" selection-end-line="707" selection-end-column="201" />
+          <folding>
+            <element signature="e#7#389#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayaranagen/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="512">
+          <caret line="48" column="32" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/pembayarancabang/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="28" column="93" selection-start-line="28" selection-start-column="84" selection-end-line="28" selection-end-column="93" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/keuangan/penerimaan_piutang/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="827">
-          <caret line="292" column="17" lean-forward="true" selection-start-line="292" selection-start-column="17" selection-end-line="292" selection-end-column="17" />
+        <state relative-caret-position="365">
+          <caret line="310" column="21" selection-start-line="310" selection-start-column="21" selection-end-line="310" selection-end-column="21" />
         </state>
       </provider>
     </entry>
