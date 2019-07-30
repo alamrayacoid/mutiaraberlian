@@ -36,4 +36,18 @@ class d_return extends Model
 {
     protected $table = 'd_return';
     public $timestamps = false;
+
+    public function getReturnDt()
+    {
+        return $this->hasMany('App\d_returndt', 'rd_return', 'r_id');
+    }
+    public function getMember()
+    {
+        return $this->belongsTo('App\m_company', 'r_member', 'c_id');
+    }
+    public function getComp()
+    {
+        return $this->belongsTo('App\m_company', 'r_comp', 'c_id');
+    }
+
 }

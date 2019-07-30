@@ -89,6 +89,10 @@
                             <a href="#penerimaanpiutang" class="nav-link" data-target="#penerimaanpiutang"
                                aria-controls="penerimaanpiutang" data-toggle="tab" role="tab">Penerimaan Piutang </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="#returnpenjualan" class="nav-link" data-target="#returnpenjualan"
+                               aria-controls="returnpenjualan" data-toggle="tab" role="tab">Return Penjualan </a>
+                        </li>
                     </ul>
                     <div class="tab-content">
                         @include('marketing.marketingarea.orderproduk.index')
@@ -97,6 +101,7 @@
                         @include('marketing.marketingarea.datacanvassing.index')
                         @include('marketing.marketingarea.datakonsinyasi.index')
                         @include('marketing.marketingarea.penerimaanpiutang.index')
+                        @include('marketing.marketingarea.returnpenjualan.index')
                     </div>
                 </div>
             </div>
@@ -2648,12 +2653,11 @@
     <!-- ========================================================================-->
     <!-- script for Return Penjualan -->
     <script type="text/javascript">
-
         $(document).ready(function() {
             // set document ready in set timeout
             setTimeout(function () {
                 returnagen();
-            }, 1000);
+            }, 1250);
         });
 
         function returnagen() {
@@ -2662,7 +2666,7 @@
                     responsive: true,
                     serverSide: true,
                     ajax: {
-                        url: "{{ route('returnpenjualanagen.index') }}",
+                        url: "{{ route('mmareturn.index') }}",
                         type: "post",
                         data: {
                             "_token": "{{ csrf_token() }}"
@@ -2691,7 +2695,7 @@
                 animationBounce: 1.5,
                 icon: 'fa fa-exclamation-triangle',
                 title: 'Peringatan!',
-                content: 'Apa anda yakin akan menghapus data ini ?',
+                content: 'Apa anda yakin akan menghapus data return ini ?',
                 theme: 'disable',
                 buttons: {
                     info: {
@@ -2700,7 +2704,7 @@
                         action: function () {
                             loadingShow();
                             $.ajax({
-                                url: baseUrl+ "/marketing/penjualanpusat/returnpenjualan/hapus/" + id,
+                                url: baseUrl+ "/marketing/marketingarea/returnpenjualan/delete/" + id,
                                 type: 'post',
                                 success: function(resp) {
                                     loadingHide();

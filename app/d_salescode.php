@@ -39,4 +39,9 @@ class d_salescode extends Model
         ->where('sc_detailid', '=', $this->getAttribute('sc_detailid'));
         return $query;
     }
+
+    public function getSales()
+    {
+        return $this->belongsTo('App\d_sales', 'sc_sales', 's_id');
+    }
 }

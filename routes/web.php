@@ -615,7 +615,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/datakonsinyasi/edit/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datakonsinyasi')->name('datakonsinyasi.edit');
     Route::post('/marketing/marketingarea/datakonsinyasi/update/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@updateDK')->name('datakonsinyasi.updateDK');
     Route::post('/marketing/marketingarea/datakonsinyasi/delete', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@deleteDK')->name('datakonsinyasi.deleteDK');
-    //End MMA Kelola data Konsinyasi
+    // End: MMA kelola data konsinyasi ================================================================================================
 
     // Start: MMA Pembayaran Piutang ===================================================================================
     Route::get('/marketing/marketingarea/penerimaanpiutang/getdata', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@getData')->name('mmapenerimaanpiutang.getdata');
@@ -625,9 +625,21 @@ Route::group(['middleware' => 'auth'], function () {
     // End: MMA Pembayaran Piutang =====================================================================================
 
     // Start: MMA Return Penjualan ===================================================================================
-    Route::get('/marketing/marketingarea/returnpenjualan/index', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@index')->name('mmareturn.index');
+    Route::post('/marketing/marketingarea/returnpenjualan/index', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@index')->name('mmareturn.index');
+    Route::get('/marketing/marketingarea/returnpenjualan/create', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@create')->name('mmareturn.create');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-agent', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getAgent')->name('mmareturn.getAgent');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-prod-code', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getProdCode')->name('mmareturn.getProdCode');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-prod-code-subs', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getProdCodeSubstitute')->name('mmareturn.getProdCodeSubstitute');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-nota', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getNota')->name('mmareturn.getNota');
+    Route::get('/marketing/marketingarea/returnpenjualan/find-item', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@findItem')->name('mmareturn.findItem');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-unit/{id}', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getUnit')->name('mmareturn.getUnit');
+    Route::get('/marketing/marketingarea/returnpenjualan/cek-stok/{stock}/{item}/{satuan}/{qty}', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@checkStock')->name('mmareturn.checkstock');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-price', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getPrice')->name('mmareturn.getPrice');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-data', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getData')->name('mmareturn.getData');
+    Route::post('/marketing/marketingarea/returnpenjualan/store', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@store')->name('mmareturn.store');
+    Route::post('/marketing/marketingarea/returnpenjualan/delete/{id}', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@delete')->name('mmareturn.delete');
+
     // End: MMA Return Penjualan ===================================================================================
-    // End: MMA kelola data konsinyasi ================================================================================================
 
     // Manajemen Agen ===============================================================================================
     // tambahan dirga

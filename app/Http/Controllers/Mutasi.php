@@ -1677,7 +1677,7 @@ class Mutasi extends Controller
     // mutation for sales 'out'
     static function salesOut(
         $from, // from
-        $to, // destination
+        $to, // destination (it's unused)
         $item, // item id
         $qty, // qty item
         $nota, // nota sales
