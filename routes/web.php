@@ -632,6 +632,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/returnpenjualan/get-prod-code-subs', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getProdCodeSubstitute')->name('mmareturn.getProdCodeSubstitute');
     Route::get('/marketing/marketingarea/returnpenjualan/get-nota', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getNota')->name('mmareturn.getNota');
     Route::get('/marketing/marketingarea/returnpenjualan/find-item', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@findItem')->name('mmareturn.findItem');
+    Route::get('/marketing/marketingarea/returnpenjualan/find-all-item', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@findAllItem')->name('mmareturn.findAllItem');
     Route::get('/marketing/marketingarea/returnpenjualan/get-unit/{id}', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getUnit')->name('mmareturn.getUnit');
     Route::get('/marketing/marketingarea/returnpenjualan/cek-stok/{stock}/{item}/{satuan}/{qty}', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@checkStock')->name('mmareturn.checkstock');
     Route::get('/marketing/marketingarea/returnpenjualan/get-price', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getPrice')->name('mmareturn.getPrice');

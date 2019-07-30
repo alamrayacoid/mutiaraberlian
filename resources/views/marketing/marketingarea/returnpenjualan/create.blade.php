@@ -78,17 +78,72 @@
                                 </div>
                                 <div class="col-md-4 col-sm-6 col-12">
 									<div class="form-group">
-										<select id="returnType" class="form-control form-control-sm select2 prodcode">
+										<select id="returnType" name="returnType" class="form-control form-control-sm select2 prodcode">
 											<option value="" selected disabled>=== Pilih Tipe Pengembalian ===</option>
-											<option value="KP">Kode Produksi</option>
+											<option value="SB">Stock Baru</option>
 											<option value="SL">Stock Lama</option>
 										</select>
 									</div>
                                 </div>
 							</div>
 
+                            <!-- form for 'stok lama'  -->
+                            <div class="row formSL d-none">
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <label>Nama Barang</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <input type="hidden" name="itemIdSL" id="itemIdSL">
+                                        <input type="text" name="itemNameSL" class="form-control form-control-sm" id="itemNameSL">
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <label>Kode Produksi</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <input type="text" name="prodCodeSL" class="form-control form-control-sm" id="prodCodeSL" style="text-transform: uppercase;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row formSL d-none">
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <label>Jumlah Return</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <input type="text" name="qtyReturnSL" class="form-control form-control-sm digits" id="qtyReturnSL">
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <label>Harga per Item</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <input type="text" name="itemPriceSL" class="form-control form-control-sm rupiah" id="itemPriceSL">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row formSL d-none">
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <label>Jenis Penggantian</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <select class="form-control select2" name="typeSL" id="typeSL">
+                                            <option value="" selected>=== Pilih Jenis Penggantian ===</option>
+                                            <option value="PN">Potong Nota</option>
+                                            <option value="GB">Ganti Barang</option>
+                                            <!-- <option value="GU">Ganti Uang</option> -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- form for 'stock baru' -->
                             <input type="hidden" name="itemId" value="" id="itemId">
-                            <div class="row">
+                            <div class="row formSB">
                                 <div class="col-md-2 col-sm-6 col-12">
                                     <label>Kode Produksi</label>
                                 </div>
@@ -111,7 +166,7 @@
 								</div>
                             </div>
 
-							<div class="row" id="div2" style="display:none">
+							<div class="row " id="div2" style="display:none">
 								<div class="col-md-2 col-sm-6 col-12">
 									<label>Nota Penjualan</label>
 								</div>
@@ -124,7 +179,7 @@
 								<hr>
 							</div>
 							<!-- detail penjualan -->
-							<div id="div3" style="display:none">
+							<div class="d-none" id="div3">
 								<section>
 									<div class="row">
 										<div class="col-md-2 col-sm-6 col-12">
@@ -195,10 +250,10 @@
 										<div class="col-md-4 col-sm-6 col-12">
 											<div class="form-group">
 												<select class="form-control select2" name="type" id="type">
-													<option value="" selected disabled>=== Pilih Jenis Penggantian ===</option>
+													<option value="" selected>=== Pilih Jenis Penggantian ===</option>
+                                                    <option value="PN">Potong Nota</option>
 													<option value="GB">Ganti Barang</option>
-													<option value="GU">Ganti Uang</option>
-													<option value="PN">Potong Nota</option>
+													<!-- <option value="GU">Ganti Uang</option> -->
 												</select>
 											</div>
 										</div>
@@ -208,120 +263,97 @@
 										</div>
 										<div class="col-md-4 col-sm-6 col-12">
 											<div class="form-group">
-												<input type="hidden" id="itemPrice" class="rupiah">
+												<input type="hidden" id="itemPrice" name="itemPrice" class="rupiah">
 												<input type="text" style="text-align:right;" name="qtyReturn" class="form-control digits" id="qtyReturn" value="">
 											</div>
 										</div>
 
-
-										<!-- start: detail Ganti Barang -->
-
-										<!-- <div class="col-md-12 col-sm-12 text-info detailGB d-none">
-											<div class="row bordered">
-												<div class="col-md-2 col-sm-6 col-12">
-													<label>Kode Produksi Pengganti</label>
-												</div>
-												<div class="col-md-4 col-sm-6 col-12">
-													<div class="form-group">
-														<select name="kodeproduksiGB" id="kodeproduksiGB" class="form-control form-control-sm select2 prodcodeGB">
-															<option value="" selected>=== Pilih Kode Produksi ===</option>
-														</select>
-													</div>
-												</div>
-
-												<div class="col-md-2 col-sm-6 col-12">
-													<label>Jumlah Pengganti</label>
-												</div>
-												<div class="col-md-4 col-sm-6 col-12">
-													<div class="form-group">
-														<input type="text" name="qtyGB" class="form-control digits" id="qtyGB" value="">
-													</div>
-												</div>
-											</div>
-										</div> -->
-
-										<div class="col-md-2 col-sm-6 col-xs-12 detailGB d-none">
-											<label>Total Nilai Pengganti</label>
-										</div>
-										<div class="col-md-4 col-sm-6 col-xs-12 detailGB d-none">
-											<div class="form-group">
-												<input type="text" class="form-control form-control-sm rupiah" name="subsValue" id="subsValue" value="Rp. 0" readonly>
-											</div>
-										</div>
-
-										<div class="col-md-2 col-sm-6 col-xs-12 detailGB d-none">
-											<label>Total Nilai Return</label>
-										</div>
-										<div class="col-md-4 col-sm-6 col-xs-12 detailGB d-none">
-											<div class="form-group">
-												<input type="text" class="form-control form-control-sm rupiah" name="returnValue" id="returnValue" value="Rp. 0" readonly>
-											</div>
-										</div>
-
-										<div class="col-md-12 col-sm-12 text-info detailGB d-none container">
-											<div class="table-responsive mt-3">
-												<table class="table table-hover table-striped diplay nowrap w-100" style="width: 100%;" id="table_gantibarang">
-													<thead class="bg-primary">
-														<tr>
-															<th>Kode/Nama Barang</th>
-															<th width="10%">Satuan</th>
-															<th width="10%">Jumlah</th>
-															<th width="15%">Kode Produksi</th>
-															<th width="13%">Harga Satuan</th>
-															<th width="15%">Sub Total</th>
-															<th width="5%">Aksi</th>
-														</tr>
-													</thead>
-													<tbody>
-														<tr>
-															<td>
-																<input type="hidden" name="idItem[]" class="itemid">
-																<input type="hidden" name="kode[]" class="kode">
-																<input type="hidden" name="idStock[]" class="idStock">
-																<input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off">
-															</td>
-															<td><select name="satuan[]" class="form-control form-control-sm select2 satuan">
-															</select>
-														</td>
-														<td>
-															<input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly>
-														</td>
-														<td>
-															<button class="btn btn-primary btnCodeProd btn-sm rounded" type="button"><i class="fa fa-plus"></i> kode produksi </button>
-														</td>
-														<td>
-															<input type="text" name="harga[]" class="form-control form-control-sm rupiah harga">
-															<p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;"> Harga tidak ditemukan!</p>
-														</td>
-														<td>
-															<input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly>
-															<input type="hidden" name="sbtotal[]" class="sbtotal">
-														</td>
-														<td>
-															<button type="button" class="btn btn-sm btn-success rounded-circle btn-addRow">
-																<i class="fa fa-plus"></i></button>
-															</td>
-														</tr>
-													</tbody>
-												</table>
-
-											</div>
-										</div>
-
-										<!-- end: detail Ganti Barang -->
-
-										<div class="col-md-2 col-sm-6 col-12">
-											<label>Keterangan </label>
-										</div>
-										<div class="col-md-10 col-sm-6 col-12">
-											<div class="form-group">
-												<input type="text" class="form-control" id="keterangan" name="keterangan">
-											</div>
-										</div>
 										<hr>
 									</div>
 								</section>
 							</div>
+                            <div class="row">
+
+                                <div class="col-md-2 col-sm-6 col-xs-12 detailGB d-none">
+                                    <label>Total Nilai Pengganti</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-xs-12 detailGB d-none">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control form-control-sm rupiah" name="subsValue" id="subsValue" value="Rp. 0" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2 col-sm-6 col-xs-12 detailGB d-none">
+                                    <label>Total Nilai Return</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-xs-12 detailGB d-none">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control form-control-sm rupiah" name="returnValue" id="returnValue" value="Rp. 0" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-sm-12 text-info detailGB d-none container">
+                                    <div class="table-responsive mt-3">
+                                        <table class="table table-hover table-striped diplay nowrap w-100" style="width: 100%;" id="table_gantibarang">
+                                            <thead class="bg-primary">
+                                                <tr>
+                                                    <th>Kode/Nama Barang</th>
+                                                    <th width="10%">Satuan</th>
+                                                    <th width="10%">Jumlah</th>
+                                                    <th width="15%">Kode Produksi</th>
+                                                    <th width="13%">Harga Satuan</th>
+                                                    <th width="15%">Sub Total</th>
+                                                    <th width="5%">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <input type="hidden" name="idItem[]" class="itemid">
+                                                        <input type="hidden" name="kode[]" class="kode">
+                                                        <input type="hidden" name="idStock[]" class="idStock">
+                                                        <input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off">
+                                                    </td>
+                                                    <td><select name="satuan[]" class="form-control form-control-sm select2 satuan">
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button"><i class="fa fa-plus"></i> kode produksi </button>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="harga[]" class="form-control form-control-sm rupiah harga">
+                                                    <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;"> Harga tidak ditemukan!</p>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly>
+                                                    <input type="hidden" name="sbtotal[]" class="sbtotal">
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-success rounded-circle btn-addRow">
+                                                        <i class="fa fa-plus"></i></button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+
+                                <!-- end: detail Ganti Barang -->
+
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <label>Keterangan </label>
+                                </div>
+                                <div class="col-md-10 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="keterangan" name="keterangan">
+                                    </div>
+                                </div>
+
+                            </div>
 						</form>
 					</div>
                     <div class="card-footer text-right">
@@ -351,15 +383,74 @@
 	var checkitem = null;
 
 	$(document).ready(function() {
-		$('#agent').on('change', function() {
+		$('#agent').on('select2:select', function() {
 			$('#kodeproduksi').attr('disabled', false);
 			$('#nota').attr('disabled', true);
-			$('#div3').css('display', 'none');
-			getProdCode();
+			// $('#div3').css('display', 'none');
+            $('#returnType').select2('open');
+			// getProdCode();
 		});
-		$('#kodeproduksi').on('change', function() {
+        $('#returnType').on('select2:select', function() {
+            if ($(this).val() == 'SL') {
+                $('#type').prop('selectedIndex',0);
+                $('#typeSL').prop('selectedIndex',0);
+                $('.formSB').addClass('d-none');
+                $('#div3').addClass('d-none');
+                $('.detailGB').addClass('d-none');
+                $('.formSL').removeClass('d-none');
+            }
+            else if ($(this).val() == 'SB') {
+                $('#type').prop('selectedIndex',0);
+                $('#typeSL').prop('selectedIndex',0);
+                $('.formSB').removeClass('d-none');
+                $('.detailGB').addClass('d-none');
+                $('.formSL').addClass('d-none');
+                getProdCode();
+            }
+        });
+        // form SL
+        $("#itemNameSL").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "{{ route('mmareturn.findAllItem') }}",
+                    data: {
+                        agent: $('#agent').val(),
+                        term: $("#itemNameSL").val()
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, data) {
+                console.log(data);;
+                $('#itemIdSL').val(data.item.id);
+            }
+        });
+        // calculate total nilai return
+        $('#qtyReturnSL').on('keyup', function() {
+            let qtyReturn = $('#qtyReturnSL').val();
+			let itemPrice = parseFloat($('#itemPriceSL').val());
+			let totalReturn = qtyReturn * itemPrice;
+			$('#returnValue').val(totalReturn);
+        });
+        $('#itemPriceSL').on('keyup', function() {
+            $('#qtyReturnSL').trigger('keyup');
+        });
+        $('#typeSL').on('select2:select', function() {
+            if ($(this).val() == 'GB') {
+                $('.detailGB').removeClass('d-none');
+            }
+            else {
+                $('.detailGB').addClass('d-none');
+            }
+        });
+
+        // form SB
+		$('#kodeproduksi').on('select2:select', function() {
 			$('#nota').attr('disabled', false);
-			$('#div3').css('display', 'none');
+			$('#div3').addClass('d-none');
 			getNota();
 		});
 		$('#nota').on('select2:select', function() {
@@ -399,16 +490,16 @@
 			addRow();
 		});
 
-		$('#qtyGB').on('keyup', function() {
-			if (parseInt($(this).val()) > parseInt($('#qtyReturn').val())) {
-				messageWarning('Perhatian', 'Jumlah pengganti tidak boleh melebihi jumlah return');
-				$(this).val($('#qtyReturn').val());
-			}
-			else if(parseInt($(this).val()) < 0) {
-				messageWarning('Perhatian', 'Jumlah pengganti tidak boleh lebih kecil dari 0');
-				$(this).val(0);
-			}
-		});
+		// $('#qtyGB').on('keyup', function() {
+		// 	if (parseInt($(this).val()) > parseInt($('#qtyReturn').val())) {
+		// 		messageWarning('Perhatian', 'Jumlah pengganti tidak boleh melebihi jumlah return');
+		// 		$(this).val($('#qtyReturn').val());
+		// 	}
+		// 	else if(parseInt($(this).val()) < 0) {
+		// 		messageWarning('Perhatian', 'Jumlah pengganti tidak boleh lebih kecil dari 0');
+		// 		$(this).val(0);
+		// 	}
+		// });
 		$('#simpan').on('click', function(){
 			confirmStore();
 		});
@@ -848,8 +939,7 @@
 				} else {
 					$("#nota").append('<option value="" selected disabled>=== Pilih Nota ===</option>');
 					$.each(response, function( key, val ) {
-						$("#nota").append('<option value="'+ val.get_sales_comp_by_id.sc_nota +'" data-itemid="'+ val.ssc_item +'">'+ val.get_sales_comp_by_id.sc_nota +'</option>');
-						console.log(val);
+						$("#nota").append('<option value="'+ val.sc_nota +'" data-itemid="'+ val.get_sales_comp_dt[0].scd_item +'">'+ val.sc_nota +'</option>');
 					});
 				}
 				$('#nota').focus();
@@ -888,8 +978,12 @@
 				$('#total').val(resp.data.sc_total);
 				$('#item').val(resp.data.get_sales_comp_dt[0].get_item.i_name);
 				$('#qty').val(resp.data.get_sales_comp_dt[0].get_prod_code[0].ssc_qty);
+                $('#qtyReturn').val(0);
+                $('#returnValue').val(0);
+                $('#subsValue').val(0);
+                $('#keterangan').val('');
 				$('#itemPrice').val(parseFloat(resp.data.get_sales_comp_dt[0].scd_value) - parseFloat(resp.data.get_sales_comp_dt[0].scd_discvalue));
-				$('#div3').css('display', '');
+				$('#div3').removeClass('d-none');
 			},
 			error: function(e) {
 				loadingHide();
@@ -900,7 +994,14 @@
 	// set confirm before send data to controller
 	function confirmStore()
 	{
-		if ($('#type').val() == 'GB') {
+        let type = '';
+        if ($('#returnType').val() == 'SB') {
+            type = $('#type').val();
+        } else if ($('#returnType').val() == 'SL') {
+            type = $('#typeSL').val();
+        }
+
+		if (type == 'GB') {
 			if (validateItemExchange() == "cek form") {
 				messageWarning('Peringatan', 'Data item pengganti masih ada yang kosong !');
 				return false;
@@ -953,6 +1054,7 @@
 			success : function(response){
 				if (response.status == 'berhasil') {
 					messageSuccess('Info', 'Berhasil Disimpan');
+                    // location.reload();
 				}
 				else {
 					messageWarning('Info', 'Gagal Disimpan: '+ response.message);
