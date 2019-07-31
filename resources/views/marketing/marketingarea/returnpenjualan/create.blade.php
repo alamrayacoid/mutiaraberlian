@@ -132,7 +132,7 @@
                                 <div class="col-md-4 col-sm-6 col-12">
                                     <div class="form-group">
                                         <select class="form-control select2" name="typeSL" id="typeSL">
-                                            <option value="" selected>=== Pilih Jenis Penggantian ===</option>
+                                            <option value="" selected disabled>=== Pilih Jenis Penggantian ===</option>
                                             <option value="PN">Potong Nota</option>
                                             <option value="GB">Ganti Barang</option>
                                             <!-- <option value="GU">Ganti Uang</option> -->
@@ -250,7 +250,7 @@
 										<div class="col-md-4 col-sm-6 col-12">
 											<div class="form-group">
 												<select class="form-control select2" name="type" id="type">
-													<option value="" selected>=== Pilih Jenis Penggantian ===</option>
+													<option value="" selected disabled>=== Pilih Jenis Penggantian ===</option>
                                                     <option value="PN">Potong Nota</option>
 													<option value="GB">Ganti Barang</option>
 													<!-- <option value="GU">Ganti Uang</option> -->
@@ -338,7 +338,6 @@
                                                 </tr>
                                             </tbody>
                                         </table>
-
                                     </div>
                                 </div>
 
@@ -392,16 +391,16 @@
 		});
         $('#returnType').on('select2:select', function() {
             if ($(this).val() == 'SL') {
-                $('#type').prop('selectedIndex',0);
-                $('#typeSL').prop('selectedIndex',0);
+                $('#type').val('').trigger('change');
+                $('#typeSL').val('').trigger('change');
                 $('.formSB').addClass('d-none');
                 $('#div3').addClass('d-none');
                 $('.detailGB').addClass('d-none');
                 $('.formSL').removeClass('d-none');
             }
             else if ($(this).val() == 'SB') {
-                $('#type').prop('selectedIndex',0);
-                $('#typeSL').prop('selectedIndex',0);
+                $('#type').val('').trigger('change');
+                $('#typeSL').val('').trigger('change');
                 $('.formSB').removeClass('d-none');
                 $('.detailGB').addClass('d-none');
                 $('.formSL').addClass('d-none');
@@ -473,6 +472,7 @@
 				$('#qtyReturn').val(0);
 			}
 			// calculate total nilai return
+            qtyReturn = $('#qtyReturn').val();
 			let itemPrice = parseFloat($('#itemPrice').val());
 			let totalReturn = qtyReturn * itemPrice;
 			$('#returnValue').val(totalReturn);

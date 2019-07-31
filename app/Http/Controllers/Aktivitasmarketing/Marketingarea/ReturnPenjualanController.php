@@ -386,7 +386,7 @@ class ReturnPenjualanController extends Controller
                     'r_member' => $member,
                     'r_item' => $itemId,
                     'r_qty' => $qtyReturn,
-                    'r_code' => $prodCode,
+                    'r_code' => strtoupper($prodCode),
                     'r_type' => $type,
                     'r_note' => $note
                 ];
@@ -673,6 +673,66 @@ class ReturnPenjualanController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+    // detail data return
+    public function detail($id)
+    {
+        DB::beginTransaction();
+        try {
+            $data = d_return::where('r_id', $id)
+            ->with(['getReturnDt' => function ($q) {
+                $q
+                    ->with('getProdCode')
+                    ->with('getItem')
+                    ->with('getUnit');
+            }])
+            ->with('getMember')
+            ->with('getComp')
+            ->with('getItem')
+            ->first();
+
+            // get list of 'in' mutcat-list
+            $inMutcatList = m_mutcat::where('m_status', 'M')
+            ->select('m_id')
+            ->get();
+            for ($i = 0; $i < count($inMutcatList); $i++) {
+                $tmp[] = $inMutcatList[$i]->m_id;
+            }
+
+            $inMutcatList = $tmp;
+            $itemId = $data->r_item;
+            $nota = $data->r_nota;
+            // get sell-price each item
+            $sellPrice = d_stock_mutation::whereHas('getStock', function($q) use ($itemId) {
+                $q->where('s_item', $itemId);
+            })
+            ->whereIn('sm_mutcat', $inMutcatList)
+            ->where('sm_nota', $nota)
+            ->select('sm_sell')
+            ->first();
+
+            $sellPrice = $sellPrice->sm_sell;
+
+            if ($data->r_type == 'PN') {
+                $data->r_type = 'Potong Nota';
+            } elseif ($data->r_type == 'GB') {
+                $data->r_type = 'Ganti Barang';
+            }
+
+            return response()->json([
+                'status' => 'berhasil',
+                'data' => $data,
+                'sellPrice' => $sellPrice
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+
     }
     // delete data 'return' from database
     public function delete($id)
