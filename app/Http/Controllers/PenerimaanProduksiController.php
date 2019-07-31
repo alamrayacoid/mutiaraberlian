@@ -468,6 +468,8 @@ class PenerimaanProduksiController extends Controller
         DB::beginTransaction();
         try{
 
+            // return json_encode($request->all());
+
             $data_check = DB::table('d_productionorder')
                 ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
                     'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
