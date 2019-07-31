@@ -10,6 +10,38 @@
             <div class="modal-body">
                 <div class="form-group row">
                     <div class="col-3">
+                        <label>Untuk</label>
+                    </div>
+                    <div class="col-9">
+                        <div class="form-group">
+                            <select class="form-control select2 form-control-sm" id="untuk" name="untuk">
+                                @if ($user->c_type == 'PUSAT')
+                                    <option value="PUSAT">PUSAT</option>
+                                    <option value="CABANG">CABANG</option>
+                                    <option value="AGEN">AGEN</option>
+                                @elseif ($user->c_type == 'CABANG')
+                                    <option value="CABANG">CABANG</option>
+                                @elseif ($user->c_type == 'AGEN')
+                                    <option value="CABANG">AGEN</option>
+                                @endif
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <label>Cabang/Agen</label>
+                    </div>
+                    <div class="col-9">
+                        <div class="form-group">
+                            <select class="form-control select2 form-control-sm" id="comp" name="comp">
+                                @foreach ($company as $comp)
+                                    <option value="{{ $comp->c_id }}">{{ $comp->c_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-3">
                         <label>Nama</label>
                     </div>
                     <div class="col-9">

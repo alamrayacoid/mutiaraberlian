@@ -2117,7 +2117,7 @@ class Mutasi extends Controller
             // dd($to, $item, $nota, $listPC, $listQtyPC, $listUnitPC, $listSellPrice, $listHPP, $listSmQty, $mutcat, $stockParentId, $status, $condition);
 
             // set date if receiveDate is not null
-            (is_null($date)) ? $dateNow = Carbon::now() : $dateNow = $date;
+            (is_null($date)) ? $dateNow = Carbon::now('Asia/jakarta') : $dateNow = $date;
             $mutcat = $mutcat;
             $comp = $to; // item owner
             $position = $to; // item position
