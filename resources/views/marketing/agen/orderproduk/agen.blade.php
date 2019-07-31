@@ -58,17 +58,17 @@
             </div>
         </div>
     </div>
-    <div class="container" id="tbl_item" style="display: none;">
+    <div class="container-fluid" id="tbl_item" style="display: none;">
         <div class="table-responsive w-100">
-            <table class="table table-striped table-hover w-100" cellspacing="0" id="table_agen">
+            <table class="table table-striped table-hover" cellspacing="0" id="table_agen" style="width: 100%">
                 <thead class="bg-primary">
                 <tr>
                     <th width="30%">Kode Barang/Nama Barang</th>
                     <th width="10%">Satuan</th>
                     <th width="10%">Jumlah</th>
-                    <th width="25%">Harga Satuan</th>
-                    <th width="25%">Sub Total</th>
-                    <th>Aksi</th>
+                    <th width="23%">Harga Satuan</th>
+                    <th width="22%">Sub Total</th>
+                    <th width="5%">Aksi</th>
                 </tr>
                 </thead>
                 <tbody>

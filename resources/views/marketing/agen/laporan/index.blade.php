@@ -74,6 +74,47 @@
                                         </table>
                                     </div>
                                 </div>
+
+                                <div class="col-md-6" style="padding: 0px; background: white; border-right: 1px solid #eee">
+                                    <div class="col-md-12" style="padding: 10px 10px 5px 10px;">
+                                        <table width="100%" border="0">
+                                            <thead>
+                                            </td>
+                                            <td>
+                                                Rp. <span id="saldoAgen">---</span>
+                                            </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="font-weight: normal; border-bottom: 1px solid #0099CC;">
+                                                    <small>Saldo di Pusat</small>
+                                                </td>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6" style="padding: 0px; background: white; border-right: 1px solid #eee">
+                                    <div class="col-md-12" style="padding: 10px 10px 5px 10px;">
+                                        <table width="100%" border="0">
+                                            <thead>
+                                            </td>
+                                            <td>
+                                                Rp. <span id="hutangCabang">---</span>
+                                            </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="font-weight: normal; border-bottom: 1px solid #0099CC;">
+                                                    <small>Sisa Hutang Pada Cabang</small>
+                                                </td>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

@@ -913,8 +913,14 @@ class MarketingAreaController extends Controller
         if ($id != null){
             $data_agen->where('po_agen', '=', $id);
         }
-        if (Auth::user()->getCompany->c_type != "PUSAT"){
+        if (Auth::user()->getCompany->c_type != "PUSAT" && Auth::user()->getCompany->c_type != "AGEN"){
             $data_agen->where('po_comp', '=', Auth::user()->u_company);
+        }
+        if (Auth::user()->getCompany->c_type == "AGEN"){
+            $data_agen->where(function ($q){
+                $q->orWhere('po_comp', '=', Auth::user()->u_company);
+                $q->orWhere('po_agen', '=', Auth::user()->u_company);
+            });
         }
 
         $data_agen = $data_agen->groupBy('po_id')->get();
@@ -1116,7 +1122,18 @@ class MarketingAreaController extends Controller
     // approve order agent and create mutation
     public function approveAgen(Request $request, $id)
     {
-        if (!AksesUser::checkAkses(22, 'update')){
+        $userinfo = DB::table('m_company')
+            ->where('c_id', '=', Auth::user()->u_company)
+            ->first();
+
+        if (!AksesUser::checkAkses(22, 'update') && $userinfo->c_type != 'AGEN'){
+            return Response::json([
+                'status' => "Failed",
+                'message' => "Anda tidak memiliki akses ke menu ini !"
+            ]);
+        }
+
+        if (!AksesUser::checkAkses(23, 'update') && $userinfo->c_type == 'AGEN'){
             return Response::json([
                 'status' => "Failed",
                 'message' => "Anda tidak memiliki akses ke menu ini !"
@@ -1247,7 +1264,15 @@ class MarketingAreaController extends Controller
             ->sum('pod_totalprice');
 
             // clone data from d_productorder to d_salescomp
-            $salescompId= (DB::table('d_salescomp')->max('sc_id')) ? DB::table('d_salescomp')->max('sc_id') + 1 : 1;
+            $salescompId = (DB::table('d_salescomp')->max('sc_id')) ? DB::table('d_salescomp')->max('sc_id') + 1 : 1;
+            if ($request->dateTop === null){
+                $request->dateTop = Carbon::now('Asia/Jakarta')->format('d-m-Y');
+            }
+
+            if ($request->paymentType == null){
+                $request->paymentType = 'C';
+            }
+
             $val_sales = [
                 'sc_id'      => $salescompId,
                 'sc_comp'    => $productOrder->po_comp,
@@ -1857,12 +1882,52 @@ class MarketingAreaController extends Controller
     // get list of paymentMethod
     public function getPaymentMethod()
     {
-        $data = m_paymentmethod::where('pm_isactive', 'Y')
-        ->with('getAkun')
-        ->get();
+        $user = DB::table('m_company')
+            ->where('c_id', '=', Auth::user()->u_company)
+            ->first();
+
+        $data = [];
+
+        if ($user->c_type == "PUSAT") {
+            $data = m_paymentmethod::where('pm_isactive', 'Y')
+                ->with('getAkun')
+                ->get();
+        } else {
+            $data = DB::table('dk_akun')
+                ->where('ak_comp', '=', $user->c_id)
+                ->where('ak_posisi', '=', 'D')
+                ->get();
+
+            if (count($data) < 1) {
+                $id = DB::table('dk_akun')
+                    ->max('ak_id');
+                ++$id;
+                DB::table('dk_akun')
+                    ->insert([
+                        'ak_id' => $id,
+                        'ak_nomor' => '1.001.001',
+                        'ak_tahun' => Carbon::now('Asia/Jakarta')->format('Y'),
+                        'ak_comp' => $user->c_id,
+                        'ak_nama' => 'KAS ' . $user->c_name,
+                        'ak_sub_id' => '001',
+                        'ak_kelompok' => 13,
+                        'ak_posisi' => 'D',
+                        'ak_opening_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                        'ak_opening' => 0,
+                        'ak_setara_kas' => '0',
+                        'ak_isactive' => 1
+                    ]);
+            }
+
+            $data = DB::table('dk_akun')
+                ->where('ak_comp', '=', $user->c_id)
+                ->where('ak_posisi', '=', 'D')
+                ->get();
+        }
 
         return response()->json([
-            'data' => $data
+            'data' => $data,
+            'tipe' => $user->c_type
         ]);
     }
     // Kelola Data Order Agen End ==========================================================================

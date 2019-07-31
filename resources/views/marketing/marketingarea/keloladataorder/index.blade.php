@@ -43,23 +43,43 @@
                         </button>
                     </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover table-striped w-100" cellspacing="0" id="table_dataAgen">
-                        <thead class="bg-primary">
-                        <tr>
-                            <th width="10%">Tanggal</th>
-                            <th width="20%" style="text-align:center;">Nota</th>
-                            <th width="20%">Cabang</th>
-                            <th width="20%">Agen</th>
-                            <th width="20%">Total Transaksi</th>
-                            <th width="10%" style="text-align:center;">Aksi</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                @if (Auth::user()->u_user == 'A')
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped w-100" cellspacing="0" id="table_dataAgen">
+                            <thead class="bg-primary">
+                            <tr>
+                                <th width="10%">Tanggal</th>
+                                <th width="20%" style="text-align:center;">Nota</th>
+                                <th width="20%">Agen/Cabang</th>
+                                <th width="20%">Sub Agen</th>
+                                <th width="20%">Total Transaksi</th>
+                                <th width="10%" style="text-align:center;">Aksi</th>
+                            </tr>
+                            </thead>
+                            <tbody>
 
-                        </tbody>
-                    </table>
-                </div>
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped w-100" cellspacing="0" id="table_dataAgen">
+                            <thead class="bg-primary">
+                            <tr>
+                                <th width="10%">Tanggal</th>
+                                <th width="20%" style="text-align:center;">Nota</th>
+                                <th width="20%">Cabang</th>
+                                <th width="20%">Agen</th>
+                                <th width="20%">Total Transaksi</th>
+                                <th width="10%" style="text-align:center;">Aksi</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
             </section>
         </div>
     </div>
