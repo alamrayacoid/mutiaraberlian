@@ -2204,6 +2204,7 @@
                 url: baseUrl + "/marketing/marketingarea/keloladataorder/show-detail-ac/" + idx,
                 type: "get",
                 success: function(response) {
+                    console.log(response);
                     $('#id_ac').val(response.poId);
                     $('#nota_ac').val(response.po_nota);
                     $('#date_ac').val(response.dateFormated);
