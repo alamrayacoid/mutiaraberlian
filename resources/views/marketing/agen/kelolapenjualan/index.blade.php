@@ -1,4 +1,4 @@
-<div class="tab-pane animated fadeIn show" id="kelolapenjualan">
+<div class="tab-pane animated fadeIn active show" id="kelolapenjualan">
     <div class="card">
         <div class="card-header bordered p-2">
             <div class="header-block">

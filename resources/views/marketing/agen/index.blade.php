@@ -84,8 +84,9 @@
             <div class="row">
                 <div class="col-12">
                     <ul class="nav nav-pills mb-3" id="Tabzs">
+                        @if(Auth::user()->getCompany->c_type == 'AGEN')
                         <li class="nav-item">
-                            <a href="#orderprodukagenpusat" class="nav-link active" data-target="#orderprodukagenpusat"
+                            <a href="#orderprodukagenpusat" class="nav-link" data-target="#orderprodukagenpusat"
                                aria-controls="orderprodukagenpusat" data-toggle="tab" role="tab">Order ke Agen /
                                 Cabang</a>
                         </li>
@@ -94,8 +95,9 @@
                                aria-controls="keloladataagen" data-toggle="tab" role="tab" onclick="kelolaDataAgen()">Kelola
                                 Data Order Agen </a>
                         </li>
+                        @endif
                         <li class="nav-item">
-                            <a href="#kelolapenjualan" class="nav-link" data-target="#kelolapenjualan"
+                            <a href="#kelolapenjualan" class="nav-link active" data-target="#kelolapenjualan"
                                aria-controls="kelolapenjualan" data-toggle="tab" role="tab">Kelola Penjualan
                                 Langsung </a>
                         </li>
@@ -114,8 +116,10 @@
                         </li>
                     </ul>
                     <div class="tab-content">
-                        @include('marketing.agen.orderproduk.index')
-                        @include('marketing.marketingarea.keloladataorder.index')
+                        @if(Auth::user()->getCompany->c_type == 'AGEN')
+                            @include('marketing.agen.orderproduk.index')
+                            @include('marketing.marketingarea.keloladataorder.index')
+                        @endif
                         @include('marketing.agen.inventoryagen.index')
                         @include('marketing.agen.penjualanviaweb.index')
                         @include('marketing.agen.kelolapenjualan.index')
@@ -2079,58 +2083,6 @@
             })
         }
 
-        function rejectApproveAgen(id) {
-            var reject_approve_agen = "{{url('/marketing/marketingarea/keloladataorder/reject-approve-agen')}}" + "/" + id;
-            $.confirm({
-                animation: 'RotateY',
-                closeAnimation: 'scale',
-                animationBounce: 1.5,
-                icon: 'fa fa-exclamation-triangle',
-                title: 'Pesan!',
-                content: 'Apakah anda yakin ingin membatalkan approve agen ini ?',
-                theme: 'disable',
-                buttons: {
-                    info: {
-                        btnClass: 'btn-blue',
-                        text: 'Ya',
-                        action: function () {
-                            return $.ajax({
-                                type: "post",
-                                url: reject_approve_agen,
-                                data: {
-                                    "_token": "{{ csrf_token() }}"
-                                },
-                                beforeSend: function () {
-                                    loadingShow();
-                                },
-                                success: function (response) {
-                                    if (response.status == 'sukses') {
-                                        loadingHide();
-                                        messageSuccess('Berhasil', 'Approve berhasil dibatalkan!');
-                                        table_agen.ajax.reload();
-                                    } else {
-                                        loadingHide();
-                                        messageFailed('Gagal', response.message);
-                                    }
-                                },
-                                error: function (e) {
-                                    loadingHide();
-                                    messageWarning('Peringatan', e.message);
-                                }
-                            });
-                        }
-                    },
-                    cancel: {
-                        text: 'Tidak',
-                        action: function (response) {
-                            loadingHide();
-                            // messageWarning('Peringatan', 'Anda telah membatalkan!');
-                        }
-                    }
-                }
-            });
-        }
-
         function approveAndSendItems() {
             idProductOrder  = $('#idProductOrder').val();
 
@@ -2199,66 +2151,11 @@
 // show detail order before acceptance
         function showDetailAcOrderAgen(idx)
         {
-            loadingShow();
-            $.ajax({
-                url: baseUrl + "/marketing/marketingarea/keloladataorder/show-detail-ac/" + idx,
-                type: "get",
-                success: function(response) {
-                    console.log(response);
-                    $('#id_ac').val(response.poId);
-                    $('#nota_ac').val(response.po_nota);
-                    $('#date_ac').val(response.dateFormated);
-                    $('#origin_ac').val(response.get_origin.c_name);
-                    $('#dest_ac').val(response.get_destination.c_name);
-                    $('#table_detail_ac tbody').empty();
-                    $.each(response.get_p_o_dt, function (index, val) {
-                        no = '<td>'+ (index + 1) +'</td>';
-                        kodeXnamaBrg = '<td>'+ val.get_item.i_code +' - '+ val.get_item.i_name +'</td>';
-                        qty = '<td class="digits">'+ val.pod_qty +'</td>';
-                        unit = '<td>'+ val.get_unit.u_name +'</td>';
-                        aksi = '<td><button type="button" class="btn btn-info btn-sm" onclick="getKodeProduksiOrderAgen('+ val.pod_productorder +', '+ val.pod_item +')">Lihat Kode</button></td>';
-                        appendItem = no + kodeXnamaBrg + qty + unit + aksi;
-                        $('#table_detail_ac > tbody:last-child').append('<tr>'+ appendItem +'</tr>');
+            messageWarning("Perhatian", "Untuk menerima barang, gunakan fitur 'Order ke Agen/Cabang'");
+        }
 
-                        if ( $.fn.DataTable.isDataTable('#table_detail_ackode') ) {
-                            $('#table_detail_ackode').DataTable().destroy();
-                        }
-                        $('#tblRemittanceList tbody').empty();
-
-                    });
-                    $('#product_name').html('');
-                    tableKodeProduksi = $('#table_detail_ackode').DataTable({
-                        "searching": false,
-                        "paging": false,
-                    });
-                    tableKodeProduksi.clear();
-                    //mask digits
-                    $('.digits').inputmask("currency", {
-                        radixPoint: ",",
-                        groupSeparator: ".",
-                        digits: 0,
-                        autoGroup: true,
-                        prefix: '', //Space after $, this will not truncate the first character.
-                        rightAlign: true,
-                        autoUnmask: true,
-                        nullable: false,
-                        // unmaskAsNumber: true,
-                    });
-
-                    // set on-click event on 'receive item button'
-                    $('#btn_confirmAc').attr('onclick', 'receiveItemOrder()');
-                    $('#modalAcceptance').modal('show');
-                    $('#modalAcceptance').on('shown.bs.modal', function() {
-                        $('#dateReceive_ac').datepicker('setDate', new Date());
-                    });
-                    loadingHide();
-                },
-                error: function(xhr, status, error) {
-                    let err = JSON.parse(xhr.responseText);
-                    messageWarning('Error', err.message);
-                    loadingHide();
-                }
-            });
+        function rejectApproveAgen(id) {
+            messageWarning("Perhatian", "Hubungi pengirim barang untuk melakukan pembatalan transaksi ini");
         }
 
 </script>
