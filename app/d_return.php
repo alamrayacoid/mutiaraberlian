@@ -49,5 +49,9 @@ class d_return extends Model
     {
         return $this->belongsTo('App\m_company', 'r_comp', 'c_id');
     }
+    public function getItem()
+    {
+        return $this->belongsTo('App\m_item', 'r_item', 'i_id');
+    }
 
 }

@@ -638,6 +638,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/returnpenjualan/get-price', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getPrice')->name('mmareturn.getPrice');
     Route::get('/marketing/marketingarea/returnpenjualan/get-data', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getData')->name('mmareturn.getData');
     Route::post('/marketing/marketingarea/returnpenjualan/store', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@store')->name('mmareturn.store');
+    Route::get('/marketing/marketingarea/returnpenjualan/detail/{id}', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@detail')->name('mmareturn.detail');
     Route::post('/marketing/marketingarea/returnpenjualan/delete/{id}', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@delete')->name('mmareturn.delete');
 
     // End: MMA Return Penjualan ===================================================================================
