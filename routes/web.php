@@ -615,7 +615,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/datakonsinyasi/edit/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_datakonsinyasi')->name('datakonsinyasi.edit');
     Route::post('/marketing/marketingarea/datakonsinyasi/update/{id}', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@updateDK')->name('datakonsinyasi.updateDK');
     Route::post('/marketing/marketingarea/datakonsinyasi/delete', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@deleteDK')->name('datakonsinyasi.deleteDK');
-    //End MMA Kelola data Konsinyasi
+    // End: MMA kelola data konsinyasi ================================================================================================
 
     // Start: MMA Pembayaran Piutang ===================================================================================
     Route::get('/marketing/marketingarea/penerimaanpiutang/getdata', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@getData')->name('mmapenerimaanpiutang.getdata');
@@ -624,10 +624,25 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/penerimaanpiutang/bayar-piutang', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@bayarPiutang')->name('mmapenerimaanpiutang.bayarPiutang');
     // End: MMA Pembayaran Piutang =====================================================================================
 
-    // End: MMA kelola data konsinyasi ================================================================================================
+    // Start: MMA Return Penjualan ===================================================================================
+    Route::post('/marketing/marketingarea/returnpenjualan/index', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@index')->name('mmareturn.index');
+    Route::get('/marketing/marketingarea/returnpenjualan/create', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@create')->name('mmareturn.create');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-agent', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getAgent')->name('mmareturn.getAgent');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-prod-code', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getProdCode')->name('mmareturn.getProdCode');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-prod-code-subs', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getProdCodeSubstitute')->name('mmareturn.getProdCodeSubstitute');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-nota', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getNota')->name('mmareturn.getNota');
+    Route::get('/marketing/marketingarea/returnpenjualan/find-item', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@findItem')->name('mmareturn.findItem');
+    Route::get('/marketing/marketingarea/returnpenjualan/find-all-item', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@findAllItem')->name('mmareturn.findAllItem');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-unit/{id}', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getUnit')->name('mmareturn.getUnit');
+    Route::get('/marketing/marketingarea/returnpenjualan/cek-stok/{stock}/{item}/{satuan}/{qty}', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@checkStock')->name('mmareturn.checkstock');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-price', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getPrice')->name('mmareturn.getPrice');
+    Route::get('/marketing/marketingarea/returnpenjualan/get-data', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getData')->name('mmareturn.getData');
+    Route::post('/marketing/marketingarea/returnpenjualan/store', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@store')->name('mmareturn.store');
+    Route::post('/marketing/marketingarea/returnpenjualan/delete/{id}', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@delete')->name('mmareturn.delete');
+
+    // End: MMA Return Penjualan ===================================================================================
 
     // Manajemen Agen ===============================================================================================
-
     // tambahan dirga
         Route::get('/marketing/agen/laporan', 'Aktivitasmarketing\Agen\ManajemenAgenController@getLaporan')->name('agen.laporan');
 
@@ -656,14 +671,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/kelolapenjualanviawebsite/cari-produk', 'Aktivitasmarketing\Agen\ManajemenAgenController@cariProduk')->name('kelolapenjualanviawebsite.cariProduk');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/get-unit', 'Aktivitasmarketing\Agen\ManajemenAgenController@getUnit')->name('kelolapenjualanviawebsite.getUnit');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/get-stock-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getStockKPW')->name('kelolapenjualanviawebsite.getStockKPW');
-    Route::post('/marketing/agen/kelolapenjualanviawebsite/save-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@saveKPW')->name('kelolapenjualanviawebsite.saveKPW');
+    Route::post('/marketing/agen/kelolapenjualanviawebsite/save-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@storeKPW')->name('kelolapenjualanviawebsite.storeKPW');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/cek-code', 'Aktivitasmarketing\Agen\ManajemenAgenController@cekProductionCode')->name('kelolapenjualanviawebsite.cekProductionCode');
     Route::get('/marketing/agen/kelolapenjualanviawebsite/edit-kpw/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@editKPW')->name('kelolapenjualanviawebsite.editKPW');
-    Route::get('/marketing/agen/kelolapenjualanviawebsite/update-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@updateKPW')->name('kelolapenjualanviawebsite.updateKPW');
+    Route::post('/marketing/agen/kelolapenjualanviawebsite/update-kpw/{id}', 'Aktivitasmarketing\Agen\ManajemenAgenController@updateKPW')->name('kelolapenjualanviawebsite.updateKPW');
+    Route::get('/marketing/agen/kelolapenjualanviawebsite/get-list-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPW')->name('kelolapenjualanviawebsite.getListKPW');
+    Route::get('/marketing/agen/kelolapenjualanviawebsite/get-detail-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailKPW')->name('kelolapenjualanviawebsite.getDetailKPW');
+    Route::get('/marketing/agen/kelolapenjualanviawebsite/delete-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteKPW')->name('kelolapenjualanviawebsite.deleteKPW');
 
-    Route::get('/marketing/agen/kelolapenjualanlangsung/get-list-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getListKPW')->name('kelolapenjualan.getListKPW');
-    Route::get('/marketing/agen/kelolapenjualanlangsung/get-detail-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@getDetailKPW')->name('kelolapenjualan.getDetailKPW');
-    Route::get('/marketing/agen/kelolapenjualanlangsung/delete-kpw', 'Aktivitasmarketing\Agen\ManajemenAgenController@deleteKPW')->name('kelolapenjualan.deleteKPW');
     // End Manajemen Agen ======================================================================================================================================================================================
 
     Route::get('/marketing/agen/orderproduk/create', 'Aktivitasmarketing\Agen\ManajemenAgenController@create_orderprodukagencabang')->name('orderagenpusat.create');
@@ -703,6 +718,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/keuangan/laporankeuangan/neraca/index', 'KeuanganController@laporankeuangan_neraca')->name('laporankeuangan.neraca');
     Route::get('/keuangan/laporankeuangan/labarugi/index', 'KeuanganController@laporankeuangan_labarugi')->name('laporankeuangan.labarugi');
     Route::get('/keuangan/laporankeuangan/aruskas/index', 'KeuanganController@laporankeuangan_aruskas')->name('laporankeuangan.aruskas');
+    // Penerimaan Piutang
+    Route::get('/keuangan/penerimaanpiutang/index', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@index')->name('penerimaanpiutang.index');
+    Route::get('/keuangan/penerimaanpiutang/pembayarancabang/get-data-list-cabang', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataListCabang')->name('pembayarancabang.getdatalistcabang');
     // !===================================================== END KEUANGAN =====================================================!
 
     // !===================================================== PENGATURAN =====================================================!

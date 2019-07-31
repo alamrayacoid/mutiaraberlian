@@ -89,6 +89,10 @@
                             <a href="#penerimaanpiutang" class="nav-link" data-target="#penerimaanpiutang"
                                aria-controls="penerimaanpiutang" data-toggle="tab" role="tab">Penerimaan Piutang </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="#returnpenjualan" class="nav-link" data-target="#returnpenjualan"
+                               aria-controls="returnpenjualan" data-toggle="tab" role="tab">Return Penjualan </a>
+                        </li>
                     </ul>
                     <div class="tab-content">
                         @include('marketing.marketingarea.orderproduk.index')
@@ -97,6 +101,7 @@
                         @include('marketing.marketingarea.datacanvassing.index')
                         @include('marketing.marketingarea.datakonsinyasi.index')
                         @include('marketing.marketingarea.penerimaanpiutang.index')
+                        @include('marketing.marketingarea.returnpenjualan.index')
                     </div>
                 </div>
             </div>
@@ -408,6 +413,18 @@
     </div>
 @endsection
 @section('extra_script')
+    <!-- ========================================================================-->
+    <!-- script for public function -->
+    <script type="text/javascript">
+    $(document).ready(function () {
+        if ($('.current_user_type').val() !== 'E') {
+            $('.filter_agent').addClass('d-none');
+        } else {
+            $('.filter_agent').removeClass('d-none');
+        }
+    });
+    </script>
+
     <!-- ========================================================================-->
     <!-- script for Data-Konsinyasi etc -->
     <script type="text/javascript">
@@ -1865,18 +1882,6 @@
     </script>
 
     <!-- ========================================================================-->
-    <!-- script for public function -->
-    <script type="text/javascript">
-        $(document).ready(function () {
-            if ($('.current_user_type').val() !== 'E') {
-                $('.filter_agent').addClass('d-none');
-            } else {
-                $('.filter_agent').removeClass('d-none');
-            }
-        });
-    </script>
-
-    <!-- ========================================================================-->
     <!-- script for Data-Canvassing -->
     <script type="text/javascript">
         $(document).ready(function () {
@@ -2427,8 +2432,7 @@
                 }
             });
         }
-//======== Penerimaan Piutang ===============
-
+        //======== Penerimaan Piutang ===============
         function getDataPP() {
             $('#table_penerimaanpiutang').dataTable().fnClearTable();
             $('#table_penerimaanpiutang').dataTable().fnDestroy();
@@ -2534,9 +2538,9 @@
                     let nama = "<td>"+value.i_name+"</td>";
                     let qty = "<td>"+value.scd_qty+"</td>";
                     let satuan = "<td>"+value.u_name+"</td>";
-                    let harga = "<td>"+convertToRupiah(value.scd_value)+"</td>";
-                    let diskon = "<td>"+convertToRupiah(value.scd_discvalue)+"</td>";
-                    let total = "<td>"+convertToRupiah(value.scd_totalnet)+"</td>";
+                    let harga = "<td class='text-right'>"+convertToRupiah(value.scd_value)+"</td>";
+                    let diskon = "<td class='text-right'>"+convertToRupiah(value.scd_discvalue)+"</td>";
+                    let total = "<td class='text-right'>"+convertToRupiah(value.scd_totalnet)+"</td>";
                     $('#table_detailpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
                 });
                 let terbayar = 0;
@@ -2544,7 +2548,7 @@
                     terbayar = terbayar + parseInt(value.scp_pay);
                     let no = "<td>"+(index + 1)+"</td>";
                     let tanggal = "<td>"+value.scp_date+"</td>";
-                    let nominal = "<td>"+convertToRupiah(value.scp_pay)+"</td>";
+                    let nominal = "<td class='text-right'>"+convertToRupiah(value.scp_pay)+"</td>";
                     $('#table_detailpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
                 });
                 $('#nota_dtpp').val(detail[0].sc_nota);
@@ -2577,9 +2581,9 @@
                     let nama = "<td>"+value.i_name+"</td>";
                     let qty = "<td>"+value.scd_qty+"</td>";
                     let satuan = "<td>"+value.u_name+"</td>";
-                    let harga = "<td>"+convertToRupiah(value.scd_value)+"</td>";
-                    let diskon = "<td>"+convertToRupiah(value.scd_discvalue)+"</td>";
-                    let total = "<td>"+convertToRupiah(value.scd_totalnet)+"</td>";
+                    let harga = "<td class='text-right'>"+convertToRupiah(value.scd_value)+"</td>";
+                    let diskon = "<td class='text-right'>"+convertToRupiah(value.scd_discvalue)+"</td>";
+                    let total = "<td class='text-right'>"+convertToRupiah(value.scd_totalnet)+"</td>";
                     $('#table_bayarpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
                 });
                 let terbayar = 0;
@@ -2587,7 +2591,7 @@
                     terbayar = terbayar + parseInt(value.scp_pay);
                     let no = "<td>"+(index + 1)+"</td>";
                     let tanggal = "<td>"+value.scp_date+"</td>";
-                    let nominal = "<td>"+convertToRupiah(value.scp_pay)+"</td>";
+                    let nominal = "<td class='text-right'>"+convertToRupiah(value.scp_pay)+"</td>";
                     $('#table_bayarpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
                 });
                 $('#paymentpp').append("<option value='disable'> == Pilih Metode Pembayaran == </option>");
@@ -2604,7 +2608,7 @@
                 alert('error');
             })
         }
-        
+
         function bayarPP() {
             let nota = $('#nota_paypp').val();
             let bayar = $('#bayarpaypp').val();
@@ -2643,6 +2647,90 @@
                 loadingHide();
                 alert("error");
             })
+        }
+    </script>
+
+    <!-- ========================================================================-->
+    <!-- script for Return Penjualan -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // set document ready in set timeout
+            setTimeout(function () {
+                returnagen();
+            }, 1250);
+        });
+
+        function returnagen() {
+            setTimeout(function () {
+                tb_return = $('#table_return').DataTable({
+                    responsive: true,
+                    serverSide: true,
+                    ajax: {
+                        url: "{{ route('mmareturn.index') }}",
+                        type: "post",
+                        data: {
+                            "_token": "{{ csrf_token() }}"
+                        }
+                    },
+                    columns: [
+                        {data: 'DT_RowIndex'},
+                        {data: 'tanggal'},
+                        {data: 'r_nota'},
+                        {data: 'r_reff'},
+                        {data: 'r_code'},
+                        {data: 'type'},
+                        {data: 'agen'},
+                        {data: 'action'}
+                    ],
+                    pageLength: 10,
+                    lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+                });
+            }, 750);
+        }
+
+        function deleteReturn(id) {
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apa anda yakin akan menghapus data return ini ?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            loadingShow();
+                            $.ajax({
+                                url: baseUrl+ "/marketing/marketingarea/returnpenjualan/delete/" + id,
+                                type: 'post',
+                                success: function(resp) {
+                                    loadingHide();
+                                    if (resp.status == 'berhasil') {
+                                        messageSuccess('Berhasil', 'Data berhasil dihapus !');
+                                    }
+                                    else {
+                                        messageWarning('Perhatian', resp.message);
+                                    }
+                                    tb_return.ajax.reload();
+                                },
+                                error: function(e) {
+                                    loadingHide();
+                                    messageWarning('Gagal', 'Terjad kesalahan : '+ e.message);
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
         }
     </script>
 @endsection

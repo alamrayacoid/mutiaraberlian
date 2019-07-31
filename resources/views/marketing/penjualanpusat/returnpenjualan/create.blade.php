@@ -13,7 +13,7 @@
 	    <p class="title-description">
 	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
 	    	 / <span>Aktifitas Marketing</span>
-	    	 / <a href="{{route('returnpenjualanagen.index')}}">Return Penjualan</a>
+	    	 / <a href="{{route('penjualanpusat.index')}}">Return Penjualan</a>
 	    	 / <span class="text-primary font-weight-bold">Tambah Return Penjualan</span>
 	     </p>
 	</div>
