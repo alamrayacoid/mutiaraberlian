@@ -448,13 +448,16 @@
 
         // form SB
 		$('#kodeproduksi').on('select2:select', function() {
+            $('#type').val('').trigger('change');
+            $('#typeSL').val('').trigger('change');
 			$('#nota').attr('disabled', false);
 			$('#div3').addClass('d-none');
 			getNota();
 		});
 		$('#nota').on('select2:select', function() {
+            $('#type').val('').trigger('change');
+            $('#typeSL').val('').trigger('change');
 			let itemId = $('#nota').find('option:selected').data('itemid');
-			console.log('itemId: '+ itemId);
 			$('#itemId').val(itemId);
 			getDataSalesComp();
 		});
@@ -939,7 +942,7 @@
 				} else {
 					$("#nota").append('<option value="" selected disabled>=== Pilih Nota ===</option>');
 					$.each(response, function( key, val ) {
-						$("#nota").append('<option value="'+ val.sc_nota +'" data-itemid="'+ val.get_sales_comp_dt[0].scd_item +'">'+ val.sc_nota +'</option>');
+						$("#nota").append('<option value="'+ val.sc_nota +'" data-itemid="'+ response[0].itemId +'">'+ val.sc_nota +'</option>');
 					});
 				}
 				$('#nota').focus();

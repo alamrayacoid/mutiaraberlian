@@ -119,6 +119,9 @@ class ReturnPenjualanController extends Controller
     {
         $prodCode = $request->prodCode;
         $agentCode = $request->agentCode;
+        // get item id by production-code
+        $itemId = d_salescompcode::where('ssc_code', $prodCode)->select('ssc_item')->first();
+        $itemId = $itemId->ssc_item;
 
         $listNota = d_salescomp::whereHas('getSalesCompDt', function ($q) use ($prodCode, $agentCode) {
             $q
@@ -131,9 +134,10 @@ class ReturnPenjualanController extends Controller
                         ->where('s_status', 'ON DESTINATION');
                 });
         })
-        ->with('getSalesCompDt')
+        ->with('getSalesCompDt.getProdCode')
         ->get();
 
+        $listNota[0]->itemId = $itemId;
         // $listNota = d_salescompcode::where('ssc_code', 'like', '%'. $prodCode .'%')
         // ->whereHas('getSalesCompById', function($q) use ($agentCode) {
         //     $q->where('sc_member', $agentCode);

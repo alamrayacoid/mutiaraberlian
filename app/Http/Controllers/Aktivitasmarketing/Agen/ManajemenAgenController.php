@@ -1673,11 +1673,6 @@ class ManajemenAgenController extends Controller
                     $sumQtyPC += (int)$request->qtyProdCode[$j];
                 }
 
-                if ($sumQtyPC != (int)$data['jumlah'][$i]) {
-                    $item = m_item::where('i_id', $data['idItem'][$i])->first();
-                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
-                }
-
                 // get qty in smallest unit
                 $data_check = DB::table('m_item')
                     ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
@@ -1690,13 +1685,19 @@ class ManajemenAgenController extends Controller
                 $sellPrice = 0;
                 if ($data['satuan'][$i] == $data_check->unit1) {
                     $qty_compare = $data['jumlah'][$i];
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]);
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) - $data['diskon'][$i];
                 } else if ($data['satuan'][$i] == $data_check->unit2) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare2;
+                    $sellPrice = ((int)Currency::removeRupiah($data['harga'][$i])  - $data['diskon'][$i]) / $data_check->compare2;
                 } else if ($data['satuan'][$i] == $data_check->unit3) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare3;
+                    $sellPrice = ((int)Currency::removeRupiah($data['harga'][$i]) - $data['diskon'][$i]) / $data_check->compare3;
+                }
+
+                // validate qty 0f production-code is same with qty request
+                if ($sumQtyPC != $qty_compare) {
+                    $item = m_item::where('i_id', $data['idItem'][$i])->first();
+                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
                 }
 
                 // declaare list of production-code
@@ -2003,11 +2004,6 @@ class ManajemenAgenController extends Controller
                     ];
                     DB::table('d_salescode')->insert($val_salescode);
                 }
-                // validate sum-qty of production-code
-                if ($sumQtyPC != $request->jumlah[$i]) {
-                    $item = m_item::where('i_id', $request->idItem[$i])->first();
-                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
-                }
 
                 // get qty in smallest unit
                 $data_check = DB::table('m_item')
@@ -2021,13 +2017,19 @@ class ManajemenAgenController extends Controller
                 $sellPrice = 0;
                 if ($data['satuan'][$i] == $data_check->unit1) {
                     $qty_compare = $data['jumlah'][$i];
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]);
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) - $data['diskon'][$i];
                 } else if ($data['satuan'][$i] == $data_check->unit2) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare2;
+                    $sellPrice = ((int)Currency::removeRupiah($data['harga'][$i])  - $data['diskon'][$i]) / $data_check->compare2;
                 } else if ($data['satuan'][$i] == $data_check->unit3) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare3;
+                    $sellPrice = ((int)Currency::removeRupiah($data['harga'][$i]) - $data['diskon'][$i]) / $data_check->compare3;
+                }
+
+                // validate sum-qty of production-code
+                if ($sumQtyPC != $qty_compare) {
+                    $item = m_item::where('i_id', $request->idItem[$i])->first();
+                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
                 }
 
                 // declaare list of production-code
@@ -2399,11 +2401,6 @@ class ManajemenAgenController extends Controller
                     $sumQtyPC += (int)$request->qtyProdCode[$j];
                 }
 
-                if ($sumQtyPC != (int)$data['jumlah'][$i]) {
-                    $item = m_item::where('i_id', $data['idItem'][$i])->first();
-                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
-                }
-
                 // get qty in smallest unit
                 $data_check = DB::table('m_item')
                 ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
@@ -2416,15 +2413,20 @@ class ManajemenAgenController extends Controller
                 $sellPrice = 0;
                 if ($data['satuan'][$i] == $data_check->unit1) {
                     $qty_compare = $data['jumlah'][$i];
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]);
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) - $data['diskon'][$i];
                 } else if ($data['satuan'][$i] == $data_check->unit2) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare2;
+                    $sellPrice = ((int)Currency::removeRupiah($data['harga'][$i])  - $data['diskon'][$i]) / $data_check->compare2;
                 } else if ($data['satuan'][$i] == $data_check->unit3) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare3;
+                    $sellPrice = ((int)Currency::removeRupiah($data['harga'][$i]) - $data['diskon'][$i]) / $data_check->compare3;
                 }
 
+                // validate qty production-code is same with qty request
+                if ($sumQtyPC != $qty_compare) {
+                    $item = m_item::where('i_id', $data['idItem'][$i])->first();
+                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
+                }
                 // declaare list of production-code
                 // $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                 $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
@@ -2732,11 +2734,6 @@ class ManajemenAgenController extends Controller
                     ];
                     DB::table('d_salescode')->insert($val_salescode);
                 }
-                // validate sum-qty of production-code
-                if ($sumQtyPC != $request->jumlah[$i]) {
-                    $item = m_item::where('i_id', $request->idItem[$i])->first();
-                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
-                }
 
                 // get qty in smallest unit
                 $data_check = DB::table('m_item')
@@ -2750,13 +2747,19 @@ class ManajemenAgenController extends Controller
                 $sellPrice = 0;
                 if ($data['satuan'][$i] == $data_check->unit1) {
                     $qty_compare = $data['jumlah'][$i];
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]);
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) - $data['diskon'][$i];
                 } else if ($data['satuan'][$i] == $data_check->unit2) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare2;
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare2;
+                    $sellPrice = ((int)Currency::removeRupiah($data['harga'][$i])  - $data['diskon'][$i]) / $data_check->compare2;
                 } else if ($data['satuan'][$i] == $data_check->unit3) {
                     $qty_compare = $data['jumlah'][$i] * $data_check->compare3;
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$i]) / $data_check->compare3;
+                    $sellPrice = ((int)Currency::removeRupiah($data['harga'][$i]) - $data['diskon'][$i]) / $data_check->compare3;
+                }
+
+                // validate sum-qty of production-code
+                if ($sumQtyPC != $qty_compare) {
+                    $item = m_item::where('i_id', $request->idItem[$i])->first();
+                    throw new Exception("Jumlah kode produksi ". strtoupper($item->i_name) ." tidak sama dengan jumlah item yang dipesan !");
                 }
 
                 // declaare list of production-code
@@ -2823,7 +2826,7 @@ class ManajemenAgenController extends Controller
             // delete salesweb
             $sales->getSalesWeb->delete();
 
-            $mutcatOut = 4;
+            $mutcatOut = 14;
             // delete salesdt and salescode
             foreach ($sales->getSalesDt as $key => $salesDt) {
                 // rollback mutation 'salesout'

@@ -1720,7 +1720,7 @@ class Mutasi extends Controller
                 ->get();
 
             $permintaan = $qty;
-            
+
             // set list of sellPrice and hpp. used for salesIn
             $listStockParentId = array();
             $listSellPrice = array();
@@ -1847,6 +1847,7 @@ class Mutasi extends Controller
                 if ($insertStockDt !== 'success') {
                     throw new Exception($insertStockDt->getData()->message);
                 }
+                // dd($stockParent->s_id, $detailid, $listSmPC, $listSmQtyPC, $insertSMProdCode);
                 // fill list of sellPrice and listhpp
                 array_push($listStockParentId, $val_stockmut['sm_stock']);
                 array_push($listSellPrice, (int)$val_stockmut['sm_sell']);

@@ -84,8 +84,9 @@
             <div class="row">
                 <div class="col-12">
                     <ul class="nav nav-pills mb-3" id="Tabzs">
+                        @if(Auth::user()->getCompany->c_type == 'AGEN')
                         <li class="nav-item">
-                            <a href="#orderprodukagenpusat" class="nav-link active" data-target="#orderprodukagenpusat"
+                            <a href="#orderprodukagenpusat" class="nav-link" data-target="#orderprodukagenpusat"
                                aria-controls="orderprodukagenpusat" data-toggle="tab" role="tab">Order ke Agen /
                                 Cabang</a>
                         </li>
@@ -94,8 +95,9 @@
                                aria-controls="keloladataagen" data-toggle="tab" role="tab" onclick="kelolaDataAgen()">Kelola
                                 Data Order Agen </a>
                         </li>
+                        @endif
                         <li class="nav-item">
-                            <a href="#kelolapenjualan" class="nav-link" data-target="#kelolapenjualan"
+                            <a href="#kelolapenjualan" class="nav-link active" data-target="#kelolapenjualan"
                                aria-controls="kelolapenjualan" data-toggle="tab" role="tab">Kelola Penjualan
                                 Langsung </a>
                         </li>
@@ -114,8 +116,10 @@
                         </li>
                     </ul>
                     <div class="tab-content">
-                        @include('marketing.agen.orderproduk.index')
-                        @include('marketing.marketingarea.keloladataorder.index')
+                        @if(Auth::user()->getCompany->c_type == 'AGEN')
+                            @include('marketing.agen.orderproduk.index')
+                            @include('marketing.marketingarea.keloladataorder.index')
+                        @endif
                         @include('marketing.agen.inventoryagen.index')
                         @include('marketing.agen.penjualanviaweb.index')
                         @include('marketing.agen.kelolapenjualan.index')
