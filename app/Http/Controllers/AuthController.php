@@ -40,6 +40,7 @@ class AuthController extends Controller
             ->update([
                 'u_lastlogout' => Carbon::now('Asia/Jakarta')
             ]);
+
         Auth::logout();
         Session::flush();
         return redirect()->route('login');

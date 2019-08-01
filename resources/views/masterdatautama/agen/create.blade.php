@@ -462,7 +462,7 @@
                 loadingHide();
                 messageWarning('Gagal', 'Data gagal ditambahkan, hubungi pengembang !');
             }
-        })
+        });
     }
 
 </script>

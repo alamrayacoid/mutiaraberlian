@@ -107,24 +107,24 @@ class RecruitmentController extends Controller
         ]);
       }
     }
-
-    /**
-    * uploads images to storage_path and return image name.
-    *
-    * @param file $image
-    * @param string $nik (9271928xxx)
-    * @param string $type (photo, ktp, others)
-    * @return string $imageName (18276-ktp)
-    */
-    public function uploadImage($image, $nik, $type)
-    {
-      if ($image != null) {
-        $imageExt = $image->getClientOriginalExtension();
-        $imageName = $nik . '-' . $type . '.' .$imageExt;
-        Image::make($image)->save(storage_path('/uploads/recruitment/' . $imageName));
-        return $imageName;
-      }
-    }
+    //
+    // /**
+    // * uploads images to storage_path and return image name.
+    // *
+    // * @param file $image
+    // * @param string $nik (9271928xxx)
+    // * @param string $type (photo, ktp, others)
+    // * @return string $imageName (18276-ktp)
+    // */
+    // public function uploadImage($image, $nik, $type)
+    // {
+    //   if ($image != null) {
+    //     $imageExt = $image->getClientOriginalExtension();
+    //     $imageName = $nik . '-' . $type . '.' .$imageExt;
+    //     Image::make($image)->save(storage_path('/uploads/recruitment/' . $imageName));
+    //     return $imageName;
+    //   }
+    // }
 
     /**
      * Check user is already registered or not.
@@ -214,10 +214,20 @@ class RecruitmentController extends Controller
         $filektp     = $request->file('filektp');
         $fileijazah  = $request->file('fileijazah');
         $fileanother = $request->file('fileanother');
-        $photo       = $this->uploadImage($filephoto, $request->nik, 'photo');
-        $ktp         = $this->uploadImage($filektp, $request->nik, 'ktp');
-        $ijazah      = $this->uploadImage($fileijazah, $request->nik, 'ijazah');
-        $another     = $this->uploadImage($fileanother, $request->nik, 'other');
+        // $photo       = $this->uploadImage($filephoto, $request->nik, 'photo');
+        // $ktp         = $this->uploadImage($filektp, $request->nik, 'ktp');
+        // $ijazah      = $this->uploadImage($fileijazah, $request->nik, 'ijazah');
+        // $another     = $this->uploadImage($fileanother, $request->nik, 'other');
+
+        $photoName = $request->nik . '-photo';
+        $photo = $filephoto->storeAs('Recruitment/Photo', $photoName);
+        $ktpName = $request->nik . '-ktp';
+        $ktp = $filephoto->storeAs('Recruitment/KTP', $ktpName);
+        $ijazahName = $request->nik . '-ijazah';
+        $ijazah = $filephoto->storeAs('Recruitment/Ijazah', $ijazahName);
+        $anotherName = $request->nik . '-other';
+        $another = $filephoto->storeAs('Recruitment/Other', $anotherName);
+
 
         DB::table('d_pelamar')
           ->insert([

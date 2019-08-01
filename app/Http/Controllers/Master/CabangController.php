@@ -30,9 +30,10 @@ class CabangController extends Controller
             ->leftJoin('m_wil_kota', 'wc_id', '=', 'c_area')
             ->where(function ($q){
                 $q->orWhere('c_type', '=', 'CABANG');
-                $q->orWhere('c_type', '=', 'PUSAT');
+                // $q->orWhere('c_type', '=', 'PUSAT');
             })
             ->orderBy('c_type', 'desc');
+
         return Datatables::of($datas)
             ->addIndexColumn()
             ->addColumn('name', function ($datas) {

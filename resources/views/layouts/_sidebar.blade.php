@@ -102,14 +102,16 @@
                 <div class="dropdown-menu profile-dropdown-menu" aria-labelledby="dropdownMenu1">
                     <a class="dropdown-item" href="{{route('profile')}}">
                         <i class="fa fa-user icon"></i> Profile </a>
+
                     <a class="dropdown-item" href="{{route('pengaturanpengguna.index')}}">
                         <i class="fa fa-gear icon"></i> Settings </a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{ route('logout') }}"
+
+                    <a class="dropdown-item" href="{{ route('auth.logout') }}"
                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                         <i class="fa fa-power-off icon"></i> Logout </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    <form id="logout-form" action="{{ route('auth.logout') }}" method="POST" style="display: none;">
                         {{ csrf_field() }}
                     </form>
                 </div>
