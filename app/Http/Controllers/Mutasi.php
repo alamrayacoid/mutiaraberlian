@@ -868,7 +868,7 @@ class Mutasi extends Controller
                 $konsinyasiKeluar = self::mutasikeluar(
                     13, // mutcat
                     $comp, // item owner
-                    $comp, // item position
+                    $position, // item position
                     $item, // item id
                     $qty, // qty with smalles unit
                     $nota, // nota
