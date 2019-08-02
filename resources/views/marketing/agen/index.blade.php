@@ -2548,7 +2548,7 @@
                 success: function (data) {
                     // console.log(data);
                     $('#agent').find('option').remove();
-                    $('#agent').append('<option value="" selected>Pilih Agen</option>')
+                    $('#agent').append('<option value="" selected>Pilih Konsigner</option>')
                     $.each(data, function (index, val) {
                         $('#agent').append('<option value="' + val.get_company.c_id + '">' + val.a_name + ' (' + val.a_address + ')</option>');
                     })
@@ -2725,11 +2725,14 @@
 
                     },
                     error: function (err) {
-                        messageWarning('Error', err.message);
+                        // console.log(err.responseJSON.message);
+                        $('.harga').eq(idx).val(0);
+                        messageWarning('Error', err.responseJSON.message);
                     }
                 });
             },
             error: function (e) {
+                console.log(e);
                 messageWarning('Error', e.message);
             }
         })
@@ -2779,7 +2782,7 @@
             '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>' +
             '<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button></td>' +
             '<td><input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="Rp. 0" readonly><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>' +
-            '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah" value="Rp. 0"></td>' +
+            '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon digits" value="Rp. 0"></td>' +
             '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>' +
             '<td>' +
             '<button class="btn btn-danger btnRemoveItem rounded-circle btn-sm" type="button">' +
@@ -2798,19 +2801,19 @@
 
         setArrayCode();
 
-        $('.input-rupiah').maskMoney({
-            thousands: ".",
-            precision: 0,
-            decimal: ",",
-            prefix: "Rp. "
-        });
+        // $('.input-rupiah').maskMoney({
+        //     thousands: ".",
+        //     precision: 0,
+        //     decimal: ",",
+        //     prefix: "Rp. "
+        // });
 
-        $('.rupiah').inputmask("currency", {
+        $('.digits').inputmask("currency", {
             radixPoint: ",",
             groupSeparator: ".",
             digits: 0,
             autoGroup: true,
-            prefix: ' Rp ', //Space after $, this will not truncate the first character.
+            prefix: '', //Space after $, this will not truncate the first character.
             rightAlign: true,
             autoUnmask: true,
             nullable: false,

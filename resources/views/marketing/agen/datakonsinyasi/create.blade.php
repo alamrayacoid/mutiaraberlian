@@ -7,6 +7,9 @@
             <div class="header-block pull-right">
                 <a class="btn btn-warning btn-sm" href="{{ route('konsinyasiAgen.bayar') }}"><i class="fa fa-plus"></i>&nbsp;Pembayaran Konsigner</a>
             </div>
+            <div class="header-block pull-right">
+                <a class="btn btn-info btn-sm" href="{{ route('konsinyasiAgen.index') }}"><i class="fa fa-folder"></i>&nbsp;Kelola Konsinyasi</a>
+            </div>
         </div>
         <div class="card-block">
 
@@ -65,7 +68,7 @@
 
                         <div class="container" id="tbl_item">
                             <div class="table-responsive mt-3">
-                                <table class="table table-hover table-striped" id="table_rencana" cellspacing="0">
+                                <table class="table table-hover table-striped w-100" id="table_rencana" cellspacing="0">
                                     <thead class="bg-primary">
                                         <tr>
                                             <th width="20%">Kode/Nama Barang</th>
@@ -114,7 +117,7 @@
                                                 Harga tidak ditemukan!</p>
                                             </td>
                                             <td>
-                                                <input class="form-control form-control-sm diskon rupiah text-right"
+                                                <input class="form-control form-control-sm diskon digits"
                                                 id="diskon" name="diskon[]">
                                             </td>
                                             <td>
