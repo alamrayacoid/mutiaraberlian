@@ -704,6 +704,18 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/orderproduk/get-cabang', 'Aktivitasmarketing\Agen\ManajemenAgenController@getCabang')->name('orderagenpusat.getcabang');
     Route::get('/marketing/agen/orderproduk/get-pembeli-cabang/{prov}/{kota}', 'Aktivitasmarketing\Agen\ManajemenAgenController@getPembeliCabang')->name('orderagenpusat.getpembelicabang');
     Route::get('/marketing/agen/orderproduk/edit', 'Aktivitasmarketing\Marketingarea\MarketingAreaController@edit_orderprodukagenpusat')->name('orderagenpusat.edit');
+
+    Route::get('/marketing/agen/konsinyasi/get-provinsi', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getProv')->name('konsinyasiAgen.getProv');
+    Route::get('/marketing/agen/konsinyasi/get-kota/{idprov}', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getkota')->name('konsinyasiAgen.getKota');
+    Route::get('/marketing/agen/konsinyasi/get-branch', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getBranchDK')->name('konsinyasiAgen.getBranchDK');
+    Route::get('/marketing/agen/konsinyasi/get-agents', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getAgentsDK')->name('konsinyasiAgen.getAgentsDK');
+    Route::get('/marketing/agen/konsinyasi/get-items', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getItemsDK')->name('konsinyasiAgen.getItemsDK');
+    Route::get('/marketing/agen/konsinyasi/get-satuan/{id}', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getSatuanDK')->name('konsinyasiAgen.getSatuanDK');
+    Route::get('/marketing/agen/konsinyasi/check-items-stock', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@checkItemStockDK')->name('konsinyasiAgen.checkItemStockDK');
+    Route::get('/marketing/agen/konsinyasi/check-items-stock-old', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@checkItemStockDKOld')->name('konsinyasiAgen.checkItemStockDKOld');
+    Route::get('/marketing/agen/konsinyasi/check-harga', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@checkHargaDK')->name('konsinyasiAgen.checkHargaDK');
+    Route::post('/marketing/agen/konsinyasi/store', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@storeDK')->name('konsinyasiAgen.storeDK');
+
     // !===================================================== END Marketing =====================================================!
 
     // !===================================================== KEUANGAN =====================================================!
