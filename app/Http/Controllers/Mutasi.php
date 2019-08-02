@@ -153,11 +153,11 @@ class Mutasi extends Controller
     // === Start: development purpose, need running-test before officially applied ========================
         static function distributionOut(
             $from, // from (company-id)
-            $itemOwner, // item-owner (company-id)
+            $itemOwner, // item-owner (company-id) / unused
             $item, // item id
             $qty, // qty item
             $nota, // nota distribution
-            $reff, // nota refference
+            $reff, // nota refference / unused
             $listPC, // list production-code
             $listQtyPC, // list qty of production-code
             $listUnitPC, // list unit of production-code
@@ -374,6 +374,7 @@ class Mutasi extends Controller
                 ]);
             }
         }
+        // check if used by konsinyasi-pusat and konsinyasi-cabang
         static function distributionIn(
             $itemOwner, // item-owner (company-id)
             $to, // destination (company-id)
@@ -386,7 +387,7 @@ class Mutasi extends Controller
             $listHPP, // list of hpp
             $listSmQty, // lsit of sm-qty (it got from salesOut, each qty used from different stock-mutation)
             $mutcat, // mutation category
-            $stockParentId, // stock parent id
+            $stockParentId = null, // stock parent id / unused
             $status = 'ON GOING', // items status in stock
             $condition = 'FINE' // item condition in stock
             )
@@ -474,7 +475,7 @@ class Mutasi extends Controller
                     }
 
                     // insert/update stock-detail production-code
-                    $stockParentId = $stockParentId;
+                    $stockParentId = null;
                     $stockChildId = $stockId;
                     $insertStockDt = self::insertStockDetail($stockParentId, $stockChildId, $listPC[$key], $listQtyPC[$key]);
                     if ($insertStockDt !== 'success') {
