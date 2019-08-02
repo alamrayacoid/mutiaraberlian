@@ -1031,7 +1031,10 @@ class ManajemenAgenController extends Controller
             ->leftJoin('m_company as comp', 's_position', 'comp.c_id')
             ->leftJoin('m_company as agen', 's_comp', 'agen.c_id')
             ->leftJoin('m_item', 's_item', 'i_id')
-            ->where('s_position', '=', $id)
+            ->where(function ($q) use ($id){
+                $q->orWhere('s_position', '=', $id);
+                $q->orWhere('s_comp', '=', $id);
+            })
             ->select('s_id', 'agen.c_name as agen', 'comp.c_name as comp', 'i_name', 's_status', 's_condition', 's_qty')
             ->get();
 

@@ -238,16 +238,16 @@ class AgenKonsinyasiController extends Controller
         $type = m_agen::whereHas('getCompany', function ($q) use ($agent) {
             $q->where('c_id', '=', $agent);
         })
-        ->first();
+            ->first();
 
         $get_price = DB::table('m_priceclassdt')
-        ->join('m_priceclass', 'pcd_classprice', 'pc_id')
-        ->select('m_priceclassdt.*', 'm_priceclass.*')
-        ->where('pc_id', '=', $type->a_class)
-        ->where('pcd_payment', '=', 'K')
-        ->where('pcd_item', '=', $item)
-        ->where('pcd_unit', '=', $unit)
-        ->get();
+            ->join('m_priceclass', 'pcd_classprice', 'pc_id')
+            ->select('m_priceclassdt.*', 'm_priceclass.*')
+            ->where('pc_id', '=', $type->a_class)
+            ->where('pcd_payment', '=', 'K')
+            ->where('pcd_item', '=', $item)
+            ->where('pcd_unit', '=', $unit)
+            ->get();
 
         $harga = 0;
         $z = false;

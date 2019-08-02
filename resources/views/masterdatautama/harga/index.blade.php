@@ -800,6 +800,7 @@
         $("#idBarang").val(info.data.i_id)
         $("#satuanBarang").find('option').remove();
         $("#satuanrange").find('option').remove();
+        console.log(info);
         $.ajax({
             url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+info.data.i_id,
             type: 'GET',
@@ -931,7 +932,6 @@
                 type: 'GET',
                 success: function( resp ) {
                     var option = '';
-                    console.log(resp, satuan);
                     if (resp.id1 == satuan) {
                         option += '<option value="'+resp.id1+'" selected>'+resp.unit1+'</option>';
                     } else {
