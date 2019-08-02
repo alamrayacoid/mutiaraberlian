@@ -6,6 +6,7 @@ use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 use DB;
@@ -280,6 +281,7 @@ class EmployeeController extends Controller
             }
             DB::beginTransaction();
             try {
+                // dd($request->hasFile('e_foto'));
                 if ($request->hasFile('e_foto')) {
                     $dataImg = $request->file('e_foto');
 
@@ -298,8 +300,10 @@ class EmployeeController extends Controller
                     // $photos = $imageName;
 
                     $imageName = $id . '-photo';
+                    // delete current photo
+                    // Storage::delete('Employees/'.$imageName);
+                    // insert new photo
                     $photos = $request->file('e_foto')->storeAs('Employees', $imageName);
-
                 } else {
                     $photos = $request->current_foto;
                 }
