@@ -70,6 +70,8 @@ class m_employee extends Model
     protected $table       = 'm_employee';
     protected $primaryKey  = 'e_id';
     public $incrementing   = false;
+    const CREATED_AT = 'e_created_at';
+    const UPDATED_AT = 'e_updated_at';
 
     public function username()
     {

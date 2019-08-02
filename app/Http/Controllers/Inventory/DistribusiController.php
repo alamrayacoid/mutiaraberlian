@@ -276,6 +276,7 @@ class DistribusiController extends Controller
                         }
                     }
                 }
+
                 if ($request->qty[$i] != 0 && $request->qty[$i] == $jumlahkode) {
                     //insert stock distribusi dt
                     $detailid = d_stockdistributiondt::where('sdd_stockdistribution', $id)->max('sdd_detailid') + 1;
@@ -311,6 +312,7 @@ class DistribusiController extends Controller
                         $distcode->sdc_qty = $request->qtyProdCode[$j];
                         $distcode->save();
                     }
+
                     // get qty of smallest unit
                     $item = m_item::where('i_id', $itemId)->first();
                     if ($item->i_unit1 == $request->units[$i]) {
@@ -320,6 +322,7 @@ class DistribusiController extends Controller
                     } elseif ($item->i_unit3 == $request->units[$i]) {
                         $convert = (int)$request->qty[$i] * $item->i_unitcompare3;
                     }
+
                     // declaare list of production-code
                     $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                     $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
@@ -338,6 +341,7 @@ class DistribusiController extends Controller
                         $listQtyPC,
                         $listUnitPC
                     );
+
                     if ($mutDist !== 'success') {
                         return $mutDist;
                     }
@@ -378,7 +382,7 @@ class DistribusiController extends Controller
 
             if(!$parrent || !$acc_ongkir_kas || !$acc_ongkir_beban){
                 return response()->json([
-                    'status' => 'Failed',
+                    'status' => 'gagal',
                     'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
                 ]);
             }
@@ -406,7 +410,7 @@ class DistribusiController extends Controller
             if($jurnal['status'] == 'error'){
                 return json_encode($jurnal);
             }
-            
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -895,7 +899,7 @@ class DistribusiController extends Controller
                 return '<div class="btn-group btn-group-sm">
                 <button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Print Nota" title="Nota" type="button" onclick="printNota(' . $data->sd_id . ')"><i class="fa fa-print"></i></button>
                 <button class="btn btn-warning btn-edit-distribusi" onclick="edit(\'' . encrypt($data->sd_id) . '\')" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-                <button class="btn btn-danger btn-disable-distribusi" onclick="hapus(' . $data->sd_id . ')" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
+                <button class="btn btn-danger btn-disable-distribusi" onclick="hapus(' . $data->sd_id . ')" type="button" title="Hapus"><i class="fa fa-times-circle"></i></button>
             </div>';
             })
             ->addColumn('tujuan', function ($data) {

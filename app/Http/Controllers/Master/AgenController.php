@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 
 use carbon\Carbon;
 use CodeGenerator;
+use App\m_agen;
 use App\m_company;
 use DB;
 use File;
@@ -172,29 +174,29 @@ class AgenController extends Controller
     }
 
 
-    /**
-     * uploads images to storage_path and return image name.
-     *
-     * @param file $image
-     * @param string $nik (9271928xxx)
-     * @param string $type (photo, ktp, others)
-     * @return string $imageName (18276-ktp)
-     */
-    public function uploadImage($image, $nik, $type)
-    {
-        if ($image != null) {
-            $imageExt = $image->getClientOriginalExtension();
-            $imageName = $nik . '-' . $type . '.' . $imageExt;
-            $path = storage_path('/uploads/agen/' . $imageName);
-            if (File::exists($path)) {
-                File::delete($path);
-            }
-            Image::make($image)->resize(300, null, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save(storage_path('/uploads/agen/' . $imageName));
-            return $imageName;
-        }
-    }
+    // /**
+    //  * uploads images to storage_path and return image name.
+    //  *
+    //  * @param file $image
+    //  * @param string $nik (9271928xxx)
+    //  * @param string $type (photo, ktp, others)
+    //  * @return string $imageName (18276-ktp)
+    //  */
+    // public function uploadImage($image, $nik, $type)
+    // {
+    //     if ($image != null) {
+    //         $imageExt = $image->getClientOriginalExtension();
+    //         $imageName = $nik . '-' . $type . '.' . $imageExt;
+    //         $path = storage_path('/uploads/agen/' . $imageName);
+    //         if (File::exists($path)) {
+    //             File::delete($path);
+    //         }
+    //         Image::make($image)->resize(300, null, function ($constraint) {
+    //             $constraint->aspectRatio();
+    //         })->save(storage_path('/uploads/agen/' . $imageName));
+    //         return $imageName;
+    //     }
+    // }
 
     /**
      * Return DataTable list for view.
@@ -310,11 +312,13 @@ class AgenController extends Controller
             $codeAgen = CodeGenerator::code('m_agen', 'a_code', 7, 'A');
             $id = DB::table('m_agen')->max('a_id') + 1;
 
-            $photo = $this->uploadImage(
-                $request->file('photo'),
-                $codeAgen,
-                'photo'
-            );
+            // $photo = $this->uploadImage(
+            //     $request->file('photo'),
+            //     $codeAgen,
+            //     'photo'
+            // );
+            $imageName = $codeAgen . '-photo';
+            $photo = $request->file('photo')->storeAs('Agents', $imageName);
 
             DB::table('m_agen')
                 ->insert([
@@ -350,6 +354,7 @@ class AgenController extends Controller
                     'c_address' => $request->address,
                     'c_tlp'     => $request->telp,
                     'c_type'    => 'AGEN',
+                    'c_area'    => $request->area_city,
                     'c_user'    => $codeAgen,
                     'c_insert'  => Carbon::now(),
                     'c_update'  => Carbon::now()
@@ -435,18 +440,29 @@ class AgenController extends Controller
                 'message' => $errors
             ]);
         }
-        if ($request->hasFile('photo')) {
-            $photo = $this->uploadImage(
-                $request->file('photo'),
-                $request->code,
-                'photo'
-            );
-        } else {
-            $photo = $request->current_photo;
-        }
+
         // start: execute update data
         DB::beginTransaction();
         try {
+            // get agent-code
+            $agentCode = m_agen::where('a_id', $id)->select('a_code')->first();
+
+            if ($request->hasFile('photo')) {
+                // $photo = $this->uploadImage(
+                //     $request->file('photo'),
+                //     $request->code,
+                //     'photo'
+                // );
+
+                $imageName = $agentCode->a_code . '-photo';
+                // delete current photo
+                // Storage::delete('Agents/'.$imageName);
+                // insert new photo
+                $photo = $request->file('photo')->storeAs('Agents', $imageName);
+            } else {
+                $photo = $request->current_photo;
+            }
+
             // update data in table m_agen
             DB::table('m_agen')
                 ->where('a_id', $id)
@@ -470,6 +486,17 @@ class AgenController extends Controller
                     'a_img'       => $photo,
                     'a_update'    => Carbon::now()
                 ]);
+
+                DB::table('m_company')
+                    ->where('c_user', $agentCode->a_code)
+                    ->update([
+                        'c_name'    => $request->name,
+                        'c_address' => $request->address,
+                        'c_tlp'     => $request->telp,
+                        'c_type'    => 'AGEN',
+                        'c_area'    => $request->area_city,
+                        'c_update'  => Carbon::now()
+                    ]);
 
             DB::commit();
             return response()->json([

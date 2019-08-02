@@ -284,7 +284,7 @@
                                     <div class="col-12" align="center">
                                         <div class="form-group">
                                             @if($data['agen']->a_img != null)
-                                            <img src="{{ asset('storage/uploads/agen') }}/{{ $data['agen']->a_img }}" id="img-preview" style="cursor: pointer; max-height: 254px;max-width: 100%;" class="img-thumbnail">
+                                            <img src="{{ asset('storage/app/'. $data['agen']->a_img) }}" id="img-preview" style="cursor: pointer; max-height: 254px;max-width: 100%;" class="img-thumbnail">
                                             @else
                                             <img src="{{ asset('assets/img/add-image-icon2.png') }}" id="img-preview" style="cursor: pointer; max-height: 254px;max-width: 100%;" class="img-thumbnail">
                                             @endif
@@ -476,7 +476,8 @@
                 if (response.status == 'berhasil') {
                     loadingHide();
                     messageSuccess('Berhasil', 'Data berhasil disimpan !');
-                    location.href = '{{ url("masterdatautama/agen/index") }}';
+                    // location.href = '{{ url("masterdatautama/agen/index") }}';
+                    location.reload();
                 } else if (response.status == 'invalid') {
                     loadingHide();
                     messageFailed('Perhatian', response.message);

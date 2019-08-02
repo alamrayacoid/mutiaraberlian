@@ -6,6 +6,7 @@ use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 use DB;
@@ -150,13 +151,18 @@ class EmployeeController extends Controller
             ]);
         }
 
-        $filePhoto = $request->file('e_foto');
-        $photo = $this->getImage($filePhoto);
+        $empCode = CodeGenerator::code('m_employee', 'e_id', 7, 'EMP');
+
+        // $filePhoto = $request->file('e_foto');
+        // $photo = $this->getImage($filePhoto);
+
+        $imageName = $empCode . '-photo';
+        $photo = $request->file('e_foto')->storeAs('Employees', $imageName);
 
         DB::beginTransaction();
         try {
             DB::table('m_employee')->insert([
-                'e_id' => CodeGenerator::code('m_employee', 'e_id', 7, 'EMP'),
+                'e_id' => $empCode,
                 'e_company' => $request->e_company,
                 'e_nip' => $request->e_nip,
                 'e_name' => strtoupper($request->e_name),
@@ -275,22 +281,29 @@ class EmployeeController extends Controller
             }
             DB::beginTransaction();
             try {
+                // dd($request->hasFile('e_foto'));
                 if ($request->hasFile('e_foto')) {
                     $dataImg = $request->file('e_foto');
 
-                    if ($dataImg->isValid()) {
-                        $file = $request->current_foto;
-                        if ($file != "") {
-                            $path = 'assets/uploads/pegawai/' . $file;
-                            if (File::exists($path)) {
-                                File::delete($path);
-                            }
-                        }
-                        $imageName = $input['imageName'] = time() . '.' . $dataImg->getClientOriginalName();
-                        $pathOri = 'assets/uploads/pegawai';
-                        $dataImg->move($pathOri, $imageName);
-                    }
-                    $photos = $imageName;
+                    // if ($dataImg->isValid()) {
+                    //     $file = $request->current_foto;
+                    //     if ($file != "") {
+                    //         $path = 'assets/uploads/pegawai/' . $file;
+                    //         if (File::exists($path)) {
+                    //             File::delete($path);
+                    //         }
+                    //     }
+                    //     $imageName = $input['imageName'] = time() . '.' . $dataImg->getClientOriginalName();
+                    //     $pathOri = 'assets/uploads/pegawai';
+                    //     $dataImg->move($pathOri, $imageName);
+                    // }
+                    // $photos = $imageName;
+
+                    $imageName = $id . '-photo';
+                    // delete current photo
+                    // Storage::delete('Employees/'.$imageName);
+                    // insert new photo
+                    $photos = $request->file('e_foto')->storeAs('Employees', $imageName);
                 } else {
                     $photos = $request->current_foto;
                 }
@@ -336,15 +349,15 @@ class EmployeeController extends Controller
         }
     }
 
-    public function getImage($foto)
-    {
-        if ($foto != null) {
-            $imageName = $input['imageName'] = time() . '.' . $foto->getClientOriginalName();
-            $pathOri = 'assets/uploads/pegawai';
-            $foto->move($pathOri, $imageName);
-            return $imageName;
-        }
-    }
+    // public function getImage($foto)
+    // {
+    //     if ($foto != null) {
+    //         $imageName = $input['imageName'] = time() . '.' . $foto->getClientOriginalName();
+    //         $pathOri = 'assets/uploads/pegawai';
+    //         $foto->move($pathOri, $imageName);
+    //         return $imageName;
+    //     }
+    // }
 
     public function nonActive($id)
     {
