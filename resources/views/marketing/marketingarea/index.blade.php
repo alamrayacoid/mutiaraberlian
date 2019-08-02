@@ -1162,6 +1162,7 @@
                 url: "{{ route('marketingarea.getPaymentMethod') }}",
                 type: "get",
                 success:function(resp) {
+                    console.log(resp);
                     $('#paymentMethod').empty();
                     // $('#paymentMethod').append('<option value="" selected disabled>== Pilih Metode Pembayaran ==</option>');
                     $.each(resp.data, function(key, val){

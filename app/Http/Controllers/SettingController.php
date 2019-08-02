@@ -23,6 +23,10 @@ class SettingController extends Controller
 
     public function pengaturanpengguna_index()
     {
+        if (!AksesUser::checkAkses(49, 'read')){
+            abort(401);
+        }
+
         $level = DB::table('m_level')->get();
         return view('pengaturan.pengaturanpengguna.index', compact('level'));
     }

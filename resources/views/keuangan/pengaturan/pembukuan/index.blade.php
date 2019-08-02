@@ -166,7 +166,7 @@
                                                                         </select>
                                                                     </template>
 
-                                                                    <template v-if="detail.pd_cf_status == '0'">
+                                                                    <template v-if="detail.pd_cf_status != '1'">
                                                                         <input type="hidden" :name="'cashflow['+ctx.pe_id+'][]'" value="null" readonly>
                                                                         <i style="cursor: no-drop; color: #ccc;">Tidak Termasuk Cashflow</i>
                                                                     </template>

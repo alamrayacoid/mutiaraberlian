@@ -111,7 +111,11 @@ class MasterController extends Controller
     public function get_list_cabang()
     {
       // start: get data from db and return it using DataTable
-      $datas = DB::table('m_company')->orderBy('c_nama', 'asc')->get();
+      $datas = DB::table('m_company')
+      // ->where('c_type', 'CABANG')
+      ->orderBy('c_nama', 'asc')
+      ->get();
+
       return Datatables::of($datas)
         ->addIndexColumn()
         ->addColumn('action', function($datas) {

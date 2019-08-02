@@ -94,22 +94,29 @@
                 </div>
             </li>
             <li class="profile dropdown">
-                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-                   aria-expanded="false">
-                    <div class="img" style="background-image: url('https://i.mydramalist.com/O5OvYc.jpg')"></div>
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    @if (Auth::user()->u_user == 'E')
+                        <div class="img" style="background-image: url('{{ asset('storage/app/'. Auth::user()->employee->e_foto) }}')"></div>
+                    @elseif (Auth::user()->u_user == 'A')
+                        <div class="img" style="background-image: url('{{ asset('storage/app/'. Auth::user()->agen->a_img) }}')"></div>
+                        <!-- <div class="img" style="background-image: url('https://i.mydramalist.com/O5OvYc.jpg')"></div> -->
+                    @endif
                     <span class="name"> {{ \App\d_username::getName() }} </span>
                 </a>
                 <div class="dropdown-menu profile-dropdown-menu" aria-labelledby="dropdownMenu1">
                     <a class="dropdown-item" href="{{route('profile')}}">
                         <i class="fa fa-user icon"></i> Profile </a>
+                    @if (Auth::user()->getCompany->c_type == 'PUSAT')
                     <a class="dropdown-item" href="{{route('pengaturanpengguna.index')}}">
                         <i class="fa fa-gear icon"></i> Settings </a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{ route('logout') }}"
+                    @endif
+
+                    <a class="dropdown-item" href="{{ route('auth.logout') }}"
                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                         <i class="fa fa-power-off icon"></i> Logout </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    <form id="logout-form" action="{{ route('auth.logout') }}" method="POST" style="display: none;">
                         {{ csrf_field() }}
                     </form>
                 </div>
