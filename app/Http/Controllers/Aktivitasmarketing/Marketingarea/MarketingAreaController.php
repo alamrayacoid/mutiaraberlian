@@ -2511,16 +2511,17 @@ class MarketingAreaController extends Controller
             ->first();
 
         $data = DB::table('d_stock')
-            ->join('d_stock_mutation', function ($sm) {
-                $sm->on('sm_stock', '=', 's_id');
-            })
+            // ->join('d_stock_mutation', function ($sm) {
+            //     $sm->on('sm_stock', '=', 's_id');
+            // })
             ->where('s_id', '=', $stock)
             // ->where('s_item', '=', $item)
             // ->where('s_status', '=', 'ON DESTINATION')
             // ->where('s_condition', '=', 'FINE')
-            ->select('sm_residue as sisa')
+            // ->select('sm_residue as sisa')
             ->first();
-
+        $data->sisa = $data->s_qty;
+// dd($stock, $data);
         $qty_compare = 0;
         if ($satuan == $data_check->unit1) {
             if ((int)$qty > (int)$data->sisa) {
@@ -2613,8 +2614,7 @@ class MarketingAreaController extends Controller
         $type = m_agen::whereHas('getCompany', function ($q) use ($agent) {
             $q->where('c_id', '=', $agent);
         })
-            ->first();
-        // dd($request->all(), $type);
+        ->first();
 
         $get_price = DB::table('m_priceclassdt')
             ->join('m_priceclass', 'pcd_classprice', 'pc_id')
@@ -2624,7 +2624,7 @@ class MarketingAreaController extends Controller
             ->where('pcd_item', '=', $item)
             ->where('pcd_unit', '=', $unit)
             ->get();
-
+// dd($type->a_class, $item, $unit, $get_price);
         $harga = 0;
         $z = false;
 
@@ -2653,7 +2653,6 @@ class MarketingAreaController extends Controller
             }
         }
 
-        // dd($get_price, $type, $qty, $harga);
         return Response::json(number_format($harga, 0, '', ''));
     }
 
@@ -2808,7 +2807,7 @@ class MarketingAreaController extends Controller
 
                 // insert stock mutation sales 'out'
                 $mutKonsOut = Mutasi::distributionOut(
-                    $compItem[$i], // from (company-id)
+                    $comp, // from (company-id)
                     $stock->s_comp, // item-owner (company-id)
                     $data['idItem'][$i], // item id
                     $qty_compare, // qty item
@@ -2824,18 +2823,18 @@ class MarketingAreaController extends Controller
                     return $mutKonsOut;
                 }
                 // set stock-parent-id
-                $listStockParentId = $mutationOut->original['listStockParentId'];
+                $listStockParentId = $mutKonsOut->original['listStockParentId'];
                 // get list
-                $listSellPrice = $mutationOut->original['listSellPrice'];
-                $listHPP = $mutationOut->original['listHPP'];
-                $listSmQty = $mutationOut->original['listSmQty'];
-                $listPCReturn = $mutationOut->original['listPCReturn'];
-                $listQtyPCReturn = $mutationOut->original['listQtyPCReturn'];
+                $listSellPrice = $mutKonsOut->original['listSellPrice'];
+                $listHPP = $mutKonsOut->original['listHPP'];
+                $listSmQty = $mutKonsOut->original['listSmQty'];
+                $listPCReturn = $mutKonsOut->original['listPCReturn'];
+                $listQtyPCReturn = $mutKonsOut->original['listQtyPCReturn'];
 
                 // insert stock mutation using sales 'in'
                 $mutKonsIn = Mutasi::distributionIn(
                     $stock->s_comp, // item-owner (company-id)
-                    $comp, // destination (company-id)
+                    $member, // destination (company-id)
                     $data['idItem'][$i], // item id
                     $nota, // nota sales
                     $listPCReturn, // list of list production-code (based on how many smQty used / each smQty has a list of prod-code)
@@ -2846,7 +2845,7 @@ class MarketingAreaController extends Controller
                     $listSmQty, // lsit of sm-qty (it got from salesOut, each qty used from different stock-mutation)
                     12, // mutation category
                     null, // stock parent id
-                    $status = 'ON GOING', // items status in stock
+                    $status = 'ON DESTINATION', // items status in stock
                     $condition = 'FINE' // item condition in stock
                 );
                 if ($mutKonsIn->original['status'] !== 'success') {
@@ -2882,15 +2881,7 @@ class MarketingAreaController extends Controller
             // insert into db
             DB::table('d_salescomp')->insert($val_sales);
             DB::table('d_salescompdt')->insert($val_salesdt);
-            $cek = DB::select('SELECT s_id, comp.c_name, pos.c_name AS pos, i_name, s_qty, SUM(sd_qty) AS jumlah,
-case when (SUM(sd_qty)) = s_qty then "sama" ELSE "tidak sama" END AS status
-FROM d_stock
-JOIN d_stockdt ON sd_stock = s_id
-JOIN m_company comp ON comp.c_id = s_comp
-JOIN m_company pos ON pos.c_id = s_position
-JOIN m_item ON s_item = i_id
-GROUP BY s_id');
-            dd($cek);
+
             DB::commit();
             return Response::json([
                 'status' => "Success",
@@ -2942,7 +2933,7 @@ GROUP BY s_id');
                 ->where('s_condition', 'FINE')
                 ->with('getItem')
                 ->first();
-            // dd($mainStock);
+
             // add stock id to data
             $val->stockId = $mainStock->s_id;
 
@@ -3307,7 +3298,6 @@ GROUP BY s_id');
         }
 
         $id = $request->id;
-
         DB::beginTransaction();
         try {
             $konsinyasi = d_salescomp::where('sc_id', $id)
@@ -3338,15 +3328,34 @@ GROUP BY s_id');
                     throw new Exception(strtoupper($item->i_name) . " sudah digunakan, konsinyasi tidak dapat dihapus !");
                 } // item is unused, continue to delete
                 else {
-                    $rollbackKons = Mutasi::rollback(
+                    // rollback mutation 'out'
+                    $mutRollbackOut = Mutasi::rollbackSalesOut(
                         $konsinyasi->sc_nota, // nota
                         $konsDt->scd_item, // itemId
-                        12 // mutcat
+                        13 // mutcat-out
                     );
-                    if (!is_bool($rollbackKons)) {
-                        DB::rollBack();
-                        return $rollbackKons;
+                    if ($mutRollbackOut->original['status'] !== 'success') {
+                        return $mutRollbackOut;
                     }
+
+                    // rollback mutation 'in'
+                    $mutRollbackIn = Mutasi::rollbackSalesIn(
+                        $konsinyasi->sc_nota, // nota
+                        $konsDt->scd_item, // itemId
+                        12 // mutcat-out
+                    );
+                    if ($mutRollbackIn->original['status'] !== 'success') {
+                        return $mutRollbackIn;
+                    }
+                    // $rollbackKons = Mutasi::rollback(
+                    //     $konsinyasi->sc_nota, // nota
+                    //     $konsDt->scd_item, // itemId
+                    //     12 // mutcat
+                    // );
+                    // if (!is_bool($rollbackKons)) {
+                    //     DB::rollBack();
+                    //     return $rollbackKons;
+                    // }
                     // delete production-code of selected stockdistribution
                     foreach ($konsDt->getProdCode as $idx => $prodCode) {
                         $prodCode->delete();

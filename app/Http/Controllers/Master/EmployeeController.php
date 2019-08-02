@@ -153,11 +153,13 @@ class EmployeeController extends Controller
 
         $empCode = CodeGenerator::code('m_employee', 'e_id', 7, 'EMP');
 
-        // $filePhoto = $request->file('e_foto');
-        // $photo = $this->getImage($filePhoto);
-
-        $imageName = $empCode . '-photo';
-        $photo = $request->file('e_foto')->storeAs('Employees', $imageName);
+        if ($request->hasFile('e_foto')) {
+            $imageName = $empCode . '-photo';
+            $photo = $request->file('e_foto')->storeAs('Employees', $imageName);
+        }
+        else {
+            $photo = null;
+        }
 
         DB::beginTransaction();
         try {
