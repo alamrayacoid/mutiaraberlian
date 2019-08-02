@@ -1053,7 +1053,7 @@ class MarketingAreaController extends Controller
             // ->where('po_id', '=', $po_id)
             // ->where('pod_item', '=', $item)
             ->get();
-        return json_encode($data);
+        // return json_encode($data);
         return DataTables::of($data)
             ->editColumn('poc_qty', function ($data) {
                 return '<div class="qty-prod-code">' . $data->poc_qty . '</div>';
@@ -2522,7 +2522,7 @@ class MarketingAreaController extends Controller
             // ->select('sm_residue as sisa')
             ->first();
         $data->sisa = $data->s_qty;
-// dd($stock, $data);
+        // dd($stock, $data);
         $qty_compare = 0;
         if ($satuan == $data_check->unit1) {
             if ((int)$qty > (int)$data->sisa) {
@@ -2625,7 +2625,7 @@ class MarketingAreaController extends Controller
             ->where('pcd_item', '=', $item)
             ->where('pcd_unit', '=', $unit)
             ->get();
-// dd($type->a_class, $item, $unit, $get_price);
+            // dd($type->a_class, $item, $unit, $get_price);
         $harga = 0;
         $z = false;
 
