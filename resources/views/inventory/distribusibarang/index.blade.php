@@ -337,7 +337,7 @@ $(document).ready(function() {
             animationBounce: 1.5,
             icon: 'fa fa-exclamation-triangle',
             title: 'Peringatan!',
-            content: 'Apa anda yakin mau menonaktifkan data ini?',
+            content: 'Apa anda yakin akan menghapus data ini?',
             theme: 'disable',
             buttons: {
                 info: {
@@ -351,14 +351,7 @@ $(document).ready(function() {
                             url: baseUrl + '/inventory/distribusibarang/hapus',
                             success : function(response){
                                 if (response.status == 'berhasil') {
-                                    $.toast({
-                                        heading: 'Information',
-                                        text: 'Data Berhasil di Nonaktifkan.',
-                                        bgColor: '#0984e3',
-                                        textColor: 'white',
-                                        loaderBg: '#fdcb6e',
-                                        icon: 'info'
-                                    })
+                                    messageSuccess("Berhasil", "Data berhasil dihapus");
                                     table_dist.ajax.reload();
                                 } else if (response.status == 'failed') {
                                     messageFailed('Failed', response.ex);
