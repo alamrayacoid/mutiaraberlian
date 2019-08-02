@@ -515,7 +515,7 @@ class HargaController extends Controller
         if (count($kode) > 0) {
             $nama = DB::table('m_item')
                 ->where(function ($q) use ($cari, $kode) {
-//                    $q->whereNotIn('i_code', $kode);
+                    // $q->whereNotIn('i_code', $kode);
                     $q->where('i_code', 'like', '%' . $cari . '%');
                     $q->orWhere('i_name', 'like', '%' . $cari . '%');
                 })
@@ -1063,7 +1063,7 @@ class HargaController extends Controller
 
     public function editGolonganHargaRange(Request $request)
     {
-        $sts = '';
+        $sts = 'Null';
         try {
             $id = Crypt::decrypt($request->golIdRange);
             $detail = Crypt::decrypt($request->golDetailRange);
@@ -1073,6 +1073,7 @@ class HargaController extends Controller
 
         DB::beginTransaction();
         try {
+
             $check = DB::table('d_priceclassauthdt')
                 ->where('pcad_classprice', '=', $id)
                 ->where('pcad_item', '=', $request->golItemRange)
@@ -1087,7 +1088,7 @@ class HargaController extends Controller
                 ->where('pcd_type', '=', "R")
                 ->get();
 
-
+            // dd($check, $check2);
             if (count($check) > 0) {
                 if ($request->rangestartedit == $request->rangestartawal && $request->rangeendedit == $request->rangestartakhir) {
                     $sts = 'Null';
@@ -1109,7 +1110,8 @@ class HargaController extends Controller
                         }
                     }
                 }
-            } else if (count($check2) > 0) {
+            }
+            else if (count($check2) > 0) {
                 if ($request->rangestartedit == $request->rangestartawal && $request->rangeendedit == $request->rangestartakhir) {
                     $sts = 'Null';
                 } else {
@@ -1131,8 +1133,8 @@ class HargaController extends Controller
                     }
                 }
             }
-
-            if ($sts = "Null") {
+// dd($sts, $id, $detail, $check, $request->all());
+            if ($sts == "Null") {
                 if ($request->statusRange == "N") {
                     DB::table('d_priceclassauthdt')
                         ->where('pcad_classprice', '=', $id)
@@ -1145,11 +1147,12 @@ class HargaController extends Controller
                         ]);
                     DB::commit();
                     return response()->json(['status' => "Success"]);
-                } else if ($request->statusRange == "Y") {
+                }
+                else if ($request->statusRange == "Y") {
                     $price = DB::table('m_priceclassdt')
                         ->where('pcd_classprice', '=', $id)
                         ->where('pcd_detailid', '=', $detail);
-
+                    
                     if ($price->count() > 0) {
                         //insert in d_priceclassauthdt
                         DB::table('d_priceclassauthdt')->insert([
@@ -1176,9 +1179,10 @@ class HargaController extends Controller
                     }
                 }
             }
+            // dd('x');
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['status' => "Failed", "msg" => $e]);
+            return response()->json(['status' => "Failed", "message" => $e->getMessage()]);
         }
     }
 

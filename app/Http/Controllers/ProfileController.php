@@ -18,7 +18,7 @@ class ProfileController extends Controller
 
         $detailUser = m_company::where('c_id', Auth::user()->u_company)
         ->with('getCity')
-        ->with('getAgent')
+        ->with('getAgent.getArea')
         ->with('getEmployee')
         ->first();
 
@@ -33,7 +33,7 @@ class ProfileController extends Controller
         }
         $detailUser->birthday = $birthDate;
 
-
+        // dd($detailUser);
     	return view('profile.profile', compact('detailUser'));
     }
 

@@ -53,7 +53,11 @@
 		                                    <div>
 		                                        <h2 class="mb-4">{{ $detailUser->c_name }}</h2>
 		                                        <h4>{{ $detailUser->c_type }}</h4>
-		                                        <p>{{ $detailUser->getCity->wc_name }}</p>
+												@if ($detailUser->getCity == null)
+													<p>{{ $detailUser->getAgent->getArea->wc_name }}</p>
+												@else
+													<p>{{ $detailUser->getCity->wc_name }}</p>
+												@endif
 		                                    </div>
 		                                </div>
 		                            </div>
@@ -87,7 +91,7 @@
 		                            <h2 class="no margins">{{ Auth::user()->u_username }}</h2>
 									<div class="row">
 										<button class="btn btn-sm btn-info" type="button" data-target="#change" data-toggle="modal">Ganti Password</button>
-										<button class="btn btn-sm btn-danger" type="button" id="btnResetPass">Reset Password</button>
+										<!-- <button class="btn btn-sm btn-danger" type="button" id="btnResetPass">Reset Password</button> -->
 									</div>
 		                        </div>
 		                    </div>
@@ -294,7 +298,11 @@
 							</div>
 							<div class="col-lg-9 col-md-8 col-sm-7 col-sm-12">
 								<div class="form-group">
-									<input type="text" readonly="" class="form-control form-control-sm" name="" value="{{ $detailUser->getCity->wc_name }}">
+									@if ($detailUser->getCity == null)
+										<input type="text" readonly="" class="form-control form-control-sm" name="" value="{{ $detailUser->getAgent->getArea->wc_name }}">
+									@else
+										<input type="text" readonly="" class="form-control form-control-sm" name="" value="{{ $detailUser->getCity->wc_name }}">
+									@endif
 								</div>
 							</div>
 						</div>
