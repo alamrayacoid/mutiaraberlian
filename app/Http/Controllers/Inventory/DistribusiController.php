@@ -410,7 +410,7 @@ class DistribusiController extends Controller
             if($jurnal['status'] == 'error'){
                 return json_encode($jurnal);
             }
-            
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
