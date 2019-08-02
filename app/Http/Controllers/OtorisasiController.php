@@ -1135,6 +1135,7 @@ class OtorisasiController extends Controller
 
     public function approvePromotion(Request $request)
     {
+
         $id = Crypt::decrypt($request->id);
         $realisasi = $request->realisasi;
 
@@ -1146,6 +1147,58 @@ class OtorisasiController extends Controller
                     'p_budgetrealization' => $realisasi,
                     'p_isapproved' => 'Y'
                 ]);
+
+            // Jurnal ------------------------------------------
+            $acc_promosi_beban = DB::table('dk_pembukuan_detail')
+                                    ->where('pd_pembukuan', function($query){
+                                        $query->select('pe_id')->from('dk_pembukuan')
+                                                    ->where('pe_nama', 'Pembayaran Promosi')
+                                                    ->where('pe_comp', Auth::user()->u_company)->first();
+                                    })->where('pd_nama', 'COA Beban Promosi')
+                                    ->first();
+            $acc_promosi_kas = DB::table('dk_pembukuan_detail')
+                                    ->where('pd_pembukuan', function($query){
+                                        $query->select('pe_id')->from('dk_pembukuan')
+                                                    ->where('pe_nama', 'Pembayaran Promosi')
+                                                    ->where('pe_comp', Auth::user()->u_company)->first();
+                                    })->where('pd_nama', 'COA Kas/Setara Kas')
+                                    ->first();
+
+            $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Pembayaran Promosi')
+                        ->where('pe_comp', Auth::user()->u_company)->first();
+            $details = [];
+
+            if(!$parrent || !$acc_promosi_beban || !$acc_promosi_kas){
+                return response()->json([
+                    'status' => 'Failed',
+                    'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                ]);
+            }
+
+            array_push($details, [
+                "jrdt_nomor"        => 1,
+                "jrdt_akun"         => $acc_promosi_beban->pd_acc,
+                "jrdt_value"        => $request->realisasi,
+                "jrdt_dk"           => "D",
+                "jrdt_keterangan"   => $acc_promosi_beban->pd_keterangan,
+                "jrdt_cashflow"     => $acc_promosi_beban->pd_cashflow
+            ]);
+
+            array_push($details, [
+                "jrdt_nomor"        => 2,
+                "jrdt_akun"         => $acc_promosi_kas->pd_acc,
+                "jrdt_value"        => $request->realisasi,
+                "jrdt_dk"           => "K",
+                "jrdt_keterangan"   => $acc_promosi_kas->pd_keterangan,
+                "jrdt_cashflow"     => $acc_promosi_kas->pd_cashflow
+            ]);
+            
+            $nota = DB::table('d_promotion')->where('p_id', $id)->first();
+            $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $nota->p_reff, $parrent->pe_nama, 'TK', Auth::user()->u_company);
+
+            if($jurnal['status'] == 'error'){
+                return json_encode($jurnal);
+            }
             DB::commit();
             return response()->json([
                 'status' => 'success'

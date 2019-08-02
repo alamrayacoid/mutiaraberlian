@@ -150,6 +150,22 @@
                 agen        = $('#agen');
                 cabang      = $('#cabang');
 
+                $("#c_prov").val('').trigger('change');
+                $("#c_kota").val('').trigger('change');
+                $("#c_kota").empty();
+                // $("#c_apb").val('').trigger('change');
+                // $("#c_apb").empty();
+                $("#c_cabang").val('').trigger('change');
+                $("#c_cabang").empty();
+
+                $("#a_prov").val('').trigger('change');
+                $("#a_kota").val('').trigger('change');
+                $("#a_kota").empty();
+                $("#a_apj").val('').trigger('change');
+                $("#a_apj").empty();
+                $("#a_apb").val('').trigger('change');
+                $("#a_apb").empty();
+
                 if (ini === '1') {
                     agen.removeClass('d-none');
                     cabang.addClass('d-none');
@@ -425,14 +441,14 @@
         }
 
         function getKotaCabang() {
-            $("#c_prov").on("change", function (evt) {
+            $("#c_prov").on("select2:select", function (evt) {
                 evt.preventDefault();
                 $("#c_kota").find('option').remove();
                 $("#c_kota").attr("disabled", true);
                 $("#c_idapb").val('');
                 $("#c_kodeapb").val('');
                 $("#c_compapb").val('');
-                $("#c_apb").val('');
+                $("#c_apb").val('').trigger('change');
                 $("#c_apb").find('option').remove();
                 $("#c_apb").attr("disabled", true);
                 visibleTableItemCabang();
@@ -459,7 +475,7 @@
                     $("#c_idapb").val('');
                     $("#c_kodeapb").val('');
                     $("#c_compapb").val('');
-                    $("#c_apb").val('');
+                    $("#c_apb").val('').trigger('change');
                     $("#c_apb").find('option').remove();
                     $("#c_apb").attr("disabled", true);
                     visibleTableItemCabang();
@@ -468,7 +484,7 @@
         }
 
         function getCabang() {
-            $("#c_apb").on("change", function (evt) {
+            $("#c_apb").on("select2:select", function (evt) {
                 evt.preventDefault();
                 $("#c_cabang").find('option').remove();
                 $("#c_cabang").attr("disabled", true);
@@ -495,12 +511,12 @@
         }
 
         function getPembeliCabang() {
-            $("#c_kota").on("change", function (evt) {
+            $("#c_kota").on("select2:select", function (evt) {
                 evt.preventDefault();
                 $("#c_idapb").val('');
                 $("#c_kodeapb").val('');
                 $("#c_compapb").val('');
-                $("#c_apb").val('');
+                $("#c_apb").val('').trigger('change');
                 $("#c_apb").find('option').remove();
                 $("#c_apb").attr("disabled", true);
                 visibleTableItemCabang();
@@ -528,7 +544,7 @@
                     $("#c_idapb").val('');
                     $("#c_kodeapb").val('');
                     $("#c_compapb").val('');
-                    $("#c_apb").val('');
+                    $("#c_apb").val('').trigger('change');
                     $("#c_apb").find('option').remove();
                     $("#c_apb").attr("disabled", true);
                     visibleTableItemCabang();
@@ -537,7 +553,7 @@
         }
 
         function changePembeliCabang() {
-            $("#c_apb").on("change", function (evt) {
+            $("#c_apb").on("select2:select", function (evt) {
                 evt.preventDefault();
                 var id  = $(this).val();
                 var kode = $(this).select2().find(":selected").data("code");
@@ -558,14 +574,14 @@
         }
 
         function changeCabang() {
-            $("#c_cabang").on("change", function (evt) {
+            $("#c_cabang").on("select2:select", function (evt) {
                 evt.preventDefault();
                 if ($(this).val() == "") {
                     $("#c_idapb").val('');
                     $("#c_kodeapb").val('');
                     $("#c_compapb").val('');
-                    $("#c_apb").val('');
-                    $('#c_apb').select2().trigger('change');
+                    $("#c_apb").val('').trigger('change');
+                    // $('#c_apb').select2().trigger('change');
                     visibleTableItemCabang();
                 } else {
                     visibleTableItemCabang();
@@ -876,10 +892,9 @@
             });
             updateTotalTampilCabang();
         }
-
         // end: functions for branch ===========
-        // start: functions for agents ===========
 
+        // start: functions for agents ===========
         function getProvAgen() {
             loadingShow();
             $("#a_prov").find('option').remove();
@@ -902,18 +917,18 @@
         }
 
         function getKotaAgen() {
-            $("#a_prov").on("change", function (evt) {
+            $("#a_prov").on("select2:select", function (evt) {
                 evt.preventDefault();
                 $("#a_kota").find('option').remove();
                 $("#a_kota").attr("disabled", true);
                 $("#a_idapj").val('');
                 $("#a_kodeapj").val('');
                 $("#a_compapj").val('');
-                $("#a_apj").val('');
+                $("#a_apj").val('').trigger('change');
                 $("#a_idapb").val('');
                 $("#a_kodeapb").val('');
                 $("#a_compapb").val('');
-                $("#a_apb").val('');
+                $("#a_apb").val('').trigger('change');
                 $("#a_apj").find('option').remove();
                 $("#a_apj").attr("disabled", true);
                 $("#a_apb").find('option').remove();
@@ -938,7 +953,8 @@
                             loadingHide();
                             messageWarning("Error", error)
                         })
-                } else if ($('#a_prov').val() == "") {
+                }
+                else if ($('#a_prov').val() == "") {
                     $("#a_idapj").val('');
                     $("#a_kodeapj").val('');
                     $("#a_compapj").val('');
@@ -957,7 +973,7 @@
         }
 
         function getAPJAgen() {
-            $("#a_kota").on("change", function (evt) {
+            $("#a_kota").on("select2:select", function (evt) {
                 evt.preventDefault();
                 $("#a_idapj").val('');
                 $("#a_kodeapj").val('');
@@ -993,7 +1009,8 @@
                             loadingHide();
                             messageWarning("Error", error)
                         })
-                } else if ($("#a_prov").val() == "" && $("#a_kota").val() == "") {
+                }
+                else if ($("#a_prov").val() == "" && $("#a_kota").val() == "") {
                     $("#a_idapj").val('');
                     $("#a_kodeapj").val('');
                     $("#a_compapj").val('');
@@ -1012,7 +1029,7 @@
         }
 
         function changeAPJAgen() {
-            $("#a_apj").on("change", function(evt){
+            $("#a_apj").on("select2:select", function(evt){
                 evt.preventDefault();
                 var id  = $(this).val();
                 var kode = $(this).select2().find(":selected").data("code");
@@ -1045,7 +1062,8 @@
                         .then(function () {
                             visibleTableItemAgen();
                         })
-                } else {
+                }
+                else {
                     $("#a_idapj").val('');
                     $("#a_kodeapj").val('');
                     $("#a_compapj").val('');
@@ -1057,7 +1075,7 @@
         }
 
         function changeAPBAgen() {
-            $("#a_apb").on("change", function(evt){
+            $("#a_apb").on("select2:select", function(evt){
                 evt.preventDefault();
                 var id  = $(this).val();
                 var kode = $(this).select2().find(":selected").data("code");

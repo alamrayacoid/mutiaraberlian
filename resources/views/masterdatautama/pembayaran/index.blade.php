@@ -104,6 +104,7 @@
             let nama = $('#nama').val();
             let akun = $('#akun').val();
             let note = $('#note').val();
+            let comp = $('#comp').val();
 
             if (nama == '' || akun == '' || note == '' || nama == null || akun == null){
                 loadingHide();
@@ -114,6 +115,7 @@
                 "nama": nama,
                 "akun": akun,
                 "note": note,
+                "comp": comp,
                 "_token": '{{ csrf_token() }}'
             }).then(function (response) {
                 loadingHide();

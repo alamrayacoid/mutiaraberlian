@@ -43,7 +43,7 @@ Route::get('/recruitment/isduplicated/{field}/{value}', 'RecruitmentController@i
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('logout', [
+    Route::post('logout', [
         'uses' => 'AuthController@logout',
         'as' => 'auth.logout'
     ]);
@@ -638,6 +638,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/returnpenjualan/get-price', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getPrice')->name('mmareturn.getPrice');
     Route::get('/marketing/marketingarea/returnpenjualan/get-data', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@getData')->name('mmareturn.getData');
     Route::post('/marketing/marketingarea/returnpenjualan/store', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@store')->name('mmareturn.store');
+    Route::get('/marketing/marketingarea/returnpenjualan/detail/{id}', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@detail')->name('mmareturn.detail');
     Route::post('/marketing/marketingarea/returnpenjualan/delete/{id}', 'Aktivitasmarketing\Marketingarea\ReturnPenjualanController@delete')->name('mmareturn.delete');
 
     // End: MMA Return Penjualan ===================================================================================
@@ -791,6 +792,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Profile
     Route::get('/profile', 'ProfileController@profile')->name('profile');
+    Route::post('/profile/update-photo', 'ProfileController@updatePhoto')->name('profile.updatePhoto');
+    Route::post('/profile/update-password', 'ProfileController@updatePassword')->name('profile.updatePassword');
 
     //Get ototitasi
     Route::get('/getoto', 'getotorisasiController@get');

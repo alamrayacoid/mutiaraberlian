@@ -50,6 +50,7 @@
     @include('marketing.marketingarea.orderproduk.modal')
     @include('marketing.marketingarea.penerimaanpiutang.modal.detail')
     @include('marketing.marketingarea.penerimaanpiutang.modal.bayar')
+    @include('marketing.marketingarea.returnpenjualan.modal-detail')
 
     <article class="content animated fadeInLeft">
         <div class="title-block text-primary">
@@ -1161,6 +1162,7 @@
                 url: "{{ route('marketingarea.getPaymentMethod') }}",
                 type: "get",
                 success:function(resp) {
+                    console.log(resp);
                     $('#paymentMethod').empty();
                     // $('#paymentMethod').append('<option value="" selected disabled>== Pilih Metode Pembayaran ==</option>');
                     $.each(resp.data, function(key, val){
@@ -2686,6 +2688,46 @@
                     lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
                 });
             }, 750);
+        }
+
+        function detailReturn(id) {
+            loadingShow();
+            $.ajax({
+                url: baseUrl+ "/marketing/marketingarea/returnpenjualan/detail/" + id,
+                type: 'get',
+                success: function(resp) {
+                    loadingHide();
+                    console.log(resp);
+                    $('#detailReturn .agentNameDt').val(resp.data.get_member.c_name);
+                    $('#detailReturn .notaReturnDt').val(resp.data.r_nota);
+                    $('#detailReturn .notaSalesDt').val(resp.data.r_reff);
+                    $('#detailReturn .itemNameDt').val(resp.data.get_item.i_name);
+                    $('#detailReturn .prodCodeDt').val(resp.data.r_code);
+                    $('#detailReturn .qtyReturnDt').val(resp.data.r_qty);
+                    $('#detailReturn .totalReturnDt').val(parseInt(resp.sellPrice) * parseInt(resp.data.r_qty));
+                    $('#detailReturn .typeDt').val(resp.data.r_type);
+
+                    if (resp.data.r_type == 'Ganti Barang') {
+                        $('#detailReturn .table_gantibarangdt').removeClass('d-none');
+                        $('#detailReturn .table_gantibarangdt > tbody').empty();
+                        $.each(resp.data.get_return_dt, function (idx, val) {
+                            let nama = '<td><input type="text" class="form-control form-control-sm" value="'+ val.get_item.i_name +'" readonly></td>';
+                            let satuan = '<td><input type="text" class="form-control form-control-sm" value="'+ val.get_unit.u_name +'" readonly></td>';
+                            let jumlah = '<td><input type="text" class="form-control form-control-sm" value="'+ val.rd_qty +'" readonly></td>';
+                            let apd = '<tr>'+ nama + satuan + jumlah +'</tr>'
+                            $('#detailReturn .table_gantibarangdt > tbody').append(apd);
+                        });
+                    }
+                    else {
+                        $('#detailReturn .table_gantibarangdt').addClass('d-none');
+                    }
+                    $('#detailReturn').modal('show');
+                },
+                error: function(e) {
+                    loadingHide();
+                    messageWarning('Gagal', 'Terjad kesalahan : '+ e.message);
+                }
+            });
         }
 
         function deleteReturn(id) {

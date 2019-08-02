@@ -52,10 +52,13 @@ class MarketingAreaController extends Controller
         $provinsi = DB::table('m_wil_provinsi')->select('m_wil_provinsi.*')->orderBy('wp_name', 'asc')->get();
         $city = DB::table('m_wil_kota')->select('m_wil_kota.*')->orderBy('wc_name', 'asc')->get();
         $user = Auth::user();
+        $company = DB::table('m_company')
+            ->where('c_id', '=', $user->u_company)
+            ->first();
         $start = new Carbon('first day of this month');
         $end = new Carbon('last day of this month');
 
-        return view('marketing/marketingarea/index', compact('provinsi', 'city', 'user', 'start', 'end'));
+        return view('marketing/marketingarea/index', compact('provinsi', 'city', 'user', 'start', 'end', 'company'));
     }
 
 
@@ -918,8 +921,8 @@ class MarketingAreaController extends Controller
         }
         if (Auth::user()->getCompany->c_type == "AGEN"){
             $data_agen->where(function ($q){
-                $q->orWhere('po_comp', '=', Auth::user()->u_company);
-                $q->orWhere('po_agen', '=', Auth::user()->u_company);
+                $q->where('po_comp', '=', Auth::user()->u_company);
+                // $q->orWhere('po_agen', '=', Auth::user()->u_company);
             });
         }
 
@@ -994,7 +997,14 @@ class MarketingAreaController extends Controller
 
         return DataTables::of($data)
             ->editColumn('pod_price', function ($data){
-                return "<span class='modaldtharga-".$data->pod_item."'>Rp. " . number_format($data->pod_price, "0", ",", ".") . "</span><input type='hidden' value='".$data->pod_price."' class='input-modaldtharga".$data->pod_item."'>";
+                if ($data->pod_unit == $data->i_unit1) {
+                    $pricePerItem = (float)$data->pod_price;
+                }
+                else {
+                    $pricePerItem = (float)$data->pod_price / (float)$data->pod_qty;
+                }
+                return "<span class='modaldtharga-".$data->pod_item."'>Rp. " . number_format($pricePerItem, "0", ",", ".") . "</span><input type='hidden' value='".$pricePerItem."' class='input-modaldtharga".$data->pod_item."'>";
+                // return "<span class='modaldtharga-".$data->pod_item."'>Rp. " . number_format($data->pod_price, "0", ",", ".") . "</span><input type='hidden' value='".$data->pod_price."' class='input-modaldtharga".$data->pod_item."'>";
             })
             ->editColumn('pod_totalprice', function ($data){
                 return "<span class='modaldtsubharga-".$data->pod_item."'>Rp. " . number_format($data->pod_totalprice, "0", ",", ".") . "</span><input type='hidden' value='".$data->pod_totalprice."' name='subtotalmodaldt[]' class='subtotalmodaldt input-modaldtsubharga".$data->pod_item."'>";
@@ -1893,9 +1903,9 @@ class MarketingAreaController extends Controller
                 ->with('getAkun')
                 ->get();
         } else {
-            $data = DB::table('dk_akun')
-                ->where('ak_comp', '=', $user->c_id)
-                ->where('ak_posisi', '=', 'D')
+            $data = m_paymentmethod::where('pm_isactive', 'Y')
+                ->with('getAkun')
+                ->where('pm_comp', '=', $user->c_id)
                 ->get();
 
             if (count($data) < 1) {
@@ -1919,9 +1929,9 @@ class MarketingAreaController extends Controller
                     ]);
             }
 
-            $data = DB::table('dk_akun')
-                ->where('ak_comp', '=', $user->c_id)
-                ->where('ak_posisi', '=', 'D')
+            $data = m_paymentmethod::where('pm_isactive', 'Y')
+                ->with('getAkun')
+                ->where('pm_comp', '=', $user->c_id)
                 ->get();
         }
 

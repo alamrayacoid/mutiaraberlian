@@ -487,7 +487,7 @@ class PenerimaanProduksiController extends Controller
                 ->where('ir_notapo', '=', $data_check->nota);
 
             // set date received
-            $receiveDate = Carbon::parse($request->receiveDate);
+            $receiveDate = Carbon::createFromFormat('d-m-Y', $request->receiveDate);
             if ($nota_receipt->count() > 0) {
                 $detail_receipt = (DB::table('d_itemreceiptdt')->where('ird_itemreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) ? (DB::table('d_itemreceiptdt')->where('ird_itemreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) + 1 : 1;
 

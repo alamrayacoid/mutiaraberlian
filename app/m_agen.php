@@ -61,6 +61,8 @@ class m_agen extends Model
 {
     protected $table       = 'm_agen';
     protected $primaryKey  = 'a_id';
+    const CREATED_AT = 'a_insert';
+    const UPDATED_AT = 'a_update';
 
     public function username()
     {
