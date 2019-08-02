@@ -33,7 +33,7 @@
                         <div class="col-12" align="center">
                           <div class="form-group">
                             @if($employee->e_foto != null)
-                            <img src="{{asset('assets/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" id="img-preview" style="cursor: pointer;max-height: 254px;max-width: 100%;">
+                            <img src="{{ asset('storage/app/'.$employee->e_foto) }}" class="img-thumbnail" id="img-preview" style="cursor: pointer;max-height: 254px;max-width: 100%;">
                             @else
                             <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" id="img-preview" style="cursor: pointer;max-height: 254px;max-width: 100%;">
                             @endif
@@ -355,7 +355,8 @@
         if(response.status == 'sukses'){
           loadingHide();
           messageSuccess('Success', 'Data berhasil diperbarui!');
-          window.location.href = "{{route('pegawai.index')}}";
+          // window.location.href = "{{route('pegawai.index')}}";
+          location.reload();
         } else if (response.status == 'invalid') {
           loadingHide();
           messageWarning('Perhatian', response.message);

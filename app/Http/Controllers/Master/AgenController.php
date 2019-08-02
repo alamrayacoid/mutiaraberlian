@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 
 use carbon\Carbon;
@@ -453,7 +454,10 @@ class AgenController extends Controller
                 //     'photo'
                 // );
 
-                $imageName = $agentCode . '-photo';
+                $imageName = $agentCode->a_code . '-photo';
+                // delete current photo
+                Storage::delete('Agents/'.$imageName);
+                // insert new photo
                 $photo = $request->file('photo')->storeAs('Agents', $imageName);
             } else {
                 $photo = $request->current_photo;

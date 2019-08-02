@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
 use App\m_company;
 use Auth;
 use Carbon\Carbon;
@@ -20,7 +22,6 @@ class ProfileController extends Controller
         ->with('getEmployee')
         ->first();
 
-        // dd($detailUser);
         if (Auth::user()->u_user == 'E') {
             if (!is_null($detailUser->getEmployee)) {
                 $birthDate = Carbon::parse($detailUser->getEmployee->e_birth)->format('d M Y');
@@ -43,6 +44,9 @@ class ProfileController extends Controller
             if (Auth::user()->u_user == 'E') {
                 $employee = m_employee::where('e_id', Auth::user()->u_code)->first();
                 $imageName = $employee->e_id . '-photo';
+                // delete current photo
+                Storage::delete('Employees/'.$imageName);
+                // insert new photo
                 $photo = $request->file('photo')->storeAs('Employees', $imageName);
                 $employee->e_foto = $photo;
                 $employee->save();
@@ -50,11 +54,14 @@ class ProfileController extends Controller
             elseif (Auth::user()->u_user == 'A') {
                 $agent = m_agen::where('a_code', Auth::user()->u_code)->first();
                 $imageName = $agent->a_code . '-photo';
+                // delete current photo
+                Storage::delete('Agents/'.$imageName);
+                // insert new photo
                 $photo = $request->file('photo')->storeAs('Agents', $imageName);
                 $agent->a_img = $photo;
                 $agent->save();
             }
-
+            
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
