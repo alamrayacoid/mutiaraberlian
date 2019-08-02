@@ -715,6 +715,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/agen/konsinyasi/check-items-stock-old', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@checkItemStockDKOld')->name('konsinyasiAgen.checkItemStockDKOld');
     Route::get('/marketing/agen/konsinyasi/check-harga', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@checkHargaDK')->name('konsinyasiAgen.checkHargaDK');
     Route::post('/marketing/agen/konsinyasi/store', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@storeDK')->name('konsinyasiAgen.storeDK');
+    Route::get('/marketing/agen/konsinyasi/index', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@index')->name('konsinyasiAgen.index');
+    Route::get('/marketing/agen/konsinyasi/get-list', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getListDK')->name('konsinyasiAgen.getListDK');
 
     Route::get('/marketing/agen/konsinyasi/pembayaran', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@bayar')->name('konsinyasiAgen.bayar');
     Route::get('/marketing/agen/konsinyasi/get-data-pembayaran', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getData')->name('konsinyasiAgen.getData');

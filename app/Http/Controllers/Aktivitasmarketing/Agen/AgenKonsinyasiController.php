@@ -26,6 +26,57 @@ use DataTables;
 
 class AgenKonsinyasiController extends Controller
 {
+    public function index()
+    {
+        return view('marketing.agen.datakonsinyasi.index');
+    }
+
+    // index -> read data and display to table
+    public function getListDK(Request $request)
+    {
+        $branchCode = $request->branchCode;
+
+        $datas = d_salescomp::where('sc_type', '=', 'K');
+
+        // if pusat is logged in
+        if (Auth::user()->getCompany->c_type == 'PUSAT') {
+            // add filter which branch wil be shown
+            $datas = $datas->where('sc_comp', $branchCode);
+        } // if branch is logged in
+        else {
+            // show konsinyasi that is made by him
+            $datas = $datas->where('sc_comp', Auth::user()->u_company)
+                ->where('sc_comp', '!=', 'MB0000001');
+        }
+        $datas = $datas
+            ->where('sc_paidoff', 'N')
+            ->with('getSalesCompDt')
+            ->with('getAgent')
+            ->orderBy('sc_date', 'desc')
+            ->get();
+
+        return Datatables::of($datas)
+            ->addIndexColumn()
+            ->addColumn('date', function ($datas) {
+                return Carbon::parse($datas->sc_date)->format('d-m-Y');
+            })
+            ->addColumn('agent', function ($datas) {
+                return $datas->getAgent->c_name;
+            })
+            ->addColumn('total', function ($datas) {
+                return '<div class="text-right">Rp ' . number_format($datas->sc_total, 0, 0, '.') . '</div>';
+            })
+            ->addColumn('action', function ($datas) {
+                return '<div class="btn-group btn-group-sm">
+                    <button class="btn btn-warning btn-edit-kons" type="button" title="Edit" onclick="editDK(' . $datas->sc_id . ')"><i class="fa fa-pencil"></i></button>
+                    <button class="btn btn-danger btn-delete-kons" type="button" title="Delete" onclick="deleteDK(' . $datas->sc_id . ')"><i class="fa fa-trash"></i></button>
+                </div>';
+            })
+            ->rawColumns(['date', 'action', 'agent', 'total'])
+            ->make(true);
+    }
+
+
     public function getProv()
     {
         $prov = m_wil_provinsi::orderBy('wp_name', 'asc')->get();
@@ -234,10 +285,13 @@ class AgenKonsinyasiController extends Controller
     public function checkHargaDK(Request $request)
     {
         $agent = $request->agentCode;
+        if (is_null($agent)) {
+            throw new \Exception("Silahkan pilih konsigner terlebih dahulu !", 1);
+        }
         $item = $request->itemId;
         $unit = $request->unit;
         $qty = $request->qty;
-        // dd($request->all());
+
         $type = m_agen::whereHas('getCompany', function ($q) use ($agent) {
             $q->where('c_id', '=', $agent);
         })
