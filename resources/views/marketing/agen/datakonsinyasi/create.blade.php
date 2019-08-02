@@ -28,12 +28,12 @@
                         </div> -->
 
                         <div class="col-md-2 col-sm-6 col-xs-12">
-                            <label>Cabang</label>
+                            <label>Agen</label>
                         </div>
                         <div class="col-md-10 col-sm-12">
                             <div class="form-group">
                                 <input type="hidden" class="form-control corm-control-sm" name="branchCode" id="branchCode" value="{{ $info->c_id }}">
-                                <input type="text" class="form-control corm-control-sm" value="{{ $info->c_name }}">
+                                <input type="text" class="form-control corm-control-sm" value="{{ $info->c_name }}" readonly disabled>
                                 <!-- <select class="form-control select2" name="branch" id="branch" disabled></select> -->
                             </div>
                         </div>
@@ -135,6 +135,10 @@
                     </div>
                 </form>
             </section>
+        </div>
+
+        <div class="card-footer text-right">
+            <button class="btn btn-primary btn-simpan-konsinyasi" type="button">Simpan</button>
         </div>
     </div>
 </div>

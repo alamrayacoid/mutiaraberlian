@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Aktivitasmarketing\Agen;
 
+use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -11,6 +12,8 @@ use Currency;
 use CodeGenerator;
 use DB;
 use App\d_stock;
+use App\d_salescomp;
+use App\d_salescompcode;
 use App\m_agen;
 use App\m_company;
 use App\m_item;
@@ -62,7 +65,7 @@ class AgenKonsinyasiController extends Controller
         $nama = m_agen::where('a_parent', $agent->getAgent->a_code)
         ->with('getCompany')
         ->get();
-        
+
         return response()->json($nama);
     }
     // get items
@@ -231,7 +234,7 @@ class AgenKonsinyasiController extends Controller
         $item = $request->itemId;
         $unit = $request->unit;
         $qty = $request->qty;
-
+        // dd($request->all());
         $type = m_agen::whereHas('getCompany', function ($q) use ($agent) {
             $q->where('c_id', '=', $agent);
         })
@@ -279,7 +282,7 @@ class AgenKonsinyasiController extends Controller
     // store
     public function storeDK(Request $request)
     {
-        if (!AksesUser::checkAkses(22, 'create')) {
+        if (!AksesUser::checkAkses(23, 'create')) {
             return response()->json([
                 'status' => "Failed",
                 'message' => "Anda tidak memiliki akses ke menu ini !"
@@ -493,6 +496,38 @@ class AgenKonsinyasiController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    function existsInArray($entry, $array)
+    {
+        $x = false;
+        foreach ($array as $compare) {
+            if ($compare->pcd_type == $entry) {
+                $x = true;
+            }
+        }
+        return $x;
+    }
+    function inRange($value, $array)
+    {
+        // in_array($request->rangestartedit, range($val->pcad_rangeqtystart, $val->pcad_rangeqtyend));
+        $idx = null;
+        foreach ($array as $key => $val) {
+            if ($value <= $val->pcd_rangeqtystart && $val->pcd_rangeqtyend == 0) {
+                $val->pcd_rangeqtyend = $val->pcd_rangeqtystart + $value + 2;
+            }
+
+            if ($val->pcd_rangeqtyend == 0) {
+                $val->pcd_rangeqtyend = $value + $val->pcd_rangeqtyend + 2;
+            }
+
+            $x = in_array($value, range($val->pcd_rangeqtystart, $val->pcd_rangeqtyend));
+            if ($x == true) {
+                $idx = $key;
+                break;
+            }
+        }
+        return $idx;
     }
 
 

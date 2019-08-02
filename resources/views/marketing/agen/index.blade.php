@@ -2237,10 +2237,10 @@
         //     }
         //     visibleTableItem();
         // });
-        // // on selectagent
-        // $('#agent').on('select2:select', function () {
-        //     $('#agentCode').val($(this).find('option:selected').val());
-        // });
+        // on selectagent
+        $('#agent').on('select2:select', function () {
+            $('#agentCode').val($(this).find('option:selected').val());
+        });
 
         $('.btnRemoveItem').on('click', function () {
             // get index of clicked element and delete a production-code-modal
@@ -2291,7 +2291,7 @@
             return checkitem;
         }
 
-        $(document).on('click', '.btn-submit', function (evt) {
+        $(document).on('click', '.btn-simpan-konsinyasi', function (evt) {
             evt.preventDefault();
             if (checkForm() == "cek form") {
                 messageWarning('Peringatan', 'Lengkapi data penempatan produk');
@@ -2550,7 +2550,6 @@
                     $('#agent').find('option').remove();
                     $('#agent').append('<option value="" selected>Pilih Agen</option>')
                     $.each(data, function (index, val) {
-                        console.log(val);
                         $('#agent').append('<option value="' + val.get_company.c_id + '">' + val.a_name + ' (' + val.a_address + ')</option>');
                     })
                     loadingHide();
@@ -2888,12 +2887,12 @@
     function visibleTableItem() {
         if ($("#provinsi").val() != "" && $("#kota").val() != "" && $("#branchCode").val() != "") {
             $("#tbl_item").show('slow');
-            $(".btn-submit").attr("disabled", false);
-            $(".btn-submit").css({"cursor": "pointer"});
+            $(".btn-simpan-konsinyasi").attr("disabled", false);
+            $(".btn-simpan-konsinyasi").css({"cursor": "pointer"});
         } else {
             $("#tbl_item").hide('slow');
-            $(".btn-submit").attr("disabled", true);
-            $(".btn-submit").css({"cursor": "not-allowed"});
+            $(".btn-simpan-konsinyasi").attr("disabled", true);
+            $(".btn-simpan-konsinyasi").css({"cursor": "not-allowed"});
         }
     }
 
