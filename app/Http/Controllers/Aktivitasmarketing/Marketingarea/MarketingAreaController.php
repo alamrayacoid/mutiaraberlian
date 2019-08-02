@@ -1050,8 +1050,8 @@ class MarketingAreaController extends Controller
                 $q->on('poc_item', '=', 'pod_item');
             })
             ->select('poc_code', 'poc_qty', 'po_id', 'pod_item')
-            // ->where('po_id', '=', $po_id)
-            // ->where('pod_item', '=', $item)
+             ->where('po_id', '=', $po_id)
+             ->where('pod_item', '=', $item)
             ->get();
         // return json_encode($data);
         return DataTables::of($data)
