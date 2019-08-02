@@ -561,11 +561,11 @@ class Mutasi extends Controller
 
             // set mutation record
             for ($j = 0; $j < count($stock); $j++) {
+
                 $continueLoopStock = false;
                 $detailid = DB::table('d_stock_mutation')
                         ->where('sm_stock', $stock[$j]->sm_stock)
                         ->max('sm_detailid') + 1;
-
                 // insert new stock mutation
                 if ($permintaan > $stock[$j]->sm_sisa && $permintaan != 0) {
                     // use all qty from current stock-mutation
@@ -611,6 +611,7 @@ class Mutasi extends Controller
                     'sm_residue' => 0,
                     'sm_hpp' => $stock[$j]->sm_hpp,
                 ];
+
                 if (!is_null($sellPrice)) {
                     $val_stockmut += [
                         'sm_sell' => $sellPrice,
@@ -660,7 +661,7 @@ class Mutasi extends Controller
                 if (count($stockId) < 1) {
                     // insert new stock-item
                     $stockId = d_stock::max('s_id') + 1;
-                    $stock = array(
+                    $Insertstock = array(
                         's_id' => $stockId,
                         's_comp' => $comp,
                         's_position' => $position,
@@ -671,7 +672,7 @@ class Mutasi extends Controller
                         's_created_at' => $dateNow,
                         's_updated_at' => $dateNow
                     );
-                    d_stock::insert($stock);
+                    d_stock::insert($Insertstock);
                     // detail id for stock-mutation
                     $smDetailId = 1;
                 }
