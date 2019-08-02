@@ -10,31 +10,35 @@
       </div>
       <div class="section">
       <div class="container">
-          <div class="row">
-                <div class="col-lg-4 col-sm-4 mt-3">
-                    <label for="">Password Lama</label>
-                </div>
-                <div class="col-8 mb-3 mt-3">
-                    <input type="text" class="form-control form-control-sm">
-                </div>
-                <div class="col-lg-4 col-sm-4">
-                    <label for="">Password Baru</label>
-                </div>
-                <div class="col-8 mb-3">
-                    <input type="text" class="form-control form-control-sm">
-                </div>
-                <div class="col-lg-4 col-sm-4">
-                    <label for="">Konfirmasi Password Baru</label>
-                </div>
-                <div class="col-8">
-                    <input type="text" class="form-control form-control-sm">
-                </div>
-          </div>
+          <form class="formUpdatePass">
+              <div class="row">
+                  <div class="col-lg-4 col-sm-4 mt-3">
+                      <label for="">Password Lama</label>
+                  </div>
+                  <div class="col-8 mb-3 mt-3">
+                      <input type="password" class="form-control form-control-sm" name="oldPassword">
+                  </div>
+
+                  <div class="col-lg-4 col-sm-4">
+                      <label for="">Password Baru</label>
+                  </div>
+                  <div class="col-8 mb-3">
+                      <input type="password" class="form-control form-control-sm" name="newPassword">
+                  </div>
+
+                  <div class="col-lg-4 col-sm-4">
+                      <label for="">Konfirmasi Password Baru</label>
+                  </div>
+                  <div class="col-8">
+                      <input type="password" class="form-control form-control-sm" name="newPasswordConfirm">
+                  </div>
+              </div>
+          </form>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Simpan</button>
+        <button type="button" class="btn btn-primary" id="btn_simpanpassword">Simpan</button>
       </div>
     </div>
 

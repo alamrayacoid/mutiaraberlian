@@ -20,12 +20,18 @@ class ProfileController extends Controller
         ->with('getEmployee')
         ->first();
 
+        // dd($detailUser);
         if (Auth::user()->u_user == 'E') {
-            $birthDate = Carbon::parse($detailUser->getEmployee->e_birth)->format('d M Y');
+            if (!is_null($detailUser->getEmployee)) {
+                $birthDate = Carbon::parse($detailUser->getEmployee->e_birth)->format('d M Y');
+            }
         } elseif (Auth::user()->u_user == 'A') {
-            $birthDate = Carbon::parse($detailUser->getAgent->a_birthday)->format('d M Y');
+            if (!is_null($detailUser->getAgent)) {
+                $birthDate = Carbon::parse($detailUser->getAgent->a_birthday)->format('d M Y');
+            }
         }
         $detailUser->birthday = $birthDate;
+
 
     	return view('profile.profile', compact('detailUser'));
     }
@@ -58,6 +64,45 @@ class ProfileController extends Controller
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function updatePassword(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            // $id = decrypt($request->id);
+            $id = Auth::user()->u_id;
+            $cek = DB::table('d_username')->where('u_id', $id)->first();
+            if (sha1(md5('islamjaya') . $request->oldPassword) == $cek->u_password) {
+                if ($request->newPassword == $request->newPasswordConfirm) {
+                    DB::table('d_username')->where('u_id', $id)->update([
+                        'u_password' => sha1(md5('islamjaya') . $request->newPassword)
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => 'failed',
+                        'message' => 'Password confirmasi tidak sama dengan password baru!'
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Password lama salah!'
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'status' => 'success'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'error',
                 'message' => $e->getMessage()
             ]);
         }

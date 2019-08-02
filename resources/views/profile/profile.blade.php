@@ -336,6 +336,10 @@
 		$('#update-gambar').on('click', function() {
 			updatePhoto();
 		});
+
+		$('#btn_simpanpassword').on('click', function() {
+			updatePassword();
+		});
 	});
 
 	function updatePhoto() {
@@ -366,6 +370,30 @@
 			error: function(e) {
 				loadingHide();
 				messageWarning('Gagal', 'Photo gagal diubah, hubungi pengembang !');
+			}
+		});
+	}
+
+	function updatePassword() {
+		let formData = $('.formUpdatePass').serialize();
+		loadingShow();
+		$.ajax({
+			url: "{{ route('profile.updatePassword') }}",
+			data: formData,
+			type: 'post',
+			success: function(resp) {
+				loadingHide();
+				if (resp.status == 'success') {
+					messageSuccess('Berhasil', 'Password berhasil di perbarui !');
+					$('#change').modal('hide');
+				}
+				else if (resp.status == 'failed') {
+					messageFailed('Gagal', resp.message);
+				}
+			},
+			error: function(e) {
+				loadingHide();
+				messageWarning('Error', 'Terjadi kesalahan, hubungi pengembang !');
 			}
 		});
 	}
