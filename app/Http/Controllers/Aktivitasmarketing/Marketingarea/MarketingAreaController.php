@@ -1044,9 +1044,10 @@ class MarketingAreaController extends Controller
 
     public function getCodeOrder(Request $request)
     {
+
         $po_id = $request->id;
         $item = $request->item;
-
+        // return json_encode($item);
         $data = DB::table('d_productorder')
             ->join('d_productorderdt', 'po_id', '=', 'pod_productorder')
             ->join('d_productordercode', function ($q){
@@ -1054,10 +1055,10 @@ class MarketingAreaController extends Controller
                 $q->on('poc_item', '=', 'pod_item');
             })
             ->select('poc_code', 'poc_qty', 'po_id', 'pod_item')
-            ->where('po_id', '=', $po_id)
-            ->where('pod_item', '=', $item)
+            // ->where('po_id', '=', $po_id)
+            // ->where('pod_item', '=', $item)
             ->get();
-
+        return json_encode($data);
         return DataTables::of($data)
             ->editColumn('poc_qty', function ($data) {
                 return '<div class="qty-prod-code">'. $data->poc_qty .'</div>';
