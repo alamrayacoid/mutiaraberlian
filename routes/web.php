@@ -794,6 +794,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/profile', 'ProfileController@profile')->name('profile');
     Route::post('/profile/update-photo', 'ProfileController@updatePhoto')->name('profile.updatePhoto');
     Route::post('/profile/update-password', 'ProfileController@updatePassword')->name('profile.updatePassword');
+    Route::post('/profile/reset-password', 'ProfileController@resetPassword')->name('profile.resetPassword');
 
     //Get ototitasi
     Route::get('/getoto', 'getotorisasiController@get');

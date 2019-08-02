@@ -113,6 +113,47 @@ class ProfileController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
-
     }
+
+    public function resetPassword()
+    {
+        DB::beginTransaction();
+        try {
+            $id = Auth::user()->u_id;
+            $defaultPassword = '123456';
+
+            DB::table('d_username')->where('u_id', $id)->update([
+                'u_password' => sha1(md5('islamjaya') . $defaultPassword)
+            ]);
+            //
+            // $cek = DB::table('d_username')->where('u_id', $id)->first();
+            // if (sha1(md5('islamjaya') . $request->oldPassword) == $cek->u_password) {
+            //     if ($request->newPassword == $request->newPasswordConfirm) {
+            //     } else {
+            //         return response()->json([
+            //             'status' => 'failed',
+            //             'message' => 'Password confirmasi tidak sama dengan password baru!'
+            //         ]);
+            //     }
+            // } else {
+            //     return response()->json([
+            //         'status' => 'failed',
+            //         'message' => 'Password lama salah!'
+            //     ]);
+            // }
+
+            DB::commit();
+            return response()->json([
+                'status' => 'success'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
 }

@@ -1204,7 +1204,12 @@ class MarketingAreaController extends Controller
                     array_push($listPC, $val->poc_code);
                     array_push($listQtyPC, $val->poc_qty);
                 }
-
+                // if ($key == 0) {
+                //     // code...
+                // }
+                dd($listPC);
+                dd($listQtyPC);
+                dd('x');
                 // validate sum-qty of production-code
                 $sumQtyPC = array_sum($listQtyPC);
                 if ($sumQtyPC != $PO->pod_qty) {
@@ -1259,8 +1264,10 @@ class MarketingAreaController extends Controller
                 if ($mutationIn->original['status'] !== 'success') {
                     return $mutationIn;
                 }
+                var_dump($mutationOut->original['status']);
+                var_dump($mutationIn->original['status']);
             }
-
+            dd('x');
             // update send-status and approval-status in d_productorder
             DB::table('d_productorder')
                 ->where('po_id', $id)

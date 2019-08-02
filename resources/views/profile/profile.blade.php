@@ -85,7 +85,10 @@
 		                        <div class="col-md-3">
 		                            <label for="">Username</label>
 		                            <h2 class="no margins">{{ Auth::user()->u_username }}</h2>
-		                            <button class="btn btn-info" type="button" data-target="#change" data-toggle="modal">Ganti Password</button>
+									<div class="row">
+										<button class="btn btn-sm btn-info" type="button" data-target="#change" data-toggle="modal">Ganti Password</button>
+										<button class="btn btn-sm btn-danger" type="button" id="btnResetPass">Reset Password</button>
+									</div>
 		                        </div>
 		                    </div>
                         </section>
@@ -340,6 +343,10 @@
 		$('#btn_simpanpassword').on('click', function() {
 			updatePassword();
 		});
+
+		$('#btnResetPass').on('click', function() {
+			resetPassword();
+		});
 	});
 
 	function updatePhoto() {
@@ -396,6 +403,51 @@
 				messageWarning('Error', 'Terjadi kesalahan, hubungi pengembang !');
 			}
 		});
+	}
+
+	function resetPassword() {
+		$.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menonaktifkan data ini ?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function() {
+						loadingShow();
+                        return $.ajax({
+							url: "{{ route('profile.resetPassword') }}",
+							type: 'post',
+							success: function(resp) {
+								loadingHide();
+								if (resp.status == 'success') {
+									messageSuccess('Berhasil', 'Password berhasil di reset !');
+									$('#change').modal('hide');
+								}
+								else if (resp.status == 'failed') {
+									messageFailed('Gagal', resp.message);
+								}
+							},
+							error: function(e) {
+								loadingHide();
+								messageWarning('Error', 'Terjadi kesalahan, hubungi pengembang !');
+							}
+						});
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function() {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
 	}
 </script>
 @endsection
