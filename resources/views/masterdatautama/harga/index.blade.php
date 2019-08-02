@@ -881,6 +881,10 @@
             $.ajax({
                 url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
                 type: 'GET',
+                data: {
+                    "id": id,
+                    "detail": detail
+                },
                 success: function( resp ) {
                     var option = '';
                     if (resp.id1 == satuan) {
@@ -920,9 +924,14 @@
             $("#satuanBarangRangeEdit").find('option').remove();
             $.ajax({
                 url: '{{ url('/masterdatautama/harga/get-satuan/') }}'+'/'+item,
+                data: {
+                    "id": id,
+                    "detail": detail
+                },
                 type: 'GET',
                 success: function( resp ) {
                     var option = '';
+                    console.log(resp, satuan);
                     if (resp.id1 == satuan) {
                         option += '<option value="'+resp.id1+'" selected>'+resp.unit1+'</option>';
                     } else {

@@ -538,8 +538,17 @@ class HargaController extends Controller
         return Response::json($results);
     }
 
-    public function getSatuan($id)
+    public function getSatuan($id, Request $request)
     {
+        $pc_id = Crypt::decrypt($request->id);
+        $detailid = Crypt::decrypt($request->detail);
+
+        $info = DB::table('m_priceclass')
+            ->join('m_priceclassdt', 'pc_id', '=', 'pcd_classprice')
+            ->where('pc_id', '=', $pc_id)
+            ->where('pcd_detailid', '=', $detailid)
+            ->first();
+
         $data = DB::table('m_item')
             ->select('m_item.*', 'a.u_id as id1', 'a.u_name as unit1', 'b.u_id as id2', 'b.u_name as unit2', 'c.u_id as id3', 'c.u_name as unit3')
             ->where('m_item.i_id', '=', $id)
@@ -553,6 +562,9 @@ class HargaController extends Controller
                 $z->on('m_item.i_unit3', '=', 'c.u_id');
             })
             ->first();
+
+        $data->satuan = $info->pcd_unit;
+
         return Response::json($data);
     }
 
