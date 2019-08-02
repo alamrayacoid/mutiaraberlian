@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -23,7 +21,7 @@
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="174">
-              <caret line="99" column="107" lean-forward="true" selection-start-line="99" selection-start-column="107" selection-end-line="99" selection-end-column="107" />
+              <caret line="99" column="107" selection-start-line="99" selection-start-column="107" selection-end-line="99" selection-end-column="107" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
               </folding>
@@ -34,8 +32,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/EmployeeController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="158" column="41" lean-forward="true" selection-start-line="158" selection-start-column="41" selection-end-line="158" selection-end-column="41" />
+            <state relative-caret-position="97">
+              <caret line="162" lean-forward="true" selection-start-line="162" selection-end-line="162" />
               <folding>
                 <element signature="n#style#0;n#strike#0;n#i#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#strike#0;n#i#0;n#!!top" expanded="true" />
@@ -431,7 +429,7 @@
       <workItem from="1564664424110" duration="820000" />
       <workItem from="1564703223866" duration="9604000" />
       <workItem from="1564731034817" duration="2479000" />
-      <workItem from="1564753851457" duration="655000" />
+      <workItem from="1564753851457" duration="1362000" />
     </task>
     <task id="LOCAL-00001" summary="perbaikan jenis produk">
       <created>1560755279119</created>
@@ -741,11 +739,18 @@
       <option name="project" value="LOCAL" />
       <updated>1564460958466</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="ftp">
+      <created>1564754540306</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1564754540306</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="569940000" />
+    <option name="totallyTimeSpent" value="570647000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -785,7 +790,6 @@
     <option name="version" value="1" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="update penjualan pusat" />
     <MESSAGE value="master ekspedisi" />
     <MESSAGE value="distribusi order penjualan" />
     <MESSAGE value="penjualan via website" />
@@ -810,7 +814,8 @@
     <MESSAGE value="update sales in penjualan pusat" />
     <MESSAGE value="ok" />
     <MESSAGE value="update penerimaan piutang versi pusat" />
-    <option name="LAST_COMMIT_MESSAGE" value="update penerimaan piutang versi pusat" />
+    <MESSAGE value="ftp" />
+    <option name="LAST_COMMIT_MESSAGE" value="ftp" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/vendor/laravel/passport/src/Bridge/RefreshTokenRepository.php">
@@ -1189,7 +1194,7 @@
     <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="174">
-          <caret line="99" column="107" lean-forward="true" selection-start-line="99" selection-start-column="107" selection-end-line="99" selection-end-column="107" />
+          <caret line="99" column="107" selection-start-line="99" selection-start-column="107" selection-end-line="99" selection-end-column="107" />
           <folding>
             <element signature="e#7#389#0#PHP" expanded="true" />
           </folding>
@@ -1198,8 +1203,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/EmployeeController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="158" column="41" lean-forward="true" selection-start-line="158" selection-start-column="41" selection-end-line="158" selection-end-column="41" />
+        <state relative-caret-position="97">
+          <caret line="162" lean-forward="true" selection-start-line="162" selection-end-line="162" />
           <folding>
             <element signature="n#style#0;n#strike#0;n#i#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#strike#0;n#i#0;n#!!top" expanded="true" />
