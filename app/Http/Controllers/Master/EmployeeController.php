@@ -301,7 +301,7 @@ class EmployeeController extends Controller
 
                     $imageName = $id . '-photo';
                     // delete current photo
-                    Storage::delete('Employees/'.$imageName);
+                    // Storage::delete('Employees/'.$imageName);
                     // insert new photo
                     $photos = $request->file('e_foto')->storeAs('Employees', $imageName);
                 } else {

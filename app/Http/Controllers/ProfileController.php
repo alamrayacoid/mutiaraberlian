@@ -45,7 +45,7 @@ class ProfileController extends Controller
                 $employee = m_employee::where('e_id', Auth::user()->u_code)->first();
                 $imageName = $employee->e_id . '-photo';
                 // delete current photo
-                Storage::delete('Employees/'.$imageName);
+                // Storage::delete('Employees/'.$imageName);
                 // insert new photo
                 $photo = $request->file('photo')->storeAs('Employees', $imageName);
                 $employee->e_foto = $photo;
@@ -55,13 +55,13 @@ class ProfileController extends Controller
                 $agent = m_agen::where('a_code', Auth::user()->u_code)->first();
                 $imageName = $agent->a_code . '-photo';
                 // delete current photo
-                Storage::delete('Agents/'.$imageName);
+                // Storage::delete('Agents/'.$imageName);
                 // insert new photo
                 $photo = $request->file('photo')->storeAs('Agents', $imageName);
                 $agent->a_img = $photo;
                 $agent->save();
             }
-            
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'

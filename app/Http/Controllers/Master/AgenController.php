@@ -456,7 +456,7 @@ class AgenController extends Controller
 
                 $imageName = $agentCode->a_code . '-photo';
                 // delete current photo
-                Storage::delete('Agents/'.$imageName);
+                // Storage::delete('Agents/'.$imageName);
                 // insert new photo
                 $photo = $request->file('photo')->storeAs('Agents', $imageName);
             } else {
