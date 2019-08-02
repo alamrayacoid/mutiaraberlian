@@ -66,7 +66,7 @@ class MMAPenerimaanPiutangController extends Controller
                 return "Rp. " . number_format($info->sisa, '0', ',', '.');
             })
             ->rawColumns(['aksi'])
-            ->make();
+            ->make(true);
     }
 
     public function getDataAgen(Request $request)
@@ -142,7 +142,7 @@ class MMAPenerimaanPiutangController extends Controller
     public function bayarPiutang(Request $request)
     {
         $nota = $request->nota;
-        $bayar = $request->bayar;
+        $bayar = (int)$request->bayar;
         $tanggal = $request->tanggal;
         $paymentmethod = $request->paymentmethod;
 
@@ -158,8 +158,8 @@ class MMAPenerimaanPiutangController extends Controller
         DB::beginTransaction();
         try {
             $salescomp = DB::table('d_salescomp')
-                ->join('d_salescomppayment', 'scp_salescomp', '=', 'sc_id')
-                ->select('d_salescomp.*', DB::raw('sum(scp_pay) as jumlah'))
+                ->leftJoin('d_salescomppayment', 'scp_salescomp', '=', 'sc_id')
+                ->select('d_salescomp.*', DB::raw('sum(coalesce(scp_pay, 0)) as jumlah'))
                 ->where('sc_nota', '=', $nota)
                 ->orderBy('sc_id')
                 ->get();

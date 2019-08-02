@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Aktivitasmarketing\Agen;
 
 use App\Http\Controllers\AksesUser;
+use const http\Client\Curl\AUTH_ANY;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -19,7 +20,9 @@ use App\m_company;
 use App\m_item;
 use App\m_wil_provinsi;
 use App\m_wil_kota;
+use Illuminate\Support\Facades\Crypt;
 use Mutasi;
+use DataTables;
 
 class AgenKonsinyasiController extends Controller
 {
@@ -531,7 +534,55 @@ class AgenKonsinyasiController extends Controller
     }
 
 
+    public function bayar()
+    {
+        $user = DB::table('m_company')
+            ->join('m_agen', 'a_code', '=', 'c_user')
+            ->where('c_id', '=', Auth::user()->u_company)
+            ->first();
 
+        $konsigner = DB::table('m_agen')
+            ->join('m_company', 'c_user', '=', 'a_code')
+            ->where(function ($q) use ($user){
+                $q->orWhere('a_mma', '=', $user->c_id);
+                $q->orWhere('a_parent', '=', $user->a_code);
+            })
+            ->get();
 
+        return view('marketing.agen.datakonsinyasi.bayar.index', compact('konsigner'));
+    }
 
+    public function getData(Request $request)
+    {
+        $agen = 'all';
+        $user = Auth::user();
+        $sekarang = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+
+        $info = DB::table('d_salescomp as scc')
+            ->join('m_company as member', 'member.c_id', '=', 'scc.sc_member')
+            ->select(DB::raw('coalesce(floor((SELECT SUM(scp_pay) FROM d_salescomppayment scpm WHERE scpm.scp_salescomp = scc.sc_id)), 0) as pembayaran'),
+                DB::raw('floor(sc_total - (SELECT(pembayaran))) AS sisa'), 'member.c_name', DB::raw('date_format(scc.sc_date, "%d-%m-%Y") as sc_date'),
+                DB::raw('floor(scc.sc_total) as sc_total'), 'sc_id', 'sc_nota')
+            ->where('sc_paidoff', '=', 'N')
+            ->groupBy('sc_id')
+            ->where('sc_comp', '=', $user->u_company);
+
+        if (isset($request->konsigner) && $request->konsigner != '' && $request->konsigner !== null && $request->konsigner != 'semua'){
+            $agen = $request->konsigner;
+            $info = $info->where('sc_member', '=', $agen);
+        }
+
+        return DataTables::of($info)
+            ->addColumn('aksi', function ($info) {
+                return '<center><div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-sm btn-primary hint--top hint--info" aria-label="Detail" onclick="detailnotapiutang(\''.Crypt::encrypt($info->sc_id).'\')"><i class="fa fa-folder"></i></button>
+                            <button type="button" class="btn btn-sm btn-danger hint--top hint--warning" aria-label="Bayar" onclick="bayarnotapiutang(\''.Crypt::encrypt($info->sc_id).'\')"><i class="fa fa-money"></i></button>
+                        </div></center>';
+            })
+            ->editColumn('sisa', function ($info){
+                return "<span class='text-right' style='width: 100%'>Rp. " . number_format($info->sisa, '0', ',', '.') . "</span>";
+            })
+            ->rawColumns(['aksi', 'sisa'])
+            ->make(true);
+    }
 }

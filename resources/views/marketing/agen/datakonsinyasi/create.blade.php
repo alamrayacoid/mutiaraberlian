@@ -4,6 +4,9 @@
             <div class="header-block">
                 <h3 class="title">Kelola Data Konsinyasi </h3>
             </div>
+            <div class="header-block pull-right">
+                <a class="btn btn-warning btn-sm" href="{{ route('konsinyasiAgen.bayar') }}"><i class="fa fa-plus"></i>&nbsp;Pembayaran Konsigner</a>
+            </div>
         </div>
         <div class="card-block">
 
