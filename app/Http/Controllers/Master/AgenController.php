@@ -317,8 +317,22 @@ class AgenController extends Controller
             //     $codeAgen,
             //     'photo'
             // );
-            $imageName = $codeAgen . '-photo';
-            $photo = $request->file('photo')->storeAs('Agents', $imageName);
+
+            if ($request->hasFile('photo')) {
+                // $photo = $this->uploadImage(
+                //     $request->file('photo'),
+                //     $request->code,
+                //     'photo'
+                // );
+
+                $imageName = $codeAgen . '-photo';
+                // delete current photo
+                // Storage::delete('Agents/'.$imageName);
+                // insert new photo
+                $photo = $request->file('photo')->storeAs('Agents', $imageName);
+            } else {
+                $photo = null;
+            }
 
             DB::table('m_agen')
                 ->insert([
