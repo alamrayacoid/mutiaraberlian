@@ -225,11 +225,11 @@
                                 <a href="{{route('masterdatautama.masterpembayaran')}}">Master Pembayaran</a>
                             </li>
                             @endif
-                            {{-- @if ($sidebar[53]->ua_read == 'Y') --}}
+                             @if ($sidebar[52]->ua_read == 'Y')
                             <li class="{{Request::is('masterdatautama/mastercashflow/*') || Request::is('masterdatautama/mastercashflow') ? 'active' : ''}}">
                                 <a href="{{route('masterdatautama.mastercashflow')}}">Master Cashflow</a>
                             </li>
-                            {{-- @endif --}}
+                             @endif
                         </ul>
                     </li>
                 @endif
