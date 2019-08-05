@@ -63,12 +63,12 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>MMA</label>
+                                        <label>Tempat Order</label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
                                             <select id="mma" class="select2 form-control form-control-sm" name="mma">
-                                                <option value="" selected disabled>Pilih MMA</option>
+                                                <option value="" selected disabled>Pilih MMA/PUSAT</option>
                                                 @foreach($data['mma'] as $mma)
                                                 <option value="{{ $mma->c_id }}">{{ $mma->c_name }}</option>
                                                 @endforeach
@@ -106,27 +106,46 @@
                                             <input type="hidden" name="type_hidden" id="type_hidden">
                                             <select id="type" class="select2 form-control form-control-sm" name="type">
                                                 <option selected disabled>Pilih Tipe Agen</option>
+                                                <option value="MMA">MMA/Cabang</option>
                                                 <option value="AGEN">Agen</option>
                                                 <option value="SUB AGEN">Sub Agen</option>
+                                                <option value="APOTEK">Apotek/Radio</option>
                                             </select>
                                         </div>
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12 div_parent">
-                                        <label>Agen (parent)</label>
+                                        <label>Agen (Tempat Order)</label>
                                     </div>
-                                    <div class="col-md-9 col-sm-6 col-xs-12 div_parent">
+                                    <div class="col-md-3 col-sm-6 col-xs-12 div_parent">
+                                        <div class="form-group">
+                                            <select id="parent_prov" class="select2 form-control form-control-sm" name="parent_prov">
+                                                <option value="" selected="">Provinsi Agen</option>
+                                                @foreach($data['provinces'] as $prov)
+                                                    <option value="{{ $prov->wp_id }}">{{ $prov->wp_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-6 col-xs-12 div_parent">
+                                        <div class="form-group">
+                                            <select id="parent_city" class="select2 form-control form-control-sm" name="parent_city">
+                                                <option value="" selected="">Kota Agen</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-6 col-xs-12 div_parent">
                                         <div class="form-group">
                                             <select id="parent" class="select2 form-control form-control-sm" name="parent">
-                                                <option value="" selected="">Pilih Parent</option>
+                                                <option value="" selected="">Pilih Agen</option>
                                             </select>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <div class="col-md-3 col-sm-6 col-xs-12 harga-beli">
                                         <label>Harga Pembelian</label>
                                     </div>
-                                    <div class="col-md-9 col-sm-6 col-xs-12">
+                                    <div class="col-md-9 col-sm-6 col-xs-12 harga-beli">
                                         <div class="form-group">
                                             <select id="a_class" class="select2 form-control form-control-sm" name="a_class">
                                                 <option value="" selected="" disabled>Pilih Jenis Harga Pembelian</option>
@@ -138,7 +157,7 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Harga Penjualan</label>
+                                        <label>Harga Penjualan ke Customer</label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
@@ -240,6 +259,24 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>Username Login <span style="color:red;">*</span></label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-sm username" name="username" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>Password Login <span style="color:red;">*</span></label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <input type="password" class="form-control form-control-sm password" name="password" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
                                         <label>Foto</label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
@@ -288,10 +325,15 @@
 
     $('#type').on('change', function() {
         $('#type_hidden').val($('#type').val());
-        if ($(this).val() == 'SUB AGEN') {
-            RetrieveListAgents();
+        if ($(this).val() == 'SUB AGEN' || $(this).val() == 'APOTEK') {
             $('.div_parent').show();
+            $('.harga-beli').show();
+        } else if ($(this).val() == 'MMA'){
+            $('.harga-beli').hide();
+            $('.div_parent').hide();
+            $('#parent').empty();
         } else {
+            $('.harga-beli').show();
             $('.div_parent').hide();
             $('#parent').empty();
         }
@@ -300,11 +342,15 @@
     function RetrieveListAgents() {
         $.ajax({
             type: 'get',
-            url: baseUrl + '/masterdatautama/agen/agents',
+            url: baseUrl + '/masterdatautama/agen/getAgenByCity/' + $('#parent_city').val(),
             success: function(data) {
                 $('#parent').empty();
                 $.each(data, function(key, val) {
-                    $("#parent").append('<option value="' + val.a_code + '">' + val.a_name + '</option>');
+                    if (val.a_code == null){
+                        alert('Agen tidak ditemukan');
+                    } else {
+                        $("#parent").append('<option value="' + val.a_code + '">' + val.a_name + '</option>');
+                    }
                 });
                 $('#parent').focus();
                 $('#parent').select2('open');
@@ -333,6 +379,26 @@
                 $('#area_city').select2('open');
             }
         });
+    });
+
+    $('#parent_prov').on('change', function() {
+        $.ajax({
+            type: 'get',
+            url: baseUrl + '/masterdatautama/agen/cities/' + $('#parent_prov').val(),
+            success: function(data) {
+                $('#parent_city').empty();
+                $("#parent_city").append('<option value="" selected>Kota Agen</option>');
+                $.each(data, function(key, val) {
+                    $("#parent_city").append('<option value="' + val.wc_id + '">' + val.wc_name + '</option>');
+                });
+                $('#parent_city').focus();
+                $('#parent_city').select2('open');
+            }
+        });
+    });
+
+    $('#parent_city').on('change', function() {
+        RetrieveListAgents();
     });
 
     // set request when address_prov changed

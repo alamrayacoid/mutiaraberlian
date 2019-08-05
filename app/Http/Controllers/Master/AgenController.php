@@ -14,10 +14,12 @@ use App\m_company;
 use DB;
 use File;
 use Image;
+use function PHPSTORM_META\type;
 use Session;
 use Auth;
 use Validator;
 use Yajra\DataTables\DataTables;
+use Response;
 
 class AgenController extends Controller
 {
@@ -155,6 +157,18 @@ class AgenController extends Controller
         return $agents;
     }
 
+    public function getAgenByCity($id)
+    {
+        $data = DB::table('m_company')
+            ->join('m_agen', 'c_user', 'a_code')
+            ->where('a_area', '=', $id)
+            ->get();
+
+        return Response::json([
+            "data" => $data
+        ]);
+    }
+
     /**
      * Return true if the agent has sub-agent
      *
@@ -217,8 +231,17 @@ class AgenController extends Controller
 
         if ($info->c_type == 'PUSAT'){
             $datas = $datas->get();
+        } elseif ($info->c_type == 'CABANG') {
+            $datas = $datas
+                ->where(function ($q) use ($info){
+                    $q->orWhere('a_mma', '=', $info->c_id);
+                    $q->orWhere('a_parent', '=', $info->c_id);
+                })
+                ->get();
+        } elseif ($info->c_type == 'AGEN' || $info->c_type == 'SUB AGEN'){
+            $datas = $datas->where('a_parent', '=', $info->c_id)->get();
         } else {
-            $datas = $datas->where('a_mma', '=', $info->c_id)->get();
+            return false;
         }
 
         return Datatables::of($datas)
@@ -271,10 +294,17 @@ class AgenController extends Controller
             ->where('c_id', '=', $comp)
             ->first();
 
-        if ($info->c_type != 'PUSAT'){
-            $data['mma'] = m_company::where('c_id', '=', $info->c_id)->get();
+        if ($info->c_type == 'PUSAT' || $info->c_type == 'CABANG'){
+            $data['mma'] = m_company::where(function ($q) use ($info){
+                $q->orWhere('c_type', '=', 'PUSAT');
+                $q->orWhere('c_type', '=', 'CABANG');
+            })->get();
         } else {
-            $data['mma'] = m_company::where('c_type', '!=', 'AGEN')->get();
+            $data['mma'] = m_company::where(function ($q) use ($info){
+                $q->orWhere('c_type', '=', 'PUSAT');
+                $q->orWhere('c_type', '=', 'CABANG');
+                $q->orWhere('c_id', '=', $info->c_id);
+            })->get();
         }
 
         $data['provinces'] = $this->getProvinces();
@@ -361,18 +391,134 @@ class AgenController extends Controller
 
             // insert to table m_company
             $codeCompany = CodeGenerator::code('m_company', 'c_id', 7, 'MB');
+
+            $c_type = $request->type_hidden;
+
+            if ($c_type == 'MMA'){
+                $c_type = 'CABANG';
+            }
+
             DB::table('m_company')
                 ->insert([
                     'c_id'      => $codeCompany,
                     'c_name'    => $request->name,
                     'c_address' => $request->address,
                     'c_tlp'     => $request->telp,
-                    'c_type'    => 'AGEN',
+                    'c_type'    => $c_type,
                     'c_area'    => $request->area_city,
                     'c_user'    => $codeAgen,
                     'c_insert'  => Carbon::now(),
                     'c_update'  => Carbon::now()
                 ]);
+
+            $cek = DB::table('d_username')
+                ->where('u_username', '=', $request->username)
+                ->first();
+
+            if ($cek !== null){
+                return Response::json([
+                    'status' => 'gagal',
+                    'message' => 'username sudah pernah digunakan'
+                ]);
+            }
+
+            $password = sha1(md5('islamjaya') . $request->password);
+
+            $id = DB::table('d_username')
+                ->max('u_id');
+            ++$id;
+
+            DB::table('d_username')
+                ->insert([
+                    "u_id" => $id,
+                    "u_company" => $codeCompany,
+                    "u_username" => $request->username,
+                    "u_password" => $password,
+                    "u_level" => 3,
+                    "u_user" => "A",
+                    "u_code" => $codeAgen
+                ]);
+
+            $akses = DB::table('m_access')
+                ->get();
+
+            $insert = [];
+            if ($c_type == 'CABANG'){
+                for ($i = 0; $i < count($akses); $i++) {
+                    if ($akses[$i]->a_id == 7 || $akses[$i]->a_id == 22 || $akses[$i]->a_id == 23){
+                        $temp = array(
+                            'ua_access' => $akses[$i]->a_id,
+                            'ua_username' => $id,
+                            'ua_read' => 'Y',
+                            'ua_create' => 'Y',
+                            'ua_update' => 'Y',
+                            'ua_delete' => 'Y'
+                        );
+                        array_push($insert, $temp);
+                    } else {
+                        $temp = array(
+                            'ua_access' => $akses[$i]->a_id,
+                            'ua_username' => $id,
+                            'ua_read' => 'N',
+                            'ua_create' => 'N',
+                            'ua_update' => 'N',
+                            'ua_delete' => 'N'
+                        );
+                        array_push($insert, $temp);
+                    }
+                }
+            } elseif ($c_type == 'AGEN'){
+                for ($i = 0; $i < count($akses); $i++) {
+                    if ($akses[$i]->a_id == 7 || $akses[$i]->a_id == 23){
+                        $temp = array(
+                            'ua_access' => $akses[$i]->a_id,
+                            'ua_username' => $id,
+                            'ua_read' => 'Y',
+                            'ua_create' => 'Y',
+                            'ua_update' => 'Y',
+                            'ua_delete' => 'Y'
+                        );
+                        array_push($insert, $temp);
+                    } else {
+                        $temp = array(
+                            'ua_access' => $akses[$i]->a_id,
+                            'ua_username' => $id,
+                            'ua_read' => 'N',
+                            'ua_create' => 'N',
+                            'ua_update' => 'N',
+                            'ua_delete' => 'N'
+                        );
+                        array_push($insert, $temp);
+                    }
+                }
+            } elseif ($c_type == 'SUB AGEN'){
+                for ($i = 0; $i < count($akses); $i++) {
+                    if ($akses[$i]->a_id == 7 || $akses[$i]->a_id == 23){
+                        $temp = array(
+                            'ua_access' => $akses[$i]->a_id,
+                            'ua_username' => $id,
+                            'ua_read' => 'Y',
+                            'ua_create' => 'Y',
+                            'ua_update' => 'Y',
+                            'ua_delete' => 'Y'
+                        );
+                        array_push($insert, $temp);
+                    } else {
+                        $temp = array(
+                            'ua_access' => $akses[$i]->a_id,
+                            'ua_username' => $id,
+                            'ua_read' => 'N',
+                            'ua_create' => 'N',
+                            'ua_update' => 'N',
+                            'ua_delete' => 'N'
+                        );
+                        array_push($insert, $temp);
+                    }
+                }
+            }
+
+            DB::table('d_useraccess')
+                ->insert($insert);
 
             DB::commit();
             return response()->json([
