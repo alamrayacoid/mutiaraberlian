@@ -2319,12 +2319,15 @@
 
         // accept item that has been ordered and delivered
         function confirmAcceptance() {
-            console.log('confirmAcceptance()');
+            let tgl = $('#dateReceive_ac').val();
             loadingShow();
             let stockdistId = $('#id_ac').val();
             $.ajax({
                 url: baseUrl + "/marketing/marketingarea/orderproduk/set-acceptance/" + stockdistId,
                 type: "post",
+                data: {
+                    "tgl": tgl
+                },
                 success: function (response) {
                     loadingHide();
                     if (response.status == 'berhasil') {

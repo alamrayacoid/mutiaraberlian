@@ -32,7 +32,7 @@
                         <thead class="bg-primary">
                             <tr>
                                 <th width="10%">No</th>
-                                <th width="10%">Tanggal</th>
+                                <th width="20%">Tanggal</th>
                                 <th>Tujuan</th>
                                 <th>Nota</th>
                                 <th width="10%">Aksi</th>

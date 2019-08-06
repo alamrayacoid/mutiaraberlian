@@ -63,7 +63,7 @@
                                     </div>
 
                                     <div class="col-md-3 col-sm-6 col-xs-12">
-                                        <label>Tempat Order</label>
+                                        <label>Tempat Order (MMA/Pusat)</label>
                                     </div>
                                     <div class="col-md-9 col-sm-6 col-xs-12">
                                         <div class="form-group">
@@ -258,21 +258,21 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <div class="col-md-3 col-sm-6 col-xs-12 userlogin">
                                         <label>Username Login <span style="color:red;">*</span></label>
                                     </div>
-                                    <div class="col-md-9 col-sm-6 col-xs-12">
+                                    <div class="col-md-9 col-sm-6 col-xs-12 userlogin">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm username" name="username" required>
+                                            <input type="text" class="form-control form-control-sm username" name="username">
                                         </div>
                                     </div>
 
-                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <div class="col-md-3 col-sm-6 col-xs-12 userlogin">
                                         <label>Password Login <span style="color:red;">*</span></label>
                                     </div>
-                                    <div class="col-md-9 col-sm-6 col-xs-12">
+                                    <div class="col-md-9 col-sm-6 col-xs-12 userlogin">
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-sm password" name="password" required>
+                                            <input type="password" class="form-control form-control-sm password" name="password">
                                         </div>
                                     </div>
 
@@ -326,16 +326,22 @@
     $('#type').on('change', function() {
         $('#type_hidden').val($('#type').val());
         if ($(this).val() == 'SUB AGEN' || $(this).val() == 'APOTEK') {
+            $('.userlogin').hide();
             $('.div_parent').show();
             $('.harga-beli').show();
         } else if ($(this).val() == 'MMA'){
             $('.harga-beli').hide();
             $('.div_parent').hide();
+            $('.userlogin').show();
             $('#parent').empty();
         } else {
+            $('.userlogin').show();
             $('.harga-beli').show();
             $('.div_parent').hide();
             $('#parent').empty();
+        }
+        if ($(this).val() == 'SUB AGEN'){
+            $('.userlogin').show();
         }
     });
 
@@ -345,7 +351,7 @@
             url: baseUrl + '/masterdatautama/agen/getAgenByCity/' + $('#parent_city').val(),
             success: function(data) {
                 $('#parent').empty();
-                $.each(data, function(key, val) {
+                $.each(data.data, function(key, val) {
                     if (val.a_code == null){
                         alert('Agen tidak ditemukan');
                     } else {

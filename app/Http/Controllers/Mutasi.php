@@ -2196,9 +2196,9 @@ class Mutasi extends Controller
         DB::beginTransaction();
         try {
             // dd($to, $item, $nota, $listPC, $listQtyPC, $listUnitPC, $listSellPrice, $listHPP, $listSmQty, $mutcat, $stockParentId, $status, $condition);
-
             // set date if receiveDate is not null
             (is_null($date)) ? $dateNow = Carbon::now('Asia/jakarta') : $dateNow = $date;
+
             $mutcat = $mutcat;
             $comp = $to; // item owner
             $position = $to; // item position
@@ -3179,13 +3179,18 @@ class Mutasi extends Controller
         $item, // item-id
         $nota, // nota distribution
         $mutcatIn, // mutation 'in'
-        $mutcatOut // mutation 'out'
+        $mutcatOut, // mutation 'out'
+        $date = null
     )
     {
         DB::beginTransaction();
         try {
             // date now
             $dateNow = Carbon::now();
+            if ($date !== null){
+                $dateNow = Carbon::createFromFormat('d-m-Y', $date);
+            }
+
             // get stock-selected-item with 'On Going' status
             $stockBefore = d_stock::where('s_comp', $itemOwner)
                 ->where('s_position', $to)
