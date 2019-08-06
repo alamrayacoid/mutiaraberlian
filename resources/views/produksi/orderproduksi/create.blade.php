@@ -90,7 +90,7 @@
                                                     <tr>
                                                         <th>Kode Barang/Nama Barang</th>
                                                         <th width="10%">Satuan</th>
-                                                        <th width="10%">Jumlah</th>
+                                                        <th width="15%">Jumlah</th>
                                                         <th>Harga @satuan</th>
                                                         <th>Sub Total</th>
                                                         <th>Aksi</th>

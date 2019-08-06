@@ -132,7 +132,7 @@
                         @endif
                     </ul>
                     <div class="tab-content">
-                        @if(Auth::user()->getCompany->c_type == 'AGEN')
+                        @if(Auth::user()->getCompany->c_type == 'AGEN' || Auth::user()->getCompany->c_type == 'SUB AGEN')
                             @include('marketing.agen.orderproduk.index')
                             @include('marketing.marketingarea.keloladataorder.index')
                         @endif

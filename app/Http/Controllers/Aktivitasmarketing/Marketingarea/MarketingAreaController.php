@@ -680,7 +680,7 @@ class MarketingAreaController extends Controller
     }
 
     // confirm received items that has been ordered
-    public function setAcceptance($id)
+    public function setAcceptance($id, Request $request)
     {
         if (!AksesUser::checkAkses(22, 'update')) {
             return Response::json([
@@ -703,7 +703,8 @@ class MarketingAreaController extends Controller
                     $val->sdd_item, // item id
                     $stockdist->sd_nota, // nota distribution
                     18, // mutcat distribution 'in'
-                    19 // mutcat distribution 'out'
+                    19,// mutcat distribution 'out',
+                    $request->tgl
                 );
                 if ($mutConfirm !== 'success') {
                     return $mutConfirm;
