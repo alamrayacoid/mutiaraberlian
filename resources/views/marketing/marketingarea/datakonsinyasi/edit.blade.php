@@ -757,7 +757,7 @@
             '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah" value="Rp. 0"></td>'+
             '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
             '<td>'+
-            '<button class="btn btn-danger btnRemoveItem btn-sm" type="button">'+
+            '<button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button">'+
             '<i class="fa fa-remove" aria-hidden="true"></i>'+
             '</button>'+
             '</td>'+

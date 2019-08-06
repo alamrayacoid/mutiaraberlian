@@ -14,7 +14,7 @@
       <p class="title-description">
         <i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
          / <span>Marketing</span>
-         / <a href="{{route('marketingarea.index')}}"><span>Manajemen Marketing Area </span></a>
+         / <a href="{{route('manajemenagen.index')}}"><span>Manajemen Agen </span></a>
          / <span class="text-primary" style="font-weight: bold;"> Edit Data Konsinyasi </span>
        </p>
   </div>
@@ -27,155 +27,141 @@
 
         <div class="card">
 
-                    <div class="card-header bordered p-2">
-                      <div class="header-block">
-                        <h3 class="title"> Edit Data Konsinyasi </h3>
-                      </div>
-                      <div class="header-block pull-right">
-                        <a href="{{route('marketingarea.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
-                      </div>
-                    </div>
-                    <form id="formKonsinyasi" method="post">
-                        {{ csrf_field() }}
-                        <input type="hidden" name="idSales" id="idSales" value="{{ $ids }}">
-                        <div class="card-block">
-                            <section>
-                                <div class="row">
-                                    <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Area</label>
-                                    </div>
-                                    <div class="col-md-5 col-sm-6 col-xs-12">
-                                        <div class="form-group">
-                                            <select name="provinsi" id="provinsi" class="form-control form-control-sm select2" disabled>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-5 col-sm-6 col-xs-12">
-                                        <div class="form-group">
-                                            <select name="kota" id="kota" class="form-control form-control-sm select2" disabled>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Cabang</label>
-                                    </div>
-                                    <div class="col-md-10 col-sm-12">
-                                        <div class="form-group">
-                                            <input type="hidden" name="branchCode" id="branchCode" value="{{ $data_item->sc_comp }}">
-                                            <select class="form-control select2" name="branch" id="branch" disabled>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Agen</label>
-                                    </div>
-                                    <div class="col-md-10 col-sm-12">
-                                        <div class="form-group">
-                                            <input type="hidden" name="agentCode" id="agentCode" value="{{ $data_item->sc_member }}">
-                                            <input type="hidden" name="nota" id="nota" value="{{ $data_item->sc_nota }}">
-                                            <select class="form-control select2" name="agent" id="agent" disabled>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-2 col-sm-6 col-xs-12">
-                                        <label>Total</label>
-                                    </div>
-                                    <div class="col-md-10 col-sm-12">
-                                        <div class="form-group">
-                                            <input type="text" class="form-control form-control-sm"
-                                                name="total_harga"
-                                                id="total_harga" value="{{ Currency::addRupiah($data_item->sc_total) }}" readonly>
-                                            <input type="hidden" name="tot_hrg" id="tot_hrg">
-                                        </div>
-                                    </div>
-
-                                    <div class="container" id="tbl_item" style="display: none;">
-                                        <div class="table-responsive mt-3">
-                                            <table class="table table-hover table-striped" id="table_rencana"
-                                                cellspacing="0">
-                                                <thead class="bg-primary">
-                                                    <tr>
-                                                        <th>Kode/Nama Barang</th>
-                                                        <th width="10%">Satuan</th>
-                                                        <th>Jumlah</th>
-                                                        <th>Kode Produksi</th>
-                                                        <th>Harga Satuan</th>
-                                                        <th>Diskon @</th>
-                                                        <th>Sub Total</th>
-                                                        <th>Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach($data_item->getSalesCompDt as $key => $data)
-                                                    <tr>
-                                                        <td>
-                                                            <input type="hidden" name="idItem[]" class="itemid" value="{{ $data->scd_item }}">
-                                                            <input type="hidden" name="kode[]" class="kode" value="{{ $data->getItem->i_code }}">
-                                                            <input type="hidden" name="idStock[]" class="idStock" value="{{ $data->stockId }}">
-                                                            <input type="text" name="barang[]" class="form-control form-control-sm barang" value="{{ strtoupper($data->getItem->i_code) }} - {{ strtoupper($data->getItem->i_name) }}" autocomplete="off" @if($data->status == 'used') readonly @endif>
-                                                        </td>
-                                                        <td>
-                                                            <select name="satuan[]" data-label="old" class="form-control form-control-sm select2 satuan">
-                                                                <option value="{{ $data->getItem->i_unit1 }}" data-unitcmp="{{ $data->getItem->i_unitcompare1 }}" @if($data->getUnit->u_id == $data->getItem->i_unit1) selected @endif>{{ $data->getItem->getUnit1->u_name }}</option>
-                                                                @if ($data->getItem->i_unit2 != null && $data->getItem->i_unit2 != $data->getItem->i_unit1)
-                                                                <option value="{{ $data->getItem->i_unit2 }}" data-unitcmp="{{ $data->getItem->i_unitcompare2 }}" @if($data->getUnit->u_id == $data->getItem->i_unit2) selected @endif>{{ $data->getItem->getUnit2->u_name }}</option>
-                                                                @endif
-                                                                @if ($data->getItem->i_unit3 != null && $data->getItem->i_unit3 != $data->getItem->i_unit2 && $data->getItem->i_unit3 != $data->getItem->i_unit1)
-                                                                <option value="{{ $data->getItem->i_unit3 }}" data-unitcmp="{{ $data->getItem->i_unitcompare3 }}" @if($data->getUnit->u_id == $data->getItem->i_unit3) selected @endif>{{ $data->getItem->getUnit3->u_name }}</option>
-                                                                @endif
-                                                            </select>
-                                                            <input type="hidden" name="oldSatuan" class="oldSatuan" value="{{ $data->getUnit->u_id }}">
-                                                        </td>
-                                                        <td>
-                                                            <input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" data-label="old" value="{{ $data->scd_qty }}">
-                                                            <input type="hidden" name="qtyOld" class="qtyOld" value="{{ $data->scd_qty }}">
-                                                            <input type="hidden" name="status[]" class="status" value="{{ $data->status }}">
-                                                        </td>
-                                                        <td>
-                                                            <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
-                                                        </td>
-                                                        <td>
-                                                            <input type="text" name="harga[]" class="form-control form-control-sm harga text-right" value="{{ Currency::addRupiah($data->scd_value) }}" readonly>
-                                                            <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p>
-                                                        </td>
-                                                        <td>
-                                                            <input class="form-control form-control-sm diskon rupiah" id="diskon" name="diskon[]" value="{{ (int)$data->scd_discvalue }}">
-                                                        </td>
-                                                        <td>
-                                                            <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="{{ Currency::addRupiah($data->scd_totalnet) }}" readonly>
-                                                        </td>
-                                                        <td>
-                                                            @if ($key == 0)
-                                                            <button type="button" class="btn btn-sm btn-success rounded-circle btn-tambahp"><i class="fa fa-plus"></i></button>
-                                                            <button class="btn btn-danger rounded-circle btnRemoveItem btn-sm d-none" type="button"  @if($data->status == 'used') disabled @endif>
-                                                                <i class="fa fa-remove" aria-hidden="true"></i>
-                                                            </button>
-                                                            @else
-                                                            <button class="btn btn-danger rounded-circle btnRemoveItem btn-sm" type="button"  @if($data->status == 'used') disabled @endif>
-                                                                <i class="fa fa-remove" aria-hidden="true"></i>
-                                                            </button>
-                                                            @endif
-
-                                                        </td>
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                        <div class="card-footer text-right">
-                            <button class="btn btn-primary btn-submit" type="button">Simpan</button>
-                            <a href="{{route('marketingarea.index')}}" class="btn btn-secondary">Kembali</a>
-                        </div>
-
-                    </form>
+            <div class="card-header bordered p-2">
+                <div class="header-block">
+                    <h3 class="title"> Edit Data Konsinyasi </h3>
                 </div>
+                <div class="header-block pull-right">
+                    <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
+                </div>
+            </div>
+            <form id="formKonsinyasi" method="post">
+                {{ csrf_field() }}
+                <input type="hidden" name="idSales" id="idSales" value="{{ $ids }}">
+                <div class="card-block">
+                    <section>
+                        <div class="row">
+                            <div class="col-md-2 col-sm-6 col-xs-12">
+                                <label>Agen</label>
+                            </div>
+                            <div class="col-md-10 col-sm-12">
+                                <div class="form-group">
+                                    <input type="hidden" name="agentCode" id="agentCode" value="{{ $data_item->sc_comp }}">
+                                    <select class="form-control select2" name="agent" id="agent" disabled>
+                                        <option value="{{ $data_item->getComp->c_id }}">{{ $data_item->getComp->c_name }}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 col-sm-6 col-xs-12">
+                                <label>Konsigner</label>
+                            </div>
+                            <div class="col-md-10 col-sm-12">
+                                <div class="form-group">
+                                    <input type="hidden" name="konsignerCode" id="konsignerCode" value="{{ $data_item->sc_member }}">
+                                    <input type="hidden" name="nota" id="nota" value="{{ $data_item->sc_nota }}">
+                                    <select class="form-control select2" name="konsigner" id="konsigner" disabled>
+                                        <option value="{{ $data_item->getAgent->c_id }}">{{ $data_item->getAgent->c_name }}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 col-sm-6 col-xs-12">
+                                <label>Total</label>
+                            </div>
+                            <div class="col-md-10 col-sm-12">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-sm rupiah"
+                                    name="total_harga"
+                                    id="total_harga" value="{{ (float)$data_item->sc_total }}" readonly>
+                                    <input type="hidden" name="tot_hrg" id="tot_hrg">
+                                </div>
+                            </div>
+
+                            <div class="container" id="tbl_item" style="display: none;">
+                                <div class="table-responsive mt-3">
+                                    <table class="table table-hover table-striped" id="table_rencana"
+                                    cellspacing="0">
+                                    <thead class="bg-primary">
+                                        <tr>
+                                            <th>Kode/Nama Barang</th>
+                                            <th width="10%">Satuan</th>
+                                            <th>Jumlah</th>
+                                            <th>Kode Produksi</th>
+                                            <th>Harga Satuan</th>
+                                            <th>Diskon @</th>
+                                            <th>Sub Total</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($data_item->getSalesCompDt as $key => $data)
+                                        <tr>
+                                            <td>
+                                                <input type="hidden" name="idItem[]" class="itemid" value="{{ $data->scd_item }}">
+                                                <input type="hidden" name="kode[]" class="kode" value="{{ $data->getItem->i_code }}">
+                                                <input type="hidden" name="idStock[]" class="idStock" value="{{ $data->stockId }}">
+                                                <input type="text" name="barang[]" class="form-control form-control-sm barang" value="{{ strtoupper($data->getItem->i_code) }} - {{ strtoupper($data->getItem->i_name) }}" autocomplete="off" @if($data->status == 'used') readonly @endif>
+                                            </td>
+                                            <td>
+                                                <select name="satuan[]" data-label="old" class="form-control form-control-sm select2 satuan">
+                                                    <option value="{{ $data->getItem->i_unit1 }}" data-unitcmp="{{ $data->getItem->i_unitcompare1 }}" @if($data->getUnit->u_id == $data->getItem->i_unit1) selected @endif>{{ $data->getItem->getUnit1->u_name }}</option>
+                                                    @if ($data->getItem->i_unit2 != null && $data->getItem->i_unit2 != $data->getItem->i_unit1)
+                                                    <option value="{{ $data->getItem->i_unit2 }}" data-unitcmp="{{ $data->getItem->i_unitcompare2 }}" @if($data->getUnit->u_id == $data->getItem->i_unit2) selected @endif>{{ $data->getItem->getUnit2->u_name }}</option>
+                                                    @endif
+                                                    @if ($data->getItem->i_unit3 != null && $data->getItem->i_unit3 != $data->getItem->i_unit2 && $data->getItem->i_unit3 != $data->getItem->i_unit1)
+                                                    <option value="{{ $data->getItem->i_unit3 }}" data-unitcmp="{{ $data->getItem->i_unitcompare3 }}" @if($data->getUnit->u_id == $data->getItem->i_unit3) selected @endif>{{ $data->getItem->getUnit3->u_name }}</option>
+                                                    @endif
+                                                </select>
+                                                <input type="hidden" name="oldSatuan" class="oldSatuan" value="{{ $data->getUnit->u_id }}">
+                                            </td>
+                                            <td>
+                                                <input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" data-label="old" value="{{ $data->scd_qty }}">
+                                                <input type="hidden" name="qtyOld" class="qtyOld" value="{{ $data->scd_qty }}">
+                                                <input type="hidden" name="status[]" class="status" value="{{ $data->status }}">
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
+                                            </td>
+                                            <td>
+                                                <input type="text" name="harga[]" class="form-control form-control-sm harga text-right" value="{{ Currency::addRupiah($data->scd_value) }}" readonly>
+                                                <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p>
+                                            </td>
+                                            <td>
+                                                <input class="form-control form-control-sm diskon rupiah" id="diskon" name="diskon[]" value="{{ (int)$data->scd_discvalue }}">
+                                            </td>
+                                            <td>
+                                                <input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="{{ Currency::addRupiah($data->scd_totalnet) }}" readonly>
+                                            </td>
+                                            <td>
+                                                @if ($key == 0)
+                                                <button type="button" class="btn btn-sm btn-success rounded-circle btn-tambahp"><i class="fa fa-plus"></i></button>
+                                                <button class="btn btn-danger rounded-circle btnRemoveItem btn-sm d-none" type="button"  @if($data->status == 'used') disabled @endif>
+                                                    <i class="fa fa-remove" aria-hidden="true"></i>
+                                                </button>
+                                                @else
+                                                <button class="btn btn-danger rounded-circle btnRemoveItem btn-sm" type="button"  @if($data->status == 'used') disabled @endif>
+                                                    <i class="fa fa-remove" aria-hidden="true"></i>
+                                                </button>
+                                                @endif
+
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="card-footer text-right">
+                <button class="btn btn-primary btn-submit" type="button">Simpan</button>
+                <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary">Kembali</a>
+            </div>
+
+        </form>
+    </div>
 
       </div>
 
@@ -196,55 +182,34 @@
     var idxBarang = null;
     var icode = [];
     var checkitem = null;
-    var selectProv = '{{ $data_item->getComp->getCity->wc_provinsi }}';
-    var selectKota = '{{ $data_item->getComp->getCity->wc_id }}';
     var salescompdt = 0;
 
     $(document).ready(function () {
         salescompdt = {!! $data_item !!};
         salescompdt = salescompdt.get_sales_comp_dt;
-
         // set modal production-code
         setModalCodeProdReady();
 
-        getProv();
-        getKota();
         changeSatuan();
         changeJumlah();
         changeHarga();
         visibleTableItem();
 
-        $("#kota").on("change", function (evt) {
-            evt.preventDefault();
-            if ($("#kota").val() == "") {
-                $("#branchCode").val('');
-                $("#branch").val('');
-                $('#branch').find('option').remove();
-                // $("#branch").attr("disabled", true);
-            }
-            else {
-                getBranch();
-                // $("#branch").attr("disabled", false);
-                $("#branchCode").val('');
-                $("#branch").val('');
-                $("#branch").attr('autofocus', true);
-            }
-        })
-        // on select branch
-        $('#branch').on('select2:select', function() {
+        // on select agent
+        $('#agent').on('select2:select', function() {
             // console.log($(this).val(), $(this).find('option:selected').data('code'));
-            $( "#branchCode" ).val($(this).find('option:selected').val());
+            $( "#agentCode" ).val($(this).find('option:selected').val());
             if ($(this).val() != '') {
-                getAgent();
+                getKonsigner();
             }
             else {
-                $('#agentCode').val('');
+                $('#konsignerCode').val('');
             }
             visibleTableItem();
         });
         // on selectagent
-        $('#agent').on('select2:select', function() {
-            $('#agentCode').val($(this).find('option:selected').val());
+        $('#konsigner').on('select2:select', function() {
+            $('#konsignerCode').val($(this).find('option:selected').val());
             visibleTableItem();
         });
 
@@ -289,7 +254,7 @@
         }
 
         $(document).on('click', '.btn-submit', function (evt) {
-            evt.preventDefault();
+            // evt.preventDefault();
             if (checkForm() == "cek form") {
                 messageWarning('Peringatan', 'Lengkapi data penempatan produk');
             } else {
@@ -346,25 +311,6 @@
         $('.btnAddProdCode').off();
         $('.btnRemoveProdCode').off();
         $('.qtyProdCode').off();
-        // agent autocomplete
-        $(".agent").autocomplete({
-            source: function( request, response ) {
-                $.ajax({
-                    url: "{{ route('datakonsinyasi.getAgentsDK') }}",
-                    data: {
-                        term: $(".agent").val()
-                    },
-                    success: function( data ) {
-                        response( data );
-                    }
-                });
-            },
-            minLength: 1,
-            select: function(event, data) {
-                $('#agentCode').val(data.item.id);
-                visibleTableItem();
-            }
-        });
         $('.barang').on('click', function(e){
             idxBarang = $('.barang').index(this);
             setArrayCode();
@@ -487,66 +433,35 @@
             // unmaskAsNumber: true,
         });
     }
-    // get list of branc based on prov and city
-    function getBranch() {
-        loadingShow();
-        $.ajax({
-            url: "{{ route('datakonsinyasi.getBranchDK') }}",
-            data: {
-                prov: $("#provinsi").val(),
-                city: $("#kota").val()
-            },
-            type: 'get',
-            success: function( data ) {
-                console.log(data);
-                $('#branch').find('option').remove();
-                $('#branch').append('<option value="" selected>Pilih Cabang</option>')
-                $.each(data, function(index, val) {
-                    if(val.c_id == $('#branchCode').val()) {
-                        $('#branch').append('<option value="'+ val.c_id +'" selected>'+ val.c_name +'</option>');
-                    }
-                    else {
-                        $('#branch').append('<option value="'+ val.c_id +'">'+ val.c_name +'</option>');
-                    }
-                });
-                getAgent();
-                loadingHide();
-            },
-            error: function(e) {
-                loadingHide();
-                // console.log('get konsigner error: ');
-            }
-        });
-    }
-    // get list of agent based on branch
-    function getAgent() {
-        loadingShow();
-        $.ajax({
-            url: "{{ route('datakonsinyasi.getAgentsDK') }}",
-            data: {
-                branch: $("#branchCode").val()
-            },
-            type: 'get',
-            success: function( data ) {
-                // console.log(data);
-                $('#agent').find('option').remove();
-                $('#agent').append('<option value="" selected>Pilih Agen</option>')
-                $.each(data, function(index, val) {
-                    if (val.get_company.c_id == $('#agentCode').val()) {
-                        $('#agent').append('<option value="'+ val.get_company.c_id +'" selected>'+ val.a_name +'</option>');
-                    }
-                    else {
-                        $('#agent').append('<option value="'+ val.get_company.c_id +'">'+ val.a_name +'</option>');
-                    }
-                })
-                loadingHide();
-            },
-            error: function(e) {
-                loadingHide();
-                // console.log('get konsigner error: ');
-            }
-        });
-    }
+
+    // function getKonsigner() {
+    //     loadingShow();
+    //     $.ajax({
+    //         url: "{{ route('konsinyasiAgen.getKonsignerDK') }}",
+    //         data: {
+    //             agent: $("#agentCode").val()
+    //         },
+    //         type: 'get',
+    //         success: function( data ) {
+    //             // console.log(data);
+    //             $('#konsigner').find('option').remove();
+    //             $('#konsigner').append('<option value="" selected>Pilih Agen</option>')
+    //             $.each(data, function(index, val) {
+    //                 if (val.get_company.c_id == $('#konsignerCode').val()) {
+    //                     $('#konsigner').append('<option value="'+ val.get_company.c_id +'" selected>'+ val.a_name +'</option>');
+    //                 }
+    //                 else {
+    //                     $('#konsigner').append('<option value="'+ val.get_company.c_id +'">'+ val.a_name +'</option>');
+    //                 }
+    //             })
+    //             loadingHide();
+    //         },
+    //         error: function(e) {
+    //             loadingHide();
+    //             // console.log('get konsigner error: ');
+    //         }
+    //     });
+    // }
 
     function changeSatuan() {
         $(".satuan").on("change", function (evt) {
@@ -562,7 +477,7 @@
 
             if ($('.jumlah').eq(idx).attr("data-label") == "old") {
                 $.ajax({
-                    url: "{{ route('datakonsinyasi.checkItemStockDKOld') }}",
+                    url: "{{ route('konsinyasiAgen.checkItemStockDKOld') }}",
                     data: {
                         idStock:  $(".idStock").eq(idx).val(),
                         itemId: $(".itemid").eq(idx).val(),
@@ -584,7 +499,7 @@
             }
             else {
                 $.ajax({
-                    url: "{{ route('datakonsinyasi.checkItemStockDK') }}",
+                    url: "{{ route('konsinyasiAgen.checkItemStockDK') }}",
                     data: {
                         idStock: $(".idStock").eq(idx).val(),
                         itemId: $(".itemid").eq(idx).val(),
@@ -633,7 +548,7 @@
     function checkStock(idx, jumlah)
     {
         $.ajax({
-            url: "{{ route('datakonsinyasi.checkItemStockDK') }}",
+            url: "{{ route('konsinyasiAgen.checkItemStockDK') }}",
             data: {
                 idStock: $(".idStock").eq(idx).val(),
                 itemId: $(".itemid").eq(idx).val(),
@@ -654,7 +569,7 @@
     function checkStockOld(idx, qtyOld, jumlah)
     {
         $.ajax({
-            url: "{{ route('datakonsinyasi.checkItemStockDKOld') }}",
+            url: "{{ route('konsinyasiAgen.checkItemStockDKOld') }}",
             data: {
                 idStock:  $(".idStock").eq(idx).val(),
                 itemId: $(".itemid").eq(idx).val(),
@@ -678,9 +593,9 @@
     {
         var tmp_jumlah = $('.jumlah').eq(idx).val();
         $.ajax({
-            url: "{{ route('datakonsinyasi.checkHargaDK') }}",
+            url: "{{ route('konsinyasiAgen.checkHargaDK') }}",
             data: {
-                agentCode: $("#agentCode").val(),
+                agentCode: $("#konsignerCode").val(),
                 itemId: $(".itemid").eq(idx).val(),
                 unit: $(".satuan").eq(idx).val(),
                 qty: tmp_jumlah
@@ -704,10 +619,10 @@
                 updateTotalTampil();
             },
             error: function (err) {
-                messageWarning('Error', err.message);
+                $('.harga').eq(idx).val(0);
+                messageWarning('Error', err.responseJSON.message);
             }
         });
-
     }
 
     function changeHarga() {
@@ -757,7 +672,7 @@
             '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah" value="Rp. 0"></td>'+
             '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>'+
             '<td>'+
-            '<button class="btn btn-danger btnRemoveItem btn-sm" type="button">'+
+            '<button class="btn btn-danger btnRemoveItem btn-sm rounded-circle" type="button">'+
             '<i class="fa fa-remove" aria-hidden="true"></i>'+
             '</button>'+
             '</td>'+
@@ -830,14 +745,14 @@
         });
 
         $.ajax({
-            url: baseUrl +"/marketing/marketingarea/datakonsinyasi/update/"+ $("#idSales").val(),
+            url: baseUrl +"/marketing/agen/konsinyasi/update/"+ $("#idSales").val(),
             data: data,
             type: 'post',
             success: function (response) {
                 loadingHide();
                 if (response.status == 'Success') {
                     messageSuccess("Berhasil", response.message);
-                    setInterval(function(){location.reload();}, 3500)
+                    setInterval(function(){location.reload();}, 2000)
                 }
                 else if (response.status === 'invalid') {
                     messageWarning('Perhatian', response.message);
@@ -889,21 +804,22 @@
             return input.value;
         });
 
-        $( ".barang" ).autocomplete({
-            source: function( request, response ) {
+        $(".barang").eq(idxBarang).autocomplete({
+            source: function (request, response) {
                 $.ajax({
-                    url: '{{ url('/marketing/konsinyasipusat/cari-barang') }}',
+                    url: "{{ route('konsinyasiAgen.getItemsDK') }}",
                     data: {
                         idItem: item,
+                        branch: $('#branchCode').val(),
                         term: $(".barang").eq(idxBarang).val()
                     },
-                    success: function( data ) {
-                        response( data );
+                    success: function (data) {
+                        response(data);
                     }
                 });
             },
             minLength: 1,
-            select: function(event, data) {
+            select: function (event, data) {
                 setItem(data.item);
             }
         });
@@ -919,7 +835,7 @@
         $(".idStock").eq(idxBarang).val(idStock);
         setArrayCode();
         $.ajax({
-            url: '{{ url('/marketing/konsinyasipusat/get-satuan/') }}'+'/'+idItem,
+            url: baseUrl + '/marketing/agen/konsinyasi/get-satuan/' + idItem,
             type: 'GET',
             success: function( resp ) {
                 $(".satuan").eq(idxBarang).find('option').remove();
@@ -934,18 +850,16 @@
                 $(".satuan").eq(idxBarang).append(option);
                 if ($(".itemid").eq(idxBarang).val() == "") {
                     $(".jumlah").eq(idxBarang).attr("readonly", true);
-                    // $(".harga").eq(idxBarang).attr("readonly", true);
                     $(".satuan").eq(idxBarang).find('option').remove();
                 }else{
                     $(".jumlah").eq(idxBarang).attr("readonly", false);
-                    // $(".harga").eq(idxBarang).attr("readonly", false);
                 }
             }
         });
     }
     // set visible table
     function visibleTableItem() {
-        if ($("#agentCode").val() != "") {
+        if ($("#konsignerCode").val() != "") {
             $("#tbl_item").show('slow');
             $(".btn-submit").attr("disabled", false);
             $(".btn-submit").css({"cursor":"pointer"});
@@ -955,77 +869,6 @@
             $(".btn-submit").attr("disabled", true);
             $(".btn-submit").css({"cursor":"not-allowed"});
         }
-    }
-
-    function getProv() {
-        loadingShow();
-        $("#provinsi").find('option').remove();
-        // $("#provinsi").attr("disabled", true);
-        axios.get('{{ route('konsinyasipusat.getProv') }}')
-        .then(function (resp) {
-            // $("#provinsi").attr("disabled", false);
-            var option = '<option value="">Pilih Provinsi</option>';
-            var prov = resp.data;
-            prov.forEach(function (data) {
-                if (selectProv == data.wp_id) {
-                    option += '<option value="'+data.wp_id+'" selected>'+data.wp_name+'</option>';
-                }else{
-                    option += '<option value="'+data.wp_id+'">'+data.wp_name+'</option>';
-                }
-            })
-            $("#provinsi").append(option);
-            axios.get(baseUrl+'/marketing/konsinyasipusat/get-kota/'+$("#provinsi").val())
-            .then(function (resp) {
-                // $("#kota").attr("disabled", false);
-                var option = '<option value="">Pilih Kota</option>';
-                var kota = resp.data;
-                kota.forEach(function (data) {
-                    if (selectKota == data.wc_id) {
-                        option += '<option value="'+data.wc_id+'" selected>'+data.wc_name+'</option>';
-                    }else{
-                        option += '<option value="'+data.wc_id+'">'+data.wc_name+'</option>';
-                    }
-                })
-                $("#kota").append(option);
-                loadingHide();
-                getBranch();
-            })
-            .catch(function (error) {
-                loadingHide();
-                messageWarning("Error", error)
-            })
-            loadingHide();
-        })
-        .catch(function (error) {
-            loadingHide();
-            messageWarning("Error", error)
-        })
-    }
-    function getKota() {
-        $("#provinsi").on("change", function (evt) {
-            evt.preventDefault();
-            $("#kota").find('option').remove();
-            // $("#kota").attr("disabled", true);
-            if ($("#provinsi").val() != "") {
-                loadingShow();
-                axios.get(baseUrl+'/marketing/konsinyasipusat/get-kota/'+$("#provinsi").val())
-                .then(function (resp) {
-                    // $("#kota").attr("disabled", false);
-                    var option = '<option value="">Pilih Kota</option>';
-                    var kota = resp.data;
-                    kota.forEach(function (data) {
-                        option += '<option value="'+data.wc_id+'">'+data.wc_name+'</option>';
-                    })
-                    $("#kota").append(option);
-                    loadingHide();
-                    $("#kota").focus();
-                })
-                .catch(function (error) {
-                    loadingHide();
-                    messageWarning("Error", error)
-                })
-            }
-        })
     }
 
     // check production code qty each item

@@ -2197,46 +2197,6 @@
         changeHarga();
         visibleTableItem();
 
-        // $("#kota").on("change", function (evt) {
-        //     evt.preventDefault();
-        //     if ($("#kota").val() == "") {
-        //         $("#branchCode").val('');
-        //         $("#branch").val('');
-        //         $('#branch').find('option').remove();
-        //         $("#branch").attr("disabled", true);
-        //     } else {
-        //         $("#branch").attr("disabled", false);
-        //         $("#branchCode").val('');
-        //         $("#branch").val('');
-        //         $("#branch").attr('autofocus', true);
-        //         getBranch();
-        //     }
-        // })
-        // $("#branch").on("change", function (evt) {
-        //     evt.preventDefault();
-        //     if ($("#branch").val() == "") {
-        //         $("#agentCode").val('');
-        //         $("#agent").val('');
-        //         $('#agent').find('option').remove();
-        //         $("#agent").attr("disabled", true);
-        //     } else {
-        //         $("#agent").attr("disabled", false);
-        //         $("#agentCode").val('');
-        //         $("#agent").val('');
-        //         $("#agent").attr('autofocus', true);
-        //         // getAgent();
-        //     }
-        // })
-        // // on select branch
-        // $('#branch').on('select2:select', function () {
-        //     $("#branchCode").val($(this).find('option:selected').val());
-        //     if ($(this).val() != '') {
-        //         getAgent();
-        //     } else {
-        //         $('#agentCode').val('');
-        //     }
-        //     visibleTableItem();
-        // });
         // on selectagent
         $('#agent').on('select2:select', function () {
             $('#agentCode').val($(this).find('option:selected').val());
@@ -2449,98 +2409,26 @@
             nullable: false,
             // unmaskAsNumber: true,
         });
+        // inputmask-digits
+        $('.rupiah').inputmask("currency", {
+            radixPoint: ",",
+            groupSeparator: ".",
+            digits: 0,
+            autoGroup: true,
+            prefix: ' Rp ', //Space after $, this will not truncate the first character.
+            rightAlign: true,
+            autoUnmask: true,
+            nullable: false,
+            // unmaskAsNumber: true,
+        });
     }
-
-    // function getProv() {
-    //     loadingShow();
-    //     $("#provinsi").find('option').remove();
-    //     $("#provinsi").attr("disabled", true);
-    //     axios.get("{{ route('konsinyasiAgen.getProv') }}")
-    //         .then(function (resp) {
-    //             $("#provinsi").attr("disabled", false);
-    //             var option = '<option value="">Pilih Provinsi</option>';
-    //             var prov = resp.data;
-    //             prov.forEach(function (data) {
-    //                 option += '<option value="' + data.wp_id + '">' + data.wp_name + '</option>';
-    //             })
-    //             $("#provinsi").append(option);
-    //             loadingHide();
-    //         })
-    //         .catch(function (error) {
-    //             loadingHide();
-    //             messageWarning("Error", error)
-    //         })
-    // }
-    //
-    // function getKota() {
-    //     $("#provinsi").on("change", function (evt) {
-    //         evt.preventDefault();
-    //         // $("#idKonsigner").val('');
-    //         // $("#kodeKonsigner").val('');
-    //         // $("#konsigner").val('');
-    //         $("#kota").find('option').remove();
-    //         $("#kota").attr("disabled", true);
-    //         // $("#konsigner").attr("disabled", true);
-    //         if ($("#provinsi").val() != "") {
-    //             loadingShow();
-    //             axios.get(baseUrl + '/marketing/agen/konsinyasi/get-kota/' + $("#provinsi").val())
-    //                 .then(function (resp) {
-    //                     $("#kota").attr("disabled", false);
-    //                     var option = '<option value="">Pilih Kota</option>';
-    //                     var kota = resp.data;
-    //                     kota.forEach(function (data) {
-    //                         option += '<option value="' + data.wc_id + '">' + data.wc_name + '</option>';
-    //                     })
-    //                     $("#kota").append(option);
-    //                     loadingHide();
-    //                     $("#kota").focus();
-    //                     $('#kota').select2('open');
-    //                 })
-    //                 .catch(function (error) {
-    //                     loadingHide();
-    //                     messageWarning("Error", error)
-    //                 })
-    //         }
-    //     })
-    // }
-    //
-    // // get list of branc based on prov and city
-    // function getBranch() {
-    //     if ($("#kota").val() != '') {
-    //         loadingShow();
-    //         $.ajax({
-    //             url: "{{ route('konsinyasiAgen.getBranchDK') }}",
-    //             data: {
-    //                 prov: $("#provinsi").val(),
-    //                 city: $("#kota").val()
-    //             },
-    //             type: 'get',
-    //             success: function (data) {
-    //                 // console.log(data);
-    //                 $('#branch').find('option').remove();
-    //                 $('#branch').append('<option value="" selected>Pilih Cabang</option>')
-    //                 $.each(data, function (index, val) {
-    //                     // console.log(val, val.a_id);
-    //                     $('#branch').append('<option value="' + val.c_id + '">' + val.c_name + '</option>');
-    //                 });
-    //                 loadingHide();
-    //                 $('#branch').focus();
-    //                 $('#branch').select2('open');
-    //             },
-    //             error: function (e) {
-    //                 loadingHide();
-    //                 // console.log('get konsigner error: ');
-    //             }
-    //         });
-    //     }
-    // }
 
     // get list of agent based on branch
     function getAgent() {
         if ($('#branch').val() != '') {
             loadingShow();
             $.ajax({
-                url: "{{ route('konsinyasiAgen.getAgentsDK') }}",
+                url: "{{ route('konsinyasiAgen.getKonsignerDK') }}",
                 data: {
                     branch: $("#branchCode").val()
                 },
@@ -2782,7 +2670,7 @@
             '<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>' +
             '<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button></td>' +
             '<td><input type="text" name="harga[]" class="form-control form-control-sm text-right harga" value="Rp. 0" readonly><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>' +
-            '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon digits" value="Rp. 0"></td>' +
+            '<td><input type="text" name="diskon[]" style="text-align: right;" class="form-control form-control-sm diskon rupiah" value="Rp. 0"></td>' +
             '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>' +
             '<td>' +
             '<button class="btn btn-danger btnRemoveItem rounded-circle btn-sm" type="button">' +
@@ -2854,7 +2742,7 @@
                     messageSuccess("Berhasil", response.message);
                     setInterval(function () {
                         location.reload();
-                    }, 3500)
+                    }, 2500)
                 } else if (response.status === 'invalid') {
                     messageWarning('Perhatian', response.message);
                 } else {

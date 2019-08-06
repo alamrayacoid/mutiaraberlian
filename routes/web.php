@@ -708,8 +708,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/marketing/agen/konsinyasi/get-provinsi', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getProv')->name('konsinyasiAgen.getProv');
     Route::get('/marketing/agen/konsinyasi/get-kota/{idprov}', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getkota')->name('konsinyasiAgen.getKota');
-    Route::get('/marketing/agen/konsinyasi/get-branch', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getBranchDK')->name('konsinyasiAgen.getBranchDK');
     Route::get('/marketing/agen/konsinyasi/get-agents', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getAgentsDK')->name('konsinyasiAgen.getAgentsDK');
+    Route::get('/marketing/agen/konsinyasi/get-konsigner', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getKonsignerDK')->name('konsinyasiAgen.getKonsignerDK');
     Route::get('/marketing/agen/konsinyasi/get-items', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getItemsDK')->name('konsinyasiAgen.getItemsDK');
     Route::get('/marketing/agen/konsinyasi/get-satuan/{id}', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getSatuanDK')->name('konsinyasiAgen.getSatuanDK');
     Route::get('/marketing/agen/konsinyasi/check-items-stock', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@checkItemStockDK')->name('konsinyasiAgen.checkItemStockDK');
@@ -718,6 +718,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/marketing/agen/konsinyasi/store', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@storeDK')->name('konsinyasiAgen.storeDK');
     Route::get('/marketing/agen/konsinyasi/index', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@index')->name('konsinyasiAgen.index');
     Route::get('/marketing/agen/konsinyasi/get-list', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getListDK')->name('konsinyasiAgen.getListDK');
+    Route::get('/marketing/agen/konsinyasi/edit/{id}', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@editDK')->name('konsinyasiAgen.editDK');
+    Route::post('/marketing/agen/konsinyasi/update/{id}', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@updateDK')->name('konsinyasiAgen.updateDK');
+    Route::post('/marketing/agen/konsinyasi/delete/{id}', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@deleteDK')->name('konsinyasiAgen.deleteDK');
 
     Route::get('/marketing/agen/konsinyasi/pembayaran', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@bayar')->name('konsinyasiAgen.bayar');
     Route::get('/marketing/agen/konsinyasi/get-data-pembayaran', 'Aktivitasmarketing\Agen\AgenKonsinyasiController@getData')->name('konsinyasiAgen.getData');

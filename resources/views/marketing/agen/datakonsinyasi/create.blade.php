@@ -6,8 +6,6 @@
             </div>
             <div class="header-block pull-right">
                 <a class="btn btn-warning btn-sm" href="{{ route('konsinyasiAgen.bayar') }}"><i class="fa fa-plus"></i>&nbsp;Pembayaran Konsigner</a>
-            </div>
-            <div class="header-block pull-right">
                 <a class="btn btn-info btn-sm" href="{{ route('konsinyasiAgen.index') }}"><i class="fa fa-folder"></i>&nbsp;Kelola Konsinyasi</a>
             </div>
         </div>
@@ -117,7 +115,7 @@
                                                 Harga tidak ditemukan!</p>
                                             </td>
                                             <td>
-                                                <input class="form-control form-control-sm diskon digits"
+                                                <input class="form-control form-control-sm diskon rupiah"
                                                 id="diskon" name="diskon[]">
                                             </td>
                                             <td>
