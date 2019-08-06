@@ -161,7 +161,8 @@ class Mutasi extends Controller
         $listQtyPC, // list qty of production-code
         $listUnitPC, // list unit of production-code
         $sellPrice = null, // sellprice
-        $mutcat = null // mutation category
+        $mutcat = null, // mutation category
+        $date = null // set custom date for mutation
         )
     {
         DB::beginTransaction();
@@ -170,8 +171,8 @@ class Mutasi extends Controller
             // dd($from, $itemOwner, $item, $qty, $nota, $listPC, $listQtyPC, $listUnitPC, $sellPrice, $mutcat);
             // qty item that is sending out to branch
             $qty = (int)$qty;
-            // date now
-            $dateNow = Carbon::now();
+            // set date if receiveDate is not null
+            (is_null($date)) ? $dateNow = Carbon::now() : $dateNow = $date;
             // get list of 'in' mutcat-list
             $inMutcatList = m_mutcat::where('m_status', 'M')
                 ->select('m_id')
@@ -428,8 +429,9 @@ class Mutasi extends Controller
         try
         {
             // dd($itemOwner, $to, $item, $nota, $listPC, $listQtyPC, $listUnitPC, $listSellPrice, $listHPP, $listSmQty, $mutcat, $status, $condition);
-            // insert stock-mutation 'in'
-            $dateNow = Carbon::now();
+            // set date if receiveDate is not null
+            (is_null($date)) ? $dateNow = Carbon::now('Asia/jakarta') : $dateNow = $date;
+
             $mutcat = $mutcat;
             $comp = $itemOwner; // item owner
             $position = $to; // item position
@@ -529,63 +531,6 @@ class Mutasi extends Controller
             ]);
         }
     }
-
-    // public function rollbackDistributionOut(
-    //     $nota, // nota
-    //     $itemId, // item-id
-    //     $mutcatOut // mutcat-out
-    // )
-    // {
-    //     DB::beginTransaction();
-    //     try {
-    //         // get stock-mutation
-    //         $stockMut = d_stock_mutation::where('sm_nota', '=', $nota)
-    //         ->where('sm_mutcat', $mutcatOut)
-    //         ->whereHas('getStock', function ($query) use ($itemId) {
-    //             $query->where('s_item', $itemId);
-    //         })
-    //         ->get();
-    //         foreach ($stockMut as $key => $mutation) {
-    //             // get stock-mutation base (mutation 'in' from the first mutation)
-    //             $stockMutBase = d_stock_mutation::where('sm_stock', $mutation->sm_stock)
-    //             ->where('sm_nota', $mutation->sm_reff)
-    //             ->first();
-    //             // calculate qty-use and qty-residue in stock-mutation base
-    //             $usedQty = $stockMutBase->sm_use - $mutation->sm_qty;
-    //             $residueQty = $stockMutBase->sm_residue + $mutation->sm_qty;
-    //             // update stock-mutation base
-    //             $stockMutBase->sm_use = $usedQty;
-    //             $stockMutBase->sm_residue = $residueQty;
-    //             $stockMutBase->save();
-    //             // update qty stock base
-    //             $stockBase = d_stock::where('s_id', $stockMutBase->sm_stock)->first();
-    //             $stockBase->s_qty = $stockBase->s_qty + $mutation->sm_qty;
-    //             $stockBase->save();
-    //             // rollback stock-mutation-detail 'out' and stock-detail 'out'
-    //             $rollbackMutDetailSalesOut = self::rollbackMutDetailSalesOut(
-    //                 $mutation->sm_stock, // stock-mutation id
-    //                 $mutation->sm_detailid // stock-mutation detail-id
-    //             );
-    //             // dd('1', $rollbackMutDetailSalesOut);
-    //             if ($rollbackMutDetailSalesOut->original['status'] != 'success') {
-    //                 return $rollbackMutDetailSalesOut;
-    //             }
-    //             // delete current
-    //             $mutation->delete();
-    //         }
-    //         DB::commit();
-    //         return response()->json([
-    //             'status' => 'success'
-    //         ]);
-    //     }
-    //     catch (\Exception $e) {
-    //         DB::rollback();
-    //         return response()->json([
-    //             'status' => 'failed',
-    //             'message' => 'rollbackSalesOut -> ' . $e->getMessage()
-    //         ]);
-    //     }
-    // }
 
     // ...PC = production-code
     static function distribusicabangkeluar(
@@ -2177,7 +2122,7 @@ class Mutasi extends Controller
                 // set list production-code and prod-code-qty
                 foreach ($listPC as $idx => $PC) {
                     if ($sisaForPC <= 0 || is_null($PC)) {
-                        break;
+                        continue;
                     }
                     if ($listQtyPC[$idx] < $sisaForPC) {
                         array_push($listSmQtyPC, $listQtyPC[$idx]);
@@ -2190,7 +2135,7 @@ class Mutasi extends Controller
                         array_push($listSmQtyPC, $sisaForPC);
                         array_push($listSmPC, $PC);
                         $sisaForPC = 0;
-                        $listQtyPC[$idx] = $sisaForPC;
+                        $listQtyPC[$idx] -= $sisaForPC;
                     }
                 }
 
@@ -2348,7 +2293,6 @@ class Mutasi extends Controller
                 $qtyStockAkhir = $stock->s_qty + $totalQty;
                 $update = array('s_qty' => $qtyStockAkhir);
                 d_stock::where('s_id', '=', $stockId)->update($update);
-
             }
 
             // insert new mutation with mutcat = pembelian-in

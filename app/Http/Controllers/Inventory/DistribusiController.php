@@ -295,11 +295,14 @@ class DistribusiController extends Controller
                     }
                     $prodCodeLength = (int)$request->prodCodeLength[$i];
                     $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                    $sumQtyPC = 0;
+                    $listPC = array();
                     for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
                         // skip inserting when val is null or qty-pc is 0
                         if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
                             continue;
                         }
+                        array_push($listPC, strtoupper($request->prodCode[$j]));
                         $detailidcode = d_stockdistributioncode::where('sdc_stockdistribution', $id)
                                 ->where('sdc_stockdistributiondt', $detailid)
                                 ->max('sdc_detailid') + 1;
@@ -311,6 +314,7 @@ class DistribusiController extends Controller
                         $distcode->sdc_code = strtoupper($request->prodCode[$j]);
                         $distcode->sdc_qty = $request->qtyProdCode[$j];
                         $distcode->save();
+                        $sumQtyPC += (int)$request->qtyProdCode[$j];
                     }
 
                     // get qty of smallest unit
@@ -323,28 +327,80 @@ class DistribusiController extends Controller
                         $convert = (int)$request->qty[$i] * $item->i_unitcompare3;
                     }
 
+                    // validate qty production-code
+                    if ($sumQtyPC != $convert) {
+                        $item = m_item::where('i_id', $itemId)->first();
+                        throw new Exception("Jumlah kode produksi " . strtoupper($item->i_name) . " tidak sama dengan jumlah item yang dipesan !");
+                    }
+
                     // declaare list of production-code
-                    $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
+                    // $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                     $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                     $listUnitPC = [];
-                    // insert stock-mutation
-                    // waiit, check the name of $reff
-                    // $reff = 'DISTRIBUSI-MASUK';
-                    $mutDist = Mutasi::distribusicabangkeluar(
-                        Auth::user()->u_company,
-                        $request->selectBranch,
-                        $itemId, // item id
-                        $convert, // qty with smallest unit
-                        $nota, // nota
-                        $nota, // nota reff
-                        $listPC,
-                        $listQtyPC,
-                        $listUnitPC
-                    );
 
-                    if ($mutDist !== 'success') {
-                        return $mutDist;
+                    // insert stock mutation sales 'out'
+                    $mutDistributionOut = Mutasi::distributionOut(
+                        Auth::user()->u_company, // from (company-id)
+                        Auth::user()->u_company, // item-owner (company-id)
+                        $itemId, // item id
+                        $convert, // qty item
+                        $nota, // nota distribution
+                        null, // nota refference
+                        $listPC, // list production-code
+                        $listQtyPC, // list qty of production-code
+                        $listUnitPC, // list unit of production-code
+                        $sellPrice = null, // sellprice
+                        19 // mutation category
+                    );
+                    if ($mutDistributionOut->original['status'] !== 'success') {
+                        return $mutDistributionOut;
                     }
+                    // set stock-parent-id
+                    $listStockParentId = $mutDistributionOut->original['listStockParentId'];
+                    // get list
+                    $listSellPrice = $mutDistributionOut->original['listSellPrice'];
+                    $listHPP = $mutDistributionOut->original['listHPP'];
+                    $listSmQty = $mutDistributionOut->original['listSmQty'];
+                    $listPCReturn = $mutDistributionOut->original['listPCReturn'];
+                    $listQtyPCReturn = $mutDistributionOut->original['listQtyPCReturn'];
+                    // dd($listSmQty, $listPCReturn, $listQtyPCReturn);
+                    // insert stock mutation using sales 'in'
+                    $mutDistributionIn = Mutasi::distributionIn(
+                        Auth::user()->u_company, // item-owner (company-id)
+                        $request->selectBranch, // destination (company-id)
+                        $itemId, // item id
+                        $nota, // nota sales
+                        $listPCReturn, // list of list production-code (based on how many smQty used / each smQty has a list of prod-code)
+                        $listQtyPCReturn, // list of list qty of production-code
+                        $listUnitPC, // list  unit of production-code (unused)
+                        $listSellPrice, // list of sellprice
+                        $listHPP, // list of hpp
+                        $listSmQty, // lsit of sm-qty (it got from salesOut, each qty used from different stock-mutation)
+                        18, // mutation category
+                        null, // stock parent id
+                        $status = 'ON GOING', // items status in stock
+                        $condition = 'FINE' // item condition in stock
+                    );
+                    if ($mutDistributionIn->original['status'] !== 'success') {
+                        return $mutDistributionIn;
+                    }
+
+                    // // waiit, check the name of $reff
+                    // // $reff = 'DISTRIBUSI-MASUK';
+                    // $mutDist = Mutasi::distribusicabangkeluar(
+                    //     Auth::user()->u_company,
+                    //     $request->selectBranch,
+                    //     $itemId, // item id
+                    //     $convert, // qty with smallest unit
+                    //     $nota, // nota
+                    //     $nota, // nota reff
+                    //     $listPC,
+                    //     $listQtyPC,
+                    //     $listUnitPC
+                    // );
+                    // if ($mutDist !== 'success') {
+                    //     return $mutDist;
+                    // }
                     $startProdCodeIdx += $prodCodeLength;
                 } else {
                     if ($request->qty[$i] != 0){
@@ -655,7 +711,7 @@ class DistribusiController extends Controller
                     DB::rollback();
                     return response()->json([
                         'status' => 'gagal',
-                        'message' => 'Jumlah kode produksi ' . strtoupper($barang->i_name) . ' tidak tidak sesuai dengan jumlah permintaan'
+                        'message' => 'Jumlah kode produksi ' . strtoupper($barang->i_name) . ' tidak sesuai dengan jumlah permintaan'
                     ]);
                 }
 
@@ -670,22 +726,70 @@ class DistribusiController extends Controller
                         DB::rollback();
                         return $rollbackDist;
                     }
-                    // waiit, check the name of $reff
-                    // $reff = 'DISTRIBUSI-MASUK';
-                    $mutDist = Mutasi::distribusicabangkeluar(
-                        Auth::user()->u_company, // from
-                        $request->sd_destination, // to
-                        $val, // item-id
-                        $convert, // qty of smallest-unit
-                        $stockdist->sd_nota, // nota
-                        $stockdist->sd_nota, // nota-reff
-                        $listPC, // list of production-code
-                        $listQtyPC, // list of production-code-qty
-                        $listUnitPC // list of production-code-unit
+                    // insert stock mutation sales 'out'
+                    $mutDistributionOut = Mutasi::distributionOut(
+                        Auth::user()->u_company, // from (company-id)
+                        Auth::user()->u_company, // item-owner (company-id)
+                        $val, // item id
+                        $convert, // qty item
+                        $stockdist->sd_nota, // nota distribution
+                        null, // nota refference
+                        $listPC, // list production-code
+                        $listQtyPC, // list qty of production-code
+                        $listUnitPC, // list unit of production-code
+                        $sellPrice = null, // sellprice
+                        19 // mutation category
                     );
-                    if ($mutDist !== 'success') {
-                        return $mutDist;
+                    if ($mutDistributionOut->original['status'] !== 'success') {
+                        return $mutDistributionOut;
                     }
+                    // set stock-parent-id
+                    $listStockParentId = $mutDistributionOut->original['listStockParentId'];
+                    // get list
+                    $listSellPrice = $mutDistributionOut->original['listSellPrice'];
+                    $listHPP = $mutDistributionOut->original['listHPP'];
+                    $listSmQty = $mutDistributionOut->original['listSmQty'];
+                    $listPCReturn = $mutDistributionOut->original['listPCReturn'];
+                    $listQtyPCReturn = $mutDistributionOut->original['listQtyPCReturn'];
+                    // dd($listSmQty, $listPCReturn, $listQtyPCReturn);
+                    // insert stock mutation using sales 'in'
+                    $mutDistributionIn = Mutasi::distributionIn(
+                        Auth::user()->u_company, // item-owner (company-id)
+                        $request->sd_destination, // destination (company-id)
+                        $val, // item id
+                        $stockdist->sd_nota, // nota sales
+                        $listPCReturn, // list of list production-code (based on how many smQty used / each smQty has a list of prod-code)
+                        $listQtyPCReturn, // list of list qty of production-code
+                        $listUnitPC, // list  unit of production-code (unused)
+                        $listSellPrice, // list of sellprice
+                        $listHPP, // list of hpp
+                        $listSmQty, // lsit of sm-qty (it got from salesOut, each qty used from different stock-mutation)
+                        18, // mutation category
+                        null, // stock parent id
+                        $status = 'ON GOING', // items status in stock
+                        $condition = 'FINE' // item condition in stock
+                    );
+                    if ($mutDistributionIn->original['status'] !== 'success') {
+                        return $mutDistributionIn;
+                    }
+
+                    // // waiit, check the name of $reff
+                    // // $reff = 'DISTRIBUSI-MASUK';
+                    // $mutDist = Mutasi::distribusicabangkeluar(
+                    //     Auth::user()->u_company, // from
+                    //     $request->sd_destination, // to
+                    //     $val, // item-id
+                    //     $convert, // qty of smallest-unit
+                    //     $stockdist->sd_nota, // nota
+                    //     $stockdist->sd_nota, // nota-reff
+                    //     $listPC, // list of production-code
+                    //     $listQtyPC, // list of production-code-qty
+                    //     $listUnitPC // list of production-code-unit
+                    // );
+                    // if ($mutDist !== 'success') {
+                    //     return $mutDist;
+                    // }
+
                 } // else : stock already 'used'
                 elseif ($request->status[$key] == "used") {
                     // update qty in stock-mutation and in stock-item

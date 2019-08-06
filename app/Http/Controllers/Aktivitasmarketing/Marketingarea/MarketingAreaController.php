@@ -2699,7 +2699,6 @@ class MarketingAreaController extends Controller
                 $request->prodCodeLength, // list production-code length each item
                 $request->qtyProdCode // list of qty each production-code
             );
-
             if ($validateProdCode !== 'validated') {
                 return $validateProdCode;
             }
