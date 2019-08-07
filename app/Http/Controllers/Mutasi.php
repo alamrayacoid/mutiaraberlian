@@ -161,7 +161,8 @@ class Mutasi extends Controller
         $listQtyPC, // list qty of production-code
         $listUnitPC, // list unit of production-code
         $sellPrice = null, // sellprice
-        $mutcat = null // mutation category
+        $mutcat = null, // mutation category
+        $date = null // set custom date for mutation
         )
     {
         DB::beginTransaction();
@@ -170,8 +171,8 @@ class Mutasi extends Controller
             // dd($from, $itemOwner, $item, $qty, $nota, $listPC, $listQtyPC, $listUnitPC, $sellPrice, $mutcat);
             // qty item that is sending out to branch
             $qty = (int)$qty;
-            // date now
-            $dateNow = Carbon::now();
+            // set date if receiveDate is not null
+            (is_null($date)) ? $dateNow = Carbon::now() : $dateNow = $date;
             // get list of 'in' mutcat-list
             $inMutcatList = m_mutcat::where('m_status', 'M')
                 ->select('m_id')
@@ -180,7 +181,6 @@ class Mutasi extends Controller
                 $tmp[] = $inMutcatList[$i]->m_id;
             }
             $inMutcatList = $tmp;
-
             // get stock and stock-mutation parent
             $stock = DB::table('d_stock')
                 ->join('d_stock_mutation', 'sm_stock', '=', 's_id')
@@ -194,7 +194,6 @@ class Mutasi extends Controller
                 ->get();
 
             $permintaan = $qty;
-
             // set callback if stock-item-parent is empty
             if (count($stock) <= 0) {
                 $itemx = m_item::where('i_id', $item)->select('i_name')->first();
@@ -215,11 +214,10 @@ class Mutasi extends Controller
                 // insert new stock mutation
                 // use 'all' qty from current stock-mutation
                 if ($permintaan > $stock[$j]->sm_sisa && $permintaan != 0) {
-                    $qtyUsed = $stock[$j]->s_qty;
                     // update qty in stock-item-parent
                     $stockParent = d_stock::where('s_id', $stock[$j]->s_id)
                     ->first();
-                    $stockParent->s_qty = 0;
+                    $stockParent->s_qty -= $stock[$j]->sm_sisa;
                     $stockParent->save();
                     // update sm_use and sm_residue in parent
                     d_stock_mutation::where('sm_stock', $stockParent->s_id)
@@ -229,69 +227,105 @@ class Mutasi extends Controller
                             'sm_residue' => 0
                         ]);
 
-                    // get prodCode
-                    $prodCode = d_stockmutationdt::where('smd_stock', $stockParent->s_id)
-                        // ->where('smd_stockmutation', $stock[$j]->sm_detailid)
-                        ->get();
-
                     $listSmQtyPC = array();
                     $listSmPC = array();
-                    // update qty-request each production-code
-                    foreach ($prodCode as $key => $pcode) {
-                        if (in_array($pcode->smd_productioncode, $listPC)) {
-                            $idx = array_search($pcode->smd_productioncode, $listPC);
-                            // get qty of production-code in stock
-                            $qtyProdCodeInStock = d_stockdt::where('sd_stock', $pcode->smd_stock)
-                            ->where('sd_code', $listPC[$idx])->select('sd_qty')->first();
-                            array_push($listSmPC, $listPC[$idx]);
-                            array_push($listSmQtyPC, $qtyUsed);
-                            // remove listPC after selected
-                            $listQtyPC[$idx] = $listQtyPC[$idx] - $qtyProdCodeInStock->sd_qty;
-                            if ($listQtyPC[$idx] <= 0) {
-                                $listPC[$idx] = null;
-                            }
-                        }
-                    }
+                    // set production-code and prod-code-qty
+                    $sisaForPC = $stock[$j]->sm_sisa;
 
+                    // // get prodCode
+                    // $prodCode = d_stockmutationdt::where('smd_stock', $stockParent->s_id)
+                    //     ->where('smd_stockmutation', $stock[$j]->sm_detailid)
+                    //     ->get();
+                    //
+                    // $listSmQtyPC = array();
+                    // $listSmPC = array();
+                    // // update qty-request each production-code
+                    // foreach ($prodCode as $key => $pcode) {
+                    //     if (in_array($pcode->smd_productioncode, $listPC)) {
+                    //         $idx = array_search($pcode->smd_productioncode, $listPC);
+                    //         // push a production-code to list
+                    //         array_push($listSmPC, $listPC[$idx]);
+                    //
+                    //         if ($listQtyPC[$idx] > $pcode->smd_qty) {
+                    //             $qtyUsedPC = $pcode->smd_qty;
+                    //             $listQtyPC[$idx] = $listQtyPC[$idx] - $pcode->smd_qty;
+                    //         }
+                    //         else {
+                    //             $qtyUsedPC = $listQtyPC[$idx];
+                    //             // remove listPC after selected
+                    //             $listQtyPC[$idx] = 0;
+                    //             $listPC[$idx] = null;
+                    //         }
+                    //         array_push($listSmQtyPC, $qtyUsedPC);
+                    //     }
+                    // }
                     // update qty of request (how much qty used by selected stock-mutation)
+
                     $permintaan = $permintaan - $stock[$j]->sm_sisa;
                     $smQty = $stock[$j]->sm_sisa;
                     $continueLoopStock = true;
                 }
                 // use 'some' qty from current stock-mutation
                 elseif ($permintaan <= $stock[$j]->sm_sisa && $permintaan != 0) {
-                    $qtyUsed = $permintaan;
                     // update qty in stock-item-parent
                     $stockParent = d_stock::where('s_id', $stock[$j]->s_id)
                     ->first();
-                    $stockParent->s_qty = $stockParent->s_qty - $permintaan;
+                    $stockParent->s_qty -= $permintaan;
                     $stockParent->save();
+                    // update sm_use and sm_residue in parent
                     d_stock_mutation::where('sm_stock', $stockParent->s_id)
                         ->where('sm_detailid', $stock[$j]->sm_detailid)
                         ->update([
                             'sm_use' => $stock[$j]->sm_use + $permintaan,
                             'sm_residue' => $stock[$j]->sm_residue - $permintaan
                         ]);
-                    // get prodCode
-                    $prodCode = d_stockmutationdt::where('smd_stock', $stockParent->s_id)
-                        // ->where('smd_stockmutation', $stock[$j]->sm_detailid)
-                        ->get();
 
                     $listSmQtyPC = array();
                     $listSmPC = array();
-                    // update qty-request each production-code
-                    foreach ($prodCode as $key => $pcode) {
-                        if (in_array($pcode->smd_productioncode, $listPC)) {
-                            $idx = array_search($pcode->smd_productioncode, $listPC);
-                            array_push($listSmPC, $listPC[$idx]);
-                            array_push($listSmQtyPC, (int)$listQtyPC[$idx]);
-                            // remove listPC after selected
-                            $listPC[$idx] = null;
-                        }
-                    }
+                    // set production-code and prod-code-qty
+                    $sisaForPC = $permintaan;
+
+                    // // get prodCode
+                    // $prodCode = d_stockmutationdt::where('smd_stock', $stockParent->s_id)
+                    //     ->where('smd_stockmutation', $stock[$j]->sm_detailid)
+                    //     ->get();
+                    //
+                    // $listSmQtyPC = array();
+                    // $listSmPC = array();
+                    // // update qty-request each production-code
+                    // foreach ($prodCode as $key => $pcode) {
+                    //     if (in_array($pcode->smd_productioncode, $listPC)) {
+                    //         $idx = array_search($pcode->smd_productioncode, $listPC);
+                    //         array_push($listSmPC, $listPC[$idx]);
+                    //         array_push($listSmQtyPC, (int)$listQtyPC[$idx]);
+                    //         // remove listPC after selected
+                    //         $listPC[$idx] = null;
+                    //     }
+                    // }
+
                     $smQty = $permintaan;
                     $continueLoopStock = false;
                 }
+                // set list production-code and prod-code-qty
+                foreach ($listPC as $idx => $PC) {
+                    if ($sisaForPC <= 0 || is_null($PC)) {
+                        continue;
+                    }
+                    if ($listQtyPC[$idx] < $sisaForPC) {
+                        array_push($listSmQtyPC, $listQtyPC[$idx]);
+                        array_push($listSmPC, $PC);
+                        $sisaForPC -= $listQtyPC[$idx];
+                        $listQtyPC[$idx] = 0;
+                        $PC = null;
+                    }
+                    else {
+                        array_push($listSmQtyPC, $sisaForPC);
+                        array_push($listSmPC, $PC);
+                        $sisaForPC = 0;
+                        $listQtyPC[$idx] -= $sisaForPC;
+                    }
+                }
+
                 $detailid = d_stock_mutation::where('sm_stock', $stockParent->s_id)
                         ->max('sm_detailid') + 1;
                 // set value for new stock-mutation
@@ -323,7 +357,6 @@ class Mutasi extends Controller
                 ];
                 // insert new stock-mutation
                 d_stock_mutation::insert($val_stockmut);
-
                 // insert new stock-mutation-detail (production-code) for mutcat-out
                 $insertSMProdCode = self::insertStockMutationDt($stockParent->s_id, $detailid, $listSmPC, $listSmQtyPC);
                 if ($insertSMProdCode !== 'success') {
@@ -385,9 +418,9 @@ class Mutasi extends Controller
         $listUnitPC, // list  unit of production-code (unused)
         $listSellPrice, // list of sellprice
         $listHPP, // list of hpp
-        $listSmQty, // lsit of sm-qty (it got from salesOut, each qty used from different stock-mutation)
+        $listSmQty, // lsit of sm-qty (it got from distributionOut, each qty used from different stock-mutation)
         $mutcat, // mutation category
-        $stockParentId = null, // stock parent id / unused
+        $listStockParentId = null, // stock parent id / unused
         $status = 'ON GOING', // items status in stock
         $condition = 'FINE' // item condition in stock
         )
@@ -395,9 +428,10 @@ class Mutasi extends Controller
         DB::beginTransaction();
         try
         {
-            // dd($itemOwner, $to, $item, $nota, $listPC, $listQtyPC, $listUnitPC, $listSellPrice, $listHPP, $listSmQty, $mutcat, $stockParentId, $status, $condition);
-            // insert stock-mutation 'in'
-            $dateNow = Carbon::now();
+            // dd($itemOwner, $to, $item, $nota, $listPC, $listQtyPC, $listUnitPC, $listSellPrice, $listHPP, $listSmQty, $mutcat, $status, $condition);
+            // set date if receiveDate is not null
+            (is_null($date)) ? $dateNow = Carbon::now('Asia/jakarta') : $dateNow = $date;
+
             $mutcat = $mutcat;
             $comp = $itemOwner; // item owner
             $position = $to; // item position
@@ -497,63 +531,6 @@ class Mutasi extends Controller
             ]);
         }
     }
-
-    // public function rollbackDistributionOut(
-    //     $nota, // nota
-    //     $itemId, // item-id
-    //     $mutcatOut // mutcat-out
-    // )
-    // {
-    //     DB::beginTransaction();
-    //     try {
-    //         // get stock-mutation
-    //         $stockMut = d_stock_mutation::where('sm_nota', '=', $nota)
-    //         ->where('sm_mutcat', $mutcatOut)
-    //         ->whereHas('getStock', function ($query) use ($itemId) {
-    //             $query->where('s_item', $itemId);
-    //         })
-    //         ->get();
-    //         foreach ($stockMut as $key => $mutation) {
-    //             // get stock-mutation base (mutation 'in' from the first mutation)
-    //             $stockMutBase = d_stock_mutation::where('sm_stock', $mutation->sm_stock)
-    //             ->where('sm_nota', $mutation->sm_reff)
-    //             ->first();
-    //             // calculate qty-use and qty-residue in stock-mutation base
-    //             $usedQty = $stockMutBase->sm_use - $mutation->sm_qty;
-    //             $residueQty = $stockMutBase->sm_residue + $mutation->sm_qty;
-    //             // update stock-mutation base
-    //             $stockMutBase->sm_use = $usedQty;
-    //             $stockMutBase->sm_residue = $residueQty;
-    //             $stockMutBase->save();
-    //             // update qty stock base
-    //             $stockBase = d_stock::where('s_id', $stockMutBase->sm_stock)->first();
-    //             $stockBase->s_qty = $stockBase->s_qty + $mutation->sm_qty;
-    //             $stockBase->save();
-    //             // rollback stock-mutation-detail 'out' and stock-detail 'out'
-    //             $rollbackMutDetailSalesOut = self::rollbackMutDetailSalesOut(
-    //                 $mutation->sm_stock, // stock-mutation id
-    //                 $mutation->sm_detailid // stock-mutation detail-id
-    //             );
-    //             // dd('1', $rollbackMutDetailSalesOut);
-    //             if ($rollbackMutDetailSalesOut->original['status'] != 'success') {
-    //                 return $rollbackMutDetailSalesOut;
-    //             }
-    //             // delete current
-    //             $mutation->delete();
-    //         }
-    //         DB::commit();
-    //         return response()->json([
-    //             'status' => 'success'
-    //         ]);
-    //     }
-    //     catch (\Exception $e) {
-    //         DB::rollback();
-    //         return response()->json([
-    //             'status' => 'failed',
-    //             'message' => 'rollbackSalesOut -> ' . $e->getMessage()
-    //         ]);
-    //     }
-    // }
 
     // ...PC = production-code
     static function distribusicabangkeluar(
@@ -1785,6 +1762,11 @@ class Mutasi extends Controller
                 ->get();
 
             $permintaan = $qty;
+            // set callback if stock-item-parent is empty
+            if (count($stock) <= 0) {
+                $itemx = m_item::where('i_id', $item)->select('i_name')->first();
+                throw new Exception("Stock " . $itemx->i_name . " kosong !");
+            }
 
             // set list of sellPrice and hpp. used for salesIn
             $listStockParentId = array();
@@ -1800,11 +1782,10 @@ class Mutasi extends Controller
                 // insert new stock mutation
                 // use 'all' qty from current stock-mutation
                 if ($permintaan > $stock[$j]->getMutation[0]->sm_residue && $permintaan != 0) {
-                    $qtyUsed = $stock[$j]->s_qty;
                     // update qty in stock-item-parent
                     $stockParent = d_stock::where('s_id', $stock[$j]->s_id)
                     ->first();
-                    $stockParent->s_qty = 0;
+                    $stockParent->s_qty -= $stock[$j]->getMutation[0]->sm_sisa;
                     $stockParent->save();
                     // update sm_use and sm_residue in parent
                     d_stock_mutation::where('sm_stock', $stockParent->s_id)
@@ -1813,41 +1794,47 @@ class Mutasi extends Controller
                             'sm_use' => $stock[$j]->getMutation[0]->sm_qty,
                             'sm_residue' => 0
                         ]);
-                    // get prodCode
-                    $prodCode = d_stockmutationdt::where('smd_stock', $stockParent->s_id)
-                        // ->where('smd_stockmutation', $stock[$j]->getMutation[0]->sm_detailid)
-                        ->get();
 
                     $listSmQtyPC = array();
                     $listSmPC = array();
-                    // update qty-request each production-code
-                    foreach ($prodCode as $key => $pcode) {
-                        if (in_array($pcode->smd_productioncode, $listPC)) {
-                            $idx = array_search($pcode->smd_productioncode, $listPC);
-                            // get qty of production-code in stock
-                            $qtyProdCodeInStock = d_stockdt::where('sd_stock', $pcode->smd_stock)
-                            ->where('sd_code', $listPC[$idx])->select('sd_qty')->first();
-                            array_push($listSmPC, $listPC[$idx]);
-                            array_push($listSmQtyPC, $qtyUsed);
-                            // remove listPC after selected
-                            $listQtyPC[$idx] = $listQtyPC[$idx] - $qtyProdCodeInStock->sd_qty;
-                            if ($listQtyPC[$idx] <= 0) {
-                                $listPC[$idx] = null;
-                            }
-                        }
-                    }
+                    // set production-code and prod-code-qty
+                    $sisaForPC = $stock[$j]->sm_sisa;
+
+                    // // get prodCode
+                    // $prodCode = d_stockmutationdt::where('smd_stock', $stockParent->s_id)
+                    //     // ->where('smd_stockmutation', $stock[$j]->getMutation[0]->sm_detailid)
+                    //     ->get();
+                    //
+                    // $listSmQtyPC = array();
+                    // $listSmPC = array();
+                    // // update qty-request each production-code
+                    // foreach ($prodCode as $key => $pcode) {
+                    //     if (in_array($pcode->smd_productioncode, $listPC)) {
+                    //         $idx = array_search($pcode->smd_productioncode, $listPC);
+                    //         // get qty of production-code in stock
+                    //         $qtyProdCodeInStock = d_stockdt::where('sd_stock', $pcode->smd_stock)
+                    //         ->where('sd_code', $listPC[$idx])->select('sd_qty')->first();
+                    //         array_push($listSmPC, $listPC[$idx]);
+                    //         array_push($listSmQtyPC, $qtyUsed);
+                    //         // remove listPC after selected
+                    //         $listQtyPC[$idx] = $listQtyPC[$idx] - $qtyProdCodeInStock->sd_qty;
+                    //         if ($listQtyPC[$idx] <= 0) {
+                    //             $listPC[$idx] = null;
+                    //         }
+                    //     }
+                    // }
                     // update qty of request (how much qty used by selected stock-mutation)
+
                     $permintaan = $permintaan - $stock[$j]->getMutation[0]->sm_residue;
                     $smQty = $stock[$j]->getMutation[0]->sm_residue;
                     $continueLoopStock = true;
                 }
                 // use 'some' qty from current stock-mutation
                 elseif ($permintaan <= $stock[$j]->getMutation[0]->sm_residue && $permintaan != 0) {
-                    $qtyUsed = $permintaan;
                     // update qty in stock-item-parent
                     $stockParent = d_stock::where('s_id', $stock[$j]->s_id)
                     ->first();
-                    $stockParent->s_qty = $stockParent->s_qty - $permintaan;
+                    $stockParent->s_qty -= $permintaan;
                     $stockParent->save();
                     d_stock_mutation::where('sm_stock', $stockParent->s_id)
                         ->where('sm_detailid', $stock[$j]->getMutation[0]->sm_detailid)
@@ -1855,25 +1842,51 @@ class Mutasi extends Controller
                             'sm_use' => $stock[$j]->getMutation[0]->sm_use + $permintaan,
                             'sm_residue' => $stock[$j]->getMutation[0]->sm_residue - $permintaan
                         ]);
-                    // get prodCode
-                    $prodCode = d_stockmutationdt::where('smd_stock', $stockParent->s_id)
-                        // ->where('smd_stockmutation', $stock[$j]->getMutation[0]->sm_detailid)
-                        ->get();
 
                     $listSmQtyPC = array();
                     $listSmPC = array();
-                    // update qty-request each production-code
-                    foreach ($prodCode as $key => $pcode) {
-                        if (in_array($pcode->smd_productioncode, $listPC)) {
-                            $idx = array_search($pcode->smd_productioncode, $listPC);
-                            array_push($listSmPC, $listPC[$idx]);
-                            array_push($listSmQtyPC, (int)$listQtyPC[$idx]);
-                            // remove listPC after selected
-                            $listPC[$idx] = null;
-                        }
-                    }
+                    // set production-code and prod-code-qty
+                    $sisaForPC = $permintaan;
+
+                    // // get prodCode
+                    // $prodCode = d_stockmutationdt::where('smd_stock', $stockParent->s_id)
+                    //     // ->where('smd_stockmutation', $stock[$j]->getMutation[0]->sm_detailid)
+                    //     ->get();
+                    //
+                    // $listSmQtyPC = array();
+                    // $listSmPC = array();
+                    // // update qty-request each production-code
+                    // foreach ($prodCode as $key => $pcode) {
+                    //     if (in_array($pcode->smd_productioncode, $listPC)) {
+                    //         $idx = array_search($pcode->smd_productioncode, $listPC);
+                    //         array_push($listSmPC, $listPC[$idx]);
+                    //         array_push($listSmQtyPC, (int)$listQtyPC[$idx]);
+                    //         // remove listPC after selected
+                    //         $listPC[$idx] = null;
+                    //     }
+                    // }
+
                     $smQty = $permintaan;
                     $continueLoopStock = false;
+                }
+                // set list production-code and prod-code-qty
+                foreach ($listPC as $idx => $PC) {
+                    if ($sisaForPC <= 0 || is_null($PC)) {
+                        break;
+                    }
+                    if ($listQtyPC[$idx] < $sisaForPC) {
+                        array_push($listSmQtyPC, $listQtyPC[$idx]);
+                        array_push($listSmPC, $PC);
+                        $sisaForPC -= $listQtyPC[$idx];
+                        $listQtyPC[$idx] = 0;
+                        $PC = null;
+                    }
+                    else {
+                        array_push($listSmQtyPC, $sisaForPC);
+                        array_push($listSmPC, $PC);
+                        $sisaForPC = 0;
+                        $listQtyPC[$idx] = $sisaForPC;
+                    }
                 }
 
                 $detailid = d_stock_mutation::where('sm_stock', $stockParent->s_id)
@@ -1901,7 +1914,7 @@ class Mutasi extends Controller
                     ];
                 }
                 $val_stockmut += [
-                        'sm_nota' => $notaReturn,
+                    'sm_nota' => $notaReturn,
                     'sm_reff' => $stock[$j]->getMutation[0]->sm_nota,
                     'sm_user' => Auth::user()->u_id
                 ];
@@ -2004,6 +2017,7 @@ class Mutasi extends Controller
                 $itemx = m_item::where('i_id', $item)->select('i_name')->first();
                 throw new Exception("Stock " . $itemx->i_name . " kosong !");
             }
+
             // set list of sellPrice and hpp. used for salesIn
             $listStockParentId = array();
             $listSellPrice = array();
@@ -2018,11 +2032,10 @@ class Mutasi extends Controller
                 // insert new stock mutation
                 // use 'all' qty from current stock-mutation
                 if ($permintaan > $stock[$j]->sm_sisa && $permintaan != 0) {
-                    $qtyUsed = $stock[$j]->s_qty;
                     // update qty in stock-item-parent
                     $stockParent = d_stock::where('s_id', $stock[$j]->s_id)
                     ->first();
-                    $stockParent->s_qty = 0;
+                    $stockParent->s_qty -= $stock[$j]->sm_sisa;
                     $stockParent->save();
                     // update sm_use and sm_residue in parent
                     d_stock_mutation::where('sm_stock', $stockParent->s_id)
@@ -2031,29 +2044,36 @@ class Mutasi extends Controller
                             'sm_use' => $stock[$j]->sm_qty,
                             'sm_residue' => 0
                         ]);
-                    // get prodCode
-                    $prodCode = d_stockmutationdt::where('smd_stock', $stockParent->s_id)
-                        // ->where('smd_stockmutation', $stock[$j]->sm_detailid)
-                        ->get();
 
                     $listSmQtyPC = array();
                     $listSmPC = array();
-                    // update qty-request each production-code
-                    foreach ($prodCode as $key => $pcode) {
-                        if (in_array($pcode->smd_productioncode, $listPC)) {
-                            $idx = array_search($pcode->smd_productioncode, $listPC);
-                            // get qty of production-code in stock
-                            $qtyProdCodeInStock = d_stockdt::where('sd_stock', $pcode->smd_stock)
-                            ->where('sd_code', $listPC[$idx])->select('sd_qty')->first();
-                            array_push($listSmPC, $listPC[$idx]);
-                            array_push($listSmQtyPC, $qtyUsed);
-                            // remove listPC after selected
-                            $listQtyPC[$idx] = $listQtyPC[$idx] - $qtyProdCodeInStock->sd_qty;
-                            if ($listQtyPC[$idx] <= 0) {
-                                $listPC[$idx] = null;
-                            }
-                        }
-                    }
+                    // set production-code and prod-code-qty
+                    $sisaForPC = $stock[$j]->sm_sisa;
+
+                    // // get prodCode
+                    // $prodCode = d_stockmutationdt::where('smd_stock', $stockParent->s_id)
+                    //     // ->where('smd_stockmutation', $stock[$j]->sm_detailid)
+                    //     ->get();
+                    //
+                    // $listSmQtyPC = array();
+                    // $listSmPC = array();
+                    // // update qty-request each production-code
+                    // foreach ($prodCode as $key => $pcode) {
+                    //     if (in_array($pcode->smd_productioncode, $listPC)) {
+                    //         $idx = array_search($pcode->smd_productioncode, $listPC);
+                    //         // get qty of production-code in stock
+                    //         $qtyProdCodeInStock = d_stockdt::where('sd_stock', $pcode->smd_stock)
+                    //         ->where('sd_code', $listPC[$idx])->select('sd_qty')->first();
+                    //         array_push($listSmPC, $listPC[$idx]);
+                    //         array_push($listSmQtyPC, $qtyUsed);
+                    //         // remove listPC after selected
+                    //         $listQtyPC[$idx] = $listQtyPC[$idx] - $qtyProdCodeInStock->sd_qty;
+                    //         if ($listQtyPC[$idx] <= 0) {
+                    //             $listPC[$idx] = null;
+                    //         }
+                    //     }
+                    // }
+
                     // update qty of request (how much qty used by selected stock-mutation)
                     $permintaan = $permintaan - $stock[$j]->sm_sisa;
                     $smQty = $stock[$j]->sm_sisa;
@@ -2061,11 +2081,10 @@ class Mutasi extends Controller
                 }
                 // use 'some' qty from current stock-mutation
                 elseif ($permintaan <= $stock[$j]->sm_sisa && $permintaan != 0) {
-                    $qtyUsed = $permintaan;
                     // update qty in stock-item-parent
                     $stockParent = d_stock::where('s_id', $stock[$j]->s_id)
                     ->first();
-                    $stockParent->s_qty = $stockParent->s_qty - $permintaan;
+                    $stockParent->s_qty -= $permintaan;
                     $stockParent->save();
                     d_stock_mutation::where('sm_stock', $stockParent->s_id)
                         ->where('sm_detailid', $stock[$j]->sm_detailid)
@@ -2073,28 +2092,53 @@ class Mutasi extends Controller
                             'sm_use' => $stock[$j]->sm_use + $permintaan,
                             'sm_residue' => $stock[$j]->sm_residue - $permintaan
                         ]);
-                    // get prodCode
-                    $prodCode = d_stockmutationdt::where('smd_stock', $stockParent->s_id)
-                        // ->where('smd_stockmutation', $stock[$j]->sm_detailid)
-                        ->get();
 
-                    $listSmPC = array();
                     $listSmQtyPC = array();
-                    // update qty-request each production-code
-                    foreach ($prodCode as $key => $pcode) {
-                        if (in_array($pcode->smd_productioncode, $listPC)) {
-                            $idx = array_search($pcode->smd_productioncode, $listPC);
-                            array_push($listSmPC, $listPC[$idx]);
-                            array_push($listSmQtyPC, (int)$listQtyPC[$idx]);
-                            // remove listPC after selected
-                            $listPC[$idx] = null;
-                        }
-                    }
+                    $listSmPC = array();
+                    // set production-code and prod-code-qty
+                    $sisaForPC = $permintaan;
+
+                    // // get prodCode
+                    // $prodCode = d_stockmutationdt::where('smd_stock', $stockParent->s_id)
+                    //     // ->where('smd_stockmutation', $stock[$j]->sm_detailid)
+                    //     ->get();
+                    //
+                    // $listSmPC = array();
+                    // $listSmQtyPC = array();
+                    // // update qty-request each production-code
+                    // foreach ($prodCode as $key => $pcode) {
+                    //     if (in_array($pcode->smd_productioncode, $listPC)) {
+                    //         $idx = array_search($pcode->smd_productioncode, $listPC);
+                    //         array_push($listSmPC, $listPC[$idx]);
+                    //         array_push($listSmQtyPC, (int)$listQtyPC[$idx]);
+                    //         // remove listPC after selected
+                    //         $listPC[$idx] = null;
+                    //     }
+                    // }
 
                     $smQty = $permintaan;
                     $continueLoopStock = false;
                 }
-                // dd($listPC, $listSmPC, $listSmQtyPC);
+                // set list production-code and prod-code-qty
+                foreach ($listPC as $idx => $PC) {
+                    if ($sisaForPC <= 0 || is_null($PC)) {
+                        continue;
+                    }
+                    if ($listQtyPC[$idx] < $sisaForPC) {
+                        array_push($listSmQtyPC, $listQtyPC[$idx]);
+                        array_push($listSmPC, $PC);
+                        $sisaForPC -= $listQtyPC[$idx];
+                        $listQtyPC[$idx] = 0;
+                        $PC = null;
+                    }
+                    else {
+                        array_push($listSmQtyPC, $sisaForPC);
+                        array_push($listSmPC, $PC);
+                        $sisaForPC = 0;
+                        $listQtyPC[$idx] -= $sisaForPC;
+                    }
+                }
+
                 $detailid = d_stock_mutation::where('sm_stock', $stockParent->s_id)
                         ->max('sm_detailid') + 1;
                 // set value for new stock-mutation
@@ -2249,7 +2293,6 @@ class Mutasi extends Controller
                 $qtyStockAkhir = $stock->s_qty + $totalQty;
                 $update = array('s_qty' => $qtyStockAkhir);
                 d_stock::where('s_id', '=', $stockId)->update($update);
-
             }
 
             // insert new mutation with mutcat = pembelian-in
@@ -2302,7 +2345,7 @@ class Mutasi extends Controller
         }
     }
 
-    // rollback mutation for salesOut, include rollback mutation-detail and stock detail
+    // rollback mutation for salesOut/distributionOut, include rollback mutation-detail and stock detail
     public static function rollbackSalesOut(
         $nota, // nota
         $itemId, // item-id
@@ -2375,33 +2418,35 @@ class Mutasi extends Controller
                 ->whereHas('getStock', function ($query) use ($itemId) {
                     $query->where('s_item', $itemId);
                 })
+                ->get();
+            foreach ($stockMut as $key => $mutation) {
+                // get stock
+                $stockItem = d_stock::where('s_id', '=', $mutation->sm_stock)
                 ->first();
-            // get stock
-            $stockItem = d_stock::where('s_id', '=', $stockMut->sm_stock)
-                ->first();
-            // calculate new qty in stock
-            $returnQty = $stockItem->s_qty - $stockMut->sm_qty;
+                // calculate new qty in stock
+                $returnQty = $stockItem->s_qty - $mutation->sm_qty;
 
-            // if new-qty is 0, delete stock-item
-            if ($returnQty <= 0) {
-                $stockItem->delete();
-            } // if new-qty is > 0, update qty in stock-item
-            elseif ($returnQty > 0) {
-                $stockItem->s_qty = $returnQty;
-                $stockItem->save();
+                // if new-qty is 0, delete stock-item
+                if ($returnQty <= 0) {
+                    $stockItem->delete();
+                } // if new-qty is > 0, update qty in stock-item
+                elseif ($returnQty > 0) {
+                    $stockItem->s_qty = $returnQty;
+                    $stockItem->save();
+                }
+
+                // rollback stock-mutation-detail 'in' and stock-detail 'in'
+                $rollbackMutDetailSalesIn = self::rollbackMutDetailSalesIn(
+                    $mutation->sm_stock, // stock-mutation id
+                    $mutation->sm_detailid // stock-mutation detail-id
+                );
+                if ($rollbackMutDetailSalesIn->original['status'] != 'success') {
+                    return $rollbackMutDetailSalesIn;
+                }
+
+                // delete stock-mutation
+                $mutation->delete();
             }
-
-            // rollback stock-mutation-detail 'in' and stock-detail 'in'
-            $rollbackMutDetailSalesIn = self::rollbackMutDetailSalesIn(
-                $stockMut->sm_stock, // stock-mutation id
-                $stockMut->sm_detailid // stock-mutation detail-id
-            );
-            if ($rollbackMutDetailSalesIn->original['status'] != 'success') {
-                return $rollbackMutDetailSalesIn;
-            }
-
-            // delete stock-mutation
-            $stockMut->delete();
 
             DB::commit();
             return response()->json([

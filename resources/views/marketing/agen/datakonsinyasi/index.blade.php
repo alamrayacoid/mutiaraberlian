@@ -95,7 +95,7 @@
 												<th class="text-center">Nota</th>
 												<th class="text-center">Agen</th>
 												<th class="text-center">Total</th>
-												<th class="text-center">Aksi</th>
+												<th class="text-center" width="10%">Aksi</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -163,12 +163,58 @@
 		});
 	}
 
-	function editDK() {
-		messageFailed('Edit', 'On Development process . . .');
+	function editDK(id) {
+		window.location = baseUrl +'/marketing/agen/konsinyasi/edit/'+ id;
 	}
 
-	function deleteDK() {
-		messageFailed('Delete', 'On Development process . . .');
+	function deleteDK(id) {
+		// messageFailed('Delete', 'On Development process . . .');
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Konfirmasi!',
+            content: 'Apakah anda yakin akan menghapus/membatalkan data konsinyasi ini ?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        deleteDKAction(id);
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
 	}
+
+    function deleteDKAction(id) {
+        loadingShow();
+        $.ajax({
+            url: baseUrl + '/marketing/agen/konsinyasi/delete/' + id,
+            type: 'post',
+            success: function(resp) {
+                loadingHide();
+                if (resp.status == 'Success') {
+                    messageSuccess('Berhasil', 'Konsinyasi berhasil dihapus/dibatalkan !');
+                    table_konsinyasi.ajax.reload();
+                }
+                else {
+                    messageFailed('Gagal', 'Konsinyasi gagal dihapus/dibatalkan : ' + resp.message);
+                }
+            },
+            error: function(e) {
+                loadingHide();
+                messageWarning('Error', 'Terjadi kesalahan saat menghapus konsinyasi, hubungi pengembang !');
+            }
+        })
+    }
 </script>
 @endsection

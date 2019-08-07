@@ -2389,8 +2389,8 @@ class MarketingAreaController extends Controller
             })
             ->addColumn('action', function ($datas) {
                 return '<div class="btn-group btn-group-sm">
-                    <button class="btn btn-warning btn-edit-kons" type="button" title="Edit" onclick="editDK(' . $datas->sc_id . ')"><i class="fa fa-pencil"></i></button>
-                    <button class="btn btn-danger btn-delete-kons" type="button" title="Delete" onclick="deleteDK(' . $datas->sc_id . ')"><i class="fa fa-trash"></i></button>
+                    <button class="btn btn-warning btn-edit-kons" type="button" title="Edit" onclick="editDK(\'' . Crypt::encrypt($datas->sc_id) . '\')"><i class="fa fa-pencil"></i></button>
+                    <button class="btn btn-danger btn-delete-kons" type="button" title="Delete" onclick="deleteDK(\'' . Crypt::encrypt($datas->sc_id) . '\')"><i class="fa fa-trash"></i></button>
                 </div>';
             })
             ->rawColumns(['date', 'action', 'agent', 'total'])
@@ -2569,19 +2569,21 @@ class MarketingAreaController extends Controller
             ->first();
 
         $data = DB::table('d_stock')
-            ->join('d_stock_mutation', function ($sm) {
-                $sm->on('sm_stock', '=', 's_id');
-            })
+            // ->join('d_stock_mutation', function ($sm) {
+            //     $sm->on('sm_stock', '=', 's_id');
+            // })
             ->where('s_id', '=', $stock)
             // ->where('s_item', '=', $item)
             // ->where('s_status', '=', 'ON DESTINATION')
             // ->where('s_condition', '=', 'FINE')
-            ->select('sm_residue as sisa')
+            // ->select('sm_residue as sisa')
             ->first();
+
+        $data->sisa = $data->s_qty;
 
         $qty_compare_old = 0;
         if ($oldSatuan == $data_check->unit1) {
-            if ((int)$qty > (int)$data->sisa) {
+            if ((int)$qty > (int)$data->sisa + $qtyOld) {
                 $qty_compare_old = $data->sisa + $qtyOld;
             } else {
                 $qty_compare_old = $qty;
@@ -2697,7 +2699,6 @@ class MarketingAreaController extends Controller
                 $request->prodCodeLength, // list production-code length each item
                 $request->qtyProdCode // list of qty each production-code
             );
-
             if ($validateProdCode !== 'validated') {
                 return $validateProdCode;
             }
@@ -2832,7 +2833,7 @@ class MarketingAreaController extends Controller
                 $listSmQty = $mutKonsOut->original['listSmQty'];
                 $listPCReturn = $mutKonsOut->original['listPCReturn'];
                 $listQtyPCReturn = $mutKonsOut->original['listQtyPCReturn'];
-
+// dd($listSmQty, $listPCReturn, $listQtyPCReturn);
                 // insert stock mutation using sales 'in'
                 $mutKonsIn = Mutasi::distributionIn(
                     $stock->s_comp, // item-owner (company-id)
@@ -2875,7 +2876,6 @@ class MarketingAreaController extends Controller
                 //     return $mutKons;
                 // }
 
-                // dd('stored');
                 $startProdCodeIdx += $prodCodeLength;
                 $detailsd++;
             }
@@ -2903,6 +2903,12 @@ class MarketingAreaController extends Controller
     {
         if (!AksesUser::checkAkses(22, 'update')) {
             abort(401);
+        }
+
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
         }
 
         $data_item = d_salescomp::where('sc_id', $id)
@@ -2982,8 +2988,8 @@ class MarketingAreaController extends Controller
             }
         }
 
-        // $ids = Crypt::encrypt($id);
-        $ids = $id;
+        $ids = Crypt::encrypt($id);
+        // $ids = $id;
 
         return view('marketing/marketingarea/datakonsinyasi/edit', compact('data_item', 'ids'));
     }
@@ -2998,7 +3004,12 @@ class MarketingAreaController extends Controller
             ]);
         }
 
-        // dd($request->all());
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
         $data = $request->all();
         $comp = $data['branchCode']; // pelaku konsinyasi
         $member = $data['agentCode']; // penerima item
@@ -3014,18 +3025,6 @@ class MarketingAreaController extends Controller
             foreach ($compItem as $key => $val) {
                 $owner = d_stock::where('s_id', $val)->first();
                 $compItem[$key] = $owner->s_comp;
-            }
-
-            // validate production-code is exist in stock-item
-            $validateProdCode = Mutasi::validateProductionCode(
-                Auth::user()->u_company, // from
-                $request->idItem, // list item-id
-                $request->prodCode, // list production-code
-                $request->prodCodeLength, // list production-code length each item
-                $request->qtyProdCode // list of qty each production-code
-            );
-            if ($validateProdCode !== 'validated') {
-                return $validateProdCode;
             }
 
             // get konsinyasi by id
@@ -3074,22 +3073,54 @@ class MarketingAreaController extends Controller
                         continue;
                     }
                 }
-                // rollBack mutation
-                $rollbackKons = Mutasi::rollback(
+
+                // rollback mutation 'out'
+                $mutRollbackOut = Mutasi::rollbackSalesOut(
                     $konsinyasi->sc_nota, // nota
                     $konsDt->scd_item, // itemId
-                    12 // mutcat
+                    13 // mutcat-out
                 );
-                if (!is_bool($rollbackKons)) {
-                    DB::rollBack();
-                    return $rollbackKons;
+                if ($mutRollbackOut->original['status'] !== 'success') {
+                    return $mutRollbackOut;
                 }
+                // rollback mutation 'in'
+                $mutRollbackIn = Mutasi::rollbackSalesIn(
+                    $konsinyasi->sc_nota, // nota
+                    $konsDt->scd_item, // itemId
+                    12 // mutcat-out
+                );
+                if ($mutRollbackIn->original['status'] !== 'success') {
+                    return $mutRollbackIn;
+                }
+                // // rollBack mutation
+                // $rollbackKons = Mutasi::rollback(
+                //     $konsinyasi->sc_nota, // nota
+                //     $konsDt->scd_item, // itemId
+                //     12 // mutcat
+                // );
+                // if (!is_bool($rollbackKons)) {
+                //     DB::rollBack();
+                //     return $rollbackKons;
+                // }
                 // delete production-code of selected stockdistribution
+
                 foreach ($konsDt->getProdCode as $idx => $prodCode) {
                     $prodCode->delete();
                 }
                 // delete konsinyasi-detail
                 $konsDt->delete();
+            }
+
+            // validate production-code is exist in stock-item
+            $validateProdCode = Mutasi::validateProductionCode(
+                Auth::user()->u_company, // from
+                $request->idItem, // list item-id
+                $request->prodCode, // list production-code
+                $request->prodCodeLength, // list production-code length each item
+                $request->qtyProdCode // list of qty each production-code
+            );
+            if ($validateProdCode !== 'validated') {
+                return $validateProdCode;
             }
 
             // update salescomp
@@ -3198,11 +3229,6 @@ class MarketingAreaController extends Controller
                     $sumQtyPC += (int)$request->qtyProdCode[$j];
                 }
 
-                if ($sumQtyPC != (int)$data['jumlah'][$key]) {
-                    $item = m_item::where('i_id', $data['idItem'][$key])->first();
-                    throw new Exception("Jumlah kode produksi " . strtoupper($item->i_name) . " tidak sama dengan jumlah item yang dipesan !");
-                }
-
                 // mutasi
                 $data_check = DB::table('m_item')
                     ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
@@ -3225,6 +3251,11 @@ class MarketingAreaController extends Controller
                     $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]) / $data_check->compare3;
                 }
 
+                if ($sumQtyPC != $qty_compare) {
+                    $item = m_item::where('i_id', $data['idItem'][$key])->first();
+                    throw new Exception("Jumlah kode produksi " . strtoupper($item->i_name) . " tidak sama dengan jumlah item yang dipesan !");
+                }
+
                 // get item stock
                 $stock = DB::table('d_stock')
                     ->where('s_id', '=', $data['idStock'][$key])
@@ -3242,28 +3273,54 @@ class MarketingAreaController extends Controller
                 // $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                 $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                 $listUnitPC = [];
-
                 $statusKons = 'cabang';
-                // set mutation (mutation-out is called inside mutation-in)
-                $mutKons = Mutasi::mutasimasuk(
-                    12, // mutcat
-                    $compItem[$key], // comp / item-owner
-                    $member, // position / destination
-                    $data['idItem'][$key], // item-id
-                    $qty_compare, // qty item with smallest unit
-                    'ON DESTINATION', // status
-                    'FINE', // condition
-                    $stock_mutasi->sm_hpp, // hpp
-                    $sellPrice, // sell value
-                    $nota, // nota
-                    $stock_mutasi->sm_nota, // nota refference
+
+                // insert stock mutation sales 'out'
+                $mutKonsOut = Mutasi::distributionOut(
+                    $comp, // from (company-id)
+                    $stock->s_comp, // item-owner (company-id)
+                    $data['idItem'][$key], // item id
+                    $qty_compare, // qty item
+                    $nota, // nota distribution
+                    null, // nota refference
                     $listPC, // list production-code
-                    $listQtyPC, // list qty roduction code
-                    $statusKons, // status konsinyasi ('pusat' / 'branch')
-                    $stock->s_comp // item owner
+                    $listQtyPC, // list qty of production-code
+                    $listUnitPC, // list unit of production-code
+                    $sellPrice = null, // sellprice
+                    13 // mutation category
                 );
-                if (!is_bool($mutKons)) {
-                    return $mutKons;
+                if ($mutKonsOut->original['status'] !== 'success') {
+                    return $mutKonsOut;
+                }
+
+                // set stock-parent-id
+                $listStockParentId = $mutKonsOut->original['listStockParentId'];
+                // get list
+                $listSellPrice = $mutKonsOut->original['listSellPrice'];
+                $listHPP = $mutKonsOut->original['listHPP'];
+                $listSmQty = $mutKonsOut->original['listSmQty'];
+                $listPCReturn = $mutKonsOut->original['listPCReturn'];
+                $listQtyPCReturn = $mutKonsOut->original['listQtyPCReturn'];
+
+                // insert stock mutation using sales 'in'
+                $mutKonsIn = Mutasi::distributionIn(
+                    $stock->s_comp, // item-owner (company-id)
+                    $member, // destination (company-id)
+                    $data['idItem'][$key], // item id
+                    $nota, // nota sales
+                    $listPCReturn, // list of list production-code (based on how many smQty used / each smQty has a list of prod-code)
+                    $listQtyPCReturn, // list of list qty of production-code
+                    $listUnitPC, // list  unit of production-code (unused)
+                    $listSellPrice, // list of sellprice
+                    $listHPP, // list of hpp
+                    $listSmQty, // lsit of sm-qty (it got from salesOut, each qty used from different stock-mutation)
+                    12, // mutation category
+                    null, // stock parent id
+                    $status = 'ON DESTINATION', // items status in stock
+                    $condition = 'FINE' // item condition in stock
+                );
+                if ($mutKonsIn->original['status'] !== 'success') {
+                    return $mutKonsIn;
                 }
 
                 // increments production-code index
@@ -3280,7 +3337,8 @@ class MarketingAreaController extends Controller
                 'status' => "Success",
                 'message' => "Data berhasil diperbarui"
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollBack();
             return Response::json([
                 'status' => "Failed",
@@ -3299,13 +3357,21 @@ class MarketingAreaController extends Controller
             ]);
         }
 
-        $id = $request->id;
+        try {
+            $id = Crypt::decrypt($request->id);
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
+
         DB::beginTransaction();
         try {
             $konsinyasi = d_salescomp::where('sc_id', $id)
                 ->with('getSalesCompDt.getProdCode')
                 ->first();
 
+            // validate konsinyasi is ready to delete or not
+            $mutcatOut = 13;
+            $mutcatIn = 12;
             foreach ($konsinyasi->getSalesCompDt as $key => $konsDt) {
                 // get item-stock in destination
                 $item = $konsDt->scd_item;
@@ -3328,13 +3394,14 @@ class MarketingAreaController extends Controller
                 if ($qtyUsed > 0) {
                     $item = m_item::where('i_id', $item)->first();
                     throw new Exception(strtoupper($item->i_name) . " sudah digunakan, konsinyasi tidak dapat dihapus !");
-                } // item is unused, continue to delete
+                }
+                // item is unused, continue to delete
                 else {
                     // rollback mutation 'out'
                     $mutRollbackOut = Mutasi::rollbackSalesOut(
                         $konsinyasi->sc_nota, // nota
                         $konsDt->scd_item, // itemId
-                        13 // mutcat-out
+                        $mutcatOut // mutcat-out
                     );
                     if ($mutRollbackOut->original['status'] !== 'success') {
                         return $mutRollbackOut;
@@ -3344,20 +3411,12 @@ class MarketingAreaController extends Controller
                     $mutRollbackIn = Mutasi::rollbackSalesIn(
                         $konsinyasi->sc_nota, // nota
                         $konsDt->scd_item, // itemId
-                        12 // mutcat-out
+                        $mutcatIn // mutcat-out
                     );
                     if ($mutRollbackIn->original['status'] !== 'success') {
                         return $mutRollbackIn;
                     }
-                    // $rollbackKons = Mutasi::rollback(
-                    //     $konsinyasi->sc_nota, // nota
-                    //     $konsDt->scd_item, // itemId
-                    //     12 // mutcat
-                    // );
-                    // if (!is_bool($rollbackKons)) {
-                    //     DB::rollBack();
-                    //     return $rollbackKons;
-                    // }
+
                     // delete production-code of selected stockdistribution
                     foreach ($konsDt->getProdCode as $idx => $prodCode) {
                         $prodCode->delete();
@@ -3366,6 +3425,13 @@ class MarketingAreaController extends Controller
                     $konsDt->delete();
                 }
             }
+
+            // get and delete konsinyasi-payment
+            $konsPayment = d_salescomppayment::where('scp_salescomp', $konsinyasi->sc_id)->get();
+            foreach ($konsPayment as $key => $value) {
+                $value->delete();
+            }
+
             // delete konsinyasi
             $konsinyasi->delete();
 
@@ -3374,7 +3440,8 @@ class MarketingAreaController extends Controller
                 'status' => "Success",
                 'message' => 'Data berhasil dihapus'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollBack();
             return Response::json([
                 'status' => "Failed",

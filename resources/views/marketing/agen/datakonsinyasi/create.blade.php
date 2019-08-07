@@ -115,7 +115,7 @@
                                                 Harga tidak ditemukan!</p>
                                             </td>
                                             <td>
-                                                <input class="form-control form-control-sm diskon digits"
+                                                <input class="form-control form-control-sm diskon rupiah"
                                                 id="diskon" name="diskon[]">
                                             </td>
                                             <td>
