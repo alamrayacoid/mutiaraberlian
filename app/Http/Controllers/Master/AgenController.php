@@ -162,6 +162,7 @@ class AgenController extends Controller
         $data = DB::table('m_company')
             ->join('m_agen', 'c_user', 'a_code')
             ->where('a_area', '=', $id)
+            ->where('c_type', '!=', 'APOTEK')
             ->get();
 
         return Response::json([
@@ -180,6 +181,7 @@ class AgenController extends Controller
         $subAgent = DB::table('m_agen')
             ->where('a_parent', $code)
             ->first();
+
         if ($subAgent != null) {
             return true;
         } else {
@@ -239,7 +241,7 @@ class AgenController extends Controller
                 })
                 ->get();
         } elseif ($info->c_type == 'AGEN' || $info->c_type == 'SUB AGEN'){
-            $datas = $datas->where('a_parent', '=', $info->c_id)->get();
+            $datas = $datas->where('a_parent', '=', $info->c_user)->get();
         } else {
             return false;
         }
@@ -296,9 +298,10 @@ class AgenController extends Controller
 
         if ($info->c_type == 'PUSAT' || $info->c_type == 'CABANG'){
             $data['mma'] = m_company::where(function ($q) use ($info){
-                $q->orWhere('c_type', '=', 'PUSAT');
-                $q->orWhere('c_type', '=', 'CABANG');
-            })->get();
+                    $q->orWhere('c_type', '=', 'PUSAT');
+                    $q->orWhere('c_type', '=', 'CABANG');
+                })
+                ->get();
         } else {
             $data['mma'] = m_company::where(function ($q) use ($info){
                 $q->orWhere('c_type', '=', 'PUSAT');
@@ -363,7 +366,9 @@ class AgenController extends Controller
             } else {
                 $photo = null;
             }
-
+            if ($request->type_hidden == 'APOTEK'){
+                $request->type_hidden = 'APOTEK/RADIO';
+            }
             DB::table('m_agen')
                 ->insert([
                     'a_id'        => $id,
@@ -411,7 +416,7 @@ class AgenController extends Controller
                     'c_update'  => Carbon::now()
                 ]);
 
-            if ($c_type != 'APOTEK'){
+            if ($c_type != 'APOTEK/RADIO'){
                 $cek = DB::table('d_username')
                     ->where('u_username', '=', $request->username)
                     ->first();
@@ -551,6 +556,24 @@ class AgenController extends Controller
             ->where('a_id', $id)
             ->first();
 
+        if ($data['agen']->a_type == "APOTEK/RADIO"){
+            $data['agen']->a_type = "APOTEK";
+        }
+
+        if ($data['agen']->a_type == "APOTEK" || $data['agen']->a_type == "SUB AGEN"){
+            $data['infoparent'] = DB::table('m_agen')
+                ->where('a_code', '=', $data['agen']->a_parent)
+                ->first();
+
+            $data['parentProv'] = $this->getProvinceByCity($data['infoparent']->a_area);
+            $data['parentCity'] = $this->getCities($data['parentProv']);
+            $data['parentAgen'] = DB::table('m_company')
+                ->join('m_agen', 'c_user', 'a_code')
+                ->where('a_area', '=', $data['infoparent']->a_area)
+                ->where('c_type', '!=', 'APOTEK')
+                ->get();
+        }
+
         $data['mma'] = [];
 
         $user = Auth::user();
@@ -559,10 +582,17 @@ class AgenController extends Controller
             ->where('c_id', '=', $comp)
             ->first();
 
-        if ($info->c_type != 'PUSAT'){
-            $data['mma'] = m_company::where('c_id', '=', $info->c_id)->get();
+        if ($info->c_type == 'PUSAT' || $info->c_type == 'CABANG'){
+            $data['mma'] = m_company::where(function ($q) use ($info){
+                $q->orWhere('c_type', '=', 'PUSAT');
+                $q->orWhere('c_type', '=', 'CABANG');
+            })->get();
         } else {
-            $data['mma'] = m_company::where('c_type', '!=', 'AGEN')->get();
+            $data['mma'] = m_company::where(function ($q) use ($info){
+                $q->orWhere('c_type', '=', 'PUSAT');
+                $q->orWhere('c_type', '=', 'CABANG');
+                $q->orWhere('c_id', '=', $info->c_id);
+            })->get();
         }
 
         $provinceId = $this->getProvinceByCity($data['agen']->a_area);
