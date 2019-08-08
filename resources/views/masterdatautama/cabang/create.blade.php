@@ -24,7 +24,7 @@
 
                         <div class="card-header bordered p-2">
                             <div class="header-block">
-                                <h3 class="title"> Tambah Data Agen </h3>
+                                <h3 class="title"> Tambah Data Cabang </h3>
                             </div>
                             <div class="header-block pull-right">
                                 <a href="{{route('agen.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
@@ -77,7 +77,7 @@
                                         </div>
 
                                         <div class="col-md-3 col-sm-6 col-xs-12">
-                                            <label>Nama Agen <span style="color:red;">*</span></label>
+                                            <label>Nama <span style="color:red;">*</span></label>
                                         </div>
                                         <div class="col-md-9 col-sm-6 col-xs-12">
                                             <div class="form-group">
@@ -99,7 +99,7 @@
                                         </div>
 
                                         <div class="col-md-3 col-sm-6 col-xs-12">
-                                            <label>Tipe Agen</label>
+                                            <label>Tipe</label>
                                         </div>
                                         <div class="col-md-9 col-sm-6 col-xs-12">
                                             <div class="form-group">
@@ -186,7 +186,7 @@
                                         </div>
 
                                         <div class="col-md-3 col-sm-6 col-xs-12">
-                                            <label>Alamat Agen</label>
+                                            <label>Alamat</label>
                                         </div>
                                         <div class="col-md-9 col-sm-6 col-xs-12">
                                             <div class="form-group">
@@ -217,7 +217,7 @@
                                         </div>
                                         <div class="col-md-9 col-sm-6 col-xs-12 userlogin">
                                             <div class="form-group">
-                                                <input type="text" class="form-control form-control-sm username" name="username">
+                                                <input type="text" class="form-control form-control-sm username" name="username" autocomplete="off">
                                             </div>
                                         </div>
 
@@ -226,7 +226,7 @@
                                         </div>
                                         <div class="col-md-9 col-sm-6 col-xs-12 userlogin">
                                             <div class="form-group">
-                                                <input type="password" class="form-control form-control-sm password" name="password">
+                                                <input type="password" class="form-control form-control-sm password" name="password" autocomplete="off">
                                             </div>
                                         </div>
 

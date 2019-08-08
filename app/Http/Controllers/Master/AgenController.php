@@ -160,9 +160,10 @@ class AgenController extends Controller
     public function getAgenByCity($id)
     {
         $data = DB::table('m_company')
+            ->where('c_isactive', 'Y')
+            ->where('c_type', '!=', 'APOTEK')
             ->join('m_agen', 'c_user', 'a_code')
             ->where('a_area', '=', $id)
-            ->where('c_type', '!=', 'APOTEK')
             ->get();
 
         return Response::json([
@@ -229,6 +230,7 @@ class AgenController extends Controller
 
         $datas = DB::table('m_agen')
             ->join('m_wil_kota', 'a_area', 'wc_id')
+            ->orderBy('a_isactive', 'asc')
             ->orderBy('a_code', 'asc');
 
         if ($info->c_type == 'PUSAT'){
@@ -297,13 +299,15 @@ class AgenController extends Controller
             ->first();
 
         if ($info->c_type == 'PUSAT' || $info->c_type == 'CABANG'){
-            $data['mma'] = m_company::where(function ($q) use ($info){
+            $data['mma'] = m_company::where('c_isactive', 'Y')
+            ->where(function ($q) use ($info){
                     $q->orWhere('c_type', '=', 'PUSAT');
                     $q->orWhere('c_type', '=', 'CABANG');
                 })
                 ->get();
         } else {
-            $data['mma'] = m_company::where(function ($q) use ($info){
+            $data['mma'] = m_company::where('c_isactive', 'Y')
+            ->where(function ($q) use ($info){
                 $q->orWhere('c_type', '=', 'PUSAT');
                 $q->orWhere('c_type', '=', 'CABANG');
                 $q->orWhere('c_id', '=', $info->c_id);
@@ -563,6 +567,7 @@ class AgenController extends Controller
         if ($data['agen']->a_type == "APOTEK" || $data['agen']->a_type == "SUB AGEN"){
             $data['infoparent'] = DB::table('m_agen')
                 ->where('a_code', '=', $data['agen']->a_parent)
+                ->where('a_isactive', 'Y')
                 ->first();
 
             $data['parentProv'] = $this->getProvinceByCity($data['infoparent']->a_area);
@@ -571,6 +576,7 @@ class AgenController extends Controller
                 ->join('m_agen', 'c_user', 'a_code')
                 ->where('a_area', '=', $data['infoparent']->a_area)
                 ->where('c_type', '!=', 'APOTEK')
+                ->where('c_isactive', 'Y')
                 ->get();
         }
 

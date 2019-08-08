@@ -113,17 +113,20 @@ class CabangController extends Controller
             ->first();
 
         if ($info->c_type == 'PUSAT' || $info->c_type == 'CABANG'){
-            $data['mma'] = m_company::where(function ($q) use ($info){
-                $q->orWhere('c_type', '=', 'PUSAT');
-                $q->orWhere('c_type', '=', 'CABANG');
+            $data['mma'] = m_company::where('c_isactive', 'Y')
+            ->where(function ($q) use ($info){
+                $q  ->where('c_type', '=', 'PUSAT')
+                    ->orWhere('c_type', '=', 'CABANG');
             })
-                ->get();
+            ->get();
         } else {
-            $data['mma'] = m_company::where(function ($q) use ($info){
-                $q->orWhere('c_type', '=', 'PUSAT');
-                $q->orWhere('c_type', '=', 'CABANG');
-                $q->orWhere('c_id', '=', $info->c_id);
-            })->get();
+            $data['mma'] = m_company::where('c_isactive', 'Y')
+            ->where(function ($q) use ($info){
+                $q  ->where('c_type', '=', 'PUSAT')
+                    ->orWhere('c_type', '=', 'CABANG')
+                    ->orWhere('c_id', '=', $info->c_id);
+            })
+            ->get();
         }
         $agenController = new AgenController();
         $data['provinces'] = $agenController->getProvinces();
@@ -146,7 +149,8 @@ class CabangController extends Controller
             abort(401);
         }
         $agenController = new AgenController();
-// validate request
+        
+        // validate request
         $isValidRequest = $agenController->validate_req($request);
         if ($isValidRequest != '1') {
             $errors = $isValidRequest;
