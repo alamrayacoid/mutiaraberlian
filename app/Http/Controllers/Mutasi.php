@@ -422,7 +422,8 @@ class Mutasi extends Controller
         $mutcat, // mutation category
         $listStockParentId = null, // stock parent id / unused
         $status = 'ON GOING', // items status in stock
-        $condition = 'FINE' // item condition in stock
+        $condition = 'FINE', // item condition in stock
+        $date = null
         )
     {
         DB::beginTransaction();

@@ -196,7 +196,6 @@ class DistribusiController extends Controller
                 'message' => 'Anda tidak memiliki akses ini'
             ]);
         }
-
         // validate request
         $isValidRequest = $this->validateDist($request);
         if ($isValidRequest != '1') {
@@ -471,7 +470,8 @@ class DistribusiController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
