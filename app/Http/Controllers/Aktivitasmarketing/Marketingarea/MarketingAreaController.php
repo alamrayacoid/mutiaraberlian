@@ -3242,13 +3242,13 @@ class MarketingAreaController extends Controller
                 $sellPrice = 0;
                 if ($data['satuan'][$key] == $data_check->unit1) {
                     $qty_compare = $data['jumlah'][$key];
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]);
+                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]) - (int)$data['diskon'][$key];
                 } else if ($data['satuan'][$key] == $data_check->unit2) {
                     $qty_compare = $data['jumlah'][$key] * $data_check->compare2;
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]) / $data_check->compare2;
+                    $sellPrice = ((int)Currency::removeRupiah($data['harga'][$key]) - (int)$data['diskon'][$key]) / $data_check->compare2;
                 } else if ($data['satuan'][$key] == $data_check->unit3) {
                     $qty_compare = $data['jumlah'][$key] * $data_check->compare3;
-                    $sellPrice = (int)Currency::removeRupiah($data['harga'][$key]) / $data_check->compare3;
+                    $sellPrice = ((int)Currency::removeRupiah($data['harga'][$key]) - (int)$data['diskon'][$key]) / $data_check->compare3;
                 }
 
                 if ($sumQtyPC != $qty_compare) {

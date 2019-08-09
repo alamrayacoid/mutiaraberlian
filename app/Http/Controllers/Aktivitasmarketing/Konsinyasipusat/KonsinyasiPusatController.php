@@ -773,18 +773,18 @@ class KonsinyasiPusatController extends Controller
                     $owner = d_stock::where('s_id', $val)->first();
                     $compItem[$key] = $owner->s_comp;
                 }
-
-                // validate production-code is exist in stock-item
-                $validateProdCode = Mutasi::validateProductionCode(
-                    Auth::user()->u_company, // from
-                    $request->idItem, // list item-id
-                    $request->prodCode, // list production-code
-                    $request->prodCodeLength, // list production-code length each item
-                    $request->qtyProdCode // list of qty each production-code
-                );
-                if ($validateProdCode !== 'validated') {
-                    return $validateProdCode;
-                }
+                //
+                // // validate production-code is exist in stock-item
+                // $validateProdCode = Mutasi::validateProductionCode(
+                //     Auth::user()->u_company, // from
+                //     $request->idItem, // list item-id
+                //     $request->prodCode, // list production-code
+                //     $request->prodCodeLength, // list production-code length each item
+                //     $request->qtyProdCode // list of qty each production-code
+                // );
+                // if ($validateProdCode !== 'validated') {
+                //     return $validateProdCode;
+                // }
                 // get konsinyasi by id
                 $konsinyasi = d_salescomp::where('sc_id', $id)
                     ->with('getSalesCompDt.getProdCode')
@@ -833,22 +833,53 @@ class KonsinyasiPusatController extends Controller
                             continue;
                         }
                     }
-                    // rollBack mutation
-                    $rollbackKons = Mutasi::rollback(
+
+                    // rollback mutation 'out'
+                    $mutRollbackOut = Mutasi::rollbackSalesOut(
                         $konsinyasi->sc_nota, // nota
                         $konsDt->scd_item, // itemId
-                        12 // mutcat
+                        13 // mutcat-out
                     );
-                    if (!is_bool($rollbackKons)) {
-                        DB::rollBack();
-                        return $rollbackKons;
+                    if ($mutRollbackOut->original['status'] !== 'success') {
+                        return $mutRollbackOut;
                     }
+                    // rollback mutation 'in'
+                    $mutRollbackIn = Mutasi::rollbackSalesIn(
+                        $konsinyasi->sc_nota, // nota
+                        $konsDt->scd_item, // itemId
+                        12 // mutcat-in
+                    );
+                    if ($mutRollbackIn->original['status'] !== 'success') {
+                        return $mutRollbackIn;
+                    }
+                    // // rollBack mutation
+                    // $rollbackKons = Mutasi::rollback(
+                    //     $konsinyasi->sc_nota, // nota
+                    //     $konsDt->scd_item, // itemId
+                    //     12 // mutcat
+                    // );
+                    // if (!is_bool($rollbackKons)) {
+                    //     DB::rollBack();
+                    //     return $rollbackKons;
+                    // }
                     // delete production-code of selected stockdistribution
                     foreach ($konsDt->getProdCode as $idx => $prodCode) {
                         $prodCode->delete();
                     }
                     // delete konsinyasi-detail
                     $konsDt->delete();
+                }
+
+                // validate production-code is exist in stock-item
+                $validateProdCode = Mutasi::validateProductionCode(
+                    Auth::user()->u_company, // from
+                    $request->idItem, // list item-id
+                    $request->prodCode, // list production-code
+                    $request->prodCodeLength, // list production-code length each item
+                    $request->qtyProdCode // list of qty each production-code
+                );
+                if ($validateProdCode !== 'validated') {
+                    return $validateProdCode;
                 }
 
                 // update salescomp
@@ -889,18 +920,18 @@ class KonsinyasiPusatController extends Controller
                         // insert new production-code
                         $prodCodeLength = (int)$request->prodCodeLength[$key];
                         $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
-
-                        if ($data['jumlah'][$i] != $request->qtyProdCode[$i]){
-                            $item = DB::table('m_item')
-                                ->where('i_id', '=', $data['idItem'][$i])
-                                ->first();
-
-                            DB::rollBack();
-                            return Response::json([
-                                'status' => "Failed",
-                                'message' => "Jumlah kode produksi " . $item->i_name . " tidak sesuai"
-                            ]);
-                        }
+                        $sumQtyPC = 0;
+                        // if ($data['jumlah'][$i] != $request->qtyProdCode[$i]){
+                        //     $item = DB::table('m_item')
+                        //         ->where('i_id', '=', $data['idItem'][$i])
+                        //         ->first();
+                        //
+                        //     DB::rollBack();
+                        //     return Response::json([
+                        //         'status' => "Failed",
+                        //         'message' => "Jumlah kode produksi " . $item->i_name . " tidak sesuai"
+                        //     ]);
+                        // }
 
                         for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
                             // skip inserting when val is null or qty-pc is 0
@@ -919,6 +950,11 @@ class KonsinyasiPusatController extends Controller
                                 'ssc_qty' => $request->qtyProdCode[$j]
                             ];
                             DB::table('d_salescompcode')->insert($val_salescode);
+                            $sumQtyPC += (int)$request->qtyProdCode[$j];
+                        }
+                        if ($sumQtyPC != (int)$data['jumlah'][$key]) {
+                            $item = m_item::where('i_id', $data['idItem'][$key])->first();
+                            throw new Exception("Jumlah kode produksi " . strtoupper($item->i_name) . " tidak sama dengan jumlah item yang dipesan !");
                         }
                         // increments production-code index
                         $startProdCodeIdx += $prodCodeLength;
@@ -942,11 +978,14 @@ class KonsinyasiPusatController extends Controller
 
                     $prodCodeLength = (int)$request->prodCodeLength[$key];
                     $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                    $sumQtyPC = 0;
+                    $listPC = array();
                     for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
                         // skip inserting when val is null or qty-pc is 0
                         if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
                             continue;
                         }
+                        array_push($listPC, strtoupper($request->prodCode[$j]));
                         $detailidcode = d_salescompcode::where('ssc_salescomp', $id)
                                 ->where('ssc_item', $data['idItem'][$key])
                                 ->max('ssc_detailid') + 1;
@@ -959,6 +998,7 @@ class KonsinyasiPusatController extends Controller
                             'ssc_qty' => $request->qtyProdCode[$j]
                         ];
                         DB::table('d_salescompcode')->insert($val_salescode);
+                        $sumQtyPC += (int)$request->qtyProdCode[$j];
                     }
 
                     // mutasi
@@ -982,6 +1022,11 @@ class KonsinyasiPusatController extends Controller
                         $sellPrice = ((int)Currency::removeRupiah($data['harga'][$key]) - (int)$diskon[$key]) / $data_check->compare3;
                     }
 
+                    if ($sumQtyPC != $qty_compare) {
+                        $item = m_item::where('i_id', $data['idItem'][$key])->first();
+                        throw new Exception("Jumlah kode produksi " . strtoupper($item->i_name) . " tidak sama dengan jumlah item yang dipesan !");
+                    }
+
                     // get item stock
                     $stock = DB::table('d_stock')
                         ->where('s_id', '=', $data['idStock'][$key])
@@ -999,8 +1044,9 @@ class KonsinyasiPusatController extends Controller
                     $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                     $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                     $listUnitPC = [];
-
                     $statusKons = 'pusat';
+
+// need to update to Mutasi::distributionOut and Mutasi::distributionIn
                     // set mutation (mutation-out is called inside mutation-in)
                     $mutKons = Mutasi::mutasimasuk(
                         12, // mutcat
@@ -1181,22 +1227,76 @@ class KonsinyasiPusatController extends Controller
                 ->with('getSalesCompDt.getProdCode')
                 ->first();
 
+            // validate konsinyasi is ready to delete or not
+            $mutcatOut = 13;
+            $mutcatIn = 12;
             foreach ($konsinyasi->getSalesCompDt as $key => $konsDt) {
-                $rollbackKons = Mutasi::rollback(
-                    $konsinyasi->sc_nota, // nota
-                    $konsDt->scd_item, // itemId
-                    12 // mutcat
-                );
-                if (!is_bool($rollbackKons)) {
-                    DB::rollBack();
-                    return $rollbackKons;
+                // get item-stock in destination
+                $item = $konsDt->scd_item;
+                $st_mutation = d_stock_mutation::where('sm_nota', '=', $konsinyasi->sc_nota)
+                    ->whereHas('getStock', function ($query) use ($item) {
+                        $query->where('s_item', $item);
+                    })
+                    ->get();
+
+                // count used item
+                $qtyUsed = 0;
+                foreach ($st_mutation as $keysm => $valsm) {
+                    if ($valsm->sm_use > 0) {
+                        $qtyUsed += $valsm->sm_use;
+                    } else {
+                        $qtyUsed += 0;
+                    }
                 }
-                // delete production-code of selected stockdistribution
-                foreach ($konsDt->getProdCode as $idx => $prodCode) {
-                    $prodCode->delete();
+                // item is used, break operation
+                if ($qtyUsed > 0) {
+                    $item = m_item::where('i_id', $item)->first();
+                    throw new Exception(strtoupper($item->i_name) . " sudah digunakan, konsinyasi tidak dapat dihapus !");
                 }
-                // delete konsinyasi-detail
-                $konsDt->delete();
+                // item is unused, continue to delete
+                else {
+                    // rollback mutation 'out'
+                    $mutRollbackOut = Mutasi::rollbackSalesOut(
+                        $konsinyasi->sc_nota, // nota
+                        $konsDt->scd_item, // itemId
+                        $mutcatOut // mutcat-out
+                    );
+                    if ($mutRollbackOut->original['status'] !== 'success') {
+                        return $mutRollbackOut;
+                    }
+
+                    // rollback mutation 'in'
+                    $mutRollbackIn = Mutasi::rollbackSalesIn(
+                        $konsinyasi->sc_nota, // nota
+                        $konsDt->scd_item, // itemId
+                        $mutcatIn // mutcat-out
+                    );
+                    if ($mutRollbackIn->original['status'] !== 'success') {
+                        return $mutRollbackIn;
+                    }
+
+                    // delete production-code of selected stockdistribution
+                    foreach ($konsDt->getProdCode as $idx => $prodCode) {
+                        $prodCode->delete();
+                    }
+                    // delete konsinyasi-detail
+                    $konsDt->delete();
+                }
+                // $rollbackKons = Mutasi::rollback(
+                //     $konsinyasi->sc_nota, // nota
+                //     $konsDt->scd_item, // itemId
+                //     12 // mutcat
+                // );
+                // if (!is_bool($rollbackKons)) {
+                //     DB::rollBack();
+                //     return $rollbackKons;
+                // }
+                // // delete production-code of selected stockdistribution
+                // foreach ($konsDt->getProdCode as $idx => $prodCode) {
+                //     $prodCode->delete();
+                // }
+                // // delete konsinyasi-detail
+                // $konsDt->delete();
             }
             // delete konsinyasi
             $konsinyasi->delete();
