@@ -962,7 +962,7 @@ class DistribusiController extends Controller
                     18, // mutcat distribution 'in'
                     19 // mutcat distribution 'out'
                 );
-                if ($mutConfirm !== 'success') {
+                if ($mutConfirm->original['status'] !== 'success') {
                     return $mutConfirm;
                 }
             }
