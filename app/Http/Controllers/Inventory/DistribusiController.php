@@ -511,9 +511,9 @@ class DistribusiController extends Controller
     // edit selected item
     public function edit($id)
     {
-        // if (!AksesUser::checkAkses(7, 'update')){
-        //     abort(401);
-        // }
+        if (!AksesUser::checkAkses(16, 'update')){
+            abort(401);
+        }
 
         // get stockdistribution by id
         $data['stockdist'] = d_stockdistribution::where('sd_id', decrypt($id))
@@ -891,9 +891,14 @@ class DistribusiController extends Controller
     // still get to delete it ??
     public function hapus(Request $request)
     {
-        // if (!AksesUser::checkAkses(7, 'delete')){
-        //     abort(401);
-        // }
+        // return json_encode($request->all());
+        if (!AksesUser::checkAkses(16, 'delete')) {
+            return response()->json([
+                'status' => 'invalid',
+                'message' => 'Anda tidak memiliki akses ini'
+            ]);
+        }
+
         DB::beginTransaction();
         try {
             // get stockdist
@@ -902,16 +907,38 @@ class DistribusiController extends Controller
                 ->with('getProductDelivery')
                 ->first();
 
+            $mutcatOut = 19;
+            $mutcatIn = 18;
             foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
-                // rollBack qty in stock-mutation and stock-item
-                $rollbackDist = Mutasi::rollbackStockMutDist(
-                    $stockdist->sd_nota, // distribution nota
-                    $stockdistDt->sdd_item // item-id
+                // rollback mutation 'out'
+                $mutRollbackOut = Mutasi::rollbackSalesOut(
+                    $stockdist->sd_nota, // nota
+                    $stockdistDt->sdd_item, // itemId
+                    $mutcatOut // mutcat-out
                 );
-                if ($rollbackDist !== 'success') {
-                    DB::rollback();
-                    return $rollbackDist;
+                if ($mutRollbackOut->original['status'] !== 'success') {
+                    return $mutRollbackOut;
                 }
+                // rollback mutation 'in'
+                $mutRollbackIn = Mutasi::rollbackSalesIn(
+                    $stockdist->sd_nota, // nota
+                    $stockdistDt->sdd_item, // itemId
+                    $mutcatIn // mutcat-in
+                );
+                if ($mutRollbackIn->original['status'] !== 'success') {
+                    return $mutRollbackIn;
+                }
+
+                // // rollBack qty in stock-mutation and stock-item
+                // $rollbackDist = Mutasi::rollbackStockMutDist(
+                //     $stockdist->sd_nota, // distribution nota
+                //     $stockdistDt->sdd_item // item-id
+                // );
+                // if ($rollbackDist !== 'success') {
+                //     DB::rollback();
+                //     return $rollbackDist;
+                // }
+
                 // delete production-code of selected stockdistribution
                 foreach ($stockdistDt->getProdCode as $idx => $prodCode) {
                     $prodCode->delete();
@@ -942,9 +969,13 @@ class DistribusiController extends Controller
     // confirm distribution
     public function setAcceptance(Request $request, $id)
     {
-        // if (!AksesUser::checkAkses(7, 'update')){
-        //     abort(401);
-        // }
+        // return json_encode($request->all());
+        if (!AksesUser::checkAkses(16, 'update')) {
+            return response()->json([
+                'status' => 'invalid',
+                'message' => 'Anda tidak memiliki akses ini'
+            ]);
+        }
 
         DB::beginTransaction();
         try {
