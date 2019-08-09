@@ -726,6 +726,7 @@ class DistribusiController extends Controller
                         DB::rollback();
                         return $rollbackDist;
                     }
+
                     // insert stock mutation sales 'out'
                     $mutDistributionOut = Mutasi::distributionOut(
                         Auth::user()->u_company, // from (company-id)

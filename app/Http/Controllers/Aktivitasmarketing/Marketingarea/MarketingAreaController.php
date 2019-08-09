@@ -3087,7 +3087,7 @@ class MarketingAreaController extends Controller
                 $mutRollbackIn = Mutasi::rollbackSalesIn(
                     $konsinyasi->sc_nota, // nota
                     $konsDt->scd_item, // itemId
-                    12 // mutcat-out
+                    12 // mutcat-in
                 );
                 if ($mutRollbackIn->original['status'] !== 'success') {
                     return $mutRollbackIn;
