@@ -1402,7 +1402,9 @@ class Mutasi extends Controller
             ]);
         }
     }
-// mutation 'rollback' is unused, deleted soon 
+
+// ------------------------------
+// mutation 'rollback' is unused, deleted soon
     static function rollback(
         $nota,
         $itemId = null,
@@ -1503,6 +1505,7 @@ class Mutasi extends Controller
             return $e;
         }
     }
+// ------------------------------
 
     static function opname(
         $mutcat, // mutation categori
@@ -2746,6 +2749,8 @@ class Mutasi extends Controller
         }
     }
 
+// ------------------------------
+// unused - deleted soon
     // rollback stock-item and stock-mutation (just 'in')
     static function rollbackStockMutationIn(
         $item, // item-id
@@ -2814,6 +2819,7 @@ class Mutasi extends Controller
             ]);
         }
     }
+// ------------------------------
 
     // rollback stock-item and stock-mutation
     static function rollbackStockMutDist($nota, $item, $mutcat = null)
