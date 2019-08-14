@@ -296,6 +296,7 @@ class DistribusiController extends Controller
                     $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
                     $sumQtyPC = 0;
                     $listPC = array();
+
                     for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
                         // skip inserting when val is null or qty-pc is 0
                         if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
@@ -336,7 +337,7 @@ class DistribusiController extends Controller
                     // $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                     $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                     $listUnitPC = [];
-
+// dd($listPC, $listQtyPC);
                     // insert stock mutation sales 'out'
                     $mutDistributionOut = Mutasi::distributionOut(
                         Auth::user()->u_company, // from (company-id)
@@ -383,7 +384,7 @@ class DistribusiController extends Controller
                     if ($mutDistributionIn->original['status'] !== 'success') {
                         return $mutDistributionIn;
                     }
-
+// dd('x');
                     // // waiit, check the name of $reff
                     // // $reff = 'DISTRIBUSI-MASUK';
                     // $mutDist = Mutasi::distribusicabangkeluar(

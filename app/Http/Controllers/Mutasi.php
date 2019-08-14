@@ -312,9 +312,8 @@ class Mutasi extends Controller
                     if ($sisaForPC <= 0 || is_null($PC) || $listQtyPC[$idx] == 0) {
                         continue;
                     }
-
-                    if ($listQtyPC[$idx] <= $sisaForPC) {
-                        array_push($listSmQtyPC, $listQtyPC[$idx]);
+                    if ((int)$listQtyPC[$idx] <= $sisaForPC) {
+                        array_push($listSmQtyPC, (int)$listQtyPC[$idx]);
                         array_push($listSmPC, $PC);
                         $sisaForPC -= $listQtyPC[$idx];
                         $listQtyPC[$idx] = 0;
@@ -323,11 +322,11 @@ class Mutasi extends Controller
                     else {
                         array_push($listSmQtyPC, $sisaForPC);
                         array_push($listSmPC, $PC);
-                        $sisaForPC = 0;
                         $listQtyPC[$idx] -= $sisaForPC;
+                        $sisaForPC = 0;
                     }
                 }
-
+// dd($listPC, $listQtyPC, $listSmPC, $listSmQtyPC);
                 $detailid = d_stock_mutation::where('sm_stock', $stockParent->s_id)
                         ->max('sm_detailid') + 1;
                 // set value for new stock-mutation
@@ -386,7 +385,7 @@ class Mutasi extends Controller
                     break;
                 }
             }
-
+dd('s', $listPCReturn, $listQtyPCReturn);
             DB::commit();
             return response()->json([
                 'status' => 'success',
@@ -1878,8 +1877,8 @@ class Mutasi extends Controller
                     if ($sisaForPC <= 0 || is_null($PC) || $listQtyPC[$idx] == 0) {
                         break;
                     }
-                    if ($listQtyPC[$idx] < $sisaForPC) {
-                        array_push($listSmQtyPC, $listQtyPC[$idx]);
+                    if ((int)$listQtyPC[$idx] < $sisaForPC) {
+                        array_push($listSmQtyPC, (int)$listQtyPC[$idx]);
                         array_push($listSmPC, $PC);
                         $sisaForPC -= $listQtyPC[$idx];
                         $listQtyPC[$idx] = 0;
@@ -1888,8 +1887,8 @@ class Mutasi extends Controller
                     else {
                         array_push($listSmQtyPC, $sisaForPC);
                         array_push($listSmPC, $PC);
-                        $sisaForPC = 0;
                         $listQtyPC[$idx] -= $sisaForPC;
+                        $sisaForPC = 0;
                     }
                 }
 
@@ -2128,8 +2127,8 @@ class Mutasi extends Controller
                     if ($sisaForPC <= 0 || is_null($PC) || $listQtyPC[$idx] == 0) {
                         continue;
                     }
-                    if ($listQtyPC[$idx] < $sisaForPC) {
-                        array_push($listSmQtyPC, $listQtyPC[$idx]);
+                    if ((int)$listQtyPC[$idx] < $sisaForPC) {
+                        array_push($listSmQtyPC, (int)$listQtyPC[$idx]);
                         array_push($listSmPC, $PC);
                         $sisaForPC -= $listQtyPC[$idx];
                         $listQtyPC[$idx] = 0;
@@ -2138,8 +2137,8 @@ class Mutasi extends Controller
                     else {
                         array_push($listSmQtyPC, $sisaForPC);
                         array_push($listSmPC, $PC);
-                        $sisaForPC = 0;
                         $listQtyPC[$idx] -= $sisaForPC;
+                        $sisaForPC = 0;
                     }
                 }
 
