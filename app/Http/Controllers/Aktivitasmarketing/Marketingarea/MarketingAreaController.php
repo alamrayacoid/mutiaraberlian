@@ -706,11 +706,11 @@ class MarketingAreaController extends Controller
                     19,// mutcat distribution 'out',
                     $request->tgl
                 );
-                if ($mutConfirm !== 'success') {
+                if ($mutConfirm->original['status'] !== 'success') {
                     return $mutConfirm;
                 }
             }
-
+            
             // update stockdist-status to 'Y'
             $stockdist->sd_status = 'Y';
             $stockdist->save();

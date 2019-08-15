@@ -1396,7 +1396,7 @@
 
                         lineChartData.datasets[0].data = JSON.parse(response.data.sr_penjualan);
                         lineChartData.datasets[1].data = JSON.parse(response.data.sr_hutang);
-                        window.myLine.update();
+                        // window.myLine.update();
 
                         $('#cover-spin').hide();
                     })
@@ -1416,7 +1416,7 @@
 
                             lineChartData.datasets[0].data = JSON.parse(response.data.sr_penjualan);
                             lineChartData.datasets[1].data = JSON.parse(response.data.sr_hutang);
-                            window.myLine.update();
+                            // window.myLine.update();
 
                             $('#cover-spin').hide();
                         })

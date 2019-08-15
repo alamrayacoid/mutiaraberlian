@@ -984,8 +984,7 @@ class ManajemenAgenController extends Controller
     public function getAgen($city)
     {
         $user = Auth::user();
-        $info = DB::table('m_company')
-            ->where('c_id', '=', $user->u_company)
+        $info = m_company::where('c_id', '=', $user->u_company)
             ->first();
 
         $agen = [];

@@ -64,7 +64,9 @@
                 </h1>
             </header>
             <div class="auth-content">
-                @if ($message = Session::get('gagal'))
+                @if (Session::get('status') == 'gagal')
+                    <small style="color: red">{{ Session::get('message') }}</small>
+                @elseif ($message = Session::get('gagal'))
                     <small style="color: red">Kombinasi username dan password salah</small>
                 @endif
                 <form method="POST" action="{{ url('auth') }}">
@@ -298,5 +300,14 @@
     }
 
 </script>
+
+{{--
+<!-- <script type="text/javascript">
+    $(document).ready(function() {
+        console.log("{!! Session::get('status') !!}");
+        console.log("{!! Session::get('message') !!}");
+    })
+</script> -->
+--}}
 </body>
 </html>

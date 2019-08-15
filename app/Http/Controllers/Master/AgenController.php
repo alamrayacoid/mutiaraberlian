@@ -724,11 +724,19 @@ class AgenController extends Controller
         // start: execute delete data
         DB::beginTransaction();
         try {
-            DB::table('m_agen')
-                ->where('a_id', $id)
-                ->update([
-                    'a_isactive' => 'N'
-                ]);
+            $agent = m_agen::where('a_id', $id)->first();
+            $agent->a_isactive = 'N';
+            $agent->save();
+
+            // DB::table('m_agen')
+            //     ->where('a_id', $id)
+            //     ->update([
+            //         'a_isactive' => 'N'
+            //     ]);
+
+            $company = m_company::where('c_user', $agent->a_code)->first();
+            $company->c_isactive = 'N';
+            $company->save();
 
             DB::commit();
             return response()->json([
@@ -758,11 +766,19 @@ class AgenController extends Controller
         // start: execute delete data
         DB::beginTransaction();
         try {
-            DB::table('m_agen')
-                ->where('a_id', $id)
-                ->update([
-                    'a_isactive' => 'Y'
-                ]);
+            $agent = m_agen::where('a_id', $id)->first();
+            $agent->a_isactive = 'Y';
+            $agent->save();
+
+            // DB::table('m_agen')
+            //     ->where('a_id', $id)
+            //     ->update([
+            //         'a_isactive' => 'Y'
+            //     ]);
+
+            $company = m_company::where('c_user', $agent->a_code)->first();
+            $company->c_isactive = 'Y';
+            $company->save();
 
             DB::commit();
             return response()->json([

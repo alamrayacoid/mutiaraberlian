@@ -3348,13 +3348,13 @@ dd('s', $listPCReturn, $listQtyPCReturn);
                 }
             }
 
-            // update stock-before qty
-            $stockBefore->s_qty = $stockBefore->s_qty - $qtyFromMutation;
-            $stockBefore->save();
-            // delete 'On Going' stock if qty is 0
-            if ($stockBefore->s_qty == 0) {
-                $stockBefore->delete();
-            }
+            // // update stock-before qty
+            // $stockBefore->s_qty = $stockBefore->s_qty - $qtyFromMutation;
+            // $stockBefore->save();
+            // // delete 'On Going' stock if qty is 0
+            // if ($stockBefore->s_qty == 0) {
+            //     $stockBefore->delete();
+            // }
 
             DB::commit();
             return response()->json([
@@ -3382,7 +3382,11 @@ dd('s', $listPCReturn, $listQtyPCReturn);
         DB::beginTransaction();
         try {
             // set date if receiveDate is not null
-            (is_null($date)) ? $dateNow = Carbon::now() : $dateNow = $date;
+            $dateNow = Carbon::now();
+            if ($date !== null){
+                $dateNow = Carbon::createFromFormat('d-m-Y', $date);
+            }
+
             // get stock-selected-item with 'On Going' status
             $stockDestination = d_stock::where('s_comp', $to)
                 ->where('s_position', $to)
@@ -3489,14 +3493,14 @@ dd('s', $listPCReturn, $listQtyPCReturn);
                 }
             }
 
-            // update stock-before qty
-            $stockDestination->s_qty = $stockDestination->s_qty - $qtyFromMutation;
-            $stockDestination->save();
-
-            // delete 'On Going' stock if qty is 0
-            if ($stockDestination->s_qty == 0) {
-                $stockDestination->delete();
-            }
+            // // update stock-before qty
+            // $stockDestination->s_qty = $stockDestination->s_qty - $qtyFromMutation;
+            // $stockDestination->save();
+            //
+            // // delete 'On Going' stock if qty is 0
+            // if ($stockDestination->s_qty == 0) {
+            //     $stockDestination->delete();
+            // }
 
             DB::commit();
             return response()->json([
