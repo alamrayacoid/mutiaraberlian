@@ -1003,14 +1003,16 @@ class ManajemenAgenController extends Controller
             $agen = $agen->union($cabang);
             $agen = $agen->get();
 
-        } elseif ($info->c_type == 'AGEN'){
+        }
+        elseif ($info->c_type == 'AGEN'){
             $agen = DB::table('m_agen')
                 ->join('m_company', 'a_code', 'c_user')
                 ->select('a_code', 'a_name', 'c_id')
                 ->where('a_kabupaten', '=', $city)
                 ->where('c_id', '=', $info->c_id)
                 ->get();
-        } elseif ($info->c_type == 'PUSAT'){
+        }
+        elseif ($info->c_type == 'PUSAT'){
             $agen = DB::table('m_agen')
                 ->join('m_company', 'a_code', 'c_user')
                 ->select('a_code', 'a_name', 'c_id')

@@ -10,43 +10,43 @@
 			<section>
 				<div class="row mb-3">
 					<div class="col-md-3 col-sm-12">
-            @if($company->c_type == 'AGEN')
-            	<select name="m_prov" id="prov" class="form-control form-control-sm select2" onchange="getProvId()">
-	              @foreach($provinsi->where('wp_id', '=', $company->a_provinsi) as $prov)
-	              	<option value="{{$prov->wp_id}}" selected="">{{$prov->wp_name}}</option>
-	              @endforeach
-	            </select>
-            @else
-            	<select name="m_prov" id="prov" class="form-control form-control-sm select2" onchange="getProvId()">
-	              <option value="" selected="" disabled="">=== Pilih Provinsi ===</option>
-	              @foreach($provinsi as $prov)
-	              	<option value="{{$prov->wp_id}}">{{$prov->wp_name}}</option>
-	              @endforeach
-	            </select>
-            @endif
+	            @if($company->c_type == 'AGEN' || $company->c_type == 'SUB AGEN' || $company->c_type == 'APOTEK/RADIO')
+	            	<select name="m_prov" id="prov" class="form-control form-control-sm select2" onchange="getProvId()">
+		              @foreach($provinsi->where('wp_id', '=', $company->a_provinsi) as $prov)
+		              	<option value="{{$prov->wp_id}}" selected="">{{$prov->wp_name}}</option>
+		              @endforeach
+		            </select>
+	            @else
+	            	<select name="m_prov" id="prov" class="form-control form-control-sm select2" onchange="getProvId()">
+		              <option value="" selected="" disabled="">=== Pilih Provinsi ===</option>
+		              @foreach($provinsi as $prov)
+		              	<option value="{{$prov->wp_id}}">{{$prov->wp_name}}</option>
+		              @endforeach
+		            </select>
+	            @endif
 					</div>
 					<div class="col-md-3 col-sm-12">
-            @if($company->c_type == 'AGEN')
-	            <select name="m_city" id="city" class="form-control form-control-sm select2 city">
-	              @foreach($kota->where('wc_id', '=', $company->a_kabupaten) as $kota)
-	              	<option value="{{$kota->wc_id}}" selected="">{{$kota->wc_name}}</option>
-	              @endforeach
-	            </select>
-	          @else
-	            <select name="m_city" id="city" class="form-control form-control-sm select2 city">
-	              <option value="" selected disabled>=== Pilih Kota ===</option>
-	            </select>
-	          @endif
-					</div>
-					<div class="col-md-4 col-sm-12">
-            @if($company->c_type == 'AGEN')
-            <input type="text" class="form-control form-control-sm" value="{{$company->a_name}}" readonly="">
-			<input type="hidden" id="agen" value="{{ $company->c_id }}">
-            @else
-            <select name="m_agen" id="agen" class="form-control form-control-sm select2 agen">
-              <option value="" selected disabled>=== Pilih Agen ===</option>
-            </select>
-            @endif
+	            @if($company->c_type == 'AGEN' || $company->c_type == 'SUB AGEN' || $company->c_type == 'APOTEK/RADIO')
+		            <select name="m_city" id="city" class="form-control form-control-sm select2 city">
+		              @foreach($kota->where('wc_id', '=', $company->a_kabupaten) as $kota)
+		              	<option value="{{$kota->wc_id}}" selected="">{{$kota->wc_name}}</option>
+		              @endforeach
+		            </select>
+	          	@else
+		            <select name="m_city" id="city" class="form-control form-control-sm select2 city">
+		              <option value="" selected disabled>=== Pilih Kota ===</option>
+		            </select>
+	          	@endif
+						</div>
+						<div class="col-md-4 col-sm-12">
+	            @if($company->c_type == 'AGEN' || $company->c_type == 'SUB AGEN' || $company->c_type == 'APOTEK/RADIO')
+		            <input type="text" class="form-control form-control-sm" value="{{$company->a_name}}" readonly="">
+					<input type="hidden" id="agen" value="{{ $company->c_id }}">
+	            @else
+		            <select name="m_agen" id="agen" class="form-control form-control-sm select2 agen">
+		              <option value="" selected disabled>=== Pilih Agen ===</option>
+		            </select>
+	            @endif
 					</div>
 					<div class="col-md-2">
 						<button class="btn btn-primary btn-md" title="Cari Berdasarkan Filter" onclick="filterData()"><i class="fa fa-filter"></i> Filter</button>
@@ -75,7 +75,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							
+
 						</tbody>
 					</table>
 				</div>

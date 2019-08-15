@@ -124,8 +124,12 @@
                                             <input type="hidden" id="has_subagent" value="{{ $data['has_subagent'] }}">
                                             <select id="type" class="select2 form-control form-control-sm" name="type">
                                                 <option selected disabled>Pilih Tipe Agen</option>
-                                                <option value="MMA">MMA/Cabang</option>
-                                                <option value="AGEN">Agen</option>
+                                                @if (Auth::user()->getCompany->c_type == 'PUSAT')
+                                                    <option value="MMA">MMA/Cabang</option>
+                                                @endif
+                                                @if (Auth::user()->getCompany->c_type == 'PUSAT' || Auth::user()->getCompany->c_type == 'CABANG')
+                                                    <option value="AGEN">Agen</option>
+                                                @endif
                                                 <option value="SUB AGEN">Sub Agen</option>
                                                 <option value="APOTEK">Apotek/Radio</option>
                                             </select>
