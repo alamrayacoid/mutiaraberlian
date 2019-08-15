@@ -355,6 +355,12 @@ class AgenController extends Controller
             //     'photo'
             // );
 
+            // prevent duplicated no-telp
+            $telpIsUsed = m_agen::where('a_telp', $request->telp)->first();
+            if ($telpIsUsed !== null) {
+                throw new \Exception("Nomor telp sudah digunakan, gunakan nomor yang lain", 1);
+            }
+
             if ($request->hasFile('photo')) {
                 // $photo = $this->uploadImage(
                 //     $request->file('photo'),
@@ -567,13 +573,13 @@ class AgenController extends Controller
         if ($data['agen']->a_type == "APOTEK" || $data['agen']->a_type == "SUB AGEN"){
             $data['infoparent'] = DB::table('m_agen')
                 ->where('a_code', '=', $data['agen']->a_parent)
-                ->where('a_isactive', 'Y')
                 ->first();
 
             $data['parentProv'] = $this->getProvinceByCity($data['infoparent']->a_area);
             $data['parentCity'] = $this->getCities($data['parentProv']);
             $data['parentAgen'] = DB::table('m_company')
                 ->join('m_agen', 'c_user', 'a_code')
+                ->where('a_code', '!=', $data['agen']->a_code)
                 ->where('a_area', '=', $data['infoparent']->a_area)
                 ->where('c_type', '!=', 'APOTEK')
                 ->where('c_isactive', 'Y')
