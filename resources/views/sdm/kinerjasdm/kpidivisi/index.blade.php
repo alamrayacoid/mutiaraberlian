@@ -12,7 +12,7 @@
             <section>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_kpi_divisi_d">
+                    <table class="table table-striped table-hover display nowrap w-100" cellspacing="0" id="table_kpi_divisi_d">
                         <thead class="bg-primary">
                         <tr align="center">
                             <th width="1%">No</th>
