@@ -179,7 +179,7 @@ class KonsinyasiPusatController extends Controller
             ->where('m_company.c_type', '=', 'AGEN')
             ->whereIn('a_mma', $id_pusat)
             ->get();
-
+// dd($id_pusat, $nama);
         return Response::json($nama);
     }
 

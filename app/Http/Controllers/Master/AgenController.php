@@ -37,14 +37,16 @@ class AgenController extends Controller
             'area_city' => 'required',
             'name' => 'required',
             'email' => 'sometimes|nullable|email',
-            'telp' => 'required'
+            'telp' => 'required',
+            'a_salesprice' => 'required'
         ],
         [
             'area_prov.required' => 'Area Provinsi masih kosong !',
             'area_city.required' => 'Area Kota masih kosong !',
             'name.required' => 'Nama agen masih kosong !',
             'email.email' => 'Format email tidak valid !',
-            'telp.required' => 'No Telp masih kosong !'
+            'telp.required' => 'No Telp masih kosong !',
+            'a_salesprice.required' => 'Harga penjualan tidak boleh kosong !'
         ]);
         if ($validator->fails()) {
             return $validator->errors()->first();
@@ -426,7 +428,7 @@ class AgenController extends Controller
                     'c_update'  => Carbon::now()
                 ]);
 
-            if ($c_type != 'APOTEK/RADIO'){
+            if ($c_type != 'APOTEK/RADIO') {
                 $cek = DB::table('d_username')
                     ->where('u_username', '=', $request->username)
                     ->first();
