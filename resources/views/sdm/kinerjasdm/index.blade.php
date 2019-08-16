@@ -85,6 +85,7 @@
     <!-- end -->
     <!-- modal master KPI-->
     @include('sdm.kinerjasdm.kpipegawai.modal_detail')
+    @include('sdm.kinerjasdm.kpidivisi.modal_detail')
     <!-- end -->
     <!-- modal inputkpi -->
     @include('sdm.kinerjasdm.inputkpi.modal_tambah_datakpi')
@@ -97,7 +98,9 @@
     var table_sup         = $('#table_scoreboard').DataTable();
     var table_bar         = $('#table_inputkpi').DataTable();
     var table_kpi_pegawai = $('#table_kpi_pegawai').DataTable();
+    var table_kpi_divisi_d = $('#table_kpi_divisi_d').DataTable();
     var tb_detail_kpi_pegawai;
+    var tb_detail_kpi_divisi;
     var table_divisi      = $('#table_divisi').DataTable();
     var table_kpi;
     var table_rab         = $('#table_manajemenscoreboardkpi').DataTable();
@@ -599,6 +602,122 @@
 
     function editKpiPegawai(emp) {
         window.location.href = "{{url('/sdm/kinerjasdm/kpi-pegawai/edit-kpi-pegawai?')}}"+"employee="+emp
+    }
+
+    //Kpi Divisi -->
+    $(document).ready(function(){
+        $('#table_kpi_divisi_d').DataTable().destroy();
+        table_kpi_divisi_d = $('#table_kpi_divisi_d').DataTable({
+            serverSide: true,
+            bAutoWidth: true,
+            processing:true,
+            ajax: {
+                url: '{{url("/sdm/kinerjasdm/kpi-divisi/get-kpi-divisi_d")}}',
+                type: "get"
+            },
+            columns: [
+                {data: 'DT_RowIndex', className: "text-center"},
+                {data: 'm_name'},
+                {data: 'action', className: "text-center"}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    })
+
+    function deatilKpiDivisi(divs) {
+        loadingShow()
+        axios.get('{{url('/sdm/kinerjasdm/kpi-divisi/get-detail-kpi-divisi?')}}'+'divisi='+divs)
+        .then(function(resp){
+            // console.log(resp.data.data[0].m_name);
+            $('#m_divisi_d').text(resp.data.data[0].m_name)
+
+            $('#tb_detail_kpi_divisi').DataTable().clear().destroy();
+            tb_detail_kpi_divisi = $('#tb_detail_kpi_divisi').DataTable({
+                serverSide: false,
+                bAutoWidth: true,
+                processing:true,
+                paging: false,
+                info: false,
+                searching: false
+            })
+
+            $.each(resp.data.data, function(key, val){
+                var no = ++key
+
+                if (val.k_isactive == 'Y')
+                    var status = '<span class="badge badge-pill badge-success p-2">Aktif</span>'
+                else
+                    var status = '<span class="badge badge-pill badge-danger p-2">Tidak Aktif</span>'
+
+                tb_detail_kpi_divisi.row.add([
+                    '<div class="text-center">'+no+'</div>',
+                    val.k_indicator,
+                    '<div class="text-right">'+val.ke_weight+'</div>',
+                    '<div class="text-right">'+val.ke_target+'</div>'
+                ]).draw(false)
+            })
+            $('#detailKpiDivisi').modal('show');
+            loadingHide()
+        })
+        .catch(function(error){
+
+        })
+    }
+
+    function delKpiDivisi(divs) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Pesan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function() {
+                        return $.ajax({
+                            type: "post",
+                            url: "{{url('/sdm/kinerjasdm/kpi-divisi/delete-kpi-divisi')}}"+"/"+divs,
+                            data: {
+                                "_token": "{{ csrf_token() }}"
+                            },
+                            beforeSend: function() {
+                                loadingShow();
+                            },
+                            success: function(response) {
+                                if (response.status == 'success') {
+                                    loadingHide();
+                                    messageSuccess('Berhasil', 'Data berhasil dihapus!');
+                                    table_kpi_divisi_d.ajax.reload();
+                                } else {
+                                    loadingHide();
+                                    messageFailed('Gagal', response.message);
+                                }
+                            },
+                            error: function(e) {
+                                loadingHide();
+                                messageWarning('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function(response) {
+                        loadingHide();
+                        messageWarning('Peringatan', 'Anda telah membatalkan!');
+                    }
+                }
+            }
+        });
+    }
+
+    function editKpiDivisi(divs) {
+        window.location.href = "{{url('/sdm/kinerjasdm/kpi-divisi/edit-kpi-divisi?')}}"+"divisi="+divs
     }
 </script>
 @endsection
