@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 
 use App\d_itemout;
 use App\d_stock;
+use App\d_stockdt;
 use App\d_stock_mutation;
 use App\m_item;
 use Mutasi;
@@ -158,9 +159,11 @@ class BarangKeluarController extends Controller
         $posisi = $request->posisi;
         $produk = $request->produk;
         $mutcat = $request->mutcat;
+        $kodeproduksi = $request->kodeproduksi;
 
         $datas = DB::table('d_stock_mutation')
             ->join('d_stock', 'sm_stock', 's_id')
+            ->join('d_stockdt', 'd_stock.s_id', 'sd_stock')
             ->join('m_company as pemilik', 'd_stock.s_comp', 'pemilik.c_id')
             ->join('m_company as posisi', 'd_stock.s_position', 'posisi.c_id')
             ->join('m_mutcat', 'sm_mutcat', '=', 'm_id')
@@ -184,6 +187,9 @@ class BarangKeluarController extends Controller
         }
         if ($produk != 'semua'){
             $datas->where('s_item', '=', $produk);
+        }
+        if ($kodeproduksi != 'semua'){
+            $datas->where('sd_code', '=', $kodeproduksi);
         }
         if ($mutcat != 'semua'){
             $datas->where('sm_mutcat', '=', $mutcat);
@@ -308,6 +314,10 @@ class BarangKeluarController extends Controller
             ->groupBy('s_item')
             ->get();
 
+        $kodeproduksi = d_stockdt::select('sd_code')
+            ->groupBy('sd_code')
+            ->get();
+
         $mutcat = DB::table('d_stock')
             ->join('d_stock_mutation', 'sm_stock', '=', 's_id')
             ->join('m_mutcat', 'm_id', '=', 'sm_mutcat')
@@ -318,7 +328,7 @@ class BarangKeluarController extends Controller
             ->groupBy('m_id')
             ->get();
 
-        return view('inventory/barangkeluar/index', compact('pemilik', 'posisi', 'produk', 'mutcat'));
+        return view('inventory/barangkeluar/index', compact('pemilik', 'posisi', 'produk', 'mutcat', 'kodeproduksi'));
     }
 
     /**

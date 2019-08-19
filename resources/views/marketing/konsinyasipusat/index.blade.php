@@ -395,11 +395,11 @@
 					return 0;
 				}
 				$.each(response, function(index, val) {
-					listAgents = '<tr><td>'+ val.get_province.wp_name +'</td>';
-					listAgents += '<td>'+ val.get_city.wc_name +'</td>';
-					listAgents += '<td>'+ val.a_name +'</td>';
-					listAgents += '<td>'+ val.a_type +'</td>';
-					listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgentMP(\''+ val.get_company.c_id +'\',\''+ val.a_name +'\')"><i class="fa fa-download"></i></button></td></tr>';
+					listAgents = '<tr><td>'+ val.get_agent.get_province.wp_name +'</td>';
+					listAgents += '<td>'+ val.get_agent.get_city.wc_name +'</td>';
+					listAgents += '<td>'+ val.get_agent.a_name +'</td>';
+					listAgents += '<td>'+ val.get_agent.a_type +'</td>';
+					listAgents += '<td><button type="button" class="btn btn-sm btn-primary" onclick="addFilterAgentMP(\''+ val.c_id +'\',\''+ val.get_agent.a_name +'\')"><i class="fa fa-download"></i></button></td></tr>';
 				});
 				$('#table_search_mp > tbody:last-child').append(listAgents);
 			}

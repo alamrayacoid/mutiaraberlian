@@ -81,6 +81,15 @@
                       @endforeach
                     </select>
                   </div>
+                  <div class="col-4">
+                      <!-- <p>Kosongkan field jika ingin menampilkan semua hasil pencarian</p> -->
+                      <select class="select2 form-control form-control-sm" name="kodeproduksi" id="filter_kodeproduksi">
+                          <option value="semua" selected>== Semua Kode Produksi ==</option>
+                          @foreach($kodeproduksi as $kp)
+                              <option value="{{ $kp->sd_code }}">{{ $kp->sd_code }}</option>
+                          @endforeach
+                      </select>
+                  </div>
                   <div class="col-4 input-group">
                     <select class="form-control form-control-sm" id="filter_mutcat" name="mutcat">
                       <option value="semua">== Semua Keterangan ==</option>
@@ -93,9 +102,9 @@
                       <button class="btn btn-primary btn-sm" type="button" id="btn_refresh_date"><i class="fa fa-refresh"></i></button>
                     </div>
                   </div>
-                  <div class="col-4">
+                  <!-- <div class="col-4">
                     <p>Kosongkan field jika ingin menampilkan semua hasil pencarian</p>
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <div class="table-responsive">
@@ -294,6 +303,7 @@
                       "pemilik": $('#filter_pemilik').val(),
                       "posisi": $('#filter_posisi').val(),
                       "produk": $('#filter_produk').val(),
+                      "kodeproduksi" : $('#filter_kodeproduksi').val(),
                       "mutcat": $('#filter_mutcat').val()
                   }
               },
