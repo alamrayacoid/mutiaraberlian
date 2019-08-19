@@ -11,7 +11,7 @@
                 <span class="text-primary" style="font-weight: bold;">Aktivitas SDM</span>
                 / <span>Kelola Kinerja SDM</span>
                 / <span>KPI Divisi</span>
-                / <span class="text-primary" style="font-weight: bold;"> Tambah Data KPI Divisi</span>
+                / <span class="text-primary" style="font-weight: bold;"> Edit Data KPI Divisi</span>
             </p>
         </div>
 
@@ -25,7 +25,7 @@
 
                         <div class="card-header bordered p-2">
                             <div class="header-block">
-                                <h3 class="title"> Tambah Data KPI Divisi </h3>
+                                <h3 class="title"> Edit Data KPI Divisi </h3>
                             </div>
                             <div class="header-block pull-right">
                                 <a href="{{ route('kinerjasdm.index') }}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
@@ -80,8 +80,8 @@
                                                                 </div>
                                                             </div>
 
-                                                            <div class="col-2 col-md-2 align-items-center" style="height: 30px;display: flex; align-items: center;">
-                                                                <button type="button" class="btn btn-block btn-primary btn-sm rounded btn-tambahp align-self-center idx-btn"><i class="fa fa-plus"></i></button>
+                                                            <div class="col-2 col-md-2">
+                                                                <label for="">Bobot</label>
                                                             </div>
                                                             <div class="offset-md-4 col-8 col-md-8 col-sm-6 col-xs-12 mb-1 messageError d-none" style="margin-top: -18px;">
                                                                 <span class="text-danger" style="font-size: 12px;">Indikator sudah terpilih</span>
@@ -90,9 +90,6 @@
                                                     </div>
                                                     <div class="col-6 col-md-6 col-sm-12">
                                                         <div class="row">
-                                                            <div class="col-2">
-                                                                <label for="">Bobot</label>
-                                                            </div>
                                                             <div class="col-4">
                                                                 <div class="form-group">
                                                                     <input type="text" name="bobot[]" class="form-control form-control-sm digits" value="{{$kpiemp_first->ke_weight}}">
@@ -105,6 +102,9 @@
                                                                 <div class="form-group">
                                                                     <input type="text" name="target[]" class="form-control form-control-sm digits" value="{{$kpiemp_first->ke_target}}">
                                                                 </div>
+                                                            </div>
+                                                            <div class="col-2 align-items-center" style="height: 30px;display: flex; align-items: center;">
+                                                                <button type="button" class="btn btn-block btn-primary btn-sm rounded btn-tambahp align-self-center idx-btn"><i class="fa fa-plus"></i></button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -128,8 +128,8 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-2 col-md-2 col-sm-2" style="height: 30px;display: flex; align-items: center;">
-                                                                <button type="button" class="btn btn-block btn-danger btn-sm rounded btn-hapus idx-btn btn-del"><i class="fa fa-trash"></i></button>
+                                                            <div class="col-2 col-md-2 col-sm-2">
+                                                                <label for="">Bobot</label>
                                                             </div>
                                                             <div class="offset-md-4 col-8 col-md-8 col-sm-6 col-xs-12 mb-1 messageError d-none" style="margin-top: -18px;">
                                                                 <span class="text-danger" style="font-size: 12px;">Indikator sudah terpilih</span>
@@ -138,9 +138,6 @@
                                                     </div>
                                                     <div class="col-6 col-md-6 col-sm-12">
                                                         <div class="row">
-                                                            <div class="col-2">
-                                                                <label for="">Bobot</label>
-                                                            </div>
                                                             <div class="col-4">
                                                                 <div class="form-group">
                                                                     <input type="text" name="bobot[]" class="form-control form-control-sm digits" value="{{$kpiemp->ke_weight}}">
@@ -153,6 +150,9 @@
                                                                 <div class="form-group">
                                                                     <input type="text" name="target[]" class="form-control form-control-sm digits" value="{{$kpiemp->ke_target}}">
                                                                 </div>
+                                                            </div>
+                                                            <div class="col-2" style="height: 30px;display: flex; align-items: center;">
+                                                                <button type="button" class="btn btn-block btn-danger btn-sm rounded btn-hapus idx-btn btn-del"><i class="fa fa-trash"></i></button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -234,8 +234,8 @@
                                     '</select>'+
                                 '</div>'+
                             '</div>'+
-                            '<div class="col-2 col-md-2 col-sm-2" style="height: 30px;display: flex; align-items: center;">'+
-                                '<button type="button" class="btn btn-block btn-danger btn-sm rounded btn-hapus idx-btn btn-del"><i class="fa fa-trash"></i></button>'+
+                            '<div class="col-2 col-md-2 col-sm-2">'+
+                                '<label for="">Bobot</label>'+
                             '</div>'+
                             '<div class="offset-md-4 col-8 col-md-8 col-sm-6 col-xs-12 mb-1 messageError d-none" style="margin-top: -18px;">'+
                                 '<span class="text-danger" style="font-size: 12px;">Indikator sudah terpilih</span>'+
@@ -244,9 +244,6 @@
                     '</div>'+
                     '<div class="col-6 col-md-6 col-sm-12">'+
                         '<div class="row">'+
-                            '<div class="col-2">'+
-                                '<label for="">Bobot</label>'+
-                            '</div>'+
                             '<div class="col-4">'+
                                 '<div class="form-group">'+
                                     '<input type="text" name="bobot[]" class="form-control form-control-sm digits">'+
@@ -259,6 +256,9 @@
                                 '<div class="form-group">'+
                                     '<input type="text" name="target[]" class="form-control form-control-sm digits">'+
                                 '</div>'+
+                            '</div>'+
+                            '<div class="col-2" style="height: 30px;display: flex; align-items: center;">'+
+                                '<button type="button" class="btn btn-block btn-danger btn-sm rounded btn-hapus idx-btn btn-del"><i class="fa fa-trash"></i></button>'+
                             '</div>'+
                         '</div>'+
                     '</div>'+
