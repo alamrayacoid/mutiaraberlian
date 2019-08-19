@@ -87,6 +87,7 @@ class ReturnPenjualanController extends Controller
         ->whereHas('getAgent', function ($q) use ($cityId) {
             $q->where('a_area', '=', $cityId);
         })
+        ->where('c_isactive', 'Y')
         ->get();
 
         return response()->json(array(
@@ -194,7 +195,7 @@ class ReturnPenjualanController extends Controller
             $q->where('sd_qty', '>', 0);
         }])
         ->get();
-        
+
         $listProdCode = array();
         foreach ($stocks as $key => $stock) {
             foreach ($stock->getStockDt as $key => $stockDt) {

@@ -51,9 +51,9 @@
 	</div>
 </div>
 
-@section('extra_script')
+
 <!-- public set time -->
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 	$(document).ready(function() {
 		// var cur_date = new Date();
 		// const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
@@ -62,10 +62,10 @@
 		// $('#filterDateFromPr').datepicker('setDate', first_day);
 		// $('#filterDateToPr').datepicker('setDate', last_day);
 	});
-</script>
+</script> -->
 
 <!-- script for 'Index Daftar Presensi SDM' -->
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 	$(document).ready(function() {
 		// // draw and update chart
 		// drawChart();
@@ -169,5 +169,4 @@
 			}
 		});
 	}
-</script>
-@endsection
+</script> -->

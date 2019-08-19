@@ -326,7 +326,7 @@ class Mutasi extends Controller
                         $sisaForPC = 0;
                     }
                 }
-// dd($listPC, $listQtyPC, $listSmPC, $listSmQtyPC);
+
                 $detailid = d_stock_mutation::where('sm_stock', $stockParent->s_id)
                         ->max('sm_detailid') + 1;
                 // set value for new stock-mutation
@@ -385,7 +385,7 @@ class Mutasi extends Controller
                     break;
                 }
             }
-dd('s', $listPCReturn, $listQtyPCReturn);
+
             DB::commit();
             return response()->json([
                 'status' => 'success',
@@ -981,7 +981,7 @@ dd('s', $listPCReturn, $listQtyPCReturn);
             for ($i = 0; $i < count($datamutcat); $i++) {
                 $tmp[] = $datamutcat[$i]->m_id;
             }
-            // dd($comp, $position, $item);
+
             $stock = DB::table('d_stock')
                 ->join('d_stock_mutation', 'sm_stock', '=', 's_id')
                 ->select('d_stock.*', 'd_stock_mutation.*', DB::raw('(sm_qty - sm_use) as sm_sisa'))
@@ -1935,7 +1935,7 @@ dd('s', $listPCReturn, $listQtyPCReturn);
                 if ($insertStockDt !== 'success') {
                     throw new Exception($insertStockDt->getData()->message);
                 }
-                // dd($stockParent->s_id, $detailid, $listSmPC, $listSmQtyPC, $insertSMProdCode);
+
                 // fill list of sellPrice and listhpp
                 array_push($listStockParentId, $val_stockmut['sm_stock']);
                 array_push($listSellPrice, (int)$val_stockmut['sm_sell']);
@@ -2385,7 +2385,7 @@ dd('s', $listPCReturn, $listQtyPCReturn);
                     $mutation->sm_stock, // stock-mutation id
                     $mutation->sm_detailid // stock-mutation detail-id
                 );
-                // dd('1', $rollbackMutDetailSalesOut);
+                
                 if ($rollbackMutDetailSalesOut->original['status'] != 'success') {
                     return $rollbackMutDetailSalesOut;
                 }
