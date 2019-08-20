@@ -360,6 +360,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::match(['get', 'post'], '/inventory/manajemenstok/pengelolaanmms/edit/{id}', 'InventoryController@pengelolaanmms_edit')->name('pengelolaanmms.edit');
     Route::get('/inventory/manajemenstok/pengelolaanmms/cari-stock', 'InventoryController@searchStock')->name('pengelolaanmms.caristock');
 
+    // Pengelolaan Data Reorder Poin
+    Route::get('/inventory/manajemenstok/kelola-repeat-order/', 'Inventory\reorderController@index')->name('reorderController.index');
+    Route::get('/inventory/manajemenstok/kelola-repeat-order/get-data', 'Inventory\reorderController@getDataReorderPoin')->name('reorderController.getDataReorderPoin');
+    Route::post('/inventory/manajemenstok/kelola-repeat-order/simpan-data', 'Inventory\reorderController@save')->name('reorderController.save');
+    Route::post('/inventory/manajemenstok/kelola-repeat-order/update-data', 'Inventory\reorderController@update')->name('reorderController.update');
+
     // !===================================================== END INVENTORY =====================================================!
 
     // !===================================================== SDM =====================================================!
