@@ -356,6 +356,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::match(['get', 'post'], '/inventory/manajemenstok/pengelolaanmms/edit/{id}', 'InventoryController@pengelolaanmms_edit')->name('pengelolaanmms.edit');
     Route::get('/inventory/manajemenstok/pengelolaanmms/cari-stock', 'InventoryController@searchStock')->name('pengelolaanmms.caristock');
 
+    // Pengelolaan Data Reorder Poin
+    Route::get('/inventory/manajemenstok/kelola-repeat-order/', 'Inventory\reorderController@index')->name('reorderController.index');
+
     // !===================================================== END INVENTORY =====================================================!
 
     // !===================================================== SDM =====================================================!
