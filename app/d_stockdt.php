@@ -23,6 +23,9 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class d_stockdt extends Model
 {
+    // use third-party library to create relationship multi-column
+    use \Awobaz\Compoships\Compoships;
+    
     protected $table = 'd_stockdt';
     public $timestamps = false;
 

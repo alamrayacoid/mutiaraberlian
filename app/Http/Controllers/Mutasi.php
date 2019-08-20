@@ -2237,7 +2237,8 @@ class Mutasi extends Controller
         $listStockParentId, // stock parent id (acutually its unuser)
         $status = 'ON GOING', // items status in stock
         $condition = 'FINE', // item condition in stock
-        $date = null // date for received item
+        $date = null, // date for received item
+        $notaReff = null // nota reff
     )
     {
         DB::beginTransaction();
@@ -2256,7 +2257,7 @@ class Mutasi extends Controller
             // $status = $status;
             // $condition = $condition;
             $nota = $nota;
-            $reff = $nota;
+            (is_null($notaReff) ? $reff = $nota : $reff = $notaReff);
             $totalQty = array_sum($listSmQty);
 
             // get stock-item in destination-position with 'On Going' status
@@ -2385,7 +2386,7 @@ class Mutasi extends Controller
                     $mutation->sm_stock, // stock-mutation id
                     $mutation->sm_detailid // stock-mutation detail-id
                 );
-                
+
                 if ($rollbackMutDetailSalesOut->original['status'] != 'success') {
                     return $rollbackMutDetailSalesOut;
                 }
@@ -3516,4 +3517,68 @@ class Mutasi extends Controller
 
     }
 
+    // update a specific stock-mutation
+    public static function updateQtySpecificMutation(
+        $smStock, // sm_stock
+        $smDetailId, // sm_detailid
+        $newQty, // new sm_qty
+        $listPC, // new listpc
+        $listQtyPC // new listQtyPC
+    )
+    {
+        DB::beginTransaction();
+        try {
+            // dd($smStock, $smDetailId, $newQty, $listPC, $listQtyPC);
+            $mutation = d_stock_mutation::where('sm_stock', $smStock)
+                ->where('sm_detailid', $smDetailId)
+                ->with('getStock')
+                ->first();
+
+            // update stock
+            $mutation->getStock->s_qty -= $mutation->sm_qty;
+            $mutation->getStock->s_qty += $newQty;
+            $mutation->getStock->save();
+
+            // update stock-mutation
+            $mutation->sm_qty = $newQty;
+            $mutation->sm_residue = $newQty - $mutation->sm_use;
+            $mutation->save();
+
+
+            // rollback stock-mutation-detail 'in' and stock-detail 'in'
+            $rollbackMutDetailSalesIn = self::rollbackMutDetailSalesIn(
+                $mutation->sm_stock, // stock-mutation id
+                $mutation->sm_detailid // stock-mutation detail-id
+            );
+            if ($rollbackMutDetailSalesIn->original['status'] != 'success') {
+                return $rollbackMutDetailSalesIn;
+            }
+
+            // insert new stock-mutation-detail (production-code) for mutcat-out
+            $insertSMProdCode = self::insertStockMutationDt($mutation->sm_stock, $mutation->sm_detailid, $listPC, $listQtyPC);
+            if ($insertSMProdCode !== 'success') {
+                throw new Exception($insertSMProdCode->getData()->message);
+            }
+
+            // insert/update stock-detail production-code
+            $stockParentId = null;
+            $stockChildId = $mutation->sm_stock;
+            $insertStockDt = self::insertStockDetail($stockParentId, $stockChildId, $listPC, $listQtyPC);
+            if ($insertStockDt !== 'success') {
+                throw new Exception($insertStockDt->getData()->message);
+            }
+
+            DB::commit();
+            return response()->json([
+                'status' => 'success'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }

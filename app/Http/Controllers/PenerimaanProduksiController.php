@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 use Auth;
+use App\d_productionorder;
+use App\d_productionorderdt;
 use App\d_productionordercode;
+use App\d_stock_mutation;
 use Carbon\Carbon;
 use Crypt;
 use DB;
@@ -450,9 +453,7 @@ class PenerimaanProduksiController extends Controller
                 ->update([
                     'pod_received' => 'Y'
                 ]);
-
         }
-
     }
 
     public function receiptItem(Request $request)
@@ -591,7 +592,8 @@ class PenerimaanProduksiController extends Controller
                 null, // stock parent id
                 'ON DESTINATION', // status
                 'FINE',
-                $receiveDate
+                $receiveDate, // received date
+                $request->nota // nota refference
             );
 
             if ($mutationIn->original['status'] !== 'success') {
@@ -715,10 +717,211 @@ class PenerimaanProduksiController extends Controller
             ->addColumn('action', function($datas) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                         <button class="btn btn-info hint--top-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-folder"></i>
+                        <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit" onclick="editHistory(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-pencil"></i>
                         </button>
                     </div>';
             })
             ->rawColumns(['nota', 'supplier', 'tanggal', 'action'])
             ->make(true);
+    }
+
+    public function editHistoryPenerimaan($id)
+    {
+        try {
+            $idx = Crypt::decrypt($id);
+        }
+        catch (\DecryptException $e){
+            abort('404');
+        }
+
+        return view('produksi/penerimaanbarang/history/edit', compact('id'));
+    }
+
+    public function getListHistoryPO(Request $request)
+    {
+        try{
+            $id = Crypt::decrypt($request->idPO);
+        }
+        catch (\DecryptException $e){
+            abort('404');
+        }
+
+        $dataPO = d_productionorder::where('po_id', $id)
+            ->with(['getMutation' => function ($q) {
+                $q->with('getStock.getItem.getUnit1');
+            }])
+            ->first();
+
+        $datas = $dataPO->getMutation;
+
+        return DataTables::of($datas)
+        ->addIndexColumn()
+        ->addColumn('date', function($datas){
+            return Carbon::parse($datas->sm_date)->format('d M Y');
+        })
+        ->addColumn('item', function($datas){
+            return $datas->getStock->getItem->i_name;
+        })
+        ->addColumn('unit', function($datas){
+            return $datas->getStock->getItem->getUnit1->u_name;
+        })
+        ->addColumn('qty', function($datas){
+            return number_format($datas->sm_qty, 0, ',', '.');
+        })
+        ->addColumn('action', function($datas) {
+            return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit" onclick="edit(\''.Crypt::encrypt($datas->sm_stock).'\',\''.Crypt::encrypt($datas->sm_detailid).'\')"><i class="fa fa-pencil"></i>
+            </button>
+            </div>';
+        })
+        ->rawColumns(['date', 'item', 'unit', 'action'])
+        ->make(true);
+    }
+
+    public function getDetailEditPO(Request $request)
+    {
+        DB::beginTransaction();
+        try{
+            $id = Crypt::decrypt($request->id);
+            $detailId = Crypt::decrypt($request->detailid);
+        }
+        catch (\DecryptException $e){
+            return Response::json([
+                'status' => 'Failed',
+                'message' => $e->getMessage()
+            ]);
+        }
+
+        try {
+            $detail = d_stock_mutation::where('sm_stock', $id)
+            ->where('sm_detailid', $detailId)
+            ->with('getMutationDt')
+            ->with('getStock.getItem.getUnit1')
+            ->first();
+
+            DB::commit();
+            return Response::json([
+                'status' => 'Success',
+                'detail' => $detail
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return Response::json([
+                'status' => 'Failed',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function updateDetailPO(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            // get current stock-mutation (used qty, qtyProdCode)
+            $current = d_stock_mutation::where('sm_stock', $request->sm_stock)
+                ->where('sm_detailid', $request->sm_detailid)
+                ->with('getMutationDt.getStockDt')
+                ->with('getStock.getStockDt')
+                ->first();
+
+            // validate qty-request with qty-system
+            if ($request->itemQty < $current->sm_use) {
+                throw new Exception("Item sudah digunakan sebanyak : ". $current->sm_use .", permintaan tidak boleh kurang dari nilai tersebut !", 1);
+            }
+
+            // get listpc and new $listQtyPC
+            $listQtyPC = array();
+            $listPC = array();
+            foreach ($current->getMutationDt as $key => $value) {
+                array_push($listQtyPC, $value->getStockDt->sd_qty - $value->smd_qty);
+                array_push($listPC, $value->smd_productioncode);
+            }
+            // update list qty-prodCode
+            foreach ($request->prodCode as $key => $value) {
+                $value = strtoupper($value);
+                $idx = array_search($value, $listPC);
+                if ($idx !== false) {
+                    $listQtyPC[$idx] += $request->qtyProdCode[$key];
+                }
+            }
+            // validate qty-prodCode
+            foreach ($listQtyPC as $key => $value) {
+                if ($value < 0) {
+                    $tempQty = abs($value);
+                    throw new Exception("Kode Produksi ". $listPC[$key] ." sudah digunakan. Permintaan tidak boleh kurang dari : ". $tempQty, 1);
+                }
+            }
+
+            // update specific-stock-mutation and stock-mutation-detail
+            $updateMut = Mutasi::updateQtySpecificMutation(
+                $current->sm_stock,
+                $current->sm_detailid,
+                $request->itemQty,
+                $request->prodCode,
+                $request->qtyProdCode
+            );
+            if ($updateMut->original['status'] !== 'success') {
+                return $updateMut;
+            }
+
+            // get production-order and item-receipt
+            $notaDO = $current->sm_reff;
+            $itemId = $current->getStock->s_item;
+            $productionOrder = d_productionorder::where('po_nota', $current->sm_nota)
+                ->with(['getPODt' => function ($query) use ($itemId) {
+                    $query
+                        ->where('pod_item', $itemId)
+                        ->with('getProdCode');
+                }])
+                ->with(['getItemReceipt.getIRDetail' => function($q) use ($notaDO) {
+                    $q->where('ird_nota_do', $notaDO);
+                }])
+                ->first();
+
+            // validate qty-request with qty-system
+            // if ($request->itemQty > $productionOrder->) {
+                // throw new Exception("Item sudah digunakan sebanyak : ". $current->sm_use .", permintaan tidak boleh kurang dari nilai tersebut !", 1);
+            // }
+            // delete production-order-code
+
+            // update production-order-code
+            // foreach ($request->prodCode as $idx => $value) {
+            //
+            // }
+
+dd($productionOrder);
+            // update production-order-detail
+            $productionOrder->getPODt[0]->pod_qty = $request->itemQty;
+            $productionOrder->getPODt[0]->pod_totalnet = $request->itemQty * $productionOrder->getPODt[0]->pod_value;
+            $productionOrder->getPODt[0]->save();
+            // update production-order
+            $notaPO = $productionOrder->po_nota;
+            $totalNet = d_productionorderdt::whereHas('getProductionOrder', function ($q) use ($notaPO) {
+                    $q->where('po_nota', $notaPO);
+                })
+                ->sum('pod_totalnet');
+
+            $productionOrder->po_totalnet = (int)$totalNet;
+            $productionOrder->save();
+            // update item-receipt
+            $productionOrder->getItemReceipt->getIRDetail[0]->ird_qty = $request->itemQty;
+            $productionOrder->getItemReceipt->getIRDetail[0]->save();
+
+dd($productionOrder);
+
+            DB::commit();
+            return Response::json([
+                'status' => 'success'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return Response::json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+
     }
 }
