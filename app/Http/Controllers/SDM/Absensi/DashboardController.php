@@ -20,7 +20,7 @@ class DashboardController extends Controller
         $dateNow = Carbon::now();
         $monthNow = $dateNow->month;
         $datas = d_presence::whereMonth('p_date', $monthNow)->get();
-        dd($monthNow, $datas);
+        // dd($monthNow, $datas);
         switch ($request->filter) {
             case 'HR':
                 // get result of presence-query
