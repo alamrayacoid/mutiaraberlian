@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Inventory/reorderController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Inventory/reorderController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/inventory/reorderpoin/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/reorderpoin/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/inventory/manajemenstok/analisastockto/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/manajemenstok/analisastockto/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/inventory/manajemenstok/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/inventory/manajemenstok/index.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
@@ -25,7 +25,7 @@
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="247">
-              <caret line="362" column="145" selection-start-line="362" selection-start-column="121" selection-end-line="362" selection-end-column="145" />
+              <caret line="365" column="167" selection-start-line="365" selection-start-column="134" selection-end-line="365" selection-end-column="167" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
               </folding>
@@ -34,62 +34,43 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Inventory/reorderController.php">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/InventoryController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="70" column="144" selection-start-line="70" selection-start-column="144" selection-end-line="70" selection-end-column="144" />
-              <folding>
-                <element signature="e#50#78#0#PHP" expanded="true" />
-              </folding>
+            <state relative-caret-position="63">
+              <caret line="77" column="48" selection-start-line="77" selection-start-column="48" selection-end-line="77" selection-end-column="48" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/inventory/reorderpoin/index.blade.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/inventory/manajemenstok/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="142" column="36" selection-start-line="142" selection-start-column="36" selection-end-line="142" selection-end-column="36" />
+            <state relative-caret-position="197">
+              <caret line="74" column="58" selection-start-line="74" selection-start-column="58" selection-end-line="74" selection-end-column="58" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Inventory/TurnOverController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="302">
+              <caret line="21" column="5" lean-forward="true" selection-start-line="21" selection-start-column="5" selection-end-line="21" selection-end-column="5" />
+              <folding>
+                <element signature="e#50#68#0#PHP" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/resources/views/inventory/reorderpoin/modal.blade.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/inventory/manajemenstok/analisastockto/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="43" column="22" lean-forward="true" selection-start-line="43" selection-start-column="22" selection-end-line="43" selection-end-column="22" />
+            <state relative-caret-position="386">
+              <caret line="114" column="55" lean-forward="true" selection-start-line="114" selection-start-column="55" selection-end-line="114" selection-end-column="55" />
               <folding>
-                <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#!!top" expanded="true" />
+                <element signature="e#345#371#0#HTML" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/ItemController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="336">
-              <caret line="16" selection-start-line="16" selection-end-line="16" selection-end-column="32" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/produk/index.blade.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="205">
-              <caret line="322" column="61" selection-start-line="322" selection-start-column="55" selection-end-line="322" selection-end-column="61" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/masterdatautama/produk/modal-create.blade.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="9" column="36" lean-forward="true" selection-end-line="25" />
             </state>
           </provider>
         </entry>
@@ -98,7 +79,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>masterdatautama/agen/list</find>
       <find>getList</find>
       <find>#type</find>
       <find>parent_prov</find>
@@ -128,6 +108,7 @@
       <find>getDataReorderPoin</find>
       <find>setReorderPoin</find>
       <find>reload</find>
+      <find>analisaturn</find>
     </findStrings>
     <replaceStrings>
       <replace>done_</replace>
@@ -145,8 +126,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/resources/views/marketing/agen/kelolapenjualan/create.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/marketing/agen/penjualanviaweb/modal_create.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/inventory/manajemenstok/pengelolaanmms/index.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Aktivitasmarketing/Penjualanpusat/ReturnPenjualanController.php" />
@@ -191,11 +170,13 @@
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/cabang/create.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/masterdatautama/cabang/edit.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Master/CabangController.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/Inventory/reorderController.php" />
+        <option value="$PROJECT_DIR$/resources/views/inventory/reorderpoin/modal.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/inventory/reorderpoin/index.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/inventory/manajemenstok/index.blade.php" />
         <option value="$PROJECT_DIR$/routes/web.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/Inventory/reorderController.php" />
-        <option value="$PROJECT_DIR$/resources/views/inventory/reorderpoin/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/inventory/reorderpoin/modal.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/Inventory/TurnOverController.php" />
+        <option value="$PROJECT_DIR$/resources/views/inventory/manajemenstok/analisastockto/index.blade.php" />
       </list>
     </option>
   </component>
@@ -399,6 +380,23 @@
               <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="views" type="462c0819:PsiDirectoryNode" />
               <item name="inventory" type="462c0819:PsiDirectoryNode" />
+              <item name="manajemenstok" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="inventory" type="462c0819:PsiDirectoryNode" />
+              <item name="manajemenstok" type="462c0819:PsiDirectoryNode" />
+              <item name="analisastockto" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mutiara" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mutiara" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="inventory" type="462c0819:PsiDirectoryNode" />
               <item name="reorderpoin" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -555,7 +553,7 @@
       <workItem from="1565228809292" duration="432000" />
       <workItem from="1565332158265" duration="1149000" />
       <workItem from="1566209393872" duration="885000" />
-      <workItem from="1566264650742" duration="11505000" />
+      <workItem from="1566264650742" duration="22092000" />
     </task>
     <task id="LOCAL-00001" summary="perbaikan jenis produk">
       <created>1560755279119</created>
@@ -876,7 +874,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="625383000" />
+    <option name="totallyTimeSpent" value="635970000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -889,9 +887,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49917355" weight="0.19591528" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49917355" weight="0.16944024" />
       <window_info id="Structure" order="1" sideWeight="0.5008264" side_tool="true" weight="0.19818456" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -944,19 +941,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="ftp" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Master/PembayaranController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="67" column="39" selection-start-line="67" selection-start-column="39" selection-end-line="67" selection-end-column="39" />
-          <folding>
-            <element signature="e#47#65#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/marketing/marketingarea/keloladataorder/modal.blade.php">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/inventory/distribusibarang/distribusi/create.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="205">
@@ -1225,9 +1209,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/InventoryController.php">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Inventory/OpnameController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -1235,13 +1216,6 @@
           <folding>
             <element signature="n#style#0;n#button#0;n#td#0;n#!!top" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/inventory/manajemenstok/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1365">
-          <caret line="65" column="65" lean-forward="true" selection-end-line="123" />
         </state>
       </provider>
     </entry>
@@ -1299,16 +1273,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/web.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="362" column="145" selection-start-line="362" selection-start-column="121" selection-end-line="362" selection-end-column="145" />
-          <folding>
-            <element signature="e#7#389#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Inventory/reorderController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
@@ -1319,20 +1283,64 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/inventory/reorderpoin/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="142" column="36" selection-start-line="142" selection-start-column="36" selection-end-line="142" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/inventory/reorderpoin/modal.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="43" column="22" lean-forward="true" selection-start-line="43" selection-start-column="22" selection-end-line="43" selection-end-column="22" />
+        <state relative-caret-position="197">
+          <caret line="40" column="109" selection-start-line="40" selection-start-column="93" selection-end-line="40" selection-end-column="109" />
           <folding>
             <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/inventory/reorderpoin/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-594">
+          <caret line="112" column="32" selection-start-line="112" selection-start-column="32" selection-end-line="112" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/InventoryController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="63">
+          <caret line="77" column="48" selection-start-line="77" selection-start-column="48" selection-end-line="77" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/inventory/manajemenstok/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="74" column="58" selection-start-line="74" selection-start-column="58" selection-end-line="74" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/web.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="365" column="167" selection-start-line="365" selection-start-column="134" selection-end-line="365" selection-end-column="167" />
+          <folding>
+            <element signature="e#7#389#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Inventory/TurnOverController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="21" column="5" lean-forward="true" selection-start-line="21" selection-start-column="5" selection-end-line="21" selection-end-column="5" />
+          <folding>
+            <element signature="e#50#68#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/inventory/manajemenstok/analisastockto/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="386">
+          <caret line="114" column="55" lean-forward="true" selection-start-line="114" selection-start-column="55" selection-end-line="114" selection-end-column="55" />
+          <folding>
+            <element signature="e#345#371#0#HTML" expanded="true" />
           </folding>
         </state>
       </provider>

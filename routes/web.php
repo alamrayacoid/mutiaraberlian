@@ -318,9 +318,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
     Route::get('/inventory/manajemenstok/create', 'InventoryController@manajemenstok_create')->name('manajemenstok.create');
     Route::get('/inventory/manajemenstok/edit', 'InventoryController@manajemenstok_edit')->name('manajemenstok.edit');
-    // Analisa Stock Turn Over
-    Route::get('/inventory/analisaturnover/index', 'InventoryController@analisaTO')->name('analisaTO.index');
-    Route::get('/inventory/analisaturnover/get-list', 'InventoryController@analisaTO_list')->name('analisaTO.list');
+
     // Opname
     Route::get('/inventory/manajemenstok/opnamestock/index', 'Inventory\OpnameController@index')->name('opname.index');
     Route::get('/inventory/manajemenstok/opnamestock/list', 'Inventory\OpnameController@getList')->name('opname.list');
@@ -362,6 +360,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/inventory/manajemenstok/kelola-repeat-order/simpan-data', 'Inventory\reorderController@save')->name('reorderController.save');
     Route::post('/inventory/manajemenstok/kelola-repeat-order/update-data', 'Inventory\reorderController@update')->name('reorderController.update');
 
+    // Inventory Turn Over
+    Route::get('/inventory/manajemenstok/inventory-turn-over/', 'Inventory\TurnOverController@index')->name('TurnOverController.index');
+    Route::get('/inventory/manajemenstok/inventory-turn-over/get-data', 'Inventory\TurnOverController@getData')->name('TurnOverController.getData');
+    Route::get('/inventory/manajemenstok/inventory-turn-over/get-data-periode', 'Inventory\TurnOverController@getDataPeriode')->name('TurnOverController.getDataPeriode');
     // !===================================================== END INVENTORY =====================================================!
 
     // !===================================================== SDM =====================================================!
