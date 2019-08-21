@@ -369,10 +369,10 @@
                                                 <label for="">Foto</label>
                                             </div>
                                             <div class="outline-img col-12 d-flex align-items-end justify-content-center justify-content-center">   
-                                                <img src="{{url('storage/uploads/recruitment', $data->p_imgfoto)}}" alt="Foto" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;" id="foto">
+                                                <img src="{{asset('storage/app/' . $data->p_imgfoto)}}" alt="Foto" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;" id="foto">
                                             </div>
                                             <div>
-                                                <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{url('storage/uploads/recruitment', $data->p_imgfoto)}}')">Lihat Berkas</button>
+                                                <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{asset('storage/app/' . $data->p_imgfoto)}}')">Lihat Berkas</button>
                                             </div>
                                         </div>
 
@@ -381,10 +381,10 @@
                                                 <label for="">KTP</label>
                                             </div>
                                             <div class="outline-img col-12 d-flex align-items-end justify-content-center">
-                                                <img src="{{url('storage/uploads/recruitment', $data->p_imgktp)}}" alt="" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;" id="ktp">
+                                                <img src="{{asset('storage/app/' . $data->p_imgktp)}}" alt="" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;" id="ktp">
                                             </div>
                                             <div>
-                                                <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{url('storage/uploads/recruitment', $data->p_imgktp)}}')">Lihat Berkas</button>
+                                                <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{asset('storage/app/' . $data->p_imgktp)}}')">Lihat Berkas</button>
                                             </div>
                                         </div>
 
@@ -393,10 +393,10 @@
                                                 <label for="">Ijazah</label>
                                             </div>
                                             <div class="outline-img col-12 d-flex align-items-end justify-content-center">
-                                                <img src="{{url('storage/uploads/recruitment', $data->img_ijazah)}}" alt="" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;">
+                                                <img src="{{asset('storage/app/' . $data->img_ijazah)}}" alt="" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;">
                                             </div>
                                             <div>
-                                                <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{url('storage/uploads/recruitment', $data->img_ijazah)}}')">Lihat Berkas</button>
+                                                <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{asset('storage/app/' . $data->img_ijazah)}}')">Lihat Berkas</button>
                                             </div>
                                         </div>
 
@@ -405,10 +405,10 @@
                                                 <label for="">Lain - Lain</label>
                                             </div>
                                             <div class="outline-img col-12 d-flex align-items-end justify-content-center">
-                                                <img src="{{url('storage/uploads/recruitment', $data->img_other)}}" alt="" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;">
+                                                <img src="{{asset('storage/app/' . $data->img_other)}}" alt="" class="img-fluid img-thumbnail" style="max-width:200px; max-height:300px;">
                                             </div>
                                             <div>
-                                                <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{url('storage/uploads/recruitment', $data->img_other)}}')">Lihat Berkas</button>
+                                                <button class="btn btn-sm btn-secondary btn-block rounded" data-toggle="modal" onclick="priview('{{asset('storage/app/' . $data->img_other)}}')">Lihat Berkas</button>
                                             </div>
                                         </div>
                                     </div>

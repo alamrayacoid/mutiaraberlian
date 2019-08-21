@@ -14,20 +14,18 @@
                         <div class="col-md-2 col-sm-6 col-xs-12">
                             <label>Tanggal Awal</label>
                         </div>
-
                         <div class="col-md-3 col-sm-6 col-xs-12">
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-sm datepicker" name="tgl_awal" id="tgl_awal">
+                                <input type="text" class="form-control form-control-sm datepicker" name="tgl_awal" id="tgl_awal" autocomplete="off">
                             </div>
                         </div>
 
                         <div class="col-md-2 col-sm-6 col-xs-12">
                             <label>Tanggal Akhir</label>
                         </div>
-
                         <div class="col-md-3 col-sm-6 col-xs-12">
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-sm datepicker" name="tgl_akhir" id="tgl_akhir">
+                                <input type="text" class="form-control form-control-sm datepicker" name="tgl_akhir" id="tgl_akhir" autocomplete="off">
                             </div>
                         </div>
 
@@ -38,7 +36,7 @@
                     </div>
                 </fieldset>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-bordered display nowrap" cellspacing="0" id="table_history">
+                    <table class="table table-striped table-hover table-bordered display nowrap w-100" cellspacing="0" id="table_history">
                         <thead class="bg-primary">
                             <tr>
                                 <th width="1%">No</th>

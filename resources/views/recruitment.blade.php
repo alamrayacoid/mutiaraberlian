@@ -440,9 +440,16 @@
         placeholder: ""
     });
     // mask ipk
-    $('.ipk').inputmask("9.99", {
+    $('.ipk').inputmask("currency", {
         autoUnmask: true,
-        placeholder: "4.00"
+        radixPoint: ",",
+        groupSeparator: ".",
+        digits: 2,
+        autoGroup: true,
+        prefix: '', //Space after $, this will not truncate the first character.
+        nullable: false,
+        // unmaskAsNumber: true,
+
     });
 
 
@@ -718,6 +725,7 @@
           loadingHide();
           messageSuccess('Berhasil', 'Registrasi berhasil !');
           $('#myForm :input').prop('disabled', true);
+          location.reload();
         } else if (response.status == 'invalid') {
           loadingHide();
           messageWarning('Perhatian', response.message);

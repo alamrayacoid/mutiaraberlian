@@ -63,7 +63,7 @@
 			</div>
 
 			<div class="col-md-4 col-sm-6 col-12">
-				<a href="#">
+				<a href="{{ route('reorderController.index') }}">
 					<div class="card text-center p-4 card-custom text-info">
 						<img src="{{asset('assets/img/storehouse.png')}}" height="128px" width="128px">
 						<h6>Penglolaan Data Re-Order Point, Repeat Order</h6>
@@ -72,7 +72,7 @@
 			</div>
 
 			<div class="col-md-4 col-sm-6 col-12">
-				<a href="{{route('analisaTO.index')}}">
+				<a href="{{route('TurnOverController.index')}}">
 					<div class="card text-center p-4 card-custom text-info">
 						<img src="{{asset('assets/img/increase.png')}}" height="128px" width="128px">
 						<h6>Analisa Stock Turn Over</h6>

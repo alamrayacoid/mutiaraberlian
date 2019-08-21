@@ -251,9 +251,9 @@ class DistribusiController extends Controller
             // insert new stockdist-detail
             foreach ($request->itemsId as $i => $itemId) {
                 $jumlahkode = 0;
-                if ($i == 0) {
-                    $startProdCodeIdx = 0;
-                }
+                // if ($i == 0) {
+                //     $startProdCodeIdx = 0;
+                // }
 
                 if ($request->prodCode[$i] === null || $request->qtyProdCode[$i] === null){
                     $barang = m_item::where('i_id', $itemId)->first();
@@ -289,9 +289,9 @@ class DistribusiController extends Controller
                     $distdt->save();
 
                     // insert new d_stockdistributioncode
-                    if ($i == 0) {
-                        $startProdCodeIdx = 0;
-                    }
+                    // if ($i == 0) {
+                    //     $startProdCodeIdx = 0;
+                    // }
                     $prodCodeLength = (int)$request->prodCodeLength[$i];
                     $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
                     $sumQtyPC = 0;
@@ -337,7 +337,7 @@ class DistribusiController extends Controller
                     // $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                     $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                     $listUnitPC = [];
-// dd($listPC, $listQtyPC);
+
                     // insert stock mutation sales 'out'
                     $mutDistributionOut = Mutasi::distributionOut(
                         Auth::user()->u_company, // from (company-id)
@@ -753,7 +753,7 @@ class DistribusiController extends Controller
                     $listSmQty = $mutDistributionOut->original['listSmQty'];
                     $listPCReturn = $mutDistributionOut->original['listPCReturn'];
                     $listQtyPCReturn = $mutDistributionOut->original['listQtyPCReturn'];
-                    // dd($listSmQty, $listPCReturn, $listQtyPCReturn);
+                    
                     // insert stock mutation using sales 'in'
                     $mutDistributionIn = Mutasi::distributionIn(
                         Auth::user()->u_company, // item-owner (company-id)

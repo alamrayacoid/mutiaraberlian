@@ -34,6 +34,15 @@ class d_productionorderdt extends Model
     protected $primaryKey  = 'pod_productionorder';
     public $timestamps = false;
 
+
+    public function getProductionOrder()
+    {
+        return $this->belongsTo('App\d_productionorder', 'pod_productionorder', 'po_id');
+    }
+    // public function getProdCode()
+    // {
+    //     return $this->hasMany('App\d_productionordercode', 'poc_productionorder', 'pod_productionorder');
+    // }
     public function getItem()
     {
       return $this->belongsTo('App\m_item', 'pod_item', 'i_id');

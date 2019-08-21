@@ -27,6 +27,9 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class d_stockmutationdt extends Model
 {
+    // use third-party library to create relationship multi-column
+    use \Awobaz\Compoships\Compoships;
+
     protected $table = 'd_stockmutationdt';
     public $timestamps = false;
 
@@ -37,5 +40,10 @@ class d_stockmutationdt extends Model
         ->where('smd_stockmutation', '=', $this->getAttribute('smd_stockmutation'))
         ->where('smd_detailid', '=', $this->getAttribute('smd_detailid'));
         return $query;
+    }
+
+    public function getStockDt()
+    {
+        return $this->belongsTo('App\d_stockdt', ['smd_stock', 'smd_productioncode'], ['sd_stock', 'sd_code']);
     }
 }

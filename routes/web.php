@@ -230,6 +230,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/produksi/penerimaanbarang/checkqty', 'PenerimaanProduksiController@checkTerima')->name('penerimaan.checkqty');
     Route::post('/produksi/penerimaanbarang/terima-item', 'PenerimaanProduksiController@receiptItem')->name('penerimaan.terimaitem');
     Route::get('/produksi/penerimaanbarang/cari-histori', 'PenerimaanProduksiController@searchHistory')->name('penerimaan.histori');
+    Route::get('/produksi/penerimaanbarang/edit-history-penerimaan/{id}', 'PenerimaanProduksiController@editHistoryPenerimaan')->name('penerimaan.edithistory');
+    Route::get('/produksi/penerimaanbarang/get-list-history-po', 'PenerimaanProduksiController@getListHistoryPO')->name('penerimaan.getListHistoryPO');
+    Route::get('/produksi/penerimaanbarang/get-detail-edit-po', 'PenerimaanProduksiController@getDetailEditPO')->name('penerimaan.getDetailEditPO');
+    Route::post('/produksi/penerimaanbarang/update-detail-po', 'PenerimaanProduksiController@updateDetailPO')->name('penerimaan.updateDetailPO');
     Route::get('/produksi/penerimaanbarang/create', 'PenerimaanProduksiController@create_penerimaan_barang')->name('penerimaan.create');
     // Pembayaran
     Route::get('/produksi/pembayaran/index', 'Produksi\PembayaranController@index')->name('pembayaran.index');
@@ -318,9 +322,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inventory/manajemenstok/index', 'InventoryController@manajemenstok_index')->name('manajemenstok.index');
     Route::get('/inventory/manajemenstok/create', 'InventoryController@manajemenstok_create')->name('manajemenstok.create');
     Route::get('/inventory/manajemenstok/edit', 'InventoryController@manajemenstok_edit')->name('manajemenstok.edit');
-    // Analisa Stock Turn Over
-    Route::get('/inventory/analisaturnover/index', 'InventoryController@analisaTO')->name('analisaTO.index');
-    Route::get('/inventory/analisaturnover/get-list', 'InventoryController@analisaTO_list')->name('analisaTO.list');
+
     // Opname
     Route::get('/inventory/manajemenstok/opnamestock/index', 'Inventory\OpnameController@index')->name('opname.index');
     Route::get('/inventory/manajemenstok/opnamestock/list', 'Inventory\OpnameController@getList')->name('opname.list');
@@ -356,6 +358,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::match(['get', 'post'], '/inventory/manajemenstok/pengelolaanmms/edit/{id}', 'InventoryController@pengelolaanmms_edit')->name('pengelolaanmms.edit');
     Route::get('/inventory/manajemenstok/pengelolaanmms/cari-stock', 'InventoryController@searchStock')->name('pengelolaanmms.caristock');
 
+    // Pengelolaan Data Reorder Poin
+    Route::get('/inventory/manajemenstok/kelola-repeat-order/', 'Inventory\reorderController@index')->name('reorderController.index');
+    Route::get('/inventory/manajemenstok/kelola-repeat-order/get-data', 'Inventory\reorderController@getDataReorderPoin')->name('reorderController.getDataReorderPoin');
+    Route::post('/inventory/manajemenstok/kelola-repeat-order/simpan-data', 'Inventory\reorderController@save')->name('reorderController.save');
+    Route::post('/inventory/manajemenstok/kelola-repeat-order/update-data', 'Inventory\reorderController@update')->name('reorderController.update');
+
+    // Inventory Turn Over
+    Route::get('/inventory/manajemenstok/inventory-turn-over/', 'Inventory\TurnOverController@index')->name('TurnOverController.index');
+    Route::get('/inventory/manajemenstok/inventory-turn-over/get-data', 'Inventory\TurnOverController@getData')->name('TurnOverController.getData');
+    Route::get('/inventory/manajemenstok/inventory-turn-over/get-data-periode', 'Inventory\TurnOverController@getDataPeriode')->name('TurnOverController.getDataPeriode');
     // !===================================================== END INVENTORY =====================================================!
 
     // !===================================================== SDM =====================================================!

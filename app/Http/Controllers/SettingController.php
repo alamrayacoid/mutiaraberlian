@@ -132,11 +132,11 @@ class SettingController extends Controller
 
     public function pengaturanpengguna_create()
     {
-        $agen = DB::table('m_agen')->get();
+        $agen = DB::table('m_agen')->where('a_isactive', 'Y')->get();
 
-        $employee = DB::table('m_employee')->get();
+        $employee = DB::table('m_employee')->where('e_isactive', 'Y')->get();
 
-        $company = DB::table('m_company')->where('c_type', '!=', 'AGEN')->get();
+        $company = DB::table('m_company')->where('c_type', '!=', 'AGEN')->where('c_isactive', 'Y')->get();
 
         $level = DB::table('m_level')->get();
 

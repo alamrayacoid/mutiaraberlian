@@ -40,5 +40,22 @@ class d_itemreceiptdt extends Model
         return $query;
     }
 
+    public function getItemReceipt()
+    {
+        return $this->belongsTo('App\d_itemreceipt', 'ird_itemreceipt', 'ir_id');
+    }
+
+    public function getItem()
+    {
+        return $this->belongsTo('App\m_item', 'ird_item', 'i_id');
+    }
+    public function getUnit()
+    {
+        return $this->belongsTo('App\m_unit', 'ird_unit', 'u_id');
+    }
+    public function getProdCode()
+    {
+        return $this->hasMany('App\d_productionordercode', 'poc_nota_do', 'ird_nota_do');
+    }
 
 }

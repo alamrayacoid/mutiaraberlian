@@ -23,6 +23,7 @@ use CodeGenerator;
 use Currency;
 use DataTables;
 use DB;
+use Mockery\Exception;
 use Mutasi;
 use Response;
 use Validator;
@@ -560,6 +561,7 @@ class KonsinyasiPusatController extends Controller
                     ->where('scd_sales', '=', $idSales)
                     ->max('sd_detailid')) + 1 : 1;
 
+            $startProdCodeIdx = 0;
             $detailsd = $sddetail;
             $val_salesdt = [];
             for ($i = 0; $i < count($data['idItem']); $i++) {
@@ -579,29 +581,32 @@ class KonsinyasiPusatController extends Controller
                 ];
 
                 // values for insert to salescomp-code
-                if ($i == 0) {
-                    $startProdCodeIdx = 0;
-                }
+                // if ($i == 0) {
+                //     $startProdCodeIdx = 0;
+                // }
                 $prodCodeLength = (int)$request->prodCodeLength[$i];
                 $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
+                $sumQtyPC = 0;
+                $listPC = array();
 
-                if ($data['jumlah'][$i] != $request->qtyProdCode[$i]){
-                    $item = DB::table('m_item')
-                        ->where('i_id', '=', $data['idItem'][$i])
-                        ->first();
-
-                    DB::rollBack();
-                    return Response::json([
-                        'status' => "Failed",
-                        'message' => "Jumlah kode produksi " . $item->i_name . " tidak sesuai"
-                    ]);
-                }
+                // if ($data['jumlah'][$i] != $request->qtyProdCode[$i]){
+                //     $item = DB::table('m_item')
+                //         ->where('i_id', '=', $data['idItem'][$i])
+                //         ->first();
+                //
+                //     DB::rollBack();
+                //     return Response::json([
+                //         'status' => "Failed",
+                //         'message' => "Jumlah kode produksi " . $item->i_name . " tidak sesuai"
+                //     ]);
+                // }
 
                 for ($j = $startProdCodeIdx; $j < $endProdCodeIdx; $j++) {
                     // skip inserting when val is null or qty-pc is 0
                     if ($request->prodCode[$j] == '' || $request->prodCode[$j] == null || $request->qtyProdCode[$j] == 0) {
                         continue;
                     }
+                    array_push($listPC, strtoupper($request->prodCode[$j]));
                     $detailidcode = d_salescompcode::where('ssc_salescomp', $idSales)
                             ->where('ssc_item', $data['idItem'][$i])
                             ->max('ssc_detailid') + 1;
@@ -614,6 +619,7 @@ class KonsinyasiPusatController extends Controller
                         'ssc_qty' => $request->qtyProdCode[$j]
                     ];
                     DB::table('d_salescompcode')->insert($val_salescode);
+                    $sumQtyPC += (int)$request->qtyProdCode[$j];
                 }
 
                 // mutasi
@@ -650,31 +656,79 @@ class KonsinyasiPusatController extends Controller
                     ->first();
 
                 // declaare list of production-code
-                $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
+                // $listPC = array_slice($request->prodCode, $startProdCodeIdx, $prodCodeLength);
                 $listQtyPC = array_slice($request->qtyProdCode, $startProdCodeIdx, $prodCodeLength);
                 $listUnitPC = [];
-
                 $statusKons = 'pusat';
-                // set mutation (mutation-out is called inside mutation-in)
-                $mutKons = Mutasi::mutasimasuk(
-                    12, // mutcat
-                    $compItem[$i], // comp / item-owner
-                    $posisi->c_id, // position / destination
-                    $data['idItem'][$i], // item-id
-                    $qty_compare, // qty item with smallest unit
-                    'ON DESTINATION', // status
-                    'FINE', // condition
-                    $stock_mutasi->sm_hpp, // hpp
-                    $sellPrice, // sell value
-                    $nota, // nota
-                    $stock_mutasi->sm_nota, // nota refference
+
+                // insert stock mutation sales 'out'
+                $mutDistributionOut = Mutasi::distributionOut(
+                    Auth::user()->u_company, // from (company-id)
+                    $compItem[$i], // item-owner (company-id)
+                    $data['idItem'][$i], // item id
+                    $qty_compare, // qty item
+                    $nota, // nota distribution
+                    null, // nota refference
                     $listPC, // list production-code
-                    $listQtyPC, // list qty roduction code
-                    $statusKons // konsinyasi dari pusat ke cabang
+                    $listQtyPC, // list qty of production-code
+                    $listUnitPC, // list unit of production-code
+                    $sellPrice = null, // sellprice
+                    13 // mutation category
                 );
-                if (!is_bool($mutKons)) {
-                    return $mutKons;
+                if ($mutDistributionOut->original['status'] !== 'success') {
+                    return $mutDistributionOut;
                 }
+                // set stock-parent-id
+                $listStockParentId = $mutDistributionOut->original['listStockParentId'];
+                // get list
+                $listSellPrice = $mutDistributionOut->original['listSellPrice'];
+                $listHPP = $mutDistributionOut->original['listHPP'];
+                $listSmQty = $mutDistributionOut->original['listSmQty'];
+                $listPCReturn = $mutDistributionOut->original['listPCReturn'];
+                $listQtyPCReturn = $mutDistributionOut->original['listQtyPCReturn'];
+                // dd($listSmQty, $listPCReturn, $listQtyPCReturn);
+                // insert stock mutation using sales 'in'
+                $mutDistributionIn = Mutasi::distributionIn(
+                    $compItem[$i], // item-owner (company-id)
+                    $posisi->c_id, // destination (company-id)
+                    $data['idItem'][$i], // item id
+                    $nota, // nota sales
+                    $listPCReturn, // list of list production-code (based on how many smQty used / each smQty has a list of prod-code)
+                    $listQtyPCReturn, // list of list qty of production-code
+                    $listUnitPC, // list  unit of production-code (unused)
+                    $listSellPrice, // list of sellprice
+                    $listHPP, // list of hpp
+                    $listSmQty, // lsit of sm-qty (it got from salesOut, each qty used from different stock-mutation)
+                    12, // mutation category
+                    null, // stock parent id
+                    $status = 'ON DESTINATION', // items status in stock
+                    $condition = 'FINE' // item condition in stock
+                );
+                if ($mutDistributionIn->original['status'] !== 'success') {
+                    return $mutDistributionIn;
+                }
+
+
+                // // set mutation (mutation-out is called inside mutation-in)
+                // $mutKons = Mutasi::mutasimasuk(
+                //     12, // mutcat
+                //     $compItem[$i], // comp / item-owner
+                //     $posisi->c_id, // position / destination
+                //     $data['idItem'][$i], // item-id
+                //     $qty_compare, // qty item with smallest unit
+                //     'ON DESTINATION', // status
+                //     'FINE', // condition
+                //     $stock_mutasi->sm_hpp, // hpp
+                //     $sellPrice, // sell value
+                //     $nota, // nota
+                //     $stock_mutasi->sm_nota, // nota refference
+                //     $listPC, // list production-code
+                //     $listQtyPC, // list qty roduction code
+                //     $statusKons // konsinyasi dari pusat ke cabang
+                // );
+                // if (!is_bool($mutKons)) {
+                //     return $mutKons;
+                // }
 
                 $startProdCodeIdx += $prodCodeLength;
                 $detailsd++;
@@ -773,7 +827,7 @@ class KonsinyasiPusatController extends Controller
                     $owner = d_stock::where('s_id', $val)->first();
                     $compItem[$key] = $owner->s_comp;
                 }
-                //
+
                 // // validate production-code is exist in stock-item
                 // $validateProdCode = Mutasi::validateProductionCode(
                 //     Auth::user()->u_company, // from
@@ -1046,27 +1100,73 @@ class KonsinyasiPusatController extends Controller
                     $listUnitPC = [];
                     $statusKons = 'pusat';
 
-// need to update to Mutasi::distributionOut and Mutasi::distributionIn
-                    // set mutation (mutation-out is called inside mutation-in)
-                    $mutKons = Mutasi::mutasimasuk(
-                        12, // mutcat
-                        $compItem[$key], // comp / item-owner
-                        $posisi->c_id, // position / destination
-                        $data['idItem'][$key], // item-id
-                        $qty_compare, // qty item with smallest unit
-                        'ON DESTINATION', // status
-                        'FINE', // condition
-                        $stock_mutasi->sm_hpp, // hpp
-                        $sellPrice, // sell value
-                        $nota, // nota
-                        $stock_mutasi->sm_nota, // nota refference
+                    // insert stock mutation sales 'out'
+                    $mutDistributionOut = Mutasi::distributionOut(
+                        Auth::user()->u_company, // from (company-id)
+                        $compItem[$key], // item-owner (company-id)
+                        $data['idItem'][$key], // item id
+                        $qty_compare, // qty item
+                        $nota, // nota distribution
+                        null, // nota refference
                         $listPC, // list production-code
-                        $listQtyPC, // list qty roduction code
-                        $statusKons // konsinyasi dari pusat ke cabang
+                        $listQtyPC, // list qty of production-code
+                        $listUnitPC, // list unit of production-code
+                        $sellPrice, // sellprice
+                        13 // mutation category
                     );
-                    if (!is_bool($mutKons)) {
-                        return $mutKons;
+                    if ($mutDistributionOut->original['status'] !== 'success') {
+                        return $mutDistributionOut;
                     }
+                    // set stock-parent-id
+                    $listStockParentId = $mutDistributionOut->original['listStockParentId'];
+                    // get list
+                    $listSellPrice = $mutDistributionOut->original['listSellPrice'];
+                    $listHPP = $mutDistributionOut->original['listHPP'];
+                    $listSmQty = $mutDistributionOut->original['listSmQty'];
+                    $listPCReturn = $mutDistributionOut->original['listPCReturn'];
+                    $listQtyPCReturn = $mutDistributionOut->original['listQtyPCReturn'];
+
+                    // insert stock mutation using sales 'in'
+                    $mutDistributionIn = Mutasi::distributionIn(
+                        $compItem[$key], // item-owner (company-id)
+                        $posisi->c_id, // destination (company-id)
+                        $data['idItem'][$key], // item id
+                        $nota, // nota sales
+                        $listPCReturn, // list of list production-code (based on how many smQty used / each smQty has a list of prod-code)
+                        $listQtyPCReturn, // list of list qty of production-code
+                        $listUnitPC, // list  unit of production-code (unused)
+                        $listSellPrice, // list of sellprice
+                        $listHPP, // list of hpp
+                        $listSmQty, // lsit of sm-qty (it got from salesOut, each qty used from different stock-mutation)
+                        12, // mutation category
+                        null, // stock parent id
+                        $status = 'ON DESTINATION', // items status in stock
+                        $condition = 'FINE' // item condition in stock
+                    );
+                    if ($mutDistributionIn->original['status'] !== 'success') {
+                        return $mutDistributionIn;
+                    }
+
+                    // // set mutation (mutation-out is called inside mutation-in)
+                    // $mutKons = Mutasi::mutasimasuk(
+                    //     12, // mutcat
+                    //     $compItem[$key], // comp / item-owner
+                    //     $posisi->c_id, // position / destination
+                    //     $data['idItem'][$key], // item-id
+                    //     $qty_compare, // qty item with smallest unit
+                    //     'ON DESTINATION', // status
+                    //     'FINE', // condition
+                    //     $stock_mutasi->sm_hpp, // hpp
+                    //     $sellPrice, // sell value
+                    //     $nota, // nota
+                    //     $stock_mutasi->sm_nota, // nota refference
+                    //     $listPC, // list production-code
+                    //     $listQtyPC, // list qty roduction code
+                    //     $statusKons // konsinyasi dari pusat ke cabang
+                    // );
+                    // if (!is_bool($mutKons)) {
+                    //     return $mutKons;
+                    // }
 
                     // increments production-code index
                     $startProdCodeIdx += $prodCodeLength;
@@ -1399,12 +1499,13 @@ class KonsinyasiPusatController extends Controller
     // get list-agents based on citiy-id
     public function getAgentsMP(Request $request)
     {
-        $agents = m_agen::where('a_area', $request->cityId)
-            ->where('a_type', 'AGEN')
-            ->with('getProvince')
-            ->with('getCity')
-            ->with('getCompany')
-            ->orderBy('a_code', 'desc')
+        $agents = m_company::where('c_area', $request->cityId)
+            ->where('c_type', 'AGEN')
+            ->with(['getAgent' => function ($q) {
+                $q->with('getProvince')
+                ->with('getCity');
+            }])
+            ->orderBy('c_name', 'asc')
             ->get();
 
         return response()->json($agents);
@@ -1416,8 +1517,13 @@ class KonsinyasiPusatController extends Controller
         $term = $request->termToFind;
 
         // startu query to find specific item
-        $agents = m_company::where('c_name', 'like', '%' . $term . '%')
-            ->orWhere('c_id', 'like', '%' . $term . '%')
+        $agents = m_company::where(function ($q) use ($term) {
+                $q->where('c_name', 'like', '%' . $term . '%')
+                ->orWhere('c_id', 'like', '%' . $term . '%');
+            })
+            ->where('c_type', 'AGEN')
+            ->where('c_isactive', 'Y')
+            ->orderBy('c_name', 'asc')
             ->get();
 
         if (count($agents) == 0) {

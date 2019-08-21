@@ -51,7 +51,7 @@
                             </div>
                             <div class="card-footer text-right">
                                 <button class="btn btn-primary btn-submit" type="button">Simpan</button>
-                                <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary">Kembali</a>
+                                <a href="{{route('penjualanpusat.index')}}" class="btn btn-secondary">Kembali</a>
                             </div>
                         </form>
                     </div>

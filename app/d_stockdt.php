@@ -23,6 +23,9 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class d_stockdt extends Model
 {
+    // use third-party library to create relationship multi-column
+    use \Awobaz\Compoships\Compoships;
+
     protected $table = 'd_stockdt';
     public $timestamps = false;
 
@@ -33,5 +36,10 @@ class d_stockdt extends Model
         ->where('sd_detailid', '=', $this->getAttribute('sd_detailid'))
         ->where('sd_code', '=', $this->getAttribute('sd_code'));
         return $query;
+    }
+
+    public function getStock()
+    {
+        return $this->belongsTo('App\d_stock', 'sd_stock', 's_id');
     }
 }

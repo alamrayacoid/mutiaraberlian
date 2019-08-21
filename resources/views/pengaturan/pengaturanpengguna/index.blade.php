@@ -35,16 +35,16 @@
                         <section>
 
                         	<div class="table-responsive">
-	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_pengaturan">
+	                            <table class="table table-striped table-hover display nowrap w-100" cellspacing="0" id="table_pengaturan">
 	                                <thead class="bg-primary">
 	                                    <tr>
 	                                    <th width="5%">No</th>
 	                                		<th width="25%">Nama User</th>
-	                                		<th width="20%">Username</th>
-																			<th width="20%">Jenis</th>
-                                      <th width="20%">Cabang</th>
-                                      <th width="15">level</th>
-	                                		<th width="15%">Aksi</th>
+											<th width="20%">Username</th>
+											<th width="20%">Jenis</th>
+											<th width="20%">Cabang</th>
+											<th width="15">level</th>
+											<th width="15%">Aksi</th>
 	                                	</tr>
 	                                </thead>
 	                                <tbody>

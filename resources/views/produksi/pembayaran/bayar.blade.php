@@ -88,14 +88,14 @@
                         <div class="col-md-4 mb-3 col-sm-12">
                             <input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"
                                    id="nilai_bayar" name="nilai_bayar">
-                            {{--<div class="input-group">--}}
-                            {{--<div class="input-group-prepend">--}}
-                            {{--<button class="btn btn-primary" type="button" title="Lunasi" onclick="lunasiTermin()"><i--}}
-                            {{--class="fa fa-check-circle"></i></button>--}}
-                            {{--</div>--}}
-                            {{--<input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0"--}}
-                            {{--id="nilai_bayar">--}}
-                            {{--</div>--}}
+                            {{--
+                                <!-- <div class="input-group">
+                                <div class="input-group-prepend">
+                                <button class="btn btn-primary" type="button" title="Lunasi" onclick="lunasiTermin()"><i class="fa fa-check-circle"></i></button>
+                                </div>
+                                <input type="text" class="form-control form-control-sm input-rupiah" value="Rp. 0" id="nilai_bayar">
+                                </div> -->
+                            --}}
                         </div>
                     </div>
 
