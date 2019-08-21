@@ -70,9 +70,9 @@ class ReturnPenjualanController extends Controller
     {
         $provId = $request->provId;
         $city = m_wil_kota::select('wc_id', 'wc_name')
-        ->where('wc_provinsi', '=', $provId)
-        ->orderBy('wc_name', 'asc')
-        ->get();
+            ->where('wc_provinsi', '=', $provId)
+            ->orderBy('wc_name', 'asc')
+            ->get();
 
         return response()->json(array(
             'success' => true,
@@ -100,21 +100,28 @@ class ReturnPenjualanController extends Controller
     {
         $agentCode = $request->agentCode;
 
-        // get list salescomp-id by agent
-        $kode = d_stock::with('getStockDt')
-            ->where('s_position', '=', $agentCode)
+        // // get list salescomp-id by agent
+        // $kode = d_stock::with('getStockDt')
+        //     ->where('s_position', '=', $agentCode)
+        //     ->get();
+
+        $kode = d_stockdt::whereHas('getStock', function ($q) use ($agentCode) {
+                $q->where('s_position', $agentCode);
+            })
+            ->with('getStock')
+            ->groupBy('sd_code')
             ->get();
+            
+        // $listSalesCompId = array();
+        // foreach ($kode as $key => $val) {
+        //     array_push($listSalesCompId, $val->getStockDt[0]->sd_code);
+        // }
+        //
+        // $prodCode = d_salescompcode::whereIn('ssc_code', $listSalesCompId)
+        //     ->groupBy('ssc_salescomp')
+        //     ->get();
 
-        $listSalesCompId = array();
-        foreach ($kode as $key => $val) {
-            array_push($listSalesCompId, $val->getStockDt[0]->sd_code);
-        }
-
-        $prodCode = d_salescompcode::whereIn('ssc_code', $listSalesCompId)
-            ->groupBy('ssc_salescomp')
-            ->get();
-
-        return response()->json($prodCode);
+        return response()->json($kode);
     }
     // get list nota based on production-code
     public function getNota(Request $request)
@@ -182,11 +189,16 @@ class ReturnPenjualanController extends Controller
     // get production-code substitute
     public function getProdCodeSubstitute(Request $request)
     {
-        $sellerCode = $request->sellerCode;
+        // get pusat-id
+        $pusatId = m_company::where('c_type', 'PUSAT')
+            ->where('c_isactive', 'Y')
+            ->select('c_id')
+            ->first();
+
         $itemId = $request->itemId;
 
         // get production-code in seller position
-        $stocks = d_stock::where('s_position', $sellerCode)
+        $stocks = d_stock::where('s_position', $pusatId->c_id)
         ->where('s_status', 'ON DESTINATION')
         ->where('s_condition', 'FINE')
         ->where('s_item', $itemId)

@@ -82,7 +82,7 @@
 										</select>
 									</div>
                                 </div>
-								<div class="col-md-2 col-sm-6 col-12">
+								<!-- <div class="col-md-2 col-sm-6 col-12">
 									<label>Nota</label>
 								</div>
 								<div class="col-md-4 col-sm-6 col-12">
@@ -91,10 +91,10 @@
 											<option value="" selected disabled>=== Pilih Nota ===</option>
 										</select>
 									</div>
-								</div>
+								</div> -->
                             </div>
 
-							<div class="row" id="div2" style="display:none">
+							<!-- <div class="row" id="div2" style="display:none">
 								<div class="col-md-2 col-sm-6 col-12">
 									<label>Nota Penjualan</label>
 								</div>
@@ -106,10 +106,10 @@
 									</div>
 								</div>
 								<hr>
-							</div>
+							</div> -->
 							<!-- detail penjualan -->
 							<div id="div3" style="display:none">
-								<section>
+								<!-- <section>
 									<div class="row">
 										<div class="col-md-2 col-sm-6 col-12">
 											<label>Penjual</label>
@@ -152,7 +152,7 @@
 										</div>
 										<hr>
 									</div>
-								</section>
+								</section> -->
 
 								<section style="margin-top:20px;">
 									<div class="row">
@@ -283,15 +283,16 @@
 		});
 		$('#kodeproduksi').on('change', function() {
 			$('#nota').attr('disabled', false);
-			$('#div3').css('display', 'none');
-			getNota();
+			$('#div3').css('display', '');
+			console.log($(this).find(':selected').data('itemid'));
+			// getNota();
 		});
-		$('#nota').on('select2:select', function() {
-			let itemId = $('#nota').find('option:selected').data('itemid');
-			console.log('itemId: '+ itemId);
-			$('#itemId').val(itemId);
-			getDataSalesComp();
-		});
+		// $('#nota').on('select2:select', function() {
+		// 	let itemId = $('#nota').find('option:selected').data('itemid');
+		// 	console.log('itemId: '+ itemId);
+		// 	$('#itemId').val(itemId);
+		// 	getDataSalesComp();
+		// });
 		$('#qtyReturn').on('keyup', function(){
 			var qtyReturn = $('#qtyReturn').val();
 			var batas = $('#qty').val();
@@ -359,7 +360,13 @@
 				}
 				$('#city').focus();
 				$('#city').select2('open');
-			}
+			},
+            error: function(err) {
+                messageWarning('Error', 'Hubungi pengembang, error : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
 		});
 	}
 	// get agent
@@ -388,7 +395,13 @@
 				}
 				$('#agent').focus();
 				$('#agent').select2('open');
-			}
+			},
+            error: function(err) {
+                messageWarning('Error', 'Hubungi pengembang, error : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
 		});
 	}
 	// get production-code
@@ -405,7 +418,6 @@
 				loadingShow();
 			},
 			success: function (response) {
-				loadingHide();
 				// fill kodeproduksi option
 				$('#kodeproduksi').empty();
 				if (response.length == 0) {
@@ -413,49 +425,55 @@
 				} else {
 					$("#kodeproduksi").append('<option value="" selected disabled>=== Pilih Kode Produksi ===</option>');
 					$.each(response, function( key, val ) {
-						$("#kodeproduksi").append('<option value="'+val.ssc_code+'">'+val.ssc_code+'</option>');
+						$("#kodeproduksi").append('<option value="'+ val.sd_code +'" data-itemid="'+ val.get_stock.s_item +'">'+val.sd_code+'</option>');
 					});
 				}
 				$('#kodeproduksi').focus();
 				$('#kodeproduksi').select2('open');
-			}
+			},
+            error: function(err) {
+                messageWarning('Error', 'Hubungi pengembang, error : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
 		});
 	}
-	// get nota based on production-code
-	function getNota()
-	{
-		let kodeproduksi = $('#kodeproduksi').val();
-		kodeproduksi = kodeproduksi.toUpperCase();
-		let agentCode = $('#agent').val();
-		$.ajax({
-			url: "{{ route('returnpenjualanagen.getNota') }}",
-			type: "get",
-			data: {
-				term: $('#nota').val(),
-				prodCode: kodeproduksi,
-				agentCode: agentCode
-			},
-			beforeSend: function () {
-				loadingShow();
-			},
-			success: function (response) {
-				console.log(response);
-				loadingHide();
-				$('#nota').empty();
-				if (response.length == 0) {
-					$("#nota").append('<option value="" selected disabled>=== Pilih Nota ===</option>');
-				} else {
-					$("#nota").append('<option value="" selected disabled>=== Pilih Nota ===</option>');
-					$.each(response, function( key, val ) {
-						$("#nota").append('<option value="'+val.get_sales_comp_by_id.sc_nota+'" data-itemid="'+ val.ssc_item +'">'+val.get_sales_comp_by_id.sc_nota+'</option>');
-						console.log(val);
-					});
-				}
-				$('#nota').focus();
-				$('#nota').select2('open');
-			}
-		});
 
+	// // get nota based on production-code
+	// function getNota()
+	// {
+	// 	let kodeproduksi = $('#kodeproduksi').val();
+	// 	kodeproduksi = kodeproduksi.toUpperCase();
+	// 	let agentCode = $('#agent').val();
+	// 	$.ajax({
+	// 		url: "{{ route('returnpenjualanagen.getNota') }}",
+	// 		type: "get",
+	// 		data: {
+	// 			term: $('#nota').val(),
+	// 			prodCode: kodeproduksi,
+	// 			agentCode: agentCode
+	// 		},
+	// 		beforeSend: function () {
+	// 			loadingShow();
+	// 		},
+	// 		success: function (response) {
+	// 			console.log(response);
+	// 			loadingHide();
+	// 			$('#nota').empty();
+	// 			if (response.length == 0) {
+	// 				$("#nota").append('<option value="" selected disabled>=== Pilih Nota ===</option>');
+	// 			} else {
+	// 				$("#nota").append('<option value="" selected disabled>=== Pilih Nota ===</option>');
+	// 				$.each(response, function( key, val ) {
+	// 					$("#nota").append('<option value="'+val.get_sales_comp_by_id.sc_nota+'" data-itemid="'+ val.ssc_item +'">'+val.get_sales_comp_by_id.sc_nota+'</option>');
+	// 					console.log(val);
+	// 				});
+	// 			}
+	// 			$('#nota').focus();
+	// 			$('#nota').select2('open');
+	// 		}
+	// 	});
 		// // get detail nota
 		// $.ajax({
 		// 	type: 'get',
@@ -480,47 +498,48 @@
 		// 		}
 		// 	}
 		// });
-	}
-	// get data that will be processed
-	function getDataSalesComp()
-	{
-		loadingShow();
-		let nota = $('#nota').val();
-		let itemId = $('#itemId').val();
-		let prodCode = $("#kodeproduksi").val();
+	// }
+	// // get data that will be processed
+	// function getDataSalesComp()
+	// {
+	// 	loadingShow();
+	// 	let nota = $('#nota').val();
+	// 	let itemId = $('#itemId').val();
+	// 	let prodCode = $("#kodeproduksi").val();
+	//
+	// 	$.ajax({
+	// 		url: "{{ route('returnpenjualanagen.getData') }}",
+	// 		data: {
+	// 			nota: nota,
+	// 			itemId: itemId,
+	// 			prodCode: prodCode
+	// 		},
+	// 		type: 'get',
+	// 		success: function(resp) {
+	// 			loadingHide();
+	// 			console.log(resp);
+	// 			$('#sellerCode').val(resp.data.get_comp.c_id);
+	// 			$('#penjual').val(resp.data.get_comp.c_name);
+	// 			$('#agen').val(resp.data.get_agent.c_name);
+	// 			if (resp.data.sc_type == 'C') {
+	// 				$('#metodepembayaran').val('Cash');
+	// 			} else {
+	// 				$('#metodepembayaran').val('Konsinyasi');
+	// 			}
+	// 			$('#tanggaltransaksi').val(resp.data.sc_date);
+	// 			$('#total').val(resp.data.sc_total);
+	// 			$('#item').val(resp.data.get_sales_comp_dt[0].get_item.i_name);
+	// 			$('#qty').val(resp.data.get_sales_comp_dt[0].get_prod_code[0].ssc_qty);
+	// 			// $('#qtyhidden').val(resp.data.get_sales_comp_dt[0].get_prod_code[0].ssc_qty);
+	// 			$('#div3').css('display', '');
+	// 		},
+	// 		error: function(e) {
+	// 			loadingHide();
+	// 			messageWarning('Error', 'Gagal mengambil detail penjualan, hubungi pengembang !')
+	// 		}
+	// 	});
+	// }
 
-		$.ajax({
-			url: "{{ route('returnpenjualanagen.getData') }}",
-			data: {
-				nota: nota,
-				itemId: itemId,
-				prodCode: prodCode
-			},
-			type: 'get',
-			success: function(resp) {
-				loadingHide();
-				console.log(resp);
-				$('#sellerCode').val(resp.data.get_comp.c_id);
-				$('#penjual').val(resp.data.get_comp.c_name);
-				$('#agen').val(resp.data.get_agent.c_name);
-				if (resp.data.sc_type == 'C') {
-					$('#metodepembayaran').val('Cash');
-				} else {
-					$('#metodepembayaran').val('Konsinyasi');
-				}
-				$('#tanggaltransaksi').val(resp.data.sc_date);
-				$('#total').val(resp.data.sc_total);
-				$('#item').val(resp.data.get_sales_comp_dt[0].get_item.i_name);
-				$('#qty').val(resp.data.get_sales_comp_dt[0].get_prod_code[0].ssc_qty);
-				// $('#qtyhidden').val(resp.data.get_sales_comp_dt[0].get_prod_code[0].ssc_qty);
-				$('#div3').css('display', '');
-			},
-			error: function(e) {
-				loadingHide();
-				messageWarning('Error', 'Gagal mengambil detail penjualan, hubungi pengembang !')
-			}
-		});
-	}
 	// get production-code substitute
 	function getProdCodeSubstitute()
 	{
@@ -538,7 +557,6 @@
 				loadingShow();
 			},
 			success: function (response) {
-				loadingHide();
 				// fill kodeproduksiGB option
 				$('#kodeproduksiGB').empty();
 				if (response.length == 0) {
@@ -551,7 +569,13 @@
 				}
 				// $('#kodeproduksiGB').focus();
 				// $('#kodeproduksiGB').select2('open');
-			}
+			},
+            error: function(err) {
+                messageWarning('Error', 'Hubungi pengembang, error : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
 		});
 	}
 	// store data to Database
@@ -571,9 +595,12 @@
 					messageWarning('Info', 'Gagal Disimpan: '+ response.message);
 				}
 			},
-			error: function(e) {
-				messageWarning('Info', 'Terjadi kesalahan : '+ e.message);
-			}
+            error: function(err) {
+                messageWarning('Error', 'Hubungi pengembang, error : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
 		});
 	}
 
