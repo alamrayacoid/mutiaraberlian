@@ -438,7 +438,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Absensi -> presensi
     Route::get('/sdm/absensisdm/index', 'SDMController@absensi')->name('absensisdm.index');
+    Route::get('/sdm/absensisdm/presensi/get-absensi', 'SDM\Absensi\PresensiController@getAbsenPegawai')->name('presensi.getAbsenPegawai');
     Route::get('/sdm/absensisdm/presensi/get-summary', 'SDM\Absensi\PresensiController@getPresenceSummary')->name('presensi.getPresenceSummary');
+    Route::get('/sdm/absensisdm/presensi/get-detail-absensi', 'SDM\Absensi\PresensiController@getDetailAbsenPegawai')->name('presensi.getDetailAbsenPegawai');
     Route::get('/sdm/absensisdm/presensi/get-detail-presence', 'SDM\Absensi\PresensiController@getDetailPresence')->name('presensi.getDetailPresence');
     Route::get('/sdm/absensisdm/presensi/get-branch', 'SDM\Absensi\PresensiController@getBranch')->name('presensi.getBranch');
     Route::get('/sdm/absensisdm/presensi/get-division', 'SDM\Absensi\PresensiController@getDivision')->name('presensi.getDivision');
