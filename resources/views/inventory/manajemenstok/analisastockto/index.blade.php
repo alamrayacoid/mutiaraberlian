@@ -58,10 +58,11 @@
                                                    id="table_turnover">
                                                 <thead class="bg-primary">
                                                 <tr>
-                                                    {{-- <th width="1%">No</th> --}}
+                                                    <th>Kode Barang</th>
                                                     <th>Nama Barang</th>
-                                                    <th>Rata-rata HPP</th>
-                                                    <th>Transaksi</th>
+                                                    <th>Total HPP</th>
+                                                    <th>Persediaan Awal</th>
+                                                    <th>Persediaan Akhir</th>
                                                     <th>Turn Over</th>
                                                 </tr>
                                                 </thead>
@@ -91,6 +92,9 @@
                 autoclose: true
             });
 
+            tb_analisa = $('#table_turnover').DataTable({
+                responsive: true
+            });
 
             $("#barang").autocomplete({
                 source: baseUrl + '/masterdatautama/harga/cari-barang',
@@ -103,30 +107,39 @@
         });
 
         function getListAnalisa() {
-            $('#table_analisastock').dataTable().fnDestroy();
-            tb_analisa = $('#table_turnover').DataTable({
-                responsive: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('TurnOverController.getDataPeriode') }}",
-                    type: "get",
-                    data: {
-                        "id_item": $('#id_barang').val(),
-                        "start": $('#date_from').val(),
-                        "end": $('#date_to').val(),
-                        "_token": "{{ csrf_token() }}"
-                    }
-                },
-                columns: [
-                    // {data: 'DT_RowIndex'},
-                    {data: 'i_name'},
-                    {data: 'sc_member'},
-                    {data: 'sc_nota'},
-                    {data: 'scd_value'}
-                ],
-                pageLength: 10,
-                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-            });
+            let id_barang = $('#id_barang').val();
+            let startdate = $('#date_from').val();
+            let enddate = $('#date_to').val();
+            if (id_barang == null || id_barang == '') {
+                messageWarning("Perhatian", "Isi nama barang terlebih dahulu");
+            }
+            if (startdate == null || startdate == '') {
+                messageWarning("Perhatian", "Isi tanggal awal terlebih dahulu");
+            }
+            if (enddate == null || enddate == '') {
+                messageWarning("Perhatian", "Isi tanggal akhir terlebih dahulu");
+            }
+
+            axios.get("{{ route('TurnOverController.getDataPeriode') }}", {
+                params:{
+                    "id_item": id_barang,
+                    "start": $('#date_from').val(),
+                    "end": $('#date_to').val(),
+                }
+            }).then(function(response){
+                let data = response.data;
+                tb_analisa.clear();
+                tb_analisa.row.add([
+                    data.i_code,
+                    data.i_name,
+                    data.totalhpp,
+                    data.qtyawal,
+                    data.qtyakhir,
+                    data.hasil
+                    ]).draw(false);
+            }).catch(function(error){
+                alert('error');
+            })
         }
 
     </script>

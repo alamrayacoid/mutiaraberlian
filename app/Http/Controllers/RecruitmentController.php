@@ -218,16 +218,27 @@ class RecruitmentController extends Controller
         // $ktp         = $this->uploadImage($filektp, $request->nik, 'ktp');
         // $ijazah      = $this->uploadImage($fileijazah, $request->nik, 'ijazah');
         // $another     = $this->uploadImage($fileanother, $request->nik, 'other');
-
+        $photo = null;
+        $ktp = null;
+        $ijazah = null;
+        $another = null;
+        
         $photoName = $request->nik . '-photo';
-        $photo = $filephoto->storeAs('Recruitment/Photo', $photoName);
+        if ($request->hasFile('filephoto')) {
+          $photo = $filephoto->storeAs('Recruitment/Photo', $photoName);
+        }
         $ktpName = $request->nik . '-ktp';
-        $ktp = $filephoto->storeAs('Recruitment/KTP', $ktpName);
+        if ($request->hasFile('filektp')) {
+          $ktp = $filektp->storeAs('Recruitment/KTP', $ktpName);
+        }
         $ijazahName = $request->nik . '-ijazah';
-        $ijazah = $filephoto->storeAs('Recruitment/Ijazah', $ijazahName);
+        if ($request->hasFile('fileijazah')) {
+          $ijazah = $fileijazah->storeAs('Recruitment/Ijazah', $ijazahName);
+        }
         $anotherName = $request->nik . '-other';
-        $another = $filephoto->storeAs('Recruitment/Other', $anotherName);
-
+        if ($request->file('fileanother')) {
+          $another = $fileanother->storeAs('Recruitment/Other', $anotherName);
+        }
 
         DB::table('d_pelamar')
           ->insert([
