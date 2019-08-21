@@ -39,6 +39,9 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class d_stock_mutation extends Model
 {
+    // use third-party library to create relationship multi-column
+    use \Awobaz\Compoships\Compoships;
+
     protected $table = 'd_stock_mutation';
     public $timestamps = false;
 
@@ -49,14 +52,11 @@ class d_stock_mutation extends Model
         ->where('sm_detailid', '=', $this->getAttribute('sm_detailid'));
         return $query;
     }
-    // ????
-    // public function getMutaionDt($query)
-    // {
-    //     return $query->join('d_stockmutationdt', function ($join) {
-    //         $join->on('d_stockmutationdt.smd_stock', 'd_stock_mutation.sm_stock');
-    //         $join->on('d_stockmutationdt.smd_stockmutation', 'd_stock_mutation.sm_detailid');
-    //     });
-    // }
+
+    public function getMutationDt()
+    {
+        return $this->hasMany('App\d_stockmutationdt', ['smd_stock', 'smd_stockmutation'], ['sm_stock', 'sm_detailid']);
+    }
 
     // relation with table d_stock
     public function getStock()

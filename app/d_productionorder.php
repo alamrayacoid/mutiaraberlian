@@ -56,4 +56,9 @@ class d_productionorder extends Model
         return $this->hasOne('App\d_itemreceipt', 'ir_notapo', 'po_nota');
     }
 
+    public function getMutation()
+    {
+        return $this->hasMany('App\d_stock_mutation', 'sm_nota', 'po_nota');
+    }
+
 }
