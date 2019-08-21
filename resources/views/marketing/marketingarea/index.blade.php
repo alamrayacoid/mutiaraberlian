@@ -50,7 +50,9 @@
     @include('marketing.marketingarea.orderproduk.modal')
     @include('marketing.marketingarea.penerimaanpiutang.modal.detail')
     @include('marketing.marketingarea.penerimaanpiutang.modal.bayar')
-    @include('marketing.marketingarea.returnpenjualan.modal-detail')
+    {{--
+    <!-- @include('marketing.marketingarea.returnpenjualan.modal-detail') -->
+    --}}
 
     <article class="content animated fadeInLeft">
         <div class="title-block text-primary">
@@ -90,10 +92,10 @@
                             <a href="#penerimaanpiutang" class="nav-link" data-target="#penerimaanpiutang"
                                aria-controls="penerimaanpiutang" data-toggle="tab" role="tab">Penerimaan Piutang </a>
                         </li>
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="#returnpenjualan" class="nav-link" data-target="#returnpenjualan"
                                aria-controls="returnpenjualan" data-toggle="tab" role="tab">Return Penjualan </a>
-                        </li>
+                        </li> -->
                     </ul>
                     <div class="tab-content">
                         @include('marketing.marketingarea.orderproduk.index')
@@ -102,7 +104,9 @@
                         @include('marketing.marketingarea.datacanvassing.index')
                         @include('marketing.marketingarea.datakonsinyasi.index')
                         @include('marketing.marketingarea.penerimaanpiutang.index')
-                        @include('marketing.marketingarea.returnpenjualan.index')
+                        {{--
+                            <!-- @include('marketing.marketingarea.returnpenjualan.index') -->
+                        --}}
                     </div>
                 </div>
             </div>

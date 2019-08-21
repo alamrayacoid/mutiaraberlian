@@ -10,7 +10,7 @@
                     <select class="form-control form-control-sm select2" name="agen" id="sagen">
                         <option value="" disabled selected="">--Pilih Agen--</option>
                         @foreach ($agen as $key => $value)
-                          <option value="{{$value->a_code}}">{{$value->a_name}}</option>
+                          <option value="{{$value->a_code}}">{{$value->a_code}} - {{$value->a_name}}</option>
                         @endforeach
                     </select>
                 </div>

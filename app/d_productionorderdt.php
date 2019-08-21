@@ -39,10 +39,10 @@ class d_productionorderdt extends Model
     {
         return $this->belongsTo('App\d_productionorder', 'pod_productionorder', 'po_id');
     }
-    public function getProdCode()
-    {
-        return $this->hasMany('App\d_productionordercode', 'poc_productionorder', 'pod_productionorder');
-    }
+    // public function getProdCode()
+    // {
+    //     return $this->hasMany('App\d_productionordercode', 'poc_productionorder', 'pod_productionorder');
+    // }
     public function getItem()
     {
       return $this->belongsTo('App\m_item', 'pod_item', 'i_id');

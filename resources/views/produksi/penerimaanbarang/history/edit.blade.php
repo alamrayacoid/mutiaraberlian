@@ -215,7 +215,7 @@
                 if (resp.status == 'success') {
                     messageSuccess('Berhasil', 'Penerimaan berhasil di-update !');
                     tbl_listPenerimaan.ajax.reload();
-                    // $('#modalEditHistory').modal('hide');
+                    $('#modalEditHistory').modal('hide');
                 }
                 else {
                     messageWarning('Gagal', 'Terjadi kesalahan : ' + resp.message);

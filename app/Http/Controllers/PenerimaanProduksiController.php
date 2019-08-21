@@ -6,6 +6,8 @@ use App\d_productionorder;
 use App\d_productionorderdt;
 use App\d_productionordercode;
 use App\d_stock_mutation;
+use App\d_itemreceiptdt;
+use App\Helper\keuangan\jurnal\jurnal;
 use Carbon\Carbon;
 use Crypt;
 use DB;
@@ -13,9 +15,9 @@ use function foo\func;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Mutasi;
+use Mockery\Exception;
 use Response;
 use Yajra\DataTables\DataTables;
-use App\Helper\keuangan\jurnal\jurnal;
 
 class PenerimaanProduksiController extends Controller
 {
@@ -468,7 +470,6 @@ class PenerimaanProduksiController extends Controller
 
         DB::beginTransaction();
         try{
-
             // return json_encode($request->all());
 
             $data_check = DB::table('d_productionorder')
@@ -506,6 +507,7 @@ class PenerimaanProduksiController extends Controller
                 $values = [
                     'ird_itemreceipt'  => $nota_receipt->first()->ir_id,
                     'ird_detailid'      => $detail_receipt,
+                    'ird_nota_do'       => $request->nota,
                     'ird_date'          => $receiveDate,
                     'ird_item'          => $item,
                     'ird_qty'           => $qty_compare,
@@ -536,6 +538,7 @@ class PenerimaanProduksiController extends Controller
                 $values = [
                     'ird_itemreceipt'  => $id,
                     'ird_detailid'      => $detail_receipt,
+                    'ird_nota_do'       => $request->nota,
                     'ird_date'          => $receiveDate,
                     'ird_item'          => $item,
                     'ird_qty'           => $qty_compare,
@@ -561,6 +564,7 @@ class PenerimaanProduksiController extends Controller
                     $detailProdCode = array(
                         'poc_productionorder' => $prodCodeId->po_id,
                         'poc_detailid' => $detailId,
+                        'poc_nota_do' => $request->nota,
                         'poc_item' => $item,
                         'poc_productioncode' => strtoupper($val),
                         'poc_qty' => $request->qtyProdCode[$key],
@@ -818,6 +822,12 @@ class PenerimaanProduksiController extends Controller
     {
         DB::beginTransaction();
         try {
+            // validate qty production-code with qty-item
+            $totalQtyPC = array_sum($request->qtyProdCode);
+            if ($request->itemQty != $totalQtyPC) {
+                throw new Exception("Jumlah kode produksi harus sesuai dengan jumlah item !", 1);
+            }
+
             // get current stock-mutation (used qty, qtyProdCode)
             $current = d_stock_mutation::where('sm_stock', $request->sm_stock)
                 ->where('sm_detailid', $request->sm_detailid)
@@ -868,47 +878,64 @@ class PenerimaanProduksiController extends Controller
             // get production-order and item-receipt
             $notaDO = $current->sm_reff;
             $itemId = $current->getStock->s_item;
-            $productionOrder = d_productionorder::where('po_nota', $current->sm_nota)
-                ->with(['getPODt' => function ($query) use ($itemId) {
-                    $query
-                        ->where('pod_item', $itemId)
-                        ->with('getProdCode');
-                }])
-                ->with(['getItemReceipt.getIRDetail' => function($q) use ($notaDO) {
-                    $q->where('ird_nota_do', $notaDO);
-                }])
-                ->first();
+            // get temp-po
+            $tempPO = d_productionorder::where('po_nota', $current->sm_nota)->first();
 
-            // validate qty-request with qty-system
-            // if ($request->itemQty > $productionOrder->) {
-                // throw new Exception("Item sudah digunakan sebanyak : ". $current->sm_use .", permintaan tidak boleh kurang dari nilai tersebut !", 1);
-            // }
             // delete production-order-code
+            $delete = d_productionordercode::where('poc_productionorder', $tempPO->po_id)
+            ->where('poc_nota_do', $notaDO)
+            ->delete();
 
+            $productionOrder = d_productionorder::where('po_nota', $current->sm_nota)
+            ->with(['getPODt' => function ($query) use ($itemId) {
+                $query
+                ->where('pod_item', $itemId);
+            }])
+            ->with(['getItemReceipt.getIRDetail' => function($q) use ($notaDO) {
+                $q
+                ->where('ird_nota_do', $notaDO)
+                ->with('getProdCode');
+            }])
+            ->first();
+
+            $valuesProdCode = array();
             // update production-order-code
-            // foreach ($request->prodCode as $idx => $value) {
-            //
-            // }
+            $detailId = d_productionordercode::where('poc_productionorder', $productionOrder->po_id)
+            ->max('poc_detailid') + 1;
 
-dd($productionOrder);
-            // update production-order-detail
-            $productionOrder->getPODt[0]->pod_qty = $request->itemQty;
-            $productionOrder->getPODt[0]->pod_totalnet = $request->itemQty * $productionOrder->getPODt[0]->pod_value;
-            $productionOrder->getPODt[0]->save();
-            // update production-order
+            foreach ($request->prodCode as $key => $val) {
+                $detailProdCode = array(
+                    'poc_productionorder' => $productionOrder->po_id,
+                    'poc_detailid' => $detailId,
+                    'poc_nota_do' => $productionOrder->getItemReceipt->getIRDetail[0]->ird_nota_do,
+                    'poc_item' => $productionOrder->getPODt[0]->pod_item,
+                    'poc_productioncode' => strtoupper($val),
+                    'poc_qty' => $request->qtyProdCode[$key],
+                    'poc_unit' => $productionOrder->getPODt[0]->pod_unit
+                );
+                array_push($valuesProdCode, $detailProdCode);
+                $detailId++;
+            }
+            d_productionordercode::insert($valuesProdCode);
+
+            // get nota-po
             $notaPO = $productionOrder->po_nota;
-            $totalNet = d_productionorderdt::whereHas('getProductionOrder', function ($q) use ($notaPO) {
-                    $q->where('po_nota', $notaPO);
-                })
-                ->sum('pod_totalnet');
-
-            $productionOrder->po_totalnet = (int)$totalNet;
-            $productionOrder->save();
             // update item-receipt
             $productionOrder->getItemReceipt->getIRDetail[0]->ird_qty = $request->itemQty;
             $productionOrder->getItemReceipt->getIRDetail[0]->save();
 
-dd($productionOrder);
+            // get sum-qty
+            $sumQty = d_itemreceiptdt::whereHas('getItemReceipt', function ($q) use ($notaPO) {
+                    $q->where('ir_notapo', $notaPO);
+                })
+                ->where('ird_nota_do', '!=', $notaDO)
+                ->sum('ird_qty');
+
+            $limitQty = $productionOrder->getPODt[0]->pod_qty - $sumQty;
+            // validate qty-request with qty-system
+            if ($request->itemQty > $limitQty) {
+                throw new Exception("Jumlah permintaan tidak boleh lebih dari : ". $limitQty, 1);
+            }
 
             DB::commit();
             return Response::json([
