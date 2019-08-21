@@ -449,9 +449,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/absensisdm/dashboard/get-presence', 'SDM\Absensi\DashboardController@getPresence')->name('presensiDash.getPresence');
     // Penggajian
     Route::get('/sdm/penggajian/index', 'SDMController@penggajian')->name('penggajian.index');
-    // TAB MANAJEMEN
-    Route::get('/sdm/penggajian/manajemen/create', 'SDMController@create_manajemen')->name('manajemen.create');
-    Route::get('/sdm/penggajian/manajemen/edit', 'SDMController@edit_manajemen')->name('manajemen.edit');
+    // TAB CASHBON
+    Route::get('/sdm/penggajian/cashbon/create', 'SDMController@create_manajemen')->name('cashbon.create');
+    Route::get('/sdm/penggajian/cashbon/edit', 'SDMController@edit_manajemen')->name('cashbon.edit');
     // END
     // TAB TUNJANGAN
     Route::get('/sdm/penggajian/tunjangan/create', 'SDMController@create_tunjangan')->name('tunjangan.create');
