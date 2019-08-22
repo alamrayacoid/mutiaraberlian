@@ -535,6 +535,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/returnpenjualan/getprodcodesubstitute', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getProdCodeSubstitute')->name('returnpenjualanagen.getProdCodeSubstitute');
     // Route::get('/marketing/penjualanpusat/returnpenjualan/simpan', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@returnpenjualanagen_simpan');
     Route::post('/marketing/penjualanpusat/returnpenjualan/simpan', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@store')->name('returnpenjualanagen.store');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/detail/{id}', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@detail')->name('returnpenjualanagen.detail');
     Route::post('/marketing/penjualanpusat/returnpenjualan/hapus/{id}', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@delete')->name('returnpenjualanagen.delete');
     // End ---
     // Konsinyasi Pusat

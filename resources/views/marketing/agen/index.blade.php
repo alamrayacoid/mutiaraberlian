@@ -75,8 +75,8 @@
     @include('marketing.agen.kelolapenjualan.modal')
     @include('marketing.agen.inventoryagen.modal_detail_agen')
     @include('marketing.marketingarea.orderproduk.modal')
+    <!-- modal-code-production -->
     <form class="formCodeProd">
-        <!-- modal-code-production -->
         @include('marketing.agen.datakonsinyasi.modal-code-prod')
         @include('marketing.agen.datakonsinyasi.modal-code-prod-base')
 
@@ -94,7 +94,7 @@
             <div class="row">
                 <div class="col-12">
                     <ul class="nav nav-pills mb-3" id="Tabzs">
-                        @if(Auth::user()->getCompany->c_type == 'AGEN')
+                        @if(Auth::user()->getCompany->c_type == 'AGEN' || Auth::user()->getCompany->c_type == 'SUB AGEN')
                         <li class="nav-item">
                             <a href="#orderprodukagenpusat" class="nav-link" data-target="#orderprodukagenpusat"
                                aria-controls="orderprodukagenpusat" data-toggle="tab" role="tab">Order ke Agen /
@@ -124,7 +124,7 @@
                             <a href="#inventoryagen" class="nav-link" data-target="#inventoryagen"
                                aria-controls="inventoryagen" data-toggle="tab" role="tab">Kelola Data Inventory Agen</a>
                         </li>
-                        @if(Auth::user()->getCompany->c_type == 'AGEN')
+                        @if(Auth::user()->getCompany->c_type == 'AGEN' || Auth::user()->getCompany->c_type == 'SUB AGEN')
                         <li class="nav-item">
                             <a href="#datakonsinyasi" class="nav-link" data-target="#datakonsinyasi"
                                aria-controls="datakonsinyasi" data-toggle="tab" role="tab">Kelola Data Konsinyasi </a>
