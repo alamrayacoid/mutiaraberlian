@@ -1,46 +1,67 @@
 <div class="tab-pane fade in active show" id="list_manajemen">
-	<div class="card">
-		<div class="card-header bordered p-2">
-			<div class="header-block">
-				<h3 class="title">Manajemen</h3>
-			</div>
-			<div class="header-block pull-right">
-				<a class="btn btn-primary" href="{{ route('manajemen.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
-			</div>
-			<div class=""></div>
-		</div>
-		<div class="card-block">
-			<section>
+    <div class="card">
+        <div class="card-header bordered p-2">
+            <div class="header-block">
+                <h3 class="title">Kelola Cashbon Pegawai</h3>
+            </div>
+            <div class="header-block pull-right">
+
+            </div>
+            <div class=""></div>
+        </div>
+        <div class="card-block">
+            <section>
+                <div class="row">
+                    <div class="col-md-1 col-sm-6 col-xs-12">
+                        <label>Pegawai</label>
+                    </div>
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm namapegawai" id="namapegawai"
+                                placeholder="Nama Pegawai">
+                            <input type="hidden" id="id_pegawai">
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-sm-6 col-xs-12">
+                        <label>Cashbon<</label>
+                    </div>
+                    <div class="col-md-2 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm cashbontop rupiahnull" id="cashbontop">
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-sm-6 col-xs-12">
+                        <label>Cashbon></label>
+                    </div>
+                    <div class="col-md-2 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm cashbonbot rupiahnull" id="cashbonbot">
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-sm-6 col-xs-12">
+                        <button class="btn btn-primary cari" onclick="filterCashbon()"><i class="fa fa-search"></i></button>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-xs-12" style="margin-top: -10px !important; padding-bottom: 10px !important">
+                        <span>Keterangan: Kosongkan jika ingin menampilkan semua data</span>
+                    </div>
+                </div>
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_manajemen">
+                    <table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_cashbon">
                         <thead class="bg-primary">
                             <tr>
+                                <th>No</th>
+                                <th>NIP</th>
                                 <th>Nama</th>
-                                <th>SMA</th>
-                                <th>D3</th>
-                                <th>S1</th>
-                                <th>Pangkat</th>
+                                <th>Cashbon</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Gaji Pokok</td>
-                                <td>Rp. 1.040.000.00</td>
-                                <td>Rp. 1.040.000.00</td>
-                                <td>Rp. 1.040.000.00</td>
-                                <td>Semua</td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-warning btn-edit-manajemen" onclick="window.location.href='{{ route('manajemen.edit') }}'" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-                                        <button class="btn btn-danger btn-disable-manajemen" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
+
                         </tbody>
                     </table>
                 </div>
-			</section>
-		</div>
-	</div>
+            </section>
+        </div>
+    </div>
 </div>

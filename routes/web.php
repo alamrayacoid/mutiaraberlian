@@ -452,8 +452,10 @@ Route::group(['middleware' => 'auth'], function () {
     // Penggajian
     Route::get('/sdm/penggajian/index', 'SDMController@penggajian')->name('penggajian.index');
     // TAB CASHBON
-    Route::get('/sdm/penggajian/cashbon/create', 'SDMController@create_manajemen')->name('cashbon.create');
-    Route::get('/sdm/penggajian/cashbon/edit', 'SDMController@edit_manajemen')->name('cashbon.edit');
+    Route::get('/sdm/penggajian/cashbon/save', 'SDM\CashbonController@save')->name('cashbon.save');
+    Route::get('/sdm/penggajian/cashbon/update', 'SDM\CashbonController@update')->name('cashbon.update');
+    Route::get('/sdm/penggajian/cashbon/get-data', 'SDM\CashbonController@getData')->name('cashbon.getData');
+    Route::get('/sdm/penggajian/cashbon/get-data-pegawai', 'SDM\CashbonController@getDataPegawai')->name('cashbon.getDataPegawai');
     // END
     // TAB TUNJANGAN
     Route::get('/sdm/penggajian/tunjangan/create', 'SDMController@create_tunjangan')->name('tunjangan.create');
