@@ -529,6 +529,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/returnpenjualan/getagent', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getAgent')->name('returnpenjualanagen.getAgent');
     Route::get('/marketing/penjualanpusat/returnpenjualan/getprodcode', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getProdCode')->name('returnpenjualanagen.getProdCode');
     Route::get('/marketing/penjualanpusat/returnpenjualan/getnota', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getNota')->name('returnpenjualanagen.getNota');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/find-item', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@findItem')->name('returnpenjualanagen.findItem');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/find-all-item', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@findAllItem')->name('returnpenjualanagen.findAllItem');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/get-unit/{id}', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getUnit')->name('returnpenjualanagen.getUnit');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/cek-stok/{stock}/{item}/{satuan}/{qty}', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@checkStock')->name('returnpenjualanagen.checkstock');
     Route::get('/marketing/penjualanpusat/returnpenjualan/getdata', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getData')->name('returnpenjualanagen.getData');
     Route::get('/marketing/penjualanpusat/returnpenjualan/getprodcodesubstitute', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getProdCodeSubstitute')->name('returnpenjualanagen.getProdCodeSubstitute');
     // Route::get('/marketing/penjualanpusat/returnpenjualan/simpan', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@returnpenjualanagen_simpan');
