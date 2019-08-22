@@ -63,9 +63,9 @@
 								<thead class="bg-primary">
 									<tr>
 										<th class="text-center">Nama</th>
+										<th style="width: 10%" class="text-center">Status</th>
 										<th style="width: 10%" class="text-center">Datang</th>
 										<th style="width: 10%" class="text-center">Pulang</th>
-										<th style="width: 10%" class="text-center">Status</th>
 										<th style="width: 20%" class="text-center">Note</th>
 										<th style="width: 10%" class="text-center">aksi</th>
 									</tr>
@@ -78,18 +78,18 @@
 											<input type="text" name="employeePr[]" class="employeePr w-100">
 										</td>
 										<td class="pad-1">
-											<input type="text" name="arriveTimePr[]" class="arriveTimePr w-100" value="">
-										</td>
-										<td class="pad-1">
-											<input type="text" name="returnTimePr[]" class="returnTimePr w-100" value="">
-										</td>
-										<td class="pad-1">
 											<select name="statusPr[]" class="statusPr w-100">
 												<option value="H" selected="">Hadir</option>
 												<option value="I">Ijin</option>
 												<option value="T">Tidak Masuk</option>
 												<option value="C">Cuti</option>
 											</select>
+										</td>
+										<td class="pad-1">
+											<input type="text" name="arriveTimePr[]" class="arriveTimePr w-100" value="">
+										</td>
+										<td class="pad-1">
+											<input type="text" name="returnTimePr[]" class="returnTimePr w-100" value="">
 										</td>
 										<td class="pad-1">
 											<textarea name="notePr[]" rows="1" class="w-100"></textarea>

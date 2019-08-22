@@ -23,22 +23,22 @@
 
 		<ul class="nav nav-pills mb-3" id="Tabzs">
 			<li class="nav-item">
-				<a href="#list_manajemen" class="nav-link active" data-target="#list_manajemen" aria-controls="list_manajemen" data-toggle="tab" role="tab">Manajemen</a>
+				<a href="#list_manajemen" class="nav-link active" data-target="#list_manajemen" aria-controls="list_manajemen" data-toggle="tab" role="tab">Cashbon</a>
 			</li>
 			<li class="nav-item">
-				<a href="#list_tunjangan" class="nav-link" data-target="#list_tunjangan" aria-controls="list_tunjangan" data-toggle="tab" role="tab">Tunjangan</a>
+				<a href="#list_tunjangan" class="nav-link" data-target="#list_tunjangan" aria-controls="list_tunjangan" data-toggle="tab" role="tab">Reward & Punishment</a>
 			</li>
 			<li class="nav-item">
-				<a href="#list_produksi" class="nav-link" data-target="#list_produksi" aria-controls="list_produksi" data-toggle="tab" role="tab">Produksi</a>
+				<a href="#list_produksi" class="nav-link" data-target="#list_produksi" aria-controls="list_produksi" data-toggle="tab" role="tab">Tunjangan</a>
 			</li>
 			<li class="nav-item">
-				<a href="#list_payrollmanajemen" class="nav-link" data-target="#list_payrollmanajemen" aria-controls="list_payrollmanajemen" data-toggle="tab" role="tab">Payroll Manajemen</a>
+				<a href="#list_payrollmanajemen" class="nav-link" data-target="#list_payrollmanajemen" aria-controls="list_payrollmanajemen" data-toggle="tab" role="tab">Salary</a>
 			</li>
 		</ul>
 
 		<div class="tab-content">
 
-			@include('sdm.penggajian.manajemen.tab_manajemen')
+			@include('sdm.penggajian.cashbon.tab_cashbon')
 			@include('sdm.penggajian.tunjangan.tab_tunjangan')
 			@include('sdm.penggajian.produksi.tab_produksi')
 			@include('sdm.penggajian.payrollmanajemen.tab_payrollmanajemen')

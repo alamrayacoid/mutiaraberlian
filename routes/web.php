@@ -438,7 +438,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Absensi -> presensi
     Route::get('/sdm/absensisdm/index', 'SDMController@absensi')->name('absensisdm.index');
+    Route::get('/sdm/absensisdm/presensi/get-absensi', 'SDM\Absensi\PresensiController@getAbsenPegawai')->name('presensi.getAbsenPegawai');
     Route::get('/sdm/absensisdm/presensi/get-summary', 'SDM\Absensi\PresensiController@getPresenceSummary')->name('presensi.getPresenceSummary');
+    Route::get('/sdm/absensisdm/presensi/get-detail-absensi', 'SDM\Absensi\PresensiController@getDetailAbsenPegawai')->name('presensi.getDetailAbsenPegawai');
     Route::get('/sdm/absensisdm/presensi/get-detail-presence', 'SDM\Absensi\PresensiController@getDetailPresence')->name('presensi.getDetailPresence');
     Route::get('/sdm/absensisdm/presensi/get-branch', 'SDM\Absensi\PresensiController@getBranch')->name('presensi.getBranch');
     Route::get('/sdm/absensisdm/presensi/get-division', 'SDM\Absensi\PresensiController@getDivision')->name('presensi.getDivision');
@@ -449,9 +451,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/absensisdm/dashboard/get-presence', 'SDM\Absensi\DashboardController@getPresence')->name('presensiDash.getPresence');
     // Penggajian
     Route::get('/sdm/penggajian/index', 'SDMController@penggajian')->name('penggajian.index');
-    // TAB MANAJEMEN
-    Route::get('/sdm/penggajian/manajemen/create', 'SDMController@create_manajemen')->name('manajemen.create');
-    Route::get('/sdm/penggajian/manajemen/edit', 'SDMController@edit_manajemen')->name('manajemen.edit');
+    // TAB CASHBON
+    Route::get('/sdm/penggajian/cashbon/create', 'SDMController@create_manajemen')->name('cashbon.create');
+    Route::get('/sdm/penggajian/cashbon/edit', 'SDMController@edit_manajemen')->name('cashbon.edit');
     // END
     // TAB TUNJANGAN
     Route::get('/sdm/penggajian/tunjangan/create', 'SDMController@create_tunjangan')->name('tunjangan.create');

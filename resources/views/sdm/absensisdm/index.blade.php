@@ -60,6 +60,28 @@
 	});
 </script>
 
+<script type="text/javascript">
+	var month_years = new Date();
+	const month_year = new Date(month_years.getFullYear(), month_years.getMonth());
+
+	$("#filterByMonthYearDashbord").datepicker( {
+    format: "mm-yyyy",
+    viewMode: "months", 
+    minViewMode: "months"
+	});
+</script>
+
+<!-- <script type="text/javascript">
+	var filter_years = new Date();
+	const filter_year = new Date(filter_years.getFullYear());
+
+	$("#filterByYearDashbord").datepicker( {
+    format: "yyyy",
+    viewMode: "years", 
+    minViewMode: "years"
+	});
+</script> -->
+
 <!-- script for 'Create Daftar Presensi SDM' -->
 <script type="text/javascript">
 	var idxRow = 0;
@@ -91,6 +113,11 @@
 		// reset form on hidden modal
 		$('#modalCreate').on('hidden.bs.modal', function() {
 			$('#presenceForm')[0].reset();
+			getBranchPr();
+			getDivisionPr();
+			// $(this).find('#presenceForm')[0].reset();
+			// $('#branchPr')[0].selectedIndex = 0;
+			// $('#presenceForm').find('input[type="text"],input[type="email"],textarea,select').val('');
 			$("#table_presence > tbody").find("tr:gt(0)").remove();
 		});
 		// reset form on hidden modal
@@ -100,6 +127,7 @@
             // const last_day = new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
 			// $('.dateNowPr').datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth(), cur_date.getDate()));
 			$('#branchPr').selectedIndex = 0;
+			$('.employeePrId').val('');
 			// $('#branchPr').val($('#branchPr option:first').val());
 		});
 
@@ -117,18 +145,18 @@
 				<input type="text" name="employeePr[]" class="employeePr w-100">
 			</td>
 			<td class="pad-1">
-				<input type="text" name="arriveTimePr[]" class="arriveTimePr w-100" value="">
-			</td>
-			<td class="pad-1">
-				<input type="text" name="returnTimePr[]" class="returnTimePr w-100" value="">
-			</td>
-			<td class="pad-1">
 				<select name="statusPr[]" class="statusPr w-100">
 					<option value="H" selected="">Hadir</option>
 					<option value="I">Ijin</option>
 					<option value="T">Tidak Masuk</option>
 					<option value="C">Cuti</option>
 				</select>
+			</td>
+			<td class="pad-1">
+				<input type="text" name="arriveTimePr[]" class="arriveTimePr w-100" value="">
+			</td>
+			<td class="pad-1">
+				<input type="text" name="returnTimePr[]" class="returnTimePr w-100" value="">
 			</td>
 			<td class="pad-1">
 				<textarea name="notePr[]" rows="1" class="w-100"></textarea>
@@ -246,27 +274,27 @@
 									<input type="text" name="employeePr[]" class="employeePr w-100" value="`+ val.e_name + ' ('+ val.get_division.m_name +') / '+ val.e_id +`">
 								</td>`;
 
-					let aTime = '';
-					let rTime = '';
 					let h = `<option value="H">Hadir</option>`;
 					let i = `<option value="I">Izin</option>`;
 					let t = `<option value="T">Tidak Masuk</option>`;
 					let c = `<option value="C">Cuti</option>`;
+					let aTime = '';
+					let rTime = '';
 					let iNote = '';
 					let action;
 
 					if (val.get_presence.length > 0) {
-						(val.get_presence[0].p_entry == null) ? aTime = '' : aTime = val.get_presence[0].p_entry;
-						(val.get_presence[0].p_out == null) ? rTime = '' : rTime = val.get_presence[0].p_out;
 						h = (val.get_presence[0].p_status == 'H') ? `<option value="H" selected>Hadir</option>` : `<option value="H">Hadir</option>`;
 						i = (val.get_presence[0].p_status == 'I') ? `<option value="I" selected>Ijin</option>` : `<option value="I">Ijin</option>`;
 						t = (val.get_presence[0].p_status == 'T') ? `<option value="T" selected>Tidak Masuk</option>` : `<option value="T">Tidak Masuk</option>`;
 						c = (val.get_presence[0].p_status == 'C') ? `<option value="C" selected>Cuti</option>` : `<option value="C">Cuti</option>`;
+						(val.get_presence[0].p_entry == null) ? aTime = '' : aTime = val.get_presence[0].p_entry;
+						(val.get_presence[0].p_out == null) ? rTime = '' : rTime = val.get_presence[0].p_out;
 						(val.get_presence[0].p_note == null) ? iNote = '' : iNote = val.get_presence[0].p_note;
 					}
+					let status = `<td class="pad-1"><select name="statusPr[]" class="statusPr w-100">` + h + i + t + c + `</select></td>`;
 					let arriveTime = `<td class="pad-1"><input type="text" name="arriveTimePr[]" class="arriveTimePr w-100" value="`+ aTime +`"></td>`;
 					let returnTime = `<td class="pad-1"><input type="text" name="returnTimePr[]" class="returnTimePr w-100" value="`+ rTime +`"></td>`;
-					let status = `<td class="pad-1"><select name="statusPr[]" class="statusPr w-100">` + h + i + t + c + `</select></td>`;
 					let note = `<td class="pad-1"><textarea name="notePr[]" rows="1" class="w-100">`+ iNote +`</textarea></td>`;
 					if (key == 0) {
 						action = `<td class="pad-1 text-center">
@@ -283,7 +311,7 @@
 						</td>`;
 					}
 
-					let row = '<tr>'+ empId + arriveTime + returnTime + status + note + action +'</tr>'
+					let row = '<tr>'+ empId + status + arriveTime + returnTime + note + action +'</tr>'
 			        $('#table_presence tbody').append(row);
 					// get recently added item to update read-only for 'tidak masuk'
 					if ($('.statusPr').filter(':last').val() == 'T') {
@@ -383,9 +411,22 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		getFilterBranch();
+		getFilterBranchDashboard();
 		// $('#filterDateFromPr').datepicker('setDate', first_day);
 		// $('#filterDateToPr').datepicker('setDate', last_day);
+		$('#filterByMonthYearDashbord').on('change input-daterange', function() {
+			getAbsenPegawai();
+		});
+		$('#filterByMonthDashbord').on('change select2:select', function() {
+			getAbsenPegawai();
+		});
+		$('#filterByYearDashbord').on('change input-daterange', function() {
+			getAbsenPegawai();
+		});
 
+		$('#filterByBranchDashbord').on('change select2:select', function() {
+			getAbsenPegawai();
+		});
 		// call function when filter activated
 		$('#filterByBranch').on('change select2:select', function() {
 			getPresenceSummary();
@@ -395,9 +436,28 @@
 		});
 		$('#filterDateToPr').on('change', function() {
 			getPresenceSummary();
-		})
+		});
+
 	});
 	// get list branch for filter-by-branch
+	function getFilterBranchDashboard()
+	{
+		$.ajax({
+			url: "{{ route('presensi.getBranch') }}",
+			type: 'get',
+			success: function(resp) {
+				$('#filterByBranchDashbord').empty();
+				$('#filterByBranchDashbord').append('<option value="" selected>Semua Cabang</option>');
+				$.each(resp, function (idx, val) {
+					$('#filterByBranchDashbord').append('<option value="'+val.c_id+'">'+val.c_name+'</option>');
+				});
+			},
+			error: function(e) {
+				messageWarning('Error', 'getBranch error : ' + e.message);
+			}
+		})
+	}
+
 	function getFilterBranch()
 	{
 		$.ajax({
@@ -416,6 +476,47 @@
 		})
 	}
 	// get list summary presence
+	
+	function getAbsenPegawai()
+	{
+		// let dateFrom = $('#filterDateFromPr').serialize();
+		// let dateTo = $('#filterDateToPr').serialize();
+		// let filter_month = $('#filterByMonthDashbord').serialize();
+		// let filter_year = $('#filterByYearDashbord').serialize();
+		let month_year = $('#filterByMonthYearDashbord').serialize();
+		let branchDashboard = $('#filterByBranchDashbord').serialize();
+		let param = month_year +'&'+ branchDashboard;
+
+		console.log(param);
+
+		$('#table_presensi_sdm_dashboard').dataTable().fnDestroy();
+		tb_listmpa = $('#table_presensi_sdm_dashboard').DataTable({
+			responsive: true,
+			serverSide: true,
+			ajax: {
+				url: "{{ route('presensi.getAbsenPegawai') }}",
+				type: 'get',
+				data: {
+					// filterByMonthDashbord: $('#filterByMonthDashbord').val(),
+					// filterByYearDashbord: $('#filterByYearDashbord').val(),
+					filterByMonthYearDashbord: $('#filterByMonthYearDashbord').val(),
+					filterByBranchDashbord: $('#filterByBranchDashbord').val()
+				}
+			},
+			columns: [
+				{data: 'DT_RowIndex'},
+				{data: 'employee'},
+				{data: 'hadir'},
+				{data: 'ijin'},
+				{data: 'tidakMasuk'},
+				{data: 'cuti'},
+				{data: 'action'}
+			],
+			pageLength: 10,
+			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+		});
+	}
+
 	function getPresenceSummary()
 	{
 		let dateFrom = $('#filterDateFromPr').serialize();
@@ -451,6 +552,73 @@
 			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
 		});
 	}
+	// show modal detail presence in dashboard
+	function showDetailAbsenPegawai(id, p_emp)
+	{
+		// console.log(p_employee);
+		$.ajax({
+			url: "{{ route('presensi.getDetailAbsenPegawai') }}",
+			data: {
+				id: id,
+				employee: p_emp
+			},
+			success: function(resp) {
+				console.log(resp);
+				if (resp.length > 0) {
+					$("#table_detail_absen_pegawai > tbody").find('tr').remove();
+				}
+				else {
+					$("#table_detail_absen_pegawai > tbody").find('tr:gt(0)').remove();
+				}
+				$('#emp_name').text(resp[0].e_name);
+				// $("#table_detail_absen_pegawai > h4").find('input').val('');
+				// let empId = `<input type="text" name="employeePr[]" class="form-control-plaintext employeePr onlyread w-100" value="`+ get_employee.e_name + ' ('+ get_employee.get_division.m_name +') / '+ p_employee +`">`;
+
+				$("#table_detail_absen_pegawai > tbody").find('input').val('');
+				$.each(resp, function(key, val) {
+					let date = `<td class="pad-1">
+									<input type="text" name="datePr[]" class="form-control-plaintext text-center datePr onlyread w-100" value="`+ val.p_date +`">
+									</td>`;
+
+					let aTime = null;
+					(val.p_entry == null) ? aTime = '' : aTime = val.p_entry;
+					let arriveTime = `<td class="pad-1">
+										<input type="text" name="arriveTimePr[]" class="form-control-plaintext text-center arriveTimePr onlyread w-100" value="`+ aTime +`">
+										</td>`;
+
+					let rTime = null;
+					(val.p_out == null) ? rTime = '' : rTime = val.p_out;
+					let returnTime = `<td class="pad-1"><input type="text" name="returnTimePr[]" class="form-control-plaintext text-center returnTimePr onlyread w-100" value="`+ rTime +`"></td>`;
+
+					let status
+					if (val.p_status == 'H') {
+						status = `<td class="pad-1"><input type="text" name="statusPr[]" class="form-control-plaintext text-center statusPr onlyread w-100" value="Hadir"></td>`;
+					}
+					else if (val.p_status =='I') {
+						status = `<td class="pad-1"><input type="text" name="statusPr[]" class="form-control-plaintext text-center statusPr onlyread w-100" value="Ijin"></td>`;
+					}
+					else if (val.p_status == 'T') {
+						status = `<td class="pad-1"><input type="text" name="statusPr[]" class="form-control-plaintext text-center statusPr onlyread w-100" value="Tidak Masuk"></td>`;
+					}
+					else if (val.p_status == 'C') {
+						status = `<td class="pad-1"><input type="text" name="statusPr[]" class="form-control-plaintext text-center statusPr onlyread w-100" value="Cuti"></td>`;
+					}
+
+					let iNote = null;
+					(val.p_note == null || val.p_note == '') ? iNote = '' : iNote = val.p_note;
+					let note = `<td class="pad-1"><textarea name="notePr[]" rows="2" class="w-100" readonly>`+ iNote +`</textarea></td>`;
+
+					let row = '<tr>'+ date + arriveTime + returnTime + status + note +'</tr>' 
+			        $('#table_detail_absen_pegawai tbody').append(row);
+				});
+				$('#modalDetailDashboard').modal('show');
+			},
+			error: function(e) {
+				messageWarning('Error', 'Error getDataPresence: '+ e.message);
+			}
+		});
+	}
+
 	// show modal detail presence
 	function showDetailPresence(id)
 	{

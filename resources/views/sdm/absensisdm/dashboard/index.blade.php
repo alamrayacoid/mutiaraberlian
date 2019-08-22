@@ -17,6 +17,7 @@
 @endsection
 
 <div class="tab-pane fade in show active" id="dashboard">
+	@include('sdm.absensisdm.dashboard.modal_detail')
 
 	<div class="card">
 		<div class="card-header bordered p-2">
@@ -27,146 +28,55 @@
 		<div class="card-block">
 			<section>
 				<div class="row mb-3">
-					<!-- Chart -->
-					<div class="chart-container col-md-6 col-sm-12">
-						<div class="row">
-							<div class=" col-md-6 col-sm-12">
-								<label for="chart_filter">Tampilkan : </label>
-								<select class="form-control form-control-sm" id="chart_filter" name="">
-									<option value="TH">Per Tahun</option>
-									<option value="BL">Per Bulan dalam 1 Tahun</option>
-									<option value="PK">Per Pekan</option>
-									<option value="HR" selected>Per Hari dalam 1 Bulan</option>
-								</select>
+					<div class="col-md-5 col-sm-6">
+						<div class="row col-md-12 col-sm-12">
+							<div class="col-md-3 col-sm-12">
+								<label for="">Bulan</label>
+							</div>
+							<div class="col-md-9 col-sm-12">
+								<div class="input-group input-group-sm input-daterange">
+									<input type="text" class="form-control" id="filterByMonthYearDashbord" name="filterByMonthYearDashbord" autocomplete="off">
+								</div>
 							</div>
 						</div>
-						<hr>
+					</div>
+				
+					<div class="col-md-5 col-sm-6">
 						<div class="row col-md-12 col-sm-12">
-							<canvas id="myChart" width="200" height="200"></canvas>
+							<div class="col-md-3 col-sm-12">
+								<label for="">Cabang</label>
+							</div>
+							<div class="col-md-9 col-sm-12">
+								<div class="form-group">
+									<select name="filterByBranchDashbord" id="filterByBranchDashbord" class="form-control form-control-sm select2">
+										<option value="" selected>Semua Cabang</option>
+									</select>
+								</div>
+							</div>
 						</div>
 					</div>
+				</div>
+				<hr>
+				<div class="table-responsive">
+					<table class="table table-hover data-table table-striped table-bordered display nowrap" cellspacing="0" style="width: 100%" id="table_presensi_sdm_dashboard">
+						<thead class="bg-primary">
+							<tr>
+								<th class="text-center">No</th>
+								<th class="text-center">Pegawai</th>
+								<th class="text-center">Hadir</th>
+								<th class="text-center">Tidak masuk</th>
+								<th class="text-center">Ijin</th>
+								<th class="text-center">Cuti</th>
+								<th class="text-center">Aksi</th>
+							</tr>
+						</thead>
+						<!-- <thead class="bg-primary">
+						</thead> -->
+						<tbody>
+						</tbody>
+					</table>
 				</div>
 			</section>
 		</div>
 	</div>
 </div>
-
-
-<!-- public set time -->
-<!-- <script type="text/javascript">
-	$(document).ready(function() {
-		// var cur_date = new Date();
-		// const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
-		// const last_day = new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
-		// // date for 'Index Daftar Presensi SDM'
-		// $('#filterDateFromPr').datepicker('setDate', first_day);
-		// $('#filterDateToPr').datepicker('setDate', last_day);
-	});
-</script> -->
-
-<!-- script for 'Index Daftar Presensi SDM' -->
-<!-- <script type="text/javascript">
-	$(document).ready(function() {
-		// // draw and update chart
-		// drawChart();
-		// $('#chart_filter').on('change', function() {
-		// 	updateChart();
-		// });
-	});
-
-	// Draw chart using chart.js
-	function drawChart()
-	{
-		updateChart();
-		let list_qty = 0;
-		chartElm = $('#myChart');
-		myChart = new Chart(chartElm, {
-			type: 'line',
-			data: {
-				labels: [],
-				datasets: []
-			},
-			options: {
-				scales: {
-					yAxes: [{
-						ticks: {
-							fontColor: 'rgb(255, 255, 255)',
-							beginAtZero: true
-						}
-					}],
-					xAxes: [{
-						ticks: {
-							fontColor: 'rgb(150, 255, 100)',
-							beginAtZero: true
-						}
-					}]
-				},
-				legend: {
-					display: true,
-					labels: {
-						fontColor: 'rgb(255, 255, 255)'
-					}
-				},
-				title: {
-					display: true,
-					position: 'bottom',
-					text: 'Kurs rerata Riyal',
-					fontSize: 24,
-					fontColor: 'rgb(255, 255, 255)'
-				},
-				elements: {
-					line: {
-						tension: 0
-					},
-				},
-			}
-		});
-	}
-	// add new dataset to chart
-	function addDataChart(chart, datasetIndex, xaxis, data, label)
-	{
-		let listColor = ['blue', 'white', 'green', 'yellow', 'red', 'violet', 'grey']
-		let newDataset = {
-			label: label,
-			data: data,
-			backgroundColor: listColor[datasetIndex],
-			borderWidth: 1,
-			borderColor: listColor[datasetIndex],
-			fill: false,
-			pointRadius: 3
-		};
-		chart.data.labels = xaxis;
-		chart.data.datasets.push(newDataset);
-		chart.update();
-	}
-	// remove current dataset inside chart
-	function removeAllDatasets(chart)
-	{
-		chart.data.datasets = [];
-		chart.update();
-	}
-	// update chart
-	function updateChart()
-	{
-		filter_val = $('#chart_filter').val();
-
-		$.ajax({
-			url: "{{ route('presensiDash.getPresence') }}",
-			data: {
-				filter: filter_val
-			},
-			type: "get",
-			success: function(response) {
-				console.log(response);
-				removeAllDatasets(myChart);
-				$.each(response.data, function(index, val) {
-					addDataChart(myChart, index, response.xaxis, val, response.label[index]);
-				});
-			},
-			error: function(xhr, status, error) {
-				let err = JSON.parse(xhr.responseText);
-				console.log(err.message);
-			}
-		});
-	}
-</script> -->
