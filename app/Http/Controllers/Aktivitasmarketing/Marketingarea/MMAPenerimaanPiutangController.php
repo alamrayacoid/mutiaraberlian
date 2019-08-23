@@ -143,11 +143,11 @@ class MMAPenerimaanPiutangController extends Controller
                 ->get();
 
             if (count($jenis) < 1) {
-                $id = dk_akun::max('ak_id') + 1;
+                $idAkun = dk_akun::max('ak_id') + 1;
 
                 DB::table('dk_akun')
                 ->insert([
-                    'ak_id' => $id,
+                    'ak_id' => $idAkun,
                     'ak_nomor' => '1.001.001',
                     'ak_tahun' => Carbon::now('Asia/Jakarta')->format('Y'),
                     'ak_comp' => $user->c_id,
@@ -159,6 +159,17 @@ class MMAPenerimaanPiutangController extends Controller
                     'ak_opening' => 0,
                     'ak_setara_kas' => '0',
                     'ak_isactive' => 1
+                ]);
+
+            $pmId = m_paymentmethod::max('pm_id') + 1;
+            DB::table('m_paymentmethod')
+                ->insert([
+                    'pm_id' => $pmId,
+                    'pm_comp' => $user->c_id,
+                    'pm_name' => 'KAS ' . $user->c_name,
+                    'pm_akun' => $idAkun,
+                    'pm_note' => '',
+                    'pm_isactive' => 'Y'
                 ]);
             }
 

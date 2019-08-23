@@ -1926,6 +1926,19 @@ class MarketingAreaController extends Controller
                         'ak_setara_kas' => '0',
                         'ak_isactive' => 1
                     ]);
+
+                $pmId = m_paymentmethod::max('pm_id') + 1;
+                DB::table('m_paymentmethod')
+                    ->insert([
+                        'pm_id' => $pmId,
+                        'pm_comp' => $user->c_id,
+                        'pm_name' => 'KAS ' . $user->c_name,
+                        'pm_akun' => $id,
+                        'pm_note' => '',
+                        'pm_isactive' => 'Y'
+                    ]);
+                }
+
             }
 
             $data = m_paymentmethod::where('pm_isactive', 'Y')
