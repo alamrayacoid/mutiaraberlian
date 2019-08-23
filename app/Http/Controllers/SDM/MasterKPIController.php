@@ -207,9 +207,13 @@ class MasterKPIController extends Controller
 
     public function save_kpi_divisi(Request $request)
     {
+        $depart = $request->divisi;
+
         DB::beginTransaction();
         try {
         
+            DB::table('d_kpiemp')->where('ke_department', $depart)->delete();
+
             $indicator = $request->indicator;
             for ($i=0; $i < count($indicator); $i++) { 
                 DB::table('d_kpiemp')->insert([
@@ -401,9 +405,13 @@ class MasterKPIController extends Controller
 
     public function save_kpi_pegawai(Request $request)
     {
+        // dd($request->all());
+        $emp = $request->employee;
+
         DB::beginTransaction();
         try {
-        
+            DB::table('d_kpiemp')->where('ke_employee', $emp)->delete();
+
             $indicator = $request->indicator;
             for ($i=0; $i < count($indicator); $i++) { 
                 DB::table('d_kpiemp')->insert([
@@ -548,5 +556,63 @@ class MasterKPIController extends Controller
                 'message' => $e
             ]);
         }
+    }
+
+    public function getIndikatorKpiPegawai(Request $request)
+    {
+        // dd($request->all());
+        $data = $request->data;
+
+        $datas = DB::table('d_kpiemp')
+            ->join('m_kpi', 'k_id', 'ke_kpi')
+            ->select('k_id', 'k_indicator', 'k_isactive', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi')
+            ->where('ke_employee', '=', $data)
+            ->get();
+        // dd($datas);
+
+        return response()->json([
+            'data' => $datas
+        ]);
+        // $status = $request->status;
+        // $data = DB::table('m_kpi');
+        // if ($status != 'all'){
+        //     $data = $data->where('k_isactive', '=', $status);
+        // }
+
+        // $datas = $data->get();
+
+        // return Datatables::of($datas)
+        //     ->addIndexColumn()
+        //     ->addColumn('action', function ($datas) {
+        //         if ($datas->k_isactive == 'Y'){
+        //             return '<div class="btn-group btn-group-sm text-center" style="width: 100%">
+        //                     <button class="btn btn-warning btn-edit-masterkpi btn-sm hint--top-left hint--error" type="button" onclick="nonKpi(\''.Crypt::encrypt($datas->k_id).'\')" aria-label="Non-aktifkan"><i class="fa fa-close"></i></button>
+        //                     <button class="btn btn-danger btn-disable-masterkpi btn-sm hint--top-left hint--error" type="button" aria-label="Hapus" onclick="deleteKpi(\''.Crypt::encrypt($datas->k_id).'\')"><i class="fa fa-trash"></i></button>
+        //                 </div>';
+        //         } else {
+        //             return '<div class="btn-group btn-group-sm text-center" style="width: 100%">
+        //                     <button class="btn btn-success btn-edit-masterkpi btn-sm hint--top-left hint--success" type="button" aria-label="Aktifkan" onclick="activeKpi(\''.Crypt::encrypt($datas->k_id).'\')"><i class="fa fa-check"></i></button>
+        //                     <button class="btn btn-danger btn-disable-masterkpi btn-sm hint--top-left hint--error" type="button" aria-label="Hapus" onclick="deleteKpi(\''.Crypt::encrypt($datas->k_id).'\')"><i class="fa fa-trash"></i></button>
+        //                 </div>';
+        //         }
+        //     })
+        //     ->rawColumns(['action'])
+        //     ->make(true);
+    }
+
+    public function getIndikatorKpiDivisi(Request $request)
+    {
+        $data = $request->data;
+        // dd($data);
+        $datas = DB::table('d_kpiemp')
+            ->join('m_kpi', 'k_id', 'ke_kpi')
+            ->select('k_id', 'k_indicator', 'k_isactive', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi')
+            ->where('ke_department', '=', $data)
+            ->get();
+        // dd($datas);
+
+        return response()->json([
+            'data' => $datas
+        ]);
     }
 }
