@@ -60,7 +60,7 @@
                                                 <tr>
                                                     <th>Kode Barang</th>
                                                     <th>Nama Barang</th>
-                                                    <th>Total HPP</th>
+                                                    <th>Total Produksi</th>
                                                     <th>Persediaan Awal</th>
                                                     <th>Persediaan Akhir</th>
                                                     <th>Turn Over</th>
@@ -133,8 +133,8 @@
                     data.i_code,
                     data.i_name,
                     data.totalhpp,
-                    data.qtyawal,
-                    data.qtyakhir,
+                    data.persediaanawal,
+                    data.persediaanakhir,
                     data.hasil
                     ]).draw(false);
             }).catch(function(error){
