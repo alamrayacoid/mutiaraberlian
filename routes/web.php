@@ -451,6 +451,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sdm/absensisdm/presensi/store', 'SDM\Absensi\PresensiController@store')->name('presensi.store');
     // Absensi -> Dashboard
     Route::get('/sdm/absensisdm/dashboard/get-presence', 'SDM\Absensi\DashboardController@getPresence')->name('presensiDash.getPresence');
+    // Kelola Hari Libur
+    Route::post('/sdm/absensisdm/kelola-libur/simpan', 'SDMController@saveHariLibur')->name('absensisdm.saveHariLibur');
     // Penggajian
     Route::get('/sdm/penggajian/index', 'SDMController@penggajian')->name('penggajian.index');
     // TAB CASHBON

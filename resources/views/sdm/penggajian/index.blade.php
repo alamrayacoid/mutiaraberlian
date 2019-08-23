@@ -163,11 +163,13 @@
     })
 
     function simpanPenerimaanCashbon(){
+        loadingShow();
         axios.post('{{ route("cashbon.savePenerimaan") }}', {
             "terima": $('#terima_cashbon').val(),
             "pegawai": $('#penerimaan_idpegawai').val(),
             "_token": '{{ csrf_token() }}'
         }).then(function(response){
+            loadingHide();
             if (response.data.status == 'sukses') {
                 messageSuccess('Berhasil', 'Data berhasil disimpan');
                 $('#penerimaan_cashbon').modal('hide');
@@ -176,6 +178,7 @@
                 messageWarning('Gagal', response.data.message);
             }
         }).catch(function(error){
+            loadingHide();
             alert('error');
         })
     }
@@ -211,11 +214,13 @@
     })
 
     function simpanPembayaranCashbon(){
+        loadingShow();
         axios.post('{{ route("cashbon.savePembayaran") }}', {
             "bayar": $('#addcashbon').val(),
             "pegawai": $('#pembayaran_idpegawai').val(),
             "_token": '{{ csrf_token() }}'
         }).then(function(response){
+            loadingHide();
             if (response.data.status == 'sukses') {
                 messageSuccess('Berhasil', 'Data berhasil disimpan');
                 $('#pembayaran_cashbon').modal('hide');
@@ -224,6 +229,7 @@
                 messageWarning('Gagal', response.data.message);
             }
         }).catch(function(error){
+            loadingHide();
             alert('error');
         })
     }

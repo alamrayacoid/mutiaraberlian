@@ -4,6 +4,8 @@
 
 <article class="content">
 
+    @include('sdm.absensisdm.harilibur.modal')
+
 	<div class="title-block text-primary">
 		<h1 class="title">Kelola Absensi SDM</h1>
 		<p class="title-description">
@@ -14,9 +16,7 @@
 	</div>
 
 	<section class="section">
-
 		<div class="row">
-
 			<div class="col-12">
 				<ul class="nav nav-pills mb-3" id="Tabs">
 					<li class="nav-item">
@@ -38,7 +38,8 @@
 
 				<div class="tab-content">
 					@include('sdm.absensisdm.dashboard.index')
-					@include('sdm.absensisdm.presensi.index')
+                    @include('sdm.absensisdm.presensi.index')
+                    @include('sdm.absensisdm.harilibur.index')
 				</div>
 			</div>
 		</div>
@@ -66,7 +67,7 @@
 
 	$("#filterByMonthYearDashbord").datepicker( {
     format: "mm-yyyy",
-    viewMode: "months", 
+    viewMode: "months",
     minViewMode: "months"
 	});
 </script>
@@ -77,7 +78,7 @@
 
 	$("#filterByYearDashbord").datepicker( {
     format: "yyyy",
-    viewMode: "years", 
+    viewMode: "years",
     minViewMode: "years"
 	});
 </script> -->
@@ -476,7 +477,7 @@
 		})
 	}
 	// get list summary presence
-	
+
 	function getAbsenPegawai()
 	{
 		// let dateFrom = $('#filterDateFromPr').serialize();
@@ -608,7 +609,7 @@
 					(val.p_note == null || val.p_note == '') ? iNote = '' : iNote = val.p_note;
 					let note = `<td class="pad-1"><textarea name="notePr[]" rows="2" class="w-100" readonly>`+ iNote +`</textarea></td>`;
 
-					let row = '<tr>'+ date + arriveTime + returnTime + status + note +'</tr>' 
+					let row = '<tr>'+ date + arriveTime + returnTime + status + note +'</tr>'
 			        $('#table_detail_absen_pegawai tbody').append(row);
 				});
 				$('#modalDetailDashboard').modal('show');
@@ -687,6 +688,49 @@
 				messageWarning('Error', 'Error getDataPresence: '+ e.message);
 			}
 		});
-	}
+    }
+
+// Hari Libur
+
+    $("#tahun").datepicker( {
+        format: "yyyy",
+        viewMode: "years",
+        minViewMode: "years",
+        autoclose: true
+    });
+
+    $("#tanggal_libur").datepicker( {
+        format: "dd-mm-yyyy",
+        autoclose: true
+    });
+
+    function simpanHariLibur(){
+        loadingShow();
+        let tgl = $('#tanggal_libur').val();
+        let note = $('#keterangan_libur').val();
+        if (tgl == '' || tgl == null) {
+            messageWarning("Perhatian", "Tanggal kosong");
+            return false;
+        }
+        if (note == '' || note == null) {
+            messageWarning("Perhatian", "Keterangan Kosong");
+        }
+        axios.post('{{ route("absensisdm.saveHariLibur") }}', {
+            "_token": '{{ csrf_token() }}',
+            "note": note,
+            "tgl": tgl
+        }).then(function(response){
+            loadingHide();
+            if (response.data.status == 'sukses') {
+                messageSuccess("Berhasil", "Data berhasil disimpan");
+                $('#modal_createharilibur').modal('hide');
+            } else if (response.data.status == 'gagal') {
+                messageWarning("Gagal", response.data.message);
+            }
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
 </script>
 @endsection
