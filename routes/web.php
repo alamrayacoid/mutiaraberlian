@@ -425,6 +425,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/kinerjasdm/kpi-pegawai/edit-kpi-pegawai', 'SDM\MasterKPIController@edit_kpi_pegawai')->name('kpipegawai.edit_kpi_pegawai');
     Route::post('/sdm/kinerjasdm/kpi-pegawai/update-kpi-pegawai', 'SDM\MasterKPIController@update_kpi_pegawai')->name('kpipegawai.update_kpi_pegawai');
     Route::post('/sdm/kinerjasdm/kpi-pegawai/delete-kpi-pegawai/{emp}', 'SDM\MasterKPIController@delete_kpi_pegawai')->name('kpipegawai.delete_kpi_pegawai');
+    Route::post('/sdm/kinerjasdm/kpi-pegawai/get-data-indikator-kpi-pegawai', 'SDM\MasterKPIController@getIndikatorKpiPegawai')->name('kpipegawai.getIndikatorKpiPegawai');
 
     // KPI Divisi
     Route::get('/sdm/kinerjasdm/kpi-divisi/create', 'SDM\MasterKPIController@kpi_create_d')->name('kpidivisi.create');
