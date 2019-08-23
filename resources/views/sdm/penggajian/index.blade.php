@@ -94,10 +94,16 @@
 
     })
 
-    function filterCashbon(){
+    function filterCashbon(mode){
         let pegawai = $('#id_pegawai').val();
         let cashbontop = $('#cashbontop').val();
         let cashbonbot = $('#cashbonbot').val();
+
+        if (mode == 'all') {
+            pegawai = null;
+            cashbonbot = null;
+            cashbontop = null;
+        }
 
         if ( $.fn.DataTable.isDataTable( '#table_cashbon' ) ) {
             $('#table_cashbon').dataTable().fnDestroy();
@@ -130,31 +136,102 @@
         });
     }
 
-    function terimaCashbon(id, cashbon){
+    function terimaCashbon(id, cashbon, saldo){
         $('.cashbonnow').val(cashbon);
         $('#cashbonsisa').val(cashbon);
+        $('.saldopegawai').val(saldo);
+        $('.saldoawalpegawai').val(saldo);
+        $('#terima_cashbon').val(0);
+        $('.id_pegawai').val(id);
         $('#penerimaan_cashbon').modal('show');
     }
 
     $('#terima_cashbon').on('keyup', function(){
         let cashbon = $('.cashbonnow').val();
         let terima = $('#terima_cashbon').val();
+        saldoawal = parseInt($('.saldoawalpegawai').val());
         saldo = 0;
         sisa = cashbon - terima;
         if (sisa < 0) {
-            saldo = sisa * (-1);
+            saldo = saldoawal + (sisa * (-1));
             sisa = 0;
+        } else {
+            saldo = saldoawal;
         }
         $('#saldopegawai').val(saldo);
         $('#cashbonsisa').val(sisa);
-        console.log(saldo);
-        console.log(terima);
-        console.log(cashbon);
     })
 
-    function tambahCashbon(id, cashbon){
+    function simpanPenerimaanCashbon(){
+        loadingShow();
+        axios.post('{{ route("cashbon.savePenerimaan") }}', {
+            "terima": $('#terima_cashbon').val(),
+            "pegawai": $('#penerimaan_idpegawai').val(),
+            "_token": '{{ csrf_token() }}'
+        }).then(function(response){
+            loadingHide();
+            if (response.data.status == 'sukses') {
+                messageSuccess('Berhasil', 'Data berhasil disimpan');
+                $('#penerimaan_cashbon').modal('hide');
+                table_cashbon.ajax.reload();
+            } else if (response.data.status == 'gagal') {
+                messageWarning('Gagal', response.data.message);
+            }
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function tambahCashbon(id, cashbon, saldo){
         $('.cashbonnow').val(cashbon);
+        $('.cashbonawal').val(cashbon);
+        $('.saldopegawai').val(saldo);
+        $('.saldoawalpegawai').val(saldo);
+        $('#addcashbon').val(0);
+        $('.id_pegawai').val(id);
         $('#pembayaran_cashbon').modal('show');
+    }
+
+    $('#addcashbon').on('keyup', function(){
+        let cashbonAwal = parseInt($('.cashbonawal').val());
+        let cashbon = cashbonAwal;
+        let saldoAwal = $('.saldoawalpegawai').val();
+        let saldo = saldoAwal;
+        let tambah = $('#addcashbon').val();
+        let sisa = saldo - tambah;
+        console.log(saldo, sisa);
+        if (sisa < 0) {
+            sisa = sisa * (-1);
+            saldo = 0;
+            cashbon = cashbonAwal + sisa;
+        } else {
+            saldo = sisa;
+            cashbon = cashbonAwal;
+        }
+        $('.cashbonnow').val(cashbon);
+        $('.saldopegawai').val(saldo);
+    })
+
+    function simpanPembayaranCashbon(){
+        loadingShow();
+        axios.post('{{ route("cashbon.savePembayaran") }}', {
+            "bayar": $('#addcashbon').val(),
+            "pegawai": $('#pembayaran_idpegawai').val(),
+            "_token": '{{ csrf_token() }}'
+        }).then(function(response){
+            loadingHide();
+            if (response.data.status == 'sukses') {
+                messageSuccess('Berhasil', 'Data berhasil disimpan');
+                $('#pembayaran_cashbon').modal('hide');
+                table_cashbon.ajax.reload();
+            } else if (response.data.status == 'gagal') {
+                messageWarning('Gagal', response.data.message);
+            }
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
     }
 </script>
 @endsection

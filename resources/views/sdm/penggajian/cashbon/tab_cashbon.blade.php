@@ -15,7 +15,7 @@
                     <div class="col-md-1 col-sm-6 col-xs-12">
                         <label>Pegawai</label>
                     </div>
-                    <div class="col-md-4 col-sm-6 col-xs-12">
+                    <div class="col-md-3 col-sm-6 col-xs-12">
                         <div class="form-group">
                             <input type="text" class="form-control form-control-sm namapegawai" id="namapegawai"
                                 placeholder="Nama Pegawai">
@@ -38,11 +38,12 @@
                             <input type="text" class="form-control form-control-sm cashbonbot rupiahnull" id="cashbonbot">
                         </div>
                     </div>
-                    <div class="col-md-1 col-sm-6 col-xs-12">
+                    <div class="col-md-2 col-sm-6 col-xs-12">
                         <button class="btn btn-primary cari" onclick="filterCashbon()"><i class="fa fa-search"></i></button>
+                        <button class="btn btn-info cariall" onclick="filterCashbon('all')">Semua</button>
                     </div>
                     <div class="col-md-12 col-sm-12 col-xs-12" style="margin-top: -10px !important; padding-bottom: 10px !important">
-                        <span>Keterangan: Kosongkan jika ingin menampilkan semua data</span>
+                        <span>Keterangan: Tombol <strong>Semua</strong> untuk menampilkan semua data</span>
                     </div>
                 </div>
                 <div class="table-responsive">

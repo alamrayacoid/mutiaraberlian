@@ -451,10 +451,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sdm/absensisdm/presensi/store', 'SDM\Absensi\PresensiController@store')->name('presensi.store');
     // Absensi -> Dashboard
     Route::get('/sdm/absensisdm/dashboard/get-presence', 'SDM\Absensi\DashboardController@getPresence')->name('presensiDash.getPresence');
+    // Kelola Hari Libur
+    Route::post('/sdm/absensisdm/kelola-libur/simpan', 'SDMController@saveHariLibur')->name('absensisdm.saveHariLibur');
     // Penggajian
     Route::get('/sdm/penggajian/index', 'SDMController@penggajian')->name('penggajian.index');
     // TAB CASHBON
-    Route::get('/sdm/penggajian/cashbon/save', 'SDM\CashbonController@save')->name('cashbon.save');
+    Route::post('/sdm/penggajian/cashbon/save-penerimaan', 'SDM\CashbonController@savePenerimaan')->name('cashbon.savePenerimaan');
+    Route::post('/sdm/penggajian/cashbon/save-pembayaran', 'SDM\CashbonController@savePembayaran')->name('cashbon.savePembayaran');
     Route::get('/sdm/penggajian/cashbon/update', 'SDM\CashbonController@update')->name('cashbon.update');
     Route::get('/sdm/penggajian/cashbon/get-data', 'SDM\CashbonController@getData')->name('cashbon.getData');
     Route::get('/sdm/penggajian/cashbon/get-data-pegawai', 'SDM\CashbonController@getDataPegawai')->name('cashbon.getDataPegawai');

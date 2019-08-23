@@ -23,59 +23,59 @@ class TurnOverController extends Controller
         $comp = DB::table('m_company')
             ->where('c_type', '=', 'PUSAT')
             ->first();
-        
-        $qtyAwal = 0;
-        $qtyAkhir = 0;
-        
-        $stock_awal = DB::select("SELECT sm_stock, sm_detailid, i_name, DATE_FORMAT(sm_date, '%m-%Y') AS periode, sm_qty,
-            (SELECT SUM(sm_qty) 
+
+        $persediaanAwal = 0;
+        $persediaanAkhir = 0;
+
+        $persediaan_awal = DB::select("SELECT sm_stock, sm_detailid, i_name, DATE_FORMAT(sm_date, '%m-%Y') AS periode, sm_qty,
+            (SELECT SUM(sm_hpp * sm_qty)
                 FROM d_stock_mutation child2
                 JOIN m_mutcat mutcat2 ON m_id = child2.sm_mutcat
-                WHERE child2.sm_stock = parent.sm_stock 
+                WHERE child2.sm_stock = parent.sm_stock
                 AND mutcat2.m_status = 'M') AS masuk,
-            (SELECT SUM(sm_qty) 
-                FROM d_stock_mutation child1 
+            (SELECT SUM(sm_hpp * sm_qty)
+                FROM d_stock_mutation child1
                 JOIN m_mutcat mutcat1 ON m_id = child1.sm_mutcat
-                WHERE child1.sm_stock = parent.sm_stock 
+                WHERE child1.sm_stock = parent.sm_stock
                 AND mutcat1.m_status = 'K') AS keluar,
-            (SELECT(masuk))-(SELECT(keluar)) AS stockakhir
+            (SELECT(masuk))-(SELECT(keluar)) AS persediaanawal
             FROM d_stock_mutation parent
             JOIN d_stock stock ON s_id = sm_stock
             JOIN m_item ON s_item = i_id
-            WHERE i_id = '".$item."' 
+            WHERE i_id = '".$item."'
             AND s_comp = '".$comp->c_id."'
             AND s_position = '".$comp->c_id."'
             AND sm_date <= '".$startdate->format('Y-m-d')."'
             GROUP BY i_id");
 
-        if (count($stock_awal) > 0) {
-            $qtyAwal = $stock_awal[0]->stockakhir;
+        if (count($persediaan_awal) > 0) {
+            $persediaanAwal = $persediaan_awal[0]->persediaanawal;
         }
 
-        $stock_akhir = DB::select("SELECT sm_stock, sm_detailid, i_name, DATE_FORMAT(sm_date, '%m-%Y') AS periode, sm_qty,
-            (SELECT SUM(sm_qty) 
+        $persediaan_akhir = DB::select("SELECT sm_stock, sm_detailid, i_name, DATE_FORMAT(sm_date, '%m-%Y') AS periode, sm_qty,
+            (SELECT SUM(sm_hpp * sm_qty)
                 FROM d_stock_mutation child2
                 JOIN m_mutcat mutcat2 ON m_id = child2.sm_mutcat
-                WHERE child2.sm_stock = parent.sm_stock 
+                WHERE child2.sm_stock = parent.sm_stock
                 AND mutcat2.m_status = 'M') AS masuk,
-            (SELECT SUM(sm_qty) 
-                FROM d_stock_mutation child1 
+            (SELECT SUM(sm_hpp * sm_qty)
+                FROM d_stock_mutation child1
                 JOIN m_mutcat mutcat1 ON m_id = child1.sm_mutcat
-                WHERE child1.sm_stock = parent.sm_stock 
+                WHERE child1.sm_stock = parent.sm_stock
                 AND mutcat1.m_status = 'K') AS keluar,
-            (SELECT(masuk))-(SELECT(keluar)) AS stockakhir
+            (SELECT(masuk))-(SELECT(keluar)) AS persediaanakhir
             FROM d_stock_mutation parent
             JOIN d_stock stock ON s_id = sm_stock
             JOIN m_item ON s_item = i_id
-            WHERE i_id = '".$item."' 
+            WHERE i_id = '".$item."'
             AND s_comp = '".$comp->c_id."'
             AND s_position = '".$comp->c_id."'
             AND sm_date <= '".$enddate->format('Y-m-d')."'
             AND sm_date >= '".$startdate->format('Y-m-d')."'
             GROUP BY i_id");
 
-        if (count($stock_akhir) > 0) {
-            $qtyAkhir = $stock_akhir[0]->stockakhir;
+        if (count($persediaan_akhir) > 0) {
+            $persediaanAkhir = $persediaan_akhir[0]->persediaanakhir;
         }
 
         $totalHPP = DB::table('d_stock_mutation')
@@ -97,10 +97,10 @@ class TurnOverController extends Controller
         }
 
         $hasil = 0;
-        if ($hpp == 0 && (($qtyAwal+$qtyAkhir)/2) == 0) {
+        if ($hpp == 0 && (($persediaanAwal + $persediaanAkhir)/2) == 0) {
             $hasil = 0;
         } else {
-            $hasil = $hpp/(($qtyAwal+$qtyAkhir)/2);
+            $hasil = $hpp/(($persediaanAwal + $persediaanAkhir)/2);
             $hasil = number_format($hasil, 2, ',', '.');
         }
 
@@ -109,10 +109,10 @@ class TurnOverController extends Controller
             ->where('i_id', '=', $item)
             ->first();
 
-        $data->hasil = $hasil;
-        $data->qtyawal = $qtyAwal;
-        $data->qtyakhir = $qtyAkhir;
-        $data->totalhpp = number_format($hpp, 0, ',', '.');
+        $data->hasil = '<span class="float-right">' .$hasil. ' Kali</span>';;
+        $data->persediaanawal = '<span class="float-right"> Rp ' .number_format($persediaanAwal, 0, ',', '.'). '</span>';
+        $data->persediaanakhir = '<span class="float-right"> Rp ' .number_format($persediaanAkhir, 0, ',', '.'). '</span>';
+        $data->totalhpp = '<span class="float-right"> Rp ' .number_format($hpp, 0, ',', '.'). '</span>';
 
         return response()->json(
             $data
