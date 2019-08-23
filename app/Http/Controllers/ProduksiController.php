@@ -225,14 +225,25 @@ class ProduksiController extends Controller
             try {
                 // dd($request);
                 $idpo = (DB::table('d_productionorderdt')->max('pod_productionorder')) ? (DB::table('d_productionorderdt')->max('pod_productionorder')) + 1 : 1;
-                $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
-                $cekNota = DB::table('d_productionorder')
-                    ->where('po_nota', '=', $nota)
-                    ->get();
+                // $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
+                // $cekNota = DB::table('d_productionorder')
+                //     ->where('po_nota', '=', $nota)
+                //     ->get();
+                //
+                // if (count($cekNota) > 0){
+                //     $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
+                // }
 
-                if (count($cekNota) > 0){
-                    $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
+                $notaProductionAuth = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
+                $notaProduction = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
+                if (strcmp($notaProduction, $notaProductionAuth) > 0) {
+                    $nota = $notaProduction;
                 }
+                else {
+                    $nota = $notaProductionAuth;
+                };
+
+
                 $productionorderauth[] = [
                     'poa_id' => $idpo,
                     'poa_nota' => $nota,

@@ -2,23 +2,31 @@
 
 namespace App\Http\Controllers\Aktivitasmarketing\Penjualanpusat;
 
-use App\d_stockdt;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
+use Auth;
 use App\d_return;
+use App\d_returncode;
+use App\d_returndt;
 use App\d_salescomp;
 use App\d_salescompcode;
 use App\d_stock;
+use App\d_stockdt;
+use App\d_stock_mutation;
 use App\m_company;
 use App\m_item;
+use App\m_mutcat;
 use App\m_wil_provinsi;
 use App\m_wil_kota;
 use Carbon\Carbon;
 use CodeGenerator;
+use Currency;
 use DB;
 use DataTables;
 use Mutasi;
+use Mockery\Exception;
 use Validator;
 
 class ReturnPenjualanController extends Controller
@@ -43,8 +51,8 @@ class ReturnPenjualanController extends Controller
             })
             ->addColumn('action', function ($data) {
                 return '<div class="btn-group btn-group-sm">
-                    <button class="btn btn-primary btn-detail" type="button" onclick="detailReturn(' . $data->r_id . ')" title="Detail"><i class="fa fa-folder"></i></button>
-                    <button class="btn btn-danger btn-process" type="button" onclick="deleteReturn(' . $data->r_id . ')" title="Hapus"><i class="fa fa-trash"></i></button>
+                    <button class="btn btn-primary btn-detail" type="button" onclick="detailReturn(\'' . Crypt::encrypt($data->r_id) . '\')" title="Detail"><i class="fa fa-folder"></i></button>
+                    <button class="btn btn-danger btn-process" type="button" onclick="deleteReturn(\'' . Crypt::encrypt($data->r_id) . '\')" title="Hapus"><i class="fa fa-trash"></i></button>
                 </div>';
                 // <button class="btn btn-warning btn-process" type="button" onclick="editReturn(' . $data->r_id . ')" title="Edit"><i class="fa fa-pencil"></i></button>
             })
@@ -100,27 +108,16 @@ class ReturnPenjualanController extends Controller
     public function getProdCode(Request $request)
     {
         $agentCode = $request->agentCode;
+        $itemStatus = $request->itemStatus;
 
-        // // get list salescomp-id by agent
-        // $kode = d_stock::with('getStockDt')
-        //     ->where('s_position', '=', $agentCode)
-        //     ->get();
-
-        $kode = d_stockdt::whereHas('getStock', function ($q) use ($agentCode) {
-                $q->where('s_position', $agentCode);
+        $kode = d_stockdt::whereHas('getStock', function ($q) use ($agentCode, $itemStatus) {
+                $q
+                    ->where('s_position', $agentCode)
+                    ->where('s_condition', $itemStatus);
             })
             ->with('getStock.getItem')
             ->groupBy('sd_code')
             ->get();
-
-        // $listSalesCompId = array();
-        // foreach ($kode as $key => $val) {
-        //     array_push($listSalesCompId, $val->getStockDt[0]->sd_code);
-        // }
-        //
-        // $prodCode = d_salescompcode::whereIn('ssc_code', $listSalesCompId)
-        //     ->groupBy('ssc_salescomp')
-        //     ->get();
 
         return response()->json($kode);
     }
@@ -158,23 +155,24 @@ class ReturnPenjualanController extends Controller
             }
         }
 
-        if (Auth::user()->getCompany->c_type == "PUSAT") {
-            if ($request->agent == '' || is_null($request->agent)) {
-                $results[] = ['id' => null, 'label' => 'Silahkan isi agen terlebih dahulu !'];
-                return Response::json($results);
-            }
-            $comp = m_company::where('c_user', $request->agent)->first();
-        } else {
-            $comp = Auth::user()->getCompany;
-        }
+        // if (Auth::user()->getCompany->c_type == "PUSAT") {
+        //     if ($request->agent == '' || is_null($request->agent)) {
+        //         $results[] = ['id' => null, 'label' => 'Silahkan isi agen terlebih dahulu !'];
+        //         return response()::json($results);
+        //     }
+        //     $comp = m_company::where('c_id', $request->agent)->first();
+        // } else {
+        //     $comp = Auth::user()->getCompany;
+        // }
 
-        // return if $comp is-null
-        if (is_null($comp)) {
-            $results[] = ['id' => null, 'label' => 'Agen tidak memiliki item apapun'];
-            return Response::json($results);
-        }
+        // // return if $comp is-null
+        // if (is_null($comp)) {
+        //     $results[] = ['id' => null, 'label' => 'Agen tidak memiliki item apapun'];
+        //     return response()->json($results);
+        // }
 
-        $comp = $comp->c_id;
+        $comp = Auth::user()->u_company;
+        // $comp = $comp->c_id;
         $cari = $request->term;
 
         if (count($is_item) == 0) {
@@ -287,38 +285,22 @@ class ReturnPenjualanController extends Controller
     // get sales-comp data
     public function getData(Request $request)
     {
-        $nota = $request->nota;
+        if (Auth::user()->getCompany->c_type == "PUSAT") {
+            $comp = m_company::where('c_id', $request->agentCode)->first();
+        } else {
+            $comp = Auth::user()->getCompany;
+        }
+
         $itemId = $request->itemId;
         $prodCode = $request->prodCode;
 
-        $data = d_salescomp::where('sc_nota', $request->nota)
-            ->with('getComp')
-            ->with('getAgent')
-            ->with(['getSalesCompDt' => function($q) use ($itemId, $prodCode) {
-                $q->where('scd_item', $itemId)
-                    ->with('getItem')
-                    ->with(['getProdCode' => function($q) use ($prodCode) {
-                        $q->where('ssc_code', $prodCode);
-                    }]);
-            }])
+        $data = d_stock::where('s_position', $comp->c_id)
+            ->where('s_item', $itemId)
+            ->where('s_status', 'ON DESTINATION')
+            ->where('s_condition', 'FINE')
+            ->with('getItem')
             ->first();
 
-        // $comp = DB::table('m_company')
-        //             ->where('c_id', $data->sc_comp)
-        //             ->first();
-        // $agen = DB::table('m_company')
-        //             ->where('c_id', $data->sc_member)
-        //             ->first();
-        // $item = DB::table('d_salescompdt')
-        //             ->join('m_item', 'i_id', '=', 'scd_item')
-        //             ->where('scd_sales', $data->sc_id)
-        //             ->where('scd_item', $request->itemid)
-        //             ->first();
-
-        $data->sc_date = Carbon::parse($data->sc_date)->format('d M Y');
-
-        $data->sc_total = number_format($data->sc_total, 2, ",", ".");
-        // dd($data);
         return response()->json([
             'data' => $data
         ]);
@@ -363,13 +345,13 @@ class ReturnPenjualanController extends Controller
         $validator = Validator::make($request->all(), [
             'agent' => 'required',
             'kodeproduksi' => 'required',
-            'nota' => 'required',
+            // 'nota' => 'required',
             'qty' => 'required'
         ],
         [
             'agent.required' => 'Agen masih kosong !',
             'kodeproduksi.required' => 'Kode Produksi masih kosong !',
-            'nota.required' => 'Nota masih kosong !',
+            // 'nota.required' => 'Nota masih kosong !',
             'qty.required' => 'Jumlah barang masih kosong !'
         ]);
         if ($validator->fails()) {
@@ -398,16 +380,6 @@ class ReturnPenjualanController extends Controller
     // store data to Database
     public function store(Request $request)
     {
-        // validate request
-        $isValidRequest = $this->validateData($request);
-        if ($isValidRequest != '1') {
-            $errors = $isValidRequest;
-            return response()->json([
-                'status' => 'invalid',
-                'message' => $errors
-            ]);
-        }
-
         DB::beginTransaction();
         try {
             $member = $request->agent;
@@ -441,15 +413,17 @@ class ReturnPenjualanController extends Controller
             $note = $request->keterangan;
 
             // get comp using agent-code
-            if (Auth::user()->getCompany->c_type == "PUSAT") {
-                $agent = DB::table('m_company')->where('c_user', '=', $request->agent)->first();
-            }
-            else {
-                $agent = Auth::user()->getCompany;
-            }
+            // if (Auth::user()->getCompany->c_type == "PUSAT") {
+            //     $agent = DB::table('m_company')->where('c_id', '=', $request->agent)->first();
+            // }
+            // else {
+            //     $agent = Auth::user()->getCompany;
+            // }
+            // // get data salescomp
+            // $dataSales = d_salescomp::where('sc_nota', $notaPenjualan)->first();
 
-            // get data salescomp
-            $dataSales = d_salescomp::where('sc_nota', $notaPenjualan)->first();
+            // penerima return
+            $comp = Auth::user()->u_company;
 
             $id = d_return::max('r_id') + 1;
             $nota = CodeGenerator::codeWithSeparator('d_return', 'r_nota', 8, 10, 3, 'RT', '-');
@@ -460,7 +434,7 @@ class ReturnPenjualanController extends Controller
                 'r_nota' => $nota,
                 'r_reff' => $notaPenjualan,
                 'r_date' => Carbon::now('Asia/Jakarta'),
-                'r_comp' => $agent->c_id,
+                'r_comp' => $comp,
                 'r_member' => $member,
                 'r_item' => $itemId,
                 'r_qty' => $qtyReturn,
@@ -487,15 +461,14 @@ class ReturnPenjualanController extends Controller
             $listUnitPC = array();
 
             if ($request->returnType == 'SL') {
-                $agentCode = $agent->c_id;
                 // get HPP
-                $hpp = d_stock_mutation::whereHas('getStock', function($q) use ($itemId, $agentCode) {
-                    $q
-                    ->where('s_item', $itemId);
-                })
-                ->orderBy('sm_date', 'desc')
-                ->select('sm_date', 'sm_hpp')
-                ->first();
+                $hpp = d_stock_mutation::whereHas('getStock', function($q) use ($itemId) {
+                        $q
+                        ->where('s_item', $itemId);
+                    })
+                    ->orderBy('sm_date', 'desc')
+                    ->select('sm_date', 'sm_hpp')
+                    ->first();
                 $hpp = (float)$hpp->sm_hpp;
 
                 $listPCReturn = array();
@@ -513,7 +486,7 @@ class ReturnPenjualanController extends Controller
                 // insert stock mutation using sales 'in'
                 $mutationIn = Mutasi::salesIn(
                     // $member, // from
-                    $agent->c_id, // to
+                    $comp, // to
                     $itemId, // item-id
                     $nota, // nota return
                     $listPCReturn, // list of list production-code
@@ -534,16 +507,18 @@ class ReturnPenjualanController extends Controller
             elseif ($request->returnType == 'SB') {
                 // insert stock mutation using sales 'out'
                 $mutationOut = Mutasi::returnOut(
-                $member, // from position
-                $itemId, // item id
-                $qtyReturn, // qty item
-                $nota, // nota return
-                $request->nota, // nota sales
-                $listPC, // list production-code
-                $listQtyPC, // list qty of production-code
-                $listUnitPC, // list unit pf production-code
-                $request->itemPrice,// sellPrice
-                $mutcat // mutcat
+                    $member, // from position
+                    $itemId, // item id
+                    $qtyReturn, // qty item
+                    $nota, // nota return
+                    $request->nota, // nota sales
+                    $listPC, // list production-code
+                    $listQtyPC, // list qty of production-code
+                    $listUnitPC, // list unit pf production-code
+                    $request->itemPrice,// sellPrice
+                    $mutcat, // mutcat
+                    null, // date
+                    $request->statusItem // item-condition 'FINE' or 'BROKEN'
                 );
                 if ($mutationOut->original['status'] !== 'success') {
                     return $mutationOut;
@@ -560,20 +535,20 @@ class ReturnPenjualanController extends Controller
 
                 // insert stock mutation using sales 'in'
                 $mutationIn = Mutasi::salesIn(
-                // $member, // from
-                $agent->c_id, // to
-                $itemId, // item-id
-                $nota, // nota return
-                $listPCReturn, // list of list production-code
-                $listQtyPCReturn, // list of list production-code-qty
-                $listUnitPC, // list of production-code-unit
-                $listSellPrice, // list of sellprice
-                $listHPP,
-                $listSmQty,
-                3, // mutcat masuk return barang rusak
-                null, // stock-parent id
-                'ON DESTINATION', // item status
-                'BROKEN' // item condition
+                    // $member, // from
+                    $comp, // to
+                    $itemId, // item-id
+                    $nota, // nota return
+                    $listPCReturn, // list of list production-code
+                    $listQtyPCReturn, // list of list production-code-qty
+                    $listUnitPC, // list of production-code-unit
+                    $listSellPrice, // list of sellprice
+                    $listHPP,
+                    $listSmQty,
+                    3, // mutcat masuk return barang rusak
+                    null, // stock-parent id
+                    'ON DESTINATION', // item status
+                    'BROKEN' // item condition
                 );
                 if ($mutationIn->original['status'] !== 'success') {
                     return $mutationIn;
@@ -590,7 +565,7 @@ class ReturnPenjualanController extends Controller
 
                 // validate production-code is exist in stock-item
                 $validateProdCode = Mutasi::validateProductionCode(
-                    $agent->c_id, // from
+                    $comp, // from
                     $request->idItem, // list item-id
                     $request->prodCode, // list production-code
                     $request->prodCodeLength ,// list production-code length each item
@@ -605,7 +580,7 @@ class ReturnPenjualanController extends Controller
                 $rdDetailid = d_returndt::where('rd_return', $id)->max('rd_detailid') + 1;
                 foreach ($request->idItem as $key => $itemIdX) {
                     // get itemStock based on position and item-id
-                    $stock = $this->getItemStock($agent->c_id, $itemIdX);
+                    $stock = $this->getItemStock($comp, $itemIdX);
                     ($stock === null) ? $itemStock = 0 : $itemStock = $stock->sumQty;
                     // is stock sufficient ?
                     if ($stock === null || $itemStock < $request->jumlah[$key]) {
@@ -687,7 +662,7 @@ class ReturnPenjualanController extends Controller
                     $listUnitPC = [];
 
                     $mutationOut = mutasi::salesOut(
-                        $dataSales->sc_comp, // from
+                        $comp, // from
                         null, // to
                         $itemIdX, // item id
                         $qty_compare, // qty item GB
@@ -737,7 +712,6 @@ class ReturnPenjualanController extends Controller
                 $member->c_saldo += ((int)$itemPrice * (int)$qtyReturn);
                 $member->save();
             }
-
 
             //
             // // insert data to table d_return
@@ -862,14 +836,227 @@ class ReturnPenjualanController extends Controller
                 'message' => $th->getMessage()
             ]);
         }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
+    // detail data return
+    public function detail($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $data = d_return::where('r_id', $id)
+                ->with(['getReturnDt' => function ($q) {
+                    $q
+                        ->with('getProdCode')
+                        ->with('getItem')
+                        ->with('getUnit');
+                }])
+                ->with('getMember')
+                ->with('getComp')
+                ->with('getItem')
+                ->first();
+
+            // get list of 'in' mutcat-list
+            $inMutcatList = m_mutcat::where('m_status', 'M')
+                ->select('m_id')
+                ->get();
+                for ($i = 0; $i < count($inMutcatList); $i++) {
+                    $tmp[] = $inMutcatList[$i]->m_id;
+                }
+
+            $inMutcatList = $tmp;
+            $itemId = $data->r_item;
+            $nota = $data->r_nota;
+            // get sell-price each item
+            $sellPrice = d_stock_mutation::whereHas('getStock', function($q) use ($itemId) {
+                    $q->where('s_item', $itemId);
+                })
+                ->whereIn('sm_mutcat', $inMutcatList)
+                ->where('sm_nota', $nota)
+                ->select('sm_sell')
+                ->first();
+
+            $sellPrice = $sellPrice->sm_sell;
+
+            if ($data->r_type == 'PN') {
+                $data->r_type = 'Potong Nota';
+            } elseif ($data->r_type == 'GB') {
+                $data->r_type = 'Ganti Barang';
+            }
+
+            return response()->json([
+                'status' => 'berhasil',
+                'data' => $data,
+                'sellPrice' => $sellPrice
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+
+    }
+    // // edit data return
+    // public function edit($id)
+    // {
+    //     try {
+    //         $id = Crypt::decrypt($id);
+    //     } catch (\Exception $e) {
+    //         abort(404);
+    //     }
+    //
+    //     DB::beginTransaction();
+    //     try {
+    //
+    //         $data = d_return::where('r_id', $id)
+    //             ->with(['getReturnDt' => function ($q) {
+    //                 $q
+    //                     ->with('getProdCode')
+    //                     ->with('getItem')
+    //                     ->with('getUnit');
+    //             }])
+    //             ->with('getMember')
+    //             ->with('getComp')
+    //             ->with('getItem')
+    //             ->first();
+    //
+    //         // get list-province and list-cities
+    //         $tempProv = m_wil_kota::where('wc_id', $data->getMember->c_area)->first();
+    //         $provinces = m_wil_provinsi::where('wp_id', $tempProv->wc_provinsi)->first();
+    //         $cities = m_wil_kota::where('wc_provinsi', $tempProv->wc_provinsi)->first();
+    //
+    //         // get list of 'in' mutcat-list
+    //         $inMutcatList = m_mutcat::where('m_status', 'M')
+    //             ->select('m_id')
+    //             ->get();
+    //             for ($i = 0; $i < count($inMutcatList); $i++) {
+    //                 $tmp[] = $inMutcatList[$i]->m_id;
+    //             }
+    //
+    //         $inMutcatList = $tmp;
+    //         $itemId = $data->r_item;
+    //         $nota = $data->r_nota;
+    //         // get sell-price each item
+    //         $sellPrice = d_stock_mutation::whereHas('getStock', function($q) use ($itemId) {
+    //                 $q->where('s_item', $itemId);
+    //             })
+    //             ->whereIn('sm_mutcat', $inMutcatList)
+    //             ->where('sm_nota', $nota)
+    //             ->select('sm_sell')
+    //             ->first();
+    //
+    //         $sellPrice = $sellPrice->sm_sell;
+    //
+    //         if ($data->r_type == 'PN') {
+    //             $data->r_type = 'Potong Nota';
+    //         } elseif ($data->r_type == 'GB') {
+    //             $data->r_type = 'Ganti Barang';
+    //         }
+    //
+    //         DB::commit();
+    //         return response()->json([
+    //             'status' => 'gagal',
+    //             'data' => $data
+    //         ]);
+    //     }
+    //     catch (\Exception $e) {
+    //         DB::rollback();
+    //         return response()->json([
+    //             'status' => 'gagal',
+    //             'message' => $e->getMessage()
+    //         ]);
+    //     }
+    // }
     // delete data 'return' from database
     public function delete($id)
     {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+
         DB::beginTransaction();
         try {
             $data = d_return::where('r_id', $id)
-            ->first();
+                ->with('getReturnDt.getProdCode')
+                ->first();
+
+            // extra rollback for 'ganti barang'
+            if ($data->r_type == 'GB')
+            {
+                foreach ($data->getReturnDt as $key => $val) {
+                    // rollback mutation 'out'
+                    $mutRollbackOut = Mutasi::rollbackSalesOut(
+                        $data->r_nota,
+                        $val->rd_item,
+                        5
+                    );
+                    if ($mutRollbackOut->original['status'] !== 'success') {
+                        return $mutRollbackOut;
+                    }
+                    // rollback mutation 'in'
+                    $mutRollbackIn = Mutasi::rollbackSalesIn(
+                        $data->r_nota,
+                        $val->rd_item,
+                        20
+                    );
+                    if ($mutRollbackIn->original['status'] !== 'success') {
+                        return $mutRollbackIn;
+                    }
+
+                    foreach ($val->getProdCode as $idx => $pc) {
+                        $pc->delete();
+                    }
+                    $val->delete();
+                }
+            }
+            else if ($data->r_type == 'PN')
+            {
+                // get list of 'in' mutcat-list
+                $inMutcatList = m_mutcat::where('m_status', 'M')
+                    ->select('m_id')
+                    ->get();
+                for ($i = 0; $i < count($inMutcatList); $i++) {
+                    $tmp[] = $inMutcatList[$i]->m_id;
+                }
+                $inMutcatList = $tmp;
+                $itemId = $data->r_item;
+
+                $agent = m_company::where('c_id', $data->r_member)->first();
+                $itemPrice = d_stock_mutation::where('sm_nota', $data->r_nota)
+                    ->whereIn('sm_mutcat', $inMutcatList)
+                    ->whereHas('getStock', function($q) use ($itemId) {
+                        $q->where('s_item', $itemId);
+                    })
+                    ->select('sm_sell')
+                    ->first();
+                $itemPrice = $itemPrice->sm_sell;
+
+                $agent->c_saldo -= ((int)$itemPrice * $data->r_qty);
+                $agent->save();
+            }
 
             // get mutcat 'out' based on return-type
             switch ($data->r_type) {
@@ -905,32 +1092,7 @@ class ReturnPenjualanController extends Controller
                 return $mutRollbackIn;
             }
 
-            // extra rollback for 'ganti barang'
-            if ($data->r_type == 'GB') {
-                // rollback mutation 'out'
-                $mutRollbackOut = Mutasi::rollbackSalesOut(
-                    $data->r_nota,
-                    $data->r_item,
-                    5
-                );
-                if ($mutRollbackOut->original['status'] !== 'success') {
-                    return $mutRollbackOut;
-                }
-                // rollback mutation 'in'
-                $mutRollbackIn = Mutasi::rollbackSalesIn(
-                    $data->r_nota,
-                    $data->r_item,
-                    20
-                );
-                if ($mutRollbackIn->original['status'] !== 'success') {
-                    return $mutRollbackIn;
-                }
-            }
-
-
-            d_return::where('r_id', $id)
-            ->delete();
-            // dd('x');
+            $ret = d_return::where('r_id', $id)->delete();
 
             DB::commit();
             return response()->json([
