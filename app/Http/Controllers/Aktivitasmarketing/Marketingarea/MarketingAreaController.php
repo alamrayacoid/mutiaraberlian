@@ -710,7 +710,7 @@ class MarketingAreaController extends Controller
                     return $mutConfirm;
                 }
             }
-            
+
             // update stockdist-status to 'Y'
             $stockdist->sd_status = 'Y';
             $stockdist->save();
@@ -1524,7 +1524,8 @@ class MarketingAreaController extends Controller
 
         DB::beginTransaction();
         try {
-            $date = Carbon::createFromFormat('d-m-Y', $request->date);
+            // $date = Carbon::createFromFormat('d-m-Y', $request->date);
+            $date = $request->date;
             // get product-order
             $productOrder = d_productorder::where('po_id', $id)
                 ->with('getPODt')
@@ -1895,12 +1896,12 @@ class MarketingAreaController extends Controller
             ->first();
 
         $data = [];
-
         if ($user->c_type == "PUSAT") {
             $data = m_paymentmethod::where('pm_isactive', 'Y')
                 ->with('getAkun')
                 ->get();
-        } else {
+        }
+        else {
             $data = m_paymentmethod::where('pm_isactive', 'Y')
                 ->with('getAkun')
                 ->where('pm_comp', '=', $user->c_id)

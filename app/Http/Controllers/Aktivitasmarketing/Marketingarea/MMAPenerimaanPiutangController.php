@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Aktivitasmarketing\Marketingarea;
 
-use App\d_salescomp;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Auth;
-use DB;
 use Illuminate\Support\Facades\Crypt;
+
+use App\d_salescomp;
+use App\m_paymentmethod;
+use Auth;
+use Carbon\Carbon;
 use DataTables;
+use DB;
 use Response;
 
 class MMAPenerimaanPiutangController extends Controller
@@ -99,7 +101,7 @@ class MMAPenerimaanPiutangController extends Controller
     public function getDetailTransaksi(Request $request)
     {
         $id = 0;
-        $user = Auth::user();
+        $user = Auth::user()->getCompany;
         try {
             $id = Crypt::decrypt($request->id);
         } catch (\Exception $e){
@@ -127,10 +129,48 @@ class MMAPenerimaanPiutangController extends Controller
             ->orderBy('scp_date')
             ->get();
 
-        $jenis = DB::table('dk_akun')
-            ->where('ak_comp', '=', $user->u_company)
-            ->select('ak_id', 'ak_nama')
+        $jenis = [];
+        if ($user->c_type == "PUSAT") {
+            $jenis = m_paymentmethod::where('pm_isactive', 'Y')
+            ->with('getAkun')
             ->get();
+        }
+        else {
+            $jenis = m_paymentmethod::where('pm_isactive', 'Y')
+                ->with('getAkun')
+                ->where('pm_comp', '=', $user->c_id)
+                ->get();
+
+            if (count($jenis) < 1) {
+                $id = dk_akun::max('ak_id') + 1;
+
+                DB::table('dk_akun')
+                ->insert([
+                    'ak_id' => $id,
+                    'ak_nomor' => '1.001.001',
+                    'ak_tahun' => Carbon::now('Asia/Jakarta')->format('Y'),
+                    'ak_comp' => $user->c_id,
+                    'ak_nama' => 'KAS ' . $user->c_name,
+                    'ak_sub_id' => '001',
+                    'ak_kelompok' => 13,
+                    'ak_posisi' => 'D',
+                    'ak_opening_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                    'ak_opening' => 0,
+                    'ak_setara_kas' => '0',
+                    'ak_isactive' => 1
+                ]);
+            }
+
+            $jenis = m_paymentmethod::where('pm_isactive', 'Y')
+                ->with('getAkun')
+                ->where('pm_comp', '=', $user->c_id)
+                ->get();
+        }
+
+        // $jenis = DB::table('dk_akun')
+        //     ->where('ak_comp', '=', $user->u_company)
+        //     ->select('ak_id', 'ak_nama')
+        //     ->get();
 
         return Response::json([
             'data' => $data,

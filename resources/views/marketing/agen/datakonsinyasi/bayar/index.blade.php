@@ -25,6 +25,7 @@
                                 <h3 class="title"> Pembayaran dari Konsigner </h3>
                             </div>
                             <div class="header-block pull-right">
+                                <input type="hidden" id="userType" value="{{ Auth::user()->getCompany->c_type }}">
                                 <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
                             </div>
                         </div>
@@ -219,6 +220,7 @@
                 });
                 $('#paymentpp').append("<option value='disable'> == Pilih Metode Pembayaran == </option>");
                 $.each(method, function (index, value) {
+                    // if ($('#userType'));
                     $('#paymentpp').append("<option value='"+value.ak_id+"'>"+value.ak_nama+"</option>");
                 });
                 $('#nota_paypp').val(detail[0].sc_nota);
