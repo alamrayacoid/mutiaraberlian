@@ -207,9 +207,13 @@ class MasterKPIController extends Controller
 
     public function save_kpi_divisi(Request $request)
     {
+        $depart = $request->divisi;
+
         DB::beginTransaction();
         try {
         
+            DB::table('d_kpiemp')->where('ke_department', $depart)->delete();
+
             $indicator = $request->indicator;
             for ($i=0; $i < count($indicator); $i++) { 
                 DB::table('d_kpiemp')->insert([
@@ -403,7 +407,7 @@ class MasterKPIController extends Controller
     {
         // dd($request->all());
         $emp = $request->employee;
-        
+
         DB::beginTransaction();
         try {
             DB::table('d_kpiemp')->where('ke_employee', $emp)->delete();
@@ -594,5 +598,21 @@ class MasterKPIController extends Controller
         //     })
         //     ->rawColumns(['action'])
         //     ->make(true);
+    }
+
+    public function getIndikatorKpiDivisi(Request $request)
+    {
+        $data = $request->data;
+        // dd($data);
+        $datas = DB::table('d_kpiemp')
+            ->join('m_kpi', 'k_id', 'ke_kpi')
+            ->select('k_id', 'k_indicator', 'k_isactive', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi')
+            ->where('ke_department', '=', $data)
+            ->get();
+        // dd($datas);
+
+        return response()->json([
+            'data' => $datas
+        ]);
     }
 }

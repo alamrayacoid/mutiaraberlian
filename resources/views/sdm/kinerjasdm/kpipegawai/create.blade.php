@@ -431,86 +431,86 @@
         });
     }
 
-    function tambahFormIndikator() {
-        index = $('.indicator').index(this);
-        getIndicator(index);
+    // function tambahFormIndikator() {
+    //     index = $('.indicator').index(this);
+    //     getIndicator(index);
 
-        $('#kolom')
-            .before(
-                '<div class="row section2">'+
-                    '<div class="col-6 col-md-6 col-sm-12">'+
-                        '<div class="row">'+
-                            '<div class="col-4 col-md-4 col-sm-6 col-xs-12">'+
-                                '<label style="display: none;">~</label>'+
-                            '</div>'+
-                            '<div class="col-6 col-md-6 col-sm-4 col-xs-12">'+
-                                '<div class="form-group">'+
-                                    '<select class="form-control form-control-sm select2 indicator" id="" name="indicator[]" data-last="null">'+
-                                        '<option value="" selected disabled>Pilih Indikator</option>'+
-                                    '</select>'+
-                                '</div>'+
-                            '</div>'+
-                            '<div class="col-2 col-md-2 col-sm-2">'+
-                                '<label for="">Bobot</label>'+
-                            '</div>'+
-                            '<div class="offset-md-4 col-8 col-md-8 col-sm-6 col-xs-12 mb-1 messageError d-none" style="margin-top: -18px;">'+
-                                '<span class="text-danger" style="font-size: 12px;">Indikator sudah terpilih</span>'+
-                            '</div>'+
-                        '</div>'+
-                    '</div>'+
-                    '<div class="col-6 col-md-6 col-sm-12">'+
-                        '<div class="row">'+
-                            '<div class="col-4">'+
-                                '<div class="form-group">'+
-                                    '<input type="text" name="bobot[]" class="form-control form-control-sm digits">'+
-                                '</div>'+
-                            '</div>'+
-                            '<div class="col-2">'+
-                                '<label for="">Target</label>'+
-                            '</div>'+
-                            '<div class="col-4">'+
-                                '<div class="form-group">'+
-                                    '<input type="text" name="target[]" class="form-control form-control-sm digits">'+
-                                '</div>'+
-                            '</div>'+
-                            '<div class="col-2" style="height: 30px;display: flex; align-items: center;">'+
-                                '<button type="button" class="btn btn-block btn-danger btn-sm rounded btn-hapus idx-btn btn-del"><i class="fa fa-trash"></i></button>'+
-                            '</div>'+
-                        '</div>'+
-                    '</div>'+
-                '</div>'
-            );
+    //     $('#kolom')
+    //         .before(
+    //             '<div class="row section2">'+
+    //                 '<div class="col-6 col-md-6 col-sm-12">'+
+    //                     '<div class="row">'+
+    //                         '<div class="col-4 col-md-4 col-sm-6 col-xs-12">'+
+    //                             '<label style="display: none;">~</label>'+
+    //                         '</div>'+
+    //                         '<div class="col-6 col-md-6 col-sm-4 col-xs-12">'+
+    //                             '<div class="form-group">'+
+    //                                 '<select class="form-control form-control-sm select2 indicator" id="" name="indicator[]" data-last="null">'+
+    //                                     '<option value="" selected disabled>Pilih Indikator</option>'+
+    //                                 '</select>'+
+    //                             '</div>'+
+    //                         '</div>'+
+    //                         '<div class="col-2 col-md-2 col-sm-2">'+
+    //                             '<label for="">Bobot</label>'+
+    //                         '</div>'+
+    //                         '<div class="offset-md-4 col-8 col-md-8 col-sm-6 col-xs-12 mb-1 messageError d-none" style="margin-top: -18px;">'+
+    //                             '<span class="text-danger" style="font-size: 12px;">Indikator sudah terpilih</span>'+
+    //                         '</div>'+
+    //                     '</div>'+
+    //                 '</div>'+
+    //                 '<div class="col-6 col-md-6 col-sm-12">'+
+    //                     '<div class="row">'+
+    //                         '<div class="col-4">'+
+    //                             '<div class="form-group">'+
+    //                                 '<input type="text" name="bobot[]" class="form-control form-control-sm digits">'+
+    //                             '</div>'+
+    //                         '</div>'+
+    //                         '<div class="col-2">'+
+    //                             '<label for="">Target</label>'+
+    //                         '</div>'+
+    //                         '<div class="col-4">'+
+    //                             '<div class="form-group">'+
+    //                                 '<input type="text" name="target[]" class="form-control form-control-sm digits">'+
+    //                             '</div>'+
+    //                         '</div>'+
+    //                         '<div class="col-2" style="height: 30px;display: flex; align-items: center;">'+
+    //                             '<button type="button" class="btn btn-block btn-danger btn-sm rounded btn-hapus idx-btn btn-del"><i class="fa fa-trash"></i></button>'+
+    //                         '</div>'+
+    //                     '</div>'+
+    //                 '</div>'+
+    //             '</div>'
+    //         );
 
-        $('.select2').select2({            
-            theme: "bootstrap",
-            dropdownAutoWidth: true,
-            width: '100%'
-        });
+    //     $('.select2').select2({            
+    //         theme: "bootstrap",
+    //         dropdownAutoWidth: true,
+    //         width: '100%'
+    //     });
 
-        //mask digits
-        $('.digits').inputmask("currency", {
-            radixPoint: ",",
-            groupSeparator: ".",
-            digits: 0,
-            autoGroup: true,
-            prefix: '', //Space after $, this will not truncate the first character.
-            rightAlign: true,
-            autoUnmask: true,
-            nullable: false,
-            // unmaskAsNumber: true,
-        });
+    //     //mask digits
+    //     $('.digits').inputmask("currency", {
+    //         radixPoint: ",",
+    //         groupSeparator: ".",
+    //         digits: 0,
+    //         autoGroup: true,
+    //         prefix: '', //Space after $, this will not truncate the first character.
+    //         rightAlign: true,
+    //         autoUnmask: true,
+    //         nullable: false,
+    //         // unmaskAsNumber: true,
+    //     });
 
-        $('.btn-del').on('click', function(){
-            var idx = $('.idx-btn').index(this);
-            var isi = $('.indicator').eq(idx).val();
+    //     $('.btn-del').on('click', function(){
+    //         var idx = $('.idx-btn').index(this);
+    //         var isi = $('.indicator').eq(idx).val();
 
-            var findArray = keranjang.findIndex(e => e == isi)
-            if (findArray >= 0) {
-                keranjang.splice(findArray, 1)
-            }
-            $(this).parents('.section2').remove()
-        })
-    }
+    //         var findArray = keranjang.findIndex(e => e == isi)
+    //         if (findArray >= 0) {
+    //             keranjang.splice(findArray, 1)
+    //         }
+    //         $(this).parents('.section2').remove()
+    //     })
+    // }
 
     function getIndicator(index) {
         axios.get('{{url('/sdm/kinerjasdm/kpi-pegawai/get-kpi-indikator')}}')

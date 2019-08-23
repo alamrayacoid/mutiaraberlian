@@ -436,6 +436,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/kinerjasdm/kpi-divisi/edit-kpi-divisi', 'SDM\MasterKPIController@edit_kpi_divisi')->name('kpidivisi.edit_kpi_divisi');
     Route::post('/sdm/kinerjasdm/kpi-divisi/update-kpi-divisi', 'SDM\MasterKPIController@update_kpi_divisi')->name('kpidivisi.update_kpi_divisi');
     Route::post('/sdm/kinerjasdm/kpi-divisi/delete-kpi-divisi/{divs}', 'SDM\MasterKPIController@delete_kpi_divisi')->name('kpidivisi.delete_kpi_divisi');
+    Route::post('/sdm/kinerjasdm/kpi-divisi/get-data-indikator-kpi-divisi', 'SDM\MasterKPIController@getIndikatorKpiDivisi')->name('kpidivisi.getIndikatorKpiDivisi');
 
     // Absensi -> presensi
     Route::get('/sdm/absensisdm/index', 'SDMController@absensi')->name('absensisdm.index');
