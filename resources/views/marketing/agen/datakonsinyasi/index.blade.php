@@ -95,6 +95,7 @@
 												<th class="text-center">Nota</th>
 												<th class="text-center">Agen</th>
 												<th class="text-center">Total</th>
+												<th class="text-center">Status</th>
 												<th class="text-center" width="10%">Aksi</th>
 											</tr>
 										</thead>
@@ -156,6 +157,7 @@
 				{data: 'sc_nota'},
 				{data: 'agent'},
 				{data: 'total'},
+				{data: 'status'},
 				{data: 'action'}
 			],
 			pageLength: 10,

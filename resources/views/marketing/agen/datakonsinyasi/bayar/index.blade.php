@@ -230,6 +230,7 @@
                 $('#nota_paypp').val(detail[0].sc_nota);
                 $('#date_paypp').val(detail[0].sc_datetop);
                 $('#agent_paypp').val(detail[0].c_name);
+                $('#bayarpaypp').val('Rp 0');
                 $('#total_paypp').val(parseInt(detail[0].sc_total)-terbayar);
                 $('#modalBayarpp').modal('show');
             }).catch(function (error) {

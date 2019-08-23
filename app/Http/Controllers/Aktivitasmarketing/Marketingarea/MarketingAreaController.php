@@ -1194,12 +1194,27 @@ class MarketingAreaController extends Controller
                     ->where('poc_item', $PO->pod_item)
                     ->select('poc_code', 'poc_qty')
                     ->get();
+
                 $listPC = array();
                 $listQtyPC = array();
                 $listUnitPC = array();
                 foreach ($prodCode as $idx => $val) {
                     array_push($listPC, $val->poc_code);
                     array_push($listQtyPC, $val->poc_qty);
+                }
+                $listItemsId = array($PO->pod_item);
+                $listProdCodeLength = array(count($listPC));
+
+                // validate production-code is exist in stock-item
+                $validateProdCode = Mutasi::validateProductionCode(
+                    $productOrder->po_comp, // from
+                    $listItemsId, // list item-id
+                    $listPC, // list production-code
+                    $listProdCodeLength, // list production-code length each item
+                    $listQtyPC // list of qty each production-code
+                );
+                if ($validateProdCode !== 'validated') {
+                    return $validateProdCode;
                 }
 
                 // validate sum-qty of production-code
@@ -1937,8 +1952,6 @@ class MarketingAreaController extends Controller
                         'pm_note' => '',
                         'pm_isactive' => 'Y'
                     ]);
-                }
-
             }
 
             $data = m_paymentmethod::where('pm_isactive', 'Y')

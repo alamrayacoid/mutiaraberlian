@@ -6,13 +6,15 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
 
-use App\Model\keuangan\dk_akun;
 use App\d_salescomp;
+use App\d_salescompdt;
 use App\m_paymentmethod;
+use App\Model\keuangan\dk_akun;
 use Auth;
 use Carbon\Carbon;
 use DataTables;
 use DB;
+use Mutasi;
 use Response;
 
 class MMAPenerimaanPiutangController extends Controller
@@ -256,12 +258,65 @@ class MMAPenerimaanPiutangController extends Controller
                 ->groupBy('sc_id')
                 ->first();
 
+            // if 'piutang' is paid-off
             if ($cek->bayar == $cek->sc_total){
                 DB::table('d_salescomp')
                     ->where('sc_id', '=', $salescomp[0]->sc_id)
                     ->update([
                         'sc_paidoff' => 'Y'
                     ]);
+
+                $salesCompDt = d_salescompdt::whereHas('getSalesComp', function ($q) use ($nota) {
+                        $q->where('sc_nota', $nota);
+                    })
+                    ->with('getSalesComp')
+                    ->with('getProdCode')
+                    ->get();
+
+                foreach ($salesCompDt as $key => $value) {
+                    $listPC = array();
+                    $listQtyPC = array();
+                    $listUnitPC = array();
+
+                    foreach ($value->getProdCode as $idx => $val) {
+                        array_push($listPC, $val->ssc_code);
+                        array_push($listQtyPC, $val->ssc_qty);
+                    }
+                    // get qty in smallest unit
+                    $data_check = DB::table('m_item')
+                        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                            'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                            'm_item.i_unit3 as unit3')
+                        ->where('i_id', '=', $value->scd_item)
+                        ->first();
+
+                    $qty_compare = 0;
+                    if ($value->scd_unit == $data_check->unit1) {
+                        $qty_compare = $value->scd_qty;
+                    } else if ($value->scd_unit == $data_check->unit2) {
+                        $qty_compare = $value->scd_qty * $data_check->compare2;
+                    } else if ($value->scd_unit == $data_check->unit3) {
+                        $qty_compare = $value->scd_qty * $data_check->compare3;
+                    }
+
+                    // insert stock mutation sales 'out'
+                    $mutationOut = Mutasi::salesOut(
+                        $value->getSalesComp->sc_member, // from
+                        null, // to
+                        $value->scd_item, // item-id
+                        $qty_compare, // qty of smallest-unit
+                        $value->getSalesComp->sc_nota, // nota
+                        $listPC, // list of production-code
+                        $listQtyPC, // list of production-code-qty
+                        $listUnitPC, // list of production-code-unit
+                        null, // sellprice
+                        14, // mutcat
+                        $tanggal
+                    );
+                    if ($mutationOut->original['status'] !== 'success') {
+                        return $mutationOut;
+                    }
+                }
             }
 
             DB::commit();
