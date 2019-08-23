@@ -18,7 +18,6 @@
                                 <th>No</th>
                                 <th>Tgl Return</th>
                                 <th>Nota Return</th>
-                                <th>Nota Penjualan</th>
                                 <th>Kode Produksi</th>
                                 <th>Jenis Return</th>
                                 <th>Agen</th>

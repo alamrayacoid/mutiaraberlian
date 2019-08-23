@@ -452,9 +452,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/absensisdm/dashboard/get-presence', 'SDM\Absensi\DashboardController@getPresence')->name('presensiDash.getPresence');
     // Penggajian
     Route::get('/sdm/penggajian/index', 'SDMController@penggajian')->name('penggajian.index');
-    // TAB MANAJEMEN
-    Route::get('/sdm/penggajian/manajemen/create', 'SDMController@create_manajemen')->name('manajemen.create');
-    Route::get('/sdm/penggajian/manajemen/edit', 'SDMController@edit_manajemen')->name('manajemen.edit');
+    // TAB CASHBON
+    Route::get('/sdm/penggajian/cashbon/save', 'SDM\CashbonController@save')->name('cashbon.save');
+    Route::get('/sdm/penggajian/cashbon/update', 'SDM\CashbonController@update')->name('cashbon.update');
+    Route::get('/sdm/penggajian/cashbon/get-data', 'SDM\CashbonController@getData')->name('cashbon.getData');
+    Route::get('/sdm/penggajian/cashbon/get-data-pegawai', 'SDM\CashbonController@getDataPegawai')->name('cashbon.getDataPegawai');
     // END
     // TAB TUNJANGAN
     Route::get('/sdm/penggajian/tunjangan/create', 'SDMController@create_tunjangan')->name('tunjangan.create');
@@ -528,10 +530,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/returnpenjualan/getagent', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getAgent')->name('returnpenjualanagen.getAgent');
     Route::get('/marketing/penjualanpusat/returnpenjualan/getprodcode', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getProdCode')->name('returnpenjualanagen.getProdCode');
     Route::get('/marketing/penjualanpusat/returnpenjualan/getnota', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getNota')->name('returnpenjualanagen.getNota');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/find-item', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@findItem')->name('returnpenjualanagen.findItem');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/find-all-item', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@findAllItem')->name('returnpenjualanagen.findAllItem');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/get-unit/{id}', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getUnit')->name('returnpenjualanagen.getUnit');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/cek-stok/{stock}/{item}/{satuan}/{qty}', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@checkStock')->name('returnpenjualanagen.checkstock');
     Route::get('/marketing/penjualanpusat/returnpenjualan/getdata', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getData')->name('returnpenjualanagen.getData');
     Route::get('/marketing/penjualanpusat/returnpenjualan/getprodcodesubstitute', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@getProdCodeSubstitute')->name('returnpenjualanagen.getProdCodeSubstitute');
     // Route::get('/marketing/penjualanpusat/returnpenjualan/simpan', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@returnpenjualanagen_simpan');
     Route::post('/marketing/penjualanpusat/returnpenjualan/simpan', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@store')->name('returnpenjualanagen.store');
+    Route::get('/marketing/penjualanpusat/returnpenjualan/detail/{id}', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@detail')->name('returnpenjualanagen.detail');
     Route::post('/marketing/penjualanpusat/returnpenjualan/hapus/{id}', 'Aktivitasmarketing\Penjualanpusat\ReturnPenjualanController@delete')->name('returnpenjualanagen.delete');
     // End ---
     // Konsinyasi Pusat

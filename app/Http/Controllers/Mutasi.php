@@ -1728,7 +1728,8 @@ class Mutasi extends Controller
         $listUnitPC, // list unit of production-code
         $sellPrice = null, // sellprice
         $mutcat = null, // mutation category
-        $date = null // set custom date for mutation
+        $date = null, // set custom date for mutation
+        $itemCond = null // item condition
     )
     {
         DB::beginTransaction();
@@ -1736,8 +1737,12 @@ class Mutasi extends Controller
             // dd($fromPosition, $item, $qty, $notaReturn, $notaSales, $listPC, $listQtyPC, $listUnitPC, $sellPrice, $mutcat);
             // qty item that is sending out to branch
             $qty = (int)$qty;
+            // set nota-sales
+            (is_null($notaSales)) ? $notaSales = null : $notaSales = $notaSales;
             // set date if receiveDate is not null
             (is_null($date)) ? $dateNow = Carbon::now() : $dateNow = $date;
+            // set item-condition
+            (is_null($itemCond)) ? $itemCond = 'FINE' : $itemCond = $itemCond;
             // get list of 'in' mutcat-list
             $inMutcatList = m_mutcat::where('m_status', 'M')
                 ->select('m_id')
@@ -1750,19 +1755,23 @@ class Mutasi extends Controller
             $stock = d_stock::where('s_position', '=', $fromPosition)
                 ->where('s_item', '=', $item)
                 ->where('s_status', '=', 'ON DESTINATION')
-                ->where('s_condition', '=', 'FINE')
-                ->whereHas('getMutation', function ($q) use ($inMutcatList, $notaSales) {
-                    $q
-                    ->where('sm_nota', $notaSales)
-                    ->whereIn('sm_mutcat', $inMutcatList);
-                })
-                ->with(['getMutation' => function ($q) use ($inMutcatList, $notaSales) {
-                    $q
-                    ->where('sm_nota', $notaSales)
-                    ->whereIn('sm_mutcat', $inMutcatList);
-                    // ->select(DB::RAW('(sm_qty - sm_use) as sm_sisa'));
-                }])
-                ->get();
+                ->where('s_condition', '=', $itemCond);
+
+            if (!is_null($notaSales)) {
+                $stock = $stock->whereHas('getMutation', function ($q) use ($inMutcatList, $notaSales) {
+                        $q
+                        ->where('sm_nota', $notaSales)
+                        ->whereIn('sm_mutcat', $inMutcatList);
+                    })
+                    ->with(['getMutation' => function ($q) use ($inMutcatList, $notaSales) {
+                        $q
+                        ->where('sm_nota', $notaSales)
+                        ->whereIn('sm_mutcat', $inMutcatList);
+                        // ->select(DB::RAW('(sm_qty - sm_use) as sm_sisa'));
+                    }]);
+            }
+
+            $stock = $stock->get();
 
             $permintaan = $qty;
             // set callback if stock-item-parent is empty
