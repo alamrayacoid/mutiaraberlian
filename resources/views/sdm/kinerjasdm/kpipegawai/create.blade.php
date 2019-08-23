@@ -283,15 +283,27 @@
                                                         '<input type="text" class="form-control form-control-sm" name="target[]" value="'+ val.ke_target +'">'+
                                                     '</div>'+
                                                 '</div>'+
-                                                // '<div class="col-2" style="height: 30px;display: flex; align-items: center;">'+
-                                                //     '<button type="button" class="btn btn-block btn-danger btn-sm rounded btn-hapus idx-btn btn-del"><i class="fa fa-trash"></i></button>'+
-                                                // '</div>'+
+                                                '<div class="col-2" style="height: 30px;display: flex; align-items: center;">'+
+                                                    '<button type="button" class="btn btn-block btn-danger btn-sm rounded btn-hapus idx-btn btn-del"><i class="fa fa-trash"></i></button>'+
+                                                '</div>'+
                                             '</div>'+
                                         '</div>'+
                                     '</div>'
                                 );
                         }
                     });
+                    
+                    $('.btn-del').on('click', function(){
+                        var idx = $('.idx-btn').index(this);
+                        var isi = $('.indicator').eq(idx).val();
+
+                        var findArray = keranjang.findIndex(e => e == isi)
+                        if (findArray >= 0) {
+                            keranjang.splice(findArray, 1)
+                        }
+                        $(this).parents('.section2').remove()
+                    });
+                    
                 } else { // ketika pegawai tidak memiliki indikator
                     $('.section2').remove();
                     
@@ -343,6 +355,12 @@
                                 '</div>'+
                             '</div>'
                         );
+
+                    $('.select2').select2({            
+                        theme: "bootstrap",
+                        dropdownAutoWidth: true,
+                        width: '100%'
+                    });
                 }
 
 

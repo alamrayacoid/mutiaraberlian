@@ -279,9 +279,9 @@
                                                             '<input type="text" class="form-control form-control-sm" name="target[]" value="'+ val.ke_target +'">'+
                                                         '</div>'+
                                                     '</div>'+
-                                                    // '<div class="col-2" style="height: 30px;display: flex; align-items: center;">'+
-                                                    //     '<button type="button" class="btn btn-block btn-danger btn-sm rounded btn-hapus idx-btn btn-del"><i class="fa fa-trash"></i></button>'+
-                                                    // '</div>'+
+                                                    '<div class="col-2" style="height: 30px;display: flex; align-items: center;">'+
+                                                        '<button type="button" class="btn btn-block btn-danger btn-sm rounded btn-hapus idx-btn btn-del"><i class="fa fa-trash"></i></button>'+
+                                                    '</div>'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'
@@ -339,6 +339,12 @@
                                     '</div>'+
                                 '</div>'
                             );
+
+                        $('.select2').select2({            
+                            theme: "bootstrap",
+                            dropdownAutoWidth: true,
+                            width: '100%'
+                        });
                     }
 
 
