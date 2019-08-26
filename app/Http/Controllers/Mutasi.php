@@ -3410,7 +3410,7 @@ class Mutasi extends Controller
 
             $qtyFromMutation = 0;
             foreach ($stockDestination->getMutation as $idxMut => $valMut) {
-                $stockDestination += $valMut->sm_qty;
+                $qtyFromMutation += $valMut->sm_qty;
             }
 
             // get stock-mutation parent (mutation out)
@@ -3494,8 +3494,8 @@ class Mutasi extends Controller
                     $listSmQty, // lsit of sm-qty
                     20, // mutcat masuk pembelian
                     null, // stock-parent id
-                    null, // items status in stock
-                    null, // item condition in stock
+                    'ON DESTINATION', // items status in stock
+                    'FINE', // item condition in stock
                     $date
                 );
                 if ($mutationIn->original['status'] !== 'success') {
