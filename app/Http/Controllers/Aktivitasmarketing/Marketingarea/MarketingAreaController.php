@@ -2288,8 +2288,9 @@ class MarketingAreaController extends Controller
                     ->orderBy('s_nota', 'desc')
                     ->get();
             }
-        } else {
-            if ($userType === 'E') {
+        }
+        else {
+            if (Auth::user()->getCompany->c_type === 'PUSAT') {
                 // get query to show sales-list
                 $datas = d_sales::whereBetween('s_date', [$from, $to])
                     ->with('getUser.employee')
@@ -2297,14 +2298,27 @@ class MarketingAreaController extends Controller
                     ->orderBy('s_date', 'desc')
                     ->orderBy('s_nota', 'desc')
                     ->get();
-            } else {
-                // get sub-agent's code  from currently logged in user
-                $subAgents = m_agen::where('a_parent', Auth::user()->u_code)
-                    ->get();
+            }
+            else {
                 $listAgentCode = array();
-                foreach ($subAgents as $subAgent) {
-                    array_push($listAgentCode, $subAgent->a_code);
+                // get list agents
+                $agents = m_agen::where('a_type', '!=', 'PUSAT')
+                    ->where(function ($q) {
+                        $q->where('a_mma', Auth::user()->u_company)
+                            ->orWhere('a_parent', Auth::user()->u_code);
+                    })
+                    ->get();
+                foreach ($agents as $agent) {
+                    array_push($listAgentCode, $agent->a_code);
                 }
+
+                // get sub-agent's code  from currently logged in user
+                // $subAgents = m_agen::where('a_parent', Auth::user()->u_code)
+                // ->get();
+                // foreach ($subAgents as $subAgent) {
+                //     array_push($listAgentCode, $subAgent->a_code);
+                // }
+
                 // add logged-in user's code
                 array_push($listAgentCode, Auth::user()->u_code);
                 // get user from created list of agent/sub-agent's code

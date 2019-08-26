@@ -2605,7 +2605,12 @@
                 });
                 $('#paymentpp').append("<option value='disable'> == Pilih Metode Pembayaran == </option>");
                 $.each(method, function (index, value) {
-                    $('#paymentpp').append("<option value='"+value.ak_id+"'>"+value.ak_nama+"</option>");
+                    if ($('#userType').val() == 'PUSAT') {
+                        $('#paymentpp').append('<option value="'+ value.pm_id +'">'+ value.get_akun.ak_nomor +' - '+ value.pm_name +'</option>');
+                    }
+                    else {
+                        $('#paymentpp').append("<option value='"+value.get_akun.ak_id +"'>"+ value.get_akun.ak_nama +"</option>");
+                    }
                 });
                 $('#nota_paypp').val(detail[0].sc_nota);
                 $('#date_paypp').val(detail[0].sc_datetop);

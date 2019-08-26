@@ -38,7 +38,7 @@ class MMAPenerimaanPiutangController extends Controller
             ->where('sc_paidoff', '=', 'N')
             ->groupBy('sc_id')
             ->where('sc_comp', '=', $user->u_company);
-
+            
         if (isset($request->start) && $request->start != '' && $request->start !== null){
             $start = Carbon::createFromFormat('d-m-Y', $request->start)->format('Y-m-d');
             $info = $info->where('sc_date', '>=', $start);
@@ -68,6 +68,9 @@ class MMAPenerimaanPiutangController extends Controller
                         </div></center>';
             })
             ->editColumn('sisa', function ($info){
+                if ($info->pembayaran == null || $info->pembayaran == '') {
+                    return "Rp. " . number_format($info->sc_total, '0', ',', '.');
+                }
                 return "Rp. " . number_format($info->sisa, '0', ',', '.');
             })
             ->rawColumns(['aksi'])
@@ -163,16 +166,16 @@ class MMAPenerimaanPiutangController extends Controller
                     'ak_isactive' => 1
                 ]);
 
-            $pmId = m_paymentmethod::max('pm_id') + 1;
-            DB::table('m_paymentmethod')
-                ->insert([
-                    'pm_id' => $pmId,
-                    'pm_comp' => $user->c_id,
-                    'pm_name' => 'KAS ' . $user->c_name,
-                    'pm_akun' => $idAkun,
-                    'pm_note' => '',
-                    'pm_isactive' => 'Y'
-                ]);
+                $pmId = m_paymentmethod::max('pm_id') + 1;
+                DB::table('m_paymentmethod')
+                    ->insert([
+                        'pm_id' => $pmId,
+                        'pm_comp' => $user->c_id,
+                        'pm_name' => 'KAS ' . $user->c_name,
+                        'pm_akun' => $idAkun,
+                        'pm_note' => '',
+                        'pm_isactive' => 'Y'
+                    ]);
             }
 
             $jenis = m_paymentmethod::where('pm_isactive', 'Y')
@@ -180,7 +183,7 @@ class MMAPenerimaanPiutangController extends Controller
                 ->where('pm_comp', '=', $user->c_id)
                 ->get();
         }
-
+// dd($jenis);
         // $jenis = DB::table('dk_akun')
         //     ->where('ak_comp', '=', $user->u_company)
         //     ->select('ak_id', 'ak_nama')
