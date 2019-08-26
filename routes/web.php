@@ -453,6 +453,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/absensisdm/dashboard/get-presence', 'SDM\Absensi\DashboardController@getPresence')->name('presensiDash.getPresence');
     // Kelola Hari Libur
     Route::post('/sdm/absensisdm/kelola-libur/simpan', 'SDMController@saveHariLibur')->name('absensisdm.saveHariLibur');
+    Route::get('/sdm/absensisdm/kelola-libur/cari', 'SDMController@cariHariLibur')->name('absensisdm.cariHariLibur');
+    Route::get('/sdm/absensisdm/kelola-libur/detail', 'SDMController@getDetailHariLibur')->name('absensisdm.getDetailHariLibur');
+    Route::get('/sdm/absensisdm/kelola-libur/update', 'SDMController@updateDetailHariLibur')->name('absensisdm.updateDetailHariLibur');
+    Route::get('/sdm/absensisdm/kelola-libur/hapus', 'SDMController@hapusHariLibur')->name('absensisdm.hapusHariLibur');
     // Penggajian
     Route::get('/sdm/penggajian/index', 'SDMController@penggajian')->name('penggajian.index');
     // TAB CASHBON

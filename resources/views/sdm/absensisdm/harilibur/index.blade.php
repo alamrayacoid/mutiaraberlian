@@ -17,7 +17,7 @@
                         <label for="">Filter</label>
                     </div>
                     <div class="col-md-3">
-                        <select id="bulan" class="form-control form-control-sm select2" name="bulan">
+                        <select id="bulan_libur" class="form-control form-control-sm select2" name="bulan">
                             <option value="all">Semua Bulan</option>
                             <option value="1">Januari</option>
                             <option value="2">Februari</option>
@@ -34,10 +34,10 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <input type="text" class="form-control tahun" id="tahun" name="tahun">
+                        <input type="text" class="form-control tahun" id="tahun_libur" name="tahun">
                     </div>
                     <div class="col-md-2">
-                        <button type="button" class="btn btn-primary">Terapkan</button>
+                        <button type="button" class="btn btn-primary" onclick="cariHariLibur()">Terapkan</button>
                     </div>
                     <div class="col-md-4">
                         <span>Keterangan: Kosongi tahun untuk melihat semua data tanpa filter tahun</span>
@@ -45,12 +45,12 @@
 				</div>
 				<hr>
 				<div class="table-responsive">
-					<table class="table table-hover data-table table-striped table-bordered nowrap" cellspacing="0" style="width: 100%" id="table_aturankehadiran">
+					<table class="table table-hover table-striped table-bordered nowrap" cellspacing="0" style="width: 100%" id="table_harilibur">
 						<thead class="bg-primary">
                             <tr>
-                                <th>Tanggal</th>
-                                <th>Keterangan</th>
-                                <th>Aksi</th>
+                                <th width="30%">Tanggal</th>
+                                <th width="50%">Keterangan</th>
+                                <th width="20%">Aksi</th>
                             </tr>
 						</thead>
 						<!-- <thead class="bg-primary">
