@@ -551,6 +551,8 @@ class ManajemenAgenController extends Controller
         $agen = DB::table('m_agen')
             ->join('m_company', 'a_code', '=', 'c_user')
             ->select('a_id', 'a_code', 'a_name', 'c_id')
+            ->where('c_type', '!=', 'PUSAT')
+            ->where('c_type', '!=', 'CABANG')
             ->where('a_area', '=', $kota)
             ->where('a_isactive', '=', 'Y')
             ->get();

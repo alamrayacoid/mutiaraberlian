@@ -38,7 +38,7 @@ class MMAPenerimaanPiutangController extends Controller
             ->where('sc_paidoff', '=', 'N')
             ->groupBy('sc_id')
             ->where('sc_comp', '=', $user->u_company);
-            
+
         if (isset($request->start) && $request->start != '' && $request->start !== null){
             $start = Carbon::createFromFormat('d-m-Y', $request->start)->format('Y-m-d');
             $info = $info->where('sc_date', '>=', $start);
@@ -302,13 +302,15 @@ class MMAPenerimaanPiutangController extends Controller
                         $qty_compare = $value->scd_qty * $data_check->compare3;
                     }
 
+
+                    $nota = $value->getSalesComp->sc_nota . '-PAID';
                     // insert stock mutation sales 'out'
                     $mutationOut = Mutasi::salesOut(
                         $value->getSalesComp->sc_member, // from
                         null, // to
                         $value->scd_item, // item-id
                         $qty_compare, // qty of smallest-unit
-                        $value->getSalesComp->sc_nota, // nota
+                        $nota, // nota
                         $listPC, // list of production-code
                         $listQtyPC, // list of production-code-qty
                         $listUnitPC, // list of production-code-unit

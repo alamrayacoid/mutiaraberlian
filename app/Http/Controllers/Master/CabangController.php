@@ -149,7 +149,7 @@ class CabangController extends Controller
             abort(401);
         }
         $agenController = new AgenController();
-        
+
         // validate request
         $isValidRequest = $agenController->validate_req($request);
         if ($isValidRequest != '1') {
@@ -419,7 +419,7 @@ class CabangController extends Controller
             $data['address_villages'] = $agenController->getVillages($data['agen']->a_kecamatan);
             $data['has_subagent'] = $agenController->hasSubAgent($data['agen']->a_code);
 
-            return view('masterdatautama.cabang.edit', compact('data', 'employe', 'provinces', 'selectedProvId', 'cities'));
+            return view('masterdatautama.cabang.edit', compact('data'));
         }
         else {
             try {
