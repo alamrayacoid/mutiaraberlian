@@ -104,4 +104,105 @@ class SDMController extends Controller
             ]);
         }
     }
+
+    public function cariHariLibur(Request $request){
+        $tahun = $request->tahun;
+        $bulan = $request->bulan;
+
+        DB::beginTransaction();
+        try {
+            $data = DB::table('m_holyday')
+                ->select('hd_id', DB::raw('date_format(hd_date, "%d-%m-%Y") as tanggal'), 'hd_note');
+
+            if ($bulan != 'all') {
+                $data = $data->whereMonth('hd_date', '=', $bulan);
+            }
+            if ($tahun != '' || $tahun !== null) {
+                $data = $data->whereYear('hd_date', '=', $tahun);
+            }
+
+            $data = $data->orderBy('hd_date', 'asc')->get();
+
+            DB::commit();
+            return response()->json($data);
+        } catch(\Exception $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => "gagal",
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function getDetailHariLibur(Request $request){
+        $id = $request->id;
+
+        $data = DB::table('m_holyday')
+            ->select('hd_id', DB::raw('date_format(hd_date, "%d-%m-%Y") as hd_date'), 'hd_note')
+            ->where('hd_id', '=', $id)
+            ->first();
+
+        return response()->json($data);
+    }
+
+    public function updateDetailHariLibur(Request $request){
+        if (!AksesUser::checkAkses(27, 'update')) {
+            return Response::json([
+                'status' => "gagal",
+                'message' => "Anda tidak memiliki akses"
+            ]);
+        }
+
+        $tanggal = Carbon::createFromFormat('d-m-Y', $request->tanggal)->format('Y-m-d');
+        $note = $request->note;
+
+        DB::beginTransaction();
+        try {
+            DB::table('m_holyday')
+                ->where('hd_date', '=', $tanggal)
+                ->update([
+                    'hd_note' => $note
+                ]);
+
+            DB::commit();
+            return Response::json([
+                'status' => "sukses"
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return Response::json([
+                'status' => "gagal",
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function hapusHariLibur(Request $request){
+        if (!AksesUser::checkAkses(27, 'delete')) {
+            return Response::json([
+                'status' => "gagal",
+                'message' => "Anda tidak memiliki akses"
+            ]);
+        }
+
+        $id = $request->id;
+
+        DB::beginTransaction();
+        try {
+            $data = DB::table('m_holyday')
+                ->where('hd_id', '=', $id)
+                ->delete();
+
+            DB::commit();
+            return Response::json([
+                'status' => "sukses"
+            ]);
+        } catch(\Exception $e){
+            DB::rollBack();
+            return Response::json([
+                'status' => "gagal",
+                'message' => $e
+            ]);
+        }
+    }
 }
