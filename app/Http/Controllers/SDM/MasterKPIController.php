@@ -945,4 +945,123 @@ class MasterKPIController extends Controller
             ]);
         }
     }
+
+    public function getKelolaKpiPegawai(Request $request)
+    {
+        // dd('coba');
+        $pegawai = $request->pegawai;
+        // dd($pegawai);
+        // 
+        $periode = "01-" . $request->periode;
+        $periode = Carbon::createFromFormat('d-m-Y', $periode);
+        $periodes = DB::table('d_kpi')
+                    ->select('k_id', 'k_type', 'k_periode', 'k_employee', 'k_department')
+                    ->whereMonth('k_periode', $periode->month)
+                    ->whereYear('k_periode', $periode->year)
+                    ->where('k_employee', $pegawai)
+                    ->first();
+
+        if ($periodes == true) {
+            $datas = DB::table('d_kpiemp')
+                ->join('m_kpi', 'm_kpi.k_id', 'ke_kpi')
+                ->join('d_kpi', function($q){
+                    $q->on('k_type', 'ke_type');
+                    $q->on('k_employee', 'ke_employee');
+                })
+                ->leftjoin('d_kpidt', function($q){
+                    $q->on('kd_kpi', 'd_kpi.k_id');
+                    $q->on('kd_indikator', 'ke_kpi');
+                })
+                ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total', 'k_periode')
+                ->where('ke_employee', '=', $pegawai)
+                ->whereMonth('k_periode', $periode->month)
+                ->whereYear('k_periode', $periode->year)
+                ->get();
+                // dd($datas);
+        } elseif ($periodes == false) {
+            $datas = [];
+        }
+        // dd($datas);
+        return Datatables::of($datas)
+            ->addIndexColumn()
+            ->make(true);
+
+        // return response()->json([
+        //     'pegawai' => $datas
+        // ]);
+    }
+
+    public function getKelolaKpiDivisi(Request $request)
+    {
+        // dd('coba');
+        $divisi = $request->divisi;
+        // dd($pegawai);
+        // 
+        $periode = "01-" . $request->periode;
+        $periode = Carbon::createFromFormat('d-m-Y', $periode);
+        $periodes = DB::table('d_kpi')
+                    ->select('k_id', 'k_type', 'k_periode', 'k_employee', 'k_department')
+                    ->whereMonth('k_periode', $periode->month)
+                    ->whereYear('k_periode', $periode->year)
+                    ->where('k_department', $divisi)
+                    ->first();
+
+        if ($periodes == true) {
+            $datas = DB::table('d_kpiemp')
+                ->join('m_kpi', 'm_kpi.k_id', 'ke_kpi')
+                ->join('d_kpi', function($q){
+                    $q->on('k_type', 'ke_type');
+                    $q->on('k_department', 'ke_department');
+                })
+                ->leftjoin('d_kpidt', function($q){
+                    $q->on('kd_kpi', 'd_kpi.k_id');
+                    $q->on('kd_indikator', 'ke_kpi');
+                })
+                ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total', 'k_periode')
+                ->where('ke_department', '=', $divisi)
+                ->whereMonth('k_periode', $periode->month)
+                ->whereYear('k_periode', $periode->year)
+                ->get();
+                // dd($datas);
+        } elseif ($periodes == false) {
+            $datas = [];
+        }
+        // dd($datas);
+        return Datatables::of($datas)
+            ->addIndexColumn()
+            ->make(true);
+
+        // return response()->json([
+        //     'pegawai' => $datas
+        // ]);
+    }
+
+    public function getDataCopy(Request $request)
+    {
+        $status = $request->status;
+        $data = DB::table('m_kpi');
+        if ($status != 'all'){
+            $data = $data->where('k_isactive', '=', $status);
+        }
+
+        $datas = $data->get();
+
+        return Datatables::of($datas)
+            ->addIndexColumn()
+            ->addColumn('action', function ($datas) {
+                if ($datas->k_isactive == 'Y'){
+                    return '<div class="btn-group btn-group-sm text-center" style="width: 100%">
+                            <button class="btn btn-warning btn-edit-masterkpi btn-sm hint--top-left hint--error" type="button" onclick="nonKpi(\''.Crypt::encrypt($datas->k_id).'\')" aria-label="Non-aktifkan"><i class="fa fa-close"></i></button>
+                            <button class="btn btn-danger btn-disable-masterkpi btn-sm hint--top-left hint--error" type="button" aria-label="Hapus" onclick="deleteKpi(\''.Crypt::encrypt($datas->k_id).'\')"><i class="fa fa-trash"></i></button>
+                        </div>';
+                } else {
+                    return '<div class="btn-group btn-group-sm text-center" style="width: 100%">
+                            <button class="btn btn-success btn-edit-masterkpi btn-sm hint--top-left hint--success" type="button" aria-label="Aktifkan" onclick="activeKpi(\''.Crypt::encrypt($datas->k_id).'\')"><i class="fa fa-check"></i></button>
+                            <button class="btn btn-danger btn-disable-masterkpi btn-sm hint--top-left hint--error" type="button" aria-label="Hapus" onclick="deleteKpi(\''.Crypt::encrypt($datas->k_id).'\')"><i class="fa fa-trash"></i></button>
+                        </div>';
+                }
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
 }

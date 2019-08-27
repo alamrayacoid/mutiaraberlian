@@ -322,7 +322,7 @@
                     $('.digits').inputmask("currency", {
                         radixPoint: ",",
                         groupSeparator: ".",
-                        digits: 0,
+                        digits: 2,
                         autoGroup: true,
                         prefix: '', //Space after $, this will not truncate the first character.
                         rightAlign: true,
@@ -338,7 +338,7 @@
                         let hasil_divisi = $(".hasilD").eq(idxHasil).val();
                         let hitung_point_divisi = parseInt(hasil_divisi) / parseInt(target_divisi);
                         
-                        $(".pointD").eq(idxHasil).val(hitung_point_divisi);
+                        $(".pointD").eq(idxHasil).val(hitung_point_divisi.toFixed(2));
 
                         let bobot_divisi = $(".bobotD").eq(idxHasil).val();
                         let point_divisi = $(".pointD").eq(idxHasil).val();
@@ -346,7 +346,7 @@
                         let nilai_divisi = (bobot_divisi * point_divisi) / parseInt(total_bobot_divisi);
                         console.log(nilai_divisi);
 
-                        $(".nilaiD").eq(idxHasil).val(nilai_divisi);
+                        $(".nilaiD").eq(idxHasil).val(nilai_divisi.toFixed(2));
                     });
                 },
             });
@@ -439,6 +439,18 @@
                         $('#table_indikator_divisi_pegawai tbody').append(row);
                     });
 
+                    $('.digits').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 2,
+                        autoGroup: true,
+                        prefix: '', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
+                    });
+
                     $('.hasilP').on('keyup', function(){
                         idxHasil = $('.hasilP').index(this);
                         
@@ -446,38 +458,19 @@
                         let hasil_pegawai = $(".hasilP").eq(idxHasil).val();
                         let hitung_point_pegawai = parseInt(hasil_pegawai) / parseInt(target_pegawai);
                         
-                        $(".pointP").eq(idxHasil).val(hitung_point_pegawai);
+                        $(".pointP").eq(idxHasil).val(hitung_point_pegawai.toFixed(2));
 
                         let bobot_pegawai = $(".bobotP").eq(idxHasil).val();
                         let point_pegawai = $(".pointP").eq(idxHasil).val();
                         let total_bobot_pegawai = parseInt(resp.total);
                         let nilai_pegawai = (bobot_pegawai * point_pegawai) / parseInt(total_bobot_pegawai);
-                        console.log(nilai_pegawai);
+                        // console.log(parseFloat(nilai_pegawai).toFixed(2));
 
-                        $(".nilaiP").eq(idxHasil).val(nilai_pegawai);
+                        $(".nilaiP").eq(idxHasil).val(nilai_pegawai.toFixed(2));
                     });
                 },
             });
         }
-
-        // $(document).on('click', '.btn-submit', function (evt) {
-        //     evt.preventDefault();
-
-        //     loadingShow();
-        //     var data = $('#myform').serialize();
-        //     axios.post(baseUrl+'/sdm/kinerjasdm/input-kpi/save', data).then(function (response){
-        //         console.log(response.data);
-        //         if(response.data.status == 'success'){
-        //             loadingHide();
-        //             messageSuccess("Berhasil", "Data Kelola KPI Berhasil Disimpan");
-        //             setInterval(function(){location.reload(true);}, 3500)
-        //         }else{
-        //             loadingHide();
-        //             messageFailed("Gagal", "Data Kelola KPI Gagal Disimpan");
-        //         }
-
-        //     });
-        // })
         
         $(document).on('click', '.btn-submit', function (evt) {
             evt.preventDefault();

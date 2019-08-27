@@ -12,66 +12,59 @@
 		</div>
 		<div class="card-block">
 			<section>
-				<div class="row">
-
-					<div class="col-md-2 col-sm-6 col-xs-12">
-						<label>Periode</label>
-					</div> 
-
-					<div class="col-md-2 col-sm-6 col-xs-12">
-						<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" name="">
-						</div>
-					</div>
-
-					<div class="col-md-1 col-sm-6 col-xs-12">
-						<span>S/D</span>
-					</div> 
-
-					<div class="col-md-2 col-sm-6 col-xs-12">
-						<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" name="">
-						</div>
-					</div>
-
-					<div class="col-md-3">
-						<button type="button" class="btn btn-primary">Cari</button>
-					</div>
+				<div class="row mb-3">
+          <div class="col-md-5 col-sm-6">
+            <div class="row col-md-12 col-sm-12">
+              <div class="col-md-3 col-sm-12">
+                <label for="">Periode</label>
+              </div>
+              <div class="col-md-9 col-sm-12">
+                <div class="input-group input-group-sm input-daterange periode_kpi">
+                  <input type="text" class="form-control" id="periode_kpi" name="periode_kpi" autocomplete="off">
+                </div>
+              </div>
+            </div>
+          </div>
+	      </div>
+	      <div class="row mb-3">
+          <div class="col-md-5 col-sm-6">
+            <div class="row col-md-12 col-sm-12">
+              <div class="col-md-3 col-sm-12">
+                <label for="">Tipe</label>
+              </div>
+              <div class="col-md-9 col-sm-12">
+                <div class="form-group">
+                  <select name="tipe" id="tipe" class="form-control form-control-sm select2 tipe" onchange="getFormDivisiOrEmployee()">
+                    <option value="" selected="" disabled="">Pilih Tipe</option>
+                    <option value="D">Divisi</option>
+                    <option value="P">Pegawai</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="kolom"></div>
+	      </div>
+				<hr>
+				<div class="table-responsive">
+					<table class="table table-hover data-table table-striped table-bordered display nowrap w-100" cellspacing="0" id="table_indikator_divisi_pegawai_index">
+						<thead class="bg-primary">
+							<tr>
+								<th class="text-center">No.</th>
+								<th class="text-center">Indikator</th>
+                <th class="text-center">Unit</th>
+                <th class="text-center">Bobot</th>
+                <th class="text-center">Target</th>
+                <th class="text-center">Hasil</th>
+                <th class="text-center">Point</th>
+                <th class="text-center">Nilai</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
 				</div>
-					<hr>
-					<div class="table-responsive">
-						<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_inputkpi">
-							<thead class="bg-primary">
-								<tr>
-									<th>No</th>
-									<th>Tanggal</th>
-									<th>Kode</th>
-									<th>Pegawai</th>
-									<th>Tanggal Confirm</th>
-									<th>Aksi</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>1</td>
-									<td>07 Sep 2019</td>
-									<td>13r4d</td>
-									<td>Brad</td>
-									<td>-</td>
-									<td>
-										<div class="btn-group btn-group-sm">
-											<button class="btn btn-primary btn-datail-inputkpi" data-toggle="modal" data-target="#tambah_scoreboardp" type="button" title="Detail"><i class="fa fa-info-circle"></i></button>
-											<button class="btn btn-warning btn-edit-inputkpi" type="button" title="Edit"><i class="fa fa-pencil"></i></button>
-											<button class="btn btn-danger btn-disable-inputkpi" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-
 			</section>
-
 		</div>
 	</div>
 </div>

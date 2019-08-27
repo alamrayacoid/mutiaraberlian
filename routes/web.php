@@ -413,6 +413,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sdm/kinerjasdm/input-kpi/get-data-indikator-kpi-divisi', 'SDM\MasterKPIController@getDataIndikatorKpiDivisi')->name('inputkpi.getDataIndikatorKpiDivisi');
     Route::match(['get', 'post'], '/sdm/kinerjasdm/input-kpi/create', 'SDM\MasterKPIController@createInputKpi')->name('inputkpi.create');
     Route::post('/sdm/kinerjasdm/input-kpi/save', 'SDM\MasterKPIController@saveInputKpi')->name('inputkpi.save');
+    Route::post('/sdm/kinerjasdm/input-kpi/get-kelola-kpi-pegawai', 'SDM\MasterKPIController@getKelolaKpiPegawai')->name('inputkpi.getKelolaKpiPegawai');
+    Route::post('/sdm/kinerjasdm/input-kpi/get-kelola-kpi-divisi', 'SDM\MasterKPIController@getKelolaKpiDivisi')->name('inputkpi.getKelolaKpiDivisi');
     // Route::match(['get', 'post'], '/sdm/kinerjasdm/input-kpi/save', 'SDM\MasterKPIController@saveInputKpi')->name('inputkpi.save');
     
 

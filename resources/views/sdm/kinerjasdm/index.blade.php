@@ -95,18 +95,21 @@
 @section('extra_script')
 <script type="text/javascript">
 
-    var table_sup         = $('#table_scoreboard').DataTable();
-    var table_bar         = $('#table_inputkpi').DataTable();
-    var table_kpi_pegawai = $('#table_kpi_pegawai').DataTable();
-    var table_kpi_divisi_d = $('#table_kpi_divisi_d').DataTable();
+    var table_sup                              = $('#table_scoreboard').DataTable();
+    var table_bar                              = $('#table_inputkpi').DataTable();
+    var table_kpi_pegawai                      = $('#table_kpi_pegawai').DataTable();
+    var table_kpi_divisi_d                     = $('#table_kpi_divisi_d').DataTable();
     var tb_detail_kpi_pegawai;
     var tb_detail_kpi_divisi;
-    var table_divisi      = $('#table_divisi').DataTable();
+    var table_divisi                           = $('#table_divisi').DataTable();
     var table_kpi;
-    var table_rab         = $('#table_manajemenscoreboardkpi').DataTable();
+    var table_rab                              = $('#table_manajemenscoreboardkpi').DataTable();
+    var table_indikator_divisi_pegawai         = $('#table_indikator_divisi_pegawai').DataTable();
+    // var table_indikator_divisi_pegawai_index   = $('#table_indikator_divisi_pegawai_index').DataTable();
 
     $(document).ready(function () {
         get_kpiAgen();
+        getDataIndikatorPegawaiIndex();
 
         setTimeout(function () {
             getDataMasterKPI();
@@ -725,4 +728,221 @@
         window.location.href = "{{url('/sdm/kinerjasdm/kpi-divisi/edit-kpi-divisi?')}}"+"divisi="+divs
     }
 </script>
+
+<script type="text/javascript">
+    var month_years = new Date();
+    const month_year = new Date(month_years.getFullYear(), month_years.getMonth());
+
+    $("#periode_kpi").datepicker( {
+    format: "mm-yyyy",
+    viewMode: "months", 
+    minViewMode: "months"
+    });
+
+    $('#periode_kpi').on('change', function(){
+        $("#table_indikator_divisi_pegawai_index > tbody").find('tr').remove();
+    });
+  </script>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+        setTimeout(function () {
+            getDataIndikatorPegawaiIndex();    
+        }, 2000)
+    });
+
+    function getDivisi(index) {
+      axios.get('{{url('/sdm/kinerjasdm/kpi-divisi/get-kpi-divisi')}}')
+      .then(function(resp) {
+        var data = resp.data.data
+        $.each(data, function(key, val) {
+          $('#divisi').append('<option value="'+val.m_id+'">'+val.m_name+'</option>')
+        })
+      })
+    }
+
+    function getPegawai(index) {
+      axios.get('{{url('/sdm/kinerjasdm/kpi-pegawai/get-kpi-employee')}}')
+      .then(function(resp) {
+        var data = resp.data.data
+        $.each(data, function(key, val) {
+          $('#pegawai').append('<option value="'+val.e_id+'">'+val.e_name+' ('+val.d_name+'/'+val.j_name+')</option>')
+        })
+      })
+    }
+
+    function getFormDivisiOrEmployee() {
+          var data = $('#tipe').val();
+          // console.log(data);
+          if ( data == 'D' ) {
+              console.log('ini data divisi');
+              $('.section2').remove();
+              $('#kolom')
+                  .before(
+                      '<div class="col-md-5 col-sm-6 section2">'+
+                          '<div class="row col-md-12 col-sm-12">'+
+                              '<div class="col-md-3 col-sm-12">'+
+                                  '<label for="">Divisi</label>'+
+                              '</div>'+
+                              '<div class="col-md-9 col-sm-12">'+
+                                  '<div class="form-group">'+
+                                      '<select name="divisi" id="divisi" class="form-control form-control-sm select2 divisi" onchange="getDataIndikatorDivisiIndex()">'+
+                                          '<option value="" disabled selected="">Pilih Divisi</option>'+
+                                      '</select>'+
+                                  '</div>'+
+                              '</div>'+
+                          '</div>'+
+                      '</div>'
+                  );
+
+              $('.divisi').on('select2:select', function () {
+                  $("#table_indikator_divisi_pegawai_index > tbody").find('tr').remove();
+              });
+                  
+              $('.select2').select2({            
+                  theme: "bootstrap",
+                  dropdownAutoWidth: true,
+                  width: '100%'
+              });
+
+              getDivisi();
+
+              $("#table_indikator_divisi_pegawai_index > tbody").find('tr').remove();
+
+          } else if ( data == 'P' ){
+              console.log('ini data pegawai');
+              $('.section2').remove();
+              $('#kolom')
+                  .before(
+                      '<div class="col-md-5 col-sm-6 section2">'+
+                          '<div class="row col-md-12 col-sm-12">'+
+                              '<div class="col-md-3 col-sm-12">'+
+                                  '<label for="">Pegawai</label>'+
+                              '</div>'+
+                              '<div class="col-md-9 col-sm-12">'+
+                                  '<div class="form-group">'+
+                                      '<select name="pegawai" id="pegawai" class="form-control form-control-sm select2 pegawai" onchange="getDataIndikatorPegawaiIndex()">'+
+                                          '<option value="" disabled selected="">Pilih Pegawai</option>'+
+                                      '</select>'+
+                                  '</div>'+
+                              '</div>'+
+                          '</div>'+
+                      '</div>'
+                  );
+
+              $('.pegawai').on('select2:select', function () {
+                  $("#table_indikator_divisi_pegawai_index > tbody").find('tr').remove();
+              });
+
+              $('.select2').select2({            
+                  theme: "bootstrap",
+                  dropdownAutoWidth: true,
+                  width: '100%'
+              });
+
+              getPegawai();
+
+              $("#table_indikator_divisi_pegawai_index > tbody").find('tr').remove();
+          }
+      }
+
+    function getDataIndikatorPegawaiIndex() {
+        var pegawai = $('#pegawai').val();
+        var periode = $('#periode_kpi').val();
+
+        $('#table_indikator_divisi_pegawai_index').dataTable().fnDestroy();
+        table_indikator_divisi_pegawai_index = $('#table_indikator_divisi_pegawai_index').DataTable({
+            serverSide: true,
+            bAutoWidth: true,
+            processing:true,
+            ajax: {
+                url: '{{ route("inputkpi.getKelolaKpiPegawai") }}',
+                type: "post",
+                data: {
+                        "_token": "{{ csrf_token() }}",
+                        "pegawai": pegawai,
+                        "periode": periode
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex', className: "text-center"},
+                {data: 'k_indicator', name: 'k_indicator'},
+                {data: 'k_unit', name: 'k_unit'},
+                {data: 'ke_weight', name: 'ke_weight'},
+                {data: 'ke_target', name: 'ke_target'},
+                {data: 'kd_result', name: 'kd_result'},
+                {data: 'kd_point', name: 'kd_point'},
+                {data: 'kd_total', name: 'kd_total'}
+                // {data: 'action', className: "text-center"}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    }
+
+    function getDataIndikatorDivisiIndex() {
+        var divisi = $('#divisi').val();
+        var periode = $('#periode_kpi').val();
+
+        $('#table_indikator_divisi_pegawai_index').dataTable().fnDestroy();
+        table_indikator_divisi_pegawai_index = $('#table_indikator_divisi_pegawai_index').DataTable({
+            serverSide: true,
+            bAutoWidth: true,
+            processing:true,
+            ajax: {
+                url: '{{ route("inputkpi.getKelolaKpiDivisi") }}',
+                type: "post",
+                data: {
+                        "_token": "{{ csrf_token() }}",
+                        "divisi": divisi,
+                        "periode": periode
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex', className: "text-center"},
+                {data: 'k_indicator', name: 'k_indicator'},
+                {data: 'k_unit', name: 'k_unit'},
+                {data: 'ke_weight', name: 'ke_weight'},
+                {data: 'ke_target', name: 'ke_target'},
+                {data: 'kd_result', name: 'kd_result'},
+                {data: 'kd_point', name: 'kd_point'},
+                {data: 'kd_total', name: 'kd_total'}
+                // {data: 'action', className: "text-center"}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    }
+
+        // function getDataMasterKPI() {
+        //     if ( $.fn.DataTable.isDataTable('#table_masterkpi') ) {
+        //         $('#table_masterkpi').DataTable().destroy();
+        //     }
+
+        //     $('#table_masterkpi tbody').empty();
+
+        //     var status = $('#statuskpi').val();
+        //     table_kpi = $('#table_masterkpi').DataTable({
+        //         serverSide: true,
+        //         bAutoWidth: true,
+        //         processing:true,
+        //         ajax: {
+        //             url: '{{route("masterkpi.getData")}}',
+        //             type: "post",
+        //             data: {
+        //                 "_token": "{{ csrf_token() }}",
+        //                 "status": status
+        //             }
+        //         },
+        //         columns: [
+        //             {data: 'DT_RowIndex'},
+        //             {data: 'k_indicator', name: 'k_indicator'},
+        //             {data: 'action', name: 'action'}
+        //         ],
+        //         pageLength: 10,
+        //         lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        //     });
+        // }
+
+  </script>
 @endsection
