@@ -277,50 +277,52 @@ class MMAPenerimaanPiutangController extends Controller
                     ->get();
 
                 // sell all item to consument if konsinyasi in 'Apotek/Radio'
-                foreach ($salesCompDt as $key => $value) {
-                    $listPC = array();
-                    $listQtyPC = array();
-                    $listUnitPC = array();
+                if (Auth::user()->getCompany->c_type == 'APOTEK/RADIO') {
+                    foreach ($salesCompDt as $key => $value) {
+                        $listPC = array();
+                        $listQtyPC = array();
+                        $listUnitPC = array();
 
-                    foreach ($value->getProdCode as $idx => $val) {
-                        array_push($listPC, $val->ssc_code);
-                        array_push($listQtyPC, $val->ssc_qty);
-                    }
-                    // get qty in smallest unit
-                    $data_check = DB::table('m_item')
-                        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                        foreach ($value->getProdCode as $idx => $val) {
+                            array_push($listPC, $val->ssc_code);
+                            array_push($listQtyPC, $val->ssc_qty);
+                        }
+                        // get qty in smallest unit
+                        $data_check = DB::table('m_item')
+                            ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
                             'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
                             'm_item.i_unit3 as unit3')
-                        ->where('i_id', '=', $value->scd_item)
-                        ->first();
+                            ->where('i_id', '=', $value->scd_item)
+                            ->first();
 
-                    $qty_compare = 0;
-                    if ($value->scd_unit == $data_check->unit1) {
-                        $qty_compare = $value->scd_qty;
-                    } else if ($value->scd_unit == $data_check->unit2) {
-                        $qty_compare = $value->scd_qty * $data_check->compare2;
-                    } else if ($value->scd_unit == $data_check->unit3) {
-                        $qty_compare = $value->scd_qty * $data_check->compare3;
-                    }
+                        $qty_compare = 0;
+                        if ($value->scd_unit == $data_check->unit1) {
+                            $qty_compare = $value->scd_qty;
+                        } else if ($value->scd_unit == $data_check->unit2) {
+                            $qty_compare = $value->scd_qty * $data_check->compare2;
+                        } else if ($value->scd_unit == $data_check->unit3) {
+                            $qty_compare = $value->scd_qty * $data_check->compare3;
+                        }
 
 
-                    $nota = $value->getSalesComp->sc_nota . '-PAID';
-                    // insert stock mutation sales 'out'
-                    $mutationOut = Mutasi::salesOut(
-                        $value->getSalesComp->sc_member, // from
-                        null, // to
-                        $value->scd_item, // item-id
-                        $qty_compare, // qty of smallest-unit
-                        $nota, // nota
-                        $listPC, // list of production-code
-                        $listQtyPC, // list of production-code-qty
-                        $listUnitPC, // list of production-code-unit
-                        null, // sellprice
-                        14, // mutcat
-                        $tanggal
-                    );
-                    if ($mutationOut->original['status'] !== 'success') {
-                        return $mutationOut;
+                        $nota = $value->getSalesComp->sc_nota . '-PAID';
+                        // insert stock mutation sales 'out'
+                        $mutationOut = Mutasi::salesOut(
+                            $value->getSalesComp->sc_member, // from
+                            null, // to
+                            $value->scd_item, // item-id
+                            $qty_compare, // qty of smallest-unit
+                            $nota, // nota
+                            $listPC, // list of production-code
+                            $listQtyPC, // list of production-code-qty
+                            $listUnitPC, // list of production-code-unit
+                            null, // sellprice
+                            14, // mutcat
+                            $tanggal
+                        );
+                        if ($mutationOut->original['status'] !== 'success') {
+                            return $mutationOut;
+                        }
                     }
                 }
             }
