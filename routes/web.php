@@ -408,6 +408,14 @@ Route::group(['middleware' => 'auth'], function () {
     // Kinerja
     Route::get('/sdm/kinerjasdm/index', 'SDMController@kinerja')->name('kinerjasdm.index');
 
+    // Kelola Input KPI
+    Route::post('/sdm/kinerjasdm/input-kpi/get-data-indikator-kpi-pegawai', 'SDM\MasterKPIController@getDataIndikatorKpiPegawai')->name('inputkpi.getDataIndikatorKpiPegawai');
+    Route::post('/sdm/kinerjasdm/input-kpi/get-data-indikator-kpi-divisi', 'SDM\MasterKPIController@getDataIndikatorKpiDivisi')->name('inputkpi.getDataIndikatorKpiDivisi');
+    Route::match(['get', 'post'], '/sdm/kinerjasdm/input-kpi/create', 'SDM\MasterKPIController@createInputKpi')->name('inputkpi.create');
+    Route::post('/sdm/kinerjasdm/input-kpi/save', 'SDM\MasterKPIController@saveInputKpi')->name('inputkpi.save');
+    // Route::match(['get', 'post'], '/sdm/kinerjasdm/input-kpi/save', 'SDM\MasterKPIController@saveInputKpi')->name('inputkpi.save');
+    
+
     //Master KPI
     Route::post('/sdm/kinerjasdm/master-kpi/create', 'SDM\MasterKPIController@create')->name('masterkpi.create');
     Route::post('/sdm/kinerjasdm/master-kpi/get-data', 'SDM\MasterKPIController@getData')->name('masterkpi.getData');

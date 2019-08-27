@@ -9,19 +9,23 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use DB;
 use DataTables;
 use Response;
+use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 
 class MasterKPIController extends Controller
 {
     public function create(Request $request)
     {
+        // dd($request->all());
         $indikator = $request->indikator;
+        $unit = $request->unit;
 
         DB::beginTransaction();
         try {
 
             $cek = DB::table('m_kpi')
                 ->where('k_indicator', '=', $indikator)
+                ->where('k_unit', '=', $unit)
                 ->get();
 
             if (count($cek) > 0){
@@ -40,7 +44,8 @@ class MasterKPIController extends Controller
             DB::table('m_kpi')
                 ->insert([
                     'k_id' => $id,
-                    'k_indicator' => $indikator
+                    'k_indicator' => $indikator,
+                    'k_unit' => $unit
                 ]);
 
             DB::commit();
@@ -562,14 +567,12 @@ class MasterKPIController extends Controller
     {
         // dd($request->all());
         $data = $request->data;
-
         $datas = DB::table('d_kpiemp')
             ->join('m_kpi', 'k_id', 'ke_kpi')
             ->select('k_id', 'k_indicator', 'k_isactive', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi')
             ->where('ke_employee', '=', $data)
             ->get();
         // dd($datas);
-
         return response()->json([
             'data' => $datas
         ]);
@@ -578,9 +581,7 @@ class MasterKPIController extends Controller
         // if ($status != 'all'){
         //     $data = $data->where('k_isactive', '=', $status);
         // }
-
         // $datas = $data->get();
-
         // return Datatables::of($datas)
         //     ->addIndexColumn()
         //     ->addColumn('action', function ($datas) {
@@ -610,9 +611,298 @@ class MasterKPIController extends Controller
             ->where('ke_department', '=', $data)
             ->get();
         // dd($datas);
-
         return response()->json([
             'data' => $datas
         ]);
+    }
+
+    public function createInputKpi(Request $request)
+    {
+        if (!$request->isMethod('post')) {
+            $employee = DB::table('m_employee')
+                ->select('e_id', 'e_nip', 'e_name')
+                ->get();
+
+            $divisi = DB::table('m_divisi')->get();
+            return view('sdm/kinerjasdm/inputkpi/create')->with(compact('employee', 'divisi'));
+        } else {
+            $data = $request->all();
+            $productionorderauth = [];
+            $productionorderdt = [];
+            $productionorderpayment = [];
+            DB::beginTransaction();
+            try {
+                // dd($request);
+                $idpo = (DB::table('d_productionorderdt')->max('pod_productionorder')) ? (DB::table('d_productionorderdt')->max('pod_productionorder')) + 1 : 1;
+                // $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
+                // $cekNota = DB::table('d_productionorder')
+                //     ->where('po_nota', '=', $nota)
+                //     ->get();
+                //
+                // if (count($cekNota) > 0){
+                //     $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
+                // }
+
+                $notaProductionAuth = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
+                $notaProduction = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
+                if (strcmp($notaProduction, $notaProductionAuth) > 0) {
+                    $nota = $notaProduction;
+                }
+                else {
+                    $nota = $notaProductionAuth;
+                };
+
+
+                $productionorderauth[] = [
+                    'poa_id' => $idpo,
+                    'poa_nota' => $nota,
+                    'poa_date' => date('Y-m-d', strtotime($data['po_date'])),
+                    'poa_supplier' => $data['supplier'],
+                    'poa_totalnet' => $data['tot_hrg'],
+                    'poa_status' => 'BELUM'
+                ];
+
+                $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) + 1 : 1;
+                $detailpod = $poddetail;
+                for ($i = 0; $i < count($data['idItem']); $i++) {
+                    $productionorderdt[] = [
+                        'pod_productionorder' => $idpo,
+                        'pod_detailid' => $detailpod,
+                        'pod_item' => $data['idItem'][$i],
+                        'pod_qty' => $data['jumlah'][$i],
+                        'pod_unit' => $data['satuan'][$i],
+                        'pod_value' => $this->removeCurrency($data['harga'][$i]),
+                        'pod_totalnet' => $this->removeCurrency($data['subtotal'][$i])
+                    ];
+                    $detailpod++;
+                }
+
+                for ($i = 0; $i < count($data['termin']); $i++) {
+                    $productionorderpayment[] = [
+                        'pop_productionorder' => $idpo,
+                        'pop_termin' => $data['termin'][$i],
+                        'pop_datetop' => date('Y-m-d', strtotime($data['estimasi'][$i])),
+                        'pop_value' => $this->removeCurrency($data['nominal'][$i]),
+                    ];
+                }
+
+                // dd($productionorderpayment);
+                DB::table('d_productionorderauth')->insert($productionorderauth);
+                DB::table('d_productionorderdt')->insert($productionorderdt);
+                DB::table('d_productionorderpayment')->insert($productionorderpayment);
+                DB::commit();
+                return json_encode([
+                    'status' => 'Success'
+                ]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return json_encode([
+                    'status' => 'Failed',
+                    'msg' => $e
+                ]);
+            }
+        }
+    }
+
+    public function getDataIndikatorKpiDivisi(Request $request)
+    {
+        $data = $request->data;
+        // dd($data);
+        // $periode = $request->periode;
+        $periode = "01-" . $request->periode;
+        $periode = Carbon::createFromFormat('d-m-Y', $periode);
+        $periodes = DB::table('d_kpi')
+                    ->select('k_id', 'k_type', 'k_periode', 'k_employee', 'k_department')
+                    ->whereMonth('k_periode', $periode->month)
+                    ->whereYear('k_periode', $periode->year)
+                    ->where('k_department', $data)
+                    ->first();
+                    // ->get();
+        // dd($periodes);
+
+        if ($periodes == true) {
+            $datas = DB::table('d_kpiemp')
+                ->join('m_kpi', 'm_kpi.k_id', 'ke_kpi')
+                ->join('d_kpi', function($q){
+                    $q->on('k_type', 'ke_type');
+                    $q->on('k_department', 'ke_department');
+                })
+                ->leftjoin('d_kpidt', 'kd_kpi', 'd_kpi.k_id')
+                ->groupBy('d_kpiemp.ke_kpi')
+                ->select('d_kpi.k_id', 'k_indicator', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
+                ->where('ke_department', '=', $data)
+                // ->where('ke_department', '=', $periodes)
+                ->get();
+        } elseif ($periodes == false) {
+            $datas = DB::table('d_kpiemp')
+                ->join('m_kpi', 'k_id', 'ke_kpi')
+                // ->join('d_kpidt', 'kd_kpi', 'ke_kpi')
+                ->select('k_id', 'k_indicator', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi')
+                ->where('ke_department', '=', $data)
+                ->get();
+            // dd($datas);
+        }
+        
+        // dd($datas);
+        
+        $datas2 = DB::table('d_kpiemp')
+            ->select('ke_department',
+                DB::RAW('SUM(ke_weight) as sum')
+            )
+            ->where('ke_department', '=', $data)
+            ->groupBy('ke_department')
+            ->first()->sum;
+        // dd($datas2);
+
+        return response()->json([
+            'data' => $datas,
+            'total' => $datas2, 
+        ]);
+    }
+
+    public function getDataIndikatorKpiPegawai(Request $request)
+    {
+        $data = $request->data;
+        // dd($data);
+
+        $periode = "01-" . $request->periode;
+        $periode = Carbon::createFromFormat('d-m-Y', $periode);
+        $periodes = DB::table('d_kpi')
+                    ->select('k_id', 'k_type', 'k_periode', 'k_employee', 'k_department')
+                    ->whereMonth('k_periode', $periode->month)
+                    ->whereYear('k_periode', $periode->year)
+                    ->where('k_employee', $data)
+                    ->first();
+        // dd($periodes);
+
+        if ($periodes == true) {
+            $datas = DB::table('d_kpiemp')
+                ->join('m_kpi', 'm_kpi.k_id', 'ke_kpi')
+                ->join('d_kpi', function($q){
+                    $q->on('k_type', 'ke_type');
+                    $q->on('k_employee', 'ke_employee');
+                })
+                ->leftjoin('d_kpidt', 'kd_kpi', 'd_kpi.k_id')
+                ->groupBy('d_kpiemp.ke_kpi')
+                ->select('d_kpi.k_id', 'k_indicator', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
+                ->where('ke_employee', '=', $data)
+                // ->where('ke_employee', '=', $periodes)
+                ->get();
+        } elseif ($periodes == false) {
+            $datas = DB::table('d_kpiemp')
+                ->join('m_kpi', 'k_id', 'ke_kpi')
+                // ->join('d_kpidt', 'kd_kpi', 'ke_kpi')
+                ->select('k_id', 'k_indicator', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi')
+                ->where('ke_employee', '=', $data)
+                ->get();
+        }
+
+        // $datas = DB::table('d_kpiemp')
+        //     ->join('m_kpi', 'k_id', 'ke_kpi')
+        //     ->select('k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi')
+        //     ->where('ke_employee', '=', $data)
+        //     ->get();
+        // dd($datas);
+        // 
+        $datas2 = DB::table('d_kpiemp')
+            ->select('ke_employee',
+                DB::RAW('SUM(ke_weight) as sum')
+            )
+            ->where('ke_employee', '=', $data)
+            ->groupBy('ke_employee')
+            ->first()->sum;
+
+        return response()->json([
+            'data' => $datas,
+            'total' => $datas2
+        ]);
+    }
+
+    public function saveInputKpi(Request $request)
+    {
+        // dd($request->all());
+        $periode = "01-" . $request->periode_kpi;
+        $periode = Carbon::createFromFormat('d-m-Y', $periode);
+        // $periode = $request->periode_kpi;
+        $departement = $request->divisi;
+        $pegawai = $request->pegawai;
+        // dd($departement);
+
+        DB::beginTransaction();
+        try {
+        
+            if ($request->tipe == 'D') {
+                DB::table('d_kpi')->whereMonth('k_periode', $periode->month)->whereYear('k_periode', $periode->year)->where('k_department', $departement)->delete();
+                $kid = DB::table('d_kpi')->max('k_id') + 1;
+                DB::table('d_kpi')->insert([
+                    'k_id'          => $kid,
+                    'k_type'        => $request->tipe,
+                    'k_periode'     => $periode,
+                    'k_department'  => $request->divisi
+                ]);
+
+                DB::table('d_kpidt')->where('kd_kpi', $kid)->delete();
+
+                $indicator = $request->kd_indikatorD;
+                for ($i=0; $i < count($indicator); $i++) { 
+                    DB::table('d_kpidt')->insert([
+                        'kd_kpi'        => $kid,
+                        // 'kd_detailid'   => DB::table('d_kpidt')->where('kd_kpi', $indicator[$i])->max('kd_detailid') + 1,
+                        'kd_detailid'   => $i+1,
+                        'kd_indikator'  => $request->kd_indikatorD[$i],
+                        'kd_weight'     => $request->bobotD[$i],
+                        'kd_target'     => $request->targetD[$i],
+                        'kd_result'     => $request->hasilD[$i],
+                        'kd_point'      => $request->pointD[$i],
+                        'kd_total'      => $request->nilaiD[$i]
+                    ]);
+                }
+            
+                DB::commit();
+                return response()->json([
+                    'status' => 'success',
+                    'data'   => ''
+                ]);
+            } elseif ($request->tipe == 'P') {
+                DB::table('d_kpi')->whereMonth('k_periode', $periode->month)->whereYear('k_periode', $periode->year)->where('k_employee', $pegawai)->delete();
+                $kid = DB::table('d_kpi')->max('k_id') + 1;
+                DB::table('d_kpi')->insert([
+                    'k_id'          => $kid,
+                    'k_type'        => $request->tipe,
+                    'k_periode'     => $periode,
+                    'k_employee'    => $request->pegawai
+                ]);
+
+                DB::table('d_kpidt')->where('kd_kpi', $kid)->delete();
+
+                $indicator = $request->kd_indikatorP;
+                for ($i=0; $i < count($indicator); $i++) { 
+                    DB::table('d_kpidt')->insert([
+                        'kd_kpi'        => $kid,
+                        // 'kd_detailid'   => DB::table('d_kpidt')->where('kd_kpi', $indicator[$i])->max('kd_detailid') + 1,
+                        'kd_detailid'   => $i+1,
+                        'kd_indikator'  => $request->kd_indikatorP[$i],
+                        'kd_weight'     => $request->bobotP[$i],
+                        'kd_target'     => $request->targetP[$i],
+                        'kd_result'     => $request->hasilP[$i],
+                        'kd_point'      => $request->pointP[$i],
+                        'kd_total'      => $request->nilaiP[$i]
+                    ]);
+                }
+            
+                DB::commit();
+                return response()->json([
+                    'status' => 'success',
+                    'data'   => ''
+                ]);
+            }
+            
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status'  => 'Gagal',
+                'message' => $e
+            ]);
+        }
     }
 }

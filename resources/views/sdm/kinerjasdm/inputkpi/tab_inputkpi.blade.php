@@ -5,7 +5,8 @@
 				<h3 class="title">Data KPI</h3>
 			</div>
 			<div class="header-block pull-right">
-				<a class="btn btn-primary" id="btn-tambah-kpi" href="#"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
+				<!-- <a class="btn btn-primary" id="btn-tambah-kpi" href="#"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a> -->
+				<a class="btn btn-primary" href="{{ route('inputkpi.create') }}"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
 			</div>
 			<div class=""></div>
 		</div>
