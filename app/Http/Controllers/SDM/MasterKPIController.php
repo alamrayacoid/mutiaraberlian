@@ -716,10 +716,24 @@ class MasterKPIController extends Controller
                     ->whereMonth('k_periode', $periode->month)
                     ->whereYear('k_periode', $periode->year)
                     ->where('k_department', $data)
+                    ->where('k_type', 'D')
                     ->first();
                     // ->get();
         // dd($periodes);
 
+        // if ($periodes == true) {
+        //     $datas = DB::table('d_kpiemp')
+        //         ->join('m_kpi', 'm_kpi.k_id', 'ke_kpi')
+        //         ->join('d_kpi', function($q){
+        //             $q->on('k_type', 'ke_type');
+        //             $q->on('k_department', 'ke_department');
+        //         })
+        //         ->leftjoin('d_kpidt', 'kd_kpi', 'd_kpi.k_id')
+        //         ->groupBy('d_kpiemp.ke_kpi')
+        //         ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
+        //         ->where('ke_department', '=', $data)
+        //         // ->where('ke_department', '=', $periodes)
+        //         ->get();
         if ($periodes == true) {
             $datas = DB::table('d_kpiemp')
                 ->join('m_kpi', 'm_kpi.k_id', 'ke_kpi')
@@ -727,17 +741,23 @@ class MasterKPIController extends Controller
                     $q->on('k_type', 'ke_type');
                     $q->on('k_department', 'ke_department');
                 })
-                ->leftjoin('d_kpidt', 'kd_kpi', 'd_kpi.k_id')
-                ->groupBy('d_kpiemp.ke_kpi')
-                ->select('d_kpi.k_id', 'k_indicator', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
+                ->leftjoin('d_kpidt', function($q){
+                    $q->on('kd_kpi', 'd_kpi.k_id');
+                    $q->on('kd_indikator', 'ke_kpi');
+                })
+                // ->groupBy('d_kpiemp.ke_kpi')
+                ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
                 ->where('ke_department', '=', $data)
+                ->whereMonth('k_periode', $periode->month)
+                ->whereYear('k_periode', $periode->year)
                 // ->where('ke_department', '=', $periodes)
                 ->get();
+                // dd($datas);
         } elseif ($periodes == false) {
             $datas = DB::table('d_kpiemp')
                 ->join('m_kpi', 'k_id', 'ke_kpi')
                 // ->join('d_kpidt', 'kd_kpi', 'ke_kpi')
-                ->select('k_id', 'k_indicator', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi')
+                ->select('k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi')
                 ->where('ke_department', '=', $data)
                 ->get();
             // dd($datas);
@@ -772,9 +792,23 @@ class MasterKPIController extends Controller
                     ->whereMonth('k_periode', $periode->month)
                     ->whereYear('k_periode', $periode->year)
                     ->where('k_employee', $data)
+                    // ->where('k_type', 'P')
                     ->first();
         // dd($periodes);
 
+        // if ($periodes == true) {
+        //     $datas = DB::table('d_kpiemp')
+        //         ->join('m_kpi', 'm_kpi.k_id', 'ke_kpi')
+        //         ->join('d_kpi', function($q){
+        //             $q->on('k_type', 'ke_type');
+        //             $q->on('k_employee', 'ke_employee');
+        //         })
+        //         ->leftjoin('d_kpidt', 'kd_kpi', 'd_kpi.k_id')
+        //         ->groupBy('d_kpiemp.ke_kpi')
+        //         ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
+        //         ->where('ke_employee', '=', $data)
+        //         // ->where('ke_employee', '=', $periodes)
+        //         ->get();
         if ($periodes == true) {
             $datas = DB::table('d_kpiemp')
                 ->join('m_kpi', 'm_kpi.k_id', 'ke_kpi')
@@ -782,17 +816,23 @@ class MasterKPIController extends Controller
                     $q->on('k_type', 'ke_type');
                     $q->on('k_employee', 'ke_employee');
                 })
-                ->leftjoin('d_kpidt', 'kd_kpi', 'd_kpi.k_id')
-                ->groupBy('d_kpiemp.ke_kpi')
-                ->select('d_kpi.k_id', 'k_indicator', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
+                ->leftjoin('d_kpidt', function($q){
+                    $q->on('kd_kpi', 'd_kpi.k_id');
+                    $q->on('kd_indikator', 'ke_kpi');
+                })
+                // // ->groupBy('d_kpiemp.ke_kpi')
+                ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total', 'k_periode')
                 ->where('ke_employee', '=', $data)
-                // ->where('ke_employee', '=', $periodes)
+                ->whereMonth('k_periode', $periode->month)
+                ->whereYear('k_periode', $periode->year)
+                // ->where('ke_department', '=', $periodes)
                 ->get();
+                // dd($datas);
         } elseif ($periodes == false) {
             $datas = DB::table('d_kpiemp')
                 ->join('m_kpi', 'k_id', 'ke_kpi')
                 // ->join('d_kpidt', 'kd_kpi', 'ke_kpi')
-                ->select('k_id', 'k_indicator', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi')
+                ->select('k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi')
                 ->where('ke_employee', '=', $data)
                 ->get();
         }

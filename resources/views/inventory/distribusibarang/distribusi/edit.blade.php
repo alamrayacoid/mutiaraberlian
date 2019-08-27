@@ -117,6 +117,18 @@
                                             <input type="text" class="form-control form-control-sm rupiah" id="shippingCost" name="shippingCost" value="{{ $data['stockdist']->getProductDelivery->pd_price }}">
                                         </div>
                                     </div>
+
+                                    <div class="col-md-2 col-sm-6 col-xs-12">
+                                        <label>Tanggal Pengiriman</label>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 col-xs-12">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                            </div>
+                                            <input type="text" name="dateSend" class="form-control form-control-sm datepicker" autocomplete="off" id="dateSend" value="{{ $data['deliveryDate'] }}">
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="table-responsive">
@@ -163,12 +175,12 @@
                                                     <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
                                                 </td>
                                                 @if ($value->status == 'used')
-                                                    <td>
+                                                    <td class="text-center">
                                                         <span class="badge badge-warning">sudah digunakan ({{ $value->qtyUsed }})</span>
                                                         <input type="hidden" name="status[]" class="status" value="{{ $value->status }}">
                                                     </td>
                                                 @else
-                                                    <td>
+                                                    <td class="text-center">
                                                         <span>Aman diedit</span>
                                                         <input type="hidden" name="status[]" class="status" value="{{ $value->status }}">
                                                     </td>
@@ -276,8 +288,8 @@
                 <td>
                     <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button">kode produksi</button>
                 </td>
-                <td>
-                    <h5><span class="badge badge-primary">Stock belum digunakan</span></h5>
+                <td class="text-center">
+                    <span>Aman diedit</span>
                     <input type="hidden" name="status[]" class="status" value="unused">
                 </td>
                 <td>
