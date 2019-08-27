@@ -3,7 +3,7 @@
 		<!-- Modal content-->
 		<div class="modal-content">
 			<div class="modal-header bg-gradient-info">
-				<h4 class="modal-title">Tambah Aturan Kehadiran </h4>
+				<h4 class="modal-title">Tambah Hari Libur </h4>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
@@ -36,7 +36,7 @@
 		<!-- Modal content-->
 		<div class="modal-content">
 			<div class="modal-header bg-gradient-info">
-				<h4 class="modal-title">Edit Aturan Kehadiran </h4>
+				<h4 class="modal-title">Edit Hari Libur </h4>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
