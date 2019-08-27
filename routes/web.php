@@ -416,7 +416,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sdm/kinerjasdm/input-kpi/get-kelola-kpi-pegawai', 'SDM\MasterKPIController@getKelolaKpiPegawai')->name('inputkpi.getKelolaKpiPegawai');
     Route::post('/sdm/kinerjasdm/input-kpi/get-kelola-kpi-divisi', 'SDM\MasterKPIController@getKelolaKpiDivisi')->name('inputkpi.getKelolaKpiDivisi');
     // Route::match(['get', 'post'], '/sdm/kinerjasdm/input-kpi/save', 'SDM\MasterKPIController@saveInputKpi')->name('inputkpi.save');
-    
+
 
     //Master KPI
     Route::post('/sdm/kinerjasdm/master-kpi/create', 'SDM\MasterKPIController@create')->name('masterkpi.create');
@@ -473,6 +473,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sdm/absensisdm/kelola-aturan-kehadiran/update', 'SDMController@updateAturanKehadiran')->name('absensisdm.updateAturanKehadiran');
     Route::post('/sdm/absensisdm/kelola-aturan-kehadiran/hapus', 'SDMController@hapusAturanKehadiran')->name('absensisdm.hapusAturanKehadiran');
     Route::get('/sdm/absensisdm/kelola-aturan-kehadiran/get-detail', 'SDMController@getDetailAturanKehadiran')->name('absensisdm.getDetailAturanKehadiran');
+    // Kelola Jenis Cuti
+    Route::get('/sdm/absensisdm/kelola-jenis-cuti/get-data', 'SDMController@getDataJenisCuti')->name('absensisdm.getDataJenisCuti');
+    Route::post('/sdm/absensisdm/kelola-jenis-cuti/simpan', 'SDMController@saveJenisCuti')->name('absensisdm.saveDataJenisCuti');
+    Route::post('/sdm/absensisdm/kelola-jenis-cuti/update', 'SDMController@updateJenisCuti')->name('absensisdm.updateJenisCuti');
+    Route::post('/sdm/absensisdm/kelola-jenis-cuti/hapus', 'SDMController@hapusJenisCuti')->name('absensisdm.hapusJenisCuti');
+    Route::get('/sdm/absensisdm/kelola-jenis-cuti/get-detail', 'SDMController@getDetailCuti')->name('absensisdm.getDetailCuti');
     // Penggajian
     Route::get('/sdm/penggajian/index', 'SDMController@penggajian')->name('penggajian.index');
     // TAB CASHBON
