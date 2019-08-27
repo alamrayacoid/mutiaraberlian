@@ -536,6 +536,9 @@ class DistribusiController extends Controller
             }])
             ->with('getProductDelivery')
             ->first();
+
+        $data['deliveryDate'] = Carbon::parse($data['stockdist']->getProductDelivery->pd_date)->format('d-m-Y');
+
         // set variabel to store nota number
         $nota = $data['stockdist']->sd_nota;
         // change number format to int before send it to view
@@ -602,7 +605,6 @@ class DistribusiController extends Controller
     // update selected item
     public function update(Request $request, $id)
     {
-        //dd($request->all());
         if (!AksesUser::checkAkses(16, 'update')) {
             return response()->json([
                 'status' => 'invalid',
@@ -622,6 +624,8 @@ class DistribusiController extends Controller
 
         DB::beginTransaction();
         try {
+            (is_null($request->dateSend)) ? $dateSend = Carbon::now() : $dateSend = Carbon::createFromFormat('d-m-Y', $request->dateSend);
+
             // get stockdist
             $stockdist = d_stockdistribution::where('sd_id', $id)
                 ->with('getDistributionDt.getProdCode')
@@ -629,13 +633,13 @@ class DistribusiController extends Controller
 
             // update stockdist
             $stockdist->sd_from = Auth::user()->u_company;
-            $stockdist->sd_date = Carbon::now();
+            $stockdist->sd_date = $dateSend;
             $stockdist->sd_user = Auth::user()->u_id;
             $stockdist->save();
 
             // update product-delivery
             $prodDeliv = d_productdelivery::where('pd_nota', $stockdist->sd_nota)->first();
-            $prodDeliv->pd_date = Carbon::now();
+            $prodDeliv->pd_date = $dateSend;
             $prodDeliv->pd_expedition = $request->expedition;
             $prodDeliv->pd_product = $request->expeditionType;
             $prodDeliv->pd_resi = strtoupper($request->resi);
@@ -743,7 +747,8 @@ class DistribusiController extends Controller
                         $listQtyPC, // list qty of production-code
                         $listUnitPC, // list unit of production-code
                         $sellPrice = null, // sellprice
-                        19 // mutation category
+                        19, // mutation category
+                        $dateSend // date transaction
                     );
                     if ($mutDistributionOut->original['status'] !== 'success') {
                         return $mutDistributionOut;
@@ -772,7 +777,8 @@ class DistribusiController extends Controller
                         18, // mutation category
                         null, // stock parent id
                         $status = 'ON GOING', // items status in stock
-                        $condition = 'FINE' // item condition in stock
+                        $condition = 'FINE', // item condition in stock
+                        $dateSend // date transaction
                     );
                     if ($mutDistributionIn->original['status'] !== 'success') {
                         return $mutDistributionIn;
@@ -805,7 +811,8 @@ class DistribusiController extends Controller
                         $qty, // new qty with smallest unit
                         $listPC, // list of production-code
                         $listQtyPC, // list of production-code-qty
-                        $listUnitPC // list of production-code-unit
+                        $listUnitPC, // list of production-code-unit
+                        $dateSend // new date
                     );
                     if ($updateDist != true) {
                         DB::rollback();

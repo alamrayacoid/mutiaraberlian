@@ -3062,10 +3062,21 @@ class Mutasi extends Controller
     }
 
     // update distrtibution
-    static function updateDistribusi($nota, $item, $qty, $listPC, $listQtyPC, $listUnitPC)
+    static function updateDistribusi(
+        $nota, // nota distribution
+        $item, // item-Id
+        $qty, // qty item
+        $listPC, // list of production-code
+        $listQtyPC, // list of qty each production-code
+        $listUnitPC, // list of unit each production-code
+        $date = null // new date
+        )
     {
         DB::beginTransaction();
         try {
+            // set date if receiveDate is not null
+            (is_null($date)) ? $dateNow = Carbon::now('Asia/jakarta') : $dateNow = $date;
+
             // get stock-mutation with selected-item
             $smItems = d_stock_mutation::where('sm_nota', '=', $nota)
                 ->whereHas('getStock', function ($query) use ($item) {
@@ -3135,7 +3146,8 @@ class Mutasi extends Controller
                     }
                     //-------------------------------//-------------------------------//------------
 
-                } else if ($val->sm_mutcat == 19) {
+                }
+                else if ($val->sm_mutcat == 19) {
                     // get stock-mutation parent
                     $smParents = d_stock_mutation::where('sm_nota', $val->sm_reff)
                         ->where('sm_stock', $val->sm_stock)
@@ -3170,6 +3182,7 @@ class Mutasi extends Controller
 
                 // update current stock-mutation
                 $val->sm_qty = (int)$qty;
+                $val->sm_date = $dateNow;
                 $val->save();
             }
 
