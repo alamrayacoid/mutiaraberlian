@@ -729,7 +729,7 @@ class MasterKPIController extends Controller
                 })
                 ->leftjoin('d_kpidt', 'kd_kpi', 'd_kpi.k_id')
                 ->groupBy('d_kpiemp.ke_kpi')
-                ->select('d_kpi.k_id', 'k_indicator', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
+                ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
                 ->where('ke_department', '=', $data)
                 // ->where('ke_department', '=', $periodes)
                 ->get();
@@ -737,7 +737,7 @@ class MasterKPIController extends Controller
             $datas = DB::table('d_kpiemp')
                 ->join('m_kpi', 'k_id', 'ke_kpi')
                 // ->join('d_kpidt', 'kd_kpi', 'ke_kpi')
-                ->select('k_id', 'k_indicator', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi')
+                ->select('k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi')
                 ->where('ke_department', '=', $data)
                 ->get();
             // dd($datas);
@@ -784,7 +784,7 @@ class MasterKPIController extends Controller
                 })
                 ->leftjoin('d_kpidt', 'kd_kpi', 'd_kpi.k_id')
                 ->groupBy('d_kpiemp.ke_kpi')
-                ->select('d_kpi.k_id', 'k_indicator', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
+                ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
                 ->where('ke_employee', '=', $data)
                 // ->where('ke_employee', '=', $periodes)
                 ->get();
@@ -792,7 +792,7 @@ class MasterKPIController extends Controller
             $datas = DB::table('d_kpiemp')
                 ->join('m_kpi', 'k_id', 'ke_kpi')
                 // ->join('d_kpidt', 'kd_kpi', 'ke_kpi')
-                ->select('k_id', 'k_indicator', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi')
+                ->select('k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi')
                 ->where('ke_employee', '=', $data)
                 ->get();
         }

@@ -248,19 +248,19 @@
 
                         let indikatorD = `<td class="pad-1">
                                         <input type="hidden" name="kd_indikatorD[]" class="form-control-plaintext kd_indikatorD onlyread w-100" value="`+ val.k_id +`">
-                                        <input type="text" name="indikatorD[]" class="form-control-plaintext indikatorD onlyread w-100" value="`+ val.k_indicator +`">
+                                        <input type="text" name="indikatorD[]" class="form-control-plaintext indikatorD onlyread w-100" value="`+ val.k_indicator +`" readonly>
                                         </td>`;
 
                         let unitD = `<td class="pad-1">
-                                        <input type="text" name="unitD[]" class="form-control-plaintext unitD onlyread w-100" value="`+ val.k_unit +`">
+                                        <input type="text" name="unitD[]" class="form-control-plaintext unitD onlyread w-100" value="`+ val.k_unit +`" readonly>
                                         </td>`;
 
                         let bobotD = `<td class="pad-1">
-                                        <input type="text" name="bobotD[]" class="form-control-plaintext text-center bobotD onlyread w-100" value="`+ val.ke_weight +`">
+                                        <input type="text" name="bobotD[]" class="form-control-plaintext text-center bobotD onlyread w-100" value="`+ val.ke_weight +`" readonly>
                                         </td>`;
 
                         let targetD = `<td class="pad-1">
-                                        <input type="text" name="targetD[]" class="form-control-plaintext text-center targetD onlyread w-100" value="`+ val.ke_target +`">
+                                        <input type="text" name="targetD[]" class="form-control-plaintext text-center targetD onlyread w-100" value="`+ val.ke_target +`" readonly>
                                         </td>`;
 
 
@@ -268,42 +268,42 @@
                         // var b = val.ke_target;
                         // var c = (parseInt(a)+parseInt(b));
                         let hasilD = `<td class="pad-1">
-                                        <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100" value="">
+                                        <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="">
                                         </td>`;
                         if (val.kd_result == null) {
                             hasilD = `<td class="pad-1">
-                                        <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100" value="">
+                                        <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="">
                                         </td>`;
                         } else {
                             hasilD = `<td class="pad-1">
-                                            <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100" value="`+ val.kd_result +`">
+                                            <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="`+ val.kd_result +`">
                                             </td>`;
                         }
 
                         let pointD = `<td class="pad-1">
-                                        <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="">
+                                        <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="" readonly>
                                         </td>`;
                         if (val.kd_point == null) {
                             pointD = `<td class="pad-1">
-                                        <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="">
+                                        <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="" readonly>
                                         </td>`;
                         } else {
                             pointD = `<td class="pad-1">
-                                            <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="`+ val.kd_point +`">
+                                            <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="`+ val.kd_point +`" readonly>
                                             </td>`;
                         }
 
 
                         let nilaiD = `<td class="pad-1">
-                                        <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="">
+                                        <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="" readonly>
                                         </td>`;
                         if (val.kd_total == null) {
                             nilaiD = `<td class="pad-1">
-                                        <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="">
+                                        <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="" readonly>
                                         </td>`;
                         } else {
                             nilaiD = `<td class="pad-1">
-                                            <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="`+ val.kd_total +`">
+                                            <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="`+ val.kd_total +`" readonly>
                                             </td>`;
                         }
 
@@ -361,57 +361,57 @@
 
                         let indikatorP = `<td class="pad-1">
                                         <input type="hidden" name="kd_indikatorP[]" class="form-control-plaintext kd_indikatorP onlyread w-100" value="`+ val.k_id +`">
-                                        <input type="text" name="indikatorP[]" class="form-control-plaintext indikatorP onlyread w-100" value="`+ val.k_indicator +`">
+                                        <input type="text" name="indikatorP[]" class="form-control-plaintext indikatorP onlyread w-100" value="`+ val.k_indicator +`" readonly>
                                         </td>`;
 
                         let unitP = `<td class="pad-1">
-                                        <input type="text" name="unitP[]" class="form-control-plaintext unitP onlyread w-100" value="`+ val.k_unit +`">
+                                        <input type="text" name="unitP[]" class="form-control-plaintext unitP onlyread w-100" value="`+ val.k_unit +`" readonly>
                                         </td>`;
 
                         let bobotP = `<td class="pad-1">
-                                        <input type="text" name="bobotP[]" class="form-control-plaintext text-center bobotP onlyread w-100" value="`+ val.ke_weight +`">
+                                        <input type="text" name="bobotP[]" class="form-control-plaintext text-center bobotP onlyread w-100" value="`+ val.ke_weight +`" readonly>
                                         </td>`;
 
                         let targetP = `<td class="pad-1">
-                                        <input type="text" name="targetP[]" class="form-control-plaintext text-center targetP onlyread w-100" value="`+ val.ke_target +`">
+                                        <input type="text" name="targetP[]" class="form-control-plaintext text-center targetP onlyread w-100" value="`+ val.ke_target +`" readonly>
                                         </td>`;
 
                         let hasilP = `<td class="pad-1">
-                                        <input type="text" name="hasilP[]" class="form-control text-center hasilP w-100" value="">
+                                        <input type="text" name="hasilP[]" class="form-control text-center hasilP w-100 digits" value="">
                                         </td>`;
                         if (val.kd_result == null) {
                             hasilP = `<td class="pad-1">
-                                        <input type="text" name="hasilP[]" class="form-control text-center hasilP w-100" value="">
+                                        <input type="text" name="hasilP[]" class="form-control text-center hasilP w-100 digits" value="">
                                         </td>`;
                         } else {
                             hasilP = `<td class="pad-1">
-                                            <input type="text" name="hasilP[]" class="form-control text-center hasilP w-100" value="`+ val.kd_result +`">
+                                            <input type="text" name="hasilP[]" class="form-control text-center hasilP w-100 digits" value="`+ val.kd_result +`">
                                             </td>`;
                         }
 
                         let pointP = `<td class="pad-1">
-                                        <input type="text" name="pointP[]" class="form-control-plaintext text-center pointP w-100" value="">
+                                        <input type="text" name="pointP[]" class="form-control-plaintext text-center pointP w-100" value="" readonly>
                                         </td>`;
                         if (val.kd_point == null) {
                             pointP = `<td class="pad-1">
-                                        <input type="text" name="pointP[]" class="form-control-plaintext text-center pointP w-100" value="">
+                                        <input type="text" name="pointP[]" class="form-control-plaintext text-center pointP w-100" value="" readonly>
                                         </td>`;
                         } else {
                             pointP = `<td class="pad-1">
-                                            <input type="text" name="pointP[]" class="form-control-plaintext text-center pointP w-100" value="`+ val.kd_point +`">
+                                            <input type="text" name="pointP[]" class="form-control-plaintext text-center pointP w-100" value="`+ val.kd_point +`" readonly>
                                             </td>`;
                         }
 
                         let nilaiP = `<td class="pad-1">
-                                        <input type="text" name="nilaiP[]" class="form-control-plaintext text-center nilaiP w-100" value="">
+                                        <input type="text" name="nilaiP[]" class="form-control-plaintext text-center nilaiP w-100" value="" readonly>
                                         </td>`;
                         if (val.kd_total == null) {
                             nilaiP = `<td class="pad-1">
-                                        <input type="text" name="nilaiP[]" class="form-control-plaintext text-center nilaiP w-100" value="">
+                                        <input type="text" name="nilaiP[]" class="form-control-plaintext text-center nilaiP w-100" value="" readonly>
                                         </td>`;
                         } else {
                             nilaiP = `<td class="pad-1">
-                                            <input type="text" name="nilaiP[]" class="form-control-plaintext text-center nilaiP w-100" value="`+ val.kd_total +`">
+                                            <input type="text" name="nilaiP[]" class="form-control-plaintext text-center nilaiP w-100" value="`+ val.kd_total +`" readonly>
                                             </td>`;
                         }
 
