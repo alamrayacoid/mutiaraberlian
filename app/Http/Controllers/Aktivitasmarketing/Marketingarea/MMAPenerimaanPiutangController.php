@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers\Aktivitasmarketing\Marketingarea;
 
-use App\d_salescomp;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Auth;
-use DB;
 use Illuminate\Support\Facades\Crypt;
+
+use App\d_salescomp;
+use App\d_salescompdt;
+use App\m_paymentmethod;
+use App\Model\keuangan\dk_akun;
+use Auth;
+use Carbon\Carbon;
 use DataTables;
+use DB;
+use Mutasi;
 use Response;
 
 class MMAPenerimaanPiutangController extends Controller
@@ -63,6 +68,9 @@ class MMAPenerimaanPiutangController extends Controller
                         </div></center>';
             })
             ->editColumn('sisa', function ($info){
+                if ($info->pembayaran == null || $info->pembayaran == '') {
+                    return "Rp. " . number_format($info->sc_total, '0', ',', '.');
+                }
                 return "Rp. " . number_format($info->sisa, '0', ',', '.');
             })
             ->rawColumns(['aksi'])
@@ -99,7 +107,7 @@ class MMAPenerimaanPiutangController extends Controller
     public function getDetailTransaksi(Request $request)
     {
         $id = 0;
-        $user = Auth::user();
+        $user = Auth::user()->getCompany;
         try {
             $id = Crypt::decrypt($request->id);
         } catch (\Exception $e){
@@ -127,10 +135,59 @@ class MMAPenerimaanPiutangController extends Controller
             ->orderBy('scp_date')
             ->get();
 
-        $jenis = DB::table('dk_akun')
-            ->where('ak_comp', '=', $user->u_company)
-            ->select('ak_id', 'ak_nama')
+        $jenis = [];
+        if ($user->c_type == "PUSAT") {
+            $jenis = m_paymentmethod::where('pm_isactive', 'Y')
+            ->with('getAkun')
             ->get();
+        }
+        else {
+            $jenis = m_paymentmethod::where('pm_isactive', 'Y')
+                ->with('getAkun')
+                ->where('pm_comp', '=', $user->c_id)
+                ->get();
+
+            if (count($jenis) < 1) {
+                $idAkun = dk_akun::max('ak_id') + 1;
+
+                DB::table('dk_akun')
+                ->insert([
+                    'ak_id' => $idAkun,
+                    'ak_nomor' => '1.001.001',
+                    'ak_tahun' => Carbon::now('Asia/Jakarta')->format('Y'),
+                    'ak_comp' => $user->c_id,
+                    'ak_nama' => 'KAS ' . $user->c_name,
+                    'ak_sub_id' => '001',
+                    'ak_kelompok' => 13,
+                    'ak_posisi' => 'D',
+                    'ak_opening_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                    'ak_opening' => 0,
+                    'ak_setara_kas' => '0',
+                    'ak_isactive' => 1
+                ]);
+
+                $pmId = m_paymentmethod::max('pm_id') + 1;
+                DB::table('m_paymentmethod')
+                    ->insert([
+                        'pm_id' => $pmId,
+                        'pm_comp' => $user->c_id,
+                        'pm_name' => 'KAS ' . $user->c_name,
+                        'pm_akun' => $idAkun,
+                        'pm_note' => '',
+                        'pm_isactive' => 'Y'
+                    ]);
+            }
+
+            $jenis = m_paymentmethod::where('pm_isactive', 'Y')
+                ->with('getAkun')
+                ->where('pm_comp', '=', $user->c_id)
+                ->get();
+        }
+// dd($jenis);
+        // $jenis = DB::table('dk_akun')
+        //     ->where('ak_comp', '=', $user->u_company)
+        //     ->select('ak_id', 'ak_nama')
+        //     ->get();
 
         return Response::json([
             'data' => $data,
@@ -204,12 +261,67 @@ class MMAPenerimaanPiutangController extends Controller
                 ->groupBy('sc_id')
                 ->first();
 
+            // if 'piutang' is paid-off
             if ($cek->bayar == $cek->sc_total){
                 DB::table('d_salescomp')
                     ->where('sc_id', '=', $salescomp[0]->sc_id)
                     ->update([
                         'sc_paidoff' => 'Y'
                     ]);
+
+                $salesCompDt = d_salescompdt::whereHas('getSalesComp', function ($q) use ($nota) {
+                        $q->where('sc_nota', $nota);
+                    })
+                    ->with('getSalesComp')
+                    ->with('getProdCode')
+                    ->get();
+
+                foreach ($salesCompDt as $key => $value) {
+                    $listPC = array();
+                    $listQtyPC = array();
+                    $listUnitPC = array();
+
+                    foreach ($value->getProdCode as $idx => $val) {
+                        array_push($listPC, $val->ssc_code);
+                        array_push($listQtyPC, $val->ssc_qty);
+                    }
+                    // get qty in smallest unit
+                    $data_check = DB::table('m_item')
+                        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                            'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                            'm_item.i_unit3 as unit3')
+                        ->where('i_id', '=', $value->scd_item)
+                        ->first();
+
+                    $qty_compare = 0;
+                    if ($value->scd_unit == $data_check->unit1) {
+                        $qty_compare = $value->scd_qty;
+                    } else if ($value->scd_unit == $data_check->unit2) {
+                        $qty_compare = $value->scd_qty * $data_check->compare2;
+                    } else if ($value->scd_unit == $data_check->unit3) {
+                        $qty_compare = $value->scd_qty * $data_check->compare3;
+                    }
+
+
+                    $nota = $value->getSalesComp->sc_nota . '-PAID';
+                    // insert stock mutation sales 'out'
+                    $mutationOut = Mutasi::salesOut(
+                        $value->getSalesComp->sc_member, // from
+                        null, // to
+                        $value->scd_item, // item-id
+                        $qty_compare, // qty of smallest-unit
+                        $nota, // nota
+                        $listPC, // list of production-code
+                        $listQtyPC, // list of production-code-qty
+                        $listUnitPC, // list of production-code-unit
+                        null, // sellprice
+                        14, // mutcat
+                        $tanggal
+                    );
+                    if ($mutationOut->original['status'] !== 'success') {
+                        return $mutationOut;
+                    }
+                }
             }
 
             DB::commit();

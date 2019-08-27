@@ -25,6 +25,7 @@
                                 <h3 class="title"> Pembayaran dari Konsigner </h3>
                             </div>
                             <div class="header-block pull-right">
+                                <input type="hidden" id="userType" value="{{ Auth::user()->getCompany->c_type }}">
                                 <a href="{{route('manajemenagen.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
                             </div>
                         </div>
@@ -219,11 +220,17 @@
                 });
                 $('#paymentpp').append("<option value='disable'> == Pilih Metode Pembayaran == </option>");
                 $.each(method, function (index, value) {
-                    $('#paymentpp').append("<option value='"+value.ak_id+"'>"+value.ak_nama+"</option>");
+                    if ($('#userType').val() == 'PUSAT') {
+                        $('#paymentpp').append('<option value="'+ value.pm_id +'">'+ value.get_akun.ak_nomor +' - '+ value.pm_name +'</option>');
+                    }
+                    else {
+                        $('#paymentpp').append("<option value='"+value.get_akun.ak_id +"'>"+ value.get_akun.ak_nama +"</option>");
+                    }
                 });
                 $('#nota_paypp').val(detail[0].sc_nota);
                 $('#date_paypp').val(detail[0].sc_datetop);
                 $('#agent_paypp').val(detail[0].c_name);
+                $('#bayarpaypp').val('Rp 0');
                 $('#total_paypp').val(parseInt(detail[0].sc_total)-terbayar);
                 $('#modalBayarpp').modal('show');
             }).catch(function (error) {

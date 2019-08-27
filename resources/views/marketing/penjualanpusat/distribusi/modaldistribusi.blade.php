@@ -11,7 +11,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-2 col-sm-12">
-                        <label for="">Tanggal</label>
+                        <label for="">Tanggal Order</label>
                     </div>
                     <div class="col-md-4 col-sm-12 mb-3">
                         <input type="text" id="dateModalSend" class="form-control form-control-sm" readonly="">
@@ -83,6 +83,18 @@
                     <div class="col-md-4 col-sm-12 mb-3">
                         <input type="text" id="biaya_kurir" class="form-control form-control-sm rupiah">
                     </div>
+                    <div class="col-md-2 col-sm-6 col-xs-12">
+                        <label>Tanggal pengiriman</label>
+                    </div>
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                            </div>
+                            <input type="text" name="dateSend" class="form-control form-control-sm datepicker" autocomplete="off" id="dateSend" value="{{ \Carbon\Carbon::now()->format('d-m-Y') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6"></div>
 
                     <div class="col-md-2 col-sm-12">
                         <label for="">Jenis Pembayaran</label>

@@ -11,7 +11,7 @@
         }
 
         .modal {
-            z-index: 9999 !important;
+            z-index: 2000 !important;
         }
 
         .ui-autocomplete-input {
@@ -79,7 +79,6 @@
     <form class="formCodeProd">
         @include('marketing.agen.datakonsinyasi.modal-code-prod')
         @include('marketing.agen.datakonsinyasi.modal-code-prod-base')
-
     </form>
 
     <article class="content animated fadeInLeft">
@@ -100,11 +99,13 @@
                                aria-controls="orderprodukagenpusat" data-toggle="tab" role="tab">Order ke Agen /
                                 Cabang</a>
                         </li>
+                        @if(Auth::user()->getCompany->c_type == 'AGEN')
                         <li class="nav-item">
                             <a href="#keloladataagen" class="nav-link" data-target="#keloladataagen"
-                               aria-controls="keloladataagen" data-toggle="tab" role="tab" onclick="kelolaDataAgen()">Kelola
-                                Data Order Agen </a>
+                            aria-controls="keloladataagen" data-toggle="tab" role="tab" onclick="kelolaDataAgen()">Kelola
+                            Data Order Agen </a>
                         </li>
+                        @endif
                         @endif
                         <li class="nav-item">
                             <a href="#kelolapenjualan" class="nav-link active" data-target="#kelolapenjualan"
@@ -134,7 +135,9 @@
                     <div class="tab-content">
                         @if(Auth::user()->getCompany->c_type == 'AGEN' || Auth::user()->getCompany->c_type == 'SUB AGEN')
                             @include('marketing.agen.orderproduk.index')
-                            @include('marketing.marketingarea.keloladataorder.index')
+                            @if(Auth::user()->getCompany->c_type == 'AGEN')
+                                @include('marketing.marketingarea.keloladataorder.index')
+                            @endif
                         @endif
                         @include('marketing.agen.inventoryagen.index')
                         @include('marketing.agen.penjualanviaweb.index')
@@ -371,7 +374,7 @@
                                 <div class="input-group col-4" style="width: 100%; padding-right: 0px;">
                                     <input type="number" onkeypress="pressCode(event)" class="inputqtyproduksi form-control form-control-sm" id="inputqtyproduksi" readonly>
                                     <span class="input-group-append">
-                                        <button type="button" class="btn btn-sm btn-primary" id="btn-addprodcode"><i class="fa fa-plus"></i></button>
+                                        <button type="button" class="btn btn-sm btn-primary" id="btn-addprodcode" onclick="addCodetoTable()"><i class="fa fa-plus"></i></button>
                                     </span>
                                 </div>
                             </div>

@@ -597,12 +597,14 @@ class AgenController extends Controller
             ->first();
 
         if ($info->c_type == 'PUSAT' || $info->c_type == 'CABANG'){
-            $data['mma'] = m_company::where(function ($q) use ($info){
+            $data['mma'] = m_company::where('c_isactive', 'Y')
+            ->where(function ($q) use ($info){
                 $q->orWhere('c_type', '=', 'PUSAT');
                 $q->orWhere('c_type', '=', 'CABANG');
             })->get();
         } else {
-            $data['mma'] = m_company::where(function ($q) use ($info){
+            $data['mma'] = m_company::where('c_isactive', 'Y')
+            ->where(function ($q) use ($info){
                 $q->orWhere('c_type', '=', 'PUSAT');
                 $q->orWhere('c_type', '=', 'CABANG');
                 $q->orWhere('c_id', '=', $info->c_id);

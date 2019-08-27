@@ -112,7 +112,9 @@
                                                 @if (Auth::user()->getCompany->c_type == 'PUSAT' || Auth::user()->getCompany->c_type == 'CABANG')
                                                     <option value="AGEN">Agen</option>
                                                 @endif
+                                                @if (Auth::user()->getCompany->c_type == 'PUSAT' || Auth::user()->getCompany->c_type == 'CABANG'  || Auth::user()->getCompany->c_type == 'AGEN')
                                                 <option value="SUB AGEN">Sub Agen</option>
+                                                @endif
                                                 <option value="APOTEK">Apotek/Radio</option>
                                             </select>
                                         </div>

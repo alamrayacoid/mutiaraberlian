@@ -4,6 +4,8 @@
 
 <article class="content">
 
+    @include('sdm.absensisdm.harilibur.modal')
+
 	<div class="title-block text-primary">
 		<h1 class="title">Kelola Absensi SDM</h1>
 		<p class="title-description">
@@ -14,9 +16,7 @@
 	</div>
 
 	<section class="section">
-
 		<div class="row">
-
 			<div class="col-12">
 				<ul class="nav nav-pills mb-3" id="Tabs">
 					<li class="nav-item">
@@ -38,7 +38,8 @@
 
 				<div class="tab-content">
 					@include('sdm.absensisdm.dashboard.index')
-					@include('sdm.absensisdm.presensi.index')
+                    @include('sdm.absensisdm.presensi.index')
+                    @include('sdm.absensisdm.harilibur.index')
 				</div>
 			</div>
 		</div>
@@ -48,6 +49,7 @@
 @section('extra_script')
 <!-- public set time -->
 <script type="text/javascript">
+    var table_harilibur;
 	$(document).ready(function() {
 		var cur_date = new Date();
 		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
@@ -57,6 +59,11 @@
 		$('#filterDateToPr').datepicker('setDate', last_day);
 		// date for 'Create Daftar Presensi SDM'
 		$('.dateNowPr').datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth(), cur_date.getDate()));
+
+        table_harilibur = $('#table_harilibur').DataTable({
+            ordering: false
+        });
+
 	});
 </script>
 
@@ -65,9 +72,9 @@
 	const month_year = new Date(month_years.getFullYear(), month_years.getMonth());
 
 	$("#filterByMonthYearDashbord").datepicker( {
-    format: "mm-yyyy",
-    viewMode: "months", 
-    minViewMode: "months"
+        format: "mm-yyyy",
+        viewMode: "months",
+        minViewMode: "months"
 	});
 </script>
 
@@ -77,7 +84,7 @@
 
 	$("#filterByYearDashbord").datepicker( {
     format: "yyyy",
-    viewMode: "years", 
+    viewMode: "years",
     minViewMode: "years"
 	});
 </script> -->
@@ -476,7 +483,7 @@
 		})
 	}
 	// get list summary presence
-	
+
 	function getAbsenPegawai()
 	{
 		// let dateFrom = $('#filterDateFromPr').serialize();
@@ -608,7 +615,7 @@
 					(val.p_note == null || val.p_note == '') ? iNote = '' : iNote = val.p_note;
 					let note = `<td class="pad-1"><textarea name="notePr[]" rows="2" class="w-100" readonly>`+ iNote +`</textarea></td>`;
 
-					let row = '<tr>'+ date + arriveTime + returnTime + status + note +'</tr>' 
+					let row = '<tr>'+ date + arriveTime + returnTime + status + note +'</tr>'
 			        $('#table_detail_absen_pegawai tbody').append(row);
 				});
 				$('#modalDetailDashboard').modal('show');
@@ -687,6 +694,164 @@
 				messageWarning('Error', 'Error getDataPresence: '+ e.message);
 			}
 		});
-	}
+    }
+
+// Hari Libur
+
+    $("#tahun_libur").datepicker( {
+        format: "yyyy",
+        viewMode: "years",
+        minViewMode: "years",
+        autoclose: true
+    });
+
+    $("#tanggal_libur").datepicker( {
+        format: "dd-mm-yyyy",
+        autoclose: true
+    });
+
+    function simpanHariLibur(){
+        loadingShow();
+        let tgl = $('#tanggal_libur').val();
+        let note = $('#keterangan_libur').val();
+        if (tgl == '' || tgl == null) {
+            messageWarning("Perhatian", "Tanggal kosong");
+            return false;
+        }
+        if (note == '' || note == null) {
+            messageWarning("Perhatian", "Keterangan Kosong");
+        }
+        axios.post('{{ route("absensisdm.saveHariLibur") }}', {
+            "_token": '{{ csrf_token() }}',
+            "note": note,
+            "tgl": tgl
+        }).then(function(response){
+            loadingHide();
+            if (response.data.status == 'sukses') {
+                messageSuccess("Berhasil", "Data berhasil disimpan");
+                $('#modal_createharilibur').modal('hide');
+                cariHariLibur();
+            } else if (response.data.status == 'gagal') {
+                messageWarning("Gagal", response.data.message);
+            }
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function cariHariLibur(){
+        loadingShow();
+        let bulan = $('#bulan_libur').val();
+        let tahun = $('#tahun_libur').val();
+
+        axios.get('{{ route("absensisdm.cariHariLibur") }}', {
+            params: {
+                bulan: bulan,
+                tahun: tahun
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            table_harilibur.clear().draw();
+            $.each(data, function(idx, val){
+                table_harilibur.row.add([
+                    val.tanggal,
+                    val.hd_note,
+                    '<center><button type="button" class="btn btn-primary btn-sm" onclick="editLibur('+val.hd_id+')">Edit</button>'+
+                    '<button type="button" class="btn btn-warning btn-sm" onclick="hapusLibur('+val.hd_id+')">Hapus</button></center>'
+                ]).draw(false);
+                table_harilibur.columns.adjust();
+            })
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        });
+    }
+
+    function editLibur(id){
+        loadingShow();
+        axios.get('{{ route("absensisdm.getDetailHariLibur") }}', {
+            params:{
+                "id": id
+            }
+        }).then(function(response){
+            loadingHide();
+            $("#edittanggal_libur").val(response.data.hd_date);
+            $('#editketerangan_libur').val(response.data.hd_note);
+            $('#modal_editharilibur').modal('show');
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function updateHariLibur(){
+        loadingShow();
+        let tanggal = $('#edittanggal_libur').val();
+        let note = $('#editketerangan_libur').val();
+        axios.get('{{ route("absensisdm.updateDetailHariLibur") }}', {
+            params:{
+                "tanggal": tanggal,
+                "note": note
+            }
+        }).then(function(response){
+            loadingHide();
+            if (response.data.status == 'sukses') {
+                messageSuccess("Berhasil", "Data berhasil diperbarui");
+                $('#modal_editharilibur').modal('hide');
+                cariHariLibur();
+            } else if (response.data.status == 'gagal') {
+                messageDanger("Gagal", response.data.message);
+            }
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function hapusLibur(id){
+        return $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        return $.ajax({
+                            type: "get",
+                            url: "{{ route('absensisdm.hapusHariLibur') }}",
+                            data: {
+                                "id": id
+                            },
+                            success: function (response) {
+                                if (response.status == 'sukses') {
+                                    messageSuccess('Berhasil', 'Data berhasil dihapus!');
+                                    cariHariLibur();
+                                } else if (response.status == 'gagal'){
+                                    messageWarning('Perhatian', response.message);
+                                }
+                            },
+                            error: function (e) {
+                                messageFailed('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
 </script>
 @endsection

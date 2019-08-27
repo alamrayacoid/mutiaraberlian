@@ -780,6 +780,7 @@
         let paymentMethod = $('#paymentMethod').val();
         let payCash = ($('#paymentType').val() == 'C') ? 0 : $('#payCash').val();
         let dateTop = ($('#paymentType').val() == 'C') ? null : $('#dateTop').val();
+        let dateSend = $('#dateSend').val();
 
         loadingShow();
         axios.post('{{ route("penjualanpusat.sendOrder") }}', {
@@ -793,7 +794,8 @@
             "paymentType": paymentType,
             "paymentMethod": paymentMethod,
             "payCash": payCash,
-            "dateTop": dateTop
+            "dateTop": dateTop,
+            "dateSend": dateSend
         }).then(function (response) {
             loadingHide();
             if (response.data.status == 'success'){

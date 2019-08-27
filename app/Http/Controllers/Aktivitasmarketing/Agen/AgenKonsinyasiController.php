@@ -53,7 +53,7 @@ class AgenKonsinyasiController extends Controller
                 ->where('sc_comp', '!=', 'MB0000001');
         }
         $datas = $datas
-            ->where('sc_paidoff', 'N')
+            // ->where('sc_paidoff', 'N')
             ->with('getSalesCompDt')
             ->with('getAgent')
             ->orderBy('sc_date', 'desc')
@@ -70,13 +70,27 @@ class AgenKonsinyasiController extends Controller
             ->addColumn('total', function ($datas) {
                 return '<div class="text-right">Rp ' . number_format($datas->sc_total, 0, 0, '.') . '</div>';
             })
-            ->addColumn('action', function ($datas) {
-                return '<div class="btn-group btn-group-sm">
-                    <button class="btn btn-warning btn-edit-kons" type="button" title="Edit" onclick="editDK(\'' . Crypt::encrypt($datas->sc_id) . '\')"><i class="fa fa-pencil"></i></button>
-                    <button class="btn btn-danger btn-delete-kons" type="button" title="Delete" onclick="deleteDK(\'' . Crypt::encrypt($datas->sc_id) . '\')"><i class="fa fa-trash"></i></button>
-                </div>';
+            ->addColumn('status', function ($datas) {
+                if ($datas->sc_paidoff == 'N') {
+                    $status = 'BELUM LUNAS';
+                }
+                else {
+                    $status = 'LUNAS';
+                }
+                return $status;
             })
-            ->rawColumns(['date', 'action', 'agent', 'total'])
+            ->addColumn('action', function ($datas) {
+                if ($datas->sc_paidoff == 'N') {
+                    $aksi = '<button class="btn btn-warning btn-edit-kons" type="button" title="Edit" onclick="editDK(\'' . Crypt::encrypt($datas->sc_id) . '\')"><i class="fa fa-pencil"></i></button>
+                        <button class="btn btn-danger btn-delete-kons" type="button" title="Delete" onclick="deleteDK(\'' . Crypt::encrypt($datas->sc_id) . '\')"><i class="fa fa-trash"></i></button>';
+                }
+                else {
+                    // $aksi = '<button class="btn btn-info btn-detail-kons" type="button" title="Detail" onclick="detailDK(\'' . Crypt::encrypt($datas->sc_id) . '\')"><i class="fa fa-folder"></i></button>';
+                    $aksi = '';
+                }
+                return '<div class="btn-group btn-group-sm">'. $aksi .'</div>';
+            })
+            ->rawColumns(['date', 'action', 'agent', 'total', 'status'])
             ->make(true);
     }
 

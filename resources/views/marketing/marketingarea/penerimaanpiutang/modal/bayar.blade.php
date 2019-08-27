@@ -69,7 +69,7 @@
                             <input type="text" class="form-control form-control-sm rupiah" id="bayarpaypp">
                         </div>
                         <div class="form-group col-md-4 col-sm-12">
-                            <label class="control-label" for="bayarpaypp">Bayar Ke</label>
+                            <label class="control-label" for="paymentpp">Bayar Ke</label>
                             <select class="form-control form-control-sm" id="paymentpp">
 
                             </select>

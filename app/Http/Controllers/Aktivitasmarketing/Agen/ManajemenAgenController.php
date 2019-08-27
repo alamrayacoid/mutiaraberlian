@@ -551,6 +551,8 @@ class ManajemenAgenController extends Controller
         $agen = DB::table('m_agen')
             ->join('m_company', 'a_code', '=', 'c_user')
             ->select('a_id', 'a_code', 'a_name', 'c_id')
+            ->where('c_type', '!=', 'PUSAT')
+            ->where('c_type', '!=', 'CABANG')
             ->where('a_area', '=', $kota)
             ->where('a_isactive', '=', 'Y')
             ->get();
@@ -605,7 +607,7 @@ class ManajemenAgenController extends Controller
                     ->select('c_id', 'c_name')->get();
         }else{
             $cabang = DB::table('m_company')
-                    ->whereIn('c_type', ['AGEN', 'CABANG'])
+                    ->whereIn('c_type', ['AGEN', 'CABANG', 'SUB AGEN'])
                     ->where('c_id', Auth::user()->u_company)
                     ->orderBy('c_name', 'asc')
                     ->select('c_id', 'c_name')->get();
@@ -938,7 +940,8 @@ class ManajemenAgenController extends Controller
         DB::beginTransaction();
         try
         {
-            $date = Carbon::createFromFormat('d-m-Y', $request->date);
+            // $date = Carbon::createFromFormat('d-m-Y', $request->date)->format('d-m-Y');
+            $date = $request->date;
             // get product-order
             $productOrder = d_productorder::where('po_id', $id)
             ->with('getPODt')
