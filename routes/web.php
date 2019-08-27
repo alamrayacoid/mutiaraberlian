@@ -465,6 +465,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/absensisdm/kelola-libur/detail', 'SDMController@getDetailHariLibur')->name('absensisdm.getDetailHariLibur');
     Route::get('/sdm/absensisdm/kelola-libur/update', 'SDMController@updateDetailHariLibur')->name('absensisdm.updateDetailHariLibur');
     Route::get('/sdm/absensisdm/kelola-libur/hapus', 'SDMController@hapusHariLibur')->name('absensisdm.hapusHariLibur');
+    // Kelola Aturan kehadiran
+    Route::get('/sdm/absensisdm/kelola-aturan-kehadiran/get-data', 'SDMController@getDataAturanKehadiran')->name('absensisdm.getDataAturanKehadiran');
+    Route::post('/sdm/absensisdm/kelola-aturan-kehadiran/simpan', 'SDMController@saveAturanKehadiran')->name('absensisdm.saveAturanKehadiran');
+    Route::post('/sdm/absensisdm/kelola-aturan-kehadiran/update', 'SDMController@updateAturanKehadiran')->name('absensisdm.updateAturanKehadiran');
+    Route::post('/sdm/absensisdm/kelola-aturan-kehadiran/hapus', 'SDMController@hapusAturanKehadiran')->name('absensisdm.hapusAturanKehadiran');
+    Route::get('/sdm/absensisdm/kelola-aturan-kehadiran/get-detail', 'SDMController@getDetailAturanKehadiran')->name('absensisdm.getDetailAturanKehadiran');
     // Penggajian
     Route::get('/sdm/penggajian/index', 'SDMController@penggajian')->name('penggajian.index');
     // TAB CASHBON

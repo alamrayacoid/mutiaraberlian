@@ -5,6 +5,7 @@
 <article class="content">
 
     @include('sdm.absensisdm.harilibur.modal')
+    @include('sdm.absensisdm.kehadiran.modal')
 
 	<div class="title-block text-primary">
 		<h1 class="title">Kelola Absensi SDM</h1>
@@ -39,6 +40,7 @@
 				<div class="tab-content">
 					@include('sdm.absensisdm.dashboard.index')
                     @include('sdm.absensisdm.presensi.index')
+                    @include('sdm.absensisdm.kehadiran.index')
                     @include('sdm.absensisdm.harilibur.index')
 				</div>
 			</div>
@@ -50,6 +52,7 @@
 <!-- public set time -->
 <script type="text/javascript">
     var table_harilibur;
+    var table_aturankehadiran;
 	$(document).ready(function() {
 		var cur_date = new Date();
 		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
@@ -63,6 +66,30 @@
         table_harilibur = $('#table_harilibur').DataTable({
             ordering: false
         });
+
+        setTimeout(function(){
+            table_aturankehadiran = $('#table_aturankehadiran').DataTable({
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route("absensisdm.getDataAturanKehadiran") }}',
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'ar_rules', name: 'ar_rules'},
+                    {data: 'ar_punishment', name: 'ar_punishment'},
+                    {data: 'ar_note', name: 'ar_note'},
+                    {data: 'aksi', name: 'aksi'},
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        },1000)
 
 	});
 </script>
@@ -839,6 +866,146 @@
                                 }
                             },
                             error: function (e) {
+                                messageFailed('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
+
+// Kelola aturan kehadiran
+    function simpanAturanKehadiran(){
+        loadingShow();
+        let rule = $('#aturan_kehadiran').val();
+        let punishment = $('#hukuman_kehadiran').val();
+        let note = $('#note_kehadiran').val();
+
+        if (rule == '' || rule == null) {
+            messageWarning("Perhatian", "Aturan tidak boleh kosong");
+            return false;
+        }
+        if (punishment == '' || punishment == null) {
+            messageWarning("Perhatian", "Hukuman tidak boleh kosong");
+            return false;
+        }
+
+        axios.post('{{ route("absensisdm.saveAturanKehadiran") }}', {
+            rule: rule,
+            punishment: punishment,
+            note: note,
+            "_token": "{{ csrf_token() }}"
+        }).then(function(response){
+            loadingHide();
+            if (response.data.status == 'sukses') {
+                messageSuccess("Berhasil", "Data berhasil disimpan");
+                $('#modal_tambahaturan').modal('hide');
+                table_aturankehadiran.ajax.reload();
+            } else if (response.data.status == 'gagal') {
+                messageFailed("Perhatian", "Data gagal disimpan");
+            }
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function editAturanKehadiran(id){
+        loadingShow();
+        axios.get('{{ route("absensisdm.getDetailAturanKehadiran") }}', {
+            params:{
+                id: id
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            $('#edit_idaturan').val(data.ar_id);
+            $('#editaturan_kehadiran').val(data.ar_rules);
+            $('#edithukuman_kehadiran').val(data.ar_punishment);
+            $('#editnote_kehadiran').val(data.ar_note);
+            $('#modal_editaturan').modal('show');
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function updateAturanKehadiran(){
+        loadingShow();
+        let rule = $('#editaturan_kehadiran').val();
+        let punishment = $('#edithukuman_kehadiran').val();
+        let note = $('#editnote_kehadiran').val();
+
+        if (rule == '' || rule == null) {
+            messageWarning("Perhatian", "Aturan tidak boleh kosong");
+            return false;
+        }
+        if (punishment == '' || punishment == null) {
+            messageWarning("Perhatian", "Hukuman tidak boleh kosong");
+            return false;
+        }
+
+        axios.post('{{ route("absensisdm.updateAturanKehadiran") }}', {
+            rule: rule,
+            punishment: punishment,
+            note: note,
+            id: $('#edit_idaturan').val(),
+            "_token": "{{ csrf_token() }}"
+        }).then(function(response){
+            loadingHide();
+            if (response.data.status == 'sukses') {
+                messageSuccess("Berhasil", "Data berhasil disimpan");
+                $('#modal_editaturan').modal('hide');
+                table_aturankehadiran.ajax.reload();
+            } else if (response.data.status == 'gagal') {
+                messageFailed("Perhatian", "Data gagal disimpan");
+            }
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function hapusAturanKehadiran(id){
+        return $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        loadingShow();
+                        return $.ajax({
+                            type: "post",
+                            url: "{{ route('absensisdm.hapusAturanKehadiran') }}",
+                            data: {
+                                "id": id,
+                                "_token": '{{ csrf_token() }}'
+                            },
+                            success: function (response) {
+                                loadingHide();
+                                if (response.status == 'sukses') {
+                                    messageSuccess('Berhasil', 'Data berhasil dihapus!');
+                                    table_aturankehadiran.ajax.reload();
+                                } else if (response.status == 'gagal'){
+                                    messageWarning('Perhatian', response.message);
+                                }
+                            },
+                            error: function (e) {
+                                loadingHide();
                                 messageFailed('Peringatan', e.message);
                             }
                         });
