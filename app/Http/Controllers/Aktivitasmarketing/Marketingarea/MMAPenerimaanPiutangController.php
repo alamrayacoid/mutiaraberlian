@@ -276,6 +276,7 @@ class MMAPenerimaanPiutangController extends Controller
                     ->with('getProdCode')
                     ->get();
 
+                // sell all item to consument if konsinyasi in 'Apotek/Radio'
                 foreach ($salesCompDt as $key => $value) {
                     $listPC = array();
                     $listQtyPC = array();
