@@ -807,7 +807,7 @@ class PenjualanPusatController extends Controller
         try {
             // return json_encode($request->all());
 
-            (is_null($request->dateSend)) ? $dateSend = Carbon::now() : $dateSend = Carbon::parse($request->dateSend);
+            (is_null($request->dateSend)) ? $dateSend = Carbon::now() : $dateSend = Carbon::createFromFormat('d-m-Y', $request->dateSend);
 
             $nota = $request->nota;
             $ekspedisi = $request->ekspedisi;

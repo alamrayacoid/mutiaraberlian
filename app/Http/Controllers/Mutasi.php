@@ -373,7 +373,7 @@ class Mutasi extends Controller
         $listStockParentId = null, // stock parent id / unused
         $status = 'ON GOING', // items status in stock
         $condition = 'FINE', // item condition in stock
-        $date = null
+        $date = null // set custom date for mutation
         )
     {
         DB::beginTransaction();
