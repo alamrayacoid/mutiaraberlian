@@ -1408,7 +1408,7 @@
                         $('#cover-spin').hide();
                     })
 
-            $('#option-cabang').change(function(){
+            $('#option-cabang').on('change click', function(){
                 var ctx = $(this);
                 $('#cover-spin').show();
 
