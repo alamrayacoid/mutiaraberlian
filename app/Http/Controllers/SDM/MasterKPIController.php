@@ -748,6 +748,8 @@ class MasterKPIController extends Controller
                 // ->groupBy('d_kpiemp.ke_kpi')
                 ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
                 ->where('ke_department', '=', $data)
+                ->whereMonth('k_periode', $periode->month)
+                ->whereYear('k_periode', $periode->year)
                 // ->where('ke_department', '=', $periodes)
                 ->get();
                 // dd($datas);
@@ -790,7 +792,7 @@ class MasterKPIController extends Controller
                     ->whereMonth('k_periode', $periode->month)
                     ->whereYear('k_periode', $periode->year)
                     ->where('k_employee', $data)
-                    ->where('k_type', 'P')
+                    // ->where('k_type', 'P')
                     ->first();
         // dd($periodes);
 
@@ -819,8 +821,10 @@ class MasterKPIController extends Controller
                     $q->on('kd_indikator', 'ke_kpi');
                 })
                 // // ->groupBy('d_kpiemp.ke_kpi')
-                ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
+                ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total', 'k_periode')
                 ->where('ke_employee', '=', $data)
+                ->whereMonth('k_periode', $periode->month)
+                ->whereYear('k_periode', $periode->year)
                 // ->where('ke_department', '=', $periodes)
                 ->get();
                 // dd($datas);
