@@ -1057,7 +1057,7 @@
 			success : function(response){
 				if (response.status == 'berhasil') {
 					messageSuccess('Info', 'Berhasil Disimpan');
-                    // location.reload();
+                    location.reload();
 				}
 				else {
 					messageWarning('Info', 'Gagal Disimpan: '+ response.message);

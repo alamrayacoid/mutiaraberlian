@@ -1,11 +1,13 @@
 @extends('main')
 
 @section('content')
-    <form class="formCodeProd">
-        <!-- modal-code-production -->
+    {{--
+    <!-- modal-code-production -->
+    <!-- <form class="formCodeProd">
         @include('produksi.returnproduksi.new-return.modal-code-prod')
         @include('produksi.returnproduksi.new-return.modal-code-prod-base')
-    </form>
+    </form> -->
+    --}}
 
 
 <article class="content animated fadeInLeft">
@@ -37,7 +39,44 @@
                     </div>
                     <div class="card-block">
                         <form id="formdata">
+                            {{--
+                            <!-- <div class="col-md-2 col-sm-6 col-xs-12">
+                                <label>Area</label>
+                            </div>
+                            <div class="col-md-10 col-sm-6 col-xs-12">
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <select name="prov" id="prov" class="form-control form-control-sm select2">
+                                            <option value="" selected="" disabled="">=== Pilih Provinsi ===</option>
+                                            @foreach($provinsi as $prov)
+                                                <option value="{{ $prov->wp_id }}">{{ $prov->wp_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <select name="city" id="city" class="form-control form-control-sm select2 city">
+                                            <option value="" selected disabled>=== Pilih Kota ===</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div> -->
+                            --}}
+
+
 							<div class="row">
+                                <div class="col-md-2 col-sm-6 col-xs-12">
+                                    <label>Tanggal Return</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-xs-12">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                        </div>
+                                        <input type="text" name="returnDate" class="form-control form-control-sm datepicker" autocomplete="off" id="returnDate" value="{{ \Carbon\Carbon::now()->format('d-m-Y') }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6"></div>
+                                
 								<div class="col-md-2 col-sm-6 col-xs-12">
 									<label>Supplier</label>
 								</div>
@@ -55,6 +94,8 @@
                                 </div>
                                 <div class="col-md-4 col-sm-6 col-12">
 									<div class="form-group">
+                                        <input type="checkbox" id="brokenItemToggle" value="broken"> Barang rusak ?<br>
+                                        <input type="hidden" name="statusItem" id="statusItem" value="FINE">
 										<select id="returnType" name="returnType" class="form-control form-control-sm select2 prodcode">
 											<option value="" selected disabled>=== Pilih Tipe Pengembalian ===</option>
 											<option value="SB">Stock Baru</option>
@@ -125,101 +166,48 @@
                                     <label>Kode Produksi</label>
                                 </div>
                                 <div class="col-md-4 col-sm-6 col-12">
-									<div class="form-group">
-										<select name="kodeproduksi" id="kodeproduksi" class="form-control form-control-sm select2 prodcode">
-											<option value="" selected disabled>=== Pilih Kode Produksi ===</option>
-										</select>
-									</div>
+                                    <div class="form-group">
+                                        <select name="kodeproduksi" id="kodeproduksi" class="form-control form-control-sm select2 prodcode">
+                                            <option value="" selected disabled>=== Pilih Kode Produksi ===</option>
+                                        </select>
+                                    </div>
                                 </div>
-								<div class="col-md-2 col-sm-6 col-12">
-									<label>Nota</label>
-								</div>
-								<div class="col-md-4 col-sm-6 col-12">
-									<div class="form-group">
-										<select name="nota" id="nota" class="form-control form-control-sm select2 nota">
-											<option value="" selected disabled>=== Pilih Nota ===</option>
-										</select>
-									</div>
-								</div>
                             </div>
 
-							<div class="row " id="div2" style="display:none">
-								<div class="col-md-2 col-sm-6 col-12">
-									<label>Nota Produksi</label>
-								</div>
-								<div class="col-md-4 col-sm-6 col-12">
-									<div class="form-group">
-										<select class="select2" onchange="notapenjualanup()" name="notapenjualan" id="notapenjualan" style="width:100%">
-										</select>
-									</div>
-								</div>
-								<hr>
-							</div>
 							<!-- detail penjualan -->
-							<!-- <div class="d-none" id="div3">
+							<div class="d-none" id="div3">
 								<section>
-									<div class="row">
-										<div class="col-md-2 col-sm-6 col-12">
-											<label>Penjual</label>
-										</div>
-										<div class="col-md-4 col-sm-6 col-12">
-											<div class="form-group">
-												<input type="hidden" name="sellerCode" id="sellerCode">
-												<input type="text" name="penjual" readonly class="form-control" id="penjual" value="">
-											</div>
-										</div>
-										<hr>
+                                    <div class="row">
+                                        <div class="col-md-2 col-sm-6 col-12">
+                                            <label>Nama Barang</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <input type="text" readonly name="item" class="form-control" id="item" value="">
+                                            </div>
+                                        </div>
 
-										<div class="col-md-2 col-sm-6 col-12">
-											<label>Metode Pembayaran</label>
-										</div>
-										<div class="col-md-4 col-sm-6 col-12">
-											<div class="form-group">
-												<input type="text" readonly name="metodepembayaran" class="form-control" id="metodepembayaran" value="">
-											</div>
-										</div>
-										<hr>
+                                        <div class="col-md-2 col-sm-6 col-12">
+                                            <label>Qty Barang</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <input type="text" style="text-align:right;" name="qty" class="form-control digits" id="qty" value="" readonly>
+                                            </div>
+                                        </div>
 
-										<div class="col-md-2 col-sm-6 col-12">
-											<label>Tanggal Transaksi</label>
-										</div>
-										<div class="col-md-4 col-sm-6 col-12">
-											<div class="form-group">
-												<input type="text" readonly name="tanggaltransaksi" class="form-control" id="tanggaltransaksi" value="">
-											</div>
-										</div>
-										<hr>
+                                        <div class="col-md-2 col-sm-6 col-12">
+                                            <label>Harga per Item</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <input type="text" name="itemPriceSB" class="form-control rupiah" id="itemPriceSB" value="">
+                                            </div>
+                                        </div>
 
-										<div class="col-md-2 col-sm-6 col-12">
-											<label>Total Transaksi</label>
-										</div>
-										<div class="col-md-4 col-sm-6 col-12">
-											<div class="form-group">
-												<input type="text" readonly name="total" class="form-control" id="total" value="">
-											</div>
-										</div>
-										<hr>
-									</div>
-									<div class="row">
-										<div class="col-md-2 col-sm-6 col-12">
-											<label>Nama Barang</label>
-										</div>
-										<div class="col-md-4 col-sm-6 col-12">
-											<div class="form-group">
-												<input type="text" readonly name="item" class="form-control" id="item" value="">
-											</div>
-										</div>
-										<hr>
-
-										<div class="col-md-2 col-sm-6 col-12">
-											<label>Qty Barang</label>
-										</div>
-										<div class="col-md-4 col-sm-6 col-12">
-											<div class="form-group">
-												<input type="text" style="text-align:right;" name="qty" class="form-control digits" id="qty" value="" readonly>
-											</div>
-										</div>
-										<hr>
+                                        <div class="col-sm-6 col-md-6">
+                                            <!-- empty -->
+                                        </div>
 
 										<div class="col-md-2 col-sm-6 col-12">
 											<label>Jenis Penggantian</label>
@@ -230,6 +218,7 @@
 													<option value="" selected disabled>=== Pilih Jenis Penggantian ===</option>
                                                     <option value="PN">Potong Nota</option>
 													<option value="GB">Ganti Barang</option>
+													<!-- <option value="GU">Ganti Uang</option> -->
 												</select>
 											</div>
 										</div>
@@ -247,7 +236,7 @@
 										<hr>
 									</div>
 								</section>
-							</div> -->
+							</div>
                             <div class="row">
 
                                 <div class="col-md-2 col-sm-6 col-xs-12 detailGB d-none">
@@ -276,7 +265,7 @@
                                                     <th>Kode/Nama Barang</th>
                                                     <th width="10%">Satuan</th>
                                                     <th width="10%">Jumlah</th>
-                                                    <th width="15%">Kode Produksi</th>
+                                                    <!-- <th width="15%">Kode Produksi</th> -->
                                                     <th width="13%">Harga Satuan</th>
                                                     <th width="15%">Sub Total</th>
                                                     <th width="5%">Aksi</th>
@@ -296,9 +285,9 @@
                                                 <td>
                                                     <input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly>
                                                 </td>
-                                                <td>
+                                                <!-- <td>
                                                     <button class="btn btn-primary btnCodeProd btn-sm rounded" type="button"><i class="fa fa-plus"></i> kode produksi </button>
-                                                </td>
+                                                </td> -->
                                                 <td>
                                                     <input type="text" name="harga[]" class="form-control form-control-sm rupiah harga">
                                                     <p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;"> Harga tidak ditemukan!</p>
@@ -329,6 +318,7 @@
                                 </div>
 
                             </div>
+
 						</form>
 					</div>
                     <div class="card-footer text-right">
@@ -360,9 +350,22 @@
 	$(document).ready(function() {
 		$('#supplier').on('select2:select', function() {
 			$('#kodeproduksi').attr('disabled', false);
-			$('#nota').attr('disabled', true);
+            $('#div3').addClass('d-none');
+			$('#returnType').attr('disabled', false);
+            $('#returnType').val('').trigger('change.select2');
             $('#returnType').select2('open');
 		});
+        $('#brokenItemToggle').on('click', function() {
+            let checkedIt = $(this).prop('checked');
+            if (checkedIt === true) {
+                $('#statusItem').val('BROKEN');
+            }
+            else {
+                $('#statusItem').val('FINE');
+            }
+            $('#returnType').val('SB').trigger('change.select2');
+            $('#returnType').trigger('select2:select');
+        });
         $('#returnType').on('select2:select', function() {
             if ($(this).val() == 'SL') {
                 $('#type').val('').trigger('change');
@@ -385,7 +388,7 @@
         $("#itemNameSL").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: "{{ route('mmareturn.findAllItem') }}",
+                    url: "{{ route('return.findAllItem') }}",
                     data: {
                         supplier: $('#supplier').val(),
                         term: $("#itemNameSL").val()
@@ -424,17 +427,14 @@
 		$('#kodeproduksi').on('select2:select', function() {
             $('#type').val('').trigger('change');
             $('#typeSL').val('').trigger('change');
-			$('#nota').attr('disabled', false);
-			$('#div3').addClass('d-none');
-			getNota();
+
+            let itemId = $(this).find('option:selected').data('itemid');
+            $('#itemId').val(itemId);
+            getDataStock();
 		});
-		$('#nota').on('select2:select', function() {
-            $('#type').val('').trigger('change');
-            $('#typeSL').val('').trigger('change');
-			let itemId = $('#nota').find('option:selected').data('itemid');
-			$('#itemId').val(itemId);
-			getDataSalesComp();
-		});
+        $('#itemPriceSB').on('keyup', function() {
+            $('#qtyReturn').trigger('keyup');
+        });
 		$('#qtyReturn').on('keyup', function(){
 			let qtyReturn = $('#qtyReturn').val();
 			let batas = $('#qty').val();
@@ -450,8 +450,12 @@
 			}
 			// calculate total nilai return
             qtyReturn = $('#qtyReturn').val();
-			let itemPrice = parseFloat($('#itemPrice').val());
+			let itemPrice = parseFloat($('#itemPriceSB').val());
 			let totalReturn = qtyReturn * itemPrice;
+            console.log('asd');
+            console.log(qtyReturn);
+            console.log(itemPrice);
+            console.log(totalReturn);
 			$('#returnValue').val(totalReturn);
 		});
 		$('#type').on('change select2:select', function() {
@@ -495,8 +499,8 @@
     		'<select name="satuan[]" class="form-control form-control-sm select2 satuan">' +
     		'</select>' +
     		'</td>' +
-    		'<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>' +
-    		'<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button"><i class="fa fa-plus"></i> kode produksi</button></td>';
+    		'<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>';
+    		// '<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button"><i class="fa fa-plus"></i> kode produksi</button></td>';
 		harga = '<td><input type="text" name="harga[]" class="form-control form-control-sm rupiah harga"><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>';
 		row = row + harga + '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>' +
     		'<td>' +
@@ -516,7 +520,7 @@
 	{
 		$(".satuan").off();
 		$('.btn-hapus').off();
-		$('.btnCodeProd').off();
+		// $('.btnCodeProd').off();
 		$('.btnAddProdCode').off();
 		$('.btnRemoveProdCode').off();
 		$('.qtyProdCode').off();
@@ -574,36 +578,36 @@
 			updateTotalSubstitute();
 			setItemAutocomplete();
 		});
-		// event to show modal to display list of code-production
-		$('.btnCodeProd').on('click', function () {
-			idxBarang = $('.btnCodeProd').index(this);
-			// get unit-cmp from selected unit
-			let unitCmp = parseInt($('.satuan').eq(idxBarang).find('option:selected').data('unitcmp')) || 0;
-			let qty = parseInt($('.jumlah').eq(idxBarang).val()) || 0;
-			let qtyUnit = qty * unitCmp;
-			// pass qtyUnit to modal
-			$('.modalCodeProd').eq(idxBarang).find('.QtyH').val(qtyUnit);
-			$('.modalCodeProd').eq(idxBarang).find('.usedUnit').val($('.satuan').eq(idxBarang).find('option:first-child').text());
-			calculateProdCodeQty();
-			$('.modalCodeProd').eq(idxBarang).modal('show');
-		});
-		// event to add more row to insert production-code
-		$('.btnAddProdCode').on('click', function () {
-			prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]"></input></td>';
-			qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="0"></input></td>';
-			action = '<td><button class="btn btn-danger btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
-			listProdCode = '<tr>' + prodCode + qtyProdCode + action + '</tr>';
-			// idxBarang is referenced from btnCodeProd above
-			// $(listProdCode).insertBefore($('.modalCodeProd:eq('+ idxBarang +')').find('.table_listcodeprod .rowBtnAdd'));
-			$('.modalCodeProd:eq(' + idxBarang + ')').find('.table_listcodeprod').append(listProdCode);
-			getEventsReady();
-		});
-		// event to remove an prod-code from table_listcodeprod
-		$('.btnRemoveProdCode').on('click', function () {
-			idxProdCode = $('.btnRemoveProdCode').index(this);
-			$(this).parents('tr').remove();
-			calculateProdCodeQty();
-		});
+		// // event to show modal to display list of code-production
+		// $('.btnCodeProd').on('click', function () {
+		// 	idxBarang = $('.btnCodeProd').index(this);
+		// 	// get unit-cmp from selected unit
+		// 	let unitCmp = parseInt($('.satuan').eq(idxBarang).find('option:selected').data('unitcmp')) || 0;
+		// 	let qty = parseInt($('.jumlah').eq(idxBarang).val()) || 0;
+		// 	let qtyUnit = qty * unitCmp;
+		// 	// pass qtyUnit to modal
+		// 	$('.modalCodeProd').eq(idxBarang).find('.QtyH').val(qtyUnit);
+		// 	$('.modalCodeProd').eq(idxBarang).find('.usedUnit').val($('.satuan').eq(idxBarang).find('option:first-child').text());
+		// 	calculateProdCodeQty();
+		// 	$('.modalCodeProd').eq(idxBarang).modal('show');
+		// });
+		// // event to add more row to insert production-code
+		// $('.btnAddProdCode').on('click', function () {
+		// 	prodCode = '<td><input type="text" class="form-control form-control-sm" style="text-transform: uppercase" name="prodCode[]"></input></td>';
+		// 	qtyProdCode = '<td><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="0"></input></td>';
+		// 	action = '<td><button class="btn btn-danger btnRemoveProdCode btn-sm rounded-circle" type="button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>';
+		// 	listProdCode = '<tr>' + prodCode + qtyProdCode + action + '</tr>';
+		// 	// idxBarang is referenced from btnCodeProd above
+		// 	// $(listProdCode).insertBefore($('.modalCodeProd:eq('+ idxBarang +')').find('.table_listcodeprod .rowBtnAdd'));
+		// 	$('.modalCodeProd:eq(' + idxBarang + ')').find('.table_listcodeprod').append(listProdCode);
+		// 	getEventsReady();
+		// });
+		// // event to remove an prod-code from table_listcodeprod
+		// $('.btnRemoveProdCode').on('click', function () {
+		// 	idxProdCode = $('.btnRemoveProdCode').index(this);
+		// 	$(this).parents('tr').remove();
+		// 	calculateProdCodeQty();
+		// });
 		// update total qty without production-code
 		$('.qtyProdCode').on('keyup', function () {
 			idxProdCode = $('.qtyProdCode').index(this);
@@ -674,7 +678,7 @@
 		$(".barang").eq(idxBarang).autocomplete({
 			source: function (request, response) {
 				$.ajax({
-					url: "{{ route('mmareturn.findItem') }}",
+					url: "{{ route('return.findItem') }}",
 					data: {
 						idItem: item,
 						supplier: supplierCode,
@@ -693,16 +697,17 @@
 	}
 	// get item-unit
 	function getUnit(info) {
+        console.log(info);
 		idStock = info.stock
-		idItem = info.data.get_item.i_id;
-		namaItem = info.data.get_item.i_name;
-		kode = info.data.get_item.i_code;
+		idItem = info.data.i_id;
+		namaItem = info.data.i_name;
+		kode = info.data.i_code;
 		$(".kode").eq(idxBarang).val(kode);
 		$(".itemid").eq(idxBarang).val(idItem);
 		$(".idStock").eq(idxBarang).val(idStock);
 		setItemAutocomplete();
 		$.ajax({
-			url: baseUrl +'/marketing/marketingarea/returnpenjualan/get-unit/'+ idItem,
+			url: baseUrl +'/produksi/returnproduksi/get-unit/'+ idItem,
 			type: 'GET',
 			success: function (resp) {
 				$(".satuan").eq(idxBarang).find('option').remove();
@@ -726,26 +731,27 @@
 	}
 	// check item stock
 	function changeUnit() {
-		$(".satuan").on("change", function (evt) {
-			loadingShow();
-			var idx = $('.satuan').index(this);
-			var jumlah = $('.jumlah').eq(idx).val();
-			if (jumlah == "") {
-				jumlah = null;
-			}
-			// check stock using marketing controller
-			axios.get(baseUrl + '/marketing/marketingarea/returnpenjualan/cek-stok/' + $(".idStock").eq(idx).val() + '/' + $(".itemid").eq(idx).val() + '/' + $(".satuan").eq(idx).val() + '/' + jumlah)
-			.then(function (resp) {
-				loadingHide();
-				$(".jumlah").eq(idx).val(resp.data);
-				// trigger on-input 'jumlah'
-				$(".jumlah").eq(idx).trigger('input');
-			})
-			.catch(function (error) {
-				loadingHide();
-				messageWarning("Error", error);
-			})
-		})
+		// $(".satuan").on("change", function (evt) {
+		// 	loadingShow();
+		// 	var idx = $('.satuan').index(this);
+		// 	var jumlah = $('.jumlah').eq(idx).val();
+		// 	if (jumlah < 0) {
+        //         $(".jumlah").eq(idx).val(0);
+		// 	}
+        //     $(".jumlah").eq(idx).trigger('input');
+		// 	// // check stock using marketing controller
+		// 	// axios.get(baseUrl + '/produksi/returnproduksi/cek-stok/' + $(".idStock").eq(idx).val() + '/' + $(".itemid").eq(idx).val() + '/' + $(".satuan").eq(idx).val() + '/' + jumlah)
+		// 	// .then(function (resp) {
+		// 	// 	loadingHide();
+		// 	// 	$(".jumlah").eq(idx).val(resp.data);
+		// 	// 	// trigger on-input 'jumlah'
+        //     //
+		// 	// })
+		// 	// .catch(function (error) {
+		// 	// 	loadingHide();
+		// 	// 	messageWarning("Error", error);
+		// 	// })
+		// });
 	}
 	// trigger qty and get price
 	function changeQtyItem() {
@@ -836,7 +842,7 @@
 	{
 		// let cityId = $('#city').val();
 		$.ajax({
-			url: "{{ route('mmareturn.getSupplier') }}",
+			url: "{{ route('return.getSupplier') }}",
 			type: "get",
 			data:{
 				// cityId: cityId
@@ -845,36 +851,42 @@
 				loadingShow();
 			},
 			success: function (response) {
-				loadingHide();
 				$('#supplier').empty();
 				if (response.data.length == 0) {
-					$("#supplier").append('<option value="" selected disabled>=== Pilih Agen ===</option>');
+					$("#supplier").append('<option value="" selected disabled>=== Pilih Supplier ===</option>');
 				} else {
-					$("#supplier").append('<option value="" selected disabled>=== Pilih Agen ===</option>');
+					$("#supplier").append('<option value="" selected disabled>=== Pilih Supplier ===</option>');
 					$.each(response.data, function( key, val ) {
-						$("#supplier").append('<option value="'+val.c_id+'">'+val.c_name+'</option>');
+						$("#supplier").append('<option value="'+ val.s_id +'">'+ val.s_name +'</option>');
 					});
 				}
 				$('#supplier').focus();
 				$('#supplier').select2('open');
-			}
+			},
+            error: function (err) {
+                messageWarning('Error', 'Terjadi kesalahan saat mencari supplier, muat ulang halaman !');
+            },
+            complete: function () {
+                loadingHide();
+            }
 		});
 	}
 	// get production-code
 	function getProdCode()
 	{
 		let supplierCode = $('#supplier').val();
+        let statusItem = $('#statusItem').val();
 		$.ajax({
-			url: "{{ route('mmareturn.getProdCode') }}",
+			url: "{{ route('return.getProdCode') }}",
 			type: "get",
 			data: {
+                itemStatus: statusItem,
 				supplierCode: supplierCode
 			},
 			beforeSend: function () {
 				loadingShow();
 			},
 			success: function (response) {
-				loadingHide();
 				// fill kodeproduksi option
 				$('#kodeproduksi').empty();
 				if (response.length == 0) {
@@ -882,90 +894,54 @@
 				} else {
 					$("#kodeproduksi").append('<option value="" selected disabled>=== Pilih Kode Produksi ===</option>');
 					$.each(response, function( key, val ) {
-						$("#kodeproduksi").append('<option value="'+ val.ssc_code +'">'+ val.ssc_code +'</option>');
+						$("#kodeproduksi").append('<option value="'+ val.sd_code +'" data-itemid="'+ val.get_stock.s_item +'">'+ val.sd_code +'</option>');
 					});
 				}
 				$('#kodeproduksi').focus();
 				$('#kodeproduksi').select2('open');
-			}
+			},
+            error: function (err) {
+                messageWarning('Error', 'Terjadi kesalahan : '+ err.message);
+            },
+            complete: function () {
+                loadingHide();
+            }
 		});
 	}
-	// get nota based on production-code
-	function getNota()
+	function getDataStock()
 	{
-		let kodeproduksi = $('#kodeproduksi').val();
-		kodeproduksi = kodeproduksi.toUpperCase();
-		let supplierCode = $('#supplier').val();
-		$.ajax({
-			url: "{{ route('mmareturn.getNota') }}",
-			type: "get",
-			data: {
-				term: $('#nota').val(),
-				prodCode: kodeproduksi,
-				supplierCode: supplierCode
-			},
-			beforeSend: function () {
-				loadingShow();
-			},
-			success: function (response) {
-				console.log(response);
-				loadingHide();
-				$('#nota').empty();
-				if (response.length == 0) {
-					$("#nota").append('<option value="" selected disabled>=== Pilih Nota ===</option>');
-				} else {
-					$("#nota").append('<option value="" selected disabled>=== Pilih Nota ===</option>');
-					$.each(response, function( key, val ) {
-						$("#nota").append('<option value="'+ val.sc_nota +'" data-itemid="'+ response[0].itemId +'">'+ val.sc_nota +'</option>');
-					});
-				}
-				$('#nota').focus();
-				$('#nota').select2('open');
-			}
-		});
-	}
-	// get data that will be processed
-	function getDataSalesComp()
-	{
-		loadingShow();
-		let nota = $('#nota').val();
 		let itemId = $('#itemId').val();
 		let prodCode = $("#kodeproduksi").val();
+        let agentCode = $('#agent').val();
 
 		$.ajax({
-			url: "{{ route('mmareturn.getData') }}",
+			url: "{{ route('return.getData') }}",
 			data: {
-				nota: nota,
+				agentCode: agentCode,
 				itemId: itemId,
 				prodCode: prodCode
 			},
 			type: 'get',
+            beforeSend: function(){
+                loadingShow();
+            },
 			success: function(resp) {
-				loadingHide();
 				console.log(resp);
-				$('#sellerCode').val(resp.data.get_comp.c_id);
-				$('#penjual').val(resp.data.get_comp.c_name);
-				$('#agen').val(resp.data.get_agent.c_name);
-				if (resp.data.sc_type == 'C') {
-					$('#metodepembayaran').val('Cash');
-				} else {
-					$('#metodepembayaran').val('Konsinyasi');
-				}
-				$('#tanggaltransaksi').val(resp.data.sc_date);
-				$('#total').val(resp.data.sc_total);
-				$('#item').val(resp.data.get_sales_comp_dt[0].get_item.i_name);
-				$('#qty').val(resp.data.get_sales_comp_dt[0].get_prod_code[0].ssc_qty);
+				$('#item').val(resp.data.get_item.i_name);
+				$('#qty').val(resp.data.s_qty);
                 $('#qtyReturn').val(0);
                 $('#returnValue').val(0);
                 $('#subsValue').val(0);
                 $('#keterangan').val('');
-				$('#itemPrice').val(parseFloat(resp.data.get_sales_comp_dt[0].scd_value) - parseFloat(resp.data.get_sales_comp_dt[0].scd_discvalue));
+				// $('#itemPrice').val(parseFloat(resp.data.get_sales_comp_dt[0].scd_value) - parseFloat(resp.data.get_sales_comp_dt[0].scd_discvalue));
 				$('#div3').removeClass('d-none');
 			},
 			error: function(e) {
-				loadingHide();
-				messageWarning('Error', 'Gagal mengambil detail penjualan, hubungi pengembang !')
-			}
+				messageWarning('Error', 'Terjadi kesalahan, hubungi teknisi !');
+			},
+            complete: function(){
+                loadingHide();
+            }
 		});
 	}
 	// set confirm before send data to controller
@@ -1014,24 +990,27 @@
 	function store()
 	{
 		let data = $('#formdata').serialize();
-		// get list of production-code
-		$.each($('.table_listcodeprod'), function (key, val) {
-			// get length of production-code each items
-			let prodCodeLength = $('.table_listcodeprod:eq(' + key + ') :input.qtyProdCode').length;
-			$('.modalCodeProd:eq(' + key + ')').find('.prodcode-length').val(prodCodeLength);
-			inputs = $('.table_listcodeprod:eq(' + key + ') :input').serialize();
-			data = data + '&' + inputs;
-		});
+		// // get list of production-code
+		// $.each($('.table_listcodeprod'), function (key, val) {
+		// 	// get length of production-code each items
+		// 	let prodCodeLength = $('.table_listcodeprod:eq(' + key + ') :input.qtyProdCode').length;
+		// 	$('.modalCodeProd:eq(' + key + ')').find('.prodcode-length').val(prodCodeLength);
+		// 	inputs = $('.table_listcodeprod:eq(' + key + ') :input').serialize();
+		// 	data = data + '&' + inputs;
+		// });
 
 		$.ajax({
 			type: 'post',
 			data: data,
 			dataType: 'JSON',
-			url: "{{ route('mmareturn.store') }}",
+			url: "{{ route('return.store') }}",
+            beforeSend: function() {
+                loadingShow();
+            },
 			success : function(response){
 				if (response.status == 'berhasil') {
 					messageSuccess('Info', 'Berhasil Disimpan');
-                    // location.reload();
+                    location.reload();
 				}
 				else {
 					messageWarning('Info', 'Gagal Disimpan: '+ response.message);
@@ -1039,450 +1018,453 @@
 			},
 			error: function(e) {
 				messageWarning('Info', 'Terjadi kesalahan : '+ e.message);
-			}
+			},
+            complete: function () {
+                loadingHide();
+            }
 		});
 	}
 
-
-
     {{--
-    <!-- <script type="text/javascript">
-        var tbl_rp, tbl_gu, tbl_pn;
-        $(document).ready(function(){
-
-            tbl_rp = $('#table_rp').DataTable();
-            tbl_gu = $('#tabel_gu').DataTable();
-            tbl_pn = $('#tabel_pn').DataTable();
-
-            $('#searchBy').on('change', function() {
-                if ($(this).val() == 'nota')
-                {
-                    $('#q_nota').clone().attr('type', 'text').insertAfter('#q_nota').prev().remove();
-                    $('#q_prodcode').clone().attr('type', 'hidden').insertAfter('#q_prodcode').prev().remove();
-                    $('#btn_searchsupplier').attr('disabled', false);
-                    $('#btn_searchsupplier').removeClass('d-none');
-                    $('#searchLabel').text('No Nota');
-                    $('#q_nota').val('');
-                    $('#q_prodcode').val('');
-                }
-                else if ($(this).val() == 'kodeproduksi')
-                {
-                    $('#q_nota').clone().attr('type', 'hidden').insertAfter('#q_nota').prev().remove();
-                    $('#q_prodcode').clone().attr('type', 'text').insertAfter('#q_prodcode').prev().remove();
-                    $('#btn_searchsupplier').attr('disabled', true);
-                    $('#btn_searchsupplier').addClass('d-none');
-                    $('#searchLabel').text('Kode Produksi');
-                    $('#q_nota').val('');
-                    $('#q_prodcode').val('');
-                }
-                // re-initialize event (keyup or another)
-                initEvents();
-            });
-
-            if ($("#q_idpo").val() == "") {
-                $("#go").attr("disabled", true);
-            }
-            else {
-                $("#go").attr("disabled", false);
-            }
-
-            // init event keyup for autocomplete
-            initEvents();
-
-            $("#go").on("click", function() {
-                searchItems();
-            });
-            $("#supplier").on("keyup", function () {
-                $("#idSupplier").val('');
-            });
-            $("#supplier").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: '{{ route('return.carisupplier') }}',
-                        data: {
-                            term: $("#supplier").val()
-                        },
-                        success: function (data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 1,
-                select: function (event, data) {
-                    $("#idSupplier").val(data.item.id);
-                }
-            });
-
-            $("#btn_searchNotainTbl").on("click", function (evt) {
-                evt.preventDefault();
-                var dateStart = $("#dateStart").val(), dateEnd = $("#dateEnd").val(), supplier = $("#idSupplier").val();
-                if (dateStart == "" && dateEnd == "" && supplier == "") {
-                    messageWarning("Peringatan", "Masukkan parameter pencarian");
-                    $("#dateStart").focus();
-                } else {
-                    loadingShow();
-                    if ($.fn.DataTable.isDataTable("#tbl_nota")) {
-                        $('#tbl_nota').DataTable().clear().destroy();
-                    }
-                    $('#tbl_nota').DataTable({
-                        responsive: true,
-                        serverSide: true,
-                        processing: true,
-                        ajax: {
-                            url: "{{ route('return.getnota') }}",
-                            data: {
-                                dateStart: dateStart,
-                                dateEnd: dateEnd,
-                                supplier: supplier
-                            },
-                            type: "get"
-                        },
-                        columns: [
-                            {data: 'supplier'},
-                            {data: 'tanggal'},
-                            {data: 'nota'},
-                            {data: 'action'}
-                        ],
-                        drawCallback: function( settings ) {
-                            loadingHide();
-                        }
-                    });
-                }
-            })
-            $("#btn_searchsupplier").on("click", function (evt) {
-                evt.preventDefault();
-                console.log('abc');
-                appendModalSearchSupplier();
-            })
-
-            $("#formCreateReturn").on("submit", function (evt) {
-                evt.preventDefault();
-                if ($("#qty_return").val() == "" || $("#qty_return").val() == 0) {
-                    messageWarning("Peringatan", "Masukkan qty return");
-                    $("#qty_return").focus();
-                } else if ($("#satuan_return").val() == "") {
-                    messageWarning("Peringatan", "Pilih satuan barang");
-                    $("#satuan_return").focus();
-                } else {
-                    $.confirm({
-                        animation: 'RotateY',
-                        closeAnimation: 'scale',
-                        animationBounce: 1.5,
-                        icon: 'fa fa-exclamation-triangle',
-                        title: 'Konfirmasi!',
-                        content: 'Apakah anda yakin akan membuat return produksi untuk barang ini?',
-                        theme: 'disable',
-                        buttons: {
-                            info: {
-                                btnClass: 'btn-blue',
-                                text: 'Ya',
-                                action: function () {
-                                    createReturn();
-                                }
-                            },
-                            cancel: {
-                                text: 'Tidak',
-                                action: function () {
-                                    // tutup confirm
-                                }
-                            }
-                        }
-                    });
-                }
-            })
-
-            $('#header-metodereturn').change(function(){
-                var ini, potong_nota, ganti_uang, ganti_barang;
-                ini             = $(this).val();
-                potong_nota     = $('#potong_nota');
-                ganti_uang     = $('#ganti_uang');
-                ganti_barang     = $('#ganti_barang');
-                if (ini === 'GB') {
-                    potong_nota.addClass('d-none');
-                    ganti_uang.addClass('d-none');
-                    ganti_barang.removeClass('d-none');
-                } else if(ini === 'GU'){
-                    potong_nota.addClass('d-none');
-                    ganti_uang.removeClass('d-none');
-                    ganti_barang.addClass('d-none');
-                } else if(ini === 'PN'){
-                    potong_nota.removeClass('d-none');
-                    ganti_uang.addClass('d-none');
-                    ganti_barang.addClass('d-none');
-                }
-            });
-
-            // reset modal-return when modal is hidden
-            $('#createReturn').on('hidden.bs.modal', function() {
-                $('#formCreateReturn')[0].reset();
-            });
-        });
-        // init autocomplete for search by nota or prod-code
-        function initEvents()
-        {
-            $("#q_prodcode").off();
-            $("#q_prodcode").on("keyup", function () {
-                $("#q_idpo").val('');
-                $(".table-returnp").addClass('d-none');
-                if ($("#q_idpo").val() == "") {
-                    $("#go").attr("disabled", true);
-                } else {
-                    $("#go").attr("disabled", false);
-                }
-            });
-            $("#q_prodcode").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "{{ route('return.cariprodkode') }}",
-                        data: {
-                            term: $("#q_prodcode").val()
-                        },
-                        success: function (data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 1,
-                select: function (event, data) {
-                    $("#q_idpo").val(data.item.id);
-                    $('#q_nota').val(data.item.nota);
-                    $("#q_prodcode").val(data.item.prodCode);
-                    $("#notaPO").val(data.item.nota);
-                    $("#prodCode").val(data.item.prodCode);
-                    searchItems();
-                }
-            });
-
-            $("#q_nota").off();
-            $("#q_nota").on("keyup", function () {
-                $("#q_idpo").val('');
-                $(".table-returnp").addClass('d-none');
-                if ($("#q_idpo").val() == "") {
-                    $("#go").attr("disabled", true);
-                } else {
-                    $("#go").attr("disabled", false);
-                }
-            });
-            $("#q_nota").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "{{ route('return.carinota') }}",
-                        data: {
-                            term: $("#q_nota").val()
-                        },
-                        success: function (data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 1,
-                select: function (event, data) {
-                    $("#q_idpo").val(data.item.id);
-                    $('#q_nota').val(data.item.nota);
-                    $("#q_prodcode").val(data.item.prodCode);
-                    $("#notaPO").val(data.item.nota);
-                    $("#prodCode").val(data.item.prodCode);
-                    searchItems();
-                }
-            });
-        }
-
-        function appendModalSearchSupplier()
-        {
-            loadingShow();
-            if ($.fn.DataTable.isDataTable("#tbl_nota")) {
-                $('#tbl_nota').DataTable().clear().destroy();
-            }
-            $('#tbl_nota').DataTable({
-                responsive: true,
-                serverSide: true,
-                processing: true,
-                ajax: {
-                    url: "{{ route('return.getnota') }}",
-                    type: "get"
-                },
-                columns: [
-                    {data: 'supplier'},
-                    {data: 'tanggal'},
-                    {data: 'nota'},
-                    {data: 'action'}
-                ],
-                drawCallback: function( settings ) {
-                    loadingHide();
-                    $("#search-modal").modal({backdrop: 'static', keyboard: false});
-                }
-            });
-        }
-
-        function detail(id)
-        {
-            loadingShow();
-            if ($.fn.DataTable.isDataTable("#tbl_detailnota")) {
-                $('#tbl_detailnota').DataTable().clear().destroy();
-            }
-            $('#tbl_detailnota').DataTable({
-                responsive: true,
-                serverSide: true,
-                processing: true,
-                ajax: {
-                    url: "{{ url('/produksi/returnproduksi/detail-nota') }}"+"/"+id,
-                    type: "get"
-                },
-                columns: [
-                    {data: 'barang'},
-                    {data: 'qty'},
-                    {data: 'harga'}
-                ],
-                drawCallback: function( settings ) {
-                    loadingHide();
-                }
-            });
-            $("#detail").modal("show");
-        }
-        // apply search nota using modal-search by supplier
-        function pilih(id, nota)
-        {
-            $("#q_nota").val(nota);
-            $("#q_idpo").val(id);
-            $("#notaPO").val(nota);
-            loadingShow();
-            if ($.fn.DataTable.isDataTable("#table_rp")) {
-                $('#table_rp').DataTable().clear().destroy();
-            }
-            $('#table_rp').DataTable({
-                responsive: true,
-                serverSide: true,
-                processing: true,
-                ajax: {
-                    url: "{{ url('/produksi/returnproduksi/cari-barang-po') }}",
-                    data: {
-                        id: $("#q_idpo").val(),
-                        prodCode: $('#q_prodcode').val(),
-                        nota: $('#q_nota').val(),
-                        searchBy: $('#searchBy').val()
-                    },
-                    type: "get"
-                },
-                columns: [
-                    {data: 'barang'},
-                    {data: 'qty'},
-                    {data: 'harga'},
-                    {data: 'total'},
-                    {data: 'action'}
-                ],
-                drawCallback: function( settings ) {
-                    loadingHide();
-                    $(".table-returnp").removeClass('d-none');
-                }
-            });
-            $("#search-modal").modal("hide");
-            if ($("#q_idpo").val() == "") {
-                $("#go").attr("disabled", true);
-            } else {
-                $("#go").attr("disabled", false);
-            }
-        }
-
-        // fill list items in dataTable after using search nota or searh prod-code
-        function searchItems()
-        {
-            loadingShow();
-            if ($.fn.DataTable.isDataTable("#table_rp")) {
-                $('#table_rp').DataTable().clear().destroy();
-            }
-            $('#table_rp').DataTable({
-                responsive: true,
-                serverSide: true,
-                processing: true,
-                ajax: {
-                    url: "{{ url('/produksi/returnproduksi/cari-barang-po') }}",
-                    data: {
-                        id: $("#q_idpo").val(),
-                        prodCode: $('#q_prodcode').val(),
-                        nota: $('#q_nota').val(),
-                        searchBy: $('#searchBy').val()
-                    },
-                    type: "get"
-                },
-                columns: [
-                    {data: 'barang'},
-                    {data: 'qty'},
-                    {data: 'harga'},
-                    {data: 'total'},
-                    {data: 'action'}
-                ],
-                drawCallback: function( settings ) {
-                    loadingHide();
-                    $(".table-returnp").removeClass('d-none');
-                }
-            });
-            $("#search-modal").modal("hide");
-            if ($("#q_idpo").val() == "") {
-                $("#go").attr("disabled", true);
-            } else {
-                $("#go").attr("disabled", false);
-            }
-        }
-        // select an item and show the modal to create return
-        function selectItem (searchMethod, poid, item, barang, qty, harga, total)
-        {
-            console.log(poid, item, barang, qty, harga, total);
-            loadingShow();
-            $("#searchMethod").val(searchMethod);
-            $("#idPO").val(poid);
-            $("#idItem").val(item);
-            $("#txt_barang").val(barang);
-            $("#txt_qty").val(qty);
-            $("#txt_harga").val(parseFloat(harga));
-            $("#txt_total").val(parseFloat(total))
-            axios.get(baseUrl+"/produksi/returnproduksi/set-satuan/"+item)
-                .then(function (resp) {
-                    loadingHide();
-                    $("#satuan_return").find('option').remove();
-                    var option = '<option value="">Pilih Satuan</option>';
-                    option += '<option value="'+resp.data.id1+'">'+resp.data.unit1+'</option>';
-                    if (resp.data.id2 != null && resp.data.id2 != resp.data.id1) {
-                        option += '<option value="'+resp.data.id2+'">'+resp.data.unit2+'</option>';
-                    }
-                    if (resp.data.id3 != null && resp.data.id3 != resp.data.id1) {
-                        option += '<option value="'+resp.data.id3+'">'+resp.data.unit3+'</option>';
-                    }
-                    $("#satuan_return").append(option);
-                    $("#createReturn").modal({backdrop: 'static', keyboard: false});
-                })
-                .catch(function (error) {
-                    loadingHide();
-                    messageWarning("Error", error);
-                })
-
-        }
-        // create return
-        function createReturn()
-        {
-            loadingShow();
-            axios.post('{{ route('return.add') }}', $("#formCreateReturn").serialize())
-            .then(function (resp) {
-                loadingHide();
-                if (resp.data.status == "Failed") {
-                    messageWarning("Gagal", resp.data.message);
-                }
-                else if (resp.data.status == "Success") {
-                    messageSuccess("Berhasil", resp.data.message);
-                    $("#qty_return").val(0);
-                    $("#note_return").val('');
-                    $("#createReturn").modal("hide");
-                    window.open(baseUrl+'/produksi/returnproduksi/nota-return/'+resp.data.id+'/'+resp.data.detail);
-                    window.location.href = '{{ route("return.index") }}';
-                }
-                else {
-                    messageFailed("Perhatian", resp.data.error);
-                }
-            })
-            .catch(function (error) {
-                loadingHide();
-                messageWarning("Error", error);
-            })
-        }
-    </script> -->
+    // <script type="text/javascript">
+    //     var tbl_rp, tbl_gu, tbl_pn;
+    //     $(document).ready(function(){
+    //
+    //         tbl_rp = $('#table_rp').DataTable();
+    //         tbl_gu = $('#tabel_gu').DataTable();
+    //         tbl_pn = $('#tabel_pn').DataTable();
+    //
+    //         $('#searchBy').on('change', function() {
+    //             if ($(this).val() == 'nota')
+    //             {
+    //                 $('#q_nota').clone().attr('type', 'text').insertAfter('#q_nota').prev().remove();
+    //                 $('#q_prodcode').clone().attr('type', 'hidden').insertAfter('#q_prodcode').prev().remove();
+    //                 $('#btn_searchsupplier').attr('disabled', false);
+    //                 $('#btn_searchsupplier').removeClass('d-none');
+    //                 $('#searchLabel').text('No Nota');
+    //                 $('#q_nota').val('');
+    //                 $('#q_prodcode').val('');
+    //             }
+    //             else if ($(this).val() == 'kodeproduksi')
+    //             {
+    //                 $('#q_nota').clone().attr('type', 'hidden').insertAfter('#q_nota').prev().remove();
+    //                 $('#q_prodcode').clone().attr('type', 'text').insertAfter('#q_prodcode').prev().remove();
+    //                 $('#btn_searchsupplier').attr('disabled', true);
+    //                 $('#btn_searchsupplier').addClass('d-none');
+    //                 $('#searchLabel').text('Kode Produksi');
+    //                 $('#q_nota').val('');
+    //                 $('#q_prodcode').val('');
+    //             }
+    //             // re-initialize event (keyup or another)
+    //             initEvents();
+    //         });
+    //
+    //         if ($("#q_idpo").val() == "") {
+    //             $("#go").attr("disabled", true);
+    //         }
+    //         else {
+    //             $("#go").attr("disabled", false);
+    //         }
+    //
+    //         // init event keyup for autocomplete
+    //         initEvents();
+    //
+    //         $("#go").on("click", function() {
+    //             searchItems();
+    //         });
+    //         $("#supplier").on("keyup", function () {
+    //             $("#idSupplier").val('');
+    //         });
+    //         $("#supplier").autocomplete({
+    //             source: function (request, response) {
+    //                 $.ajax({
+    //                     url: '{{ route('return.carisupplier') }}',
+    //                     data: {
+    //                         term: $("#supplier").val()
+    //                     },
+    //                     success: function (data) {
+    //                         response(data);
+    //                     }
+    //                 });
+    //             },
+    //             minLength: 1,
+    //             select: function (event, data) {
+    //                 $("#idSupplier").val(data.item.id);
+    //             }
+    //         });
+    //
+    //         $("#btn_searchNotainTbl").on("click", function (evt) {
+    //             evt.preventDefault();
+    //             var dateStart = $("#dateStart").val(), dateEnd = $("#dateEnd").val(), supplier = $("#idSupplier").val();
+    //             if (dateStart == "" && dateEnd == "" && supplier == "") {
+    //                 messageWarning("Peringatan", "Masukkan parameter pencarian");
+    //                 $("#dateStart").focus();
+    //             } else {
+    //                 loadingShow();
+    //                 if ($.fn.DataTable.isDataTable("#tbl_nota")) {
+    //                     $('#tbl_nota').DataTable().clear().destroy();
+    //                 }
+    //                 $('#tbl_nota').DataTable({
+    //                     responsive: true,
+    //                     serverSide: true,
+    //                     processing: true,
+    //                     ajax: {
+    //                         url: "{{ route('return.getnota') }}",
+    //                         data: {
+    //                             dateStart: dateStart,
+    //                             dateEnd: dateEnd,
+    //                             supplier: supplier
+    //                         },
+    //                         type: "get"
+    //                     },
+    //                     columns: [
+    //                         {data: 'supplier'},
+    //                         {data: 'tanggal'},
+    //                         {data: 'nota'},
+    //                         {data: 'action'}
+    //                     ],
+    //                     drawCallback: function( settings ) {
+    //                         loadingHide();
+    //                     }
+    //                 });
+    //             }
+    //         })
+    //         $("#btn_searchsupplier").on("click", function (evt) {
+    //             evt.preventDefault();
+    //             console.log('abc');
+    //             appendModalSearchSupplier();
+    //         })
+    //
+    //         $("#formCreateReturn").on("submit", function (evt) {
+    //             evt.preventDefault();
+    //             if ($("#qty_return").val() == "" || $("#qty_return").val() == 0) {
+    //                 messageWarning("Peringatan", "Masukkan qty return");
+    //                 $("#qty_return").focus();
+    //             } else if ($("#satuan_return").val() == "") {
+    //                 messageWarning("Peringatan", "Pilih satuan barang");
+    //                 $("#satuan_return").focus();
+    //             } else {
+    //                 $.confirm({
+    //                     animation: 'RotateY',
+    //                     closeAnimation: 'scale',
+    //                     animationBounce: 1.5,
+    //                     icon: 'fa fa-exclamation-triangle',
+    //                     title: 'Konfirmasi!',
+    //                     content: 'Apakah anda yakin akan membuat return produksi untuk barang ini?',
+    //                     theme: 'disable',
+    //                     buttons: {
+    //                         info: {
+    //                             btnClass: 'btn-blue',
+    //                             text: 'Ya',
+    //                             action: function () {
+    //                                 createReturn();
+    //                             }
+    //                         },
+    //                         cancel: {
+    //                             text: 'Tidak',
+    //                             action: function () {
+    //                                 // tutup confirm
+    //                             }
+    //                         }
+    //                     }
+    //                 });
+    //             }
+    //         })
+    //
+    //         $('#header-metodereturn').change(function(){
+    //             var ini, potong_nota, ganti_uang, ganti_barang;
+    //             ini             = $(this).val();
+    //             potong_nota     = $('#potong_nota');
+    //             ganti_uang     = $('#ganti_uang');
+    //             ganti_barang     = $('#ganti_barang');
+    //             if (ini === 'GB') {
+    //                 potong_nota.addClass('d-none');
+    //                 ganti_uang.addClass('d-none');
+    //                 ganti_barang.removeClass('d-none');
+    //             } else if(ini === 'GU'){
+    //                 potong_nota.addClass('d-none');
+    //                 ganti_uang.removeClass('d-none');
+    //                 ganti_barang.addClass('d-none');
+    //             } else if(ini === 'PN'){
+    //                 potong_nota.removeClass('d-none');
+    //                 ganti_uang.addClass('d-none');
+    //                 ganti_barang.addClass('d-none');
+    //             }
+    //         });
+    //
+    //         // reset modal-return when modal is hidden
+    //         $('#createReturn').on('hidden.bs.modal', function() {
+    //             $('#formCreateReturn')[0].reset();
+    //         });
+    //     });
+    //     // init autocomplete for search by nota or prod-code
+    //     function initEvents()
+    //     {
+    //         $("#q_prodcode").off();
+    //         $("#q_prodcode").on("keyup", function () {
+    //             $("#q_idpo").val('');
+    //             $(".table-returnp").addClass('d-none');
+    //             if ($("#q_idpo").val() == "") {
+    //                 $("#go").attr("disabled", true);
+    //             } else {
+    //                 $("#go").attr("disabled", false);
+    //             }
+    //         });
+    //         $("#q_prodcode").autocomplete({
+    //             source: function (request, response) {
+    //                 $.ajax({
+    //                     url: "{{ route('return.cariprodkode') }}",
+    //                     data: {
+    //                         term: $("#q_prodcode").val()
+    //                     },
+    //                     success: function (data) {
+    //                         response(data);
+    //                     }
+    //                 });
+    //             },
+    //             minLength: 1,
+    //             select: function (event, data) {
+    //                 $("#q_idpo").val(data.item.id);
+    //                 $('#q_nota').val(data.item.nota);
+    //                 $("#q_prodcode").val(data.item.prodCode);
+    //                 $("#notaPO").val(data.item.nota);
+    //                 $("#prodCode").val(data.item.prodCode);
+    //                 searchItems();
+    //             }
+    //         });
+    //
+    //         $("#q_nota").off();
+    //         $("#q_nota").on("keyup", function () {
+    //             $("#q_idpo").val('');
+    //             $(".table-returnp").addClass('d-none');
+    //             if ($("#q_idpo").val() == "") {
+    //                 $("#go").attr("disabled", true);
+    //             } else {
+    //                 $("#go").attr("disabled", false);
+    //             }
+    //         });
+    //         $("#q_nota").autocomplete({
+    //             source: function (request, response) {
+    //                 $.ajax({
+    //                     url: "{{ route('return.carinota') }}",
+    //                     data: {
+    //                         term: $("#q_nota").val()
+    //                     },
+    //                     success: function (data) {
+    //                         response(data);
+    //                     }
+    //                 });
+    //             },
+    //             minLength: 1,
+    //             select: function (event, data) {
+    //                 $("#q_idpo").val(data.item.id);
+    //                 $('#q_nota').val(data.item.nota);
+    //                 $("#q_prodcode").val(data.item.prodCode);
+    //                 $("#notaPO").val(data.item.nota);
+    //                 $("#prodCode").val(data.item.prodCode);
+    //                 searchItems();
+    //             }
+    //         });
+    //     }
+    //
+    //     function appendModalSearchSupplier()
+    //     {
+    //         loadingShow();
+    //         if ($.fn.DataTable.isDataTable("#tbl_nota")) {
+    //             $('#tbl_nota').DataTable().clear().destroy();
+    //         }
+    //         $('#tbl_nota').DataTable({
+    //             responsive: true,
+    //             serverSide: true,
+    //             processing: true,
+    //             ajax: {
+    //                 url: "{{ route('return.getnota') }}",
+    //                 type: "get"
+    //             },
+    //             columns: [
+    //                 {data: 'supplier'},
+    //                 {data: 'tanggal'},
+    //                 {data: 'nota'},
+    //                 {data: 'action'}
+    //             ],
+    //             drawCallback: function( settings ) {
+    //                 loadingHide();
+    //                 $("#search-modal").modal({backdrop: 'static', keyboard: false});
+    //             }
+    //         });
+    //     }
+    //
+    //     function detail(id)
+    //     {
+    //         loadingShow();
+    //         if ($.fn.DataTable.isDataTable("#tbl_detailnota")) {
+    //             $('#tbl_detailnota').DataTable().clear().destroy();
+    //         }
+    //         $('#tbl_detailnota').DataTable({
+    //             responsive: true,
+    //             serverSide: true,
+    //             processing: true,
+    //             ajax: {
+    //                 url: "{{ url('/produksi/returnproduksi/detail-nota') }}"+"/"+id,
+    //                 type: "get"
+    //             },
+    //             columns: [
+    //                 {data: 'barang'},
+    //                 {data: 'qty'},
+    //                 {data: 'harga'}
+    //             ],
+    //             drawCallback: function( settings ) {
+    //                 loadingHide();
+    //             }
+    //         });
+    //         $("#detail").modal("show");
+    //     }
+    //     // apply search nota using modal-search by supplier
+    //     function pilih(id, nota)
+    //     {
+    //         $("#q_nota").val(nota);
+    //         $("#q_idpo").val(id);
+    //         $("#notaPO").val(nota);
+    //         loadingShow();
+    //         if ($.fn.DataTable.isDataTable("#table_rp")) {
+    //             $('#table_rp').DataTable().clear().destroy();
+    //         }
+    //         $('#table_rp').DataTable({
+    //             responsive: true,
+    //             serverSide: true,
+    //             processing: true,
+    //             ajax: {
+    //                 url: "{{ url('/produksi/returnproduksi/cari-barang-po') }}",
+    //                 data: {
+    //                     id: $("#q_idpo").val(),
+    //                     prodCode: $('#q_prodcode').val(),
+    //                     nota: $('#q_nota').val(),
+    //                     searchBy: $('#searchBy').val()
+    //                 },
+    //                 type: "get"
+    //             },
+    //             columns: [
+    //                 {data: 'barang'},
+    //                 {data: 'qty'},
+    //                 {data: 'harga'},
+    //                 {data: 'total'},
+    //                 {data: 'action'}
+    //             ],
+    //             drawCallback: function( settings ) {
+    //                 loadingHide();
+    //                 $(".table-returnp").removeClass('d-none');
+    //             }
+    //         });
+    //         $("#search-modal").modal("hide");
+    //         if ($("#q_idpo").val() == "") {
+    //             $("#go").attr("disabled", true);
+    //         } else {
+    //             $("#go").attr("disabled", false);
+    //         }
+    //     }
+    //
+    //     // fill list items in dataTable after using search nota or searh prod-code
+    //     function searchItems()
+    //     {
+    //         loadingShow();
+    //         if ($.fn.DataTable.isDataTable("#table_rp")) {
+    //             $('#table_rp').DataTable().clear().destroy();
+    //         }
+    //         $('#table_rp').DataTable({
+    //             responsive: true,
+    //             serverSide: true,
+    //             processing: true,
+    //             ajax: {
+    //                 url: "{{ url('/produksi/returnproduksi/cari-barang-po') }}",
+    //                 data: {
+    //                     id: $("#q_idpo").val(),
+    //                     prodCode: $('#q_prodcode').val(),
+    //                     nota: $('#q_nota').val(),
+    //                     searchBy: $('#searchBy').val()
+    //                 },
+    //                 type: "get"
+    //             },
+    //             columns: [
+    //                 {data: 'barang'},
+    //                 {data: 'qty'},
+    //                 {data: 'harga'},
+    //                 {data: 'total'},
+    //                 {data: 'action'}
+    //             ],
+    //             drawCallback: function( settings ) {
+    //                 loadingHide();
+    //                 $(".table-returnp").removeClass('d-none');
+    //             }
+    //         });
+    //         $("#search-modal").modal("hide");
+    //         if ($("#q_idpo").val() == "") {
+    //             $("#go").attr("disabled", true);
+    //         } else {
+    //             $("#go").attr("disabled", false);
+    //         }
+    //     }
+    //     // select an item and show the modal to create return
+    //     function selectItem (searchMethod, poid, item, barang, qty, harga, total)
+    //     {
+    //         console.log(poid, item, barang, qty, harga, total);
+    //         loadingShow();
+    //         $("#searchMethod").val(searchMethod);
+    //         $("#idPO").val(poid);
+    //         $("#idItem").val(item);
+    //         $("#txt_barang").val(barang);
+    //         $("#txt_qty").val(qty);
+    //         $("#txt_harga").val(parseFloat(harga));
+    //         $("#txt_total").val(parseFloat(total))
+    //         axios.get(baseUrl+"/produksi/returnproduksi/set-satuan/"+item)
+    //             .then(function (resp) {
+    //                 loadingHide();
+    //                 $("#satuan_return").find('option').remove();
+    //                 var option = '<option value="">Pilih Satuan</option>';
+    //                 option += '<option value="'+resp.data.id1+'">'+resp.data.unit1+'</option>';
+    //                 if (resp.data.id2 != null && resp.data.id2 != resp.data.id1) {
+    //                     option += '<option value="'+resp.data.id2+'">'+resp.data.unit2+'</option>';
+    //                 }
+    //                 if (resp.data.id3 != null && resp.data.id3 != resp.data.id1) {
+    //                     option += '<option value="'+resp.data.id3+'">'+resp.data.unit3+'</option>';
+    //                 }
+    //                 $("#satuan_return").append(option);
+    //                 $("#createReturn").modal({backdrop: 'static', keyboard: false});
+    //             })
+    //             .catch(function (error) {
+    //                 loadingHide();
+    //                 messageWarning("Error", error);
+    //             })
+    //
+    //     }
+    //     // create return
+    //     function createReturn()
+    //     {
+    //         loadingShow();
+    //         axios.post('{{ route('return.add') }}', $("#formCreateReturn").serialize())
+    //         .then(function (resp) {
+    //             loadingHide();
+    //             if (resp.data.status == "Failed") {
+    //                 messageWarning("Gagal", resp.data.message);
+    //             }
+    //             else if (resp.data.status == "Success") {
+    //                 messageSuccess("Berhasil", resp.data.message);
+    //                 $("#qty_return").val(0);
+    //                 $("#note_return").val('');
+    //                 $("#createReturn").modal("hide");
+    //                 window.open(baseUrl+'/produksi/returnproduksi/nota-return/'+resp.data.id+'/'+resp.data.detail);
+    //                 window.location.href = '{{ route("return.index") }}';
+    //             }
+    //             else {
+    //                 messageFailed("Perhatian", resp.data.error);
+    //             }
+    //         })
+    //         .catch(function (error) {
+    //             loadingHide();
+    //             messageWarning("Error", error);
+    //         })
+    //     }
+    // </script>
     --}}
+</script>
+
 @endsection

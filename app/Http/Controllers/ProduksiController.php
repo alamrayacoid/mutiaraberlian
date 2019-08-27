@@ -3,23 +3,30 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Contracts\Encryption\DecryptException;
+
 use App\d_itemreceipt as ItemReceipt;
 use App\d_productionorder as ProductionOrder;
 use App\d_productionorderdt as ProductionOrderDT;
 use App\d_productionordercode;
-use App\m_supplier as Supplier;
+use App\d_returnproductionorder;
+use App\d_salescompcode;
 use App\d_stock as Stock;
+use App\d_stockdt;
 use App\d_stock_mutation as StockMutation;
-use DB;
+use App\m_item;
+use App\m_supplier;
+use App\m_wil_provinsi;
+use App\m_supplier as Supplier;
 use Auth;
-use Mockery\Exception;
-use Response;
 use Carbon\Carbon;
 use CodeGenerator;
-use Yajra\DataTables\DataTables;
 use Crypt;
 use Currency;
-use Illuminate\Contracts\Encryption\DecryptException;
+use DB;
+use Mockery\Exception;
+use Response;
+use Yajra\DataTables\DataTables;
 
 class ProduksiController extends Controller
 {
@@ -221,6 +228,7 @@ class ProduksiController extends Controller
             $productionorderauth = [];
             $productionorderdt = [];
             $productionorderpayment = [];
+
             DB::beginTransaction();
             try {
                 // dd($request);
@@ -243,6 +251,7 @@ class ProduksiController extends Controller
                     $nota = $notaProductionAuth;
                 };
 
+                (is_null($request->nota_return) ? $nota = $nota : $nota = $request->nota_return);
 
                 $productionorderauth[] = [
                     'poa_id' => $idpo,
@@ -289,7 +298,7 @@ class ProduksiController extends Controller
                 DB::rollBack();
                 return json_encode([
                     'status' => 'Failed',
-                    'msg' => $e
+                    'msg' => $e->getMessage()
                 ]);
             }
         }
@@ -654,7 +663,7 @@ class ProduksiController extends Controller
         $data = DB::table('d_returnproductionorder')
             ->join('m_item', 'rpo_item', '=', 'i_id')
             ->join('m_unit', 'i_unit1', '=', 'u_id')
-            ->select('rpo_productionorder as id', 'rpo_detailid as detail', 'rpo_date as tanggal', 'rpo_nota as nota', 'rpo_action as metode', 'rpo_item as idItem', 'i_name as barang',
+            ->select('rpo_id as id', 'rpo_date as tanggal', 'rpo_nota as nota', 'rpo_action as metode', 'rpo_item as idItem', 'i_name as barang',
                 'rpo_qty as qty', 'u_name as satuan');
 
         if ($request->awal !== null) {
@@ -693,9 +702,9 @@ class ProduksiController extends Controller
                 return $data->qty . ' ' . $data->satuan;
             })
             ->addColumn('action', function ($data) {
-                $detail = '<button class="btn btn-primary" type="button" title="Detail" onclick="detailReturn(\'' . Crypt::encrypt($data->id) . '\', \'' . Crypt::encrypt($data->detail) . '\')"><i class="fa fa-folder"></i></button>';
-                $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editReturn(\'' . Crypt::encrypt($data->id) . '\', \'' . Crypt::encrypt($data->detail) . '\', \'' . Crypt::encrypt($data->idItem) . '\')"><i class="fa fa-pencil-square-o"></i></button>';
-                $hapus = '<button class="btn btn-danger" type="button" title="Hapus" onclick="hapusReturn(\'' . Crypt::encrypt($data->id) . '\', \'' . Crypt::encrypt($data->detail) . '\', \'' . $data->qty . '\')"><i class="fa fa-trash-o"></i></button>';
+                $detail = '<button class="btn btn-primary" type="button" title="Detail" onclick="detailReturn(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>';
+                $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editReturn(\'' . Crypt::encrypt($data->id) . '\', \'' . Crypt::encrypt($data->idItem) . '\')"><i class="fa fa-pencil-square-o"></i></button>';
+                $hapus = '<button class="btn btn-danger" type="button" title="Hapus" onclick="hapusReturn(\'' . Crypt::encrypt($data->id) . '\', \'' . $data->qty . '\')"><i class="fa fa-trash-o"></i></button>';
                 return '<div class="btn-group btn-group-sm">' . $detail . $hapus . '</div>';
             })
             ->rawColumns(['tanggal', 'nota', 'metode', 'barang', 'qty', 'action'])
@@ -704,6 +713,7 @@ class ProduksiController extends Controller
 
     public function detailReturn($id = null, $detail = null)
     {
+dd('debug !');
         try {
             $id = Crypt::decrypt($id);
             $detail = Crypt::decrypt($detail);
@@ -758,6 +768,7 @@ class ProduksiController extends Controller
 
     public function getEditReturn($id = null, $detail = null)
     {
+dd('debug !');
         try {
             $id = Crypt::decrypt($id);
             $detail = Crypt::decrypt($detail);
@@ -819,7 +830,344 @@ class ProduksiController extends Controller
 
     public function create_return_produksi()
     {
-        return view('produksi/returnproduksi/create');
+        $provinsi = m_wil_provinsi::orderBy('wp_name', 'asc')->get();
+        return view('produksi/returnproduksi/create', compact('provinsi'));
+    }
+    // get list items from m_items without stock
+    public function findAllItem(Request $request)
+    {
+        $cari = $request->term;
+
+        $nama = m_item::where('i_name', 'like', '%'. $cari .'%')
+        ->get();
+
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' . strtoupper($query->i_name)];
+            }
+        }
+        return response()->json($results);
+    }
+    // get items using autocomple.js
+    public function findItem(Request $request)
+    {
+        $supplier = $request->supplier;
+
+        $is_item = array();
+        for ($i = 0; $i < count($request->idItem); $i++) {
+            if ($request->idItem[$i] != null) {
+                array_push($is_item, $request->idItem[$i]);
+            }
+        }
+
+        $cari = $request->term;
+        if (count($is_item) == 0) {
+            $nama = DB::table('m_item')
+                ->join('d_itemsupplier', 'is_item', '=', 'i_id')
+                ->where('is_supplier', $supplier)
+                ->where(function ($q) use ($cari) {
+                    $q->orWhere('i_name', 'like', '%' . $cari . '%');
+                    $q->orWhere('i_code', 'like', '%' . $cari . '%');
+                })
+                ->get();
+        } else {
+            $nama = DB::table('m_item')
+                ->join('d_itemsupplier', 'is_item', '=', 'i_id')
+                ->whereNotIn('i_id', $is_item)
+                ->where('is_supplier', $supplier)
+                ->where(function ($q) use ($cari) {
+                    $q->orWhere('i_name', 'like', '%' . $cari . '%');
+                    $q->orWhere('i_code', 'like', '%' . $cari . '%');
+                })
+                ->get();
+        }
+
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = ['id' => $query->i_id, 'label' => $query->i_code . ' - ' . strtoupper($query->i_name), 'data' => $query];
+            }
+        }
+        return response()->json($results);
+    }
+    // get satuan of an item
+    public function getUnit($id)
+    {
+        $data = m_item::where('i_id', $id)
+            ->with('getUnit1')
+            ->with('getUnit2')
+            ->with('getUnit3')
+            ->first();
+
+        return response()->json($data);
+    }
+    // // check item stock
+    // public function checkStock($stock = null, $item = null, $satuan = null, $qty = null)
+    // {
+    //     $data_check = DB::table('m_item')
+    //         ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+    //         'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+    //         'm_item.i_unit3 as unit3')
+    //         ->where('i_id', '=', $item)
+    //         ->first();
+    //
+    //     $data = DB::table('d_stock')
+    //         ->join('d_stock_mutation', function ($sm) {
+    //             $sm->on('sm_stock', '=', 's_id');
+    //         })
+    //         ->where('s_id', '=', $stock)
+    //         ->where('s_item', '=', $item)
+    //         ->where('s_status', '=', 'ON DESTINATION')
+    //         ->where('s_condition', '=', 'FINE')
+    //         ->select('sm_residue as sisa')
+    //         ->first();
+    //
+    //     $qty_compare = 0;
+    //     if ($satuan == $data_check->unit1) {
+    //         if ((int)$qty > (int)$data->sisa) {
+    //             $qty_compare = $data->sisa;
+    //         } else {
+    //             $qty_compare = $qty;
+    //         }
+    //     } else if ($satuan == $data_check->unit2) {
+    //         $compare = (int)$qty * (int)$data_check->compare2;
+    //         if ((int)$compare > (int)$data->sisa) {
+    //             $qty_compare = (int)$data->sisa / (int)$data_check->compare2;
+    //         } else {
+    //             $qty_compare = $qty;
+    //         }
+    //     } else if ($satuan == $data_check->unit3) {
+    //         $compare = (int)$qty * (int)$data_check->compare3;
+    //         if ((int)$compare > (int)$data->sisa) {
+    //             $qty_compare = (int)$data->sisa / (int)$data_check->compare3;
+    //         } else {
+    //             $qty_compare = $qty;
+    //         }
+    //     }
+    //
+    //     return response()->json(floor($qty_compare));
+    // }
+    // get list supplier
+    public function getSupplier(Request $request)
+    {
+        $suppliers = Supplier::orderBy('s_name', 'asc')->get();
+
+        return response()->json(array(
+            'success' => true,
+            'data' => $suppliers
+        ));
+    }
+    // get production-code
+    public function getProdCode(Request $request)
+    {
+        $itemStatus = $request->itemStatus;
+        $position = Auth::user()->u_company;
+
+        $kode = d_stockdt::whereHas('getStock', function ($q) use ($position, $itemStatus) {
+                $q
+                    ->where('s_position', $position)
+                    ->where('s_condition', $itemStatus);
+            })
+            ->with('getStock.getItem')
+            ->groupBy('sd_code')
+            ->get();
+
+        return response()->json($kode);
+    }
+    // // get list nota based on production-code
+    // public function getNota(Request $request)
+    // {
+    //     $prodCode = $request->prodCode;
+    //     $agentCode = $request->agentCode;
+    //     // get item id by production-code
+    //     $itemId = d_salescompcode::where('ssc_code', $prodCode)->select('ssc_item')->first();
+    //     $itemId = $itemId->ssc_item;
+    //
+    //     $listNota = d_salescomp::whereHas('getSalesCompDt', function ($q) use ($prodCode, $agentCode) {
+    //         $q
+    //             ->whereHas('getProdCode', function ($que) use ($prodCode) {
+    //                 $que->where('ssc_code', 'like', '%'. $prodCode .'%');
+    //             })
+    //             ->whereHas('getStock', function ($query) use ($agentCode) {
+    //                 $query
+    //                     ->where('s_position', $agentCode)
+    //                     ->where('s_status', 'ON DESTINATION');
+    //             });
+    //     })
+    //     ->with('getSalesCompDt.getProdCode')
+    //     ->get();
+    //
+    //     $listNota[0]->itemId = $itemId;
+    //
+    //     return response()->json($listNota);
+    // }
+    // get data stock
+    public function getData(Request $request)
+    {
+        $position = Auth::user()->u_company;
+        $itemId = $request->itemId;
+
+        $data = Stock::where('s_position', $position)
+            ->where('s_item', $itemId)
+            ->where('s_status', 'ON DESTINATION')
+            ->where('s_condition', 'FINE')
+            ->with('getItem')
+            ->first();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+    // store data to Database
+    public function store(Request $request)
+    {
+        // dd('debug supplier code', $request->all());
+        DB::beginTransaction();
+        try {
+            $supplierId = $request->supplier; // supplier id
+            (is_null($request->returnDate)) ? $returnDate = Carbon::now() : $returnDate = Carbon::createFromFormat('d-m-Y', $request->returnDate);
+
+            if ($request->returnType == 'SB') {
+                $notaPenjualan = $request->nota;
+                $itemId = $request->itemId;
+                $prodCode = $request->kodeproduksi;
+                $qtyReturn = (int)$request->qtyReturn;
+                $itemPrice = (int)$request->itemPriceSB;
+                $type = $request->type;
+            }
+            elseif ($request->returnType == 'SL') {
+                $notaPenjualan = 'STOK LAMA';
+                $itemId = $request->itemIdSL;
+                $prodCode = $request->prodCodeSL;
+                $qtyReturn = (int)$request->qtyReturnSL;
+                $itemPrice = (int)$request->itemPriceSL;
+                $type = $request->typeSL;
+            }
+
+            if (is_null($type) || $type == '') {
+                throw new Exception("Silahkan pilih Jenis Penggantian terlebih dahulu !", 1);
+            }
+            if (is_null($itemId) || $itemId == '') {
+                throw new Exception("Silahkan mengisi item yang akan di-return terlebih dahulu !", 1);
+            }
+            if ($qtyReturn < 1) {
+                throw new Exception("Qty item yang akan di-return tidak boleh kurang dari 1", 1);
+            }
+
+            $note = $request->keterangan;
+            $comp = Auth::user()->u_company;
+
+            $id = d_returnproductionorder::max('rpo_id') + 1;
+            $nota = CodeGenerator::codeWithSeparator('d_returnproductionorder', 'rpo_nota', 15, 10, 3, 'RETURN-PO', '/');
+
+            // set value for table d_return
+            $valReturn = [
+                'rpo_id' => $id,
+                'rpo_date' => $returnDate,
+                'rpo_nota' => $nota,
+                'rpo_item' => $itemId,
+                'rpo_qty' => $qtyReturn,
+                'rpo_code' => strtoupper($prodCode),
+                'rpo_action' => $type,
+                'rpo_note' => $request->keterangan,
+                'rpo_reff' => null
+            ];
+            // insert return to table d_return
+            $insertReturn = d_returnproductionorder::insert($valReturn);
+
+            if ($type == 'GB') {
+                $mutcat = 16;
+            }
+            elseif ($type == 'GU') {
+                $mutcat = 15;
+            }
+            else {
+                $mutcat = 17;
+            }
+
+            // set list of production-code and qty each production-code
+            $listPC = array($prodCode);
+            $listQtyPC = array($qtyReturn);
+            $listUnitPC = array();
+
+            if ($request->returnType == 'SL') {
+                throw new \Exception("Maaf, saat ini return produksi hanya mendukung pengembalian 'Stok Baru' !", 1);
+            }
+            elseif ($request->returnType == 'SB') {
+                // insert stock mutation using sales 'out'
+                $mutationOut = Mutasi::returnOut(
+                    $comp, // from position
+                    $itemId, // item id
+                    $qtyReturn, // qty item
+                    $nota, // nota return
+                    $notaPenjualan, // nota sales
+                    $listPC, // list production-code
+                    $listQtyPC, // list qty of production-code
+                    $listUnitPC, // list unit pf production-code
+                    $itemPrice,// sellPrice
+                    $mutcat // mutcat
+                );
+                if ($mutationOut->original['status'] !== 'success') {
+                    return $mutationOut;
+                }
+            }
+
+            // create new production-order for 'ganti barang'
+            if ($type == 'GB')
+            {
+                // validate 'ganti barang'
+                if ((int)$request->subsValue > (int)$request->returnValue) {
+                    throw new Exception("Total Nilai Pengganti tidak boleh melebihi Total Nilai Return", 1);
+                }
+
+                $termin = array(1);
+                $dateTermin = Carbon::now()->addMonth();
+                $estimasi = array($dateTermin);
+                $nominal = array((int)$request->subsValue);
+
+                $myRequest = new \Illuminate\Http\Request();
+                $myRequest->setMethod('POST');
+                $myRequest->request->add(['nota_return' => $nota]);
+                $myRequest->request->add(['supplier' => $supplierId]);
+                $myRequest->request->add(['po_date' => $returnDate]);
+                $myRequest->request->add(['tot_hrg' => (int)$request->subsValue]);
+                $myRequest->request->add(['idItem' => $request->idItem]); // list
+                $myRequest->request->add(['jumlah' => $request->jumlah]); // list
+                $myRequest->request->add(['satuan' => $request->satuan]); // list
+                $myRequest->request->add(['harga' => $request->harga]); // list
+                $myRequest->request->add(['subtotal' => $request->subtotal]); // list
+                $myRequest->request->add(['termin' => $termin]); // list
+                $myRequest->request->add(['estimasi' => $estimasi]); // list
+                $myRequest->request->add(['nominal' => $nominal]); // list
+
+                // create order-produksi with nota 'return'
+                $order = $this->create_produksi($myRequest);
+                if (json_decode($order)->status !== 'Success') {
+                    throw new \Exception("Terjadi kesalahan saat menyelesaikan return produksi", 1);
+                }
+            }
+            elseif ($type == 'PN')
+            {
+                $supplier = m_supplier::where('s_id', $supplierId)->first();
+                $supplier->s_deposit += ((int)$itemPrice * (int)$qtyReturn);
+                $supplier->save();
+            }
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     public function getNotaProductionOrder(Request $request)
@@ -880,7 +1228,6 @@ class ProduksiController extends Controller
                 ->make(true);
         }
     }
-
     public function detailNota($id = null)
     {
         $data = ProductionOrder::where('po_id', Crypt::decrypt($id))
@@ -901,7 +1248,6 @@ class ProduksiController extends Controller
             ->rawColumns(['barang', 'qty', 'harga'])
             ->make(true);
     }
-
     public function searchSupplier(Request $request)
     {
         $cari = $request->term;
@@ -920,7 +1266,6 @@ class ProduksiController extends Controller
         }
         return Response::json($results);
     }
-
     public function searchNota(Request $request)
     {
         $data = ProductionOrder::join('m_supplier', 's_id', '=', 'po_supplier')
@@ -952,7 +1297,6 @@ class ProduksiController extends Controller
             ->rawColumns(['supplier', 'tanggal', 'nota', 'action'])
             ->make(true);
     }
-
     // set return for autocomplete searching using production-code
     public function cariProdKode(Request $request)
     {
@@ -977,7 +1321,6 @@ class ProduksiController extends Controller
         }
         return Response::json($results);
     }
-
     // set return for autocomplete searching using no-nota of production-order
     public function cariNota(Request $request)
     {
@@ -1004,7 +1347,6 @@ class ProduksiController extends Controller
         }
         return Response::json($results);
     }
-
     // find detailed selected items (after using autocomplete)
     public function cariBarangPO(Request $request)
     {
@@ -1093,7 +1435,6 @@ class ProduksiController extends Controller
                 ->make(true);
         }
     }
-
     // find item-unit
     public function setSatuan($id = null)
     {
@@ -1112,7 +1453,6 @@ class ProduksiController extends Controller
             ->first();
         return Response::json($data);
     }
-
     public function addReturn(Request $request)
     {
         try {

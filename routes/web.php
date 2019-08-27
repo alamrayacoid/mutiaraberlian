@@ -254,16 +254,25 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/returnproduksi/detail-return/{id}/{detail}', 'ProduksiController@detailReturn')->name('return.detailreturn');
     Route::get('/produksi/returnproduksi/get-editreturn/{id}/{detail}', 'ProduksiController@getEditReturn')->name('return.geteditreturn');
     Route::get('/produksi/returnproduksi/create', 'ProduksiController@create_return_produksi')->name('return.create');
-    Route::get('/produksi/returnproduksi/get-nota', 'ProduksiController@getNotaProductionOrder')->name('return.getnota');
-    Route::get('/produksi/returnproduksi/detail-nota/{id}', 'ProduksiController@detailNota')->name('return.detailnota');
-    Route::get('/produksi/returnproduksi/cari-supplier', 'ProduksiController@searchSupplier')->name('return.carisupplier');
-    Route::get('/produksi/returnproduksi/cari-prodkode', 'ProduksiController@cariProdKode')->name('return.cariprodkode');
-    Route::get('/produksi/returnproduksi/cari-nota', 'ProduksiController@cariNota')->name('return.carinota');
-    Route::get('/produksi/returnproduksi/cari-barang-po', 'ProduksiController@cariBarangPO')->name('return.caribarangpo');
-    Route::get('/produksi/returnproduksi/set-satuan/{id}', 'ProduksiController@setSatuan')->name('return.setunit');
+    Route::get('/produksi/returnproduksi/find-all-item', 'ProduksiController@findAllItem')->name('return.findAllItem');
+    Route::get('/produksi/returnproduksi/find-item', 'ProduksiController@findItem')->name('return.findItem');
+    Route::get('/produksi/returnproduksi/get-unit/{id}', 'ProduksiController@getUnit')->name('return.getUnit');
+    // Route::get('/produksi/returnproduksi/cek-stok/{stock}/{item}/{satuan}/{qty}', 'ProduksiController@checkStock')->name('return.checkStock');
+    Route::get('/produksi/returnproduksi/get-supplier', 'ProduksiController@getSupplier')->name('return.getSupplier');
+    Route::get('/produksi/returnproduksi/get-prod-code', 'ProduksiController@getProdCode')->name('return.getProdCode');
+    Route::get('/produksi/returnproduksi/get-nota', 'ProduksiController@getNota')->name('return.getNota');
+    Route::get('/produksi/returnproduksi/get-data', 'ProduksiController@getData')->name('return.getData');
+    Route::post('/produksi/returnproduksi/store', 'ProduksiController@store')->name('return.store');
+    // Route::get('/produksi/returnproduksi/get-nota', 'ProduksiController@getNotaProductionOrder')->name('return.getnota');
+    // Route::get('/produksi/returnproduksi/detail-nota/{id}', 'ProduksiController@detailNota')->name('return.detailnota');
+    // Route::get('/produksi/returnproduksi/cari-supplier', 'ProduksiController@searchSupplier')->name('return.carisupplier');
+    // Route::get('/produksi/returnproduksi/cari-prodkode', 'ProduksiController@cariProdKode')->name('return.cariprodkode');
+    // Route::get('/produksi/returnproduksi/cari-nota', 'ProduksiController@cariNota')->name('return.carinota');
+    // Route::get('/produksi/returnproduksi/cari-barang-po', 'ProduksiController@cariBarangPO')->name('return.caribarangpo');
+    // Route::get('/produksi/returnproduksi/set-satuan/{id}', 'ProduksiController@setSatuan')->name('return.setunit');
     Route::get('/produksi/returnproduksi/hapus-return/{id}/{detail}/{qty}', 'ProduksiController@deleteReturn')->name('return.delete');
-    Route::post('/produksi/returnproduksi/tambah-return', 'ProduksiController@addReturn')->name('return.add');
-    Route::get('/produksi/returnproduksi/tambah-return', 'ProduksiController@addReturn')->name('return.add');
+    // Route::post('/produksi/returnproduksi/tambah-return', 'ProduksiController@addReturn')->name('return.add');
+    // Route::get('/produksi/returnproduksi/tambah-return', 'ProduksiController@addReturn')->name('return.add');
     Route::post('/produksi/returnproduksi/edit-return', 'ProduksiController@editReturn')->name('return.edit');
     Route::get('/produksi/returnproduksi/nota-return/{id}/{detail}', 'ProduksiController@notaReturn')->name('return.nota');
     Route::get('/produksi/returnproduksi/create/next', 'ProduksiController@next_create_return_produksi')->name('return.nextcreate');
@@ -414,7 +423,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::match(['get', 'post'], '/sdm/kinerjasdm/input-kpi/create', 'SDM\MasterKPIController@createInputKpi')->name('inputkpi.create');
     Route::post('/sdm/kinerjasdm/input-kpi/save', 'SDM\MasterKPIController@saveInputKpi')->name('inputkpi.save');
     // Route::match(['get', 'post'], '/sdm/kinerjasdm/input-kpi/save', 'SDM\MasterKPIController@saveInputKpi')->name('inputkpi.save');
-    
+
 
     //Master KPI
     Route::post('/sdm/kinerjasdm/master-kpi/create', 'SDM\MasterKPIController@create')->name('masterkpi.create');
