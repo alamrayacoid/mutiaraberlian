@@ -146,6 +146,18 @@
                                                 <input type="text" class="form-control form-control-sm rupiah-without-comma" id="shippingCost" name="shippingCost" value="">
                                             </div>
                                         </div>
+
+                                        <div class="col-md-2 col-sm-6 col-xs-12">
+                                            <label>Tanggal Pengiriman</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                                </div>
+                                                <input type="text" name="dateSend" class="form-control form-control-sm datepicker" autocomplete="off" id="dateSend" value="{{ \Carbon\Carbon::now()->format('d-m-Y') }}">
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="table-responsive">

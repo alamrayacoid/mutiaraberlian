@@ -142,6 +142,8 @@ class ProsesOrderController extends Controller
 
         DB::beginTransaction();
         try {
+            (is_null($request->dateSend)) ? $dateSend = Carbon::now() : $dateSend = Carbon::createFromFormat('d-m-Y', $request->dateSend);
+
             $nota = $request->sd_nota;
             // validate production-code is exist in stock-item
             $validateProdCode = Mutasi::validateProductionCode(
@@ -162,7 +164,7 @@ class ProsesOrderController extends Controller
                 ->first();
 
             // update stockdist
-            $stockdist->sd_date = Carbon::now();
+            $stockdist->sd_date = $dateSend;
             $stockdist->sd_status = 'P';
             $stockdist->sd_user = Auth::user()->u_id;
             $stockdist->save();
@@ -171,7 +173,7 @@ class ProsesOrderController extends Controller
             $idDeliv = d_productdelivery::max('pd_id') + 1;
             $prodDeliv = new d_productdelivery;
             $prodDeliv->pd_id = $idDeliv;
-            $prodDeliv->pd_date = Carbon::now();
+            $prodDeliv->pd_date = $dateSend;
             $prodDeliv->pd_nota = $nota;
             $prodDeliv->pd_expedition = $request->expedition;
             $prodDeliv->pd_product = $request->expeditionType;
@@ -284,7 +286,8 @@ class ProsesOrderController extends Controller
                         $listQtyPC, // list qty of production-code
                         $listUnitPC, // list unit of production-code
                         $sellPrice = null, // sellprice
-                        19 // mutation category
+                        19, // mutation category
+                        $dateSend // date
                     );
                     if ($mutDistributionOut->original['status'] !== 'success') {
                         return $mutDistributionOut;
@@ -313,7 +316,8 @@ class ProsesOrderController extends Controller
                         18, // mutation category
                         null, // stock parent id
                         $status = 'ON GOING', // items status in stock
-                        $condition = 'FINE' // item condition in stock
+                        $condition = 'FINE', // item condition in stock
+                        $dateSend // date
                     );
                     if ($mutDistributionIn->original['status'] !== 'success') {
                         return $mutDistributionIn;
