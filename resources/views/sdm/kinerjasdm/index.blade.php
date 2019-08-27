@@ -273,16 +273,21 @@
 
     function simpanMasterKPI() {
         let indikator = $('#indikator_masterkpi').val();
-        if (indikator == '' || indikator == ' '){
-            messageWarning("Perhatian", "Indikator tidak boleh kosong");
+        let unit = $('#unit_masterkpi').val();
+        if (indikator == '' || indikator == ' ' || unit == '' || unit == ' '){
+            messageWarning("Perhatian", "Indikator dan Unit tidak boleh kosong");
             return false;
         } else {
             axios.post('{{ route("masterkpi.create") }}', {
                 'indikator': indikator,
+                'unit': unit,
                 '_token': '{{ csrf_token() }}'
             }).then(function (response) {
+                console.log(response);
                 if (response.data.status == 'sukses'){
                     messageSuccess("Berhasil", "Data KPI berhasil dibuat");
+                    $('#indikator_masterkpi').val('');
+                    $('#unit_masterkpi').val('');
                     $('#modal_createmasterkpi').modal('hide');
                     table_kpi.ajax.reload();
                 } else if (response.data.status == 'gagal') {

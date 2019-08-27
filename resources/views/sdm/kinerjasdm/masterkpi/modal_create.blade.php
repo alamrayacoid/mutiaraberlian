@@ -10,7 +10,6 @@
             </div>
             <div class="modal-body">
                 <section>
-
                     <div class="row">
                         <div class="col-2">
                             <label>Indikator</label>
@@ -19,6 +18,17 @@
                         <div class="col-10">
                             <div class="form-group">
                                 <textarea class="form-control" id="indikator_masterkpi"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Unit</label>
+                        </div>
+
+                        <div class="col-10">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="unit_masterkpi">
                             </div>
                         </div>
                     </div>

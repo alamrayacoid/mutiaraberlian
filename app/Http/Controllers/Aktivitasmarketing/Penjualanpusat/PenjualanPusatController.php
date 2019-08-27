@@ -805,8 +805,9 @@ class PenjualanPusatController extends Controller
         // dd($request->all());
         DB::beginTransaction();
         try {
-
             // return json_encode($request->all());
+
+            (is_null($request->dateSend)) ? $dateSend = Carbon::now() : $dateSend = Carbon::parse($request->dateSend);
 
             $nota = $request->nota;
             $ekspedisi = $request->ekspedisi;
@@ -864,7 +865,7 @@ class PenjualanPusatController extends Controller
             DB::table('d_productdelivery')
                 ->insert([
                     'pd_id' => $pd_id,
-                    'pd_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                    'pd_date' => $dateSend,
                     'pd_nota' => $nota,
                     'pd_expedition' => $ekspedisi,
                     'pd_product' => $produk,
@@ -949,8 +950,9 @@ class PenjualanPusatController extends Controller
                     $listPC, // list of production-code
                     $listQtyPC, // list of production-code-qty
                     $listUnitPC, // list of production-code-unit
-                    $sell,
-                    5
+                    $sell, // sell price
+                    5, // mutcat
+                    $dateSend // date
                 );
                 // return json_encode($mutDist->original);
                 if ($mutDist->original['status'] !== 'success') {
@@ -979,7 +981,10 @@ class PenjualanPusatController extends Controller
                     $listHPP,
                     $listSmQty,
                     20, // mutcat masuk pembelian
-                    $listStockParentId // stock-parent id
+                    $listStockParentId, // stock-parent id
+                    null, // item status
+                    null, // item condition
+                    $dateSend // date
                 );
                 if ($mutationIn->original['status'] !== 'success') {
                     return $mutationIn;
@@ -1065,7 +1070,7 @@ class PenjualanPusatController extends Controller
                     // 'sc_member' => $data[0]->po_agen,
                     'sc_member' => $productOrder->po_agen,
                     'sc_type' => 'C',
-                    'sc_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+                    'sc_date' => $dateSend,
                     'sc_nota' => $notasales,
                     'sc_total' => $total,
                     'sc_paidoff' => $paidOff,
@@ -1081,7 +1086,7 @@ class PenjualanPusatController extends Controller
             $val_salespayment = [
                 'scp_salescomp' => $s_id,
                 'scp_detailid' => d_salescomppayment::where('scp_salescomp', $s_id)->max('scp_detailid') + 1,
-                'scp_date' => Carbon::now(),
+                'scp_date' => $dateSend,
                 'scp_pay' => $payCash,
                 'scp_payment' => $request->paymentMethod
             ];
@@ -1122,7 +1127,7 @@ class PenjualanPusatController extends Controller
     }
 
      private function jurnalSendOrder(float $totHpp, float $ongkir, String $notasales, Request $request){
-        
+
         $details = [];
 
             // Acc persediaan keluar
