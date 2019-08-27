@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use DB;
 use Carbon\Carbon;
 use Auth;
+use Crypt;
 use Response;
 use App\Http\Controllers\AksesUser;
+use Yajra\DataTables\DataTables;
 
 class SDMController extends Controller
 {
@@ -205,4 +207,119 @@ class SDMController extends Controller
             ]);
         }
     }
+
+
+    // Aturan kehadiran
+    public function getDataAturanKehadiran(){
+        $data = DB::table('m_attendancerules')
+            ->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('aksi', function($data){
+                return '<center>
+                <button class="btn btn-primary btn-sm btn-terima" onclick="editAturanKehadiran(\''.Crypt::encrypt($data->ar_id).'\')">Edit</button>
+                <button class="btn btn-warning btn-sm btn-bayar" onclick="hapusAturanKehadiran(\''.Crypt::encrypt($data->ar_id).'\')">Hapus</button>
+                </center>';
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
+
+    public function saveAturanKehadiran(Request $request){
+        $aturan = $request->rule;
+        $punishment = $request->punishment;
+        $note = $request->note;
+
+        DB::beginTransaction();
+        try {
+            $id = DB::table('m_attendancerules')
+                ->max('ar_id');
+
+            ++$id;
+
+            DB::table('m_attendancerules')
+                ->insert([
+                    'ar_id' => $id,
+                    'ar_rules' => $aturan,
+                    'ar_punishment' => $punishment,
+                    'ar_note' => $note
+                ]);
+
+            DB::commit();
+            return Response::json([
+                'status' => "sukses"
+            ]);
+        } catch (\Exception $e){
+            DB::rollback();
+            return Response::json([
+                'status' => "gagal",
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function getDetailAturanKehadiran(Request $request){
+        $id = Crypt::decrypt($request->id);
+
+        $data = DB::table('m_attendancerules')
+            ->where('ar_id', '=', $id)
+            ->first();
+
+        return response()->json($data);
+    }
+
+    public function updateAturanKehadiran(Request $request){
+        $aturan = $request->rule;
+        $punishment = $request->punishment;
+        $note = $request->note;
+        $id = $request->id;
+
+        DB::beginTransaction();
+        try {
+
+            DB::table('m_attendancerules')
+                ->where('ar_id', '=', $id)
+                ->update([
+                    'ar_rules' => $aturan,
+                    'ar_punishment' => $punishment,
+                    'ar_note' => $note
+                ]);
+
+            DB::commit();
+            return Response::json([
+                'status' => "sukses"
+            ]);
+        } catch (\Exception $e){
+            DB::rollback();
+            return Response::json([
+                'status' => "gagal",
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function hapusAturanKehadiran(Request $request){
+        $id = Crypt::decrypt($request->id);
+
+        DB::beginTransaction();
+        try {
+
+            DB::table('m_attendancerules')
+                ->where('ar_id', '=', $id)
+                ->delete();
+
+            DB::commit();
+            return Response::json([
+                'status' => "sukses"
+            ]);
+        } catch (\Exception $e){
+            DB::rollback();
+            return Response::json([
+                'status' => "gagal",
+                'message' => $e
+            ]);
+        }
+    }
+
 }
