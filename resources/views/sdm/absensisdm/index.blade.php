@@ -6,6 +6,7 @@
 
     @include('sdm.absensisdm.harilibur.modal')
     @include('sdm.absensisdm.kehadiran.modal')
+    @include('sdm.absensisdm.cuti.modal')
 
 	<div class="title-block text-primary">
 		<h1 class="title">Kelola Absensi SDM</h1>
@@ -42,6 +43,7 @@
                     @include('sdm.absensisdm.presensi.index')
                     @include('sdm.absensisdm.kehadiran.index')
                     @include('sdm.absensisdm.harilibur.index')
+                    @include('sdm.absensisdm.cuti.index')
 				</div>
 			</div>
 		</div>
@@ -53,6 +55,7 @@
 <script type="text/javascript">
     var table_harilibur;
     var table_aturankehadiran;
+    var table_jeniscuti;
 	$(document).ready(function() {
 		var cur_date = new Date();
 		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
@@ -91,7 +94,51 @@
             });
         },1000)
 
+        setTimeout(function(){
+            table_jeniscuti = $('#table_kelolacuti').DataTable({
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route("absensisdm.getDataJenisCuti") }}',
+                    type: "get",
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'l_name', name: 'l_name'},
+                    {data: 'l_longleave', name: 'l_longleave'},
+                    {data: 'l_note', name: 'l_note'},
+                    {data: 'aksi', name: 'aksi'},
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+            table_jeniscuti.columns.adjust();
+        },800)
+
 	});
+
+    $('.suffixhari').inputmask("decimal", {
+        radixPoint: ",",
+        groupSeparator: ".",
+        digits: 0,
+        autoGroup: true,
+        suffix: ' Hari',
+        rightAlign: true,
+        autoUnmask: true,
+        // unmaskAsNumber: true,
+        suffix:" Hari",
+        definitions: {
+            a: { validator: "" }
+        },
+        onBeforeMask: function (value, opts) {
+            return value;
+        }
+    });
+
 </script>
 
 <script type="text/javascript">
@@ -1000,6 +1047,148 @@
                                 if (response.status == 'sukses') {
                                     messageSuccess('Berhasil', 'Data berhasil dihapus!');
                                     table_aturankehadiran.ajax.reload();
+                                } else if (response.status == 'gagal'){
+                                    messageWarning('Perhatian', response.message);
+                                }
+                            },
+                            error: function (e) {
+                                loadingHide();
+                                messageFailed('Peringatan', e.message);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
+
+// Kelola jenis cuti
+    function simpanJenisCuti(){
+        loadingShow();
+        let nama = $('#nama_cuti').val();
+        let lama = $('#lama_cuti').val();
+        let note = $('#note_cuti').val();
+        if (nama == '' || nama == null) {
+            messageWarning("Perhatian", "Form tidak boleh kosong");
+            return false;
+        }
+        if (lama == '' || lama == null) {
+            messageWarning("Perhatian", "Form tidak boleh kosong");
+            return false;
+        }
+
+        axios.post('{{ route("absensisdm.saveDataJenisCuti") }}', {
+            "nama": nama,
+            "lama": lama,
+            "note": note,
+            "_token": "{{ csrf_token() }}"
+        }).then(function(response){
+            loadingHide();
+            if (response.data.status == 'sukses') {
+                messageSuccess('Berhasil', 'Data berhasil disimpan');
+                $('#modal_tambahcuti').modal('hide');
+                table_jeniscuti.ajax.reload();
+                table_jeniscuti.columns.adjust();
+            } else if (response.data.status == 'gagal') {
+                messageWarning('Gagal', response.data.message);
+            }
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function editJenisCuti(id){
+        loadingShow();
+        axios.get('{{ route("absensisdm.getDetailCuti") }}', {
+            params:{
+                "id": id
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            $('#editnama_cuti').val(data.l_name);
+            $('#editlama_cuti').val(data.l_longleave);
+            $('#editid_cuti').val(data.l_id);
+            $('#editnote_cuti').val(data.l_note);
+            $('#modal_editcuti').modal('show');
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function updateJenisCuti(){
+        loadingShow();
+        let nama = $('#editnama_cuti').val();
+        let lama = $('#editlama_cuti').val();
+        let note = $('#editnote_cuti').val();
+        let id = $('#editid_cuti').val();
+        if (nama == '' || nama == null) {
+            messageWarning("Perhatian", "Form tidak boleh kosong");
+            return false;
+        }
+        if (lama == '' || lama == null) {
+            messageWarning("Perhatian", "Form tidak boleh kosong");
+            return false;
+        }
+
+        axios.post('{{ route("absensisdm.updateJenisCuti") }}', {
+            "nama": nama,
+            "lama": lama,
+            "id": id,
+            "note": note,
+            "_token": "{{ csrf_token() }}"
+        }).then(function(response){
+            loadingHide();
+            if (response.data.status == 'sukses') {
+                messageSuccess('Berhasil', 'Data berhasil disimpan');
+                $('#modal_editcuti').modal('hide');
+                table_jeniscuti.ajax.reload();
+                table_jeniscuti.columns.adjust();
+            } else if (response.data.status == 'gagal') {
+                messageWarning('Gagal', response.data.message);
+            }
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function hapusJenisCuti(id){
+        return $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Peringatan!',
+            content: 'Apakah anda yakin ingin menghapus data ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        loadingShow();
+                        return $.ajax({
+                            type: "post",
+                            url: "{{ route('absensisdm.hapusJenisCuti') }}",
+                            data: {
+                                "id": id,
+                                "_token": '{{ csrf_token() }}'
+                            },
+                            success: function (response) {
+                                loadingHide();
+                                if (response.status == 'sukses') {
+                                    messageSuccess('Berhasil', 'Data berhasil dihapus!');
+                                    table_jeniscuti.ajax.reload();
+                                    table_jeniscuti.columns.adjust();
                                 } else if (response.status == 'gagal'){
                                     messageWarning('Perhatian', response.message);
                                 }

@@ -322,4 +322,115 @@ class SDMController extends Controller
         }
     }
 
+// Kelola jenis cuti
+    public function getDataJenisCuti(Request $request){
+        $data = DB::table('m_leave')
+            ->select('l_id', 'l_name', DB::raw('concat(l_longleave, " Hari") as l_longleave'), 'l_note')
+            ->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('aksi', function($data){
+                return '<center>
+                <button class="btn btn-primary btn-sm btn-terima" onclick="editJenisCuti(\''.Crypt::encrypt($data->l_id).'\')">Edit</button>
+                <button class="btn btn-warning btn-sm btn-bayar" onclick="hapusJenisCuti(\''.Crypt::encrypt($data->l_id).'\')">Hapus</button>
+                </center>';
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
+
+    public function saveJenisCuti(Request $request){
+        $nama = $request->nama;
+        $lama = $request->lama;
+        $note = $request->note;
+
+        DB::beginTransaction();
+        try {
+            $id = DB::table('m_leave')
+                ->max('l_id');
+
+            ++$id;
+
+            DB::table('m_leave')
+                ->insert([
+                    'l_id' => $id,
+                    'l_name' => $nama,
+                    'l_longleave' => $lama,
+                    'l_note' => $note
+                ]);
+
+            DB::commit();
+            return Response::json([
+                'status' => "sukses"
+            ]);
+        } catch (\Exception $e){
+            DB::rollback();
+            return Response::json([
+                'status' => "gagal",
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function getDetailCuti(Request $request){
+        $id = Crypt::decrypt($request->id);
+
+        $data = DB::table('m_leave')
+            ->where('l_id', '=', $id)
+            ->first();
+
+        return response()->json($data);
+    }
+
+    public function updateJenisCuti(Request $request){
+        $nama = $request->nama;
+        $lama = $request->lama;
+        $note = $request->note;
+        $id = $request->id;
+
+        DB::beginTransaction();
+        try {
+            DB::table('m_leave')
+                ->where('l_id', '=', $id)
+                ->update([
+                    'l_name' => $nama,
+                    'l_longleave' => $lama,
+                    'l_note' => $note
+                ]);
+
+            DB::commit();
+            return Response::json([
+                'status' => "sukses"
+            ]);
+        } catch (\Exception $e){
+            DB::rollback();
+            return Response::json([
+                'status' => "gagal",
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function hapusJenisCuti(Request $request){
+        $id = Crypt::decrypt($request->id);
+
+        DB::beginTransaction();
+        try {
+            DB::table('m_leave')
+                ->where('l_id', '=', $id)
+                ->delete();
+
+            DB::commit();
+            return Response::json([
+                'status' => "sukses"
+            ]);
+        } catch (\Exception $e){
+            DB::rollback();
+            return Response::json([
+                'status' => "gagal",
+                'message' => $e
+            ]);
+        }
+    }
 }
