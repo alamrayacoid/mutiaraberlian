@@ -125,7 +125,7 @@
 
     <script>
         $(document).ready(function(){
-            // $('#divisi').on('select2:select', function () {
+            // $('.divisi').on('select2:select', function () {
             //     console.log('testes');
             //     getDivisi();
             // });
@@ -166,7 +166,7 @@
                                 '</div>'+
                                 '<div class="col-md-9 col-sm-12">'+
                                     '<div class="form-group">'+
-                                        '<select name="divisi" id="divisi" class="form-control form-control-sm select2" onchange="getDataIndikatorDivisi()">'+
+                                        '<select name="divisi" id="divisi" class="form-control form-control-sm select2 divisi" onchange="getDataIndikatorDivisi()">'+
                                             '<option value="" disable="" selected="">Pilih Divisi</option>'+
                                         '</select>'+
                                     '</div>'+
@@ -174,6 +174,10 @@
                             '</div>'+
                         '</div>'
                     );
+
+                $('.divisi').on('select2:select', function () {
+                    $("#table_indikator_divisi_pegawai > tbody").find('tr').remove();
+                });
                     
                 $('.select2').select2({            
                     theme: "bootstrap",
@@ -197,7 +201,7 @@
                                 '</div>'+
                                 '<div class="col-md-9 col-sm-12">'+
                                     '<div class="form-group">'+
-                                        '<select name="pegawai" id="pegawai" class="form-control form-control-sm select2" onchange="getDataIndikatorPegawai()">'+
+                                        '<select name="pegawai" id="pegawai" class="form-control form-control-sm select2 pegawai" onchange="getDataIndikatorPegawai()">'+
                                             '<option value="" disable="" selected="">Pilih Pegawai</option>'+
                                         '</select>'+
                                     '</div>'+
@@ -205,6 +209,10 @@
                             '</div>'+
                         '</div>'
                     );
+
+                $('.pegawai').on('select2:select', function () {
+                    $("#table_indikator_divisi_pegawai > tbody").find('tr').remove();
+                });
 
                 $('.select2').select2({            
                     theme: "bootstrap",
@@ -309,6 +317,18 @@
 
                         let row = '<tr>'+ indikatorD + unitD + bobotD + targetD + hasilD + pointD + nilaiD +'</tr>' 
                         $('#table_indikator_divisi_pegawai tbody').append(row);
+                    });
+
+                    $('.digits').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 0,
+                        autoGroup: true,
+                        prefix: '', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
                     });
 
                     $('.hasilD').on('keyup', function(){
