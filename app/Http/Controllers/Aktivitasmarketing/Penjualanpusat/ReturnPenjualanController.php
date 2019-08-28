@@ -1105,10 +1105,6 @@ class ReturnPenjualanController extends Controller
                 'status' => 'gagal',
                 'message' => $e->getMessage()
             ]);
-
         }
-
-
     }
-
 }

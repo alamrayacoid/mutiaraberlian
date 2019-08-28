@@ -8,6 +8,8 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use App\d_itemreceipt as ItemReceipt;
 use App\d_productionorder as ProductionOrder;
 use App\d_productionorderdt as ProductionOrderDT;
+use App\d_productionorderauth;
+use App\d_productionorderpayment;
 use App\d_productionordercode;
 use App\d_returnproductionorder;
 use App\d_salescompcode;
@@ -16,6 +18,7 @@ use App\d_stockdt;
 use App\d_stock_mutation as StockMutation;
 use App\m_item;
 use App\m_supplier;
+use App\m_mutcat;
 use App\m_wil_provinsi;
 use App\m_supplier as Supplier;
 use Auth;
@@ -422,7 +425,6 @@ class ProduksiController extends Controller
 
         DB::beginTransaction();
         try {
-
             DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
             DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
             DB::table('d_productionorder')->where('po_id', '=', $id)->delete();
@@ -1066,6 +1068,7 @@ dd('debug !');
             // set value for table d_return
             $valReturn = [
                 'rpo_id' => $id,
+                'rpo_supplier' => $supplierId,
                 'rpo_date' => $returnDate,
                 'rpo_nota' => $nota,
                 'rpo_item' => $itemId,
@@ -1127,7 +1130,7 @@ dd('debug !');
                 $dateTermin = Carbon::now()->addMonth();
                 $estimasi = array($dateTermin);
                 $nominal = array((int)$request->subsValue);
-                // prepare Request to create new production-order
+                // prepare Request to create new production-order-Auth
                 $myRequest = new \Illuminate\Http\Request();
                 $myRequest->setMethod('POST');
                 $myRequest->request->add(['nota_return' => $nota]);
@@ -1142,7 +1145,7 @@ dd('debug !');
                 $myRequest->request->add(['termin' => $termin]); // list
                 $myRequest->request->add(['estimasi' => $estimasi]); // list
                 $myRequest->request->add(['nominal' => $nominal]); // list
-                // create new production-order with nota-return
+                // create new production-order-auth with nota-return
                 $order = $this->create_produksi($myRequest);
                 if (json_decode($order)->status !== 'Success') {
                     throw new \Exception("Terjadi kesalahan saat menyelesaikan return produksi", 1);
@@ -1159,11 +1162,10 @@ dd('debug !');
                 ];
                 $insertPO = DB::table('d_productionorder')->insert($values);
                 // delete production-auth
-                $deletePOAuth = DB::table('d_productionorderauth')
-                ->where('poa_id', '=', $data->poa_id)
-                ->delete();
+                $deletePOAuth = d_productionorderauth::where('poa_id', '=', $data->poa_id)
+                    ->delete();
                 // update production-payment to 'lunas'
-                $POPayment = d_productionorderpayment::where('pop_productionorder', $insertPO->po_id)->first();
+                $POPayment = d_productionorderpayment::where('pop_productionorder', $data->poa_id)->first();
                 $POPayment->pop_date = $returnDate;
                 $POPayment->pop_pay = $POPayment->pop_value;
                 $POPayment->pop_status = 'Y';
@@ -1193,10 +1195,85 @@ dd('debug !');
     // delete production-order
     public function deleteReturn($id)
     {
+        if (!AksesUser::checkAkses(12, 'delete')) {
+            return Response::json([
+                'status' => "Gagal",
+                'message' => "Anda tidak memiliki akses"
+            ]);
+        }
+
+        DB::beginTransaction();
         try {
             $id = Crypt::decrypt($id);
+
+            $data = d_returnproductionorder::where('rpo_id', $id)->first();
+
+            if ($data->rpo_action == 'GB') {
+                $deletePOPayment = d_productionorderpayment::where('pop_productionorder', $id)->delete();
+                $deletePODetail = ProductionOrderDT::where('pod_productionorder', '=', $id)->delete();
+                $deletePO = ProductionOrder::where('po_id', $id)->delete();
+            }
+            elseif ($data->rpo_action == 'PN') {
+                // get list of 'in' mutcat-list
+                $inMutcatList = m_mutcat::where('m_status', 'K')
+                    ->select('m_id')
+                    ->get();
+                for ($i = 0; $i < count($inMutcatList); $i++) {
+                    $tmp[] = $inMutcatList[$i]->m_id;
+                }
+                $inMutcatList = $tmp;
+                $itemId = $data->rpo_item;
+
+                $supplier = m_supplier::where('s_id', $data->rpo_supplier)->first();
+
+                $itemPrice = StockMutation::where('sm_nota', $data->rpo_nota)
+                    ->whereIn('sm_mutcat', $inMutcatList)
+                    ->whereHas('getStock', function($q) use ($itemId) {
+                        $q->where('s_item', $itemId);
+                    })
+                    ->select('sm_sell')
+                    ->first();
+
+                $itemPrice = $itemPrice->sm_sell;
+
+                $supplier->s_deposit -= ((int)$itemPrice * $data->rpo_qty);
+                $supplier->save();
+            }
+
+            // get mutcat 'out' based on return-type
+            switch ($data->rpo_action) {
+                case 'GB':
+                    $mutcatOut = 16;
+                    break;
+                case 'GU':
+                    $mutcatOut = 15;
+                    break;
+                case 'PN':
+                    $mutcatOut = 17;
+                    break;
+                default:
+                    break;
+            }
+
+            // rollback mutation 'out'
+            $mutRollbackOut = Mutasi::rollbackSalesOut(
+                $data->rpo_nota,
+                $data->rpo_item,
+                $mutcatOut
+            );
+            if ($mutRollbackOut->original['status'] !== 'success') {
+                return $mutRollbackOut;
+            }
+            // delete return-ProductionOrder
+            $deleteReturnPO = d_returnproductionorder::where('rpo_id', $id)->delete();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
         }
         catch (\Exception $e) {
+            DB::rollback();
             return response()->json([
                 'status' => 'gagal',
                 'message' => $e->getMessage()
@@ -1488,262 +1565,261 @@ dd('debug !');
             ->first();
         return Response::json($data);
     }
-    public function addReturn(Request $request)
-    {
-        try {
-            $poid = Crypt::decrypt($request->idPO);
-            $idItem = Crypt::decrypt($request->idItem);
-        } catch (DecryptException $e) {
-            return Response::json([
-                'status' => "Failed",
-                'message' => $e->getMessage()
-            ]);
-        }
-
-        $detailid = (DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')) ? DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid') + 1 : 1;
-        // return-po/001/23/03/2019
-        $nota = CodeGenerator::codeWithSeparator('d_returnproductionorder', 'rpo_nota', 15, 10, 3, 'RETURN-PO', '/');
-        $nota_reff = '';
-        $data_check = DB::table('d_productionorder')
-            ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
-                'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-                'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-                'm_item.i_unit3 as unit3', 'd_productionorderdt.pod_unit as unit', 'd_productionorderdt.pod_value as value')
-            ->join('d_productionorderdt', function ($x) use ($idItem) {
-                $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
-                $x->where('d_productionorderdt.pod_item', '=', $idItem);
-            })
-            ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
-            ->where('d_productionorder.po_id', '=', $poid)
-            ->first();
-
-        $qty_compare = 0;
-        $unit = 0;
-        if ($request->satuan_return == $data_check->unit1) {
-            $qty_compare = (int)$request->qty_return;
-            $unit = $data_check->unit1;
-        } else if ($request->satuan_return == $data_check->unit2) {
-            $qty_compare = $request->qty_return * $data_check->compare2;
-        } else if ($request->satuan_return == $data_check->unit3) {
-            $qty_compare = $request->qty_return * $data_check->compare3;
-        }
-
-        // if searchMethod is using 'kodeproduksi'
-        if ($request->searchMethod == 'kodeproduksi') {
-            // get production-code by PO-id and production-code-number
-            $data = d_productionordercode::where('poc_productionorder', $poid)
-                ->where('poc_productioncode', $request->prodCode)
-                ->get();
-
-            // get qty-item from production-code
-            $qtydata_compare = 0;
-            $totalQty = 0;
-            foreach ($data as $key => $val) {
-                if ($val->poc_unit == $data_check->unit1) {
-                    $qtydata_compare = $val->poc_qty;
-                } else if ($val->poc_unit == $data_check->unit2) {
-                    $qtydata_compare = $val->poc_qty * $data_check->compare2;
-                } else if ($val->poc_unit == $data_check->unit3) {
-                    $qtydata_compare = $val->poc_qty * $data_check->compare3;
-                }
-                $totalQty += $qtydata_compare;
-            }
-
-            // return-failed if qty-return > qty-item
-            if ((int)$qty_compare > (int)$totalQty) {
-                DB::rollBack();
-                return Response::json([
-                    'status' => "Failed",
-                    'message' => "Jumlah permintaan pengembalian melebihi jumlah yang tersedia !"
-                ]);
-            }
-
-        } // if searchMethod is using 'nota'
-        elseif ($request->searchMethod == 'nota') {
-            // get production-order-dt by PO-id and item-id
-            $data = ProductionOrderDT::where('pod_productionorder', $poid)
-                ->where('pod_item', $idItem)
-                ->get();
-
-            // get qty-item from production-order-dt
-            $qtydata_compare = 0;
-            $totalQty = 0;
-            foreach ($data as $key => $val) {
-                if ($val->pod_unit == $data_check->unit1) {
-                    $qtydata_compare = $val->pod_qty;
-                } else if ($val->pod_unit == $data_check->unit2) {
-                    $qtydata_compare = $val->pod_qty * $data_check->compare2;
-                } else if ($val->pod_unit == $data_check->unit3) {
-                    $qtydata_compare = $val->pod_qty * $data_check->compare3;
-                }
-                $totalQty += $qtydata_compare;
-            }
-
-            // return-failed if qty-return > qty-item
-            if ((int)$qty_compare > (int)$totalQty) {
-                DB::rollBack();
-                return Response::json([
-                    'status' => "Failed",
-                    'message' => "Jumlah permintaan pengembalian melebihi jumlah yang tersedia !"
-                ]);
-            }
-        }
-
-        DB::beginTransaction();
-        try {
-            $valCode = [
-                'rpod_productionorder' => $poid,
-                'rpod_returnproductionorder' => $detailid,
-                'rpod_detailid' => 1,
-                'rpod_productioncode' => $request->prodCode,
-                'rpod_qty' => $qty_compare,
-                'rpod_unit' => $unit
-            ];
-            $infocomp = DB::table('m_company')
-                ->where('c_type', '=', 'PUSAT')
-                ->first();
-
-            $comp = $infocomp->c_id;
-            // // update stock
-            // $get_stock = Stock::where('s_comp', $comp)
-            // ->where('s_position', $comp)
-            // ->where('s_item', $idItem)
-            // ->where('s_status', 'ON DESTINATION')
-            // ->where('s_condition', 'FINE');
-            $mutasi = Mutasi::mutasikeluar(
-                15, // mutcat
-                $comp, // item owner
-                $comp, // destination
-                $idItem, // item id
-                $qty_compare, // qty
-                $nota, // nota
-                null, // sellprice
-                null, // list of productioncode
-                null, // list qty of productioncode
-                $request->notaPO // reff
-            );
-            if (!is_bool($mutasi)) {
-                return $mutasi;
-            }
-
-            // mengurangi qty kode sesuai jumlah return
-            $kode = $request->prodCode;
-            $info_stock = DB::table('d_stock')
-                ->leftJoin('d_stockdt', function ($q) use ($kode) {
-                    $q->on('sd_stock', '=', 's_id');
-                    $q->where('sd_code', '=', $kode);
-                })
-                ->where('s_comp', '=', $comp)
-                ->where('s_position', '=', $comp)
-                ->where('s_item', '=', $idItem)
-                ->where('s_status', '=', 'ON DESTINATION')
-                ->first();
-
-            //update d_stockdt
-            $qtystockdt = $qty_compare;
-            DB::table('d_stockdt')
-                ->where('sd_stock', '=', $info_stock->s_id)
-                ->where('sd_code', '=', $kode)
-                ->update([
-                    'sd_qty' => $info_stock->sd_qty - $qtystockdt
-                ]);
-
-            //create stockmutationdt
-            $info_mutation = DB::table('d_stock_mutation')
-                ->where('sm_nota', '=', $nota)
-                ->get();
-
-            for ($i = 0; $i < count($info_mutation); $i++){
-                $smd_detailid = DB::table('d_stockmutationdt')
-                    ->where('smd_stock', '=', $info_mutation[$i]->sm_stock)
-                    ->where('smd_stockmutation', '=', $info_mutation[$i]->sm_detailid)
-                    ->max('smd_detailid');
-
-                ++$smd_detailid;
-
-                DB::table('d_stockmutationdt')
-                    ->insert([
-                        'smd_stock' => $info_mutation[$i]->sm_stock,
-                        'smd_stockmutation' => $info_mutation[$i]->sm_detailid,
-                        'smd_detailid' => $smd_detailid,
-                        'smd_productioncode' => $kode,
-                        'smd_qty' => $info_mutation[$i]->sm_qty,
-                        'smd_unit' => $unit
-                    ]);
-            }
-            $dataPO = DB::table('d_productionorder')
-                ->join('d_productionorderdt', 'pod_productionorder', '=', 'po_id')
-                ->where('po_nota', '=', $request->notaPO)
-                ->where('pod_item', '=', $idItem)
-                ->get();
-            //metode return
-            if ($request->methode_return == "GB"){
-                //Ganti Barang
-                //Pembuatan Nota Pembelian
-                $po_id = DB::table('d_productionorderdt')
-                    ->max('pod_productionorder');
-                ++$po_id;
-
-                $po_nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'RETURN', '-');
-                $totalnet = 0;
-                $nota_reff = $po_nota;
-                DB::table('d_productionorder')
-                    ->insert([
-                        'po_id' => $po_id,
-                        'po_nota' => $po_nota,
-                        'po_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
-                        'po_supplier' => $dataPO[0]->po_supplier,
-                        'po_totalnet' => (int)$dataPO[0]->pod_value * $qty_compare,
-                        'po_status' => 'BELUM'
-                    ]);
-
-                DB::table('d_productionorderdt')
-                    ->insert([
-                        'pod_productionorder' => $po_id,
-                        'pod_detailid' => 1,
-                        'pod_item' => $idItem,
-                        'pod_qty' => $qty_compare,
-                        'pod_unit' => $unit,
-                        'pod_value' => (int)$dataPO[0]->pod_value,
-                        'pod_received' => 'N',
-                        'pod_totalnet' => (int)$dataPO[0]->pod_value * $qty_compare
-                    ]);
-
-            } elseif ($request->methode_return == "PT"){
-                //Potong tagihan
-            } elseif ($request->methode_return == "RD"){
-                //Return Dana
-            }
-            //dd($request);
-            // insert return
-            DB::table('d_returnproductionorder')->insert([
-                'rpo_productionorder' => $poid,
-                'rpo_detailid' => $detailid,
-                'rpo_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
-                'rpo_nota' => $nota,
-                'rpo_item' => $idItem,
-                'rpo_qty' => $qty_compare,
-                'rpo_action' => $request->methode_return,
-                'rpo_note' => $request->note_return,
-                'rpo_reff' => $nota_reff
-            ]);
-            DB::table('d_returnproductionorderdt')->insert($valCode);
-            DB::commit();
-            return Response::json([
-                'status' => "Success",
-                'message' => "Data berhasil disimpan",
-                'id' => Crypt::encrypt($poid),
-                'detail' => Crypt::encrypt($detailid)
-            ]);
-        } catch (Exception $e) {
-            DB::rollBack();
-            return Response::json([
-                'status' => "Failed",
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
-
+    // public function addReturn(Request $request)
+    // {
+    //     try {
+    //         $poid = Crypt::decrypt($request->idPO);
+    //         $idItem = Crypt::decrypt($request->idItem);
+    //     } catch (DecryptException $e) {
+    //         return Response::json([
+    //             'status' => "Failed",
+    //             'message' => $e->getMessage()
+    //         ]);
+    //     }
+    //
+    //     $detailid = (DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid')) ? DB::table('d_returnproductionorder')->where('rpo_productionorder', $poid)->max('rpo_detailid') + 1 : 1;
+    //     // return-po/001/23/03/2019
+    //     $nota = CodeGenerator::codeWithSeparator('d_returnproductionorder', 'rpo_nota', 15, 10, 3, 'RETURN-PO', '/');
+    //     $nota_reff = '';
+    //     $data_check = DB::table('d_productionorder')
+    //         ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
+    //             'm_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+    //             'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+    //             'm_item.i_unit3 as unit3', 'd_productionorderdt.pod_unit as unit', 'd_productionorderdt.pod_value as value')
+    //         ->join('d_productionorderdt', function ($x) use ($idItem) {
+    //             $x->on('d_productionorder.po_id', '=', 'd_productionorderdt.pod_productionorder');
+    //             $x->where('d_productionorderdt.pod_item', '=', $idItem);
+    //         })
+    //         ->join('m_item', 'd_productionorderdt.pod_item', '=', 'm_item.i_id')
+    //         ->where('d_productionorder.po_id', '=', $poid)
+    //         ->first();
+    //
+    //     $qty_compare = 0;
+    //     $unit = 0;
+    //     if ($request->satuan_return == $data_check->unit1) {
+    //         $qty_compare = (int)$request->qty_return;
+    //         $unit = $data_check->unit1;
+    //     } else if ($request->satuan_return == $data_check->unit2) {
+    //         $qty_compare = $request->qty_return * $data_check->compare2;
+    //     } else if ($request->satuan_return == $data_check->unit3) {
+    //         $qty_compare = $request->qty_return * $data_check->compare3;
+    //     }
+    //
+    //     // if searchMethod is using 'kodeproduksi'
+    //     if ($request->searchMethod == 'kodeproduksi') {
+    //         // get production-code by PO-id and production-code-number
+    //         $data = d_productionordercode::where('poc_productionorder', $poid)
+    //             ->where('poc_productioncode', $request->prodCode)
+    //             ->get();
+    //
+    //         // get qty-item from production-code
+    //         $qtydata_compare = 0;
+    //         $totalQty = 0;
+    //         foreach ($data as $key => $val) {
+    //             if ($val->poc_unit == $data_check->unit1) {
+    //                 $qtydata_compare = $val->poc_qty;
+    //             } else if ($val->poc_unit == $data_check->unit2) {
+    //                 $qtydata_compare = $val->poc_qty * $data_check->compare2;
+    //             } else if ($val->poc_unit == $data_check->unit3) {
+    //                 $qtydata_compare = $val->poc_qty * $data_check->compare3;
+    //             }
+    //             $totalQty += $qtydata_compare;
+    //         }
+    //
+    //         // return-failed if qty-return > qty-item
+    //         if ((int)$qty_compare > (int)$totalQty) {
+    //             DB::rollBack();
+    //             return Response::json([
+    //                 'status' => "Failed",
+    //                 'message' => "Jumlah permintaan pengembalian melebihi jumlah yang tersedia !"
+    //             ]);
+    //         }
+    //
+    //     } // if searchMethod is using 'nota'
+    //     elseif ($request->searchMethod == 'nota') {
+    //         // get production-order-dt by PO-id and item-id
+    //         $data = ProductionOrderDT::where('pod_productionorder', $poid)
+    //             ->where('pod_item', $idItem)
+    //             ->get();
+    //
+    //         // get qty-item from production-order-dt
+    //         $qtydata_compare = 0;
+    //         $totalQty = 0;
+    //         foreach ($data as $key => $val) {
+    //             if ($val->pod_unit == $data_check->unit1) {
+    //                 $qtydata_compare = $val->pod_qty;
+    //             } else if ($val->pod_unit == $data_check->unit2) {
+    //                 $qtydata_compare = $val->pod_qty * $data_check->compare2;
+    //             } else if ($val->pod_unit == $data_check->unit3) {
+    //                 $qtydata_compare = $val->pod_qty * $data_check->compare3;
+    //             }
+    //             $totalQty += $qtydata_compare;
+    //         }
+    //
+    //         // return-failed if qty-return > qty-item
+    //         if ((int)$qty_compare > (int)$totalQty) {
+    //             DB::rollBack();
+    //             return Response::json([
+    //                 'status' => "Failed",
+    //                 'message' => "Jumlah permintaan pengembalian melebihi jumlah yang tersedia !"
+    //             ]);
+    //         }
+    //     }
+    //
+    //     DB::beginTransaction();
+    //     try {
+    //         $valCode = [
+    //             'rpod_productionorder' => $poid,
+    //             'rpod_returnproductionorder' => $detailid,
+    //             'rpod_detailid' => 1,
+    //             'rpod_productioncode' => $request->prodCode,
+    //             'rpod_qty' => $qty_compare,
+    //             'rpod_unit' => $unit
+    //         ];
+    //         $infocomp = DB::table('m_company')
+    //             ->where('c_type', '=', 'PUSAT')
+    //             ->first();
+    //
+    //         $comp = $infocomp->c_id;
+    //         // // update stock
+    //         // $get_stock = Stock::where('s_comp', $comp)
+    //         // ->where('s_position', $comp)
+    //         // ->where('s_item', $idItem)
+    //         // ->where('s_status', 'ON DESTINATION')
+    //         // ->where('s_condition', 'FINE');
+    //         $mutasi = Mutasi::mutasikeluar(
+    //             15, // mutcat
+    //             $comp, // item owner
+    //             $comp, // destination
+    //             $idItem, // item id
+    //             $qty_compare, // qty
+    //             $nota, // nota
+    //             null, // sellprice
+    //             null, // list of productioncode
+    //             null, // list qty of productioncode
+    //             $request->notaPO // reff
+    //         );
+    //         if (!is_bool($mutasi)) {
+    //             return $mutasi;
+    //         }
+    //
+    //         // mengurangi qty kode sesuai jumlah return
+    //         $kode = $request->prodCode;
+    //         $info_stock = DB::table('d_stock')
+    //             ->leftJoin('d_stockdt', function ($q) use ($kode) {
+    //                 $q->on('sd_stock', '=', 's_id');
+    //                 $q->where('sd_code', '=', $kode);
+    //             })
+    //             ->where('s_comp', '=', $comp)
+    //             ->where('s_position', '=', $comp)
+    //             ->where('s_item', '=', $idItem)
+    //             ->where('s_status', '=', 'ON DESTINATION')
+    //             ->first();
+    //
+    //         //update d_stockdt
+    //         $qtystockdt = $qty_compare;
+    //         DB::table('d_stockdt')
+    //             ->where('sd_stock', '=', $info_stock->s_id)
+    //             ->where('sd_code', '=', $kode)
+    //             ->update([
+    //                 'sd_qty' => $info_stock->sd_qty - $qtystockdt
+    //             ]);
+    //
+    //         //create stockmutationdt
+    //         $info_mutation = DB::table('d_stock_mutation')
+    //             ->where('sm_nota', '=', $nota)
+    //             ->get();
+    //
+    //         for ($i = 0; $i < count($info_mutation); $i++){
+    //             $smd_detailid = DB::table('d_stockmutationdt')
+    //                 ->where('smd_stock', '=', $info_mutation[$i]->sm_stock)
+    //                 ->where('smd_stockmutation', '=', $info_mutation[$i]->sm_detailid)
+    //                 ->max('smd_detailid');
+    //
+    //             ++$smd_detailid;
+    //
+    //             DB::table('d_stockmutationdt')
+    //                 ->insert([
+    //                     'smd_stock' => $info_mutation[$i]->sm_stock,
+    //                     'smd_stockmutation' => $info_mutation[$i]->sm_detailid,
+    //                     'smd_detailid' => $smd_detailid,
+    //                     'smd_productioncode' => $kode,
+    //                     'smd_qty' => $info_mutation[$i]->sm_qty,
+    //                     'smd_unit' => $unit
+    //                 ]);
+    //         }
+    //         $dataPO = DB::table('d_productionorder')
+    //             ->join('d_productionorderdt', 'pod_productionorder', '=', 'po_id')
+    //             ->where('po_nota', '=', $request->notaPO)
+    //             ->where('pod_item', '=', $idItem)
+    //             ->get();
+    //         //metode return
+    //         if ($request->methode_return == "GB"){
+    //             //Ganti Barang
+    //             //Pembuatan Nota Pembelian
+    //             $po_id = DB::table('d_productionorderdt')
+    //                 ->max('pod_productionorder');
+    //             ++$po_id;
+    //
+    //             $po_nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'RETURN', '-');
+    //             $totalnet = 0;
+    //             $nota_reff = $po_nota;
+    //             DB::table('d_productionorder')
+    //                 ->insert([
+    //                     'po_id' => $po_id,
+    //                     'po_nota' => $po_nota,
+    //                     'po_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+    //                     'po_supplier' => $dataPO[0]->po_supplier,
+    //                     'po_totalnet' => (int)$dataPO[0]->pod_value * $qty_compare,
+    //                     'po_status' => 'BELUM'
+    //                 ]);
+    //
+    //             DB::table('d_productionorderdt')
+    //                 ->insert([
+    //                     'pod_productionorder' => $po_id,
+    //                     'pod_detailid' => 1,
+    //                     'pod_item' => $idItem,
+    //                     'pod_qty' => $qty_compare,
+    //                     'pod_unit' => $unit,
+    //                     'pod_value' => (int)$dataPO[0]->pod_value,
+    //                     'pod_received' => 'N',
+    //                     'pod_totalnet' => (int)$dataPO[0]->pod_value * $qty_compare
+    //                 ]);
+    //
+    //         } elseif ($request->methode_return == "PT"){
+    //             //Potong tagihan
+    //         } elseif ($request->methode_return == "RD"){
+    //             //Return Dana
+    //         }
+    //         //dd($request);
+    //         // insert return
+    //         DB::table('d_returnproductionorder')->insert([
+    //             'rpo_productionorder' => $poid,
+    //             'rpo_detailid' => $detailid,
+    //             'rpo_date' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
+    //             'rpo_nota' => $nota,
+    //             'rpo_item' => $idItem,
+    //             'rpo_qty' => $qty_compare,
+    //             'rpo_action' => $request->methode_return,
+    //             'rpo_note' => $request->note_return,
+    //             'rpo_reff' => $nota_reff
+    //         ]);
+    //         DB::table('d_returnproductionorderdt')->insert($valCode);
+    //         DB::commit();
+    //         return Response::json([
+    //             'status' => "Success",
+    //             'message' => "Data berhasil disimpan",
+    //             'id' => Crypt::encrypt($poid),
+    //             'detail' => Crypt::encrypt($detailid)
+    //         ]);
+    //     } catch (Exception $e) {
+    //         DB::rollBack();
+    //         return Response::json([
+    //             'status' => "Failed",
+    //             'message' => $e->getMessage()
+    //         ]);
+    //     }
+    // }
     public function editReturn(Request $request)
     {
         $comp = Auth::user()->u_company;
@@ -1827,219 +1903,217 @@ dd('debug !');
             ]);
         }
     }
-
-    function deleteReturn($id = null, $detail = null, $qty = null)
-    {
-        if (!AksesUser::checkAkses(12, 'delete')) {
-            return Response::json([
-                'status' => "Gagal",
-                'message' => "Anda tidak memiliki akses"
-            ]);
-        }
-        $dataUser = DB::table('m_company')
-            ->where('c_type', '=', 'PUSAT')
-            ->get();
-        $comp = $dataUser[0]->c_id;
-        try {
-            $id = Crypt::decrypt($id);
-            $detail = Crypt::decrypt($detail);
-        } catch (DecryptException $e) {
-            return Response::json([
-                'status' => "Failed",
-                'message' => $e
-            ]);
-        }
-
-        if ($qty == null || $qty == "") {
-            return Response::json([
-                'status' => "Failed",
-                'message' => "Kuantitas barang tidak diketahui"
-            ]);
-        }
-
-        $return_po = DB::table('d_returnproductionorder')
-            ->where('rpo_productionorder', $id)
-            ->where('rpo_detailid', $detail);
-
-        if ($return_po->count() == 0) {
-            return Response::json([
-                'status' => "Failed",
-                'message' => "Data return produksi tidak ditemukan"
-            ]);
-        } else {
-            $stock = Stock::where('s_comp', $comp)
-                ->join('d_stock_mutation', 'sm_stock', '=', 's_id')
-                ->where('s_position', $comp)
-                ->where('s_item', $return_po->first()->rpo_item)
-                ->where('s_status', 'ON DESTINATION')
-                ->where('sm_nota', '=', $return_po->first()->rpo_nota);
-
-            /*$stock_mutation = StockMutation::where('sm_stock', $stock->first()->s_id);
-            //$qty = kuantitas return
-            $s_qty = $stock->first()->s_qty + $qty;
-            $sm_qty = $stock_mutation->first()->sm_qty;
-            $sm_residue = $stock_mutation->first()->sm_residue + $qty;
-            $sm_use = $stock_mutation->first()->sm_use - $qty;
-
-            $val_mutasi = [
-                'sm_residue' => $sm_residue,
-                'sm_use' => $sm_use
-            ];
-
-            $val_stock = [
-                's_qty' => $s_qty
-            ];*/
-
-            DB::beginTransaction();
-            try {
-                $dataReturn = DB::table('d_returnproductionorder')
-                    ->join('d_returnproductionorderdt', function ($q){
-                        $q->on('rpo_productionorder', '=', 'rpod_productionorder');
-                        $q->on('rpo_detailid', '=', 'rpod_returnproductionorder');
-                    })
-                    ->get();
-
-                if (count($dataReturn) > 0){
-                    if ($dataReturn[0]->rpo_action == 'GB'){
-                        //delete nota pengembalian barang
-                        DB::table('d_productionorder')
-                            ->where('po_nota', '=', $dataReturn[0]->rpo_reff)
-                            ->delete();
-                    }
-                }
-
-                $dataStock = $stock->get();
-                for ($i = 0; $i < count($dataReturn); $i++){
-                    $stockDt = DB::table('d_stockdt')
-                        ->where('sd_stock', '=', $dataStock[0]->s_id)
-                        ->where('sd_code', '=', $dataReturn[$i]->rpod_productioncode)
-                        ->first();
-
-                    $qtyawal = $stockDt->sd_qty;
-                    $qtyReturn = $dataReturn[$i]->rpod_qty;
-                    $qtyUpdate = (int)$qtyawal + (int)$qtyReturn;
-
-                    DB::table('d_stockdt')
-                        ->where('sd_stock', '=', $dataStock[0]->s_id)
-                        ->where('sd_code', '=', $dataReturn[$i]->rpod_productioncode)
-                        ->update([
-                            'sd_qty' => $qtyUpdate
-                        ]);
-
-                    DB::table('d_returnproductionorderdt')
-                        ->where('rpod_productionorder', $id)
-                        ->where('rpod_returnproductionorder', $detail)
-                        ->where('rpod_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
-                        ->delete();
-
-                    $datamutasi = DB::table('d_stock_mutation')
-                        ->where('sm_stock', '=', $dataStock[0]->s_id)
-                        ->where('sm_nota', '=', $dataReturn[$i]->rpo_nota)
-                        ->get();
-
-                    for ($j = 0; $j < count($datamutasi); $j++){
-                        DB::table('d_stockmutationdt')
-                            ->where('smd_stock', '=', $dataStock[0]->s_id)
-                            ->where('smd_stockmutation', '=', $datamutasi[$i]->sm_detailid)
-                            ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
-                            ->delete();
-
-                        //update stock & stock mutasi
-                        //get mutasi yang dikurangi
-                        $mutasi = DB::table('d_stock_mutation')
-                            ->where('sm_nota', '=', $datamutasi[$i]->sm_reff)
-                            ->where('sm_hpp', '=', $datamutasi[$i]->sm_hpp)
-                            ->where('sm_use', '>', 0)
-                            ->get();
-                        $jumlahreturn = $qty;
-                        for ($k = 0; $k < count($mutasi); $k++){
-                            if ($mutasi[$k]->sm_use < $jumlahreturn){
-                                //jika sm_use kurang dari jumlah return maka data tersebut akan direset ke kondisi belum pernah terpakai
-                                DB::table('d_stock_mutation')
-                                    ->where('sm_detailid', '=', $mutasi[$k]->sm_detailid)
-                                    ->where('sm_stock', '=', $mutasi[$k]->sm_stock)
-                                    ->update([
-                                        'sm_use' => 0,
-                                        'sm_residue' => $mutasi[$k]->sm_qty
-                                    ]);
-
-                                //update stock mutation dt
-                                /*$mutationdt = DB::table('d_stockmutationdt')
-                                    ->where('smd_stock', '=', $mutasi[$k]->sm_stock)
-                                    ->where('smd_stockmutation', '=', $mutasi[$k]->sm_detailid)
-                                    ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
-                                    ->first();
-
-                                DB::table('d_stockmutationdt')
-                                    ->where('smd_stock', '=', $mutasi[$k]->sm_stock)
-                                    ->where('smd_stockmutation', '=', $mutasi[$k]->sm_detailid)
-                                    ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
-                                    ->update([
-                                        'smd_qty' => (int)$mutationdt->smd_qty + (int)$mutasi[$k]->sm_use
-                                    ]);*/
-
-                                $jumlahreturn = $jumlahreturn - $mutasi[$k]->sm_use;
-                            } else {
-                                //jika sm_use >= jumlah return maka data kuantitas yang telah digunakan akan dikurangi dengan jumlah return
-                                $dataawal = DB::table('d_stock_mutation')
-                                    ->where('sm_detailid', '=', $mutasi[$k]->sm_detailid)
-                                    ->where('sm_stock', '=', $mutasi[$k]->sm_stock)
-                                    ->first();
-
-                                DB::table('d_stock_mutation')
-                                    ->where('sm_detailid', '=', $mutasi[$k]->sm_detailid)
-                                    ->where('sm_stock', '=', $mutasi[$k]->sm_stock)
-                                    ->update([
-                                        'sm_use' => $dataawal->sm_use - $jumlahreturn,
-                                        'sm_residue' => $dataawal->sm_residue + $jumlahreturn
-                                    ]);
-
-                                //update stock mutation dt
-                                /*$mutationdt = DB::table('d_stockmutationdt')
-                                    ->where('smd_stock', '=', $mutasi[$k]->sm_stock)
-                                    ->where('smd_stockmutation', '=', $mutasi[$k]->sm_detailid)
-                                    ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
-                                    ->first();
-
-                                DB::table('d_stockmutationdt')
-                                    ->where('smd_stock', '=', $mutasi[$k]->sm_stock)
-                                    ->where('smd_stockmutation', '=', $mutasi[$k]->sm_detailid)
-                                    ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
-                                    ->update([
-                                        'smd_qty' => (int)$mutationdt->smd_qty + (int)$mutasi[$k]->sm_use
-                                    ]);*/
-                                $k = count($mutasi) + 2;
-                                break;
-                            }
-                        }
-                    }
-
-                }
-                /*$stock_mutation->update($val_mutasi);
-                $stock->update($val_stock);*/
-                $return_po->delete();
-                $stock->update([
-                    's_qty' => $dataStock[0]->s_qty + $qty
-                ]);
-                DB::table('d_stock_mutation')
-                    ->where('sm_nota', '=', $dataReturn[0]->rpo_nota)
-                    ->delete();
-
-                DB::commit();
-                return Response::json([
-                    'status' => "Success",
-                    'message' => "Data berhasil dihapus"
-                ]);
-            } catch (Exception $e) {
-                DB::rollBack();
-                return Response::json([
-                    'status' => "Failed",
-                    'message' => $e
-                ]);
-            }
-        }
-    }
-
+    // function deleteReturn($id = null, $detail = null, $qty = null)
+    // {
+    //     if (!AksesUser::checkAkses(12, 'delete')) {
+    //         return Response::json([
+    //             'status' => "Gagal",
+    //             'message' => "Anda tidak memiliki akses"
+    //         ]);
+    //     }
+    //     $dataUser = DB::table('m_company')
+    //         ->where('c_type', '=', 'PUSAT')
+    //         ->get();
+    //     $comp = $dataUser[0]->c_id;
+    //     try {
+    //         $id = Crypt::decrypt($id);
+    //         $detail = Crypt::decrypt($detail);
+    //     } catch (DecryptException $e) {
+    //         return Response::json([
+    //             'status' => "Failed",
+    //             'message' => $e
+    //         ]);
+    //     }
+    //
+    //     if ($qty == null || $qty == "") {
+    //         return Response::json([
+    //             'status' => "Failed",
+    //             'message' => "Kuantitas barang tidak diketahui"
+    //         ]);
+    //     }
+    //
+    //     $return_po = DB::table('d_returnproductionorder')
+    //         ->where('rpo_productionorder', $id)
+    //         ->where('rpo_detailid', $detail);
+    //
+    //     if ($return_po->count() == 0) {
+    //         return Response::json([
+    //             'status' => "Failed",
+    //             'message' => "Data return produksi tidak ditemukan"
+    //         ]);
+    //     } else {
+    //         $stock = Stock::where('s_comp', $comp)
+    //             ->join('d_stock_mutation', 'sm_stock', '=', 's_id')
+    //             ->where('s_position', $comp)
+    //             ->where('s_item', $return_po->first()->rpo_item)
+    //             ->where('s_status', 'ON DESTINATION')
+    //             ->where('sm_nota', '=', $return_po->first()->rpo_nota);
+    //
+    //         /*$stock_mutation = StockMutation::where('sm_stock', $stock->first()->s_id);
+    //         //$qty = kuantitas return
+    //         $s_qty = $stock->first()->s_qty + $qty;
+    //         $sm_qty = $stock_mutation->first()->sm_qty;
+    //         $sm_residue = $stock_mutation->first()->sm_residue + $qty;
+    //         $sm_use = $stock_mutation->first()->sm_use - $qty;
+    //
+    //         $val_mutasi = [
+    //             'sm_residue' => $sm_residue,
+    //             'sm_use' => $sm_use
+    //         ];
+    //
+    //         $val_stock = [
+    //             's_qty' => $s_qty
+    //         ];*/
+    //
+    //         DB::beginTransaction();
+    //         try {
+    //             $dataReturn = DB::table('d_returnproductionorder')
+    //                 ->join('d_returnproductionorderdt', function ($q){
+    //                     $q->on('rpo_productionorder', '=', 'rpod_productionorder');
+    //                     $q->on('rpo_detailid', '=', 'rpod_returnproductionorder');
+    //                 })
+    //                 ->get();
+    //
+    //             if (count($dataReturn) > 0){
+    //                 if ($dataReturn[0]->rpo_action == 'GB'){
+    //                     //delete nota pengembalian barang
+    //                     DB::table('d_productionorder')
+    //                         ->where('po_nota', '=', $dataReturn[0]->rpo_reff)
+    //                         ->delete();
+    //                 }
+    //             }
+    //
+    //             $dataStock = $stock->get();
+    //             for ($i = 0; $i < count($dataReturn); $i++){
+    //                 $stockDt = DB::table('d_stockdt')
+    //                     ->where('sd_stock', '=', $dataStock[0]->s_id)
+    //                     ->where('sd_code', '=', $dataReturn[$i]->rpod_productioncode)
+    //                     ->first();
+    //
+    //                 $qtyawal = $stockDt->sd_qty;
+    //                 $qtyReturn = $dataReturn[$i]->rpod_qty;
+    //                 $qtyUpdate = (int)$qtyawal + (int)$qtyReturn;
+    //
+    //                 DB::table('d_stockdt')
+    //                     ->where('sd_stock', '=', $dataStock[0]->s_id)
+    //                     ->where('sd_code', '=', $dataReturn[$i]->rpod_productioncode)
+    //                     ->update([
+    //                         'sd_qty' => $qtyUpdate
+    //                     ]);
+    //
+    //                 DB::table('d_returnproductionorderdt')
+    //                     ->where('rpod_productionorder', $id)
+    //                     ->where('rpod_returnproductionorder', $detail)
+    //                     ->where('rpod_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
+    //                     ->delete();
+    //
+    //                 $datamutasi = DB::table('d_stock_mutation')
+    //                     ->where('sm_stock', '=', $dataStock[0]->s_id)
+    //                     ->where('sm_nota', '=', $dataReturn[$i]->rpo_nota)
+    //                     ->get();
+    //
+    //                 for ($j = 0; $j < count($datamutasi); $j++){
+    //                     DB::table('d_stockmutationdt')
+    //                         ->where('smd_stock', '=', $dataStock[0]->s_id)
+    //                         ->where('smd_stockmutation', '=', $datamutasi[$i]->sm_detailid)
+    //                         ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
+    //                         ->delete();
+    //
+    //                     //update stock & stock mutasi
+    //                     //get mutasi yang dikurangi
+    //                     $mutasi = DB::table('d_stock_mutation')
+    //                         ->where('sm_nota', '=', $datamutasi[$i]->sm_reff)
+    //                         ->where('sm_hpp', '=', $datamutasi[$i]->sm_hpp)
+    //                         ->where('sm_use', '>', 0)
+    //                         ->get();
+    //                     $jumlahreturn = $qty;
+    //                     for ($k = 0; $k < count($mutasi); $k++){
+    //                         if ($mutasi[$k]->sm_use < $jumlahreturn){
+    //                             //jika sm_use kurang dari jumlah return maka data tersebut akan direset ke kondisi belum pernah terpakai
+    //                             DB::table('d_stock_mutation')
+    //                                 ->where('sm_detailid', '=', $mutasi[$k]->sm_detailid)
+    //                                 ->where('sm_stock', '=', $mutasi[$k]->sm_stock)
+    //                                 ->update([
+    //                                     'sm_use' => 0,
+    //                                     'sm_residue' => $mutasi[$k]->sm_qty
+    //                                 ]);
+    //
+    //                             //update stock mutation dt
+    //                             /*$mutationdt = DB::table('d_stockmutationdt')
+    //                                 ->where('smd_stock', '=', $mutasi[$k]->sm_stock)
+    //                                 ->where('smd_stockmutation', '=', $mutasi[$k]->sm_detailid)
+    //                                 ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
+    //                                 ->first();
+    //
+    //                             DB::table('d_stockmutationdt')
+    //                                 ->where('smd_stock', '=', $mutasi[$k]->sm_stock)
+    //                                 ->where('smd_stockmutation', '=', $mutasi[$k]->sm_detailid)
+    //                                 ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
+    //                                 ->update([
+    //                                     'smd_qty' => (int)$mutationdt->smd_qty + (int)$mutasi[$k]->sm_use
+    //                                 ]);*/
+    //
+    //                             $jumlahreturn = $jumlahreturn - $mutasi[$k]->sm_use;
+    //                         } else {
+    //                             //jika sm_use >= jumlah return maka data kuantitas yang telah digunakan akan dikurangi dengan jumlah return
+    //                             $dataawal = DB::table('d_stock_mutation')
+    //                                 ->where('sm_detailid', '=', $mutasi[$k]->sm_detailid)
+    //                                 ->where('sm_stock', '=', $mutasi[$k]->sm_stock)
+    //                                 ->first();
+    //
+    //                             DB::table('d_stock_mutation')
+    //                                 ->where('sm_detailid', '=', $mutasi[$k]->sm_detailid)
+    //                                 ->where('sm_stock', '=', $mutasi[$k]->sm_stock)
+    //                                 ->update([
+    //                                     'sm_use' => $dataawal->sm_use - $jumlahreturn,
+    //                                     'sm_residue' => $dataawal->sm_residue + $jumlahreturn
+    //                                 ]);
+    //
+    //                             //update stock mutation dt
+    //                             /*$mutationdt = DB::table('d_stockmutationdt')
+    //                                 ->where('smd_stock', '=', $mutasi[$k]->sm_stock)
+    //                                 ->where('smd_stockmutation', '=', $mutasi[$k]->sm_detailid)
+    //                                 ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
+    //                                 ->first();
+    //
+    //                             DB::table('d_stockmutationdt')
+    //                                 ->where('smd_stock', '=', $mutasi[$k]->sm_stock)
+    //                                 ->where('smd_stockmutation', '=', $mutasi[$k]->sm_detailid)
+    //                                 ->where('smd_productioncode', '=', $dataReturn[$i]->rpod_productioncode)
+    //                                 ->update([
+    //                                     'smd_qty' => (int)$mutationdt->smd_qty + (int)$mutasi[$k]->sm_use
+    //                                 ]);*/
+    //                             $k = count($mutasi) + 2;
+    //                             break;
+    //                         }
+    //                     }
+    //                 }
+    //
+    //             }
+    //             /*$stock_mutation->update($val_mutasi);
+    //             $stock->update($val_stock);*/
+    //             $return_po->delete();
+    //             $stock->update([
+    //                 's_qty' => $dataStock[0]->s_qty + $qty
+    //             ]);
+    //             DB::table('d_stock_mutation')
+    //                 ->where('sm_nota', '=', $dataReturn[0]->rpo_nota)
+    //                 ->delete();
+    //
+    //             DB::commit();
+    //             return Response::json([
+    //                 'status' => "Success",
+    //                 'message' => "Data berhasil dihapus"
+    //             ]);
+    //         } catch (Exception $e) {
+    //             DB::rollBack();
+    //             return Response::json([
+    //                 'status' => "Failed",
+    //                 'message' => $e
+    //             ]);
+    //         }
+    //     }
+    // }
     public function notaReturn($id = null, $detail = null)
     {
         try {
@@ -2087,7 +2161,6 @@ dd('debug !');
         }
         return view('produksi.returnproduksi.nota')->with(compact('val'));
     }
-
     public function nota()
     {
         return view('produksi/orderproduksi/nota');

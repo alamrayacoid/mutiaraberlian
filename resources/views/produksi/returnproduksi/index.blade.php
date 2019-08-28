@@ -21,7 +21,7 @@
 		<div class="row">
 
 			<div class="col-12">
-				
+
 				<div class="card">
                     <div class="card-header bordered p-2">
                     	<div class="header-block">
@@ -133,7 +133,7 @@
         })
 
 	});
-	
+
 	function updateTableReturn() {
         if ( $.fn.DataTable.isDataTable('#table_return') ) {
             $('#table_return').DataTable().destroy();
@@ -292,10 +292,11 @@
 	    axios.get(baseUrl+'/produksi/returnproduksi/hapus-return/'+id+'/'+detail+'/'+qty)
             .then(function (resp) {
                 loadingHide();
-                if (resp.data.status == "Success") {
+                console.log(resp);
+                if (resp.data.status == "berhasil") {
                     table.ajax.reload();
-                    messageSuccess("Berhasil", resp.data.message);
-                } else if (resp.data.status == "Failed") {
+                    messageSuccess("Berhasil", 'Data return produksi berhasil di hapus !');
+                } else if (resp.data.status == "gagal") {
                     messageFailed("Gagal", resp.data.message);
                 }
             })

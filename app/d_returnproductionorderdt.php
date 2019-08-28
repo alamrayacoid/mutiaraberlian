@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class d_returnproductionorder extends Model
+class d_returnproductionorderdt extends Model
 {
-    protected $table = 'd_returnproductionorder';
+    protected $table = 'd_returnproductionorderdt';
     public $timestamps = false;
 
 }
