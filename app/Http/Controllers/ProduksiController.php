@@ -1127,7 +1127,7 @@ dd('debug !');
                 $dateTermin = Carbon::now()->addMonth();
                 $estimasi = array($dateTermin);
                 $nominal = array((int)$request->subsValue);
-
+                // prepare Request to create new production-order
                 $myRequest = new \Illuminate\Http\Request();
                 $myRequest->setMethod('POST');
                 $myRequest->request->add(['nota_return' => $nota]);
@@ -1142,15 +1142,36 @@ dd('debug !');
                 $myRequest->request->add(['termin' => $termin]); // list
                 $myRequest->request->add(['estimasi' => $estimasi]); // list
                 $myRequest->request->add(['nominal' => $nominal]); // list
-
-                // create order-produksi with nota 'return'
+                // create new production-order with nota-return
                 $order = $this->create_produksi($myRequest);
                 if (json_decode($order)->status !== 'Success') {
                     throw new \Exception("Terjadi kesalahan saat menyelesaikan return produksi", 1);
                 }
+                // acc otorisasi production-order
+                $data = d_productionorderauth::where('poa_nota', $nota)->first();
+                $values = [
+                    'po_id'         => $data->poa_id,
+                    'po_nota'       => $data->poa_nota,
+                    'po_date'       => $data->poa_date,
+                    'po_supplier'   => $data->poa_supplier,
+                    'po_totalnet'   => $data->poa_totalnet,
+                    'po_status'     => $data->poa_status,
+                ];
+                $insertPO = DB::table('d_productionorder')->insert($values);
+                // delete production-auth
+                $deletePOAuth = DB::table('d_productionorderauth')
+                ->where('poa_id', '=', $data->poa_id)
+                ->delete();
+                // update production-payment to 'lunas'
+                $POPayment = d_productionorderpayment::where('pop_productionorder', $insertPO->po_id)->first();
+                $POPayment->pop_date = $returnDate;
+                $POPayment->pop_pay = $POPayment->pop_value;
+                $POPayment->pop_status = 'Y';
+                $POPayment->save();
             }
             elseif ($type == 'PN')
             {
+                // update saldo in supplier
                 $supplier = m_supplier::where('s_id', $supplierId)->first();
                 $supplier->s_deposit += ((int)$itemPrice * (int)$qtyReturn);
                 $supplier->save();
@@ -1168,6 +1189,20 @@ dd('debug !');
                 'message' => $e->getMessage()
             ]);
         }
+    }
+    // delete production-order
+    public function deleteReturn($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        }
+        catch (\Exception $e) {
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+
     }
 
     public function getNotaProductionOrder(Request $request)
