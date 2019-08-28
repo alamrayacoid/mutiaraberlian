@@ -60,6 +60,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div id="private-section">
+                                                {{--
                                                 <div class="row">
                                                     <div class="col-6 col-md-6 col-sm-12">
                                                         <div class="row">
@@ -92,7 +93,7 @@
                                                         <div class="row">
                                                             <div class="col-4">
                                                                 <div class="form-group">
-                                                                    <input type="text" name="bobot[]" class="form-control form-control-sm digits" value="{{$kpiemp_first->ke_weight}}">
+                                                                    <input type="text" name="bobot[]" class="form-control form-control-sm text-right" value="{{number_format($kpiemp_first->ke_weight, 2)}}">
                                                                 </div>
                                                             </div>
                                                             <div class="col-2">
@@ -100,7 +101,7 @@
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="form-group">
-                                                                    <input type="text" name="target[]" class="form-control form-control-sm digits" value="{{$kpiemp_first->ke_target}}">
+                                                                    <input type="text" name="target[]" class="form-control form-control-sm text-right" value="{{number_format($kpiemp_first->ke_target, 2)}}">
                                                                 </div>
                                                             </div>
                                                             <div class="col-2 align-items-center" style="height: 30px;display: flex; align-items: center;">
@@ -109,6 +110,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                --}}
                                                 @foreach($kpiemp as $idx => $kpiemp)
                                                 <div class="row section2">
                                                     <div class="col-6 col-md-6 col-sm-12">
@@ -140,7 +142,7 @@
                                                         <div class="row">
                                                             <div class="col-4">
                                                                 <div class="form-group">
-                                                                    <input type="text" name="bobot[]" class="form-control form-control-sm digits" value="{{$kpiemp->ke_weight}}">
+                                                                    <input type="text" name="bobot[]" class="form-control form-control-sm text-right" value="{{number_format($kpiemp->ke_weight, 2)}}">
                                                                 </div>
                                                             </div>
                                                             <div class="col-2">
@@ -148,12 +150,18 @@
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="form-group">
-                                                                    <input type="text" name="target[]" class="form-control form-control-sm digits" value="{{$kpiemp->ke_target}}">
+                                                                    <input type="text" name="target[]" class="form-control form-control-sm text-right" value="{{number_format($kpiemp->ke_target, 2)}}">
                                                                 </div>
                                                             </div>
-                                                            <div class="col-2" style="height: 30px;display: flex; align-items: center;">
-                                                                <button type="button" class="btn btn-block btn-danger btn-sm rounded btn-hapus idx-btn btn-del"><i class="fa fa-trash"></i></button>
-                                                            </div>
+                                                            @if($idx == 0)
+                                                                <div class="col-2 align-items-center" style="height: 30px;display: flex; align-items: center;">
+                                                                    <button type="button" class="btn btn-block btn-primary btn-sm rounded btn-tambahp align-self-center idx-btn"><i class="fa fa-plus"></i></button>
+                                                                </div>
+                                                            @else
+                                                                <div class="col-2" style="height: 30px;display: flex; align-items: center;">
+                                                                    <button type="button" class="btn btn-block btn-danger btn-sm rounded btn-hapus idx-btn btn-del"><i class="fa fa-trash"></i></button>
+                                                                </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
