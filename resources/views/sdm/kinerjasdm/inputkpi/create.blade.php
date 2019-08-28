@@ -124,12 +124,12 @@
     </script>
 
     <script>
-        $(document).ready(function(){
-            // $('.divisi').on('select2:select', function () {
-            //     console.log('testes');
-            //     getDivisi();
-            // });
-        });
+        // $(document).ready(function(){
+        //     $('.divisi').on('select2:select', function () {
+        //         console.log('testes');
+        //         getDivisi();
+        //     });
+        // });
 
         function getDivisi(index) {
             axios.get('{{url('/sdm/kinerjasdm/kpi-divisi/get-kpi-divisi')}}')
@@ -167,7 +167,7 @@
                                 '<div class="col-md-9 col-sm-12">'+
                                     '<div class="form-group">'+
                                         '<select name="divisi" id="divisi" class="form-control form-control-sm select2 divisi" onchange="getDataIndikatorDivisi()">'+
-                                            '<option value="" disable="" selected="">Pilih Divisi</option>'+
+                                            '<option value="" disabled selected="">Pilih Divisi</option>'+
                                         '</select>'+
                                     '</div>'+
                                 '</div>'+
@@ -202,7 +202,7 @@
                                 '<div class="col-md-9 col-sm-12">'+
                                     '<div class="form-group">'+
                                         '<select name="pegawai" id="pegawai" class="form-control form-control-sm select2 pegawai" onchange="getDataIndikatorPegawai()">'+
-                                            '<option value="" disable="" selected="">Pilih Pegawai</option>'+
+                                            '<option value="" disabled selected="">Pilih Pegawai</option>'+
                                         '</select>'+
                                     '</div>'+
                                 '</div>'+

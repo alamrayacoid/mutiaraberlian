@@ -317,7 +317,8 @@ class MasterKPIController extends Controller
             ->join('m_kpi', 'k_id', 'ke_kpi')
             ->select('m_name', 'k_indicator', 'k_isactive', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi')
             // ->where('k_isactive', '=', 'Y')
-            ->where('ke_department', '=', $divs)->offset(1)->take(100)->get();
+            // ->where('ke_department', '=', $divs)->offset(1)->take(100)->get();
+            ->where('ke_department', '=', $divs)->get();
 
         return view('sdm.kinerjasdm.kpidivisi.edit', compact('divisi', 'kpi', 'kpiemp_first', 'kpiemp'));
     }
@@ -522,7 +523,8 @@ class MasterKPIController extends Controller
             ->join('m_jabatan', 'j_id', 'e_position')
             ->join('m_kpi', 'k_id', 'ke_kpi')
             ->select('e_name', 'm_name', 'j_name', 'k_indicator', 'k_isactive', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi')
-            ->where('ke_employee', '=', $emp)->offset(1)->take(100)->get();
+            // ->where('ke_employee', '=', $emp)->offset(1)->take(100)->get();
+            ->where('ke_employee', '=', $emp)->get();
         
         return view('sdm.kinerjasdm.kpipegawai.edit', compact('employee', 'kpi', 'kpiemp_first', 'kpiemp'));
     }
@@ -625,82 +627,82 @@ class MasterKPIController extends Controller
 
             $divisi = DB::table('m_divisi')->get();
             return view('sdm/kinerjasdm/inputkpi/create')->with(compact('employee', 'divisi'));
-        } else {
-            $data = $request->all();
-            $productionorderauth = [];
-            $productionorderdt = [];
-            $productionorderpayment = [];
-            DB::beginTransaction();
-            try {
-                // dd($request);
-                $idpo = (DB::table('d_productionorderdt')->max('pod_productionorder')) ? (DB::table('d_productionorderdt')->max('pod_productionorder')) + 1 : 1;
-                // $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
-                // $cekNota = DB::table('d_productionorder')
-                //     ->where('po_nota', '=', $nota)
-                //     ->get();
-                //
-                // if (count($cekNota) > 0){
-                //     $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
-                // }
+        // } else {
+        //     $data = $request->all();
+        //     $productionorderauth = [];
+        //     $productionorderdt = [];
+        //     $productionorderpayment = [];
+        //     DB::beginTransaction();
+        //     try {
+        //         // dd($request);
+        //         $idpo = (DB::table('d_productionorderdt')->max('pod_productionorder')) ? (DB::table('d_productionorderdt')->max('pod_productionorder')) + 1 : 1;
+        //         // $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
+        //         // $cekNota = DB::table('d_productionorder')
+        //         //     ->where('po_nota', '=', $nota)
+        //         //     ->get();
+        //         //
+        //         // if (count($cekNota) > 0){
+        //         //     $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
+        //         // }
 
-                $notaProductionAuth = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
-                $notaProduction = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
-                if (strcmp($notaProduction, $notaProductionAuth) > 0) {
-                    $nota = $notaProduction;
-                }
-                else {
-                    $nota = $notaProductionAuth;
-                };
+        //         $notaProductionAuth = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
+        //         $notaProduction = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
+        //         if (strcmp($notaProduction, $notaProductionAuth) > 0) {
+        //             $nota = $notaProduction;
+        //         }
+        //         else {
+        //             $nota = $notaProductionAuth;
+        //         };
 
 
-                $productionorderauth[] = [
-                    'poa_id' => $idpo,
-                    'poa_nota' => $nota,
-                    'poa_date' => date('Y-m-d', strtotime($data['po_date'])),
-                    'poa_supplier' => $data['supplier'],
-                    'poa_totalnet' => $data['tot_hrg'],
-                    'poa_status' => 'BELUM'
-                ];
+        //         $productionorderauth[] = [
+        //             'poa_id' => $idpo,
+        //             'poa_nota' => $nota,
+        //             'poa_date' => date('Y-m-d', strtotime($data['po_date'])),
+        //             'poa_supplier' => $data['supplier'],
+        //             'poa_totalnet' => $data['tot_hrg'],
+        //             'poa_status' => 'BELUM'
+        //         ];
 
-                $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) + 1 : 1;
-                $detailpod = $poddetail;
-                for ($i = 0; $i < count($data['idItem']); $i++) {
-                    $productionorderdt[] = [
-                        'pod_productionorder' => $idpo,
-                        'pod_detailid' => $detailpod,
-                        'pod_item' => $data['idItem'][$i],
-                        'pod_qty' => $data['jumlah'][$i],
-                        'pod_unit' => $data['satuan'][$i],
-                        'pod_value' => $this->removeCurrency($data['harga'][$i]),
-                        'pod_totalnet' => $this->removeCurrency($data['subtotal'][$i])
-                    ];
-                    $detailpod++;
-                }
+        //         $poddetail = (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) ? (DB::table('d_productionorderdt')->where('pod_productionorder', '=', $idpo)->max('pod_detailid')) + 1 : 1;
+        //         $detailpod = $poddetail;
+        //         for ($i = 0; $i < count($data['idItem']); $i++) {
+        //             $productionorderdt[] = [
+        //                 'pod_productionorder' => $idpo,
+        //                 'pod_detailid' => $detailpod,
+        //                 'pod_item' => $data['idItem'][$i],
+        //                 'pod_qty' => $data['jumlah'][$i],
+        //                 'pod_unit' => $data['satuan'][$i],
+        //                 'pod_value' => $this->removeCurrency($data['harga'][$i]),
+        //                 'pod_totalnet' => $this->removeCurrency($data['subtotal'][$i])
+        //             ];
+        //             $detailpod++;
+        //         }
 
-                for ($i = 0; $i < count($data['termin']); $i++) {
-                    $productionorderpayment[] = [
-                        'pop_productionorder' => $idpo,
-                        'pop_termin' => $data['termin'][$i],
-                        'pop_datetop' => date('Y-m-d', strtotime($data['estimasi'][$i])),
-                        'pop_value' => $this->removeCurrency($data['nominal'][$i]),
-                    ];
-                }
+        //         for ($i = 0; $i < count($data['termin']); $i++) {
+        //             $productionorderpayment[] = [
+        //                 'pop_productionorder' => $idpo,
+        //                 'pop_termin' => $data['termin'][$i],
+        //                 'pop_datetop' => date('Y-m-d', strtotime($data['estimasi'][$i])),
+        //                 'pop_value' => $this->removeCurrency($data['nominal'][$i]),
+        //             ];
+        //         }
 
-                // dd($productionorderpayment);
-                DB::table('d_productionorderauth')->insert($productionorderauth);
-                DB::table('d_productionorderdt')->insert($productionorderdt);
-                DB::table('d_productionorderpayment')->insert($productionorderpayment);
-                DB::commit();
-                return json_encode([
-                    'status' => 'Success'
-                ]);
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return json_encode([
-                    'status' => 'Failed',
-                    'msg' => $e
-                ]);
-            }
+        //         // dd($productionorderpayment);
+        //         DB::table('d_productionorderauth')->insert($productionorderauth);
+        //         DB::table('d_productionorderdt')->insert($productionorderdt);
+        //         DB::table('d_productionorderpayment')->insert($productionorderpayment);
+        //         DB::commit();
+        //         return json_encode([
+        //             'status' => 'Success'
+        //         ]);
+        //     } catch (\Exception $e) {
+        //         DB::rollBack();
+        //         return json_encode([
+        //             'status' => 'Failed',
+        //             'msg' => $e
+        //         ]);
+        //     }
         }
     }
 
