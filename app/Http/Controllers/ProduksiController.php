@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
 
+use App\d_itemsupplier;
 use App\d_itemreceipt as ItemReceipt;
 use App\d_productionorder as ProductionOrder;
 use App\d_productionorderdt as ProductionOrderDT;
@@ -705,7 +706,7 @@ class ProduksiController extends Controller
             })
             ->addColumn('action', function ($data) {
                 $detail = '<button class="btn btn-primary" type="button" title="Detail" onclick="detailReturn(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>';
-                $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editReturn(\'' . Crypt::encrypt($data->id) . '\', \'' . Crypt::encrypt($data->idItem) . '\')"><i class="fa fa-pencil-square-o"></i></button>';
+                // $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editReturn(\'' . Crypt::encrypt($data->id) . '\', \'' . Crypt::encrypt($data->idItem) . '\')"><i class="fa fa-pencil-square-o"></i></button>';
                 $hapus = '<button class="btn btn-danger" type="button" title="Hapus" onclick="hapusReturn(\'' . Crypt::encrypt($data->id) . '\', \'' . $data->qty . '\')"><i class="fa fa-trash-o"></i></button>';
                 return '<div class="btn-group btn-group-sm">' . $detail . $hapus . '</div>';
             })
@@ -713,12 +714,10 @@ class ProduksiController extends Controller
             ->make(true);
     }
 
-    public function detailReturn($id = null, $detail = null)
+    public function detailReturn($id)
     {
-dd('debug !');
         try {
             $id = Crypt::decrypt($id);
-            $detail = Crypt::decrypt($detail);
         } catch (DecryptException $e) {
             return Response::json([
                 'status' => "Failed",
@@ -726,39 +725,41 @@ dd('debug !');
             ]);
         }
 
-        $data = DB::table('d_returnproductionorder')
-            ->leftJoin('d_returnproductionorderdt', function ($q) use ($id){
-                $q->on('rpo_productionorder', '=', 'rpod_productionorder');
-                $q->on('rpo_detailid', '=', 'rpod_returnproductionorder');
-            })
-            ->join('m_item', 'rpo_item', '=', 'i_id')
-            ->join('m_unit', 'i_unit1', '=', 'u_id')
-            ->where('rpo_productionorder', $id)
-            ->where('rpo_detailid', $detail);
+        $data = d_returnproductionorder::where('rpo_id', $id)
+            ->with('getItem')
+            ->first();
+            // ->leftJoin('d_returnproductionorderdt', function ($q) use ($id){
+            //     $q->on('rpo_productionorder', '=', 'rpod_productionorder');
+            //     $q->on('rpo_detailid', '=', 'rpod_returnproductionorder');
+            // })
+            // ->join('m_item', 'rpo_item', '=', 'i_id')
+            // ->join('m_unit', 'i_unit1', '=', 'u_id')
+            // ->where('rpo_productionorder', $id)
+            // ->where('rpo_detailid', $detail);
 
-        if ($data->count() == 0) {
+        if (is_null($data)) {
             return Response::json([
                 'status' => "Failed",
                 'message' => "Data tidak ditemukan"
             ]);
         } else {
-            if ($data->first()->rpo_action == "GB") {
+            if ($data->rpo_action == "GB") {
                 $metode = "Ganti Barang";
-            } else if ($data->first()->rpo_action == "PT") {
+            } else if ($data->rpo_action == "PT") {
                 $metode = "Potong Tagihan";
-            } else if ($data->first()->rpo_action == "RD") {
+            } else if ($data->rpo_action == "RD") {
                 $metode = "Return Dana";
             }
 
             $val = [
-                'tanggal' => Carbon::parse($data->first()->rpo_date)->format('d-m-Y'),
-                'nota' => $data->first()->rpo_nota,
-                'barang' => $data->first()->i_name,
-                'qty' => $data->first()->rpo_qty . ' ' . $data->first()->u_name,
+                'tanggal' => Carbon::parse($data->rpo_date)->format('d-m-Y'),
+                'nota' => $data->rpo_nota,
+                'barang' => $data->getItem->i_name,
+                'qty' => $data->rpo_qty . ' ' . $data->getItem->u_name,
                 'metode' => $metode,
-                'keterangan' => $data->first()->rpo_note,
-                'kode' => $data->first()->rpod_productioncode,
-                'qtykode' => $data->first()->rpod_qty,
+                'keterangan' => $data->rpo_note,
+                'kode' => $data->rpo_code,
+                'qtykode' => $data->rpo_qty,
             ];
 
             return Response::json([
@@ -967,11 +968,20 @@ dd('debug !');
     {
         $itemStatus = $request->itemStatus;
         $position = Auth::user()->u_company;
+        $supplier = $request->supplierCode;
 
-        $kode = d_stockdt::whereHas('getStock', function ($q) use ($position, $itemStatus) {
+        $listItemsSupplier = d_itemsupplier::where('is_supplier', $supplier)->get();
+        $temp = array();
+        foreach ($listItemsSupplier as $key => $value) {
+            array_push($temp, $value->is_item);
+        }
+        $listItemsSupplier = $temp;
+
+        $kode = d_stockdt::whereHas('getStock', function ($q) use ($position, $itemStatus, $listItemsSupplier) {
                 $q
                     ->where('s_position', $position)
-                    ->where('s_condition', $itemStatus);
+                    ->where('s_condition', $itemStatus)
+                    ->whereIn('s_item', $listItemsSupplier);
             })
             ->with('getStock.getItem')
             ->groupBy('sd_code')
@@ -1209,9 +1219,10 @@ dd('debug !');
             $data = d_returnproductionorder::where('rpo_id', $id)->first();
 
             if ($data->rpo_action == 'GB') {
-                $deletePOPayment = d_productionorderpayment::where('pop_productionorder', $id)->delete();
-                $deletePODetail = ProductionOrderDT::where('pod_productionorder', '=', $id)->delete();
-                $deletePO = ProductionOrder::where('po_id', $id)->delete();
+                $PO = ProductionOrder::where('po_nota', $data->rpo_nota)->first();
+                $deletePOPayment = d_productionorderpayment::where('pop_productionorder', $PO->po_id)->delete();
+                $deletePODetail = ProductionOrderDT::where('pod_productionorder', $PO->po_id)->delete();
+                $PO->delete();
             }
             elseif ($data->rpo_action == 'PN') {
                 // get list of 'in' mutcat-list
