@@ -148,6 +148,33 @@ class MasterKPIController extends Controller
         }
     }
 
+    // public function deleteKpi($id)
+    // {
+    //     try {
+    //         $id = Crypt::decrypt($id);
+    //     } catch (\Exception $e) {
+    //         return view('errors.404');
+    //     }
+
+    //     DB::beginTransaction();
+    //     try {
+    //         DB::table('m_kpi')
+    //             ->where('k_id', $id)
+    //             ->delete();
+
+    //         DB::commit();
+    //         return response()->json([
+    //             'status' => 'sukses'
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         DB::rollback();
+    //         return response()->json([
+    //             'status'  => 'Gagal',
+    //             'message' => $e
+    //         ]);
+    //     }
+    // }
+    
     public function deleteKpi($id)
     {
         try {
@@ -160,6 +187,14 @@ class MasterKPIController extends Controller
         try {
             DB::table('m_kpi')
                 ->where('k_id', $id)
+                ->delete();
+
+            DB::table('d_kpiemp')
+                ->where('ke_kpi', $id)
+                ->delete();
+
+            DB::table('d_kpidt')
+                ->where('kd_indikator', $id)
                 ->delete();
 
             DB::commit();
