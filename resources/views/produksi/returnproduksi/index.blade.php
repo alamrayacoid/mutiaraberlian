@@ -260,7 +260,7 @@
             })
     }
 
-    function hapusReturn(id, detail, qty) {
+    function hapusReturn(id) {
         $.confirm({
             animation: 'RotateY',
             closeAnimation: 'scale',
@@ -274,7 +274,7 @@
                     btnClass: 'btn-blue',
                     text: 'Ya',
                     action: function () {
-                        deleteReturn(id, detail, qty);
+                        deleteReturn(id);
                     }
                 },
                 cancel: {
@@ -287,9 +287,56 @@
         });
     }
 
-    function deleteReturn(id, detail, qty) {
+    function deleteReturn(id) {
 	    loadingShow();
-	    axios.get(baseUrl+'/produksi/returnproduksi/hapus-return/'+id+'/'+detail+'/'+qty)
+	    axios.get(baseUrl+'/produksi/returnproduksi/hapus-return/'+id)
+            .then(function (resp) {
+                loadingHide();
+                console.log(resp);
+                if (resp.data.status == "berhasil") {
+                    table.ajax.reload();
+                    messageSuccess("Berhasil", 'Data return produksi berhasil di hapus !');
+                } else if (resp.data.status == "gagal") {
+                    messageFailed("Gagal", resp.data.message);
+                } else if (resp.data.status == "received") {
+                    forceDeletePopUp(id);
+                }
+            })
+            .catch(function (error) {
+                loadingHide();
+                messageWarning("Error", error);
+            })
+    }
+
+    function forceDeletePopUp(idPO) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Konfirmasi!',
+            content: 'Barang pengganti sudah diterima. Jika dihapus, maka barang yang diterima akan ikut dihapus. Apakah yakin untuk menghapus pengembalian/return ?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        forceDelete(idPO);
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
+                }
+            }
+        });
+    }
+    function forceDelete(idPO) {
+	    loadingShow();
+	    axios.get(baseUrl+'/produksi/returnproduksi/paksa-hapus-return/'+idPO)
             .then(function (resp) {
                 loadingHide();
                 console.log(resp);
@@ -303,7 +350,7 @@
             .catch(function (error) {
                 loadingHide();
                 messageWarning("Error", error);
-            })
+            });
     }
 </script>
 @endsection

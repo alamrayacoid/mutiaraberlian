@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Http\Request;
+
 use Auth;
 use App\d_productionorder;
 use App\d_productionorderdt;
@@ -8,12 +12,11 @@ use App\d_productionordercode;
 use App\d_stock_mutation;
 use App\d_itemreceiptdt;
 use App\Helper\keuangan\jurnal\jurnal;
+use App\m_mutcat;
 use Carbon\Carbon;
 use Crypt;
 use DB;
 use function foo\func;
-use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Http\Request;
 use Mutasi;
 use Mockery\Exception;
 use Response;
@@ -749,10 +752,20 @@ class PenerimaanProduksiController extends Controller
         catch (\DecryptException $e){
             abort('404');
         }
+        // get list of 'in' mutcat-list
+        $inMutcatList = m_mutcat::where('m_status', 'M')
+            ->select('m_id')
+            ->get();
+        for ($i = 0; $i < count($inMutcatList); $i++) {
+            $tmp[] = $inMutcatList[$i]->m_id;
+        }
+        $inMutcatList = $tmp;
 
         $dataPO = d_productionorder::where('po_id', $id)
-            ->with(['getMutation' => function ($q) {
-                $q->with('getStock.getItem.getUnit1');
+            ->with(['getMutation' => function ($q) use ($inMutcatList) {
+                $q
+                    ->whereIn('sm_mutcat', $inMutcatList)
+                    ->with('getStock.getItem.getUnit1');
             }])
             ->first();
 
