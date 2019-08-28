@@ -20,6 +20,7 @@ use App\d_productorderdt;
 use App\d_productordercode;
 use App\d_stock;
 use App\d_salescomppayment;
+use App\m_company;
 use App\m_item;
 use App\m_paymentmethod;
 use Currency;
@@ -779,7 +780,14 @@ class PenjualanPusatController extends Controller
     // get list of paymentMethod
     public function getPaymentMethod()
     {
+        // get pusat
+        $pusatCode = m_company::where('c_type', 'PUSAT')->select('c_id')->first();
+        $pusatCode = $pusatCode->c_id;
+
         $data = m_paymentmethod::where('pm_isactive', 'Y')
+            ->whereHas('getAkun', function ($q) use ($pusatCode) {
+                $q->where('ak_comp', $pusatCode);
+            })
             ->with('getAkun')
             ->get();
 
