@@ -255,7 +255,8 @@
                     $.each(resp.data, function(key, val) {
 
                         let indikatorD = `<td class="pad-1">
-                                        <input type="hidden" name="kd_indikatorD[]" class="form-control-plaintext kd_indikatorD onlyread w-100" value="`+ val.k_id +`">
+                                        <input type="hidden" name="kd_kpiD[]" class="form-control-plaintext kd_kpiD onlyread w-100" value="`+ val.kd_kpi +`">
+                                        <input type="hidden" name="kd_indikatorD[]" class="form-control-plaintext kd_indikatorD onlyread w-100" value="`+ val.ke_kpi +`">
                                         <input type="text" name="indikatorD[]" class="form-control-plaintext indikatorD onlyread w-100" value="`+ val.k_indicator +`" readonly>
                                         </td>`;
 
@@ -378,9 +379,11 @@
 
                     // $('#table_indikator_divisi_pegawai').dataTable().fnDestroy();
                     $.each(resp.data, function(key, val) {
+                        console.log(val.kd_kpi);
 
                         let indikatorP = `<td class="pad-1">
-                                        <input type="hidden" name="kd_indikatorP[]" class="form-control-plaintext kd_indikatorP onlyread w-100" value="`+ val.k_id +`">
+                                        <input type="hidden" name="kd_kpiP[]" class="form-control-plaintext kd_kpiP onlyread w-100" value="`+ val.kd_kpi +`">
+                                        <input type="hidden" name="kd_indikatorP[]" class="form-control-plaintext kd_indikatorP onlyread w-100" value="`+ val.ke_kpi +`">
                                         <input type="text" name="indikatorP[]" class="form-control-plaintext indikatorP onlyread w-100" value="`+ val.k_indicator +`" readonly>
                                         </td>`;
 

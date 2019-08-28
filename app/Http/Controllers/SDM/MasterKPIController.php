@@ -746,7 +746,7 @@ class MasterKPIController extends Controller
                     $q->on('kd_indikator', 'ke_kpi');
                 })
                 // ->groupBy('d_kpiemp.ke_kpi')
-                ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total')
+                ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total', 'kd_kpi')
                 ->where('ke_department', '=', $data)
                 ->whereMonth('k_periode', $periode->month)
                 ->whereYear('k_periode', $periode->year)
@@ -821,7 +821,7 @@ class MasterKPIController extends Controller
                     $q->on('kd_indikator', 'ke_kpi');
                 })
                 // // ->groupBy('d_kpiemp.ke_kpi')
-                ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total', 'k_periode')
+                ->select('d_kpi.k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi', 'kd_result', 'kd_point', 'kd_total', 'k_periode', 'kd_kpi')
                 ->where('ke_employee', '=', $data)
                 ->whereMonth('k_periode', $periode->month)
                 ->whereYear('k_periode', $periode->year)
@@ -861,6 +861,9 @@ class MasterKPIController extends Controller
     public function saveInputKpi(Request $request)
     {
         // dd($request->all());
+        $kd_kpiD = $request->kd_kpiD;
+        $kd_kpiP = $request->kd_kpiP;
+        // dd($kd_kpiP);
         $periode = "01-" . $request->periode_kpi;
         $periode = Carbon::createFromFormat('d-m-Y', $periode);
         // $periode = $request->periode_kpi;
@@ -873,6 +876,11 @@ class MasterKPIController extends Controller
         
             if ($request->tipe == 'D') {
                 DB::table('d_kpi')->whereMonth('k_periode', $periode->month)->whereYear('k_periode', $periode->year)->where('k_department', $departement)->delete();
+                
+                if ($kd_kpiD == true) {
+                    DB::table('d_kpidt')->where('kd_kpi', $kd_kpiD)->delete();
+                }
+                
                 $kid = DB::table('d_kpi')->max('k_id') + 1;
                 DB::table('d_kpi')->insert([
                     'k_id'          => $kid,
@@ -880,8 +888,6 @@ class MasterKPIController extends Controller
                     'k_periode'     => $periode,
                     'k_department'  => $request->divisi
                 ]);
-
-                DB::table('d_kpidt')->where('kd_kpi', $kid)->delete();
 
                 $indicator = $request->kd_indikatorD;
                 for ($i=0; $i < count($indicator); $i++) { 
@@ -905,15 +911,19 @@ class MasterKPIController extends Controller
                 ]);
             } elseif ($request->tipe == 'P') {
                 DB::table('d_kpi')->whereMonth('k_periode', $periode->month)->whereYear('k_periode', $periode->year)->where('k_employee', $pegawai)->delete();
+
+                if ($kd_kpiP == true) {
+                    DB::table('d_kpidt')->where('kd_kpi', $kd_kpiP)->delete();
+                }
+
                 $kid = DB::table('d_kpi')->max('k_id') + 1;
+
                 DB::table('d_kpi')->insert([
                     'k_id'          => $kid,
                     'k_type'        => $request->tipe,
                     'k_periode'     => $periode,
                     'k_employee'    => $request->pegawai
                 ]);
-
-                DB::table('d_kpidt')->where('kd_kpi', $kid)->delete();
 
                 $indicator = $request->kd_indikatorP;
                 for ($i=0; $i < count($indicator); $i++) { 
