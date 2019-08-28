@@ -285,7 +285,7 @@
                                         </td>`;
                         } else {
                             hasilD = `<td class="pad-1">
-                                            <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="`+ val.kd_result +`">
+                                            <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="`+ parseFloat(val.kd_result) +`">
                                             </td>`;
                         }
 
@@ -408,7 +408,7 @@
                                         </td>`;
                         } else {
                             hasilP = `<td class="pad-1">
-                                            <input type="text" name="hasilP[]" class="form-control text-center hasilP w-100 digits" value="`+ val.kd_result +`">
+                                            <input type="text" name="hasilP[]" class="form-control text-center hasilP w-100 digits" value="`+ parseFloat(val.kd_result) +`">
                                             </td>`;
                         }
 
