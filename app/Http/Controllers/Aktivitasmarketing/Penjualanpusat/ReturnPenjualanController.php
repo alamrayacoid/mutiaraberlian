@@ -282,7 +282,7 @@ class ReturnPenjualanController extends Controller
 
         return response()->json(floor($qty_compare));
     }
-    // get sales-comp data
+    // get data stock
     public function getData(Request $request)
     {
         if (Auth::user()->getCompany->c_type == "PUSAT") {
@@ -388,7 +388,7 @@ class ReturnPenjualanController extends Controller
                 $itemId = $request->itemId;
                 $prodCode = $request->kodeproduksi;
                 $qtyReturn = (int)$request->qtyReturn;
-                $itemPrice = (int)$request->itemPrice;
+                $itemPrice = (int)$request->itemPriceSB;
                 $type = $request->type;
             }
             elseif ($request->returnType == 'SL') {
@@ -1105,10 +1105,6 @@ class ReturnPenjualanController extends Controller
                 'status' => 'gagal',
                 'message' => $e->getMessage()
             ]);
-
         }
-
-
     }
-
 }

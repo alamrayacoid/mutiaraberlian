@@ -516,21 +516,21 @@
 		var row = '';
 		let harga = '';
 		row = '<tr>' +
-		'<td><input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"><input type="hidden" name="idStock[]" class="idStock"></td>' +
-		'<td>' +
-		'<select name="satuan[]" class="form-control form-control-sm select2 satuan">' +
-		'</select>' +
-		'</td>' +
-		'<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>' +
-		'<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button"><i class="fa fa-plus"></i> kode produksi</button></td>';
+    		'<td><input type="text" name="barang[]" class="form-control form-control-sm barang" autocomplete="off"><input type="hidden" name="idItem[]" class="itemid"><input type="hidden" name="kode[]" class="kode"><input type="hidden" name="idStock[]" class="idStock"></td>' +
+    		'<td>' +
+    		'<select name="satuan[]" class="form-control form-control-sm select2 satuan">' +
+    		'</select>' +
+    		'</td>' +
+    		'<td><input type="number" name="jumlah[]" min="0" class="form-control form-control-sm jumlah" value="0" readonly></td>' +
+    		'<td><button class="btn btn-primary btnCodeProd btn-sm rounded" type="button"><i class="fa fa-plus"></i> kode produksi</button></td>';
 		harga = '<td><input type="text" name="harga[]" class="form-control form-control-sm rupiah harga"><p class="text-danger unknow mb-0" style="display: none; margin-bottom:-12px !important;">Harga tidak ditemukan!</p></td>';
 		row = row + harga + '<td><input type="text" name="subtotal[]" style="text-align: right;" class="form-control form-control-sm subtotal" value="Rp. 0" readonly><input type="hidden" name="sbtotal[]" class="sbtotal"></td>' +
-		'<td>' +
-		'<button class="btn btn-danger btn-hapus btn-sm" type="button">' +
-		'<i class="fa fa-remove" aria-hidden="true"></i>' +
-		'</button>' +
-		'</td>' +
-		'</tr>';
+    		'<td>' +
+    		'<button class="btn btn-danger btn-hapus btn-sm" type="button">' +
+    		'<i class="fa fa-remove" aria-hidden="true"></i>' +
+    		'</button>' +
+    		'</td>' +
+    		'</tr>';
 		$('#table_gantibarang tbody').append(row);
 		// clone modal-code-production and insert new one
 		$('#modalCodeProdBase').clone().prop('id', 'modalCodeProd').addClass('modalCodeProd').insertAfter($('.modalCodeProd').last());
@@ -1057,7 +1057,7 @@
 			success : function(response){
 				if (response.status == 'berhasil') {
 					messageSuccess('Info', 'Berhasil Disimpan');
-                    // location.reload();
+                    location.reload();
 				}
 				else {
 					messageWarning('Info', 'Gagal Disimpan: '+ response.message);

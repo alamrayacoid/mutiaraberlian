@@ -2870,86 +2870,86 @@ class ManajemenAgenController extends Controller
     }
 
     // End : Kelola Penjualan via Website -----------------
-
     // Tambahan dirga
-        protected function getLaporan(Request $request){
-            $penjualan = DB::table('d_sales')
-                            ->where(DB::raw('concat(MONTH(s_date), "-", YEAR(s_date))'), date('n-Y'))
-                            ->select(DB::raw('coalesce(sum(s_total), 0) as penjualan'));
+    protected function getLaporan(Request $request){
+        $penjualan = DB::table('d_sales')
+            ->where(DB::raw('concat(MONTH(s_date), "-", YEAR(s_date))'), date('n-Y'))
+            ->select(DB::raw('coalesce(sum(s_total), 0) as penjualan'));
 
-            $sisahutang = DB::table('d_salescomp')
-                                ->join('d_salescomppayment', 'scp_salescomp', 'sc_id')
-                                ->where(DB::raw('concat(MONTH(sc_date), "-", YEAR(sc_date))'), date('n-Y'))
-                                ->where('sc_comp', 'MB0000001')
-                                ->select(DB::raw('coalesce((sum(sc_total) - sum(scp_pay)), 0) as tagihan'));
+        $sisahutang = DB::table('d_salescomp')
+            ->join('d_salescomppayment', 'scp_salescomp', 'sc_id')
+            ->where(DB::raw('concat(MONTH(sc_date), "-", YEAR(sc_date))'), date('n-Y'))
+            ->where('sc_comp', 'MB0000001')
+            ->select(DB::raw('coalesce((sum(sc_total) - sum(scp_pay)), 0) as tagihan'));
 
-            $saldo = DB::table('m_company')
-                ->select(DB::raw('sum(floor(c_saldo)) as saldo'));
+        $saldo = DB::table('m_company')
+            ->select(DB::raw('sum(floor(c_saldo)) as saldo'));
 
-            $hutangcabang = DB::table('d_salescomp')
-                ->join('d_salescomppayment', 'scp_salescomp', 'sc_id')
-                ->where(DB::raw('concat(MONTH(sc_date), "-", YEAR(sc_date))'), date('n-Y'))
-                ->whereIn('sc_comp', function ($q){
-                    $q->select('c_id')->from('m_company')->where('c_type', '=', 'CABANG');
-                })
-                ->where('sc_paidoff', '=', 'N')
-                ->select(DB::raw('coalesce(((sc_total) - sum(scp_pay)), 0) as tagihan'));
+        $hutangcabang = DB::table('d_salescomp')
+            ->join('d_salescomppayment', 'scp_salescomp', 'sc_id')
+            ->where(DB::raw('concat(MONTH(sc_date), "-", YEAR(sc_date))'), date('n-Y'))
+            ->whereIn('sc_comp', function ($q){
+                $q->select('c_id')->from('m_company')->where('c_type', '=', 'CABANG');
+            })
+            ->where('sc_paidoff', '=', 'N')
+            ->select(DB::raw('coalesce(((sc_total) - sum(scp_pay)), 0) as tagihan'));
 
-            if($request->search == 'all'){
-                $penjualan = $penjualan->first();
-                $sisahutang = $sisahutang->first();
-                $saldo = $saldo->first();
-                $hutangcabang = $hutangcabang->first();
-            }else{
-                $penjualan = $penjualan->where('s_comp', $request->search)->first();
-                $sisahutang = $sisahutang->where('sc_member', $request->search)->first();
-                $saldo = $saldo->where('c_id', '=', $request->search)->first();
-                $hutangcabang = $hutangcabang->where('sc_member', '=', $request->search)->first();
-            }
-
-            $dateNow = date('Y-m-d');
-            $loop = 1;
-            $bulanChart = $penjualanChart = $sisaHutang = [];
-
-            do{
-
-                $sr_penjualan = DB::table('d_sales')
-                            ->where(DB::raw('concat(MONTH(s_date), "-", YEAR(s_date))'), date('n-Y', strtotime('-'.$loop.' month', strtotime($dateNow))))
-                            ->select(DB::raw('coalesce(sum(s_total), 0) as penjualan'));
-
-                $sr_sisahutang = DB::table('d_salescomp')
-                                    ->join('d_salescomppayment', 'scp_salescomp', 'sc_id')
-                                    ->where(DB::raw('concat(MONTH(sc_date), "-", YEAR(sc_date))'), date('n-Y', strtotime('-'.$loop.' month', strtotime($dateNow))))
-                                    ->where('sc_comp', 'MB0000001')
-                                    ->select(DB::raw('coalesce((sum(sc_total) - sum(scp_pay)), 0) as tagihan'));
-
-                if($request->search == 'all'){
-                    $sr_penjualan = $sr_penjualan->first();
-                    $sr_sisahutang = $sr_sisahutang->first();
-                }else{
-                    $sr_penjualan = $sr_penjualan->where('s_comp', $request->search)->first();
-                    $sr_sisahutang = $sr_sisahutang->where('sc_member', $request->search)->first();
-                }
-
-                array_push($bulanChart, date('M, Y', strtotime('-'.$loop.' month', strtotime($dateNow))));
-                array_push($penjualanChart, ($sr_penjualan) ? (float) $sr_penjualan->penjualan : (float) 0);
-                array_push($sisaHutang, ($sr_sisahutang) ? (float) $sr_sisahutang->tagihan : (float) 0);
-
-                $loop++;
-
-            }while($loop <= 5);
-
-            // return json_encode($datachart);
-
-            return json_encode([
-                "penjualan"     => ($penjualan) ? $penjualan->penjualan : 0,
-                "sisahutang"    => ($sisahutang) ? $sisahutang->tagihan : 0,
-                "bulanChart"    => json_encode($bulanChart),
-                "sr_penjualan"  => json_encode($penjualanChart),
-                "sr_hutang"     => json_encode($sisaHutang),
-                "saldo"         => ($saldo) ? $saldo->saldo : 0,
-                "hutangcabang"  => ($hutangcabang) ? $hutangcabang->tagihan : 0
-            ]);
+        if ($request->search == 'all'){
+            $penjualan = $penjualan->first();
+            $sisahutang = $sisahutang->first();
+            $saldo = $saldo->first();
+            $hutangcabang = $hutangcabang->first();
+        }
+        else{
+            $penjualan = $penjualan->where('s_comp', $request->search)->first();
+            $sisahutang = $sisahutang->where('sc_member', $request->search)->first();
+            $saldo = $saldo->where('c_id', '=', $request->search)->first();
+            $hutangcabang = $hutangcabang->where('sc_member', '=', $request->search)->first();
         }
 
+        $dateNow = date('Y-m-d');
+        $loop = 1;
+        $bulanChart = $penjualanChart = $sisaHutang = [];
+
+        do {
+
+            $sr_penjualan = DB::table('d_sales')
+                ->where(DB::raw('concat(MONTH(s_date), "-", YEAR(s_date))'), date('n-Y', strtotime('-'.$loop.' month', strtotime($dateNow))))
+                ->select(DB::raw('coalesce(sum(s_total), 0) as penjualan'));
+
+            $sr_sisahutang = DB::table('d_salescomp')
+                ->join('d_salescomppayment', 'scp_salescomp', 'sc_id')
+                ->where(DB::raw('concat(MONTH(sc_date), "-", YEAR(sc_date))'), date('n-Y', strtotime('-'.$loop.' month', strtotime($dateNow))))
+                ->where('sc_comp', 'MB0000001')
+                ->select(DB::raw('coalesce((sum(sc_total) - sum(scp_pay)), 0) as tagihan'));
+
+            if($request->search == 'all'){
+                $sr_penjualan = $sr_penjualan->first();
+                $sr_sisahutang = $sr_sisahutang->first();
+            }
+            else{
+                $sr_penjualan = $sr_penjualan->where('s_comp', $request->search)->first();
+                $sr_sisahutang = $sr_sisahutang->where('sc_member', $request->search)->first();
+            }
+
+            array_push($bulanChart, date('M, Y', strtotime('-'.$loop.' month', strtotime($dateNow))));
+            array_push($penjualanChart, ($sr_penjualan) ? (float) $sr_penjualan->penjualan : (float) 0);
+            array_push($sisaHutang, ($sr_sisahutang) ? (float) $sr_sisahutang->tagihan : (float) 0);
+
+            $loop++;
+
+        } while($loop <= 5);
+
+        // return json_encode($datachart);
+
+        return json_encode([
+            "penjualan"     => ($penjualan) ? $penjualan->penjualan : 0,
+            "sisahutang"    => ($sisahutang) ? $sisahutang->tagihan : 0,
+            "bulanChart"    => json_encode($bulanChart),
+            "sr_penjualan"  => json_encode($penjualanChart),
+            "sr_hutang"     => json_encode($sisaHutang),
+            "saldo"         => ($saldo) ? $saldo->saldo : 0,
+            "hutangcabang"  => ($hutangcabang) ? $hutangcabang->tagihan : 0
+        ]);
+    }
 }
