@@ -13,5 +13,9 @@ class d_returnproductionorder extends Model
     {
         return $this->belongsTo('App\m_item', 'rpo_item', 'i_id');
     }
+    public function getPO()
+    {
+        return $this->belongsTo('App\d_productionorder', 'rpo_nota', 'po_nota');
+    }
 
 }
