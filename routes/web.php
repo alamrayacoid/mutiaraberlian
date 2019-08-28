@@ -251,7 +251,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Return Produksi
     Route::get('/produksi/returnproduksi/index', 'ProduksiController@return_produksi')->name('return.index');
     Route::post('/produksi/returnproduksi/list', 'ProduksiController@listReturn')->name('return.list');
-    Route::get('/produksi/returnproduksi/detail-return/{id}/{detail}', 'ProduksiController@detailReturn')->name('return.detailreturn');
+    Route::get('/produksi/returnproduksi/detail-return/{id}', 'ProduksiController@detailReturn')->name('return.detailreturn');
     Route::get('/produksi/returnproduksi/get-editreturn/{id}/{detail}', 'ProduksiController@getEditReturn')->name('return.geteditreturn');
     Route::get('/produksi/returnproduksi/create', 'ProduksiController@create_return_produksi')->name('return.create');
     Route::get('/produksi/returnproduksi/find-all-item', 'ProduksiController@findAllItem')->name('return.findAllItem');

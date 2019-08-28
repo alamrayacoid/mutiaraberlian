@@ -158,9 +158,9 @@
         }
     }
 
-	function detailReturn(id, detail) {
+	function detailReturn(id) {
 	    loadingShow();
-	    axios.get(baseUrl+'/produksi/returnproduksi/detail-return/'+id+'/'+detail)
+	    axios.get(baseUrl+'/produksi/returnproduksi/detail-return/'+id)
             .then(function (resp) {
                 loadingHide();
                 if (resp.data.status == "Failed") {
