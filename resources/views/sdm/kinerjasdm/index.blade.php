@@ -110,6 +110,7 @@
     $(document).ready(function () {
         get_kpiAgen();
         getDataIndikatorPegawaiIndex();
+        getDataIndikatorDivisiIndex();
 
         setTimeout(function () {
             getDataMasterKPI();
@@ -752,7 +753,8 @@
   <script type="text/javascript">
     $(document).ready(function () {
         setTimeout(function () {
-            getDataIndikatorPegawaiIndex();    
+            getDataIndikatorPegawaiIndex();
+            getDataIndikatorDivisiIndex();    
         }, 2000);
 
         // $('#periode_kpi').datepicker().on('changeDate', function() {

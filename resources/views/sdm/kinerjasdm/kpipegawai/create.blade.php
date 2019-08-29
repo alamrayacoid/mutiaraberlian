@@ -226,7 +226,7 @@
                                             '<div class="row">'+
                                                 '<div class="col-4">'+
                                                     '<div class="form-group">'+
-                                                        '<input type="text" class="form-control form-control-sm" name="bobot[]" value="'+ val.ke_weight +'">'+
+                                                        '<input type="text" class="form-control form-control-sm digits" name="bobot[]" value="'+ parseFloat(val.ke_weight) +'">'+
                                                     '</div>'+
                                                 '</div>'+
                                                 '<div class="col-2">'+
@@ -234,7 +234,7 @@
                                                 '</div>'+
                                                 '<div class="col-4">'+
                                                     '<div class="form-group">'+
-                                                        '<input type="text" class="form-control form-control-sm" name="target[]" value="'+ val.ke_target +'">'+
+                                                        '<input type="text" class="form-control form-control-sm digits" name="target[]" value="'+ parseFloat(val.ke_target) +'">'+
                                                     '</div>'+
                                                 '</div>'+
                                                 '<div class="col-2 align-items-center" style="height: 30px;display: flex; align-items: center;">'+
@@ -272,7 +272,7 @@
                                             '<div class="row">'+
                                                 '<div class="col-4">'+
                                                     '<div class="form-group">'+
-                                                        '<input type="text" class="form-control form-control-sm" name="bobot[]" value="'+ val.ke_weight +'">'+
+                                                        '<input type="text" class="form-control form-control-sm digits" name="bobot[]" value="'+ parseFloat(val.ke_weight) +'">'+
                                                     '</div>'+
                                                 '</div>'+
                                                 '<div class="col-2">'+
@@ -280,7 +280,7 @@
                                                 '</div>'+
                                                 '<div class="col-4">'+
                                                     '<div class="form-group">'+
-                                                        '<input type="text" class="form-control form-control-sm" name="target[]" value="'+ val.ke_target +'">'+
+                                                        '<input type="text" class="form-control form-control-sm digits" name="target[]" value="'+ parseFloat(val.ke_target) +'">'+
                                                     '</div>'+
                                                 '</div>'+
                                                 '<div class="col-2" style="height: 30px;display: flex; align-items: center;">'+
@@ -302,6 +302,18 @@
                             keranjang.splice(findArray, 1)
                         }
                         $(this).parents('.section2').remove()
+                    });
+
+                    $('.digits').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 2,
+                        autoGroup: true,
+                        prefix: '', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
                     });
                     
                 } else { // ketika pegawai tidak memiliki indikator
@@ -360,6 +372,18 @@
                         theme: "bootstrap",
                         dropdownAutoWidth: true,
                         width: '100%'
+                    });
+
+                    $('.digits').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 2,
+                        autoGroup: true,
+                        prefix: '', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
                     });
                 }
 
@@ -425,7 +449,7 @@
                     $('.digits').inputmask("currency", {
                         radixPoint: ",",
                         groupSeparator: ".",
-                        digits: 0,
+                        digits: 2,
                         autoGroup: true,
                         prefix: '', //Space after $, this will not truncate the first character.
                         rightAlign: true,
