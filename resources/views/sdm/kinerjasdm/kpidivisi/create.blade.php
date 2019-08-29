@@ -170,7 +170,7 @@
             }
 
             $('.btn-del').on('click', function(){
-                $('.btn-submit').removeAttr('disabled', '')    
+                $('.btn-submit').removeAttr('disabled', '')
             });
         })
 
@@ -187,11 +187,11 @@
                 success: function (resp) {
                     // console.log(resp);
                     console.log(resp.data.length);
-                                
+
                     if (resp.data.length > 0) { // ketika pegawai memiliki indikator
 
                         $('.section2').remove();
-                        
+
                         $.each(resp.data, function(key, val) {
                             if (key == 0) { // untuk data pertama
                                 $('#kolom_divisi')
@@ -290,10 +290,10 @@
                         });
                     } else { // ketika pegawai tidak memiliki indikator
                         $('.section2').remove();
-                        
+
                         index = $('.indicator').index(this);
                         getIndicator(index);
-                        
+
                         $('#kolom_divisi')
                             .before(
                                 '<div class="row section2">'+
@@ -340,7 +340,7 @@
                                 '</div>'
                             );
 
-                        $('.select2').select2({            
+                        $('.select2').select2({
                             theme: "bootstrap",
                             dropdownAutoWidth: true,
                             width: '100%'
@@ -399,7 +399,7 @@
                                 '</div>'
                             );
 
-                        $('.select2').select2({            
+                        $('.select2').select2({
                             theme: "bootstrap",
                             dropdownAutoWidth: true,
                             width: '100%'
@@ -488,7 +488,7 @@
                     '</div>'
                 );
 
-            $('.select2').select2({            
+            $('.select2').select2({
                 theme: "bootstrap",
                 dropdownAutoWidth: true,
                 width: '100%'
@@ -537,7 +537,7 @@
                 messageSuccess('Berhasil!', 'Data berhasil disimpan!');
                 setTimeout(function(){
                     window.location.href = "{{url('/sdm/kinerjasdm/index')}}"
-                }, 1000)                
+                }, 1000)
             }else{
                 messageFailed('Gagal!', 'Data gagal disimpan!');
             }

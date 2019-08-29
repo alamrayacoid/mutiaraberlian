@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\AksesUser;
+
 use Auth;
 use App\d_salescomp;
 use App\d_salescompdt;
@@ -17,6 +18,7 @@ use App\d_stock_mutation;
 use App\m_agen;
 use App\m_company;
 use App\m_item;
+use App\m_paymentmethod;
 use App\m_wil_provinsi;
 use Carbon\Carbon;
 use CodeGenerator;
@@ -71,7 +73,18 @@ class KonsinyasiPusatController extends Controller
         $provinsi = DB::table('m_wil_provinsi')
             ->get();
 
-        return view('marketing/konsinyasipusat/index', compact('provinsi'));
+        // get pusat
+        $pusatCode = m_company::where('c_type', 'PUSAT')->select('c_id')->first();
+        $pusatCode = $pusatCode->c_id;
+
+        $paymentMethod = m_paymentmethod::where('pm_isactive', 'Y')
+            ->whereHas('getAkun', function ($q) use ($pusatCode) {
+                $q->where('ak_comp', $pusatCode);
+            })
+            ->with('getAkun')
+            ->get();
+
+        return view('marketing/konsinyasipusat/index', compact('provinsi', 'paymentMethod'));
     }
 
     public function detailKonsinyasi($id = null, $action = null)
@@ -647,7 +660,7 @@ class KonsinyasiPusatController extends Controller
                     $item = m_item::where('i_id', $data['idItem'][$i])->first();
                     throw new Exception("Jumlah kode produksi " . strtoupper($item->i_name) . " tidak sama dengan jumlah item yang dipesan !");
                 }
-                
+
                 $stock = DB::table('d_stock')
                     ->where('s_id', '=', $data['idStock'][$i])
                     ->first();
@@ -1613,6 +1626,7 @@ class KonsinyasiPusatController extends Controller
             $salescompPayment->scp_detailid = $detailId;
             $salescompPayment->scp_date = Carbon::now();
             $salescompPayment->scp_pay = $request->paymentVal;
+            $salescompPayment->scp_payment = $request->cashAccount;
             $salescompPayment->save();
 
             // update salescomp to 'lunas'
@@ -1620,6 +1634,67 @@ class KonsinyasiPusatController extends Controller
                 $salescomp = d_salescomp::where('sc_id', $request->salescompId)->first();
                 $salescomp->sc_paidoff = 'Y';
                 $salescomp->save();
+
+
+                $salesCompId = $request->salescompId;
+                $salesCompDt = d_salescompdt::whereHas('getSalesComp', function ($q) use ($salesCompId) {
+                        $q->where('sc_id', $salesCompId);
+                    })
+                    ->with('getSalesComp')
+                    ->with('getProdCode')
+                    ->get();
+
+                $member = m_company::where('c_id', $salesCompDt[0]->getSalesComp->sc_member)->first();
+
+                // sell all item to consument if konsinyasi in 'Apotek/Radio'
+                if ($member->c_type == 'APOTEK/RADIO') {
+                    foreach ($salesCompDt as $key => $value) {
+                        $listPC = array();
+                        $listQtyPC = array();
+                        $listUnitPC = array();
+
+                        foreach ($value->getProdCode as $idx => $val) {
+                            array_push($listPC, $val->ssc_code);
+                            array_push($listQtyPC, $val->ssc_qty);
+                        }
+                        // get qty in smallest unit
+                        $data_check = DB::table('m_item')
+                            ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                            'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                            'm_item.i_unit3 as unit3')
+                            ->where('i_id', '=', $value->scd_item)
+                            ->first();
+
+                        $qty_compare = 0;
+                        if ($value->scd_unit == $data_check->unit1) {
+                            $qty_compare = $value->scd_qty;
+                        } else if ($value->scd_unit == $data_check->unit2) {
+                            $qty_compare = $value->scd_qty * $data_check->compare2;
+                        } else if ($value->scd_unit == $data_check->unit3) {
+                            $qty_compare = $value->scd_qty * $data_check->compare3;
+                        }
+
+
+                        $nota = $value->getSalesComp->sc_nota . '-PAID';
+                        // insert stock mutation sales 'out'
+                        $mutationOut = Mutasi::salesOut(
+                            $value->getSalesComp->sc_member, // from
+                            null, // to
+                            $value->scd_item, // item-id
+                            $qty_compare, // qty of smallest-unit
+                            $nota, // nota
+                            $listPC, // list of production-code
+                            $listQtyPC, // list of production-code-qty
+                            $listUnitPC, // list of production-code-unit
+                            null, // sellprice
+                            14, // mutcat
+                            $tanggal
+                        );
+                        if ($mutationOut->original['status'] !== 'success') {
+                            return $mutationOut;
+                        }
+                    }
+                }
             }
 
             DB::commit();

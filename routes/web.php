@@ -282,6 +282,7 @@ Route::group(['middleware' => 'auth'], function () {
     // !===================================================== INVENTORY =====================================================!
     // Barang Masuk
     Route::get('/inventory/barangmasuk/index', 'Inventory\BarangMasukController@index')->name('barangmasuk.index');
+    Route::get('/inventory/barangmasuk/get-production-code', 'Inventory\BarangMasukController@getProductionCode')->name('barangmasuk.getProductionCode');
     Route::get('/inventory/barangmasuk/list', 'Inventory\BarangMasukController@getData')->name('barangmasuk.list');
     Route::get('/inventory/barangmasuk/create', 'Inventory\BarangMasukController@create')->name('barangmasuk.create');
     Route::get('/inventory/barangmasuk/store', 'Inventory\BarangMasukController@store')->name('barangmasuk.store');
@@ -292,6 +293,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Barang Keluar
     Route::get('/inventory/barangkeluar/index', 'Inventory\BarangKeluarController@index')->name('barangkeluar.index');
+    Route::get('/inventory/barangkeluar/get-production-code', 'Inventory\BarangKeluarController@getProductionCode')->name('barangkeluar.getProductionCode');
     Route::get('/inventory/barangkeluar/list', 'Inventory\BarangKeluarController@getList')->name('barangkeluar.list');
     Route::get('/inventory/barangkeluar/detail/{id}/{detail}', 'Inventory\BarangKeluarController@getDetail')->name('barangkeluar.detail');
     Route::get('/inventory/barangkeluar/getItems', 'Inventory\BarangKeluarController@getItems')->name('barangkeluar.getItems');
@@ -692,6 +694,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/marketingarea/penerimaanpiutang/get-data-agen', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@getDataAgen')->name('mmapenerimaanpiutang.getDataAgen');
     Route::get('/marketing/marketingarea/penerimaanpiutang/get-detail-transaksi', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@getDetailTransaksi')->name('mmapenerimaanpiutang.getDetailTransaksi');
     Route::get('/marketing/marketingarea/penerimaanpiutang/bayar-piutang', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@bayarPiutang')->name('mmapenerimaanpiutang.bayarPiutang');
+    Route::get('/marketing/marketingarea/penerimaanpiutang/history-payment', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@historyPayment')->name('mmapenerimaanpiutang.historyPayment');
+    Route::get('/marketing/marketingarea/penerimaanpiutang/get-data-agen-history', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@getDataAgenH')->name('mmapenerimaanpiutang.getDataAgenH');
+    Route::get('/marketing/marketingarea/penerimaanpiutang/get-history-payment', 'Aktivitasmarketing\Marketingarea\MMAPenerimaanPiutangController@getDataHistoryPayment')->name('mmapenerimaanpiutang.getDataHistoryPayment');
     // End: MMA Pembayaran Piutang =====================================================================================
 
     // Start: MMA Return Penjualan ===================================================================================

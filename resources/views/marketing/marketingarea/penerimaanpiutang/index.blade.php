@@ -5,7 +5,7 @@
                 <h3 class="title">Kelola Pembayaran Piutang </h3><span> (Pelunasan Agen ke Cabang/MMA)</span>
             </div>
             <div class="header-block pull-right">
-                <a class="btn btn-warning" href="#"><i class="fa fa-history"></i>&nbsp;History Pembayaran</a>
+                <a class="btn btn-warning" href="{{ route('mmapenerimaanpiutang.historyPayment') }}"><i class="fa fa-history"></i>&nbsp;History Pembayaran</a>
             </div>
         </div>
         <div class="card-block">
