@@ -177,10 +177,11 @@ class KonsinyasiPusatController extends Controller
             ->join('m_company', 'a_code', '=', 'c_user')
             ->where('m_agen.a_area', '=', $kota)
             ->where('a_isactive', '=', 'Y')
-            ->where('m_company.c_type', '=', 'AGEN')
+            ->where('m_company.c_type', '!=', 'PUSAT')
+            ->where('m_company.c_type', '!=', 'CABANG')
             ->whereIn('a_mma', $id_pusat)
             ->get();
-// dd($id_pusat, $nama);
+
         return Response::json($nama);
     }
 
@@ -515,13 +516,11 @@ class KonsinyasiPusatController extends Controller
             $request->prodCodeLength, // list production-code length each item
             $request->qtyProdCode // list of qty each production-code
         );
-
         if ($validateProdCode !== 'validated') {
             return $validateProdCode;
         }
 
         try {
-
             //simpan info ekspedisi
             $pd_id = DB::table('d_productdelivery')
                 ->max('pd_id');
@@ -643,6 +642,12 @@ class KonsinyasiPusatController extends Controller
                     $sellPrice = ((int)Currency::removeRupiah($data['harga'][$i]) - (int)$diskon[$i]) / $data_check->compare3;
                 }
 
+                // validate qty production-code
+                if ($sumQtyPC != $qty_compare) {
+                    $item = m_item::where('i_id', $data['idItem'][$i])->first();
+                    throw new Exception("Jumlah kode produksi " . strtoupper($item->i_name) . " tidak sama dengan jumlah item yang dipesan !");
+                }
+                
                 $stock = DB::table('d_stock')
                     ->where('s_id', '=', $data['idStock'][$i])
                     ->first();
