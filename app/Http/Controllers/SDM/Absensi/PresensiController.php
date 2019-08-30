@@ -145,6 +145,7 @@ class PresensiController extends Controller
                 $q->where('e_company', $branch);
             });
         }
+
         // get data
         $datas = $datas->groupBy('p_date')
         ->get();
@@ -225,9 +226,13 @@ class PresensiController extends Controller
                     return '<td>' . $datas->countC . '</td>';
                 }
             })
+            // ->addColumn('action', function ($datas) {
+            //     return '<div class="text-center"><div class="btn-group btn-group-sm">
+            //     <button class="btn btn-primary btn-detail" type="button" onclick="showDetailPresence(' . $datas->p_id . ')" title="Detail Presensi"><i class="fa fa-folder"></i></button>
+            //     </div></div>';
             ->addColumn('action', function ($datas) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm">
-                <button class="btn btn-primary btn-detail" type="button" onclick="showDetailPresence(' . $datas->p_id . ')" title="Detail Presensi"><i class="fa fa-folder"></i></button>
+                <button class="btn btn-primary btn-detail" type="button" onclick="showDetailPresence(\'' . $datas->p_id . '\', \'' . $datas->p_date . '\', \'' . $datas->getEmployee->e_company . '\')" title="Detail Presensi"><i class="fa fa-folder"></i></button>
                 </div></div>';
                 // <button class="btn btn-warning btn-edit" type="button" onclick="editDetailPresence(' . $datas->p_id . ')"  title="Edit Presensi"><i class="fa fa-arrow-right"></i></button>
             })
@@ -311,16 +316,32 @@ class PresensiController extends Controller
     {
         try {
             $prId = $request->id;
+            $prTanggal = $request->tanggal;
+            $prCabang = $request->cabang;
 
-            $press = d_presence::where('p_id', $prId)->first();
+            // if (!is_null($prCabang)) {
+            //     $datas = $datas->whereHas('getEmployee', function ($q) use ($branch) {
+            //         $q->where('e_company', $branch);
+            //     });
+            // }
 
-            $presences = d_presence::whereDate('p_date', $press->p_date)
-            ->with(['getEmployee' => function ($q) {
-                $q->with('getDivision')->with('getCompany');
-            }])
-            ->join('m_employee', 'p_employee', 'e_id')
-            ->orderBy('e_name', 'asc')
-            ->get();
+            // $prCabangPegawai = m_employee::where('e_company', $prCabang)->get();
+
+            $press = d_presence::where('p_id', $prId)
+                                ->first();
+                                
+            if ($prCabang == true) {
+                $presences = d_presence::whereDate('p_date', $prTanggal)
+                ->with(['getEmployee' => function ($q) {
+                    $q->with('getDivision')->with('getCompany');
+                }])
+                ->join('m_employee', 'p_employee', 'e_id')
+                ->where('e_company', $prCabang)
+                ->orderBy('e_name', 'asc')
+                ->get();
+            }            
+
+            // dd($presences);
 
             return response()->json($presences);
         }

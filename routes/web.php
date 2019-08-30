@@ -491,6 +491,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sdm/absensisdm/kelola-jenis-cuti/update', 'SDMController@updateJenisCuti')->name('absensisdm.updateJenisCuti');
     Route::post('/sdm/absensisdm/kelola-jenis-cuti/hapus', 'SDMController@hapusJenisCuti')->name('absensisdm.hapusJenisCuti');
     Route::get('/sdm/absensisdm/kelola-jenis-cuti/get-detail', 'SDMController@getDetailCuti')->name('absensisdm.getDetailCuti');
+
     // Penggajian
     Route::get('/sdm/penggajian/index', 'SDMController@penggajian')->name('penggajian.index');
     // TAB CASHBON
@@ -500,6 +501,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/penggajian/cashbon/get-data', 'SDM\CashbonController@getData')->name('cashbon.getData');
     Route::get('/sdm/penggajian/cashbon/get-data-pegawai', 'SDM\CashbonController@getDataPegawai')->name('cashbon.getDataPegawai');
     // END
+    // TAB REWARD
+    Route::get('/sdm/penggajian/reward/getdata-reward', 'SDM\BenefitsController@getDataMasterReward')->name('reward.getDataMasterReward');
+    Route::get('/sdm/penggajian/reward/getdata-punishment', 'SDM\BenefitsController@getDataMasterPunishment')->name('reward.getDataMasterPunishment');
+    Route::post('/sdm/penggajian/reward/simpan-master-benefits', 'SDM\BenefitsController@saveMasterBenefits')->name('reward.saveMasterBenefits');
+    Route::get('/sdm/penggajian/reward/getdata-reward-punishment', 'SDM\BenefitsController@getDataRewardPunishment')->name('reward.getDataRewardPunishment');
+    Route::get('/sdm/penggajian/reward/getdetail-reward-punishment', 'SDM\BenefitsController@getDetailRewardPunishment')->name('reward.getDetailRewardPunishment');
     // TAB TUNJANGAN
     Route::get('/sdm/penggajian/tunjangan/create', 'SDMController@create_tunjangan')->name('tunjangan.create');
     Route::get('/sdm/penggajian/tunjangan/edit', 'SDMController@edit_tunjangan')->name('tunjangan.edit');

@@ -4,7 +4,7 @@
 
 <!-- modal scoreboard pegawai -->
 @include('sdm.penggajian.cashbon.modal')
-@include('sdm.penggajian.payrollmanajemen.modal_tambah')
+@include('sdm.penggajian.reward.modal')
 <!-- end -->
 
 <article class="content">
@@ -29,12 +29,12 @@
                             aria-controls="list_manajemen" data-toggle="tab" role="tab">Cashbon</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#list_tunjangan" class="nav-link" data-target="#list_tunjangan"
-                            aria-controls="list_tunjangan" data-toggle="tab" role="tab">Reward & Punishment</a>
+                        <a href="#tabreward" class="nav-link" data-target="#tabreward"
+                            aria-controls="tabreward" data-toggle="tab" role="tab">Reward & Punishment</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#list_produksi" class="nav-link" data-target="#list_produksi"
-                            aria-controls="list_produksi" data-toggle="tab" role="tab">Tunjangan</a>
+                        <a href="#list_tunjangan" class="nav-link" data-target="#list_tunjangan"
+                            aria-controls="list_tunjangan" data-toggle="tab" role="tab">Tunjangan</a>
                     </li>
                     <li class="nav-item">
                         <a href="#list_payrollmanajemen" class="nav-link" data-target="#list_payrollmanajemen"
@@ -46,7 +46,7 @@
 
                     @include('sdm.penggajian.cashbon.tab_cashbon')
                     @include('sdm.penggajian.tunjangan.tab_tunjangan')
-                    @include('sdm.penggajian.produksi.tab_produksi')
+                    @include('sdm.penggajian.reward.tab_reward')
                     @include('sdm.penggajian.payrollmanajemen.tab_payrollmanajemen')
 
                 </div>
@@ -63,14 +63,39 @@
 @section('extra_script')
 <script type="text/javascript">
     var table_cashbon;
+    var table_masterreward;
+    var table_masterpunishment;
+    var table_rewardpunishment;
+    var table_detailrewardpunishment;
 	$(document).ready(function(){
 		var table_bar = $('#table_tunjangan').DataTable();
-		var table_pus = $('#table_produksi').DataTable();
 		var table_rab = $('#table_payrollmanajemen').DataTable();
 
         setTimeout(function(){
             filterCashbon();
         },500);
+
+        setTimeout(function(){
+            table_masterreward = $('#table_masterreward').DataTable({
+                responsive: true,
+                searching: false,
+                paging: false
+            });
+
+            table_masterpunishment = $('#table_masterpunishment').DataTable({
+                responsive: true,
+                searching: false,
+                paging: false
+            });
+
+            table_rewardpunishment = $('#table_rewardpunishment').DataTable();
+            table_detailrewardpunishment = $('#table_detailrewardpunishment').DataTable();
+
+            table_masterreward.columns.adjust();
+            table_masterpunishment.columns.adjust();
+            table_detailrewardpunishment.columns.adjust();
+            table_rewardpunishment.columns.adjust();
+        },700);
 
         $("#namapegawai").autocomplete({
             source: '{{ route("cashbon.getDataPegawai") }}',
@@ -91,6 +116,14 @@
             nullable: true,
             // unmaskAsNumber: true,
         });
+
+        $("#periode_reward").datepicker( {
+            format: "mm-yyyy",
+            viewMode: "months",
+            minViewMode: "months",
+            autoclose: true
+        });
+
 
     })
 
@@ -134,6 +167,7 @@
             pageLength: 10,
             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
         });
+        table_cashbon.columns.adjust();
     }
 
     function terimaCashbon(id, cashbon, saldo){
@@ -228,6 +262,161 @@
             } else if (response.data.status == 'gagal') {
                 messageWarning('Gagal', response.data.message);
             }
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+// Reward
+    function getMasterReward(){
+        loadingShow();
+        $('.add_masterbenefits').val('');
+        axios.get('{{ route("reward.getDataMasterReward") }}', {
+            params:{
+
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            table_masterreward.clear().draw();
+            $.each(data, function(idx, val){
+                table_masterreward.row.add([
+                    val.b_name,
+                    '<center><button type="button" class="btn btn-warning btn-sm" onclick="editMasterReward('+val.b_id+')">Edit</button></center>'
+                ]).draw().node();
+            });
+            table_masterreward.columns.adjust();
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function getMasterPunishment(){
+        loadingShow();
+        $('.add_masterbenefits').val('');
+        axios.get('{{ route("reward.getDataMasterPunishment") }}', {
+            params:{
+
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            table_masterpunishment.clear().draw();
+            $.each(data, function(idx, val){
+                table_masterpunishment.row.add([
+                    val.b_name,
+                    '<center><button type="button" class="btn btn-warning btn-sm" onclick="editMasterReward('+val.b_id+')">Edit</button></center>'
+                ]).draw().node();
+            });
+            table_masterpunishment.columns.adjust();
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function tambahMasterBenefits(type){
+        loadingShow();
+        let reward = '';
+        if (type == 'R') {
+            reward = $('#add_masterreward').val();
+        }
+        else if (type == 'P') {
+            reward = $('#add_masterpunishment').val();
+        }
+        if (reward == null || reward == '') {
+            loadingHide();
+            messageWarning("Perhatian", "Input tidak boleh kosong!!");
+            return false;
+        }
+        axios.post('{{ route("reward.saveMasterBenefits") }}', {
+            "_token": "{{ csrf_token() }}",
+            "nama": reward,
+            "type": type
+        }).then(function(response){
+            loadingHide();
+            if (response.data.status == 'sukses') {
+                messageSuccess("Berhasil", "Data berhasil disimpan");
+                if (type == 'R') {
+                    getMasterReward();
+                }
+                else if (type == 'P') {
+                    getMasterPunishment();
+                }
+            } else if (response.data.status == 'gagal') {
+                messageWarning("Gagal", response.data.message);
+            }
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function getDataRewardPunishment(){
+        loadingShow();
+        axios.get('{{ route("reward.getDataRewardPunishment") }}', {
+            params:{
+                periode: $('#periode_reward').val()
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            table_rewardpunishment.clear().draw();
+            $.each(data, function(idx, val){
+                if (val.reward == null) {
+                    val.reward = 0;
+                }
+                if (val.punishment == null) {
+                    val.punishment = 0;
+                }
+                table_rewardpunishment.row.add([
+                    val.e_nip,
+                    val.e_name,
+                    '<span class="pull-right">'+convertToRupiah(val.reward)+'</span>',
+                    '<span class="pull-right">'+convertToRupiah(val.punishment)+'</span>',
+                    '<center><button type="button" class="btn btn-primary btn-sm" onclick="detailRewardPunishment(\''+val.e_id+'\')">Detail</button>'+
+                    '<button type="button" class="btn btn-warning btn-sm" onclick="editRewardPunishment(\''+val.e_id+'\')">Edit</button></center>'
+                ]).draw().node();
+            });
+            table_rewardpunishment.columns.adjust();
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function detailRewardPunishment(id){
+        loadingShow();
+        axios.get('{{ route("reward.getDetailRewardPunishment") }}', {
+            params:{
+                "e_id": id,
+                "periode": $('#periode_reward').val()
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            $('.nama_pegawai').html(data[0].e_name);
+            $('.nip_pegawai').html(data[0].e_nip);
+            table_detailrewardpunishment.clear().draw();
+            $.each(data, function(idx, val){
+                if (val.b_name != null) {
+                    if (val.b_type == 'P') {
+                        val.b_type = 'Punishment';
+                    }
+                    if (val.b_type == 'R') {
+                        val.b_type = 'Reward';
+                    }
+                    table_detailrewardpunishment.row.add([
+                        val.b_name,
+                        val.b_type,
+                        convertToRupiah(val.ebd_value)
+                    ]).draw().node();
+                }
+            });
+            table_detailrewardpunishment.columns.adjust();
+            $('#modal_detailmasterreward').modal('show');
         }).catch(function(error){
             loadingHide();
             alert('error');
