@@ -75,7 +75,7 @@
                                         <table class="table table-hover table-striped table-bordered display nowrap" cellspacing="0" style="width: 100%" id="table_indikator_divisi_pegawai">
                                             <thead class="bg-primary">
                                                 <tr>
-                                                    <th class="text-center">Indikator</th>
+                                                    <th class="text-center" width="30%">Indikator</th>
                                                     <th class="text-center">Unit</th>
                                                     <th class="text-center">Bobot</th>
                                                     <th class="text-center">Target</th>
@@ -257,7 +257,7 @@
                         let indikatorD = `<td class="pad-1">
                                         <input type="hidden" name="kd_kpiD[]" class="form-control-plaintext kd_kpiD onlyread w-100" value="`+ val.kd_kpi +`">
                                         <input type="hidden" name="kd_indikatorD[]" class="form-control-plaintext kd_indikatorD onlyread w-100" value="`+ val.ke_kpi +`">
-                                        <input type="text" name="indikatorD[]" class="form-control-plaintext indikatorD onlyread w-100" value="`+ val.k_indicator +`" readonly>
+                                        <textarea name="indikatorD[]" cols="" rows="" class="form-control-plaintext indikatorD onlyread" readonly>`+ val.k_indicator +`</textarea>
                                         </td>`;
 
                         let unitD = `<td class="pad-1">
@@ -384,7 +384,8 @@
                         let indikatorP = `<td class="pad-1">
                                         <input type="hidden" name="kd_kpiP[]" class="form-control-plaintext kd_kpiP onlyread w-100" value="`+ val.kd_kpi +`">
                                         <input type="hidden" name="kd_indikatorP[]" class="form-control-plaintext kd_indikatorP onlyread w-100" value="`+ val.ke_kpi +`">
-                                        <input type="text" name="indikatorP[]" class="form-control-plaintext indikatorP onlyread w-100" value="`+ val.k_indicator +`" readonly>
+                                        
+                                        <textarea name="indikatorP[]" cols="" rows="" class="form-control-plaintext indikatorP onlyread" readonly>`+ val.k_indicator +`</textarea>
                                         </td>`;
 
                         let unitP = `<td class="pad-1">

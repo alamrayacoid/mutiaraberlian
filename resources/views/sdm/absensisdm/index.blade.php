@@ -701,12 +701,14 @@
 	}
 
 	// show modal detail presence
-	function showDetailPresence(id)
+	function showDetailPresence(id, p_date, e_company)
 	{
 		$.ajax({
 			url: "{{ route('presensi.getDetailPresence') }}",
 			data: {
-				id: id
+				id: id,
+				tanggal: p_date,
+				cabang: e_company
 			},
 			success: function(resp) {
 				console.log(resp);
