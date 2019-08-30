@@ -57,10 +57,13 @@ class d_stock_mutation extends Model
     {
         return $this->hasMany('App\d_stockmutationdt', ['smd_stock', 'smd_stockmutation'], ['sm_stock', 'sm_detailid']);
     }
-
     // relation with table d_stock
     public function getStock()
     {
         return $this->belongsTo('App\d_stock', 'sm_stock', 's_id');
+    }
+    public function getMutcat()
+    {
+        return $this->belongsTo('App\m_mutcat', 'sm_mutcat', 'm_id');
     }
 }

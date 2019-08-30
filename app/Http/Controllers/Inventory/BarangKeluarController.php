@@ -55,95 +55,68 @@ class BarangKeluarController extends Controller
         return response()->json($results);
     }
 
-    /**
-     * Validate request before execute command.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return 'error message' or '1'
-     */
-    public function validate_req(Request $request)
+    // get list production-code
+    public function getProductionCode(Request $request)
     {
-        // start: validate data before execute
-        $validator = Validator::make($request->all(), [
-            'itemId' => 'required',
-            'qty' => 'required',
-            'unit' => 'required',
-            'position' => 'required',
-            'owner' => 'required',
-            'mutcat' => 'required'
-        ],
-            [
-                'itemId.required' => 'Item masih kosong !',
-                'qty.required' => 'Jumlah barang masih kosong !',
-                'unit.required' => 'Satuan masih kosong !',
-                'position.required' => 'Lokasi barang masih kosong !',
-                'owner.required' => 'Pemilik barang masih kosong !',
-                'mutcat.required' => 'Keterangan masih kosong !'
-            ]);
-        if ($validator->fails()) {
-            return $validator->errors()->first();
+        $term = $request->term;
+        $from = Carbon::parse($request->date_from)->format('Y-m-d');
+        $to = Carbon::parse($request->date_to)->format('Y-m-d');
+        $pemilik = $request->pemilik;
+        $posisi = $request->posisi;
+        $produk = $request->produk;
+        $mutcat = $request->mutcat;
+
+        $datas = d_stockmutationdt::whereHas('getStockMutation', function ($q) use ($mutcat) {
+                $q->whereHas('getMutcat', function ($query) use ($mutcat) {
+                    $query->where('m_status', 'K');
+                });
+            })
+            ->where('smd_productioncode', 'LIKE', '%'. $term .'%');
+
+        if ($from != null || $from != ''){
+            $datas = $datas->whereHas('getStockMutation', function ($qFrom) use ($from) {
+                    $qFrom->where('sm_date', '>=', $from);
+                });
+        }
+        if ($to != null || $to != ''){
+            $datas = $datas->whereHas('getStockMutation', function ($qTo) use ($to) {
+                    $qTo->where('sm_date', '<=', $to);
+                });
+        }
+        if ($pemilik != 'semua'){
+            $datas = $datas->whereHas('getStock', function ($qStock) use ($pemilik) {
+                    $qStock->where('s_comp', $pemilik);
+                });
+        }
+        if ($posisi != 'semua'){
+            $datas = $datas->whereHas('getStock', function ($qOwner) use ($posisi) {
+                    $qOwner->where('s_position', $posisi);
+                });
+        }
+        if ($produk != 'semua'){
+            $datas = $datas->whereHas('getStock', function ($qProduct) use ($produk) {
+                    $qProduct->where('s_item', $produk);
+                });
+        }
+        if ($mutcat != 'semua'){
+            $datas = $datas->whereHas('getStockMutation', function ($qMutcat) use ($mutcat) {
+                    $qMutcat->where('sm_mutcat', $mutcat);
+                });
+        }
+        $datas = $datas->groupBy('smd_productioncode')->get();
+        // dd($request->all(), $datas);
+
+        if (count($datas) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan kode produksi terkait'];
         } else {
-            return '1';
+            foreach ($datas as $query) {
+                $results[] = [
+                    'id' => $query->smd_productioncode,
+                    'label' => $query->smd_productioncode,
+                ];
+            }
         }
-    }
-
-    /**
-     * Return a new 'nota' for creating new 'item out'.
-     *
-     * @return varchar $nota
-     */
-    public function getNewNota()
-    {
-        $nota = CodeGenerator::codeWithSeparator('d_itemout', 'io_nota', 9, 10, 3, 'OUT', '-');
-        return $nota;
-    }
-
-    /**
-     * Return a converted value by unit.
-     *
-     * @return int outQty
-     */
-    public function convertOutQtyToSmallestUnit($itemId, $unit, $outQty)
-    {
-        $outQty = (int)$outQty;
-        $item = m_item::where('i_id', $itemId)->first();
-        if ($unit == $item->i_unit1) {
-            $outQty = $outQty * $item->i_unitcompare1;
-        } elseif ($unit == $item->i_unit2) {
-            $outQty = $outQty * $item->i_unitcompare2;
-        } elseif ($unit == $item->i_unit3) {
-            $outQty = $outQty * $item->i_unitcompare3;
-        }
-        return $outQty;
-    }
-
-    /**
-     * Inser new 'item out' row.
-     *
-     * @param string
-     * @param int
-     */
-    public function storeNewItemOut($req)
-    {
-        try {
-            $newId = d_itemout::max('io_id') + 1;
-            DB::beginTransaction();
-            $itemOut = new d_itemout;
-            $itemOut->io_id = $newId;
-            $itemOut->io_date = Carbon::now();
-            $itemOut->io_nota = $this->getNewNota();
-            $itemOut->io_item = $req->itemId;
-            $itemOut->io_qty = $req->qty;
-            $itemOut->io_unit = $req->unit;
-            $itemOut->io_mutcat = $req->mutcat;
-            $itemOut->io_user = Auth::user()->employee->e_id;
-            $itemOut->save();
-            DB::commit();
-            return $itemOut;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return false;
-        }
+        return response()->json($results);
     }
 
     /**
@@ -188,7 +161,7 @@ class BarangKeluarController extends Controller
         if ($produk != 'semua'){
             $datas->where('s_item', '=', $produk);
         }
-        if ($kodeproduksi != 'semua'){
+        if ($kodeproduksi != ''){
             $datas->where('sd_code', '=', $kodeproduksi);
         }
         if ($mutcat != 'semua'){
@@ -345,61 +318,4 @@ class BarangKeluarController extends Controller
         return view('inventory/barangkeluar/create', compact('data'));
     }
 
-    // -------------------- start: function below is unused --------------------
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        // // validate request
-        // $isValidRequest = $this->validate_req($request);
-        // if ($isValidRequest != '1') {
-        //     $errors = $isValidRequest;
-        //     return response()->json([
-        //         'status' => 'invalid',
-        //         'message' => $errors
-        //     ]);
-        // }
-        //
-        // DB::beginTransaction();
-        // try {
-        //     // insert new 'item out (d_itemout)'
-        //     $storeItemOut = $this->storeNewItemOut($request);
-        //     if ($storeItemOut === false) {
-        //         return response()->json([
-        //             'status' => 'gagal',
-        //             'message' => 'Gagal, Barang keluar gagal ditambahkan !'
-        //         ]);
-        //     }
-        //     $itemQtyUnitBase = $this->convertOutQtyToSmallestUnit(
-        //         $request->itemId,
-        //         $request->unit,
-        //         $request->qty
-        //     );
-        //     // insert new mutasi-keluar
-        //     $mutasi = Mutasi::mutasikeluar(
-        //         $request->mutcat, // mutcat
-        //         $request->owner, // item-owner
-        //         $request->position, // item-position
-        //         $request->itemId, // item-id
-        //         $itemQtyUnitBase, // item-qty in smallest unit
-        //         $storeItemOut->io_nota // nota
-        //     );
-        //
-        //     DB::commit();
-        //     return response()->json([
-        //         'status' => 'berhasil'
-        //     ]);
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return response()->json([
-        //         'status' => 'gagal',
-        //         'message' => $e->getMessage()
-        //     ]);
-        // }
-    }
-    // -------------------- end: function is unused --------------------
 }

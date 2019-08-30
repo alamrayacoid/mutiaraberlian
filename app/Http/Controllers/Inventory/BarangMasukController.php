@@ -9,6 +9,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 
 use DB;
 use App\d_stockdt;
+use App\d_stockmutationdt;
 use Auth;
 use Response;
 use DataTables;
@@ -41,9 +42,9 @@ class BarangMasukController extends Controller
             ->groupBy('s_item')
             ->get();
 
-        $kodeproduksi = d_stockdt::select('sd_code')
-            ->groupBy('sd_code')
-            ->get();
+        // $kodeproduksi = d_stockdt::select('sd_code')
+        //     ->groupBy('sd_code')
+        //     ->get();
 
         $mutcat = DB::table('d_stock')
             ->join('d_stock_mutation', 'sm_stock', '=', 's_id')
@@ -55,7 +56,71 @@ class BarangMasukController extends Controller
             ->groupBy('m_id')
             ->get();
 
-        return view('inventory/barangmasuk/index', compact('produk','posisi', 'pemilik', 'mutcat', 'kodeproduksi'));
+        return view('inventory/barangmasuk/index', compact('produk','posisi', 'pemilik', 'mutcat'));
+    }
+    // get list production-code
+    public function getProductionCode(Request $request)
+    {
+        // dd($request->all());
+        $term = $request->term;
+        $from = Carbon::parse($request->date_from)->format('Y-m-d');
+        $to = Carbon::parse($request->date_to)->format('Y-m-d');
+        $pemilik = $request->pemilik;
+        $posisi = $request->posisi;
+        $produk = $request->produk;
+        $mutcat = $request->mutcat;
+
+        $datas = d_stockmutationdt::whereHas('getStockMutation', function ($q) use ($mutcat) {
+                $q->whereHas('getMutcat', function ($query) use ($mutcat) {
+                    $query->where('m_status', 'M');
+                });
+            })
+            ->where('smd_productioncode', 'LIKE', '%'. $term .'%');
+
+        if ($from != null || $from != ''){
+            $datas = $datas->whereHas('getStockMutation', function ($qFrom) use ($from) {
+                    $qFrom->where('sm_date', '>=', $from);
+                });
+        }
+        if ($to != null || $to != ''){
+            $datas = $datas->whereHas('getStockMutation', function ($qTo) use ($to) {
+                    $qTo->where('sm_date', '<=', $to);
+                });
+        }
+        if ($pemilik != 'semua'){
+            $datas = $datas->whereHas('getStock', function ($qStock) use ($pemilik) {
+                    $qStock->where('s_comp', $pemilik);
+                });
+        }
+        if ($posisi != 'semua'){
+            $datas = $datas->whereHas('getStock', function ($qOwner) use ($posisi) {
+                    $qOwner->where('s_position', $posisi);
+                });
+        }
+        if ($produk != 'semua'){
+            $datas = $datas->whereHas('getStock', function ($qProduct) use ($produk) {
+                    $qProduct->where('s_item', $produk);
+                });
+        }
+        if ($mutcat != 'semua'){
+            $datas = $datas->whereHas('getStockMutation', function ($qMutcat) use ($mutcat) {
+                    $qMutcat->where('sm_mutcat', $mutcat);
+                });
+        }
+        $datas = $datas->groupBy('smd_productioncode')->get();
+        // dd($request->all(), $datas);
+
+        if (count($datas) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan kode produksi terkait'];
+        } else {
+            foreach ($datas as $query) {
+                $results[] = [
+                    'id' => $query->smd_productioncode,
+                    'label' => $query->smd_productioncode,
+                ];
+            }
+        }
+        return response()->json($results);
     }
 
     public function getData(Request $request)
@@ -95,7 +160,7 @@ class BarangMasukController extends Controller
         if ($produk != 'semua'){
             $datas->where('s_item', '=', $produk);
         }
-        if ($kodeproduksi != 'semua'){
+        if ($kodeproduksi != ''){
             $datas->where('sd_code', '=', $kodeproduksi);
         }
         if ($mutcat != 'semua'){
