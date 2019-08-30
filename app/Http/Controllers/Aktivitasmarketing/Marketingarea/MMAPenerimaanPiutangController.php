@@ -367,7 +367,7 @@ class MMAPenerimaanPiutangController extends Controller
             })
             ->select('member.c_name', 'member.c_user', 'member.c_tlp', 'member.c_id')
             ->where('sc_comp', '=', $user->u_company)
-            ->where('sc_paidoffbranch', '=', 'Y')
+            ->where('sc_paidoff', '=', 'Y')
             ->groupBy('member.c_id')
             ->get();
 
@@ -554,6 +554,18 @@ class MMAPenerimaanPiutangController extends Controller
             // validate 'lunas' atau 'belum'
             $totalPayment = d_salescomppayment::where('scp_salescomp', $salesCompId)
                 ->sum('scp_pay');
+
+            $salesCompDt = d_salescompdt::whereHas('getSalesComp', function ($q) use ($nota) {
+                    $q->where('sc_nota', $nota);
+                })
+                ->with('getSalesComp.getAgent')
+                ->with('getProdCode')
+                ->get();
+            $member = $salesCompDt[0]->getSalesComp->getAgent;
+            // mutcat 'penjualan langsung ke konsumen'
+            $mutcatOut = 14;
+            $notaSales = $salesCompDt[0]->getSalesComp->sc_nota . '-PAID';
+
             if ($salesCompPayment->getSalesComp->sc_paidoff == 'Y') {
                 if ($totalPayment != $salesCompPayment->getSalesComp->sc_total) {
                     // update salescomp
@@ -561,6 +573,19 @@ class MMAPenerimaanPiutangController extends Controller
                     $salesCompPayment->getSalesComp->save();
 
                     // rollback if 'APOTEK/RADIO'
+                    if ($member->c_type == 'APOTEK/RADIO') {
+                        foreach ($salesCompDt as $key => $value) {
+                            // rollback mutation 'salesout'
+                            $mutRollbackOut = Mutasi::rollbackSalesOut(
+                                $notaSales,
+                                $value->scd_item,
+                                $mutcatOut
+                            );
+                            if ($mutRollbackOut->original['status'] !== 'success') {
+                                return $mutRollbackOut;
+                            }
+                        }
+                    }
                 }
             }
             else {
@@ -568,15 +593,6 @@ class MMAPenerimaanPiutangController extends Controller
                     // update salescomp
                     $salesCompPayment->getSalesComp->sc_paidoff = 'Y';
                     $salesCompPayment->getSalesComp->save();
-
-                    $salesCompDt = d_salescompdt::whereHas('getSalesComp', function ($q) use ($nota) {
-                            $q->where('sc_nota', $nota);
-                        })
-                        ->with('getSalesComp.getAgent')
-                        ->with('getProdCode')
-                        ->get();
-
-                    $member = $salesCompDt[0]->getSalesComp->getAgent;
 
                     // sell all item to consument if konsinyasi in 'Apotek/Radio'
                     if ($member->c_type == 'APOTEK/RADIO') {
@@ -606,20 +622,18 @@ class MMAPenerimaanPiutangController extends Controller
                                 $qty_compare = $value->scd_qty * $data_check->compare3;
                             }
 
-
-                            $nota = $value->getSalesComp->sc_nota . '-PAID';
                             // insert stock mutation sales 'out'
                             $mutationOut = Mutasi::salesOut(
                                 $value->getSalesComp->sc_member, // from
                                 null, // to
                                 $value->scd_item, // item-id
                                 $qty_compare, // qty of smallest-unit
-                                $nota, // nota
+                                $notaSales, // nota
                                 $listPC, // list of production-code
                                 $listQtyPC, // list of production-code-qty
                                 $listUnitPC, // list of production-code-unit
                                 null, // sellprice
-                                14, // mutcat
+                                $mutcatOut, // mutcat
                                 $tanggal
                             );
                             if ($mutationOut->original['status'] !== 'success') {
@@ -628,13 +642,8 @@ class MMAPenerimaanPiutangController extends Controller
                         }
                     }
                 }
-                // else {
-                //     // update salescomp
-                //     $salesCompPayment->getSalesComp->sc_paidoff = 'N';
-                //     $salesCompPayment->getSalesComp->save();
-                // }
             }
-dd('x');
+
             DB::commit();
             return Response()->json([
                 'status' => 'sukses'
