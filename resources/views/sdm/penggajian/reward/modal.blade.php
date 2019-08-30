@@ -67,13 +67,6 @@
                             </thead>
                         </table>
                     </div>
-                    {{-- <div class="col-3">
-                        <input type="text" class="form-control form-control-sm edit_reward" id="edit_reward" readonly>
-                        <input type="hidden" id="id_reward">
-                    </div>
-                    <div class="col-2">
-                        <button type="button" class="btn btn-primary" onclick="updateMasterReward()">Update</button>
-                    </div> --}}
                 </div>
 			</div>
 			<div class="modal-footer">
@@ -82,7 +75,6 @@
 		</div>
 	</div>
 </div>
-
 
 <div class="modal fade" id="modal_detailmasterreward" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -130,3 +122,4 @@
         </div>
     </div>
 </div>
+
