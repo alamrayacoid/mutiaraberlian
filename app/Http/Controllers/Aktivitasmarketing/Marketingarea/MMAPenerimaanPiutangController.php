@@ -559,6 +559,8 @@ class MMAPenerimaanPiutangController extends Controller
                     // update salescomp
                     $salesCompPayment->getSalesComp->sc_paidoff = 'N';
                     $salesCompPayment->getSalesComp->save();
+
+                    // rollback if 'APOTEK/RADIO'
                 }
             }
             else {
@@ -570,11 +572,11 @@ class MMAPenerimaanPiutangController extends Controller
                     $salesCompDt = d_salescompdt::whereHas('getSalesComp', function ($q) use ($nota) {
                             $q->where('sc_nota', $nota);
                         })
-                        ->with('getSalesComp')
+                        ->with('getSalesComp.getAgent')
                         ->with('getProdCode')
                         ->get();
 
-                    $member = m_company::where('c_id', $cek->sc_member)->first();
+                    $member = $salesCompDt[0]->getSalesComp->getAgent;
 
                     // sell all item to consument if konsinyasi in 'Apotek/Radio'
                     if ($member->c_type == 'APOTEK/RADIO') {
@@ -626,13 +628,13 @@ class MMAPenerimaanPiutangController extends Controller
                         }
                     }
                 }
-                else {
-                    // update salescomp
-                    $salesCompPayment->getSalesComp->sc_paidoff = 'N';
-                    $salesCompPayment->getSalesComp->save();
-                }
+                // else {
+                //     // update salescomp
+                //     $salesCompPayment->getSalesComp->sc_paidoff = 'N';
+                //     $salesCompPayment->getSalesComp->save();
+                // }
             }
-
+dd('x');
             DB::commit();
             return Response()->json([
                 'status' => 'sukses'
