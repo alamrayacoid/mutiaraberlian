@@ -42,8 +42,18 @@ class d_stockmutationdt extends Model
         return $query;
     }
 
+    // relation with table d_stock
+    public function getStock()
+    {
+        return $this->belongsTo('App\d_stock', 'smd_stock', 's_id');
+    }
     public function getStockDt()
     {
         return $this->belongsTo('App\d_stockdt', ['smd_stock', 'smd_productioncode'], ['sd_stock', 'sd_code']);
     }
+    public function getStockMutation()
+    {
+        return $this->belongsTo('App\d_stock_mutation', ['smd_stock', 'smd_stockmutation'], ['sm_stock', 'sm_detailid']);
+    }
+
 }

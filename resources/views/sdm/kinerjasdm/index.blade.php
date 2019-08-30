@@ -110,6 +110,7 @@
     $(document).ready(function () {
         get_kpiAgen();
         getDataIndikatorPegawaiIndex();
+        getDataIndikatorDivisiIndex();
 
         setTimeout(function () {
             getDataMasterKPI();
@@ -739,16 +740,30 @@
     minViewMode: "months"
     });
 
+    $('#periode_kpi').datepicker('setDate', month_year);
+    
+    $('#periode_kpi').datepicker("setDate", new Date(month_years.getFullYear(), month_years.getMonth()));
+
     $('#periode_kpi').on('change', function(){
         $("#table_indikator_divisi_pegawai_index > tbody").find('tr').remove();
     });
+
   </script>
 
   <script type="text/javascript">
     $(document).ready(function () {
         setTimeout(function () {
-            getDataIndikatorPegawaiIndex();    
-        }, 2000)
+            getDataIndikatorPegawaiIndex();
+            getDataIndikatorDivisiIndex();    
+        }, 2000);
+
+        // $('#periode_kpi').datepicker().on('changeDate', function() {
+        //     getDataIndikatorPegawaiIndex();
+        // });
+
+        // $('#periode_kpi').datepicker().on('changeDate', function() {
+        //     getDataIndikatorDivisiIndex();
+        // });
     });
 
     function getDivisi(index) {

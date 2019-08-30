@@ -695,13 +695,18 @@ class AgenController extends Controller
                     'a_update'    => Carbon::now()
                 ]);
 
+                $c_type = $request->type_hidden;
+                if ($c_type == 'MMA'){
+                    $c_type = 'CABANG';
+                }
+
                 DB::table('m_company')
                     ->where('c_user', $agentCode->a_code)
                     ->update([
                         'c_name'    => $request->name,
                         'c_address' => $request->address,
                         'c_tlp'     => $request->telp,
-                        'c_type'    => 'AGEN',
+                        'c_type'    => $c_type,
                         'c_area'    => $request->area_city,
                         'c_update'  => Carbon::now()
                     ]);

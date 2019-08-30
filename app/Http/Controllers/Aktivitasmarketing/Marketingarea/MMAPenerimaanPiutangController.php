@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Crypt;
 use App\d_salescomp;
 use App\d_salescompdt;
 use App\m_paymentmethod;
+use App\m_company;
 use App\Model\keuangan\dk_akun;
 use Auth;
 use Carbon\Carbon;
@@ -256,7 +257,7 @@ class MMAPenerimaanPiutangController extends Controller
 
             $cek = DB::table('d_salescomp')
                 ->join('d_salescomppayment', 'scp_salescomp', '=', 'sc_id')
-                ->select(DB::raw('sum(scp_pay) as bayar'), 'sc_total')
+                ->select(DB::raw('sum(scp_pay) as bayar'), 'sc_total', 'sc_member')
                 ->where('sc_id', '=', $salescomp[0]->sc_id)
                 ->groupBy('sc_id')
                 ->first();
@@ -276,8 +277,10 @@ class MMAPenerimaanPiutangController extends Controller
                     ->with('getProdCode')
                     ->get();
 
+                $member = m_company::where('c_id', $cek->sc_member)->first();
+
                 // sell all item to consument if konsinyasi in 'Apotek/Radio'
-                if (Auth::user()->getCompany->c_type == 'APOTEK/RADIO') {
+                if ($member->c_type == 'APOTEK/RADIO') {
                     foreach ($salesCompDt as $key => $value) {
                         $listPC = array();
                         $listQtyPC = array();
@@ -338,5 +341,94 @@ class MMAPenerimaanPiutangController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    // history =======================================
+    public function historyPayment()
+    {
+        return view('marketing/marketingarea/penerimaanpiutang/history/history');
+    }
+    public function getDataAgenH(Request $request)
+    {
+        $user = Auth::user();
+        $cari = $request->term;
+        $nama = DB::table('d_salescomp')
+            ->join('m_company as comp', 'comp.c_id', '=', 'sc_comp')
+            ->join('m_company as member', 'member.c_id', '=', 'sc_member')
+            ->where(function ($q) use ($cari){
+                $q->orWhere('member.c_name', 'like', '%' . $cari . '%');
+                $q->orWhere('member.c_user', 'like', '%' . $cari . '%');
+            })
+            ->select('member.c_name', 'member.c_user', 'member.c_tlp', 'member.c_id')
+            ->where('sc_comp', '=', $user->u_company)
+            ->where('sc_paidoffbranch', '=', 'Y')
+            ->groupBy('member.c_id')
+            ->get();
+
+        if (count($nama) == 0) {
+            $results[] = ['id' => null, 'label' => 'Tidak ditemukan data terkait'];
+        } else {
+            foreach ($nama as $query) {
+                $results[] = ['id' => $query->c_id, 'label' => strtoupper($query->c_name), 'data' => $query];
+            }
+        }
+        return Response::json($results);
+    }
+    public function getDataHistoryPayment(Request $request)
+    {
+        $start = 'all';
+        $end = 'all';
+        $status = 'all';
+        $agen = 'all';
+        $user = Auth::user();
+        $sekarang = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+
+        $info = DB::table('d_salescomp as scc')
+            ->join('m_company as member', 'member.c_id', '=', 'scc.sc_member')
+            ->select(DB::raw('floor((SELECT SUM(scp_pay) FROM d_salescomppayment scpm WHERE scpm.scp_salescomp = scc.sc_id)) as pembayaran'),
+                DB::raw('floor(sc_total - (SELECT(pembayaran))) AS sisa'),
+                DB::raw('case when sc_datetop < NOW() then "Melebihi" when sc_datetop >= NOW() then "Belum" END AS status'),
+                'member.c_name', DB::raw('date_format(scc.sc_datetop, "%d-%m-%Y") as sc_datetop'),
+                DB::raw('floor(scc.sc_total) as sc_total'), 'sc_id')
+            ->where('sc_paidoff', '=', 'Y')
+            ->groupBy('sc_id')
+            ->where('sc_comp', '=', $user->u_company);
+
+        if (isset($request->start) && $request->start != '' && $request->start !== null){
+            $start = Carbon::createFromFormat('d-m-Y', $request->start)->format('Y-m-d');
+            $info = $info->where('sc_date', '>=', $start);
+        }
+        if (isset($request->end) && $request->end != '' && $request->end !== null){
+            $end = Carbon::createFromFormat('d-m-Y', $request->end)->format('Y-m-d');
+            $info = $info->where('scc.sc_date', '<=', $end);
+        }
+        if (isset($request->status) && $request->status != '' && $request->status !== null){
+            $status = $request->status;
+            if ($status == 'Melebihi'){
+                $info = $info->whereRaw('(SELECT(case when sc_datetop < NOW() then "Melebihi" when sc_datetop >= NOW() then "Belum" END)) = "Melebihi"');
+            } elseif ($status == 'Belum'){
+                $info = $info->whereRaw('(SELECT(case when sc_datetop < NOW() then "Melebihi" when sc_datetop >= NOW() then "Belum" END)) = "Belum"');
+            }
+        }
+        if (isset($request->agen) && $request->agen != '' && $request->agen !== null){
+            $agen = $request->agen;
+            $info = $info->where('sc_member', '=', $agen);
+        }
+
+        return DataTables::of($info)
+            ->addColumn('aksi', function ($info) {
+                return '<center><div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-sm btn-primary hint--top hint--info" aria-label="Detail" onclick="getDetailPiutang(\'' .Crypt::encrypt($info->sc_id). '\')"><i class="fa fa-folder"></i></button>
+                            <button type="button" class="btn btn-sm btn-warning hint--top hint--warning" aria-label="Edit" onclick="editPiutang(\'' .Crypt::encrypt($info->sc_id). '\')"><i class="fa fa-pencil"></i></button>
+                        </div></center>';
+            })
+            ->editColumn('sisa', function ($info){
+                // if ($info->pembayaran == null || $info->pembayaran == '') {
+                    return "Rp. " . number_format($info->sc_total, '0', ',', '.');
+                // }
+                // return "Rp. " . number_format($info->sisa, '0', ',', '.');
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
     }
 }

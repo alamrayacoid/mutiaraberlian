@@ -488,7 +488,7 @@
             });
             updateTotalTampil();
         }
-        
+
         function visibleSimpan() {
             var inpNominal = document.getElementsByClassName( 'nominal' ),
                 nominal  = [].map.call(inpNominal, function( input ) {
@@ -515,7 +515,7 @@
                 $("#btn_submit").attr("style", "cursor: not-allowed");
             }
         }
-        
+
         function updateSisaPembayaran() {
             var inpNominal = document.getElementsByClassName( 'nominal' ),
                 nominal  = [].map.call(inpNominal, function( input ) {

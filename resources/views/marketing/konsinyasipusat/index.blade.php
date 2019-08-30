@@ -502,9 +502,9 @@
 	{
 		$('#formAddPP')[0].reset();
 		$('#listNotaPP').empty();
-		$('#paymentTypePP option:first').attr('selected', 'selected');
+		$('#paymentTypePP option:first').attr('selected', 'selected').trigger('change');
 		$('#paymentTypePP').select2();
-		$('#cashAccountPP option:first').attr('selected', 'selected');
+		$('#cashAccountPP option:first').attr('selected', 'selected').trigger('change');
 		$('#cashAccountPP').select2();
 	}
 	// autocomple to find-agents

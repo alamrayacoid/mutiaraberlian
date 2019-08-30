@@ -83,12 +83,15 @@
                   </div>
                   <div class="col-4">
                       <!-- <p>Kosongkan field jika ingin menampilkan semua hasil pencarian</p> -->
-                      <select class="select2 form-control form-control-sm" name="kodeproduksi" id="filter_kodeproduksi">
+                      <input type="text" class="form-control form-control-sm" id="filter_kodeproduksi" placeholder="Kode Produksi" name="kodeproduksi" >
+                      {{--
+                      <!-- <select class="select2 form-control form-control-sm" name="kodeproduksi" id="filter_kodeproduksi">
                           <option value="semua" selected>== Semua Kode Produksi ==</option>
                           @foreach($kodeproduksi as $kp)
                               <option value="{{ $kp->sd_code }}">{{ $kp->sd_code }}</option>
                           @endforeach
-                      </select>
+                      </select> -->
+                      --}}
                   </div>
                   <div class="col-4 input-group">
                     <select class="form-control form-control-sm" id="filter_mutcat" name="mutcat">
@@ -236,131 +239,128 @@
 @endsection
 
 @section('extra_script')
-  <script type="text/javascript">
-      $(document).ready(function () {
-          const cur_date = new Date();
-          const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
-          const last_day = new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
-          $('#date_from').datepicker('setDate', first_day);
-          $('#date_to').datepicker('setDate', last_day);
+<script type="text/javascript">
+    $(document).ready(function () {
+        const cur_date = new Date();
+        const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+        const last_day = new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+        $('#date_from').datepicker('setDate', first_day);
+        $('#date_to').datepicker('setDate', last_day);
 
-          $('#date_from').on('change', function () {
-              TableBarangKeluar();
-          });
-          $('#date_to').on('change', function () {
-              TableBarangKeluar();
-          });
-          $('#btn_search_date').on('click', function () {
-              TableBarangKeluar();
-          });
-          $('#btn_refresh_date').on('click', function () {
-              $('#date_from').datepicker('setDate', first_day);
-              $('#date_to').datepicker('setDate', last_day);
-          });
+        $('#date_from').on('change', function () {
+            TableBarangKeluar();
+        });
+        $('#date_to').on('change', function () {
+            TableBarangKeluar();
+        });
+        $('#btn_search_date').on('click', function () {
+            TableBarangKeluar();
+        });
+        $('#btn_refresh_date').on('click', function () {
+            $('#date_from').datepicker('setDate', first_day);
+            $('#date_to').datepicker('setDate', last_day);
+        });
 
-          TableBarangKeluar();
-      });
+        $("#filter_kodeproduksi").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "{{ route('barangmasuk.getProductionCode') }}",
+                    data: {
+                        term: $('#filter_kodeproduksi').val(),
+                        date_from: $('#date_from').val(),
+                        date_to: $('#date_to').val(),
+                        pemilik: $('#filter_pemilik').val(),
+                        posisi: $('#filter_posisi').val(),
+                        produk: $('#filter_produk').val(),
+                        mutcat: $('#filter_mutcat').val()
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 1
+        });
 
-      // set header token for ajax request
-      $.ajaxSetup({
-          headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          }
-      });
+        TableBarangKeluar();
+    });
 
-      // /* Fungsi formatRupiah */
-      // function formatRupiah(angka)
-      // {
-      // 	var number_string = angka.replace(/[^.\d]/g, '').toString();
-      // 	split = number_string.split(',');
-      // 	sisa = split[0].length % 3;
-      // 	rupiah = split[0].substr(0, sisa);
-      // 	ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-      // 	// tambahkan titik jika yang di input sudah menjadi angka ribuan
-      // 	if(ribuan){
-      // 		separator = sisa ? '.' : '';
-      // 		rupiah += separator + ribuan.join('.');
-      // 	}
-      // 	rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-      // 	return rupiah;
-      // }
+    var tb_barangkeluar;
 
-      var tb_barangkeluar;
+    function TableBarangKeluar() {
+        $('#table_barangkeluar').dataTable().fnDestroy();
+        tb_barangkeluar = $('#table_barangkeluar').dataTable({
+            responsive: true,
+            serverSide: true,
+            searching: false,
+            ajax: {
+                url: "{{ route('barangkeluar.list') }}",
+                type: "get",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "date_from": $('#date_from').val(),
+                    "date_to": $('#date_to').val(),
+                    "pemilik": $('#filter_pemilik').val(),
+                    "posisi": $('#filter_posisi').val(),
+                    "produk": $('#filter_produk').val(),
+                    "kodeproduksi" : $('#filter_kodeproduksi').val(),
+                    "mutcat": $('#filter_mutcat').val()
+                }
+            },
+            columns: [
+                {data: 'sm_date', name: 'sm_date'},
+                {data: 'pemilik', name: 'pemilik'},
+                {data: 'posisi', name: 'posisi'},
+                {data: 'i_name', name: 'i_name'},
+                {data: 'sm_qty', name: 'sm_qty'},
+                {data: 'm_name', name: 'm_name'},
+                {data: 'action', name: 'action'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
+            dom: 'Bfrtip',
+            buttons: [
+                'excel', 'pdf', 'print'
+            ],
+        });
+        $('.dt-button').addClass('btn-secondary btn btn-sm');
+    }
 
-      function TableBarangKeluar() {
-          $('#table_barangkeluar').dataTable().fnDestroy();
-          tb_barangkeluar = $('#table_barangkeluar').dataTable({
-              responsive: true,
-              serverSide: true,
-              searching: false,
-              ajax: {
-                  url: "{{ route('barangkeluar.list') }}",
-                  type: "get",
-                  data: {
-                      "_token": "{{ csrf_token() }}",
-                      "date_from": $('#date_from').val(),
-                      "date_to": $('#date_to').val(),
-                      "pemilik": $('#filter_pemilik').val(),
-                      "posisi": $('#filter_posisi').val(),
-                      "produk": $('#filter_produk').val(),
-                      "kodeproduksi" : $('#filter_kodeproduksi').val(),
-                      "mutcat": $('#filter_mutcat').val()
-                  }
-              },
-              columns: [
-                  {data: 'sm_date', name: 'sm_date'},
-                  {data: 'pemilik', name: 'pemilik'},
-                  {data: 'posisi', name: 'posisi'},
-                  {data: 'i_name', name: 'i_name'},
-                  {data: 'sm_qty', name: 'sm_qty'},
-                  {data: 'm_name', name: 'm_name'},
-                  {data: 'action', name: 'action'}
-              ],
-              pageLength: 10,
-              lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
-              dom: 'Bfrtip',
-              buttons: [
-                  'excel', 'pdf', 'print'
-              ],
-          });
-          $('.dt-button').addClass('btn-secondary btn btn-sm');
-      }
-
-      function detail(id, detail) {
+    function detail(id, detail) {
         $('#modal_detail').modal('show');
         $.ajax({
             url: baseUrl + "/inventory/barangkeluar/detail" + "/" + id + "/" + detail,
             type: 'get',
             success: function (response) {
-              loadingShow();
-              console.log(response.data.nota)
-              document.getElementById("namaB").setAttribute("value", response.data.i_name);
-              document.getElementById("pemilikB").setAttribute("value", response.data.pemilik);
-              document.getElementById("posisiB").setAttribute("value", response.data.posisi);
-              document.getElementById("codeB").setAttribute("value", response.data.code);
-              document.getElementById("qtyB").setAttribute("value", response.data.jumlah);
-              document.getElementById("hppB").setAttribute("value", response.hpp);
-              document.getElementById("satuanB").setAttribute("value", response.data.u_name);
-              document.getElementById("notaB").setAttribute("value", response.data.nota);
-              console.log(response.detail);
-              $('#table_detail').DataTable().clear().destroy();
-              var tb_detail = $('#table_detail').DataTable({
-                  responsive: true,
-                  info: false,
-                  paging: false,
-                  searching: false
-              });
-              tb_detail.columns.adjust();
+                loadingShow();
+                console.log(response.data.nota)
+                document.getElementById("namaB").setAttribute("value", response.data.i_name);
+                document.getElementById("pemilikB").setAttribute("value", response.data.pemilik);
+                document.getElementById("posisiB").setAttribute("value", response.data.posisi);
+                document.getElementById("codeB").setAttribute("value", response.data.code);
+                document.getElementById("qtyB").setAttribute("value", response.data.jumlah);
+                document.getElementById("hppB").setAttribute("value", response.hpp);
+                document.getElementById("satuanB").setAttribute("value", response.data.u_name);
+                document.getElementById("notaB").setAttribute("value", response.data.nota);
+                console.log(response.detail);
+                $('#table_detail').DataTable().clear().destroy();
+                var tb_detail = $('#table_detail').DataTable({
+                    responsive: true,
+                    info: false,
+                    paging: false,
+                    searching: false
+                });
+                tb_detail.columns.adjust();
 
-              $.each(response.detail, function (key, val) {
-                  tb_detail.row.add([
-                      val.smd_productioncode,
-                      val.smd_qty
-                  ]).draw(false);
-              });
-              loadingHide();
+                $.each(response.detail, function (key, val) {
+                    tb_detail.row.add([
+                    val.smd_productioncode,
+                    val.smd_qty
+                    ]).draw(false);
+                });
+                loadingHide();
             }
         });
-      }
-  </script>
+    }
+</script>
 @endsection

@@ -170,7 +170,7 @@
             }
 
             $('.btn-del').on('click', function(){
-                $('.btn-submit').removeAttr('disabled', '')    
+                $('.btn-submit').removeAttr('disabled', '')
             });
         })
 
@@ -187,11 +187,11 @@
                 success: function (resp) {
                     // console.log(resp);
                     console.log(resp.data.length);
-                                
+
                     if (resp.data.length > 0) { // ketika pegawai memiliki indikator
 
                         $('.section2').remove();
-                        
+
                         $.each(resp.data, function(key, val) {
                             if (key == 0) { // untuk data pertama
                                 $('#kolom_divisi')
@@ -222,7 +222,7 @@
                                                 '<div class="row">'+
                                                     '<div class="col-4">'+
                                                         '<div class="form-group">'+
-                                                            '<input type="text" class="form-control form-control-sm" name="bobot[]" value="'+ val.ke_weight +'">'+
+                                                            '<input type="text" class="form-control form-control-sm digits" name="bobot[]" value="'+ parseFloat(val.ke_weight) +'">'+
                                                         '</div>'+
                                                     '</div>'+
                                                     '<div class="col-2">'+
@@ -230,7 +230,7 @@
                                                     '</div>'+
                                                     '<div class="col-4">'+
                                                         '<div class="form-group">'+
-                                                            '<input type="text" class="form-control form-control-sm" name="target[]" value="'+ val.ke_target +'">'+
+                                                            '<input type="text" class="form-control form-control-sm digits" name="target[]" value="'+ parseFloat(val.ke_target) +'">'+
                                                         '</div>'+
                                                     '</div>'+
                                                     '<div class="col-2 align-items-center" style="height: 30px;display: flex; align-items: center;">'+
@@ -268,7 +268,7 @@
                                                 '<div class="row">'+
                                                     '<div class="col-4">'+
                                                         '<div class="form-group">'+
-                                                            '<input type="text" class="form-control form-control-sm" name="bobot[]" value="'+ val.ke_weight +'">'+
+                                                            '<input type="text" class="form-control form-control-sm digits" name="bobot[]" value="'+ parseFloat(val.ke_weight) +'">'+
                                                         '</div>'+
                                                     '</div>'+
                                                     '<div class="col-2">'+
@@ -276,7 +276,7 @@
                                                     '</div>'+
                                                     '<div class="col-4">'+
                                                         '<div class="form-group">'+
-                                                            '<input type="text" class="form-control form-control-sm" name="target[]" value="'+ val.ke_target +'">'+
+                                                            '<input type="text" class="form-control form-control-sm digits" name="target[]" value="'+ parseFloat(val.ke_target) +'">'+
                                                         '</div>'+
                                                     '</div>'+
                                                     '<div class="col-2" style="height: 30px;display: flex; align-items: center;">'+
@@ -288,12 +288,35 @@
                                     );
                             }
                         });
+
+                        $('.btn-del').on('click', function(){
+                            var idx = $('.idx-btn').index(this);
+                            var isi = $('.indicator').eq(idx).val();
+
+                            var findArray = keranjang.findIndex(e => e == isi)
+                            if (findArray >= 0) {
+                                keranjang.splice(findArray, 1)
+                            }
+                            $(this).parents('.section2').remove()
+                        });
+
+                        $('.digits').inputmask("currency", {
+                            radixPoint: ",",
+                            groupSeparator: ".",
+                            digits: 2,
+                            autoGroup: true,
+                            prefix: '', //Space after $, this will not truncate the first character.
+                            rightAlign: true,
+                            autoUnmask: true,
+                            nullable: false,
+                            // unmaskAsNumber: true,
+                        });
                     } else { // ketika pegawai tidak memiliki indikator
                         $('.section2').remove();
-                        
+
                         index = $('.indicator').index(this);
                         getIndicator(index);
-                        
+
                         $('#kolom_divisi')
                             .before(
                                 '<div class="row section2">'+
@@ -340,10 +363,22 @@
                                 '</div>'
                             );
 
-                        $('.select2').select2({            
+                        $('.select2').select2({
                             theme: "bootstrap",
                             dropdownAutoWidth: true,
                             width: '100%'
+                        });
+
+                        $('.digits').inputmask("currency", {
+                            radixPoint: ",",
+                            groupSeparator: ".",
+                            digits: 2,
+                            autoGroup: true,
+                            prefix: '', //Space after $, this will not truncate the first character.
+                            rightAlign: true,
+                            autoUnmask: true,
+                            nullable: false,
+                            // unmaskAsNumber: true,
                         });
                     }
 
@@ -399,7 +434,7 @@
                                 '</div>'
                             );
 
-                        $('.select2').select2({            
+                        $('.select2').select2({
                             theme: "bootstrap",
                             dropdownAutoWidth: true,
                             width: '100%'
@@ -409,7 +444,7 @@
                         $('.digits').inputmask("currency", {
                             radixPoint: ",",
                             groupSeparator: ".",
-                            digits: 0,
+                            digits: 2,
                             autoGroup: true,
                             prefix: '', //Space after $, this will not truncate the first character.
                             rightAlign: true,
@@ -488,7 +523,7 @@
                     '</div>'
                 );
 
-            $('.select2').select2({            
+            $('.select2').select2({
                 theme: "bootstrap",
                 dropdownAutoWidth: true,
                 width: '100%'
@@ -498,7 +533,7 @@
             $('.digits').inputmask("currency", {
                 radixPoint: ",",
                 groupSeparator: ".",
-                digits: 0,
+                digits: 2,
                 autoGroup: true,
                 prefix: '', //Space after $, this will not truncate the first character.
                 rightAlign: true,
@@ -537,7 +572,7 @@
                 messageSuccess('Berhasil!', 'Data berhasil disimpan!');
                 setTimeout(function(){
                     window.location.href = "{{url('/sdm/kinerjasdm/index')}}"
-                }, 1000)                
+                }, 1000)
             }else{
                 messageFailed('Gagal!', 'Data gagal disimpan!');
             }

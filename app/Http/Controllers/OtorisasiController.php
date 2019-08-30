@@ -229,7 +229,7 @@ class OtorisasiController extends Controller
             $id = Crypt::decrypt($id);
 
             // return json_encode($id);
-            
+
             $data = DB::table('d_adjusmentauth')->where('aa_id', $id)->first();
 
             $date = Carbon::now('Asia/Jakarta');
@@ -319,7 +319,7 @@ class OtorisasiController extends Controller
                                     ->select('*')->get()->last();
 
                 $hpp = ($dataHpp) ? (float) $dataHpp->sm_hpp : 0;
-                
+
                 $selisih = ($data->aa_qtysystem - $data->aa_qtyreal) * $hpp;
 
                 if($selisih > 0){
@@ -538,7 +538,8 @@ class OtorisasiController extends Controller
 
             $values = [
                 'po_id'         => $data->poa_id,
-                'po_nota'       => CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-'),
+                // 'po_nota'       => CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-'),
+                'po_nota'       => $data->poa_nota,
                 'po_date'       => $data->poa_date,
                 'po_supplier'   => $data->poa_supplier,
                 'po_totalnet'   => $data->poa_totalnet,
@@ -1192,7 +1193,7 @@ class OtorisasiController extends Controller
                 "jrdt_keterangan"   => $acc_promosi_kas->pd_keterangan,
                 "jrdt_cashflow"     => $acc_promosi_kas->pd_cashflow
             ]);
-            
+
             $nota = DB::table('d_promotion')->where('p_id', $id)->first();
             $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $nota->p_reff, $parrent->pe_nama, 'TK', Auth::user()->u_company);
 

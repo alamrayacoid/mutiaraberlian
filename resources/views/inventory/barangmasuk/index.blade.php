@@ -53,7 +53,7 @@
                                         </div>
                                     </div>
                                     <div class="col-4">
-                                        {{--<input type="text" class="form-control form-control-sm" id="filter_pemilik" placeholder="Pemilik">--}}
+                                        <!-- <input type="text" class="form-control form-control-sm" id="filter_pemilik" placeholder="Pemilik"> -->
                                         <select class="select2 form-control form-control-sm" name="pemilik" id="filter_pemilik">
                                             <option value="semua" selected>== Semua Pemilik ==</option>
                                             @foreach($pemilik as $comp)
@@ -62,7 +62,7 @@
                                         </select>
                                     </div>
                                     <div class="col-4">
-                                        {{--<input type="text" class="form-control form-control-sm" id="filter_posisi" placeholder="Posisi">--}}
+                                        <!-- <input type="text" class="form-control form-control-sm" id="filter_posisi" placeholder="Posisi"> -->
                                         <select class="select2 form-control form-control-sm" name="posisi" id="filter_posisi">
                                             <option value="semua" selected>== Semua Posisi ==</option>
                                             @foreach($posisi as $position)
@@ -73,7 +73,7 @@
                                 </div>
                                 <div class="row col-12">
                                     <div class="col-4">
-                                        {{--<input type="text" class="form-control form-control-sm" id="filter_produk" placeholder="Produk">--}}
+                                        <!-- <input type="text" class="form-control form-control-sm" id="filter_produk" placeholder="Produk"> -->
                                         <select class="select2 form-control form-control-sm" name="produk" id="filter_produk">
                                             <option value="semua" selected>== Semua Produk ==</option>
                                             @foreach($produk as $item)
@@ -83,12 +83,15 @@
                                     </div>
                                     <div class="col-4">
                                         <!-- <p>Kosongkan field jika ingin menampilkan semua hasil pencarian</p> -->
-                                        <select class="select2 form-control form-control-sm" name="kodeproduksi" id="filter_kodeproduksi">
+                                        <input type="text" class="form-control form-control-sm" id="filter_kodeproduksi" placeholder="Kode Produksi" name="kodeproduksi" >
+                                        {{--
+                                        <!-- <select class="select2 form-control form-control-sm" name="kodeproduksi" id="filter_kodeproduksi">
                                             <option value="semua" selected>== Semua Kode Produksi ==</option>
                                             @foreach($kodeproduksi as $kp)
                                                 <option value="{{ $kp->sd_code }}">{{ $kp->sd_code }}</option>
                                             @endforeach
-                                        </select>
+                                        </select> -->
+                                        --}}
                                     </div>
                                     <div class="col-4 input-group">
                                         <select class="form-control form-control-sm" id="filter_mutcat" name="mutcat">
@@ -257,6 +260,27 @@ $(document).ready(function(){
 		$('#date_from').datepicker('setDate', first_day);
 		$('#date_to').datepicker('setDate', last_day);
 	});
+
+    $("#filter_kodeproduksi").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "{{ route('barangmasuk.getProductionCode') }}",
+                data: {
+                    term: $('#filter_kodeproduksi').val(),
+                    date_from: $('#date_from').val(),
+    				date_to: $('#date_to').val(),
+                    pemilik: $('#filter_pemilik').val(),
+                    posisi: $('#filter_posisi').val(),
+                    produk: $('#filter_produk').val(),
+                    mutcat: $('#filter_mutcat').val()
+                },
+                success: function (data) {
+                    response(data);
+                }
+            });
+        },
+        minLength: 1
+    });
 
 	TableCabang();
 });

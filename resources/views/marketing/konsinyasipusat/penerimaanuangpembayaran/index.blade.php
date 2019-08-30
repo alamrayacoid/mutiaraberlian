@@ -52,9 +52,13 @@
 								<div class="col-md-6 col-sm-12">
 									<div class="form-group">
 										<select name="" id="cashAccountPP" class="form-control form-control-sm mb-3 select2">
-											<option value="KB" selected>Kas Besar</option>
+											<option value="">== Pilih Akun ==</option>
+											@foreach($paymentMethod as $pm)
+												<option value="{{ $pm->pm_id }}">{{ $pm->getAkun->ak_nomor }} - {{ $pm->pm_name }}</option>
+											@endforeach
+											<!-- <option value="KB" selected>Kas Besar</option>
 											<option value="KC">Kas Kecil</option>
-											<option value="KP">Kas Penjualan Tunai</option>
+											<option value="KP">Kas Penjualan Tunai</option> -->
 										</select>
 									</div>
 								</div>
