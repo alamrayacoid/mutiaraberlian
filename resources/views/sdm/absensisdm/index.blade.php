@@ -635,14 +635,15 @@
 		});
 	}
 	// show modal detail presence in dashboard
-	function showDetailAbsenPegawai(id, p_emp)
+	function showDetailAbsenPegawai(id, p_emp, p_date)
 	{
 		// console.log(p_employee);
 		$.ajax({
 			url: "{{ route('presensi.getDetailAbsenPegawai') }}",
 			data: {
 				id: id,
-				employee: p_emp
+				employee: p_emp,
+				tanggal: p_date
 			},
 			success: function(resp) {
 				console.log(resp);

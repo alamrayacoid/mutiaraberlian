@@ -121,7 +121,7 @@ class PresensiController extends Controller
             })
             ->addColumn('action', function ($datas) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm">
-                <button class="btn btn-primary btn-detail" type="button" onclick="showDetailAbsenPegawai(\'' . $datas->p_id . '\', \'' . $datas->p_employee . '\')" title="Detail Presensi Pegawai"><i class="fa fa-folder"></i></button>
+                <button class="btn btn-primary btn-detail" type="button" onclick="showDetailAbsenPegawai(\'' . $datas->p_id . '\', \'' . $datas->p_employee . '\', \'' . $datas->p_date . '\')" title="Detail Presensi Pegawai"><i class="fa fa-folder"></i></button>
                 </div></div>';
                 // <button class="btn btn-warning btn-edit" type="button" onclick="editDetailPresence(' . $datas->p_id . ')"  title="Edit Presensi"><i class="fa fa-arrow-right"></i></button>
             })
@@ -281,13 +281,16 @@ class PresensiController extends Controller
         try {
             $pr_id = $request->id;
             $pr_emp = $request->employee;
+            $pr_tgl = Carbon::parse($request->tanggal);
 
             // $press = d_presence::where('p_id', $pr_id)
             //                     ->where('p_employee', $pr_emp)
             //                     ->first();
             // dd($p_emp);
 
-            $presences = d_presence::where('p_id', $pr_id)
+            $presences = d_presence::whereMonth('p_date', $pr_tgl->month)
+            ->whereYear('p_date', $pr_tgl->year)
+            // where('p_id', $pr_id)
             ->where('p_employee', $pr_emp)
             ->with(['getEmployee' => function ($q) {
                 $q->with('getDivision')->with('getCompany');
@@ -296,6 +299,7 @@ class PresensiController extends Controller
             ->select(DB::raw('date_format(p_date, "%d") as p_date, p_entry, p_out, p_status, p_note, e_name'))
             ->orderBy('e_name', 'asc')
             ->get();
+            // dd($presences);
 
             // $pr_date = Carbon::parse($presences->p_date)->format('d M Y');
             // dd($pr_date);

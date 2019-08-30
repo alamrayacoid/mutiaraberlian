@@ -64,8 +64,8 @@
 								<th class="text-center">No</th>
 								<th class="text-center">Pegawai</th>
 								<th class="text-center">Hadir</th>
-								<th class="text-center">Tidak masuk</th>
 								<th class="text-center">Ijin</th>
+								<th class="text-center">Tidak masuk</th>
 								<th class="text-center">Cuti</th>
 								<th class="text-center">Aksi</th>
 							</tr>
