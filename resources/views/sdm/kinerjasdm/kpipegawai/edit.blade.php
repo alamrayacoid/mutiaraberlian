@@ -326,6 +326,7 @@
 
     $('.btn-submit').on('click', function() {
         var datas = $('#form-edit').serialize();
+
         $.confirm({
             animation: 'RotateY',
             closeAnimation: 'scale',
@@ -339,14 +340,17 @@
                     btnClass: 'btn-blue',
                     text: 'Ya',
                     action: function() {
+                        loadingShow();
                         axios.post('{{url('/sdm/kinerjasdm/kpi-pegawai/update-kpi-pegawai')}}', datas)
                         .then(function(resp){
                             if (resp.data.status == 'success') {
+                                loadingHide();
                                 messageSuccess('Berhasil!', 'Data berhasil diperbarui!');
                                 setTimeout(function(){
                                     window.location.href = "{{url('/sdm/kinerjasdm/index')}}"
                                 }, 1000)                
                             }else{
+                                loadingHide();
                                 messageFailed('Gagal!', 'Data gagal diperbarui!');
                             }
                         })

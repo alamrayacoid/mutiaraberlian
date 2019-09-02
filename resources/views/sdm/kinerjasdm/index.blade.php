@@ -730,7 +730,7 @@
     }
 </script>
 
-<script type="text/javascript">
+<script type="text/javascript"> // form periode di input kpi
     var month_years = new Date();
     const month_year = new Date(month_years.getFullYear(), month_years.getMonth());
 
@@ -747,10 +747,81 @@
     $('#periode_kpi').on('change', function(){
         $("#table_indikator_divisi_pegawai_index > tbody").find('tr').remove();
     });
+</script>
 
-  </script>
+<script type="text/javascript"> // form periode di dashboard kpi
+    var month_years_dashboard = new Date();
+    const month_year_dashboard = new Date(month_years_dashboard.getFullYear(), month_years_dashboard.getMonth());
 
-  <script type="text/javascript">
+    $("#periode_dashboard").datepicker( {
+    format: "mm-yyyy",
+    viewMode: "months", 
+    minViewMode: "months"
+    });
+
+    $('#periode_dashboard').datepicker('setDate', month_year);
+    
+    $('#periode_dashboard').datepicker("setDate", new Date(month_years.getFullYear(), month_years.getMonth()));
+
+    $('#periode_dashboard').on('change', function(){
+        $("#table_dashboard_kpi_pegawai > tbody").find('tr').remove();
+        $("#table_dashboard_kpi_divisi > tbody").find('tr').remove();
+    });
+</script>
+
+<script type="text/javascript">
+    function getDashboardKpi() {
+        var periode_dashboard = $('#periode_dashboard').val();
+        
+        $('#table_dashboard_kpi_pegawai').dataTable().fnDestroy();
+        table_dashboard_kpi_pegawai = $('#table_dashboard_kpi_pegawai').DataTable({
+            serverSide: true,
+            bAutoWidth: true,
+            processing:true,
+            ajax: {
+                url: '{{ route("dashboardkpipegawai.getKpiDashboardPegawai") }}',
+                type: "post",
+                data: {
+                        "_token": "{{ csrf_token() }}",
+                        "periode_dashboard": periode_dashboard
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex', className: "text-center"},
+                {data: 'e_name', name: 'e_name'},
+                {data: 'sum_point_pegawai', name: 'sum_point_pegawai'}
+                // {data: 'action', className: "text-center"}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+
+        $('#table_dashboard_kpi_divisi').dataTable().fnDestroy();
+        table_dashboard_kpi_divisi = $('#table_dashboard_kpi_divisi').DataTable({
+            serverSide: true,
+            bAutoWidth: true,
+            processing:true,
+            ajax: {
+                url: '{{ route("dashboardkpidivisi.getKpiDashboardDivisi") }}',
+                type: "post",
+                data: {
+                        "_token": "{{ csrf_token() }}",
+                        "periode_dashboard": periode_dashboard
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex', className: "text-center"},
+                {data: 'm_name', name: 'm_name'},
+                {data: 'sum_point_divisi', name: 'sum_point_divisi'}
+                // {data: 'action', className: "text-center"}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    }
+</script>
+
+<script type="text/javascript">
     $(document).ready(function () {
         setTimeout(function () {
             getDataIndikatorPegawaiIndex();
@@ -959,5 +1030,5 @@
         //     });
         // }
 
-  </script>
+</script>
 @endsection
