@@ -503,6 +503,9 @@ Route::group(['middleware' => 'auth'], function () {
     // END
     // TAB REWARD
     Route::get('/sdm/penggajian/reward/getdata-reward', 'SDM\BenefitsController@getDataMasterReward')->name('reward.getDataMasterReward');
+    Route::get('/sdm/penggajian/reward/getdata-edit-reward', 'SDM\BenefitsController@getDataEditReward')->name('reward.getDataEditReward');
+    Route::get('/sdm/penggajian/reward/getdata-edit-punishment', 'SDM\BenefitsController@getDataEditPunishment')->name('reward.getDataEditPunishment');
+    Route::post ('/sdm/penggajian/reward/update-master-benefits', 'SDM\BenefitsController@updateMasterBenefits')->name('reward.updateMasterBenefits');
     Route::get('/sdm/penggajian/reward/getdata-punishment', 'SDM\BenefitsController@getDataMasterPunishment')->name('reward.getDataMasterPunishment');
     Route::post('/sdm/penggajian/reward/simpan-master-benefits', 'SDM\BenefitsController@saveMasterBenefits')->name('reward.saveMasterBenefits');
     Route::get('/sdm/penggajian/reward/getdata-reward-punishment', 'SDM\BenefitsController@getDataRewardPunishment')->name('reward.getDataRewardPunishment');
@@ -513,10 +516,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sdm/penggajian/reward-punishment/save-reward-punishment', 'SDM\BenefitsController@saveDataRewardPunishmentPegawai')->name('reward.saveDataRewardPunishmentPegawai');
     Route::post('/sdm/penggajian/reward-punishment/hapus-reward-punishment', 'SDM\BenefitsController@deleteDataRewardPunishmentPegawai')->name('reward.deleteDataRewardPunishmentPegawai');
     // TAB TUNJANGAN
-    Route::get('/sdm/penggajian/tunjangan/create', 'SDMController@create_tunjangan')->name('tunjangan.create');
-    Route::get('/sdm/penggajian/tunjangan/edit', 'SDMController@edit_tunjangan')->name('tunjangan.edit');
-    Route::get('/sdm/penggajian/tunjangan/setting', 'SDMController@set_tunjangan')->name('tunjangan.setting');
-    Route::get('/sdm/penggajian/tunjangan/edit_setting_tunjangan', 'SDMController@edit_set_tunjangan')->name('tunjangan.setting.edit');
+    Route::get('/sdm/penggajian/tunjangan/getdata-tunjangan', 'SDM\BenefitsController@getDataTunjangan')->name('tunjangan.getDataTunjangan');
+    Route::get('/sdm/penggajian/tunjangan/getdata-master-tunjangan', 'SDM\BenefitsController@getDataMasterTunjangan')->name('tunjangan.getDataMasterTunjangan');
+    Route::get('/sdm/penggajian/tunjangan/getdata-edit-tunjangan', 'SDM\BenefitsController@getDataEditTunjangan')->name('tunjangan.getDataEditTunjangan');
+    Route::get('/sdm/penggajian/tunjangan/edit-tunjangan-pegawai/{id}/{periode}', 'SDM\BenefitsController@editTunjanganPegawai')->name('tunjangan.editTunjanganPegawai');
+    Route::get('/sdm/penggajian/tunjangan/getdata-tunjangan-pegawai', 'SDM\BenefitsController@getDataTunjanganPegawai')->name('tunjangan.getDataTunjanganPegawai');
     // END
     // TAB PRODUKSI
     Route::get('/sdm/penggajian/produksi/create', 'SDMController@create_produksi')->name('produksi.create');
