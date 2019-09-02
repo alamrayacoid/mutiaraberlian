@@ -56,7 +56,8 @@
     var table_harilibur;
     var table_aturankehadiran;
     var table_jeniscuti;
-	$(document).ready(function() {
+		
+		$(document).ready(function() {
 		var cur_date = new Date();
 		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
 		const last_day = new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
@@ -634,14 +635,15 @@
 		});
 	}
 	// show modal detail presence in dashboard
-	function showDetailAbsenPegawai(id, p_emp)
+	function showDetailAbsenPegawai(id, p_emp, p_date)
 	{
 		// console.log(p_employee);
 		$.ajax({
 			url: "{{ route('presensi.getDetailAbsenPegawai') }}",
 			data: {
 				id: id,
-				employee: p_emp
+				employee: p_emp,
+				tanggal: p_date
 			},
 			success: function(resp) {
 				console.log(resp);
@@ -701,14 +703,13 @@
 	}
 
 	// show modal detail presence
-	function showDetailPresence(id, p_date, e_company)
+	function showDetailPresence(id, p_date)
 	{
 		$.ajax({
 			url: "{{ route('presensi.getDetailPresence') }}",
 			data: {
 				id: id,
-				tanggal: p_date,
-				cabang: e_company
+				tanggal: p_date
 			},
 			success: function(resp) {
 				console.log(resp);
@@ -1211,5 +1212,9 @@
             }
         });
     }
+
+    $('#btnRefreshTable').on('click', function(){
+        getPresenceSummary();
+    });
 </script>
 @endsection

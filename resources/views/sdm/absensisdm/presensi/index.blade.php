@@ -21,7 +21,7 @@
 							<span class="input-group-addon">-</span>
 							<input type="text" class="form-control" id="filterDateToPr" name="filterDateToPr">
 							<div class="input-group-append">
-								<button class="btn btn-primary" type="button" id="brnRefreshDatePr"><i class="fa fa-refresh"></i></button>
+								<button class="btn btn-primary" type="button" id="btnRefreshTable"><i class="fa fa-refresh"></i></button>
 							</div>
 						</div>
 					</div>

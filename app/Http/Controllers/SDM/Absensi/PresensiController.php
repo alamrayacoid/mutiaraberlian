@@ -121,7 +121,7 @@ class PresensiController extends Controller
             })
             ->addColumn('action', function ($datas) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm">
-                <button class="btn btn-primary btn-detail" type="button" onclick="showDetailAbsenPegawai(\'' . $datas->p_id . '\', \'' . $datas->p_employee . '\')" title="Detail Presensi Pegawai"><i class="fa fa-folder"></i></button>
+                <button class="btn btn-primary btn-detail" type="button" onclick="showDetailAbsenPegawai(\'' . $datas->p_id . '\', \'' . $datas->p_employee . '\', \'' . $datas->p_date . '\')" title="Detail Presensi Pegawai"><i class="fa fa-folder"></i></button>
                 </div></div>';
                 // <button class="btn btn-warning btn-edit" type="button" onclick="editDetailPresence(' . $datas->p_id . ')"  title="Edit Presensi"><i class="fa fa-arrow-right"></i></button>
             })
@@ -226,14 +226,14 @@ class PresensiController extends Controller
                     return '<td>' . $datas->countC . '</td>';
                 }
             })
-            // ->addColumn('action', function ($datas) {
-            //     return '<div class="text-center"><div class="btn-group btn-group-sm">
-            //     <button class="btn btn-primary btn-detail" type="button" onclick="showDetailPresence(' . $datas->p_id . ')" title="Detail Presensi"><i class="fa fa-folder"></i></button>
-            //     </div></div>';
             ->addColumn('action', function ($datas) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm">
-                <button class="btn btn-primary btn-detail" type="button" onclick="showDetailPresence(\'' . $datas->p_id . '\', \'' . $datas->p_date . '\', \'' . $datas->getEmployee->e_company . '\')" title="Detail Presensi"><i class="fa fa-folder"></i></button>
+                <button class="btn btn-primary btn-detail" type="button" onclick="showDetailPresence(\'' . $datas->p_id . '\', \'' . $datas->p_date . '\')" title="Detail Presensi"><i class="fa fa-folder"></i></button>
                 </div></div>';
+            // ->addColumn('action', function ($datas) {
+            //     return '<div class="text-center"><div class="btn-group btn-group-sm">
+            //     <button class="btn btn-primary btn-detail" type="button" onclick="showDetailPresence(\'' . $datas->p_id . '\', \'' . $datas->p_date . '\', \'' . $datas->getEmployee->e_company . '\')" title="Detail Presensi"><i class="fa fa-folder"></i></button>
+            //     </div></div>';
                 // <button class="btn btn-warning btn-edit" type="button" onclick="editDetailPresence(' . $datas->p_id . ')"  title="Edit Presensi"><i class="fa fa-arrow-right"></i></button>
             })
             ->rawColumns(['date', 'hadir', 'ijin', 'tidakMasuk', 'cuti', 'action'])
@@ -281,13 +281,16 @@ class PresensiController extends Controller
         try {
             $pr_id = $request->id;
             $pr_emp = $request->employee;
+            $pr_tgl = Carbon::parse($request->tanggal);
 
             // $press = d_presence::where('p_id', $pr_id)
             //                     ->where('p_employee', $pr_emp)
             //                     ->first();
             // dd($p_emp);
 
-            $presences = d_presence::where('p_id', $pr_id)
+            $presences = d_presence::whereMonth('p_date', $pr_tgl->month)
+            ->whereYear('p_date', $pr_tgl->year)
+            // where('p_id', $pr_id)
             ->where('p_employee', $pr_emp)
             ->with(['getEmployee' => function ($q) {
                 $q->with('getDivision')->with('getCompany');
@@ -296,6 +299,7 @@ class PresensiController extends Controller
             ->select(DB::raw('date_format(p_date, "%d") as p_date, p_entry, p_out, p_status, p_note, e_name'))
             ->orderBy('e_name', 'asc')
             ->get();
+            // dd($presences);
 
             // $pr_date = Carbon::parse($presences->p_date)->format('d M Y');
             // dd($pr_date);
@@ -317,31 +321,30 @@ class PresensiController extends Controller
         try {
             $prId = $request->id;
             $prTanggal = $request->tanggal;
-            $prCabang = $request->cabang;
 
-            // if (!is_null($prCabang)) {
-            //     $datas = $datas->whereHas('getEmployee', function ($q) use ($branch) {
-            //         $q->where('e_company', $branch);
-            //     });
-            // }
+            // $press = d_presence::where('p_id', $prId)->first();
+            // dd($press);
 
-            // $prCabangPegawai = m_employee::where('e_company', $prCabang)->get();
-
-            $press = d_presence::where('p_id', $prId)
-                                ->first();
-                                
-            if ($prCabang == true) {
-                $presences = d_presence::whereDate('p_date', $prTanggal)
-                ->with(['getEmployee' => function ($q) {
-                    $q->with('getDivision')->with('getCompany');
-                }])
-                ->join('m_employee', 'p_employee', 'e_id')
-                ->where('e_company', $prCabang)
-                ->orderBy('e_name', 'asc')
-                ->get();
-            }            
-
+            $presences = d_presence::where('p_id', $prId)
+            ->whereDate('p_date', $prTanggal)
+            ->with(['getEmployee' => function ($q) {
+                $q->with('getDivision')->with('getCompany');
+            }])
+            ->join('m_employee', 'p_employee', 'e_id')
+            ->orderBy('e_name', 'asc')
+            ->get();
             // dd($presences);
+                                
+            // if ($prCabang == true) {
+            //     $presences = d_presence::whereDate('p_date', $prTanggal)
+            //     ->with(['getEmployee' => function ($q) {
+            //         $q->with('getDivision')->with('getCompany');
+            //     }])
+            //     ->join('m_employee', 'p_employee', 'e_id')
+            //     ->where('e_company', $prCabang)
+            //     ->orderBy('e_name', 'asc')
+            //     ->get();
+            // }  
 
             return response()->json($presences);
         }

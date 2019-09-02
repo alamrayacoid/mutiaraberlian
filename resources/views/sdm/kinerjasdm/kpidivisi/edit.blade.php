@@ -343,14 +343,17 @@
                     btnClass: 'btn-blue',
                     text: 'Ya',
                     action: function() {
+                        loadingShow();
                         axios.post('{{url('/sdm/kinerjasdm/kpi-divisi/update-kpi-divisi')}}', datas)
                         .then(function(resp){
                             if (resp.data.status == 'success') {
+                                loadingHide();
                                 messageSuccess('Berhasil!', 'Data berhasil diperbarui!');
                                 setTimeout(function(){
                                     window.location.href = "{{url('/sdm/kinerjasdm/index')}}"
                                 }, 1000)                
                             }else{
+                                loadingHide();
                                 messageFailed('Gagal!', 'Data gagal diperbarui!');
                             }
                         })

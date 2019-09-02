@@ -566,14 +566,18 @@
 
     $('.btn-submit').on('click', function() {
         var datas = $('#form-add').serialize();
+
+        loadingShow();
         axios.post('{{url('/sdm/kinerjasdm/kpi-pegawai/save-kpi-pegawai')}}', datas)
         .then(function(resp){
             if (resp.data.status == 'success') {
+                loadingHide();
                 messageSuccess('Berhasil!', 'Data berhasil disimpan!');
                 setTimeout(function(){
                     window.location.href = "{{url('/sdm/kinerjasdm/index')}}"
                 }, 1000)                
             }else{
+                loadingHide();
                 messageFailed('Gagal!', 'Data gagal disimpan!');
             }
         })

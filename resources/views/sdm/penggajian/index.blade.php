@@ -5,6 +5,7 @@
 <!-- modal scoreboard pegawai -->
 @include('sdm.penggajian.cashbon.modal')
 @include('sdm.penggajian.reward.modal')
+@include('sdm.penggajian.tunjangan.modal')
 <!-- end -->
 
 <article class="content">
@@ -33,8 +34,8 @@
                             aria-controls="tabreward" data-toggle="tab" role="tab">Reward & Punishment</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#list_tunjangan" class="nav-link" data-target="#list_tunjangan"
-                            aria-controls="list_tunjangan" data-toggle="tab" role="tab">Tunjangan</a>
+                        <a href="#tabtunjangan" class="nav-link" data-target="#tabtunjangan"
+                            aria-controls="tabtunjangan" data-toggle="tab" role="tab">Tunjangan</a>
                     </li>
                     <li class="nav-item">
                         <a href="#list_payrollmanajemen" class="nav-link" data-target="#list_payrollmanajemen"
@@ -66,9 +67,10 @@
     var table_masterreward;
     var table_masterpunishment;
     var table_rewardpunishment;
+    var table_tunjangan;
     var table_detailrewardpunishment;
+    var table_mastertunjangan;
 	$(document).ready(function(){
-		var table_bar = $('#table_tunjangan').DataTable();
 		var table_rab = $('#table_payrollmanajemen').DataTable();
 
         setTimeout(function(){
@@ -88,13 +90,22 @@
                 paging: false
             });
 
+            table_mastertunjangan = $('#table_mastertunjangan').DataTable({
+                responsive: true,
+                searching: false,
+                paging: false
+            });
+
             table_rewardpunishment = $('#table_rewardpunishment').DataTable();
+            table_tunjangan = $('#table_tunjangan').DataTable();
             table_detailrewardpunishment = $('#table_detailrewardpunishment').DataTable();
 
             table_masterreward.columns.adjust();
+            table_mastertunjangan.columns.adjust();
             table_masterpunishment.columns.adjust();
             table_detailrewardpunishment.columns.adjust();
             table_rewardpunishment.columns.adjust();
+            table_tunjangan.columns.adjust();
         },700);
 
         $("#namapegawai").autocomplete({
@@ -124,6 +135,12 @@
             autoclose: true
         });
 
+        $("#periode_tunjangan").datepicker( {
+            format: "mm-yyyy",
+            viewMode: "months",
+            minViewMode: "months",
+            autoclose: true
+        });
 
     })
 
@@ -293,6 +310,44 @@
         })
     }
 
+    function editMasterReward(id){
+        loadingShow();
+        axios.get('{{ route("reward.getDataEditReward") }}', {
+            params:{
+                id: id
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            $('#modal_masterreward').modal('hide');
+            $('#edit_masterreward').val(data.b_name);
+            $('#edit_idreward').val(id);
+            $('#modal_editMasterReward').modal('show');
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function editMasterPunishment(id){
+        loadingShow();
+        axios.get('{{ route("reward.getDataEditPunishment") }}', {
+            params:{
+                id: id
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            $('#modal_masterpunishment').modal('hide');
+            $('#edit_masterpunishment').val(data.b_name);
+            $('#edit_idpunishment').val(id);
+            $('#modal_editMasterPunishment').modal('show');
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
     function getMasterPunishment(){
         loadingShow();
         $('.add_masterbenefits').val('');
@@ -307,7 +362,7 @@
             $.each(data, function(idx, val){
                 table_masterpunishment.row.add([
                     val.b_name,
-                    '<center><button type="button" class="btn btn-warning btn-sm" onclick="editMasterReward('+val.b_id+')">Edit</button></center>'
+                    '<center><button type="button" class="btn btn-warning btn-sm" onclick="editMasterPunishment('+val.b_id+')">Edit</button></center>'
                 ]).draw().node();
             });
             table_masterpunishment.columns.adjust();
@@ -325,6 +380,9 @@
         }
         else if (type == 'P') {
             reward = $('#add_masterpunishment').val();
+        }
+        else if (type == 'T') {
+            reward = $('#add_mastertunjangan').val();
         }
         if (reward == null || reward == '') {
             loadingHide();
@@ -344,6 +402,63 @@
                 }
                 else if (type == 'P') {
                     getMasterPunishment();
+                }
+                else if (type == 'T') {
+                    getMasterTunjangan();
+                }
+            } else if (response.data.status == 'gagal') {
+                messageWarning("Gagal", response.data.message);
+            }
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function updateMasterBenefits(type){
+        loadingShow();
+        let nama = '';
+        let id = '';
+        if (type == 'R') {
+            nama = $('#edit_masterreward').val();
+            id = $('#edit_idreward').val();
+        }
+        else if (type == 'P') {
+            nama = $('#edit_masterpunishment').val();
+            id = $('#edit_idpunishment').val();
+        }
+        else if (type == 'T') {
+            nama = $('#edit_mastertunjangan').val();
+            id = $('#edit_idtunjangan').val();
+        }
+        if (nama == null || nama == '') {
+            loadingHide();
+            messageWarning("Perhatian", "Input tidak boleh kosong!!");
+            return false;
+        }
+        axios.post('{{ route("reward.updateMasterBenefits") }}', {
+            "_token": "{{ csrf_token() }}",
+            "nama": nama,
+            "type": type,
+            "id": id
+        }).then(function(response){
+            loadingHide();
+            if (response.data.status == 'sukses') {
+                messageSuccess("Berhasil", "Data berhasil disimpan");
+                if (type == 'R') {
+                    $('#modal_editMasterReward').modal('hide');
+                    getMasterReward();
+                    $('#modal_masterreward').modal('show');
+                }
+                else if (type == 'P') {
+                    $('#modal_editMasterPunishment').modal('hide');
+                    getMasterPunishment();
+                    $('#modal_masterpunishment').modal('show');
+                }
+                else if (type == 'T') {
+                    $('#modal_editMasterTunjangan').modal('hide');
+                    getMasterTunjangan();
+                    $('#modal_mastertunjangan').modal('show');
                 }
             } else if (response.data.status == 'gagal') {
                 messageWarning("Gagal", response.data.message);
@@ -421,6 +536,90 @@
             loadingHide();
             alert('error');
         })
+    }
+
+    function editRewardPunishment(id){
+        let reward = $('#periode_reward').val();
+        location.href = baseUrl + '/sdm/penggajian/reward-punishment/edit-reward-punishment/' + id + '/' + reward;
+    }
+
+// Tunjangan
+    function getDataTunjangan(){
+        loadingShow();
+        axios.get('{{ route("tunjangan.getDataTunjangan") }}', {
+            params:{
+                periode: $('#periode_tunjangan').val()
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            table_rewardpunishment.clear().draw();
+            $.each(data, function(idx, val){
+                if (val.tunjangan == null) {
+                    val.tunjangan = 0;
+                }
+
+                table_tunjangan.row.add([
+                    val.e_nip,
+                    val.e_name,
+                    '<span class="pull-right">'+convertToRupiah(val.tunjangan)+'</span>',
+                    '<center><button type="button" class="btn btn-primary btn-sm" onclick="detailTunjangan(\''+val.e_id+'\')">Detail</button>'+
+                    '<button type="button" class="btn btn-warning btn-sm" onclick="editTunjangan(\''+val.e_id+'\')">Edit</button></center>'
+                ]).draw().node();
+            });
+            table_tunjangan.columns.adjust();
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function getMasterTunjangan(){
+        loadingShow();
+        $('.add_mastertunjangan').val('');
+        axios.get('{{ route("tunjangan.getDataMasterTunjangan") }}', {
+            params:{
+
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            table_mastertunjangan.clear().draw();
+            $.each(data, function(idx, val){
+                table_mastertunjangan.row.add([
+                    val.b_name,
+                    '<center><button type="button" class="btn btn-warning btn-sm" onclick="editMasterTunjangan('+val.b_id+')">Edit</button></center>'
+                ]).draw().node();
+            });
+            table_mastertunjangan.columns.adjust();
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function editMasterTunjangan(id){
+        loadingShow();
+        axios.get('{{ route("tunjangan.getDataEditTunjangan") }}', {
+            params:{
+                id: id
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            $('#modal_mastertunjangan').modal('hide');
+            $('#edit_mastertunjangan').val(data.b_name);
+            $('#edit_idtunjangan').val(id);
+            $('#modal_editMasterTunjangan').modal('show');
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function editTunjangan(id){
+        let bulan = $('#periode_tunjangan').val();
+        location.href = baseUrl + '/sdm/penggajian/tunjangan/edit-tunjangan-pegawai/' + id + '/' + bulan;
     }
 </script>
 @endsection
