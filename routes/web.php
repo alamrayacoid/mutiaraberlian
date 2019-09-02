@@ -420,6 +420,10 @@ Route::group(['middleware' => 'auth'], function () {
     // Kinerja
     Route::get('/sdm/kinerjasdm/index', 'SDMController@kinerja')->name('kinerjasdm.index');
 
+    // Dashboard KPI
+    Route::post('/sdm/kinerjasdm/dashboard-kpi/get-dashboard-kpi-pegawai', 'SDM\MasterKPIController@getKpiDashboardPegawai')->name('dashboardkpipegawai.getKpiDashboardPegawai');
+    Route::post('/sdm/kinerjasdm/dashboard-kpi/get-dashboard-kpi-divisi', 'SDM\MasterKPIController@getKpiDashboardDivisi')->name('dashboardkpidivisi.getKpiDashboardDivisi');
+
     // Kelola Input KPI
     Route::post('/sdm/kinerjasdm/input-kpi/get-data-indikator-kpi-pegawai', 'SDM\MasterKPIController@getDataIndikatorKpiPegawai')->name('inputkpi.getDataIndikatorKpiPegawai');
     Route::post('/sdm/kinerjasdm/input-kpi/get-data-indikator-kpi-divisi', 'SDM\MasterKPIController@getDataIndikatorKpiDivisi')->name('inputkpi.getDataIndikatorKpiDivisi');

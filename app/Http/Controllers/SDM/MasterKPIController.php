@@ -1083,6 +1083,65 @@ class MasterKPIController extends Controller
         // ]);
     }
 
+    public function getKpiDashboardPegawai(Request $request)
+    {
+        $periode = "01-" . $request->periode_dashboard;
+        $periode = Carbon::createFromFormat('d-m-Y', $periode);
+        $periodes = DB::table('d_kpi')
+                    ->select('k_id', 'k_type', 'k_periode', 'k_employee', 'k_department')
+                    ->whereMonth('k_periode', $periode->month)
+                    ->whereYear('k_periode', $periode->year)
+                    ->first();
+
+        if ($periodes == true) {
+            $datas_pegawai = DB::table('d_kpidt')
+            ->join('d_kpi', 'k_id', 'kd_kpi')
+            ->join('m_employee', 'e_id', 'k_employee')
+            ->select('kd_kpi', 'e_name',
+                DB::RAW('SUM(kd_point) as sum_point_pegawai')
+            )
+            ->whereMonth('k_periode', $periode->month)
+            ->whereYear('k_periode', $periode->year)
+            ->groupBy('kd_kpi')
+            ->get();
+        } elseif ($periodes == false) {
+            $datas_pegawai = [];
+        }
+        return Datatables::of($datas_pegawai)
+            ->addIndexColumn()
+            ->make(true);
+    }
+
+    public function getKpiDashboardDivisi(Request $request)
+    {
+        $periode = "01-" . $request->periode_dashboard;
+        $periode = Carbon::createFromFormat('d-m-Y', $periode);
+        $periodes = DB::table('d_kpi')
+                    ->select('k_id', 'k_type', 'k_periode', 'k_employee', 'k_department')
+                    ->whereMonth('k_periode', $periode->month)
+                    ->whereYear('k_periode', $periode->year)
+                    ->first();
+
+        if ($periodes == true) {
+            $datas_divisi = DB::table('d_kpidt')
+            ->join('d_kpi', 'k_id', 'kd_kpi')
+            ->join('m_divisi', 'm_id', 'k_department')
+            ->select('kd_kpi', 'm_name',
+                DB::RAW('SUM(kd_point) as sum_point_divisi')
+            )
+            ->whereMonth('k_periode', $periode->month)
+            ->whereYear('k_periode', $periode->year)
+            ->groupBy('kd_kpi')
+            ->get();
+        } elseif ($periodes == false) {
+            $datas_divisi = [];
+        }
+
+        return Datatables::of($datas_divisi)
+            ->addIndexColumn()
+            ->make(true);
+    }
+
     public function getDataCopy(Request $request)
     {
         $status = $request->status;
