@@ -822,9 +822,19 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/keuangan/laporankeuangan/neraca/index', 'KeuanganController@laporankeuangan_neraca')->name('laporankeuangan.neraca');
     Route::get('/keuangan/laporankeuangan/labarugi/index', 'KeuanganController@laporankeuangan_labarugi')->name('laporankeuangan.labarugi');
     Route::get('/keuangan/laporankeuangan/aruskas/index', 'KeuanganController@laporankeuangan_aruskas')->name('laporankeuangan.aruskas');
-    // Penerimaan Piutang
+    // Penerimaan Piutang Agen
     Route::get('/keuangan/penerimaanpiutang/index', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@index')->name('penerimaanpiutang.index');
-    Route::get('/keuangan/penerimaanpiutang/pembayarancabang/get-data-list-cabang', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataListCabang')->name('pembayarancabang.getdatalistcabang');
+    Route::get('/keuangan/penerimaanpiutang/agen/getdata', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataPenerimaanAgen')->name('penerimaanpiutang.getDataPenerimaanAgen');
+    Route::get('/keuangan/penerimaanpiutang/agen/get-list-agen', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getListAgen')->name('penerimaanpiutang.getListAgen');
+    Route::get('/keuangan/penerimaanpiutang/agen/get-detail-transaksi', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDetailTransaksi')->name('penerimaanpiutang.getDetailTransaksi');
+    Route::get('/keuangan/penerimaanpiutang/agen/pay-piutang', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@payPiutangAgen')->name('penerimaanpiutang.payPiutangAgen');
+    Route::get('/keuangan/penerimaanpiutang/agen/get-history', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataHistoryAgen')->name('penerimaanpiutang.getDataHistoryAgen');
+
+    // Penerimaan Piutang Cabang
+    Route::get('/keuangan/penerimaanpiutang/cabang/getdata', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataPenerimaanCabang')->name('penerimaanpiutang.getDataPenerimaanCabang');
+    Route::get('/keuangan/penerimaanpiutang/cabang/get-list-cabang', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getListCabang')->name('penerimaanpiutang.getListCabang');
+    Route::get('/keuangan/penerimaanpiutang/cabang/pay-piutang', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@payPiutangCabang')->name('penerimaanpiutang.payPiutangCabang');
+    Route::get('/keuangan/penerimaanpiutang/cabang/get-history', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataHistoryCabang')->name('penerimaanpiutang.getDataHistoryCabang');
     // !===================================================== END KEUANGAN =====================================================!
 
     // !===================================================== PENGATURAN =====================================================!

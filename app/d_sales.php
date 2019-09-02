@@ -51,6 +51,10 @@ class d_sales extends Model
     {
         return $this->belongsTo('App\d_username', 's_comp', 'u_company');
     }
+    public function getComp()
+    {
+        return $this->belongsTo('App\m_company', 's_comp', 'c_id');
+    }
     // get sales-web
     public function getSalesWeb()
     {
