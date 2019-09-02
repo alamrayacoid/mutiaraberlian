@@ -422,5 +422,10 @@
             alert('error');
         })
     }
+
+    function editRewardPunishment(id){
+        let reward = $('#periode_reward').val();
+        location.href = baseUrl + '/sdm/penggajian/reward-punishment/edit-reward-punishment/' + id + '/' + reward;
+    }
 </script>
 @endsection

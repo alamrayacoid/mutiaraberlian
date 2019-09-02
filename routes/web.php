@@ -511,6 +511,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sdm/penggajian/reward/simpan-master-benefits', 'SDM\BenefitsController@saveMasterBenefits')->name('reward.saveMasterBenefits');
     Route::get('/sdm/penggajian/reward/getdata-reward-punishment', 'SDM\BenefitsController@getDataRewardPunishment')->name('reward.getDataRewardPunishment');
     Route::get('/sdm/penggajian/reward/getdetail-reward-punishment', 'SDM\BenefitsController@getDetailRewardPunishment')->name('reward.getDetailRewardPunishment');
+    Route::get('/sdm/penggajian/reward-punishment/edit-reward-punishment/{id}/{periode}', 'SDM\BenefitsController@editRewardPunishment')->name('reward.editRewardPunishment');
+    Route::post('/sdm/penggajian/reward/simpan-pegawai-benefits', 'SDM\BenefitsController@saveEmployeeBenefits')->name('reward.saveEmployeeBenefits');
+    Route::get('/sdm/penggajian/reward-punishment/getdata-reward-punishment', 'SDM\BenefitsController@getDataRewardPunishmentPegawai')->name('reward.getDataRewardPunishmentPegawai');
+    Route::post('/sdm/penggajian/reward-punishment/save-reward-punishment', 'SDM\BenefitsController@saveDataRewardPunishmentPegawai')->name('reward.saveDataRewardPunishmentPegawai');
+    Route::post('/sdm/penggajian/reward-punishment/hapus-reward-punishment', 'SDM\BenefitsController@deleteDataRewardPunishmentPegawai')->name('reward.deleteDataRewardPunishmentPegawai');
     // TAB TUNJANGAN
     Route::get('/sdm/penggajian/tunjangan/create', 'SDMController@create_tunjangan')->name('tunjangan.create');
     Route::get('/sdm/penggajian/tunjangan/edit', 'SDMController@edit_tunjangan')->name('tunjangan.edit');
