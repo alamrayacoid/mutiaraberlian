@@ -281,7 +281,7 @@
                                         </td>`;
                         if (val.kd_result == null) {
                             hasilD = `<td class="pad-1">
-                                        <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="">
+                                        <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="0">
                                         </td>`;
                         } else {
                             hasilD = `<td class="pad-1">
@@ -294,7 +294,7 @@
                                         </td>`;
                         if (val.kd_point == null) {
                             pointD = `<td class="pad-1">
-                                        <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="" readonly>
+                                        <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="0" readonly>
                                         </td>`;
                         } else {
                             pointD = `<td class="pad-1">
@@ -308,7 +308,7 @@
                                         </td>`;
                         if (val.kd_total == null) {
                             nilaiD = `<td class="pad-1">
-                                        <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="" readonly>
+                                        <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="0" readonly>
                                         </td>`;
                         } else {
                             nilaiD = `<td class="pad-1">
