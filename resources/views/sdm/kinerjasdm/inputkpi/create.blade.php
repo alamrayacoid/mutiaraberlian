@@ -119,7 +119,14 @@
         });
 
         $('#periode_kpi').on('change', function(){
-            $("#table_indikator_divisi_pegawai > tbody").find('tr').remove();
+            // $("#table_indikator_divisi_pegawai > tbody").find('tr').remove();
+            var data = $('#tipe').val();
+            if (data != null && data == 'D') {
+                getDataIndikatorDivisi();
+            }
+            else if (data != null && data == 'P'){
+                getDataIndikatorPegawai();
+            }
         });
     </script>
 
