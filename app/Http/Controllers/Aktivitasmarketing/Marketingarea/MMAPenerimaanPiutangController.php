@@ -146,6 +146,7 @@ class MMAPenerimaanPiutangController extends Controller
         if ($user->c_type == "PUSAT") {
             $jenis = m_paymentmethod::where('pm_isactive', 'Y')
             ->with('getAkun')
+            ->where('pm_comp', '=', $user->c_id)
             ->get();
         }
         else {
@@ -190,11 +191,6 @@ class MMAPenerimaanPiutangController extends Controller
                 ->where('pm_comp', '=', $user->c_id)
                 ->get();
         }
-// dd($jenis);
-        // $jenis = DB::table('dk_akun')
-        //     ->where('ak_comp', '=', $user->u_company)
-        //     ->select('ak_id', 'ak_nama')
-        //     ->get();
 
         return Response::json([
             'data' => $data,

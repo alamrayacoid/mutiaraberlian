@@ -103,10 +103,9 @@
                         <table class="table table-hover table-striped display nowrap" style="width:100%" cellspacing="0" id="table_detailrewardpunishment">
                             <thead class="bg-primary">
                                 <tr>
-                                    <th width="50%">Nama</th>
+                                    <th width="60%">Nama</th>
                                     <th width="20%">Jenis</th>
                                     <th width="20%">Jumlah</th>
-                                    <th width="10%">Aksi</th>
                                 </tr>
                             </thead>
                         </table>
@@ -123,3 +122,62 @@
     </div>
 </div>
 
+<div class="modal fade" id="modal_editMasterReward" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="border-radius: 5px;">
+			<div class="modal-header">
+				<h4 class="modal-title" id="myModalLabel">Edit Master Reward </h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		        	<span aria-hidden="true">&times;</span>
+		        </button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group row">
+                    <div class="col-2">
+                        <label>Nama Reward</label>
+                    </div>
+                    <div class="col-7 mb-3">
+                        <input type="text" class="form-control form-control-sm edit_masterreward" id="edit_masterreward">
+                        <input type="hidden" class="form-control form-control-sm edit_idreward" id="edit_idreward">
+                    </div>
+                    <div class="col-3">
+                        <button type="button" class="btn btn-primary" onclick="updateMasterBenefits('R')">Update</button>
+                    </div>
+                </div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal_editMasterPunishment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="border-radius: 5px;">
+			<div class="modal-header">
+				<h4 class="modal-title" id="myModalLabel">Edit Master Punishment </h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		        	<span aria-hidden="true">&times;</span>
+		        </button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group row">
+                    <div class="col-2">
+                        <label>Nama Punishment</label>
+                    </div>
+                    <div class="col-7 mb-3">
+                        <input type="text" class="form-control form-control-sm edit_masterpunishment" id="edit_masterpunishment">
+                        <input type="hidden" class="form-control form-control-sm edit_idpunishment" id="edit_idpunishment">
+                    </div>
+                    <div class="col-3">
+                        <button type="button" class="btn btn-primary" onclick="updateMasterBenefits('P')">Update</button>
+                    </div>
+                </div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
