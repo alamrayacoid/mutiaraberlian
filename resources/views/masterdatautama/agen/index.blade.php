@@ -37,6 +37,19 @@
                     </div>
                     <div class="card-block">
                         <section>
+                            <div class="row mb-5">
+                                <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <label>Status Agen</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-xs-12">
+                                    <select name="status" id="status" class="form-control form-control-sm select2">
+                                        <option value="">Semua</option>
+                                        <option value="Y" selected>Aktif</option>
+                                        <option value="N">Non Aktif</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover display" cellspacing="0" id="table_agen">
                                     <thead class="bg-primary">
@@ -71,11 +84,15 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-    // set header token for ajax request
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
+    $(document).ready(function() {
+        setTimeout(function () {
+            TableAgen();
+
+            $('#status').on('select2:select', function() {
+                TableAgen();
+            });
+
+        }, 100);
     });
 
     var tb_agen;
@@ -91,6 +108,7 @@
                 url: "{{ route('agen.list') }}",
                 type: "post",
                 data: {
+                    status: $('#status').val(),
                     "_token": "{{ csrf_token() }}"
                 }
             },
@@ -225,9 +243,6 @@
 
     }
 
-    $(document).ready(function() {
-        TableAgen();
-    });
 
 </script>
 @endsection

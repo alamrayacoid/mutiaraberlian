@@ -75,9 +75,18 @@ class ItemController extends Controller
      *
      * @return Yajra/DataTables
      */
-    public function getList()
+    public function getList(Request $request)
     {
-        $datas = DB::table('m_item')->orderBy('i_name', 'asc')->join('m_itemtype', 'i_type', '=', 'it_id')->get();
+        $status = $request->status;
+
+        $datas = DB::table('m_item');
+        if ($status != '') {
+            $datas = $datas->where('i_isactive', $status);
+        }
+        $datas = $datas->orderBy('i_name', 'asc')
+            ->join('m_itemtype', 'i_type', '=', 'it_id')
+            ->get();
+
         return Datatables::of($datas)
             ->addIndexColumn()
             ->setRowClass(function ($datas){

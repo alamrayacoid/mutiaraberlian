@@ -9,8 +9,8 @@
 	<div class="title-block text-primary">
 	    <h1 class="title"> Master Suplier </h1>
 	    <p class="title-description">
-	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a> 
-	    	/ <span>Master Data Utama</span> 
+	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
+	    	/ <span>Master Data Utama</span>
 	    	/ <span class="text-primary" style="font-weight: bold;">Master Suplier</span>
 	     </p>
 	</div>
@@ -27,9 +27,9 @@
                     <li class="nav-item">
                         <a href="#itemsuplier" class="nav-link" data-target="#itemsuplier" aria-controls="itemsuplier" data-toggle="tab" role="tab">Item Suplier</a>
                     </li>
-                </ul>				
-		
-				<div class="tab-content">		
+                </ul>
+
+				<div class="tab-content">
 
 					@include('masterdatautama.suplier.datasuplier.index')
 					@include('masterdatautama.suplier.itemsuplier.index')
@@ -48,38 +48,38 @@
 @section('extra_script')
 <script type="text/javascript">
 
-$(document).ready(function(){
-	$('#jenisharga').change(function(){
-		var ini, satuan, range;
-		ini             = $(this).val();
-		satuan     		= $('#satuan');
-		range     		= $('#range');
+	$(document).ready(function(){
+		$('#jenisharga').change(function(){
+			var ini, satuan, range;
+			ini             = $(this).val();
+			satuan     		= $('#satuan');
+			range     		= $('#range');
 
-		if (ini === '1') {
-			satuan.removeClass('d-none');
-			range.addClass('d-none');
-		} else if(ini === '2'){
-			satuan.addClass('d-none');
-			range.removeClass('d-none');
-		} else {
-			satuan.addClass('d-none');
-			range.addClass('d-none');
-		}
+			if (ini === '1') {
+				satuan.removeClass('d-none');
+				range.addClass('d-none');
+			} else if(ini === '2'){
+				satuan.addClass('d-none');
+				range.removeClass('d-none');
+			} else {
+				satuan.addClass('d-none');
+				range.addClass('d-none');
+			}
+		});
 	});
-});
-</script>
+	</script>
+
 <script type="text/javascript">
-	// set header token for ajax request
-	$.ajaxSetup({
-		headers: {
-			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-		}
-	});
-
 	$(document).ready(function () {
-        
-		$('#item_suplier').DataTable();
+		setTimeout(function () {
+			TableItemSupplier();
+			TableSupplier();
 
+			$('#supplier_status').on('select2:select', function () {
+				TableSupplier();
+			});
+
+		}, 100);
     })
 
 	var sub;
@@ -113,13 +113,12 @@ $(document).ready(function(){
 		$('#table_supplier').dataTable().fnDestroy();
 		tb_supplier = $('#table_supplier').DataTable({
 			responsive: true,
-			// language: dataTableLanguage,
-			// processing: true,
 			serverSide: true,
 			ajax: {
 				url: "{{ route('suplier.list') }}",
 				type: "get",
 				data: {
+					status: $('#supplier_status').val(),
 					"_token": "{{ csrf_token() }}"
 				}
 			},
@@ -282,61 +281,5 @@ $(document).ready(function(){
 		})
 	}
 
-	$(document).ready(function(){
-		TableSupplier();
-
-		// $(document).on('click', '.btn-disable', function(){
-		// 	var ini = $(this);
-		// 	$.confirm({
-		// 		animation: 'RotateY',
-		// 		closeAnimation: 'scale',
-		// 		animationBounce: 1.5,
-		// 		icon: 'fa fa-exclamation-triangle',
-		// 		title: 'Peringatan!',
-		// 		content: 'Apa anda yakin mau menonaktifkan data ini?',
-		// 		theme: 'disable',
-		// 	    buttons: {
-		// 	        info: {
-		// 				btnClass: 'btn-blue',
-		// 	        	text:'Ya',
-		// 	        	action : function(){
-		// 					$.toast({
-		// 						heading: 'Information',
-		// 						text: 'Data Berhasil di Nonaktifkan.',
-		// 						bgColor: '#0984e3',
-		// 						textColor: 'white',
-		// 						loaderBg: '#fdcb6e',
-		// 						icon: 'info'
-		// 					})
-		// 			        ini.parents('.btn-group').html('<button class="btn btn-success btn-enable" type="button" title="enable"><i class="fa fa-check-circle"></i></button>');
-		// 		        }
-		// 	        },
-		// 	        cancel:{
-		// 	        	text: 'Tidak',
-		// 			    action: function () {
-    // 			            // tutup confirm
-    // 			        }
-    // 			    }
-		// 	    }
-		// 	});
-		// });
-		// $(document).on('click', '.btn-enable', function(){
-		// 	$.toast({
-		// 		heading: 'Information',
-		// 		text: 'Data Berhasil di Aktifkan.',
-		// 		bgColor: '#0984e3',
-		// 		textColor: 'white',
-		// 		loaderBg: '#fdcb6e',
-		// 		icon: 'info'
-		// 	})
-		// 	$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
-	  //                               		'<button class="btn btn-danger btn-disable" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>')
-		// })
-		// $('#table_suplier tbody').on('click','.btn-edit', function(){
-		// })
-	});
-
-
-	
 </script>
 @endsection

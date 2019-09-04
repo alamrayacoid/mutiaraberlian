@@ -81,11 +81,18 @@ class SupplierController extends Controller
      *
      * @return Yajra/DataTables
      */
-    public function getList()
+    public function getList(Request $request)
     {
-        $datas = DB::table('m_supplier')
-            ->orderBy('s_company', 'asc')
+        $status = $request->status;
+
+        $datas = DB::table('m_supplier');
+        if ($status != '') {
+            $datas = $datas->where('s_isactive', $status);
+        }
+        $datas = $datas->orderBy('s_company', 'asc')
             ->get();
+
+
         return Datatables::of($datas)
             ->addIndexColumn()
             ->addColumn('limit', function ($datas) {
