@@ -12,7 +12,7 @@
 			<section>
                 <div class="row mb-3">
                     <div class="col-1">
-                        <label>Bulang</label>
+                        <label>Bulan</label>
                     </div>
                     <div class="col-2">
                         <input type="text" class="form-control form-control-sm text-center periode_tunjangan" id="periode_tunjangan">
