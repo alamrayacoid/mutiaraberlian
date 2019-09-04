@@ -844,7 +844,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/keuangan/penerimaanpiutang/agen/get-history', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataHistoryAgen')->name('penerimaanpiutang.getDataHistoryAgen');
     Route::get('/keuangan/penerimaanpiutang/agen/get-detail-payment', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDetailPayment')->name('penerimaanpiutang.getDetailPayment');
     Route::post('/keuangan/penerimaanpiutang/agen/update-history-payment', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@updateHistoryPayment')->name('penerimaanpiutang.updateHistoryPayment');
-    Route::post('/keuangan/penerimaanpiutang/agen/decline-payment', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@declinePaymentAgen')->name('penerimaanpiutang.declinePaymentAgen');
+    Route::post('/keuangan/penerimaanpiutang/agen/decline-all-payments', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@declineAllPaymentsAgen')->name('penerimaanpiutang.declineAllPaymentsAgen');
+    Route::post('/keuangan/penerimaanpiutang/agen/decline-selected-payments', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@declineSelectedPaymentAgen')->name('penerimaanpiutang.declineSelectedPaymentAgen');
 
     // Penerimaan Piutang Cabang
     Route::get('/keuangan/penerimaanpiutang/cabang/getdata', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataPenerimaanCabang')->name('penerimaanpiutang.getDataPenerimaanCabang');

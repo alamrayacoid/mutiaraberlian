@@ -101,7 +101,7 @@
                 });
             }, 100);
         });
-
+        // get list payment
         function getListPenerimaanAgen() {
             $('#table_penerimaanagen').DataTable().clear().destroy();
             table_penerimaanagen = $('#table_penerimaanagen').DataTable({
@@ -131,7 +131,7 @@
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
             });
         }
-
+        // show detail payment
         function detailNotaPiutangAgen(nota) {
             let type = 'AGEN';
             loadingShow();
@@ -188,7 +188,7 @@
                 messageWarning('Error', 'Terjadi kesalahan : '+ error);
             })
         }
-
+        // show modal payment
         function showPaymentProcessAgen(nota) {
             let type = 'AGEN';
             loadingShow();
@@ -262,7 +262,7 @@
                 messageWarning('Error', 'Terjadi kesalahan : '+ error);
             })
         }
-
+        // send payment agent
         function sendPaymentAgen() {
             let nota = $('#nota_paypp').val();
             let bayar = $('#bayarpaypp').val();
@@ -301,6 +301,61 @@
                 loadingHide();
                 messageWarning('Error', 'Terjadi kesalahan : '+ error);
             })
+        }
+        // delete all payment
+        function declineAllPaymentsAgen(nota) {
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apa anda yakin mau membatalkan pembayaran piutang ini ?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            confirmDeclineAllPaymentsAgen(nota);
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+        }
+        // confirm delete all-payment
+        function confirmDeclineAllPaymentsAgen(nota) {
+            $.ajax({
+                url: "{{ route('penerimaanpiutang.declineAllPaymentsAgen') }}",
+                type: "post",
+                data: {
+                    nota: nota
+                },
+                beforeSend: function () {
+                    loadingShow();
+                },
+                success: function (resp) {
+                    if (resp.status == 'sukses') {
+                        messageSuccess('Berhasil', 'Seluruh data pembayaran terkait berhasil dibatalkan !');
+                        table_penerimaanagen.ajax.reload();
+                    }
+                    else {
+                        messageWarning('Gagal', 'Terjadi kesalahan : '+ resp.message);
+                    }
+                },
+                error: function (err) {
+                    messageWarning('Error', 'Terjadi kesalahan : '+ error);
+                },
+                complete: function () {
+                    loadingHide();
+                }
+            });
         }
 
     </script>
@@ -763,7 +818,10 @@
                     let no = "<td>"+ (index + 1) +"</td>";
                     let tanggal = "<td>"+ value.scp_date +"</td>";
                     let nominal = "<td class='text-right rupiah'>"+ parseFloat(value.scp_pay)+"</td>";
-                    let aksi = '<td class="text-center"><button type="button" class="btn btn-sm btn-warning hint--top hint--warning" aria-label="Edit" onclick="showEditHistoryAgen(\''+ value.scp_salescomp +'\', \''+ value.scp_detailid +'\')"><i class="fa fa-pencil"></i></button></td>';
+                    let aksi = '<td class="text-center"><div class="btn-group btn-group-sm">' +
+                        '<button type="button" class="btn btn-sm btn-warning hint--top hint--warning" aria-label="Edit" onclick="showEditHistoryAgen(\''+ value.scp_salescomp +'\', \''+ value.scp_detailid +'\')"><i class="fa fa-pencil"></i></button>' +
+                        '<button type="button" class="btn btn-sm btn-danger hint--top hint--danger" aria-label="Batalkan pembayaran" onclick="declineSelectedPaymentAgen(\''+ value.scp_salescomp +'\', \''+ value.scp_detailid +'\')"><i class="fa fa-ban"></i></button>' +
+                        '</div></td>';
                     $('#table_detailpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal + aksi +"</tr>");
                 });
                 $('#nota_dtpp').val(detail.nota);
@@ -911,8 +969,8 @@
                 }
             });
         }
-        // decline all payment
-        function declineAgen(nota) {
+        // decline selected payment
+        function declineSelectedPaymentAgen(salesCompId, paymentDetailId) {
             $.confirm({
                 animation: 'RotateY',
                 closeAnimation: 'scale',
@@ -926,7 +984,7 @@
                         btnClass: 'btn-blue',
                         text: 'Ya',
                         action: function () {
-                            declinePaymentAgen(nota);
+                            confirmDeclineSelectedPaymentAgen(salesCompId, paymentDetailId);
                         }
                     },
                     cancel: {
@@ -938,10 +996,68 @@
                 }
             });
         }
-
-        function declinePaymentAgen(nota) {
+        // confirm decline selected payment
+        function confirmDeclineSelectedPaymentAgen(salesCompId, paymentDetailId) {
             $.ajax({
-                url: "{{ route('penerimaanpiutang.declinePaymentAgen') }}",
+                url: "{{ route('penerimaanpiutang.declineSelectedPaymentAgen') }}",
+                type: "post",
+                data: {
+                    salesCompId: salesCompId,
+                    paymentDetailId: paymentDetailId
+                },
+                beforeSend: function () {
+                    loadingShow();
+                },
+                success: function (resp) {
+                    if (resp.status == 'sukses') {
+                        messageSuccess('Berhasil', 'Seluruh data pembayaran terkait berhasil dibatalkan !');
+                        table_penerimaanagen.ajax.reload();
+                        table_historyagen.ajax.reload();
+                        $('#modalDetailpp').modal('hide');
+                    }
+                    else {
+                        messageWarning('Gagal', 'Terjadi kesalahan : '+ resp.message);
+                    }
+                },
+                error: function (err) {
+                    messageWarning('Error', 'Terjadi kesalahan : '+ error);
+                },
+                complete: function () {
+                    loadingHide();
+                }
+            });
+        }
+        // decline all payment
+        function declineAllPaymentsHistoryAgen(nota) {
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apa anda yakin mau membatalkan pembayaran piutang ini ?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            confirmDeclineAllPaymentsHistoryAgen(nota);
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+        }
+        // confirm decline all payment
+        function confirmDeclineAllPaymentsHistoryAgen(nota) {
+            $.ajax({
+                url: "{{ route('penerimaanpiutang.declineAllPaymentsAgen') }}",
                 type: "post",
                 data: {
                     nota: nota

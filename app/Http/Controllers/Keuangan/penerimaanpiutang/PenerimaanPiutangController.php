@@ -160,6 +160,7 @@ class PenerimaanPiutangController extends Controller
             'jenis' => $jenis
         ]);
     }
+
 // Start Penerimaan Piutang Agen ==========================================================================
     public function getListAgen(Request $request)
     {
@@ -233,10 +234,11 @@ class PenerimaanPiutangController extends Controller
                 return '<center>
                         <div class="btn-group btn-group-sm">
                             <button type="button" class="btn btn-sm btn-primary hint--top hint--info" aria-label="Detail" onclick="detailNotaPiutangAgen(\''.Crypt::encrypt($info->nota).'\')"><i class="fa fa-folder"></i></button>
-                            <button type="button" class="btn btn-sm btn-danger hint--top hint--warning" aria-label="Bayar" onclick="showPaymentProcessAgen(\''.Crypt::encrypt($info->nota).'\')"><i class="fa fa-money"></i></button>
+                            <button type="button" class="btn btn-sm btn-warning hint--top hint--warning" aria-label="Edit" onclick="showDetailEditHistoryAgen(\''.Crypt::encrypt($info->nota).'\')"><i class="fa fa-pencil"></i></button>
+                            <button type="button" class="btn btn-sm btn-danger hint--top hint--danger" aria-label="Bayar" onclick="showPaymentProcessAgen(\''.Crypt::encrypt($info->nota).'\')"><i class="fa fa-money"></i></button>
                         </div>
                         <div class="btn-group btn-group-sm">
-                            <button type="button" class="btn btn-sm btn-danger hint--top hint--danger" aria-label="Batalkan pembayaran" onclick="declineAllPaymentAgen(\''.Crypt::encrypt($info->nota).'\')"><i class="fa fa-ban"></i></button>
+                            <button type="button" class="btn btn-sm btn-danger hint--top hint--danger" aria-label="Batalkan pembayaran" onclick="declineAllPaymentsAgen(\''.Crypt::encrypt($info->nota).'\')"><i class="fa fa-ban"></i></button>
                         </div
                         </center>';
             })
@@ -670,7 +672,7 @@ class PenerimaanPiutangController extends Controller
                 return '<center><div class="btn-group btn-group-sm">
                 <button type="button" class="btn btn-sm btn-primary hint--top hint--info" aria-label="Detail" onclick="showDetailHistoryAgen(\''.Crypt::encrypt($info->nota).'\')"><i class="fa fa-folder"></i></button>
                 <button type="button" class="btn btn-sm btn-warning hint--top hint--warning" aria-label="Edit" onclick="showDetailEditHistoryAgen(\''.Crypt::encrypt($info->nota).'\')"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-sm btn-danger hint--top hint--danger" aria-label="Batalkan seluruh pembayaran" onclick="declineAgen(\''.Crypt::encrypt($info->nota).'\')"><i class="fa fa-ban"></i></button>
+                <button type="button" class="btn btn-sm btn-danger hint--top hint--danger" aria-label="Batalkan pembayaran" onclick="declineAllPaymentsHistoryAgen(\''.Crypt::encrypt($info->nota).'\')"><i class="fa fa-ban"></i></button>
                 </div></center>';
             })
             ->rawColumns(['date_top', 'piutang', 'aksi'])
@@ -807,6 +809,7 @@ class PenerimaanPiutangController extends Controller
             $mutcatOut = 14;
             $notaSales = $salesCompDt[0]->getSalesComp->sc_nota . '-PAID';
 
+            // if already 'paid-off'
             if ($salesCompPayment->getSalesComp->sc_paidoff == 'Y') {
                 if ($totalPayment != $salesCompPayment->getSalesComp->sc_total) {
                     // update salescomp
@@ -829,6 +832,7 @@ class PenerimaanPiutangController extends Controller
                     }
                 }
             }
+            // if currently 'not paid-off'
             else {
                 if ($totalPayment == $salesCompPayment->getSalesComp->sc_total) {
                     // update salescomp
@@ -896,12 +900,139 @@ class PenerimaanPiutangController extends Controller
                 'status' => 'gagal',
                 'message' => $e->getMessage()
             ]);
-
         }
     }
-    // delete all payment
-    public function declineAllPaymentAgen(Request $request)
+    // delete selected payment
+    public function declineSelectedPaymentAgen(Request $request)
     {
+        DB::beginTransaction();
+        try {
+            $salesCompId = $request->salesCompId;
+            $paymentDetailId = $request->paymentDetailId;
+
+            $salesCompPayment = d_salescomppayment::where('scp_salescomp', $salesCompId)
+                ->where('scp_detailid', $paymentDetailId)
+                ->with('getSalesComp.getAgent')
+                ->first();
+            // get nota salesComp
+            $nota = $salesCompPayment->getSalesComp->sc_nota;
+            // get total-payment
+            $totalPayment = d_salescomppayment::where('scp_salescomp', $salesCompId)
+                ->sum('scp_pay');
+            // get new taotal-payment after minus by selected payment
+            $newTotalPayment = $totalPayment - (int)$salesCompPayment->scp_pay;
+
+            $salesCompDt = d_salescompdt::whereHas('getSalesComp', function ($q) use ($nota) {
+                    $q->where('sc_nota', $nota);
+                })
+                ->get();
+            $member = $salesCompPayment->getSalesComp->getAgent;
+            // mutcat 'penjualan langsung ke konsumen'
+            $mutcatOut = 14;
+            $notaSales = $nota . '-PAID';
+
+            // if already 'paid-off'
+            if ($salesCompPayment->getSalesComp->sc_paidoff == 'Y') {
+                // update salescomp
+                $salesCompPayment->getSalesComp->sc_paidoff = 'N';
+                $salesCompPayment->getSalesComp->save();
+
+                // rollback if 'APOTEK/RADIO'
+                if ($member->c_type == 'APOTEK/RADIO') {
+                    foreach ($salesCompDt as $key => $value) {
+                        // rollback mutation 'salesout'
+                        $mutRollbackOut = Mutasi::rollbackSalesOut(
+                            $notaSales,
+                            $value->scd_item,
+                            $mutcatOut
+                        );
+                        if ($mutRollbackOut->original['status'] !== 'success') {
+                            return $mutRollbackOut;
+                        }
+                    }
+                }
+            }
+
+            // delete payment
+            $salesCompPayment->delete();
+
+            DB::commit();
+            return Response()->json([
+                'status' => 'sukses'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return Response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+
+    }
+    // delete all payment
+    public function declineAllPaymentsAgen(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $nota = Crypt::decrypt($request->nota);
+            // get all salescomp-payment based on 'nota'
+            $salesCompPayment = d_salescomppayment::whereHas('getSalesComp', function ($q) use ($nota) {
+                    $q->where('sc_nota', $nota);
+                })
+                ->with('getSalesComp.getAgent')
+                ->get();
+
+            // get all salescomp-detail based on nota
+            $salesCompDt = d_salescompdt::whereHas('getSalesComp', function ($q) use ($nota) {
+                    $q->where('sc_nota', $nota);
+                })
+                ->with('getProdCode')
+                ->get();
+
+            $member = $salesCompPayment[0]->getSalesComp->getAgent;
+
+            // mutcat 'penjualan langsung ke konsumen'
+            $mutcatOut = 14;
+            $notaSales = $nota . '-PAID';
+
+            if ($salesCompPayment[0]->getSalesComp->sc_paidoff == 'Y') {
+                // rollback if 'APOTEK/RADIO'
+                if ($member->c_type == 'APOTEK/RADIO') {
+                    foreach ($salesCompDt as $key => $value) {
+                        // rollback mutation 'salesout'
+                        $mutRollbackOut = Mutasi::rollbackSalesOut(
+                            $notaSales,
+                            $value->scd_item,
+                            $mutcatOut
+                        );
+                        if ($mutRollbackOut->original['status'] !== 'success') {
+                            return $mutRollbackOut;
+                        }
+                    }
+                }
+            }
+
+            // update salescomp
+            $salesCompPayment[0]->getSalesComp->sc_paidoff = 'N';
+            $salesCompPayment[0]->getSalesComp->save();
+            // delete all salescomp-payment
+            foreach ($salesCompPayment as $key => $value) {
+                $value->delete();
+            }
+
+            DB::commit();
+            return Response()->json([
+                'status' => 'sukses'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return Response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
 
     }
 
