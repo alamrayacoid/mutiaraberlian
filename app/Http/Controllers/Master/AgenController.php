@@ -222,7 +222,7 @@ class AgenController extends Controller
      *
      * @return Yajra/DataTables
      */
-    public function getList()
+    public function getList(Request $request)
     {
         $user = Auth::user();
         $comp = $user->u_company;
@@ -230,8 +230,13 @@ class AgenController extends Controller
             ->where('c_id', '=', $comp)
             ->first();
 
-        $datas = DB::table('m_agen')
-            ->join('m_wil_kota', 'a_area', 'wc_id')
+        $status = $request->status;
+
+        $datas = DB::table('m_agen');
+        if ($status != '') {
+            $datas = $datas->where('a_isactive', $status);
+        }
+        $datas = $datas->join('m_wil_kota', 'a_area', 'wc_id')
             ->orderBy('a_isactive', 'asc')
             ->orderBy('a_code', 'asc');
 

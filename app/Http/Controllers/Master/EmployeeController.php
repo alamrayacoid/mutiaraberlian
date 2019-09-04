@@ -25,12 +25,19 @@ class EmployeeController extends Controller
         return view('masterdatautama.datapegawai.index');
     }
 
-    public function getData()
+    public function getData(Request $request)
     {
-        $datas = DB::table('m_employee')
-            ->join('m_jabatan', 'e_position', 'j_id')
+        $status = $request->status;
+
+        $datas = DB::table('m_employee');
+        if ($status != '') {
+            $datas = $datas->where('e_isactive', $status);
+        }
+        $datas = $datas->join('m_jabatan', 'e_position', 'j_id')
             ->select('m_employee.*', 'j_name')
-            ->orderBy('e_name', 'asc');
+            ->orderBy('e_name', 'asc')
+            ->get();
+
         return Datatables::of($datas)
             ->addIndexColumn()
             ->addColumn('nik', function ($datas) {

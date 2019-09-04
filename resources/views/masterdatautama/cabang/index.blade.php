@@ -32,6 +32,19 @@
                     </div>
                     <div class="card-block">
                         <section>
+                            <div class="row mb-5">
+                                <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <label>Status Cabang</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-xs-12">
+                                    <select name="status" id="status" class="form-control form-control-sm select2">
+                                        <option value="">Semua</option>
+                                        <option value="Y" selected>Aktif</option>
+                                        <option value="N">Non Aktif</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="table-responsive">
                                 <table class="table table-hover display nowrap" cellspacing="0" id="table_cabang">
                                     <thead class="bg-primary">
@@ -58,19 +71,18 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
     var tb_cabang;
     setTimeout(function() {
         $('[data-toggle="tooltip"]').tooltip();
         TableCabang();
-    }, 500);
+
+        $('#status').on('select2:select', function() {
+            TableCabang();
+        });
+    }, 100);
 
     function TableCabang() {
+        $('#table_cabang').dataTable().fnDestroy();
         tb_cabang = $('#table_cabang').DataTable({
             responsive: true,
             serverSide: true,
@@ -78,6 +90,7 @@
                 url: "{{ route('cabang.list') }}",
                 type: "get",
                 data: {
+                    status: $('#status').val(),
                     "_token": "{{ csrf_token() }}"
                 }
             },

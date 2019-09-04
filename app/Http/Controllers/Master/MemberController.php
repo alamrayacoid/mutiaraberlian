@@ -24,10 +24,16 @@ class MemberController extends Controller
         return view('masterdatautama.member.index');
     }
 
-    public function listDataMember()
+    public function listDataMember(Request $request)
     {
-        $data_member = DB::table('m_member')
-            ->leftJoin('m_agen', 'm_member.m_agen', 'a_code')
+        $status = $request->status;
+
+        $data_member = DB::table('m_member');
+
+        if ($status != '') {
+            $data_member = $data_member->where('m_status', $status);
+        }
+        $data_member = $data_member->leftJoin('m_agen', 'm_member.m_agen', 'a_code')
             ->leftJoin('m_wil_kota', 'm_city', 'wc_id')
             ->leftJoin('m_wil_provinsi', 'm_province', 'wp_id')
             ->select('m_member.*', 'a_name', 'wp_name', 'wc_name')
@@ -51,7 +57,7 @@ class MemberController extends Controller
                                 </button>
                             </div>';
                 }
-                
+
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -66,7 +72,7 @@ class MemberController extends Controller
     }
 
     public function cariDataAgen(Request $request)
-    {        
+    {
         $is_agen = array();
         for ($i = 0; $i < count($request->idAgen); $i++) {
             if ($request->idAgen[$i] != null) {
@@ -113,7 +119,7 @@ class MemberController extends Controller
                             <button class="btn btn-primary hint--top-left hint--primary"  aria-label="Pilih Agen Ini" onclick="chooseAgen(\''.$agen->c_id.'\',\''.$agen->a_name.'\',\''.$agen->c_user.'\')"><i class="fa fa-arrow-down" aria-hidden="true"></i>
                             </button>
                         </div>';
-                
+
             })
             ->rawColumns(['action_agen'])
             ->make(true);
@@ -149,7 +155,7 @@ class MemberController extends Controller
         }
 
         DB::beginTransaction();
-        try {            
+        try {
             $getIdMax = DB::table('m_member')->max('m_id');
             $memberId = $getIdMax + 1;
 

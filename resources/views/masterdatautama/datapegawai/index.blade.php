@@ -24,6 +24,19 @@
                     </div>
                     <div class="card-block">
                         <section>
+                            <div class="row mb-5">
+                                <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <label>Status Pegawai</label>
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-xs-12">
+                                    <select name="status" id="emp_status" class="form-control form-control-sm select2">
+                                        <option value="">Semua</option>
+                                        <option value="Y" selected>Aktif</option>
+                                        <option value="N">Non Aktif</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_pegawai">
                                     <thead class="bg-primary">
@@ -55,19 +68,21 @@
 	});
 </script>
 <script type="text/javascript">
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
     var tb_pegawai;
-    setTimeout(function () {
-        tablePegawai();
-        addPegawai();
-    }, 500);
+    $(document).ready(function () {
+        setTimeout(function () {
+            tablePegawai();
+            addPegawai();
+
+            $('#emp_status').on('select2:select', function() {
+                tablePegawai();
+            });
+
+        }, 100);
+    })
 
     function tablePegawai() {
+        $('#table_pegawai').dataTable().fnDestroy();
         tb_pegawai = $('#table_pegawai').DataTable({
             responsive: true,
             serverSide: true,
@@ -75,6 +90,7 @@
                 url: "{{ route('pegawai.list') }}",
                 type: "get",
                 data: {
+                    status: $('#emp_status').val(),
                     "_token": "{{ csrf_token() }}"
                 }
             },

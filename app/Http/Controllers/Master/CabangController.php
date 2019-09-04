@@ -27,10 +27,15 @@ class CabangController extends Controller
         return view('masterdatautama.cabang.index');
     }
 
-    public function getData()
+    public function getData(Request $request)
     {
-        $datas = DB::table('m_company')
-            ->leftJoin('m_wil_kota', 'wc_id', '=', 'c_area')
+        $status = $request->status;
+
+        $datas = DB::table('m_company');
+        if ($status != '') {
+            $datas = $datas->where('c_isactive', $status);
+        }
+        $datas = $datas->leftJoin('m_wil_kota', 'wc_id', '=', 'c_area')
             ->where(function ($q){
                 $q->orWhere('c_type', '=', 'CABANG');
                 // $q->orWhere('c_type', '=', 'PUSAT');
