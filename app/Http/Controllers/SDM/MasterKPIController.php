@@ -1098,7 +1098,7 @@ class MasterKPIController extends Controller
             ->join('d_kpi', 'k_id', 'kd_kpi')
             ->join('m_employee', 'e_id', 'k_employee')
             ->select('kd_kpi', 'e_name',
-                DB::RAW('SUM(kd_point) as sum_point_pegawai')
+                DB::RAW('ROUND(AVG(kd_point), 2) as sum_point_pegawai')
             )
             ->whereMonth('k_periode', $periode->month)
             ->whereYear('k_periode', $periode->year)
@@ -1127,7 +1127,7 @@ class MasterKPIController extends Controller
             ->join('d_kpi', 'k_id', 'kd_kpi')
             ->join('m_divisi', 'm_id', 'k_department')
             ->select('kd_kpi', 'm_name',
-                DB::RAW('SUM(kd_point) as sum_point_divisi')
+                DB::RAW('ROUND(AVG(kd_point), 2) as sum_point_divisi')
             )
             ->whereMonth('k_periode', $periode->month)
             ->whereYear('k_periode', $periode->year)
