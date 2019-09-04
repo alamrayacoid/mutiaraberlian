@@ -119,7 +119,14 @@
         });
 
         $('#periode_kpi').on('change', function(){
-            $("#table_indikator_divisi_pegawai > tbody").find('tr').remove();
+            // $("#table_indikator_divisi_pegawai > tbody").find('tr').remove();
+            var data = $('#tipe').val();
+            if (data != null && data == 'D') {
+                getDataIndikatorDivisi();
+            }
+            else if (data != null && data == 'P'){
+                getDataIndikatorPegawai();
+            }
         });
     </script>
 
@@ -281,7 +288,7 @@
                                         </td>`;
                         if (val.kd_result == null) {
                             hasilD = `<td class="pad-1">
-                                        <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="">
+                                        <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="0">
                                         </td>`;
                         } else {
                             hasilD = `<td class="pad-1">
@@ -294,7 +301,7 @@
                                         </td>`;
                         if (val.kd_point == null) {
                             pointD = `<td class="pad-1">
-                                        <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="" readonly>
+                                        <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="0" readonly>
                                         </td>`;
                         } else {
                             pointD = `<td class="pad-1">
@@ -308,7 +315,7 @@
                                         </td>`;
                         if (val.kd_total == null) {
                             nilaiD = `<td class="pad-1">
-                                        <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="" readonly>
+                                        <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="0" readonly>
                                         </td>`;
                         } else {
                             nilaiD = `<td class="pad-1">
@@ -405,7 +412,7 @@
                                         </td>`;
                         if (val.kd_result == null) {
                             hasilP = `<td class="pad-1">
-                                        <input type="text" name="hasilP[]" class="form-control text-center hasilP w-100 digits" value="">
+                                        <input type="text" name="hasilP[]" class="form-control text-center hasilP w-100 digits" value="0">
                                         </td>`;
                         } else {
                             hasilP = `<td class="pad-1">
@@ -418,7 +425,7 @@
                                         </td>`;
                         if (val.kd_point == null) {
                             pointP = `<td class="pad-1">
-                                        <input type="text" name="pointP[]" class="form-control-plaintext text-center pointP w-100" value="" readonly>
+                                        <input type="text" name="pointP[]" class="form-control-plaintext text-center pointP w-100" value="0" readonly>
                                         </td>`;
                         } else {
                             pointP = `<td class="pad-1">
@@ -431,7 +438,7 @@
                                         </td>`;
                         if (val.kd_total == null) {
                             nilaiP = `<td class="pad-1">
-                                        <input type="text" name="nilaiP[]" class="form-control-plaintext text-center nilaiP w-100" value="" readonly>
+                                        <input type="text" name="nilaiP[]" class="form-control-plaintext text-center nilaiP w-100" value="0" readonly>
                                         </td>`;
                         } else {
                             nilaiP = `<td class="pad-1">

@@ -28,7 +28,8 @@
 							<thead class="bg-primary">
 								<tr>
 									<th width="10%">No</th>
-									<th width="70%">Indikator</th>
+									<th width="60%">Indikator</th>
+									<th width="20%">Satuan</th>
 									<th width="10%">Aksi</th>
 								</tr>
 							</thead>

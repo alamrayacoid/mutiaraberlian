@@ -108,6 +108,7 @@
     // var table_indikator_divisi_pegawai_index   = $('#table_indikator_divisi_pegawai_index').DataTable();
 
     $(document).ready(function () {
+        getDashboardKpi();
         get_kpiAgen();
         getDataIndikatorPegawaiIndex();
         getDataIndikatorDivisiIndex();
@@ -327,6 +328,7 @@
             columns: [
                 {data: 'DT_RowIndex'},
                 {data: 'k_indicator', name: 'k_indicator'},
+                {data: 'k_unit', name: 'k_unit'},
                 {data: 'action', name: 'action'}
             ],
             pageLength: 10,
@@ -745,7 +747,15 @@
     $('#periode_kpi').datepicker("setDate", new Date(month_years.getFullYear(), month_years.getMonth()));
 
     $('#periode_kpi').on('change', function(){
-        $("#table_indikator_divisi_pegawai_index > tbody").find('tr').remove();
+        var data = $('#tipe').val();
+        if (data != null && data == 'D') {
+            getDataIndikatorDivisiIndex();
+        }
+        else if (data != null && data == 'P'){
+            getDataIndikatorPegawaiIndex();
+        }
+        // $('#table_indikator_divisi_pegawai_index').dataTable().fnDestroy();
+        // $("#table_indikator_divisi_pegawai_index > tbody").find('tr').remove();
     });
 </script>
 
@@ -770,6 +780,16 @@
 </script>
 
 <script type="text/javascript">
+    // $(document).ready(function () {
+    //     setTimeout(function () {
+    //         getDashboardKpi();    
+    //     }, 2000);
+    // });
+
+    $('#periode_dashboard').on('change', function () {
+        getDashboardKpi();
+    });
+
     function getDashboardKpi() {
         var periode_dashboard = $('#periode_dashboard').val();
         
@@ -999,36 +1019,6 @@
             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
         });
     }
-
-        // function getDataMasterKPI() {
-        //     if ( $.fn.DataTable.isDataTable('#table_masterkpi') ) {
-        //         $('#table_masterkpi').DataTable().destroy();
-        //     }
-
-        //     $('#table_masterkpi tbody').empty();
-
-        //     var status = $('#statuskpi').val();
-        //     table_kpi = $('#table_masterkpi').DataTable({
-        //         serverSide: true,
-        //         bAutoWidth: true,
-        //         processing:true,
-        //         ajax: {
-        //             url: '{{route("masterkpi.getData")}}',
-        //             type: "post",
-        //             data: {
-        //                 "_token": "{{ csrf_token() }}",
-        //                 "status": status
-        //             }
-        //         },
-        //         columns: [
-        //             {data: 'DT_RowIndex'},
-        //             {data: 'k_indicator', name: 'k_indicator'},
-        //             {data: 'action', name: 'action'}
-        //         ],
-        //         pageLength: 10,
-        //         lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-        //     });
-        // }
 
 </script>
 @endsection

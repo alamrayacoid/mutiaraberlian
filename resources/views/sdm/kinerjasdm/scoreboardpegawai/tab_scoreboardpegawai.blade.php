@@ -16,7 +16,8 @@
               </div>
               <div class="col-md-9 col-sm-12">
                 <div class="input-group input-group-sm input-daterange periode_dashboard">
-                  <input type="text" class="form-control" id="periode_dashboard" name="periode_dashboard" autocomplete="off" onchange="getDashboardKpi()">
+                  <input type="text" class="form-control" id="periode_dashboard" name="periode_dashboard" autocomplete="off">
+                  {{-- onchange="getDashboardKpi()" --}}
                 </div>
               </div>
             </div>
