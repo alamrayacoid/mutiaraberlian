@@ -532,6 +532,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/penggajian/salary/data-master-gaji-pokok', 'SDM\SalaryController@getMasterGajiPokok')->name('salary.getMasterGajiPokok');
     Route::post('/sdm/penggajian/salary/simpan-gaji-pokok', 'SDM\SalaryController@saveGajiPokok')->name('salary.saveGajiPokok');
     Route::post('/sdm/penggajian/salary/simpan-gaji-pegawai', 'SDM\SalaryController@saveGajiPegawai')->name('salary.saveGajiPegawai');
+    Route::get('/sdm/penggajian/salary/detail-gaji-pegawai', 'SDM\SalaryController@detailGajiPegawai')->name('salary.detailGajiPegawai');
 
     // END
     // !===================================================== END SDM =====================================================!

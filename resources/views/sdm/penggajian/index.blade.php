@@ -13,6 +13,7 @@
 @include('sdm.penggajian.cashbon.modal')
 @include('sdm.penggajian.reward.modal')
 @include('sdm.penggajian.tunjangan.modal')
+@include('sdm.penggajian.salary.modal')
 <!-- end -->
 
 <article class="content">
@@ -78,6 +79,9 @@
     var table_detailrewardpunishment;
     var table_mastertunjangan;
     var table_salary;
+    var table_detailtunjangan;
+    var table_detailpunishment;
+    var table_detailreward;
 	$(document).ready(function(){
 
         setTimeout(function(){
@@ -116,6 +120,29 @@
             table_tunjangan.columns.adjust();
             table_salary.columns.adjust();
         },700);
+
+        setTimeout(function(){
+            table_detailpunishment = $('#modal_detailtablepunishment').DataTable({
+                responsive: true,
+                searching: false,
+                paging: false,
+                info: false
+            });
+
+            table_detailreward = $('#modal_detailtablereward').DataTable({
+                responsive: true,
+                searching: false,
+                paging: false,
+                info: false
+            });
+
+            table_detailtunjangan = $('#modal_detailtabletunjangan').DataTable({
+                responsive: true,
+                searching: false,
+                paging: false,
+                info: false
+            });
+        },1000)
 
         $("#namapegawai").autocomplete({
             source: '{{ route("cashbon.getDataPegawai") }}',
@@ -719,6 +746,57 @@
             }
         }).catch(function(error){
             loadingHide();
+        })
+    }
+
+    function detailGajiPegawai(id){
+        loadingShow();
+        let periode = $('#periode_salary').val();
+        axios.get('{{ route("salary.detailGajiPegawai") }}', {
+            params:{
+                "id": id,
+                "periode": periode
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            let salary = data.salary;
+            let punishment = data.punishment;
+            let reward = data.reward;
+            let tunjangan = data.tunjangan;
+
+            $('#modal_detailnama').html(salary.e_name);
+            $('#modal_detailgaji').html(convertToRupiah(salary.e_salary));
+            $('#modal_detailbulan').html(periode);
+
+            table_detailreward.clear().draw();
+            $.each(reward, function(idx, val){
+                table_detailreward.row.add([
+                    val.b_name,
+                    convertToRupiah(val.ebd_value)
+                ]).draw(false);
+            })
+
+            table_detailpunishment.clear().draw();
+            $.each(punishment, function(idx, val){
+                table_detailpunishment.row.add([
+                    val.b_name,
+                    convertToRupiah(val.ebd_value)
+                ]).draw(false);
+            })
+
+            table_detailtunjangan.clear().draw();
+            $.each(tunjangan, function(idx, val){
+                table_detailtunjangan.row.add([
+                    val.b_name,
+                    convertToRupiah(val.ebd_value)
+                ]).draw(false);
+            })
+
+            $('#modal_detailsalary').modal('show');
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
         })
     }
 </script>
