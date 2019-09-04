@@ -1,5 +1,12 @@
 @extends('main')
-
+@section('extra_style')
+<style type="text/css">
+    #draft.btn.btn-warning {
+        font-size: 10pt !important;
+        color: white;
+    }
+</style>
+@endsection
 @section('content')
 
 <!-- modal scoreboard pegawai -->
@@ -38,8 +45,8 @@
                             aria-controls="tabtunjangan" data-toggle="tab" role="tab">Tunjangan</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#list_payrollmanajemen" class="nav-link" data-target="#list_payrollmanajemen"
-                            aria-controls="list_payrollmanajemen" data-toggle="tab" role="tab">Salary</a>
+                        <a href="#tab_salary" class="nav-link" data-target="#tab_salary"
+                            aria-controls="tab_salary" data-toggle="tab" role="tab">Pembayaran Salary</a>
                     </li>
                 </ul>
 
@@ -48,7 +55,7 @@
                     @include('sdm.penggajian.cashbon.tab_cashbon')
                     @include('sdm.penggajian.tunjangan.tab_tunjangan')
                     @include('sdm.penggajian.reward.tab_reward')
-                    @include('sdm.penggajian.payrollmanajemen.tab_payrollmanajemen')
+                    @include('sdm.penggajian.salary.tab_salary')
 
                 </div>
 
@@ -70,8 +77,8 @@
     var table_tunjangan;
     var table_detailrewardpunishment;
     var table_mastertunjangan;
+    var table_salary;
 	$(document).ready(function(){
-		var table_rab = $('#table_payrollmanajemen').DataTable();
 
         setTimeout(function(){
             filterCashbon();
@@ -99,6 +106,7 @@
             table_rewardpunishment = $('#table_rewardpunishment').DataTable();
             table_tunjangan = $('#table_tunjangan').DataTable();
             table_detailrewardpunishment = $('#table_detailrewardpunishment').DataTable();
+            table_salary = $('#table_salary').DataTable();
 
             table_masterreward.columns.adjust();
             table_mastertunjangan.columns.adjust();
@@ -106,6 +114,7 @@
             table_detailrewardpunishment.columns.adjust();
             table_rewardpunishment.columns.adjust();
             table_tunjangan.columns.adjust();
+            table_salary.columns.adjust();
         },700);
 
         $("#namapegawai").autocomplete({
@@ -136,6 +145,13 @@
         });
 
         $("#periode_tunjangan").datepicker( {
+            format: "mm-yyyy",
+            viewMode: "months",
+            minViewMode: "months",
+            autoclose: true
+        });
+
+        $("#periode_salary").datepicker( {
             format: "mm-yyyy",
             viewMode: "months",
             minViewMode: "months",
@@ -620,6 +636,90 @@
     function editTunjangan(id){
         let bulan = $('#periode_tunjangan').val();
         location.href = baseUrl + '/sdm/penggajian/tunjangan/edit-tunjangan-pegawai/' + id + '/' + bulan;
+    }
+
+    function getDataSalary(){
+        loadingShow();
+        axios.get('{{ route("salary.getDataSalaryPegawai") }}', {
+            params:{
+                periode: $('#periode_salary').val()
+            }
+        }).then(function(response){
+            loadingHide();
+            let data = response.data;
+            if (data[0].es_issubmitted == 'Y') {
+                $('.statusdiberikan').html('Sudah diserahkan ke pegawai');
+            } else if (data[0].es_issubmitted == 'N') {
+                $('.statusdiberikan').html('Belum diserahkan ke pegawai');
+            }
+            table_salary.clear().draw();
+            $.each(data, function(idx, val){
+                let total = parseInt(val.tunjangan) + parseInt(val.reward) + parseInt(val.e_salary) - parseInt(val.punishment);
+                table_salary.row.add([
+                    val.e_nip+'<input type="hidden" class="e_id" name="e_id[]" value="'+val.e_id+'">',
+                    val.e_name,
+                    '<span class="pull-right">'+convertToRupiah(val.e_salary)+'</span>',
+                    '<span class="pull-right">'+convertToRupiah(val.reward)+'</span>',
+                    '<span class="pull-right">'+convertToRupiah(val.punishment)+'</span>',
+                    '<span class="pull-right">'+convertToRupiah(val.tunjangan)+'</span>',
+                    '<span class="pull-right">'+convertToRupiah(total)+'</span>'+'<input type="hidden" class="total" name="total[]" value="'+total+'">',
+                    '<input type="text" class="form-control form-control-sm diserahkan" name="diserahkan[]" value="'+val.esd_submitedon+'">',
+                    '<center><button type="button" class="btn btn-primary btn-sm" onclick="detailGajiPegawai(\''+val.e_id+'\')">Detail</button></center>'
+                ]).draw().node();
+            });
+            table_salary.columns.adjust();
+            $('.diserahkan').datepicker({
+                format: "dd-mm-yyyy",
+                enableOnReadonly: false,
+                todayHighlight: true,
+                autoclose: true
+            });
+
+        }).catch(function(error){
+            loadingHide();
+            alert('error');
+        })
+    }
+
+    function masterGajiPokok(){
+        location.href = baseUrl + '/sdm/penggajian/salary/master-gaji-pokok';
+    }
+
+    function simpanGajiPegawai(type){
+        loadingShow();
+        let e_id = [];
+        let diserahkan = [];
+        let total = [];
+        let periode = $('#periode_salary').val();
+
+        $('.diserahkan').each(function(idx){
+            diserahkan[idx] = $(this).val();
+        })
+        $('.e_id').each(function(idx){
+            e_id[idx] = $(this).val();
+        })
+        $('.total').each(function(idx){
+            total[idx] = $(this).val();
+        })
+
+        axios.post('{{ route("salary.saveGajiPegawai") }}', {
+            "periode": periode,
+            "e_id": e_id,
+            "diserahkan": diserahkan,
+            "total": total,
+            "type": type,
+            "_token": "{{ csrf_token() }}"
+        }).then(function(response){
+            loadingHide();
+            if (response.data.status == 'sukses') {
+                messageSuccess("Berhasil", "Data berhasil disimpan");
+                getDataSalary();
+            } else if (response.data.status == 'gagal') {
+                messageWarning("Gagal", response.data.message);
+            }
+        }).catch(function(error){
+            loadingHide();
+        })
     }
 </script>
 @endsection

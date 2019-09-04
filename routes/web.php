@@ -526,9 +526,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/penggajian/tunjangan/edit-tunjangan-pegawai/{id}/{periode}', 'SDM\BenefitsController@editTunjanganPegawai')->name('tunjangan.editTunjanganPegawai');
     Route::get('/sdm/penggajian/tunjangan/getdata-tunjangan-pegawai', 'SDM\BenefitsController@getDataTunjanganPegawai')->name('tunjangan.getDataTunjanganPegawai');
     // END
-    // TAB PRODUKSI
-    Route::get('/sdm/penggajian/produksi/create', 'SDMController@create_produksi')->name('produksi.create');
-    Route::get('/sdm/penggajian/produksi/edit', 'SDMController@edit_produksi')->name('produksi.edit');
+    // TAB SALARY
+    Route::get('/sdm/penggajian/salary/get-data-salary-pegawai', 'SDM\SalaryController@getDataSalaryPegawai')->name('salary.getDataSalaryPegawai');
+    Route::get('/sdm/penggajian/salary/master-gaji-pokok', 'SDM\SalaryController@masterGajiPokok')->name('salary.masterGajiPokok');
+    Route::get('/sdm/penggajian/salary/data-master-gaji-pokok', 'SDM\SalaryController@getMasterGajiPokok')->name('salary.getMasterGajiPokok');
+    Route::post('/sdm/penggajian/salary/simpan-gaji-pokok', 'SDM\SalaryController@saveGajiPokok')->name('salary.saveGajiPokok');
+    Route::post('/sdm/penggajian/salary/simpan-gaji-pegawai', 'SDM\SalaryController@saveGajiPegawai')->name('salary.saveGajiPegawai');
+
     // END
     // !===================================================== END SDM =====================================================!
 

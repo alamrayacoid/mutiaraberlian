@@ -147,6 +147,7 @@ class BenefitsController extends Controller
                         ')
             )
             ->where('e_company', '=', $pusat->c_id)
+            ->where('e_isactive', '=', 'Y')
             ->groupBy('e_id')
             ->get();
 
@@ -175,6 +176,7 @@ class BenefitsController extends Controller
             ->select('e_name', 'e_nip', 'b_name', DB::raw('round(ebd_value) as ebd_value'), 'ebd_note', 'b_type')
             ->where('e_company', '=', $pusat->c_id)
             ->where('e_id', '=', $e_id)
+            ->where('e_isactive', '=', 'Y')
             ->get();
 
         return response()->json($data);
@@ -263,7 +265,7 @@ class BenefitsController extends Controller
                 $detailid = 1;
                 if ($cek != null) {
                     //data sudah ada
-                    DB::commit();
+                    DB::rollback();
                     return response()->json([
                         'status' => 'gagal',
                         'message' => 'data sudah ada..'
@@ -404,6 +406,7 @@ class BenefitsController extends Controller
                         ')
             )
             ->where('e_company', '=', $pusat->c_id)
+            ->where('e_isactive', '=', 'Y')
             ->groupBy('e_id')
             ->get();
 
@@ -431,6 +434,9 @@ class BenefitsController extends Controller
     public function editTunjanganPegawai($id, $periode){
         $tanggal = $periode;
         $periode = Carbon::createFromFormat('d-m-Y', "01-" . $periode);
+        $pusat = DB::table('m_company')
+            ->where('c_type', '=', 'PUSAT')
+            ->first();
 
         $data = DB::table('m_employee')
             ->leftJoin('d_employeebenefits as emben', function($q) use ($periode){
@@ -446,6 +452,8 @@ class BenefitsController extends Controller
             ->select('e_name', 'e_nip', 'e_id', 'b_name', DB::raw('(case when b_type = "T" then "Tunjangan" end) as b_type'),
                 DB::raw('round(ebd_value) as ebd_value'))
             ->where('e_id', '=', $id)
+            ->where('e_company', '=', $pusat->c_id)
+            ->where('e_isactive', '=', 'Y')
             ->get();
 
         $tunjangan = DB::table('m_benefits')
