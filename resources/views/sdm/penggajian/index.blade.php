@@ -663,7 +663,7 @@
                     '<span class="pull-right">'+convertToRupiah(val.punishment)+'</span>',
                     '<span class="pull-right">'+convertToRupiah(val.tunjangan)+'</span>',
                     '<span class="pull-right">'+convertToRupiah(total)+'</span>'+'<input type="hidden" class="total" name="total[]" value="'+total+'">',
-                    '<input type="text" class="form-control form-control-sm diserahkan" name="diserahkan[]" value="'+val.esd_submitedon+'">',
+                    '<input type="text" class="form-control form-control-sm diserahkan" name="diserahkan[]" value="'+val.esd_submittedon+'">',
                     '<center><button type="button" class="btn btn-primary btn-sm" onclick="detailGajiPegawai(\''+val.e_id+'\')">Detail</button></center>'
                 ]).draw().node();
             });
