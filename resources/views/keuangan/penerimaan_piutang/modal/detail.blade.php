@@ -38,6 +38,13 @@
                         <div class="col-4 mb-3">
                             <input type="text" class="form-control form-control-sm rupiah" id="total_dtpp" readonly="">
                         </div>
+
+                        <div class="col-2 d-none paiddate">
+                            <label for="">Tanggal Pelunasan</label>
+                        </div>
+                        <div class="col-4 mb-3 d-none paiddate">
+                            <input type="text" class="form-control form-control-sm" id="paiddate_dtpp" readonly="">
+                        </div>
                     </div>
                 </section>
                 <div class="table-responsive">
@@ -65,6 +72,7 @@
                             <th class="text-center">No</th>
                             <th class="text-center">Tanggal</th>
                             <th class="text-center">Nominal</th>
+                            <th class="text-center d-none is-edit">Aksi</th>
                         </tr>
                         </thead>
                         <tbody>

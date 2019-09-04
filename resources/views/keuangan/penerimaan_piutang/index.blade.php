@@ -80,6 +80,7 @@
                     source: function (request, response) {
                         $.ajax({
                             url: "{{ route('penerimaanpiutang.getListAgen') }}",
+                            type: "get",
                             data: {
                                 term: $("#agen_pa").val()
                             },
@@ -93,6 +94,10 @@
                         let agen = data.item;
                         $('#id_agen_pa').val(agen.id);
                     }
+                });
+
+                $('#modalBayarpp').on('hidden.bs.modal', function () {
+                    $('#bayarpaypp').val('0');
                 });
             }, 100);
         });
@@ -160,10 +165,10 @@
                     let nominal = "<td class='text-right rupiah'>"+ parseFloat(value.scp_pay)+"</td>";
                     $('#table_detailpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
                 });
-                $('#nota_dtpp').val(detail.sc_nota);
+                $('#nota_dtpp').val(detail.nota);
                 $('#date_dtpp').val(detail.sc_datetop);
-                $('#agent_dtpp').val(detail.get_agent.c_name);
-                $('#total_dtpp').val(parseFloat(detail.sc_total) - terbayar);
+                $('#agent_dtpp').val(detail.agent);
+                $('#total_dtpp').val(parseFloat(detail.total) - terbayar);
                 //mask rupiah
                 $('.rupiah').inputmask("currency", {
                     radixPoint: ",",
@@ -201,6 +206,7 @@
 
                 $('#table_bayarpp > tbody').empty();
                 $('#table_bayarpembayaranpp > tbody').empty();
+                $('#table_bayarpembayaranpp').removeClass('d-none');
                 $('#paymentpp').empty();
                 $.each(detail.get_sales_comp_dt, function (index, value) {
                     let no = "<td>"+ (index + 1) +"</td>";
@@ -231,7 +237,13 @@
                 $('#nota_paypp').val(detail.sc_nota);
                 $('#date_paypp').val(detail.sc_datetop);
                 $('#agent_paypp').val(detail.get_agent.c_name);
-                $('#total_paypp').val(parseFloat(detail.sc_total) - terbayar);//mask rupiah
+                $('#total_paypp').val(parseFloat(detail.sc_total) - terbayar);
+
+                $('#btnPay').off();
+                $('#btnPay').on('click', function() {
+                    sendPaymentAgen();
+                });
+                // mask rupiah
                 $('.rupiah').inputmask("currency", {
                     radixPoint: ",",
                     groupSeparator: ".",
@@ -257,15 +269,15 @@
             let tanggal = $('#datepaypp').val();
             let paymentmethod = $('#paymentpp').val();
             if (bayar == 0 || bayar == ''){
-                messageWarning("Lengkapi form pembayaran");
+                messageWarning("Perhatian", "Nilai bayar tidak boleh kosong !");
                 return false;
             }
             if (tanggal == ''){
-                messageWarning("Lengkapi form pembayaran");
+                messageWarning("Perhatian", "Tanggal pembayaran tidak boleh kosong !");
                 return false;
             }
             if (paymentmethod == 'disable' || paymentmethod == ''){
-                messageWarning("Lengkapi form pembayaran");
+                messageWarning("Perhatian", "Metode pembayaran tidak boleh kosong !");
                 return false;
             }
             loadingShow();
@@ -280,7 +292,7 @@
                 loadingHide();
                 if (response.data.status == 'sukses'){
                     messageSuccess("Berhasil", "Pembayaran berhasil dilakukan !");
-                    table_penerimaanpiutang.ajax.reload();
+                    table_penerimaanagen.ajax.reload();
                     $('#modalBayarpp').modal('hide');
                 } else if (response.data.status == 'gagal'){
                     messageFailed("Gagal", response.data.message);
@@ -330,6 +342,11 @@
                         let agen = data.item;
                         $('#id_cabang_pc').val(agen.id);
                     }
+                });
+
+                $('#modalBayarpp').on('hidden.bs.modal', function () {
+                    $('#bayarpaypp').val('0');
+                    $('#bayarpaypp').attr('readonly', false);
                 });
             }, 200);
         });
@@ -385,9 +402,10 @@
                 console.log(detail);
                 $('#table_detailpp > tbody').empty();
                 $('#table_detailpembayaranpp > tbody').empty();
+                $('#table_detailpembayaranpp').addClass('d-none');
                 // if transaction is from sales
                 if (detail.source == 'Sales') {
-                    $('#table_detailpembayaranpp').addClass('d-none');
+                    // $('#table_detailpembayaranpp').addClass('d-none');
                     $.each(detail.get_sales_dt, function (index, value) {
                         let no = "<td>"+ (index + 1) +"</td>";
                         let nama = "<td>"+ value.get_item.i_name+"</td>";
@@ -401,7 +419,7 @@
                 }
                 // if transaction is from salesComp
                 else {
-                    $('#table_detailpembayaranpp').removeClass('d-none');
+                    // $('#table_detailpembayaranpp').removeClass('d-none');
                     $.each(detail.get_sales_comp_dt, function (index, value) {
                         let no = "<td>"+ (index + 1) +"</td>";
                         let nama = "<td>"+ value.get_item.i_name+"</td>";
@@ -411,14 +429,6 @@
                         let diskon = "<td class='text-right rupiah'>"+ parseFloat(value.scd_discvalue) +"</td>";
                         let total = "<td class='text-right rupiah'>"+ parseFloat(value.scd_totalnet) +"</td>";
                         $('#table_detailpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
-                    });
-
-                    $.each(pay, function (index, value) {
-                        // terbayar = terbayar + parseFloat(value.scp_pay);
-                        let no = "<td>"+ (index + 1) +"</td>";
-                        let tanggal = "<td>"+ value.scp_date +"</td>";
-                        let nominal = "<td class='text-right rupiah'>"+ parseFloat(value.scp_pay)+"</td>";
-                        $('#table_detailpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
                     });
                 }
                 $('#agent_dtpp').val(detail.agent);
@@ -462,10 +472,11 @@
 
                 $('#table_bayarpp > tbody').empty();
                 $('#table_bayarpembayaranpp > tbody').empty();
+                $('#table_bayarpembayaranpp').addClass('d-none');
                 $('#paymentpp').empty();
                 // if transaction is from sales
                 if (detail.source == 'Sales') {
-                    $('#table_detailpembayaranpp').addClass('d-none');
+                    // $('#table_bayarpembayaranpp').addClass('d-none');
                     $.each(detail.get_sales_dt, function (index, value) {
                         let no = "<td>"+ (index + 1) +"</td>";
                         let nama = "<td>"+ value.get_item.i_name+"</td>";
@@ -479,7 +490,7 @@
                 }
                 // if transaction is from salesComp
                 else {
-                    $('#table_detailpembayaranpp').removeClass('d-none');
+                    // $('#table_bayarpembayaranpp').removeClass('d-none');
                     $.each(detail.get_sales_comp_dt, function (index, value) {
                         let no = "<td>"+ (index + 1) +"</td>";
                         let nama = "<td>"+ value.get_item.i_name+"</td>";
@@ -491,13 +502,13 @@
                         $('#table_bayarpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
                     });
 
-                    $.each(pay, function (index, value) {
-                        terbayar = terbayar + parseFloat(value.scp_pay);
-                        let no = "<td>"+ (index + 1) +"</td>";
-                        let tanggal = "<td>"+ value.scp_date +"</td>";
-                        let nominal = "<td class='text-right rupiah'>"+ parseFloat(value.scp_pay)+"</td>";
-                        $('#table_bayarpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
-                    });
+                    // $.each(pay, function (index, value) {
+                    //     terbayar = terbayar + parseFloat(value.scp_pay);
+                    //     let no = "<td>"+ (index + 1) +"</td>";
+                    //     let tanggal = "<td>"+ value.scp_date +"</td>";
+                    //     let nominal = "<td class='text-right rupiah'>"+ parseFloat(value.scp_pay)+"</td>";
+                    //     $('#table_bayarpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
+                    // });
                 }
                 $('#paymentpp').append("<option value='disable'> == Pilih Metode Pembayaran == </option>");
                 $.each(method, function (index, value) {
@@ -511,7 +522,15 @@
                 $('#agent_paypp').val(detail.agent);
                 $('#nota_paypp').val(detail.nota);
                 $('#date_paypp').val(detail.sc_datetop);
-                $('#total_paypp').val(parseFloat(detail.total));//mask rupiah
+                $('#total_paypp').val(parseFloat(detail.total));
+                $('#bayarpaypp').val(parseFloat(detail.total));
+                $('#bayarpaypp').attr('readonly', true);
+
+                $('#btnPay').off();
+                $('#btnPay').on('click', function() {
+                    sendPaymentCabang();
+                });
+                //mask rupiah
                 $('.rupiah').inputmask("currency", {
                     radixPoint: ",",
                     groupSeparator: ".",
@@ -523,7 +542,6 @@
                     nullable: false,
                     // unmaskAsNumber: true,
                 });
-
                 $('#modalBayarpp').modal('show');
             }).catch(function (error) {
                 loadingHide();
@@ -537,15 +555,15 @@
             let tanggal = $('#datepaypp').val();
             let paymentmethod = $('#paymentpp').val();
             if (bayar == 0 || bayar == ''){
-                messageWarning("Lengkapi form pembayaran");
+                messageWarning("Perhatian", "Nilai bayar tidak boleh kosong !");
                 return false;
             }
             if (tanggal == ''){
-                messageWarning("Lengkapi form pembayaran");
+                messageWarning("Perhatian", "Tanggal pembayaran tidak boleh kosong !");
                 return false;
             }
             if (paymentmethod == 'disable' || paymentmethod == ''){
-                messageWarning("Lengkapi form pembayaran");
+                messageWarning("Perhatian", "Metode pembayaran tidak boleh kosong !");
                 return false;
             }
             loadingShow();
@@ -560,7 +578,7 @@
                 loadingHide();
                 if (response.data.status == 'sukses'){
                     messageSuccess("Berhasil", "Pembayaran berhasil dilakukan !");
-                    table_penerimaanpiutang.ajax.reload();
+                    table_penerimaancabang.ajax.reload();
                     $('#modalBayarpp').modal('hide');
                 } else if (response.data.status == 'gagal'){
                     messageFailed("Gagal", response.data.message);
@@ -612,6 +630,15 @@
                         $('#id_agen_pah').val(agen.id);
                     }
                 });
+
+                $('#modalDetailpp').on('hidden.bs.modal', function() {
+                    $('.paiddate').addClass('d-none');
+                    $('#table_detailpembayaranpp .is-edit').addClass('d-none');
+                });
+                $('#modalBayarpp').on('hidden.bs.modal', function() {
+                    $('.table-list-payment').removeClass('d-none');
+                });
+
             }, 300);
         });
 
@@ -635,8 +662,8 @@
                 },
                 columns: [
                     {data: 'c_name'},
-                    {data: 'sisa'},
-                    {data: 'sc_datetop'},
+                    {data: 'piutang'},
+                    {data: 'date_top'},
                     {data: 'status'},
                     {data: 'aksi'}
                 ],
@@ -644,64 +671,301 @@
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
             });
         }
+        // show detail payment-history
+        function showDetailHistoryAgen(nota) {
+            let type = 'AGEN';
+            loadingShow();
+            axios.get('{{ route("penerimaanpiutang.getDetailTransaksi") }}', {
+                params:{
+                    nota: nota,
+                    type: type
+                }
+            }).then(function (response) {
+                loadingHide();
+                let detail = response.data.data;
+                let pay = response.data.pay;
+                let terbayar = 0;
 
-        // function detailHistoryPiutangAgen(nota) {
-        //     let type = 'AGEN';
-        //     loadingShow();
-        //     axios.get('{{ route("penerimaanpiutang.getDetailTransaksi") }}', {
-        //         params:{
-        //             nota: nota,
-        //             type: type
-        //         }
-        //     }).then(function (response) {
-        //         loadingHide();
-        //         let detail = response.data.data;
-        //         let pay = response.data.pay;
-        //         let terbayar = 0;
-        //
-        //         $('#table_detailpp > tbody').empty();
-        //         $('#table_detailpembayaranpp > tbody').empty();
-        //         $.each(detail.get_sales_comp_dt, function (index, value) {
-        //             let no = "<td>"+ (index + 1) +"</td>";
-        //             let nama = "<td>"+ value.get_item.i_name+"</td>";
-        //             let qty = "<td>"+ value.scd_qty +"</td>";
-        //             let satuan = "<td>"+ value.get_unit.u_name +"</td>";
-        //             let harga = "<td class='text-right rupiah'>"+ parseFloat(value.scd_value) +"</td>";
-        //             let diskon = "<td class='text-right rupiah'>"+ parseFloat(value.scd_discvalue) +"</td>";
-        //             let total = "<td class='text-right rupiah'>"+ parseFloat(value.scd_totalnet) +"</td>";
-        //             $('#table_detailpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
-        //         });
-        //         $.each(pay, function (index, value) {
-        //             terbayar = terbayar + parseFloat(value.scp_pay);
-        //             let no = "<td>"+ (index + 1) +"</td>";
-        //             let tanggal = "<td>"+ value.scp_date +"</td>";
-        //             let nominal = "<td class='text-right rupiah'>"+ parseFloat(value.scp_pay)+"</td>";
-        //             $('#table_detailpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
-        //         });
-        //         $('#nota_dtpp').val(detail.sc_nota);
-        //         $('#date_dtpp').val(detail.sc_datetop);
-        //         $('#agent_dtpp').val(detail.get_agent.c_name);
-        //         $('#total_dtpp').val(parseFloat(detail.sc_total) - terbayar);
-        //         //mask rupiah
-        //         $('.rupiah').inputmask("currency", {
-        //             radixPoint: ",",
-        //             groupSeparator: ".",
-        //             digits: 0,
-        //             autoGroup: true,
-        //             prefix: ' Rp ', //Space after $, this will not truncate the first character.
-        //             rightAlign: true,
-        //             autoUnmask: true,
-        //             nullable: false,
-        //             // unmaskAsNumber: true,
-        //         });
-        //
-        //         $('#modalDetailpp').modal('show');
-        //     }).catch(function (error) {
-        //         loadingHide();
-        //         messageWarning('Error', 'Terjadi kesalahan : '+ error);
-        //     })
-        // }
+                $('#table_detailpp > tbody').empty();
+                $('#table_detailpembayaranpp > tbody').empty();
+                $.each(detail.get_sales_comp_dt, function (index, value) {
+                    let no = "<td>"+ (index + 1) +"</td>";
+                    let nama = "<td>"+ value.get_item.i_name+"</td>";
+                    let qty = "<td>"+ value.scd_qty +"</td>";
+                    let satuan = "<td>"+ value.get_unit.u_name +"</td>";
+                    let harga = "<td class='text-right rupiah'>"+ parseFloat(value.scd_value) +"</td>";
+                    let diskon = "<td class='text-right rupiah'>"+ parseFloat(value.scd_discvalue) +"</td>";
+                    let total = "<td class='text-right rupiah'>"+ parseFloat(value.scd_totalnet) +"</td>";
+                    $('#table_detailpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
+                });
+                $.each(pay, function (index, value) {
+                    terbayar = terbayar + parseFloat(value.scp_pay);
+                    let no = "<td>"+ (index + 1) +"</td>";
+                    let tanggal = "<td>"+ value.scp_date +"</td>";
+                    let nominal = "<td class='text-right rupiah'>"+ parseFloat(value.scp_pay)+"</td>";
+                    $('#table_detailpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
+                });
+                $('#nota_dtpp').val(detail.nota);
+                $('#date_dtpp').val(detail.sc_datetop);
+                $('#agent_dtpp').val(detail.agent);
+                $('#total_dtpp').val(parseFloat(detail.total) - terbayar);
+                $('.paiddate').removeClass('d-none');
+                $('#paiddate_dtpp').val(detail.paidDate);
+                //mask rupiah
+                $('.rupiah').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 0,
+                    autoGroup: true,
+                    prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
 
+                $('#modalDetailpp').modal('show');
+            }).catch(function (error) {
+                loadingHide();
+                messageWarning('Error', 'Terjadi kesalahan : '+ error);
+            })
+        }
+        // show detail payment-history for edit
+        function showDetailEditHistoryAgen(nota) {
+            let type = 'AGEN';
+            loadingShow();
+            axios.get('{{ route("penerimaanpiutang.getDetailTransaksi") }}', {
+                params:{
+                    nota: nota,
+                    type: type
+                }
+            }).then(function (response) {
+                loadingHide();
+                let detail = response.data.data;
+                let pay = response.data.pay;
+                let terbayar = 0;
+
+                $('#table_detailpp > tbody').empty();
+                $('#table_detailpembayaranpp > tbody').empty();
+                $('#table_detailpembayaranpp .is-edit').removeClass('d-none');
+                $.each(detail.get_sales_comp_dt, function (index, value) {
+                    let no = "<td>"+ (index + 1) +"</td>";
+                    let nama = "<td>"+ value.get_item.i_name+"</td>";
+                    let qty = "<td>"+ value.scd_qty +"</td>";
+                    let satuan = "<td>"+ value.get_unit.u_name +"</td>";
+                    let harga = "<td class='text-right rupiah'>"+ parseFloat(value.scd_value) +"</td>";
+                    let diskon = "<td class='text-right rupiah'>"+ parseFloat(value.scd_discvalue) +"</td>";
+                    let total = "<td class='text-right rupiah'>"+ parseFloat(value.scd_totalnet) +"</td>";
+                    $('#table_detailpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
+                });
+                $.each(pay, function (index, value) {
+                    terbayar = terbayar + parseFloat(value.scp_pay);
+                    let no = "<td>"+ (index + 1) +"</td>";
+                    let tanggal = "<td>"+ value.scp_date +"</td>";
+                    let nominal = "<td class='text-right rupiah'>"+ parseFloat(value.scp_pay)+"</td>";
+                    let aksi = '<td class="text-center"><button type="button" class="btn btn-sm btn-warning hint--top hint--warning" aria-label="Edit" onclick="showEditHistoryAgen(\''+ value.scp_salescomp +'\', \''+ value.scp_detailid +'\')"><i class="fa fa-pencil"></i></button></td>';
+                    $('#table_detailpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal + aksi +"</tr>");
+                });
+                $('#nota_dtpp').val(detail.nota);
+                $('#date_dtpp').val(detail.sc_datetop);
+                $('#agent_dtpp').val(detail.agent);
+                $('#total_dtpp').val(parseFloat(detail.total) - terbayar);
+                //mask rupiah
+                $('.rupiah').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 0,
+                    autoGroup: true,
+                    prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
+
+                $('#modalDetailpp').modal('show');
+            }).catch(function (error) {
+                loadingHide();
+                messageWarning('Error', 'Terjadi kesalahan : '+ error);
+            })
+        }
+        // show edit payment-history
+        function showEditHistoryAgen(id, detailId) {
+            $.ajax({
+                url: '{{ route("penerimaanpiutang.getDetailPayment") }}',
+                type: 'get',
+                data: {
+                    id: id,
+                    detailId: detailId
+                },
+                beforeSend: function () {
+                    loadingShow();
+                },
+                success: function (resp) {
+                    $('#modalDetailpp').modal('hide');
+                    $('#nota_paypp').val(resp.get_sales_comp.sc_nota);
+                    $('#date_tempo').val(resp.get_sales_comp.sc_datetop);
+                    $('#agent_paypp').val(resp.get_sales_comp.get_agent.c_name);
+                    $('#total_paypp').val(parseFloat(resp.remainingPayment));
+                    $('#bayarpaypp').val(parseFloat(resp.scp_pay));
+
+                    $('.table-list-payment').addClass('d-none');
+                    $('#table_bayarpp > tbody').empty();
+                    $.each(resp.get_sales_comp.get_sales_comp_dt, function (index, value) {
+                        let no = "<td>"+ (index + 1) +"</td>";
+                        let nama = "<td>"+value.get_item.i_name+"</td>";
+                        let qty = "<td>"+value.scd_qty+"</td>";
+                        let satuan = "<td>"+value.get_unit.u_name+"</td>";
+                        let harga = "<td class='text-right rupiah'>"+ parseFloat(value.scd_value) +"</td>";
+                        let diskon = "<td class='text-right rupiah'>"+ parseFloat(value.scd_discvalue) +"</td>";
+                        let total = "<td class='text-right rupiah'>"+ parseFloat(value.scd_totalnet) +"</td>";
+                        $('#modalBayarpp #table_bayarpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
+                    });
+                    // re-init inputmask
+                    $('.rupiah').inputmask("currency", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 0,
+                        autoGroup: true,
+                        prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        // unmaskAsNumber: true,
+                    });
+
+                    $('#paymentpp').empty();
+                    $('#paymentpp').append("<option value='disable'> == Pilih Metode Pembayaran == </option>");
+                    $.each(resp.method, function (index, value) {
+                        if ($('#userType').val() == 'PUSAT') {
+                            $('#paymentpp').append('<option value="'+ value.pm_id +'">'+ value.get_akun.ak_nomor +' - '+ value.pm_name +'</option>');
+                        }
+                        else {
+                            $('#paymentpp').append("<option value='"+value.get_akun.ak_id +"'>"+ value.get_akun.ak_nama +"</option>");
+                        }
+                    });
+
+                    $('#btnPay').off();
+                    $('#btnPay').on('click', function () {
+                        sendEditHistoryAgen(resp.scp_salescomp, resp.scp_detailid);
+                    });
+
+                    $('#modalBayarpp').modal('show');
+                },
+                error: function (err) {
+                    messageWarning('Error', 'Terjadi kesalahan : '+ err.message);
+                },
+                complete: function () {
+                    loadingHide();
+                }
+            });
+        }
+        // send edit payment-history
+        function sendEditHistoryAgen(salesCompId, paymentDetailId) {
+            let nota = $('#nota_paypp').val();
+            let bayar = $('#bayarpaypp').val();
+            let tanggal = $('#datepaypp').val();
+            let paymentmethod = $('#paymentpp').val();
+            if (bayar == 0 || bayar == ''){
+                messageWarning("Perhatian", "Jumlah pembayaran tidak boleh kosong atau '0' !");
+                return false;
+            }
+            if (tanggal == ''){
+                messageWarning("Perhatian", "Tanggal pembayaran tidak boleh kosong !");
+                return false;
+            }
+            if (paymentmethod == 'disable' || paymentmethod == ''){
+                messageWarning("Perhatian", "Metode pembayaran tidak boleh kosong !");
+                return false;
+            }
+
+            $.ajax({
+                url: '{{ route("penerimaanpiutang.updateHistoryPayment") }}',
+                type: 'post',
+                data: {
+                    salesCompId: salesCompId,
+                    paymentDetailId: paymentDetailId,
+                    nota: nota,
+                    bayar: bayar,
+                    tanggal: tanggal,
+                    paymentmethod: paymentmethod
+                },
+                beforeSend: function (){
+                    loadingShow();
+                },
+                success: function (resp) {
+                    if (resp.status == 'sukses') {
+                        $('#modalBayarpp').modal('hide');
+                        table_historyagen.ajax.reload();
+                        messageSuccess('Berhasil', 'Pembayaran berhasil di perbarui !');
+                    }
+                    else {
+                        messageFailed('Gagal', 'Gagal melakukan update pembayaran : ' + resp.message);
+                    }
+                },
+                error: function (err) {
+                    messageWarning('Error', 'Terjadi kesalahan : '+ err);
+                },
+                complete: function () {
+                    loadingHide();
+                }
+            });
+        }
+        // decline all payment
+        function declineAgen(nota) {
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apa anda yakin mau membatalkan pembayaran piutang ini ?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            declinePaymentAgen(nota);
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+        }
+
+        function declinePaymentAgen(nota) {
+            $.ajax({
+                url: "{{ route('penerimaanpiutang.declinePaymentAgen') }}",
+                type: "post",
+                data: {
+                    nota: nota
+                },
+                beforeSend: function () {
+                    loadingShow();
+                },
+                success: function (resp) {
+                    if (resp.status == 'sukses') {
+                        messageSuccess('Berhasil', 'Seluruh data pembayaran terkait berhasil dibatalkan !');
+                        table_historyagen.ajax.reload();
+                    }
+                    else {
+                        messageWarning('Gagal', 'Terjadi kesalahan : '+ resp.message);
+                    }
+                },
+                error: function (err) {
+                    messageWarning('Error', 'Terjadi kesalahan : '+ error);
+                },
+                complete: function () {
+                    loadingHide();
+                }
+            });
+        }
     </script>
 <!-- ====== end: History Penerimaan Piutang Agen ======= -->
 
@@ -715,10 +979,10 @@
                 $('#id_cabang_pch').val('');
 
                 $('#btnCari_pch').on('click', function() {
-                    getListPenerimaanCabang();
+                    getListHitoryCabang();
                 });
 
-                getListPenerimaanCabang();
+                getListHitoryCabang();
 
                 $("#cabang_pch").on('keyup', function () {
                     $('#id_cabang_pch').val('');
@@ -742,10 +1006,14 @@
                         $('#id_cabang_pch').val(agen.id);
                     }
                 });
+
+                $('#modalDetailpp').on('hidden.bs.modal', function() {
+                    $('.paiddate').addClass('d-none');
+                });
             }, 200);
         });
 
-        function getListPenerimaanCabang() {
+        function getListHitoryCabang() {
             let dateStart = $('#date_from_pch').val();
             let dateEnd = $('#date_to_pch').val();
 
@@ -779,83 +1047,130 @@
             });
         }
 
-        // function detailNotaPiutangCabang(nota) {
-        //     let type = 'CABANG';
-        //     loadingShow();
-        //     axios.get('{{ route("penerimaanpiutang.getDetailTransaksi") }}', {
-        //         params:{
-        //             nota: nota,
-        //             type: type
-        //         }
-        //     }).then(function (response) {
-        //         loadingHide();
-        //         let detail = response.data.data;
-        //         let pay = response.data.pay;
-        //         // let terbayar = 0;
-        //
-        //         console.log(detail);
-        //         $('#table_detailpp > tbody').empty();
-        //         $('#table_detailpembayaranpp > tbody').empty();
-        //         // if transaction is from sales
-        //         if (detail.source == 'Sales') {
-        //             $('#table_detailpembayaranpp').addClass('d-none');
-        //             $.each(detail.get_sales_dt, function (index, value) {
-        //                 let no = "<td>"+ (index + 1) +"</td>";
-        //                 let nama = "<td>"+ value.get_item.i_name+"</td>";
-        //                 let qty = "<td>"+ value.sd_qty +"</td>";
-        //                 let satuan = "<td>"+ value.get_unit.u_name +"</td>";
-        //                 let harga = "<td class='text-right rupiah'>"+ parseFloat(value.sd_value) +"</td>";
-        //                 let diskon = "<td class='text-right rupiah'>"+ parseFloat(value.sd_discvalue) +"</td>";
-        //                 let total = "<td class='text-right rupiah'>"+ parseFloat(value.sd_totalnet) +"</td>";
-        //                 $('#table_detailpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
-        //             });
-        //         }
-        //         // if transaction is from salesComp
-        //         else {
-        //             $('#table_detailpembayaranpp').removeClass('d-none');
-        //             $.each(detail.get_sales_comp_dt, function (index, value) {
-        //                 let no = "<td>"+ (index + 1) +"</td>";
-        //                 let nama = "<td>"+ value.get_item.i_name+"</td>";
-        //                 let qty = "<td>"+ value.scd_qty +"</td>";
-        //                 let satuan = "<td>"+ value.get_unit.u_name +"</td>";
-        //                 let harga = "<td class='text-right rupiah'>"+ parseFloat(value.scd_value) +"</td>";
-        //                 let diskon = "<td class='text-right rupiah'>"+ parseFloat(value.scd_discvalue) +"</td>";
-        //                 let total = "<td class='text-right rupiah'>"+ parseFloat(value.scd_totalnet) +"</td>";
-        //                 $('#table_detailpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
-        //             });
-        //
-        //             $.each(pay, function (index, value) {
-        //                 // terbayar = terbayar + parseFloat(value.scp_pay);
-        //                 let no = "<td>"+ (index + 1) +"</td>";
-        //                 let tanggal = "<td>"+ value.scp_date +"</td>";
-        //                 let nominal = "<td class='text-right rupiah'>"+ parseFloat(value.scp_pay)+"</td>";
-        //                 $('#table_detailpembayaranpp > tbody').append("<tr>" + no + tanggal + nominal +"</tr>");
-        //             });
-        //         }
-        //         $('#agent_dtpp').val(detail.agent);
-        //         $('#nota_dtpp').val(detail.nota);
-        //         $('#date_dtpp').val(detail.sc_datetop);
-        //         $('#total_dtpp').val(parseFloat(detail.total));
-        //         //mask rupiah
-        //         $('.rupiah').inputmask("currency", {
-        //             radixPoint: ",",
-        //             groupSeparator: ".",
-        //             digits: 0,
-        //             autoGroup: true,
-        //             prefix: ' Rp ', //Space after $, this will not truncate the first character.
-        //             rightAlign: true,
-        //             autoUnmask: true,
-        //             nullable: false,
-        //             // unmaskAsNumber: true,
-        //         });
-        //
-        //         $('#modalDetailpp').modal('show');
-        //     }).catch(function (error) {
-        //         loadingHide();
-        //         messageWarning('Error', 'Terjadi kesalahan : '+ error);
-        //     })
-        // }
+        function showDetailHistoryCabang(nota) {
+            let type = 'CABANG';
+            loadingShow();
+            axios.get('{{ route("penerimaanpiutang.getDetailTransaksi") }}', {
+                params:{
+                    nota: nota,
+                    type: type
+                }
+            }).then(function (response) {
+                loadingHide();
+                let detail = response.data.data;
+                let pay = response.data.pay;
 
+                $('#table_detailpp > tbody').empty();
+                $('#table_detailpembayaranpp > tbody').empty();
+                $('#table_detailpembayaranpp').addClass('d-none');
+                // if transaction is from sales
+                if (detail.source == 'Sales') {
+                    // $('#table_detailpembayaranpp').addClass('d-none');
+                    $.each(detail.get_sales_dt, function (index, value) {
+                        let no = "<td>"+ (index + 1) +"</td>";
+                        let nama = "<td>"+ value.get_item.i_name+"</td>";
+                        let qty = "<td>"+ value.sd_qty +"</td>";
+                        let satuan = "<td>"+ value.get_unit.u_name +"</td>";
+                        let harga = "<td class='text-right rupiah'>"+ parseFloat(value.sd_value) +"</td>";
+                        let diskon = "<td class='text-right rupiah'>"+ parseFloat(value.sd_discvalue) +"</td>";
+                        let total = "<td class='text-right rupiah'>"+ parseFloat(value.sd_totalnet) +"</td>";
+                        $('#table_detailpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
+                    });
+                }
+                // if transaction is from salesComp
+                else {
+                    // $('#table_detailpembayaranpp').removeClass('d-none');
+                    $.each(detail.get_sales_comp_dt, function (index, value) {
+                        let no = "<td>"+ (index + 1) +"</td>";
+                        let nama = "<td>"+ value.get_item.i_name+"</td>";
+                        let qty = "<td>"+ value.scd_qty +"</td>";
+                        let satuan = "<td>"+ value.get_unit.u_name +"</td>";
+                        let harga = "<td class='text-right rupiah'>"+ parseFloat(value.scd_value) +"</td>";
+                        let diskon = "<td class='text-right rupiah'>"+ parseFloat(value.scd_discvalue) +"</td>";
+                        let total = "<td class='text-right rupiah'>"+ parseFloat(value.scd_totalnet) +"</td>";
+                        $('#table_detailpp > tbody').append("<tr>" + no + nama + qty + satuan + harga + diskon + total + "</tr>");
+                    });
+                }
+                $('#agent_dtpp').val(detail.agent);
+                $('#nota_dtpp').val(detail.nota);
+                $('#date_dtpp').val(detail.sc_datetop);
+                $('#total_dtpp').val(parseFloat(detail.total));
+                $('.paiddate').removeClass('d-none');
+                $('#paiddate_dtpp').val(detail.paidDate);
+                //mask rupiah
+                $('.rupiah').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 0,
+                    autoGroup: true,
+                    prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
+
+                $('#modalDetailpp').modal('show');
+            }).catch(function (error) {
+                loadingHide();
+                messageWarning('Error', 'Terjadi kesalahan : '+ error);
+            })
+        }
+
+        function declineCabang(nota) {
+            $.confirm({
+                animation: 'RotateY',
+                closeAnimation: 'scale',
+                animationBounce: 1.5,
+                icon: 'fa fa-exclamation-triangle',
+                title: 'Peringatan!',
+                content: 'Apa anda yakin mau membatalkan pembayaran piutang ini ?',
+                theme: 'disable',
+                buttons: {
+                    info: {
+                        btnClass: 'btn-blue',
+                        text: 'Ya',
+                        action: function () {
+                            declinePaymentCabang(nota);
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak',
+                        action: function () {
+                            // tutup confirm
+                        }
+                    }
+                }
+            });
+        }
+
+        function declinePaymentCabang(nota) {
+            $.ajax({
+                url: "{{ route('penerimaanpiutang.declinePaymentCabang') }}",
+                type: "post",
+                data: {
+                    nota: nota
+                },
+                beforeSend: function () {
+                    loadingShow();
+                },
+                success: function (resp) {
+                    if (resp.status == 'sukses') {
+                        messageSuccess('Berhasil', 'Seluruh data pembayaran terkait berhasil dibatalkan !');
+                        table_historycabang.ajax.reload();
+                    }
+                    else {
+                        messageWarning('Gagal', 'Terjadi kesalahan : '+ resp.message);
+                    }
+                },
+                error: function (err) {
+                    messageWarning('Error', 'Terjadi kesalahan : '+ error);
+                },
+                complete: function () {
+                    loadingHide();
+                }
+            });
+        }
     </script>
 <!-- ====== end: History Penerimaan Piutang Cabang ======= -->
 

@@ -842,12 +842,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/keuangan/penerimaanpiutang/agen/get-detail-transaksi', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDetailTransaksi')->name('penerimaanpiutang.getDetailTransaksi');
     Route::get('/keuangan/penerimaanpiutang/agen/pay-piutang', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@payPiutangAgen')->name('penerimaanpiutang.payPiutangAgen');
     Route::get('/keuangan/penerimaanpiutang/agen/get-history', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataHistoryAgen')->name('penerimaanpiutang.getDataHistoryAgen');
+    Route::get('/keuangan/penerimaanpiutang/agen/get-detail-payment', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDetailPayment')->name('penerimaanpiutang.getDetailPayment');
+    Route::post('/keuangan/penerimaanpiutang/agen/update-history-payment', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@updateHistoryPayment')->name('penerimaanpiutang.updateHistoryPayment');
+    Route::post('/keuangan/penerimaanpiutang/agen/decline-payment', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@declinePaymentAgen')->name('penerimaanpiutang.declinePaymentAgen');
 
     // Penerimaan Piutang Cabang
     Route::get('/keuangan/penerimaanpiutang/cabang/getdata', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataPenerimaanCabang')->name('penerimaanpiutang.getDataPenerimaanCabang');
     Route::get('/keuangan/penerimaanpiutang/cabang/get-list-cabang', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getListCabang')->name('penerimaanpiutang.getListCabang');
     Route::get('/keuangan/penerimaanpiutang/cabang/pay-piutang', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@payPiutangCabang')->name('penerimaanpiutang.payPiutangCabang');
     Route::get('/keuangan/penerimaanpiutang/cabang/get-history', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataHistoryCabang')->name('penerimaanpiutang.getDataHistoryCabang');
+    Route::post('/keuangan/penerimaanpiutang/cabang/decline-payment', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@declinePaymentCabang')->name('penerimaanpiutang.declinePaymentCabang');
+
     // !===================================================== END KEUANGAN =====================================================!
 
     // !===================================================== PENGATURAN =====================================================!

@@ -75,12 +75,12 @@
                             </select>
                         </div>
                         <div class="form-group col-md-2 col-sm-12" style="padding-top: 10px;">
-                            <button type="button" class="btn btn-primary" onclick="bayarPP()" style="width: 100%; margin-top: 17px !important;"><i class="fa fa-money"></i> Bayar</button>
+                            <button type="button" class="btn btn-primary" id="btnPay" style="width: 100%; margin-top: 17px !important;"><i class="fa fa-money"></i> Bayar</button>
                         </div>
                     </div>
                 </section>
 
-                <div class="table-responsive">
+                <div class="table-responsive table-list-payment">
                     <table class="table table-striped table-hover display table-bordered" cellspacing="0" id="table_bayarpembayaranpp" width="100%">
                         <thead class="bg-primary">
                         <tr>
