@@ -38,7 +38,6 @@ class SalaryController extends Controller
                 $q->whereYear('es_date', '=', $periode->format('Y'));
             })
             ->leftJoin('d_employeesalarydt', function($q){
-                $q->on('es_id', '=', 'esd_employeesalary');
                 $q->on('esd_employee', '=', 'e_id');
             })
             ->select('e_name', 'e_nip', 'e_id', DB::raw('round(e_salary) as e_salary'), DB::raw('coalesce(es_issubmitted, "N") as es_issubmitted'),
