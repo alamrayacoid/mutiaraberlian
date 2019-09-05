@@ -859,6 +859,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/keuangan/penerimaanpiutang/cabang/get-history', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataHistoryCabang')->name('penerimaanpiutang.getDataHistoryCabang');
     Route::post('/keuangan/penerimaanpiutang/cabang/decline-payment', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@declinePaymentCabang')->name('penerimaanpiutang.declinePaymentCabang');
 
+    // Analisis Keuangan
+    Route::get('/keuangan/analisis/roe', 'Keuangan\analisis\ROEController@index')->name('roe.index');
     // !===================================================== END KEUANGAN =====================================================!
 
     // !===================================================== PENGATURAN =====================================================!
