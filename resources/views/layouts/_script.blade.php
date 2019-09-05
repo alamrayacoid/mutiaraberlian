@@ -583,7 +583,7 @@
 
     var channelOto = pusher.subscribe('channel-otorisasi');
     channelOto.bind('event-otorisasi', function(data) {
-        otorisasi(data.name, data.qty, data.link);
+        otorisasi(data.name);
     });
 
     // var channelNotif = pusher.subscribe('channel-notifikasi');
@@ -608,32 +608,30 @@
         }
     });
 
-    // get list 'notifikasi - notifikasi'
-    $.ajax({
-        type: 'get',
-        dataType: 'json',
-        url: baseUrl + '/gettmpnotif',
-        success : function(response){
-            if (response.length != 0) {
-                for (var i = 0; i < response.length; i++) {
-                    if (parseInt(response[i].n_qty) != 0) {
-                        notifikasi(response[i].n_name, 0, response[i].n_link);
-                    }
-                }
-            }
-        }
-    });
+    // // get list 'notifikasi - notifikasi'
+    // $.ajax({
+    //     type: 'get',
+    //     dataType: 'json',
+    //     url: baseUrl + '/gettmpnotif',
+    //     success : function(response){
+    //         if (response.length != 0) {
+    //             for (var i = 0; i < response.length; i++) {
+    //                 if (parseInt(response[i].n_qty) != 0) {
+    //                     notifikasi(response[i].n_name, 0, response[i].n_link);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // });
 
     // validate and update 'notif - otorisasi' (create if is_null)
-    function otorisasi(name, qty, link) {
-        console.log('otor: '+ name + ' , ' + qty);
+    function otorisasi(name) {
+        console.log('otor: '+ name);
         var html = "";
         $.ajax({
             type: 'get',
             data: {
-                name,
-                qty,
-                link
+                name
             },
             dataType: 'json',
             url: baseUrl + '/getoto',

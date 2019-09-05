@@ -1156,8 +1156,7 @@ class OtorisasiController extends Controller
                     'p_isapproved' => 'Y'
                 ]);
 
-            $link = route('promotion');
-            pushOtorisasi::otorisasiup('Otorisasi Promosi', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Promosi');
 
             // Jurnal ------------------------------------------
             $acc_promosi_beban = DB::table('dk_pembukuan_detail')
@@ -1234,8 +1233,7 @@ class OtorisasiController extends Controller
                     'p_isapproved' => 'N'
                 ]);
 
-            $link = route('promotion');
-            pushOtorisasi::otorisasiup('Otorisasi Promosi', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Promosi');
 
             DB::commit();
             return response()->json([
@@ -1347,8 +1345,7 @@ class OtorisasiController extends Controller
                     'ss_isapproved' => "Y"
                 ]);
 
-            $link = route('sdm');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi SDM');
 
             DB::commit();
             return response()->json([
@@ -1378,8 +1375,7 @@ class OtorisasiController extends Controller
                     'ss_isapproved' => "N"
                 ]);
 
-            $link = route('sdm');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi SDM');
 
             DB::commit();
             return response()->json([

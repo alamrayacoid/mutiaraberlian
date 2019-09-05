@@ -9,12 +9,12 @@ use Carbon\Carbon;
 
 class pushotorisasiController extends Controller
 {
-    static function otorisasiup($name, $qty, $link)
+    static function otorisasiup($name)
     {
         $data = array(
-            'name' => $name,
-            'qty' => $qty,
-            'link' => $link
+            'name' => $name
+            // 'qty' => $qty,
+            // 'link' => $link
         );
 
         $options = array(

@@ -219,8 +219,7 @@ class ItemController extends Controller
                     'ia_update_at' => Carbon::now(),
                 ]);
 
-            $link = route('revisi');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', 1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
             DB::commit();
             return response()->json([
@@ -347,8 +346,7 @@ class ItemController extends Controller
                     'ia_update_at' => Carbon::now(),
                 ]);
 
-                $link = route('revisi');
-                pushOtorisasi::otorisasiup('Otorisasi Revisi Data', 1, $link);
+                pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
             }
 
 
@@ -402,8 +400,7 @@ class ItemController extends Controller
                     'ia_update_at' => Carbon::now()
                 ]);
 
-                $link = route('revisi');
-                pushOtorisasi::otorisasiup('Otorisasi Revisi Data', 1, $link);
+                pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
             }
 
             DB::commit();
@@ -437,8 +434,7 @@ class ItemController extends Controller
                     'ia_update_at' => Carbon::now(),
                 ]);
 
-            $link = route('revisi');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', 1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
             DB::commit();
             return response()->json([
