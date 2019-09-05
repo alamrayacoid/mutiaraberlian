@@ -430,6 +430,7 @@
         $('.email').inputmask({alias: "email"});
     });
 </script>
+
 <script type="text/javascript">
     $(document).ready(function () {
         jconfirm.defaults = {
@@ -536,6 +537,8 @@
 
     });
 </script>
+
+<!-- PUSHER function -->
 <script type="text/javascript">
     const menuThree = document.querySelector('.menuThree');
 
@@ -564,183 +567,199 @@
     //PUSHER
     // Enable pusher logging - don't include this in production
     Pusher.logToConsole = true;
+    // if this not shown-up, try to use 'artisan config:clear'
+    var p_key = "{{ env('PUSHER_APP_KEY') }}";
+    var p_cluster = "{{ env('PUSHER_APP_CLUSTER') }}";
 
-    var p_key = "{{env('PUSHER_APP_KEY')}}";
-    var p_cluster = "{{env('PUSHER_APP_CLUSTER')}}";
-
-       var pusher = new Pusher(p_key, {
-         cluster: p_cluster,
-         forceTLS: true
-       });
-
-       var pusher1 = new Pusher(p_key, {
-         cluster: p_cluster,
-         forceTLS: true
-       });
-
-    var channel = pusher.subscribe('my-channel');
-    channel.bind('my-event', function(data) {
-      otorisasi(data.name, data.qty, data.link);
+    var pusher = new Pusher(p_key, {
+        cluster: p_cluster,
+        forceTLS: true
     });
 
-    var channel1 = pusher1.subscribe('my-channel1');
-    channel1.bind('my-event1', function(data) {
-      notifikasi(data.name, data.qty, data.link);
+    // var pusher1 = new Pusher(p_key, {
+    //     cluster: p_cluster,
+    //     forceTLS: true
+    // });
+
+    var channelOto = pusher.subscribe('channel-otorisasi');
+    channelOto.bind('event-otorisasi', function(data) {
+        otorisasi(data.name, data.qty, data.link);
     });
 
+    // var channelNotif = pusher.subscribe('channel-notifikasi');
+    // channelNotif.bind('event-notifikasi', function(data) {
+    //     notifikasi(data.name, data.qty, data.link);
+    // });
+
+    // get list 'notifikasi - otorisasi'
     $.ajax({
-      type: 'get',
-      dataType: 'json',
-      url: baseUrl + '/gettmpoto',
-      success : function(response){
-        if (response.length != 0) {
-          // console.log(response[0]);
-          for (var i = 0; i < response.length; i++) {
-            if (parseInt(response[i].n_qty) != 0) {
-              otorisasi(response[i].n_name, 0, response[i].n_link);
-            }
-          }
-        }
-      }
-    });
-
-    $.ajax({
-      type: 'get',
-      dataType: 'json',
-      url: baseUrl + '/gettmpnotif',
-      success : function(response){
-        if (response.length != 0) {
-          // console.log(response[0]);
-          for (var i = 0; i < response.length; i++) {
-            if (parseInt(response[i].n_qty) != 0) {
-              otorisasi(response[i].n_name, 0, response[i].n_link);
-            }
-          }
-        }
-      }
-    });
-
-    function otorisasi(name, qty, link){
-      // alert(link);
-      var html = "";
-      $.ajax({
         type: 'get',
-        data: {name, qty, link},
         dataType: 'json',
-        url: baseUrl + '/getoto',
+        url: baseUrl + '/gettmpoto',
         success : function(response){
-          if (response.count == 0) {
-            html = '<center><li>'
-                     +'<a href="#" class="notification-item">'
-                     +'<div class="body-col">'
-                     +'<p>'
-                     +      '<span class="accent">Tidak ada data</span>'
-                     +'</p>'
-                     +'</div>'
-                     +'</a>'
-                     '</li></center>';
-          } else {
-            for (var i = 0; i < response.data.length; i++) {
-              html += '<li>'
-                       +'<a href="'+response.data[i].link+'" class="notification-item">'
-                       +'<div class="body-col">'
-                       +'<p>'
-                       +      '<span class="accent"> '+response.data[i].name+' </span> '+response.data[i].isi+''
-                       +      '<span class="accent"> '+response.data[i].count + ', ' + response.data[i].date+' </span> . </p>'
-                       +'</div>'
-                       +'</a>'
-                       '</li>';
+            console.log('oto: '+ response);
+            if (response.length != 0) {
+                for (var i = 0; i < response.length; i++) {
+                    if (parseInt(response[i].n_qty) != 0) {
+                        otorisasi(response[i].n_name, 0, response[i].n_link);
+                    }
+                }
             }
-          }
-          $('#showotorisasi').html(html);
-          $('#counteroto').text(response.count);
         }
-      });
+    });
+
+    // get list 'notifikasi - notifikasi'
+    $.ajax({
+        type: 'get',
+        dataType: 'json',
+        url: baseUrl + '/gettmpnotif',
+        success : function(response){
+            if (response.length != 0) {
+                for (var i = 0; i < response.length; i++) {
+                    if (parseInt(response[i].n_qty) != 0) {
+                        notifikasi(response[i].n_name, 0, response[i].n_link);
+                    }
+                }
+            }
+        }
+    });
+
+    // validate and update 'notif - otorisasi' (create if is_null)
+    function otorisasi(name, qty, link) {
+        console.log('otor: '+ name + ' , ' + qty);
+        var html = "";
+        $.ajax({
+            type: 'get',
+            data: {
+                name,
+                qty,
+                link
+            },
+            dataType: 'json',
+            url: baseUrl + '/getoto',
+            beforeSend: function() {
+                loadingShow();
+            },
+            success : function(response){
+                if (response.count == 0) {
+                    html = '<center><li>'
+                    +'<a href="#" class="notification-item">'
+                    +'<div class="body-col">'
+                    +'<p>'
+                    +      '<span class="accent">Tidak ada data</span>'
+                    +'</p>'
+                    +'</div>'
+                    +'</a>'
+                    '</li></center>';
+                }
+                else {
+                    for (var i = 0; i < response.data.length; i++) {
+                        html += '<li>'
+                        +'<a href="'+response.data[i].link+'" class="notification-item">'
+                        +'<div class="body-col">'
+                        +'<p>'
+                        +      '<span class="accent"> ' + response.data[i].name + ' </span> ' + response.data[i].isi + ''
+                        +      '<span class="accent"> ' + response.data[i].count + ' (' + response.data[i].date +') </span> . </p>'
+                        +'</div>'
+                        +'</a>'
+                        '</li>';
+                    }
+                }
+                $('#showotorisasi').html(html);
+                $('#counteroto').text(response.count);
+            },
+            error: function (err) {
+                alert('Koneksi internet tidak stabil, notifikasi tidak diperbaharui !');
+            },
+            complete: function (){
+                loadingHide();
+            }
+        });
     }
 
-    function notifikasi(name, qty, link){
-      // alert(link);
-      var html = "";
-      $.ajax({
-        type: 'get',
-        data: {name, qty, link},
-        dataType: 'json',
-        url: baseUrl + '/getnotif',
-        success : function(response){
-          if (response.count == 0) {
-            html = '<center><li>'
-                     +'<a href="#" class="notification-item">'
-                     +'<div class="body-col">'
-                     +'<p>'
-                     +      '<span class="accent">Tidak ada data</span>'
-                     +'</p>'
-                     +'</div>'
-                     +'</a>'
-                     '</li></center>';
-          } else {
-            for (var i = 0; i < response.data.length; i++) {
-              html += '<li>'
-                       +'<a href="'+response.data[i].link+'" class="notification-item">'
-                       +'<div class="body-col">'
-                       +'<p>'
-                       +      '<span class="accent"> '+response.data[i].name+' </span> '+response.data[i].isi+''
-                       +      '<span class="accent"> '+response.data[i].count + ', ' + response.data[i].date+' </span> . </p>'
-                       +'</div>'
-                       +'</a>'
-                       '</li>';
+    // validate and update 'notif - notifikasi' (create if is_null)
+    function notifikasi(name, qty, link) {
+        // alert(link);
+        var html = "";
+        $.ajax({
+            type: 'get',
+            data: {
+                name,
+                qty,
+                link
+            },
+            dataType: 'json',
+            url: baseUrl + '/getnotif',
+            success : function(response){
+                if (response.count == 0) {
+                    html = '<center><li>'
+                    +'<a href="#" class="notification-item">'
+                    +'<div class="body-col">'
+                    +'<p>'
+                    +      '<span class="accent">Tidak ada data</span>'
+                    +'</p>'
+                    +'</div>'
+                    +'</a>'
+                    '</li></center>';
+                } else {
+                    for (var i = 0; i < response.data.length; i++) {
+                        html += '<li>'
+                        +'<a href="'+response.data[i].link+'" class="notification-item">'
+                        +'<div class="body-col">'
+                        +'<p>'
+                        +      '<span class="accent"> '+response.data[i].name+' </span> '+response.data[i].isi+''
+                        +      '<span class="accent"> '+response.data[i].count + ', ' + response.data[i].date+' </span> . </p>'
+                        +'</div>'
+                        +'</a>'
+                        '</li>';
+                    }
+                }
+                $('#shownotifikasi').html(html);
+                $('#counternotif').text(response.count);
             }
-          }
-          $('#shownotifikasi').html(html);
-          $('#counternotif').text(response.count);
-        }
-      });
+        });
     }
-
 </script>
+
+
 <script type="text/javascript">
+    $(document).ready(function(){
 
-$(document).ready(function(){
+        $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
 
-    $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
+            localStorage.setItem('activeTab', $(e.target).attr('href'));
 
-        localStorage.setItem('activeTab', $(e.target).attr('href'));
+        });
+
+        var activeTab = localStorage.getItem('activeTab');
+
+        if(activeTab){
+
+            $('#Tabzs a[href="' + activeTab + '"]').tab('show');
+
+        }
 
     });
-
-    var activeTab = localStorage.getItem('activeTab');
-
-    if(activeTab){
-
-        $('#Tabzs a[href="' + activeTab + '"]').tab('show');
-
-    }
-
-});
 
 </script>
 <script>
-    function search() {
-        var search = $('#filterInput');
-        search.val('');
-        search.focus();
-    }
+        function search() {
+            var search = $('#filterInput');
+            search.val('');
+            search.focus();
+        }
 
-    function hideMenu() {
-        document.getElementById("sidebar-collapse-btn").click();
-    }
+        function hideMenu() {
+            document.getElementById("sidebar-collapse-btn").click();
+        }
 
-    function easyCreate(){
-        document.getElementById("e-create").click();
-    }
+        function easyCreate(){
+            document.getElementById("e-create").click();
+        }
 
-    Mousetrap.bind ({
-        '/': search,
-        'ctrl+shift+h': hideMenu,
-        'f1' : easyCreate
-    });
+        Mousetrap.bind ({
+            '/': search,
+            'ctrl+shift+h': hideMenu,
+            'f1' : easyCreate
+        });
 </script>
-{{--<script>
-$(document).ready(function(){
-    $('[data-gallery=example]').photoviewer();
-});
-</script>--}}

@@ -3,23 +3,25 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use DB;
-use Auth;
-use DataTables;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
-use CodeGenerator;
-use Currency;
-use Carbon\Carbon;
-use Mockery\Exception;
-use Response;
+use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
+
+use App\d_salescomp;
+use App\d_salescomppayment;
 use App\m_agen;
 use App\m_company;
 use App\m_wil_provinsi;
-use App\d_salescomp;
-use App\d_salescomppayment;
-use Validator;
+use Auth;
+use Carbon\Carbon;
+use CodeGenerator;
+use Currency;
+use DB;
+use DataTables;
+use Mockery\Exception;
 use Mutasi;
+use Response;
+use Validator;
 
 class MarketingController extends Controller
 {
@@ -162,6 +164,10 @@ class MarketingController extends Controller
                     'p_impactplan' => $impact,
                     'p_note' => $note
                 ]);
+
+            $link = route('promotion');
+            pushOtorisasi::otorisasiup('Otorisasi Promosi', 1, $link);
+
             DB::commit();
             return Response::json([
                 'status' => 'success'
@@ -243,9 +249,16 @@ class MarketingController extends Controller
         $p_id = Crypt::decrypt($request->id);
         DB::beginTransaction();
         try {
+            $prom = d_promotion::where('p_id', $p_id)->first();
+            if ($prom->p_isapproved == 'P') {
+                $link = route('promotion');
+                pushOtorisasi::otorisasiup('Otorisasi Promosi', -1, $link);
+            }
+
             DB::table('d_promotion')
                 ->where('p_id', '=', $p_id)
                 ->delete();
+
             DB::commit();
             return Response::json([
                 'status' => 'success'
@@ -268,7 +281,7 @@ class MarketingController extends Controller
     {
     	return view('marketing/penjualanpusat/index');
     }
-    
+
     public function getPromosiBulanan()
     {
         $data = DB::table('d_promotion')
@@ -352,6 +365,10 @@ class MarketingController extends Controller
                     'p_impactplan' => $impact,
                     'p_note' => $note
                 ]);
+
+            $link = route('promotion');
+            pushOtorisasi::otorisasiup('Otorisasi Promosi', 1, $link);
+
             DB::commit();
             return Response::json([
                 'status' => 'success'
@@ -390,6 +407,7 @@ class MarketingController extends Controller
                     'p_impactplan' => $impact,
                     'p_note' => $note
                 ]);
+                
             DB::commit();
             return Response::json([
                 'status' => 'success'

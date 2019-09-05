@@ -11,7 +11,11 @@ class pushnotifikasiController extends Controller
 {
   static function notifikasiup($name, $qty, $link)
   {
-      $data = array('name' => $name, 'qty' => $qty, 'link' => $link);
+      $data = array(
+          'name' => $name,
+          'qty' => $qty,
+          'link' => $link
+      );
 
       $options = array(
           'cluster' => env('PUSHER_APP_CLUSTER'),

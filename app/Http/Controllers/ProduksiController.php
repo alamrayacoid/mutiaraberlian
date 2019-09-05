@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
+use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
 
 use App\d_itemsupplier;
 use App\d_itemreceipt as ItemReceipt;
@@ -239,7 +240,8 @@ class ProduksiController extends Controller
 
             $units = DB::table('m_unit')->get();
             return view('produksi/orderproduksi/create')->with(compact('suppliers', 'units'));
-        } else {
+        }
+        else {
             $data = $request->all();
             $productionorderauth = [];
             $productionorderdt = [];
@@ -247,16 +249,7 @@ class ProduksiController extends Controller
 
             DB::beginTransaction();
             try {
-                // dd($request);
                 $idpo = (DB::table('d_productionorderdt')->max('pod_productionorder')) ? (DB::table('d_productionorderdt')->max('pod_productionorder')) + 1 : 1;
-                // $nota = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
-                // $cekNota = DB::table('d_productionorder')
-                //     ->where('po_nota', '=', $nota)
-                //     ->get();
-                //
-                // if (count($cekNota) > 0){
-                //     $nota = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
-                // }
 
                 $notaProductionAuth = CodeGenerator::codeWithSeparator('d_productionorderauth', 'poa_nota', 8, 10, 3, 'PO', '-');
                 $notaProduction = CodeGenerator::codeWithSeparator('d_productionorder', 'po_nota', 8, 10, 3, 'PO', '-');
@@ -306,11 +299,16 @@ class ProduksiController extends Controller
                 DB::table('d_productionorderauth')->insert($productionorderauth);
                 DB::table('d_productionorderdt')->insert($productionorderdt);
                 DB::table('d_productionorderpayment')->insert($productionorderpayment);
+
+                $link = route('revisi');
+                pushOtorisasi::otorisasiup('Otorisasi Revisi Data', 1, $link);
+
                 DB::commit();
                 return json_encode([
                     'status' => 'Success'
                 ]);
-            } catch (\Exception $e) {
+            }
+            catch (\Exception $e) {
                 DB::rollBack();
                 return json_encode([
                     'status' => 'Failed',
