@@ -532,6 +532,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/penggajian/salary/data-master-gaji-pokok', 'SDM\SalaryController@getMasterGajiPokok')->name('salary.getMasterGajiPokok');
     Route::post('/sdm/penggajian/salary/simpan-gaji-pokok', 'SDM\SalaryController@saveGajiPokok')->name('salary.saveGajiPokok');
     Route::post('/sdm/penggajian/salary/simpan-gaji-pegawai', 'SDM\SalaryController@saveGajiPegawai')->name('salary.saveGajiPegawai');
+    Route::get('/sdm/penggajian/salary/detail-gaji-pegawai', 'SDM\SalaryController@detailGajiPegawai')->name('salary.detailGajiPegawai');
 
     // END
     // !===================================================== END SDM =====================================================!
@@ -858,6 +859,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/keuangan/penerimaanpiutang/cabang/get-history', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataHistoryCabang')->name('penerimaanpiutang.getDataHistoryCabang');
     Route::post('/keuangan/penerimaanpiutang/cabang/decline-payment', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@declinePaymentCabang')->name('penerimaanpiutang.declinePaymentCabang');
 
+    // Analisis Keuangan
+    Route::get('/keuangan/analisis/roe', 'Keuangan\analisis\ROEController@index')->name('roe.index');
     // !===================================================== END KEUANGAN =====================================================!
 
     // !===================================================== PENGATURAN =====================================================!

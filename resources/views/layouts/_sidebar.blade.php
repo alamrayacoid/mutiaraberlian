@@ -429,7 +429,7 @@
                                 </li>
                             @endif
                             @if ($sidebar[37]->ua_read == 'Y' || $sidebar[38]->ua_read == 'Y' || $sidebar[39]->ua_read == 'Y' || $sidebar[40]->ua_read == 'Y' || $sidebar[41]->ua_read == 'Y' || $sidebar[42]->ua_read == 'Y' || $sidebar[43]->ua_read == 'Y')
-                                <li>
+                                <li class="{{Request::is('keuangan/*') && !Request::is('keuangan/masterdatautama/*') ? 'open' : ''}}">
                                     <a href="#">
                                         <i class="fa fa-bar-chart-o"></i>
                                         Analisa
@@ -471,8 +471,8 @@
                                             </li>
                                         @endif
                                         @if ($sidebar[43]->ua_read == 'Y')
-                                            <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                                <a href="{{ route('manajemenagen.index') }}">Analisa Return on
+                                            <li class="{{ Request::is('keuangan/analisis/roe') || Request::is('keuangan/analisis/roe/*') ? 'active' : '' }}">
+                                                <a href="{{ route('roe.index') }}">Analisa Return on
                                                     Equity</a>
                                             </li>
                                         @endif
