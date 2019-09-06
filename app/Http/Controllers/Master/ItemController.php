@@ -218,7 +218,7 @@ class ItemController extends Controller
                     'ia_created_at' => Carbon::now(),
                     'ia_update_at' => Carbon::now(),
                 ]);
-
+            // pusher -> push notification
             pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
             DB::commit();
@@ -345,7 +345,7 @@ class ItemController extends Controller
                     'ia_isactive' => "Y",
                     'ia_update_at' => Carbon::now(),
                 ]);
-
+                // pusher -> push notification
                 pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
             }
 
@@ -399,7 +399,7 @@ class ItemController extends Controller
                     'ia_isactive' => "N",
                     'ia_update_at' => Carbon::now()
                 ]);
-
+                // pusher -> push notification
                 pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
             }
 
@@ -433,7 +433,7 @@ class ItemController extends Controller
                     'ia_isactive' => "Y",
                     'ia_update_at' => Carbon::now(),
                 ]);
-
+            // pusher -> push notification
             pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
             DB::commit();

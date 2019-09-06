@@ -4,17 +4,17 @@ namespace App\Http\Controllers\Inventory;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
 
-use DB;
-use App\m_item;
-use App\d_stock;
-use App\m_company;
 use App\d_opnameauth;
-use Validator;
-use CodeGenerator;
+use App\d_stock;
+use App\m_item;
+use App\m_company;
 use carbon\Carbon;
+use CodeGenerator;
+use DB;
+use Validator;
 use Yajra\DataTables\DataTables;
-use App\Http\Controllers\pushotorisasiController as otorisasi;
 
 class OpnameController extends Controller
 {
@@ -173,256 +173,264 @@ class OpnameController extends Controller
             })
             ->rawColumns(['name', 'status', 'action'])
             ->make(true);
+    }
+
+    /**
+    * Display a listing of the resource.
+    *
+    * @return \Illuminate\Http\Response
+    */
+    public function index()
+    {
+        return view('inventory/manajemenstok/opname/index');
+    }
+
+    /**
+    * Show the form for creating a new resource.
+    *
+    * @return \Illuminate\Http\Response
+    */
+    public function create()
+    {
+        $data['company'] = DB::table('m_company')->select('c_id', 'c_name')->get();
+        return view('inventory/manajemenstok/opname/opnamestock/create', compact('data'));
+    }
+
+    public function list_codeProduksi(Request $req)
+    {
+        $stock = DB::table('d_stock')->where('s_item', '=', $req->item)
+        ->where('s_comp', '=', $req->owner)
+        ->where('s_position', '=', $req->position)
+        // ->where('s_condition', '=', $req->condition)
+        ->where('s_status', '=', 'ON DESTINATION')
+        ->get();
+
+        if (count($stock) > 0) {
+            $stockId = $stock[0]->s_id;
+        } else {
+            $stockId = 0;
         }
 
-        /**
-        * Display a listing of the resource.
-        *
-        * @return \Illuminate\Http\Response
-        */
-        public function index()
-        {
-            return view('inventory/manajemenstok/opname/index');
-        }
+        $codes = DB::table('d_stockdt')
+        ->where('sd_stock', '=', $stockId)
+        ->get();
 
-        /**
-        * Show the form for creating a new resource.
-        *
-        * @return \Illuminate\Http\Response
-        */
-        public function create()
-        {
-            $data['company'] = DB::table('m_company')->select('c_id', 'c_name')->get();
-            return view('inventory/manajemenstok/opname/opnamestock/create', compact('data'));
-        }
+        return Datatables::of($codes)
+        ->make(true);
+    }
 
-        public function list_codeProduksi(Request $req)
-        {
-            $stock = DB::table('d_stock')->where('s_item', '=', $req->item)
-            ->where('s_comp', '=', $req->owner)
-            ->where('s_position', '=', $req->position)
-            // ->where('s_condition', '=', $req->condition)
-            ->where('s_status', '=', 'ON DESTINATION')
-            ->get();
+    public function list_codeOpname(Request $req)
+    {
+        $stock = DB::table('d_stockdt')
+        ->join('d_stock', 'sd_stock', 's_id')
+        ->where('s_item', '=', $req->item)
+        ->where('s_comp', '=', $req->owner)
+        ->where('s_position', '=', $req->position)
+        ->get();
 
-            if (count($stock) > 0) {
-                $stockId = $stock[0]->s_id;
-            } else {
-                $stockId = 0;
-            }
+        return Datatables::of($stock)
+        ->make(true);
+    }
 
-            $codes = DB::table('d_stockdt')
-            ->where('sd_stock', '=', $stockId)
-            ->get();
-
-            return Datatables::of($codes)
-            ->make(true);
-        }
-
-        public function list_codeOpname(Request $req)
-        {
-            $stock = DB::table('d_stockdt')
-            ->join('d_stock', 'sd_stock', 's_id')
-            ->where('s_item', '=', $req->item)
-            ->where('s_comp', '=', $req->owner)
-            ->where('s_position', '=', $req->position)
-            ->get();
-
-            return Datatables::of($stock)
-            ->make(true);
-        }
-
-        /**
-        * Store a newly created resource in storage.
-        *
-        * @param  \Illuminate\Http\Request  $request
-        * @return \Illuminate\Http\Response
-        */
-        public function store(Request $request)
-        {
-            // validate request
-            $isValidRequest = $this->validate_req($request);
-            if ($isValidRequest != '1') {
-                $errors = $isValidRequest;
-                return response()->json([
+    /**
+    * Store a newly created resource in storage.
+    *
+    * @param  \Illuminate\Http\Request  $request
+    * @return \Illuminate\Http\Response
+    */
+    public function store(Request $request)
+    {
+        // validate request
+        $isValidRequest = $this->validate_req($request);
+        if ($isValidRequest != '1') {
+            $errors = $isValidRequest;
+            return response()->json([
                 'status' => 'invalid',
                 'message' => $errors
-                ]);
+            ]);
+        }
+        // insert data to db
+        try {
+            DB::beginTransaction();
+            $notaOpnameAuth = CodeGenerator::codeWithSeparator('d_opnameauth', 'oa_nota', 12, 10, 3, 'OPNAME', '-');
+            $notaOpname = CodeGenerator::codeWithSeparator('d_opname', 'o_nota', 12, 10, 3, 'OPNAME', '-');
+            if (strcmp($notaOpname, $notaOpnameAuth) > 0) {
+                $nota = $notaOpname;
             }
-            // insert data to db
-            try {
-                DB::beginTransaction();
-                $notaOpnameAuth = CodeGenerator::codeWithSeparator('d_opnameauth', 'oa_nota', 12, 10, 3, 'OPNAME', '-');
-                $notaOpname = CodeGenerator::codeWithSeparator('d_opname', 'o_nota', 12, 10, 3, 'OPNAME', '-');
-                if (strcmp($notaOpname, $notaOpnameAuth) > 0) {
-                    $nota = $notaOpname;
-                }
-                else {
-                    $nota = $notaOpnameAuth;
-                };
+            else {
+                $nota = $notaOpnameAuth;
+            };
 
-                $newId = d_opnameauth::max('oa_id') + 1;
+            $newId = d_opnameauth::max('oa_id') + 1;
 
-                $opname                = new d_opnameauth;
-                $opname->oa_id         = $newId;
-                $opname->oa_date       = Carbon::now();
-                $opname->oa_nota       = $nota;
-                $opname->oa_comp       = $request->owner;
-                $opname->oa_position   = $request->position;
-                $opname->oa_item       = $request->itemId;
-                $opname->oa_qtyreal    = $request->qty_real;
-                $opname->oa_unitreal   = $request->unit_real;
-                $opname->oa_qtysystem  = $request->qty_sys_hidden;
-                $opname->oa_unitsystem = 1;
-                $opname->oa_insert     = Carbon::now();
-                $opname->save();
+            $opname                = new d_opnameauth;
+            $opname->oa_id         = $newId;
+            $opname->oa_date       = Carbon::now();
+            $opname->oa_nota       = $nota;
+            $opname->oa_comp       = $request->owner;
+            $opname->oa_position   = $request->position;
+            $opname->oa_item       = $request->itemId;
+            $opname->oa_qtyreal    = $request->qty_real;
+            $opname->oa_unitreal   = $request->unit_real;
+            $opname->oa_qtysystem  = $request->qty_sys_hidden;
+            $opname->oa_unitsystem = 1;
+            $opname->oa_insert     = Carbon::now();
+            $opname->save();
 
-                for ($i=0; $i < count($request->code_r); $i++) {
-                    $dt_Id = DB::table('d_opnameauthdt')->where('oad_opname', '=', $newId)->max('oad_detailid') + 1;
-                    DB::table('d_opnameauthdt')->insert([
+            for ($i=0; $i < count($request->code_r); $i++) {
+                $dt_Id = DB::table('d_opnameauthdt')->where('oad_opname', '=', $newId)->max('oad_detailid') + 1;
+                DB::table('d_opnameauthdt')->insert([
                     'oad_opname'   => $newId,
                     'oad_detailid' => $dt_Id,
                     'oad_code'     => $request->code_r[$i],
                     'oad_qty'      => $request->qty_r[$i]
-                    ]);
-                }
-
-                otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
-
-                DB::commit();
-                return response()->json([
-                'status' => 'berhasil'
-                ]);
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return response()->json([
-                'status' => 'gagal',
-                'message' => $e->getMessage()
                 ]);
             }
 
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Opname');
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
         }
 
-        // show specific resource
-        public function show($id)
-        {
-            $data = d_opnameauth::where('oa_id', $id)
+    }
+
+    // show specific resource
+    public function show($id)
+    {
+        $data = d_opnameauth::where('oa_id', $id)
             ->with('getItem')
             ->with('getUnitReal')
             ->with('getUnitSystem')
             ->with('getPosition')
             ->with('getOwner')
             ->first();
-            return $data;
-        }
+        return $data;
+    }
 
-        /**
-        * Show the form for editing the specified resource.
-        *
-        * @param  int  $id
-        * @return \Illuminate\Http\Response
-        */
-        public function edit($id)
-        {
-            $data['opname'] = d_opnameauth::where('oa_id', $id)
+    /**
+    * Show the form for editing the specified resource.
+    *
+    * @param  int  $id
+    * @return \Illuminate\Http\Response
+    */
+    public function edit($id)
+    {
+        $data['opname'] = d_opnameauth::where('oa_id', $id)
             ->join('m_item', 'oa_item', 'i_id')
             ->with('getItem')
             ->first();
-            $code_real = DB::table('d_opnameauthdt')->where('oad_opname', '=', $data['opname']->oa_id)->get();
-            $data['company'] = DB::table('m_company')->select('c_id', 'c_name')
+        $code_real = DB::table('d_opnameauthdt')->where('oad_opname', '=', $data['opname']->oa_id)->get();
+        $data['company'] = DB::table('m_company')->select('c_id', 'c_name')
             ->get();
-            return view('inventory/manajemenstok/opname/opnamestock/edit', compact('data', 'code_real'));
-        }
+        return view('inventory/manajemenstok/opname/opnamestock/edit', compact('data', 'code_real'));
+    }
 
-        /**
-        * Update the specified resource in storage.
-        *
-        * @param  \Illuminate\Http\Request  $request
-        * @param  int  $id
-        * @return \Illuminate\Http\Response
-        */
-        public function update(Request $request, $id)
-        {
-            // dd($request);
-            // validate request
-            $isValidRequest = $this->validate_req($request);
-            if ($isValidRequest != '1') {
-                $errors = $isValidRequest;
-                return response()->json([
+    /**
+    * Update the specified resource in storage.
+    *
+    * @param  \Illuminate\Http\Request  $request
+    * @param  int  $id
+    * @return \Illuminate\Http\Response
+    */
+    public function update(Request $request, $id)
+    {
+        // validate request
+        $isValidRequest = $this->validate_req($request);
+        if ($isValidRequest != '1') {
+            $errors = $isValidRequest;
+            return response()->json([
                 'status' => 'invalid',
                 'message' => $errors
-                ]);
-            }
-            // insert data to db
-            try {
-                DB::beginTransaction();
-                $opname = d_opnameauth::where('oa_id', $id)
+            ]);
+        }
+        // insert data to db
+        try {
+            DB::beginTransaction();
+            $opname = d_opnameauth::where('oa_id', $id)
                 ->first();
-                $opname->oa_comp       = $request->owner;
-                $opname->oa_position   = $request->position;
-                $opname->oa_item       = $request->itemId;
-                $opname->oa_qtyreal    = $request->qty_real;
-                $opname->oa_unitreal   = $request->unit_real;
-                $opname->oa_qtysystem  = $request->qty_sys_hidden;
-                $opname->oa_unitsystem = 1;
-                $opname->oa_insert     = Carbon::now();
-                $opname->save();
+            $opname->oa_comp       = $request->owner;
+            $opname->oa_position   = $request->position;
+            $opname->oa_item       = $request->itemId;
+            $opname->oa_qtyreal    = $request->qty_real;
+            $opname->oa_unitreal   = $request->unit_real;
+            $opname->oa_qtysystem  = $request->qty_sys_hidden;
+            $opname->oa_unitsystem = 1;
+            $opname->oa_insert     = Carbon::now();
+            $opname->save();
 
-                DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->delete();
+            DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->delete();
 
-                for ($i=0; $i < count($request->code_r) ; $i++) {
-                    $detailId = DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->max('oad_detailid') + 1;
-                    DB::table('d_opnameauthdt')->insert([
+            for ($i=0; $i < count($request->code_r) ; $i++) {
+                $detailId = DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->max('oad_detailid') + 1;
+                DB::table('d_opnameauthdt')->insert([
                     'oad_opname'   => $id,
                     'oad_detailid' => $detailId,
                     'oad_code'     => $request->code_r[$i],
                     'oad_qty'      => $request->qty_r[$i]
-                    ]);
-                }
-
-                otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
-
-                DB::commit();
-                return response()->json([
-                'status' => 'berhasil'
-                ]);
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return response()->json([
-                'status' => 'gagal',
-                'message' => $e->getMessage()
                 ]);
             }
+
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Opname');
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
         }
+        catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 
-        /**
-        * Remove the specified resource from storage.
-        *
-        * @param  int  $id
-        * @return \Illuminate\Http\Response
-        */
-        public function destroy($id)
-        {
-            // start: execute delete data
-            DB::beginTransaction();
-            try {
-
-                DB::table('d_opnameauth')
+    /**
+    * Remove the specified resource from storage.
+    *
+    * @param  int  $id
+    * @return \Illuminate\Http\Response
+    */
+    public function destroy($id)
+    {
+        // start: execute delete data
+        DB::beginTransaction();
+        try {
+            DB::table('d_opnameauth')
                 ->where('oa_id', $id)
                 ->delete();
 
-                otorisasi::otorisasiup('d_opnameauth', 'Stock Opname', '#');
+            DB::table('d_opnameauthdt')
+                ->where('oad_opname', '=', $id)
+                ->delete();
 
-                DB::commit();
-                return response()->json([
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Opname');
+
+            DB::commit();
+            return response()->json([
                 'status' => 'berhasil'
-                ]);
-            } catch (\Exception $e) {
-                DB::rollback();
-                return response()->json([
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
                 'status' => 'gagal',
                 'message' => $e->getMessage()
-                ]);
-            }
+            ]);
         }
     }
+}

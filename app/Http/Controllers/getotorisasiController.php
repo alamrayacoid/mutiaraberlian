@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use DB;
+use App\d_adjusmentauth;
 use App\d_notification;
+use App\d_opnameauth;
+use App\d_priceclassauthdt;
 use App\d_productionorderauth;
 use App\d_promotion;
+use App\d_salespriceauth;
 use App\d_sdmsubmission;
 use App\m_item_auth;
 use Carbon\Carbon;
@@ -37,6 +41,18 @@ class getotorisasiController extends Controller
                 $this->countPromotion($name);
                 break;
 
+            case 'Otorisasi Perubahan Harga Jual' :
+                $this->countHargaJual($name);
+                break;
+
+            case 'Otorisasi Opname' :
+                $this->countOpname($name);
+                break;
+
+            case 'Otorisasi Adjustment' :
+                $this->countAdjustment($name);
+                break;
+
             default:
                 // code...
                 break;
@@ -49,20 +65,6 @@ class getotorisasiController extends Controller
             'count' => $this->countparrent,
             'data' => $this->data
         ]);
-    }
-
-    // format teks for 'notifikasi'
-    public function pushdata($name, $count, $date, $link){
-        Carbon::setlocale('id');
-        if ($count != 0) {
-            $this->data[] = array(
-                'name' => $name,
-                'isi' => 'Membutuhkan otorisasi sebanyak ',
-                'count' => $count,
-                'date' => Carbon::parse($date)->diffForHumans(),
-                'link' => $link
-            );
-        }
     }
 
     // filter data to set teks in 'notifikasi'
@@ -81,6 +83,20 @@ class getotorisasiController extends Controller
             );
         }
     }
+    // format teks for 'notifikasi'
+    public function pushdata($name, $count, $date, $link){
+        Carbon::setlocale('id');
+        if ($count != 0) {
+            $this->data[] = array(
+                'name' => $name,
+                'isi' => 'Membutuhkan otorisasi sebanyak ',
+                'count' => $count,
+                'date' => Carbon::parse($date)->diffForHumans(),
+                'link' => $link
+            );
+        }
+    }
+
     // count all otorisation in Revisi-Data
     public function countRevisiData($name)
     {
@@ -116,6 +132,40 @@ class getotorisasiController extends Controller
             ->count();
         // set qty
         $qty = (int)$countPromotion;
+        // update 'notification'
+        $this->updateNotif($name, $qty, $link);
+    }
+    // count all otorisation in Promotion
+    public function countHargaJual($name)
+    {
+        $link = route('perubahanhargajual');
+        // count all 'item' that need otorisation
+        $countHargaJual = d_priceclassauthdt::count();
+        $countHargaJualAgen = d_salespriceauth::count();
+        // set qty
+        $qty = (int)$countHargaJual + (int)$countHargaJualAgen;
+        // update 'notification'
+        $this->updateNotif($name, $qty, $link);
+    }
+    // count all otorisation in Promotion
+    public function countOpname($name)
+    {
+        $link = route('opname_otorisasi');
+        // count all 'item' that need otorisation
+        $countOpname = d_opnameauth::count();
+        // set qty
+        $qty = (int)$countOpname;
+        // update 'notification'
+        $this->updateNotif($name, $qty, $link);
+    }
+    // count all otorisation in Promotion
+    public function countAdjustment($name)
+    {
+        $link = route('adjustment');
+        // count all 'item' that need otorisation
+        $countAdjustment = d_adjusmentauth::count();
+        // set qty
+        $qty = (int)$countAdjustment;
         // update 'notification'
         $this->updateNotif($name, $qty, $link);
     }

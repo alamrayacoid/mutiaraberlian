@@ -46,7 +46,9 @@ class OtorisasiController extends Controller
 // ================== Opname =================
     public function getopname()
     {
-        $data = DB::table('d_opnameauth')->join('m_item', 'i_id', '=', 'oa_item')->get();
+        $data = DB::table('d_opnameauth')
+            ->join('m_item', 'i_id', '=', 'oa_item')
+            ->get();
 
         return DataTables::of($data)
         ->addIndexColumn()
@@ -95,9 +97,7 @@ class OtorisasiController extends Controller
         DB::beginTransaction();
         try
         {
-
             // return json_encode($id);
-
             $auth = DB::table('d_opnameauth')->where('oa_id', '=', $id)->first();
 
             $authdt = DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->get();
@@ -131,6 +131,9 @@ class OtorisasiController extends Controller
 
             DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->delete();
 
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Opname');
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -151,6 +154,9 @@ class OtorisasiController extends Controller
         try
         {
             DB::table('d_opnameauth')->where('oa_id', Crypt::decrypt($id))->delete();
+
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Opname');
 
             DB::commit();
             return response()->json([
@@ -175,7 +181,9 @@ class OtorisasiController extends Controller
     }
     public function getadjusment()
     {
-        $data = DB::table('d_adjusmentauth')->join('m_item', 'i_id', '=', 'aa_item')->get();
+        $data = DB::table('d_adjusmentauth')
+            ->join('m_item', 'i_id', '=', 'aa_item')
+            ->get();
 
         return DataTables::of($data)
         ->addIndexColumn()
@@ -379,6 +387,9 @@ class OtorisasiController extends Controller
 
             // end dirga
 
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Adjustment');
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -400,6 +411,9 @@ class OtorisasiController extends Controller
             DB::table('d_adjusmentauth')->where('aa_id', $id)->delete();
             DB::table('d_adjustmentcodeauth')->where('aca_adjustment', '=', $id)->delete();
 
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Adjustment');
+            
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -783,59 +797,65 @@ class OtorisasiController extends Controller
         try{
             $id = Crypt::decrypt($id);
             $detail = Crypt::decrypt($detail);
-        }catch (DecryptException $e){
+        }
+        catch (DecryptException $e){
             return response()->json([
-            'status' => 'gagal',
-            'message' => $e
+                'status' => 'gagal',
+                'message' => $e->getMessage()
             ]);
         }
 
         DB::beginTransaction();
         try {
             $data = DB::table('d_priceclassauthdt')
-            ->where('pcad_classprice', '=', $id)
-            ->where('pcad_detailid', '=', $detail)
-            ->first();
+                ->where('pcad_classprice', '=', $id)
+                ->where('pcad_detailid', '=', $detail)
+                ->first();
 
             if ($data == null) {
                 return response()->json([
-                'status' => 'gagal'
+                    'status' => 'gagal'
                 ]);
             }
 
             $max = DB::table('m_priceclassdt')
-            ->where('pcd_classprice', '=', $data->pcad_classprice)
-            ->max('pcd_detailid');
+                ->where('pcd_classprice', '=', $data->pcad_classprice)
+                ->max('pcd_detailid');
 
             ++$max;
 
             DB::table('m_priceclassdt')
-            ->insert([
-            'pcd_classprice' => $data->pcad_classprice,
-            'pcd_detailid' => $max,
-            'pcd_item' => $data->pcad_item,
-            'pcd_unit' => $data->pcad_unit,
-            'pcd_type' => $data->pcad_type,
-            'pcd_payment' => $data->pcad_payment,
-            'pcd_rangeqtystart' => $data->pcad_rangeqtystart,
-            'pcd_rangeqtyend' => $data->pcad_rangeqtyend,
-            'pcd_price' => $data->pcad_price,
-            'pcd_user' => $data->pcad_user
-            ]);
+                ->insert([
+                    'pcd_classprice' => $data->pcad_classprice,
+                    'pcd_detailid' => $max,
+                    'pcd_item' => $data->pcad_item,
+                    'pcd_unit' => $data->pcad_unit,
+                    'pcd_type' => $data->pcad_type,
+                    'pcd_payment' => $data->pcad_payment,
+                    'pcd_rangeqtystart' => $data->pcad_rangeqtystart,
+                    'pcd_rangeqtyend' => $data->pcad_rangeqtyend,
+                    'pcd_price' => $data->pcad_price,
+                    'pcd_user' => $data->pcad_user
+                ]);
 
             DB::table('d_priceclassauthdt')
-            ->where('pcad_classprice', '=', $id)
-            ->where('pcad_detailid', '=', $detail)
-            ->delete();
+                ->where('pcad_classprice', '=', $id)
+                ->where('pcad_detailid', '=', $detail)
+                ->delete();
+
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
+
             DB::commit();
             return response()->json([
-            'status' => 'sukses'
+                'status' => 'sukses'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-            'status' => 'gagal',
-            'message' => $e->getMessage()
+                'status' => 'gagal',
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -858,52 +878,56 @@ class OtorisasiController extends Controller
         try
         {
             $data = DB::table('d_salespriceauth')
-            ->where('spa_salesprice', '=', $id)
-            ->where('spa_detailid', '=', $detail)
-            ->first();
+                ->where('spa_salesprice', '=', $id)
+                ->where('spa_detailid', '=', $detail)
+                ->first();
 
             if ($data == null)
             {
                 return response()->json([
-                'status' => 'gagal'
+                    'status' => 'gagal'
                 ]);
             }
 
             $max = DB::table('d_salespricedt')
-            ->where('spd_salesprice', '=', $data->spa_salesprice)
-            ->max('spd_detailid');
+                ->where('spd_salesprice', '=', $data->spa_salesprice)
+                ->max('spd_detailid');
 
             ++$max;
 
             DB::table('d_salespricedt')
-            ->insert([
-            'spd_salesprice'        => $data->spa_salesprice,
-            'spd_detailid'          => $max,
-            'spd_item'              => $data->spa_item,
-            'spd_unit'              => $data->spa_unit,
-            'spd_type'              => $data->spa_type,
-            'spd_payment'           => $data->spa_payment,
-            'spd_rangeqtystart'     => $data->spa_rangeqtystart,
-            'spd_rangeqtyend'       => $data->spa_rangeqtyend,
-            'spd_price'             => $data->spa_price,
-            'spd_user'              => $data->spa_user
-            ]);
+                ->insert([
+                    'spd_salesprice'        => $data->spa_salesprice,
+                    'spd_detailid'          => $max,
+                    'spd_item'              => $data->spa_item,
+                    'spd_unit'              => $data->spa_unit,
+                    'spd_type'              => $data->spa_type,
+                    'spd_payment'           => $data->spa_payment,
+                    'spd_rangeqtystart'     => $data->spa_rangeqtystart,
+                    'spd_rangeqtyend'       => $data->spa_rangeqtyend,
+                    'spd_price'             => $data->spa_price,
+                    'spd_user'              => $data->spa_user
+                ]);
 
             DB::table('d_salespriceauth')
-            ->where('spa_salesprice', '=', $id)
-            ->where('spa_detailid', '=', $detail)
-            ->delete();
+                ->where('spa_salesprice', '=', $id)
+                ->where('spa_detailid', '=', $detail)
+                ->delete();
+
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
+
             DB::commit();
             return response()->json([
-            'status' => 'sukses'
+                'status' => 'sukses'
             ]);
         }
         catch (\Exception $e)
         {
             DB::rollBack();
             return response()->json([
-            'status' => 'gagal',
-            'message' => $e->getMessage()
+                'status' => 'gagal',
+                'message' => $e->getMessage()
             ]);
         }
     }
