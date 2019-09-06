@@ -29,12 +29,12 @@
                 <a href="" data-toggle="dropdown">
                     <i class="fa fa-bell-o" title="Notifikasi"></i>
                     <sup>
-                        <span class="counter">8</span>
+                        <span class="counter" id="counternotif">0</span>
                     </sup>
                 </a>
                 <div class="dropdown-menu notifications-dropdown-menu">
-                    <ul class="notifications-container">
-                        <li>
+                    <ul class="notifications-container" id="shownotifikasi">
+                        <!-- <li>
                             <a href="" class="notification-item">
                                 <div class="body-col">
                                     <p>
@@ -61,7 +61,7 @@
                                     </p>
                                 </div>
                             </a>
-                        </li>
+                        </li> -->
                     </ul>
                     <footer>
                         <ul>
@@ -77,7 +77,7 @@
 
                     <i><img src="{{ asset('assets/img/author-sign.png') }}" alt="" title="Otorisasi"></i>
                     <sup>
-                        <span class="counter" id="counter">0</span>
+                        <span class="counter" id="counteroto">0</span>
                     </sup>
                 </a>
                 <div class="dropdown-menu notifications-dropdown-menu">

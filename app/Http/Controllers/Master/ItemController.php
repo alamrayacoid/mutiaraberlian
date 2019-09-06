@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Master;
 use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
 
-use App\Http\Controllers\pushotorisasiController as otorisasi;
 use DB;
 use Auth;
 use App\m_item;
@@ -31,11 +31,13 @@ class ItemController extends Controller
             'dataproduk_name.required' => 'Nama produk masih kosong, silahkan isi terlebih dahulu !',
             'dataproduk_code.required' => 'Code produk masih kosong, silahkan isi terlebih dahulu !',
             'dataproduk_type.required' => 'Type produk masih kosong, silahkan isi terlebih dahulu !',
+            'dataproduk_satuanutama.required' => 'Satuan Utama produk masih kosong, silahkan isi terlebih dahulu !',
         ];
         $validator = Validator::make($request->all(), [
             'dataproduk_name' => 'required',
             'dataproduk_code' => 'required',
             'dataproduk_type' => 'required',
+            'dataproduk_satuanutama' => 'required',
         ], $messages);
         if ($validator->fails()) {
             return $validator->errors()->first();
@@ -217,13 +219,15 @@ class ItemController extends Controller
                     'ia_update_at' => Carbon::now(),
                 ]);
 
-                otorisasi::otorisasiup('m_item_auth', 'Master Produk', '#');
+            $link = route('revisi');
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', 1, $link);
 
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -307,7 +311,8 @@ class ItemController extends Controller
                     $constraint->aspectRatio();
                 })
                 ->save($authDirectory .'\\'. $file_name);
-            } else {
+            }
+            else {
                 $file_name = $gambar->i_image;
             }
 
@@ -326,7 +331,8 @@ class ItemController extends Controller
                     'ia_isactive' => "Y",
                     'ia_update_at' => Carbon::now(),
                 ]);
-            } else {
+            }
+            else {
                 // start: execute update data
                 DB::table('m_item_auth')
                 ->where('ia_id', $id)
@@ -340,9 +346,11 @@ class ItemController extends Controller
                     'ia_isactive' => "Y",
                     'ia_update_at' => Carbon::now(),
                 ]);
+
+                $link = route('revisi');
+                pushOtorisasi::otorisasiup('Otorisasi Revisi Data', 1, $link);
             }
 
-            otorisasi::otorisasiup('m_item_auth', 'Master Produk', '#');
 
             DB::commit();
             return response()->json([
@@ -382,7 +390,8 @@ class ItemController extends Controller
                     'ia_isactive' => "N",
                     'ia_update_at' => Carbon::now(),
                 ]);
-            } else {
+            }
+            else {
                 $itemCode = m_item::where('i_id', $id)->select('i_code')->first();
                 // dd($itemCode);
                 DB::table('m_item_auth')
@@ -392,9 +401,10 @@ class ItemController extends Controller
                     'ia_isactive' => "N",
                     'ia_update_at' => Carbon::now()
                 ]);
-            }
 
-            otorisasi::otorisasiup('m_item_auth', 'Master Produk', '#');
+                $link = route('revisi');
+                pushOtorisasi::otorisasiup('Otorisasi Revisi Data', 1, $link);
+            }
 
             DB::commit();
             return response()->json([
@@ -427,7 +437,8 @@ class ItemController extends Controller
                     'ia_update_at' => Carbon::now(),
                 ]);
 
-                otorisasi::otorisasiup('m_item_auth', 'Master Produk', '#');
+            $link = route('revisi');
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', 1, $link);
 
             DB::commit();
             return response()->json([

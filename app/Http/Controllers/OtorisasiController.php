@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use function foo\func;
-use Illuminate\Http\Request;
-use App\m_item;
-use App\m_item_auth;
-use DB;
-use DataTables;
-use Currency;
-use CodeGenerator;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Http\Request;
+use function foo\func;
 use App\Helper\keuangan\jurnal\jurnal;
+use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
+
+use App\m_item;
+use App\m_item_auth;
+use Carbon\Carbon;
+use CodeGenerator;
+use Currency;
+use DB;
+use DataTables;
 
 use Auth;
 
@@ -41,7 +43,7 @@ class OtorisasiController extends Controller
     }
 
 
-    // ================== Opname =================
+// ================== Opname =================
     public function getopname()
     {
         $data = DB::table('d_opnameauth')->join('m_item', 'i_id', '=', 'oa_item')->get();
@@ -68,7 +70,6 @@ class OtorisasiController extends Controller
         ->rawColumns(['nota','aksi'])
         ->make(true);
     }
-
     public function detailApproveOpname($id)
     {
         $temp = DB::table('d_opnameauth')
@@ -83,7 +84,6 @@ class OtorisasiController extends Controller
         ]);
 
     }
-
     public function approveopname($id)
     {
         try {
@@ -168,7 +168,7 @@ class OtorisasiController extends Controller
     }
 
 
-    // ================== Adjustment =================
+// ================== Adjustment =================
     public function adjustment()
     {
         return view('notifikasiotorisasi.otorisasi.adjustment.index');
@@ -207,7 +207,6 @@ class OtorisasiController extends Controller
         ->rawColumns(['nota','aksi'])
         ->make(true);
     }
-
     public function detailApprove($id)
     {
         $temp = DB::table('d_adjusmentauth')
@@ -421,7 +420,7 @@ class OtorisasiController extends Controller
     }
 
 
-    // ==================Order Produksi=================
+// ================== Order Produksi =================
     public function getProduksi()
     {
         $data = DB::table('d_productionorderauth')
@@ -524,10 +523,10 @@ class OtorisasiController extends Controller
     }
     public function agree($id = null)
     {
-
-        try{
+        try {
             $id = Crypt::decrypt($id);
-        }catch (DecryptException $e){
+        }
+        catch (DecryptException $e){
             return response()->json(['status'=>'Failed']);
         }
 
@@ -607,8 +606,11 @@ class OtorisasiController extends Controller
             // selesai dirga
 
             DB::table('d_productionorderauth')
-            ->where('poa_id', '=', $id)
-            ->delete();
+                ->where('poa_id', '=', $id)
+                ->delete();
+
+            $link = route('revisi');
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
 
             DB::commit();
             return response()->json(['status'=>'Success']);
@@ -623,9 +625,10 @@ class OtorisasiController extends Controller
     }
     public function rejected($id = null)
     {
-        try{
+        try {
             $id = Crypt::decrypt($id);
-        }catch (DecryptException $e){
+        }
+        catch (DecryptException $e){
             return response()->json(['status'=>'Failed']);
         }
 
@@ -633,16 +636,19 @@ class OtorisasiController extends Controller
         try{
 
             DB::table('d_productionorderpayment')
-            ->where('pop_productionorder', '=', $id)
-            ->delete();
+                ->where('pop_productionorder', '=', $id)
+                ->delete();
 
             DB::table('d_productionorderdt')
-            ->where('pod_productionorder', '=', $id)
-            ->delete();
+                ->where('pod_productionorder', '=', $id)
+                ->delete();
 
             DB::table('d_productionorderauth')
-            ->where('poa_id', '=', $id)
-            ->delete();
+                ->where('poa_id', '=', $id)
+                ->delete();
+
+            $link = route('revisi');
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
 
             DB::commit();
             return response()->json(['status'=>'Success']);
@@ -657,7 +663,7 @@ class OtorisasiController extends Controller
     }
 
 
-    // ============= Perubahan Harga Jual ==============
+// ============= Perubahan Harga Jual ==============
     public function getDataPerubahanHarga()
     {
         $data = DB::table('m_priceclass')
@@ -713,7 +719,6 @@ class OtorisasiController extends Controller
         ->rawColumns(['aksi', 'pcad_price'])
         ->make(true);
     }
-
     public function getDataPerubahanHargaHPA()
     {
         $data = DB::table('d_salesprice')
@@ -769,12 +774,10 @@ class OtorisasiController extends Controller
         ->rawColumns(['aksi', 'spa_price'])
         ->make(true);
     }
-
     public function detailPerubahanHarga($id, $detail)
     {
         //
     }
-
     public function approvePerubahanHarga($id, $detail)
     {
         try{
@@ -836,7 +839,6 @@ class OtorisasiController extends Controller
             ]);
         }
     }
-
     public function approvePerubahanHargaHPA($id, $detail)
     {
         try
@@ -907,11 +909,12 @@ class OtorisasiController extends Controller
     }
 
 
-    // ======================== Otorisasi Revisi Data ========================
+// ======================== Otorisasi Revisi Data ========================
     public function getListRevDataProduk()
     {
         $datas = m_item_auth::with('getItem')
-        ->get();
+            ->get();
+
         return Datatables::of($datas)
         ->addIndexColumn()
         ->addColumn('produk', function ($datas) {
@@ -1047,9 +1050,12 @@ class OtorisasiController extends Controller
             // delete $item_auth after approval success
             $item_auth->delete();
 
+            $link = route('revisi');
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+
             DB::commit();
             return response()->json([
-            'status' => 'berhasil'
+                'status' => 'berhasil'
             ]);
         }
         catch (\Exception $e)
@@ -1084,27 +1090,29 @@ class OtorisasiController extends Controller
             // delete $item_auth after approval success
             $item_auth->delete();
 
+            $link = route('revisi');
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+
             DB::commit();
             return response()->json([
-            'status' => 'berhasil'
+                'status' => 'berhasil'
             ]);
         }
         catch (\Exception $e)
         {
             DB::rollback();
             return response()->json([
-            'status' => 'gagal',
-            'message' => $e->getMessage()
+                'status' => 'gagal',
+                'message' => $e->getMessage()
             ]);
         }
     }
 
-    //============ Approval promosi ================
+//============ Approval promosi ================
     public function promotion()
     {
         return view('notifikasiotorisasi.otorisasi.promotion.index');
     }
-
     public function getDataPromotion()
     {
         $data = DB::table('d_promotion')
@@ -1133,7 +1141,6 @@ class OtorisasiController extends Controller
             ->rawColumns(['action'])
             ->make(true);
     }
-
     public function approvePromotion(Request $request)
     {
 
@@ -1148,6 +1155,9 @@ class OtorisasiController extends Controller
                     'p_budgetrealization' => $realisasi,
                     'p_isapproved' => 'Y'
                 ]);
+
+            $link = route('promotion');
+            pushOtorisasi::otorisasiup('Otorisasi Promosi', -1, $link);
 
             // Jurnal ------------------------------------------
             $acc_promosi_beban = DB::table('dk_pembukuan_detail')
@@ -1200,6 +1210,7 @@ class OtorisasiController extends Controller
             if($jurnal['status'] == 'error'){
                 return json_encode($jurnal);
             }
+
             DB::commit();
             return response()->json([
                 'status' => 'success'
@@ -1211,7 +1222,6 @@ class OtorisasiController extends Controller
             ]);
         }
     }
-
     public function rejectPromotion(Request $request)
     {
         $id = Crypt::decrypt($request->id);
@@ -1223,6 +1233,10 @@ class OtorisasiController extends Controller
                 ->update([
                     'p_isapproved' => 'N'
                 ]);
+
+            $link = route('promotion');
+            pushOtorisasi::otorisasiup('Otorisasi Promosi', -1, $link);
+
             DB::commit();
             return response()->json([
                 'status' => 'success'
@@ -1235,10 +1249,9 @@ class OtorisasiController extends Controller
         }
     }
 
+//============ Approval sdm-submission ================
     public function getListPengajuanInOtorisasi()
     {
-
-
         $pengajuan = DB::table('d_sdmsubmission')
             ->join('m_divisi', 'ss_department','m_id')
             ->join('m_jabatan', 'ss_position', 'j_id')
@@ -1288,7 +1301,6 @@ class OtorisasiController extends Controller
             ->rawColumns(['tanggal', 'status', 'action'])
             ->make(true);
     }
-
     public function simpanPublikasi(Request $request)
     {
         $date1 = strtotime($request->ss_startdate);
@@ -1319,7 +1331,6 @@ class OtorisasiController extends Controller
             ]);
         }
     }
-
     public function ApprovePengajuan($id)
     {
         try {
@@ -1336,6 +1347,9 @@ class OtorisasiController extends Controller
                     'ss_isapproved' => "Y"
                 ]);
 
+            $link = route('sdm');
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+
             DB::commit();
             return response()->json([
                 'status' => 'sukses'
@@ -1348,7 +1362,6 @@ class OtorisasiController extends Controller
             ]);
         }
     }
-
     public function DeclinePengajuan($id)
     {
         try {
@@ -1364,6 +1377,9 @@ class OtorisasiController extends Controller
                 ->update([
                     'ss_isapproved' => "N"
                 ]);
+
+            $link = route('sdm');
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
 
             DB::commit();
             return response()->json([

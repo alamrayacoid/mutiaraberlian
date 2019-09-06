@@ -11,7 +11,11 @@ class pushotorisasiController extends Controller
 {
     static function otorisasiup($name, $qty, $link)
     {
-        $data = array('name' => $name, 'qty' => $qty, 'link' => $link);
+        $data = array(
+            'name' => $name,
+            'qty' => $qty,
+            'link' => $link
+        );
 
         $options = array(
             'cluster' => env('PUSHER_APP_CLUSTER'),
@@ -23,7 +27,7 @@ class pushotorisasiController extends Controller
             env('PUSHER_APP_ID'),
             $options
         );
-        // dd($data);
-        $pusher->trigger('my-channel', 'my-event', $data);
+
+        $x = $pusher->trigger('channel-otorisasi', 'event-otorisasi', $data);
     }
 }
