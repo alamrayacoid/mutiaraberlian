@@ -861,6 +861,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Analisis Keuangan
     Route::get('/keuangan/analisis/roe', 'Keuangan\analisis\ROEController@index')->name('roe.index');
+    Route::get('/keuangan/analisis/roe/get-data', 'Keuangan\analisis\ROEController@getData')->name('roe.getData');
     // !===================================================== END KEUANGAN =====================================================!
 
     // !===================================================== PENGATURAN =====================================================!
