@@ -478,6 +478,7 @@ class ProduksiController extends Controller
                     return json_encode($jurnal);
                 }
             // end: update jurnal
+// dd($jurnal);
 
             DB::commit();
             return json_encode([
@@ -522,7 +523,7 @@ class ProduksiController extends Controller
                     }
                 }
             // end:  drop jurnal for production-order and payment
-dd($po, $jurnal);
+// dd($po, $jurnal);
 
             DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
             DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
@@ -551,7 +552,6 @@ dd($po, $jurnal);
 
         DB::beginTransaction();
         try {
-
             // get production order
             $po = ProductionOrder::where('po_id', $id)->with('getPODt')->first();
             // get item received
@@ -576,7 +576,6 @@ dd($po, $jurnal);
                 }
             }
 
-
             // start:  drop jurnal for production-order and payment
                 // $po = ProductionOrder::where('po_id', $id)->select('po_nota')->first();
                 $jurnal = DB::table('dk_jurnal')
@@ -595,8 +594,7 @@ dd($po, $jurnal);
                     }
                 }
             // end:  drop jurnal for production-order and payment
-    dd($po, $jurnal);
-dd($po, $jurnal);
+// dd($po, $jurnal);
 
             DB::table('d_itemreceiptdt')->where('ird_itemreceipt', $itemReceive->ir_id)->delete();
             $itemReceive->delete();
@@ -605,7 +603,8 @@ dd($po, $jurnal);
             DB::table('d_productionordercode')->where('poc_productionorder', '=', $id)->delete();
             DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
             $po->delete();
-            // dd('force delete x');
+
+
             DB::commit();
             return response()->json([
                 'status' => 'Success'

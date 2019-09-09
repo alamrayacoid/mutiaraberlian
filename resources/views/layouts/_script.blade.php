@@ -42,8 +42,6 @@
 <script src="{{asset('assets/JTimepicker-JohnHRTN/jquery.timepicker.min.js')}}"></script>
 <script src="{{asset('assets/js/chartjs/dist/chart.min.js')}}"></script>
 
-<?php $sidebar = App\Http\Controllers\AksesUser::aksesSidebar() ?>
-
 <script type="text/javascript">
     var getstorage;
     $('#sidebar-collapse-btn, #sidebar-overlay').click(function () {
@@ -573,56 +571,58 @@
     var p_key = "{{ env('PUSHER_APP_KEY') }}";
     var p_cluster = "{{ env('PUSHER_APP_CLUSTER') }}";
 
-    @if($sidebar[44]->ua_read == 'Y')
-        var pusher = new Pusher(p_key, {
-            cluster: p_cluster,
-            forceTLS: true
-        });
+    @if(Auth::check())
+        <?php $sidebar = App\Http\Controllers\AksesUser::aksesSidebar() ?>
+        @if($sidebar[44]->ua_read == 'Y')
+            var pusher = new Pusher(p_key, {
+                cluster: p_cluster,
+                forceTLS: true
+            });
 
-        var channelOto = pusher.subscribe('channel-otorisasi');
-        channelOto.bind('event-otorisasi', function(data) {
-            otorisasi(data.name);
-        });
+            var channelOto = pusher.subscribe('channel-otorisasi');
+            channelOto.bind('event-otorisasi', function(data) {
+                otorisasi(data.name);
+            });
 
-        // var channelNotif = pusher.subscribe('channel-notifikasi');
-    // channelNotif.bind('event-notifikasi', function(data) {
-    //     notifikasi(data.name, data.qty, data.link);
-    // });
+            // var channelNotif = pusher.subscribe('channel-notifikasi');
+            // channelNotif.bind('event-notifikasi', function(data) {
+            //     notifikasi(data.name, data.qty, data.link);
+            // });
 
-        // get list 'notifikasi - otorisasi'
-        $.ajax({
-            type: 'get',
-            dataType: 'json',
-            url: baseUrl + '/gettmpoto',
-            success : function(response){
-                console.log('oto: '+ response);
-                if (response.length != 0) {
-                    for (var i = 0; i < response.length; i++) {
-                        if (parseInt(response[i].n_qty) != 0) {
-                            otorisasi(response[i].n_name, 0, response[i].n_link);
+            // get list 'notifikasi - otorisasi'
+            $.ajax({
+                type: 'get',
+                dataType: 'json',
+                url: baseUrl + '/gettmpoto',
+                success : function(response){
+                    console.log('oto: '+ response);
+                    if (response.length != 0) {
+                        for (var i = 0; i < response.length; i++) {
+                            if (parseInt(response[i].n_qty) != 0) {
+                                otorisasi(response[i].n_name, 0, response[i].n_link);
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
 
-        // // get list 'notifikasi - notifikasi'
-    // $.ajax({
-    //     type: 'get',
-    //     dataType: 'json',
-    //     url: baseUrl + '/gettmpnotif',
-    //     success : function(response){
-    //         if (response.length != 0) {
-    //             for (var i = 0; i < response.length; i++) {
-    //                 if (parseInt(response[i].n_qty) != 0) {
-    //                     notifikasi(response[i].n_name, 0, response[i].n_link);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // });
+            // // get list 'notifikasi - notifikasi'
+            // $.ajax({
+            //     type: 'get',
+            //     dataType: 'json',
+            //     url: baseUrl + '/gettmpnotif',
+            //     success : function(response){
+            //         if (response.length != 0) {
+            //             for (var i = 0; i < response.length; i++) {
+            //                 if (parseInt(response[i].n_qty) != 0) {
+            //                     notifikasi(response[i].n_name, 0, response[i].n_link);
+            //                 }
+            //             }
+            //         }
+            //     }
+            // });
+        @endif
     @endif
-
     // validate and update 'notif - otorisasi' (create if is_null)
     function otorisasi(name) {
         var html = "";

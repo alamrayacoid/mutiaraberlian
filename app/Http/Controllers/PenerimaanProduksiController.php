@@ -830,7 +830,7 @@ class PenerimaanProduksiController extends Controller
             ]);
         }
     }
-
+    // update penerimaan production-order
     public function updateDetailPO(Request $request)
     {
         DB::beginTransaction();
@@ -949,6 +949,67 @@ class PenerimaanProduksiController extends Controller
             if ($request->itemQty > $limitQty) {
                 throw new Exception("Jumlah permintaan tidak boleh lebih dari : ". $limitQty, 1);
             }
+
+            // start : update jurnal
+                $acc_persediaan = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Penerimaan Barang Produksi')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA Persediaan Item')
+                                        ->first();
+
+                $acc_persediaan_perjalanan = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Penerimaan Barang Produksi')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA Persediaan dalam perjalanan')
+                                        ->first();
+
+                $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Penerimaan Barang Produksi')
+                                ->where('pe_comp', Auth::user()->u_company)->first();
+                $details = [];
+
+                if(!$parrent || !$acc_persediaan || !$acc_persediaan_perjalanan){
+                    return response()->json([
+                        'status' => 'Failed',
+                        'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                    ]);
+                }
+                $jrValue = $productionOrder->getPODt[0]->pod_value * $request->itemQty;
+// dd($productionOrder->getPODt[0]->pod_value, $request->itemQty, $jrValue, $notaDO);
+                array_push($details, [
+                    "jrdt_nomor"        => 1,
+                    "jrdt_akun"         => $acc_persediaan->pd_acc,
+                    "jrdt_value"        => $jrValue,
+                    "jrdt_dk"           => "D",
+                    "jrdt_keterangan"   => $acc_persediaan->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_persediaan->pd_cashflow
+                ]);
+
+                array_push($details, [
+                    "jrdt_nomor"        => 2,
+                    "jrdt_akun"         => $acc_persediaan_perjalanan->pd_acc,
+                    "jrdt_value"        => $jrValue,
+                    "jrdt_dk"           => "K",
+                    "jrdt_keterangan"   => $acc_persediaan_perjalanan->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_persediaan_perjalanan->pd_cashflow
+                ]);
+
+                $jurnal = jurnal::updateJurnal(
+                    $details,
+                    date('Y-m-d'),
+                    $notaDO,
+                    $parrent->pe_nama,
+                    'TM',
+                    Auth::user()->u_company
+                );
+
+                if($jurnal['status'] == 'error'){
+                    return json_encode($jurnal);
+                }
+            // end : update jurnal
 
             DB::commit();
             return Response::json([
