@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
+use App\Helper\keuangan\jurnal\jurnal;
 
 use App\d_itemsupplier;
 use App\d_itemreceipt as ItemReceipt;
@@ -412,11 +413,78 @@ class ProduksiController extends Controller
             DB::table('d_productionorderdt')->insert($productionorderdt);
             DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
             DB::table('d_productionorderpayment')->insert($productionorderpayment);
+
+            // start: update jurnal
+                $po = ProductionOrder::where('po_id', $id)->select('po_nota')->first();
+                $detail = DB::table('d_productionorderdt')->where('pod_productionorder', $id)->get();
+
+                $acc_persediaan = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Order Produksi')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA Persediaan dalam perjalanan')
+                                        ->first();
+
+                $hutang = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Order Produksi')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA Hutang')
+                                        ->first();
+
+                $details = []; $count = 0;
+
+                if(!$hutang || !$acc_persediaan){
+                    return response()->json([
+                        'status' => 'Failed',
+                        'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                    ]);
+                }
+
+                foreach ($detail as $key => $value) {
+                    $count += $value->pod_value * $value->pod_qty;
+                }
+
+                array_push($details, [
+                    "jrdt_nomor"        => 1,
+                    "jrdt_akun"         => $acc_persediaan->pd_acc,
+                    "jrdt_value"        => $count,
+                    "jrdt_dk"           => "D",
+                    "jrdt_keterangan"   => "Persediaan Dalam Perjalanan Order Produksi",
+                    "jrdt_cashflow"     => null
+                ]);
+
+                array_push($details, [
+                    "jrdt_nomor"        => 2,
+                    "jrdt_akun"         => $hutang->pd_acc,
+                    "jrdt_value"        => $count,
+                    "jrdt_dk"           => "K",
+                    "jrdt_keterangan"   => "Hutang Order Produksi",
+                    "jrdt_cashflow"     => null
+                ]);
+
+                $jurnal = jurnal::updateJurnal(
+                    $details,
+                    date('Y-m-d'),
+                    $po->po_nota,
+                    'Order Produksi',
+                    'TM',
+                    Auth::user()->u_company
+                );
+
+                if($jurnal['status'] == 'error'){
+                    return json_encode($jurnal);
+                }
+            // end: update jurnal
+
             DB::commit();
             return json_encode([
                 'status' => 'Success'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollBack();
             return json_encode([
                 'status' => 'Failed',
@@ -436,14 +504,39 @@ class ProduksiController extends Controller
 
         DB::beginTransaction();
         try {
+            // start:  drop jurnal for production-order and payment
+                $po = ProductionOrder::where('po_id', $id)->select('po_nota')->first();
+                $jurnal = DB::table('dk_jurnal')
+                    ->where('jr_nota_ref', 'like', '%' . $po->po_nota . '%')
+                    ->groupBy('jr_id')
+                    ->get();
+
+                if (count($jurnal) > 0) {
+                    foreach ($jurnal as $key => $value) {
+                        $idJurnal = $value->jr_id;
+                        // drop jurnal by id
+                        $dropJurnal = jurnal::dropJurnal($idJurnal);
+            			if ($dropJurnal['status'] == 'error') {
+            				return $dropJurnal;
+            			}
+                    }
+                }
+            // end:  drop jurnal for production-order and payment
+dd($po, $jurnal);
+
             DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
             DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
             DB::table('d_productionorder')->where('po_id', '=', $id)->delete();
+
             DB::commit();
             return response()->json(['status' => "Success"]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['status' => "Failed"]);
+            return response()->json([
+                'status' => "Failed",
+                'message' => $e->getMessage()
+            ]);
         }
     }
     // force-delete
@@ -482,6 +575,28 @@ class ProduksiController extends Controller
                     }
                 }
             }
+
+
+            // start:  drop jurnal for production-order and payment
+                // $po = ProductionOrder::where('po_id', $id)->select('po_nota')->first();
+                $jurnal = DB::table('dk_jurnal')
+                    ->where('jr_nota_ref', 'like', '%' . $po->po_nota . '%')
+                    ->groupBy('jr_id')
+                    ->get();
+
+                if (count($jurnal) > 0) {
+                    foreach ($jurnal as $key => $value) {
+                        $idJurnal = $value->jr_id;
+                        // drop jurnal by id
+                        $dropJurnal = jurnal::dropJurnal($idJurnal);
+            			if ($dropJurnal['status'] == 'error') {
+            				return $dropJurnal;
+            			}
+                    }
+                }
+            // end:  drop jurnal for production-order and payment
+    dd($po, $jurnal);
+dd($po, $jurnal);
 
             DB::table('d_itemreceiptdt')->where('ird_itemreceipt', $itemReceive->ir_id)->delete();
             $itemReceive->delete();
@@ -781,7 +896,6 @@ class ProduksiController extends Controller
 
     public function getEditReturn($id = null, $detail = null)
     {
-dd('debug !');
         try {
             $id = Crypt::decrypt($id);
             $detail = Crypt::decrypt($detail);

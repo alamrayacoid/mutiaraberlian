@@ -180,24 +180,31 @@ class ItemController extends Controller
                 $id = DB::table('m_item_auth')->max('ia_id') + 1;
             }
 
-            $file = $request->file('file');
-            $file_name = null;
-            if ($file != null) {
-                // make-directory based on item-id
-                $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
-                if (!is_dir($authDirectory)) {
-                    mkdir($authDirectory, 0777, true);
-                }
-                // specify file-name
-                $file_name = time() . '.' . $file->getClientOriginalExtension();
-
-                // create image inside auth-directory
-                Image::make($file)
-                    ->resize(261, null, function ($constraint) {
-                        $constraint->aspectRatio();
-                    })
-                    ->save($authDirectory .'\\'. $file_name);
+            if ($request->hasFile('file')) {
+                $imageName = $id . '-photo';
+                $photo = $request->file('file')->storeAs('Products', $imageName);
+            } else {
+                $photo = null;
             }
+
+            // $file = $request->file('file');
+            // $file_name = null;
+            // if ($file != null) {
+            //     // make-directory based on item-id
+            //     $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
+            //     if (!is_dir($authDirectory)) {
+            //         mkdir($authDirectory, 0777, true);
+            //     }
+            //     // specify file-name
+            //     $file_name = time() . '.' . $file->getClientOriginalExtension();
+            //
+            //     // create image inside auth-directory
+            //     Image::make($file)
+            //         ->resize(261, null, function ($constraint) {
+            //             $constraint->aspectRatio();
+            //         })
+            //         ->save($authDirectory .'\\'. $file_name);
+            // }
 
             DB::table('m_item_auth')
                 ->insert([
@@ -214,7 +221,7 @@ class ItemController extends Controller
                     'ia_unitcompare3' => $request->dataproduk_isisatuanalt2,
                     'ia_detail' => $request->dataproduk_ket,
                     'ia_isactive' => "Y",
-                    'ia_image' => $file_name,
+                    'ia_image' => $photo,
                     'ia_created_at' => Carbon::now(),
                     'ia_update_at' => Carbon::now(),
                 ]);
@@ -287,33 +294,42 @@ class ItemController extends Controller
         DB::beginTransaction();
         try {
             $gambar = DB::table('m_item')->where('i_id', '=', $id)->first();
-            $file = $request->file('file');
-            if ($file != null) {
-                // make-directory based on item-id
-                $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
-                if (!is_dir($authDirectory)) {
-                    mkdir($authDirectory, 0777, true);
-                }
-                // remove/delete current image
-                if ($gambar->i_image != '') {
-                    if (file_exists($authDirectory .'\\'. $gambar->i_image)) {
-                        unlink($authDirectory .'\\'. $gambar->i_image);
-                    }
-                }
-                // specify file-name
-                $file_name = time() . '.' . $file->getClientOriginalExtension();
 
-                // dd($authDirectory, $file_name);
-                // create image inside auth-directory
-                Image::make($file)
-                ->resize(261, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })
-                ->save($authDirectory .'\\'. $file_name);
+            if ($request->hasFile('file')) {
+                $imageName = $id . '-photo';
+                $photo = $request->file('file')->storeAs('Products', $imageName);
+            } else {
+                $photo = $gambar->i_image;
             }
-            else {
-                $file_name = $gambar->i_image;
-            }
+
+
+            // $file = $request->file('file');
+            // if ($file != null) {
+            //     // make-directory based on item-id
+            //     $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
+            //     if (!is_dir($authDirectory)) {
+            //         mkdir($authDirectory, 0777, true);
+            //     }
+            //     // remove/delete current image
+            //     if ($gambar->i_image != '') {
+            //         if (file_exists($authDirectory .'\\'. $gambar->i_image)) {
+            //             unlink($authDirectory .'\\'. $gambar->i_image);
+            //         }
+            //     }
+            //     // specify file-name
+            //     $file_name = time() . '.' . $file->getClientOriginalExtension();
+            //
+            //     // dd($authDirectory, $file_name);
+            //     // create image inside auth-directory
+            //     Image::make($file)
+            //     ->resize(261, null, function ($constraint) {
+            //         $constraint->aspectRatio();
+            //     })
+            //     ->save($authDirectory .'\\'. $file_name);
+            // }
+            // else {
+            //     $file_name = $gambar->i_image;
+            // }
 
             // is there already existing un-autorized edit-item ?
             $cek = DB::table('m_item_auth')->where('ia_id', $id)->count();
@@ -326,7 +342,7 @@ class ItemController extends Controller
                     'ia_codegroup' => null,
                     'ia_name' => strtoupper($request->dataproduk_name),
                     'ia_detail' => $request->dataproduk_ket,
-                    'ia_image' => $file_name,
+                    'ia_image' => $photo,
                     'ia_isactive' => "Y",
                     'ia_update_at' => Carbon::now(),
                 ]);
@@ -341,7 +357,7 @@ class ItemController extends Controller
                     'ia_codegroup' => null,
                     'ia_name' => strtoupper($request->dataproduk_name),
                     'ia_detail' => $request->dataproduk_ket,
-                    'ia_image' => $file_name,
+                    'ia_image' => $photo,
                     'ia_isactive' => "Y",
                     'ia_update_at' => Carbon::now(),
                 ]);
@@ -354,7 +370,8 @@ class ItemController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -390,12 +407,17 @@ class ItemController extends Controller
                 ]);
             }
             else {
-                $itemCode = m_item::where('i_id', $id)->select('i_code')->first();
-                // dd($itemCode);
+                $itemDetail = m_item::where('i_id', $id)->first();
+
                 DB::table('m_item_auth')
                 ->insert([
                     'ia_id' => $id,
-                    'ia_code' => $itemCode->i_code,
+                    'ia_code' => $itemDetail->i_code,
+                    'ia_type' => $itemDetail->i_type,
+                    'ia_codegroup' => $itemDetail->i_codegroup,
+                    'ia_name' => $itemDetail->i_name,
+                    'ia_detail' => $itemDetail->i_detail,
+                    'ia_image' => $itemDetail->i_image,
                     'ia_isactive' => "N",
                     'ia_update_at' => Carbon::now()
                 ]);
@@ -427,14 +449,42 @@ class ItemController extends Controller
         // start: execute update data (delete)
         DB::beginTransaction();
         try {
-            DB::table('m_item_auth')
+            $isAlreadyExist = m_item_auth::where('ia_id', $id)->first();
+            if ($isAlreadyExist !== null) {
+                DB::table('m_item_auth')
                 ->where('ia_id', $id)
                 ->update([
                     'ia_isactive' => "Y",
                     'ia_update_at' => Carbon::now(),
                 ]);
-            // pusher -> push notification
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
+            }
+            else {
+                $itemDetail = m_item::where('i_id', $id)->first();
+
+                DB::table('m_item_auth')
+                ->insert([
+                    'ia_id' => $id,
+                    'ia_code' => $itemDetail->i_code,
+                    'ia_type' => $itemDetail->i_type,
+                    'ia_codegroup' => $itemDetail->i_codegroup,
+                    'ia_name' => $itemDetail->i_name,
+                    'ia_detail' => $itemDetail->i_detail,
+                    'ia_image' => $itemDetail->i_image,
+                    'ia_isactive' => "Y",
+                    'ia_update_at' => Carbon::now()
+                ]);
+                // pusher -> push notification
+                pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
+            }
+
+            // DB::table('m_item_auth')
+            //     ->where('ia_id', $id)
+            //     ->update([
+            //         'ia_isactive' => "Y",
+            //         'ia_update_at' => Carbon::now(),
+            //     ]);
+            // // pusher -> push notification
+            // pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
             DB::commit();
             return response()->json([

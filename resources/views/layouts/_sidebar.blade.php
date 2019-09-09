@@ -1,3 +1,6 @@
+
+<?php $sidebar = App\Http\Controllers\AksesUser::aksesSidebar() ?>
+
 <header class="header">
     <div class="header-block header-block-collapse">
         <!-- <button class="collapse-btn icon" id="sidebar-collapse-btn">
@@ -25,74 +28,76 @@
     </div> -->
     <div class="header-block header-block-nav">
         <ul class="nav-profile">
-            <li class="notifications new">
-                <a href="" data-toggle="dropdown">
-                    <i class="fa fa-bell-o" title="Notifikasi"></i>
-                    <sup>
-                        <span class="counter" id="counternotif">0</span>
-                    </sup>
-                </a>
-                <div class="dropdown-menu notifications-dropdown-menu">
-                    <ul class="notifications-container" id="shownotifikasi">
-                        <!-- <li>
-                            <a href="" class="notification-item">
-                                <div class="body-col">
-                                    <p>
-                                        <span class="accent">Zack Alien</span> pushed new commit:
-                                        <span class="accent">Fix page load performance issue</span>. </p>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="notification-item">
-                                <div class="body-col">
-                                    <p>
-                                        <span class="accent">Amaya Hatsumi</span> started new task:
-                                        <span class="accent">Dashboard UI design.</span>. </p>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="notification-item">
-                                <div class="body-col">
-                                    <p>
-                                        <span class="accent">Andy Nouman</span> deployed new version of
-                                        <span class="accent">NodeJS REST Api V3</span>
-                                    </p>
-                                </div>
-                            </a>
-                        </li> -->
-                    </ul>
-                    <footer>
-                        <ul>
-                            <li>
-                                <a href=""> View All </a>
+            @if($sidebar[44]->ua_read == 'Y')
+                <li class="notifications new">
+                    <a href="" data-toggle="dropdown">
+                        <i class="fa fa-bell-o" title="Notifikasi"></i>
+                        <sup>
+                            <span class="counter" id="counternotif">0</span>
+                        </sup>
+                    </a>
+                    <div class="dropdown-menu notifications-dropdown-menu">
+                        <ul class="notifications-container" id="shownotifikasi">
+                            <!-- <li>
+                                <a href="" class="notification-item">
+                                    <div class="body-col">
+                                        <p>
+                                            <span class="accent">Zack Alien</span> pushed new commit:
+                                            <span class="accent">Fix page load performance issue</span>. </p>
+                                    </div>
+                                </a>
                             </li>
-                        </ul>
-                    </footer>
-                </div>
-            </li>
-            <li class="notifications new">
-                <a href="" data-toggle="dropdown">
-
-                    <i><img src="{{ asset('assets/img/author-sign.png') }}" alt="" title="Otorisasi"></i>
-                    <sup>
-                        <span class="counter" id="counteroto">0</span>
-                    </sup>
-                </a>
-                <div class="dropdown-menu notifications-dropdown-menu">
-                    <ul class="notifications-container" id="showotorisasi">
-
-                    </ul>
-                    <footer>
-                        <ul>
                             <li>
-                                <a href=""> View All </a>
+                                <a href="" class="notification-item">
+                                    <div class="body-col">
+                                        <p>
+                                            <span class="accent">Amaya Hatsumi</span> started new task:
+                                            <span class="accent">Dashboard UI design.</span>. </p>
+                                    </div>
+                                </a>
                             </li>
+                            <li>
+                                <a href="" class="notification-item">
+                                    <div class="body-col">
+                                        <p>
+                                            <span class="accent">Andy Nouman</span> deployed new version of
+                                            <span class="accent">NodeJS REST Api V3</span>
+                                        </p>
+                                    </div>
+                                </a>
+                            </li> -->
                         </ul>
-                    </footer>
-                </div>
-            </li>
+                        <footer>
+                            <ul>
+                                <li>
+                                    <a href="#"> # </a>
+                                </li>
+                            </ul>
+                        </footer>
+                    </div>
+                </li>
+                <li class="notifications new">
+                    <a href="" data-toggle="dropdown">
+
+                        <i><img src="{{ asset('assets/img/author-sign.png') }}" alt="" title="Otorisasi"></i>
+                        <sup>
+                            <span class="counter" id="counteroto">0</span>
+                        </sup>
+                    </a>
+                    <div class="dropdown-menu notifications-dropdown-menu">
+                        <ul class="notifications-container" id="showotorisasi">
+
+                        </ul>
+                        <footer>
+                            <ul>
+                                <li>
+                                    <a href="#"> # </a>
+                                </li>
+                            </ul>
+                        </footer>
+                    </div>
+                </li>
+            @endif
             <li class="profile dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                     @if (Auth::user()->u_user == 'E')
@@ -124,8 +129,6 @@
         </ul>
     </div>
 </header>
-
-<?php $sidebar = App\Http\Controllers\AksesUser::aksesSidebar() ?>
 
 <aside class="sidebar">
     <div class="sidebar-container">

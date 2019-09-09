@@ -230,9 +230,6 @@ class PembayaranController extends Controller
 
     public function bayar(Request $request)
     {
-
-        // return json_encode($request->all());
-
         $bayar = Currency::removeRupiah($request->nilai_bayar);
         $termin = $request->termin;
         try {
@@ -280,7 +277,7 @@ class PembayaranController extends Controller
                 ->where('pop_status', '=', 'N')
                 ->get();
 
-            if (count($check) == 0){
+            if (count($check) == 0) {
                 DB::table('d_productionorder')
                     ->where('po_id', '=', $poid)
                     ->update([
@@ -304,7 +301,7 @@ class PembayaranController extends Controller
                                                         ->where('pe_comp', Auth::user()->u_company)->first();
                                         })->where('pd_nama', 'COA Hutang')
                                         ->first();
-                
+
                 $pembukuan = DB::table('dk_pembukuan')
                                     ->where('pe_nama', 'Pembayaran Order Produksi')
                                     ->where('pe_comp', Auth::user()->u_company)->first();
@@ -340,7 +337,7 @@ class PembayaranController extends Controller
 
                 $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $nota, $pembukuan->pe_keterangan, 'TK', Auth::user()->u_company);
 
-                if($jurnal['status'] == 'error'){
+                if ($jurnal['status'] == 'error'){
                     return json_encode($jurnal);
                 }
 

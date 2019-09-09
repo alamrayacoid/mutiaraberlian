@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use function foo\func;
 use App\Helper\keuangan\jurnal\jurnal;
 use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
@@ -413,7 +414,7 @@ class OtorisasiController extends Controller
 
             // pusher -> push notification
             pushOtorisasi::otorisasiup('Otorisasi Adjustment');
-            
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -623,8 +624,7 @@ class OtorisasiController extends Controller
                 ->where('poa_id', '=', $id)
                 ->delete();
 
-            $link = route('revisi');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
             DB::commit();
             return response()->json(['status'=>'Success']);
@@ -661,8 +661,7 @@ class OtorisasiController extends Controller
                 ->where('poa_id', '=', $id)
                 ->delete();
 
-            $link = route('revisi');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
             DB::commit();
             return response()->json(['status'=>'Success']);
@@ -972,9 +971,9 @@ class OtorisasiController extends Controller
     public function getDetailRevDataProduk($id)
     {
         $data = m_item_auth::where('ia_id', $id)
-        ->with('getItem')
-        ->with('getItemType')
-        ->first();
+            ->with('getItem')
+            ->with('getItemType')
+            ->first();
         return $data;
     }
     // approve revisi-data-produk
@@ -997,28 +996,28 @@ class OtorisasiController extends Controller
                 }
                 else
                 {
-                    if ($item_auth->ia_image != '')
-                    {
-                        // get-directory based on item-id
-                        $mainDirectory = storage_path('uploads\produk\original\\') . $id;
-                        $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
-                        if (!is_dir($mainDirectory))
-                        {
-                            mkdir($mainDirectory, 0777, true);
-                        }
-                        // is image exist in auth-directory ?
-                        if (file_exists($authDirectory .'\\'. $item_auth->ia_image))
-                        {
-                            // delete image if exist in main-directory
-                            if (file_exists($mainDirectory . $item_main->i_image)) {
-                                unlink($mainDirectory .'\\'. $item_main->i_image);
-                            }
-                            // move image from item-auth to original
-                            $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
-                            $newPath = $mainDirectory .'\\'. $item_auth->ia_image;
-                            rename($oldPath, $newPath);
-                        }
-                    }
+                    // if ($item_auth->ia_image != '')
+                    // {
+                    //     // get-directory based on item-id
+                    //     $mainDirectory = storage_path('app\Products\original\\') . $id;
+                    //     $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
+                    //     if (!is_dir($mainDirectory))
+                    //     {
+                    //         mkdir($mainDirectory, 0777, true);
+                    //     }
+                    //     // is image exist in auth-directory ?
+                    //     if (file_exists($authDirectory .'\\'. $item_auth->ia_image))
+                    //     {
+                    //         // delete image if exist in main-directory
+                    //         if (file_exists($mainDirectory . $item_main->i_image)) {
+                    //             unlink($mainDirectory .'\\'. $item_main->i_image);
+                    //         }
+                    //         // move image from item-auth to original
+                    //         $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
+                    //         $newPath = $mainDirectory .'\\'. $item_auth->ia_image;
+                    //         rename($oldPath, $newPath);
+                    //     }
+                    // }
 
                     // update $item-main based on $item-auth
                     $item_main->i_code = $item_auth->ia_code;
@@ -1027,6 +1026,7 @@ class OtorisasiController extends Controller
                     $item_main->i_name = $item_auth->ia_name;
                     $item_main->i_detail = $item_auth->ia_detail;
                     $item_main->i_image = $item_auth->ia_image;
+                    $item_main->i_isactive = 'Y';
                     $item_main->save();
 
                 }
@@ -1034,23 +1034,23 @@ class OtorisasiController extends Controller
             // if $item-main == null
             else
             {
-                if ($item_auth->ia_image != '')
-                {
-                    // make-directory based on item-id
-                    $mainDirectory = storage_path('uploads\produk\original\\') . $id;
-                    $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
-                    if (!is_dir($mainDirectory))
-                    {
-                        mkdir($mainDirectory, 0777, true);
-                    }
-                    if (file_exists($authDirectory .'\\'. $item_auth->ia_image))
-                    {
-                        // move image from auth-directory to main-directory
-                        $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
-                        $newPath = $mainDirectory .'\\'. $item_auth->ia_image;
-                        rename($oldPath, $newPath);
-                    }
-                }
+                // if ($item_auth->ia_image != '')
+                // {
+                //     // make-directory based on item-id
+                //     $mainDirectory = storage_path('uploads\produk\original\\') . $id;
+                //     $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
+                //     if (!is_dir($mainDirectory))
+                //     {
+                //         mkdir($mainDirectory, 0777, true);
+                //     }
+                //     if (file_exists($authDirectory .'\\'. $item_auth->ia_image))
+                //     {
+                //         // move image from auth-directory to main-directory
+                //         $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
+                //         $newPath = $mainDirectory .'\\'. $item_auth->ia_image;
+                //         rename($oldPath, $newPath);
+                //     }
+                // }
 
                 // insert $item-auth to $item-main
                 $item = new m_item();
@@ -1074,8 +1074,7 @@ class OtorisasiController extends Controller
             // delete $item_auth after approval success
             $item_auth->delete();
 
-            $link = route('revisi');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
             DB::commit();
             return response()->json([
@@ -1102,20 +1101,20 @@ class OtorisasiController extends Controller
             // delete image in storage
             if ($item_auth->ia_image != '')
             {
-                // get-directory based on item-id
-                $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
-                if (file_exists($authDirectory .'\\'. $item_auth->ia_image))
-                {
-                    // delete image inside auth-directory
-                    $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
-                    unlink($oldPath);
-                }
+                // Storage::delete($item_auth->ia_image);
+            //     // get-directory based on item-id
+            //     $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
+            //     if (file_exists($authDirectory .'\\'. $item_auth->ia_image))
+            //     {
+            //         // delete image inside auth-directory
+            //         $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
+            //         unlink($oldPath);
+            //     }
             }
             // delete $item_auth after approval success
             $item_auth->delete();
 
-            $link = route('revisi');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
             DB::commit();
             return response()->json([
