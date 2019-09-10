@@ -194,35 +194,41 @@
     axios.get(baseUrl + '/inventory/manajemenstok/adjustmentstock/getopname?nota='+nota)
     .then(function (response) {
       data = response.data.data;
-      // handle success
+      // handle success);
       if (parseInt(response.data.data.o_qtysystem) != parseInt(response.data.stock.s_qty)) {
         $('#btnsimpan').css('display', 'none');
         messageFailed('Failed', 'Data Stock System Sudah Berubah');
         loadingHide();
-      } else {
+      }
+      else {
         loadingHide();
         $('#btnsimpan').css('display', '');
         $('#item').val(response.data.item.i_name);
         $('#iditem').val(response.data.item.i_id);
         for (var i = 0; i < response.data.unit.length; i++) {
-          if (response.data.unit[i].u_id == response.data.unitsystem.u_id) {
-            var selected = 'selected';
-          } else {
-            var selected = '';
-          }
+            if (response.data.unit[i] != null) {
+                if (response.data.unit[i].u_id == response.data.unitsystem.u_id) {
+                    var selected = 'selected';
+                } else {
+                    var selected = '';
+                }
+                $('#satuansystem').append('<option value="'+response.data.unit[i].u_id+'" '+selected+'>'+response.data.unit[i].u_name+'</option>');
+            }
 
-          $('#satuansystem').append('<option value="'+response.data.unit[i].u_id+'" '+selected+'>'+response.data.unit[i].u_name+'</option>');
         }
 
         for (var i = 0; i < response.data.unit.length; i++) {
-          if (response.data.unit[i].u_id == response.data.unitreal.u_id) {
-            var selected = 'selected';
-          } else {
-            var selected = '';
-          }
+            if (response.data.unit[i] != null) {
+                if (response.data.unit[i].u_id == response.data.unitreal.u_id) {
+                    var selected = 'selected';
+                } else {
+                    var selected = '';
+                }
+                $('#satuanreal').append('<option value="'+response.data.unit[i].u_id+'" '+selected+'>'+response.data.unit[i].u_name+'</option>');
+            }
 
-          $('#satuanreal').append('<option value="'+response.data.unit[i].u_id+'" '+selected+'>'+response.data.unit[i].u_name+'</option>');
         }
+
         $('#qtysystem').val(response.data.data.o_qtysystem);
         $('#qtyreal').val(response.data.data.o_qtyreal);
 
@@ -231,7 +237,7 @@
     })
     .catch(function (error) {
       // handle error
-      messageFailed('Failed', 'Data Stock System Sudah Berubah');
+      messageFailed('Failed', 'Terjadi kesalahan : ' + error);
     });
   }
 
@@ -400,16 +406,16 @@
               success : function(response){
                 if (response.status == 'berhasil') {
                   loadingHide();
-                  messageSuccess('Berhasil', 'Opname berhasil!');
+                  messageSuccess('Berhasil', 'Adjustment berhasil disimpan !');
                   setTimeout(function () {
                     window.location.href = '{{route('adjustment.index')}}';
                   }, 1000);
                 } else if (response.status == 'warning') {
                   loadingHide();
-                  messageWarning('Peringatan!', 'Opname Expired!');
+                  messageWarning('Peringatan!', 'Adjustment Expired!');
                 } else {
                     loadingHide();
-                  messageFailed('Gagal!', 'Opname gagal!');
+                  messageFailed('Gagal!', 'Adjustment gagal!');
                 }
               }
             })

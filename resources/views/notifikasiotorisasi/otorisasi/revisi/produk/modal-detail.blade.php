@@ -14,7 +14,7 @@
                         <div class="form-group">
                             <label for="">Nama : </label>
                             <div class="col-md-12 col-sm-12">
-                                <input type="text" id="detNameRP" class="form-control-sm form-control-plaintext border-bottom" value="">
+                                <input type="text" id="detNameRP" class="form-control-sm form-control-plaintext border-bottom" value="" readonly>
                             </div>
                         </div>
                     </div>
@@ -22,7 +22,7 @@
                         <div class="form-group">
                             <label for="">Jenis : </label>
                             <div class="col-md-12 col-sm-12">
-                                <input type="text" id="detTypeRP" class="form-control-sm form-control-plaintext border-bottom" value="">
+                                <input type="text" id="detTypeRP" class="form-control-sm form-control-plaintext border-bottom" value="" readonly>
                             </div>
                         </div>
                     </div>
@@ -30,7 +30,7 @@
                         <div class="form-group">
                             <label for="">Kode : </label>
                             <div class="col-md-12 col-sm-12">
-                                <input type="text" id="detCodeRP" class="form-control-sm form-control-plaintext border-bottom" value="">
+                                <input type="text" id="detCodeRP" class="form-control-sm form-control-plaintext border-bottom" value="" readonly>
                             </div>
                         </div>
                     </div>
@@ -38,7 +38,7 @@
                         <div class="form-group">
                             <label for="">Keterangan : </label>
                             <div class="col-md-12 col-sm-12">
-                                <input type="text" id="detKetRP" class="form-control-sm form-control-plaintext border-bottom" value="">
+                                <input type="text" id="detKetRP" class="form-control-sm form-control-plaintext border-bottom" value="" readonly>
                             </div>
                         </div>
                     </div>
@@ -46,7 +46,7 @@
                         <div class="form-group">
                             <label for="">Gambar : </label>
                             <div class="col-md-12 col-sm-12">
-                                <img src="" id="detImgRP" alt="Gambar Produk">
+                                <img src="" id="detImgRP" alt="Gambar Produk" width="150">
                             </div>
                         </div>
                     </div>

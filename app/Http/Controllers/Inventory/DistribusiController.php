@@ -884,6 +884,66 @@ class DistribusiController extends Controller
                 $startProdCodeIdx += $prodCodeLength;
             }
 
+            // update jurnal
+                $acc_ongkir_kas = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Ongkos Kirim Distribusi')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA Kas/Setara Kas')
+                                            ->first();
+
+                $acc_ongkir_beban = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Ongkos Kirim Distribusi')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA beban ongkos kirim')
+                                        ->first();
+
+                $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Ongkos Kirim Distribusi')
+                                ->where('pe_comp', Auth::user()->u_company)->first();
+                $details = [];
+
+                if(!$parrent || !$acc_ongkir_kas || !$acc_ongkir_beban){
+                    return response()->json([
+                        'status' => 'gagal',
+                        'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                    ]);
+                }
+
+                array_push($details, [
+                    "jrdt_nomor"        => 1,
+                    "jrdt_akun"         => $acc_ongkir_kas->pd_acc,
+                    "jrdt_value"        => $request->shippingCost,
+                    "jrdt_dk"           => "K",
+                    "jrdt_keterangan"   => $acc_ongkir_kas->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_ongkir_kas->pd_cashflow
+                ]);
+
+                array_push($details, [
+                    "jrdt_nomor"        => 2,
+                    "jrdt_akun"         => $acc_ongkir_beban->pd_acc,
+                    "jrdt_value"        => $request->shippingCost,
+                    "jrdt_dk"           => "D",
+                    "jrdt_keterangan"   => $acc_ongkir_beban->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_ongkir_beban->pd_cashflow
+                ]);
+
+                $jurnal = jurnal::updateJurnal(
+                    $details,
+                    date('Y-m-d'),
+                    $stockdist->sd_nota,
+                    $parrent->pe_nama,
+                    'TK',
+                    Auth::user()->u_company
+                );
+
+                if($jurnal['status'] == 'error'){
+                    return json_encode($jurnal);
+                }
+            // update jurnal
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'

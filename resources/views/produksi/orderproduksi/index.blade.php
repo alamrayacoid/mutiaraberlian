@@ -214,11 +214,15 @@
 								loadingHide();
 								messageSuccess("Berhasil", "Data Order Produksi Berhasil Dihapus");
 								TableIndex();
-							}else{
+							}
+							else{
 								loadingHide();
 								messageFailed("Gagal", "Data Order Produksi Gagal Dihapus");
 							}
-						})
+						}).catch(error => {
+							loadingHide();
+							messageWarning('Error', 'Terjadi kesalahan : '+  error);
+						});
 					}
 				},
 				cancel: {
@@ -257,6 +261,9 @@
 								loadingHide();
 								messageFailed("Gagal", "Data Order Produksi Gagal Dihapus");
 							}
+						}).catch(error => {
+							loadingHide();
+							messageWarning('Error', 'Terjadi kesalahan : '+  error);
 						});
 					}
 				},

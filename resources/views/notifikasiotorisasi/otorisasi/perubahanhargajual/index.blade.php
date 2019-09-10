@@ -25,11 +25,12 @@
 <article class="content">
 
     <div class="title-block text-primary">
-	    <h1 class="title"> Otorisasi</h1>
+	    <h1 class="title"> Otorisasi Perubahan Harga Jual</h1>
 	    <p class="title-description">
 	    	<i class="fa fa-home"></i>&nbsp;<a href="{{url('/home')}}">Home</a>
 	    	 / <span>Notifikasi & Otorisasi</span>
 	    	 / <a href="{{route('otorisasi')}}">Otorisasi</a>
+			 / <span class="text-primary font-weight-bold">Otorisasi Perubahan Harga Jual</span>
 	     </p>
 	</div>
 

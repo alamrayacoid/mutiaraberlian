@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Inventory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\DataTables;
+use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
 
-use DB;
-use CodeGenerator;
 use Carbon\Carbon;
-use otorisasi;
+use CodeGenerator;
+use DB;
 use Mutasi;
 
 class AdjusmentController extends Controller
@@ -63,6 +63,7 @@ class AdjusmentController extends Controller
         $data = DB::table('d_opname')->where('o_nota', $request->nota)->first();
 
         $stock = DB::table('d_stock')->where('s_comp', $data->o_comp)->where('s_position', $data->o_position)->where('s_item', $data->o_item)->first();
+// dd($data->o_qtysystem, $stock->s_qty);
 
         $item = DB::table('m_item')->where('i_id', $data->o_item)->first();
 
@@ -148,7 +149,8 @@ class AdjusmentController extends Controller
                 'o_status' => 'Y'
             ]);
 
-            otorisasi::otorisasiup('d_adjusmentauth', 'Adjusment Stock', '#');
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Adjustment');
 
             DB::commit();
             return response()->json([

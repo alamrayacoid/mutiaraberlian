@@ -10,7 +10,7 @@
 			<section>
 					<hr>
 					<div class="table-responsive">
-						<table class="table table-hover table-striped display nowrap" cellspacing="0" id="table_revdataproduk">
+						<table class="table table-hover table-striped display nowrap w-100" cellspacing="0" id="table_revdataproduk">
 							<thead class="bg-primary">
 								<tr>
 									<th>No</th>

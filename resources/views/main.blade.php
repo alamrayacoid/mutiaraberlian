@@ -45,7 +45,9 @@
 
 	<div class="main-wrapper">
         <div class="app" id="app">
-        	@include('layouts._sidebar')
+            @if(Auth::check())
+                @include('layouts._sidebar')
+            @endif
 
         	@yield('content')
 

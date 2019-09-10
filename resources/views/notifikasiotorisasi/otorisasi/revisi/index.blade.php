@@ -302,7 +302,7 @@
                 $('#detTypeRP').val(response.get_item_type.it_name);
                 $('#detCodeRP').val(response.ia_code);
                 $('#detKetRP').val(response.ia_detail);
-                $('#detImgRP').attr('src', baseUrl +'/storage/uploads/produk/item-auth/'+ response.ia_id +'/'+ response.ia_image);
+                $('#detImgRP').attr('src', "{{ asset('storage/app') }}" + '/' + response.ia_image);
                 $('#modalDetailRevProduk').modal('show');
             },
             error: function (e) {
@@ -314,46 +314,91 @@
     // accept revisi-produk
     function appRevisiP(id)
     {
-        loadingShow();
-        $.ajax({
-            url: baseUrl + '/notifikasiotorisasi/otorisasi/revisi/approve-dataproduk/' + id,
-            type: 'post',
-            success: function (response) {
-                loadingHide();
-                console.log(response);
-                if (response.status === 'berhasil') {
-                    messageSuccess('Selamat', 'Penyetujuan perubahan item berhasil dijalankan !');
-                    tb_listrevproduk.ajax.reload();
-                } else if (response.status === 'gagal') {
-                    messageWarning('Perhatian', response.message);
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Konfirmasi!',
+            content: 'Apakan Anda yakin akan menyetujui update produk ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        loadingShow();
+                        $.ajax({
+                            url: baseUrl + '/notifikasiotorisasi/otorisasi/revisi/approve-dataproduk/' + id,
+                            type: 'post',
+                            success: function (response) {
+                                loadingHide();
+                                if (response.status === 'berhasil') {
+                                    messageSuccess('Selamat', 'Penyetujuan perubahan item berhasil dijalankan !');
+                                    tb_listrevproduk.ajax.reload();
+                                } else if (response.status === 'gagal') {
+                                    messageWarning('Perhatian', response.message);
+                                }
+                            },
+                            error: function (e) {
+                                loadingHide();
+                                messageWarning('Perhatian', 'Terjadi kesalahan saat melakukan \'penyetujuan\' revisi, hubungi pengembang !');
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
                 }
-            },
-            error: function (e) {
-                loadingHide();
-                messageWarning('Perhatian', 'Terjadi kesalahan saat melakukan \'penyetujuan\' revisi, hubungi pengembang !');
             }
         });
     }
     // reject revisi-produk
     function rejRevisiP(id)
     {
-        loadingShow();
-        $.ajax({
-            url: baseUrl + '/notifikasiotorisasi/otorisasi/revisi/reject-dataproduk/' + id,
-            type: 'post',
-            success: function (response) {
-                loadingHide();
-                console.log(response);
-                if (response.status === 'berhasil') {
-                    messageSuccess('Selamat', 'Penolakan perubahan item berhasil dijalankan !');
-                    tb_listrevproduk.ajax.reload();
-                } else if (response.status === 'gagal') {
-                    messageWarning('Perhatian', response.message);
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 2.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Konfirmasi !',
+            content: 'Apakan Anda yakin akan menolak update produk ini?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function () {
+                        loadingShow();
+                        $.ajax({
+                            url: baseUrl + '/notifikasiotorisasi/otorisasi/revisi/reject-dataproduk/' + id,
+                            type: 'post',
+                            success: function (response) {
+                                loadingHide();
+                                console.log(response);
+                                if (response.status === 'berhasil') {
+                                    messageSuccess('Selamat', 'Penolakan perubahan item berhasil dijalankan !');
+                                    tb_listrevproduk.ajax.reload();
+                                } else if (response.status === 'gagal') {
+                                    messageWarning('Perhatian', response.message);
+                                }
+                            },
+                            error: function (e) {
+                                loadingHide();
+                                messageWarning('Perhatian', 'Terjadi kesalahan saat melakukan \'penolakan\' revisi, hubungi pengembang !');
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function () {
+                        // tutup confirm
+                    }
                 }
-            },
-            error: function (e) {
-                loadingHide();
-                messageWarning('Perhatian', 'Terjadi kesalahan saat melakukan \'penolakan\' revisi, hubungi pengembang !');
             }
         });
     }

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
 
+use App\d_promotion;
 use App\d_salescomp;
 use App\d_salescomppayment;
 use App\m_agen;
@@ -165,8 +166,7 @@ class MarketingController extends Controller
                     'p_note' => $note
                 ]);
 
-            $link = route('promotion');
-            pushOtorisasi::otorisasiup('Otorisasi Promosi', 1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Promosi');
 
             DB::commit();
             return Response::json([
@@ -251,8 +251,7 @@ class MarketingController extends Controller
         try {
             $prom = d_promotion::where('p_id', $p_id)->first();
             if ($prom->p_isapproved == 'P') {
-                $link = route('promotion');
-                pushOtorisasi::otorisasiup('Otorisasi Promosi', -1, $link);
+                pushOtorisasi::otorisasiup('Otorisasi Promosi');
             }
 
             DB::table('d_promotion')
@@ -366,8 +365,7 @@ class MarketingController extends Controller
                     'p_note' => $note
                 ]);
 
-            $link = route('promotion');
-            pushOtorisasi::otorisasiup('Otorisasi Promosi', 1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Promosi');
 
             DB::commit();
             return Response::json([
@@ -407,7 +405,7 @@ class MarketingController extends Controller
                     'p_impactplan' => $impact,
                     'p_note' => $note
                 ]);
-                
+
             DB::commit();
             return Response::json([
                 'status' => 'success'

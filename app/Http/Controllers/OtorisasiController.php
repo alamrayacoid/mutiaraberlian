@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use function foo\func;
 use App\Helper\keuangan\jurnal\jurnal;
 use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
@@ -46,7 +47,9 @@ class OtorisasiController extends Controller
 // ================== Opname =================
     public function getopname()
     {
-        $data = DB::table('d_opnameauth')->join('m_item', 'i_id', '=', 'oa_item')->get();
+        $data = DB::table('d_opnameauth')
+            ->join('m_item', 'i_id', '=', 'oa_item')
+            ->get();
 
         return DataTables::of($data)
         ->addIndexColumn()
@@ -95,9 +98,7 @@ class OtorisasiController extends Controller
         DB::beginTransaction();
         try
         {
-
             // return json_encode($id);
-
             $auth = DB::table('d_opnameauth')->where('oa_id', '=', $id)->first();
 
             $authdt = DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->get();
@@ -131,6 +132,9 @@ class OtorisasiController extends Controller
 
             DB::table('d_opnameauthdt')->where('oad_opname', '=', $id)->delete();
 
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Opname');
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -151,6 +155,9 @@ class OtorisasiController extends Controller
         try
         {
             DB::table('d_opnameauth')->where('oa_id', Crypt::decrypt($id))->delete();
+
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Opname');
 
             DB::commit();
             return response()->json([
@@ -175,7 +182,9 @@ class OtorisasiController extends Controller
     }
     public function getadjusment()
     {
-        $data = DB::table('d_adjusmentauth')->join('m_item', 'i_id', '=', 'aa_item')->get();
+        $data = DB::table('d_adjusmentauth')
+            ->join('m_item', 'i_id', '=', 'aa_item')
+            ->get();
 
         return DataTables::of($data)
         ->addIndexColumn()
@@ -300,10 +309,7 @@ class OtorisasiController extends Controller
             DB::table('d_adjustmentcodeauth')->where('aca_adjustment', $id)->delete();
 
             // Create to mutation ------------>>
-            // dd((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
-
             Mutasi::opname((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
-            // dd(count($codeAuth));
 
             // tambahan dirga
                 $dataHpp = DB::table('d_stock_mutation')
@@ -375,9 +381,10 @@ class OtorisasiController extends Controller
                     return json_encode($jurnal);
                 }
 
-                // return json_encode($details);
-
             // end dirga
+
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Adjustment');
 
             DB::commit();
             return response()->json([
@@ -399,6 +406,9 @@ class OtorisasiController extends Controller
 
             DB::table('d_adjusmentauth')->where('aa_id', $id)->delete();
             DB::table('d_adjustmentcodeauth')->where('aca_adjustment', '=', $id)->delete();
+
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Adjustment');
 
             DB::commit();
             return response()->json([
@@ -609,8 +619,7 @@ class OtorisasiController extends Controller
                 ->where('poa_id', '=', $id)
                 ->delete();
 
-            $link = route('revisi');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
             DB::commit();
             return response()->json(['status'=>'Success']);
@@ -647,8 +656,7 @@ class OtorisasiController extends Controller
                 ->where('poa_id', '=', $id)
                 ->delete();
 
-            $link = route('revisi');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
             DB::commit();
             return response()->json(['status'=>'Success']);
@@ -783,59 +791,65 @@ class OtorisasiController extends Controller
         try{
             $id = Crypt::decrypt($id);
             $detail = Crypt::decrypt($detail);
-        }catch (DecryptException $e){
+        }
+        catch (DecryptException $e){
             return response()->json([
-            'status' => 'gagal',
-            'message' => $e
+                'status' => 'gagal',
+                'message' => $e->getMessage()
             ]);
         }
 
         DB::beginTransaction();
         try {
             $data = DB::table('d_priceclassauthdt')
-            ->where('pcad_classprice', '=', $id)
-            ->where('pcad_detailid', '=', $detail)
-            ->first();
+                ->where('pcad_classprice', '=', $id)
+                ->where('pcad_detailid', '=', $detail)
+                ->first();
 
             if ($data == null) {
                 return response()->json([
-                'status' => 'gagal'
+                    'status' => 'gagal'
                 ]);
             }
 
             $max = DB::table('m_priceclassdt')
-            ->where('pcd_classprice', '=', $data->pcad_classprice)
-            ->max('pcd_detailid');
+                ->where('pcd_classprice', '=', $data->pcad_classprice)
+                ->max('pcd_detailid');
 
             ++$max;
 
             DB::table('m_priceclassdt')
-            ->insert([
-            'pcd_classprice' => $data->pcad_classprice,
-            'pcd_detailid' => $max,
-            'pcd_item' => $data->pcad_item,
-            'pcd_unit' => $data->pcad_unit,
-            'pcd_type' => $data->pcad_type,
-            'pcd_payment' => $data->pcad_payment,
-            'pcd_rangeqtystart' => $data->pcad_rangeqtystart,
-            'pcd_rangeqtyend' => $data->pcad_rangeqtyend,
-            'pcd_price' => $data->pcad_price,
-            'pcd_user' => $data->pcad_user
-            ]);
+                ->insert([
+                    'pcd_classprice' => $data->pcad_classprice,
+                    'pcd_detailid' => $max,
+                    'pcd_item' => $data->pcad_item,
+                    'pcd_unit' => $data->pcad_unit,
+                    'pcd_type' => $data->pcad_type,
+                    'pcd_payment' => $data->pcad_payment,
+                    'pcd_rangeqtystart' => $data->pcad_rangeqtystart,
+                    'pcd_rangeqtyend' => $data->pcad_rangeqtyend,
+                    'pcd_price' => $data->pcad_price,
+                    'pcd_user' => $data->pcad_user
+                ]);
 
             DB::table('d_priceclassauthdt')
-            ->where('pcad_classprice', '=', $id)
-            ->where('pcad_detailid', '=', $detail)
-            ->delete();
+                ->where('pcad_classprice', '=', $id)
+                ->where('pcad_detailid', '=', $detail)
+                ->delete();
+
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
+
             DB::commit();
             return response()->json([
-            'status' => 'sukses'
+                'status' => 'sukses'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-            'status' => 'gagal',
-            'message' => $e->getMessage()
+                'status' => 'gagal',
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -858,52 +872,56 @@ class OtorisasiController extends Controller
         try
         {
             $data = DB::table('d_salespriceauth')
-            ->where('spa_salesprice', '=', $id)
-            ->where('spa_detailid', '=', $detail)
-            ->first();
+                ->where('spa_salesprice', '=', $id)
+                ->where('spa_detailid', '=', $detail)
+                ->first();
 
             if ($data == null)
             {
                 return response()->json([
-                'status' => 'gagal'
+                    'status' => 'gagal'
                 ]);
             }
 
             $max = DB::table('d_salespricedt')
-            ->where('spd_salesprice', '=', $data->spa_salesprice)
-            ->max('spd_detailid');
+                ->where('spd_salesprice', '=', $data->spa_salesprice)
+                ->max('spd_detailid');
 
             ++$max;
 
             DB::table('d_salespricedt')
-            ->insert([
-            'spd_salesprice'        => $data->spa_salesprice,
-            'spd_detailid'          => $max,
-            'spd_item'              => $data->spa_item,
-            'spd_unit'              => $data->spa_unit,
-            'spd_type'              => $data->spa_type,
-            'spd_payment'           => $data->spa_payment,
-            'spd_rangeqtystart'     => $data->spa_rangeqtystart,
-            'spd_rangeqtyend'       => $data->spa_rangeqtyend,
-            'spd_price'             => $data->spa_price,
-            'spd_user'              => $data->spa_user
-            ]);
+                ->insert([
+                    'spd_salesprice'        => $data->spa_salesprice,
+                    'spd_detailid'          => $max,
+                    'spd_item'              => $data->spa_item,
+                    'spd_unit'              => $data->spa_unit,
+                    'spd_type'              => $data->spa_type,
+                    'spd_payment'           => $data->spa_payment,
+                    'spd_rangeqtystart'     => $data->spa_rangeqtystart,
+                    'spd_rangeqtyend'       => $data->spa_rangeqtyend,
+                    'spd_price'             => $data->spa_price,
+                    'spd_user'              => $data->spa_user
+                ]);
 
             DB::table('d_salespriceauth')
-            ->where('spa_salesprice', '=', $id)
-            ->where('spa_detailid', '=', $detail)
-            ->delete();
+                ->where('spa_salesprice', '=', $id)
+                ->where('spa_detailid', '=', $detail)
+                ->delete();
+
+            // pusher -> push notification
+            pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
+
             DB::commit();
             return response()->json([
-            'status' => 'sukses'
+                'status' => 'sukses'
             ]);
         }
         catch (\Exception $e)
         {
             DB::rollBack();
             return response()->json([
-            'status' => 'gagal',
-            'message' => $e->getMessage()
+                'status' => 'gagal',
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -948,9 +966,9 @@ class OtorisasiController extends Controller
     public function getDetailRevDataProduk($id)
     {
         $data = m_item_auth::where('ia_id', $id)
-        ->with('getItem')
-        ->with('getItemType')
-        ->first();
+            ->with('getItem')
+            ->with('getItemType')
+            ->first();
         return $data;
     }
     // approve revisi-data-produk
@@ -973,28 +991,28 @@ class OtorisasiController extends Controller
                 }
                 else
                 {
-                    if ($item_auth->ia_image != '')
-                    {
-                        // get-directory based on item-id
-                        $mainDirectory = storage_path('uploads\produk\original\\') . $id;
-                        $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
-                        if (!is_dir($mainDirectory))
-                        {
-                            mkdir($mainDirectory, 0777, true);
-                        }
-                        // is image exist in auth-directory ?
-                        if (file_exists($authDirectory .'\\'. $item_auth->ia_image))
-                        {
-                            // delete image if exist in main-directory
-                            if (file_exists($mainDirectory . $item_main->i_image)) {
-                                unlink($mainDirectory .'\\'. $item_main->i_image);
-                            }
-                            // move image from item-auth to original
-                            $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
-                            $newPath = $mainDirectory .'\\'. $item_auth->ia_image;
-                            rename($oldPath, $newPath);
-                        }
-                    }
+                    // if ($item_auth->ia_image != '')
+                    // {
+                    //     // get-directory based on item-id
+                    //     $mainDirectory = storage_path('app\Products\original\\') . $id;
+                    //     $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
+                    //     if (!is_dir($mainDirectory))
+                    //     {
+                    //         mkdir($mainDirectory, 0777, true);
+                    //     }
+                    //     // is image exist in auth-directory ?
+                    //     if (file_exists($authDirectory .'\\'. $item_auth->ia_image))
+                    //     {
+                    //         // delete image if exist in main-directory
+                    //         if (file_exists($mainDirectory . $item_main->i_image)) {
+                    //             unlink($mainDirectory .'\\'. $item_main->i_image);
+                    //         }
+                    //         // move image from item-auth to original
+                    //         $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
+                    //         $newPath = $mainDirectory .'\\'. $item_auth->ia_image;
+                    //         rename($oldPath, $newPath);
+                    //     }
+                    // }
 
                     // update $item-main based on $item-auth
                     $item_main->i_code = $item_auth->ia_code;
@@ -1003,6 +1021,7 @@ class OtorisasiController extends Controller
                     $item_main->i_name = $item_auth->ia_name;
                     $item_main->i_detail = $item_auth->ia_detail;
                     $item_main->i_image = $item_auth->ia_image;
+                    $item_main->i_isactive = 'Y';
                     $item_main->save();
 
                 }
@@ -1010,23 +1029,23 @@ class OtorisasiController extends Controller
             // if $item-main == null
             else
             {
-                if ($item_auth->ia_image != '')
-                {
-                    // make-directory based on item-id
-                    $mainDirectory = storage_path('uploads\produk\original\\') . $id;
-                    $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
-                    if (!is_dir($mainDirectory))
-                    {
-                        mkdir($mainDirectory, 0777, true);
-                    }
-                    if (file_exists($authDirectory .'\\'. $item_auth->ia_image))
-                    {
-                        // move image from auth-directory to main-directory
-                        $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
-                        $newPath = $mainDirectory .'\\'. $item_auth->ia_image;
-                        rename($oldPath, $newPath);
-                    }
-                }
+                // if ($item_auth->ia_image != '')
+                // {
+                //     // make-directory based on item-id
+                //     $mainDirectory = storage_path('uploads\produk\original\\') . $id;
+                //     $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
+                //     if (!is_dir($mainDirectory))
+                //     {
+                //         mkdir($mainDirectory, 0777, true);
+                //     }
+                //     if (file_exists($authDirectory .'\\'. $item_auth->ia_image))
+                //     {
+                //         // move image from auth-directory to main-directory
+                //         $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
+                //         $newPath = $mainDirectory .'\\'. $item_auth->ia_image;
+                //         rename($oldPath, $newPath);
+                //     }
+                // }
 
                 // insert $item-auth to $item-main
                 $item = new m_item();
@@ -1050,8 +1069,7 @@ class OtorisasiController extends Controller
             // delete $item_auth after approval success
             $item_auth->delete();
 
-            $link = route('revisi');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
             DB::commit();
             return response()->json([
@@ -1078,20 +1096,20 @@ class OtorisasiController extends Controller
             // delete image in storage
             if ($item_auth->ia_image != '')
             {
-                // get-directory based on item-id
-                $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
-                if (file_exists($authDirectory .'\\'. $item_auth->ia_image))
-                {
-                    // delete image inside auth-directory
-                    $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
-                    unlink($oldPath);
-                }
+                // Storage::delete($item_auth->ia_image);
+            //     // get-directory based on item-id
+            //     $authDirectory = storage_path('uploads\produk\item-auth\\') . $id;
+            //     if (file_exists($authDirectory .'\\'. $item_auth->ia_image))
+            //     {
+            //         // delete image inside auth-directory
+            //         $oldPath = $authDirectory .'\\'. $item_auth->ia_image;
+            //         unlink($oldPath);
+            //     }
             }
             // delete $item_auth after approval success
             $item_auth->delete();
 
-            $link = route('revisi');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
             DB::commit();
             return response()->json([
@@ -1156,8 +1174,7 @@ class OtorisasiController extends Controller
                     'p_isapproved' => 'Y'
                 ]);
 
-            $link = route('promotion');
-            pushOtorisasi::otorisasiup('Otorisasi Promosi', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Promosi');
 
             // Jurnal ------------------------------------------
             $acc_promosi_beban = DB::table('dk_pembukuan_detail')
@@ -1234,8 +1251,7 @@ class OtorisasiController extends Controller
                     'p_isapproved' => 'N'
                 ]);
 
-            $link = route('promotion');
-            pushOtorisasi::otorisasiup('Otorisasi Promosi', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi Promosi');
 
             DB::commit();
             return response()->json([
@@ -1347,8 +1363,7 @@ class OtorisasiController extends Controller
                     'ss_isapproved' => "Y"
                 ]);
 
-            $link = route('sdm');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi SDM');
 
             DB::commit();
             return response()->json([
@@ -1378,8 +1393,7 @@ class OtorisasiController extends Controller
                     'ss_isapproved' => "N"
                 ]);
 
-            $link = route('sdm');
-            pushOtorisasi::otorisasiup('Otorisasi Revisi Data', -1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi SDM');
 
             DB::commit();
             return response()->json([

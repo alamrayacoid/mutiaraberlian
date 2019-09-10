@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
+use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
 
 use DB;
 use File;
+use App\d_sdmsubmission;
 use Auth;
 use Currency;
 use Response;
@@ -491,8 +493,8 @@ class RecruitmentController extends Controller
                 'ss_qtyneed'      => $request->ss_qtyneed
             ]);
 
-            $link = route('sdm');
-            pushOtorisasi::otorisasiup('Otorisasi SDM', 1, $link);
+            pushOtorisasi::otorisasiup('Otorisasi SDM');
+
 
             DB::commit();
             return response()->json([
@@ -522,8 +524,7 @@ class RecruitmentController extends Controller
             // get detail submission
             $sdm = d_sdmsubmission::where('ss_id', $id)->first();
             if ($sdm->ss_isapproved == 'P') {
-                $link = route('sdm');
-                pushOtorisasi::otorisasiup('Otorisasi SDM', 1, $link);
+                pushOtorisasi::otorisasiup('Otorisasi SDM');
             }
 
             DB::table('d_sdmsubmission')
@@ -559,8 +560,7 @@ class RecruitmentController extends Controller
             // get detail submission
             $sdm = d_sdmsubmission::where('ss_id', $id)->first();
             if ($sdm->ss_isapproved == 'P') {
-                $link = route('sdm');
-                pushOtorisasi::otorisasiup('Otorisasi SDM', -1, $link);
+                pushOtorisasi::otorisasiup('Otorisasi SDM');
             }
 
             DB::table('d_sdmsubmission')
@@ -594,14 +594,14 @@ class RecruitmentController extends Controller
         try {
             // get detail submission
             $sdm = d_sdmsubmission::where('ss_id', $id)->first();
-            if ($sdm->ss_isapproved == 'P') {
-                $link = route('sdm');
-                pushOtorisasi::otorisasiup('Otorisasi SDM', -1, $link);
-            }
 
             DB::table('d_sdmsubmission')
             ->where('ss_id', $id)
             ->delete();
+            
+            if ($sdm->ss_isapproved == 'P') {
+                pushOtorisasi::otorisasiup('Otorisasi SDM');
+            }
 
             DB::commit();
             return response()->json([
@@ -844,8 +844,7 @@ class RecruitmentController extends Controller
                 // get detail submission
                 $sdm = d_sdmsubmission::where('ss_id', $id)->first();
                 if ($sdm->ss_isapproved == 'P') {
-                    $link = route('sdm');
-                    pushOtorisasi::otorisasiup('Otorisasi SDM', -1, $link);
+                    pushOtorisasi::otorisasiup('Otorisasi SDM');
                 }
 
                 DB::table('d_sdmsubmission')

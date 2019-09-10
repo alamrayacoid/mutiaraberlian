@@ -42,6 +42,7 @@
                                             <label>Nama Produk</label>
                                         </div>
                                         <div class="col-md-9 col-sm-6 col-xs-12">
+                                            <input type="hidden" name="dataproduk_satuanutama" value="{{ $data['dataproduk']->i_unit1 }}">
                                             <div class="form-group">
                                                 <input type="text" style="text-transform: uppercase;"
                                                        class="form-control form-control-sm" name="dataproduk_name"
@@ -110,7 +111,7 @@
                                             <div class="form-group">
                                                 @if ($data['dataproduk']->i_image != null)
                                                     <img
-                                                        src="{{url('/storage/uploads/produk/original') .'/'. $data['dataproduk']->i_id .'/'. $data['dataproduk']->i_image}}"
+                                                        src="{{ asset('storage/app/'. $data['dataproduk']->i_image) }}"
                                                         height="120px" width="130px" id="img-preview"
                                                         style="cursor: pointer;">
                                                 @else

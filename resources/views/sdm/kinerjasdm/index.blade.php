@@ -93,6 +93,7 @@
     <!-- end -->
 @endsection
 @section('extra_script')
+
 <script type="text/javascript">
 
     var table_sup                              = $('#table_scoreboard').DataTable();
@@ -105,176 +106,62 @@
     var table_kpi;
     var table_rab                              = $('#table_manajemenscoreboardkpi').DataTable();
     var table_indikator_divisi_pegawai         = $('#table_indikator_divisi_pegawai').DataTable();
-    // var table_indikator_divisi_pegawai_index   = $('#table_indikator_divisi_pegawai_index').DataTable();
 
     $(document).ready(function () {
         getDashboardKpi();
-        get_kpiAgen();
+        // get_kpiAgen();
         getDataIndikatorPegawaiIndex();
         getDataIndikatorDivisiIndex();
 
         setTimeout(function () {
             getDataMasterKPI();
-        }, 1500)
-
-
-// scoreboard pegawai
-        $(document).on('click', '.btn-disable-sbpegawai', function () {
-            var ini = $(this);
-            $.confirm({
-                animation: 'RotateY',
-                closeAnimation: 'scale',
-                animationBounce: 1.5,
-                icon: 'fa fa-exclamation-triangle',
-                title: 'Peringatan!',
-                content: 'Apa anda yakin mau menonaktifkan data ini?',
-                theme: 'disable',
-                buttons: {
-                    info: {
-                        btnClass: 'btn-blue',
-                        text: 'Ya',
-                        action: function () {
-                            $.toast({
-                                heading: 'Information',
-                                text: 'Data Berhasil di Nonaktifkan.',
-                                bgColor: '#0984e3',
-                                textColor: 'white',
-                                loaderBg: '#fdcb6e',
-                                icon: 'info'
-                            })
-                            ini.parents('.btn-group').html('<button class="btn btn-success btn-enable-sbpegawai" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-                        }
-                    },
-                    cancel: {
-                        text: 'Tidak',
-                        action: function () {
-                            // tutup confirm
-                        }
-                    }
-                }
-            });
-        });
-
-        $(document).on('click', '.btn-enable-sbpegawai', function () {
-            $.toast({
-                heading: 'Information',
-                text: 'Data Berhasil di Aktifkan.',
-                bgColor: '#0984e3',
-                textColor: 'white',
-                loaderBg: '#fdcb6e',
-                icon: 'info'
-            })
-            $(this).parents('.btn-group').html('<button class="btn btn-primary btn-datail-sbpegawai" data-toggle="modal" data-target="#tambah_scoreboardp" type="button" title="Detail"><i class="fa fa-info-circle"></i></button>' +
-                '<button class="btn btn-warning btn-edit-sbpegawai" data-toggle="modal" data-target="#edit_scoreboardp" type="button" title="Edit"><i class="fa fa-pencil"></i></button>' +
-                '<button class="btn btn-danger btn-disable-sbpegawai" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>')
-        })
-
-// end scoreboard pegawai
-
-        $(document).on('click', '.btn-disable-inputkpi', function () {
-            var ini = $(this);
-            $.confirm({
-                animation: 'RotateY',
-                closeAnimation: 'scale',
-                animationBounce: 1.5,
-                icon: 'fa fa-exclamation-triangle',
-                title: 'Disable',
-                content: 'Apa anda yakin mau disable data ini?',
-                theme: 'disable',
-                buttons: {
-                    info: {
-                        btnClass: 'btn-blue',
-                        text: 'Ya',
-                        action: function () {
-                            $.toast({
-                                heading: 'Information',
-                                text: 'Data Berhasil di Disable.',
-                                bgColor: '#0984e3',
-                                textColor: 'white',
-                                loaderBg: '#fdcb6e',
-                                icon: 'info'
-                            })
-                            ini.parents('.btn-group').html('<button class="btn btn-success btn-enable-pelamar" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-                        }
-                    },
-                    cancel: {
-                        text: 'Tidak',
-                        action: function () {
-                            // tutup confirm
-                        }
-                    }
-                }
-            });
-        });
-
-        $(document).on('click', '.btn-enable-pelamar', function () {
-            $.toast({
-                heading: 'Information',
-                text: 'Data Berhasil di Enable.',
-                bgColor: '#0984e3',
-                textColor: 'white',
-                loaderBg: '#fdcb6e',
-                icon: 'info'
-            })
-            $(this).parents('.btn-group').html('<button class="btn btn-primary" data-toggle="modal" data-target="#list_barang_dibawa" type="button" title="Preview"><i class="fa fa-search"></i></button>' +
-                '<button class="btn btn-warning btn-edit-pelamar" type="button" title="Process"><i class="fa fa-file-powerpoint-o"></i></button>' +
-                '<button class="btn btn-danger btn-disable-pelamar" type="button" title="Delete"><i class="fa fa-times-circle"></i></button>')
-        })
-
-        $(document).on('click', '.btn-simpan-modal', function () {
-            $.toast({
-                heading: 'Success',
-                text: 'Data Berhasil di Simpan',
-                bgColor: '#00b894',
-                textColor: 'white',
-                loaderBg: '#55efc4',
-                icon: 'success'
-            })
-        })
+        }, 1500);
     });
 </script>
 
+<!-- Master KPI -->
 <script type="text/javascript">
-    $('#btn-tambah-kpi').click(function () {
 
-        $('#div_pki_pegawai').addClass('d-none');
-        $('#div_pki_realisasi').addClass('d-none');
-        $('#form_masuk_pki :input').val('').trigger('change');
+    $(document).ready(function() {
+        setTimeout(function () {
+            $('#btn-tambah-kpi').click(function () {
 
-        $('#tambah_datakpi').modal('show');
+                $('#div_pki_pegawai').addClass('d-none');
+                $('#div_pki_realisasi').addClass('d-none');
+                $('#form_masuk_pki :input').val('').trigger('change');
 
-    });
+                $('#tambah_datakpi').modal('show');
 
-    $('#table_inputkpi').on('click', '.btn-edit-inputkpi', function () {
-        $('#edit_datakpi').modal('show');
-    });
+            });
 
-    $('#pki_jabatan').on('change', function () {
-        if ($(this).val() === '') {
-            // console.log('if jab');
-            $('#div_pki_pegawai').addClass('d-none');
-            $('#div_pki_realisasi').addClass('d-none');
+            $('#table_inputkpi').on('click', '.btn-edit-inputkpi', function () {
+                $('#edit_datakpi').modal('show');
+            });
 
-        } else {
-            $('#div_pki_pegawai').removeClass('d-none');
-            // console.log('else jab');
+            $('#pki_jabatan').on('change', function () {
+                if ($(this).val() === '') {
+                    // console.log('if jab');
+                    $('#div_pki_pegawai').addClass('d-none');
+                    $('#div_pki_realisasi').addClass('d-none');
 
-        }
-    });
+                } else {
+                    $('#div_pki_pegawai').removeClass('d-none');
+                    // console.log('else jab');
 
-    $('#pki_pegawai').on('change', function () {
-        if ($(this).val() === '') {
+                }
+            });
 
-            // console.log('if pegawai');
+            $('#pki_pegawai').on('change', function () {
+                if ($(this).val() === '') {
+                    $('#div_pki_realisasi').addClass('d-none');
+                } else {
+                    $('#div_pki_realisasi').removeClass('d-none');
+                }
+            });
 
-            $('#div_pki_realisasi').addClass('d-none');
-
-        } else {
-            $('#div_pki_realisasi').removeClass('d-none');
-            // console.log('else pegawai');
-
-        }
-    });
+            getDataMasterKPI();
+        }, 100);
+    })
 
     function simpanMasterKPI() {
         let indikator = $('#indikator_masterkpi').val();
@@ -300,19 +187,15 @@
                     table_kpi.ajax.reload();
                 }
             }).catch(function (error) {
-                alert('error');
+                loadingHide();
+                messageWarning("Error", "Terjadi kesalahan : " + error);
             });
         }
     }
 
     function getDataMasterKPI() {
-        if ( $.fn.DataTable.isDataTable('#table_masterkpi') ) {
-            $('#table_masterkpi').DataTable().destroy();
-        }
-
-        $('#table_masterkpi tbody').empty();
-
         var status = $('#statuskpi').val();
+        $('#table_masterkpi').DataTable().destroy();
         table_kpi = $('#table_masterkpi').DataTable({
             serverSide: true,
             bAutoWidth: true,
@@ -495,37 +378,42 @@
             }
         });
     }
+</script>
 
+<!-- KPI Pegawai -->
+<script type="text/javascript">
     // Kpi Agen -->
     $(document).ready(function(){
-        $('#table_kpi_pegawai').DataTable().destroy();
-        table_kpi_pegawai = $('#table_kpi_pegawai').DataTable({
-            serverSide: true,
-            bAutoWidth: true,
-            processing:true,
-            ajax: {
-                url: '{{url("/sdm/kinerjasdm/kpi-pegawai/get-kpi-pegawai")}}',
-                type: "get"
-            },
-            columns: [
-                {data: 'DT_RowIndex', className: "text-center"},
-                {data: 'e_name'},
-                {data: 'm_name'},
-                {data: 'j_name'},
-                {data: 'action', className: "text-center"}
-            ],
-            pageLength: 10,
-            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-        });
+        setTimeout(function () {
+            $('#table_kpi_pegawai').DataTable().destroy();
+            table_kpi_pegawai = $('#table_kpi_pegawai').DataTable({
+                serverSide: true,
+                bAutoWidth: true,
+                processing:true,
+                ajax: {
+                    url: '{{url("/sdm/kinerjasdm/kpi-pegawai/get-kpi-pegawai")}}',
+                    type: "get"
+                },
+                columns: [
+                    {data: 'DT_RowIndex', className: "text-center"},
+                    {data: 'e_name'},
+                    {data: 'm_name'},
+                    {data: 'j_name'},
+                    {data: 'action', className: "text-center"}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }, 200);
     })
 
     function deatilKpiPegawai(emp) {
         loadingShow()
-        axios.get('{{url('/sdm/kinerjasdm/kpi-pegawai/get-detail-kpi-pegawai?')}}'+'employee='+emp)
-        .then(function(resp){
-            $('#m_employee').text(resp.data.data[0].e_name)
-            $('#m_divisi').text(resp.data.data[0].m_name)
-            $('#m_posisi').text(resp.data.data[0].j_name)
+        axios.get('{{ url("/sdm/kinerjasdm/kpi-pegawai/get-detail-kpi-pegawai?") }}' + 'employee=' + emp)
+        .then(function(resp) {
+            $('#m_employee').text(resp.data.data[0].e_name);
+            $('#m_divisi').text(resp.data.data[0].m_name);
+            $('#m_posisi').text(resp.data.data[0].j_name);
 
             $('#tb_detail_kpi_pegawai').DataTable().clear().destroy();
             tb_detail_kpi_pegawai = $('#tb_detail_kpi_pegawai').DataTable({
@@ -535,29 +423,30 @@
                 paging: false,
                 info: false,
                 searching: false
-            })
+            });
 
-            $.each(resp.data.data, function(key, val){
-                var no = ++key
+            $.each(resp.data.data, function(key, val) {
+                var no = ++key;
 
                 if (val.k_isactive == 'Y')
-                    var status = '<span class="badge badge-pill badge-success p-2">Aktif</span>'
+                var status = '<span class="badge badge-pill badge-success p-2">Aktif</span>';
                 else
-                    var status = '<span class="badge badge-pill badge-danger p-2">Tidak Aktif</span>'
+                var status = '<span class="badge badge-pill badge-danger p-2">Tidak Aktif</span>';
 
                 tb_detail_kpi_pegawai.row.add([
-                    '<div class="text-center">'+no+'</div>',
-                    val.k_indicator,
-                    '<div class="text-right">'+val.ke_weight+'</div>',
-                    '<div class="text-right">'+val.ke_target+'</div>'
-                ]).draw(false)
-            })
+                '<div class="text-center">'+no+'</div>',
+                val.k_indicator,
+                '<div class="text-right">'+val.ke_weight+'</div>',
+                '<div class="text-right">'+val.ke_target+'</div>'
+                ]).draw(false);
+            });
             $('#detailKpiPegawai').modal('show');
-            loadingHide()
+            loadingHide();
         })
-        .catch(function(error){
-
-        })
+        .catch(function(error) {
+            loadingHide();
+            messageWarning("Error", "Terjadi kesalahan : " + error);
+        });
     }
 
     function delKpiPegawai(emp) {
@@ -614,66 +503,73 @@
     function editKpiPegawai(emp) {
         window.location.href = "{{url('/sdm/kinerjasdm/kpi-pegawai/edit-kpi-pegawai?')}}"+"employee="+emp
     }
+</script>
 
-    //Kpi Divisi -->
+<!-- KPI Divisi -->
+<script type="text/javascript">
+    // Kpi Divisi
     $(document).ready(function(){
-        $('#table_kpi_divisi_d').DataTable().destroy();
-        table_kpi_divisi_d = $('#table_kpi_divisi_d').DataTable({
-            serverSide: true,
-            bAutoWidth: true,
-            processing:true,
-            ajax: {
-                url: '{{url("/sdm/kinerjasdm/kpi-divisi/get-kpi-divisi_d")}}',
-                type: "get"
-            },
-            columns: [
-                {data: 'DT_RowIndex', className: "text-center"},
-                {data: 'm_name'},
-                {data: 'action', className: "text-center"}
-            ],
-            pageLength: 10,
-            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-        });
+        setTimeout(function () {
+            $('#table_kpi_divisi_d').DataTable().destroy();
+            table_kpi_divisi_d = $('#table_kpi_divisi_d').DataTable({
+                serverSide: true,
+                bAutoWidth: true,
+                processing:true,
+                ajax: {
+                    url: '{{url("/sdm/kinerjasdm/kpi-divisi/get-kpi-divisi_d")}}',
+                    type: "get"
+                },
+                columns: [
+                    {data: 'DT_RowIndex', className: "text-center"},
+                    {data: 'm_name'},
+                    {data: 'action', className: "text-center"}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+        }, 300);
     })
 
     function deatilKpiDivisi(divs) {
-        loadingShow()
-        axios.get('{{url('/sdm/kinerjasdm/kpi-divisi/get-detail-kpi-divisi?')}}'+'divisi='+divs)
-        .then(function(resp){
-            // console.log(resp.data.data[0].m_name);
-            $('#m_divisi_d').text(resp.data.data[0].m_name)
+        loadingShow();
+        axios.get('{{ url("/sdm/kinerjasdm/kpi-divisi/get-detail-kpi-divisi?") }}'+'divisi='+divs)
+            .then(function(resp){
+                // console.log(resp.data.data[0].m_name);
+                $('#m_divisi_d').text(resp.data.data[0].m_name)
 
-            $('#tb_detail_kpi_divisi').DataTable().clear().destroy();
-            tb_detail_kpi_divisi = $('#tb_detail_kpi_divisi').DataTable({
-                serverSide: false,
-                bAutoWidth: true,
-                processing:true,
-                paging: false,
-                info: false,
-                searching: false
-            })
+                $('#tb_detail_kpi_divisi').DataTable().clear().destroy();
+                tb_detail_kpi_divisi = $('#tb_detail_kpi_divisi').DataTable({
+                    serverSide: false,
+                    bAutoWidth: true,
+                    processing:true,
+                    paging: false,
+                    info: false,
+                    searching: false
+                })
 
-            $.each(resp.data.data, function(key, val){
+                $.each(resp.data.data, function(key, val){
                 var no = ++key
 
                 if (val.k_isactive == 'Y')
-                    var status = '<span class="badge badge-pill badge-success p-2">Aktif</span>'
+                var status = '<span class="badge badge-pill badge-success p-2">Aktif</span>'
                 else
-                    var status = '<span class="badge badge-pill badge-danger p-2">Tidak Aktif</span>'
+                var status = '<span class="badge badge-pill badge-danger p-2">Tidak Aktif</span>'
 
                 tb_detail_kpi_divisi.row.add([
                     '<div class="text-center">'+no+'</div>',
                     val.k_indicator,
                     '<div class="text-right">'+val.ke_weight+'</div>',
                     '<div class="text-right">'+val.ke_target+'</div>'
-                ]).draw(false)
+                    ]).draw(false)
+                })
+                $('#detailKpiDivisi').modal('show');
+                loadingHide()
             })
-            $('#detailKpiDivisi').modal('show');
-            loadingHide()
-        })
-        .catch(function(error){
+            .catch(function(error){
+                loadingHide();
+                messageWarning("Error", "Terjadi kesalahan : " + error);
 
-        })
+            });
     }
 
     function delKpiDivisi(divs) {
@@ -728,7 +624,7 @@
     }
 
     function editKpiDivisi(divs) {
-        window.location.href = "{{url('/sdm/kinerjasdm/kpi-divisi/edit-kpi-divisi?')}}"+"divisi="+divs
+        window.location.href = "{{ url('/sdm/kinerjasdm/kpi-divisi/edit-kpi-divisi?') }}" + "divisi=" + divs;
     }
 </script>
 
@@ -738,12 +634,12 @@
 
     $("#periode_kpi").datepicker( {
     format: "mm-yyyy",
-    viewMode: "months", 
+    viewMode: "months",
     minViewMode: "months"
     });
 
     $('#periode_kpi').datepicker('setDate', month_year);
-    
+
     $('#periode_kpi').datepicker("setDate", new Date(month_years.getFullYear(), month_years.getMonth()));
 
     $('#periode_kpi').on('change', function(){
@@ -765,12 +661,12 @@
 
     $("#periode_dashboard").datepicker( {
     format: "mm-yyyy",
-    viewMode: "months", 
+    viewMode: "months",
     minViewMode: "months"
     });
 
     $('#periode_dashboard').datepicker('setDate', month_year);
-    
+
     $('#periode_dashboard').datepicker("setDate", new Date(month_years.getFullYear(), month_years.getMonth()));
 
     $('#periode_dashboard').on('change', function(){
@@ -782,7 +678,7 @@
 <script type="text/javascript">
     // $(document).ready(function () {
     //     setTimeout(function () {
-    //         getDashboardKpi();    
+    //         getDashboardKpi();
     //     }, 2000);
     // });
 
@@ -792,7 +688,7 @@
 
     function getDashboardKpi() {
         var periode_dashboard = $('#periode_dashboard').val();
-        
+
         $('#table_dashboard_kpi_pegawai').dataTable().fnDestroy();
         table_dashboard_kpi_pegawai = $('#table_dashboard_kpi_pegawai').DataTable({
             serverSide: true,
@@ -845,7 +741,7 @@
     $(document).ready(function () {
         setTimeout(function () {
             getDataIndikatorPegawaiIndex();
-            getDataIndikatorDivisiIndex();    
+            getDataIndikatorDivisiIndex();
         }, 2000);
 
         // $('#periode_kpi').datepicker().on('changeDate', function() {
@@ -904,8 +800,8 @@
               $('.divisi').on('select2:select', function () {
                   $("#table_indikator_divisi_pegawai_index > tbody").find('tr').remove();
               });
-                  
-              $('.select2').select2({            
+
+              $('.select2').select2({
                   theme: "bootstrap",
                   dropdownAutoWidth: true,
                   width: '100%'
@@ -940,7 +836,7 @@
                   $("#table_indikator_divisi_pegawai_index > tbody").find('tr').remove();
               });
 
-              $('.select2').select2({            
+              $('.select2').select2({
                   theme: "bootstrap",
                   dropdownAutoWidth: true,
                   width: '100%'

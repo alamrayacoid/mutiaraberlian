@@ -356,12 +356,6 @@ class AgenController extends Controller
             $codeAgen = CodeGenerator::code('m_agen', 'a_code', 7, 'A');
             $id = DB::table('m_agen')->max('a_id') + 1;
 
-            // $photo = $this->uploadImage(
-            //     $request->file('photo'),
-            //     $codeAgen,
-            //     'photo'
-            // );
-
             // prevent duplicated no-telp
             $telpIsUsed = m_agen::where('a_telp', $request->telp)->first();
             if ($telpIsUsed !== null) {
@@ -369,16 +363,8 @@ class AgenController extends Controller
             }
 
             if ($request->hasFile('photo')) {
-                // $photo = $this->uploadImage(
-                //     $request->file('photo'),
-                //     $request->code,
-                //     'photo'
-                // );
-
                 $imageName = $codeAgen . '-photo';
-                // delete current photo
-                // Storage::delete('Agents/'.$imageName);
-                // insert new photo
+
                 $photo = $request->file('photo')->storeAs('Agents', $imageName);
             } else {
                 $photo = null;
@@ -661,16 +647,8 @@ class AgenController extends Controller
             $agentCode = m_agen::where('a_id', $id)->select('a_code')->first();
 
             if ($request->hasFile('photo')) {
-                // $photo = $this->uploadImage(
-                //     $request->file('photo'),
-                //     $request->code,
-                //     'photo'
-                // );
-
                 $imageName = $agentCode->a_code . '-photo';
-                // delete current photo
-                // Storage::delete('Agents/'.$imageName);
-                // insert new photo
+
                 $photo = $request->file('photo')->storeAs('Agents', $imageName);
             } else {
                 $photo = $request->current_photo;
@@ -720,7 +698,8 @@ class AgenController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -747,12 +726,6 @@ class AgenController extends Controller
             $agent = m_agen::where('a_id', $id)->first();
             $agent->a_isactive = 'N';
             $agent->save();
-
-            // DB::table('m_agen')
-            //     ->where('a_id', $id)
-            //     ->update([
-            //         'a_isactive' => 'N'
-            //     ]);
 
             $company = m_company::where('c_user', $agent->a_code)->first();
             $company->c_isactive = 'N';
@@ -789,12 +762,6 @@ class AgenController extends Controller
             $agent = m_agen::where('a_id', $id)->first();
             $agent->a_isactive = 'Y';
             $agent->save();
-
-            // DB::table('m_agen')
-            //     ->where('a_id', $id)
-            //     ->update([
-            //         'a_isactive' => 'Y'
-            //     ]);
 
             $company = m_company::where('c_user', $agent->a_code)->first();
             $company->c_isactive = 'Y';

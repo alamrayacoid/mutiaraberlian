@@ -75,4 +75,9 @@ class m_item extends Model
     {
         return $this->hasMany('App\d_stock', 's_item', 'i_id');
     }
+    // get-relation with item-type
+    public function getItemType()
+    {
+        return $this->belongsTo('App\m_itemtype', 'i_type', 'it_id');
+    }
 }

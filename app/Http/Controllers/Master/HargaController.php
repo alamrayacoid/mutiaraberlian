@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers\Master;
 
-use App\Http\Controllers\AksesUser;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use DB;
-use Carbon\Carbon;
-use Response;
-use DataTables;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\EncryptException;
 use Illuminate\Contracts\Encryption\DecryptException;
-use Currency;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use App\Http\Controllers\AksesUser;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
+
 use Auth;
+use Carbon\Carbon;
+use Currency;
+use DataTables;
+use DB;
+use Response;
 
 class HargaController extends Controller
 {
@@ -33,6 +35,7 @@ class HargaController extends Controller
                 $unit->on('d_priceclassauthdt.pcad_unit', '=', 'm_unit.u_id');
             })
             ->get();
+
         return Datatables::of($datas)
             ->addIndexColumn()
             ->addColumn('item', function ($datas) {
@@ -605,7 +608,8 @@ class HargaController extends Controller
 
                 if (count($check) > 0 || count($check2) > 0) {
                     return response()->json(['status' => "Unit Ada"]);
-                } else {
+                }
+                else {
                     $checkGol1 = DB::table('m_priceclassdt')->where('pcd_classprice', '=', $idGol)->count();
                     $checkGol2 = DB::table('d_priceclassauthdt')->where('pcad_classprice', '=', $idGol)->count();
                     $detailid = 1;
@@ -640,10 +644,16 @@ class HargaController extends Controller
                         'pcad_user' => Auth::user()->u_id
                     ];
                     DB::table('d_priceclassauthdt')->insert($values);
+                    // pusher -> push notification
+                    pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
+
                     DB::commit();
-                    return response()->json(['status' => "Success"]);
+                    return response()->json([
+                        'status' => "Success"
+                    ]);
                 }
-            } else {
+            }
+            else {
                 $qtyend = $request->rangeend;
                 if ($qtyend == "~"){
                     $qtyend == 0;
@@ -727,13 +737,20 @@ class HargaController extends Controller
                         'pcad_user' => Auth::user()->u_id
                     ];
                     DB::table('d_priceclassauthdt')->insert($values);
+                    // pusher -> push notification
+                    pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
+
                     DB::commit();
                     return response()->json(['status' => "Success"]);
                 }
             }
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['status' => "Failed"]);
+            return response()->json([
+                'status' => "Failed",
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
@@ -803,10 +820,14 @@ class HargaController extends Controller
                         'spa_user' => Auth::user()->u_id
                     ];
                     DB::table('d_salespriceauth')->insert($values);
+                    // pusher -> push notification
+                    pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
+
                     DB::commit();
                     return response()->json(['status' => "Success"]);
                 }
-            } else {
+            }
+            else {
                 // Range
                 $qtyend = $request->rangeendHPA;
                 if ($qtyend == "~"){
@@ -889,13 +910,20 @@ class HargaController extends Controller
                     ];
 
                     DB::table('d_salespriceauth')->insert($values);
+                    // pusher -> push notification
+                    pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
+
                     DB::commit();
                     return response()->json(['status' => "Success"]);
                 }
             }
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['status' => "Failed", 'message' => $e]);
+            return response()->json([
+                'status' => "Failed",
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
@@ -915,7 +943,10 @@ class HargaController extends Controller
                     ->where('pcad_classprice', '=', $id)
                     ->where('pcad_detailid', '=', $detail)
                     ->delete();
-            } else if ($status == "Y") {
+                // pusher -> push notification
+                pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
+            }
+            else if ($status == "Y") {
                 DB::table('m_priceclassdt')
                     ->where('pcd_classprice', '=', $id)
                     ->where('pcd_detailid', '=', $detail)
@@ -924,9 +955,12 @@ class HargaController extends Controller
 
             DB::commit();
             return response()->json(['status' => "Success"]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['status' => "Failed"]);
+            return response()->json([
+                'status' => "Failed"
+            ]);
         }
     }
 
@@ -946,7 +980,10 @@ class HargaController extends Controller
                     ->where('spa_salesprice', '=', $id)
                     ->where('spa_detailid', '=', $detail)
                     ->delete();
-            } else if ($status == "Y") {
+                // pusher -> push notification
+                pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
+            }
+            else if ($status == "Y") {
                 DB::table('d_salespricedt')
                     ->where('spd_salesprice', '=', $id)
                     ->where('spd_detailid', '=', $detail)
@@ -983,7 +1020,8 @@ class HargaController extends Controller
 
                 DB::commit();
                 return response()->json(['status' => "Success"]);
-            } else if ($request->status == "Y") {
+            }
+            else if ($request->status == "Y") {
                 $price = DB::table('m_priceclassdt')
                     ->where('pcd_classprice', '=', $id)
                     ->where('pcd_detailid', '=', $detail);
@@ -1003,6 +1041,8 @@ class HargaController extends Controller
                         'pcad_user' => $price->first()->pcd_user
                     ];
                     DB::table('d_priceclassauthdt')->insert($val);
+                    // pusher -> push notification
+                    pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
 
                     //delete in m_priceclassdt
                     $price->delete();
@@ -1042,7 +1082,8 @@ class HargaController extends Controller
 
                 DB::commit();
                 return response()->json(['status' => "Success"]);
-            } else if ($request->statusHPA == "Y") {
+            }
+            else if ($request->statusHPA == "Y") {
                 $price = DB::table('d_salespricedt')
                     ->where('spd_salesprice', '=', $id)
                     ->where('spd_detailid', '=', $detail);
@@ -1061,7 +1102,9 @@ class HargaController extends Controller
                         'spa_price' => Currency::removeRupiah($request->edithargaHPA),
                         'spa_user' => $price->first()->spd_user
                     ];
-                    DB::table('d_salespricedt')->insert($val);
+                    DB::table('d_salespriceauth')->insert($val);
+                    // pusher -> push notification
+                    pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
 
                     //delete in m_priceclassdt
                     $price->delete();
@@ -1170,7 +1213,7 @@ class HargaController extends Controller
                     $price = DB::table('m_priceclassdt')
                         ->where('pcd_classprice', '=', $id)
                         ->where('pcd_detailid', '=', $detail);
-                    
+
                     if ($price->count() > 0) {
                         //insert in d_priceclassauthdt
                         DB::table('d_priceclassauthdt')->insert([
@@ -1185,6 +1228,9 @@ class HargaController extends Controller
                             'pcad_price' => Currency::removeRupiah($request->edithargarange),
                             'pcad_user' => $price->first()->pcd_user
                         ]);
+
+                        // pusher -> push notification
+                        pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
 
                         //delete in m_priceclassdt
                         $price->delete();
@@ -1287,7 +1333,8 @@ class HargaController extends Controller
                         ]);
                     DB::commit();
                     return response()->json(['status' => "Success"]);
-                } else if ($request->statusRangeHPA == "Y") {
+                }
+                else if ($request->statusRangeHPA == "Y") {
                     $price = DB::table('d_salespricedt')
                         ->where('spd_salesprice', '=', $id)
                         ->where('spd_detailid', '=', $detail);
@@ -1306,6 +1353,8 @@ class HargaController extends Controller
                             'spa_price' => Currency::removeRupiah($request->edithargarangeHPA),
                             'spa_user' => $price->first()->pcd_user
                         ]);
+                        // pusher -> push notification
+                        pushOtorisasi::otorisasiup('Otorisasi Perubahan Harga Jual');
 
                         //delete in m_priceclassdt
                         $price->delete();
