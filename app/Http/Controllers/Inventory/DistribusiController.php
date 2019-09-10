@@ -905,8 +905,6 @@ class DistribusiController extends Controller
                                 ->where('pe_comp', Auth::user()->u_company)->first();
                 $details = [];
 
-                // return json_encode($parrent);
-
                 if(!$parrent || !$acc_ongkir_kas || !$acc_ongkir_beban){
                     return response()->json([
                         'status' => 'gagal',
