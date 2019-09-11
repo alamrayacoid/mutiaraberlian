@@ -370,7 +370,7 @@
             // unmaskAsNumber: true,
         });
 
-        //mask digits
+        // mask digits
         $('.digits').inputmask("currency", {
             radixPoint: ",",
             groupSeparator: ".",
