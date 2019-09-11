@@ -859,9 +859,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/keuangan/penerimaanpiutang/cabang/get-history', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataHistoryCabang')->name('penerimaanpiutang.getDataHistoryCabang');
     Route::post('/keuangan/penerimaanpiutang/cabang/decline-payment', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@declinePaymentCabang')->name('penerimaanpiutang.declinePaymentCabang');
 
-    // Analisis Keuangan
+    // Analisis Keuangan ROE
     Route::get('/keuangan/analisis/roe', 'Keuangan\analisis\ROEController@index')->name('roe.index');
     Route::get('/keuangan/analisis/roe/get-data', 'Keuangan\analisis\ROEController@getData')->name('roe.getData');
+
+    // Analisis Net Profit OCF
+    Route::get('/keuangan/analisis/netprofit', 'Keuangan\analisis\AnalisisNetProfitController@index')->name('netprofit.index');
+
     // !===================================================== END KEUANGAN =====================================================!
 
     // !===================================================== PENGATURAN =====================================================!
