@@ -236,6 +236,7 @@ class ProduksiController extends Controller
     {
         if (!$request->isMethod('post')) {
             $suppliers = DB::table('m_supplier')
+                ->where('s_isactive', 'Y')
                 ->select('s_id', 's_company')
                 ->get();
 
@@ -301,8 +302,7 @@ class ProduksiController extends Controller
                 DB::table('d_productionorderdt')->insert($productionorderdt);
                 DB::table('d_productionorderpayment')->insert($productionorderpayment);
 
-                $link = route('revisi');
-                pushOtorisasi::otorisasiup('Otorisasi Revisi Data', 1, $link);
+                pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
                 DB::commit();
                 return json_encode([
@@ -489,7 +489,7 @@ class ProduksiController extends Controller
             DB::rollBack();
             return json_encode([
                 'status' => 'Failed',
-                'msg' => $e
+                'msg' => $e->getMessage()
             ]);
         }
     }
@@ -686,7 +686,8 @@ class ProduksiController extends Controller
                     $q->orWhere('i_code', 'like', '%' . $cari . '%');
                 })
                 ->get();
-        } else {
+        }
+        else {
             $nama = DB::table('m_item')
                 ->join('d_itemsupplier', 'is_item', '=', 'i_id')
                 ->whereNotIn('i_id', $is_item)
@@ -1079,7 +1080,7 @@ class ProduksiController extends Controller
     // get list supplier
     public function getSupplier(Request $request)
     {
-        $suppliers = Supplier::orderBy('s_name', 'asc')->get();
+        $suppliers = Supplier::orderBy('s_company', 'asc')->get();
 
         return response()->json(array(
             'success' => true,

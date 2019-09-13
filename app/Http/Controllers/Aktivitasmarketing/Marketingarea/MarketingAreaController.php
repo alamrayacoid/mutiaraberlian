@@ -1174,6 +1174,7 @@ class MarketingAreaController extends Controller
                 'pd_price' => $request->shippingCost,
             ];
             DB::table('d_productdelivery')->insert($val_deliv);
+
             // mutation
             // dd($productOrder->getPODt[0], $productOrder->getPODt[1], $productOrder->getPODt[2]);
             foreach ($productOrder->getPODt as $key => $PO) {
@@ -1260,8 +1261,8 @@ class MarketingAreaController extends Controller
                     $listQtyPCReturn, // list of list production-code-qty
                     $listUnitPC, // list of production-code-unit
                     $listSellPrice, // sellprice
-                    $listHPP,
-                    $listSmQty,
+                    $listHPP, // list hpp
+                    $listSmQty, // list of sm-qty
                     20, // mutcat masuk pembelian
                     $listStockParentId, // stock-parent id
                     null, // items status in stock
@@ -1836,7 +1837,8 @@ class MarketingAreaController extends Controller
                 return Response::json([
                     "status" => "success"
                 ]);
-            } else {
+            }
+            else {
                 //create baru
                 $detail = DB::table('d_productordercode')
                     ->where('poc_productorder', '=', $po_id)
@@ -1857,7 +1859,8 @@ class MarketingAreaController extends Controller
                     "status" => "success"
                 ]);
             }
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return Response::json([
                 "status" => "gagal",

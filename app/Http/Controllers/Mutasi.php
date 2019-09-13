@@ -2279,7 +2279,7 @@ class Mutasi extends Controller
                     'sm_user' => Auth::user()->u_id
                 );
                 d_stock_mutation::insert($mutasi);
-
+                
                 // insert/update stock-mutation-detail production-code for mutcat-in
                 $insertSMProdCode = self::insertStockMutationDt($stockId, $smDetailId, $listPC[$key], $listQtyPC[$key]);
                 if ($insertSMProdCode !== 'success') {

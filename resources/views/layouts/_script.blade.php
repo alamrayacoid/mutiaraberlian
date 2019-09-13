@@ -581,13 +581,9 @@
 
             var channelOto = pusher.subscribe('channel-otorisasi');
             channelOto.bind('event-otorisasi', function(data) {
+                messageSuccess('Otorisasi', 'Perlu tindakan : ' + data.name)
                 otorisasi(data.name);
             });
-
-            // var channelNotif = pusher.subscribe('channel-notifikasi');
-            // channelNotif.bind('event-notifikasi', function(data) {
-            //     notifikasi(data.name, data.qty, data.link);
-            // });
 
             // get list 'notifikasi - otorisasi'
             $.ajax({

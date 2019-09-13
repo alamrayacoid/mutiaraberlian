@@ -62,7 +62,6 @@
                             </div> -->
                             --}}
 
-
 							<div class="row">
                                 <div class="col-md-2 col-sm-6 col-xs-12">
                                     <label>Tanggal Return</label>
@@ -76,7 +75,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6"></div>
-                                
+
 								<div class="col-md-2 col-sm-6 col-xs-12">
 									<label>Supplier</label>
 								</div>
@@ -857,7 +856,7 @@
 				} else {
 					$("#supplier").append('<option value="" selected disabled>=== Pilih Supplier ===</option>');
 					$.each(response.data, function( key, val ) {
-						$("#supplier").append('<option value="'+ val.s_id +'">'+ val.s_name +'</option>');
+						$("#supplier").append('<option value="'+ val.s_id +'">'+ val.s_company +'</option>');
 					});
 				}
 				$('#supplier').focus();
