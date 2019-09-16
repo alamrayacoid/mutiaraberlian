@@ -410,16 +410,17 @@
             let dateStart = $('#date_from_pc').val();
             let dateEnd = $('#date_to_pc').val();
 
-            $('#table_penerimaancabang').DataTable().clear().destroy();
+            $('#table_penerimaancabang').dataTable().fnDestroy();
             table_penerimaancabang = $('#table_penerimaancabang').DataTable({
+                ordering: false,
                 serverSide: true,
                 processing: true,
-                searching: true,
+                searching: false,
                 paging: true,
                 responsive: true,
                 ajax: {
                     url: "{{ route('penerimaanpiutang.getDataPenerimaanCabang') }}",
-                    type: "get",
+                    type: "post",
                     data: {
                         start: dateStart,
                         end: dateEnd,
@@ -432,7 +433,7 @@
                     {data: 'agen'},
                     {data: 'piutang'},
                     {data: 'sc_datetop'},
-                    // {data: ''},
+                    {data: 'status'},
                     {data: 'aksi'}
                 ],
                 pageLength: 10,
@@ -440,13 +441,14 @@
             });
         }
 
-        function detailNotaPiutangCabang(nota) {
+        function detailNotaPiutangCabang(nota, asalPiutang) {
             let type = 'CABANG';
             loadingShow();
             axios.get('{{ route("penerimaanpiutang.getDetailTransaksi") }}', {
                 params:{
                     nota: nota,
-                    type: type
+                    type: type,
+                    asalPiutang: asalPiutang
                 }
             }).then(function (response) {
                 loadingHide();
@@ -510,13 +512,14 @@
             })
         }
 
-        function showPaymentProcessCabang(nota) {
+        function showPaymentProcessCabang(nota, asalPiutang) {
             let type = 'CABANG';
             loadingShow();
             axios.get('{{ route("penerimaanpiutang.getDetailTransaksi") }}', {
                 params:{
                     nota: nota,
-                    type: type
+                    type: type,
+                    asalPiutang: asalPiutang
                 }
             }).then(function (response) {
                 loadingHide();

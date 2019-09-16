@@ -117,7 +117,8 @@ class PenjualanPusatController extends Controller
             return Response::json([
                 'status' => 'sukses'
             ]);
-        } catch (DecryptException $e) {
+        }
+        catch (DecryptException $e) {
             DB::rollBack();
             return Response::json([
                 'status' => 'gagal',
@@ -1140,7 +1141,7 @@ class PenjualanPusatController extends Controller
                                         })->where('pd_nama', 'COA Persediaan dalam perjalanan')
                                         ->first();
 
-        if(!is_null($request->harga) && $request->harga != 0){
+        if(!is_null($request->harga) && $request->harga != 0) {
             // Acc Ongkir
                 $acc_beban_ongkir = DB::table('dk_pembukuan_detail')
                                         ->where('pd_pembukuan', function($query){
@@ -1217,7 +1218,7 @@ class PenjualanPusatController extends Controller
             return $jurnal;
         }
 
-        if($request->paymentType == 'T'){
+        if($request->paymentType == 'T') {
             $details = [];
 
             $acc_kas = m_paymentmethod::where('pm_id', $request->paymentMethod)
@@ -1428,7 +1429,8 @@ class PenjualanPusatController extends Controller
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (DecryptException $e){
+        }
+        catch (DecryptException $e){
             DB::rollBack();
             return Response::json([
                 'status' => 'gagal',

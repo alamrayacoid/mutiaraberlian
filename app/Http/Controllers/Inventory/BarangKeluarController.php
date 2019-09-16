@@ -136,7 +136,6 @@ class BarangKeluarController extends Controller
 
         $datas = DB::table('d_stock_mutation')
             ->join('d_stock', 'sm_stock', 's_id')
-            ->join('d_stockdt', 'd_stock.s_id', 'sd_stock')
             ->join('m_company as pemilik', 'd_stock.s_comp', 'pemilik.c_id')
             ->join('m_company as posisi', 'd_stock.s_position', 'posisi.c_id')
             ->join('m_mutcat', 'sm_mutcat', '=', 'm_id')
@@ -162,13 +161,14 @@ class BarangKeluarController extends Controller
             $datas->where('s_item', '=', $produk);
         }
         if ($kodeproduksi != ''){
-            $datas->where('sd_code', '=', $kodeproduksi);
+            $datas->join('d_stockdt', 'd_stock.s_id', 'sd_stock')
+                ->where('sd_code', '=', $kodeproduksi);
         }
         if ($mutcat != 'semua'){
             $datas->where('sm_mutcat', '=', $mutcat);
         }
 
-        $datas->get();
+        $datas = $datas->get();
 
         return Datatables::of($datas)
             ->addIndexColumn()

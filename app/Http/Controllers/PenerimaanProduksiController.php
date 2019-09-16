@@ -941,13 +941,15 @@ class PenerimaanProduksiController extends Controller
             $sumQty = d_itemreceiptdt::whereHas('getItemReceipt', function ($q) use ($notaPO) {
                     $q->where('ir_notapo', $notaPO);
                 })
-                ->where('ird_nota_do', '!=', $notaDO)
+                ->where('ird_item', $productionOrder->getPODt[0]->pod_item)
                 ->sum('ird_qty');
 
             $limitQty = $productionOrder->getPODt[0]->pod_qty - $sumQty;
             // validate qty-request with qty-system
-            if ($request->itemQty > $limitQty) {
-                throw new Exception("Jumlah permintaan tidak boleh lebih dari : ". $limitQty, 1);
+            if ($limitQty < 0) {
+                // limit maximum request
+                $x = $request->itemQty - abs($limitQty);
+                throw new Exception("Jumlah permintaan tidak boleh lebih dari : ". $x, 1);
             }
 
             // start : update jurnal

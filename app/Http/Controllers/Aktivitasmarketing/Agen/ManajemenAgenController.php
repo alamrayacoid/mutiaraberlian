@@ -941,7 +941,10 @@ class ManajemenAgenController extends Controller
         try
         {
             // $date = Carbon::createFromFormat('d-m-Y', $request->date)->format('d-m-Y');
-            $date = $request->date;
+            // $date = $request->date;
+
+            (is_null($request->date)) ? $dateConfirm = Carbon::now() : $dateConfirm = Carbon::createFromFormat('d-m-Y', $request->date);
+
             // get product-order
             $productOrder = d_productorder::where('po_id', $id)
             ->with('getPODt')
@@ -955,7 +958,7 @@ class ManajemenAgenController extends Controller
                     $productOrder->po_nota, // nota
                     20, // mutcat in
                     5, // mutcat out
-                    $date
+                    $dateConfirm
                 );
                 if ($mutConfirm->original['status'] !== 'success') {
                     return $mutConfirm;
@@ -2885,26 +2888,41 @@ class ManajemenAgenController extends Controller
         $saldo = DB::table('m_company')
             ->select(DB::raw('sum(floor(c_saldo)) as saldo'));
 
-        $hutangcabang = DB::table('d_salescomp')
-            ->join('d_salescomppayment', 'scp_salescomp', 'sc_id')
+        // get total payment
+        $totalPayment = DB::table('d_salescomppayment')
+            ->join('d_salescomp', 'sc_id', 'scp_salescomp')
             ->where(DB::raw('concat(MONTH(sc_date), "-", YEAR(sc_date))'), date('n-Y'))
             ->whereIn('sc_comp', function ($q){
                 $q->select('c_id')->from('m_company')->where('c_type', '=', 'CABANG');
             })
             ->where('sc_paidoff', '=', 'N')
-            ->select(DB::raw('coalesce(((sc_total) - sum(scp_pay)), 0) as tagihan'));
+            ->select(DB::raw('sum(scp_pay) as payment'));
+        // get total hutang before payment
+        $hutangcabang = DB::table('d_salescomp')
+            // ->join('d_salescomppayment', 'scp_salescomp', 'sc_id')
+            ->where(DB::raw('concat(MONTH(sc_date), "-", YEAR(sc_date))'), date('n-Y'))
+            ->whereIn('sc_comp', function ($q){
+                $q->select('c_id')->from('m_company')->where('c_type', '=', 'CABANG');
+            })
+            ->where('sc_paidoff', '=', 'N')
+            ->select(DB::raw('sum(sc_total) as tagihan'));
+            // ->select(DB::raw('coalesce(((sc_total) - sum(scp_pay)), 0) as tagihan'));
 
         if ($request->search == 'all'){
             $penjualan = $penjualan->first();
             $sisahutang = $sisahutang->first();
             $saldo = $saldo->first();
-            $hutangcabang = $hutangcabang->first();
+            // calculate hutang cabang after payment
+            $hutangcabang = $hutangcabang->first() - $totalPayment->first();
         }
         else{
             $penjualan = $penjualan->where('s_comp', $request->search)->first();
             $sisahutang = $sisahutang->where('sc_member', $request->search)->first();
             $saldo = $saldo->where('c_id', '=', $request->search)->first();
+            // calculate hutang cabang after payment
+            $totalPayment = $totalPayment->where('sc_member', '=', $request->search)->first();
             $hutangcabang = $hutangcabang->where('sc_member', '=', $request->search)->first();
+            $hutangcabang->tagihan = $hutangcabang->tagihan - $totalPayment->payment;
         }
 
         $dateNow = date('Y-m-d');

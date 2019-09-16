@@ -600,21 +600,20 @@ class AgenKonsinyasiController extends Controller
     // get payment view
     public function bayar()
     {
-        // $user = DB::table('m_company')
-        //     ->join('m_agen', 'a_code', '=', 'c_user')
-        //     ->where('c_id', '=', Auth::user()->u_company)
-        //     ->first();
-        $user = Auth::user()->with('getCompany.getAgent')->first();
+        $user = Auth::user();
 
         $konsigner = DB::table('m_agen')
             ->join('m_company', 'c_user', '=', 'a_code')
             ->where(function ($q) use ($user){
                 $q->where('a_mma', '=', $user->getCompany->c_id);
             });
+
         if (!is_null($user->getCompany->getAgent)) {
             $konsigner = $konsigner->orWhere('a_parent', $user->getCompany->getAgent->a_code);
         }
-        $konsigner = $konsigner->get();
+        $konsigner = $konsigner
+            ->where('c_isactive', 'Y')
+            ->get();
 
         return view('marketing.agen.datakonsinyasi.bayar.index', compact('konsigner'));
     }
