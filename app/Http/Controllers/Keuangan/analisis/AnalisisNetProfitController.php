@@ -18,4 +18,8 @@ class AnalisisNetProfitController extends Controller
 
         return view('keuangan.analisis.netprofit.index', compact('cabang'));
     }
+
+    public function getData(Request $request){
+        dd($request);
+    }
 }

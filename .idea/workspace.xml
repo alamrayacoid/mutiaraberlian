@@ -3,10 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c4ea43e9-8969-4314-b485-3b0d1b6369ad" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/analisis/AnalisisNetProfitController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Keuangan/analisis/AnalisisNetProfitController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/keuangan/analisis/netprofit/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/keuangan/analisis/netprofit/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/layouts/_sidebar.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/layouts/_sidebar.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,7 +15,7 @@
   <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
     <execution>
-      <executable />
+      <executable path="composer" />
     </execution>
   </component>
   <component name="FileEditorManager">
@@ -68,17 +65,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/keuangan/analisis/netprofit/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5544">
-              <caret line="308" column="95" selection-start-line="308" selection-start-column="86" selection-end-line="308" selection-end-column="95" />
+            <state relative-caret-position="360">
+              <caret line="313" selection-start-line="313" selection-end-line="313" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/resources/views/layouts/_script.blade.php">
+        <entry file="file://$PROJECT_DIR$/modul_keuangan/js/vendors/vue/components/datepicker/datepicker.component.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="41" column="63" lean-forward="true" selection-start-line="41" selection-end-line="42" />
+            <state relative-caret-position="198">
+              <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
             </state>
           </provider>
         </entry>
@@ -340,7 +337,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -428,6 +424,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -447,7 +444,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="Laravel.SettingsForm" />
+    <property name="settings.editor.selected.configurable" value="tv.twelvetone.intellij.plugins.intellivue.preferences.IntellivueConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -591,6 +588,8 @@
       <workItem from="1568088121407" duration="3435000" />
       <workItem from="1568098531090" duration="293000" />
       <workItem from="1568098855828" duration="19000" />
+      <workItem from="1568100167519" duration="493000" />
+      <workItem from="1568100722649" duration="1289000" />
     </task>
     <task id="LOCAL-00001" summary="perbaikan jenis produk">
       <created>1560755279119</created>
@@ -918,7 +917,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="648878000" />
+    <option name="totallyTimeSpent" value="650660000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -932,7 +931,7 @@
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49917355" visible="true" weight="0.18078668" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49917355" visible="true" weight="0.1860817" />
       <window_info id="Structure" order="1" sideWeight="0.5008264" side_tool="true" weight="0.19818456" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -985,13 +984,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="update" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Inventory/DistribusiController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="34" column="50" selection-start-line="34" selection-start-column="50" selection-end-line="34" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/inventory/distribusibarang/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="903">
@@ -1350,13 +1342,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/keuangan/analisis/netprofit/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5544">
-          <caret line="308" column="95" selection-start-line="308" selection-start-column="86" selection-end-line="308" selection-end-column="95" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/keuangan/analisis/netprofit/result.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="12960">
@@ -1366,8 +1351,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/layouts/_script.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="41" column="63" lean-forward="true" selection-start-line="41" selection-end-line="42" />
+        <state relative-caret-position="-90">
+          <caret line="40" column="46" lean-forward="true" selection-start-line="40" selection-start-column="46" selection-end-line="40" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/keuangan/analisis/netprofit/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="313" selection-start-line="313" selection-end-line="313" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modul_keuangan/js/vendors/vue/components/datepicker/datepicker.component.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
         </state>
       </provider>
     </entry>
