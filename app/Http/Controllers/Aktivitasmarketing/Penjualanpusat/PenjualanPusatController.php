@@ -117,7 +117,8 @@ class PenjualanPusatController extends Controller
             return Response::json([
                 'status' => 'sukses'
             ]);
-        } catch (DecryptException $e) {
+        }
+        catch (DecryptException $e) {
             DB::rollBack();
             return Response::json([
                 'status' => 'gagal',
@@ -1140,7 +1141,7 @@ class PenjualanPusatController extends Controller
                                         })->where('pd_nama', 'COA Persediaan dalam perjalanan')
                                         ->first();
 
-        if(!is_null($request->harga) && $request->harga != 0){
+        if(!is_null($request->harga) && $request->harga != 0) {
             // Acc Ongkir
                 $acc_beban_ongkir = DB::table('dk_pembukuan_detail')
                                         ->where('pd_pembukuan', function($query){
