@@ -1217,7 +1217,7 @@ class PenjualanPusatController extends Controller
             return $jurnal;
         }
 
-        if($request->paymentType == 'T'){
+        if($request->paymentType == 'T') {
             $details = [];
 
             $acc_kas = m_paymentmethod::where('pm_id', $request->paymentMethod)
@@ -1428,7 +1428,8 @@ class PenjualanPusatController extends Controller
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (DecryptException $e){
+        }
+        catch (DecryptException $e){
             DB::rollBack();
             return Response::json([
                 'status' => 'gagal',

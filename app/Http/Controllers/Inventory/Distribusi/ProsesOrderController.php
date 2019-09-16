@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inventory\Distribusi;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use AksesUser;
 use App\d_productdelivery;
 use App\d_stock;
 use App\d_stockdistribution;
@@ -57,9 +58,12 @@ class ProsesOrderController extends Controller
     // process and approve order
     public function approveOrder($id)
     {
-        // if (!AksesUser::checkAkses(7, 'update')){
-        //     abort(401);
-        // }
+        if (!AksesUser::checkAkses(16, 'update')) {
+            return response()->json([
+                'status' => 'invalid',
+                'message' => 'Anda tidak memiliki akses ini'
+            ]);
+        }
 
         // get stockdistribution by id
         $data['stockdist'] = d_stockdistribution::where('sd_id', decrypt($id))
@@ -95,7 +99,8 @@ class ProsesOrderController extends Controller
                 $val->stockUnit1 = 0;
                 $val->stockUnit2 = 0;
                 $val->stockUnit3 = 0;
-            } else {
+            }
+            else {
                 // calculate item-stock based on unit-compare each item
                 if ($mainStock->getItem->i_unitcompare1 != null) {
                     $stock['unit1'] = floor($mainStock->s_qty / $mainStock->getItem->i_unitcompare1);
@@ -129,6 +134,14 @@ class ProsesOrderController extends Controller
     // store approved order
     public function storeApproval(Request $request)
     {
+        // return json_encode($request->all());
+        if (!AksesUser::checkAkses(16, 'create')) {
+            return response()->json([
+                'status' => 'invalid',
+                'message' => 'Anda tidak memiliki akses ini'
+            ]);
+        }
+
         $id = $request->sd_id;
         // validate request
         $isValidRequest = $this->validateDist($request);
@@ -192,9 +205,6 @@ class ProsesOrderController extends Controller
             // insert new stockdist-detail
             foreach ($request->itemsId as $i => $itemId) {
                 $jumlahkode = 0;
-                // if ($i == 0) {
-                //     $startProdCodeIdx = 0;
-                // }
 
                 if ($request->prodCode[$i] === null || $request->qtyProdCode[$i] === null){
                     $barang = m_item::where('i_id', $itemId)->first();
@@ -323,23 +333,9 @@ class ProsesOrderController extends Controller
                         return $mutDistributionIn;
                     }
 
-                    // // insert stock-mutation
-                    // $mutDist = Mutasi::distribusicabangkeluar(
-                    //     Auth::user()->u_company,
-                    //     $request->sd_destination,
-                    //     $itemId, // item id
-                    //     $convert, // qty with smallest unit
-                    //     $nota, // nota
-                    //     $nota, // nota reff
-                    //     $listPC,
-                    //     $listQtyPC,
-                    //     $listUnitPC
-                    // );
-                    // if ($mutDist !== 'success') {
-                    //     return $mutDist;
-                    // }
                     $startProdCodeIdx += $prodCodeLength;
-                } else {
+                }
+                else {
                     if ($request->qty[$i] != 0){
                         $barang = m_item::where('i_id', $itemId)->first();
                         DB::rollback();
@@ -350,6 +346,9 @@ class ProsesOrderController extends Controller
                     }
                 }
             }
+
+// start: pembukuan jurnal
+// end: pembukuan jurnal
 
             DB::commit();
             return response()->json([

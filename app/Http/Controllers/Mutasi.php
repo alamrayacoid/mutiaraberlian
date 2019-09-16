@@ -2279,7 +2279,7 @@ class Mutasi extends Controller
                     'sm_user' => Auth::user()->u_id
                 );
                 d_stock_mutation::insert($mutasi);
-                
+
                 // insert/update stock-mutation-detail production-code for mutcat-in
                 $insertSMProdCode = self::insertStockMutationDt($stockId, $smDetailId, $listPC[$key], $listQtyPC[$key]);
                 if ($insertSMProdCode !== 'success') {
@@ -3211,11 +3211,9 @@ class Mutasi extends Controller
     {
         DB::beginTransaction();
         try {
-            // date now
-            $dateNow = Carbon::now();
-            if ($date !== null){
-                $dateNow = Carbon::createFromFormat('d-m-Y', $date);
-            }
+            // set date if receiveDate is not null
+            (is_null($date)) ? $dateNow = Carbon::now('Asia/jakarta') : $dateNow = $date;
+
 
             // get stock-selected-item with 'On Going' status
             $stockBefore = d_stock::where('s_comp', $itemOwner)
@@ -3356,10 +3354,7 @@ class Mutasi extends Controller
         DB::beginTransaction();
         try {
             // set date if receiveDate is not null
-            $dateNow = Carbon::now();
-            if ($date !== null){
-                $dateNow = Carbon::createFromFormat('d-m-Y', $date);
-            }
+            (is_null($date)) ? $dateNow = Carbon::now('Asia/jakarta') : $dateNow = $date;
 
             // get stock-selected-item with 'On Going' status
             $stockDestination = d_stock::where('s_comp', $to)

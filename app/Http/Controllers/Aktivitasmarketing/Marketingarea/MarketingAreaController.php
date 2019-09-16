@@ -691,6 +691,8 @@ class MarketingAreaController extends Controller
 
         DB::beginTransaction();
         try {
+            (is_null($request->tgl)) ? $dateConfirm = Carbon::now() : $dateConfirm = Carbon::createFromFormat('d-m-Y', $request->tgl);
+
             $stockdist = d_stockdistribution::where('sd_id', $id)
                 ->with('getDistributionDt')
                 ->first();
@@ -704,7 +706,7 @@ class MarketingAreaController extends Controller
                     $stockdist->sd_nota, // nota distribution
                     18, // mutcat distribution 'in'
                     19,// mutcat distribution 'out',
-                    $request->tgl
+                    $dateConfirm
                 );
                 if ($mutConfirm->original['status'] !== 'success') {
                     return $mutConfirm;
@@ -1541,7 +1543,10 @@ class MarketingAreaController extends Controller
         DB::beginTransaction();
         try {
             // $date = Carbon::createFromFormat('d-m-Y', $request->date);
-            $date = $request->date;
+            // $date = $request->date;
+
+            (is_null($request->date)) ? $dateConfirm = Carbon::now() : $dateConfirm = Carbon::createFromFormat('d-m-Y', $request->date);
+
             // get product-order
             $productOrder = d_productorder::where('po_id', $id)
                 ->with('getPODt')
@@ -1556,7 +1561,7 @@ class MarketingAreaController extends Controller
                     $productOrder->po_nota, // nota
                     20, // mutcat in
                     5, // mutcat out
-                    $date
+                    $dateConfirm
                 );
                 if ($mutConfirm->original['status'] !== 'success') {
                     return $mutConfirm;

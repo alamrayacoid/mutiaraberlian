@@ -600,7 +600,7 @@ class AgenKonsinyasiController extends Controller
     // get payment view
     public function bayar()
     {
-        $user = Auth::user()->with('getCompany.getAgent')->first();
+        $user = Auth::user();
 
         $konsigner = DB::table('m_agen')
             ->join('m_company', 'c_user', '=', 'a_code')
