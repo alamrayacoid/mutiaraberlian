@@ -519,10 +519,11 @@ class ProduksiController extends Controller
             			if ($dropJurnal['status'] == 'error') {
             				return $dropJurnal;
             			}
+
+                        // return $dropJurnal;
                     }
                 }
             // end:  drop jurnal for production-order and payment
-dd($po, $jurnal);
 
             DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
             DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();

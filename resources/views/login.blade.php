@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
-    @include('layouts._head')
+    <!-- @include('layouts._head') -->
 
 <body>
     <div class="auth">
@@ -53,6 +53,6 @@
                 </div> -->
             </div>
         </div>
-        @include('layouts._script')
+        <!-- @include('layouts._script') -->
 </body>
 </html>

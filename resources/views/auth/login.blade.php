@@ -110,7 +110,7 @@
         </div> -->
     </div>
 </div>
-@include('layouts._script')
+
 <script type="text/javascript">
     var LeafScene = function (el) {
         this.viewport = el;

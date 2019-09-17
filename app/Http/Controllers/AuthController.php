@@ -67,11 +67,16 @@ class AuthController extends Controller
 
     public function logout()
     {
+
+        return json_encode('aa');
+
         DB::table('d_username')
             ->where('u_username', '=', Auth::user()->u_username)
             ->update([
                 'u_lastlogout' => Carbon::now('Asia/Jakarta')
             ]);
+
+        return 'ss';
 
         Auth::logout();
         Session::flush();

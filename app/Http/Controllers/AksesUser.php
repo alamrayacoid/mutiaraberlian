@@ -51,6 +51,8 @@ class AksesUser
 
     public static function aksesSidebar()
     {
+        // return Auth::cek();
+        
         $m_id = Auth::user()->u_id;
         $cek = DB::table('m_access')
             ->leftJoin('d_useraccess', function ($q) use ($m_id){

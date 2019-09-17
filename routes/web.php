@@ -12,6 +12,7 @@
 */
 
 Route::get("/", function () {
+    
     if (Auth::check()) {
         return redirect()->route("home");
     } else {
@@ -20,7 +21,7 @@ Route::get("/", function () {
 });
 
 Route::group(['middleware' => 'guest'], function () {
-    Route::get('/login', function () {
+    Route::get('login', function () {
         return view('auth/login');
     })->name('login');
 
@@ -43,7 +44,7 @@ Route::get('/recruitment/isduplicated/{field}/{value}', 'RecruitmentController@i
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::post('logout', [
+    Route::get('logout', [
         'uses' => 'AuthController@logout',
         'as' => 'auth.logout'
     ]);
