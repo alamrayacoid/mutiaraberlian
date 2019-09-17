@@ -309,10 +309,7 @@ class OtorisasiController extends Controller
             DB::table('d_adjustmentcodeauth')->where('aca_adjustment', $id)->delete();
 
             // Create to mutation ------------>>
-            // dd((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
-
             Mutasi::opname((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
-            // dd(count($codeAuth));
 
             // tambahan dirga
                 $dataHpp = DB::table('d_stock_mutation')
@@ -383,8 +380,6 @@ class OtorisasiController extends Controller
                 if($jurnal['status'] == 'error'){
                     return json_encode($jurnal);
                 }
-
-                // return json_encode($details);
 
             // end dirga
 

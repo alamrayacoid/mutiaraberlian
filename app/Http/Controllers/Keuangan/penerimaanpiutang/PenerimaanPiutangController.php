@@ -14,7 +14,7 @@ use App\d_salescomppayment;
 use App\m_company;
 use App\m_paymentmethod;
 use Carbon\Carbon;
-use DataTables;
+use Yajra\DataTables\DataTables;
 use DB;
 
 class PenerimaanPiutangController extends Controller
@@ -30,6 +30,8 @@ class PenerimaanPiutangController extends Controller
     {
         $user = Auth::user()->getCompany;
         $type = $request->type;
+        $asalPiutang = $request->asalPiutang;
+
         try {
             $nota = Crypt::decrypt($request->nota);
         }
@@ -65,8 +67,7 @@ class PenerimaanPiutangController extends Controller
             // ->get();
         }
         else {
-            $salesComp = d_salescomp::where('sc_nota', $nota)->first();
-            if (is_null($salesComp)) {
+            if ($asalPiutang == 'sales') {
                 $data = d_sales::where('s_nota', $nota)
                     ->with('getComp')
                     ->with(['getSalesDt' => function ($q) {
@@ -79,7 +80,7 @@ class PenerimaanPiutangController extends Controller
                 $data->total = $data->s_total;
                 $data->paidDate = Carbon::parse($data->s_paymentdate)->format('d M Y');
             }
-            else {
+            else if ($asalPiutang == 'salescomp') {
                 $data = d_salescomp::where('sc_nota', $nota)
                     ->with('getComp')
                     ->with(['getSalesCompDt' => function ($q) {
@@ -92,6 +93,35 @@ class PenerimaanPiutangController extends Controller
                 $data->total = $data->sc_total;
                 $data->paidDate = Carbon::parse($data->sc_paiddate)->format('d M Y');
             }
+
+
+            // $salesComp = d_salescomp::where('sc_nota', $nota)->first();
+            // if (is_null($salesComp)) {
+            //     $data = d_sales::where('s_nota', $nota)
+            //         ->with('getComp')
+            //         ->with(['getSalesDt' => function ($q) {
+            //             $q->with('getItem')->with('getUnit');
+            //         }])
+            //         ->first();
+            //     $data->source = 'Sales';
+            //     $data->nota = $data->s_nota;
+            //     $data->agent = $data->getComp->c_name;
+            //     $data->total = $data->s_total;
+            //     $data->paidDate = Carbon::parse($data->s_paymentdate)->format('d M Y');
+            // }
+            // else {
+            //     $data = d_salescomp::where('sc_nota', $nota)
+            //         ->with('getComp')
+            //         ->with(['getSalesCompDt' => function ($q) {
+            //             $q->with('getItem')->with('getUnit');
+            //         }])
+            //         ->first();
+            //     $data->source = 'SalesComp';
+            //     $data->nota = $data->sc_nota;
+            //     $data->agent = $data->getComp->c_name;
+            //     $data->total = $data->sc_total;
+            //     $data->paidDate = Carbon::parse($data->sc_paiddate)->format('d M Y');
+            // }
         }
 
         $pembayaran = d_salescomppayment::where('scp_salescomp', '=', $data->sc_id)
@@ -471,7 +501,9 @@ class PenerimaanPiutangController extends Controller
                 DB::raw('date_format(scc.sc_datetop, "%d-%m-%Y") as sc_datetop'),
                 DB::raw('floor(scc.sc_total) as piutang'),
                 'sc_nota as nota',
-                'cabang.c_name as cabang')
+                'cabang.c_name as cabang',
+                DB::raw('"salescomp" AS asalPiutang'),
+                )
             ->where('sc_paidoff', '=', 'Y')
             ->where('sc_paidoffbranch', '=', 'N')
             ->groupBy('sc_id')
@@ -509,7 +541,9 @@ class PenerimaanPiutangController extends Controller
                 DB::raw('date_format(s_date, "%d-%m-%Y") as sc_datetop'),
                 DB::raw('floor(s_total) as piutang'),
                 's_nota as nota',
-                'c_name as cabang')
+                'c_name as cabang',
+                DB::raw('"sales" AS asalPiutang'),
+                )
             ->where('s_paidoffbranch', '=', 'N')
             ->groupBy('s_id')
             ->where('s_comp', '!=', $idPusat)
@@ -528,28 +562,27 @@ class PenerimaanPiutangController extends Controller
             $infoSales = $infoSales->where('s_comp', '=', $cabang);
         }
 
-        $info = $infoSalescomp->union($infoSales);
+        $info = $infoSales->union($infoSalescomp);
+        // $info = $info->get();
 
-        return DataTables::of($info)
+        return Datatables::of($info)
+            ->addIndexColumn()
             ->addColumn('cabang', function ($info) {
                 return $info->cabang;
             })
             ->addColumn('agen', function ($info) {
                 return $info->agen;
             })
-            ->addColumn('date_top', function ($info) {
-                return $info->sc_datetop;
-            })
             ->addColumn('piutang', function ($info) {
                 return "Rp. " . number_format($info->piutang, '0', ',', '.');
             })
             ->addColumn('aksi', function ($info) {
                 return '<center><div class="btn-group btn-group-sm">
-                <button type="button" class="btn btn-sm btn-primary hint--top hint--info" aria-label="Detail" onclick="detailNotaPiutangCabang(\''.Crypt::encrypt($info->nota).'\')"><i class="fa fa-folder"></i></button>
-                <button type="button" class="btn btn-sm btn-danger hint--top hint--warning" aria-label="Bayar" onclick="showPaymentProcessCabang(\''.Crypt::encrypt($info->nota).'\')"><i class="fa fa-money"></i></button>
+                <button type="button" class="btn btn-sm btn-primary hint--top hint--info" aria-label="Detail" onclick="detailNotaPiutangCabang(\''.Crypt::encrypt($info->nota).'\', \''. $info->asalPiutang .'\')"><i class="fa fa-folder"></i></button>
+                <button type="button" class="btn btn-sm btn-danger hint--top hint--warning" aria-label="Bayar" onclick="showPaymentProcessCabang(\''.Crypt::encrypt($info->nota).'\', \''. $info->asalPiutang .'\', )"><i class="fa fa-money"></i></button>
                 </div></center>';
             })
-            ->rawColumns(['cabang', 'agen', 'date_top', 'piutang', 'aksi'])
+            ->rawColumns(['cabang', 'agen', 'piutang', 'aksi'])
             ->make(true);
     }
     public function payPiutangCabang(Request $request)

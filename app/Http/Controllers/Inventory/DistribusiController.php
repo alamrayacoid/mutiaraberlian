@@ -252,9 +252,6 @@ class DistribusiController extends Controller
             // insert new stockdist-detail
             foreach ($request->itemsId as $i => $itemId) {
                 $jumlahkode = 0;
-                // if ($i == 0) {
-                //     $startProdCodeIdx = 0;
-                // }
 
                 if ($request->prodCode[$i] === null || $request->qtyProdCode[$i] === null){
                     $barang = m_item::where('i_id', $itemId)->first();
@@ -289,10 +286,6 @@ class DistribusiController extends Controller
                     $distdt->sdd_unit = $request->units[$i];
                     $distdt->save();
 
-                    // insert new d_stockdistributioncode
-                    // if ($i == 0) {
-                    //     $startProdCodeIdx = 0;
-                    // }
                     $prodCodeLength = (int)$request->prodCodeLength[$i];
                     $endProdCodeIdx = $startProdCodeIdx + $prodCodeLength;
                     $sumQtyPC = 0;
@@ -388,24 +381,9 @@ class DistribusiController extends Controller
                         return $mutDistributionIn;
                     }
 
-                    // // waiit, check the name of $reff
-                    // // $reff = 'DISTRIBUSI-MASUK';
-                    // $mutDist = Mutasi::distribusicabangkeluar(
-                    //     Auth::user()->u_company,
-                    //     $request->selectBranch,
-                    //     $itemId, // item id
-                    //     $convert, // qty with smallest unit
-                    //     $nota, // nota
-                    //     $nota, // nota reff
-                    //     $listPC,
-                    //     $listQtyPC,
-                    //     $listUnitPC
-                    // );
-                    // if ($mutDist !== 'success') {
-                    //     return $mutDist;
-                    // }
                     $startProdCodeIdx += $prodCodeLength;
-                } else {
+                }
+                else {
                     if ($request->qty[$i] != 0){
                         $barang = m_item::where('i_id', $itemId)->first();
                         DB::rollback();
@@ -417,58 +395,58 @@ class DistribusiController extends Controller
                 }
             }
 
-            $acc_ongkir_kas = DB::table('dk_pembukuan_detail')
+            // start: pembukuan jurnal
+                $acc_ongkir_kas = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Ongkos Kirim Distribusi')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA Kas/Setara Kas')
+                                            ->first();
+
+                $acc_ongkir_beban = DB::table('dk_pembukuan_detail')
                                         ->where('pd_pembukuan', function($query){
                                             $query->select('pe_id')->from('dk_pembukuan')
                                                         ->where('pe_nama', 'Ongkos Kirim Distribusi')
                                                         ->where('pe_comp', Auth::user()->u_company)->first();
-                                        })->where('pd_nama', 'COA Kas/Setara Kas')
+                                        })->where('pd_nama', 'COA beban ongkos kirim')
                                         ->first();
 
-            $acc_ongkir_beban = DB::table('dk_pembukuan_detail')
-                                    ->where('pd_pembukuan', function($query){
-                                        $query->select('pe_id')->from('dk_pembukuan')
-                                                    ->where('pe_nama', 'Ongkos Kirim Distribusi')
-                                                    ->where('pe_comp', Auth::user()->u_company)->first();
-                                    })->where('pd_nama', 'COA beban ongkos kirim')
-                                    ->first();
+                $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Ongkos Kirim Distribusi')
+                                ->where('pe_comp', Auth::user()->u_company)->first();
+                $details = [];
 
-            $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Ongkos Kirim Distribusi')
-                            ->where('pe_comp', Auth::user()->u_company)->first();
-            $details = [];
+                if(!$parrent || !$acc_ongkir_kas || !$acc_ongkir_beban){
+                    return response()->json([
+                        'status' => 'gagal',
+                        'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                    ]);
+                }
 
-            // return json_encode($parrent);
-
-            if(!$parrent || !$acc_ongkir_kas || !$acc_ongkir_beban){
-                return response()->json([
-                    'status' => 'gagal',
-                    'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                array_push($details, [
+                    "jrdt_nomor"        => 1,
+                    "jrdt_akun"         => $acc_ongkir_kas->pd_acc,
+                    "jrdt_value"        => $request->shippingCost,
+                    "jrdt_dk"           => "K",
+                    "jrdt_keterangan"   => $acc_ongkir_kas->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_ongkir_kas->pd_cashflow
                 ]);
-            }
 
-            array_push($details, [
-                "jrdt_nomor"        => 1,
-                "jrdt_akun"         => $acc_ongkir_kas->pd_acc,
-                "jrdt_value"        => $request->shippingCost,
-                "jrdt_dk"           => "K",
-                "jrdt_keterangan"   => $acc_ongkir_kas->pd_keterangan,
-                "jrdt_cashflow"     => $acc_ongkir_kas->pd_cashflow
-            ]);
+                array_push($details, [
+                    "jrdt_nomor"        => 2,
+                    "jrdt_akun"         => $acc_ongkir_beban->pd_acc,
+                    "jrdt_value"        => $request->shippingCost,
+                    "jrdt_dk"           => "D",
+                    "jrdt_keterangan"   => $acc_ongkir_beban->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_ongkir_beban->pd_cashflow
+                ]);
 
-            array_push($details, [
-                "jrdt_nomor"        => 2,
-                "jrdt_akun"         => $acc_ongkir_beban->pd_acc,
-                "jrdt_value"        => $request->shippingCost,
-                "jrdt_dk"           => "D",
-                "jrdt_keterangan"   => $acc_ongkir_beban->pd_keterangan,
-                "jrdt_cashflow"     => $acc_ongkir_beban->pd_cashflow
-            ]);
+                $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $nota, $parrent->pe_nama, 'TK', Auth::user()->u_company);
 
-            $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $nota, $parrent->pe_nama, 'TK', Auth::user()->u_company);
-
-            if($jurnal['status'] == 'error'){
-                return json_encode($jurnal);
-            }
+                if($jurnal['status'] == 'error'){
+                    return json_encode($jurnal);
+                }
+            // end: pembukuan jurnal
 
             DB::commit();
             return response()->json([
@@ -884,11 +862,72 @@ class DistribusiController extends Controller
                 $startProdCodeIdx += $prodCodeLength;
             }
 
+            // start: update pembukuan jurnal
+                $acc_ongkir_kas = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Ongkos Kirim Distribusi')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA Kas/Setara Kas')
+                                            ->first();
+
+                $acc_ongkir_beban = DB::table('dk_pembukuan_detail')
+                                        ->where('pd_pembukuan', function($query){
+                                            $query->select('pe_id')->from('dk_pembukuan')
+                                                        ->where('pe_nama', 'Ongkos Kirim Distribusi')
+                                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                        })->where('pd_nama', 'COA beban ongkos kirim')
+                                        ->first();
+
+                $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Ongkos Kirim Distribusi')
+                                ->where('pe_comp', Auth::user()->u_company)->first();
+                $details = [];
+
+                if(!$parrent || !$acc_ongkir_kas || !$acc_ongkir_beban){
+                    return response()->json([
+                        'status' => 'gagal',
+                        'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                    ]);
+                }
+
+                array_push($details, [
+                    "jrdt_nomor"        => 1,
+                    "jrdt_akun"         => $acc_ongkir_kas->pd_acc,
+                    "jrdt_value"        => $request->shippingCost,
+                    "jrdt_dk"           => "K",
+                    "jrdt_keterangan"   => $acc_ongkir_kas->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_ongkir_kas->pd_cashflow
+                ]);
+
+                array_push($details, [
+                    "jrdt_nomor"        => 2,
+                    "jrdt_akun"         => $acc_ongkir_beban->pd_acc,
+                    "jrdt_value"        => $request->shippingCost,
+                    "jrdt_dk"           => "D",
+                    "jrdt_keterangan"   => $acc_ongkir_beban->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_ongkir_beban->pd_cashflow
+                ]);
+
+                $jurnal = jurnal::updateJurnal(
+                    $details,
+                    date('Y-m-d'),
+                    $stockdist->sd_nota,
+                    $parrent->pe_nama,
+                    'TK',
+                    Auth::user()->u_company
+                );
+
+                if($jurnal['status'] == 'error'){
+                    return json_encode($jurnal);
+                }
+            // end: update pembukuan jurnal
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -918,6 +957,24 @@ class DistribusiController extends Controller
                 ->with('getProductDelivery')
                 ->first();
 
+            // start:  drop jurnal for stock-distribution
+                $jurnal = DB::table('dk_jurnal')
+                    ->where('jr_nota_ref', 'like', '%' . $stockdist->sd_nota . '%')
+                    ->groupBy('jr_id')
+                    ->get();
+
+                if (count($jurnal) > 0) {
+                    foreach ($jurnal as $key => $value) {
+                        $idJurnal = $value->jr_id;
+                        // drop jurnal by id
+                        $dropJurnal = jurnal::dropJurnal($idJurnal);
+                        if ($dropJurnal['status'] == 'error') {
+                            return $dropJurnal;
+                        }
+                    }
+                }
+            // end:  drop jurnal for stock-distribution
+
             $mutcatOut = 19;
             $mutcatIn = 18;
             foreach ($stockdist->getDistributionDt as $key => $stockdistDt) {
@@ -940,16 +997,6 @@ class DistribusiController extends Controller
                     return $mutRollbackIn;
                 }
 
-                // // rollBack qty in stock-mutation and stock-item
-                // $rollbackDist = Mutasi::rollbackStockMutDist(
-                //     $stockdist->sd_nota, // distribution nota
-                //     $stockdistDt->sdd_item // item-id
-                // );
-                // if ($rollbackDist !== 'success') {
-                //     DB::rollback();
-                //     return $rollbackDist;
-                // }
-
                 // delete production-code of selected stockdistribution
                 foreach ($stockdistDt->getProdCode as $idx => $prodCode) {
                     $prodCode->delete();
@@ -968,7 +1015,8 @@ class DistribusiController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -1017,7 +1065,8 @@ class DistribusiController extends Controller
             return response()->json([
                 'status' => 'berhasil'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -1031,8 +1080,7 @@ class DistribusiController extends Controller
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
         $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
-            ->where('sd_status', '!=', 'Y')
-            ->where('sd_status', '!=', 'N')
+            ->where('sd_status', 'P') // status == 'pending'
             ->orderBy('sd_date', 'desc')
             ->orderBy('sd_nota', 'desc')
             ->get();
@@ -1130,7 +1178,7 @@ class DistribusiController extends Controller
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
 
         $data = d_stockdistribution::whereBetween('sd_date', [$from, $to])
-            ->where('sd_status', 'P')// status == 'pending'
+            ->where('sd_status', 'P') // status == 'pending'
             ->orderBy('sd_date', 'asc')
             ->orderBy('sd_nota', 'asc');
 

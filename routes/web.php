@@ -854,15 +854,19 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/keuangan/penerimaanpiutang/agen/decline-selected-payments', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@declineSelectedPaymentAgen')->name('penerimaanpiutang.declineSelectedPaymentAgen');
 
     // Penerimaan Piutang Cabang
-    Route::get('/keuangan/penerimaanpiutang/cabang/getdata', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataPenerimaanCabang')->name('penerimaanpiutang.getDataPenerimaanCabang');
+    Route::post('/keuangan/penerimaanpiutang/cabang/getdata', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataPenerimaanCabang')->name('penerimaanpiutang.getDataPenerimaanCabang');
     Route::get('/keuangan/penerimaanpiutang/cabang/get-list-cabang', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getListCabang')->name('penerimaanpiutang.getListCabang');
     Route::get('/keuangan/penerimaanpiutang/cabang/pay-piutang', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@payPiutangCabang')->name('penerimaanpiutang.payPiutangCabang');
     Route::get('/keuangan/penerimaanpiutang/cabang/get-history', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@getDataHistoryCabang')->name('penerimaanpiutang.getDataHistoryCabang');
     Route::post('/keuangan/penerimaanpiutang/cabang/decline-payment', 'Keuangan\penerimaanpiutang\PenerimaanPiutangController@declinePaymentCabang')->name('penerimaanpiutang.declinePaymentCabang');
 
-    // Analisis Keuangan
+    // Analisis Keuangan ROE
     Route::get('/keuangan/analisis/roe', 'Keuangan\analisis\ROEController@index')->name('roe.index');
     Route::get('/keuangan/analisis/roe/get-data', 'Keuangan\analisis\ROEController@getData')->name('roe.getData');
+
+    // Analisis Net Profit OCF
+    Route::get('/keuangan/analisis/netprofit', 'Keuangan\analisis\AnalisisNetProfitController@index')->name('netprofit.index');
+    Route::get('/keuangan/analisis/netprofit/get-data', 'Keuangan\analisis\AnalisisNetProfitController@getData')->name('netprofit.getData');
     // !===================================================== END KEUANGAN =====================================================!
 
     // !===================================================== PENGATURAN =====================================================!

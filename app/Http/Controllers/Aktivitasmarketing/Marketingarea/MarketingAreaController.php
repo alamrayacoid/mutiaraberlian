@@ -691,6 +691,8 @@ class MarketingAreaController extends Controller
 
         DB::beginTransaction();
         try {
+            (is_null($request->tgl)) ? $dateConfirm = Carbon::now() : $dateConfirm = Carbon::createFromFormat('d-m-Y', $request->tgl);
+
             $stockdist = d_stockdistribution::where('sd_id', $id)
                 ->with('getDistributionDt')
                 ->first();
@@ -704,7 +706,7 @@ class MarketingAreaController extends Controller
                     $stockdist->sd_nota, // nota distribution
                     18, // mutcat distribution 'in'
                     19,// mutcat distribution 'out',
-                    $request->tgl
+                    $dateConfirm
                 );
                 if ($mutConfirm->original['status'] !== 'success') {
                     return $mutConfirm;
@@ -1174,6 +1176,7 @@ class MarketingAreaController extends Controller
                 'pd_price' => $request->shippingCost,
             ];
             DB::table('d_productdelivery')->insert($val_deliv);
+
             // mutation
             // dd($productOrder->getPODt[0], $productOrder->getPODt[1], $productOrder->getPODt[2]);
             foreach ($productOrder->getPODt as $key => $PO) {
@@ -1260,8 +1263,8 @@ class MarketingAreaController extends Controller
                     $listQtyPCReturn, // list of list production-code-qty
                     $listUnitPC, // list of production-code-unit
                     $listSellPrice, // sellprice
-                    $listHPP,
-                    $listSmQty,
+                    $listHPP, // list hpp
+                    $listSmQty, // list of sm-qty
                     20, // mutcat masuk pembelian
                     $listStockParentId, // stock-parent id
                     null, // items status in stock
@@ -1540,7 +1543,10 @@ class MarketingAreaController extends Controller
         DB::beginTransaction();
         try {
             // $date = Carbon::createFromFormat('d-m-Y', $request->date);
-            $date = $request->date;
+            // $date = $request->date;
+
+            (is_null($request->date)) ? $dateConfirm = Carbon::now() : $dateConfirm = Carbon::createFromFormat('d-m-Y', $request->date);
+
             // get product-order
             $productOrder = d_productorder::where('po_id', $id)
                 ->with('getPODt')
@@ -1555,7 +1561,7 @@ class MarketingAreaController extends Controller
                     $productOrder->po_nota, // nota
                     20, // mutcat in
                     5, // mutcat out
-                    $date
+                    $dateConfirm
                 );
                 if ($mutConfirm->original['status'] !== 'success') {
                     return $mutConfirm;
@@ -1836,7 +1842,8 @@ class MarketingAreaController extends Controller
                 return Response::json([
                     "status" => "success"
                 ]);
-            } else {
+            }
+            else {
                 //create baru
                 $detail = DB::table('d_productordercode')
                     ->where('poc_productorder', '=', $po_id)
@@ -1857,7 +1864,8 @@ class MarketingAreaController extends Controller
                     "status" => "success"
                 ]);
             }
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return Response::json([
                 "status" => "gagal",

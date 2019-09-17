@@ -173,23 +173,7 @@
 
 			        <li class="nav-item">
 			          	<i class="fa fa-print" title="Print Laporan" @click="print"></i>
-			        </li>
-
-			        <!-- <li class="nav-item dropdown" title="Download Laporan">
-			          	<i class="fa fa-download" id="dropdownMenuButton" data-toggle="dropdown"></i>
-
-			            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-						    <a class="dropdown-item" href="#" style="font-size: 10pt;" @click='downloadPdf'>
-						    	<i class="fa fa-file-pdf-o" style="font-weight: bold;"></i> &nbsp; Download PDF
-						    </a>
-
-						    <div class="dropdown-divider"></div>
-
-						    <a class="dropdown-item" href="#" style="font-size: 10pt;" @click='downloadExcel'>
-						    	<i class="fa fa-file-excel-o" style="font-weight: bold;"></i> &nbsp; Download Excel
-						    </a>
-					    </div>
-			        </li> -->
+                    </li>
 
 			        <li class="nav-item">
 			          <i class="fa fa-sliders" title="Pengaturan Laporan" @click="showSetting"></i>
@@ -314,11 +298,11 @@
 							<div class="card">
 	                            <div class="card-header bordered p-2">
 	                                <div class="header-block">
-	                                    <h3 class="title"> Setting Laporan Jurnal Umum </h3>
+	                                    <h3 class="title"> Analisis Net Profit Terhadap OCF </h3>
 	                                </div>
 	                            </div>
 	                            <div class="card-block">
-	                                <form id="data-form" enctype="multipart/form-data" action="{{ Route('laporan.keuangan.jurnal_umum') }}">
+	                                <form id="data-form" enctype="multipart/form-data" action="{{ Route('netprofit.getData') }}">
 	                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" readonly>
 	                                    <section>
 	                                        <div class="row keuangan-form" style="border-bottom: 0px solid #ddd; padding-bottom: 30px;">
@@ -328,13 +312,6 @@
 	                                                        <div class="col-md-5 label">Jurnal Milik</div>
 	                                                        <div class="col-md-7">
 	                                                            <vue-select :name="'lap_cabang'" :id="'lap_cabang'" :options="lap_cabang" :search="false" v-model="single.lap_cabang"></vue-select>
-	                                                        </div>
-	                                                    </div>
-
-	                                                    <div class="row" style="margin-top: 15px;">
-	                                                        <div class="col-md-5 label">Jenis Laporan</div>
-	                                                        <div class="col-md-7">
-	                                                            <vue-select :name="'lap_jenis'" :id="'lap_jenis'" :options="lap_jenis" :search="false" v-model="single.lap_jenis"></vue-select>
 	                                                        </div>
 	                                                    </div>
 
@@ -361,15 +338,6 @@
 	                                                        </div>
 	                                                    </div>
 
-	                                                    <!-- <div class="row" style="margin-top: 15px;">
-	                                                        <div class="col-md-5 label">Tampilkan Nama COA</div>
-	                                                        <div class="col-md-3">
-	                                                            <vue-select :name="'lap_nama'" :id="'lap_nama'" :options="lap_nama" :search="false" v-model="single.lap_nama"></vue-select>
-	                                                        </div>
-	                                                    </div> -->
-
-	                                                    <!-- <hr> -->
-
 	                                                    <div class="row" style="margin-top: -10px;">
 	                                                        <div class="col-md-12 label">
 
@@ -395,13 +363,13 @@
 				<div class="modal-dialog">
 					<div class="modal-content" style="border-radius: 5px;">
 						<div class="modal-header">
-							<span class="modal-title keuangan" id="myModalLabel">Pilih mutasi yang akan diperbarui</span>
+							<span class="modal-title keuangan" id="myModalLabel">Setting Analisis Net Profit Terhadap OCF</span>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					        	<span aria-hidden="true">&times;</span>
 					        </button>
 						</div>
 						<div class="modal-body" style="font-size: 9.5pt;">
-							<form id="data-form" enctype="multipart/form-data" action="{{ Route('laporan.keuangan.jurnal_umum') }}">
+							<form id="data-form" enctype="multipart/form-data" action="{{ Route('netprofit.getData') }}">
 								<input type="hidden" name="_token" value="{{ csrf_token() }}" readonly>
 								<div class="row keuangan-form" style="border-bottom: 0px solid #ddd; padding-bottom: 30px;">
 	                                <div class="col-md-12" style="border-right: 1px solid #ddd;">
@@ -410,13 +378,6 @@
 	                                            <div class="col-md-5 label">Jurnal Milik</div>
 	                                            <div class="col-md-7">
 	                                                <vue-select :name="'lap_cabang'" :id="'lap_cabang'" :options="lap_cabang" :search="false" v-model="single.lap_cabang"></vue-select>
-	                                            </div>
-	                                        </div>
-
-	                                        <div class="row" style="margin-top: 15px;">
-	                                            <div class="col-md-5 label">Jenis Laporan</div>
-	                                            <div class="col-md-7">
-	                                                <vue-select :name="'lap_jenis'" :id="'lap_jenis'" :options="lap_jenis" :search="false" v-model="single.lap_jenis"></vue-select>
 	                                            </div>
 	                                        </div>
 
@@ -442,15 +403,6 @@
 	                                            	</table>
 	                                            </div>
 	                                        </div>
-
-	                                        <!-- <div class="row" style="margin-top: 15px;">
-	                                            <div class="col-md-5 label">Tampilkan Nama COA</div>
-	                                            <div class="col-md-3">
-	                                                <vue-select :name="'lap_nama'" :id="'lap_nama'" :options="lap_nama" :search="false" v-model="single.lap_nama"></vue-select>
-	                                            </div>
-	                                        </div> -->
-
-	                                        <!-- <hr> -->
 
 	                                        <div class="row" style="margin-top: -10px;">
 	                                            <div class="col-md-12 label">

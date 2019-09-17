@@ -43,7 +43,7 @@
                             <th class="text-center">Agen</th>
                             <th class="text-center">Piutang</th>
                             <th class="text-center">Jatuh Tempo</th>
-                            <!-- <th class="text-center">Status</th> -->
+                            <th class="text-center">Status</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                         </thead>

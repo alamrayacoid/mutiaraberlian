@@ -236,6 +236,7 @@ class ProduksiController extends Controller
     {
         if (!$request->isMethod('post')) {
             $suppliers = DB::table('m_supplier')
+                ->where('s_isactive', 'Y')
                 ->select('s_id', 's_company')
                 ->get();
 
@@ -301,8 +302,7 @@ class ProduksiController extends Controller
                 DB::table('d_productionorderdt')->insert($productionorderdt);
                 DB::table('d_productionorderpayment')->insert($productionorderpayment);
 
-                $link = route('revisi');
-                pushOtorisasi::otorisasiup('Otorisasi Revisi Data', 1, $link);
+                pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
                 DB::commit();
                 return json_encode([
@@ -478,6 +478,7 @@ class ProduksiController extends Controller
                     return json_encode($jurnal);
                 }
             // end: update jurnal
+// dd($jurnal);
 
             DB::commit();
             return json_encode([
@@ -488,7 +489,7 @@ class ProduksiController extends Controller
             DB::rollBack();
             return json_encode([
                 'status' => 'Failed',
-                'msg' => $e
+                'msg' => $e->getMessage()
             ]);
         }
     }
@@ -524,6 +525,7 @@ class ProduksiController extends Controller
                     }
                 }
             // end:  drop jurnal for production-order and payment
+            // dd($po, $jurnal);
 
             DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
             DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
@@ -552,7 +554,6 @@ class ProduksiController extends Controller
 
         DB::beginTransaction();
         try {
-
             // get production order
             $po = ProductionOrder::where('po_id', $id)->with('getPODt')->first();
             // get item received
@@ -577,7 +578,6 @@ class ProduksiController extends Controller
                 }
             }
 
-
             // start:  drop jurnal for production-order and payment
                 // $po = ProductionOrder::where('po_id', $id)->select('po_nota')->first();
                 $jurnal = DB::table('dk_jurnal')
@@ -596,8 +596,7 @@ class ProduksiController extends Controller
                     }
                 }
             // end:  drop jurnal for production-order and payment
-    dd($po, $jurnal);
-dd($po, $jurnal);
+// dd($po, $jurnal);
 
             DB::table('d_itemreceiptdt')->where('ird_itemreceipt', $itemReceive->ir_id)->delete();
             $itemReceive->delete();
@@ -606,7 +605,8 @@ dd($po, $jurnal);
             DB::table('d_productionordercode')->where('poc_productionorder', '=', $id)->delete();
             DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
             $po->delete();
-            // dd('force delete x');
+
+
             DB::commit();
             return response()->json([
                 'status' => 'Success'
@@ -688,7 +688,8 @@ dd($po, $jurnal);
                     $q->orWhere('i_code', 'like', '%' . $cari . '%');
                 })
                 ->get();
-        } else {
+        }
+        else {
             $nama = DB::table('m_item')
                 ->join('d_itemsupplier', 'is_item', '=', 'i_id')
                 ->whereNotIn('i_id', $is_item)
@@ -1081,7 +1082,7 @@ dd($po, $jurnal);
     // get list supplier
     public function getSupplier(Request $request)
     {
-        $suppliers = Supplier::orderBy('s_name', 'asc')->get();
+        $suppliers = Supplier::orderBy('s_company', 'asc')->get();
 
         return response()->json(array(
             'success' => true,

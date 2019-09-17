@@ -446,8 +446,8 @@
                                             </li>
                                         @endif
                                         @if ($sidebar[38]->ua_read == 'Y')
-                                            <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                                <a href="{{ route('manajemenagen.index') }}">Analisa Net Profit Terhadap
+                                            <li class="{{Request::is('keuangan/analisis/netprofit/*') ? 'active' : ''}}">
+                                                <a href="{{ route('netprofit.index') }}">Analisa Net Profit Terhadap
                                                     OCF</a>
                                             </li>
                                         @endif
