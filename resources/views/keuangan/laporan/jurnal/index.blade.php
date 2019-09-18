@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Laporan Jurnal</title>
-        
+
         <link rel="stylesheet" type="text/css" href="{{asset('assets/css/app.css')}}">
 		<link rel="stylesheet" type="text/css" href="{{ asset('modul_keuangan/bootstrap_4_1_3/css/bootstrap.min.css') }}">
 		<link rel="stylesheet" type="text/css" href="{{ asset('modul_keuangan/font-awesome_4_7_0/css/font-awesome.min.css') }}">
@@ -45,14 +45,14 @@
 
 		    .navbar-nav {
 		      flex-direction: row;
-		      padding-right: 40px; 
+		      padding-right: 40px;
 		    }
-		    
+
 		    .nav-link {
 		      padding-right: .5rem !important;
 		      padding-left: .5rem !important;
 		    }
-		    
+
 		    /* Fixes dropdown menus placed on the right side */
 		    .ml-auto .dropdown-menu {
 		      left: auto !important;
@@ -222,7 +222,7 @@
 
 				            <tr>
 				              <th style="text-align: center; font-size: 8pt; font-weight: 500; padding-bottom: 10px; color: #666; font-style: italic;">
-				              	
+
 				              	@if(isset($_GET['lap_tanggal_awal']) && isset($_GET['lap_tanggal_akhir']))
 				              		tanggal : {{ $_GET['lap_tanggal_awal'] }} - {{ $_GET['lap_tanggal_akhir'] }}
 				              	@endif
@@ -550,7 +550,7 @@
 	            		axios.get("{{ Route('laporan.keuangan.jurnal_umum.resource') }}?"+this.url.searchParams)
 	                        .then((response) => {
 	                            this.downloadingResource = false;
-	                            this.data = response.data.data;
+                                this.data = response.data.data;
 	                            this.single.cabang = response.data.namaCabang;
 
 	                        }).catch((e) => {
@@ -568,7 +568,6 @@
             				totAktiva: 0,
             				totPasiva: 0,
             			};
-
             			$.each(this.data, function(alpha, conteks){
             				var totDebet = totKredit = 0;
             				$.each(conteks.detail, function(beta, detail){
@@ -583,13 +582,12 @@
             					kredit: totKredit
             				}
             			})
-
             			return bucket;
 	            	}
 	            },
 
 	            watch: {
-	            	
+
 	            },
 
 	            methods: {
@@ -670,11 +668,11 @@
 	                },
 
 	            	typeChange: function(e){
-	                	
+
 	                },
 
 	                akunChange:function(e){
-	                	
+
 	                },
 
 	            	humanizePrice: function(alpha){

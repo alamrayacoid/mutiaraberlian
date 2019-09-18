@@ -520,10 +520,12 @@ class ProduksiController extends Controller
             			if ($dropJurnal['status'] == 'error') {
             				return $dropJurnal;
             			}
+
+                        // return $dropJurnal;
                     }
                 }
             // end:  drop jurnal for production-order and payment
-// dd($po, $jurnal);
+            // dd($po, $jurnal);
 
             DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
             DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
@@ -1160,6 +1162,7 @@ class ProduksiController extends Controller
     // store data to Database
     public function store(Request $request)
     {
+        // return json_encode($request->all());
         // dd('debug supplier code', $request->all());
         DB::beginTransaction();
         try {
@@ -1229,6 +1232,8 @@ class ProduksiController extends Controller
             $listPC = array($prodCode);
             $listQtyPC = array($qtyReturn);
             $listUnitPC = array();
+
+            // return json_encode($qtyReturn * $request->itemPriceSB);
 
             if ($request->returnType == 'SL') {
                 throw new \Exception("Maaf, saat ini return produksi hanya mendukung pengembalian 'Stok Baru' !", 1);
@@ -1304,6 +1309,64 @@ class ProduksiController extends Controller
                 $POPayment->pop_pay = $POPayment->pop_value;
                 $POPayment->pop_status = 'Y';
                 $POPayment->save();
+
+
+                // tambahan dirga
+                    $acc_persediaan = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Return Pembelian Tukar Barang')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA Persediaan Item')
+                                            ->first();
+
+                    $acc_persediaan_perjalanan = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Return Pembelian Tukar Barang')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA Persediaan dalam perjalanan')
+                                            ->first();
+
+                    $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Return Pembelian Tukar Barang')
+                                    ->where('pe_comp', Auth::user()->u_company)->first();
+                    $details = [];
+
+                    // return json_encode($parrent);
+
+                    if(!$parrent || !$acc_persediaan || !$acc_persediaan_perjalanan){
+                        return response()->json([
+                            'status' => 'Failed',
+                            'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                        ]);
+                    }
+
+                    array_push($details, [
+                        "jrdt_nomor"        => 1,
+                        "jrdt_akun"         => $acc_persediaan_perjalanan->pd_acc,
+                        "jrdt_value"        => $qtyReturn * $request->itemPriceSB,
+                        "jrdt_dk"           => "D",
+                        "jrdt_keterangan"   => $acc_persediaan_perjalanan->pd_keterangan,
+                        "jrdt_cashflow"     => $acc_persediaan_perjalanan->pd_cashflow
+                    ]);
+
+                    array_push($details, [
+                        "jrdt_nomor"        => 2,
+                        "jrdt_akun"         => $acc_persediaan->pd_acc,
+                        "jrdt_value"        => $qtyReturn * $request->itemPriceSB,
+                        "jrdt_dk"           => "K",
+                        "jrdt_keterangan"   => $acc_persediaan->pd_keterangan,
+                        "jrdt_cashflow"     => $acc_persediaan->pd_cashflow
+                    ]);
+
+                    // return json_encode($details);
+
+                    $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $nota, $parrent->pe_nama, 'TM', Auth::user()->u_company);
+
+                    if($jurnal['status'] == 'error'){
+                        return json_encode($jurnal);
+                    }
+
             }
             elseif ($type == 'PN')
             {
@@ -1311,6 +1374,62 @@ class ProduksiController extends Controller
                 $supplier = m_supplier::where('s_id', $supplierId)->first();
                 $supplier->s_deposit += ((int)$itemPrice * (int)$qtyReturn);
                 $supplier->save();
+
+                // tambahan dirga
+                    $acc_persediaan = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Return Pembelian Potong Nota')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA Persediaan Item')
+                                            ->first();
+
+                    $acc_hutang = DB::table('dk_pembukuan_detail')
+                                            ->where('pd_pembukuan', function($query){
+                                                $query->select('pe_id')->from('dk_pembukuan')
+                                                            ->where('pe_nama', 'Return Pembelian Potong Nota')
+                                                            ->where('pe_comp', Auth::user()->u_company)->first();
+                                            })->where('pd_nama', 'COA Hutang')
+                                            ->first();
+
+                    $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Return Pembelian Potong Nota')
+                                    ->where('pe_comp', Auth::user()->u_company)->first();
+                    $details = [];
+
+                    // return json_encode($parrent);
+
+                    if(!$parrent || !$acc_persediaan || !$acc_hutang){
+                        return response()->json([
+                            'status' => 'Failed',
+                            'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                        ]);
+                    }
+
+                    array_push($details, [
+                        "jrdt_nomor"        => 1,
+                        "jrdt_akun"         => $acc_hutang->pd_acc,
+                        "jrdt_value"        => $qtyReturn * $request->itemPriceSB,
+                        "jrdt_dk"           => "D",
+                        "jrdt_keterangan"   => $acc_hutang->pd_keterangan,
+                        "jrdt_cashflow"     => $acc_hutang->pd_cashflow
+                    ]);
+
+                    array_push($details, [
+                        "jrdt_nomor"        => 2,
+                        "jrdt_akun"         => $acc_persediaan->pd_acc,
+                        "jrdt_value"        => $qtyReturn * $request->itemPriceSB,
+                        "jrdt_dk"           => "K",
+                        "jrdt_keterangan"   => $acc_persediaan->pd_keterangan,
+                        "jrdt_cashflow"     => $acc_persediaan->pd_cashflow
+                    ]);
+
+                    // return json_encode($details);
+
+                    $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $nota, $parrent->pe_nama, 'TM', Auth::user()->u_company);
+
+                    if($jurnal['status'] == 'error'){
+                        return json_encode($jurnal);
+                    }
             }
 
             DB::commit();

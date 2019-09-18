@@ -12,6 +12,7 @@
 */
 
 Route::get("/", function () {
+    
     if (Auth::check()) {
         return redirect()->route("home");
     } else {
@@ -20,7 +21,7 @@ Route::get("/", function () {
 });
 
 Route::group(['middleware' => 'guest'], function () {
-    Route::get('/login', function () {
+    Route::get('login', function () {
         return view('auth/login');
     })->name('login');
 
@@ -43,7 +44,7 @@ Route::get('/recruitment/isduplicated/{field}/{value}', 'RecruitmentController@i
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::post('logout', [
+    Route::get('logout', [
         'uses' => 'AuthController@logout',
         'as' => 'auth.logout'
     ]);
@@ -865,7 +866,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Analisis Net Profit OCF
     Route::get('/keuangan/analisis/netprofit', 'Keuangan\analisis\AnalisisNetProfitController@index')->name('netprofit.index');
-
+    Route::get('/keuangan/analisis/netprofit/get-data', 'Keuangan\analisis\AnalisisNetProfitController@getData')->name('netprofit.getData');
     // !===================================================== END KEUANGAN =====================================================!
 
     // !===================================================== PENGATURAN =====================================================!
