@@ -56,7 +56,7 @@
     var table_harilibur;
     var table_aturankehadiran;
     var table_jeniscuti;
-		
+
 		$(document).ready(function() {
 		var cur_date = new Date();
 		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
@@ -255,7 +255,7 @@
 		// changed status
 		$('.statusPr').on('click change', function() {
 			idxRow = $('.statusPr').index(this);
-			if ($('.statusPr').eq(idxRow).val() == 'T') {
+			if ($('.statusPr').eq(idxRow).val() == 'T' || $('.statusPr').eq(idxRow).val() == 'C') {
 				$('.arriveTimePr').eq(idxRow).val('');
 				$('.arriveTimePr').eq(idxRow).attr('readonly', true);
 				$('.returnTimePr').eq(idxRow).val('');
@@ -396,7 +396,7 @@
 					let row = '<tr>'+ empId + status + arriveTime + returnTime + note + action +'</tr>'
 			        $('#table_presence tbody').append(row);
 					// get recently added item to update read-only for 'tidak masuk'
-					if ($('.statusPr').filter(':last').val() == 'T') {
+					if ($('.statusPr').filter(':last').val() == 'T' || $('.statusPr').filter(':last').val() == 'C') {
 						let idxTemp = $('.statusPr').index(this);
 						$('.arriveTimePr').eq(idxTemp).attr('readonly', true);
 						$('.returnTimePr').eq(idxTemp).attr('readonly', true);

@@ -41,8 +41,8 @@
 		cur_date = new Date();
 		first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
 		last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
-		$('#date_from').datepicker('setDate', first_day);
-		$('#date_to').datepicker('setDate', last_day);
+		$('#dateStartHistory').datepicker('setDate', first_day);
+		$('#dateEndHistory').datepicker('setDate', last_day);
 
 		TableAdjusmentHistory();
 		TableAdjusment();
@@ -123,9 +123,9 @@
 				url: baseUrl + "/notifikasiotorisasi/otorisasi/adjustment/getList",
 				type: "get",
 				data: {
+					date_from: $('#dateStartHistory').val(),
+					date_to: $('#dateEndHistory').val(),
 					"_token": "{{ csrf_token() }}",
-					"date_from" : $('#date_from').val(),
-					"date_to" : $('#date_to').val()
 				}
 			},
 			columns: [

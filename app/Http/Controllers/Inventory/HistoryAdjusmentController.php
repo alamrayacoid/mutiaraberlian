@@ -21,8 +21,9 @@ class HistoryAdjusmentController extends Controller
      */
     public function getList(Request $request)
     {
-      $from = date("Y-m-d", strtotime($request->date_from));
-      $to = date("Y-m-d", strtotime($request->date_to));
+      $from = Carbon::createFromFormat('d-m-Y', $request->date_from)->format('Y-m-d');
+      $to = Carbon::createFromFormat('d-m-Y', $request->date_to)->format('Y-m-d');
+      
       $datas = DB::table('d_adjusment')->orderBy('a_date', 'asc')
         ->join('m_item', 'i_id', '=', 'a_item')
         ->whereBetween('a_date', [$from, $to])

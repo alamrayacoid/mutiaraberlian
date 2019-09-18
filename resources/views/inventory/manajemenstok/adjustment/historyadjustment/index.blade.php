@@ -15,20 +15,18 @@
 					<div class="col-md-2 col-sm-6 col-xs-12">
 					<label>Tanggal Awal</label>
 					</div>
-
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" onchange="gettable()" id="rekrut_from" name="">
+						<input type="text" class="form-control form-control-sm datepicker" onchange="gettable()" id="dateStartHistory" name="">
 					</div>
 					</div>
 
 					<div class="col-md-2 col-sm-6 col-xs-12">
 					<label>Tanggal Akhir</label>
 					</div>
-
 					<div class="col-md-3 col-sm-6 col-xs-12">
 					<div class="form-group">
-						<input type="text" class="form-control form-control-sm datepicker" onchange="gettable()" id="rekrut_to" name="">
+						<input type="text" class="form-control form-control-sm datepicker" onchange="gettable()" id="dateEndHistory" name="">
 					</div>
 					</div>
 
