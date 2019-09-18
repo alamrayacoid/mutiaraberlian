@@ -334,6 +334,9 @@ class ReturnPenjualanController extends Controller
     // store data to Database
     public function store(Request $request)
     {
+
+        return json_encode($request->all());
+
         DB::beginTransaction();
         try {
             $member = $request->agent;
