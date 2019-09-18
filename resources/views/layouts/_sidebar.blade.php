@@ -101,10 +101,14 @@
             <li class="profile dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                     @if (Auth::user()->u_user == 'E')
+                        @if (!is_null(Auth::user()->employee))
                         <div class="img" style="background-image: url('{{ asset('storage/app/'. Auth::user()->employee->e_foto) }}')"></div>
+                        @endif
                     @elseif (Auth::user()->u_user == 'A')
+                        @if (!is_null(Auth::user()->agen))
                         <div class="img" style="background-image: url('{{ asset('storage/app/'. Auth::user()->agen->a_img) }}')"></div>
                         <!-- <div class="img" style="background-image: url('https://i.mydramalist.com/O5OvYc.jpg')"></div> -->
+                        @endif
                     @endif
                     <span class="name"> {{ \App\d_username::getName() }} </span>
                 </a>

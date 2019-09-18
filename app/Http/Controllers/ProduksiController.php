@@ -1284,7 +1284,7 @@ class ProduksiController extends Controller
                 if (json_decode($order)->status !== 'Success') {
                     throw new \Exception("Terjadi kesalahan saat menyelesaikan return produksi", 1);
                 }
-                // acc otorisasi production-order
+                // acc otorisasi production-order with status payment = 'LUNAS'
                 $data = d_productionorderauth::where('poa_nota', $nota)->first();
                 $values = [
                     'po_id'         => $data->poa_id,
@@ -1292,7 +1292,7 @@ class ProduksiController extends Controller
                     'po_date'       => $data->poa_date,
                     'po_supplier'   => $data->poa_supplier,
                     'po_totalnet'   => $data->poa_totalnet,
-                    'po_status'     => $data->poa_status,
+                    'po_status'     => 'LUNAS'
                 ];
                 $insertPO = DB::table('d_productionorder')->insert($values);
                 // delete production-auth
