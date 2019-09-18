@@ -44,6 +44,10 @@
 		$('#dateStartHistory').datepicker('setDate', first_day);
 		$('#dateEndHistory').datepicker('setDate', last_day);
 
+		$('#btnRefreshHistory').on('click', function() {
+			TableAdjusmentHistory();
+		});
+
 		TableAdjusmentHistory();
 		TableAdjusment();
 
