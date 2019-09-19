@@ -4,6 +4,14 @@
         #table_agen td {
             padding: 5px;
         }
+
+        .shadow-box-fancy{
+            box-shadow: 4px 10px 16px 0px rgba(0,0,0,0.1);
+        }
+
+        .border-bot{
+            border-bottom: 1px solid rgba(0,0,0,0.2);
+        }
     </style>
 @stop
 @section('content')
@@ -37,19 +45,46 @@
                     </div>
                     <div class="card-block">
                         <section>
-                            <div class="row mb-5">
-                                <div class="col-md-3 col-sm-6 col-xs-12">
-                                    <label>Status Agen</label>
-                                </div>
-                                <div class="col-md-4 col-sm-6 col-xs-12">
-                                    <select name="status" id="status" class="form-control form-control-sm select2">
-                                        <option value="">Semua</option>
-                                        <option value="Y" selected>Aktif</option>
-                                        <option value="N">Non Aktif</option>
-                                    </select>
+                            <div class="col-md-12">
+                                <div class="row justify-content-center">
+                                {{--  box widget 1--}}
+                                    <div class="col-md-4" style="background-color: #fff;">
+                                        <div class="col-md-12 p-0 shadow-box-fancy" >
+                                            <div class="col-md-12 p-3 py-4 text-center" style="color:#000;background-color: #d1d1d1;clip-path: polygon(0 0 , 100% 0 ,100% 70% , 0 100% ); ">
+                                                <p class="h3">Laba Rugi</p>
+                                            </div>
+                                            <div class="fluid-container" id="laba_rugi">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                {{--   end box widget 1--}}
+
+                                    {{--  box widget 1--}}
+                                    <div class="col-md-7 " style="background-color: #fff;">
+                                        <div class="row">
+                                            <div class="col-md-6 p-0 shadow-box-fancy">
+                                                <div class="col-md-12 p-3 py-4 text-center" style="color:#fff;background-color: #2b3f87;clip-path: polygon(0 0 , 100% 0 ,100% 70% , 0 100% ); ">
+                                                    <p class="h3">Budgeting</p>
+                                                </div>
+                                                <div class="fluid-container" id="budget">
+
+                                                </div>
+                                            </div>
+                                            {{--  start new widget breakdown--}}
+                                            <div class="col-md-6 p-0 shadow-box-fancy">
+                                                <div class="col-md-12 p-3 py-4 text-center">
+                                                    <p class="h3">Breakdown</p>
+                                                </div>
+                                                <div class="fluid-container" id="breakdown">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{--   end box widget 1--}}
                                 </div>
                             </div>
-
                         </section>
                     </div>
                 </div>
@@ -65,10 +100,56 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
-    $(document).ready(function() {
-        setTimeout(function () {
+    var layout ='';
+    var saldo = '';
 
-        }, 100);
+    function ajax_output(url,type,data)
+    {
+        $.ajax({
+            url : url,
+            type : type,
+            data : data,
+            success : function(get){
+                var par = JSON.parse(get);
+                var layout ='';
+                var breakd ='';
+                for(var i =0;i<(par['data']).length;i++){
+                    for(var j =0;j<(par['data'][i]['subclass']).length;j++){
+                        for(var k =0;k<(par['data'][i]['subclass'][j]['level2']).length;k++){
+                            for(var  n=0;n<(par['data'][i]['subclass'][j]['level2'][k]['akun']).length;n++){
+                                for(var o = 0;o<(par['data'][i]['subclass'][j]['level2'][k]['akun']).length;o++){
+                                    if(parseFloat(par['data'][i]['subclass'][j]['level2'][k]['akun'][o].saldo_akhir) > 0){
+                                        var status = 'green';
+                                    }else{
+                                        var status = 'red';
+                                    }
+                                    layout += '<div class="col-md-12 p-2 border-bot mt-2">\n' +
+                                        '<div class="row">\n' +
+                                        '<p class="col-md-6">'+ par['data'][i]['subclass'][j]['level2'][k]['akun'][o].ak_nomor+' - '+ par['data'][i]['subclass'][j]['level2'][k]['akun'][o].ak_nama +'</p>\n' +
+                                        '<p class="col-md-6 text-right"> Rp. '+ par['data'][i]['subclass'][j]['level2'][k]['akun'][o].saldo_akhir +'</p>\n' +
+                                        '</div>\n' +
+                                        '</div>';
+
+                                    breakd += '<div class="col-md-12 p-2 border-bot mt-2" style="background-color:'+status+';color:#fff">\n' +
+                                        '<div class="row">\n' +
+                                        '<p class="col-md-6">'+ par['data'][i]['subclass'][j]['level2'][k]['akun'][o].ak_nomor+' - '+ par['data'][i]['subclass'][j]['level2'][k]['akun'][o].ak_nama +'</p>\n' +
+                                        '<p class="col-md-6 text-right"> Rp. '+ par['data'][i]['subclass'][j]['level2'][k]['akun'][o].saldo_akhir +'</p>\n' +
+                                        '</div>\n' +
+                                        '</div>';
+                                }
+                            }
+                        }
+                    }
+                }
+                $('#laba_rugi').html(layout);
+                $('#budget').html(layout);
+                $('#breakdown').html(breakd);
+            }
+        })
+    }
+
+    $(document).ready(function() {
+        ajax_output('{{route("budgeting.data_lr")}}','post',{'_token' : '{{csrf_token()}}'});
     });
 
 </script>

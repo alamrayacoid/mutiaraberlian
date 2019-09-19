@@ -34,8 +34,8 @@ class laporan_neraca_controller extends Controller
 	        }
 
 	        if($request->lap_cabang == 'all'){
-    			$data = [];
-    		}else{
+                $data = [];
+            }else{
 		        $data = level_1::where('hs_id', '<=', '3')
 		                    ->with([
 		                        'subclass' => function($query) use ($d1){
