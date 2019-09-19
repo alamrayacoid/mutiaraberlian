@@ -386,14 +386,16 @@
                         <ul class="sidebar-nav">
                             @if ($sidebar[29]->ua_read == 'Y')
                                 <li>
-                                    <a href="#">Manajemen Perencanaan</a>
+                                    <a href="{{ route('budgeting.index') }}">Manajemen Perencanaan</a>
                                 </li>
                             @endif
-                            @if ($sidebar[30]->ua_read == 'Y')
+                            {{--
+                            <!-- @if ($sidebar[30]->ua_read == 'Y')
                                 <li>
                                     <a href="#">Manajemen Penganggaran</a>
                                 </li>
-                            @endif
+                            @endif -->
+                            --}}
                         </ul>
                     </li>
                 @endif
