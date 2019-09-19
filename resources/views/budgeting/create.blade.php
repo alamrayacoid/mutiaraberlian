@@ -40,62 +40,52 @@
                     </div>
 <!-- start : form -->
                     <div class="card-block">
-                        <section>
-                            <div class="row mb-5">
-                                <div class="col-md-3 col-sm-6 col-xs-12">
-                                    <label>periode</label>
+                        <form class="formBudgeting">
+                            <section>
+                                <div class="row mb-5">
+                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                        <label>periode</label>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 col-xs-12">
+                                        <input type="text" class="form-control" id="periode" name="periode" autocomplete="off">
+                                    </div>
                                 </div>
-                                <div class="col-md-4 col-sm-6 col-xs-12">
-                                    <input type="text" class="form-control" id="periode" name="periode" autocomplete="off">
-                                </div>
-                            </div>
 
-                            <!--Table-->
-                            <div class="table-responsive">
-                                <table id="tablePendapatan" class="table table-hover display table-bordered w-100">
-                                    <!--Table head-->
-                                    <thead class="bg-primary">
-                                        <tr>
-                                            <th colspan="4">Pendapatan</th>
-                                        </tr>
-                                        <tr>
-                                            <th>#</th>
-                                            <th class="text-center">Akun</th>
-                                            <th class="text-center">Value</th>
-                                            <th class="text-center">Persentase</th>
-                                        </tr>
-                                    </thead>
-                                    <!--Table head-->
-                                    <!--Table body-->
-                                    <tbody>
-                                        <tr>
-                                            <th scope="row">1</th>
-                                            <td>Penjualan</td>
-                                            <td><input type="text" class="form-control pend-value w-100 rupiah" name="pendValue" value="0"></td>
-                                            <td class="text-right"><label class="pend-persentase"></label></td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">1</th>
-                                            <td>Penjualan</td>
-                                            <td><input type="text" class="form-control pend-value w-100 rupiah" name="pendValue" value="0"></td>
-                                            <td class="text-right"><label class="pend-persentase"></label></td>
-                                        </tr>
-                                    </tbody>
-                                    <!--Table body-->
-                                    <!--Table footer-->
-                                    <tfoot>
-                                        <tr>
-                                            <th scope="row" colspan="2" class="text-center">Total</th>
-                                            <td><input type="text" class="form-control form-control-plaintext total-pend-value w-100 rupiah" name="totalPendValue"></td>
-                                            <td class="text-right"><label class="pend-total-persentase"></label></td>
-                                        </tr>
-                                    </tfoot>
-                                    <!--Table footer-->
-                                </table>
                                 <!--Table-->
-                            </div>
+                                <div class="table-responsive">
+                                    <table id="tablePendapatan" class="table table-hover table-sm table-striped display table-bordered w-100">
+                                        <!--Table head-->
+                                        <thead class="bg-primary">
+                                            <tr>
+                                                <th colspan="4">Pendapatan</th>
+                                            </tr>
+                                            <tr>
+                                                <th>#</th>
+                                                <th class="text-center">Akun</th>
+                                                <th class="text-center">Value</th>
+                                                <th class="text-center">Persentase</th>
+                                            </tr>
+                                        </thead>
+                                        <!--Table head-->
+                                        <!--Table body-->
+                                        <tbody>
+                                        </tbody>
+                                        <!--Table body-->
+                                        <!--Table footer-->
+                                        <tfoot>
+                                            <tr>
+                                                <th scope="row" colspan="2" class="text-center">Total</th>
+                                                <td><input type="text" class="form-control form-control-plaintext total-pend-value w-100 rupiah" name="totalPendValue"></td>
+                                                <td class="text-right"><label class="pend-total-persentase"></label></td>
+                                            </tr>
+                                        </tfoot>
+                                        <!--Table footer-->
+                                    </table>
+                                    <!--Table-->
+                                </div>
 
-                        </section>
+                            </section>
+                        </form>
                         <div class="card-footer text-right">
                             <button class="btn btn-primary btn-submit" type="button">Simpan</button>
                             <a href="{{ route('budgeting.index') }}" class="btn btn-secondary">Kembali</a>
@@ -121,23 +111,28 @@
     $(document).ready(function() {
         setTimeout(function () {
             month_years = new Date(month_years.getFullYear(), month_years.getMonth());
-
             // set month picker
             $("#periode").datepicker({
                 format: "mm-yyyy",
                 viewMode: "months",
-                minViewMode: "months"
+                minViewMode: "months",
+                autoclose: true,
             });
-// start : test get akun
-            getPendapatan();
-// end : test get akun
             $('#periode').datepicker('setDate', month_years);
+            $('#periode').datepicker().on('changeDate', function (ev) {
+                getPendapatan();
+            });
+            getPendapatan();
 
             $('.pend-value').on('keyup', function() {
                 idxPendapatan = $('.pend-value').index(this);
                 totalPendapatan = calculateTotalPendapatan();
                 $('.total-pend-value').val(totalPendapatan);
                 calculatePersentasePendapatan();
+            });
+
+            $('.btn-submit').on('click', function() {
+                store();
             });
         }, 100);
     });
@@ -164,19 +159,138 @@
     }
 
     function getPendapatan() {
+        periode = $('#periode').val();
+        console.log(periode);
         $.ajax({
             url: "{{ route('budgeting.getAkunPendapatan') }}",
             type: 'GET',
             data: {
-                // periode: 
+                periode: periode
+            },
+            beforeSend : function (){
+                loadingShow();
             },
             success: function (response) {
                 console.log(response);
+                let resp = response.data;
+                let respBudgeting = response.budgeting;
+                let layout = '';
+                let counter = 0;
+                $('#tablePendapatan > tbody').empty();
+                if (respBudgeting.length > 0) {
+                    $.each(resp, function (j, data) {
+                        if (data.subclass.length <= 0) { return true };
+                        $.each(data.subclass, function (k, subclass) {
+                            if (subclass.level2.length <= 0) { return true };
+                            $.each(subclass.level2, function (l, level2) {
+                                if (level2.akun.length <= 0) { return true };
+                                $.each(level2.akun, function (m, akun) {
+                                    counter++;
+                                    let value = '';
+                                    $.each(respBudgeting, function (idxBud, valBud) {
+                                        if (valBud.b_akun == akun.ak_nomor) {
+                                            value = '<td><input type="text" class="form-control pend-value w-100 rupiah" name="pendValue[]" value="'+ parseInt(valBud.b_value) +'"></td>';
+                                            return false;
+                                        }
+                                        else {
+                                            value = '<td><input type="text" class="form-control pend-value w-100 rupiah" name="pendValue[]" value="0"></td>';
+                                        }
+                                    });
+                                    let number = '<th scope="row">'+ counter +'</th>';
+                                    let name = '<td>'+ akun.ak_nama +'<input type="hidden" name="pendAkun[]" value="'+ akun.ak_nomor +'"></td>';
+                                    let persentase = '<td class="text-right"><label class="pend-persentase"></label></td>';
+                                    layout += '<tr>'+ number + name + value + persentase +'</tr>'
+                                });
+                            });
+                        });
+                    });
+                }
+                else {
+                    $.each(resp, function (j, data) {
+                        if (data.subclass.length <= 0) { return true };
+                        $.each(data.subclass, function (k, subclass) {
+                            if (subclass.level2.length <= 0) { return true };
+                            $.each(subclass.level2, function (l, level2) {
+                                if (level2.akun.length <= 0) { return true };
+                                $.each(level2.akun, function (m, akun) {
+                                    counter++;
+                                    let number = '<th scope="row">'+ counter +'</th>';
+                                    let name = '<td>'+ akun.ak_nama +'<input type="hidden" name="pendAkun[]" value="'+ akun.ak_nomor +'"></td>';
+                                    let value = '<td><input type="text" class="form-control pend-value w-100 rupiah" name="pendValue[]" value="0"></td>';
+                                    let persentase = '<td class="text-right"><label class="pend-persentase"></label></td>';
+                                    layout += '<tr>'+ number + name + value + persentase +'</tr>'
+                                });
+                            });
+                        });
+                    });
+
+                    // for(var i = 0; i<(resp).length; i++){
+                    //     for(var j = 0; j < (resp[i]['subclass']).length; j++){
+                    //         for(var k = 0; k < (resp[i]['subclass'][j]['level2']).length; k++){
+                    //             for(var n = 0; n < (resp[i]['subclass'][j]['level2'][k]['akun']).length; n++){
+                    //                 for(var o = 0; o < (resp[i]['subclass'][j]['level2'][k]['akun']).length; o++){
+                    //                     counter++;
+                    //                     let number = '<th scope="row">'+ counter +'</th>';
+                    //                     let name = '<td>'+ resp[i]['subclass'][j]['level2'][k]['akun'][o].ak_nama +'<input type="hidden" name="pendAkun[]" value="'+ resp[i]['subclass'][j]['level2'][k]['akun'][o].ak_nomor +'"></td>';
+                    //                     let value = '<td><input type="text" class="form-control pend-value w-100 rupiah" name="pendValue[]" value="0"></td>';
+                    //                     let persentase = '<td class="text-right"><label class="pend-persentase"></label></td>';
+                    //                     layout += '<tr>'+ number + name + value + persentase +'</tr>'
+                    //                 }
+                    //             }
+                    //         }
+                    //     }
+                    // }
+                }
+
+                $('#tablePendapatan > tbody').append(layout);
+                $('.pend-value').off();
+                $('.pend-value').on('keyup', function() {
+                    idxPendapatan = $('.pend-value').index(this);
+                    totalPendapatan = calculateTotalPendapatan();
+                    $('.total-pend-value').val(totalPendapatan);
+                    calculatePersentasePendapatan();
+                });
+                $('.pend-value').trigger('keyup');
+                $('.rupiah').inputmask("currency", {
+                    radixPoint: ",",
+                    groupSeparator: ".",
+                    digits: 0,
+                    autoGroup: true,
+                    prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                    rightAlign: true,
+                    autoUnmask: true,
+                    nullable: false,
+                    // unmaskAsNumber: true,
+                });
             },
             error: function (error) {
                 messageFailed('Error', 'Terjadi kesalahan : ' + error);
+            },
+            complete: function () {
+                loadingHide();
             }
         });
+    }
+
+    function store() {
+        formData = $('.formBudgeting').serialize();
+        $.ajax({
+            url: "{{ route('budgeting.store') }}",
+            type: 'POST',
+            data: formData,
+            beforeSend: function (){
+                loadingShow();
+            },
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(error) {
+                messageWarning('Error', 'Terjadi kesalahan : ' + error);
+            },
+            complete: function (){
+                loadingHide();
+            }
+        })
     }
 
 </script>

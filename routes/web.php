@@ -544,6 +544,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/budgeting/manajemen-perencanaan/create', 'Budgeting\BudgetingController@create')->name('budgeting.create');
     Route::get('/budgeting/manajemen-perencanaan/get-akun-pendapatan', 'Budgeting\BudgetingController@getAkunPendapatan')->name('budgeting.getAkunPendapatan');
     Route::get('/budgeting/manajemen-perencanaan/get-akun-beban', 'Budgeting\BudgetingController@getAkunBeban')->name('budgeting.getAkunBeban');
+    Route::post('/budgeting/manajemen-perencanaan/store', 'Budgeting\BudgetingController@store')->name('budgeting.store');
     // END
     // !===================================================== END BUDGETING =====================================================!
 
