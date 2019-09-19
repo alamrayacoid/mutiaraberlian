@@ -12,7 +12,7 @@
 */
 
 Route::get("/", function () {
-    
+
     if (Auth::check()) {
         return redirect()->route("home");
     } else {
@@ -537,6 +537,14 @@ Route::group(['middleware' => 'auth'], function () {
 
     // END
     // !===================================================== END SDM =====================================================!
+
+    // !===================================================== START BUDGETING =====================================================!
+    // START
+    Route::get('/budgeting/manajemen-perencanaan/index', 'Budgeting\BudgetingController@index')->name('budgeting.index');
+    Route::get('/budgeting/manajemen-perencanaan/create', 'Budgeting\BudgetingController@create')->name('budgeting.create');
+    // END
+    // !===================================================== END BUDGETING =====================================================!
+
 
     // !===================================================== Marketing =====================================================!
     // Manajemen Marketing
