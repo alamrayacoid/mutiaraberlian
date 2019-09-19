@@ -875,6 +875,12 @@ Route::group(['middleware' => 'auth'], function () {
     // Analisis Net Profit OCF
     Route::get('/keuangan/analisis/netprofit', 'Keuangan\analisis\AnalisisNetProfitController@index')->name('netprofit.index');
     Route::get('/keuangan/analisis/netprofit/get-data', 'Keuangan\analisis\AnalisisNetProfitController@getData')->name('netprofit.getData');
+
+    // Pajak
+
+    Route::get('/keuangan/pajak/index', 'Keuangan\pajak\pajakController@index')->name('pajak.index');
+
+
     // !===================================================== END KEUANGAN =====================================================!
 
     // !===================================================== PENGATURAN =====================================================!
@@ -1157,6 +1163,8 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     // Selesai Dirga
+
+
 });
 
 // End Route Group
