@@ -53,8 +53,12 @@
                                 </div>
                             </div>
                         </div>
-
-
+                    </div>
+                </div>
+                <div class="col-lg-12 mt-2 mt-md-4">
+                    <div class="ibox-content text-center">
+                        <b style="font-size: 2em;">Pajak</b>
+                        <div id="kinerja" style="height: 250px;"></div>
                     </div>
                 </div>
             </div>
@@ -64,6 +68,36 @@
 @endsection
 @section('extra_script')
     <script type="text/javascript">
+        function line1(variable,data_data,key,x,label)
+        {
+            Morris.Line({
+                element: variable,
+                data: data_data,
+                xkey: key,
+                ykeys: x,
+                labels: label,
+                hideHover: 'auto',
+                resize: true,
+                barColors: ['#1ab394', '#cacaca'],
+            });
+        }
 
+        $(document).ready(function(){
+
+            line1('kinerja',
+                [
+                    { y: '2008', a: 5 ,b:4 },
+                    { y: '2009', a: 10 ,b:4 },
+                    { y: '2010', a: 8 ,b:4 },
+                    { y: '2011', a: 22 ,b:4 },
+                    { y: '2012', a: 8 ,b:4 },
+                    { y: '2014', a: 10 ,b:4 },
+                    { y: '2015', a: 5 ,b:4 }
+                ],
+                'y'
+                ,['a','b'],
+                ['Pajak Tahun lalu', 'Pajak Tahun ini']
+            );
+        })
     </script>
 @endsection
