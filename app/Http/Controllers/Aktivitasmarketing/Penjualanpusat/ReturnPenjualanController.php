@@ -380,7 +380,7 @@ class ReturnPenjualanController extends Controller
     // store data to Database
     public function store(Request $request)
     {
-        return json_encode($request->all());
+        // return json_encode($request->all());
 
         DB::beginTransaction();
         try {
@@ -502,7 +502,7 @@ class ReturnPenjualanController extends Controller
                     'ON DESTINATION', // item status
                     'BROKEN' // item condition
                 );
-                
+
                 if ($mutationIn->original['status'] !== 'success') {
                     return $mutationIn;
                 }
