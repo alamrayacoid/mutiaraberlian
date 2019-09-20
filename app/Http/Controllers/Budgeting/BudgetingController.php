@@ -254,9 +254,10 @@ class BudgetingController extends Controller
                             ->orderBy('b_akun','asc')->where('b_akun',$rowwww->ak_nomor)->get();
                         foreach ($dataa as $row2){
                             $cou =[
+                                'ak_posisi' => $row2->ak_posisi,
                                 'ak_nama' => $row2->ak_nama,
                                 'ak_nomor' => $row2->ak_nomor,
-                                'count' => $rowwww->saldo_akhir - $row2->b_value
+                                'count' => (int)$rowwww->saldo_akhir - (int)$row2->b_value
                             ];
                             array_push($coun , $cou);
                         }

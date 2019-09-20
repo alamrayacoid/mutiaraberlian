@@ -46,43 +46,85 @@
                     <div class="card-block">
                         <section>
                             <div class="col-md-12">
+                                <div class="row col-md-12">
+                                    <h3>Pendapatan</h3>
+                                    <hr>
+                                </div>
                                 <div class="row justify-content-center">
-                                {{--  box widget 1--}}
                                     <div class="col-md-4" style="background-color: #fff;">
                                         <div class="col-md-12 p-0 shadow-box-fancy" >
                                             <div class="col-md-12 p-3 py-4 text-center" style="color:#000;background-color: #d1d1d1;clip-path: polygon(0 0 , 100% 0 ,100% 70% , 0 100% ); ">
-                                                <p class="h3">Laba Rugi</p>
+                                                <p class="h5">Laba Rugi</p>
                                             </div>
                                             <div class="fluid-container" id="laba_rugi">
 
                                             </div>
                                         </div>
                                     </div>
-                                {{--   end box widget 1--}}
-
-                                    {{--  box widget 1--}}
-                                    <div class="col-md-7 " style="background-color: #fff;">
+                                    <div class="col-md-4 " style="background-color: #fff;">
                                         <div class="row">
-                                            <div class="col-md-6 p-0 shadow-box-fancy">
+                                            <div class="col-md-12 p-0 shadow-box-fancy">
                                                 <div class="col-md-12 p-3 py-4 text-center" style="color:#fff;background-color: #2b3f87;clip-path: polygon(0 0 , 100% 0 ,100% 70% , 0 100% ); ">
-                                                    <p class="h3">Budgeting</p>
+                                                    <p class="h5">Budgeting</p>
                                                 </div>
                                                 <div class="fluid-container" id="budget">
 
                                                 </div>
                                             </div>
-                                            {{--  start new widget breakdown--}}
-                                            <div class="col-md-6 p-0 shadow-box-fancy">
-                                                <div class="col-md-12 p-3 py-4 text-center">
-                                                    <p class="h3">Breakdown</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" style="background-color: #fff;">
+                                        <div class="col-md-12 p-0 shadow-box-fancy">
+                                            <div class="col-md-12 p-3 py-4 text-center">
+                                                <p class="h5">Breakdown</p>
+                                            </div>
+                                            <div class="fluid-container" id="breakdown">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <br>
+                                </div>
+                                    <div class="row col-md-12">
+                                        <h3>Beban</h3>
+                                        <hr>
+                                    </div>
+                                <div class="row justify-content-center">
+                                    <div class="col-md-4" style="background-color: #fff;">
+                                        <div class="col-md-12 p-0 shadow-box-fancy" >
+                                            <div class="col-md-12 p-3 py-4 text-center" style="color:#000;background-color: #d1d1d1;clip-path: polygon(0 0 , 100% 0 ,100% 70% , 0 100% ); ">
+                                                <p class="h5">Laba Rugi</p>
+                                            </div>
+                                            <div class="fluid-container" id="laba_rugi_beban">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 " style="background-color: #fff;">
+                                        <div class="row">
+                                            <div class="col-md-12 p-0 shadow-box-fancy">
+                                                <div class="col-md-12 p-3 py-4 text-center" style="color:#fff;background-color: #2b3f87;clip-path: polygon(0 0 , 100% 0 ,100% 70% , 0 100% ); ">
+                                                    <p class="h5">Budgeting</p>
                                                 </div>
-                                                <div class="fluid-container" id="breakdown">
+                                                <div class="fluid-container" id="budget_beban">
 
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    {{--   end box widget 1--}}
+                                    <div class="col-md-4" style="background-color: #fff;">
+                                        <div class="col-md-12 p-0 shadow-box-fancy">
+                                            <div class="col-md-12 p-3 py-4 text-center">
+                                                <p class="h5">Breakdown</p>
+                                            </div>
+                                            <div class="fluid-container" id="breakdown_beban">
+
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </section>
@@ -112,11 +154,11 @@
                 url : url,
                 type : type,
                 data : data,
-                success : function(response){
-                    console.log(response);
+                success : function(response) {
                     resp = response.data;
-                    let layout = '';
-                    let counter = 0;
+                    let layoutPend = '';
+                    let layoutBeban = '';
+
                     $.each(resp, function (j, data) {
                         if (data.subclass.length <= 0) { return true };
                         $.each(data.subclass, function (k, subclass) {
@@ -124,21 +166,29 @@
                             $.each(subclass.level2, function (l, level2) {
                                 if (level2.akun.length <= 0) { return true };
                                 $.each(level2.akun, function (m, akun) {
-                                    counter++;
-
-
-                                    layout += '<div class="col-md-12 p-2 border-bot mt-2">\n' +
+                                    if (akun.ak_posisi == 'D') {
+                                        layoutBeban += '<div class="col-md-12 p-2 border-bot mt-2">\n' +
                                         '<div class="row">\n' +
-                                        '<p class="col-md-6">'+ akun.ak_nomor +' - '+ akun.ak_nama +'</p>\n' +
-                                        '<p class="col-md-6 text-right data"> Rp. '+ akun.saldo_akhir +'</p>\n' +
+                                        '<p class="col-md-6 col-sm-6">'+ akun.ak_nomor +' - '+ akun.ak_nama +'</p>\n' +
+                                        '<p class="col-md-6 rupiah data">'+ parseInt(akun.saldo_akhir) +'</p>\n' +
                                         '</div>\n' +
                                         '</div>';
+                                    }
+                                    else {
+                                        layoutPend += '<div class="col-md-12 p-2 border-bot mt-2">\n' +
+                                        '<div class="row">\n' +
+                                        '<p class="col-md-6 col-sm-6">'+ akun.ak_nomor +' - '+ akun.ak_nama +'</p>\n' +
+                                        '<p class="col-md-6 rupiah data">'+ parseInt(akun.saldo_akhir) +'</p>\n' +
+                                        '</div>\n' +
+                                        '</div>';
+                                    }
                                 });
                             });
                         });
                     });
 
-                    $('#laba_rugi').html(layout);
+                    $('#laba_rugi').html(layoutPend);
+                    $('#laba_rugi_beban').html(layoutBeban);
                     ajax_output2('{{route("budgeting.data_budget")}}','post',{'_token' : '{{csrf_token()}}'});
 
                 }
@@ -147,22 +197,34 @@
 
         function ajax_output2(url,type,data)
         {
-            var breakd ='';
-            var layout = '';
+            var breakdPend ='';
+            var breakdBeban ='';
+            var layoutPend = '';
+            var layoutBeban= '';
             $.ajax({
                 url : url,
                 type : type,
                 data : data,
                 success : function(get) {
                     console.log(get);
+                    console.log((get['count'][0].count));
                     for (var i = 0; i < (get['data']).length; i++) {
-                        layout += '<div class="col-md-12 p-2 border-bot mt-2">\n' +
-                            '<div class="row">\n' +
-                            '<p class="col-md-6">' + get['data'][i].ak_nomor + ' - ' + get['data'][i].ak_nama + '</p>\n' +
-                            '<p class="col-md-6 text-right budget"> Rp. ' + get['data'][i].b_value + '</p>\n' +
-                            '</div>\n' +
-                            '</div>';
-
+                        if (get['data'][i].ak_posisi == 'D') {
+                            layoutBeban += '<div class="col-md-12 p-2 border-bot mt-2">\n' +
+                                '<div class="row">\n' +
+                                '<p class="col-md-6">' + get['data'][i].ak_nomor + ' - ' + get['data'][i].ak_nama + '</p>\n' +
+                                '<p class="col-md-6 rupiah budget">' + parseInt(get['data'][i].b_value) + '</p>\n' +
+                                '</div>\n' +
+                                '</div>';
+                        }
+                        else {
+                            layoutPend += '<div class="col-md-12 p-2 border-bot mt-2">\n' +
+                                '<div class="row">\n' +
+                                '<p class="col-md-6">' + get['data'][i].ak_nomor + ' - ' + get['data'][i].ak_nama + '</p>\n' +
+                                '<p class="col-md-6 rupiah budget">' + parseInt(get['data'][i].b_value) + '</p>\n' +
+                                '</div>\n' +
+                                '</div>';
+                        }
                     }
 
                     for (var i = 0; i < (get['count']).length; i++) {
@@ -171,17 +233,41 @@
                         }else{
                             var status = 'red';
                         }
-
-                        breakd += '<div class="col-md-12 p-2 border-bot mt-2" style="background-color:'+status+';color:#fff">\n' +
-                            '<div class="row">\n' +
-                            '<p class="col-md-6">'+ get['count'][i].ak_nomor+' - '+ get['count'][i].ak_nama +'</p>\n' +
-                            '<p class="col-md-6 text-right"> Rp. '+ get['count'][i].count +'</p>\n' +
-                            '</div>\n' +
-                            '</div>';
+                        if (get['count'][i].ak_posisi == 'D') {
+                            breakdBeban += '<div class="col-md-12 p-2 border-bot mt-2" style="background-color:'+status+';color:#fff">\n' +
+                                '<div class="row">\n' +
+                                '<p class="col-md-6">'+ get['count'][i].ak_nomor +' - '+ get['count'][i].ak_nama +'</p>\n' +
+                                '<p class="col-md-6 rupiah">'+ parseInt(get['count'][i].count) +'</p>\n' +
+                                '</div>\n' +
+                                '</div>';
+                        }
+                        else {
+                            breakdPend += '<div class="col-md-12 p-2 border-bot mt-2" style="background-color:'+status+';color:#fff">\n' +
+                                '<div class="row">\n' +
+                                '<p class="col-md-6">'+ get['count'][i].ak_nomor +' - '+ get['count'][i].ak_nama +'</p>\n' +
+                                '<p class="col-md-6 rupiah">'+ parseInt(get['count'][i].count) +'</p>\n' +
+                                '</div>\n' +
+                                '</div>';
+                        }
                     }
 
-                    $('#breakdown').html(breakd);
-                    $('#budget').html(layout);
+                    $('#budget_beban').html(layoutBeban);
+                    $('#budget').html(layoutPend);
+                    $('#breakdown_beban').html(breakdBeban);
+                    $('#breakdown').html(breakdPend);
+
+                    $('.rupiah').inputmask("numeric", {
+                        radixPoint: ",",
+                        groupSeparator: ".",
+                        digits: 0,
+                        autoGroup: true,
+                        prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                        rightAlign: true,
+                        autoUnmask: true,
+                        nullable: false,
+                        allowMinus: true,
+                        // unmaskAsNumber: true,
+                    });
                 }
             })
         }
@@ -193,4 +279,3 @@
 
     </script>
 @endsection
-
