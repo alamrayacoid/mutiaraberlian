@@ -10,8 +10,6 @@ use DB;
 use Auth;
 
 use App\d_budgeting;
-use App\Model\keuangan\dk_hierarki_satu as level_1;
-use DB;
 use Carbon\Carbon;
 
 class BudgetingController extends Controller
@@ -29,7 +27,12 @@ class BudgetingController extends Controller
     public function getAkunPendapatan(Request $request)
     {
         // get first day of selected month
-        $month = Carbon::createFromFormat('m-Y', $request->periode)->firstOfMonth()->format('Y-m-d');
+        if(!$request->periode){
+            $month = Carbon::now('Asia/Jakarta')->startOfMonth()->format('Y-m-d');
+        }else{
+            $month = Carbon::createFromFormat('m-Y', $request->periode)->firstOfMonth()->format('Y-m-d');
+        }
+
         $d1 = $month;
 
         $budgeting = d_budgeting::where('b_date', $d1)->get();
@@ -144,8 +147,8 @@ class BudgetingController extends Controller
 
     public function data_lr(Request $request)
     {
-        $d1 = date('Y-m').'-01';
-        $periode = date('F Y');
+        $month = Carbon::now('Asia/Jakarta')->startOfMonth()->format('Y-m-d');
+        $d1 = $month;
 
 //        return \GuzzleHttp\json_encode($d1);
 
@@ -161,6 +164,7 @@ class BudgetingController extends Controller
                                         'akun' => function($query) use ($d1){
                                             $query->leftJoin('dk_akun_saldo', 'dk_akun_saldo.as_akun', 'dk_akun.ak_id')
                                                 ->where('as_periode', $d1)
+                                                ->groupBy('ak_id')
                                                 ->select(
                                                     'ak_id',
                                                     'ak_nomor',
@@ -182,12 +186,75 @@ class BudgetingController extends Controller
             $namaCabang = $cabang->c_name;
         }
 
-        return json_encode([
-            "data"	        => $data,
-            "namaCabang" => $namaCabang,
-            "periode"	=> $periode,
+        return response()->json([
+            'data' => $data
         ]);
 
+    }
+
+    public function data_budget(Request $request)
+    {
+        $coun = [];
+        $month = Carbon::now('Asia/Jakarta')->startOfMonth()->format('Y-m-d');
+        $d1 = $month;
+        $data2 = level_1::where('hs_id', '>', '3')
+            ->with([
+                'subclass' => function($query) {
+                    $query->select('hs_id', 'hs_nama', 'hs_level_1')
+                        ->orderBy('hs_flag')
+                        ->with([
+                            'level2' => function($query) {
+                                $query->select('hd_id', 'hd_nama', 'hd_subclass', 'hd_nomor')
+                                    ->with([
+                                        'akun' => function($query) {
+                                            $query->leftJoin('dk_akun_saldo', 'dk_akun_saldo.as_akun', 'dk_akun.ak_id')
+                                                ->groupBy('ak_id')
+                                                ->select(
+                                                    'ak_id',
+                                                    'ak_nomor',
+                                                    'ak_kelompok',
+                                                    'ak_nama',
+                                                    'ak_posisi',
+                                                    DB::raw('coalesce((as_saldo_akhir - as_saldo_awal), 2) as saldo_akhir')
+                                                );
+                                        }
+                                    ]);
+                            }
+                        ]);
+                }
+            ])
+            ->select('hs_id', 'hs_nama')
+            ->get();
+
+        $data = DB::table('d_budgeting')
+            ->join('dk_akun','ak_nomor','b_akun')
+            ->where('b_date',Carbon::now('Asia/Jakarta')->startOfMonth()->format('Y-m-d'))
+            ->orderBy('b_akun','asc')->get();
+
+        foreach ($data2 as $row){
+            foreach ($row->subclass as $roww){
+                foreach ($roww->level2 as $rowww ){
+                    foreach ($rowww->akun as $rowwww){
+                        $dataa = DB::table('d_budgeting')
+                            ->join('dk_akun','ak_nomor','b_akun')
+                            ->where('b_date',Carbon::now('Asia/Jakarta')->startOfMonth()->format('Y-m-d'))
+                            ->orderBy('b_akun','asc')->where('b_akun',$rowwww->ak_nomor)->get();
+                        foreach ($dataa as $row2){
+                            $cou =[
+                                'ak_nama' => $row2->ak_nama,
+                                'ak_nomor' => $row2->ak_nomor,
+                                'count' => $rowwww->saldo_akhir - $row2->b_value
+                            ];
+                            array_push($coun , $cou);
+                        }
+                    }
+                }
+            }
+        }
+        return response()->json([
+            'data' => $data,
+            'count' => $coun,
+        ]);
     }
 
     /**

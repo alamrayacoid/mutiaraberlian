@@ -99,58 +99,98 @@
 
 @endsection
 @section('extra_script')
-<script type="text/javascript">
-    var layout ='';
-    var saldo = '';
+    <script type="text/javascript">
+        var layout ='';
+        var saldo = '';
+        var breakd ='';
+        var compare = 0;
+        var last = '';
 
-    function ajax_output(url,type,data)
-    {
-        $.ajax({
-            url : url,
-            type : type,
-            data : data,
-            success : function(get){
-                var par = JSON.parse(get);
-                var layout ='';
-                var breakd ='';
-                for(var i =0;i<(par['data']).length;i++){
-                    for(var j =0;j<(par['data'][i]['subclass']).length;j++){
-                        for(var k =0;k<(par['data'][i]['subclass'][j]['level2']).length;k++){
-                            for(var  n=0;n<(par['data'][i]['subclass'][j]['level2'][k]['akun']).length;n++){
-                                for(var o = 0;o<(par['data'][i]['subclass'][j]['level2'][k]['akun']).length;o++){
-                                    if(parseFloat(par['data'][i]['subclass'][j]['level2'][k]['akun'][o].saldo_akhir) > 0){
-                                        var status = 'green';
-                                    }else{
-                                        var status = 'red';
-                                    }
+        function ajax_output(url,type,data)
+        {
+            $.ajax({
+                url : url,
+                type : type,
+                data : data,
+                success : function(response){
+                    console.log(response);
+                    resp = response.data;
+                    let layout = '';
+                    let counter = 0;
+                    $.each(resp, function (j, data) {
+                        if (data.subclass.length <= 0) { return true };
+                        $.each(data.subclass, function (k, subclass) {
+                            if (subclass.level2.length <= 0) { return true };
+                            $.each(subclass.level2, function (l, level2) {
+                                if (level2.akun.length <= 0) { return true };
+                                $.each(level2.akun, function (m, akun) {
+                                    counter++;
+
+
                                     layout += '<div class="col-md-12 p-2 border-bot mt-2">\n' +
                                         '<div class="row">\n' +
-                                        '<p class="col-md-6">'+ par['data'][i]['subclass'][j]['level2'][k]['akun'][o].ak_nomor+' - '+ par['data'][i]['subclass'][j]['level2'][k]['akun'][o].ak_nama +'</p>\n' +
-                                        '<p class="col-md-6 text-right"> Rp. '+ par['data'][i]['subclass'][j]['level2'][k]['akun'][o].saldo_akhir +'</p>\n' +
+                                        '<p class="col-md-6">'+ akun.ak_nomor +' - '+ akun.ak_nama +'</p>\n' +
+                                        '<p class="col-md-6 text-right data"> Rp. '+ akun.saldo_akhir +'</p>\n' +
                                         '</div>\n' +
                                         '</div>';
+                                });
+                            });
+                        });
+                    });
 
-                                    breakd += '<div class="col-md-12 p-2 border-bot mt-2" style="background-color:'+status+';color:#fff">\n' +
-                                        '<div class="row">\n' +
-                                        '<p class="col-md-6">'+ par['data'][i]['subclass'][j]['level2'][k]['akun'][o].ak_nomor+' - '+ par['data'][i]['subclass'][j]['level2'][k]['akun'][o].ak_nama +'</p>\n' +
-                                        '<p class="col-md-6 text-right"> Rp. '+ par['data'][i]['subclass'][j]['level2'][k]['akun'][o].saldo_akhir +'</p>\n' +
-                                        '</div>\n' +
-                                        '</div>';
-                                }
-                            }
-                        }
-                    }
+                    $('#laba_rugi').html(layout);
+                    ajax_output2('{{route("budgeting.data_budget")}}','post',{'_token' : '{{csrf_token()}}'});
+
                 }
-                $('#laba_rugi').html(layout);
-                $('#budget').html(layout);
-                $('#breakdown').html(breakd);
-            }
-        })
-    }
+            })
+        }
 
-    $(document).ready(function() {
-        ajax_output('{{route("budgeting.data_lr")}}','post',{'_token' : '{{csrf_token()}}'});
-    });
+        function ajax_output2(url,type,data)
+        {
+            var breakd ='';
+            var layout = '';
+            $.ajax({
+                url : url,
+                type : type,
+                data : data,
+                success : function(get) {
+                    console.log(get);
+                    for (var i = 0; i < (get['data']).length; i++) {
+                        layout += '<div class="col-md-12 p-2 border-bot mt-2">\n' +
+                            '<div class="row">\n' +
+                            '<p class="col-md-6">' + get['data'][i].ak_nomor + ' - ' + get['data'][i].ak_nama + '</p>\n' +
+                            '<p class="col-md-6 text-right budget"> Rp. ' + get['data'][i].b_value + '</p>\n' +
+                            '</div>\n' +
+                            '</div>';
 
-</script>
+                    }
+
+                    for (var i = 0; i < (get['count']).length; i++) {
+                        if(get['count'][i].count > 0){
+                            var status = 'green';
+                        }else{
+                            var status = 'red';
+                        }
+
+                        breakd += '<div class="col-md-12 p-2 border-bot mt-2" style="background-color:'+status+';color:#fff">\n' +
+                            '<div class="row">\n' +
+                            '<p class="col-md-6">'+ get['count'][i].ak_nomor+' - '+ get['count'][i].ak_nama +'</p>\n' +
+                            '<p class="col-md-6 text-right"> Rp. '+ get['count'][i].count +'</p>\n' +
+                            '</div>\n' +
+                            '</div>';
+                    }
+
+                    $('#breakdown').html(breakd);
+                    $('#budget').html(layout);
+                }
+            })
+        }
+
+        $(document).ready(function() {
+            ajax_output('{{route("budgeting.getAkunPendapatan")}}','get',{'_token' : '{{csrf_token()}}'});
+
+        });
+
+    </script>
 @endsection
+
