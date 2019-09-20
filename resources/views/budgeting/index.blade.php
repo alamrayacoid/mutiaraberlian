@@ -61,15 +61,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 " style="background-color: #fff;">
-                                        <div class="row">
-                                            <div class="col-md-12 p-0 shadow-box-fancy">
-                                                <div class="col-md-12 p-3 py-4 text-center" style="color:#fff;background-color: #2b3f87;clip-path: polygon(0 0 , 100% 0 ,100% 70% , 0 100% ); ">
-                                                    <p class="h5">Budgeting</p>
-                                                </div>
-                                                <div class="fluid-container" id="budget">
+                                    <div class="col-md-4" style="background-color: #fff;">
+                                        <div class="col-md-12 p-0 shadow-box-fancy">
+                                            <div class="col-md-12 p-3 py-4 text-center" style="color:#fff;background-color: #2b3f87;clip-path: polygon(0 0 , 100% 0 ,100% 70% , 0 100% ); ">
+                                                <p class="h5">Budgeting</p>
+                                            </div>
+                                            <div class="fluid-container" id="budget">
 
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -104,14 +102,12 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4 " style="background-color: #fff;">
-                                        <div class="row">
-                                            <div class="col-md-12 p-0 shadow-box-fancy">
-                                                <div class="col-md-12 p-3 py-4 text-center" style="color:#fff;background-color: #2b3f87;clip-path: polygon(0 0 , 100% 0 ,100% 70% , 0 100% ); ">
-                                                    <p class="h5">Budgeting</p>
-                                                </div>
-                                                <div class="fluid-container" id="budget_beban">
+                                        <div class="col-md-12 p-0 shadow-box-fancy">
+                                            <div class="col-md-12 p-3 py-4 text-center" style="color:#fff;background-color: #2b3f87;clip-path: polygon(0 0 , 100% 0 ,100% 70% , 0 100% ); ">
+                                                <p class="h5">Budgeting</p>
+                                            </div>
+                                            <div class="fluid-container" id="budget_beban">
 
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
