@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Produksi;
 
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\pushnotifikasiController as pushNotif;
+
 use App\d_productionorder;
 use App\d_productionorderpayment;
+use App\d_username;
 use App\m_supplier;
-use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Crypt;
 use Currency;
@@ -342,6 +345,9 @@ class PembayaranController extends Controller
                 }
 
             // selesai dirga
+
+            // pusher -> push notification
+            pushNotif::notifikasiup('Notifikasi Pembayaran Produksi');
 
             DB::commit();
             return Response::json(['status' => "Success", 'message' => "Data berhasil disimpan"]);

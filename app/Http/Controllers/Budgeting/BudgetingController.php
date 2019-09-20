@@ -6,12 +6,12 @@ use App\Helper\keuangan\laporan\laporan as laporan;
 use App\Model\Keuangan\dk_hierarki_satu as level_1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\pushnotifikasiController as pushNotif;
+
 use DB;
 use Auth;
 
 use App\d_budgeting;
-use App\Model\keuangan\dk_hierarki_satu as level_1;
-use DB;
 use Carbon\Carbon;
 
 class BudgetingController extends Controller
@@ -95,8 +95,17 @@ class BudgetingController extends Controller
         try {
             $periode = Carbon::createFromFormat('m-Y', $request->periode)->firstOfMonth()->format('Y-m-d');
             $budget = d_budgeting::where('b_date', $periode)->get();
-            $listPendAkun = $request->pendAkun;
-            $listPendValue = $request->pendValue;
+
+            $listAkun = array();
+            $listValue = array();
+            foreach ($request->pendAkun as $key => $value) {
+                array_push($listAkun, $value);
+                array_push($listValue, $request->pendValue[$key]);
+            }
+            foreach ($request->bebanAkun as $key => $value) {
+                array_push($listAkun, $value);
+                array_push($listValue, $request->bebanValue[$key]);
+            }
 
             $dataPendapatan = [];
             if (count($budget) > 0) {
@@ -111,13 +120,13 @@ class BudgetingController extends Controller
             }
 
             // prepare data for new budgeting
-            foreach ($listPendAkun as $key => $akun) {
+            foreach ($listAkun as $key => $akun) {
                 $temp = array(
                     'b_id' => $budgetId,
                     'b_detailid' => $key + 1,
                     'b_date' => $periode,
                     'b_akun' => $akun,
-                    'b_value' => $listPendValue[$key],
+                    'b_value' => $listValue[$key],
                     'b_insert_at' => Carbon::now(),
                     'b_updated_at' => Carbon::now()
                 );
@@ -126,6 +135,9 @@ class BudgetingController extends Controller
 
             // insert new budgeting
             $x = DB::table('d_budgeting')->insert($dataPendapatan);
+
+            // pusher -> push notification
+            pushNotif::notifikasiup('Notifikasi Pembuatan Perencanaan Budgeting');
 
             DB::commit();
             return response()->json([
@@ -139,7 +151,6 @@ class BudgetingController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
-
     }
 
     public function data_lr(Request $request)

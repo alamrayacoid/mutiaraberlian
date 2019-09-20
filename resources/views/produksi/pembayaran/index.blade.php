@@ -171,7 +171,7 @@
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
             });
         }
-        
+
         function gunakanNota(id) {
             $('#po_nota').val(id).trigger('change');
             $('#searchLanjutan').modal('hide');
@@ -489,11 +489,11 @@
         function bayar(id, termin) {
             loadingShow();
             axios.get(baseUrl + '/produksi/pembayaran/bayar-list', {
-                params: {
-                    id: id,
-                    termin: termin
-                }
-            })
+                    params: {
+                        id: id,
+                        termin: termin
+                    }
+                })
                 .then(function (response) {
                     if (response.data.status == "Failed") {
                         loadingHide();
@@ -517,7 +517,7 @@
                     messageWarning("Error", error);
                 })
                 .then(function () {
-                    // always executed
+                    loadingHide();
                 });
 
         }

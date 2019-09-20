@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\pushnotifikasiController as pushNotif;
 
 use DB;
 
@@ -240,6 +241,9 @@ class SettingController extends Controller
             }
 
             DB::table('d_useraccess')->insert($isi);
+
+            // pusher -> push notification
+            pushNotif::notifikasiup('Notifikasi Pembuatan Pengaturan Pengguna');
 
             DB::commit();
             return response()->json([

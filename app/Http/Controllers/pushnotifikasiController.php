@@ -9,12 +9,13 @@ use Carbon\Carbon;
 
 class pushnotifikasiController extends Controller
 {
-  static function notifikasiup($name, $qty, $link)
+  static function notifikasiup($name)
   {
       $data = array(
           'name' => $name,
-          'qty' => $qty,
-          'link' => $link
+          // 'user' => $userName
+          // 'qty' => $qty,
+          // 'link' => $link
       );
 
       $options = array(
@@ -28,6 +29,6 @@ class pushnotifikasiController extends Controller
           $options
       );
       // dd($data);
-      $pusher->trigger('my-channel1', 'my-event1', $data);
+      $pusher->trigger('channel-otorisasi', 'event-notif', $data);
   }
 }

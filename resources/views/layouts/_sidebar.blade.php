@@ -499,11 +499,13 @@
                             <i class="fa arrow"></i>
                         </a>
                         <ul class="sidebar-nav">
-                            @if ($sidebar[46]->ua_read == 'Y')
+                            {{--
+                            <!-- @if ($sidebar[46]->ua_read == 'Y')
                                 <li class="{{Request::is('notifikasiotorisasi/notifikasi/*') ? 'open' : ''}}">
                                     <a href="{{route('notifikasi')}}">Notifikasi</a>
                                 </li>
-                            @endif
+                            @endif -->
+                            --}}
                             @if ($sidebar[45]->ua_read == 'Y')
                                 <li class="{{Request::is('notifikasiotorisasi/otorisasi/*') ? 'open' : ''}}">
                                     <a href="{{route('otorisasi')}}">Otorisasi</a>
