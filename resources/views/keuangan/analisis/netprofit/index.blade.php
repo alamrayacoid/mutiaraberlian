@@ -5,7 +5,7 @@
 		<meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Laporan Jurnal</title>
+		<title>Analisa net profit OCF</title>
 
         <link rel="stylesheet" type="text/css" href="{{asset('assets/css/app.css')}}">
 		<link rel="stylesheet" type="text/css" href="{{ asset('modul_keuangan/bootstrap_4_1_3/css/bootstrap.min.css') }}">
@@ -189,7 +189,8 @@
 
 			<template v-if="laporanReady == 'true' && !downloadingResource">
 				<div class="container-fluid" style="background: none; margin-top: 70px; padding: 10px 30px;">
-					<div id="contentnya">
+					<div id="contentnya" style="padding-bottom: 20px;">
+
 						<table width="100%" border="0" style="border-bottom: 1px solid #333;" {{-- v-if="pageNow == 1" v-cloak --}}>
 				          <thead>
 				            <tr>
@@ -200,7 +201,7 @@
 
 				            <tr>
 				              <th style="text-align: center; font-size: 14pt; color: #0099CC; font-weight: bold;" colspan="2">
-				              	Laporan Jurnal Umum
+				              	Analisa Net Profit OCF
 				              </th>
 				            </tr>
 
@@ -208,7 +209,7 @@
 				              <th style="text-align: center; font-size: 8pt; font-weight: 500; padding-bottom: 10px; color: #666; font-style: italic;">
 
 				              	@if(isset($_GET['lap_tanggal_awal']) && isset($_GET['lap_tanggal_akhir']))
-				              		tanggal : {{ $_GET['lap_tanggal_awal'] }} - {{ $_GET['lap_tanggal_akhir'] }}
+				              		Periode yang : {{ $_GET['lap_tanggal_awal'] }} - {{ $_GET['lap_tanggal_akhir'] }}
 				              	@endif
 				              </th>
 				            </tr>
@@ -224,69 +225,36 @@
 				        	</thead>
 				        </table>
 
-				        <table id="table-data" width="100%" style="font-size: 8pt; margin-top: 15px;" border="0">
-				        	<thead>
-				        		<tr>
-				        			<th width="8%" style="background: #e5e5e5; color: #333; text-align: center; padding: 5px;">
-				        				Tanggal
-				        			</th>
-				        			<th width="10%" style="background: #e5e5e5; color: #333; text-align: center; padding: 5px;">
-				        				No. Transaksi
-				        			</th>
-				        			<th width="15%%" style="background: #e5e5e5; color: #333; text-align: center; padding: 5px;">
-				        				Pemilik Jurnal
-				        			</th>
-				        			<th width="25%" style="background: #e5e5e5; color: #333; text-align: center; padding: 5px;">
-				        				Keterangan
-				        			</th>
-				        			<th width="9%" style="background: #e5e5e5; color: #333; text-align: center; padding: 5px;">
-				        				kode COA
-				        			</th>
-				        			<th style="background: #e5e5e5; color: #333; text-align: center; padding: 5px;">
-				        				Nama COA
-				        			</th>
-				        			<th style="background: #e5e5e5; color: #333; text-align: center; padding: 5px;">
-				        				Debet
-				        			</th>
-				        			<th style="background: #e5e5e5; color: #333; text-align: center; padding: 5px;">
-				        				Kredit
-				        			</th>
-				        		</tr>
-				        	</thead>
+						<canvas id="canvasku" style="margin-top: 10px; width: 100px"></canvas>
+						
+						<table id="table-data" width="100%" style="font-size: 8pt; margin-top: 20px;" border="0">
+		                    <thead>
+			                    <tr>
+			                        <th width="25%" style="background: #e5e5e5; color: #333; text-align: center; padding: 5px;">
+			                            Periode Analisa
+			                        </th>
+			                        <th width="25%" style="background: #e5e5e5; color: #333; text-align: center; padding: 5px;">
+			                            Nilai Operating Cashflow
+			                        </th>
+			                        <th width="25%%" style="background: #e5e5e5; color: #333; text-align: center; padding: 5px;">
+			                            Nilai Net Profit
+			                        </th>
+			                        <!-- <th width="25%" style="background: #e5e5e5; color: #333; text-align: center; padding: 5px;">
+			                            Persentase OCF/Net Profit
+			                        </th> -->
+			                    </tr>
+		                    </thead>
 
-				        	<tbody>
-				        		<template v-for="(jurnal, idx) in data">
-				        			<tr v-for="(detail, idx) in jurnal.detail">
-					        			<td style="text-align: center; padding: 5px;">@{{ humanizeDate(jurnal.jr_tanggal_trans) }}</td>
-					        			<td style="text-align: center; padding: 5px;">@{{ jurnal.jr_nota_ref }}</td>
-					        			<td style="text-align: left; padding: 5px;">@{{ jurnal.c_name }}</td>
-					        			<td style="text-align: left; padding: 5px;">@{{ jurnal.jr_keterangan }}</td>
-					        			<td style="text-align: center; padding: 5px;">@{{ detail.ak_nomor }}</td>
-					        			<td style="text-align: left; padding: 5px;">@{{ detail.ak_nama }}</td>
-					        			<td style="text-align: right; padding: 5px;">
-					        				@{{ (detail.jrdt_dk == 'D') ? humanizePrice(detail.jrdt_value) :'0.00' }}
-					        			</td>
-					        			<td style="text-align: right; padding: 5px;">
-					        				@{{ (detail.jrdt_dk == 'K') ? humanizePrice(detail.jrdt_value) :'0.00' }}
-					        			</td>
-					        		</tr>
-					        		<tr>
-					        			<td colspan="6" style="background: #e5e5e5; padding: 5px;">&nbsp;</td>
-					        			<td style="background: #e5e5e5; text-align: right; font-weight: bold; padding: 5px;">
-					        				@{{ humanizePrice(dataTot.totJurnal[jurnal.jr_id].debet) }}
-					        			</td>
-					        			<td style="background: #e5e5e5; text-align: right; font-weight: bold; padding: 5px;">
-					        				@{{ humanizePrice(dataTot.totJurnal[jurnal.jr_id].debet) }}
-					        			</td>
-					        		</tr>
-				        		</template>
-
-				        		<tr v-if="!data.length">
-				        			<td colspan="8" style="text-align: center; padding: 5px;">Tidak Ada Transaksi Pada Tanggal Ini.</td>
-				        		</tr>
-				        	</tbody>
-				        </table>
-
+		                    <tbody>
+			                    <template v-for="(datas, index) in data.periode">
+			                    	<tr>
+			                    		<td style="text-align: center; border: 1px solid #ccc;">@{{ datas }}</td>
+			                    		<td style="text-align: right; border: 1px solid #ccc;">@{{ humanizePrice(data.ocf[index]) }}</td>
+			                    		<td style="text-align: right; border: 1px solid #ccc;">@{{ humanizePrice(data.netProfit[index]) }}</td>
+			                    	</tr>
+			                    </template>
+		                    </tbody>
+		                </table>
 				    </div>
 				</div>
 			</template>
@@ -302,7 +270,7 @@
 	                                </div>
 	                            </div>
 	                            <div class="card-block">
-	                                <form id="data-form" enctype="multipart/form-data" action="{{ Route('netprofit.getData') }}">
+	                                <form id="data-form" enctype="multipart/form-data" action="{{ Route('netprofit.index') }}">
 	                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" readonly>
 	                                    <section>
 	                                        <div class="row keuangan-form" style="border-bottom: 0px solid #ddd; padding-bottom: 30px;">
@@ -316,13 +284,23 @@
 	                                                    </div>
 
 	                                                    <div class="row" style="margin-top: 15px;">
+	                                                        <div class="col-md-5 label">Type Laporan</div>
+	                                                        <div class="col-md-7">
+	                                                            <vue-select :name="'type'" :id="'type'" :options="type" :search="false" v-model="single.type" @option-change="typeChange"></vue-select>
+	                                                        </div>
+	                                                    </div>
+
+	                                                    <div class="row" style="margin-top: 15px;">
 	                                                        <div class="col-md-5 label">Rentang Waktu</div>
 	                                                        <div class="col-md-7">
 	                                                        	<table width="100%">
 	                                                        		<thead>
 	                                                        			<tr>
 	                                                        				<td>
-	                                                        					<vue-datepicker :name="'lap_tanggal_awal'" :id="'lap_tanggal_awal'" :class="'form-control'" :placeholder="'Tgl Awal'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_awal" :style="'font-size: 8pt;'" @input="tanggalAwalChange"></vue-datepicker>
+	                                                        					<vue-datepicker :name="'lap_tanggal_awal'" :id="'lap_tanggal_awal'" :class="'form-control'" :placeholder="'Bulan Awal'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_awal" :style="'font-size: 8pt;'" @input="tanggalAwalChange" :format="'mm/yyyy'" v-show="single.type == 'bulan'"></vue-datepicker>
+
+	                                                        					<vue-datepicker :name="'lap_tanggal_awal'" :id="'lap_tanggal_awal'" :class="'form-control'" :placeholder="'Tahun Awal'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_awal" :style="'font-size: 8pt;'" @input="tanggalAwalChange" :format="'yyyy'" v-show="single.type == 'tahun'"></vue-datepicker>
+
 	                                                        				</td>
 
 	                                                        				<td width="10%" style="padding: 0px 5px;">
@@ -330,7 +308,9 @@
 	                                                        				</td>
 
 	                                                        				<td>
-	                                                        					<vue-datepicker :name="'lap_tanggal_akhir'" :id="'lap_tanggal_akhir'" :class="'form-control'" :placeholder="'Tgl Akhir'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_akhir" :style="'font-size: 8pt;'"></vue-datepicker>
+	                                                        					<vue-datepicker :name="'lap_tanggal_akhir'" :id="'lap_tanggal_akhir'" :class="'form-control'" :placeholder="'Bulan Akhir'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_akhir" :style="'font-size: 8pt;'" :format="'mm/yyyy'" v-show="single.type == 'bulan'"></vue-datepicker>
+
+	                                                        					<vue-datepicker :name="'lap_tanggal_akhir'" :id="'lap_tanggal_akhir'" :class="'form-control'" :placeholder="'Tahun Akhir'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_akhir" :style="'font-size: 8pt;'" :format="'yyyy'" v-show="single.type == 'tahun'"></vue-datepicker>
 	                                                        				</td>
 	                                                        			</tr>
 	                                                        		</thead>
@@ -369,50 +349,64 @@
 					        </button>
 						</div>
 						<div class="modal-body" style="font-size: 9.5pt;">
-							<form id="data-form" enctype="multipart/form-data" action="{{ Route('netprofit.getData') }}">
-								<input type="hidden" name="_token" value="{{ csrf_token() }}" readonly>
-								<div class="row keuangan-form" style="border-bottom: 0px solid #ddd; padding-bottom: 30px;">
-	                                <div class="col-md-12" style="border-right: 1px solid #ddd;">
-	                                    <div class="col-md-12">
-	                                    	<div class="row" style="margin-top: 0px;">
-	                                            <div class="col-md-5 label">Jurnal Milik</div>
-	                                            <div class="col-md-7">
-	                                                <vue-select :name="'lap_cabang'" :id="'lap_cabang'" :options="lap_cabang" :search="false" v-model="single.lap_cabang"></vue-select>
-	                                            </div>
-	                                        </div>
+							<form id="data-form-modal" enctype="multipart/form-data" action="{{ Route('netprofit.index') }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}" readonly>
+                                <section>
+                                    <div class="row keuangan-form" style="border-bottom: 0px solid #ddd; padding-bottom: 30px;">
+                                        <div class="col-md-12" style="border-right: 1px solid #ddd;">
+                                            <div class="col-md-12">
+                                            	<div class="row" style="margin-top: 0px;">
+                                                    <div class="col-md-5 label">Jurnal Milik</div>
+                                                    <div class="col-md-7">
+                                                        <vue-select :name="'lap_cabang'" :id="'lap_cabang'" :options="lap_cabang" :search="false" v-model="single.lap_cabang"></vue-select>
+                                                    </div>
+                                                </div>
 
-	                                        <div class="row" style="margin-top: 15px;">
-	                                            <div class="col-md-5 label">Rentang Waktu</div>
-	                                            <div class="col-md-7">
-	                                            	<table width="100%">
-	                                            		<thead>
-	                                            			<tr>
-	                                            				<td>
-	                                            					<vue-datepicker :name="'lap_tanggal_awal'" :id="'lap_tanggal_awal'" :class="'form-control'" :placeholder="'Tgl Awal'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_awal" :style="'font-size: 8pt;'" @input="tanggalAwalChange"></vue-datepicker>
-	                                            				</td>
+                                                <div class="row" style="margin-top: 15px;">
+                                                    <div class="col-md-5 label">Type Laporan</div>
+                                                    <div class="col-md-7">
+                                                        <vue-select :name="'type'" :id="'type'" :options="type" :search="false" v-model="single.type" @option-change="typeChange"></vue-select>
+                                                    </div>
+                                                </div>
 
-	                                            				<td width="10%" style="padding: 0px 5px;">
-	                                            					s/d
-	                                            				</td>
+                                                <div class="row" style="margin-top: 15px;">
+                                                    <div class="col-md-5 label">Rentang Waktu</div>
+                                                    <div class="col-md-7">
+                                                    	<table width="100%">
+                                                    		<thead>
+                                                    			<tr>
+                                                    				<td>
+                                                    					<vue-datepicker :name="'lap_tanggal_awal'" :id="'lap_tanggal_awal'" :class="'form-control'" :placeholder="'Bulan Awal'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_awal" :style="'font-size: 8pt;'" @input="tanggalAwalChange" :format="'mm/yyyy'" v-show="single.type == 'bulan'"></vue-datepicker>
 
-	                                            				<td>
-	                                            					<vue-datepicker :name="'lap_tanggal_akhir'" :id="'lap_tanggal_akhir'" :class="'form-control'" :placeholder="'Tgl Akhir'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_akhir" :style="'font-size: 8pt;'"></vue-datepicker>
-	                                            				</td>
-	                                            			</tr>
-	                                            		</thead>
-	                                            	</table>
-	                                            </div>
-	                                        </div>
+                                                    					<vue-datepicker :name="'lap_tanggal_awal'" :id="'lap_tanggal_awal'" :class="'form-control'" :placeholder="'Tahun Awal'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_awal" :style="'font-size: 8pt;'" @input="tanggalAwalChange" :format="'yyyy'" v-show="single.type == 'tahun'"></vue-datepicker>
 
-	                                        <div class="row" style="margin-top: -10px;">
-	                                            <div class="col-md-12 label">
+                                                    				</td>
 
-	                                            </div>
-	                                        </div>
-	                                    </div>
-	                                </div>
-	                            </div>
-                        	</form>
+                                                    				<td width="10%" style="padding: 0px 5px;">
+                                                    					s/d
+                                                    				</td>
+
+                                                    				<td>
+                                                    					<vue-datepicker :name="'lap_tanggal_akhir'" :id="'lap_tanggal_akhir'" :class="'form-control'" :placeholder="'Bulan Akhir'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_akhir" :style="'font-size: 8pt;'" :format="'mm/yyyy'" v-show="single.type == 'bulan'"></vue-datepicker>
+
+                                                    					<vue-datepicker :name="'lap_tanggal_akhir'" :id="'lap_tanggal_akhir'" :class="'form-control'" :placeholder="'Tahun Akhir'" :title="'Tidak Boleh Kosong'" :readonly="true" v-model="single.lap_tanggal_akhir" :style="'font-size: 8pt;'" :format="'yyyy'" v-show="single.type == 'tahun'"></vue-datepicker>
+                                                    				</td>
+                                                    			</tr>
+                                                    		</thead>
+                                                    	</table>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row" style="margin-top: -10px;">
+                                                    <div class="col-md-12 label">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </form>
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-primary btn-sm" @click="terapkan" type="button">Terapkan</button>
@@ -436,7 +430,83 @@
     	<script src="{{asset('modul_keuangan/js/vendors/vue/components/select/select.component.js')}}"></script>
     	<script src="{{ asset('modul_keuangan/js/vendors/vue/components/datepicker/datepicker.component.js') }}"></script>
 
+		<script src="{{asset('assets/js/chartjs/dist/chart.min.js')}}"></script>
+
     	<script type="text/javascript">
+
+    		// tambahan dirga
+            // alert($('#option-cabang').val());
+
+            function initiate(response) {
+
+            	console.log(response.data.ocf);
+
+            	var chartData = {
+	                labels: response.data.periode,
+					datasets: [{
+						type: 'line',
+						label: 'OCF',
+						borderColor: '#0099CC',
+						borderWidth: 2,
+						fill: false,
+						data: response.data.ocf
+					}, {
+						type: 'bar',
+						label: 'Net Profit',
+						backgroundColor: '#FF8800',
+						data: response.data.netProfit
+					}]
+	            };
+
+            	var ctx = document.getElementById('canvasku').getContext('2d');
+				window.myMixedChart = new Chart(ctx, {
+					type: 'bar',
+					data: chartData,
+					options: {
+						responsive: true,
+						title: {
+							display: false,
+							text: 'Chart.js Combo Bar Line Chart'
+						},
+						tooltips: {
+							mode: 'index',
+							intersect: true
+						},
+						hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        legend: {
+                            display: false
+                        },
+                        scales: {
+							xAxes: [{
+								display: true,
+								scaleLabel: {
+									display: true,
+									labelString: 'Month'
+								}
+							}],
+							yAxes: [{
+								display: true,
+								scaleLabel: {
+									display: true,
+									labelString: 'Value'
+								},
+								ticks: {
+									// min: 0,
+									// max: 100,
+									beginAtZero:true,
+
+									// forces step size to be 5 units
+									stepSize: 100
+								}
+							}]
+						}
+					}
+				});
+            };
+
 			var app = new Vue({
     			el: '#vue-element',
     			data: {
@@ -474,6 +544,18 @@
     					},
     				],
 
+    				type: [
+    					{
+    						id : 'bulan',
+    						text : 'Laporan Dalam Periode Bulan'
+    					},
+
+    					{
+    						id : 'tahun',
+    						text : 'Laporan Dalam Periode Tahun'
+    					}
+    				],
+
     				lap_cabang: [],
 
     				data: [],
@@ -481,6 +563,7 @@
     				single: {
     					lap_jenis: 'MK',
     					lap_nama: 'Y',
+    					type: 'bulan',
     					lap_tanggal_awal: '',
     					lap_tanggal_akhir: '',
     					lap_cabang: '',
@@ -499,11 +582,17 @@
 	            	if(this.laporanReady == 'true'){
 	            		this.downloadingResource = true;
 
-	            		axios.get("{{ Route('laporan.keuangan.jurnal_umum.resource') }}?"+this.url.searchParams)
+	            		axios.get("{{ Route('netprofit.getData') }}?"+this.url.searchParams)
 	                        .then((response) => {
 	                            this.downloadingResource = false;
-                                this.data = response.data.data;
+                                this.data = response.data;
 	                            this.single.cabang = response.data.namaCabang;
+
+	                            // console.log(this.data);
+
+	                            setTimeout(function(){
+	                            	initiate(response);
+	                            }, 0)
 
 	                        }).catch((e) => {
 	                            this.downloadingResource = false;
@@ -548,7 +637,7 @@
 	            		e.preventDefault();
 	            		e.stopImmediatePropagation();
 
-	            		$('#data-form').submit();
+	            		$('#data-form-modal').submit();
 	            	},
 
 	            	showSetting: function(evt){
@@ -620,7 +709,7 @@
 	                },
 
 	            	typeChange: function(e){
-
+	            		this.single.type = e;
 	                },
 
 	                akunChange:function(e){
