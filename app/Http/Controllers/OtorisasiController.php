@@ -327,7 +327,7 @@ class OtorisasiController extends Controller
 
                 $selisih = ($data->aa_qtysystem - $data->aa_qtyreal) * $hpp;
 
-                if($selisih > 0){
+                if($selisih != 0) {
                     $acc_persediaan = DB::table('dk_pembukuan_detail')
                                         ->where('pd_pembukuan', function($query){
                                             $query->select('pe_id')->from('dk_pembukuan')
@@ -374,7 +374,7 @@ class OtorisasiController extends Controller
                         "jrdt_cashflow"     => ($selisih > 0) ? $acc_persediaan->pd_cashflow : $acc_beban_selisih->pd_cashflow,
                     ]);
                 }
-
+                
                 $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $data->aa_nota, $parrent->pe_nama, 'TM', Auth::user()->u_company);
 
                 if($jurnal['status'] == 'error'){

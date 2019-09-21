@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inventory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Helper\keuangan\jurnal\jurnal;
+use App\Http\Controllers\pushnotifikasiController as pushNotif;
 
 use AksesUser;
 use Auth;
@@ -447,6 +448,9 @@ class DistribusiController extends Controller
                     return json_encode($jurnal);
                 }
             // end: pembukuan jurnal
+
+            // pusher -> push notification
+            pushNotif::notifikasiup('Notifikasi Pembuatan Distribusi');
 
             DB::commit();
             return response()->json([
@@ -921,6 +925,9 @@ class DistribusiController extends Controller
                     return json_encode($jurnal);
                 }
             // end: update pembukuan jurnal
+
+            // pusher -> push notification
+            pushNotif::notifikasiup('Notifikasi Perubahan Distribusi');
 
             DB::commit();
             return response()->json([

@@ -101,10 +101,14 @@
             <li class="profile dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                     @if (Auth::user()->u_user == 'E')
+                        @if (!is_null(Auth::user()->employee))
                         <div class="img" style="background-image: url('{{ asset('storage/app/'. Auth::user()->employee->e_foto) }}')"></div>
+                        @endif
                     @elseif (Auth::user()->u_user == 'A')
+                        @if (!is_null(Auth::user()->agen))
                         <div class="img" style="background-image: url('{{ asset('storage/app/'. Auth::user()->agen->a_img) }}')"></div>
                         <!-- <div class="img" style="background-image: url('https://i.mydramalist.com/O5OvYc.jpg')"></div> -->
+                        @endif
                     @endif
                     <span class="name"> {{ \App\d_username::getName() }} </span>
                 </a>
@@ -382,14 +386,16 @@
                         <ul class="sidebar-nav">
                             @if ($sidebar[29]->ua_read == 'Y')
                                 <li>
-                                    <a href="#">Manajemen Perencanaan</a>
+                                    <a href="{{ route('budgeting.index') }}">Manajemen Perencanaan</a>
                                 </li>
                             @endif
-                            @if ($sidebar[30]->ua_read == 'Y')
+                            {{--
+                            <!-- @if ($sidebar[30]->ua_read == 'Y')
                                 <li>
                                     <a href="#">Manajemen Penganggaran</a>
                                 </li>
-                            @endif
+                            @endif -->
+                            --}}
                         </ul>
                     </li>
                 @endif
@@ -493,11 +499,13 @@
                             <i class="fa arrow"></i>
                         </a>
                         <ul class="sidebar-nav">
-                            @if ($sidebar[46]->ua_read == 'Y')
+                            {{--
+                            <!-- @if ($sidebar[46]->ua_read == 'Y')
                                 <li class="{{Request::is('notifikasiotorisasi/notifikasi/*') ? 'open' : ''}}">
                                     <a href="{{route('notifikasi')}}">Notifikasi</a>
                                 </li>
-                            @endif
+                            @endif -->
+                            --}}
                             @if ($sidebar[45]->ua_read == 'Y')
                                 <li class="{{Request::is('notifikasiotorisasi/otorisasi/*') ? 'open' : ''}}">
                                     <a href="{{route('otorisasi')}}">Otorisasi</a>

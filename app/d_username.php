@@ -77,9 +77,13 @@ class d_username extends Authenticatable
     public static function getName()
     {
         if (Auth::user()->u_user == 'E'){
-            return Auth::user()->employee->e_name;
+            if (!is_null(Auth::user()->employee)) {
+                return Auth::user()->employee->e_name;
+            }
         } elseif (Auth::user()->u_user == 'A'){
-            return Auth::user()->agen->a_name;
+            if (!is_null(Auth::user()->agen)) {
+                return Auth::user()->agen->a_name;
+            }
         }
     }
 

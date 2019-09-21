@@ -173,7 +173,7 @@ class getotorisasiController extends Controller
     // update 'notification'
     public function updateNotif($name, $qty, $link)
     {
-        // get notification with name 'Revisi Data'
+        // get notification with name
         $notif = d_notification::where('n_name', $name)
             ->first();
         // create notif if null

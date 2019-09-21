@@ -607,27 +607,6 @@ class PenerimaanProduksiController extends Controller
                 return $mutationIn;
             }
 
-            // // repair mutasimasuk, also insert production code to param
-            // // check stock-mutation again
-            // $mutasi = Mutasi::mutasimasuk(
-            //     1, // mutcat
-            //     Auth::user()->u_company, // from
-            //     Auth::user()->u_company, // destination
-            //     $item, // item id
-            //     $qty_compare, // qty smallest unit
-            //     'ON DESTINATION', // status item
-            //     'FINE', // condition item
-            //     $data_check->value, // hpp
-            //     $data_check->value, // sell
-            //     $data_check->nota, // nota
-            //     $request->nota, // nota refference
-            //     $request->prodCode, // list of productioncode
-            //     $request->qtyProdCode // list of qty-productioncode
-            // );
-            // if (!is_bool($mutasi)) {
-            //     return $mutasi;
-            // }
-
             // update received-status of an item
             $this->UpdateStatus($order, $item);
 

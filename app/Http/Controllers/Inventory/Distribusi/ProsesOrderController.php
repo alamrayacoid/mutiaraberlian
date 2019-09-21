@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Inventory\Distribusi;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\pushnotifikasiController as pushNotif;
 
 use AksesUser;
 use App\d_productdelivery;
@@ -349,6 +350,9 @@ class ProsesOrderController extends Controller
 
 // start: pembukuan jurnal
 // end: pembukuan jurnal
+
+            // pusher -> push notification
+            pushNotif::notifikasiup('Notifikasi Terima Order Distribusi');
 
             DB::commit();
             return response()->json([

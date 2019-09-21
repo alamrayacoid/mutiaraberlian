@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
+use App\Http\Controllers\pushnotifikasiController as pushNotif;
 use App\Helper\keuangan\jurnal\jurnal;
 
 use App\d_itemsupplier;
@@ -302,6 +303,7 @@ class ProduksiController extends Controller
                 DB::table('d_productionorderdt')->insert($productionorderdt);
                 DB::table('d_productionorderpayment')->insert($productionorderpayment);
 
+                // pusher -> push notification
                 pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
 
                 DB::commit();
@@ -478,7 +480,8 @@ class ProduksiController extends Controller
                     return json_encode($jurnal);
                 }
             // end: update jurnal
-// dd($jurnal);
+
+            pushNotif::notifikasiup('Notifikasi Perubahan Order Produksi');
 
             DB::commit();
             return json_encode([
@@ -525,7 +528,7 @@ class ProduksiController extends Controller
                     }
                 }
             // end:  drop jurnal for production-order and payment
-            // dd($po, $jurnal);
+
 
             DB::table('d_productionorderpayment')->where('pop_productionorder', '=', $id)->delete();
             DB::table('d_productionorderdt')->where('pod_productionorder', '=', $id)->delete();
@@ -596,7 +599,6 @@ class ProduksiController extends Controller
                     }
                 }
             // end:  drop jurnal for production-order and payment
-// dd($po, $jurnal);
 
             DB::table('d_itemreceiptdt')->where('ird_itemreceipt', $itemReceive->ir_id)->delete();
             $itemReceive->delete();
@@ -1289,7 +1291,7 @@ class ProduksiController extends Controller
                 if (json_decode($order)->status !== 'Success') {
                     throw new \Exception("Terjadi kesalahan saat menyelesaikan return produksi", 1);
                 }
-                // acc otorisasi production-order
+                // acc otorisasi production-order with status payment = 'LUNAS'
                 $data = d_productionorderauth::where('poa_nota', $nota)->first();
                 $values = [
                     'po_id'         => $data->poa_id,
@@ -1297,7 +1299,7 @@ class ProduksiController extends Controller
                     'po_date'       => $data->poa_date,
                     'po_supplier'   => $data->poa_supplier,
                     'po_totalnet'   => $data->poa_totalnet,
-                    'po_status'     => $data->poa_status,
+                    'po_status'     => 'LUNAS'
                 ];
                 $insertPO = DB::table('d_productionorder')->insert($values);
                 // delete production-auth
@@ -1432,6 +1434,8 @@ class ProduksiController extends Controller
                     }
             }
 
+            pushNotif::notifikasiup('Notifikasi Pembuatan Return Produksi');
+
             DB::commit();
             return response()->json([
                 'status' => 'berhasil'
@@ -1475,6 +1479,8 @@ class ProduksiController extends Controller
                 $deletePOPayment = d_productionorderpayment::where('pop_productionorder', $PO->po_id)->delete();
                 $deletePODetail = ProductionOrderDT::where('pod_productionorder', $PO->po_id)->delete();
                 $PO->delete();
+
+// update jurnal ?
             }
             elseif ($data->rpo_action == 'PN') {
                 // get list of 'in' mutcat-list
@@ -1501,6 +1507,7 @@ class ProduksiController extends Controller
 
                 $supplier->s_deposit -= ((int)$itemPrice * $data->rpo_qty);
                 $supplier->save();
+// update jurnal ?
             }
 
             // get mutcat 'out' based on return-type
@@ -1603,6 +1610,7 @@ class ProduksiController extends Controller
             $deletePOPayment = d_productionorderpayment::where('pop_productionorder', $po->po_id)->delete();
             $deletePODetail = ProductionOrderDT::where('pod_productionorder', $po->po_id)->delete();
             $po->delete();
+// update jurnal ?
 
             DB::commit();
             return response()->json([

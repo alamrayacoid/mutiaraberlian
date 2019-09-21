@@ -12,7 +12,7 @@
 */
 
 Route::get("/", function () {
-    
+
     if (Auth::check()) {
         return redirect()->route("home");
     } else {
@@ -538,6 +538,20 @@ Route::group(['middleware' => 'auth'], function () {
     // END
     // !===================================================== END SDM =====================================================!
 
+    // !===================================================== START BUDGETING =====================================================!
+    // START
+    Route::get('/budgeting/manajemen-perencanaan/index', 'Budgeting\BudgetingController@index')->name('budgeting.index');
+    Route::get('/budgeting/manajemen-perencanaan/create', 'Budgeting\BudgetingController@create')->name('budgeting.create');
+    Route::post('/budgeting/manajemen-perencanaan/get', 'Budgeting\BudgetingController@data_lr')->name('budgeting.data_lr');
+    Route::get('/budgeting/manajemen-perencanaan/get-akun-pendapatan', 'Budgeting\BudgetingController@getAkunPendapatan')->name('budgeting.getAkunPendapatan');
+    Route::get('/budgeting/manajemen-perencanaan/get-akun-beban', 'Budgeting\BudgetingController@getAkunBeban')->name('budgeting.getAkunBeban');
+    Route::post('/budgeting/manajemen-perencanaan/store', 'Budgeting\BudgetingController@store')->name('budgeting.store');
+    Route::post('/budgeting/manajemen-perencanaan/data_budget', 'Budgeting\BudgetingController@data_budget')->name('budgeting.data_budget');
+
+    // END
+    // !===================================================== END BUDGETING =====================================================!
+
+
     // !===================================================== Marketing =====================================================!
     // Manajemen Marketing
     Route::get('/marketing/manajemenmarketing/index', 'MarketingController@marketing')->name('mngmarketing.index');
@@ -867,6 +881,12 @@ Route::group(['middleware' => 'auth'], function () {
     // Analisis Net Profit OCF
     Route::get('/keuangan/analisis/netprofit', 'Keuangan\analisis\AnalisisNetProfitController@index')->name('netprofit.index');
     Route::get('/keuangan/analisis/netprofit/get-data', 'Keuangan\analisis\AnalisisNetProfitController@getData')->name('netprofit.getData');
+
+    // Pajak
+
+    Route::get('/keuangan/pajak/index', 'Keuangan\pajak\pajakController@index')->name('pajak.index');
+
+
     // !===================================================== END KEUANGAN =====================================================!
 
     // !===================================================== PENGATURAN =====================================================!
@@ -1149,6 +1169,8 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     // Selesai Dirga
+
+
 });
 
 // End Route Group
