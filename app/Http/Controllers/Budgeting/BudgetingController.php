@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Budgeting;
 
 use App\Helper\keuangan\laporan\laporan as laporan;
-use App\Model\Keuangan\dk_hierarki_satu as level_1;
+use App\Model\keuangan\dk_hierarki_satu as level_1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\pushnotifikasiController as pushNotif;
