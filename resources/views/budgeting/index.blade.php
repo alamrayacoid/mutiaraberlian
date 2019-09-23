@@ -162,7 +162,7 @@
                             $.each(subclass.level2, function (l, level2) {
                                 if (level2.akun.length <= 0) { return true };
                                 $.each(level2.akun, function (m, akun) {
-                                    if (akun.ak_posisi == 'D') {
+                                    if (akun.ak_nomor.substring(0,1) != '4' && akun.ak_nomor.substring(0,1) != '8') {
                                         layoutBeban += '<div class="col-md-12 p-2 border-bot mt-2">\n' +
                                         '<div class="row">\n' +
                                         '<p class="col-md-6 col-sm-6">'+ akun.ak_nomor +' - '+ akun.ak_nama +'</p>\n' +
@@ -205,7 +205,7 @@
                     console.log(get);
                     console.log((get['count'][0].count));
                     for (var i = 0; i < (get['data']).length; i++) {
-                        if (get['data'][i].ak_posisi == 'D') {
+                        if (get['data'][i].ak_nomor.substring(0,1) != '4' && get['data'][i].ak_nomor.substring(0,1) != '8') {
                             layoutBeban += '<div class="col-md-12 p-2 border-bot mt-2">\n' +
                                 '<div class="row">\n' +
                                 '<p class="col-md-6">' + get['data'][i].ak_nomor + ' - ' + get['data'][i].ak_nama + '</p>\n' +
@@ -229,7 +229,7 @@
                         }else{
                             var status = 'red';
                         }
-                        if (get['count'][i].ak_posisi == 'D') {
+                        if (get['count'][i].ak_nomor.substring(0,1) != '4' && get['count'][i].ak_nomor.substring(0,1) != '8') {
                             breakdBeban += '<div class="col-md-12 p-2 border-bot mt-2" style="background-color:'+status+';color:#fff">\n' +
                                 '<div class="row">\n' +
                                 '<p class="col-md-6">'+ get['count'][i].ak_nomor +' - '+ get['count'][i].ak_nama +'</p>\n' +

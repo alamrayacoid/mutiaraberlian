@@ -247,7 +247,7 @@
                                 $.each(level2.akun, function (m, akun) {
                                     let value = '';
                                     // separate between 'pendapatan' and 'beban'
-                                    if (akun.ak_posisi == 'D') {
+                                    if (akun.ak_nomor.substring(0,1) != '4' && akun.ak_nomor.substring(0,1) != '8') {
                                         counterBeban++;
                                         $.each(respBudgeting, function (idxBud, valBud) {
                                             if (valBud.b_akun == akun.ak_nomor) {
