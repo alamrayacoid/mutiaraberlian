@@ -882,8 +882,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/keuangan/analisis/netprofit', 'Keuangan\analisis\AnalisisNetProfitController@index')->name('netprofit.index');
     Route::get('/keuangan/analisis/netprofit/get-data', 'Keuangan\analisis\AnalisisNetProfitController@getData')->name('netprofit.getData');
 
-    // Pajak
+    // Analisis Aset Eta
+    Route::get('/keuangan/analisis/aset-eta', 'Keuangan\analisis\analisa_aset_eta@index')->name('aset_eta.index');
+    Route::get('/keuangan/analisis/aset-eta/get-data', 'Keuangan\analisis\analisa_aset_eta@getData')->name('aset_eta.getData');
 
+
+
+
+    // Pajak
     Route::get('/keuangan/pajak/index', 'Keuangan\pajak\pajakController@index')->name('pajak.index');
 
 
