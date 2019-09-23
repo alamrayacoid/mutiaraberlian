@@ -202,8 +202,6 @@
                 type : type,
                 data : data,
                 success : function(get) {
-                    console.log(get);
-                    console.log((get['count'][0].count));
                     for (var i = 0; i < (get['data']).length; i++) {
                         if (get['data'][i].ak_nomor.substring(0,1) != '4' && get['data'][i].ak_nomor.substring(0,1) != '8') {
                             layoutBeban += '<div class="col-md-12 p-2 border-bot mt-2">\n' +
