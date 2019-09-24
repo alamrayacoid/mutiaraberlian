@@ -585,6 +585,7 @@
                 otorisasi(data.name);
             });
             channelOto.bind('event-notif', function(data) {
+                messageSuccess('Info', data.name)
                 notifikasi(data.name);
             });
 

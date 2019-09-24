@@ -234,7 +234,8 @@ class AgenController extends Controller
 
         $datas = DB::table('m_agen');
         if ($status != '') {
-            $datas = $datas->where('a_isactive', $status);
+            $datas = $datas->where('a_isactive', $status)
+                ->where('a_type', '!=', 'MMA');
         }
         $datas = $datas->join('m_wil_kota', 'a_area', 'wc_id')
             ->orderBy('a_isactive', 'asc')

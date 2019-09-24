@@ -32,9 +32,9 @@
                       <div class="col-12" align="center">
                         <div class="form-group">
                           @if($employee->e_foto != null)
-                          <img src="{{asset('assets/uploads/pegawai')}}/{{$employee->e_foto}}" class="img-thumbnail" style="max-height: 254px;max-width: 100%;">
+                          <img src="{{ asset('storage/app/'.$employee->e_foto) }}" class="img-thumbnail" style="max-height: 254px;max-width: 100%;">
                           @else
-                          <img src="{{asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" style="max-height: 254px;max-width: 100%;">
+                          <img src="{{ asset('assets/img/add-image-icon2.png')}}" class="img-thumbnail" style="max-height: 254px;max-width: 100%;">
                           @endif
                         </div>
                       </div>
@@ -243,7 +243,7 @@
 
     $("#foto").change(function() {
       readURL(this, '#img-preview');
-    });  
+    });
     $('#img-preview').click(function(){
       $('#foto').click();
     });

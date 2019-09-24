@@ -37,8 +37,8 @@ class CabangController extends Controller
         }
         $datas = $datas->leftJoin('m_wil_kota', 'wc_id', '=', 'c_area')
             ->where(function ($q){
-                $q->orWhere('c_type', '=', 'CABANG');
-                // $q->orWhere('c_type', '=', 'PUSAT');
+                $q->where('c_type', '=', 'CABANG')
+                ->orWhere('c_type', '=', 'PUSAT');
             })
             ->orderBy('c_type', 'desc');
 

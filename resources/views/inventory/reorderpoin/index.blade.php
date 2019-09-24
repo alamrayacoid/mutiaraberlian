@@ -132,7 +132,7 @@
                 }
             }).catch(function (error) {
                 loadingHide();
-                alert('error');
+                messageWarning("Error", 'Terjadi kesalahan : ' + error);
             })
         }
 
@@ -153,7 +153,7 @@
                 }
             }).catch(function (error) {
                 loadingHide();
-                alert('error');
+                messageWarning("Error", 'Terjadi kesalahan : ' + error);
             })
         }
     </script>

@@ -38,7 +38,7 @@
                             <a href="{{route('budgeting.index')}}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i></a>
                         </div>
                     </div>
-<!-- start : form -->
+                    <!-- start : form -->
                     <div class="card-block">
                         <form class="formBudgeting">
                             <section>
@@ -96,7 +96,7 @@
                                                 <th>#</th>
                                                 <th class="text-center">Akun</th>
                                                 <th class="text-center">Value</th>
-                                                <th class="text-center">Persentase</th>
+                                                <th class="text-center">Persentase (terhadap Pendapatan)</th>
                                             </tr>
                                         </thead>
                                         <!--Table head-->
@@ -209,7 +209,7 @@
         let totalPersen = 0;
         $.each($('.beban-persentase'), function (idx, value) {
             let valueX = $('.beban-value').eq(idx).val();
-            persen = parseFloat(valueX / totalBeban) * 100;
+            persen = parseFloat(valueX / totalPendapatan) * 100;
             persen = Math.floor(persen);
             $('.beban-persentase').eq(idx).text(persen + ' %');
             totalPersen += persen;
@@ -314,23 +314,6 @@
                             });
                         });
                     });
-
-                    // for(var i = 0; i<(resp).length; i++){
-                    //     for(var j = 0; j < (resp[i]['subclass']).length; j++){
-                    //         for(var k = 0; k < (resp[i]['subclass'][j]['level2']).length; k++){
-                    //             for(var n = 0; n < (resp[i]['subclass'][j]['level2'][k]['akun']).length; n++){
-                    //                 for(var o = 0; o < (resp[i]['subclass'][j]['level2'][k]['akun']).length; o++){
-                    //                     counter++;
-                    //                     let number = '<th scope="row">'+ counter +'</th>';
-                    //                     let name = '<td>'+ resp[i]['subclass'][j]['level2'][k]['akun'][o].ak_nama +'<input type="hidden" name="pendAkun[]" value="'+ resp[i]['subclass'][j]['level2'][k]['akun'][o].ak_nomor +'"></td>';
-                    //                     let value = '<td><input type="text" class="form-control pend-value w-100 rupiah" name="pendValue[]" value="0"></td>';
-                    //                     let persentase = '<td class="text-right"><label class="pend-persentase"></label></td>';
-                    //                     layout += '<tr>'+ number + name + value + persentase +'</tr>'
-                    //                 }
-                    //             }
-                    //         }
-                    //     }
-                    // }
                 }
 
                 $('#tablePendapatan > tbody').append(layoutPend);

@@ -226,6 +226,9 @@ class ProduksiController extends Controller
                     $forceDelete = '';
                     $hapus = '';
                 }
+            // start : temp
+                $forceDelete = '';
+            // end : temp
                 $nota = '<button class="btn btn-info btn-nota hint--top-left hint--info" aria-label="Cetak Nota" title="Nota" type="button" onclick="printNota(\''. Crypt::encrypt($data->po_id) .'\')"><i class="fa fa-print"></i></button>';
                 return '<div class="row h-100 justify-content-center align-items-center"><div class="btn-group btn-group-sm">'. $detail . $nota . $edit . $hapus . '</div><div class="col-md-1"></div><div class="btn-group btn-group-sm">'. $forceDelete .'</div></div>';
             })
@@ -821,11 +824,13 @@ class ProduksiController extends Controller
             ->addColumn('metode', function ($data) {
                 if ($data->metode == "GB") {
                     return "Ganti Barang";
-                } else if ($data->metode == "PT") {
-                    return "Potong Tagihan";
-                } else if ($data->metode == "RD") {
-                    return "Return Dana";
                 }
+                else if ($data->metode == "PN") {
+                    return "Potong Tagihan";
+                }
+                // else if ($data->metode == "RD") {
+                //     return "Return Dana";
+                // }
             })
             ->addColumn('barang', function ($data) {
                 return $data->barang;
@@ -857,14 +862,6 @@ class ProduksiController extends Controller
         $data = d_returnproductionorder::where('rpo_id', $id)
             ->with('getItem')
             ->first();
-            // ->leftJoin('d_returnproductionorderdt', function ($q) use ($id){
-            //     $q->on('rpo_productionorder', '=', 'rpod_productionorder');
-            //     $q->on('rpo_detailid', '=', 'rpod_returnproductionorder');
-            // })
-            // ->join('m_item', 'rpo_item', '=', 'i_id')
-            // ->join('m_unit', 'i_unit1', '=', 'u_id')
-            // ->where('rpo_productionorder', $id)
-            // ->where('rpo_detailid', $detail);
 
         if (is_null($data)) {
             return Response::json([
@@ -874,11 +871,13 @@ class ProduksiController extends Controller
         } else {
             if ($data->rpo_action == "GB") {
                 $metode = "Ganti Barang";
-            } else if ($data->rpo_action == "PT") {
-                $metode = "Potong Tagihan";
-            } else if ($data->rpo_action == "RD") {
-                $metode = "Return Dana";
             }
+            else if ($data->rpo_action == "PN") {
+                $metode = "Potong Tagihan";
+            }
+            // else if ($data->rpo_action == "RD") {
+            //     $metode = "Return Dana";
+            // }
 
             $val = [
                 'tanggal' => Carbon::parse($data->rpo_date)->format('d-m-Y'),

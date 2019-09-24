@@ -37,7 +37,7 @@
 				</div>
 			</fieldset>
 				<div class="table-responsive">
-					<table class="table table-hover table-striped" cellspacing="0" width="100%" id="table_historyadjusment">
+					<table class="table table-hover table-striped w-100" cellspacing="0" width="100%" id="table_historyadjusment">
 						<thead class="bg-primary">
 							<tr>
 								<th width="1%">No</th>

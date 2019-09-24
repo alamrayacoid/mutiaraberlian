@@ -138,7 +138,7 @@
                     data.hasil
                     ]).draw(false);
             }).catch(function(error){
-                alert('error');
+                messageWarning("Error", 'Terjadi kesalahan : ' + error);
             })
         }
 

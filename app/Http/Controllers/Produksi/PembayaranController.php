@@ -35,6 +35,7 @@ class PembayaranController extends Controller
             ->orderBy('pop_productionorder', 'asc')
             ->orderBy('pop_termin', 'asc')
             ->get();
+
         return Datatables::of($datas)
             ->addIndexColumn()
             ->addColumn('estimasi', function ($datas) {
@@ -277,6 +278,7 @@ class PembayaranController extends Controller
                 ->update($values);
 
             $check = DB::table('d_productionorderpayment')
+                ->where('pop_productionorder', '=', $poid)
                 ->where('pop_status', '=', 'N')
                 ->get();
 

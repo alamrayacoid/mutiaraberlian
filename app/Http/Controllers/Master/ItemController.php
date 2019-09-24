@@ -346,6 +346,8 @@ class ItemController extends Controller
                     'ia_isactive' => "Y",
                     'ia_update_at' => Carbon::now(),
                 ]);
+                // pusher -> push notification
+                pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
             }
             else {
                 // start: execute update data
@@ -361,8 +363,6 @@ class ItemController extends Controller
                     'ia_isactive' => "Y",
                     'ia_update_at' => Carbon::now(),
                 ]);
-                // pusher -> push notification
-                pushOtorisasi::otorisasiup('Otorisasi Revisi Data');
             }
 
 
